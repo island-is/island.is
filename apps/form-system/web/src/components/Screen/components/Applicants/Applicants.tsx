@@ -19,11 +19,16 @@ export const Applicants = ({ applicantTypes }: Props) => {
   })
   const user = useUserInfo()
 
-  const nationalId = user?.profile.actor ? user.profile.actor.nationalId : user?.profile.nationalId
+  const nationalId = user?.profile.actor
+    ? user.profile.actor.nationalId
+    : user?.profile.nationalId
   return (
     <>
       {applicantTypes.map((applicantType) => {
-        if (applicantType.applicantTypeId === ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY) {
+        if (
+          applicantType.applicantTypeId ===
+          ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY
+        ) {
           return (
             <IndividualApplicant
               applicantType={applicantType}

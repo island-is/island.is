@@ -97,7 +97,7 @@ export const incrementWithScreens = (
       console.error('Error submitting screen:', error)
     })
   }
-  if (currentScreenIndex === maxScreenIndex) {
+  if (currentScreenIndex >= maxScreenIndex) {
     if (state.currentSection.index === maxSectionIndex) {
       return {
         ...state,
@@ -239,6 +239,31 @@ export const decrementWithoutScreens = (
         }
       : undefined,
     errors: [],
+  }
+}
+
+export const setCurrentScreen = (
+  state: ApplicationState,
+  sectionIndex: number,
+  screenIndex: number,
+): ApplicationState => {
+  const currentSection = state.sections[sectionIndex]
+  let currentScreen: FormSystemScreen | undefined = undefined
+  if (hasScreens(currentSection)) {
+    const maybeScreen = currentSection.screens?.find(
+      (screen) => screen?.displayOrder === screenIndex,
+    )
+    currentScreen = maybeScreen === null ? undefined : maybeScreen
+  }
+  return {
+    ...state,
+    currentSection: {
+      data: currentSection,
+      index: sectionIndex,
+    },
+    currentScreen: currentScreen
+      ? { data: currentScreen, index: screenIndex }
+      : undefined,
   }
 }
 

@@ -123,7 +123,7 @@ export class Form extends Model<Form> {
   })
   stopProgressOnValidatingScreen!: boolean
 
-    @Column({
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: true,

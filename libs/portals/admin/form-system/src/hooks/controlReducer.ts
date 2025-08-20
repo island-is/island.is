@@ -572,7 +572,7 @@ export const controlReducer = (
       action.payload.update({ ...updatedState.form })
       return updatedState
     }
-    case 'CHANGE_HAS_SUMMARY_SCREEN':{
+    case 'CHANGE_HAS_SUMMARY_SCREEN': {
       const updatedState = {
         ...state,
         form: {

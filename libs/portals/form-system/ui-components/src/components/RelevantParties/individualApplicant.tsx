@@ -25,7 +25,12 @@ interface Props {
   lang: 'is' | 'en'
 }
 
-export const IndividualApplicant = ({ applicantType, lang, user, nationalId }: Props) => {
+export const IndividualApplicant = ({
+  applicantType,
+  lang,
+  user,
+  nationalId,
+}: Props) => {
   const { formatMessage } = useIntl()
   nationalId = nationalId ?? user?.nationalId ?? ''
   const email =
@@ -49,7 +54,8 @@ export const IndividualApplicant = ({ applicantType, lang, user, nationalId }: P
     },
   )
   const address = addressData?.formSystemHomeByNationalId?.heimilisfang
-  const isLoading = shouldQuery && (nameLoading || addressLoading) && email != undefined
+  const isLoading =
+    shouldQuery && (nameLoading || addressLoading) && email != undefined
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>

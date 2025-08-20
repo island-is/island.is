@@ -62,7 +62,7 @@ export class FormDto {
   @ApiProperty()
   stopProgressOnValidatingScreen!: boolean
 
-    @ApiProperty()
+  @ApiProperty()
   hasSummaryScreen!: boolean
 
   @ApiPropertyOptional()

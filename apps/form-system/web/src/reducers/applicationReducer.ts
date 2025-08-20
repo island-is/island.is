@@ -16,6 +16,7 @@ import {
   hasScreens,
   incrementWithoutScreens,
   incrementWithScreens,
+  setCurrentScreen,
 } from './reducerUtils'
 
 export const initialState = {
@@ -149,6 +150,16 @@ export const applicationReducer = (
 
       return decrementWithoutScreens(state, currentSectionIndex)
     }
+    case 'INDEX_SCREEN': {
+      const { sectionIndex, screenIndex } = action.payload
+      const currentSection = state.sections[sectionIndex]
+      if (hasScreens(currentSection)) {
+        const currentScreen = currentSection.screens?.[screenIndex]
+      }
+
+      return setCurrentScreen(state, sectionIndex, screenIndex)
+    }
+
     case 'SET_VALIDITY': {
       const { isValid } = action.payload
       return {

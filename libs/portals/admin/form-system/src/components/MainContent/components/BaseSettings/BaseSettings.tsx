@@ -262,9 +262,9 @@ export const BaseSettings = () => {
             }}
           />
         </Column>
-        </Row>
-            <Row>
-                <Column>
+      </Row>
+      <Row>
+        <Column>
           <Checkbox
             label={formatMessage(m.summaryScreen)}
             checked={

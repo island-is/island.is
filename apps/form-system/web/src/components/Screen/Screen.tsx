@@ -22,7 +22,6 @@ export const Screen = () => {
     state.sections?.[0].isCompleted ?? false,
   )
 
-console.log("state", state)
   return (
     <Box
       component="form"
