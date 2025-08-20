@@ -175,7 +175,7 @@ export const Overview = () => {
             <Fragment key={defendant.id}>
               <Box className={styles.container}>
                 {features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) && (
-                  <VerdictStatusAlert verdict={verdict} />
+                  <VerdictStatusAlert verdict={verdict} defendant={defendant} />
                 )}
                 <Box component="section">
                   <BlueBoxWithDate defendant={defendant} icon="calendar" />

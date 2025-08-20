@@ -35,6 +35,7 @@ export enum VerdictServiceStatus {
   ELECTRONICALLY = ServiceStatus.ELECTRONICALLY,
   DEFENDER = ServiceStatus.DEFENDER,
   IN_PERSON = ServiceStatus.IN_PERSON,
+  LEGAL_PAPER = 'LEGAL_PAPER',
 }
 
 export enum PunishmentType {

@@ -5,7 +5,7 @@ import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Lawyer } from '@island.is/judicial-system/types'
 
-import { Verdict, VerdictServiceStatus } from '../../graphql/schema'
+import { Defendant, Verdict, VerdictServiceStatus } from '../../graphql/schema'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 
 const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
@@ -47,6 +47,17 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
         }`,
         verdict.comment,
       ]
+    case VerdictServiceStatus.LEGAL_PAPER:
+      return [
+        `Dómur birtur í Lögbirtingarblaðinu - ${
+          verdict.serviceDate
+            ? `${formatDate(verdict.serviceDate)} kl. ${formatDate(
+                verdict.serviceDate,
+                TIME_FORMAT,
+              )}`
+            : ''
+        }`,
+      ]
     default:
       return [
         `Ákæra fór í birtingu ${
@@ -61,7 +72,13 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
   }
 }
 
-const VerdictStatusAlert = ({ verdict }: { verdict: Verdict }) => {
+const VerdictStatusAlert = ({
+  verdict,
+  defendant,
+}: {
+  verdict: Verdict
+  defendant: Defendant
+}) => {
   const [lawyer, setLawyer] = useState<Lawyer>()
   const { lawyers } = useContext(LawyerRegistryContext)
   const messages = mapServiceStatusMessages(verdict, lawyer)
@@ -105,9 +122,9 @@ const VerdictStatusAlert = ({ verdict }: { verdict: Verdict }) => {
   if (verdict.legalPaperRequestDate) {
     return (
       <AlertMessage
-        type="success"
-        title="Birting tókst"
-        message={`Birt í Lögbirtingarblaðinu - ${formatDate(
+        type="info"
+        title={`Dómur sendur í Lögbirtingarblaðið - ${defendant.name}`}
+        message={`Dómur sendur - ${formatDate(
           verdict.legalPaperRequestDate,
         )} kl. ${formatDate(verdict.legalPaperRequestDate, TIME_FORMAT)}`}
       />
