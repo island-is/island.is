@@ -19,6 +19,7 @@ export const NavButtons = ({ id, type }: Props) => {
   const { form } = control
   const { screens, fields } = form
   const { formatMessage } = useIntl()
+
   const hoverText =
     type === 'Section'
       ? formatMessage(m.addScreenHover)

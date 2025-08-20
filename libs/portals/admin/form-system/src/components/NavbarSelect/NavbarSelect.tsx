@@ -15,13 +15,20 @@ const filterSections = (
   sections: Maybe<Maybe<FormSystemSection>[]> | undefined,
 ): FormSystemSection[] => {
   if (!sections) return []
-  return sections.filter(
-    (section): section is FormSystemSection =>
-      section !== null &&
-      section !== undefined &&
-      (section.sectionType === SectionTypes.INPUT ||
-        section.sectionType === SectionTypes.PARTIES),
-  )
+  return sections
+    .filter(
+      (section): section is FormSystemSection =>
+        section !== null &&
+        section !== undefined &&
+        (section.sectionType === SectionTypes.INPUT ||
+          section.sectionType === SectionTypes.PARTIES ||
+          section.sectionType === SectionTypes.PAYMENT),
+    )
+    .sort((a, b) => {
+      const ao = a.displayOrder ?? Number.MAX_SAFE_INTEGER
+      const bo = b.displayOrder ?? Number.MAX_SAFE_INTEGER
+      return ao - bo
+    })
 }
 
 export const NavbarSelect = () => {
