@@ -817,6 +817,7 @@ export const slices = gql`
     namespace
     maxNumberOfCards
     sorting
+    alwaysDisplayResultsAsCards
     resolvedGrantsList {
       total
       items {
