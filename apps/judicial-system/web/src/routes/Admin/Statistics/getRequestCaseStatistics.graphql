@@ -3,5 +3,6 @@ query RequestCaseStatistics($input: RequestStatisticsInput) {
     count
     inProgressCount
     completedCount
+    minDate
   }
 }

@@ -1,8 +1,8 @@
 import { DndContext, DragOverlay, UniqueIdentifier } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
-import { useContext, useMemo } from 'react'
+import { useContext, useMemo, Fragment } from 'react'
 import { createPortal } from 'react-dom'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Section } from '@island.is/island-ui/core'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 import {
   FormSystemScreen,
@@ -32,6 +32,8 @@ export const Navbar = () => {
   const { formatMessage } = useIntl()
   const { activeItem, form } = control
   const { sections, screens, fields } = form
+  const parties = sections?.find((s) => s?.sectionType === SectionTypes.PARTIES)
+  const payment = sections?.find((s) => s?.sectionType === SectionTypes.PAYMENT)
 
   const sectionIds = useMemo(
     () =>
@@ -148,7 +150,9 @@ export const Navbar = () => {
       .filter(
         (s) =>
           s.sectionType !== SectionTypes.INPUT &&
-          s.sectionType !== SectionTypes.SUMMARY,
+          s.sectionType !== SectionTypes.PARTIES &&
+          s.sectionType !== SectionTypes.SUMMARY &&
+          s.sectionType !== SectionTypes.PAYMENT,
       )
       .map((s) => (
         <Box key={s.id}>
@@ -241,6 +245,14 @@ export const Navbar = () => {
   const renderDnDView = () => (
     <div>
       <Box className={styles.minimalScrollbar}>
+        {parties && (
+          <NavComponent
+            type="Section"
+            data={parties}
+            active={activeItem.data?.id === parties.id}
+            focusComponent={focusComponent}
+          />
+        )}
         <DndContext
           sensors={sensors}
           onDragStart={onDragStart}
@@ -275,6 +287,17 @@ export const Navbar = () => {
             document.body,
           )}
         </DndContext>
+        {payment && (
+          <Fragment>
+            <NavComponent
+              type="Section"
+              data={payment}
+              active={activeItem.data?.id === payment.id}
+              focusComponent={focusComponent}
+            />
+            {renderScreensForSection(payment as FormSystemSection)}
+          </Fragment>
+        )}
       </Box>
       <Box display="flex" justifyContent="center" paddingTop={3}>
         <Button variant="ghost" size="small" onClick={addSection}>
