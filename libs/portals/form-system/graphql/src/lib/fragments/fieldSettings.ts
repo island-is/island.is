@@ -32,6 +32,7 @@ export const FieldSettingsFragment = gql`
     zendeskIsPublic
     zendeskIsCustomField
     zendeskCustomFieldId
+    applicantType
   }
   ${ListItemFragment}
   ${LanguageFields}

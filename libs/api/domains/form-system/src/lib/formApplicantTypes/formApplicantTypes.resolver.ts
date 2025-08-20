@@ -14,6 +14,8 @@ import {
   FormApplicantTypeDeleteInput,
   FormApplicantTypeUpdateInput,
 } from '../../dto/formApplicantType.input'
+import { Screen } from '../../models/screen.model'
+import { CreateApplicantInput } from '../../dto/applicant.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -23,15 +25,19 @@ export class FormApplicantTypesResolver {
     private readonly formApplicantTypesService: FormApplicantTypesService,
   ) {}
 
-  @Mutation(() => FormApplicantType, {
+  @Mutation(() => Screen, {
     name: 'createFormSystemApplicantType',
   })
   async createFormApplicantType(
-    @Args('input', { type: () => FormApplicantTypeCreateInput })
-    input: FormApplicantTypeCreateInput,
+    @Args('input', { type: () => CreateApplicantInput })
+    input: CreateApplicantInput,
     @CurrentUser() user: User,
-  ): Promise<FormApplicantType> {
-    return this.formApplicantTypesService.createFormApplicantType(user, input)
+  ): Promise<Screen> {
+    const result = await this.formApplicantTypesService.createFormApplicantType(
+      user,
+      input,
+    )
+    return result
   }
 
   @Mutation(() => Boolean, {

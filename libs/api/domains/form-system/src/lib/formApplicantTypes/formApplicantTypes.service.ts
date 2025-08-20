@@ -14,6 +14,8 @@ import {
   FormApplicantTypeUpdateInput,
 } from '../../dto/formApplicantType.input'
 import { FormApplicantType } from '../../models/formApplicantTypes.model'
+import { CreateApplicantInput } from '../../dto/applicant.input'
+import { Screen } from '../../models/screen.model'
 
 @Injectable()
 export class FormApplicantTypesService {
@@ -42,15 +44,15 @@ export class FormApplicantTypesService {
 
   async createFormApplicantType(
     auth: User,
-    input: FormApplicantTypeCreateInput,
-  ): Promise<FormApplicantType> {
+    input: CreateApplicantInput,
+  ): Promise<Screen> {
     const response = await this.formApplicantTypesApiWithAuth(
       auth,
     ).formApplicantTypesControllerCreate(
       input as FormApplicantTypesControllerCreateRequest,
     )
 
-    return response as FormApplicantType
+    return response as Screen
   }
 
   async deleteFormApplicantType(

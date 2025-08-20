@@ -1,11 +1,14 @@
 import { gql } from '@apollo/client'
 import { ApplicantFragment } from '../fragments/applicant'
+import { ScreenFragment } from '../fragments/screen'
 
 export const CREATE_APPLICANT = gql`
-  mutation CreateFormSystemApplicant($input: CreateFormSystemApplicantInput!) {
-    createFormSystemApplicant(input: $input) {
-      ...Applicant
+  mutation CreateFormSystemApplicantType(
+    $input: CreateFormSystemApplicantInput!
+  ) {
+    createFormSystemApplicantType(input: $input) {
+      ...Screen
     }
   }
-  ${ApplicantFragment}
+  ${ScreenFragment}
 `

@@ -8,8 +8,18 @@ import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
 import { ApplicantTypes } from '../../dataTypes/applicantTypes/applicantType.model'
-import { ApplicantTypesEnum } from '@island.is/form-system/shared'
+import {
+  ApplicantTypesEnum,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/shared'
 import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { Field } from '../fields/models/field.model'
+import { Screen } from '../screens/models/screen.model'
+import { Section } from '../sections/models/section.model'
+import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
+import { FieldDto } from '../fields/models/dto/field.dto'
 
 @Injectable()
 export class FormApplicantTypesService {
@@ -18,11 +28,15 @@ export class FormApplicantTypesService {
     private readonly formApplicantTypeModel: typeof FormApplicantType,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
+    @InjectModel(Screen)
+    private readonly screenModel: typeof Screen,
+    @InjectModel(Field)
+    private readonly fieldModel: typeof Field,
   ) {}
 
   async create(
     createFormApplicantTypeDto: CreateFormApplicantTypeDto,
-  ): Promise<FormApplicantTypeDto> {
+  ): Promise<ScreenDto> {
     const applicantType = ApplicantTypes.find(
       (applicantType) =>
         applicantType.id === createFormApplicantTypeDto.applicantTypeId,
@@ -36,7 +50,29 @@ export class FormApplicantTypesService {
 
     const form = await this.formModel.findByPk(
       createFormApplicantTypeDto.formId,
+      {
+        include: [
+          {
+            model: Section,
+            as: 'sections',
+            where: { sectionType: SectionTypes.PARTIES },
+            include: [
+              {
+                model: Screen,
+                as: 'screens',
+                include: [
+                  {
+                    model: Field,
+                    as: 'fields',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     )
+
     if (!form) {
       throw new NotFoundException(
         `Form with id '${createFormApplicantTypeDto.formId}' not found`,
@@ -68,18 +104,59 @@ export class FormApplicantTypesService {
       await form.save()
     }
 
-    const formApplicantType = createFormApplicantTypeDto as FormApplicantType
-    const newFormApplicantType: FormApplicantType =
-      new this.formApplicantTypeModel(formApplicantType)
-    await newFormApplicantType.save()
+    const newScreen = new this.screenModel()
+    newScreen.sectionId = form.sections[0].id // PARTIES is the only section here
+    await newScreen.save()
 
-    const keys = ['id', 'applicantTypeId', 'name']
-    const formApplicantTypeDto: FormApplicantTypeDto = defaults(
-      pick(newFormApplicantType, keys),
-      zipObject(keys, Array(keys.length).fill(null)),
-    ) as FormApplicantTypeDto
+    const newField = new this.fieldModel()
+    newField.screenId = newScreen.id
+    newField.fieldType = FieldTypesEnum.APPLICANT
+    newField.fieldSettings = {
+      applicantType: applicantType.id,
+    } as FieldSettings
+    await newField.save()
 
-    return formApplicantTypeDto
+    const fieldKeys = [
+      'id',
+      'screenId',
+      'name',
+      'displayOrder',
+      'description',
+      'fieldType',
+      'fieldSettings',
+    ]
+    const fieldDto: FieldDto = defaults(
+      pick(newField, fieldKeys),
+      zipObject(fieldKeys, Array(fieldKeys.length).fill(null)),
+    ) as FieldDto
+
+    const screenKeys = [
+      'id',
+      'sectionId',
+      'name',
+      'displayOrder',
+      'isCompleted',
+      'callRuleset',
+    ]
+    const screenDto: ScreenDto = defaults(
+      pick(newScreen, screenKeys),
+      zipObject(screenKeys, Array(screenKeys.length).fill(null)),
+    ) as ScreenDto
+
+    return screenDto
+
+    // const formApplicantType = createFormApplicantTypeDto as FormApplicantType
+    // const newFormApplicantType: FormApplicantType =
+    //   new this.formApplicantTypeModel(formApplicantType)
+    // await newFormApplicantType.save()
+
+    // const keys = ['id', 'applicantTypeId', 'name']
+    // const formApplicantTypeDto: FormApplicantTypeDto = defaults(
+    //   pick(newFormApplicantType, keys),
+    //   zipObject(keys, Array(keys.length).fill(null)),
+    // ) as FormApplicantTypeDto
+
+    // return formApplicantTypeDto
   }
 
   async update(
