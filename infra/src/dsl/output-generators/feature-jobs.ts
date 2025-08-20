@@ -162,7 +162,18 @@ export const generateCleanUpForFeature = async (
               },
             ],
           }
-        }),
+        })
+        .concat([
+          {
+            image,
+            command: [`/app/delete-secrets.sh`, feature as string],
+            name: `${feature}-delete-secrets1`!
+              .replace(/_/g, '-')
+              .substring(0, 60),
+            securityContext,
+            env: [],
+          },
+        ]),
     )
     .reduce((acc, cur) => {
       let result = acc
@@ -173,6 +184,7 @@ export const generateCleanUpForFeature = async (
       })
       return result
     }, [])
+
   return {
     apiVersion: 'batch/v1',
     kind: 'Job',
