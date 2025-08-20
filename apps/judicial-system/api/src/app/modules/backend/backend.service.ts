@@ -58,12 +58,12 @@ import {
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { CaseStatistics } from '../statistics'
-import { CaseDataExportInput } from '../statistics/dto/caseDataExport.input'
 import {
   IndictmentCaseStatistics,
   RequestCaseStatistics,
   SubpoenaStatistics,
 } from '../statistics'
+import { CaseDataExportInput } from '../statistics/dto/caseDataExport.input'
 import {
   IndictmentStatisticsInput,
   RequestStatisticsInput,
