@@ -190,7 +190,7 @@ export const getBankInfo = (
   const bankId = supportData?.banks?.find(
     (bank) => bank.bankNo === bankInfo?.bankNumber,
   )?.id
-  const accountNumber = bankInfo?.accountNumber
+  const accountNumber = bankInfo?.accountNumber?.padStart(6, '0')
   if (!ledgerId || !bankId || !accountNumber) return undefined
 
   return { bankId, ledgerId, accountNumber }
@@ -362,6 +362,10 @@ const getMimeType = (fileType: string): string | undefined => {
     case 'jpg':
     case 'jpeg':
       return 'image/jpeg'
+    case 'doc':
+      return 'application/msword'
+    case 'docx':
+      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     default:
       return undefined
   }
