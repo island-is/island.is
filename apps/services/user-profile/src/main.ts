@@ -11,5 +11,3 @@ bootstrap({
   port: environment.port,
   enableVersioning: true,
 })
-
-// Trigger deploy
