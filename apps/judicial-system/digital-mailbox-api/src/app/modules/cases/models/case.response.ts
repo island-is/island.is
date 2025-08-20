@@ -19,6 +19,9 @@ class IndictmentCaseData {
   hasBeenServed?: boolean
 
   @ApiProperty({ type: Boolean })
+  hasRuling?: boolean
+
+  @ApiProperty({ type: Boolean })
   hasRulingBeenServed?: boolean
 
   @ApiProperty({ type: [Groups] })
@@ -54,6 +57,7 @@ export class CaseResponse {
           subpoenas.length > 0
             ? isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
             : false,
+        hasRuling: Boolean(verdict),
         hasRulingBeenServed: verdict?.serviceStatus
           ? isSuccessfulServiceStatus(verdict.serviceStatus)
           : false,
