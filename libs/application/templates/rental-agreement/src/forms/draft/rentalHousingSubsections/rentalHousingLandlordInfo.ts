@@ -7,7 +7,6 @@ import {
 import {
   applicantTableConfig,
   applicantTableFields,
-  hasAnyMatchingNationalId,
   hasDuplicateApplicants,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
@@ -45,43 +44,25 @@ export const RentalHousingLandlordInfo = buildSubSection({
           table: applicantTableConfig,
         }),
         buildAlertMessageField({
-          id: 'landlordInfo.onlyRepresentativeError',
-          alertType: 'error',
-          title: landlordDetails.landlordOnlyRepresentativeTableError,
-          shouldBlockInSetBeforeSubmitCallback: true,
-          condition: (answers) => {
-            const { landlords, landlordRepresentatives } =
-              applicationAnswers(answers)
-
-            return landlordRepresentatives.length > 0 && landlords.length === 0
-          },
-        }),
-        buildAlertMessageField({
-          id: 'landlordInfo.landlordSameAsTenantError',
+          id: 'landlordInfo.uniqueApplicantsError',
           alertType: 'warning',
-          title: landlordDetails.landlordSameAsTenantError,
+          title: landlordDetails.uniqueApplicantsError,
           condition: (answers) => {
-            const { tenants, landlords } = applicationAnswers(answers)
+            const {
+              landlords,
+              tenants,
+              landlordRepresentatives,
+              tenantRepresentatives,
+            } = applicationAnswers(answers)
 
-            const tenantNationalIds =
-              tenants?.map((tenant) => tenant.nationalIdWithName.nationalId) ??
-              []
+            const allApplicants = [
+              ...landlords,
+              ...tenants,
+              ...landlordRepresentatives,
+              ...tenantRepresentatives,
+            ]
 
-            return hasAnyMatchingNationalId(tenantNationalIds, landlords)
-          },
-        }),
-        buildAlertMessageField({
-          id: 'landlordInfo.landlordAlreadyExistsError',
-          alertType: 'warning',
-          title: landlordDetails.landlordAlreadyExistsError,
-          condition: (answers) => {
-            const { landlords } = applicationAnswers(answers)
-
-            if (landlords.length === 0 || landlords.length === 1) {
-              return false
-            }
-
-            return hasDuplicateApplicants(landlords)
+            return hasDuplicateApplicants(allApplicants)
           },
         }),
       ],

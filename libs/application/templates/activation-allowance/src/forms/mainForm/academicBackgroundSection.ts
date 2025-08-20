@@ -129,22 +129,9 @@ export const academicBackgroundSection = buildSection({
                   label: academicBackground.labels.currentlyStudying,
                 },
               ],
-              setOnChange: async (
-                option,
-                _application,
-                index,
-                _activeField,
-              ) => {
-                if (option && option.length > 0 && option[0] === YES) {
-                  return [
-                    {
-                      key: `academicBackground.education[${index}].endOfStudy`,
-                      value: undefined,
-                    },
-                  ]
-                }
-                return []
-              },
+              clearOnChange: (index: number) => [
+                `academicBackground.education[${index}].endOfStudy`,
+              ],
             },
           },
         }),

@@ -84,6 +84,7 @@ const SubjectInfo = () => {
 
             <InfoLine
               label={m.legalResidence}
+              tooltip={formatMessage(spmm.legalResidenceTooltip)}
               content={
                 formatAddress(
                   nationalRegistryPerson?.housing?.address ?? null,
