@@ -32,3 +32,11 @@ mutation CreatePatientDataPermit(
     id
   }
 }
+
+mutation InvalidatePatientDataPermit(
+  $input: HealthDirectoratePatientDataInvalidatePermitInput!
+) {
+  healthDirectoratePatientDataInvalidatePermit(input: $input) {
+    id
+  }
+}

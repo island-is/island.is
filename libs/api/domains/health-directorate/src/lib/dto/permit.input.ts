@@ -28,6 +28,6 @@ export class PermitInput {
 @InputType('HealthDirectoratePatientDataInvalidatePermitInput')
 export class InvalidatePermitInput {
   @Field()
-  @IsISO8601()
+  @IsString()
   id!: string
 }

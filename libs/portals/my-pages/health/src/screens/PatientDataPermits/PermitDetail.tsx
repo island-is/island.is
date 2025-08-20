@@ -1,5 +1,5 @@
 import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   formatDate,
@@ -10,23 +10,52 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { InvalidatePermitModal } from '../../components/PatientDataPermit/InvalidatePermitModal'
 import { messages } from '../../lib/messages'
-import { useGetPatientDataPermitQuery } from './PatientDataPermits.generated'
+import {
+  useGetPatientDataPermitQuery,
+  useInvalidatePatientDataPermitMutation,
+} from './PatientDataPermits.generated'
 
 type UseParams = {
   id: string
 }
 const PermitDetail: React.FC = () => {
   const { formatMessage, lang } = useLocale()
+  const navigate = useNavigate()
   const { id } = useParams() as UseParams
   const [modalOpen, setModalOpen] = useState<boolean>(false)
 
   const { data, error, loading } = useGetPatientDataPermitQuery({
     variables: { locale: lang, id },
   })
+
+  const [invalidatePermit] = useInvalidatePatientDataPermitMutation()
+
   const permit = data?.healthDirectoratePatientDataPermit
+
+  const onInvalidateSubmit = () => {
+    // Call the API to invalidate the permit
+    if (permit?.id) {
+      invalidatePermit({
+        variables: {
+          input: {
+            id: permit?.id,
+          },
+        },
+      })
+        .then(() => {
+          // Handle successful invalidation
+          toast.success(formatMessage(messages.permitInvalidated))
+          navigate(-1)
+        })
+        .catch((error) => {
+          // Handle error
+          toast.error(formatMessage(messages.permitInvalidatedError))
+        })
+    }
+  }
 
   return (
     <IntroWrapper
@@ -106,6 +135,9 @@ const PermitDetail: React.FC = () => {
       <InvalidatePermitModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
+        onSubmit={() => {
+          onInvalidateSubmit()
+        }}
         countries={permit?.countries}
         validFrom={formatDate(permit?.validFrom)}
         validTo={formatDate(permit?.validTo)}

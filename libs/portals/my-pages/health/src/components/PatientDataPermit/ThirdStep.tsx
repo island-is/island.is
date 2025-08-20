@@ -1,4 +1,4 @@
-import { HealthDirectoratePatientDataApprovalInput } from '@island.is/api/schema'
+import { HealthDirectoratePatientDataPermitInput } from '@island.is/api/schema'
 import { Box, Button, DatePicker, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch, FC, SetStateAction, useState } from 'react'
@@ -8,9 +8,9 @@ import * as styles from './PatientDataPermit.css'
 interface ThirdStepProps {
   onClick: () => void
   goBack: () => void
-  formState?: HealthDirectoratePatientDataApprovalInput
+  formState?: HealthDirectoratePatientDataPermitInput
   setFormState: Dispatch<
-    SetStateAction<HealthDirectoratePatientDataApprovalInput | undefined>
+    SetStateAction<HealthDirectoratePatientDataPermitInput | undefined>
   >
 }
 
