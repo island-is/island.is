@@ -1,4 +1,4 @@
-import { HealthDirectorateApprovalStatus } from '@island.is/api/schema'
+import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -26,7 +26,7 @@ const PermitDetail: React.FC = () => {
   const { data, error, loading } = useGetPatientDataPermitQuery({
     variables: { locale: lang, id },
   })
-  const permit = data?.healthDirectoratePatientSummaryApproval
+  const permit = data?.healthDirectoratePatientDataPermit
 
   return (
     <IntroWrapper
@@ -66,14 +66,14 @@ const PermitDetail: React.FC = () => {
             <InfoLine
               label={formatMessage(messages.status) ?? ''}
               content={
-                permit?.status === HealthDirectorateApprovalStatus.active
+                permit?.status === HealthDirectoratePermitStatus.active
                   ? formatMessage(messages.valid)
-                  : permit?.status === HealthDirectorateApprovalStatus.expired
+                  : permit?.status === HealthDirectoratePermitStatus.expired
                   ? formatMessage(messages.expired)
                   : formatMessage(messages.invalid)
               }
               button={
-                permit?.status === HealthDirectorateApprovalStatus.active
+                permit?.status === HealthDirectoratePermitStatus.active
                   ? {
                       action: () => setModalOpen(true),
                       label: formatMessage(messages.invalidatePermit),

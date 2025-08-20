@@ -1,14 +1,14 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { ApprovalCodesEnum, ApprovalStatusEnum } from '../enums'
+import { PermitCodesEnum, PermitStatusEnum } from '../enums'
 import { Country } from './country.model'
 
-@ObjectType('HealthDirectoratePatientDataApproval')
-export class Approval {
+@ObjectType('HealthDirectoratePatientDataPermit')
+export class Permit {
   @Field(() => ID)
   id!: string
 
-  @Field(() => ApprovalStatusEnum)
-  status!: ApprovalStatusEnum
+  @Field(() => PermitStatusEnum)
+  status!: PermitStatusEnum
 
   @Field()
   createdAt!: Date
@@ -19,21 +19,21 @@ export class Approval {
   @Field()
   validTo!: Date
 
-  @Field(() => [ApprovalCodesEnum])
-  codes!: ApprovalCodesEnum[]
+  @Field(() => [PermitCodesEnum])
+  codes!: PermitCodesEnum[]
 
   @Field(() => [Country])
   countries!: Country[]
 }
 
-@ObjectType('HealthDirectoratePatientDataApprovals')
-export class Approvals {
-  @Field(() => [Approval])
-  data!: Approval[]
+@ObjectType('HealthDirectoratePatientDataPermits')
+export class Permits {
+  @Field(() => [Permit])
+  data!: Permit[]
 }
 
-@ObjectType('HealthDirectoratePatientDataApprovalReturn')
-export class ApprovalReturn {
+@ObjectType('HealthDirectoratePatientDataPermitReturn')
+export class PermitReturn {
   @Field(() => ID)
   id!: string
 }

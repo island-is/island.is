@@ -16,11 +16,11 @@ import { HealthDirectorateHealthService } from '@island.is/clients/health-direct
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Country, isDefined } from '@island.is/shared/utils'
 import isNumber from 'lodash/isNumber'
-import { ApprovalInput } from './dto/approval.input'
+import { InvalidatePermitInput, PermitInput } from './dto/permit.input'
 import {
-  Approval,
-  ApprovalReturn,
-  Approvals,
+  Permit,
+  PermitReturn,
+  Permits,
 } from './models/approvals/approvals.model'
 import {
   MedicineHistory,
@@ -44,7 +44,7 @@ import {
   mapPrescriptionRenewalStatus,
   mapVaccinationStatus,
 } from './utils/mappers'
-import { approvalsData, europeanCountriesIs } from './utils/mockData'
+import { permitData, europeanCountriesIs } from './utils/mockData'
 import { Countries } from './models/approvals/country.model'
 
 @Injectable()
@@ -402,12 +402,12 @@ export class HealthDirectorateService {
     return { dispensations }
   }
 
-  /* Patient data - Approvals */
-  async getApprovals(auth: Auth, locale: Locale): Promise<Approvals | null> {
-    //const data = await this.healthApi.getApprovals(auth, locale)
+  /* Patient data - Permits */
+  async getPermits(auth: Auth, locale: Locale): Promise<Permits | null> {
+    //const data = await this.healthApi.getPermits(auth, locale)
     // TODO connect to service when ready
 
-    const data: Approval[] = approvalsData
+    const data: Permit[] = permitData
     if (!data) {
       return null
     }
@@ -415,16 +415,16 @@ export class HealthDirectorateService {
     return { data }
   }
 
-  /* Patient data - Approval Detail */
-  async getApproval(
+  /* Patient data - Permit Detail */
+  async getPermit(
     auth: Auth,
     locale: Locale,
     id: string,
-  ): Promise<Approval | null> {
-    //const data = await this.healthApi.getApprovals(auth, locale)
+  ): Promise<Permit | null> {
+    //const data = await this.healthApi.getPermits(auth, locale)
     // TODO connect to service when ready
 
-    const data = approvalsData.find((approval) => approval.id === id)
+    const data = permitData.find((permit) => permit.id === id)
     if (!data) {
       return null
     }
@@ -432,12 +432,12 @@ export class HealthDirectorateService {
     return data
   }
 
-  /* Patient data - Approval countries */
-  async getApprovalCountries(
+  /* Patient data - Permit countries */
+  async getPermitCountries(
     auth: Auth,
     locale: Locale,
   ): Promise<Countries | null> {
-    //const data = await this.healthApi.getApprovalCountries(auth, locale)
+    //const data = await this.healthApi.getPermitCountries(auth, locale)
     // TODO connect to service when ready
 
     const data: Countries = { data: europeanCountriesIs }
@@ -450,11 +450,22 @@ export class HealthDirectorateService {
   }
 
   /* Patient data - Create approval */
-  async createApproval(
+  async createPermit(
     auth: Auth,
-    input: ApprovalInput,
-  ): Promise<ApprovalReturn | null> {
-    //const data = await this.healthApi.createApproval(auth, locale, input)
+    input: PermitInput,
+  ): Promise<PermitReturn | null> {
+    //const data = await this.healthApi.createPermit(auth, locale, input)
+
+    // TODO connect to service when ready
+    return { id: 'mock-approval-id' } // Mock response for now
+  }
+
+  /* Patient data - invalidate permit */
+  async invalidatePermit(
+    auth: Auth,
+    input: InvalidatePermitInput,
+  ): Promise<PermitReturn | null> {
+    //const data = await this.healthApi.invalidatePermit(auth, locale, input)
 
     // TODO connect to service when ready
     return { id: 'mock-approval-id' } // Mock response for now

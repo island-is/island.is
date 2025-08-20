@@ -1,6 +1,6 @@
 import {
   HealthDirectoratePatientDataApprovalCountry,
-  HealthDirectoratePatientDataApprovalInput,
+  HealthDirectoratePatientDataPermitInput,
 } from '@island.is/api/schema'
 import {
   Box,
@@ -13,14 +13,14 @@ import { useLocale } from '@island.is/localization'
 import React, { Dispatch, FC, SetStateAction, useState } from 'react'
 import { messages } from '../../lib/messages'
 import * as styles from './PatientDataPermit.css'
-import { useHealthDirectoratePatientSummaryApprovalCountriesQuery } from './SecondStep.generated'
+import { useHealthDirectoratePatientDataPermitCountriesQuery } from './SecondStep.generated'
 import { Problem } from '@island.is/react-spa/shared'
 interface SecondStepProps {
   onClick: () => void
   goBack: () => void
-  formState?: HealthDirectoratePatientDataApprovalInput
+  formState?: HealthDirectoratePatientDataPermitInput
   setFormState: Dispatch<
-    SetStateAction<HealthDirectoratePatientDataApprovalInput | undefined>
+    SetStateAction<HealthDirectoratePatientDataPermitInput | undefined>
   >
 }
 
@@ -37,14 +37,13 @@ const SecondStep: FC<SecondStepProps> = ({
   const [selectAll, setSelectAll] = useState<boolean>(false)
 
   const { data, error, loading } =
-    useHealthDirectoratePatientSummaryApprovalCountriesQuery({
+    useHealthDirectoratePatientDataPermitCountriesQuery({
       variables: {
         locale: lang,
       },
     })
 
-  const countries =
-    data?.healthDirectoratePatientSummaryApprovalCountries.data || []
+  const countries = data?.healthDirectoratePatientDataPermitCountries.data || []
 
   return (
     <Box>

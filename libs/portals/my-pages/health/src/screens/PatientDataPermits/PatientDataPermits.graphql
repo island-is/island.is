@@ -1,4 +1,4 @@
-fragment PatientDataPermitFields on HealthDirectoratePatientDataApproval {
+fragment PatientDataPermitFields on HealthDirectoratePatientDataPermit {
   id
   status
   createdAt
@@ -12,7 +12,7 @@ fragment PatientDataPermitFields on HealthDirectoratePatientDataApproval {
 }
 
 query GetPatientDataPermits($locale: String) {
-  healthDirectoratePatientSummaryApprovals(locale: $locale) {
+  healthDirectoratePatientDataPermits(locale: $locale) {
     data {
       ...PatientDataPermitFields
     }
@@ -20,15 +20,15 @@ query GetPatientDataPermits($locale: String) {
 }
 
 query GetPatientDataPermit($locale: String, $id: String!) {
-  healthDirectoratePatientSummaryApproval(locale: $locale, id: $id) {
+  healthDirectoratePatientDataPermit(locale: $locale, id: $id) {
     ...PatientDataPermitFields
   }
 }
 
 mutation CreatePatientDataPermit(
-  $input: HealthDirectoratePatientDataApprovalInput!
+  $input: HealthDirectoratePatientDataPermitInput!
 ) {
-  healthDirectoratePatientSummaryCreateApproval(input: $input) {
+  healthDirectoratePatientDataCreatePermit(input: $input) {
     id
   }
 }

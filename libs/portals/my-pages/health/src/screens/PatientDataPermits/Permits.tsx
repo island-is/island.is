@@ -1,4 +1,4 @@
-import { HealthDirectorateApprovalStatus } from '@island.is/api/schema'
+import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -29,16 +29,14 @@ const PatientDataPermits: React.FC = () => {
   const { data, loading, error } = useGetPatientDataPermitsQuery({
     variables: { locale: lang },
   })
-  const dataLength =
-    data?.healthDirectoratePatientSummaryApprovals.data.length ?? 0
+  const dataLength = data?.healthDirectoratePatientDataPermits.data.length ?? 0
 
-  const filteredData =
-    data?.healthDirectoratePatientSummaryApprovals.data.filter(
-      (permit) =>
-        showExipredPermits ||
-        permit.status === HealthDirectorateApprovalStatus.active ||
-        permit.status === HealthDirectorateApprovalStatus.inactive,
-    )
+  const filteredData = data?.healthDirectoratePatientDataPermits.data.filter(
+    (permit) =>
+      showExipredPermits ||
+      permit.status === HealthDirectoratePermitStatus.active ||
+      permit.status === HealthDirectoratePermitStatus.inactive,
+  )
   return (
     <IntroWrapper
       title={formatMessage(messages.patientDataPermitTitle)}
@@ -95,7 +93,7 @@ const PatientDataPermits: React.FC = () => {
                     .join(', '),
                 })}
                 subText={
-                  permit.status === HealthDirectorateApprovalStatus.active
+                  permit.status === HealthDirectoratePermitStatus.active
                     ? formatMessage(messages.medicineValidTo) +
                       ' ' +
                       formatDate(permit.validTo)
@@ -105,13 +103,13 @@ const PatientDataPermits: React.FC = () => {
                       })
                 }
                 tag={
-                  permit.status === HealthDirectorateApprovalStatus.active
+                  permit.status === HealthDirectoratePermitStatus.active
                     ? {
                         label: formatMessage(messages.valid),
                         variant: 'blue',
                         outlined: false,
                       }
-                    : permit.status === HealthDirectorateApprovalStatus.expired
+                    : permit.status === HealthDirectoratePermitStatus.expired
                     ? {
                         label: formatMessage(messages.expired),
                         variant: 'red',

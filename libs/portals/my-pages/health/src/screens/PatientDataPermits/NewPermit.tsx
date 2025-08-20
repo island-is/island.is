@@ -1,6 +1,6 @@
 import {
-  HealthDirectorateApprovalCodes,
-  HealthDirectoratePatientDataApprovalInput,
+  HealthDirectoratePermitCodes,
+  HealthDirectoratePatientDataPermitInput,
 } from '@island.is/api/schema'
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -19,7 +19,7 @@ const NewPermit: React.FC = () => {
   const { formatMessage } = useLocale()
   const [step, setStep] = useState<number | undefined>(1)
   const [formState, setFormState] =
-    useState<HealthDirectoratePatientDataApprovalInput>()
+    useState<HealthDirectoratePatientDataPermitInput>()
 
   const navigate = useNavigate()
 
@@ -31,7 +31,7 @@ const NewPermit: React.FC = () => {
         variables: {
           input: {
             ...formState,
-            codes: [HealthDirectorateApprovalCodes.PatientSummary],
+            codes: [HealthDirectoratePermitCodes.PatientSummary],
           },
         },
       })

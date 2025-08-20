@@ -41,11 +41,11 @@ import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import {
-  Approval,
-  ApprovalReturn,
-  Approvals,
+  Permit,
+  PermitReturn,
+  Permits,
 } from './models/approvals/approvals.model'
-import { ApprovalInput } from './dto/approval.input'
+import { InvalidatePermitInput, PermitInput } from './dto/permit.input'
 import { Countries } from './models/approvals/country.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -248,63 +248,76 @@ export class HealthDirectorateResolver {
     return this.api.getMedicineDispensationsForATC(user, locale, input)
   }
 
-  /* Patient summary - Approvals */
+  /* Patient data - Permits */
 
-  @Query(() => Approvals, {
-    name: 'healthDirectoratePatientSummaryApprovals',
+  @Query(() => Permits, {
+    name: 'healthDirectoratePatientDataPermits',
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
-  // TODO -> @FeatureFlag(Features.servicePortalHealthApprovalsPageEnabled)
-  getApprovals(
+  // TODO -> @FeatureFlag(Features.servicePortalHealthPermitsPageEnabled)
+  getPermits(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @CurrentUser() user: User,
-  ): Promise<Approvals | null> {
-    return this.api.getApprovals(user, locale)
+  ): Promise<Permits | null> {
+    return this.api.getPermits(user, locale)
   }
 
-  @Query(() => Approval, {
-    name: 'healthDirectoratePatientSummaryApproval',
+  @Query(() => Permit, {
+    name: 'healthDirectoratePatientDataPermit',
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
-  // TODO -> @FeatureFlag(Features.servicePortalHealthApprovalsPageEnabled)
-  getApproval(
+  // TODO -> @FeatureFlag(Features.servicePortalHealthPermitsPageEnabled)
+  getPermit(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('id', { type: () => String }) id: string,
     @CurrentUser() user: User,
-  ): Promise<Approval | null> {
-    return this.api.getApproval(user, locale, id)
+  ): Promise<Permit | null> {
+    return this.api.getPermit(user, locale, id)
   }
 
   @Query(() => Countries, {
-    name: 'healthDirectoratePatientSummaryApprovalCountries',
+    name: 'healthDirectoratePatientDataPermitCountries',
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
-  // TODO -> @FeatureFlag(Features.servicePortalHealthApprovalsPageEnabled)
-  getApprovalCountries(
+  // TODO -> @FeatureFlag(Features.servicePortalHealthPermitsPageEnabled)
+  getPermitCountries(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<Countries | null> {
-    return this.api.getApprovalCountries(user, locale)
+    return this.api.getPermitCountries(user, locale)
   }
 
-  /* New approval */
-  @Mutation(() => ApprovalReturn, {
+  @Mutation(() => PermitReturn, {
     nullable: true,
-    name: 'healthDirectoratePatientSummaryCreateApproval',
+    name: 'healthDirectoratePatientDataCreatePermit',
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
-  // TODO -> @FeatureFlag(Features.servicePortalHealthApprovalsPageEnabled)
-  async createApproval(
-    @Args('input') input: ApprovalInput,
+  // TODO -> @FeatureFlag(Features.servicePortalHealthPermitsPageEnabled)
+  async createPermit(
+    @Args('input') input: PermitInput,
     @CurrentUser() user: User,
-  ): Promise<ApprovalReturn | null> {
-    return this.api.createApproval(user, input)
+  ): Promise<PermitReturn | null> {
+    return this.api.createPermit(user, input)
+  }
+
+  @Mutation(() => PermitReturn, {
+    nullable: true,
+    name: 'healthDirectoratePatientDataInvalidatePermit',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  // TODO -> @FeatureFlag(Features.servicePortalHealthPermitsPageEnabled)
+  async invalidatePermit(
+    @Args('input') input: InvalidatePermitInput,
+    @CurrentUser() user: User,
+  ): Promise<PermitReturn | null> {
+    return this.api.invalidatePermit(user, input)
   }
 }

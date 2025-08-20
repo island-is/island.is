@@ -1,5 +1,5 @@
-query HealthDirectoratePatientSummaryApprovalCountries($locale: String) {
-  healthDirectoratePatientSummaryApprovalCountries(locale: $locale) {
+query HealthDirectoratePatientDataPermitCountries($locale: String) {
+  healthDirectoratePatientDataPermitCountries(locale: $locale) {
     data {
       code
       name

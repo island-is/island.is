@@ -1,15 +1,15 @@
-import { Approval } from '../models/approvals/approvals.model'
+import { Permit } from '../models/approvals/approvals.model'
 import { Country } from '../models/approvals/country.model'
-import { ApprovalCodesEnum, ApprovalStatusEnum } from '../models/enums'
+import { PermitCodesEnum, PermitStatusEnum } from '../models/enums'
 
-export const approvalsData: Approval[] = [
+export const permitData: Permit[] = [
   {
     id: '1',
-    status: ApprovalStatusEnum.active,
+    status: PermitStatusEnum.active,
     createdAt: new Date('2024-01-01T10:00:00Z'),
     validFrom: new Date('2024-01-02T12:00:00Z'),
     validTo: new Date('2026-01-02T12:00:00Z'),
-    codes: [ApprovalCodesEnum.PatientSummary],
+    codes: [PermitCodesEnum.PatientSummary],
     countries: [
       {
         code: 'FR',
@@ -90,11 +90,11 @@ export const approvalsData: Approval[] = [
   },
   {
     id: '2',
-    status: ApprovalStatusEnum.inactive,
+    status: PermitStatusEnum.inactive,
     createdAt: new Date('2025-02-06T10:00:00Z'),
     validFrom: new Date('2025-02-06T12:00:00Z'),
     validTo: new Date('2025-06-06T12:00:00Z'),
-    codes: [ApprovalCodesEnum.PatientSummary],
+    codes: [PermitCodesEnum.PatientSummary],
     countries: [
       {
         code: 'FR',
@@ -120,11 +120,11 @@ export const approvalsData: Approval[] = [
   },
   {
     id: '3',
-    status: ApprovalStatusEnum.expired,
+    status: PermitStatusEnum.expired,
     createdAt: new Date('2024-01-01T10:00:00Z'),
     validFrom: new Date('2024-01-02T12:00:00Z'),
     validTo: new Date('2025-01-02T12:00:00Z'),
-    codes: [ApprovalCodesEnum.PatientSummary],
+    codes: [PermitCodesEnum.PatientSummary],
     countries: [
       {
         code: 'FR',
