@@ -39,7 +39,9 @@ test.describe.serial('Indictment tests', () => {
     await page.getByRole('option', { name: 'Umferðarlagabrot' }).click()
     await page.getByPlaceholder('Sláðu inn vettvang').click()
     await page.getByPlaceholder('Sláðu inn vettvang').fill('Reykjavík')
-    await page.locator('input[id=arrestDate]').fill(today)
+    await page
+      .locator(`input[id=crime-scene-date-${policeCaseNumber}]`)
+      .fill(today)
     await page.keyboard.press('Escape')
     await page
       .getByRole('checkbox', { name: 'Ákærði er ekki með íslenska kennitölu' })

@@ -71,7 +71,7 @@ import {
 import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
-import { IndictmentCount } from '../indictment-count'
+import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
@@ -539,6 +539,7 @@ export class CaseService {
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
+    private readonly indictmentCountService: IndictmentCountService,
     private readonly subpoenaService: SubpoenaService,
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
@@ -626,7 +627,7 @@ export class CaseService {
     return theCase.id
   }
 
-  private async syncPoliceCaseNumbersAndCaseFiles(
+  private async handlePoliceCaseNumbersUpdate(
     theCase: Case,
     update: UpdateCase,
     transaction: Transaction,
@@ -634,7 +635,7 @@ export class CaseService {
     if (
       !update.policeCaseNumbers ||
       update.policeCaseNumbers.length === 0 ||
-      !theCase.caseFiles
+      (!theCase.caseFiles && !theCase.indictmentCounts)
     ) {
       // Nothing to do
       return
@@ -652,6 +653,7 @@ export class CaseService {
       if (oldPoliceCaseNumbers[0] === newPoliceCaseNumbers[0]) {
         oldPoliceCaseNumbers.shift()
         newPoliceCaseNumbers.shift()
+
         continue
       }
 
@@ -660,6 +662,7 @@ export class CaseService {
       if (oldPoliceCaseNumbers[0] < newPoliceCaseNumbers[0]) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         removedPoliceCaseNumbers.push(oldPoliceCaseNumbers.shift()!)
+
         continue
       }
 
@@ -684,29 +687,63 @@ export class CaseService {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const addedPoliceCaseNumber = addedPoliceCaseNumbers.shift()!
 
-      // Update case files with the new police case number
-      for (const caseFile of theCase.caseFiles.filter(
-        (caseFile) => caseFile.policeCaseNumber === removedPoliceCaseNumber,
-      )) {
-        await this.fileService.updateCaseFile(
-          theCase.id,
-          caseFile.id,
-          { policeCaseNumber: addedPoliceCaseNumber },
-          transaction,
-        )
+      if (theCase.caseFiles) {
+        // Update case files with the new police case number
+        for (const caseFile of theCase.caseFiles.filter(
+          (caseFile) => caseFile.policeCaseNumber === removedPoliceCaseNumber,
+        )) {
+          await this.fileService.updateCaseFile(
+            theCase.id,
+            caseFile.id,
+            { policeCaseNumber: addedPoliceCaseNumber },
+            transaction,
+          )
+        }
+      }
+
+      if (theCase.indictmentCounts) {
+        // Update indictment counts with the new police case number
+        for (const indictmentCount of theCase.indictmentCounts.filter(
+          (indictmentCount) =>
+            indictmentCount.policeCaseNumber === removedPoliceCaseNumber,
+        )) {
+          await this.indictmentCountService.update(
+            theCase.id,
+            indictmentCount.id,
+            { policeCaseNumber: addedPoliceCaseNumber },
+            transaction,
+          )
+        }
       }
 
       // We are done
       return
     }
 
-    // Delete case files connected to removed police case numbers
-    for (const caseFile of theCase.caseFiles.filter(
-      (caseFile) =>
-        caseFile.policeCaseNumber &&
-        removedPoliceCaseNumbers.includes(caseFile.policeCaseNumber),
-    )) {
-      await this.fileService.deleteCaseFile(theCase, caseFile, transaction)
+    if (theCase.caseFiles) {
+      // Delete case files connected to removed police case numbers
+      for (const caseFile of theCase.caseFiles.filter(
+        (caseFile) =>
+          caseFile.policeCaseNumber &&
+          removedPoliceCaseNumbers.includes(caseFile.policeCaseNumber),
+      )) {
+        await this.fileService.deleteCaseFile(theCase, caseFile, transaction)
+      }
+    }
+
+    if (theCase.indictmentCounts) {
+      // Delete indictment counts connected to removed police case numbers
+      for (const indictmentCount of theCase.indictmentCounts.filter(
+        (indictmentCount) =>
+          indictmentCount.policeCaseNumber &&
+          removedPoliceCaseNumbers.includes(indictmentCount.policeCaseNumber),
+      )) {
+        await this.indictmentCountService.delete(
+          theCase.id,
+          indictmentCount.id,
+          transaction,
+        )
+      }
     }
   }
 
@@ -2133,11 +2170,7 @@ export class CaseService {
         }
 
         // Update police case numbers of case files if necessary
-        await this.syncPoliceCaseNumbersAndCaseFiles(
-          theCase,
-          update,
-          transaction,
-        )
+        await this.handlePoliceCaseNumbersUpdate(theCase, update, transaction)
 
         // Reset case file states if court case number is changed
         if (

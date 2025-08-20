@@ -1,7 +1,7 @@
 // TODO: Add tests
 import {
   isIndictmentCase,
-  isTrafficViolationCase,
+  isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 import {
   Case,
@@ -16,7 +16,6 @@ import {
   IndictmentCount,
   IndictmentCountOffense,
   IndictmentDecision,
-  IndictmentSubtype,
   SessionArrangements,
   User,
   Victim,
@@ -348,14 +347,11 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
     Boolean(indictmentCount.legalArguments)
 
   const isTrafficViolation = (indictmentCount: IndictmentCount) =>
-    indictmentCount.indictmentCountSubtypes?.includes(
-      IndictmentSubtype.TRAFFIC_VIOLATION,
+    isTrafficViolationIndictmentCount(
+      indictmentCount.indictmentCountSubtypes,
+      indictmentCount.policeCaseNumber &&
+        workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber],
     )
-
-  // All indictment counts are traffic violations
-  if (isTrafficViolationCase(workingCase)) {
-    return workingCase.indictmentCounts?.every(isValidTrafficViolation) ?? false
-  }
 
   if (!workingCase.indictmentCounts?.length) {
     return false

@@ -48,7 +48,7 @@ import {
 import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { usePoliceCaseInfoQuery } from '../Defendant/policeCaseInfo.generated'
+import { usePoliceCaseInfoQuery } from '../Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
 import { strings } from './Indictment.strings'
 
@@ -350,8 +350,16 @@ const Indictment = () => {
         workingCase.indictmentCounts &&
         workingCase.indictmentCounts.length > 1
       ) {
-        await deleteIndictmentCount(workingCase.id, indictmentCountId)
+        const deleted = await deleteIndictmentCount(
+          workingCase.id,
+          indictmentCountId,
+        )
 
+        if (!deleted) {
+          return
+        }
+
+        // Remove the deleted indictment count from the working case
         const indictmentCounts = workingCase.indictmentCounts?.filter(
           (count) => count.id !== indictmentCountId,
         )

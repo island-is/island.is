@@ -5,7 +5,10 @@ import {
   formatDate,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { CrimeScene } from '@island.is/judicial-system/types'
+import {
+  CrimeScene,
+  isTrafficViolationIndictmentCount,
+} from '@island.is/judicial-system/types'
 import {
   Gender,
   IndictmentCount,
@@ -13,7 +16,6 @@ import {
   IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
 import { strings } from './getIncidentDescription.strings'
@@ -79,10 +81,7 @@ export const getIncidentDescription = (
     return ''
   }
 
-  if (
-    isTrafficViolationIndictmentCount(policeCaseNumber, subtypesRecord) ||
-    indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
-  ) {
+  if (isTrafficViolationIndictmentCount(indictmentCountSubtypes, subtypes)) {
     const hasOnlyOtherOffense =
       offenses?.length === 1 &&
       offenses[0].offense === IndictmentCountOffense.OTHER

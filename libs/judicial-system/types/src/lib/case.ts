@@ -1,7 +1,3 @@
-import flatten from 'lodash/flatten'
-
-import { CaseFileCategory } from './file'
-
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -384,30 +380,6 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
       ].includes(state),
   )
 }
-
-export const isTrafficViolationCase = (theCase: {
-  type?: CaseType | null
-  indictmentSubtypes?: IndictmentSubtypeMap
-  caseFiles?: { category?: CaseFileCategory | null }[] | null
-}): boolean => {
-  if (theCase.type !== CaseType.INDICTMENT || !theCase.indictmentSubtypes) {
-    return false
-  }
-
-  const flatIndictmentSubtypes = flatten(
-    Object.values(theCase.indictmentSubtypes),
-  )
-
-  return (
-    flatIndictmentSubtypes.length > 0 &&
-    flatIndictmentSubtypes.every(
-      (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
-    )
-  )
-}
-
-export const hasTrafficViolationSubtype = (subtypes: IndictmentSubtype[]) =>
-  subtypes.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
 
 export const getStatementDeadline = (appealReceived: Date): string => {
   return new Date(

@@ -1,3 +1,4 @@
+import { IndictmentSubtype } from './case'
 import {
   ILLEGAL_DRUGS_AND_PRESCRIPTION_DRUGS_DRIVING,
   Substance,
@@ -29,4 +30,15 @@ export const offenseSubstances: {
     ILLEGAL_DRUGS_AND_PRESCRIPTION_DRUGS_DRIVING,
   [IndictmentCountOffense.SPEEDING]: [],
   [IndictmentCountOffense.OTHER]: [],
+}
+
+export const isTrafficViolationIndictmentCount = (
+  indictmentCountSubtypes: IndictmentSubtype[] | undefined | null,
+  policeCaseNumberSubTypes: IndictmentSubtype[] | undefined | null,
+): boolean => {
+  return (
+    indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION) ||
+    (policeCaseNumberSubTypes?.length === 1 &&
+      policeCaseNumberSubTypes.includes(IndictmentSubtype.TRAFFIC_VIOLATION))
+  )
 }

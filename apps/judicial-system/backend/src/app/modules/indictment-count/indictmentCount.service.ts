@@ -13,8 +13,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
-  hasTrafficViolationSubtype,
   IndictmentCountOffense,
+  isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
@@ -78,14 +78,14 @@ export class IndictmentCountService {
         })
       }
 
-      const isTrafficViolationSubtypePresent =
-        hasTrafficViolationSubtype(updatedSubtypes) ||
-        (policeCaseNumberSubtypes.length === 1 &&
-          hasTrafficViolationSubtype(policeCaseNumberSubtypes))
+      const isTrafficViolation = isTrafficViolationIndictmentCount(
+        updatedSubtypes,
+        policeCaseNumberSubtypes,
+      )
 
       // if traffic violation subtype is not present we need to handle a cascading update
       // for indictment count and offenses
-      const updatedIndictmentCount = !isTrafficViolationSubtypePresent
+      const updatedIndictmentCount = !isTrafficViolation
         ? {
             ...update,
             vehicleRegistrationNumber: null,
@@ -96,10 +96,7 @@ export class IndictmentCountService {
           }
         : update
 
-      const hasOffense = await this.offenseModel.findOne({
-        where: { indictmentCountId },
-      })
-      if (!isTrafficViolationSubtypePresent && hasOffense) {
+      if (!isTrafficViolation) {
         // currently offenses only exist for traffic violation indictment subtype.
         // if we support other offenses per subtype in the future we have to take the subtype into account
         await this.offenseModel.destroy({
@@ -160,30 +157,44 @@ export class IndictmentCountService {
     return indictmentCount
   }
 
-  async delete(caseId: string, indictmentCountId: string): Promise<boolean> {
-    return this.sequelize.transaction(async (transaction) => {
+  async delete(
+    caseId: string,
+    indictmentCountId: string,
+    transaction?: Transaction,
+  ): Promise<boolean> {
+    const deleteWithTransaction = async (transaction: Transaction) => {
       await this.offenseModel.destroy({
         where: { indictmentCountId },
         transaction,
       })
 
-      const numberOfAffectedRows = await this.indictmentCountModel.destroy({
+      return this.indictmentCountModel.destroy({
         where: { id: indictmentCountId, caseId },
         transaction,
       })
+    }
 
-      if (numberOfAffectedRows > 1) {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting indictment count ${indictmentCountId} of case ${caseId}`,
-        )
-      } else if (numberOfAffectedRows < 1) {
-        throw new InternalServerErrorException(
-          `Could not delete indictment count ${indictmentCountId} of case ${caseId}`,
-        )
-      }
-      return true
-    })
+    const deleteWithInternalTransaction = () =>
+      this.sequelize.transaction(async (transaction) => {
+        return deleteWithTransaction(transaction)
+      })
+
+    const numberOfAffectedRows = transaction
+      ? await deleteWithTransaction(transaction)
+      : await deleteWithInternalTransaction()
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting indictment count ${indictmentCountId} of case ${caseId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not delete indictment count ${indictmentCountId} of case ${caseId}`,
+      )
+    }
+
+    return true
   }
 
   async createOffense(

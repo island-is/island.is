@@ -2,11 +2,7 @@ import { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
-import { IndictmentSubtypeMap } from '@island.is/judicial-system/types'
-import {
-  Case,
-  IndictmentSubtype,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { replaceTabs } from './formatters'
 import { UpdateCase } from './hooks'
@@ -318,23 +314,4 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     stepsToCheck.find(([, validationFn]) => !validationFn(theCase)) ?? []
 
   return key
-}
-
-export const isTrafficViolationIndictmentCount = (
-  policeCaseNumber?: string | null,
-  indictmentSubtypes?: IndictmentSubtypeMap,
-) => {
-  if (!policeCaseNumber || !indictmentSubtypes) {
-    return false
-  }
-
-  if (
-    indictmentSubtypes[policeCaseNumber].length === 1 &&
-    indictmentSubtypes[policeCaseNumber][0] ===
-      IndictmentSubtype.TRAFFIC_VIOLATION
-  ) {
-    return true
-  }
-
-  return false
 }
