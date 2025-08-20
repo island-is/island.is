@@ -60,7 +60,7 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
       ]
     default:
       return [
-        `Ákæra fór í birtingu ${
+        `Dómur fór í birtingu ${
           verdict.created
             ? ` - ${formatDate(verdict.created)} kl. ${formatDate(
                 verdict.created,
