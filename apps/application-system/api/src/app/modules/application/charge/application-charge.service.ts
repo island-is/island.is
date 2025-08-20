@@ -27,6 +27,9 @@ export class ApplicationChargeService {
 
       // No need to delete charge if never existed
       if (!payment) {
+        this.logger.info(
+          `Not deleting charge for application ${application.id} because it does not have a payment`,
+        )
         return
       }
 
@@ -42,6 +45,9 @@ export class ApplicationChargeService {
         if (
           !stateConfig.meta?.lifecycle?.shouldDeleteChargeIfPaymentFulfilled
         ) {
+          this.logger.info(
+            `Not deleting charge for application ${application.id} because its lifecycle does not allow it`,
+          )
           return
         }
       }
@@ -53,9 +59,7 @@ export class ApplicationChargeService {
       const url = new URL(paymentUrl)
       const chargeId = url.pathname.split('/').pop()
 
-      console.log('************************************************')
-      console.log('deleteCharge chargeId', chargeId)
-      console.log('************************************************')
+      this.logger.info('deleteCharge chargeId', chargeId)
 
       if (chargeId) {
         await this.chargeFjsV2ClientService.deleteCharge(chargeId)
