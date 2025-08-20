@@ -47,7 +47,12 @@ export class ApplicationChargeService {
       }
 
       // Delete the charge, using the ID we got from FJS
-      const chargeId = payment.id
+      const paymentUrl = (payment.definition as { paymentUrl: string })
+        ?.paymentUrl as string
+
+      const url = new URL(paymentUrl)
+      const chargeId = url.pathname.split('/').pop()
+
       if (chargeId) {
         await this.chargeFjsV2ClientService.deleteCharge(chargeId)
       }
