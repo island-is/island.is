@@ -1,5 +1,6 @@
 import {
   buildBankAccountField,
+  buildCustomField,
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
@@ -18,6 +19,10 @@ export const paymentInformationSection = buildSection({
           title: paymentInformation.labels.accountInformation,
           titleVariant: 'h5',
           required: true,
+        }),
+        buildCustomField({
+          id: 'paymentInformationValidation',
+          component: 'PaymentInformationValidation',
         }),
       ],
     }),
