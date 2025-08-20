@@ -123,7 +123,7 @@ export class StatisticsController {
   ): Promise<{ url: string }> {
     this.logger.debug('Create and export csv file for data analytics', query)
 
-    return this.statisticService.extractTransformLoadRvgDataToS3({
+    return this.statisticService.extractTransformLoadEventDataToS3({
       type: query.type,
       period: query.period,
     })

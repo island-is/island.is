@@ -12,6 +12,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  capitalize,
+  indictmentSubtypes,
+} from '@island.is/judicial-system/formatters'
+import {
   CaseNotificationType,
   CaseState,
   CaseType,
@@ -26,6 +30,8 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import { Case, DateLog, partition } from '../case'
 import { EventLog } from '../event-log'
+import { IndictmentCount } from '../indictment-count'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena } from '../subpoena'
@@ -39,7 +45,11 @@ import {
   SubpoenaStatistics,
 } from './models/subpoenaStatistics.response'
 import { DateFilter } from './statistics/types'
-import { eventFunctions } from './caseEvents'
+import {
+  IndictmentCaseEvent,
+  indictmentCaseEventFunctions,
+} from './indictmentCaseEvents'
+import { requestCaseEventFunctions } from './requestCaseEvents'
 
 const isDateInPeriod = (
   date: Date,
@@ -501,7 +511,7 @@ export class StatisticsService {
     const fromDate = new Date(period.fromDate ?? Date.now())
     const toDate = new Date(period.toDate ?? Date.now())
     const events = cases
-      .flatMap((c) => eventFunctions.flatMap((func) => func(c)))
+      .flatMap((c) => requestCaseEventFunctions.flatMap((func) => func(c)))
       .filter(
         (event) =>
           !!event && isDateInPeriod(new Date(event.date), { fromDate, toDate }),
@@ -510,7 +520,88 @@ export class StatisticsService {
     return events
   }
 
-  async extractTransformLoadRvgDataToS3({
+  private async extractAndTransformIndictmentCases(
+    period?: DateFilter,
+  ): Promise<IndictmentCaseEvent[]> {
+    const where: WhereOptions = {
+      type: CaseType.INDICTMENT,
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+      order: [['created', 'ASC']],
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+        },
+        {
+          model: IndictmentCount,
+          as: 'indictmentCounts',
+          required: false,
+          order: [['created', 'ASC']],
+          include: [
+            {
+              model: Offense,
+              as: 'offenses',
+              required: false,
+              order: [['created', 'ASC']],
+              separate: true,
+            },
+          ],
+          separate: true,
+        },
+        { model: Institution, as: 'prosecutorsOffice' },
+        { model: Institution, as: 'court' },
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          required: false,
+          where: { dateType: dateTypes },
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+      ],
+    })
+
+    // create events for data analytics for each case
+    if (!period) return []
+
+    const fromDate = new Date(period.fromDate ?? Date.now())
+    const toDate = new Date(period.toDate ?? Date.now())
+    const events = cases
+      .flatMap((c) => {
+        // get all selected subtypes per case
+        const caseIndictmentSubtypes = c.indictmentSubtypes
+        console.log({
+          caseIndictmentSubtypes,
+          policeCaseNumbers: c.policeCaseNumbers,
+        })
+        const subtypes = caseIndictmentSubtypes
+          ? c.policeCaseNumbers?.flatMap(
+              (number) => caseIndictmentSubtypes[number],
+            )
+          : []
+        const subtypeDescriptors = subtypes.map((subtype) =>
+          capitalize(indictmentSubtypes[subtype]),
+        )
+
+        return indictmentCaseEventFunctions.flatMap((func) => ({
+          ...func(c),
+          caseSubtypes: subtypes.join(','),
+          caseSubtypeDescriptors: subtypeDescriptors.join(','),
+        }))
+      })
+      .filter(
+        (event) =>
+          !!event && isDateInPeriod(new Date(event.date), { fromDate, toDate }),
+      )
+
+    return events
+  }
+
+  async extractTransformLoadEventDataToS3({
     type,
     period,
   }: {
@@ -521,35 +612,53 @@ export class StatisticsService {
       if (type === DataGroups.REQUESTS) {
         return {
           data: await this.extractAndTransformRequestCases(period),
+          columns: [
+            { key: 'id', header: 'ID' },
+            { key: 'eventDescriptor', header: 'Atburður' },
+            { key: 'date', header: 'Dagsetning' },
+            { key: 'institution', header: 'Stofnun' },
+            { key: 'caseTypeDescriptor', header: 'Tegund máls' },
+            { key: 'origin', header: 'Stofnað í' },
+            { key: 'isExtended', header: 'Mál framlengt' },
+            {
+              key: 'requestDecisionDescriptor',
+              header: 'Niðurstaða kröfu',
+            },
+            {
+              key: 'courtOfAppealDecisionDescriptor',
+              header: 'Niðurstaða Landsréttar',
+            },
+          ],
           key: `krofur_from_${getDateString(
             period?.fromDate,
           )}_to_${getDateString(period?.toDate)}`,
         }
       }
-      // TODO: implement events for indictments
+      if (type === DataGroups.INDICTMENTS) {
+        return {
+          data: await this.extractAndTransformIndictmentCases(period),
+          columns: [
+            { key: 'id', header: 'ID' },
+            { key: 'eventDescriptor', header: 'Atburður' },
+            { key: 'date', header: 'Dagsetning' },
+            { key: 'institution', header: 'Stofnun' },
+            { key: 'caseTypeDescriptor', header: 'Tegund máls' },
+            { key: 'caseSubtypeDescriptors', header: 'Sakarefni' },
+            { key: 'origin', header: 'Stofnað í' },
+          ],
+          key: `ákærur_from_${getDateString(
+            period?.fromDate,
+          )}_to_${getDateString(period?.toDate)}`,
+        }
+      }
+
       return undefined
     }
     const result = await getData()
     if (!result) return { url: '' }
 
-    const { data, key } = result
-    const columns = [
-      { key: 'id', header: 'ID' },
-      { key: 'eventDescriptor', header: 'Atburður' },
-      { key: 'date', header: 'Dagsetning' },
-      { key: 'institution', header: 'Stofnun' },
-      { key: 'caseTypeDescriptor', header: 'Tegund máls' },
-      { key: 'origin', header: 'Stofnað í' },
-      { key: 'isExtended', header: 'Mál framlengt' },
-      {
-        key: 'requestDecisionDescriptor',
-        header: 'Niðurstaða kröfu',
-      },
-      {
-        key: 'courtOfAppealDecisionDescriptor',
-        header: 'Niðurstaða Landsréttar',
-      },
-    ]
+    const { data, columns, key } = result
+
     stringify(data, { header: true, columns }, async (error, csvOutput) => {
       if (error) {
         this.logger.error('Failed to convert data to csv file')

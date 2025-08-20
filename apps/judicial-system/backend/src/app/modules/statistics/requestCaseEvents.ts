@@ -309,7 +309,7 @@ const caseCompletedByCourtOfAppeals = (
   }
 }
 
-export const eventFunctions = [
+export const requestCaseEventFunctions = [
   createCase,
   caseSentToCourt,
   caseReceivedByCourt,
