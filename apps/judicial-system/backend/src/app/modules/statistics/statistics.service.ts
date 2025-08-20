@@ -17,7 +17,7 @@ import {
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { Case, DateLog, partition } from '../case'
+import { Case, DateLog } from '../case'
 import { EventLog } from '../event-log'
 import { Subpoena } from '../subpoena'
 import {
@@ -30,6 +30,24 @@ import {
   SubpoenaStatistics,
 } from './models/subpoenaStatistics.response'
 import { DateFilter } from './statistics/types'
+
+export const partition = <T>(
+  array: T[],
+  predicate: (item: T) => boolean,
+): [T[], T[]] => {
+  const pass: T[] = []
+  const fail: T[] = []
+
+  for (const item of array) {
+    if (predicate(item)) {
+      pass.push(item)
+    } else {
+      fail.push(item)
+    }
+  }
+
+  return [pass, fail]
+}
 
 @Injectable()
 export class StatisticsService {
