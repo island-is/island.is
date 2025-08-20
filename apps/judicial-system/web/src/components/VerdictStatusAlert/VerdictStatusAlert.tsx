@@ -5,7 +5,7 @@ import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Lawyer } from '@island.is/judicial-system/types'
 
-import { Verdict,VerdictServiceStatus } from '../../graphql/schema'
+import { Verdict, VerdictServiceStatus } from '../../graphql/schema'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 
 const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
