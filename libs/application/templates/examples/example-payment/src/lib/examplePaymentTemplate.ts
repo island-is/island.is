@@ -111,6 +111,7 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () => import('../forms/done').then((val) => val.done),
               read: 'all',
+              delete: true,
             },
           ],
         },
