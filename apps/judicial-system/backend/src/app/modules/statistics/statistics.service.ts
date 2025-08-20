@@ -1,12 +1,8 @@
 import isWithinInterval from 'date-fns/isWithinInterval'
 import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
-import { Inject, Injectable } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
-
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
 import {
   CaseState,
@@ -17,7 +13,7 @@ import {
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { Case, DateLog } from '../case'
+import { Case } from '../case'
 import { EventLog } from '../event-log'
 import { Subpoena } from '../subpoena'
 import {
@@ -52,11 +48,8 @@ export const partition = <T>(
 @Injectable()
 export class StatisticsService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
-    @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async getIndictmentCaseStatistics(
