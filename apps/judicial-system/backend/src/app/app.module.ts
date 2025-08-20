@@ -35,6 +35,7 @@ import {
   notificationModuleConfig,
   PoliceModule,
   policeModuleConfig,
+  StatisticsModule,
   SubpoenaModule,
   UserModule,
   userModuleConfig,
@@ -64,6 +65,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     VictimModule,
     CaseTableModule,
     LawyerRegistryModule,
+    StatisticsModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,

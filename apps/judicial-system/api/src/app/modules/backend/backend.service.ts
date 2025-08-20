@@ -23,17 +23,7 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from '../case'
-import { CaseListEntry, CaseStatistics } from '../case-list'
-import {
-  IndictmentStatisticsInput,
-  RequestStatisticsInput,
-  SubpoenaStatisticsInput,
-} from '../case-list/dto/caseStatistics.input'
-import {
-  IndictmentCaseStatistics,
-  RequestCaseStatistics,
-  SubpoenaStatistics,
-} from '../case-list/models/caseStatistics.model'
+import { CaseListEntry } from '../case-list'
 import { CaseTableResponse, SearchCasesResponse } from '../case-table'
 import {
   CivilClaimant,
@@ -67,6 +57,17 @@ import {
   PoliceCaseInfo,
   UploadPoliceCaseFileResponse,
 } from '../police'
+import { CaseStatistics } from '../statistics'
+import {
+  IndictmentCaseStatistics,
+  RequestCaseStatistics,
+  SubpoenaStatistics,
+} from '../statistics'
+import {
+  IndictmentStatisticsInput,
+  RequestStatisticsInput,
+  SubpoenaStatisticsInput,
+} from '../statistics/dto/caseStatistics.input'
 import { Subpoena } from '../subpoena'
 import { Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
