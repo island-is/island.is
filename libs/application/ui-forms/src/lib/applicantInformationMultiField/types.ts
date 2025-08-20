@@ -43,6 +43,9 @@ export type applicantInformationProps = {
   emailCondition?: Condition
   emailRequired?: boolean
   emailDisabled?: boolean
+  addressRequired?: boolean
+  postalCodeRequired?: boolean
+  cityRequired?: boolean
   applicantInformationTitle?: FormText
   applicantInformationDescription?: FormText
   baseInfoReadOnly?: boolean
