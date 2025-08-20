@@ -119,43 +119,43 @@ const createCase = (c: Case): IndictmentCaseEvent => {
   }
 }
 
-// const caseSentToCourt = (c: Case): RequestCaseEvent | undefined => {
-//   const date = EventLog.getEventLogDateByEventType(
-//     EventType.CASE_SENT_TO_COURT,
-//     c.eventLogs,
-//   )?.toISOString()
-//   if (!date) {
-//     return undefined
-//   }
+const caseSentToCourt = (c: Case): IndictmentCaseEvent | undefined => {
+  const date = EventLog.getEventLogDateByEventType(
+    EventType.INDICTMENT_CONFIRMED,
+    c.eventLogs,
+  )?.toISOString()
+  if (!date) {
+    return undefined
+  }
 
-//   return {
-//     id: c.id,
-//     event: 'CASE_SENT_TO_COURT',
-//     eventDescriptor: 'Krafa send til héraðsdóms',
-//     date,
-//     institution: c.prosecutorsOffice?.name,
-//     ...commonFields(c),
-//   }
-// }
+  return {
+    id: c.id,
+    event: 'CASE_SENT_TO_COURT',
+    eventDescriptor: 'Ákæra send til héraðsdóms',
+    date,
+    institution: c.prosecutorsOffice?.name,
+    ...commonFields(c),
+  }
+}
 
-// const caseReceivedByCourt = (c: Case): RequestCaseEvent | undefined => {
-//   const date = EventLog.getEventLogDateByEventType(
-//     EventType.CASE_RECEIVED_BY_COURT,
-//     c.eventLogs,
-//   )?.toISOString()
-//   if (!date) {
-//     return undefined
-//   }
+const caseReceivedByCourt = (c: Case): IndictmentCaseEvent | undefined => {
+  const date = EventLog.getEventLogDateByEventType(
+    EventType.CASE_RECEIVED_BY_COURT,
+    c.eventLogs,
+  )?.toISOString()
+  if (!date) {
+    return undefined
+  }
 
-//   return {
-//     id: c.id,
-//     event: 'CASE_RECEIVED_BY_COURT',
-//     eventDescriptor: 'Krafa móttekin af héraðsdómi',
-//     date,
-//     institution: c.prosecutorsOffice?.name,
-//     ...commonFields(c),
-//   }
-// }
+  return {
+    id: c.id,
+    event: 'CASE_RECEIVED_BY_COURT',
+    eventDescriptor: 'Ákæra móttekin af héraðsdómi',
+    date,
+    institution: c.court?.name,
+    ...commonFields(c),
+  }
+}
 
 // const courtDateScheduled = (c: Case): RequestCaseEvent | undefined => {
 //   const date = EventLog.getEventLogDateByEventType(
@@ -297,8 +297,8 @@ const createCase = (c: Case): IndictmentCaseEvent => {
 
 export const indictmentCaseEventFunctions = [
   createCase,
-  //   caseSentToCourt,
-  //   caseReceivedByCourt,
+  caseSentToCourt,
+  caseReceivedByCourt,
   //   courtDateScheduled,
   //   courtSessionStarted,
   //   courtSessionEnded,

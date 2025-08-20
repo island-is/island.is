@@ -538,9 +538,7 @@ export class StatisticsService {
     return events
   }
 
-  private async extractAndTransformIndictmentCases(
-    period?: DateFilter,
-  ): Promise<IndictmentCaseEvent[]> {
+  private async extractAndTransformIndictmentCases(period?: DateFilter) {
     const where: WhereOptions = {
       type: CaseType.INDICTMENT,
     }
@@ -588,33 +586,36 @@ export class StatisticsService {
 
     const fromDate = new Date(period.fromDate ?? Date.now())
     const toDate = new Date(period.toDate ?? Date.now())
-    const events = cases
-      .flatMap((c) => {
-        // get all selected subtypes per case
-        const caseIndictmentSubtypes = c.indictmentSubtypes
-        console.log({
-          caseIndictmentSubtypes,
-          policeCaseNumbers: c.policeCaseNumbers,
-        })
-        const subtypes = caseIndictmentSubtypes
-          ? c.policeCaseNumbers?.flatMap(
-              (number) => caseIndictmentSubtypes[number],
-            )
-          : []
-        const subtypeDescriptors = subtypes.map((subtype) =>
-          capitalize(indictmentSubtypes[subtype]),
-        )
 
-        return indictmentCaseEventFunctions.flatMap((func) => ({
-          ...func(c),
-          caseSubtypes: subtypes.join(','),
-          caseSubtypeDescriptors: subtypeDescriptors.join(','),
-        }))
-      })
-      .filter(
-        (event) =>
-          !!event && isDateInPeriod(new Date(event.date), { fromDate, toDate }),
+    const events = cases.flatMap((c) => {
+      // get all selected subtypes per case
+      const caseIndictmentSubtypes = c.indictmentSubtypes
+      const subtypes = caseIndictmentSubtypes
+        ? c.policeCaseNumbers?.flatMap(
+            (number) => caseIndictmentSubtypes[number],
+          )
+        : []
+      const subtypeDescriptors = subtypes.map((subtype) =>
+        capitalize(indictmentSubtypes[subtype]),
       )
+
+      return indictmentCaseEventFunctions
+        .map((func) => {
+          const event = func(c)
+          if (!event) return undefined
+
+          return {
+            ...event,
+            caseSubtypes: subtypes.join(','),
+            caseSubtypeDescriptors: subtypeDescriptors.join(','),
+          }
+        })
+        .filter(
+          (event) =>
+            !!event &&
+            isDateInPeriod(new Date(event.date), { fromDate, toDate }),
+        )
+    })
 
     return events
   }
