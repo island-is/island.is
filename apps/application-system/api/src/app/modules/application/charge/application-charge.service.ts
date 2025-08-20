@@ -53,6 +53,10 @@ export class ApplicationChargeService {
       const url = new URL(paymentUrl)
       const chargeId = url.pathname.split('/').pop()
 
+      console.log('************************************************')
+      console.log('deleteCharge chargeId', chargeId)
+      console.log('************************************************')
+
       if (chargeId) {
         await this.chargeFjsV2ClientService.deleteCharge(chargeId)
       }

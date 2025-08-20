@@ -218,6 +218,10 @@ export class PaymentService extends BaseTemplateApiService {
     const url = new URL(paymentUrl)
     const chargeId = url.pathname.split('/').pop()
 
+    console.log('************************************************')
+    console.log('deletePayment chargeId', chargeId)
+    console.log('************************************************')
+
     if (chargeId) {
       await this.chargeFjsV2ClientService.deleteCharge(chargeId)
     }
