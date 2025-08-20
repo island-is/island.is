@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
@@ -11,6 +11,7 @@ import {
   applyDativeCaseToCourtName,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { getIndictmentCountCompare } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -414,6 +415,11 @@ const Indictment = () => {
 
   useOnceOn(isCaseUpToDate, initialize)
 
+  const compareIndictmentCounts = useMemo(
+    () => getIndictmentCountCompare(workingCase.policeCaseNumbers),
+    [workingCase.policeCaseNumbers],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -468,37 +474,42 @@ const Indictment = () => {
             autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
-        {workingCase.indictmentCounts?.map((indictmentCount, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-          >
-            <Box
-              component="section"
-              marginBottom={
-                index - 1 === workingCase.indictmentCounts?.length ? 0 : 3
-              }
-            >
-              <SectionHeading
-                title={formatMessage(strings.indictmentCountHeading, {
-                  count: index + 1,
-                })}
-              />
-              <AnimatePresence>
-                <IndictmentCount
-                  indictmentCount={indictmentCount}
-                  workingCase={workingCase}
-                  onDelete={index > 0 ? handleDeleteIndictmentCount : undefined}
-                  onChange={handleUpdateIndictmentCount}
-                  setWorkingCase={setWorkingCase}
-                  updateIndictmentCountState={updateIndictmentCountState}
-                />
-              </AnimatePresence>
-            </Box>
-          </motion.div>
-        ))}
+        {workingCase.indictmentCounts &&
+          workingCase.indictmentCounts
+            .sort(compareIndictmentCounts)
+            .map((indictmentCount, index) => (
+              <motion.div
+                key={indictmentCount.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+              >
+                <Box
+                  component="section"
+                  marginBottom={
+                    index - 1 === workingCase.indictmentCounts?.length ? 0 : 3
+                  }
+                >
+                  <SectionHeading
+                    title={formatMessage(strings.indictmentCountHeading, {
+                      count: index + 1,
+                    })}
+                  />
+                  <AnimatePresence>
+                    <IndictmentCount
+                      indictmentCount={indictmentCount}
+                      workingCase={workingCase}
+                      onDelete={
+                        index > 0 ? handleDeleteIndictmentCount : undefined
+                      }
+                      onChange={handleUpdateIndictmentCount}
+                      setWorkingCase={setWorkingCase}
+                      updateIndictmentCountState={updateIndictmentCountState}
+                    />
+                  </AnimatePresence>
+                </Box>
+              </motion.div>
+            ))}
         <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
           <Button
             variant="ghost"
