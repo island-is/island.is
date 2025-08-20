@@ -3,8 +3,8 @@ import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import {
   InformationForDefendant,
   ServiceRequirement,
-  VerdictServiceStatus,
   VerdictAppealDecision,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 registerEnumType(ServiceRequirement, { name: 'ServiceRequirement' })
