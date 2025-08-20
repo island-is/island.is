@@ -15,8 +15,8 @@ import {
   HashAlgorithm,
   InformationForDefendant,
   ServiceRequirement,
-  VerdictServiceStatus,
   VerdictAppealDecision,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
