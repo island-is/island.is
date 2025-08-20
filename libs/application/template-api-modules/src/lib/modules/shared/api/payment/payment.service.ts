@@ -212,7 +212,16 @@ export class PaymentService extends BaseTemplateApiService {
       return // No payment found, nothing to do
     }
 
-    await this.chargeFjsV2ClientService.deleteCharge(payment.id)
+    const paymentUrl = (payment.definition as { paymentUrl: string })
+      ?.paymentUrl as string
+
+    const url = new URL(paymentUrl)
+    const chargeId = url.pathname.split('/').pop()
+
+    if (chargeId) {
+      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+    }
+
     await this.paymentModelService.delete(application.id, auth)
   }
 }
