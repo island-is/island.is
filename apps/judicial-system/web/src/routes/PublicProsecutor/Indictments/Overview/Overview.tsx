@@ -40,8 +40,6 @@ import {
   Defendant,
   IndictmentCaseReviewDecision,
   ServiceRequirement,
-  ServiceStatus,
-  Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,

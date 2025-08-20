@@ -31,6 +31,12 @@ export enum ServiceStatus {
   NOT_APPLICABLE = 'NOT_APPLICABLE', // Note: ONLY used for old verdicts prior to delivering verdicts automatically to the police
 }
 
+export enum VerdictServiceStatus {
+  ELECTRONICALLY = ServiceStatus.ELECTRONICALLY,
+  DEFENDER = ServiceStatus.DEFENDER,
+  IN_PERSON = ServiceStatus.IN_PERSON,
+}
+
 export enum PunishmentType {
   IMPRISONMENT = 'IMPRISONMENT',
   PROBATION = 'PROBATION',

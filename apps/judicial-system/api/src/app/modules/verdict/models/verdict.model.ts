@@ -3,13 +3,14 @@ import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import {
   InformationForDefendant,
   ServiceRequirement,
-  ServiceStatus,
+  VerdictServiceStatus,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 registerEnumType(ServiceRequirement, { name: 'ServiceRequirement' })
 registerEnumType(VerdictAppealDecision, { name: 'VerdictAppealDecision' })
 registerEnumType(InformationForDefendant, { name: 'InformationForDefendant' })
+registerEnumType(VerdictServiceStatus, { name: 'VerdictServiceStatus' })
 
 @ObjectType()
 export class Verdict {
@@ -31,8 +32,8 @@ export class Verdict {
   @Field(() => ServiceRequirement, { nullable: true })
   serviceRequirement?: ServiceRequirement
 
-  @Field(() => ServiceStatus, { nullable: true })
-  serviceStatus?: ServiceStatus
+  @Field(() => VerdictServiceStatus, { nullable: true })
+  serviceStatus?: VerdictServiceStatus
 
   @Field(() => String, { nullable: true })
   serviceDate?: string

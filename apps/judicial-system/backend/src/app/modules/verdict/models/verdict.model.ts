@@ -15,7 +15,7 @@ import {
   HashAlgorithm,
   InformationForDefendant,
   ServiceRequirement,
-  ServiceStatus,
+  VerdictServiceStatus,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
@@ -76,10 +76,10 @@ export class Verdict extends Model {
   @Column({
     type: DataType.ENUM,
     allowNull: true,
-    values: Object.values(ServiceStatus),
+    values: Object.values(VerdictServiceStatus),
   })
-  @ApiPropertyOptional({ enum: ServiceStatus })
-  serviceStatus?: ServiceStatus
+  @ApiPropertyOptional({ enum: VerdictServiceStatus })
+  serviceStatus?: VerdictServiceStatus
 
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })

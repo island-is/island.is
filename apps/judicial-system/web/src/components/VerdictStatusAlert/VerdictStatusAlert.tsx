@@ -1,34 +1,16 @@
 import { useContext, useEffect, useState } from 'react'
 
-import { AlertMessage, Box,Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Lawyer } from '@island.is/judicial-system/types'
 
-import { ServiceStatus, Verdict } from '../../graphql/schema'
+import { VerdictServiceStatus, Verdict } from '../../graphql/schema'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
-
-const mapServiceStatusTitle = (
-  serviceStatus?: ServiceStatus | null,
-): string => {
-  switch (serviceStatus) {
-    case ServiceStatus.DEFENDER:
-    case ServiceStatus.ELECTRONICALLY:
-    case ServiceStatus.IN_PERSON:
-      return 'Birting tókst'
-    case ServiceStatus.EXPIRED:
-      return 'remove?'
-    case ServiceStatus.FAILED:
-      return 'remove?'
-    // Should not happen
-    default:
-      return 'Óþekkt birtingarstaða'
-  }
-}
 
 const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
   switch (verdict.serviceStatus) {
-    case ServiceStatus.DEFENDER:
+    case VerdictServiceStatus.DEFENDER:
       return [
         `${verdict.servedBy ? verdict.servedBy : ''}${
           verdict.serviceDate
@@ -42,7 +24,7 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
           lawyer ? ` - ${lawyer.name} ${lawyer.practice}` : ''
         }`,
       ]
-    case ServiceStatus.ELECTRONICALLY:
+    case VerdictServiceStatus.ELECTRONICALLY:
       return [
         `Rafrænt pósthólf island.is - ${
           verdict.serviceDate
@@ -53,8 +35,7 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
             : ''
         }`,
       ]
-    case ServiceStatus.IN_PERSON:
-    case ServiceStatus.FAILED:
+    case VerdictServiceStatus.IN_PERSON:
       return [
         `${verdict.servedBy ? verdict.servedBy : ''}${
           verdict.serviceDate
@@ -83,23 +64,13 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
 const VerdictStatusAlert = ({ verdict }: { verdict: Verdict }) => {
   const [lawyer, setLawyer] = useState<Lawyer>()
   const { lawyers } = useContext(LawyerRegistryContext)
-
-  const title = mapServiceStatusTitle(verdict.serviceStatus)
   const messages = mapServiceStatusMessages(verdict, lawyer)
-
-  const isServed =
-    verdict.serviceDate &&
-    verdict.serviceStatus &&
-    [
-      ServiceStatus.DEFENDER,
-      ServiceStatus.ELECTRONICALLY,
-      ServiceStatus.IN_PERSON,
-    ].includes(verdict.serviceStatus)
+  const isServed = verdict.serviceDate && verdict.serviceStatus
 
   useEffect(() => {
     if (
       !verdict?.defenderNationalId ||
-      verdict?.serviceStatus !== ServiceStatus.DEFENDER ||
+      verdict?.serviceStatus !== VerdictServiceStatus.DEFENDER ||
       !lawyers ||
       lawyers.length === 0
     ) {
@@ -117,7 +88,7 @@ const VerdictStatusAlert = ({ verdict }: { verdict: Verdict }) => {
     return (
       <AlertMessage
         type="success"
-        title={title}
+        title="Birting tókst"
         message={
           <Box>
             {messages.map((msg) => (
