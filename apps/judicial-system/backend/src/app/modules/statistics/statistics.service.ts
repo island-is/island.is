@@ -28,7 +28,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
-import { Case, DateLog, partition } from '../case'
+import { Case, DateLog } from '../case'
 import { EventLog } from '../event-log'
 import { IndictmentCount } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
@@ -69,6 +69,24 @@ const isDateInPeriod = (
 
 const getDateString = (date?: Date) =>
   new Date(date ?? Date.now()).toISOString().split('T')[0] // Gets the date in YYYY-MM-DD format
+
+export const partition = <T>(
+  array: T[],
+  predicate: (item: T) => boolean,
+): [T[], T[]] => {
+  const pass: T[] = []
+  const fail: T[] = []
+
+  for (const item of array) {
+    if (predicate(item)) {
+      pass.push(item)
+    } else {
+      fail.push(item)
+    }
+  }
+
+  return [pass, fail]
+}
 
 @Injectable()
 export class StatisticsService {
