@@ -59,15 +59,15 @@ import {
 } from '../police'
 import { CaseStatistics } from '../statistics'
 import {
+  IndictmentCaseStatistics,
+  RequestCaseStatistics,
+  SubpoenaStatistics,
+} from '../statistics'
+import {
   IndictmentStatisticsInput,
   RequestStatisticsInput,
   SubpoenaStatisticsInput,
 } from '../statistics/dto/caseStatistics.input'
-import {
-  IndictmentCaseStatistics,
-  RequestCaseStatistics,
-  SubpoenaStatistics,
-} from '../statistics/models/caseStatistics.model'
 import { Subpoena } from '../subpoena'
 import { Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'

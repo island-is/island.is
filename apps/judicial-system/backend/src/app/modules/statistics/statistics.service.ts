@@ -20,7 +20,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
-import { Case, DateLog, partition } from '../case'
+import { Case, DateLog } from '../case'
 import { EventLog } from '../event-log'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
@@ -40,6 +40,24 @@ import { eventFunctions } from './caseEvents'
 export enum DataGroups {
   REQUESTS = 'REQUESTS',
   INDICTMENTS = 'INDICTMENTS',
+}
+
+export const partition = <T>(
+  array: T[],
+  predicate: (item: T) => boolean,
+): [T[], T[]] => {
+  const pass: T[] = []
+  const fail: T[] = []
+
+  for (const item of array) {
+    if (predicate(item)) {
+      pass.push(item)
+    } else {
+      fail.push(item)
+    }
+  }
+
+  return [pass, fail]
 }
 
 @Injectable()
