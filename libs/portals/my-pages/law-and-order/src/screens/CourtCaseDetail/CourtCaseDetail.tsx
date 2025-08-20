@@ -35,6 +35,7 @@ const CourtCaseDetail = () => {
 
   const courtCase = data?.lawAndOrderCourtCaseDetail
   const hasVerdict = true //courtCase?.data?.hasVerdict
+  const hasVerdictBeenServed = true //courtCase?.data?.hasVerdictBeenServed
 
   useEffect(() => {
     refetch()
@@ -56,7 +57,7 @@ const CourtCaseDetail = () => {
       <Box marginBottom={3} display="flex" flexWrap="wrap">
         {data?.lawAndOrderCourtCaseDetail &&
           !loading &&
-          courtCase?.data?.hasBeenServed && (
+          courtCase?.data?.hasSubpoenaBeenServed && (
             <Box paddingRight={2} marginBottom={[1]}>
               <LinkButton
                 to={LawAndOrderPaths.SubpoenaDetail.replace(

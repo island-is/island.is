@@ -517,6 +517,7 @@
         "properties": {
           "caseNumber": { "type": "string" },
           "hasBeenServed": { "type": "boolean" },
+          "hasRuling": { "type": "boolean" },
           "hasRulingBeenServed": { "type": "boolean" },
           "groups": {
             "type": "array",
@@ -526,6 +527,7 @@
         "required": [
           "caseNumber",
           "hasBeenServed",
+          "hasRuling",
           "hasRulingBeenServed",
           "groups"
         ]

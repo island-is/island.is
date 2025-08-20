@@ -67,8 +67,9 @@ export class LawAndOrderService {
   async getCourtCase(user: User, id: string, locale: Locale) {
     const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
     const singleCase = await this.api.getCase(id, user, locale)
-    const hasBeenServed = singleCase?.data.hasBeenServed
-    const hasVerdict = singleCase?.data.hasRulingBeenServed
+    const hasSubpoenaBeenServed = singleCase?.data.hasBeenServed
+    const hasVerdict = singleCase?.data.hasRuling
+    const hasVerdictBeenServed = singleCase?.data.hasRulingBeenServed
 
     const summonString = formatMessage(m.summon)
     const seeSummonString = formatMessage(m.seeSummon)
@@ -80,19 +81,22 @@ export class LawAndOrderService {
     // add an action to the line including "fyrirkall" to redirect to the digital mailbox or detail page
     const summonSentItem: Item | undefined = {
       action: {
-        data: hasBeenServed
+        data: hasSubpoenaBeenServed
           ? formatMessage(summonLink, { caseId: singleCase?.caseId })
           : mailboxLink,
-        title: hasBeenServed ? seeSummonString : seeSummonInMailboxString,
-        type: hasBeenServed ? ActionTypeEnum.inbox : ActionTypeEnum.url,
+        title: hasSubpoenaBeenServed
+          ? seeSummonString
+          : seeSummonInMailboxString,
+        type: hasSubpoenaBeenServed ? ActionTypeEnum.inbox : ActionTypeEnum.url,
       },
     }
 
     const data: CourtCase = {
       data: {
         id: singleCase?.caseId ?? id,
-        hasBeenServed: hasBeenServed,
+        hasSubpoenaBeenServed: hasSubpoenaBeenServed,
         hasVerdict: hasVerdict,
+        hasVerdictBeenServed: hasVerdictBeenServed,
         caseNumberTitle: singleCase?.data.caseNumber,
         groups: (singleCase?.data.groups ?? []).map((group, groupIndex) => {
           return {

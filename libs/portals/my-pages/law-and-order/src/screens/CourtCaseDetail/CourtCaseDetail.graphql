@@ -8,7 +8,8 @@ query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
     }
     data {
       id
-      hasBeenServed
+      hasSubpoenaBeenServed
+      hasVerdictBeenServed
       hasVerdict
       caseNumberTitle
       groups {
