@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const policeCaseInfo = defineMessages({
+export const strings = defineMessages({
   policeCaseNumberLabel: {
     id: 'judicial.system.core:police_case_info.police_case_number_label',
     defaultMessage: 'LÖKE málsnúmer',

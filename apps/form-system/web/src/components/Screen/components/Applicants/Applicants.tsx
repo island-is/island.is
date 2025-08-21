@@ -5,13 +5,14 @@ import {
   IndividualApplicant,
   LegalEntity,
 } from '@island.is/form-system/ui'
-import { useQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { useQuery } from '@apollo/client'
 interface Props {
   applicantTypes: FormSystemApplicant[]
 }
+
 export const Applicants = ({ applicantTypes }: Props) => {
   const { lang } = useLocale()
   const { data } = useQuery(USER_PROFILE, {
@@ -61,7 +62,6 @@ export const Applicants = ({ applicantTypes }: Props) => {
               applicantType={applicantType}
               lang={lang}
               key={applicantType.id}
-              user={data?.getUserProfile}
             />
           )
         }

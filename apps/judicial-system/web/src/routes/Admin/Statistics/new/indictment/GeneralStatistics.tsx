@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
+import { AnimatePresence } from 'motion/react'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import {
   InfoCard,
   LabelValue,
@@ -70,7 +71,7 @@ const indictmentFilterKeys = [
   'sentToCourt',
 ] as (keyof IndictmentFilterType)[]
 
-export const GeneralStatistics = () => {
+const GeneralStatisticsBody = ({ minDate }: { minDate?: Date }) => {
   const [stats, setStats] = useState<IndictmentCaseStatistics | undefined>()
   const [filters, setFilters] = useState<IndictmentFilterType>({})
 
@@ -101,8 +102,30 @@ export const GeneralStatistics = () => {
         filters={filters}
         setFilters={setFilters}
         onClear={() => setFilters({})}
+        minDate={minDate}
       />
       <Statistics stats={stats} loading={loading} />
     </Box>
+  )
+}
+
+export const GeneralStatistics = () => {
+  // We extract the initial call to fetch the request statistics data to a specific parent component
+  // to fetch defined statistical constraints (minDate) once. The child component is
+  // currently re-rendered on each filter change.
+  const { data, loading } = useIndictmentCaseStatisticsQuery({
+    variables: {
+      input: {},
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+  const minDate = data?.indictmentCaseStatistics?.minDate ?? new Date()
+
+  return loading && !data ? (
+    <SkeletonLoader height={800} />
+  ) : (
+    <AnimatePresence mode="wait">
+      <GeneralStatisticsBody minDate={new Date(minDate)} />
+    </AnimatePresence>
   )
 }

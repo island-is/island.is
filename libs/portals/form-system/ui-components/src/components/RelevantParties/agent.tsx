@@ -1,15 +1,8 @@
 import { FormSystemApplicant } from '@island.is/api/schema'
 import { Input, Stack, Box, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { NationalIdField } from './components/nationalIdField'
-import {
-  GET_NAME_BY_NATIONALID,
-  GET_ADDRESS_BY_NATIONALID,
-} from '@island.is/form-system/graphql'
 import { m, webMessages } from '../../lib/messages'
-import { useQuery } from '@apollo/client'
-import { User } from './types'
-import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
+import { NationalIdField } from './components/nationalIdField'
 
 interface Props {
   applicantType: FormSystemApplicant

@@ -24,6 +24,9 @@ import { OrganizationPermissionsModule } from './modules/organizationPermissions
     AuthModule.register(environment.auth),
     AuditModule.forRoot(environment.audit),
     LoggingModule,
+    SequelizeModule.forRootAsync({
+      useClass: SequelizeConfigService,
+    }),
     OrganizationsModule,
     FormsModule,
     SectionsModule,
@@ -37,9 +40,6 @@ import { OrganizationPermissionsModule } from './modules/organizationPermissions
     OrganizationPermissionsModule,
     OrganizationUrlsModule,
     ServicesModule,
-    SequelizeModule.forRootAsync({
-      useClass: SequelizeConfigService,
-    }),
   ],
 })
 export class AppModule {}
