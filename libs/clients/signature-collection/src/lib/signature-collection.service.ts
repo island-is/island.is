@@ -46,15 +46,6 @@ export class SignatureCollectionClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(
-    collectionTypeFilter: CollectionType,
-  ): Promise<Collection[]> {
-    return await this.sharedService.currentCollection(
-      this.electionsApi,
-      collectionTypeFilter,
-    )
-  }
-
   async getLatestCollectionForType(
     collectionType: CollectionType,
   ): Promise<Collection> {
@@ -165,17 +156,23 @@ export class SignatureCollectionClientService {
     { collectionId, owner, areas, collectionType, listName }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
-    const matchingCollection = (
-      await this.currentCollection(CollectionType.LocalGovernmental)
-    ).find((collection) => collection.id === collectionId)
-    if (!matchingCollection) {
+    const currentCollection = await this.getLatestCollectionForType(
+      CollectionType.LocalGovernmental,
+    )
+
+    const inputAreaId = areas?.[0].areaId
+    const currentAreaCollectionId = currentCollection.areas.find(
+      (area) => area.id === inputAreaId,
+    )?.collectionId
+
+    if (currentAreaCollectionId !== collectionId) {
       throw new Error('Collection not found')
     }
 
-    const { id, isActive, areas: collectionAreas } = matchingCollection
+    const { areas: collectionAreas } = currentCollection
 
-    // check if collectionId is current collection and current collection is open
-    if (collectionId !== id.toString() || !isActive) {
+    // check if collection is open
+    if (!collectionAreas.find((area) => area.id === inputAreaId)?.isActive) {
       // TODO: create ApplicationTemplateError
       throw new Error('Collection is not open')
     }
@@ -200,7 +197,7 @@ export class SignatureCollectionClientService {
       auth,
     ).frambodPost({
       frambodRequestDTO: {
-        sofnunID: parseInt(id),
+        sofnunID: parseInt(collectionId),
         kennitala: owner.nationalId.replace(/\D/g, ''),
         frambodNafn: `${listName ?? partyBallotLetterInfo?.name}`,
         simi: owner.phone,

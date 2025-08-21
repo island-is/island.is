@@ -75,16 +75,6 @@ export class SignatureCollectionAdminClientService
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(
-    auth: Auth,
-    collectionTypeFilter?: CollectionType,
-  ): Promise<Collection[]> {
-    return await this.sharedService.currentCollection(
-      this.getApiWithAuth(this.electionsApi, auth),
-      collectionTypeFilter,
-    )
-  }
-
   async getLatestCollectionForType(
     auth: Auth,
     collectionType: CollectionType,

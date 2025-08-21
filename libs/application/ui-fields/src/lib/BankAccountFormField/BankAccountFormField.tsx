@@ -1,4 +1,5 @@
 import {
+  buildFieldRequired,
   coreDefaultFieldMessages,
   formatText,
   formatTextWithLocale,
@@ -14,8 +15,15 @@ interface Props extends FieldBaseProps {
 }
 export const BankAccountFormField = ({ field, application }: Props) => {
   const { formatMessage, lang: locale } = useLocale()
-  const { marginBottom, marginTop, title, titleVariant, id, clearOnChange } =
-    field
+  const {
+    marginBottom,
+    marginTop,
+    title,
+    titleVariant,
+    id,
+    clearOnChange,
+    required,
+  } = field
   const bankNumber = formatText(
     coreDefaultFieldMessages.defaultBankAccountBankNumber,
     application,
@@ -55,10 +63,11 @@ export const BankAccountFormField = ({ field, application }: Props) => {
               backgroundColor="blue"
               autoFocus
               clearOnChange={clearOnChange}
+              required={buildFieldRequired(application, required)}
             />
           </Box>
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '2/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '3/12', '2/12']}>
           <Box marginBottom={[2, 2, 4]}>
             <InputController
               id={`${id}.ledger`}
@@ -68,10 +77,11 @@ export const BankAccountFormField = ({ field, application }: Props) => {
               format="##"
               backgroundColor="blue"
               clearOnChange={clearOnChange}
+              required={buildFieldRequired(application, required)}
             />
           </Box>
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12', '6/12']}>
           <Box marginBottom={[2, 2, 4]}>
             <InputController
               id={`${id}.accountNumber`}
@@ -81,6 +91,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
               format="######"
               backgroundColor="blue"
               clearOnChange={clearOnChange}
+              required={buildFieldRequired(application, required)}
             />
           </Box>
         </GridColumn>
