@@ -1,7 +1,6 @@
 import {
   buildSection,
   getValueViaPath,
-  buildTextField,
   buildAlertMessageField,
   buildMultiField,
 } from '@island.is/application/core'
