@@ -15,7 +15,6 @@ interface TimeDuration {
   startTime?: string
   endTime?: string
   endDate?: string
-  endDateEndTime?: string
 }
 
 const TimeDurationField = () => {
@@ -108,30 +107,60 @@ const TimeDurationField = () => {
         </>
       )}
       {!startDateIsSameAsEndDate && startDate && (
-        <div>
-          <FormControl.Label>End date</FormControl.Label>
-          <Flex gap="spacingS" flexDirection="column">
-            <Datepicker
-              selected={time.endDate ? new Date(time.endDate) : fromDate}
-              fromDate={fromDate}
-              onSelect={(day) => {
-                updateTime('endDate', day.toISOString())
-              }}
-              style={{ width: '267px' }}
-            />
-            <TextInput
-              type="time"
-              value={time.endDateEndTime}
-              style={{ width: '267px' }}
-              size="small"
-              name="end-time"
-              placeholder="End time"
-              onChange={(ev) => {
-                updateTime('endDateEndTime', ev.target.value)
-              }}
-            />
+        <Flex gap="spacingS" flexDirection="column">
+          <Flex flexDirection="column">
+            <FormControl.Label>Start date</FormControl.Label>
+            <Text>
+              {startDate.getDate()}.{startDate.getMonth() + 1}.
+              {startDate.getFullYear()}
+            </Text>
           </Flex>
-        </div>
+          <Flex gap="spacingS" flexDirection="column">
+            <Flex flexDirection="column">
+              <FormControl.Label>Start time</FormControl.Label>
+              <TextInput
+                type="time"
+                value={time.endTime}
+                style={{ width: '267px' }}
+                size="small"
+                name="end-time"
+                placeholder="End time"
+                onChange={(ev) => {
+                  updateTime('endTime', ev.target.value)
+                }}
+              />
+            </Flex>
+          </Flex>
+
+          <Flex gap="spacingS" flexDirection="column">
+            <Flex flexDirection="column">
+              <FormControl.Label>End date</FormControl.Label>
+              <Datepicker
+                selected={time.endDate ? new Date(time.endDate) : fromDate}
+                fromDate={fromDate}
+                onSelect={(day) => {
+                  updateTime('endDate', day.toISOString())
+                }}
+                style={{ width: '267px' }}
+              />
+            </Flex>
+            <Flex flexDirection="column">
+              <FormControl.Label>End time</FormControl.Label>
+
+              <TextInput
+                type="time"
+                value={time.endTime}
+                style={{ width: '267px' }}
+                size="small"
+                name="end-time"
+                placeholder="End time"
+                onChange={(ev) => {
+                  updateTime('endTime', ev.target.value)
+                }}
+              />
+            </Flex>
+          </Flex>
+        </Flex>
       )}
       {!startDateIsSameAsEndDate && !startDate && (
         <Text>Please select a start date</Text>
