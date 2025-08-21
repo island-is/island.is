@@ -190,7 +190,7 @@ export const NavComponent = ({
             ) &&
               selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
-          {selectable && type === 'Field' && (
+          {selectable && (
             <Box className={cn(styles.selectableComponent)} marginLeft="auto">
               <Checkbox
                 checked={connected()}
