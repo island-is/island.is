@@ -23,7 +23,7 @@ export const Checkbox = ({ item, dispatch, lang = 'is' }: Props) => {
         <CheckboxField
           name={field.name}
           label={item?.name?.[lang] ?? ''}
-          checked={!!field.value}
+          checked={getValue(item, 'checkboxValue') ?? false}
           onChange={(e) => {
             field.onChange(e.target.checked)
             if (dispatch) {
