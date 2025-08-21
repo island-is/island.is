@@ -8,13 +8,21 @@ import { UpdateScreensDisplayOrderDto } from './models/dto/updateScreensDisplayO
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import { Field } from '../fields/models/field.model'
+import { Section } from '../sections/models/section.model'
+import { Form } from '../forms/models/form.model'
+import { filterArrayDependency, filterDependency } from '../../../utils/dependenciesHelper'
 
 @Injectable()
 export class ScreensService {
   constructor(
     @InjectModel(Screen)
     private readonly screenModel: typeof Screen,
-  ) {}
+    @InjectModel(Section)
+    private readonly sectionModel: typeof Section,
+    @InjectModel(Form)
+    private readonly formModel: typeof Form
+  ) { }
 
   async create(createScreenDto: CreateScreenDto): Promise<ScreenDto> {
     const screen = createScreenDto as Screen
@@ -68,9 +76,23 @@ export class ScreensService {
 
   async delete(id: string): Promise<void> {
     const screen = await this.screenModel.findByPk(id)
-
     if (!screen) {
       throw new NotFoundException(`Screen with id '${id}' not found`)
+    }
+
+    const section = await this.sectionModel.findByPk(screen?.sectionId)
+    const form = await this.formModel.findByPk(section?.formId)
+
+    if (form) {
+      const { dependencies } = form
+      if (screen.fields) {
+        const fieldIds = screen.fields.map(field => field.id)
+        const newDependencies = filterArrayDependency(dependencies, [...fieldIds, id])
+        form.dependencies = newDependencies
+      } else {
+        form.dependencies = filterDependency(dependencies, id)
+      }
+      form.save()
     }
 
     screen.destroy()

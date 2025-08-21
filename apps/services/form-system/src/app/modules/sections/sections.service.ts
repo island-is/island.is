@@ -8,13 +8,18 @@ import { UpdateSectionsDisplayOrderDto } from './models/dto/updateSectionsDispla
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import { Form } from '../forms/models/form.model'
+import { filterArrayDependency, filterDependency } from '../../../utils/dependenciesHelper'
+import { SectionTypes } from '@island.is/form-system/shared'
 
 @Injectable()
 export class SectionsService {
   constructor(
     @InjectModel(Section)
     private readonly sectionModel: typeof Section,
-  ) {}
+    @InjectModel(Form)
+    private readonly formModel: typeof Form
+  ) { }
 
   async create(createSectionDto: CreateSectionDto): Promise<SectionDto> {
     const section = createSectionDto as Section
@@ -48,6 +53,7 @@ export class SectionsService {
     const { sectionsDisplayOrderDto: sectionsDisplayOrderDto } =
       updateSectionDisplayOrderDto
 
+
     for (let i = 0; i < sectionsDisplayOrderDto.length; i++) {
       const section = await this.sectionModel.findByPk(
         sectionsDisplayOrderDto[i].id,
@@ -58,6 +64,8 @@ export class SectionsService {
           `Section with id '${sectionsDisplayOrderDto[i].id}' not found`,
         )
       }
+
+      if (section.sectionType === SectionTypes.SUMMARY || section.sectionType === SectionTypes.PAYMENT) continue
 
       await section.update({
         displayOrder: i,
@@ -70,6 +78,23 @@ export class SectionsService {
 
     if (!section) {
       throw new NotFoundException(`Section with id '${id}' not found`)
+    }
+
+    const form = await this.formModel.findByPk(section.formId)
+
+    if (form) {
+      const { dependencies } = form
+      if (section.screens) {
+        const screenIds = section.screens.map(screen => screen.id)
+        const fieldIds = section.screens
+          .filter(screen => Array.isArray(screen.fields) && screen.fields.length > 0)
+          .flatMap(screen => screen.fields.map(field => field.id))
+        const newDependencies = filterArrayDependency(dependencies, [...screenIds, ...fieldIds, id])
+        form.dependencies = newDependencies
+      } else {
+        form.dependencies = filterDependency(dependencies, id)
+      }
+      form.save()
     }
 
     section.destroy()
