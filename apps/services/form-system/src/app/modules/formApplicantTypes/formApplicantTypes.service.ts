@@ -122,6 +122,8 @@ export class FormApplicantTypesService {
       'name',
       'displayOrder',
       'description',
+      'isPartOfMultiset',
+      'isRequired',
       'fieldType',
       'fieldSettings',
     ]
@@ -142,6 +144,8 @@ export class FormApplicantTypesService {
       pick(newScreen, screenKeys),
       zipObject(screenKeys, Array(screenKeys.length).fill(null)),
     ) as ScreenDto
+
+    screenDto.fields = [fieldDto]
 
     return screenDto
 
