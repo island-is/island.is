@@ -51,10 +51,18 @@ export class ApplicationChargeService {
           return
         }
       }
-
+      console.log('************************************************')
+      console.log('deleteCharge, payment object')
+      console.dir(payment, { depth: null, colors: true })
+      console.log('************************************************')
       // Delete the charge, using the ID we got from FJS
       const paymentUrl = (payment.definition as { paymentUrl: string })
         ?.paymentUrl as string
+
+      console.log('************************************************')
+      console.log('deleteCharge, paymentUrl')
+      console.log(paymentUrl)
+      console.log('************************************************')
 
       const url = new URL(paymentUrl)
       const chargeId = url.pathname.split('/').pop()

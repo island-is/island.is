@@ -13,6 +13,10 @@ export const getPaymentIdFromExternalData = (application: Application) => {
     paymentUrl: string
   }
 
+  console.log('************************************************')
+  console.log('getPaymentIdFromExternalData paymentUrl', paymentUrl)
+  console.log('************************************************')
+
   const url = new URL(paymentUrl)
   const id = url.pathname.split('/').pop()
 
