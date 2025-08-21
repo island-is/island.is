@@ -621,7 +621,7 @@ export const getDefaultSupportCaseworker = (
 export const hasDefaultSupportCaseworker = (
   externalData: ExternalData,
   type: CaseWorkerInputTypeEnum,
-) => {
+): YesOrNoOrEmpty => {
   const { socialProfile } = getApplicationExternalData(externalData)
 
   // If no child information is available (not registered in Frigg), return an empty string
