@@ -15,6 +15,7 @@ import { OptionsType } from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getDefaultYESNOValue,
   hasDefaultAllergies,
   hasDefaultFoodAllergiesOrIntolerances,
 } from '../../../utils/newPrimarySchoolUtils'
@@ -95,9 +96,7 @@ export const healthProtectionSubSection = buildSubSection({
             },
           ],
           defaultValue: (application: Application) => {
-            const v = hasDefaultFoodAllergiesOrIntolerances(
-              application.externalData,
-            )
+            const v = hasDefaultAllergies(application.externalData)
             return v === YES ? [YES] : []
           },
         }),
@@ -182,7 +181,8 @@ export const healthProtectionSubSection = buildSubSection({
             const { healthProfile } = getApplicationExternalData(
               application.externalData,
             )
-            return healthProfile?.usesEpipen ? YES : ''
+
+            return getDefaultYESNOValue(healthProfile?.usesEpipen)
           },
         }),
         buildRadioField({
@@ -212,7 +212,10 @@ export const healthProtectionSubSection = buildSubSection({
             const { healthProfile } = getApplicationExternalData(
               application.externalData,
             )
-            return healthProfile?.hasConfirmedMedicalDiagnoses ? YES : ''
+
+            return getDefaultYESNOValue(
+              healthProfile?.hasConfirmedMedicalDiagnoses,
+            )
           },
         }),
         buildDescriptionField({
@@ -247,7 +250,10 @@ export const healthProtectionSubSection = buildSubSection({
             const { healthProfile } = getApplicationExternalData(
               application.externalData,
             )
-            return healthProfile?.requestsMedicationAdministration ? YES : ''
+
+            return getDefaultYESNOValue(
+              healthProfile?.requestsMedicationAdministration,
+            )
           },
         }),
         buildAlertMessageField({

@@ -19,6 +19,7 @@ import {
   SelectOption,
   SiblingsRow,
   SocialProfile,
+  YesOrNoOrEmpty,
 } from '../types'
 import {
   AffiliationRole,
@@ -606,7 +607,7 @@ export const hasDefaultAllergies = (externalData: ExternalData) => {
   return (healthProfile?.allergies?.length ?? 0) > 0 ? YES : NO
 }
 
-export const hasDefaultSupportCaseworkers = (
+export const getDefaultSupportCaseworker = (
   externalData: ExternalData,
   type: CaseWorkerInputTypeEnum,
 ) => {
@@ -615,4 +616,26 @@ export const hasDefaultSupportCaseworkers = (
   return socialProfile?.caseWorkers?.find(
     (caseWorker) => caseWorker.type === type,
   )
+}
+
+export const hasDefaultSupportCaseworker = (
+  externalData: ExternalData,
+  type: CaseWorkerInputTypeEnum,
+) => {
+  const { socialProfile } = getApplicationExternalData(externalData)
+
+  // If no child information is available (not registered in Frigg), return an empty string
+  if (!socialProfile || !socialProfile?.caseWorkers) {
+    return ''
+  }
+
+  return getDefaultSupportCaseworker(externalData, type) ? YES : NO
+}
+
+export const getDefaultYESNOValue = (
+  value: boolean | null | undefined,
+): YesOrNoOrEmpty => {
+  // If no child information is available (not registered in Frigg), return an empty string
+  // else return YES or NO based on the boolean value comming from Frigg
+  return value ? YES : value === false ? NO : ''
 }

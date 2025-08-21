@@ -1,4 +1,7 @@
+import { NO, YES } from '@island.is/application/core'
 import { AffiliationOrganizationType, AffiliationRole } from './utils/constants'
+
+export type YesOrNoOrEmpty = typeof YES | typeof NO | ''
 
 export interface RelativesRow {
   fullName: string

@@ -5,8 +5,8 @@ import { LanguageEnvironmentOptions } from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getDefaultSupportCaseworker,
   getOtherGuardian,
-  hasDefaultSupportCaseworkers,
 } from './newPrimarySchoolUtils'
 
 export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
@@ -29,7 +29,7 @@ export const isWelfareContactSelected = (
       socialProfile?.hasDiagnoses === true ||
       socialProfile?.hasHadSupport === true) &&
     (hasWelfareContact === YES ||
-      !!hasDefaultSupportCaseworkers(
+      !!getDefaultSupportCaseworker(
         externalData,
         CaseWorkerInputTypeEnum.SupportManager,
       ))

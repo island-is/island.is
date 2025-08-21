@@ -16,7 +16,9 @@ import { ApplicationType, SchoolType } from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  hasDefaultSupportCaseworkers,
+  getDefaultSupportCaseworker,
+  getDefaultYESNOValue,
+  hasDefaultSupportCaseworker,
 } from '../../../utils/newPrimarySchoolUtils'
 
 export const supportSubSection = buildSubSection({
@@ -65,7 +67,7 @@ export const supportSubSection = buildSubSection({
               application.externalData,
             )
 
-            return socialProfile?.hasDiagnoses ? YES : ''
+            return getDefaultYESNOValue(socialProfile?.hasDiagnoses)
           },
         }),
         buildRadioField({
@@ -101,7 +103,7 @@ export const supportSubSection = buildSubSection({
               application.externalData,
             )
 
-            return socialProfile?.hasHadSupport ? YES : ''
+            return getDefaultYESNOValue(socialProfile?.hasHadSupport)
           },
         }),
         buildRadioField({
@@ -147,13 +149,11 @@ export const supportSubSection = buildSubSection({
               socialProfile?.hasHadSupport === true
             )
           },
-          defaultValue: (application: Application) => {
-            const caseWorker = hasDefaultSupportCaseworkers(
+          defaultValue: (application: Application) =>
+            hasDefaultSupportCaseworker(
               application.externalData,
               CaseWorkerInputTypeEnum.SupportManager,
-            )
-            return caseWorker ? YES : ''
-          },
+            ),
         }),
         buildTextField({
           id: 'support.welfareContact.name',
@@ -163,13 +163,11 @@ export const supportSubSection = buildSubSection({
           condition: (answers, externalData) => {
             return isWelfareContactSelected(answers, externalData)
           },
-          defaultValue: (application: Application) => {
-            const caseWorker = hasDefaultSupportCaseworkers(
+          defaultValue: (application: Application) =>
+            getDefaultSupportCaseworker(
               application.externalData,
               CaseWorkerInputTypeEnum.SupportManager,
-            )
-            return caseWorker?.name
-          },
+            )?.name,
         }),
         buildTextField({
           id: 'support.welfareContact.email',
@@ -179,13 +177,11 @@ export const supportSubSection = buildSubSection({
           condition: (answers, externalData) => {
             return isWelfareContactSelected(answers, externalData)
           },
-          defaultValue: (application: Application) => {
-            const caseWorker = hasDefaultSupportCaseworkers(
+          defaultValue: (application: Application) =>
+            getDefaultSupportCaseworker(
               application.externalData,
               CaseWorkerInputTypeEnum.SupportManager,
-            )
-            return caseWorker?.email
-          },
+            )?.email,
         }),
         buildRadioField({
           id: 'support.hasCaseManager',
@@ -210,14 +206,11 @@ export const supportSubSection = buildSubSection({
           condition: (answers, externalData) => {
             return isWelfareContactSelected(answers, externalData)
           },
-          defaultValue: (application: Application) => {
-            const caseWorker = hasDefaultSupportCaseworkers(
+          defaultValue: (application: Application) =>
+            hasDefaultSupportCaseworker(
               application.externalData,
               CaseWorkerInputTypeEnum.CaseManager,
-            )
-
-            return caseWorker ? YES : ''
-          },
+            ),
         }),
         buildTextField({
           id: 'support.caseManager.name',
@@ -226,7 +219,7 @@ export const supportSubSection = buildSubSection({
           required: true,
           condition: (answers, externalData) => {
             const { hasCaseManager } = getApplicationAnswers(answers)
-            const caseWorker = hasDefaultSupportCaseworkers(
+            const caseWorker = getDefaultSupportCaseworker(
               externalData,
               CaseWorkerInputTypeEnum.CaseManager,
             )
@@ -237,13 +230,11 @@ export const supportSubSection = buildSubSection({
               caseWorker !== undefined
             )
           },
-          defaultValue: (application: Application) => {
-            const caseWorker = hasDefaultSupportCaseworkers(
+          defaultValue: (application: Application) =>
+            getDefaultSupportCaseworker(
               application.externalData,
               CaseWorkerInputTypeEnum.CaseManager,
-            )
-            return caseWorker?.name || ''
-          },
+            )?.name || '',
         }),
         buildTextField({
           id: 'support.caseManager.email',
@@ -252,7 +243,7 @@ export const supportSubSection = buildSubSection({
           required: true,
           condition: (answers, externalData) => {
             const { hasCaseManager } = getApplicationAnswers(answers)
-            const caseWorker = hasDefaultSupportCaseworkers(
+            const caseWorker = getDefaultSupportCaseworker(
               externalData,
               CaseWorkerInputTypeEnum.CaseManager,
             )
@@ -263,13 +254,11 @@ export const supportSubSection = buildSubSection({
               caseWorker !== undefined
             )
           },
-          defaultValue: (application: Application) => {
-            const caseWorker = hasDefaultSupportCaseworkers(
+          defaultValue: (application: Application) =>
+            getDefaultSupportCaseworker(
               application.externalData,
               CaseWorkerInputTypeEnum.CaseManager,
-            )
-            return caseWorker?.email || ''
-          },
+            )?.email || '',
         }),
         buildRadioField({
           id: 'support.hasIntegratedServices',
@@ -300,7 +289,7 @@ export const supportSubSection = buildSubSection({
               application.externalData,
             )
 
-            return socialProfile?.hasIntegratedServices ? YES : ''
+            return getDefaultYESNOValue(socialProfile?.hasIntegratedServices)
           },
         }),
         buildAlertMessageField({
