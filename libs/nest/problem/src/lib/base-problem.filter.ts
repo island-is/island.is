@@ -1,3 +1,4 @@
+import { getRequest } from '@island.is/auth-nest-tools'
 import {
   ArgumentsHost,
   ExceptionFilter,
@@ -31,11 +32,13 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
 
   catch(error: Error, host: ArgumentsHost) {
     const problem = (error as ProblemError).problem || this.getProblem(error)
+    const request = getRequest(host)
+    const traceSid = request.auth?.traceSid
 
     if (problem.status && problem.status >= 500) {
-      this.logger.error(error)
+      this.logger.error(traceSid ? { message: error, traceSid } : error)
     } else if (this.options.logAllErrors) {
-      this.logger.info(error)
+      this.logger.info(traceSid ? { message: error, traceSid } : error)
     }
 
     if ((host.getType() as string) === 'graphql') {

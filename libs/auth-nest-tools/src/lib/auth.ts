@@ -8,6 +8,7 @@ import {
 export interface Auth {
   sub?: string
   sid?: string
+  traceSid?: string
   nationalId?: string
   scope: string[]
   authorization: string
