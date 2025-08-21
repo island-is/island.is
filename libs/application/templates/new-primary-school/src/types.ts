@@ -1,5 +1,9 @@
 import { NO, YES } from '@island.is/application/core'
-import { AffiliationOrganizationType, AffiliationRole } from './utils/constants'
+import {
+  AffiliationOrganizationType,
+  AffiliationRole,
+  CaseWorkerInputTypeEnum,
+} from './utils/constants'
 
 export type YesOrNoOrEmpty = typeof YES | typeof NO | ''
 
@@ -171,9 +175,4 @@ export type CurrentSchool = {
   grade?: string
   school?: string
   municipality?: string
-}
-
-export enum CaseWorkerInputTypeEnum {
-  CaseManager = 'caseManager',
-  SupportManager = 'supportManager',
 }

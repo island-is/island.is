@@ -9,7 +9,6 @@ import { MessageDescriptor } from 'react-intl'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
   Affiliation,
-  CaseWorkerInputTypeEnum,
   Child,
   ChildInformation,
   FriggChildInformation,
@@ -24,6 +23,7 @@ import {
 import {
   AffiliationRole,
   ApplicationType,
+  CaseWorkerInputTypeEnum,
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'

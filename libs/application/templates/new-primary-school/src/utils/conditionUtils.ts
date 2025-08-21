@@ -1,7 +1,9 @@
 import { YES } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { CaseWorkerInputTypeEnum } from '../types'
-import { LanguageEnvironmentOptions } from './constants'
+import {
+  CaseWorkerInputTypeEnum,
+  LanguageEnvironmentOptions,
+} from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,

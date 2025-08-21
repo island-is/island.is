@@ -10,9 +10,12 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { CaseWorkerInputTypeEnum } from '../../../types'
 import { isWelfareContactSelected } from '../../../utils/conditionUtils'
-import { ApplicationType, SchoolType } from '../../../utils/constants'
+import {
+  ApplicationType,
+  CaseWorkerInputTypeEnum,
+  SchoolType,
+} from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
