@@ -15,6 +15,7 @@ interface TimeDuration {
   startTime?: string
   endTime?: string
   endDate?: string
+  endDateEndTime?: string
 }
 
 const TimeDurationField = () => {
@@ -109,28 +110,27 @@ const TimeDurationField = () => {
       {!startDateIsSameAsEndDate && startDate && (
         <div>
           <FormControl.Label>End date</FormControl.Label>
-          <Datepicker
-            selected={time.endDate ? new Date(time.endDate) : fromDate}
-            fromDate={fromDate}
-            onSelect={(day) => {
-              updateTime('endDate', day.toISOString())
-            }}
-          />
-
-          <TextInput.Group spacing="spacingS">
+          <Flex gap="spacingS" flexDirection="column">
+            <Datepicker
+              selected={time.endDate ? new Date(time.endDate) : fromDate}
+              fromDate={fromDate}
+              onSelect={(day) => {
+                updateTime('endDate', day.toISOString())
+              }}
+              style={{ width: '267px' }}
+            />
             <TextInput
               type="time"
-              value={time.endTime}
-              style={{ width: '150px' }}
+              value={time.endDateEndTime}
+              style={{ width: '267px' }}
               size="small"
               name="end-time"
               placeholder="End time"
               onChange={(ev) => {
-                updateTime('endTime', ev.target.value)
+                updateTime('endDateEndTime', ev.target.value)
               }}
             />
-          </TextInput.Group>
-          <FormControl.HelpText>Ex. 12:00 - 14:00</FormControl.HelpText>
+          </Flex>
         </div>
       )}
       {!startDateIsSameAsEndDate && !startDate && (
