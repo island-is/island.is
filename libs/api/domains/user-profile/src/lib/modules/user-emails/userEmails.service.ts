@@ -29,11 +29,11 @@ export class UserEmailsService {
   }
 
   async getEmails(user: User): Promise<EmailsDto[]> {
-    return this.v2EmailsApiWithAuth(user).emailsControllerFindAllByNationalId()
+    return this.v2EmailsApiWithAuth(user).emailsControllerFindAllByNationalIdV2()
   }
 
   async addEmail({ user, input }: { user: User; input: AddEmailInput }) {
-    return this.v2EmailsApiWithAuth(user).emailsControllerCreateEmail({
+    return this.v2EmailsApiWithAuth(user).emailsControllerCreateEmailV2({
       createEmailDto: input,
     })
   }
@@ -45,7 +45,7 @@ export class UserEmailsService {
     emailId: string
     user: User
   }): Promise<boolean> {
-    await this.v2MeApiWithAuth(user).meUserProfileControllerSetEmailAsPrimary({
+    await this.v2MeApiWithAuth(user).meUserProfileControllerSetEmailAsPrimaryV2({
       emailId,
     })
 
@@ -61,7 +61,7 @@ export class UserEmailsService {
   }): Promise<boolean> {
     await this.v2ActorApiWithAuth(
       user,
-    ).actorUserProfileControllerSetActorProfileEmail({
+    ).actorUserProfileControllerSetActorProfileEmailV2({
       setActorProfileEmailDto: {
         emailsId: emailId,
       },
@@ -71,7 +71,7 @@ export class UserEmailsService {
   }
 
   async deleteEmail({ emailId, user }: { emailId: string; user: User }) {
-    await this.v2EmailsApiWithAuth(user).emailsControllerDeleteEmail({
+    await this.v2EmailsApiWithAuth(user).emailsControllerDeleteEmailV2({
       emailId,
     })
 

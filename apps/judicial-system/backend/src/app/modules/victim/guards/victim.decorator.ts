@@ -1,7 +1,10 @@
-import { createParamDecorator } from '@nestjs/common'
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
 import { Victim } from '../models/victim.model'
 
 export const CurrentVictim = createParamDecorator(
-  (data, { args: [_1, { req }] }): Victim => req.victim,
+  (data: unknown, context: ExecutionContext): Victim => {
+    const ctx = context.getArgByIndex(1)
+    return ctx?.req?.victim
+  },
 )

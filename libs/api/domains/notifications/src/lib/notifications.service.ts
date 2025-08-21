@@ -36,7 +36,7 @@ export class NotificationsService {
     this.logger.debug('getting potential notifications')
     const notifications = await this.userNotificationsWAuth(
       user,
-    ).meNotificationsControllerFindMany({
+    ).meNotificationsControllerFindManyV1({
       locale,
       limit: input?.limit,
       before: input?.before,
@@ -49,7 +49,7 @@ export class NotificationsService {
     }
 
     return {
-      data: notifications.data.map((item) => notificationMapper(item)),
+      data: notifications.data.map((item: any) => notificationMapper(item)),
       totalCount: notifications.totalCount,
       pageInfo: notifications.pageInfo,
     }
@@ -63,7 +63,7 @@ export class NotificationsService {
     this.logger.debug('getting potential single notification')
     const notification = await this.userNotificationsWAuth(
       user,
-    ).meNotificationsControllerFindOne({ locale, id })
+    ).meNotificationsControllerFindOneV1({ locale, id })
 
     if (!notification) {
       this.logger.debug('no notification found')
@@ -80,7 +80,7 @@ export class NotificationsService {
 
     await this.userNotificationsWAuth(
       user,
-    ).meNotificationsControllerMarkAllAsSeen()
+    ).meNotificationsControllerMarkAllAsSeenV1()
 
     return {
       success: true,
@@ -94,7 +94,7 @@ export class NotificationsService {
 
     await this.userNotificationsWAuth(
       user,
-    ).meNotificationsControllerMarkAllAsRead()
+    ).meNotificationsControllerMarkAllAsReadV1()
 
     return {
       success: true,
@@ -106,7 +106,7 @@ export class NotificationsService {
 
     const res = await this.userNotificationsWAuth(
       user,
-    ).meNotificationsControllerGetUnreadNotificationsCount()
+    ).meNotificationsControllerGetUnreadNotificationsCountV1()
 
     return res
   }
@@ -116,7 +116,7 @@ export class NotificationsService {
 
     const res = await this.userNotificationsWAuth(
       user,
-    ).meNotificationsControllerGetUnseenNotificationsCount()
+    ).meNotificationsControllerGetUnseenNotificationsCountV1()
 
     return res
   }
@@ -131,7 +131,7 @@ export class NotificationsService {
     )
     const notification = await this.userNotificationsWAuth(
       user,
-    ).meNotificationsControllerUpdate({
+    ).meNotificationsControllerUpdateV1({
       locale,
       id,
       updateNotificationDto: {

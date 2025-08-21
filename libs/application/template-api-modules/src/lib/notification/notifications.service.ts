@@ -79,7 +79,7 @@ export class NotificationsService {
     }
 
     const response =
-      await this.notificationApi.notificationsControllerCreateHnippNotification(
+      await this.notificationApi.notificationsControllerCreateHnippNotificationV1(
         {
           createHnippNotificationDto: notification,
         },

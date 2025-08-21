@@ -1,7 +1,10 @@
-import { createParamDecorator } from '@nestjs/common'
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
 import type { User } from '@island.is/judicial-system/types'
 
 export const CurrentGraphQlUser = createParamDecorator(
-  (data, { args: [_1, _2, { req }] }): User => req.user?.currentUser,
+  (data: unknown, context: ExecutionContext): User => {
+    const ctx = context.getArgByIndex(2)
+    return ctx?.req?.user?.currentUser
+  },
 )

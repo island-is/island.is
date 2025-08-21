@@ -28,6 +28,7 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
       playground,
       autoSchemaFile,
       path: '/api/graphql',
+      allowBatchedHttpRequests: true,
       cache:
         this.config.redis.nodes.length > 0
           ? createRedisApolloCache({

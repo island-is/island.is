@@ -38,14 +38,14 @@ export class UniversityGatewayApi {
   }
 
   async getActivePrograms(): Promise<UniversityGatewayProgramsPaginated> {
-    const res = await this.programApi.programControllerGetPrograms({
+    const res = await this.programApi.programControllerGetProgramsV1({
       active: true,
     })
 
     return {
       totalCount: res.totalCount,
       pageInfo: res.pageInfo,
-      data: res.data.map((item) => ({
+      data: res.data.map((item: any) => ({
         active: item.active,
         id: item.id,
         externalId: item.externalId,
@@ -72,7 +72,7 @@ export class UniversityGatewayApi {
         durationInYears: item.durationInYears,
         costPerYear: item.costPerYear,
         iscedCode: item.iscedCode,
-        modeOfDelivery: item.modeOfDelivery.map((m) =>
+        modeOfDelivery: item.modeOfDelivery.map((m: any) =>
           m.modeOfDelivery.toString(),
         ),
         applicationPeriodOpen: item.applicationPeriodOpen,
@@ -84,7 +84,7 @@ export class UniversityGatewayApi {
   async getProgramById(
     input: UniversityGatewayGetPogramInput,
   ): Promise<UniversityGatewayProgramDetails> {
-    const item = await this.programApi.programControllerGetProgramById({
+    const item = await this.programApi.programControllerGetProgramByIdV1({
       id: input.id,
     })
 
@@ -128,7 +128,7 @@ export class UniversityGatewayApi {
       durationInYears: item.durationInYears,
       costPerYear: item.costPerYear,
       iscedCode: item.iscedCode,
-      modeOfDelivery: item.modeOfDelivery.map((m) =>
+      modeOfDelivery: item.modeOfDelivery.map((m: any) =>
         m.modeOfDelivery.toString(),
       ),
       externalUrlIs: item.externalUrlIs,
@@ -148,14 +148,14 @@ export class UniversityGatewayApi {
   }
 
   async getUniversities(): Promise<UniversityGatewayUniversity[]> {
-    const res = await this.universityApi.universityControllerGetUniversities()
+    const res = await this.universityApi.universityControllerGetUniversitiesV1()
     return res.data
   }
 
   async getUniversityApplicationById(auth: Auth, id: string) {
     const results = await this.universityApplicationApiWithAuth(
       auth,
-    ).universityApplicationControllerGetApplicationById({
+    ).universityApplicationControllerGetApplicationByIdV1({
       id: id,
     })
 
@@ -191,7 +191,7 @@ export class UniversityGatewayApi {
       {
         field: 'universityId',
         options: (
-          await this.universityApi.universityControllerGetUniversities()
+          await this.universityApi.universityControllerGetUniversitiesV1()
         ).data.map((item: University) => item.id),
       },
     ]

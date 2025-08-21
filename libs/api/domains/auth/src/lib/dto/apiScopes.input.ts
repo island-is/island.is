@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-import { DomainsControllerFindScopeTreeDirectionEnum } from '@island.is/clients/auth/delegation-api'
+import { DomainsControllerFindScopeTreeV1DirectionEnum } from '@island.is/clients/auth/delegation-api'
 
 import { DomainDirection } from './domainDirection'
 
@@ -13,5 +13,5 @@ export class ApiScopesInput {
   domain?: string
 
   @Field(() => DomainDirection, { nullable: true })
-  direction?: DomainsControllerFindScopeTreeDirectionEnum
+  direction?: DomainsControllerFindScopeTreeV1DirectionEnum
 }

@@ -39,13 +39,13 @@ export class ConsentTenantsService {
   ): Promise<ConsentTenant[]> {
     const response = await this.scopesApiWithAuth(
       user,
-    ).scopesControllerFindScopeTree({
+    ).scopesControllerFindScopeTreeV1({
       requestedScopes: [...consentedScopes, ...rejectedScopes],
       lang,
     })
 
     const map = new Map<string, ScopeTreeDTO[]>()
-    response.forEach((item) => {
+    response.forEach((item: ScopeTreeDTO) => {
       const key = item.domainName
       const existing = map.get(key)
       if (!existing) {

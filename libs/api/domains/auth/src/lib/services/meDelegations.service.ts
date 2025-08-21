@@ -5,8 +5,8 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   DelegationDTO,
   MeDelegationsApi,
-  MeDelegationsControllerFindAllDirectionEnum,
-  MeDelegationsControllerFindAllValidityEnum,
+  MeDelegationsControllerFindAllV1DirectionEnum,
+  MeDelegationsControllerFindAllV1ValidityEnum,
 } from '@island.is/clients/auth/delegation-api'
 
 import {
@@ -34,11 +34,12 @@ export class MeDelegationsService {
   ): Promise<DelegationDTO[]> {
     const delegations = await this.delegationsApiWithAuth(
       user,
-    ).meDelegationsControllerFindAll({
+    ).meDelegationsControllerFindAllV1({
       domain: input.domain ?? undefined,
       direction:
-        input.direction ?? MeDelegationsControllerFindAllDirectionEnum.outgoing,
-      validity: MeDelegationsControllerFindAllValidityEnum.includeFuture,
+        input.direction ??
+        MeDelegationsControllerFindAllV1DirectionEnum.outgoing,
+      validity: MeDelegationsControllerFindAllV1ValidityEnum.includeFuture,
     })
     return delegations.map(this.includeDomainNameInScopes)
   }
@@ -49,7 +50,7 @@ export class MeDelegationsService {
   ): Promise<DelegationDTO | null> {
     const request = await this.delegationsApiWithAuth(
       user,
-    ).meDelegationsControllerFindOneRaw({
+    ).meDelegationsControllerFindOneV1Raw({
       delegationId,
     })
     const delegation = request.raw.status === 204 ? null : await request.value()
@@ -63,8 +64,8 @@ export class MeDelegationsService {
   ): Promise<DelegationDTO | null> {
     const delegations = await this.delegationsApiWithAuth(
       user,
-    ).meDelegationsControllerFindAll({
-      direction: MeDelegationsControllerFindAllDirectionEnum.outgoing,
+    ).meDelegationsControllerFindAllV1({
+      direction: MeDelegationsControllerFindAllV1DirectionEnum.outgoing,
       xQueryOtherUser: toNationalId,
       domain: domain ?? undefined,
     })
@@ -98,7 +99,7 @@ export class MeDelegationsService {
     user: User,
     { toNationalId, domainName, scopes }: CreateDelegationInput,
   ): Promise<DelegationDTO> {
-    return this.delegationsApiWithAuth(user).meDelegationsControllerCreate({
+    return this.delegationsApiWithAuth(user).meDelegationsControllerCreateV1({
       createDelegationDTO: {
         toNationalId,
         domainName,
@@ -111,7 +112,7 @@ export class MeDelegationsService {
     user: User,
     { delegationId }: DeleteDelegationInput,
   ): Promise<boolean> {
-    await this.delegationsApiWithAuth(user).meDelegationsControllerDelete({
+    await this.delegationsApiWithAuth(user).meDelegationsControllerDeleteV1({
       delegationId,
     })
     return true
@@ -161,7 +162,7 @@ export class MeDelegationsService {
   ): Promise<DelegationDTO> {
     const delegation = await this.delegationsApiWithAuth(
       user,
-    ).meDelegationsControllerPatch({
+    ).meDelegationsControllerPatchV1({
       delegationId,
       patchDelegationDTO: {
         deleteScopes,

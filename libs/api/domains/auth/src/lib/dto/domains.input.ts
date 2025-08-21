@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-import { DomainsControllerFindAllDirectionEnum } from '@island.is/clients/auth/delegation-api'
+import { DomainsControllerFindAllV1DirectionEnum } from '@island.is/clients/auth/delegation-api'
 
 import { DomainDirection } from './domainDirection'
 
@@ -10,7 +10,7 @@ export class DomainsInput {
   lang = 'is'
 
   @Field(() => DomainDirection, { nullable: true })
-  direction?: DomainsControllerFindAllDirectionEnum
+  direction?: DomainsControllerFindAllV1DirectionEnum
 
   // Intentionally left out of GQL schema.
   domainNames?: string[]

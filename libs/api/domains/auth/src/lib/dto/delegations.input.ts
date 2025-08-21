@@ -1,8 +1,8 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 
-import { MeDelegationsControllerFindAllDirectionEnum } from '@island.is/clients/auth/delegation-api'
+import { MeDelegationsControllerFindAllV1DirectionEnum } from '@island.is/clients/auth/delegation-api'
 
-registerEnumType(MeDelegationsControllerFindAllDirectionEnum, {
+registerEnumType(MeDelegationsControllerFindAllV1DirectionEnum, {
   name: 'AuthDelegationDirection',
 })
 
@@ -11,6 +11,8 @@ export class DelegationsInput {
   @Field(() => String, { nullable: true })
   domain?: string | null
 
-  @Field(() => MeDelegationsControllerFindAllDirectionEnum, { nullable: true })
-  direction?: MeDelegationsControllerFindAllDirectionEnum
+  @Field(() => MeDelegationsControllerFindAllV1DirectionEnum, {
+    nullable: true,
+  })
+  direction?: MeDelegationsControllerFindAllV1DirectionEnum
 }

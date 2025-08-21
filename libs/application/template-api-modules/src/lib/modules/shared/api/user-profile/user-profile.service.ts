@@ -48,8 +48,8 @@ export class UserProfileService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<UserProfileParameters>): Promise<UserProfile> {
     const { mobilePhoneNumber, email } = await this.userProfileApiWithAuth(auth)
-      .meUserProfileControllerFindUserProfile()
-      .catch((error) => {
+      .meUserProfileControllerFindUserProfileV2()
+      .catch((error: any) => {
         if (isRunningOnEnvironment('local')) {
           return {
             email: 'mockEmail@island.is',
