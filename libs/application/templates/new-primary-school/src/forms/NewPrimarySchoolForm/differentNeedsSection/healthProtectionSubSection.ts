@@ -182,7 +182,7 @@ export const healthProtectionSubSection = buildSubSection({
             const { healthProfile } = getApplicationExternalData(
               application.externalData,
             )
-            return healthProfile?.usesEpipen ? YES : NO
+            return healthProfile?.usesEpipen ? YES : ''
           },
         }),
         buildRadioField({
@@ -212,7 +212,7 @@ export const healthProtectionSubSection = buildSubSection({
             const { healthProfile } = getApplicationExternalData(
               application.externalData,
             )
-            return healthProfile?.hasConfirmedMedicalDiagnoses ? YES : NO
+            return healthProfile?.hasConfirmedMedicalDiagnoses ? YES : ''
           },
         }),
         buildDescriptionField({
@@ -247,7 +247,7 @@ export const healthProtectionSubSection = buildSubSection({
             const { healthProfile } = getApplicationExternalData(
               application.externalData,
             )
-            return healthProfile?.requestsMedicationAdministration ? YES : NO
+            return healthProfile?.requestsMedicationAdministration ? YES : ''
           },
         }),
         buildAlertMessageField({

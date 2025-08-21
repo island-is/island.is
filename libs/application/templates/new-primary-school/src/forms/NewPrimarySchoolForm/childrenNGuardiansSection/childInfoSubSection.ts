@@ -166,7 +166,7 @@ export const childInfoSubSection = buildSubSection({
             getApplicationExternalData(application.externalData)
               .childInformation?.residence?.address
               ? YES
-              : NO,
+              : '',
         }),
         buildTextField({
           id: 'childInfo.placeOfResidence.streetAddress',

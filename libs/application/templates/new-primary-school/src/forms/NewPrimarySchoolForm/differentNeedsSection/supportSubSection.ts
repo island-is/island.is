@@ -65,7 +65,7 @@ export const supportSubSection = buildSubSection({
               application.externalData,
             )
 
-            return socialProfile?.hasDiagnoses ? YES : NO
+            return socialProfile?.hasDiagnoses ? YES : ''
           },
         }),
         buildRadioField({
@@ -101,7 +101,7 @@ export const supportSubSection = buildSubSection({
               application.externalData,
             )
 
-            return socialProfile?.hasHadSupport ? YES : NO
+            return socialProfile?.hasHadSupport ? YES : ''
           },
         }),
         buildRadioField({
@@ -152,7 +152,7 @@ export const supportSubSection = buildSubSection({
               application.externalData,
               CaseWorkerInputTypeEnum.SupportManager,
             )
-            return caseWorker ? YES : NO
+            return caseWorker ? YES : ''
           },
         }),
         buildTextField({
@@ -216,7 +216,7 @@ export const supportSubSection = buildSubSection({
               CaseWorkerInputTypeEnum.CaseManager,
             )
 
-            return caseWorker ? YES : NO
+            return caseWorker ? YES : ''
           },
         }),
         buildTextField({
@@ -300,7 +300,7 @@ export const supportSubSection = buildSubSection({
               application.externalData,
             )
 
-            return socialProfile?.hasIntegratedServices ? YES : NO
+            return socialProfile?.hasIntegratedServices ? YES : ''
           },
         }),
         buildAlertMessageField({
