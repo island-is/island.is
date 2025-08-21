@@ -1,20 +1,29 @@
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
+
 import {
   CaseAppealRulingDecision,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseType,
   EventType,
-  NotificationType,
+  ServiceStatus,
 } from '@island.is/judicial-system/types'
 
+// TODO: fix barrel files
 import { Case } from '../case'
 import { courtSubtypes } from '../court/court.service'
 import { EventLog } from '../event-log'
-import { RequestCaseEventType } from './models/event.model'
+import {
+  IndictmentCaseEventType,
+  RequestCaseEventType,
+} from './models/event.model'
 
 export interface IndictmentCaseEvent {
   id: string
-  event: RequestCaseEventType
+  event: IndictmentCaseEventType
   eventDescriptor: string
   date: string
   institution?: string
@@ -23,6 +32,14 @@ export interface IndictmentCaseEvent {
   origin: CaseOrigin
   caseSubtypes?: string
   caseSubtypeDescriptors?: string
+  // for subpoena events
+  defendantId?: string
+  serviceStatus?: string
+  serviceStatusDescriptor?: string
+  // ruling related
+  rulingDate?: string
+  rulingDecision?: string
+  rulingDecisionDescriptor?: string
 }
 
 // utility functions
@@ -42,22 +59,16 @@ const commonFields = (c: Case) => {
   }
 }
 
-const getDecisionDescriptor = (decision: CaseDecision) => {
-  switch (decision) {
-    case CaseDecision.ACCEPTING: {
-      return 'Krafa samþykkt'
+const getServiceStatusDescriptor = (successStatus: ServiceStatus) => {
+  switch (successStatus) {
+    case ServiceStatus.ELECTRONICALLY: {
+      return 'Birt í pósthólfi island.is'
     }
-    case CaseDecision.REJECTING: {
-      return 'Kröfu hafnað'
+    case ServiceStatus.IN_PERSON: {
+      return 'Birt varnaraðila'
     }
-    case CaseDecision.ACCEPTING_PARTIALLY: {
-      return 'Krafa tekin til greina að hluta'
-    }
-    case CaseDecision.DISMISSING: {
-      return 'Kröfu vísað frá'
-    }
-    case CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN: {
-      return 'Kröfu hafnað en úrskurðað í farbann'
+    case ServiceStatus.DEFENDER: {
+      return 'Birt fyrir verjanda'
     }
     default: {
       return 'Óþekkt'
@@ -65,34 +76,26 @@ const getDecisionDescriptor = (decision: CaseDecision) => {
   }
 }
 
-const getAppealRulingDecisionDescriptor = (
-  appealRulingDecision: CaseAppealRulingDecision,
+const getRulingDecisionDescriptor = (
+  decision: CaseIndictmentRulingDecision,
 ) => {
-  switch (appealRulingDecision) {
-    case CaseAppealRulingDecision.ACCEPTING: {
-      return 'Staðfesting'
+  switch (decision) {
+    case CaseIndictmentRulingDecision.RULING: {
+      return 'Dómur'
     }
-    case CaseAppealRulingDecision.REPEAL: {
-      return 'Fella úr gildi'
+    case CaseIndictmentRulingDecision.FINE: {
+      return 'Viðurlagaákvörðun'
     }
-    case CaseAppealRulingDecision.CHANGED: {
-      return 'Niðurstöðu breytt'
+    case CaseIndictmentRulingDecision.DISMISSAL: {
+      return 'Frávísun'
     }
-    case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY: {
-      return 'Niðurstöðu breytt að verulegu leyti'
+    case CaseIndictmentRulingDecision.CANCELLATION: {
+      return 'Niðurfelling máls'
     }
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL: {
-      return 'Frávísun frá Landsrétti'
+    case CaseIndictmentRulingDecision.MERGE: {
+      return 'Sameinað öðru máli'
     }
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT: {
-      return 'Frávísun frá héraðsdómi'
-    }
-    case CaseAppealRulingDecision.REMAND: {
-      return 'Ómerking og heimvísun'
-    }
-    case CaseAppealRulingDecision.DISCONTINUED: {
-      return 'Niðurfelling'
-    }
+
     default: {
       return 'Óþekkt'
     }
@@ -157,153 +160,128 @@ const caseReceivedByCourt = (c: Case): IndictmentCaseEvent | undefined => {
   }
 }
 
-// const courtDateScheduled = (c: Case): RequestCaseEvent | undefined => {
-//   const date = EventLog.getEventLogDateByEventType(
-//     EventType.COURT_DATE_SCHEDULED,
-//     c.eventLogs,
-//   )?.toISOString()
+const courtDatesScheduled = (c: Case): IndictmentCaseEvent[] | undefined => {
+  // we can have many court dates scheduled
+  const events = EventLog.getAllEventLogsByEventType(
+    EventType.COURT_DATE_SCHEDULED,
+    c.eventLogs,
+  )
 
-//   if (!date) {
-//     return undefined
-//   }
+  if (!events) {
+    return undefined
+  }
 
-//   return {
-//     id: c.id,
-//     event: 'COURT_DATE_SCHEDULED',
-//     eventDescriptor: 'Þinghald bókað',
-//     date,
-//     institution: c.court?.name,
-//     ...commonFields(c),
-//   }
-// }
+  return events.map(({ created }) => ({
+    id: c.id,
+    event: 'COURT_DATE_SCHEDULED',
+    eventDescriptor: 'Fyrirtökutíma úthlutað',
+    date: created.toISOString(),
+    institution: c.court?.name,
+    ...commonFields(c),
+  }))
+}
 
-// const courtSessionStarted = (c: Case): RequestCaseEvent | undefined => {
-//   const date = c.courtStartDate
-//   if (!date) {
-//     return undefined
-//   }
+const subpoenaServedToDefendant = (
+  c: Case,
+): IndictmentCaseEvent[] | undefined => {
+  const subpoenas = pipe(
+    c.defendants ?? [],
+    filterMap((defendant) => {
+      const subpoena = defendant.subpoenas?.find(
+        (subpoena) => subpoena.serviceDate,
+      )
 
-//   return {
-//     id: c.id,
-//     event: 'COURT_SESSION_STARTED',
-//     eventDescriptor: 'Þinghald hófst',
-//     date: date.toISOString(),
-//     institution: c.court?.name,
-//     ...commonFields(c),
-//   }
-// }
+      if (!subpoena || !subpoena.serviceDate || !subpoena.serviceStatus)
+        return option.none
 
-// const courtSessionEnded = (c: Case): RequestCaseEvent | undefined => {
-//   const date = c.courtEndTime
-//   if (!date) {
-//     return undefined
-//   }
+      return option.some({
+        defendantId: defendant.id,
+        date: subpoena.serviceDate,
+        serviceStatus: subpoena.serviceStatus,
+      })
+    }),
+  )
 
-//   return {
-//     id: c.id,
-//     event: 'COURT_SESSION_ENDED',
-//     eventDescriptor: 'Þinghaldi lauk',
-//     date: date.toISOString(),
-//     institution: c.court?.name,
-//     ...commonFields(c),
-//   }
-// }
+  if (subpoenas.length === 0) {
+    return undefined
+  }
 
-// const requestAppealed = (c: Case): RequestCaseEvent[] => {
-//   const { prosecutorPostponedAppealDate, accusedPostponedAppealDate } = c
+  return subpoenas.map((subpoena) => ({
+    id: c.id,
+    event: 'SUBPOENA_SERVED',
+    eventDescriptor: 'Ákæra birt varnaraðila',
+    date: subpoena.date.toISOString(),
+    institution: c.court?.name,
+    defendantId: subpoena.defendantId,
+    serviceStatus: subpoena.serviceStatus,
+    serviceStatusDescriptor: getServiceStatusDescriptor(subpoena.serviceStatus),
+    ...commonFields(c),
+  }))
+}
 
-//   const requestAppealedEvents: RequestCaseEvent[] = []
-//   if (prosecutorPostponedAppealDate) {
-//     requestAppealedEvents.push({
-//       id: c.id,
-//       event: 'REQUEST_APPEALED',
-//       eventDescriptor: 'Úrskurður kærður',
-//       date: prosecutorPostponedAppealDate.toISOString(),
-//       institution: c.prosecutorsOffice?.name,
-//       ...commonFields(c),
-//     })
-//   }
+const caseRulingDecisionConfirmed = (
+  c: Case,
+): IndictmentCaseEvent | undefined => {
+  const date = c.rulingDate
+  const ruling = c.indictmentRulingDecision
+  if (!date || !ruling) {
+    return undefined
+  }
 
-//   if (accusedPostponedAppealDate) {
-//     requestAppealedEvents.push({
-//       id: c.id,
-//       event: 'REQUEST_APPEALED',
-//       eventDescriptor: 'Úrskurður kærður',
-//       date: accusedPostponedAppealDate.toISOString(),
-//       ...commonFields(c),
-//     })
-//   }
+  return {
+    id: c.id,
+    event: 'RULING_DECISION_CONFIRMED',
+    eventDescriptor: 'Lyktir kveðnar upp',
+    date: date.toISOString(),
+    institution: c.court?.name,
+    ...commonFields(c),
+    rulingDecision: ruling,
+    rulingDecisionDescriptor: getRulingDecisionDescriptor(ruling),
+  }
+}
 
-//   return requestAppealedEvents
-// }
+const verdictServedToDefendant = (
+  c: Case,
+): IndictmentCaseEvent[] | undefined => {
+  const verdicts = pipe(
+    c.defendants ?? [],
+    filterMap((defendant) => {
+      const verdict = defendant.verdict
 
-// const requestCompleted = (c: Case): RequestCaseEvent | undefined => {
-//   const date = EventLog.getEventLogDateByEventType(
-//     EventType.REQUEST_COMPLETED,
-//     c.eventLogs,
-//   )?.toISOString()
+      if (!verdict || !verdict.serviceDate || !verdict.serviceStatus)
+        return option.none
 
-//   if (!date) {
-//     return undefined
-//   }
+      return option.some({
+        defendantId: defendant.id,
+        date: verdict.serviceDate,
+        serviceStatus: verdict.serviceStatus,
+      })
+    }),
+  )
 
-//   return {
-//     id: c.id,
-//     event: 'REQUEST_COMPLETED',
-//     eventDescriptor: 'Kröfu lokið',
-//     date: date,
-//     institution: c.court?.name,
-//     ...commonFields(c),
-//   }
-// }
+  if (verdicts.length === 0) {
+    return undefined
+  }
 
-// const caseReceivedByCourtOfAppeals = (
-//   c: Case,
-// ): RequestCaseEvent | undefined => {
-//   const date = c.appealReceivedByCourtDate?.toISOString()
-//   if (!date) {
-//     return undefined
-//   }
-
-//   return {
-//     id: c.id,
-//     event: 'CASE_RECEIVED_BY_COURT_OF_APPEALS',
-//     eventDescriptor: 'Kæra móttekin af Landsrétti',
-//     date,
-//     institution: 'Landsréttur',
-//     ...commonFields(c),
-//   }
-// }
-// const caseCompletedByCourtOfAppeals = (
-//   c: Case,
-// ): RequestCaseEvent | undefined => {
-//   const completedByCourtOfAppealsNotification = c.notifications?.find(
-//     (notification) => notification.type === NotificationType.APPEAL_COMPLETED,
-//   )
-
-//   if (!completedByCourtOfAppealsNotification) {
-//     return undefined
-//   }
-
-//   return {
-//     id: c.id,
-//     event: 'CASE_COMPLETED_BY_COURT_OF_APPEALS',
-//     eventDescriptor: 'Kæru lokið',
-//     date: completedByCourtOfAppealsNotification.created.toISOString(),
-//     institution: 'Landsréttur',
-//     ...commonFields(c),
-//   }
-// }
+  return verdicts.map((verdict) => ({
+    id: c.id,
+    event: 'VERDICT_SERVED',
+    eventDescriptor: 'Dómur birtur dómfellda',
+    date: verdict.date.toISOString(),
+    institution: c.court?.name,
+    defendantId: verdict.defendantId,
+    serviceStatus: verdict.serviceStatus,
+    serviceStatusDescriptor: getServiceStatusDescriptor(verdict.serviceStatus),
+    ...commonFields(c),
+  }))
+}
 
 export const indictmentCaseEventFunctions = [
   createCase,
   caseSentToCourt,
   caseReceivedByCourt,
-  //   courtDateScheduled,
-  //   courtSessionStarted,
-  //   courtSessionEnded,
-  //   requestAppealed,
-  //   requestCompleted,
-  //   caseReceivedByCourtOfAppeals,
-  //   caseCompletedByCourtOfAppeals,
+  courtDatesScheduled,
+  subpoenaServedToDefendant,
+  caseRulingDecisionConfirmed,
+  verdictServedToDefendant,
 ]

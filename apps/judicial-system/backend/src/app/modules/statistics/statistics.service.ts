@@ -21,6 +21,7 @@ import {
   CaseType,
   DataGroups,
   dateTypes,
+  defendantEventTypes,
   EventType,
   isCompletedCase,
   isIndictmentCase,
@@ -29,12 +30,14 @@ import {
 
 import { AwsS3Service } from '../aws-s3'
 import { Case, DateLog } from '../case'
+import { Defendant, DefendantEventLog } from '../defendant'
 import { EventLog } from '../event-log'
 import { IndictmentCount } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena } from '../subpoena'
+import { Verdict } from '../verdict/models/verdict.model'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
@@ -578,6 +581,34 @@ export class StatisticsService {
           order: [['created', 'DESC']],
           separate: true,
         },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: false,
+          order: [['created', 'ASC']],
+          include: [
+            {
+              model: Subpoena,
+              as: 'subpoenas',
+              required: false,
+              order: [['created', 'DESC']],
+              separate: true,
+            },
+            {
+              model: DefendantEventLog,
+              as: 'eventLogs',
+              required: false,
+              where: { eventType: defendantEventTypes },
+              separate: true,
+            },
+            {
+              model: Verdict,
+              as: 'verdict',
+              required: false,
+            },
+          ],
+          separate: true,
+        },
       ],
     })
 
@@ -600,10 +631,17 @@ export class StatisticsService {
       )
 
       return indictmentCaseEventFunctions
-        .map((func) => {
+        .flatMap((func) => {
           const event = func(c)
           if (!event) return undefined
 
+          if (Array.isArray(event)) {
+            return event.map((event) => ({
+              ...event,
+              caseSubtypes: subtypes.join(','),
+              caseSubtypeDescriptors: subtypeDescriptors.join(','),
+            }))
+          }
           return {
             ...event,
             caseSubtypes: subtypes.join(','),

@@ -2,7 +2,7 @@ type BaseEventType =
   | 'CASE_CREATED'
   | 'CASE_SENT_TO_COURT'
   | 'CASE_RECEIVED_BY_COURT'
-  | 'COURT_DATE_SCHEDULED' // the date a court date was scheduled
+  | 'COURT_DATE_SCHEDULED'
 
 export type RequestCaseEventType =
   | BaseEventType
@@ -24,13 +24,13 @@ export type RequestCaseEventType =
 export type IndictmentCaseEventType =
   | BaseEventType
   | 'SUBPOENA_SERVED'
-  | 'RULING_ACKNOWLEDGED_IN_COURT'
-  | 'INDICTMENT_COMPLETED'
-  | 'VERDICT_CREATED'
+  | 'RULING_DECISION_CONFIRMED'
+  | 'INDICTMENT_COMPLETED' // not implemented
+  | 'VERDICT_CREATED' // not implemented
   | 'VERDICT_SERVED'
-  | 'INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR'
-  | 'INDICTMENT_REVIEWED_BY_PUBLIC_PROSECUTOR'
-  | 'CASE_SENT_TO_PRISON_ADMIN'
-  | 'CASE_RECEIVED_BY_PRISON_ADMIN'
-  | 'ARRAIGNMENT_DATE_OCCURRED'
-  | 'COURT_DATE_OCCURRED'
+  | 'INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR' // not implemented
+  | 'INDICTMENT_REVIEWED_BY_PUBLIC_PROSECUTOR' // not implemented
+  | 'CASE_SENT_TO_PRISON_ADMIN' // not implemented
+  | 'CASE_RECEIVED_BY_PRISON_ADMIN' // not implemented
+  | 'ARRAIGNMENT_DATE_OCCURRED' // not implemented
+  | 'COURT_DATE_OCCURRED' // not implemented
