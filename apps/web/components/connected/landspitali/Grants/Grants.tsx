@@ -52,65 +52,151 @@ interface DirectGrants {
 
 const DEFAULT_GRANT_OPTIONS = [
   {
-    label: 'Styrktarsjóður barna- og unglingageðdeildar',
-    value: 'MR106',
-  },
-  {
-    label: 'Styrktarsjóður Barnaspítala Hringsins',
-    value: 'MR105',
-  },
-  {
-    label: 'Styrktarsjóður Blóðbankans',
-    value: 'MR133',
-  },
-  {
-    label: 'Styrktarsjóður bráðasviðs',
-    value: 'MR104',
-  },
-  {
-    label: 'Styrktarsjóður endurhæfingar',
-    value: 'MR112',
+    label: 'Styrktarsjóður Landspítala',
+    value: 'MR102',
   },
   {
     label: 'Styrktarsjóður geðsviðs',
     value: 'MR103',
   },
   {
+    label: 'Styrktarsjóður bráðasviðs',
+    value: 'MR104',
+  },
+  {
+    label: 'Styrktarsjóður barnaspítala Hringsins',
+    value: 'MR105',
+  },
+  {
+    label: 'Styrktarsjóður barna- og unglingageðdeildar',
+    value: 'MR106',
+  },
+  {
     label: 'Styrktarsjóður gjörgæslu',
     value: 'MR110',
   },
   {
-    label: 'Styrktarsjóður hjartadeildar',
-    value: 'MR130',
-  },
-  {
-    label: 'Styrktarsjóður kvenna- og fæðingardeildar',
-    value: 'MR125',
-  },
-  {
-    label: 'Styrktarsjóður Landspítala',
-    value: 'MR101',
-  },
-  {
-    label: 'Styrktarsjóður lyflækningadeilda',
+    label: 'Styrktarsjóður lyflækninga',
     value: 'MR111',
   },
   {
-    label: 'Styrktarsjóður myndgreininga',
-    value: 'MR115',
+    label: 'Styrktarsjóður endurhæfingar',
+    value: 'MR112',
+  },
+  {
+    label: 'Styrktarsjóður öldrunar',
+    value: 'MR113',
   },
   {
     label: 'Styrktarsjóður rannsóknarstofa',
     value: 'MR114',
   },
   {
-    label: 'Styrktarsjóður skurðlækningadeildar',
-    value: 'MR107',
+    label: 'Styrktarsjóður myndgreininga',
+    value: 'MR115',
   },
   {
-    label: 'Styrktarsjóður öldrunar',
-    value: 'MR113',
+    label: 'Styrktarsjóður vegna ristilkrabbameins',
+    value: 'MR116',
   },
+  {
+    label: 'Gjafasjóður kvennadeilda LHS',
+    value: 'MR125',
+  },
+  {
+    label: 'Minningarsjóður öldrunardeildar',
+    value: 'MR126',
+  },
+  {
+    label: 'Blóð- og krabbameinslækningadeild',
+    value: 'MR127',
+  },
+  {
+    label: 'Líknardeild og heimahlynning ',
+    value: 'MR128',
+  },
+  {
+    label: 'Minningarsjóður skurðdeildar',
+    value: 'MR129',
+  },
+  {
+    label: 'Minningarsjóður hjartadeildar',
+    value: 'MR130',
+  },
+  {
+    label: 'Minningarsjóður RHLÖ',
+    value: 'MR131',
+  },
+  {
+    label: 'Minningargjafasjóður Landspítala',
+    value: 'MR132',
+  },
+  {
+    label: 'Styrktarsjóður Blóðbankans',
+    value: 'MR133',
+  },
+
+  // TODO: Remove these
+  // {
+  //   label: 'Styrktarsjóður barna- og unglingageðdeildar',
+  //   value: 'MR106',
+  // },
+  // {
+  //   label: 'Styrktarsjóður Barnaspítala Hringsins',
+  //   value: 'MR105',
+  // },
+  // {
+  //   label: 'Styrktarsjóður Blóðbankans',
+  //   value: 'MR133',
+  // },
+  // {
+  //   label: 'Styrktarsjóður bráðasviðs',
+  //   value: 'MR104',
+  // },
+  // {
+  //   label: 'Styrktarsjóður endurhæfingar',
+  //   value: 'MR112',
+  // },
+  // {
+  //   label: 'Styrktarsjóður geðsviðs',
+  //   value: 'MR103',
+  // },
+  // {
+  //   label: 'Styrktarsjóður gjörgæslu',
+  //   value: 'MR110',
+  // },
+  // {
+  //   label: 'Styrktarsjóður hjartadeildar',
+  //   value: 'MR130',
+  // },
+  // {
+  //   label: 'Styrktarsjóður kvenna- og fæðingardeildar',
+  //   value: 'MR125',
+  // },
+  // {
+  //   label: 'Styrktarsjóður Landspítala',
+  //   value: 'MR101',
+  // },
+  // {
+  //   label: 'Styrktarsjóður lyflækningadeilda',
+  //   value: 'MR111',
+  // },
+  // {
+  //   label: 'Styrktarsjóður myndgreininga',
+  //   value: 'MR115',
+  // },
+  // {
+  //   label: 'Styrktarsjóður rannsóknarstofa',
+  //   value: 'MR114',
+  // },
+  // {
+  //   label: 'Styrktarsjóður skurðlækningadeildar',
+  //   value: 'MR107',
+  // },
+  // {
+  //   label: 'Styrktarsjóður öldrunar',
+  //   value: 'MR113',
+  // },
 ]
 
 const PRESET_AMOUNTS = ['5.000', '10.000', '50.000', '100.000']
@@ -123,17 +209,11 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
   const { data: catalogData } = useQuery<
     WebLandspitaliCatalogQuery,
     WebLandspitaliCatalogQueryVariables
-  >(GET_LANDSPITALI_CATALOG)
+  >(GET_LANDSPITALI_CATALOG) // TODO: Remove this gql endpoint altogether
 
   const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
 
-  const grantOptions =
-    catalogData?.webLandspitaliCatalog.item.map((item) => ({
-      label: item.chargeItemName,
-      value: item.chargeItemCode,
-    })) ??
-    slice.json?.grantOptions ??
-    DEFAULT_GRANT_OPTIONS
+  const grantOptions = slice.json?.grantOptions ?? DEFAULT_GRANT_OPTIONS
 
   const methods = useForm<DirectGrants>({
     mode: 'onChange',

@@ -132,7 +132,7 @@ export class LandspitaliService {
             },
           ],
           payerNationalId:
-            input.payerNationalId ?? this.config.paymentNationalIdFallback,
+            input.payerNationalId || this.config.paymentNationalIdFallback,
           organisationId: LANDSPITALI_NATIONAL_ID,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
           // TODO: Find out just how much data should be sent to FJS and how that data should be structured
@@ -217,7 +217,7 @@ export class LandspitaliService {
             },
           ],
           payerNationalId:
-            input.payerNationalId ?? this.config.paymentNationalIdFallback,
+            input.payerNationalId || this.config.paymentNationalIdFallback,
           organisationId: LANDSPITALI_NATIONAL_ID,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
           // TODO: Find out just how much data should be sent to FJS and how that data should be structured

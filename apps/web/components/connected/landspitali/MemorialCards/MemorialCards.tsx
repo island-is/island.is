@@ -56,45 +56,87 @@ interface MemorialCard {
 
 const DEFAULT_FUND_OPTIONS = [
   {
-    label: 'Minningargjafasjóður Landspítala Íslands',
-    value: 'MR124',
-  },
-  {
-    label: 'Minningarsjóður blóð- og krabbameinslækningadeilda',
-    value: 'MR119',
-  },
-  {
-    label: 'Minningarsjóður gjörgæslu',
+    label: 'Styrktarsjóður gjörgæslu',
     value: 'MR108',
   },
   {
-    label: 'Minningarsjóður hjartadeildar',
-    value: 'MR122',
-  },
-  {
-    label: 'Minningarsjóður kvenlækningadeildar',
-    value: 'MR117',
-  },
-  {
-    label: 'Minningarsjóður líknardeildar og HERU',
-    value: 'MR128',
-  },
-  {
-    label: 'Minningarsjóður lyflækningadeilda',
+    label: 'Styrktarsjóður lyflækninga',
     value: 'MR109',
   },
   {
-    label: 'Minningarsjóður Rannsóknarstofu HÍ og LSH í öldrunarfræðum',
-    value: 'MR131',
+    label: 'Gjafasjóður kvennadeilda LHS',
+    value: 'MR117',
+  },
+  {
+    label: 'Minningarsjóður öldrunardeildar',
+    value: 'MR118',
+  },
+  {
+    label: 'Blóð- og krabbameinslækningadeild',
+    value: 'MR119',
+  },
+  {
+    label: 'Líknardeild og heimahlynning ',
+    value: 'MR120',
   },
   {
     label: 'Minningarsjóður skurðdeildar',
     value: 'MR121',
   },
   {
-    label: 'Minningarsjóður öldrunardeildar',
-    value: 'MR118',
+    label: 'Minningarsjóður hjartadeildar',
+    value: 'MR122',
   },
+  {
+    label: 'Minningarsjóður RHLÖ',
+    value: 'MR123',
+  },
+  {
+    label: 'Minningagjafasjóður Landspítala',
+    value: 'MR124',
+  },
+
+  // TODO: Remove these
+  // {
+  //   label: 'Minningargjafasjóður Landspítala Íslands',
+  //   value: 'MR124',
+  // },
+  // {
+  //   label: 'Minningarsjóður blóð- og krabbameinslækningadeilda',
+  //   value: 'MR119',
+  // },
+  // {
+  //   label: 'Minningarsjóður gjörgæslu',
+  //   value: 'MR108',
+  // },
+  // {
+  //   label: 'Minningarsjóður hjartadeildar',
+  //   value: 'MR122',
+  // },
+  // {
+  //   label: 'Minningarsjóður kvenlækningadeildar',
+  //   value: 'MR117',
+  // },
+  // {
+  //   label: 'Minningarsjóður líknardeildar og HERU',
+  //   value: 'MR128',
+  // },
+  // {
+  //   label: 'Minningarsjóður lyflækningadeilda',
+  //   value: 'MR109',
+  // },
+  // {
+  //   label: 'Minningarsjóður Rannsóknarstofu HÍ og LSH í öldrunarfræðum',
+  //   value: 'MR131',
+  // },
+  // {
+  //   label: 'Minningarsjóður skurðdeildar',
+  //   value: 'MR121',
+  // },
+  // {
+  //   label: 'Minningarsjóður öldrunardeildar',
+  //   value: 'MR118',
+  // },
 ]
 
 const PRESET_AMOUNTS = ['5.000', '10.000', '50.000', '100.000']
@@ -105,17 +147,11 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
   const { data: catalogData } = useQuery<
     WebLandspitaliCatalogQuery,
     WebLandspitaliCatalogQueryVariables
-  >(GET_LANDSPITALI_CATALOG)
+  >(GET_LANDSPITALI_CATALOG) // TODO: Remove this gql endpoint altogether
 
   const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
 
-  const fundOptions =
-    catalogData?.webLandspitaliCatalog.item.map((item) => ({
-      label: item.chargeItemName,
-      value: item.chargeItemCode,
-    })) ??
-    slice.json?.fundOptions ??
-    DEFAULT_FUND_OPTIONS
+  const fundOptions = slice.json?.fundOptions ?? DEFAULT_FUND_OPTIONS
 
   const methods = useForm<MemorialCard>({
     mode: 'onChange',
@@ -185,7 +221,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
   const handleReset = () => setSubmitted(false)
 
   const { activeLocale } = useI18n()
-
+  console.log(catalogData)
   if (submitted) {
     const data = methods.getValues()
     const amountISK =
