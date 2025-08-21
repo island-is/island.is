@@ -55,8 +55,8 @@ export const FormProvider: React.FC<{
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.sections)?.find(
-          (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
-        ) ?? defaultStep,
+            (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
+          ) ?? defaultStep,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,
@@ -167,11 +167,18 @@ export const FormProvider: React.FC<{
       inSettings,
       inListBuilder,
       selectStatus,
-      control
+      control,
     })
     console.log('dependencies:', control.form.dependencies)
     console.log('form:', control.form)
-  }, [control.form?.id, control.activeItem?.type, inSettings, inListBuilder, selectStatus, control])
+  }, [
+    control.form?.id,
+    control.activeItem?.type,
+    inSettings,
+    inListBuilder,
+    selectStatus,
+    control,
+  ])
   return (
     <ControlContext.Provider value={context}>
       {children}

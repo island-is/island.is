@@ -8,10 +8,12 @@ import { UpdateScreensDisplayOrderDto } from './models/dto/updateScreensDisplayO
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
-import { Field } from '../fields/models/field.model'
 import { Section } from '../sections/models/section.model'
 import { Form } from '../forms/models/form.model'
-import { filterArrayDependency, filterDependency } from '../../../utils/dependenciesHelper'
+import {
+  filterArrayDependency,
+  filterDependency,
+} from '../../../utils/dependenciesHelper'
 
 @Injectable()
 export class ScreensService {
@@ -21,8 +23,8 @@ export class ScreensService {
     @InjectModel(Section)
     private readonly sectionModel: typeof Section,
     @InjectModel(Form)
-    private readonly formModel: typeof Form
-  ) { }
+    private readonly formModel: typeof Form,
+  ) {}
 
   async create(createScreenDto: CreateScreenDto): Promise<ScreenDto> {
     const screen = createScreenDto as Screen
@@ -86,8 +88,11 @@ export class ScreensService {
     if (form) {
       const { dependencies } = form
       if (screen.fields) {
-        const fieldIds = screen.fields.map(field => field.id)
-        const newDependencies = filterArrayDependency(dependencies, [...fieldIds, id])
+        const fieldIds = screen.fields.map((field) => field.id)
+        const newDependencies = filterArrayDependency(dependencies, [
+          ...fieldIds,
+          id,
+        ])
         form.dependencies = newDependencies
       } else {
         form.dependencies = filterDependency(dependencies, id)

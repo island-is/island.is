@@ -11,4 +11,4 @@ import { Form } from '../forms/models/form.model'
   providers: [SectionsService],
   exports: [SectionsService],
 })
-export class SectionsModule { }
+export class SectionsModule {}

@@ -12,4 +12,4 @@ import { Form } from '../forms/models/form.model'
   controllers: [FieldsController],
   providers: [FieldsService],
 })
-export class FieldsModule { }
+export class FieldsModule {}

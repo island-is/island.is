@@ -11,4 +11,4 @@ import { Form } from '../forms/models/form.model'
   controllers: [ScreensController],
   providers: [ScreensService],
 })
-export class ScreensModule { }
+export class ScreensModule {}

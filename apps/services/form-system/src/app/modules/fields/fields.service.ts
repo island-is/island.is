@@ -13,7 +13,7 @@ import zipObject from 'lodash/zipObject'
 import { Screen } from '../screens/models/screen.model'
 import { Section } from '../sections/models/section.model'
 import { Form } from '../forms/models/form.model'
-import { FieldTypesEnum } from '../../../../../../../libs/form-system/src'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 import { filterDependency } from '../../../utils/dependenciesHelper'
 
 @Injectable()
@@ -26,8 +26,8 @@ export class FieldsService {
     @InjectModel(Section)
     private readonly sectionModel: typeof Section,
     @InjectModel(Form)
-    private readonly formModel: typeof Form
-  ) { }
+    private readonly formModel: typeof Form,
+  ) {}
 
   async findById(id: string): Promise<Field> {
     const field = await this.fieldModel.findByPk(id)
@@ -103,7 +103,11 @@ export class FieldsService {
     const field = await this.findById(id)
 
     // Make sure to delete all instances of the fieldId in the dependencies array
-    if (field.fieldType === FieldTypesEnum.CHECKBOX || field.fieldType === FieldTypesEnum.RADIO_BUTTONS || field.fieldType === FieldTypesEnum.DROPDOWN_LIST) {
+    if (
+      field.fieldType === FieldTypesEnum.CHECKBOX ||
+      field.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
+      field.fieldType === FieldTypesEnum.DROPDOWN_LIST
+    ) {
       const screen = await this.screenModel.findByPk(field.screenId)
       const section = await this.sectionModel.findByPk(screen?.sectionId)
       const form = await this.formModel.findByPk(section?.formId)
