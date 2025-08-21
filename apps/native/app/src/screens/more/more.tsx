@@ -28,20 +28,16 @@ const Row = styled.View`
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
+    (theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'profile.screenTitle' }),
         },
-        rightButtons: initialized
-          ? getRightButtons({ icons: ['settings'], theme: theme as any })
-          : [],
+        rightButtons: getRightButtons({ icons: ['settings'], theme }),
       },
       bottomTab: {
         iconColor: theme.color.blue400,
-        text: initialized
-          ? intl.formatMessage({ id: 'profile.bottomTabText' })
-          : '',
+        text: intl.formatMessage({ id: 'profile.bottomTabText' }),
       },
     }),
     {

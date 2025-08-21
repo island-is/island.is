@@ -99,7 +99,7 @@ const TagsWrapper = styled.View`
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
+    (theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'inbox.screenTitle' }),
@@ -107,9 +107,7 @@ const { useNavigationOptions, getNavigationOptions } =
       },
       bottomTab: {
         iconColor: theme.color.blue400,
-        text: initialized
-          ? intl.formatMessage({ id: 'inbox.bottomTabText' })
-          : '',
+        text: intl.formatMessage({ id: 'inbox.bottomTabText' }),
       },
     }),
     {

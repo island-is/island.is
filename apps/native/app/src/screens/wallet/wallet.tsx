@@ -62,23 +62,19 @@ const getSkeletonArr = (): FlatListItem[] =>
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
+    (theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'wallet.screenTitle' }),
         },
-        rightButtons: initialized
-          ? getRightButtons({
-              icons: ['licenseScan'],
-              theme: theme,
-            })
-          : [],
+        rightButtons: getRightButtons({
+          icons: ['licenseScan'],
+          theme: theme,
+        }),
       },
       bottomTab: {
         iconColor: theme.color.blue400,
-        text: initialized
-          ? intl.formatMessage({ id: 'wallet.bottomTabText' })
-          : '',
+        text: intl.formatMessage({ id: 'wallet.bottomTabText' }),
       },
     }),
     {

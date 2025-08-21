@@ -80,16 +80,14 @@ const { useNavigationOptions, getNavigationOptions } =
         rightButtons: initialized
           ? getRightButtons({
               icons: ['notifications', 'options'],
-              theme: theme as any,
+              theme,
             })
           : [],
       },
       bottomTab: {
-        ...({
+        ...{
           accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
-        } as any),
-        // selectedIconColor: null as any,
-        // iconColor: null as any,
+        },
         textColor: initialized
           ? isAndroid
             ? theme.shade.foreground

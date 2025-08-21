@@ -8,7 +8,6 @@ import {
   View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import { useTheme } from 'styled-components'
 
 import { EmptyList, StatusCardSkeleton } from '../../ui'
@@ -22,13 +21,12 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
 import { testIDs } from '../../utils/test-ids'
-import { isIos } from '../../utils/devices'
 import { ApplicationsPreview } from './components/applications-preview'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
+    (theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'applications.title' }),
@@ -39,9 +37,7 @@ const { useNavigationOptions, getNavigationOptions } =
       },
       bottomTab: {
         iconColor: theme.color.blue400,
-        text: initialized
-          ? intl.formatMessage({ id: 'applications.bottomTabText' })
-          : '',
+        text: intl.formatMessage({ id: 'applications.bottomTabText' }),
       },
     }),
     {
