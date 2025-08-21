@@ -1,5 +1,5 @@
 import {
-  DefaultStateLifeCycle,
+  // DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
