@@ -18,13 +18,7 @@ class AppDelegate: RNNAppDelegate, RNAppAuthAuthorizationFlowManager {
 
     override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
-        moduleName = "IslandApp"
-        dependencyProvider = RCTAppDependencyProvider()
-
-        // You can add your custom initial props in the dictionary below.
-        // They will be passed down to the ViewController used by React Native.
-        initialProps = [:]
-
+        
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
@@ -55,11 +49,11 @@ class AppDelegate: RNNAppDelegate, RNAppAuthAuthorizationFlowManager {
         )
     }
 
-    override func sourceURL(for _: RCTBridge) -> URL? {
-        bundleURL()
+    override func extraModules(for bridge: RCTBridge) -> [RCTBridgeModule] {
+        return ReactNativeNavigation.extraModules(for: bridge)
     }
-
-    override func bundleURL() -> URL? {
+    
+    override func sourceURL(for _: RCTBridge) -> URL? {
         #if DEBUG
             RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
         #else

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		5423FF0F80BB983A63A1370D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA6BB3F9BC0A645D723048 /* ExpoModulesProvider.swift */; };
+		5FE8394BAA6C061DB15F6B8B /* libPods-IslandApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 552921C7053115D8C5FF96C6 /* libPods-IslandApp.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8420ABB22E27FD0200D04F8A /* RNIsland.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8420ABB12E27FD0200D04F8A /* RNIsland.mm */; };
 		842B6C7E2E299962000AE0B2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842B6C7D2E29995F000AE0B2 /* AppDelegate.swift */; };
@@ -34,7 +35,6 @@
 		E3C8A6902E09E933006111E3 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3C8A68F2E09E933006111E3 /* SwiftUI.framework */; };
 		E3C8A6A12E09E934006111E3 /* LicenseWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E3C8A68C2E09E932006111E3 /* LicenseWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F1211DB68E885E77FC7E4BB7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 941A2A9F3CFC44F91E0A673C /* PrivacyInfo.xcprivacy */; };
-		FF707B993DAA2AB5BFE797F9 /* libPods-IslandApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC9E3DEE6F006FAA5025A373 /* libPods-IslandApp.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,19 +62,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		10233D684CB22A3C882B5CF8 /* Pods-IslandApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.release.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* IslandApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IslandApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = IslandApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = IslandApp/Info.plist; sourceTree = "<group>"; };
-		53BFAD2CC243DF4051226B06 /* Pods-IslandApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.debug.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.debug.xcconfig"; sourceTree = "<group>"; };
-		54B034D314460DA252CA27C7 /* Pods-IslandApp.testing.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.testing.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.testing.xcconfig"; sourceTree = "<group>"; };
-		5BD3F84B09D28615BB8D415C /* Pods-IslandApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.release.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.release.xcconfig"; sourceTree = "<group>"; };
+		2B8C7F2A9538CBD24BAA99E8 /* Pods-IslandApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.debug.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.debug.xcconfig"; sourceTree = "<group>"; };
+		552921C7053115D8C5FF96C6 /* libPods-IslandApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IslandApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		61891E6650A744E114D6A469 /* Pods-IslandApp.testing.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.testing.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.testing.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = IslandApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8420ABB12E27FD0200D04F8A /* RNIsland.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RNIsland.mm; sourceTree = "<group>"; };
 		842B6C7D2E29995F000AE0B2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		890AA6A42E10000B000E7D37 /* IslandAppRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = IslandAppRelease.entitlements; path = IslandApp/IslandAppRelease.entitlements; sourceTree = "<group>"; };
 		8DCA6BB3F9BC0A645D723048 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-IslandApp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		941A2A9F3CFC44F91E0A673C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = IslandApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		AC9E3DEE6F006FAA5025A373 /* libPods-IslandApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IslandApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E367D422298A854E007054A4 /* IslandApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IslandApp-Bridging-Header.h"; sourceTree = "<group>"; };
 		E367D423298A854E007054A4 /* noop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = noop.swift; sourceTree = "<group>"; };
 		E367D427298AB652007054A4 /* RNIsland.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNIsland.h; sourceTree = "<group>"; };
@@ -130,7 +130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E367D44C2991CA7C007054A4 /* PassKit.framework in Frameworks */,
-				FF707B993DAA2AB5BFE797F9 /* libPods-IslandApp.a in Frameworks */,
+				5FE8394BAA6C061DB15F6B8B /* libPods-IslandApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,7 +173,7 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				E3C8A68D2E09E932006111E3 /* WidgetKit.framework */,
 				E3C8A68F2E09E933006111E3 /* SwiftUI.framework */,
-				AC9E3DEE6F006FAA5025A373 /* libPods-IslandApp.a */,
+				552921C7053115D8C5FF96C6 /* libPods-IslandApp.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -231,9 +231,9 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				53BFAD2CC243DF4051226B06 /* Pods-IslandApp.debug.xcconfig */,
-				54B034D314460DA252CA27C7 /* Pods-IslandApp.testing.xcconfig */,
-				5BD3F84B09D28615BB8D415C /* Pods-IslandApp.release.xcconfig */,
+				2B8C7F2A9538CBD24BAA99E8 /* Pods-IslandApp.debug.xcconfig */,
+				61891E6650A744E114D6A469 /* Pods-IslandApp.testing.xcconfig */,
+				10233D684CB22A3C882B5CF8 /* Pods-IslandApp.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -266,7 +266,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "IslandApp" */;
 			buildPhases = (
-				1D5D14183630A5603D9A6D3E /* [CP] Check Pods Manifest.lock */,
+				37799A2489FC4DC30B32E5D8 /* [CP] Check Pods Manifest.lock */,
 				E367D429298DEB17007054A4 /* [Firebase] Copy GoogleService-Info plist */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				80880EBB58E0BB23E970CEEA /* [Expo] Configure project */,
@@ -275,9 +275,9 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				E3C8A6A22E09E934006111E3 /* Embed Foundation Extensions */,
-				D16DDC829E26C01D0DF3AA12 /* [CP] Embed Pods Frameworks */,
-				91613BE7D3FF19594F61ADDA /* [CP] Copy Pods Resources */,
-				49F635179AA6C3AD955E7CC5 /* [CP-User] [RNFB] Core Configuration */,
+				67E5665EEFCFD1ABCFBABD63 /* [CP] Embed Pods Frameworks */,
+				F7661C37745A4A67C17BC6A0 /* [CP] Copy Pods Resources */,
+				6C35FD083E70AFF21DB0E560 /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -398,7 +398,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../../../../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../../../../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		1D5D14183630A5603D9A6D3E /* [CP] Check Pods Manifest.lock */ = {
+		37799A2489FC4DC30B32E5D8 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -420,7 +420,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		49F635179AA6C3AD955E7CC5 /* [CP-User] [RNFB] Core Configuration */ = {
+		67E5665EEFCFD1ABCFBABD63 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6C35FD083E70AFF21DB0E560 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -452,40 +469,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-IslandApp/expo-configure-project.sh\"\n";
 		};
-		91613BE7D3FF19594F61ADDA /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D16DDC829E26C01D0DF3AA12 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		E367D429298DEB17007054A4 /* [Firebase] Copy GoogleService-Info plist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -503,6 +486,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "PATH_TO_CONFIG=\"$SRCROOT/Config/GoogleService-Info-$PRODUCT_BUNDLE_IDENTIFIER.plist\"\nFILENAME_IN_BUNDLE=GoogleService-Info.plist\nBUILD_APP_DIR=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\"\necho cp $PATH_TO_CONFIG \"$BUILD_APP_DIR/$FILENAME_IN_BUNDLE\"\ncp $PATH_TO_CONFIG \"$BUILD_APP_DIR/$FILENAME_IN_BUNDLE\"\n";
+		};
+		F7661C37745A4A67C17BC6A0 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -557,7 +557,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F951A680F5B00A75B9A /* Testing */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54B034D314460DA252CA27C7 /* Pods-IslandApp.testing.xcconfig */;
+			baseConfigurationReference = 61891E6650A744E114D6A469 /* Pods-IslandApp.testing.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconTest;
 				CLANG_ENABLE_MODULES = YES;
@@ -769,7 +769,7 @@
 		};
 		E367D44E2991D1B4007054A4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5BD3F84B09D28615BB8D415C /* Pods-IslandApp.release.xcconfig */;
+			baseConfigurationReference = 10233D684CB22A3C882B5CF8 /* Pods-IslandApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -903,7 +903,7 @@
 		};
 		E367D4512991D1C6007054A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 53BFAD2CC243DF4051226B06 /* Pods-IslandApp.debug.xcconfig */;
+			baseConfigurationReference = 2B8C7F2A9538CBD24BAA99E8 /* Pods-IslandApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconTest;
 				CLANG_ENABLE_MODULES = YES;

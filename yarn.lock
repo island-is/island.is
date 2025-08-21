@@ -15351,7 +15351,7 @@ __metadata:
     react-native-keychain: "npm:8.1.1"
     react-native-markdown-display: "npm:7.0.2"
     react-native-mmkv-storage: "npm:0.11.2"
-    react-native-navigation: "patch:react-native-navigation@npm%3A8.3.0#~/.yarn/patches/react-native-navigation-npm-8.3.0-683da0a2c4.patch"
+    react-native-navigation: "patch:react-native-navigation@npm%3A7.51.0#~/.yarn/patches/react-native-navigation-npm-7.51.0-83f4c854df.patch"
     react-native-navigation-hooks: "npm:6.3.0"
     react-native-passkey: "patch:react-native-passkey@npm%3A2.1.1#~/.yarn/patches/react-native-passkey-npm-2.1.1-0b2bf2ddcf.patch"
     react-native-passkit-wallet: "npm:0.1.6"
@@ -48952,7 +48952,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"normalize-svg-path@npm:^1.0.1, normalize-svg-path@npm:^1.1.0":
+"normalize-svg-path@npm:^1.1.0":
   version: 1.1.0
   resolution: "normalize-svg-path@npm:1.1.0"
   dependencies:
@@ -52713,6 +52713,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-lifecycles-compat@npm:2.0.0":
+  version: 2.0.0
+  resolution: "react-lifecycles-compat@npm:2.0.0"
+  checksum: 10/d531994d475f23ad0d796ca96d8002c081d79b9b874c0cfe8541463b56821f582568025ef0aa33d50f25926ff2f587950b360c0fc3175d8db0c98b4f9922f0da
+  languageName: node
+  linkType: hard
+
 "react-lifecycles-compat@npm:^3.0.0, react-lifecycles-compat@npm:^3.0.4":
   version: 3.0.4
   resolution: "react-lifecycles-compat@npm:3.0.4"
@@ -52961,17 +52968,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-navigation@npm:8.3.0":
-  version: 8.3.0
-  resolution: "react-native-navigation@npm:8.3.0"
+"react-native-navigation@npm:7.51.0":
+  version: 7.51.0
+  resolution: "react-native-navigation@npm:7.51.0"
   dependencies:
     hoist-non-react-statics: "npm:3.x.x"
     lodash: "npm:4.17.x"
     prop-types: "npm:15.x.x"
-    react-lifecycles-compat: "npm:^3.0.4"
-    react-native-redash: "npm:^12.6.1"
-    reanimated-color-picker: "npm:^3.0.6"
-    ssim.js: "npm:^3.5.0"
+    react-lifecycles-compat: "npm:2.0.0"
     tslib: "npm:1.9.3"
   peerDependencies:
     react: "*"
@@ -52982,21 +52986,18 @@ __metadata:
       optional: true
   bin:
     rnn-link: autolink/postlink/run.js
-  checksum: 10/0fafb64fcb6bc29b167f595fd4065f8004852fe2376d929ee3b46f4d8c3db0b1cff2f2e8639272d6b87a86c00d57913e35b943e6a1e5ae4b7e22d1af332e674b
+  checksum: 10/179b4e4de540b30c17e7252195f55df83cfe818845185438571e80a177f369e04ca949a2f1851d1dd7c5d198d2b7be90b723cb0d4db0855d01a0c237459505ae
   languageName: node
   linkType: hard
 
-"react-native-navigation@patch:react-native-navigation@npm%3A8.3.0#~/.yarn/patches/react-native-navigation-npm-8.3.0-683da0a2c4.patch":
-  version: 8.3.0
-  resolution: "react-native-navigation@patch:react-native-navigation@npm%3A8.3.0#~/.yarn/patches/react-native-navigation-npm-8.3.0-683da0a2c4.patch::version=8.3.0&hash=a7cf9e"
+"react-native-navigation@patch:react-native-navigation@npm%3A7.51.0#~/.yarn/patches/react-native-navigation-npm-7.51.0-83f4c854df.patch":
+  version: 7.51.0
+  resolution: "react-native-navigation@patch:react-native-navigation@npm%3A7.51.0#~/.yarn/patches/react-native-navigation-npm-7.51.0-83f4c854df.patch::version=7.51.0&hash=f64242"
   dependencies:
     hoist-non-react-statics: "npm:3.x.x"
     lodash: "npm:4.17.x"
     prop-types: "npm:15.x.x"
-    react-lifecycles-compat: "npm:^3.0.4"
-    react-native-redash: "npm:^12.6.1"
-    reanimated-color-picker: "npm:^3.0.6"
-    ssim.js: "npm:^3.5.0"
+    react-lifecycles-compat: "npm:2.0.0"
     tslib: "npm:1.9.3"
   peerDependencies:
     react: "*"
@@ -53007,7 +53008,7 @@ __metadata:
       optional: true
   bin:
     rnn-link: autolink/postlink/run.js
-  checksum: 10/c9e0c109073680c208a3959ff4b906394075e89cc32f1d8a221af5be28135a19e45fcccd4c49c57a529dc0888433114faab40b01790f464d4453a02c272b82e7
+  checksum: 10/3bea186776c15510d4b1063180f88c53cfc81fa19560282b48ea70d0404b30cba862281a2aa10d2185414a0dcb309d5894c5a0e614eccb3810fffd6fc9d9ce54
   languageName: node
   linkType: hard
 
@@ -53104,23 +53105,6 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/aec34f97393b3189fc727cee306481af0f6f47309589f04d4ece89cae69144131f896ddc226f786c2261c828091481494cbd6c442d1152461da83334fc643def
-  languageName: node
-  linkType: hard
-
-"react-native-redash@npm:^12.6.1":
-  version: 12.6.1
-  resolution: "react-native-redash@npm:12.6.1"
-  dependencies:
-    abs-svg-path: "npm:^0.1.1"
-    normalize-svg-path: "npm:^1.0.1"
-    parse-svg-path: "npm:^0.1.2"
-    use-memo-one: "npm:^1.1.1"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-    react-native-gesture-handler: "*"
-    react-native-reanimated: "*"
-  checksum: 10/e334d10ebf8ff96f7a05559a6d2429cc531e116d22aecac0ec5e753a68859299d16f6f1cc0a6c79910221e98153217ab30c0aece5d9c096d0a14694832330e90
   languageName: node
   linkType: hard
 
@@ -54031,22 +54015,6 @@ __metadata:
     react: ^16.8.0 || ^17.0.0
     react-dom: ^16.8.0 || ^17.0.0
   checksum: 10/9c45da6b2a5ee0a3f306912abbc0840aca6bd31c12c370c7cdfa64ed41559c9b6e9ea6e8a32f31805d04af6ab7c2e690fdc4b7e9231de6fe76a08be3413fef1f
-  languageName: node
-  linkType: hard
-
-"reanimated-color-picker@npm:^3.0.6":
-  version: 3.0.6
-  resolution: "reanimated-color-picker@npm:3.0.6"
-  peerDependencies:
-    expo: ">=44.0.0"
-    react: "*"
-    react-native: "*"
-    react-native-gesture-handler: ">=2.0.0"
-    react-native-reanimated: ^2.0.0 || ^3.0.0
-  peerDependenciesMeta:
-    expo:
-      optional: true
-  checksum: 10/f1b7a564933ee090cc7f8992eb4b21125d17640f1fbc74aaff2f724a3901ed5ec71fdad7f1ef72dfe075bb37e23efaf6d4ad603c6591794739b3533f15dd36be
   languageName: node
   linkType: hard
 
@@ -57129,13 +57097,6 @@ __metadata:
     sshpk-sign: bin/sshpk-sign
     sshpk-verify: bin/sshpk-verify
   checksum: 10/b437fd3fd2777b29b5425b57d3d352b5771d5c61ddb0e000ddc6ff4b8a5b69c2d1d6b188787a0577df2b125045a492d2c9d03452067e87c49b013bd273e1c70a
-  languageName: node
-  linkType: hard
-
-"ssim.js@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "ssim.js@npm:3.5.0"
-  checksum: 10/fface2e7f0317a4a612d5d00c82ff3c92d4a45638457468be1775bdf77a3d8d9453d457373af9700978f66ecc9fc56237c4b1379246d86b3af7276ab63c8dec3
   languageName: node
   linkType: hard
 
@@ -60525,15 +60486,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10/fd3787ed19f6cfbf70e2c5822d01bebbf96b00968195840d5ad61082b8e6ca7a8e2e46270c4096537d18a38ea57f4e4e9668cce5eec36fa4697ddba2ef1203fd
-  languageName: node
-  linkType: hard
-
-"use-memo-one@npm:^1.1.1":
-  version: 1.1.3
-  resolution: "use-memo-one@npm:1.1.3"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10/8f08eba26d69406b61bb4b8dacdd5a92bd6aef5b53d346dfe87954f7330ee10ecabc937cc7854635155d46053828e85c10b5a5aff7a04720e6a97b9f42999bac
   languageName: node
   linkType: hard
 

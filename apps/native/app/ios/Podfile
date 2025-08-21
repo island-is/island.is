@@ -10,6 +10,9 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, '15.6'
 prepare_react_native_project!
 
+# Disable New Architecture
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+
 $RNFirebaseAnalyticsWithoutAdIdSupport = true
 $VCEnableLocation = false
 
@@ -69,7 +72,7 @@ target 'IslandApp' do
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false,
+      :mac_catalyst_enabled => false
       # :ccache_enabled => true
     )
 

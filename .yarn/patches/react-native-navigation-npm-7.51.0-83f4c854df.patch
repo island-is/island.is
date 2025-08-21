@@ -1,0 +1,171 @@
+diff --git a/ReactNativeNavigation.podspec b/ReactNativeNavigation.podspec
+index d52e2e7b735061cdb7253ac309cea08ec03c4e29..bcf0455260753eb459653f6d44b71597628bad5a 100644
+--- a/ReactNativeNavigation.podspec
++++ b/ReactNativeNavigation.podspec
+@@ -1,9 +1,29 @@
+ require 'json'
++require 'find'
+ 
+ package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
+ 
+ fabric_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
+ 
++# Detect if this is a Swift project by looking for user AppDelegate.swift files
++start_dir = File.expand_path('../../', __dir__)
++swift_delegate_path = nil
++Find.find(start_dir) do |path|
++  if path =~ /AppDelegate\.swift$/
++    swift_delegate_path = path
++    break
++  end
++end
++
++swift_project = swift_delegate_path && File.exist?(swift_delegate_path)
++
++# Debug output
++if swift_project
++  puts "ReactNativeNavigation: Swift AppDelegate detected - enabling Swift-compatible configuration"
++else
++  puts "ReactNativeNavigation: Objective-C AppDelegate detected - using standard configuration"
++end
++
+ Pod::Spec.new do |s|
+   s.name         = "ReactNativeNavigation"
+   s.version      = package['version']
+@@ -19,23 +39,37 @@ Pod::Spec.new do |s|
+ 
+   s.subspec 'Core' do |ss|
+     s.source              = { :git => "https://github.com/wix/react-native-navigation.git", :tag => "#{s.version}" }
+-    s.source_files    = 'lib/ios/**/*.{h,m,mm,cpp}'
++    s.source_files        = 'lib/ios/**/*.{h,m,mm,cpp}'
+     s.exclude_files       = "lib/ios/ReactNativeNavigationTests/**/*.*", "lib/ios/OCMock/**/*.*"
++    # Only expose headers for Swift projects
++    if swift_project
++      s.public_header_files = [
++          'lib/ios/RNNAppDelegate.h',
++          'lib/ios/ReactNativeNavigation.h'
++        ]
++    end
+   end
+ 
+-  if fabric_enabled
+-    install_modules_dependencies(s)
++  folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32 -DFOLLY_CFG_NO_COROUTINES=1'
+ 
+-    folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32'
+-    fabric_flags = fabric_enabled ? '-DRCT_NEW_ARCH_ENABLED' : ''
+-
+-    s.pod_target_xcconfig = {
++  # Base xcconfig settings
++  xcconfig_settings = {
+       'HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/boost" "$(PODS_ROOT)/boost-for-react-native"  "$(PODS_ROOT)/RCT-Folly" "$(PODS_ROOT)/Headers/Private/React-Core" "$(PODS_ROOT)/Headers/Private/Yoga"',
+-      "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
++      "CLANG_CXX_LANGUAGE_STANDARD" => "c++20",
+       "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1",
+-    }
++  }
++
++  # Only add DEFINES_MODULE for Swift projects
++  if swift_project
++    xcconfig_settings["DEFINES_MODULE"] = "YES"
++  end
++
++  s.pod_target_xcconfig = xcconfig_settings
++
++  if fabric_enabled
++    install_modules_dependencies(s)
+ 
+-    s.compiler_flags  = folly_compiler_flags + ' ' + '-DRCT_NEW_ARCH_ENABLED'
++    s.compiler_flags  = folly_compiler_flags + ' ' + '-DRCT_NEW_ARCH_ENABLED' + ' ' + '-DUSE_HERMES=1'
+     s.requires_arc    = true
+ 
+     s.dependency "React"
+@@ -46,9 +80,12 @@ Pod::Spec.new do |s|
+     s.dependency "RCT-Folly"
+     s.dependency "RCTRequired"
+     s.dependency "RCTTypeSafety"
+-    s.dependency "ReactCommon/turbomodule/core"
++    s.dependency "ReactCommon"
+     s.dependency "React-runtimeexecutor"
+     s.dependency "React-rncore"
++    s.dependency "React-RuntimeCore"
++  else
++    s.compiler_flags  = folly_compiler_flags
+   end
+ 
+   s.dependency 'React-Core'
+diff --git a/lib/ios/BottomTabsBasePresenter.m b/lib/ios/BottomTabsBasePresenter.m
+index 75aa424bfd33fccf72a2d2faa508a0cf34eb9428..7a40c76772e171e554dbaf686ceda366fea49db3 100644
+--- a/lib/ios/BottomTabsBasePresenter.m
++++ b/lib/ios/BottomTabsBasePresenter.m
+@@ -1,5 +1,6 @@
+ #import "BottomTabsBasePresenter.h"
+ #import "RNNBottomTabsController.h"
++#import "RNNConvert.h"
+ #import "UIImage+utils.h"
+ 
+ @implementation BottomTabsBasePresenter
+@@ -29,7 +30,7 @@ - (void)applyOptions:(RNNNavigationOptions *)options {
+     [self applyBackgroundColor:[withDefault.bottomTabs.backgroundColor withDefault:nil]
+                    translucent:[withDefault.bottomTabs.translucent withDefault:NO]];
+     [bottomTabs setTabBarHideShadow:[withDefault.bottomTabs.hideShadow withDefault:NO]];
+-    [bottomTabs setTabBarStyle:[RCTConvert UIBarStyle:[withDefault.bottomTabs.barStyle
++    [bottomTabs setTabBarStyle:[RNNConvert UIBarStyle:[withDefault.bottomTabs.barStyle
+                                                           withDefault:@"default"]]];
+     [self applyTabBarBorder:withDefault.bottomTabs];
+     [self applyTabBarShadow:withDefault.bottomTabs.shadow];
+@@ -60,7 +61,7 @@ - (void)mergeOptions:(RNNNavigationOptions *)mergeOptions
+     }
+ 
+     if (mergeOptions.bottomTabs.barStyle.hasValue) {
+-        [bottomTabs setTabBarStyle:[RCTConvert UIBarStyle:mergeOptions.bottomTabs.barStyle.get]];
++        [bottomTabs setTabBarStyle:[RNNConvert UIBarStyle:mergeOptions.bottomTabs.barStyle.get]];
+     }
+ 
+     if (mergeOptions.bottomTabs.translucent.hasValue) {
+diff --git a/lib/ios/RNNConvert.h b/lib/ios/RNNConvert.h
+index b21c73b042dc6fc755d69e7e06e2cfcfd960bad1..c14cb98603238ff2ac1ac04cba0ea2298b31fdbd 100644
+--- a/lib/ios/RNNConvert.h
++++ b/lib/ios/RNNConvert.h
+@@ -7,4 +7,6 @@
+ 
+ + (UIModalTransitionStyle)UIModalTransitionStyle:(id)json;
+ 
+++ (UIBarStyle)UIBarStyle:(id)json;
++
+ @end
+diff --git a/lib/ios/RNNConvert.m b/lib/ios/RNNConvert.m
+index 873042dec5eac0a845a52d53eebaa115c5a860a9..c707820b8d98689f482f0139582dc689c75e81da 100644
+--- a/lib/ios/RNNConvert.m
++++ b/lib/ios/RNNConvert.m
+@@ -32,4 +32,8 @@ + (UIModalPresentationStyle)defaultModalPresentationStyle {
+                    }),
+                    UIModalPresentationFullScreen, integerValue)
+ 
++RCT_ENUM_CONVERTER(UIBarStyle,
++                   (@{@"default" : @(UIBarStyleDefault), @"black" : @(UIBarStyleBlack)}),
++                   UIBarStyleDefault, integerValue)
++
+ @end
+diff --git a/lib/ios/RNNStackPresenter.m b/lib/ios/RNNStackPresenter.m
+index 357d8d615ce40c9af8bf97ecfb27ec4ad49bdb51..085fd0c8ff7e00cb61c2749b2759a701298e950a 100644
+--- a/lib/ios/RNNStackPresenter.m
++++ b/lib/ios/RNNStackPresenter.m
+@@ -69,7 +69,7 @@ - (void)applyOptions:(RNNNavigationOptions *)options {
+     stack.interactivePopGestureRecognizer.delegate = _interactivePopGestureDelegate;
+ 
+     [stack
+-        setBarStyle:[RCTConvert UIBarStyle:[withDefault.topBar.barStyle withDefault:@"default"]]];
++        setBarStyle:[RNNConvert UIBarStyle:[withDefault.topBar.barStyle withDefault:@"default"]]];
+     [stack setRootBackgroundImage:[withDefault.rootBackgroundImage withDefault:nil]];
+     [stack setNavigationBarTestId:[withDefault.topBar.testID withDefault:nil]];
+     [stack setNavigationBarVisible:[withDefault.topBar.visible withDefault:YES]
+@@ -127,7 +127,7 @@ - (void)mergeOptions:(RNNNavigationOptions *)mergeOptions
+     }
+ 
+     if (mergeOptions.topBar.barStyle.hasValue) {
+-        [stack setBarStyle:[RCTConvert UIBarStyle:mergeOptions.topBar.barStyle.get]];
++        [stack setBarStyle:[RNNConvert UIBarStyle:mergeOptions.topBar.barStyle.get]];
+     }
+ 
+     if (mergeOptions.topBar.background.clipToBounds.hasValue) {
