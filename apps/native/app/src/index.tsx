@@ -1,3 +1,4 @@
+import './utils/intl-polyfill'
 import { Navigation } from 'react-native-navigation'
 import { initializeApolloClient } from './graphql/client'
 import { readAuthorizeResult } from './stores/auth-store'
@@ -11,19 +12,19 @@ import { setupGlobals } from './utils/lifecycle/setup-globals'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { performanceMetricsAppLaunched } from './utils/performance-metrics'
 
+// setup global packages and polyfills
+setupGlobals()
+
+// Register all event handlers
+setupEventHandlers()
+
+// setup development menu
+setupDevMenu()
+
+// Setup app routing layer
+setupRoutes()
+
 async function startApp() {
-  // setup global packages and polyfills
-  setupGlobals()
-
-  // Register all event handlers
-  setupEventHandlers()
-
-  // setup development menu
-  setupDevMenu()
-
-  // Setup app routing layer
-  setupRoutes()
-
   // Initialize Apollo client. This must be done before registering components
   await initializeApolloClient()
 
@@ -58,5 +59,4 @@ async function startApp() {
   })
 }
 
-// Start the app
-void startApp()
+startApp()

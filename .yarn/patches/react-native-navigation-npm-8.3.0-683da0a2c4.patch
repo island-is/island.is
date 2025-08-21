@@ -1,0 +1,15 @@
+diff --git a/ReactNativeNavigation.podspec b/ReactNativeNavigation.podspec
+index 1777dc62b018f884dcee620f9b404ec37f49c683..24eb71637993f5e2fa01673386e1882ca612dd99 100644
+--- a/ReactNativeNavigation.podspec
++++ b/ReactNativeNavigation.podspec
+@@ -44,7 +44,9 @@ Pod::Spec.new do |s|
+     # Only expose headers for Swift projects
+     if swift_project
+       s.public_header_files = [
+-          'lib/ios/RNNAppDelegate.h'
++          'lib/ios/RNNAppDelegate.h',
++          'lib/ios/ReactNativeNavigation.h',
++          'lib/ios/TurboModules/RNNTurboManager.h'
+         ]
+     end
+   end
