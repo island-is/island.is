@@ -1049,9 +1049,6 @@ export class ApplicationController {
     // delete charge in FJS
     await this.applicationChargeService.deleteCharge(existingApplication)
 
-    // no need to delete payment, we are no longer fully deleting the application
-    // await this.paymentService.delete(existingApplication.id, user)
-
     await this.fileService.deleteAttachmentsForApplication(existingApplication)
 
     await this.applicationService.softDelete(existingApplication.id)
