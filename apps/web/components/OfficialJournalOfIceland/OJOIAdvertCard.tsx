@@ -83,7 +83,7 @@ export const OJOIAdvertCard = ({
         </GridColumn>
         <GridColumn span={'3/12'}>
           {link && (
-            <Box display="flex" height="full"justifyContent="flexEnd" alignItems="flexEnd">
+            <Box display="flex" height="full" justifyContent="flexEnd" alignItems="flexEnd">
               <LinkV2
                 href={link}
                 color="blue400"
