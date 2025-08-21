@@ -96,7 +96,12 @@ const template: ApplicationTemplate<
           status: 'completed',
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000,
+            shouldDeleteChargeIfPaymentFulfilled: true,
+          },
           onEntry: [
             VerifyPaymentApi.configure({
               order: 0,
