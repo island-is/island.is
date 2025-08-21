@@ -66,7 +66,7 @@ export type AgentModel = {
   email: string
   phone: string
   nationalId: string
-  type: string
+  type: AffiliationRole
   preferredLanguage: string | null
   requiresInterpreter: boolean
 }
@@ -124,7 +124,7 @@ export type CaseWorker = {
   name: string
   email: string
   phone: string
-  type: string
+  type: CaseWorkerInputTypeEnum
 }
 
 export type SocialProfile = {
