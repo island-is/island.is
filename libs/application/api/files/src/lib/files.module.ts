@@ -11,7 +11,6 @@ import { ConfigType } from '@nestjs/config'
 import { UploadProcessor } from './upload.processor'
 import { FileStorageModule } from '@island.is/file-storage'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
-import type { Redis } from 'ioredis'
 
 @Module({
   imports: [
@@ -41,7 +40,7 @@ export const createBullModule = () => {
             ssl: config.redis.ssl,
             nodes: config.redis.nodes,
             noPrefix: true,
-          }) as any,
+          }),
       }),
       inject: [ApplicationFilesConfig.KEY],
     })
