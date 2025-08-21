@@ -20,9 +20,9 @@ echo "Dropping role with name ${DB_USER}"
 
 # Determine if $DB_USER is a read-only user and revoke its privileges
 if [[ "$DB_USER" == *"_read" ]]; then
-  psql -c "REVOKE USAGE ON SCHEMA PUBLIC FROM ${DB_NAME}"
-  psql -c "REVOKE SELECT ON ALL TABLES IN SCHEMA PUBLIC FROM ${DB_NAME}"
-  psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM ${DB_NAME}" || true
+  psql -c "REVOKE USAGE ON SCHEMA PUBLIC FROM ${DB_USER}"
+  psql -c "REVOKE SELECT ON ALL TABLES IN SCHEMA PUBLIC FROM ${DB_USER}"
+  psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM ${DB_USER}" || true
 fi
 
-psql -c "DROP ROLE IF EXISTS ${DB_NAME};" || true
+psql -c "DROP ROLE IF EXISTS ${DB_USER};" || true
