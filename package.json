@@ -211,7 +211,7 @@
     "identicon.js": "2.3.3",
     "intl": "1.2.5",
     "intl-locales-supported": "1.8.12",
-    "ioredis": "5.3.2",
+    "ioredis": "5.6.1",
     "ip3country": "5.0.0",
     "is-circular": "1.0.2",
     "is-url": "1.2.4",
