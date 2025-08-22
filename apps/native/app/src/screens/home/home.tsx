@@ -75,30 +75,22 @@ const iconInsets = {
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
+    (theme, intl) => ({
       topBar: {
-        rightButtons: initialized
-          ? getRightButtons({
-              icons: ['notifications', 'options'],
-              theme,
-            })
-          : [],
+        rightButtons: getRightButtons({
+          icons: ['notifications', 'options'],
+          theme,
+        }),
       },
       bottomTab: {
         ...{
           accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
         },
-        textColor: initialized
-          ? isAndroid
-            ? theme.shade.foreground
-            : { light: 'black', dark: 'white' }
-          : theme.shade.background,
-        icon: initialized
-          ? require('../../assets/icons/tabbar-home.png')
-          : undefined,
-        selectedIcon: initialized
-          ? require('../../assets/icons/tabbar-home-selected.png')
-          : undefined,
+        textColor: isAndroid
+          ? theme.shade.foreground
+          : { light: 'black', dark: 'white' },
+        icon: require('../../assets/icons/tabbar-home.png'),
+        selectedIcon: require('../../assets/icons/tabbar-home-selected.png'),
       },
     }),
     {
@@ -114,8 +106,8 @@ const { useNavigationOptions, getNavigationOptions } =
         iconInsets,
         disableIconTint: false,
         disableSelectedIconTint: true,
-        iconColor: null as any,
-        selectedIconColor: null as any,
+        iconColor: null,
+        selectedIconColor: null,
       },
     },
   )
@@ -317,10 +309,6 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
     licensesWidgetEnabled,
     inboxWidgetEnabled,
   ])
-
-  if (!ui.initializedApp) {
-    return null
-  }
 
   const data = [
     {
