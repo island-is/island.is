@@ -39,6 +39,8 @@ function pushFiles() {
     run('git', ['add', dirtyFile], { cwd: repoRoot });
   }
   run('git', ['commit', '-m', `chore: ${action} update dirty file`], { cwd: repoRoot });
+  const output = runCapture('git', ['push', '--dry-run'], { cwd: repoRoot });
+  console.log(output);
   // run('git', ['push'], { cwd: repoRoot });
 }
 
@@ -47,7 +49,9 @@ function getUrlWithToken(token) {
 }
 
 function getCurrentUrl() {
-  const url = runCapture('git', ['remote', 'get-url', 'origin']).trim().split('@')[1].replace(':', '/');
+  const origin = runCapture('git', ['remote', 'get-url', 'origin']).trim();
+  console.log(`Current origin url: ${origin}`);
+  const url = origin.split('@')[1].replace(':', '/');
   return url;
 }
 
