@@ -1,6 +1,14 @@
 import { useIntl } from 'react-intl'
 
-import { Box, GridColumn, GridRow, Icon, LinkV2, Tag, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Icon,
+  LinkV2,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 
 import { m } from '../../screens/OfficialJournalOfIceland/messages'
 import { formatDate } from './OJOIUtils'
@@ -41,7 +49,7 @@ export const OJOIAdvertCard = ({
         </GridColumn>
         <GridColumn span={'6/12'}>
           {(department || publicationDate) && (
-            <Box display="flex" justifyContent='flexEnd'>
+            <Box display="flex" justifyContent="flexEnd">
               <Text variant="eyebrow" color="blueberry400">
                 {department}
                 {department && publicationDate && ' - '}
@@ -70,7 +78,13 @@ export const OJOIAdvertCard = ({
           )}
 
           {categories && categories.length > 0 && (
-            <Box marginTop={2} display="flex" rowGap={1} columnGap={1} flexWrap="wrap">
+            <Box
+              marginTop={2}
+              display="flex"
+              rowGap={1}
+              columnGap={1}
+              flexWrap="wrap"
+            >
               {categories.map((cat) => {
                 return (
                   <Tag key={cat} variant="blue" outlined disabled>
@@ -83,7 +97,12 @@ export const OJOIAdvertCard = ({
         </GridColumn>
         <GridColumn span={'3/12'}>
           {link && (
-            <Box display="flex" height="full" justifyContent="flexEnd" alignItems="flexEnd">
+            <Box
+              display="flex"
+              height="full"
+              justifyContent="flexEnd"
+              alignItems="flexEnd"
+            >
               <LinkV2
                 href={link}
                 color="blue400"
