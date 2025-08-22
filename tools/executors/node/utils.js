@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTmpTsConfig = void 0;
+exports.createTmpTsConfig = createTmpTsConfig;
 var fs_1 = require("fs");
 var path_1 = require("path");
 var devkit_1 = require("@nx/devkit");
@@ -15,7 +15,6 @@ function createTmpTsConfig(tsconfigPath, workspaceRoot, projectRoot) {
     (0, devkit_1.writeJsonFile)(tmpTsConfigPath, parsedTSConfig);
     return (0, path_1.join)(tmpTsConfigPath);
 }
-exports.createTmpTsConfig = createTmpTsConfig;
 function readTsConfigWithCommonJs(tsConfig, generatedTsConfigPath) {
     var generatedTsConfig = { compilerOptions: {} };
     generatedTsConfig.extends = (0, path_1.relative)((0, path_1.dirname)(generatedTsConfigPath), tsConfig);
