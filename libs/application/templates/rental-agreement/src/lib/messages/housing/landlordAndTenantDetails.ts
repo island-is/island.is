@@ -135,10 +135,16 @@ export const landlordAndTenantDetails = defineMessages({
     defaultMessage: 'Símanúmer þarf að vera skráð',
     description: 'Phone number empty error',
   },
-  emailEmptyError: {
-    id: 'ra.application:landlordAndTenantDetails.emailEmptyError',
-    defaultMessage: 'Netfang þarf að vera skráð',
-    description: 'Email empty error',
+  phoneNumberInvalidError: {
+    id: 'ra.application:landlordAndTenantDetails.phoneNumberInvalidError',
+    defaultMessage: 'Símanúmer er ógilt',
+    description: 'Phone number invalid error',
+  },
+  emailInvalidError: {
+    id: 'ra.application:landlordAndTenantDetails.emailInvalidError',
+    defaultMessage:
+      'Netfangið er rangt ritað. Vinsamlegast athugaðu hvort vanti @-merkið eða lénið (eins og ".is")',
+    description: 'Email invalid error',
   },
   addressEmptyError: {
     id: 'ra.application:landlordAndTenantDetails.addressEmptyError',
