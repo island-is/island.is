@@ -6,6 +6,8 @@ jobs:
     runs-on: arc-shared 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Yarn
         env:
             DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
