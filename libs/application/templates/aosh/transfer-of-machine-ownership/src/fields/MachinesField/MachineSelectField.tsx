@@ -40,7 +40,7 @@ export const MachineSelectField: FC<
     currentMachine && currentMachine.regNumber ? currentMachine : null,
   )
   const [machineId, setMachineId] = useState<string>(
-    getValueViaPath(application.answers, 'pickMachine.id', '') as string,
+    getValueViaPath(application.answers, 'machine.id', '') as string, // TODO does this work now?
   )
 
   const getMachineDetails = useLazyMachineDetails()
@@ -88,8 +88,8 @@ export const MachineSelectField: FC<
           setValue('machine.id', response.getWorkerMachineDetails.id)
           setValue('machine.date', new Date().toISOString())
           setValue(
-            'pickMachine.isValid',
-            response.getWorkerMachineDetails.disabled ? undefined : true,
+            'machine.isValid',
+            response.getWorkerMachineDetails.disabled ? undefined : true, // TODO this work now?
           )
           setMachineId(currentMachine?.id || '')
           setIsLoading(false)
@@ -104,10 +104,10 @@ export const MachineSelectField: FC<
 
   return (
     <Box>
-      <SelectController
+      <SelectController // TODO changed this, work now?
         label={formatMessage(information.labels.pickMachine.vehicle)}
-        id="pickMachine.id"
-        name="pickMachine.id"
+        id="machine.id"
+        name="machine.id"
         onSelect={(option) => onChange(option as Option)}
         options={currentMachineList.map((machine, index) => {
           return {

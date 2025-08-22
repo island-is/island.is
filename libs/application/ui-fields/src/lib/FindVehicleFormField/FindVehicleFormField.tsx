@@ -60,7 +60,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, `${field.id}.plate`, '') as string,
   )
-  const { setValue } = useFormContext()
+  const { setValue, register } = useFormContext()
   const { formatMessage } = useLocale()
   const [vehicleNotFound, setVehicleNotFound] = useState<boolean>()
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true)
@@ -184,7 +184,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
         }
       }
     }
-    setValue(`${field.id}.findVehicle`, true)
+
+    console.log('machineDetails', machineDetails)
 
     setValue(
       `${field.id}.paymentRequiredForOwnerChange`,
@@ -198,9 +199,11 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.ownerNumber`, machineDetails.ownerNumber || '')
     setValue(`${field.id}.id`, machineDetails.id)
     setValue(`${field.id}.date`, new Date().toISOString())
+    setValue(`${field.id}.findVehicle`, true)
+    setValue(`${field.id}.isValid`, machineDisabled ? undefined : true)
 
-    setValue('pickMachine.id', machineDetails.id)
-    setValue('pickMachine.isValid', machineDisabled ? undefined : true)
+    setValue('pickMachine.id', machineDetails.id) // TODO remove?
+    setValue('pickMachine.isValid', machineDisabled ? undefined : true) // todo remove?
 
     setSubmitButtonDisabled?.(!machineDisabled || false)
 

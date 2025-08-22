@@ -14,7 +14,13 @@ const UserSchemaBase = z.object({
     ),
   name: z.string().min(1),
   email: z.string().min(1),
-  phone: z.string().min(1),
+  phone: z
+    .string()
+    .min(1)
+    .refine((phone) => {
+      const countryCodeIS = phone.startsWith('+354')
+      return countryCodeIS ? phone.length === 11 : true
+    }),
 })
 
 const RemovableUserSchemaBase = z
@@ -22,7 +28,13 @@ const RemovableUserSchemaBase = z
     nationalId: z.string().optional(),
     name: z.string().optional(),
     email: z.string().optional(),
-    phone: z.string().optional(),
+    phone: z
+      .string()
+      .optional()
+      .refine((phone) => {
+        const countryCodeIS = phone?.startsWith('+354')
+        return countryCodeIS && phone ? phone?.length === 11 : true
+      }),
     wasRemoved: z.string().optional(),
   })
   .refine(
@@ -86,10 +98,20 @@ export const MachineAnswersSchema = z.object({
     regNumber: z.string().optional(),
     ownerNumber: z.string().optional(),
     paymentRequiredForOwnerChange: z.boolean().optional(),
+    findVehicle: z.boolean().optional(),
   }),
   pickMachine: z.object({
+    findVehicle: z.boolean().optional(),
     index: z.string().optional(),
     id: z.string().min(1),
+    date: z.string().optional(),
+    type: z.string().optional(),
+    plate: z.string().optional(),
+    subType: z.string().optional(),
+    category: z.string().optional(),
+    regNumber: z.string().optional(),
+    ownerNumber: z.string().optional(),
+    paymentRequiredForOwnerChange: z.boolean().optional(),
   }),
   location: z.object({
     address: z.string(),
