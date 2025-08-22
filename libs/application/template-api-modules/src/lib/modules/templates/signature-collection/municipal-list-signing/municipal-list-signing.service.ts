@@ -11,13 +11,11 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 import { errorMessages } from '@island.is/application/templates/signature-collection/municipal-list-signing'
 import { getCollectionTypeFromApplicationType } from '../shared/utils'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 @Injectable()
 export class MunicipalListSigningService extends BaseTemplateApiService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionClientService,
-    private nationalRegistryClientService: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.MUNICIPAL_LIST_SIGNING)
   }
