@@ -268,7 +268,7 @@ jobs:
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-express-yarn" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
