@@ -19,7 +19,17 @@ export async function getGithubToken(APP_ID, PRIVATE_KEY) {
         Authorization: `Bearer ${authData.token}`,
       },
     })
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch installations: ${response.status} ${response.statusText}`)
+    }
+    
     const installations = await response.json()
+    
+    if (!installations || installations.length === 0) {
+      throw new Error('No GitHub App installations found')
+    }
+    
     const INSTALL_ID = installations[0].id
     
     const actionRest = await fetch(
@@ -33,7 +43,15 @@ export async function getGithubToken(APP_ID, PRIVATE_KEY) {
       },
     )
     
+    if (!actionRest.ok) {
+      throw new Error(`Failed to create installation token: ${actionRest.status} ${actionRest.statusText}`)
+    }
+    
     const actionJson = await actionRest.json()
+
+    if (!actionJson.token) {
+      throw new Error('No token received from GitHub API')
+    }
 
     return actionJson.token;
 }
