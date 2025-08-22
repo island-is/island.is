@@ -102,23 +102,22 @@ export class FieldsService {
   async delete(id: string): Promise<void> {
     const field = await this.findById(id)
 
-    // Make sure to delete all instances of the fieldId in the dependencies array
-    if (
-      field.fieldType === FieldTypesEnum.CHECKBOX ||
-      field.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-      field.fieldType === FieldTypesEnum.DROPDOWN_LIST
-    ) {
-      const screen = await this.screenModel.findByPk(field.screenId)
-      const section = await this.sectionModel.findByPk(screen?.sectionId)
-      const form = await this.formModel.findByPk(section?.formId)
-
-      if (form) {
-        const { dependencies } = form
-        const newDependencies = filterDependency(dependencies, id)
-        form.dependencies = newDependencies
-        form.save()
-      }
+    if (!field) {
+      throw new NotFoundException(`Field with id '${id}' not found`)
     }
+    // Make sure to delete all instances of the fieldId in the dependencies array
+    
+    const screen = await this.screenModel.findByPk(field.screenId)
+    const section = await this.sectionModel.findByPk(screen?.sectionId)
+    const form = await this.formModel.findByPk(section?.formId)
+
+    if (form) {
+      const { dependencies } = form
+      const newDependencies = filterDependency(dependencies, id)
+      form.dependencies = newDependencies
+      form.save()
+    }
+    
 
     field?.destroy()
   }
