@@ -35,6 +35,7 @@ const generateRandomAsset = (n: number, i = 1): InheritanceReportAsset => {
     exchangeRateOrInterest: String(1 + Math.round(Math.random() * 99)),
     debtType: [
       DebtTypes.CreditCard,
+      DebtTypes.Duties,
       DebtTypes.Loan,
       DebtTypes.InsuranceCompany,
       DebtTypes.Overdraft,

@@ -19,7 +19,7 @@ global:
 name: 'user-notification-worker'
 args:
   - '--no-experimental-fetch'
-  - 'main.js'
+  - 'main.cjs'
   - '--job=worker'
 command:
   - 'node'

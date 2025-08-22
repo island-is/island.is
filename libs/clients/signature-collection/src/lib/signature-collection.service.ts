@@ -159,14 +159,20 @@ export class SignatureCollectionClientService {
     const currentCollection = await this.getLatestCollectionForType(
       CollectionType.LocalGovernmental,
     )
-    if (currentCollection.id !== collectionId) {
+
+    const inputAreaId = areas?.[0].areaId
+    const currentAreaCollectionId = currentCollection.areas.find(
+      (area) => area.id === inputAreaId,
+    )?.collectionId
+
+    if (currentAreaCollectionId !== collectionId) {
       throw new Error('Collection not found')
     }
 
-    const { id, isActive, areas: collectionAreas } = currentCollection
+    const { areas: collectionAreas } = currentCollection
 
-    // check if collectionId is current collection and current collection is open
-    if (collectionId !== id.toString() || !isActive) {
+    // check if collection is open
+    if (!collectionAreas.find((area) => area.id === inputAreaId)?.isActive) {
       // TODO: create ApplicationTemplateError
       throw new Error('Collection is not open')
     }
@@ -191,7 +197,7 @@ export class SignatureCollectionClientService {
       auth,
     ).frambodPost({
       frambodRequestDTO: {
-        sofnunID: parseInt(id),
+        sofnunID: parseInt(collectionId),
         kennitala: owner.nationalId.replace(/\D/g, ''),
         frambodNafn: `${listName ?? partyBallotLetterInfo?.name}`,
         simi: owner.phone,
@@ -527,7 +533,10 @@ export class SignatureCollectionClientService {
     })
     return {
       success: requirementsMet && !activeSignature && noInvalidSignature,
-      reasons,
+      reasons:
+        reasons.length > 1
+          ? reasons.filter((r) => r !== ReasonKey.DeniedByService)
+          : reasons,
     }
   }
 
@@ -537,14 +546,14 @@ export class SignatureCollectionClientService {
     nationalId?: string,
   ): Promise<Signee> {
     const collection = await this.getLatestCollectionForType(collectionType)
-    const { id, isActive, areas } = collection
+    const { electionId, isActive, areas } = collection
     try {
       const user = await this.getApiWithAuth(
-        this.collectionsApi,
+        this.electionsApi,
         auth,
-      ).medmaelasofnunIDEinsInfoKennitalaGet({
+      ).kosningIDEinsInfoKennitalaGet({
         kennitala: nationalId ?? auth.nationalId,
-        iD: parseInt(id),
+        iD: parseInt(electionId ?? '0'),
       })
 
       const candidate = user.frambod ? mapCandidate(user.frambod) : undefined

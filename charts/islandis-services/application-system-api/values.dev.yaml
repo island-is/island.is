@@ -18,7 +18,7 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'application-system-api'
 args:
-  - 'main.js'
+  - 'main.cjs'
 command:
   - 'node'
 enabled: true
@@ -49,6 +49,9 @@ env:
   FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
   FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
   GRAPHQL_API_URL: 'http://api.islandis.svc.cluster.local'
+  HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
+  HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
+  HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
@@ -75,6 +78,7 @@ env:
   SERVICE_USER_PROFILE_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
   UNIVERSITY_GATEWAY_API_URL: 'http://services-university-gateway.services-university-gateway.svc.cluster.local'
   USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
+  VMST_UNEMPLOYMENT_XROAD_PATH: 'IS-DEV/GOV/10003/VMST-Protected/XRoadDev-v1'
   WORKPOINT_ARBORG_SERVICE_PATH: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1'
   XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1'
   XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1'
@@ -257,6 +261,7 @@ secrets:
   EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
   FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
   FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+  HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
   ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
   ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
@@ -276,6 +281,8 @@ secrets:
   XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
   XROAD_PROPERTIES_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
   XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
+  XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
+  XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
