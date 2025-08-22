@@ -8,6 +8,7 @@ import {
 import { useCourtDocuments } from '@island.is/judicial-system-web/src/components/CourtDocuments/CourtDocuments'
 import { Box, Tag } from '@island.is/island-ui/core'
 import { Reorder, useDragControls } from 'motion/react'
+import * as styles from './CourtRecord.css'
 
 const CourtRecord: FC = () => {
   const { workingCase } = useContext(FormContext)
@@ -38,16 +39,20 @@ const CourtRecord: FC = () => {
       name="indictmentCourtDocuments"
       isDisabled={() => false}
     >
-      <Box display="flex" rowGap={2} justifyContent="spaceBetween">
+      <Box
+        display="flex"
+        rowGap={2}
+        justifyContent="spaceBetween"
+        className={styles.reorderGroup}
+      >
         <Reorder.Group
           axis="y"
           values={reorderableItems}
           onReorder={setReorderableItems}
-          // className={styles.reorderGroup}
         >
           {reorderableItems.map((item, index) => {
             return (
-              <Reorder.Item key={item.name} value={item}>
+              <Reorder.Item key={item.name} value={item} data-reorder-item>
                 <Box
                   display="flex"
                   alignItems="center"

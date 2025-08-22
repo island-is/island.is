@@ -4,7 +4,6 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   display: 'grid',
-  gap: theme.spacing[2],
 })
 
 export const addCourtDocumentContainer = style({
