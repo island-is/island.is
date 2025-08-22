@@ -8,7 +8,6 @@ import {
 } from '@island.is/form-system/graphql'
 import { m, webMessages } from '../../lib/messages'
 import { useQuery } from '@apollo/client'
-import { User } from './types'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 
 interface Props {

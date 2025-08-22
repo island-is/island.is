@@ -7,11 +7,11 @@ interface Props {
 }
 
 const AWNSER_MAP = {
-  ['is']: {
+  is: {
     true: 'Já',
     false: 'Nei',
   },
-  ['en']: {
+  en: {
     true: 'Yes',
     false: 'No',
   },

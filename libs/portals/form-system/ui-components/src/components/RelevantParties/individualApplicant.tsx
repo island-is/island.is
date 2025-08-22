@@ -25,7 +25,12 @@ interface Props {
   actor: string
 }
 
-export const IndividualApplicant = ({ applicantType, lang, user, actor }: Props) => {
+export const IndividualApplicant = ({
+  applicantType,
+  lang,
+  user,
+  actor,
+}: Props) => {
   const { formatMessage } = useIntl()
   const nationalId = actor ?? user?.nationalId
   const email =

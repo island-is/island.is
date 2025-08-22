@@ -17,7 +17,7 @@ export const Applicants = ({ applicantTypes }: Props) => {
   const { data } = useQuery(USER_PROFILE, {
     fetchPolicy: 'cache-first',
   })
-  console.log("minarsidurData", data)
+  console.log('minarsidurData', data)
   const userInfo = useUserInfo()
   return (
     <>

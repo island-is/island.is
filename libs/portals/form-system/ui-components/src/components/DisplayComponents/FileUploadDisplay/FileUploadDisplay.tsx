@@ -1,6 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
-import { fileTypes } from '../../../lib/fileTypes'
 
 interface Props {
   item: FormSystemField

@@ -146,11 +146,6 @@ export const applicationReducer = (
     }
     case 'INDEX_SCREEN': {
       const { sectionIndex, screenIndex } = action.payload
-      const currentSection = state.sections[sectionIndex]
-      if (hasScreens(currentSection)) {
-        const currentScreen = currentSection.screens?.[screenIndex]
-      }
-
       return setCurrentScreen(state, sectionIndex, screenIndex)
     }
 
