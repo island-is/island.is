@@ -13,6 +13,7 @@ const APP_ID = 'DIRTYBOT_APP_ID';
 const { relPath, action, owner, privateKey, appId, repoRoot, absPath, isCi } = getProps();
 
 !isCi && console.info(`Running in non-CI mode, does not push for real.`);
+shouldRunGuard();
 console.info(`Repository root: ${repoRoot} path to check: ${absPath}`);
 console.info(`Checking if ${relPath} is dirty with action: ${action} and pushing with owner: ${owner}`);
 
@@ -41,7 +42,7 @@ function pushFiles() {
   run('git', ['commit', '-m', `chore: ${action} update dirty file`], { cwd: repoRoot });
   const output = runCapture('git', ['push', '--dry-run'], { cwd: repoRoot });
   console.log(output);
-  // run('git', ['push'], { cwd: repoRoot });
+  run('git', ['push'], { cwd: repoRoot });
 }
 
 function getUrlWithToken(token) {
@@ -224,4 +225,15 @@ function getPrivateKey(owner) {
     return {privateKey: process.env[PRIVATE_KEY], appId: process.env[APP_ID]};
   }
   return { privateKey: null, appId: null };
+}
+
+function shouldRunGuard() {
+  const commitMsg = runCapture('git', ['log', '-1', '--pretty=%B'], { cwd: repoRoot }).trim().split('\n').find(Boolean);
+  if (!commitMsg) {
+    throw new Error('Could not get commit message');
+  }
+  if (commitMsg.includes(`chore: ${action} update dirty file`)) {
+    console.info(`Last commit was a ${action} dirty file update, not running again.`);
+    process.exit(0);
+  }
 }
