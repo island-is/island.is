@@ -303,7 +303,7 @@ describe('MyService', () => {
       .mockReturnValueOnce(sofnunApi)
       .mockReturnValueOnce(frambodApi)
     jest
-      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
+      .spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet')
       .mockReturnValue(Promise.resolve(sofnunUser))
     jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
       Promise.resolve([
@@ -372,7 +372,7 @@ describe('MyService', () => {
       .spyOn(sofnunApi, 'medmaelasofnunGet')
       .mockReturnValue(Promise.resolve(sofnun))
     jest
-      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
+      .spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet')
       .mockReturnValue(Promise.resolve(sofnunUser))
     jest
       .spyOn(service, 'getApiWithAuth')
@@ -473,7 +473,7 @@ describe('MyService', () => {
       .spyOn(sofnunApi, 'medmaelasofnunGet')
       .mockReturnValue(Promise.resolve(sofnun))
     jest
-      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
+      .spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet')
       .mockReturnValueOnce(
         Promise.resolve({
           ...sofnunUser,
@@ -582,21 +582,19 @@ describe('MyService', () => {
     jest
       .spyOn(sofnunApi, 'medmaelasofnunGet')
       .mockReturnValue(Promise.resolve(sofnun))
-    jest
-      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
-      .mockReturnValue(
-        Promise.resolve({
-          ...sofnunUser,
-          medmaeli: [
-            {
-              id: 111,
-              medmaeliTegundNr: 1,
-              medmaelalistiID: 999,
-              kennitala: '0101302399',
-            },
-          ],
-        }),
-      )
+    jest.spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet').mockReturnValue(
+      Promise.resolve({
+        ...sofnunUser,
+        medmaeli: [
+          {
+            id: 111,
+            medmaeliTegundNr: 1,
+            medmaelalistiID: 999,
+            kennitala: '0101302399',
+          },
+        ],
+      }),
+    )
     jest.spyOn(medmaeliApi, 'medmaeliIDDelete').mockReturnValue(
       Promise.resolve({
         kennitala: '0101302399',

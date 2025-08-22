@@ -533,7 +533,10 @@ export class SignatureCollectionClientService {
     })
     return {
       success: requirementsMet && !activeSignature && noInvalidSignature,
-      reasons,
+      reasons:
+        reasons.length > 1
+          ? reasons.filter((r) => r !== ReasonKey.DeniedByService)
+          : reasons,
     }
   }
 
