@@ -30,7 +30,7 @@ export const AudioPlayer = ({ url, title }: Props) => {
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const audioProgress = trackProgress / duration ?? 0
+  const audioProgress = trackProgress / duration || 0
 
   const toggleAudio = () => {
     if (hasEnded) {
