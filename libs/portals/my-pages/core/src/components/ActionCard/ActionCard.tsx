@@ -14,11 +14,12 @@ import {
 } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import * as React from 'react'
-import { CardLoader, isExternalLink } from '../..'
+import { CardLoader } from '../CardLoader/CardLoader'
+import { isExternalLink } from '../../utils/isExternalLink'
 import LinkResolver from '../LinkResolver/LinkResolver'
 import * as styles from './ActionCard.css'
 
-type ActionCardProps = {
+export type ActionCardProps = {
   capitalizeHeading?: boolean
   date?: string
   heading?: string
