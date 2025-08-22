@@ -164,7 +164,7 @@ yargs(process.argv.slice(2))
         })
     },
     handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
+      const typedArgv = argv as unknown as Arguments
       const {
         habitat,
         affectedServices,
@@ -222,7 +222,7 @@ yargs(process.argv.slice(2))
       return yargs
     },
     handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
+      const typedArgv = argv as unknown as Arguments
       const {
         habitat,
         affectedServices,
@@ -265,17 +265,15 @@ yargs(process.argv.slice(2))
     describe: 'get helm values file',
     builder: (yargs) => yargs,
     handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
+      const typedArgv = argv as unknown as Arguments
       const { habitat, affectedServices, env } = parseArguments(typedArgv)
-      const {
-        included: featureYaml,
-        excluded,
-      } = await getFeatureAffectedServices(
-        habitat,
-        affectedServices.slice(),
-        ExcludedFeatureDeploymentServices,
-        env,
-      )
+      const { included: featureYaml, excluded } =
+        await getFeatureAffectedServices(
+          habitat,
+          affectedServices.slice(),
+          ExcludedFeatureDeploymentServices,
+          env,
+        )
       const ingressComment = buildComment(
         (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
           .services,
@@ -305,7 +303,7 @@ yargs(process.argv.slice(2))
         })
     },
     handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
+      const typedArgv = argv as unknown as Arguments
       const { affectedServices, env, writeDest } = parseArguments(typedArgv)
       const featureYaml = await renderHelmJobForFeature(
         env,
@@ -371,7 +369,7 @@ yargs(process.argv.slice(2))
         })
     },
     handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
+      const typedArgv = argv as unknown as Arguments
       const { affectedServices, env, writeDest } = parseArguments(typedArgv)
       const featureYaml = await renderCleanUpForFeature(
         env,
