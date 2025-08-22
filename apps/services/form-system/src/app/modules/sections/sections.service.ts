@@ -22,7 +22,7 @@ export class SectionsService {
     private readonly sectionModel: typeof Section,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
-  ) { }
+  ) {}
 
   async create(createSectionDto: CreateSectionDto): Promise<SectionDto> {
     const section = createSectionDto as Section

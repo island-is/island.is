@@ -13,7 +13,6 @@ import zipObject from 'lodash/zipObject'
 import { Screen } from '../screens/models/screen.model'
 import { Section } from '../sections/models/section.model'
 import { Form } from '../forms/models/form.model'
-import { FieldTypesEnum } from '@island.is/form-system/shared'
 import { filterDependency } from '../../../utils/dependenciesHelper'
 
 @Injectable()
@@ -106,7 +105,7 @@ export class FieldsService {
       throw new NotFoundException(`Field with id '${id}' not found`)
     }
     // Make sure to delete all instances of the fieldId in the dependencies array
-    
+
     const screen = await this.screenModel.findByPk(field.screenId)
     const section = await this.sectionModel.findByPk(screen?.sectionId)
     const form = await this.formModel.findByPk(section?.formId)
@@ -117,7 +116,6 @@ export class FieldsService {
       form.dependencies = newDependencies
       form.save()
     }
-    
 
     field?.destroy()
   }
