@@ -229,7 +229,7 @@ jobs:
 
       - name: Commit changed files
         if: ${{ steps.lintfix.outputs.FILES_CHANGED == 'true' }}
-        run: ./infra/scripts/ci/git-check-dirty.sh . lintfix dirtybot
+        run: ./infra/scripts/ci/git-check-dirty.mjs "." "lintfix" "dirtybot"
 
   linting:
     needs:

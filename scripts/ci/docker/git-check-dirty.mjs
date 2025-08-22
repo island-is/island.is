@@ -53,7 +53,7 @@ function getCurrentUrl() {
   console.log(`Current origin url: ${origin}`);
   const url = (() => {
     if (origin.startsWith('https://')) {
-      return origin.replace('https://', '').replace(/.*/, '');
+      return origin.replace('https://', '').replace(/.@*/, '');
     }
     return origin.split('@')[1].replace(':', '/');
   })();
