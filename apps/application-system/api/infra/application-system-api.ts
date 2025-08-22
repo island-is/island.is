@@ -144,7 +144,7 @@ export const workerSetup = (services: {
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
     })
-    .args('main.js', '--job', 'worker')
+    .args('main.cjs', '--job', 'worker')
     .command('node')
     .extraAttributes({
       dev: { schedule: '*/30 * * * *' },
@@ -171,7 +171,7 @@ export const serviceSetup = (services: {
     .command('node')
     .redis()
     .codeOwner(CodeOwners.NordaApplications)
-    .args('main.js')
+    .args('main.cjs')
     .env({
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {

@@ -19,7 +19,7 @@ global:
 name: 'user-notification-birthday-worker'
 args:
   - '--no-experimental-fetch'
-  - 'main.js'
+  - 'main.cjs'
   - '--job=worker'
   - '--isBirthdayWorker'
 command:

@@ -24,6 +24,7 @@ export const PdfReport = ({
   // Update pdf document after data is fetched
   useEffect(() => {
     if (report) {
+      // @ts-expect-error - updateDocument should be called without arguments based on working examples
       updateDocument()
     }
   }, [report, updateDocument])

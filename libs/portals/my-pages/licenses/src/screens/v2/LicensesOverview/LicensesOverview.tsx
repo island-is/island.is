@@ -66,7 +66,7 @@ export const LicensesOverviewV2 = () => {
   })
 
   const generateLicense = (userLicense: GenericUserLicense, index: number) => {
-    const isPayloadEmpty = (userLicense.payload?.data.length ?? 0) <= 0 ?? true
+    const isPayloadEmpty = (userLicense.payload?.data.length || 0) <= 0
     return (
       <ActionCard
         key={`license-card-${userLicense.payload?.metadata.licenseId}-${index}`}

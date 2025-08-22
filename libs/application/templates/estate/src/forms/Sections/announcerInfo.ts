@@ -97,11 +97,10 @@ export const announcerInfo = buildSection({
             },
           }) => {
             return (data as { relationOptions: string[] }).relationOptions.map(
-              (option) =>
-                ({
-                  value: option,
-                  label: option,
-                } || []),
+              (option) => ({
+                value: option,
+                label: option,
+              }),
             )
           },
         }),

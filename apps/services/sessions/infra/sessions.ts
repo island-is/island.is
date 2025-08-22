@@ -63,7 +63,7 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     .redis()
     .serviceAccount('sessions-worker')
     .command('node')
-    .args('main.js', '--job=worker')
+    .args('main.cjs', '--job=worker')
     .db({
       extensions: ['uuid-ossp'],
       readOnly: false,
@@ -100,7 +100,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
     .image(imageName)
     .codeOwner(CodeOwners.Aranja)
     .command('node')
-    .args('main.js', '--job=cleanup')
+    .args('main.cjs', '--job=cleanup')
     .resources({
       limits: {
         cpu: '400m',

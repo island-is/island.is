@@ -97,13 +97,10 @@ export const AreaWithDateSelection: FC<
           required
           error={errors && getErrorViaPath(errors, AREA_FIELD_ID)}
           defaultValue={''}
-          options={licenseAreas?.map(
-            (o) =>
-              ({
-                label: o.description || '',
-                value: o.key || '',
-              } || []),
-          )}
+          options={licenseAreas?.map((o) => ({
+            label: o.description || '',
+            value: o.key || '',
+          }))}
         />
       </Box>
       <Box marginTop={3}>

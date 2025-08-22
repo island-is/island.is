@@ -57,7 +57,7 @@ describe('BFF PortalEnv serialization', () => {
       globalPrefix: '/stjornbord/bff',
     })
     .command('node')
-    .args('main.js')
+    .args('main.cjs')
     .readiness(`/${key}/bff/health/check`)
     .liveness(`/${key}/bff/liveness`)
     .replicaCount({
@@ -123,7 +123,7 @@ describe('BFF PortalEnv serialization', () => {
 
   it('command and args', () => {
     expect(result.serviceDef[0].command).toStrictEqual(['node'])
-    expect(result.serviceDef[0].args).toStrictEqual(['main.js'])
+    expect(result.serviceDef[0].args).toStrictEqual(['main.cjs'])
   })
   it('network policies', () => {
     expect(result.serviceDef[0].grantNamespaces).toStrictEqual([])

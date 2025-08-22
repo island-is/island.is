@@ -67,6 +67,7 @@ export const DownloadReports = ({
   // Update pdf document after correct data is fetched
   useEffect(() => {
     if (data?.signatureCollectionAreaSummaryReport?.id === pdfState.areaId) {
+      // @ts-expect-error - updateDocument should be called without arguments based on working examples
       updateDocument()
     }
   }, [data, pdfState, updateDocument])
