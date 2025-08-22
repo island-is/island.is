@@ -20,7 +20,6 @@ import DigitalServices from '@island.is/application/templates/signature-collecti
 import {
   CandidateApi,
   MunicipalCollectionApi,
-  MunicipalIdentityApi,
 } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -82,9 +81,6 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: MunicipalCollectionApi,
-            }),
-            buildDataProviderItem({
-              provider: MunicipalIdentityApi,
             }),
             buildDataProviderItem({
               provider: CandidateApi,

@@ -14,8 +14,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/municipal-list-creation'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { isCompany } from 'kennitala'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { getCollectionTypeFromApplicationType } from '../shared/utils'
@@ -87,25 +86,6 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
         405,
       )
     }
-  }
-
-  async municipalIdentity({ auth }: TemplateApiModuleActionProps) {
-    const contactNationalId = isCompany(auth.nationalId)
-      ? auth.actor?.nationalId ?? auth.nationalId
-      : auth.nationalId
-
-    const identity = await this.nationalRegistryClientService.getIndividual(
-      contactNationalId,
-    )
-
-    if (!identity) {
-      throw new TemplateApiError(
-        coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
-        500,
-      )
-    }
-
-    return identity
   }
 
   async delegatedToCompany({ auth }: TemplateApiModuleActionProps) {

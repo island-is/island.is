@@ -23,7 +23,6 @@ import {
   CandidateApi,
   IsDelegatedToCompanyApi,
   MunicipalCollectionApi,
-  MunicipalIdentityApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -79,7 +78,6 @@ const createListTemplate: ApplicationTemplate<
                 UserProfileApi,
                 CandidateApi,
                 MunicipalCollectionApi,
-                MunicipalIdentityApi,
                 IsDelegatedToCompanyApi,
               ],
             },
