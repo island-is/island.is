@@ -8,6 +8,7 @@ import {
 import { useQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
+import { useUserInfo } from '@island.is/react-spa/bff'
 interface Props {
   applicantTypes: FormSystemApplicant[]
 }
@@ -16,6 +17,8 @@ export const Applicants = ({ applicantTypes }: Props) => {
   const { data } = useQuery(USER_PROFILE, {
     fetchPolicy: 'cache-first',
   })
+  console.log("minarsidurData", data)
+  const userInfo = useUserInfo()
   return (
     <>
       {applicantTypes.map((applicantType) => {
@@ -26,6 +29,7 @@ export const Applicants = ({ applicantTypes }: Props) => {
               lang={lang}
               key={applicantType.id}
               user={data?.getUserProfile}
+              actor={userInfo?.profile.actor?.nationalId ?? ''}
             />
           )
         } else if (
@@ -39,7 +43,7 @@ export const Applicants = ({ applicantTypes }: Props) => {
               applicantType={applicantType}
               lang={lang}
               key={applicantType.id}
-              user={data?.getUserProfile}
+              nationalId={userInfo?.profile?.nationalId ?? ''}
             />
           )
         } else if (
@@ -51,6 +55,7 @@ export const Applicants = ({ applicantTypes }: Props) => {
               lang={lang}
               key={applicantType.id}
               user={data?.getUserProfile}
+              id={userInfo?.profile?.nationalId ?? ''}
             />
           )
         }

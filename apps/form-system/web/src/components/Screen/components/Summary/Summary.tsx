@@ -28,7 +28,7 @@ export const Summary = ({ state }: Props) => {
       payload: { screenIndex: screenIndex, sectionIndex: sectionIndex },
     })
   }
-
+  //TODO: filter ishidden sections and screens
   return (
     <Box marginTop={2}>
       <Text fontWeight="light" as="p">

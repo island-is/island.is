@@ -22,11 +22,12 @@ interface Props {
   applicantType: FormSystemApplicant
   user?: User
   lang: 'is' | 'en'
+  actor: string
 }
 
-export const IndividualApplicant = ({ applicantType, lang, user }: Props) => {
+export const IndividualApplicant = ({ applicantType, lang, user, actor }: Props) => {
   const { formatMessage } = useIntl()
-  const nationalId = user?.nationalId ?? ''
+  const nationalId = actor ?? user?.nationalId
   const email =
     user?.emails.find((email: { primary: boolean }) => email.primary)?.email ??
     user?.emails[0]?.email
@@ -48,7 +49,7 @@ export const IndividualApplicant = ({ applicantType, lang, user }: Props) => {
     },
   )
   const address = addressData?.formSystemHomeByNationalId?.heimilisfang
-  const isLoading = shouldQuery && (nameLoading || addressLoading)
+  const isLoading = shouldQuery && (nameLoading || addressLoading) && !email
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>

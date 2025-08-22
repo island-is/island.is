@@ -12,11 +12,12 @@ interface Props {
   applicantType: FormSystemApplicant
   user?: User
   lang: 'is' | 'en'
+  id: string
 }
 
-export const LegalEntity = ({ applicantType, lang, user }: Props) => {
+export const LegalEntity = ({ applicantType, lang, user, id }: Props) => {
   const { formatMessage } = useIntl()
-  const nationalId = user?.nationalId ?? ''
+  const nationalId = user?.nationalId ?? id
   const shouldQuery = !!nationalId
   const { data: companyData, loading: companyLoading } = useQuery(
     GET_COMPANY_BY_NATIONALID,
@@ -40,7 +41,7 @@ export const LegalEntity = ({ applicantType, lang, user }: Props) => {
           <>
             <NationalIdField
               disabled={true}
-              nationalId={nationalId}
+              nationalId={id}
               name={companyData?.formSystemCompanyByNationalId?.name}
             />
             <Input

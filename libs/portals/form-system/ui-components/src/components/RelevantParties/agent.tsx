@@ -14,16 +14,12 @@ import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 interface Props {
   applicantType: FormSystemApplicant
   lang: 'is' | 'en'
-  user?: User
+  nationalId: string
 }
 
 // TODO: Implementation is still a WIP, still missing an endpoint
-export const Agent = ({ applicantType, lang, user }: Props) => {
+export const Agent = ({ applicantType, lang, nationalId }: Props) => {
   const { formatMessage } = useIntl()
-  const nationalId = user?.nationalId ?? ''
-  const email =
-    user?.emails.find((email: { primary: boolean }) => email.primary)?.email ??
-    user?.emails[0]?.email
   const shouldQuery = !!nationalId
   const { data: nameData, loading: nameLoading } = useQuery(
     GET_NAME_BY_NATIONALID,
@@ -54,12 +50,13 @@ export const Agent = ({ applicantType, lang, user }: Props) => {
         ) : (
           <>
             <NationalIdField
-              disabled={false}
+              disabled={true}
               nationalId={nationalId}
               name={nameData?.formSystemNameByNationalId?.fulltNafn}
             />
             <Input
               label={formatMessage(m.address)}
+              disabled={true}
               name="address"
               placeholder={formatMessage(m.address)}
               backgroundColor="blue"
@@ -69,6 +66,7 @@ export const Agent = ({ applicantType, lang, user }: Props) => {
             {/* TODO: This should be a dropdown menu */}
             <Input
               label={formatMessage(webMessages.postalCode)}
+              disabled={true}
               name="postalCode"
               placeholder={formatMessage(webMessages.postalCode)}
               backgroundColor="blue"
@@ -81,7 +79,6 @@ export const Agent = ({ applicantType, lang, user }: Props) => {
               placeholder={formatMessage(m.email)}
               backgroundColor="blue"
               required={true}
-              defaultValue={email}
             />
             <Input
               label={formatMessage(m.phoneNumber)}
@@ -89,7 +86,6 @@ export const Agent = ({ applicantType, lang, user }: Props) => {
               placeholder={formatMessage(m.phoneNumber)}
               backgroundColor="blue"
               required={true}
-              defaultValue={user?.mobilePhoneNumber}
             />
           </>
         )}
