@@ -11,15 +11,11 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 import { errorMessages } from '@island.is/application/templates/signature-collection/municipal-list-signing'
 import { getCollectionTypeFromApplicationType } from '../shared/utils'
-import { isCompany } from 'kennitala'
-import { coreErrorMessages } from '@island.is/application/core'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 @Injectable()
 export class MunicipalListSigningService extends BaseTemplateApiService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionClientService,
-    private nationalRegistryClientService: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.MUNICIPAL_LIST_SIGNING)
   }
@@ -43,25 +39,6 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
     } else {
       throw new TemplateApiError(errorMessages.submitFailure, 405)
     }
-  }
-
-  async municipalIdentity({ auth }: TemplateApiModuleActionProps) {
-    const contactNationalId = isCompany(auth.nationalId)
-      ? auth.actor?.nationalId ?? auth.nationalId
-      : auth.nationalId
-
-    const identity = await this.nationalRegistryClientService.getIndividual(
-      contactNationalId,
-    )
-
-    if (!identity) {
-      throw new TemplateApiError(
-        coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
-        500,
-      )
-    }
-
-    return identity
   }
 
   async canSign({ auth }: TemplateApiModuleActionProps) {
