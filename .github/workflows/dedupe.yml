@@ -50,8 +50,8 @@ jobs:
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' && steps.dedupe.outputs.should == 'true' }}
         with:
-          token: ${{ inputs.token || secrets.DIRTY_FIX_BOT_TOKEN || github.token }}
           ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: false
 
       - name: Setup yarn
         if: ${{ steps.dedupe.outputs.should == 'true' }}

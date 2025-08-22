@@ -59,7 +59,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && !github.event.localrun }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          persist-credentials: false
 
       - uses: actions/checkout@v4
         if: ${{ github.event_name != 'pull_request' || github.event.localrun }}
