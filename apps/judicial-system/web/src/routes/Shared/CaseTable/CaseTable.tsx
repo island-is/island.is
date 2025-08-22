@@ -269,9 +269,9 @@ const CaseTable: FC = () => {
                 />
               </div>
             )}
-            <CancelCaseModal />
-            <DeleteCaseModal />
-            <WithdrawAppealModal />
+            {CancelCaseModal}
+            {DeleteCaseModal}
+            {WithdrawAppealModal}
           </>
         ) : (
           /* If we cannot determine which table to show, then the user does not have access to the current route */

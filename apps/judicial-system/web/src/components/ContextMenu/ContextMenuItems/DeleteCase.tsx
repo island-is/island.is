@@ -45,19 +45,18 @@ export const useDeleteCase = (onComplete: (caseId: string) => void) => {
     setDeleteCaseId(undefined)
   }
 
-  const DeleteCaseModal = () =>
-    deleteCaseId && (
-      <Modal
-        title="Afturkalla mál"
-        text="Ertu viss um að þú viljir afturkalla þetta mál?"
-        primaryButtonText="Afturkalla"
-        primaryButtonColorScheme="destructive"
-        onPrimaryButtonClick={handlePrimaryButtonClick}
-        isPrimaryButtonLoading={isTransitioningCase}
-        secondaryButtonText="Hætta við"
-        onSecondaryButtonClick={handleSecondaryButtonClick}
-      />
-    )
+  const DeleteCaseModal = deleteCaseId && (
+    <Modal
+      title="Afturkalla mál"
+      text="Ertu viss um að þú viljir afturkalla þetta mál?"
+      primaryButtonText="Afturkalla"
+      primaryButtonColorScheme="destructive"
+      onPrimaryButtonClick={handlePrimaryButtonClick}
+      isPrimaryButtonLoading={isTransitioningCase}
+      secondaryButtonText="Hætta við"
+      onSecondaryButtonClick={handleSecondaryButtonClick}
+    />
+  )
 
   return { deleteCase, DeleteCaseModal }
 }
