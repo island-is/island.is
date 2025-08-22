@@ -104,7 +104,7 @@ export const generateCleanUpForFeature = async (
   env: EnvironmentConfig,
 ): Promise<FeatureKubeJob> => {
   const feature = env.feature
-  if (typeof feature === 'undefined') {
+  if (!feature) {
     throw new Error('Feature jobs with a feature name not defined')
   }
   const securityContext = {

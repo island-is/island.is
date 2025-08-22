@@ -109,7 +109,7 @@ yargs(hideBin(process.argv))
     describe: 'delete secrets by prefix',
     builder: (yargs) => yargs,
     handler: async (argv) => {
-      const throttle = (ms: number) =>
+      const wait = (ms: number) =>
         new Promise((resolve) => setTimeout(resolve, ms))
 
       const { prefix } = argv as DeleteArguments
@@ -144,7 +144,7 @@ yargs(hideBin(process.argv))
             logger.info(
               'Throttled while listing parameters; backing off and retrying',
             )
-            await throttle(1000)
+            await wait(1000)
             continue
           }
           throw error
@@ -202,7 +202,7 @@ yargs(hideBin(process.argv))
                     attempts,
                   },
                 )
-                await throttle(1000 * attempts)
+                await wait(1000 * attempts)
                 continue
               } else if (code === 'ParameterNotFound') {
                 logger.warn('Parameter not found while deleting, ignoring')
