@@ -4,7 +4,6 @@ import {
   Delete,
   Param,
   Post,
-  Put,
   UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
@@ -18,11 +17,10 @@ import {
 } from '@nestjs/swagger'
 import { FormApplicantTypesService } from './formApplicantTypes.service'
 import { CreateFormApplicantTypeDto } from './models/dto/createFormApplicantType.dto'
-import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
-import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { DeleteFormApplicantTypeDto } from './models/dto/deleteFormApplicantType.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
@@ -46,27 +44,16 @@ export class FormApplicantTypesController {
     return this.formApplicantTypesService.create(createFormApplicantTypeDto)
   }
 
-  @ApiOperation({ summary: 'Update form applicant' })
-  @ApiNoContentResponse({
-    description: 'Update form applicant',
-  })
-  @ApiBody({ type: UpdateFormApplicantTypeDto })
-  @ApiParam({ name: 'id', type: String })
-  @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateFormApplicantTypeDto: UpdateFormApplicantTypeDto,
-  ): Promise<void> {
-    await this.formApplicantTypesService.update(id, updateFormApplicantTypeDto)
-  }
-
   @ApiOperation({ summary: 'Delete form applicant' })
-  @ApiNoContentResponse({
+  @ApiCreatedResponse({
     description: 'Delete form applicant',
+    type: ScreenDto,
   })
-  @ApiParam({ name: 'id', type: String })
-  @Delete(':id')
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.formApplicantTypesService.delete(id)
+  @ApiBody({ type: DeleteFormApplicantTypeDto })
+  @Delete()
+  async delete(
+    @Body() deleteFormApplicantTypeDto: DeleteFormApplicantTypeDto,
+  ): Promise<ScreenDto> {
+    return this.formApplicantTypesService.delete(deleteFormApplicantTypeDto)
   }
 }

@@ -71,25 +71,43 @@ export const RelevantParties = () => {
           })
         }
       } else {
-        await Promise.all(
-          typesArray.map(async (applicantType) => {
-            const applicant = formApplicants.find(
-              (a) => a.applicantTypeId === applicantType,
-            )
-            if (applicant) {
-              await deleteApplicant({
-                variables: { input: { id: applicant.id } },
-              })
-            }
+        const deletedScreens = await Promise.all(
+          typesArray.map(async (applicantTypeId) => {
+            const deletedScreen = await deleteApplicant({
+              variables: {
+                input: {
+                  deleteFormApplicantTypeDto: {
+                    formId,
+                    applicantTypeId,
+                  },
+                },
+              },
+            })
+            const maybeScreen = deletedScreen.data.deleteFormSystemApplicantType
+            return maybeScreen ? removeTypename(maybeScreen) : null
           }),
         )
-        const updatedApplicants = formApplicants.filter(
-          (applicant) =>
-            applicant.applicantTypeId !== undefined &&
-            applicant.applicantTypeId !== null &&
-            !typesArray.includes(applicant.applicantTypeId),
-        )
-        setFormApplicants(updatedApplicants)
+        if (deletedScreens.length) {
+          deletedScreens.forEach((screen) => {
+            controlDispatch({
+              type: 'REMOVE_SCREEN',
+              payload: { id: screen.id, isApplicant: true },
+            })
+            if (screen && screen.fields) {
+              screen.fields.forEach((field: FormSystemField) => {
+                if (field) {
+                  setApplicantFields((prev) =>
+                    prev.filter((f) => f.id !== field.id),
+                  )
+                  controlDispatch({
+                    type: 'REMOVE_FIELD',
+                    payload: { id: field.id, isApplicant: true },
+                  })
+                }
+              })
+            }
+          })
+        }
       }
     } catch (e) {
       console.error(e)

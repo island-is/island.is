@@ -1,31 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { FormApplicantType } from './models/formApplicantType.model'
 import { Form } from '../forms/models/form.model'
 import { CreateFormApplicantTypeDto } from './models/dto/createFormApplicantType.dto'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
-import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
 import { ApplicantTypes } from '../../dataTypes/applicantTypes/applicantType.model'
 import {
   ApplicantTypesEnum,
   FieldTypesEnum,
   SectionTypes,
 } from '@island.is/form-system/shared'
-import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Field } from '../fields/models/field.model'
 import { Screen } from '../screens/models/screen.model'
 import { Section } from '../sections/models/section.model'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
+import { DeleteFormApplicantTypeDto } from './models/dto/deleteFormApplicantType.dto'
 
 @Injectable()
 export class FormApplicantTypesService {
   constructor(
-    @InjectModel(FormApplicantType)
-    private readonly formApplicantTypeModel: typeof FormApplicantType,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
     @InjectModel(Screen)
@@ -116,86 +112,61 @@ export class FormApplicantTypesService {
     } as FieldSettings
     await newField.save()
 
-    const fieldKeys = [
-      'id',
-      'screenId',
-      'name',
-      'displayOrder',
-      'description',
-      'isPartOfMultiset',
-      'isRequired',
-      'fieldType',
-      'fieldSettings',
-    ]
-    const fieldDto: FieldDto = defaults(
-      pick(newField, fieldKeys),
-      zipObject(fieldKeys, Array(fieldKeys.length).fill(null)),
-    ) as FieldDto
-
-    const screenKeys = [
-      'id',
-      'sectionId',
-      'name',
-      'displayOrder',
-      'isCompleted',
-      'callRuleset',
-    ]
-    const screenDto: ScreenDto = defaults(
-      pick(newScreen, screenKeys),
-      zipObject(screenKeys, Array(screenKeys.length).fill(null)),
-    ) as ScreenDto
-
-    screenDto.fields = [fieldDto]
+    const screenDto = this.mapToScreenDto(newScreen, newField)
 
     return screenDto
-
-    // const formApplicantType = createFormApplicantTypeDto as FormApplicantType
-    // const newFormApplicantType: FormApplicantType =
-    //   new this.formApplicantTypeModel(formApplicantType)
-    // await newFormApplicantType.save()
-
-    // const keys = ['id', 'applicantTypeId', 'name']
-    // const formApplicantTypeDto: FormApplicantTypeDto = defaults(
-    //   pick(newFormApplicantType, keys),
-    //   zipObject(keys, Array(keys.length).fill(null)),
-    // ) as FormApplicantTypeDto
-
-    // return formApplicantTypeDto
   }
 
-  async update(
-    id: string,
-    updateFormApplicantTypeDto: UpdateFormApplicantTypeDto,
-  ): Promise<void> {
-    const formApplicantType = await this.formApplicantTypeModel.findByPk(id)
+  async delete(
+    deleteFormApplicantTypeDto: DeleteFormApplicantTypeDto,
+  ): Promise<ScreenDto> {
+    const form = await this.formModel.findByPk(
+      deleteFormApplicantTypeDto.formId,
+    )
 
-    if (!formApplicantType) {
-      throw new NotFoundException(`Form applicant with id '${id}' not found`)
-    }
-
-    formApplicantType.name = updateFormApplicantTypeDto.name
-
-    await formApplicantType.save()
-  }
-
-  async delete(id: string): Promise<void> {
-    const formApplicantType = await this.formApplicantTypeModel.findByPk(id)
-
-    if (!formApplicantType) {
-      throw new NotFoundException(
-        `Form applicant type with id '${id}' not found`,
-      )
-    }
-
-    const form = await this.formModel.findByPk(formApplicantType.formId)
     if (!form) {
       throw new NotFoundException(
-        `Form with id '${formApplicantType.formId}' not found`,
+        `Form with id '${deleteFormApplicantTypeDto.formId}' not found`,
       )
     }
 
-    let allowedDelegationTypes: string[] = []
+    const partiesSection = await Section.findOne({
+      where: { formId: form.id, sectionType: SectionTypes.PARTIES },
+      include: [
+        {
+          model: Screen,
+          as: 'screens',
+          include: [
+            {
+              model: Field,
+              as: 'fields',
+            },
+          ],
+        },
+      ],
+    })
 
+    const targetScreen = partiesSection?.screens?.find((screen) =>
+      (screen.fields ?? []).some(
+        (f) =>
+          f.fieldSettings &&
+          (f.fieldSettings as FieldSettings).applicantType ===
+            deleteFormApplicantTypeDto.applicantTypeId,
+      ),
+    )
+
+    if (
+      !targetScreen ||
+      !targetScreen.fields ||
+      targetScreen.fields.length === 0
+    ) {
+      throw new NotFoundException(
+        `Screen with applicant type id '${deleteFormApplicantTypeDto.applicantTypeId}' not found`,
+      )
+    }
+
+    // Update allowedDelegationTypes
+    let allowedDelegationTypes: string[] = []
     if (Array.isArray(form.allowedDelegationTypes)) {
       allowedDelegationTypes = [...form.allowedDelegationTypes]
     } else if (
@@ -206,19 +177,20 @@ export class FormApplicantTypesService {
     } else {
       allowedDelegationTypes = []
     }
-
     const delegationType = await this.getDelegationType(
-      formApplicantType.applicantTypeId,
+      deleteFormApplicantTypeDto.applicantTypeId,
     )
-
     const updatedDelegationTypes = allowedDelegationTypes.filter(
       (type) => type !== delegationType,
     )
-
     form.allowedDelegationTypes = updatedDelegationTypes
     await form.save()
 
-    formApplicantType.destroy()
+    const screenDto = this.mapToScreenDto(targetScreen, targetScreen.fields[0])
+
+    await this.screenModel.destroy({ where: { id: targetScreen.id } })
+
+    return screenDto
   }
 
   private async getDelegationType(applicantType: string): Promise<string> {
@@ -236,5 +208,40 @@ export class FormApplicantTypesService {
       default:
         return 'Other'
     }
+  }
+
+  private mapToScreenDto(screen: Screen, field: Field): ScreenDto {
+    const fieldKeys = [
+      'id',
+      'screenId',
+      'name',
+      'displayOrder',
+      'description',
+      'isPartOfMultiset',
+      'isRequired',
+      'fieldType',
+      'fieldSettings',
+    ]
+    const fieldDto: FieldDto = defaults(
+      pick(field, fieldKeys),
+      zipObject(fieldKeys, Array(fieldKeys.length).fill(null)),
+    ) as FieldDto
+
+    const screenKeys = [
+      'id',
+      'sectionId',
+      'name',
+      'displayOrder',
+      'isCompleted',
+      'callRuleset',
+    ]
+    const screenDto: ScreenDto = defaults(
+      pick(screen, screenKeys),
+      zipObject(screenKeys, Array(screenKeys.length).fill(null)),
+    ) as ScreenDto
+
+    screenDto.fields = [fieldDto]
+
+    return screenDto
   }
 }

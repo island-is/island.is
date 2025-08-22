@@ -1,5 +1,4 @@
 import { gql } from '@apollo/client'
-import { ApplicantFragment } from '../fragments/applicant'
 import { ScreenFragment } from '../fragments/screen'
 
 export const CREATE_APPLICANT = gql`
