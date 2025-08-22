@@ -52,6 +52,7 @@ import {
   PracticalExams,
   RentalService,
   FireCompensation,
+  VMSTUnemployment,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -315,6 +316,22 @@ export const serviceSetup = (services: {
               : 'application-system'
           }.svc.cluster.local`,
       ),
+      HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
+        dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        staging:
+          'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        prod: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+      },
+      HMS_CONTRACTS_AUTH_TENANT_ID: {
+        dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        staging: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        prod: 'c7256472-2622-417e-8955-a54eeb0a110e',
+      },
+      HMS_CONTRACTS_AUTH_CLIENT_ID: {
+        dev: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
+      },
     })
     .xroad(
       Base,
@@ -363,6 +380,7 @@ export const serviceSetup = (services: {
       SecondarySchool,
       PracticalExams,
       RentalService,
+      VMSTUnemployment,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -404,6 +422,8 @@ export const serviceSetup = (services: {
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      HMS_CONTRACTS_AUTH_CLIENT_SECRET:
+        '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
     })
     .db()
     .migrations()

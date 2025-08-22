@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Box, Button, GridColumn, Text } from '@island.is/island-ui/core'
+import { ActionCard, Box, GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import { applicationAnswers, RentalHousingCategoryClass } from '../../shared'
@@ -39,7 +39,6 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
     propertyDescriptionRoute,
     specialProvisionsRoute,
     propertyConditionRoute,
-    fileUploadRoute,
     fireProtectionsRoute,
     hasChangeButton,
   } = props
@@ -186,14 +185,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
             value={conditionDescription || ''}
           />
         </GridColumn>
-      </SummaryCardRow>
-
-      {files && files.length > 0 && (
-        <SummaryCardRow
-          editAction={goToScreen}
-          route={fileUploadRoute}
-          hasChangeButton={hasChangeButton}
-        >
+        {files && files.length > 0 && (
           <GridColumn span={['12/12']}>
             <Box paddingY={'p2'}>
               <Text
@@ -207,47 +199,18 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
               <ul className={fileLinksList}>
                 {files.map((file) => (
                   <li key={file.name} className={fileLink}>
-                    <Button
-                      key={file.name}
-                      icon="download"
-                      variant="text"
-                      size="small"
-                      iconType="outline"
-                      truncate={true}
-                      onClick={() => {
-                        // TODO: Fix this
-                        const fileUrl = new URL(
-                          file.key ?? '',
-                          window.location.origin,
-                        )
-                        if (
-                          fileUrl.origin === window.location.origin ||
-                          process.env.ALLOWED_FILE_DOMAINS?.includes(
-                            fileUrl.origin,
-                          )
-                        ) {
-                          window.open(
-                            fileUrl.toString(),
-                            '_blank',
-                            'noopener,noreferrer',
-                          )
-                        } else {
-                          console.error(
-                            'Attempted to open file from disallowed origin:',
-                            fileUrl.origin,
-                          )
-                        }
-                      }}
-                    >
-                      {file.name}
-                    </Button>
+                    <ActionCard
+                      heading={file.name}
+                      headingVariant="h4"
+                      backgroundColor="blue"
+                    />
                   </li>
                 ))}
               </ul>
             </Box>
           </GridColumn>
-        </SummaryCardRow>
-      )}
+        )}
+      </SummaryCardRow>
 
       <SummaryCardRow
         editAction={goToScreen}
