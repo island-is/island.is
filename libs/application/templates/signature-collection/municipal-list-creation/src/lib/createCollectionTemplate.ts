@@ -42,11 +42,6 @@ const createListTemplate: ApplicationTemplate<
     ApplicationConfigurations[ApplicationTypes.MUNICIPAL_LIST_CREATION]
       .translation,
   ],
-  allowedDelegations: [
-    {
-      type: AuthDelegationType.ProcurationHolder,
-    },
-  ],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
