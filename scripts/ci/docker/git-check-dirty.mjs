@@ -51,7 +51,12 @@ function getUrlWithToken(token) {
 function getCurrentUrl() {
   const origin = runCapture('git', ['remote', 'get-url', 'origin']).trim();
   console.log(`Current origin url: ${origin}`);
-  const url = origin.split('@')[1].replace(':', '/');
+  const url = (() => {
+    if (origin.startsWith('https://')) {
+      return origin.replace('https://', '').replace(/.*/, '');
+    }
+    return origin.split('@')[1].replace(':', '/');
+  })();
   return url;
 }
 
