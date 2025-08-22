@@ -15351,7 +15351,7 @@ __metadata:
     react-native-keychain: "npm:8.1.1"
     react-native-markdown-display: "npm:7.0.2"
     react-native-mmkv-storage: "npm:0.11.2"
-    react-native-navigation: "patch:react-native-navigation@npm%3A7.51.0#~/.yarn/patches/react-native-navigation-npm-7.51.0-83f4c854df.patch"
+    react-native-navigation: "patch:react-native-navigation@npm%3A8.0.0#~/.yarn/patches/react-native-navigation-npm-8.0.0-f392fcfdab.patch"
     react-native-navigation-hooks: "npm:6.3.0"
     react-native-passkey: "patch:react-native-passkey@npm%3A2.1.1#~/.yarn/patches/react-native-passkey-npm-2.1.1-0b2bf2ddcf.patch"
     react-native-passkit-wallet: "npm:0.1.6"
@@ -15361,7 +15361,7 @@ __metadata:
     react-native-reanimated: "npm:3.18.0"
     react-native-share: "npm:12.1.0"
     react-native-spotlight-search: "npm:2.2.0"
-    react-native-svg: "npm:15.8.0"
+    react-native-svg: "npm:15.12.1"
     react-native-vision-camera: "npm:4.7.1"
     react-native-webview: "npm:13.13.1"
     react-native-widgetkit: "npm:1.0.9"
@@ -52713,13 +52713,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-lifecycles-compat@npm:2.0.0":
-  version: 2.0.0
-  resolution: "react-lifecycles-compat@npm:2.0.0"
-  checksum: 10/d531994d475f23ad0d796ca96d8002c081d79b9b874c0cfe8541463b56821f582568025ef0aa33d50f25926ff2f587950b360c0fc3175d8db0c98b4f9922f0da
-  languageName: node
-  linkType: hard
-
 "react-lifecycles-compat@npm:^3.0.0, react-lifecycles-compat@npm:^3.0.4":
   version: 3.0.4
   resolution: "react-lifecycles-compat@npm:3.0.4"
@@ -52968,14 +52961,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-navigation@npm:7.51.0":
-  version: 7.51.0
-  resolution: "react-native-navigation@npm:7.51.0"
+"react-native-navigation@npm:8.0.0":
+  version: 8.0.0
+  resolution: "react-native-navigation@npm:8.0.0"
   dependencies:
     hoist-non-react-statics: "npm:3.x.x"
     lodash: "npm:4.17.x"
     prop-types: "npm:15.x.x"
-    react-lifecycles-compat: "npm:2.0.0"
+    react-lifecycles-compat: "npm:^3.0.4"
     tslib: "npm:1.9.3"
   peerDependencies:
     react: "*"
@@ -52986,18 +52979,18 @@ __metadata:
       optional: true
   bin:
     rnn-link: autolink/postlink/run.js
-  checksum: 10/179b4e4de540b30c17e7252195f55df83cfe818845185438571e80a177f369e04ca949a2f1851d1dd7c5d198d2b7be90b723cb0d4db0855d01a0c237459505ae
+  checksum: 10/4bf1fe302cb0f241f6b7cc72009f2b871897572d9b1091e44e6d2667bcc9dbfe72f4fc4ded7cd1d3bd7e247a5081af946b5d24828fd29032bb746776cf05fbf9
   languageName: node
   linkType: hard
 
-"react-native-navigation@patch:react-native-navigation@npm%3A7.51.0#~/.yarn/patches/react-native-navigation-npm-7.51.0-83f4c854df.patch":
-  version: 7.51.0
-  resolution: "react-native-navigation@patch:react-native-navigation@npm%3A7.51.0#~/.yarn/patches/react-native-navigation-npm-7.51.0-83f4c854df.patch::version=7.51.0&hash=f64242"
+"react-native-navigation@patch:react-native-navigation@npm%3A8.0.0#~/.yarn/patches/react-native-navigation-npm-8.0.0-f392fcfdab.patch":
+  version: 8.0.0
+  resolution: "react-native-navigation@patch:react-native-navigation@npm%3A8.0.0#~/.yarn/patches/react-native-navigation-npm-8.0.0-f392fcfdab.patch::version=8.0.0&hash=119350"
   dependencies:
     hoist-non-react-statics: "npm:3.x.x"
     lodash: "npm:4.17.x"
     prop-types: "npm:15.x.x"
-    react-lifecycles-compat: "npm:2.0.0"
+    react-lifecycles-compat: "npm:^3.0.4"
     tslib: "npm:1.9.3"
   peerDependencies:
     react: "*"
@@ -53008,7 +53001,7 @@ __metadata:
       optional: true
   bin:
     rnn-link: autolink/postlink/run.js
-  checksum: 10/3bea186776c15510d4b1063180f88c53cfc81fa19560282b48ea70d0404b30cba862281a2aa10d2185414a0dcb309d5894c5a0e614eccb3810fffd6fc9d9ce54
+  checksum: 10/cfee947662d503fcc93057d0c18deac69c0883a086c9776a6b81b47d27e3e634df8f8e0c87049df5df7c3aed3c8e5cbdca4779014a44d8666186140fd6cba1e9
   languageName: node
   linkType: hard
 
@@ -53143,6 +53136,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-svg@npm:15.12.1":
+  version: 15.12.1
+  resolution: "react-native-svg@npm:15.12.1"
+  dependencies:
+    css-select: "npm:^5.1.0"
+    css-tree: "npm:^1.1.3"
+    warn-once: "npm:0.1.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/aa7b3a54cf2eb52aeb1322ba4a3f63176d4da0725ea4b9ec0051a59df0a511dc189fd101abf7993e94676c1cdea736e4abb207a0aea6f3083b5982c48e4648ac
+  languageName: node
+  linkType: hard
+
 "react-native-svg@npm:15.2.0":
   version: 15.2.0
   resolution: "react-native-svg@npm:15.2.0"
@@ -53153,20 +53160,6 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/5042e1377b9d66679898ce812760691d01602efac27a32eed0914b518652c66d575dc7eb1493d3315a7db043d4974796d9107fe17f4b331b6bbbff16906016e9
-  languageName: node
-  linkType: hard
-
-"react-native-svg@npm:15.8.0":
-  version: 15.8.0
-  resolution: "react-native-svg@npm:15.8.0"
-  dependencies:
-    css-select: "npm:^5.1.0"
-    css-tree: "npm:^1.1.3"
-    warn-once: "npm:0.1.1"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10/9a60d1f33539c41ca50b2c21e6d8909e52a3bdf67b29b9231c7ffe72120fc8cb6d7fca45723bd9219b993202ade2343c97c7e4f53de7ee2446279ac91426b096
   languageName: node
   linkType: hard
 

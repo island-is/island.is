@@ -1811,14 +1811,14 @@ PODS:
     - IQKeyboardManagerSwift (= 6.5.4)
     - React-Core
     - React-RCTText
-  - ReactNativeNavigation (7.51.0):
+  - ReactNativeNavigation (8.0.0):
     - HMSegmentedControl
     - React-Core
     - React-CoreModules
     - React-RCTImage
     - React-RCTText
-    - ReactNativeNavigation/Core (= 7.51.0)
-  - ReactNativeNavigation/Core (7.51.0):
+    - ReactNativeNavigation/Core (= 8.0.0)
+  - ReactNativeNavigation/Core (8.0.0):
     - HMSegmentedControl
     - React-Core
     - React-CoreModules
@@ -2015,7 +2015,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.8.0):
+  - RNSVG (15.12.1):
     - React-Core
   - SocketRocket (0.7.1)
   - VisionCamera (4.7.1):
@@ -2537,7 +2537,7 @@ SPEC CHECKSUMS:
   ReactCodegen: a25f74f6bc833878a3a46f67bd10f08e2728a253
   ReactCommon: bf4612cba0fa356b529385029f470d5529dddde4
   ReactNativeKeyboardManager: f1b1faae318f9338846530682a58333b0f94ae40
-  ReactNativeNavigation: d67dee9ea92de35e35c710b63bf922504a900ab3
+  ReactNativeNavigation: ca03768f9823dedc62fdffe116866806be40b0c9
   RNCAsyncStorage: b44e8a4e798c3e1f56bffccd0f591f674fb9198f
   RNCClipboard: efe1b27ad1ea378c60c8c8aabfd130961bbeb474
   RNDeviceInfo: 32413a6eefa0de704834b9d2afe5be596b44a66d
@@ -2552,7 +2552,7 @@ SPEC CHECKSUMS:
   RNQuickAction: c2c8f379e614428be0babe4d53a575739667744d
   RNReanimated: b03449cdf6cf281cdcc3d50d85f0eef19c824f24
   RNShare: 5bc29e5794f5d451ca1308d6ad9101088eb15f8c
-  RNSVG: 8542aa11770b27563714bbd8494a8436385fc85f
+  RNSVG: 2e59e14c2723a1967cd1bba71038a59142cbc616
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   VisionCamera: 0f3c379d61348bfb97249ec95d7742f17ca43d77
   Yoga: 7d51419602153919f32aec72812e324d495ee49d
