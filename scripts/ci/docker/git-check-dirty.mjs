@@ -46,7 +46,7 @@ function pushFiles() {
 }
 
 function getUrlWithToken(token) {
-  return `https://${token}@${getCurrentUrl()}`;
+  return `https://x-access-token:${token}@${getCurrentUrl()}`;
 }
 
 function getCurrentUrl() {

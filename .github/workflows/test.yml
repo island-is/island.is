@@ -15,6 +15,6 @@ jobs:
         run: |
           corepack enable 
           yarn
-          echo "hehehe2" > bull
+          echo "hehehe44" > bull
           node scripts/ci/docker/git-check-dirty.mjs "." "bull" "dirtybot"
 
