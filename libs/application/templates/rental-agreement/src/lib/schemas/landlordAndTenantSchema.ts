@@ -1,6 +1,10 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import * as m from '../messages'
+import { EMAIL_REGEX } from '@island.is/application/core'
+import { isValidPhoneNumber } from '../../utils/utils'
+
+export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 
 const personInfoSchema = z.object({
   nationalIdWithName: z.object({
@@ -23,12 +27,15 @@ const personInfoSchema = z.object({
     .optional()
     .refine((x) => !!x && x.trim().length > 0, {
       params: m.landlordAndTenantDetails.phoneNumberEmptyError,
+    })
+    .refine((x) => x && isValidPhoneNumber(x), {
+      params: m.landlordAndTenantDetails.phoneNumberInvalidError,
     }),
   email: z
     .string()
     .optional()
-    .refine((x) => !!x && x.trim().length > 0, {
-      params: m.landlordAndTenantDetails.emailEmptyError,
+    .refine((val) => !!val && val.trim().length > 0 && isValidEmail(val), {
+      params: m.landlordAndTenantDetails.emailInvalidError,
     }),
   address: z
     .string()
