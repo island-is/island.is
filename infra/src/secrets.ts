@@ -109,25 +109,109 @@ yargs(hideBin(process.argv))
     describe: 'delete secrets by prefix',
     builder: (yargs) => yargs,
     handler: async (argv) => {
+      const wait = (ms: number) =>
+        new Promise((resolve) => setTimeout(resolve, ms))
+
       const { prefix } = argv as DeleteArguments
-      const { Parameters } = await ssm
-        .describeParameters({
-          ParameterFilters: [
-            { Key: 'Name', Option: 'BeginsWith', Values: [prefix] },
-          ],
-        })
-        .promise()
-      if (Parameters && Parameters.length > 0) {
+      let nextToken: string | undefined = undefined
+      let parameterList: any = []
+
+      logger.info(`Deleting all parameters with prefix:`, { prefix })
+
+      do {
+        try {
+          let response: any = await ssm
+            .describeParameters({
+              ParameterFilters: [
+                { Key: 'Name', Option: 'BeginsWith', Values: [prefix] },
+              ],
+              NextToken: nextToken,
+            })
+            .promise()
+
+          nextToken = response.NextToken
+
+          if (response.Parameters && response.Parameters.length > 0) {
+            parameterList = parameterList.concat(response.Parameters)
+          }
+        } catch (error: any) {
+          let code = error?.code
+          if (
+            code &&
+            (code === 'ThrottlingException' ||
+              code === 'TooManyRequestsException')
+          ) {
+            logger.info(
+              'Throttled while listing parameters; backing off and retrying',
+            )
+            await wait(1000)
+            continue
+          }
+          throw error
+        }
+      } while (nextToken)
+
+      if (parameterList && parameterList.length > 0) {
         logger.debug(
-          `Parameters to destroy: ${Parameters.map(({ Name }) => Name)}`,
+          `Parameters to destroy: ${parameterList.map(
+            ({ Name }: any) => Name,
+          )}`,
         )
-        await Promise.all(
-          Parameters.map(({ Name }) =>
-            Name
-              ? ssm.deleteParameter({ Name }).promise()
-              : new Promise((resolve) => resolve(true)),
-          ),
-        )
+
+        const names: string[] = parameterList
+          .map(({ Name }: any) => Name)
+          .filter(Boolean)
+
+        const batchSize = 10
+        const maximumAttempts = 5
+        for (let i = 0; i < names.length; i += batchSize) {
+          const batch = names.slice(i, i + batchSize)
+
+          let attempts = 0
+
+          while (true) {
+            try {
+              let resp = await ssm.deleteParameters({ Names: batch }).promise()
+              if (resp.InvalidParameters && resp.InvalidParameters.length > 0) {
+                logger.error('Invalid parameters', {
+                  invalid: resp.InvalidParameters,
+                })
+              }
+              break
+            } catch (error: any) {
+              let code = error?.code
+              if (
+                code === 'ThrottlingException' ||
+                code === 'TooManyRequestsException'
+              ) {
+                attempts++
+                if (attempts > maximumAttempts) {
+                  logger.error(
+                    'Failed to delete parameters after multiple attempts',
+                    {
+                      error,
+                      batch,
+                    },
+                  )
+                  break
+                }
+
+                logger.info(
+                  'Throttled while deleting parameters; backing off and retrying',
+                  {
+                    attempts,
+                  },
+                )
+                await wait(1000 * attempts)
+                continue
+              } else if (code === 'ParameterNotFound') {
+                logger.warn('Parameter not found while deleting, ignoring')
+              }
+              logger.error('Exception while deleting parameters', { error })
+              break
+            }
+          }
+        }
       }
     },
   })

@@ -11,6 +11,7 @@ import {
   generateOutput,
 } from '../processing/rendering-pipeline'
 import { generateJobsForFeature } from '../output-generators/feature-jobs'
+import { generateCleanUpForFeature } from '../output-generators/feature-jobs'
 import { ServiceBuilder } from '../dsl'
 import { hacks } from './hacks'
 
@@ -78,4 +79,17 @@ export const renderHelmJobForFeature = async (
     outputFormat: renderers.helm,
   })
   return generateJobsForFeature(image, result, env)
+}
+
+export const renderCleanUpForFeature = async (
+  env: EnvironmentConfig,
+  image: string,
+  services: ServiceBuilder<any>[],
+) => {
+  const result = prepareServicesForEnv({
+    services: services,
+    env: env,
+    outputFormat: renderers.helm,
+  })
+  return generateCleanUpForFeature(image, result, env)
 }
