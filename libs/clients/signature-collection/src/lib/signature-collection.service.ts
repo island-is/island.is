@@ -543,14 +543,14 @@ export class SignatureCollectionClientService {
     nationalId?: string,
   ): Promise<Signee> {
     const collection = await this.getLatestCollectionForType(collectionType)
-    const { id, isActive, areas } = collection
+    const { electionId, isActive, areas } = collection
     try {
       const user = await this.getApiWithAuth(
-        this.collectionsApi,
+        this.electionsApi,
         auth,
-      ).medmaelasofnunIDEinsInfoKennitalaGet({
+      ).kosningIDEinsInfoKennitalaGet({
         kennitala: nationalId ?? auth.nationalId,
-        iD: parseInt(id),
+        iD: parseInt(electionId ?? '0'),
       })
 
       const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
