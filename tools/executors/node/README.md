@@ -1,6 +1,6 @@
 # Custom node:build executor
 
-Runs @nrwl/node:webpack in local dev and @anatine/esbuildnx:build for production builds.
+Runs @nx/webpack:webpack in local dev and @nx/esbuild:esbuild for production builds.
 
 We do this because we need esbuildnx for production builds but its watch logic is broken and hurts DX.
 

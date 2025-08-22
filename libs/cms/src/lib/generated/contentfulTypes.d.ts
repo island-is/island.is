@@ -1666,6 +1666,9 @@ export interface IGenericListFields {
   /** Item Type */
   itemType?: 'Non-clickable' | 'Clickable' | undefined
 
+  /** Alphabetically Order Filter Tags */
+  alphabeticallyOrderFilterTags?: boolean | undefined
+
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
@@ -1990,7 +1993,7 @@ export interface IGrantCardsListFields {
   /** Funds */
   grantCardListFunds?: IFund[] | undefined
 
-  /** Max number of cards */
+  /** Max number of results */
   grantCardsListMaxNumberOfCards?: number | undefined
 
   /** Sorting */
@@ -1998,6 +2001,9 @@ export interface IGrantCardsListFields {
     | 'Alphabetical'
     | 'Most recently updated first'
     | undefined
+
+  /** Always display results as cards */
+  grantCardsAlwaysDisplayResultsAsCards?: boolean | undefined
 }
 
 export interface IGrantCardsList extends Entry<IGrantCardsListFields> {

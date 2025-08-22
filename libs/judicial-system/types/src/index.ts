@@ -5,14 +5,18 @@ export {
   DefenderChoice,
   SubpoenaType,
   DefendantPlea,
-  ServiceRequirement,
   ServiceStatus,
   PunishmentType,
-  VerdictAppealDecision,
-  InformationForDefendant,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
+
+export {
+  ServiceRequirement,
+  VerdictAppealDecision,
+  InformationForDefendant,
+  informationForDefendantMap,
+} from './lib/verdict'
 
 export {
   InstitutionType,
@@ -105,8 +109,6 @@ export {
   isInvestigationCase,
   isRequestCase,
   isAcceptingCaseDecision,
-  isTrafficViolationCase,
-  hasTrafficViolationSubtype,
   completedRequestCaseStates,
   completedIndictmentCaseStates,
   completedCaseStates,
@@ -138,6 +140,7 @@ export type {
 export {
   IndictmentCountOffense,
   offenseSubstances,
+  isTrafficViolationIndictmentCount,
 } from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 

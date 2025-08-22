@@ -1,4 +1,4 @@
-import { Op, WhereOptions } from 'sequelize'
+import { Op } from 'sequelize'
 import { Includeable, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -70,7 +70,7 @@ import {
 import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
-import { IndictmentCount } from '../indictment-count'
+import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
@@ -81,14 +81,8 @@ import { VerdictService } from '../verdict/verdict.service'
 import { Victim } from '../victim/models/victim.model'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
-import { partition } from './filters/filterHelpers'
 import { Case } from './models/case.model'
 import { MinimalCase } from './models/case.types'
-import {
-  CaseStatistics,
-  IndictmentCaseStatistics,
-  RequestCaseStatistics,
-} from './models/caseStatistics.response'
 import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
@@ -536,6 +530,7 @@ export class CaseService {
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
+    private readonly indictmentCountService: IndictmentCountService,
     private readonly subpoenaService: SubpoenaService,
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
@@ -623,66 +618,122 @@ export class CaseService {
     return theCase.id
   }
 
-  private async syncPoliceCaseNumbersAndCaseFiles(
+  private async handlePoliceCaseNumbersUpdate(
     theCase: Case,
     update: UpdateCase,
     transaction: Transaction,
   ): Promise<void> {
-    if (update.policeCaseNumbers && theCase.caseFiles) {
-      const oldPoliceCaseNumbers = theCase.policeCaseNumbers
-      const newPoliceCaseNumbers = update.policeCaseNumbers
-      const maxIndex = Math.max(
-        oldPoliceCaseNumbers.length,
-        newPoliceCaseNumbers.length,
-      )
+    if (
+      !update.policeCaseNumbers ||
+      update.policeCaseNumbers.length === 0 ||
+      (!theCase.caseFiles && !theCase.indictmentCounts)
+    ) {
+      // Nothing to do
+      return
+    }
 
-      // Assumptions:
-      // 1. The police case numbers are in the same order as they were before
-      // 2. The police case numbers are not duplicated
-      // 3. At most one police case number is changed, added or removed
-      for (let i = 0; i < maxIndex; i++) {
-        // Police case number added
-        if (i === oldPoliceCaseNumbers.length) {
-          break
+    const oldPoliceCaseNumbers = [...theCase.policeCaseNumbers].sort()
+    const newPoliceCaseNumbers = [...update.policeCaseNumbers].sort()
+
+    const removedPoliceCaseNumbers: string[] = []
+    const addedPoliceCaseNumbers: string[] = []
+
+    // Find added and removed police case numbers
+    while (oldPoliceCaseNumbers.length > 0 && newPoliceCaseNumbers.length > 0) {
+      // If the police case numbers are equal, then nothing has changed
+      if (oldPoliceCaseNumbers[0] === newPoliceCaseNumbers[0]) {
+        oldPoliceCaseNumbers.shift()
+        newPoliceCaseNumbers.shift()
+
+        continue
+      }
+
+      // If the first police case number in the old list is smaller
+      // than the first in the new list, then it has been removed
+      if (oldPoliceCaseNumbers[0] < newPoliceCaseNumbers[0]) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        removedPoliceCaseNumbers.push(oldPoliceCaseNumbers.shift()!)
+
+        continue
+      }
+
+      // Otherwise, the first police case number in the new list has been added
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      addedPoliceCaseNumbers.push(newPoliceCaseNumbers.shift()!)
+    }
+
+    // If there are still police case numbers left in either list,
+    // then they have been removed or added
+    removedPoliceCaseNumbers.push(...oldPoliceCaseNumbers)
+    addedPoliceCaseNumbers.push(...newPoliceCaseNumbers)
+
+    // Assumption: If exactly one police case number has been added and
+    // exactly one has been removed, then a police case number has been changed
+    if (
+      removedPoliceCaseNumbers.length === 1 &&
+      addedPoliceCaseNumbers.length === 1
+    ) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const removedPoliceCaseNumber = removedPoliceCaseNumbers.shift()!
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const addedPoliceCaseNumber = addedPoliceCaseNumbers.shift()!
+
+      if (theCase.caseFiles) {
+        // Update case files with the new police case number
+        for (const caseFile of theCase.caseFiles.filter(
+          (caseFile) => caseFile.policeCaseNumber === removedPoliceCaseNumber,
+        )) {
+          await this.fileService.updateCaseFile(
+            theCase.id,
+            caseFile.id,
+            { policeCaseNumber: addedPoliceCaseNumber },
+            transaction,
+          )
         }
+      }
 
-        // Police case number deleted
-        if (
-          i === newPoliceCaseNumbers.length ||
-          (newPoliceCaseNumbers[i] !== oldPoliceCaseNumbers[i] &&
-            newPoliceCaseNumbers.length < oldPoliceCaseNumbers.length)
-        ) {
-          for (const caseFile of theCase.caseFiles) {
-            if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-              await this.fileService.deleteCaseFile(
-                theCase,
-                caseFile,
-                transaction,
-              )
-            }
-          }
-
-          break
+      if (theCase.indictmentCounts) {
+        // Update indictment counts with the new police case number
+        for (const indictmentCount of theCase.indictmentCounts.filter(
+          (indictmentCount) =>
+            indictmentCount.policeCaseNumber === removedPoliceCaseNumber,
+        )) {
+          await this.indictmentCountService.update(
+            theCase.id,
+            indictmentCount.id,
+            { policeCaseNumber: addedPoliceCaseNumber },
+            transaction,
+          )
         }
+      }
 
-        // Police case number unchanged
-        if (newPoliceCaseNumbers[i] === oldPoliceCaseNumbers[i]) {
-          continue
-        }
+      // We are done
+      return
+    }
 
-        // Police case number changed
-        for (const caseFile of theCase.caseFiles) {
-          if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-            await this.fileService.updateCaseFile(
-              theCase.id,
-              caseFile.id,
-              { policeCaseNumber: newPoliceCaseNumbers[i] },
-              transaction,
-            )
-          }
-        }
+    if (theCase.caseFiles) {
+      // Delete case files connected to removed police case numbers
+      for (const caseFile of theCase.caseFiles.filter(
+        (caseFile) =>
+          caseFile.policeCaseNumber &&
+          removedPoliceCaseNumbers.includes(caseFile.policeCaseNumber),
+      )) {
+        await this.fileService.deleteCaseFile(theCase, caseFile, transaction)
+      }
+    }
 
-        break
+    if (theCase.indictmentCounts) {
+      // Delete indictment counts connected to removed police case numbers
+      for (const indictmentCount of theCase.indictmentCounts.filter(
+        (indictmentCount) =>
+          indictmentCount.policeCaseNumber &&
+          removedPoliceCaseNumbers.includes(indictmentCount.policeCaseNumber),
+      )) {
+        await this.indictmentCountService.delete(
+          theCase.id,
+          indictmentCount.id,
+          transaction,
+        )
       }
     }
   }
@@ -2110,11 +2161,7 @@ export class CaseService {
         }
 
         // Update police case numbers of case files if necessary
-        await this.syncPoliceCaseNumbersAndCaseFiles(
-          theCase,
-          update,
-          transaction,
-        )
+        await this.handlePoliceCaseNumbersUpdate(theCase, update, transaction)
 
         // Reset case file states if court case number is changed
         if (
@@ -2472,132 +2519,5 @@ export class CaseService {
     )) as Case
 
     return updatedCase
-  }
-
-  async getCaseStatistics(
-    from?: Date,
-    to?: Date,
-    institutionId?: string,
-  ): Promise<CaseStatistics> {
-    let where: WhereOptions = {
-      state: {
-        [Op.not]: [
-          CaseState.DELETED,
-          CaseState.DRAFT,
-          CaseState.NEW,
-          CaseState.WAITING_FOR_CONFIRMATION,
-        ],
-      },
-    }
-
-    if (from || to) {
-      where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
-      }
-      if (to) {
-        where.created[Op.lte] = to
-      }
-    }
-
-    if (institutionId) {
-      where = {
-        ...where,
-        [Op.or]: [
-          { courtId: institutionId },
-          { prosecutorsOfficeId: institutionId },
-        ],
-      }
-    }
-
-    const cases = await this.caseModel.findAll({
-      where,
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-          where: {
-            eventType: EventType.INDICTMENT_CONFIRMED,
-          },
-        },
-      ],
-    })
-
-    const [indictments, requests] = partition(cases, (c) =>
-      isIndictmentCase(c.type),
-    )
-
-    const requestCases = this.getRequestCaseStatistics(requests)
-    const indictmentCases = this.getIndictmentStatistics(indictments)
-    const subpoenas = await this.subpoenaService.getStatistics(
-      from,
-      to,
-      institutionId,
-    )
-
-    const stats: CaseStatistics = {
-      count: cases.length,
-      requestCases,
-      indictmentCases,
-      subpoenas,
-    }
-
-    return stats
-  }
-
-  getIndictmentStatistics(cases: Case[]): IndictmentCaseStatistics {
-    const inProgressCount = cases.filter(
-      (caseItem) => caseItem.state !== CaseState.COMPLETED,
-    ).length
-
-    const rulingCount = cases.filter(
-      (caseItem) => caseItem.rulingDate !== null,
-    ).length
-
-    const totalCount = cases.length
-
-    const caseDurations = cases
-      .map((caseItem) => {
-        const confirmedDate = EventLog.getEventLogDateByEventType(
-          EventType.INDICTMENT_CONFIRMED,
-          caseItem.eventLogs,
-        )
-        if (!confirmedDate || !caseItem.rulingDate) return null
-
-        const diff = caseItem.rulingDate.getTime() - confirmedDate.getTime()
-        return diff > 0 ? diff : null
-      })
-      .filter((ms): ms is number => ms !== null)
-
-    const averageRulingTimeMs = caseDurations.length
-      ? Math.round(
-          caseDurations.reduce((sum, ms) => sum + ms, 0) / caseDurations.length,
-        )
-      : 0
-
-    return {
-      count: totalCount,
-      inProgressCount,
-      rulingCount,
-      averageRulingTimeMs,
-      averageRulingTimeDays: Math.round(
-        averageRulingTimeMs / (1000 * 60 * 60 * 24),
-      ),
-    }
-  }
-
-  getRequestCaseStatistics(cases: Case[]): RequestCaseStatistics {
-    const inProgressCount = cases.filter(
-      (c) => !isCompletedCase(c.state),
-    ).length
-
-    const completedCount = cases.filter((c) => isCompletedCase(c.state)).length
-
-    return {
-      count: cases.length,
-      inProgressCount,
-      completedCount,
-    }
   }
 }

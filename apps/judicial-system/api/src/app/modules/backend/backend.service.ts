@@ -23,7 +23,7 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from '../case'
-import { CaseListEntry, CaseStatistics } from '../case-list'
+import { CaseListEntry } from '../case-list'
 import { CaseTableResponse, SearchCasesResponse } from '../case-table'
 import {
   CivilClaimant,
@@ -57,6 +57,17 @@ import {
   PoliceCaseInfo,
   UploadPoliceCaseFileResponse,
 } from '../police'
+import { CaseStatistics } from '../statistics'
+import {
+  IndictmentCaseStatistics,
+  RequestCaseStatistics,
+  SubpoenaStatistics,
+} from '../statistics'
+import {
+  IndictmentStatisticsInput,
+  RequestStatisticsInput,
+  SubpoenaStatisticsInput,
+} from '../statistics/dto/caseStatistics.input'
 import { Subpoena } from '../subpoena'
 import { Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
@@ -240,6 +251,54 @@ export class BackendService extends DataSource<{ req: Request }> {
     if (institutionId) params.append('institutionId', institutionId)
 
     return this.get(`cases/statistics?${params.toString()}`)
+  }
+
+  getIndictmentCaseStatistics(
+    query: IndictmentStatisticsInput,
+  ): Promise<IndictmentCaseStatistics> {
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/indictments/statistics?${searchParams.toString()}`)
+  }
+
+  private serializeNestedObject<T extends object>(
+    object: T,
+    rootKey = 'query',
+  ): string {
+    const params = new URLSearchParams()
+    Object.entries(object).forEach(([key, value]) => {
+      if (value && typeof value === 'object' && !(value instanceof Date)) {
+        // Note: currently only handle one level of nested object
+        Object.entries(value).forEach(([subKey, subValue]) => {
+          if (subValue !== undefined && subValue !== null && subValue !== '') {
+            const valStr =
+              subValue instanceof Date
+                ? subValue.toISOString()
+                : subValue.toString()
+            params.append(`${rootKey}[${key}][${subKey}]`, valStr)
+          }
+        })
+      } else if (value) {
+        const valStr =
+          value instanceof Date ? value.toISOString() : value.toString()
+        params.append(`${rootKey}[${key}]`, valStr)
+      }
+    })
+
+    return params.toString()
+  }
+
+  getRequestCaseStatistics(
+    query: RequestStatisticsInput,
+  ): Promise<RequestCaseStatistics> {
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/requests/statistics?${searchParams}`)
+  }
+
+  getSubpoenaStatistics(
+    query: SubpoenaStatisticsInput,
+  ): Promise<SubpoenaStatistics> {
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/subpoenas/statistics?${searchParams.toString()}`)
   }
 
   getConnectedCases(id: string): Promise<Case[]> {
