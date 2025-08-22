@@ -257,7 +257,7 @@ api:
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -594,7 +594,7 @@ api:
     name: 'api'
 application-system-api:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -869,7 +869,7 @@ application-system-api:
     name: 'application-system-api'
 application-system-api-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job'
     - 'worker'
   command:
@@ -1044,7 +1044,7 @@ application-system-form:
     privileged: false
 cms-importer-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -1397,7 +1397,7 @@ endorsement-system-api:
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -2814,7 +2814,7 @@ services-sessions:
     privileged: false
 services-sessions-cleanup:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -2876,7 +2876,7 @@ services-sessions-cleanup:
     privileged: false
 services-sessions-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
   command:
     - 'node'
@@ -2972,7 +2972,7 @@ services-sessions-worker:
     name: 'sessions-worker'
 services-university-gateway:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -3100,7 +3100,7 @@ services-university-gateway:
     name: 'services-university-gateway'
 services-university-gateway-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job'
     - 'worker'
   command:
@@ -3355,7 +3355,7 @@ skilavottord-ws:
 user-notification:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -3472,7 +3472,7 @@ user-notification:
 user-notification-birthday-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
     - '--isBirthdayWorker'
   command:
@@ -3573,7 +3573,7 @@ user-notification-birthday-worker:
 user-notification-cleanup-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -3667,7 +3667,7 @@ user-notification-cleanup-worker:
 user-notification-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
   command:
     - 'node'
@@ -3865,7 +3865,7 @@ web:
 xroad-collector:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
