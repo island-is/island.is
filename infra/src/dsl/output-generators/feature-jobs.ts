@@ -167,7 +167,7 @@ export const generateCleanUpForFeature = async (
           {
             image,
             command: [`/app/delete-secrets.sh`, feature as string],
-            name: `${feature}-delete-secrets1`!
+            name: `${feature}-delete-secrets1`
               .replace(/_/g, '-')
               .substring(0, 60),
             securityContext,
@@ -195,8 +195,7 @@ export const generateCleanUpForFeature = async (
       ),
       annotations: {
         'argocd.argoproj.io/hook': 'PostDelete',
-        'argocd.argoproj.io/hook-delete-policy':
-          'BeforeHookCreation, HookFailed',
+        'argocd.argoproj.io/hook-delete-policy': 'BeforeHookCreation',
       },
     },
     spec: {

@@ -8,4 +8,10 @@ echo "Deleting secrets for feature $FEATURE_NAME"
 
 sleep 10
 
-node secrets delete "/k8s/feature-$FEATURE_NAME"
+if command -v yarn >/dev/null 2>&1; then
+  # Use the package.json “secrets” script
+  yarn secrets delete -- "/k8s/feature-${FEATURE_NAME}"
+else
+  # Fallback directly to the CLI entrypoint
+  node -r esbuild-register infra/src/secrets.ts delete -- "/k8s/feature-${FEATURE_NAME}"
+fi
