@@ -93,6 +93,14 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
           name: States.PREREQUISITES,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -205,7 +213,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.APPROVED,
+            target: States.TRYGGINGASTOFNUN_SUBMITTED,
           },
         },
       },
@@ -233,7 +241,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
               },
               {
                 onEvent: OAPEvents.DISMISS,
-                logMessage: coreSIAStatesMessages.applicationRejected,
+                logMessage: coreSIAStatesMessages.applicationDismissed,
               },
             ],
           },
@@ -296,12 +304,6 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
               content: statesMessages.applicationRejectedDescription,
               displayStatus: 'error',
             },
-            historyLogs: [
-              {
-                onEvent: States.REJECTED,
-                logMessage: coreSIAStatesMessages.applicationRejected,
-              },
-            ],
           },
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -330,12 +332,6 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
               content: statesMessages.applicationDismissedDescription,
               displayStatus: 'error',
             },
-            historyLogs: [
-              {
-                onEvent: States.DISMISSED,
-                logMessage: statesMessages.applicationDismissed,
-              },
-            ],
           },
           roles: [
             {
