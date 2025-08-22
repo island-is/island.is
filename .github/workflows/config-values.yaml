@@ -83,8 +83,8 @@ jobs:
       - name: Commit any changes to charts
         if: ${{ github.event_name == 'pull_request' }}
         env:
-            DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
-            DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
         run: |
           (cd infra && yarn charts)
           node scripts/ci/docker/git-check-dirty.mjs "charts/" "charts" "dirtybot"

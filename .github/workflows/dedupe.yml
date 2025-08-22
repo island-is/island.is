@@ -63,8 +63,8 @@ jobs:
       - name: Deduplicate (write)
         if: ${{ inputs.write && steps.dedupe.outputs.should == 'true' }}
         env:
-            DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
-            DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
         run: |
           yarn dedupe
           node scripts/ci/docker/git-check-dirty.mjs "./yarn.lock" "dedupe" "dirtybot"
