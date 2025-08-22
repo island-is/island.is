@@ -142,6 +142,10 @@ export const spmm = defineMessages({
     id: 'sp.family:edit-link',
     defaultMessage: 'Breyta hjá Þjóðskrá',
   },
+  legalResidenceTooltip: {
+    id: 'sp.family:legal-residence-tooltip',
+    defaultMessage: 'Götuheiti, Húsnúmer, Íbúðarnúmer, Póstnúmer, Sveitarfélag',
+  },
 })
 
 export const mInformationNotifications = defineMessages({

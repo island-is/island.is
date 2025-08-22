@@ -6,15 +6,18 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "target": "node",
+        "target": "node20",
         "compiler": "tsc",
         "outputPath": "dist/apps/services/payments",
         "main": "apps/services/payments/src/main.ts",
         "tsConfig": "apps/services/payments/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           {
             "glob": "*",
@@ -103,8 +106,8 @@
         "cwd": "apps/services/payments"
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

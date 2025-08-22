@@ -64,8 +64,7 @@
       "executor": "@nx/webpack:dev-server",
       "options": {
         "port": 4242,
-        "buildTarget": "application-system-form:build",
-        "proxyConfig": "apps/application-system/form/proxy.config.json"
+        "buildTarget": "application-system-form:build"
       },
       "configurations": {
         "production": {
