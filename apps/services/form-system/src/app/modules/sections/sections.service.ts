@@ -22,7 +22,7 @@ export class SectionsService {
     private readonly sectionModel: typeof Section,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
-  ) {}
+  ) { }
 
   async create(createSectionDto: CreateSectionDto): Promise<SectionDto> {
     const section = createSectionDto as Section
@@ -90,14 +90,15 @@ export class SectionsService {
 
     if (form) {
       const { dependencies } = form
-      if (section.screens) {
-        const screenIds = section.screens.map((screen) => screen.id)
-        const fieldIds = section.screens
-          .filter(
-            (screen) =>
-              Array.isArray(screen.fields) && screen.fields.length > 0,
-          )
-          .flatMap((screen) => screen.fields.map((field) => field.id))
+      const screens = await (section as any).$get('screens', { attributes: ['id'] })
+      if (Array.isArray(screens) && screens.length) {
+        const screenIds = screens.map((screen: { id: string }) => screen.id)
+        const fieldsPerScreen = await Promise.all(
+          screens.map((s: any) => s.$get('fields', { attributes: ['id'] })),
+        )
+        const fieldIds = fieldsPerScreen
+          .flat()
+          .map((field: { id: string }) => field.id)
         const newDependencies = filterArrayDependency(dependencies, [
           ...screenIds,
           ...fieldIds,
@@ -107,7 +108,7 @@ export class SectionsService {
       } else {
         form.dependencies = filterDependency(dependencies, id)
       }
-      form.save()
+      await form.save()
     }
 
     section.destroy()

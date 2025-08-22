@@ -24,7 +24,7 @@ export class ScreensService {
     private readonly sectionModel: typeof Section,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
-  ) {}
+  ) { }
 
   async create(createScreenDto: CreateScreenDto): Promise<ScreenDto> {
     const screen = createScreenDto as Screen
@@ -88,16 +88,19 @@ export class ScreensService {
     if (form) {
       const { dependencies } = form
       if (screen.fields) {
-        const fieldIds = screen.fields.map((field) => field.id)
-        const newDependencies = filterArrayDependency(dependencies, [
-          ...fieldIds,
-          id,
-        ])
-        form.dependencies = newDependencies
+        const fields = await (screen as any).$get('fields', { attributes: ['id'] })
+        if (Array.isArray(fields) && fields.length) {
+          const fieldIds = fields.map((field: { id: string }) => field.id)
+          const newDependencies = filterArrayDependency(dependencies, [
+            ...fieldIds,
+            id,
+          ])
+          form.dependencies = newDependencies
+        }
       } else {
         form.dependencies = filterDependency(dependencies, id)
       }
-      form.save()
+      await form.save()
     }
 
     screen.destroy()
