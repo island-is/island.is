@@ -229,6 +229,9 @@ jobs:
 
       - name: Commit changed files
         if: ${{ steps.lintfix.outputs.FILES_CHANGED == 'true' }}
+        env:
+            DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+            DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
         run: node scripts/ci/docker/git-check-dirty.mjs "." "lintfix" "dirtybot"
 
   linting:
