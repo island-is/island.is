@@ -61,7 +61,7 @@ export class SignatureCollectionService {
   }
 
   async listsForUser(
-    { collectionId }: SignatureCollectionIdInput,
+    { collectionId, collectionType }: SignatureCollectionIdInput,
     signee: SignatureCollectionSignee,
     user: User,
   ): Promise<SignatureCollectionList[]> {
@@ -73,6 +73,7 @@ export class SignatureCollectionService {
         collectionId: collectionId,
         areaId: signee.area?.id,
         onlyActive: true,
+        collectionType,
       },
       user,
     )
