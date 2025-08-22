@@ -17,10 +17,7 @@ import {
 import { m } from '../lib/messages'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
-import {
-  CandidateApi,
-  MunicipalCollectionApi,
-} from '../dataProviders'
+import { CandidateApi, MunicipalCollectionApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'createListPrerequisites',
