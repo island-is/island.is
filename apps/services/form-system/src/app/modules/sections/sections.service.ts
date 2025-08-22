@@ -22,7 +22,7 @@ export class SectionsService {
     private readonly sectionModel: typeof Section,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
-  ) { }
+  ) {}
 
   async create(createSectionDto: CreateSectionDto): Promise<SectionDto> {
     const section = createSectionDto as Section
@@ -90,7 +90,9 @@ export class SectionsService {
 
     if (form) {
       const { dependencies } = form
-      const screens = await (section as any).$get('screens', { attributes: ['id'] })
+      const screens = await (section as any).$get('screens', {
+        attributes: ['id'],
+      })
       if (Array.isArray(screens) && screens.length) {
         const screenIds = screens.map((screen: { id: string }) => screen.id)
         const fieldsPerScreen = await Promise.all(
