@@ -10,12 +10,22 @@ import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import { Screen } from '../screens/models/screen.model'
+import { Section } from '../sections/models/section.model'
+import { Form } from '../forms/models/form.model'
+import { filterDependency } from '../../../utils/dependenciesHelper'
 
 @Injectable()
 export class FieldsService {
   constructor(
     @InjectModel(Field)
     private readonly fieldModel: typeof Field,
+    @InjectModel(Screen)
+    private readonly screenModel: typeof Screen,
+    @InjectModel(Section)
+    private readonly sectionModel: typeof Section,
+    @InjectModel(Form)
+    private readonly formModel: typeof Form,
   ) {}
 
   async findById(id: string): Promise<Field> {
@@ -90,6 +100,23 @@ export class FieldsService {
 
   async delete(id: string): Promise<void> {
     const field = await this.findById(id)
+
+    if (!field) {
+      throw new NotFoundException(`Field with id '${id}' not found`)
+    }
+    // Make sure to delete all instances of the fieldId in the dependencies array
+
+    const screen = await this.screenModel.findByPk(field.screenId)
+    const section = await this.sectionModel.findByPk(screen?.sectionId)
+    const form = await this.formModel.findByPk(section?.formId)
+
+    if (form) {
+      const { dependencies } = form
+      const newDependencies = filterDependency(dependencies, id)
+      form.dependencies = newDependencies
+      form.save()
+    }
+
     field?.destroy()
   }
 }
