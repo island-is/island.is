@@ -8,19 +8,20 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/xroad-collector",
         "main": "apps/services/xroad-collector/src/main.ts",
         "tsConfig": "apps/services/xroad-collector/tsconfig.app.json",
-        "assets": ["apps/services/xroad-collector/src/assets"],
-        "maxWorkers": 2
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "assets": ["apps/services/xroad-collector/src/assets"]
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -41,8 +42,8 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/xroad-collector"]
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

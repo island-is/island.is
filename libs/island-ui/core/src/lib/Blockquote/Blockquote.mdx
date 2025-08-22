@@ -1,0 +1,15 @@
+import { Meta, Story, Canvas, Props } from '@storybook/blocks'
+import * as BlockquoteStories from './Blockquote.stories'
+
+import { Box } from '../Box/Box'
+import { Blockquote } from './Blockquote'
+
+<Meta of={BlockquoteStories} />
+
+# Blockquote
+
+Render a text as a blockquote.
+
+<Canvas>
+  <Story of={BlockquoteStories.Default} />
+</Canvas>

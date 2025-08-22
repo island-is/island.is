@@ -34,6 +34,7 @@ export const createBullModule = () => {
       useFactory: (config: ConfigType<typeof ApplicationFilesConfig>) => ({
         prefix: `{${config.bullModuleName}}`,
         createClient: () =>
+          // Type assertion needed due to Bull's Redis client interface requirements
           createRedisCluster({
             name: config.bullModuleName,
             ssl: config.redis.ssl,
