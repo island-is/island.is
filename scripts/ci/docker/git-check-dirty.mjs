@@ -52,9 +52,9 @@ function getCurrentUrl() {
   const origin = runCapture('git', ['remote', 'get-url', 'origin']).trim();
   console.log(`Current origin url: ${origin}`);
   const url = (() => {
-    if (origin.startsWith('https://')) {
-      return origin.replace('https://', '').replace(/.@*/, '');
-    }
+    if (origin.startsWith('https://') && !origin.includes('@')) {
+      return origin.split('https://')[1];
+    } 
     return origin.split('@')[1].replace(':', '/');
   })();
   return url;

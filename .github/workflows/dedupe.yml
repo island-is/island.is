@@ -64,4 +64,4 @@ jobs:
         if: ${{ inputs.write && steps.dedupe.outputs.should == 'true' }}
         run: |
           yarn dedupe
-          ./infra/scripts/ci/git-check-dirty.mjs "./yarn.lock" "dedupe" "dirtybot"
+          node scripts/ci/docker/git-check-dirty.mjs "./yarn.lock" "dedupe" "dirtybot"
