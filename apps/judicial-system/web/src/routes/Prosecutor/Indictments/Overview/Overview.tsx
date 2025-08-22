@@ -17,7 +17,6 @@ import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   ConnectedCaseFilesAccordionItem,
-  CourtDocuments,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -26,7 +25,6 @@ import {
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   Modal,
-  MultipleValueList,
   PageHeader,
   PageLayout,
   PageTitle,
