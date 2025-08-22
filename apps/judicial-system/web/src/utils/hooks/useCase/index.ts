@@ -235,6 +235,7 @@ const useCase = () => {
           return true
         } catch (e) {
           toast.error(formatMessage(errors.transitionCase))
+
           return false
         }
       },
@@ -317,6 +318,7 @@ const useCase = () => {
       return true
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))
+
       return false
     }
   }
