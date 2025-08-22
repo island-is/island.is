@@ -117,6 +117,7 @@ const EventInformationBox = ({
             <EventTime
               startTime={event.time?.startTime ?? ''}
               endTime={event.time?.endTime ?? ''}
+              endDate={event.time?.endDate ?? ''}
               timePrefix={
                 n('timePrefix', activeLocale === 'is' ? 'kl.' : '') as string
               }

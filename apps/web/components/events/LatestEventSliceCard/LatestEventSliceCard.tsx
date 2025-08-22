@@ -26,11 +26,22 @@ interface EventCardProps {
   href: string
   date?: string
   location?: EventLocationSchema
+  endDate?: string
 }
 
 export const LatestEventSliceCard: React.FC<
   React.PropsWithChildren<EventCardProps>
-> = ({ title, image, namespace, location, startTime, endTime, href, date }) => {
+> = ({
+  title,
+  image,
+  namespace,
+  location,
+  startTime,
+  endTime,
+  href,
+  date,
+  endDate,
+}) => {
   const { format } = useDateUtils()
   const formattedDate = date && format(new Date(date), 'do MMMM yyyy')
   const { activeLocale } = useI18n()
@@ -55,6 +66,7 @@ export const LatestEventSliceCard: React.FC<
                 <EventTime
                   startTime={startTime}
                   endTime={endTime}
+                  endDate={endDate}
                   timePrefix={
                     n(
                       'timePrefix',
