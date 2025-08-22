@@ -57,6 +57,7 @@ const sofnun: MedmaelasofnunExtendedDTO[] = [
     },
     kosningTegund: 'Forsetakosning',
     kosningNafn: 'Gervikosning',
+    kosningID: 112233,
   },
 ]
 const sofnunUser: EinstaklingurKosningInfoDTO = {
@@ -300,8 +301,13 @@ describe('MyService', () => {
       .mockReturnValueOnce(Promise.resolve(candidacy))
     jest
       .spyOn(service, 'getApiWithAuth')
-      .mockReturnValueOnce(sofnunApi)
-      .mockReturnValueOnce(frambodApi)
+      .mockImplementation((api, _) =>
+        api instanceof MedmaelasofnunApi
+          ? sofnunApi
+          : api instanceof KosningApi
+          ? kosningApi
+          : frambodApi,
+      )
     jest
       .spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet')
       .mockReturnValue(Promise.resolve(sofnunUser))
@@ -372,13 +378,17 @@ describe('MyService', () => {
       .spyOn(sofnunApi, 'medmaelasofnunGet')
       .mockReturnValue(Promise.resolve(sofnun))
     jest
-      .spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet')
-      .mockReturnValue(Promise.resolve(sofnunUser))
-    jest
       .spyOn(service, 'getApiWithAuth')
       .mockImplementation((api, _) =>
-        api instanceof MedmaelasofnunApi ? sofnunApi : frambodApi,
+        api instanceof MedmaelasofnunApi
+          ? sofnunApi
+          : api instanceof KosningApi
+          ? kosningApi
+          : frambodApi,
       )
+    jest
+      .spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet')
+      .mockReturnValue(Promise.resolve(sofnunUser))
     jest
       .spyOn(frambodApi, 'frambodIDDelete')
       .mockImplementation(() => Promise.resolve())
@@ -473,6 +483,17 @@ describe('MyService', () => {
       .spyOn(sofnunApi, 'medmaelasofnunGet')
       .mockReturnValue(Promise.resolve(sofnun))
     jest
+      .spyOn(service, 'getApiWithAuth')
+      .mockImplementation((api, _) =>
+        api instanceof MedmaelasofnunApi
+          ? sofnunApi
+          : api instanceof FrambodApi
+          ? frambodApi
+          : api instanceof KosningApi
+          ? kosningApi
+          : listarApi,
+      )
+    jest
       .spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet')
       .mockReturnValueOnce(
         Promise.resolve({
@@ -481,15 +502,6 @@ describe('MyService', () => {
         }),
       )
       .mockReturnValue(Promise.resolve(sofnunUser))
-    jest
-      .spyOn(service, 'getApiWithAuth')
-      .mockImplementation((api, _) =>
-        api instanceof MedmaelasofnunApi
-          ? sofnunApi
-          : api instanceof FrambodApi
-          ? frambodApi
-          : listarApi,
-      )
     jest.spyOn(listarApi, 'medmaelalistarIDMedmaeliPost').mockReturnValue(
       Promise.resolve({
         kennitala: '0101302399',
@@ -577,7 +589,11 @@ describe('MyService', () => {
     jest
       .spyOn(service, 'getApiWithAuth')
       .mockImplementation((api, _) =>
-        api instanceof MedmaeliApi ? medmaeliApi : sofnunApi,
+        api instanceof MedmaeliApi
+          ? medmaeliApi
+          : api instanceof MedmaelasofnunApi
+          ? sofnunApi
+          : kosningApi,
       )
     jest
       .spyOn(sofnunApi, 'medmaelasofnunGet')
