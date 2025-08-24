@@ -23,6 +23,7 @@ import {
   dateTypes,
   defendantEventTypes,
   EventType,
+  InstitutionType,
   isCompletedCase,
   isIndictmentCase,
   ServiceStatus,
@@ -48,10 +49,7 @@ import {
   SubpoenaStatistics,
 } from './models/subpoenaStatistics.response'
 import { DateFilter } from './statistics/types'
-import {
-  IndictmentCaseEvent,
-  indictmentCaseEventFunctions,
-} from './indictmentCaseEvents'
+import { indictmentCaseEventFunctions } from './indictmentCaseEvents'
 import { requestCaseEventFunctions } from './requestCaseEvents'
 
 const isDateInPeriod = (
@@ -94,6 +92,7 @@ export const partition = <T>(
 @Injectable()
 export class StatisticsService {
   constructor(
+    @InjectModel(Case) private readonly institutionModel: typeof Institution,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     private readonly awsS3Service: AwsS3Service,
@@ -612,6 +611,15 @@ export class StatisticsService {
       ],
     })
 
+    const institutions = await this.institutionModel.findAll({
+      where: {
+        type: [
+          InstitutionType.PRISON_ADMIN,
+          InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+        ],
+      },
+    })
+
     // create events for data analytics for each case
     if (!period) return []
 
@@ -632,7 +640,7 @@ export class StatisticsService {
 
       return indictmentCaseEventFunctions
         .flatMap((func) => {
-          const event = func(c)
+          const event = func(c, institutions)
           if (!event) return undefined
 
           if (Array.isArray(event)) {
@@ -695,13 +703,16 @@ export class StatisticsService {
         return {
           data: await this.extractAndTransformIndictmentCases(period),
           columns: [
-            { key: 'id', header: 'ID' },
+            { key: 'id', header: 'Mál' },
             { key: 'eventDescriptor', header: 'Atburður' },
             { key: 'date', header: 'Dagsetning' },
             { key: 'institution', header: 'Stofnun' },
             { key: 'caseTypeDescriptor', header: 'Tegund máls' },
             { key: 'caseSubtypeDescriptors', header: 'Sakarefni' },
             { key: 'origin', header: 'Stofnað í' },
+            { key: 'defendantId', header: 'Varnaraðili' },
+            { key: 'serviceStatusDescriptor', header: 'Birting' },
+            { key: 'rulingDate', header: 'Uppkvaðning' },
           ],
           key: `ákærur_from_${getDateString(
             period?.fromDate,

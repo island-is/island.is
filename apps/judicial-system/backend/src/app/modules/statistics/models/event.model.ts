@@ -20,17 +20,14 @@ export type RequestCaseEventType =
   | 'CASE_RECEIVED_BY_COURT_OF_APPEALS'
   | 'CASE_COMPLETED_BY_COURT_OF_APPEALS'
 
-// not implemented
 export type IndictmentCaseEventType =
   | BaseEventType
   | 'SUBPOENA_SERVED'
   | 'RULING_DECISION_CONFIRMED'
-  | 'INDICTMENT_COMPLETED' // not implemented
+  | 'INDICTMENT_COMPLETED'
   | 'VERDICT_CREATED' // not implemented
   | 'VERDICT_SERVED'
-  | 'INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR' // not implemented
-  | 'INDICTMENT_REVIEWED_BY_PUBLIC_PROSECUTOR' // not implemented
-  | 'CASE_SENT_TO_PRISON_ADMIN' // not implemented
-  | 'CASE_RECEIVED_BY_PRISON_ADMIN' // not implemented
-  | 'ARRAIGNMENT_DATE_OCCURRED' // not implemented
-  | 'COURT_DATE_OCCURRED' // not implemented
+  | 'INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR'
+  | 'INDICTMENT_REVIEWED_BY_PUBLIC_PROSECUTOR'
+  | 'CASE_SENT_TO_PRISON_ADMIN'
+  | 'CASE_RECEIVED_BY_PRISON_ADMIN'

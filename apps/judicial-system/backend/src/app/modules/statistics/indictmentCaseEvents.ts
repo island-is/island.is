@@ -3,19 +3,20 @@ import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 
 import {
-  CaseAppealRulingDecision,
-  CaseDecision,
   CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseType,
+  DefendantEventType,
   EventType,
+  InstitutionType,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
-// TODO: fix barrel files
 import { Case } from '../case'
-import { courtSubtypes } from '../court/court.service'
+import { courtSubtypes } from '../court'
+import { DefendantEventLog } from '../defendant'
 import { EventLog } from '../event-log'
+import { Institution } from '../institution'
 import {
   IndictmentCaseEventType,
   RequestCaseEventType,
@@ -240,10 +241,29 @@ const caseRulingDecisionConfirmed = (
   }
 }
 
+const caseCompletedAtCourt = (c: Case): IndictmentCaseEvent | undefined => {
+  const date = EventLog.getEventLogDateByEventType(
+    EventType.INDICTMENT_COMPLETED,
+    c.eventLogs,
+  )?.toISOString()
+  if (!date) {
+    return undefined
+  }
+
+  return {
+    id: c.id,
+    event: 'INDICTMENT_COMPLETED',
+    eventDescriptor: 'Málið lokið hjá héraðsómi',
+    date,
+    institution: c.court?.name,
+    ...commonFields(c),
+  }
+}
+
 const verdictServedToDefendant = (
   c: Case,
 ): IndictmentCaseEvent[] | undefined => {
-  const verdicts = pipe(
+  return pipe(
     c.defendants ?? [],
     filterMap((defendant) => {
       const verdict = defendant.verdict
@@ -252,28 +272,135 @@ const verdictServedToDefendant = (
         return option.none
 
       return option.some({
+        id: c.id,
         defendantId: defendant.id,
-        date: verdict.serviceDate,
+        date: verdict.serviceDate.toISOString(),
         serviceStatus: verdict.serviceStatus,
+        serviceStatusDescriptor: getServiceStatusDescriptor(
+          verdict.serviceStatus,
+        ),
+        event: 'VERDICT_SERVED',
+        eventDescriptor: 'Dómur birtur dómfellda',
+        institution: c.court?.name,
+        ...commonFields(c),
       })
     }),
   )
+}
 
-  if (verdicts.length === 0) {
+const caseSentToPublicProsecutorOffice = (
+  c: Case,
+): IndictmentCaseEvent | undefined => {
+  const date = EventLog.getEventLogDateByEventType(
+    EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    c.eventLogs,
+  )?.toISOString()
+  if (!date) {
     return undefined
   }
 
-  return verdicts.map((verdict) => ({
+  return {
     id: c.id,
-    event: 'VERDICT_SERVED',
-    eventDescriptor: 'Dómur birtur dómfellda',
-    date: verdict.date.toISOString(),
+    event: 'INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR',
+    eventDescriptor: 'Mál sent til Skrifstofu Ríkissaksóknara',
+    date,
     institution: c.court?.name,
-    defendantId: verdict.defendantId,
-    serviceStatus: verdict.serviceStatus,
-    serviceStatusDescriptor: getServiceStatusDescriptor(verdict.serviceStatus),
     ...commonFields(c),
-  }))
+  }
+}
+
+const caseReviewedByPublicProsecutorOffice = (
+  c: Case,
+  institution: Institution[],
+): IndictmentCaseEvent | undefined => {
+  const publicProsecutorOffice = institution.find(
+    (institution) =>
+      institution.type === InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+  )
+
+  const date = EventLog.getEventLogDateByEventType(
+    EventType.INDICTMENT_REVIEWED,
+    c.eventLogs,
+  )?.toISOString()
+  if (!date || !publicProsecutorOffice) {
+    return undefined
+  }
+
+  return {
+    id: c.id,
+    event: 'INDICTMENT_REVIEWED_BY_PUBLIC_PROSECUTOR',
+    eventDescriptor: 'Ákvörðun tekin hjá Ríkissaksóknara',
+    date,
+    institution: publicProsecutorOffice.name,
+    ...commonFields(c),
+  }
+}
+
+const caseSentToPrisonAdmin = (
+  c: Case,
+  institution: Institution[],
+): IndictmentCaseEvent[] | undefined => {
+  const publicProsecutorOffice = institution.find(
+    (institution) =>
+      institution.type === InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+  )
+  if (!publicProsecutorOffice) return undefined
+
+  return pipe(
+    c.defendants ?? [],
+    filterMap((defendant) => {
+      const defendantEventLogs = defendant.eventLogs
+
+      const date = DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.SENT_TO_PRISON_ADMIN,
+        defendantEventLogs,
+      )
+      if (!date) return option.none
+
+      return option.some({
+        id: c.id,
+        defendantId: defendant.id,
+        date: date.toISOString(),
+        event: 'CASE_SENT_TO_PRISON_ADMIN',
+        eventDescriptor: 'Mál sent til fullnustu',
+        institution: publicProsecutorOffice.name,
+        ...commonFields(c),
+      })
+    }),
+  )
+}
+
+const caseReceivedByPrisonAdmin = (
+  c: Case,
+  institution: Institution[],
+): IndictmentCaseEvent[] | undefined => {
+  const prisonAdmin = institution.find(
+    (institution) => institution.type === InstitutionType.PRISON_ADMIN,
+  )
+  if (!prisonAdmin) return undefined
+
+  return pipe(
+    c.defendants ?? [],
+    filterMap((defendant) => {
+      const defendantEventLogs = defendant.eventLogs
+
+      const date = DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.OPENED_BY_PRISON_ADMIN,
+        defendantEventLogs,
+      )
+      if (!date) return option.none
+
+      return option.some({
+        id: c.id,
+        defendantId: defendant.id,
+        date: date.toISOString(),
+        event: 'CASE_RECEIVED_BY_PRISON_ADMIN',
+        eventDescriptor: 'Mál móttekið af fangelsisyfirvöldum',
+        institution: prisonAdmin?.name,
+        ...commonFields(c),
+      })
+    }),
+  )
 }
 
 export const indictmentCaseEventFunctions = [
@@ -284,4 +411,9 @@ export const indictmentCaseEventFunctions = [
   subpoenaServedToDefendant,
   caseRulingDecisionConfirmed,
   verdictServedToDefendant,
+  caseCompletedAtCourt,
+  caseSentToPublicProsecutorOffice,
+  caseReviewedByPublicProsecutorOffice,
+  caseSentToPrisonAdmin,
+  caseReceivedByPrisonAdmin,
 ]
