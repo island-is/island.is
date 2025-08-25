@@ -109,6 +109,7 @@ export class VehiclesService {
     const res = await this.vehicleClientService.getVehicles(auth, {
       pageSize: input.pageSize,
       page: input.page,
+      includeNextMainInspectionDate: input.includeNextMainInspectionDate,
       onlyMileageRegisterableVehicles:
         input.filterOnlyVehiclesUserCanRegisterMileage,
       query: input.query,
