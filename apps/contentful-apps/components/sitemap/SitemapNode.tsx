@@ -201,7 +201,8 @@ interface SitemapNodeProps {
   addNode: (
     parentNode: Tree,
     type: TreeNodeType,
-    createNew?: boolean,
+    entries: Record<string, EntryProps>,
+    createNew: boolean,
     entryType?: EntryType,
   ) => void
   removeNode: (parentNode: Tree, idOfNodeToRemove: number) => void
@@ -415,36 +416,52 @@ export const SitemapNode = ({
                         return
                       }
 
-                      const otherCategories = parentNode.childNodes.filter(
-                        (child) =>
-                          child.type === TreeNodeType.CATEGORY &&
-                          child.id !== node.id,
-                      )
+                      const otherCategoriesAndEntryNodes =
+                        parentNode.childNodes.filter(
+                          (child) =>
+                            (child.type === TreeNodeType.CATEGORY ||
+                              child.type === TreeNodeType.ENTRY) &&
+                            child.id !== node.id,
+                        )
+
+                      const otherSlugs = otherCategoriesAndEntryNodes
+                        .map((child) =>
+                          child.type === TreeNodeType.CATEGORY
+                            ? child.slug
+                            : child.type === TreeNodeType.ENTRY
+                            ? entries[child.entryId]?.fields?.slug?.['is-IS']
+                            : '',
+                        )
+                        .filter(Boolean)
+
+                      const otherSlugsEN = otherCategoriesAndEntryNodes
+                        .map((child) =>
+                          child.type === TreeNodeType.CATEGORY
+                            ? child.slugEN
+                            : child.type === TreeNodeType.ENTRY
+                            ? entries[child.entryId]?.fields?.slug?.['en']
+                            : '',
+                        )
+                        .filter(Boolean)
 
                       const updatedNode = await sdk.dialogs.openCurrentApp({
                         parameters: {
                           node,
-                          otherCategorySlugs: otherCategories
-                            .map((child) =>
-                              child.type === TreeNodeType.CATEGORY
-                                ? child.slug
-                                : '',
-                            )
-                            .filter(Boolean),
-                          otherCategorySlugsEN: otherCategories
-                            .map((child) =>
-                              child.type === TreeNodeType.CATEGORY
-                                ? child.slugEN
-                                : '',
-                            )
-                            .filter(Boolean),
+                          otherSlugs,
+                          otherSlugsEN,
                         },
                         minHeight:
                           node.type === TreeNodeType.URL
                             ? URL_DIALOG_MIN_HEIGHT
                             : CATEGORY_DIALOG_MIN_HEIGHT,
                       })
+
+                      if (!updatedNode) {
+                        return
+                      }
+
                       updateNode(parentNode, updatedNode)
+
                       return
                     }}
                     onRemove={async () => {
@@ -527,8 +544,8 @@ export const SitemapNode = ({
               {status !== 'published' && mode === 'edit' && (
                 <div className={styles.addNodeButtonContainer}>
                   <AddNodeButton
-                    addNode={(type, createNew, entryType) => {
-                      addNode(node, type, createNew, entryType)
+                    addNode={(type, entries, createNew, entryType) => {
+                      addNode(node, type, entries, createNew, entryType)
                     }}
                     options={
                       indent > 1 || node.type === TreeNodeType.ENTRY
