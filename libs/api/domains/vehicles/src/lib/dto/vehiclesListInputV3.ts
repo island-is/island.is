@@ -8,7 +8,11 @@ export class VehiclesListInputV3 {
   @Field()
   page!: number
 
-  @Field({ nullable: true, defaultValue: true, description: 'Set to false if not needed for performance reasons' })
+  @Field({
+    nullable: true,
+    defaultValue: true,
+    description: 'Set to false if not needed for performance reasons',
+  })
   includeNextMainInspectionDate?: boolean
 
   @Field({ nullable: true })
