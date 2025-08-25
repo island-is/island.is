@@ -4,6 +4,7 @@ export interface Lawyer {
   email: string
   phoneNr: string
   nationalId: string
+  isLitigator: boolean
 }
 
 export type LawyerFull = {
@@ -61,6 +62,7 @@ export const mapToLawyer = (lawyer: LawyerRegistry): Lawyer => {
     email: lawyer.email,
     phoneNr: lawyer.phoneNumber,
     nationalId: lawyer.nationalId.replace(/\D/g, ''), // Remove all non-numeric characters
+    isLitigator: lawyer.isLitigator,
   }
 }
 
