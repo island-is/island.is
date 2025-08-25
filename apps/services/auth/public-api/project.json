@@ -7,19 +7,21 @@
   "tags": ["scope:auth-api"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/auth/public-api",
         "main": "apps/services/auth/public-api/src/main.ts",
         "tsConfig": "apps/services/auth/public-api/tsconfig.app.json",
-        "assets": ["apps/services/auth/public-api/src/assets"]
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "assets": ["apps/services/auth/public-api/src/assets"]
         }
       }
     },
@@ -47,8 +49,8 @@
       },
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }
