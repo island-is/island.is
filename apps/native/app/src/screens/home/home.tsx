@@ -12,7 +12,6 @@ import {
   Platform,
   RefreshControl,
 } from 'react-native'
-import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
@@ -76,32 +75,22 @@ const iconInsets = {
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
+    (theme, intl) => ({
       topBar: {
-        rightButtons: initialized
-          ? getRightButtons({
-              icons: ['notifications', 'options'],
-              theme: theme as any,
-            })
-          : [],
+        rightButtons: getRightButtons({
+          icons: ['notifications', 'options'],
+          theme,
+        }),
       },
       bottomTab: {
-        ...({
+        ...{
           accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
-        } as any),
-        // selectedIconColor: null as any,
-        // iconColor: null as any,
-        textColor: initialized
-          ? isAndroid
-            ? theme.shade.foreground
-            : { light: 'black', dark: 'white' }
-          : theme.shade.background,
-        icon: initialized
-          ? require('../../assets/icons/tabbar-home.png')
-          : undefined,
-        selectedIcon: initialized
-          ? require('../../assets/icons/tabbar-home-selected.png')
-          : undefined,
+        },
+        textColor: isAndroid
+          ? theme.shade.foreground
+          : { light: 'black', dark: 'white' },
+        icon: require('../../assets/icons/tabbar-home.png'),
+        selectedIcon: require('../../assets/icons/tabbar-home-selected.png'),
       },
     }),
     {
@@ -117,15 +106,13 @@ const { useNavigationOptions, getNavigationOptions } =
         iconInsets,
         disableIconTint: false,
         disableSelectedIconTint: true,
-        iconColor: null as any,
-        selectedIconColor: null as any,
+        iconColor: null,
+        selectedIconColor: null,
       },
     },
   )
 
-export const MainHomeScreen: NavigationFunctionComponent = ({
-  componentId,
-}) => {
+export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
 
   useAndroidNotificationPermission()
@@ -323,10 +310,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     inboxWidgetEnabled,
   ])
 
-  if (!ui.initializedApp) {
-    return null
-  }
-
   const data = [
     {
       id: 'hello',
@@ -401,11 +384,4 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   )
 }
 
-MainHomeScreen.options = getNavigationOptions
-
-export const HomeScreen = CodePush({
-  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-  installMode: CodePush.InstallMode.ON_NEXT_RESUME,
-})(MainHomeScreen)
-
-HomeScreen.options = MainHomeScreen.options
+HomeScreen.options = getNavigationOptions

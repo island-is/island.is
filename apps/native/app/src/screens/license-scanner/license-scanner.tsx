@@ -99,7 +99,7 @@ const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera)
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
+    (_theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'licenseScanner.title' }),
@@ -213,7 +213,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
     onCodeScanned,
   })
 
-  const [verifyLicenseBarcode, { data, error, reset, loading }] =
+  const [verifyLicenseBarcode, { data, error, reset }] =
     useVerifyLicenseBarcodeMutation()
 
   useEffect(() => {

@@ -11,14 +11,11 @@ import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
-import { config, getConfig } from '../config'
-import { openNativeBrowser } from '../lib/rn-island'
-import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
+import { getConfig } from '../config'
 import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
 import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
-import { MainBottomTabs } from '../utils/component-registry'
 import { getCustomUserAgent } from '../utils/user-agent'
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
@@ -75,9 +72,6 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
         redirectUrl.indexOf('cognito.shared.devland.is') >= 0
       ) {
         authStore.setState({ cognitoAuthUrl: redirectUrl })
-        if (config.isTestingApp && authStore.getState().authorizeResult) {
-          openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
-        }
       }
     }
   }
