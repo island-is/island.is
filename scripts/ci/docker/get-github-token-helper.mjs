@@ -12,7 +12,7 @@ export async function getGithubToken(APP_ID, PRIVATE_KEY) {
     id: APP_ID,
     privateKey: PRIVATE_KEY,
   })
-  core.setSecret(authData.token);
+  core.setSecret(authData.token)
   const response = await fetch('https://api.github.com/app/installations', {
     method: 'GET',
     headers: {
@@ -20,7 +20,7 @@ export async function getGithubToken(APP_ID, PRIVATE_KEY) {
       Authorization: `Bearer ${authData.token}`,
     },
   })
-  
+
   if (!response.ok) {
     throw new Error(
       `Failed to fetch installations: ${response.status} ${response.statusText}`,
