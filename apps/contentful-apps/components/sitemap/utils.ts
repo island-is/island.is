@@ -200,7 +200,9 @@ export const addNode = async (
       .map((child) =>
         child.type === TreeNodeType.CATEGORY
           ? child.slug
-          : entries[child.entryId]?.fields?.slug?.['is-IS'],
+          : child.type === TreeNodeType.ENTRY
+          ? entries[child.entryId]?.fields?.slug?.['is-IS']
+          : '',
       )
       .filter(Boolean)
 
@@ -208,7 +210,9 @@ export const addNode = async (
       .map((child) =>
         child.type === TreeNodeType.CATEGORY
           ? child.slugEN
-          : entries[child.entryId]?.fields?.slug?.['en'],
+          : child.type === TreeNodeType.ENTRY
+          ? entries[child.entryId]?.fields?.slug?.['en']
+          : '',
       )
       .filter(Boolean)
 
