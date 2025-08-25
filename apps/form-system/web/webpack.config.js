@@ -11,6 +11,19 @@ module.exports = composePlugins(withNx(), withReact(), nrwlConfig, (config) => {
 
   if (isDev) {
     config.devtool = 'eval-cheap-module-source-map'
+
+    // Add proxy configuration for development
+    config.devServer = {
+      ...config.devServer,
+      proxy: [
+        {
+          context: ['/bff'],
+          target: 'http://localhost:3010',
+          secure: false,
+          changeOrigin: true,
+        },
+      ],
+    }
   }
 
   return {
