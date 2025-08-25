@@ -1,0 +1,41 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks'
+import * as LinkStories from './Link.stories'
+
+import { DescriptionFigma } from '../../utils/withFigma'
+import { Box } from '../Box/Box'
+import { LinkV2 } from './LinkV2'
+import { ArrowLink } from './ArrowLink/ArrowLink'
+
+<Meta of={LinkStories} />
+
+# LinkV2
+
+<DescriptionFigma name="LinkV2" />
+
+### Default
+
+<Canvas>
+  <Story of={LinkStories.Default} />
+</Canvas>
+
+### With underline always visible
+
+<Canvas>
+  <Story of={LinkStories.UnderlineAlwaysVisible} />
+</Canvas>
+
+### With small underline
+
+<Canvas>
+  <Story of={LinkStories.SmallUnderline} />
+</Canvas>
+
+### Arrow link
+
+<Canvas>
+  <Story of={LinkStories.ArrowLink} />
+</Canvas>
+
+# Props
+
+<Controls />
