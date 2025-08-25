@@ -207,19 +207,11 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
   }, [refetch])
 
-  // Using the onRefresh function when pressing the update button in ios is buggy,
-  // it scrolls the list half out of view when done - so we do it manually instead
+  // Using the onRefresh function when pressing the update button in ios is buggy.
+  // Instead we manually scroll to the top of the list. And then call the onRefresh function which will trigger RefreshControl loading spinner.
   const programmaticScrollWhenRefreshing = () => {
-    flatListRef.current?.scrollToOffset({ offset: -300, animated: true })
-    res
-      .refetch()
-      .then(() => {
-        // Ofsetting to 0 scrolls the top of the list out of view, so we offset to -150
-        flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
-      })
-      .catch(() => {
-        flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
-      })
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true })
+    onRefresh()
   }
 
   const renderItem = useCallback(
