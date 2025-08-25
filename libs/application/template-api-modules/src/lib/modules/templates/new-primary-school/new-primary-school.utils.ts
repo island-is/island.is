@@ -1,4 +1,4 @@
-import { YES } from '@island.is/application/core'
+import { NO, YES } from '@island.is/application/core'
 import {
   ApplicationType,
   getApplicationAnswers,
@@ -136,6 +136,13 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           residence: {
             address: childInfo?.placeOfResidence?.streetAddress,
             postCode: childInfo?.placeOfResidence?.postalCode,
+          },
+        }),
+      ...(childInfo?.differentPlaceOfResidence === NO &&
+        childInfo?.placeOfResidence && {
+          residence: {
+            address: '',
+            postCode: '',
           },
         }),
     },

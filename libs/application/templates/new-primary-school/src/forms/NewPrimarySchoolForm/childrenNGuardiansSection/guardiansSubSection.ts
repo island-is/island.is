@@ -20,6 +20,7 @@ import { hasOtherGuardian } from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getGuardianByNationalId,
   getOtherGuardian,
 } from '../../../utils/newPrimarySchoolUtils'
 
@@ -225,6 +226,19 @@ export const guardiansSubSection = buildSubSection({
           required: true,
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
+          defaultValue: (application: Application) => {
+            const otherGuardian = getOtherGuardian(
+              application.answers,
+              application.externalData,
+            )
+
+            const guardian = getGuardianByNationalId(
+              application.externalData,
+              otherGuardian?.nationalId || '',
+            )
+
+            return guardian?.email || ''
+          },
         }),
         buildPhoneField({
           id: 'guardians[1].phoneNumber',
@@ -235,6 +249,19 @@ export const guardiansSubSection = buildSubSection({
           required: true,
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
+          defaultValue: (application: Application) => {
+            const otherGuardian = getOtherGuardian(
+              application.answers,
+              application.externalData,
+            )
+
+            const guardian = getGuardianByNationalId(
+              application.externalData,
+              otherGuardian?.nationalId || '',
+            )
+
+            return guardian?.phone || ''
+          },
         }),
         buildCheckboxField({
           id: 'guardians[1].requiresInterpreter',
