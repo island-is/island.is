@@ -74,6 +74,9 @@ async function main(testContext = null) {
     } else if (file.includes('bootstrap-fd-job') && !changedFiles.has(file)) {
       console.log(`Adding bootstrap-fd-job file ${file}`)
       changedFiles.add(file)
+    } else if (file.includes('cleanup-fd-job') && !changedFiles.has(file)) {
+      console.log(`Adding cleanup-fd-job file ${file}`)
+      changedFiles.add(file)
     } else if (!file.includes('values.bootstrap') && !changedFiles.has(file)) {
       console.log(`Skipping file ${file}`)
     }
