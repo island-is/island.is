@@ -59,22 +59,17 @@ const IndictmentCasesDataExport = () => {
             marginTop={2}
             marginBottom={2}
           >
-            {/* TODO: Update link */}
-            <a
-              href="https://rettarvorslugatt.island.is/"
-              target="_blank"
-              rel="noopener noreferrer"
-              download
+            <Button
+              variant="ghost"
+              size="small"
+              icon="open"
+              iconType="outline"
+              onClick={async () => {
+                window.open('', '_blank', 'noopener,noreferrer')
+              }}
             >
-              <Button
-                variant="ghost"
-                size="small"
-                icon="open"
-                iconType="outline"
-              >
-                Sækja sniðmát
-              </Button>
-            </a>
+              Sækja sniðmát
+            </Button>
           </Box>
           <Text>
             Veldu tímabil hér að neðan fyrir gögnin sem þú vilt sækja.

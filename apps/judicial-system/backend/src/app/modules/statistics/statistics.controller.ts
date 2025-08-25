@@ -17,6 +17,7 @@ import {
   RequestCaseStatistics,
 } from './models/caseStatistics.response'
 import { SubpoenaStatistics } from './models/subpoenaStatistics.response'
+import { CaseDataExportDto } from './statistics/caseDataExport.dto'
 import { ExportDataResponse } from './statistics/exportData.response'
 import { IndictmentStatisticsDto } from './statistics/indictmentStatistics.dto'
 import { RequestStatisticsDto } from './statistics/requestStatistics.dto'

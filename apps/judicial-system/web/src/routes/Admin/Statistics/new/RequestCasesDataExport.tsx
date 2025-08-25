@@ -59,21 +59,21 @@ const RequestCasesDataExport = () => {
             marginTop={2}
             marginBottom={2}
           >
-            <a
-              href="https://docs.google.com/spreadsheets/d/1U4O-EtWeRRzFpD7lXPbSQxbF0XqTU_LNOCCAvdFMK-g/edit?usp=sharing"
-              target="_blank"
-              rel="noopener noreferrer"
-              download
+            <Button
+              variant="ghost"
+              size="small"
+              icon="open"
+              iconType="outline"
+              onClick={async () => {
+                window.open(
+                  'https://docs.google.com/spreadsheets/d/1U4O-EtWeRRzFpD7lXPbSQxbF0XqTU_LNOCCAvdFMK-g/edit?usp=sharing',
+                  '_blank',
+                  'noopener,noreferrer',
+                )
+              }}
             >
-              <Button
-                variant="ghost"
-                size="small"
-                icon="open"
-                iconType="outline"
-              >
-                Sækja sniðmát
-              </Button>
-            </a>
+              Sækja sniðmát
+            </Button>
           </Box>
           <Text>
             Veldu tímabil hér að neðan fyrir gögnin sem þú vilt sækja.

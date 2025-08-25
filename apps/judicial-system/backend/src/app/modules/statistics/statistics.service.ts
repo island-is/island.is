@@ -1,4 +1,5 @@
 import stringify from 'csv-stringify'
+import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
@@ -58,7 +59,7 @@ const isDateInPeriod = (
 }
 
 const getDateString = (date?: Date) =>
-  new Date(date ?? Date.now()).toISOString().split('T')[0] // Gets the date in YYYY-MM-DD format
+  format(date ? new Date(date) : new Date(), 'yyyy-MM-dd')
 
 export const partition = <T>(
   array: T[],
