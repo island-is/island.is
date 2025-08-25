@@ -310,6 +310,9 @@ api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
+    LANDSPITALI_DIRECT_GRANT_PAYMENT_CONFIRMATION_SUBJECT: '[TEST] Beinn styrkur - Landspítali'
+    LANDSPITALI_MEMORIAL_CARD_PAYMENT_CONFIRMATION_SUBJECT: '[TEST] Minningarkort - Landspítali'
+    LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: 'http://web.islandis.svc.cluster.local/payments/event-callback'
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     LOG_LEVEL: 'info'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'
@@ -546,6 +549,8 @@ api:
     INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
+    LANDSPITALI_PAYMENT_CONFIRMATION_SEND_TO_EMAIL: '/k8s/api/LANDSPITALI_PAYMENT_CONFIRMATION_SEND_TO_EMAIL'
+    LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK: '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK'
     LICENSE_SERVICE_BARCODE_SECRET_KEY: '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY'
     MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
@@ -580,6 +585,7 @@ api:
     VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY: '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY'
     WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY: '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY'
     WATSON_ASSISTANT_CHAT_FEEDBACK_URL: '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL'
+    WEB_PAYMENT_CONFIRMATION_SECRET: '/k8s/api/WEB_PAYMENT_CONFIRMATION_SECRET'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
     XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
     XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
@@ -3655,8 +3661,12 @@ web:
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'staging'
+    LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: 'http://web.islandis.svc.cluster.local/payments/event-callback'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
+    PAYMENTS_WEB_URL: 'https://beta.staging01.devland.is/greida'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.staging01.devland.is'
   grantNamespaces:
@@ -3665,6 +3675,7 @@ web:
     - 'application-system'
     - 'consultation-portal'
     - 'search-indexer'
+    - 'payments'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3714,6 +3725,7 @@ web:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
+    WEB_PAYMENT_CONFIRMATION_SECRET: '/k8s/api/WEB_PAYMENT_CONFIRMATION_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
