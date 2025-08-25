@@ -1,7 +1,12 @@
+import differenceInDays from 'date-fns/differenceInDays'
 import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 
+import {
+  capitalize,
+  indictmentSubtypes,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseIndictmentRulingDecision,
   CaseOrigin,
@@ -31,12 +36,13 @@ export interface IndictmentCaseEvent {
   caseType: CaseType
   caseTypeDescriptor: string
   origin: CaseOrigin
-  caseSubtypes?: string
-  caseSubtypeDescriptors?: string
+  caseSubtype?: string
+  subtypeDescriptor?: string
   // for subpoena events
   defendantId?: string
   serviceStatus?: string
   serviceStatusDescriptor?: string
+  timeToServeSubpoena?: number
   // ruling related
   rulingDate?: string
   rulingDecision?: string
@@ -71,6 +77,12 @@ const getServiceStatusDescriptor = (successStatus: ServiceStatus) => {
     case ServiceStatus.DEFENDER: {
       return 'Birt fyrir verjanda'
     }
+    case ServiceStatus.EXPIRED: {
+      return 'Birting tókst ekki'
+    }
+    case ServiceStatus.FAILED: {
+      return 'Árangurslaus birting'
+    }
     default: {
       return 'Óþekkt'
     }
@@ -92,6 +104,9 @@ const getRulingDecisionDescriptor = (
     }
     case CaseIndictmentRulingDecision.CANCELLATION: {
       return 'Niðurfelling máls'
+    }
+    case CaseIndictmentRulingDecision.WITHDRAWAL: {
+      return 'Afturkallað'
     }
     case CaseIndictmentRulingDecision.MERGE: {
       return 'Sameinað öðru máli'
@@ -182,6 +197,43 @@ const courtDatesScheduled = (c: Case): IndictmentCaseEvent[] | undefined => {
   }))
 }
 
+const subpoenaCreated = (c: Case): IndictmentCaseEvent[] | undefined => {
+  const subpoenas = pipe(
+    c.defendants ?? [],
+    filterMap((defendant) => {
+      const subpoena = defendant.subpoenas?.find(
+        (subpoena) => subpoena.policeSubpoenaId,
+      )
+
+      if (!subpoena) return option.none
+
+      return option.some({
+        defendantId: defendant.id,
+        date: subpoena.created, // TODO: store the date when we send subpoena to the police
+        serviceStatus: subpoena.serviceStatus,
+      })
+    }),
+  )
+
+  if (subpoenas.length === 0) {
+    return undefined
+  }
+
+  return subpoenas.map((subpoena) => ({
+    id: c.id,
+    event: 'SUBPOENA_CREATED',
+    eventDescriptor: 'Fyrirkall stofnað',
+    date: subpoena.date.toISOString(),
+    institution: c.court?.name,
+    defendantId: subpoena.defendantId,
+    serviceStatus: subpoena.serviceStatus,
+    serviceStatusDescriptor: subpoena.serviceStatus
+      ? getServiceStatusDescriptor(subpoena.serviceStatus)
+      : 'Óbirt',
+    ...commonFields(c),
+  }))
+}
+
 const subpoenaServedToDefendant = (
   c: Case,
 ): IndictmentCaseEvent[] | undefined => {
@@ -197,7 +249,8 @@ const subpoenaServedToDefendant = (
 
       return option.some({
         defendantId: defendant.id,
-        date: subpoena.serviceDate,
+        created: subpoena.created,
+        serviceDate: subpoena.serviceDate,
         serviceStatus: subpoena.serviceStatus,
       })
     }),
@@ -211,11 +264,15 @@ const subpoenaServedToDefendant = (
     id: c.id,
     event: 'SUBPOENA_SERVED',
     eventDescriptor: 'Ákæra birt varnaraðila',
-    date: subpoena.date.toISOString(),
+    date: subpoena.serviceDate.toISOString(),
     institution: c.court?.name,
     defendantId: subpoena.defendantId,
     serviceStatus: subpoena.serviceStatus,
     serviceStatusDescriptor: getServiceStatusDescriptor(subpoena.serviceStatus),
+    timeToServeSubpoena: differenceInDays(
+      subpoena.created,
+      subpoena.serviceDate,
+    ),
     ...commonFields(c),
   }))
 }
@@ -253,7 +310,7 @@ const caseCompletedAtCourt = (c: Case): IndictmentCaseEvent | undefined => {
   return {
     id: c.id,
     event: 'INDICTMENT_COMPLETED',
-    eventDescriptor: 'Málið lokið hjá héraðsómi',
+    eventDescriptor: 'Máli lokið hjá héraðsómi',
     date,
     institution: c.court?.name,
     ...commonFields(c),
@@ -267,9 +324,9 @@ const verdictServedToDefendant = (
     c.defendants ?? [],
     filterMap((defendant) => {
       const verdict = defendant.verdict
-
-      if (!verdict || !verdict.serviceDate || !verdict.serviceStatus)
+      if (!verdict || !verdict.serviceDate || !verdict.serviceStatus) {
         return option.none
+      }
 
       return option.some({
         id: c.id,
@@ -403,10 +460,40 @@ const caseReceivedByPrisonAdmin = (
   )
 }
 
+// used to aggregate case subtypes without creating complicated post-processing
+// where we assume the the case subtypes are confirmed when a case is sent to court
+const caseSubtypesConfirmed = (c: Case): IndictmentCaseEvent[] | undefined => {
+  const date = EventLog.getEventLogDateByEventType(
+    EventType.INDICTMENT_CONFIRMED,
+    c.eventLogs,
+  )?.toISOString()
+  if (!date) {
+    return undefined
+  }
+
+  const caseIndictmentSubtypes = c.indictmentSubtypes
+  const subtypes = caseIndictmentSubtypes
+    ? c.policeCaseNumbers?.flatMap((number) => caseIndictmentSubtypes[number])
+    : []
+
+  return subtypes.map((subtype) => ({
+    id: c.id,
+    event: 'CASE_SUBTYPES_CONFIRMED',
+    eventDescriptor: 'Sakarefni staðfest',
+    date,
+    institution: c.prosecutorsOffice?.name,
+    subtype,
+    subtypeDescriptor: capitalize(indictmentSubtypes[subtype]),
+    ...commonFields(c),
+  }))
+}
+
 export const indictmentCaseEventFunctions = [
   createCase,
   caseSentToCourt,
+  caseSubtypesConfirmed,
   caseReceivedByCourt,
+  subpoenaCreated,
   courtDatesScheduled,
   subpoenaServedToDefendant,
   caseRulingDecisionConfirmed,

@@ -11,10 +11,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  capitalize,
-  indictmentSubtypes,
-} from '@island.is/judicial-system/formatters'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseNotificationType,
   CaseState,
@@ -92,7 +89,8 @@ export const partition = <T>(
 @Injectable()
 export class StatisticsService {
   constructor(
-    @InjectModel(Case) private readonly institutionModel: typeof Institution,
+    @InjectModel(Institution)
+    private readonly institutionModel: typeof Institution,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     private readonly awsS3Service: AwsS3Service,
@@ -611,8 +609,11 @@ export class StatisticsService {
       ],
     })
 
+    // get institutions that are not linked directly to a case but
+    // are known to handle certain events
     const institutions = await this.institutionModel.findAll({
       where: {
+        active: true,
         type: [
           InstitutionType.PRISON_ADMIN,
           InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
@@ -628,34 +629,18 @@ export class StatisticsService {
 
     const events = cases.flatMap((c) => {
       // get all selected subtypes per case
-      const caseIndictmentSubtypes = c.indictmentSubtypes
-      const subtypes = caseIndictmentSubtypes
-        ? c.policeCaseNumbers?.flatMap(
-            (number) => caseIndictmentSubtypes[number],
-          )
-        : []
-      const subtypeDescriptors = subtypes.map((subtype) =>
-        capitalize(indictmentSubtypes[subtype]),
-      )
+      // const caseIndictmentSubtypes = c.indictmentSubtypes
+      // const subtypes = caseIndictmentSubtypes
+      //   ? c.policeCaseNumbers?.flatMap(
+      //       (number) => caseIndictmentSubtypes[number],
+      //     )
+      //   : []
+      // const subtypeDescriptors = subtypes.map((subtype) =>
+      //   capitalize(indictmentSubtypes[subtype]),
+      // )
 
       return indictmentCaseEventFunctions
-        .flatMap((func) => {
-          const event = func(c, institutions)
-          if (!event) return undefined
-
-          if (Array.isArray(event)) {
-            return event.map((event) => ({
-              ...event,
-              caseSubtypes: subtypes.join(','),
-              caseSubtypeDescriptors: subtypeDescriptors.join(','),
-            }))
-          }
-          return {
-            ...event,
-            caseSubtypes: subtypes.join(','),
-            caseSubtypeDescriptors: subtypeDescriptors.join(','),
-          }
-        })
+        .flatMap((func) => func(c, institutions))
         .filter(
           (event) =>
             !!event &&
@@ -668,9 +653,11 @@ export class StatisticsService {
 
   async extractTransformLoadEventDataToS3({
     type,
+    user,
     period,
   }: {
     type: DataGroups
+    user: User
     period?: DateFilter
   }): Promise<{ url: string }> {
     const getData = async () => {
@@ -696,7 +683,7 @@ export class StatisticsService {
           ],
           key: `krofur_from_${getDateString(
             period?.fromDate,
-          )}_to_${getDateString(period?.toDate)}`,
+          )}_to_${getDateString(period?.toDate)}_${user.nationalId}`,
         }
       }
       if (type === DataGroups.INDICTMENTS) {
@@ -708,15 +695,19 @@ export class StatisticsService {
             { key: 'date', header: 'Dagsetning' },
             { key: 'institution', header: 'Stofnun' },
             { key: 'caseTypeDescriptor', header: 'Tegund máls' },
-            { key: 'caseSubtypeDescriptors', header: 'Sakarefni' },
+            { key: 'subtypeDescriptor', header: 'Sakarefni' },
             { key: 'origin', header: 'Stofnað í' },
             { key: 'defendantId', header: 'Varnaraðili' },
             { key: 'serviceStatusDescriptor', header: 'Birting' },
-            { key: 'rulingDate', header: 'Uppkvaðning' },
+            { key: 'rulingDecisionDescriptor', header: 'Uppkvaðning' },
+            {
+              key: 'timeToServeSubpoena',
+              header: 'Birtingartími fyrirkalls (dagar)',
+            },
           ],
           key: `ákærur_from_${getDateString(
             period?.fromDate,
-          )}_to_${getDateString(period?.toDate)}`,
+          )}_to_${getDateString(period?.toDate)}_${user.nationalId}`,
         }
       }
 

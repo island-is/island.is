@@ -22,6 +22,8 @@ export type RequestCaseEventType =
 
 export type IndictmentCaseEventType =
   | BaseEventType
+  | 'CASE_SUBTYPES_CONFIRMED'
+  | 'SUBPOENA_CREATED'
   | 'SUBPOENA_SERVED'
   | 'RULING_DECISION_CONFIRMED'
   | 'INDICTMENT_COMPLETED'
