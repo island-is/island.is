@@ -13,7 +13,7 @@ import cn from 'classnames'
 
 export interface ModalField {
   title: string
-  value: string
+  value: string | string[] | React.ReactNode
 }
 
 export interface GenericRenewModalProps<T> {

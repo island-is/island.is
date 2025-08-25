@@ -2,7 +2,7 @@ import {
   RightsPortalAidOrNutrition,
   RightsPortalAidOrNutritionRenewalStatus,
 } from '@island.is/api/schema'
-import { Box, Text, toast } from '@island.is/island-ui/core'
+import { Box, Button, Inline, Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
@@ -20,6 +20,7 @@ import { useState } from 'react'
 import GenericRenewModal, {
   ModalField,
 } from '../../components/GenericRenewModal/GenericRenewModal'
+import LocationModal from './LocationModal'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
@@ -31,6 +32,10 @@ const Nutrition = ({ data }: Props) => {
   const [activeItem, setActiveItem] =
     useState<RightsPortalAidOrNutrition | null>(null)
   const [isVisible, setIsVisible] = useState(false)
+
+  const [locationModalItem, setLocationModalItem] =
+    useState<RightsPortalAidOrNutrition | null>(null)
+  const [isLocationModalVisible, setIsLocationModalVisible] = useState(false)
 
   const [renewAidsAndNutrition, { data: postData, error: postError, loading }] =
     useRenewAidsAndNutritionMutation()
@@ -62,7 +67,24 @@ const Nutrition = ({ data }: Props) => {
     },
     {
       title: formatMessage(messages.dispensationPlace),
-      value: item.location ?? '',
+      value:
+        item.location && item.location.length > 6 ? (
+          <Inline space={2}>
+            <Text variant="small">
+              {formatMessage(messages.manyDispensationLocations)}
+            </Text>
+
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => openLocationModal(item)}
+            >
+              {formatMessage(messages.seeList)}
+            </Button>
+          </Inline>
+        ) : (
+          item.location ?? ''
+        ),
     },
     {
       title: formatMessage(messages.extraDetail),
@@ -85,6 +107,11 @@ const Nutrition = ({ data }: Props) => {
   const openModal = (item: RightsPortalAidOrNutrition) => {
     setActiveItem(item)
     setIsVisible(true)
+  }
+
+  const openLocationModal = (item: RightsPortalAidOrNutrition) => {
+    setLocationModalItem(item)
+    setIsLocationModalVisible(true)
   }
 
   return (
@@ -183,7 +210,6 @@ const Nutrition = ({ data }: Props) => {
           ]}
         />
       </Box>
-
       <Box paddingTop={4}>
         <Text variant="small" paddingBottom={2}>
           {formatMessage(messages.nutritionDisclaimer)}
@@ -194,7 +220,6 @@ const Nutrition = ({ data }: Props) => {
           variant="text"
         />
       </Box>
-
       {activeItem && (
         <GenericRenewModal
           item={activeItem}
@@ -209,6 +234,14 @@ const Nutrition = ({ data }: Props) => {
           confirmLabel={formatMessage(messages.renew)}
           errorMessage={formatMessage(messages.renewalFormError)}
           loading={loading}
+        />
+      )}
+
+      {locationModalItem && (
+        <LocationModal
+          item={locationModalItem}
+          onClose={() => setLocationModalItem(null)}
+          isVisible={!!isLocationModalVisible}
         />
       )}
     </Box>

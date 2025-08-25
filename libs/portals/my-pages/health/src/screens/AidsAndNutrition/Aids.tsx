@@ -2,7 +2,15 @@ import {
   RightsPortalAidOrNutrition,
   RightsPortalAidOrNutritionRenewalStatus,
 } from '@island.is/api/schema'
-import { Box, Icon, Text, Tooltip, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Icon,
+  Text,
+  Tooltip,
+  toast,
+  Button,
+  Inline,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
@@ -20,6 +28,7 @@ import NestedInfoLines from '../../components/NestedInfoLines/NestedInfoLines'
 import { messages } from '../../lib/messages'
 import { exportAidTable } from '../../utils/FileBreakdown'
 import { useRenewAidsAndNutritionMutation } from './AidsAndNutrition.generated'
+import LocationModal from './LocationModal'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
@@ -32,6 +41,10 @@ const Aids = ({ data }: Props) => {
     useState<RightsPortalAidOrNutrition | null>(null)
   const [isVisible, setIsVisible] = useState(false)
 
+  const [locationModalItem, setLocationModalItem] =
+    useState<RightsPortalAidOrNutrition | null>(null)
+  const [isLocationModalVisible, setIsLocationModalVisible] = useState(false)
+
   const [renewAidsAndNutrition, { data: postData, error: postError, loading }] =
     useRenewAidsAndNutritionMutation()
 
@@ -40,7 +53,23 @@ const Aids = ({ data }: Props) => {
 
     foldedValues.push({
       title: formatMessage(messages.location),
-      value: rowItem.location ? rowItem.location : '',
+      value:
+        rowItem.location && rowItem.location.length > 6 ? (
+          <Inline space={2}>
+            <Text variant="small">
+              {formatMessage(messages.manyDispensationLocations)}
+            </Text>
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => openLocationModal(rowItem)}
+            >
+              {formatMessage(messages.seeList)}
+            </Button>
+          </Inline>
+        ) : (
+          rowItem.location ?? ''
+        ),
     })
 
     foldedValues.push({
@@ -99,7 +128,24 @@ const Aids = ({ data }: Props) => {
     },
     {
       title: formatMessage(messages.dispensationPlace),
-      value: item.location?.join() ?? '',
+      value:
+        item.location && item.location.length > 6 ? (
+          <Inline space={2}>
+            <Text variant="small">
+              {formatMessage(messages.manyDispensationLocations)}
+            </Text>
+
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => openLocationModal(item)}
+            >
+              {formatMessage(messages.seeList)}
+            </Button>
+          </Inline>
+        ) : (
+          item.location ?? ''
+        ),
     },
     {
       title: formatMessage(messages.extraDetail),
@@ -122,6 +168,11 @@ const Aids = ({ data }: Props) => {
   const openModal = (item: RightsPortalAidOrNutrition) => {
     setActiveItem(item)
     setIsVisible(true)
+  }
+
+  const openLocationModal = (item: RightsPortalAidOrNutrition) => {
+    setLocationModalItem(item)
+    setIsLocationModalVisible(true)
   }
 
   return (
@@ -227,6 +278,14 @@ const Aids = ({ data }: Props) => {
           confirmLabel={formatMessage(messages.renew)}
           errorMessage={formatMessage(messages.renewalFormError)}
           loading={loading}
+        />
+      )}
+
+      {locationModalItem && (
+        <LocationModal
+          item={locationModalItem}
+          onClose={() => setLocationModalItem(null)}
+          isVisible={!!isLocationModalVisible}
         />
       )}
     </Box>

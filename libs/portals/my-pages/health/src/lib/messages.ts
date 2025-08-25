@@ -1714,4 +1714,16 @@ export const messages = defineMessages({
     id: 'sp.health:renew-ehic-url',
     defaultMessage: 'https://island.is/evropska-sjukratryggingakortid',
   },
+  manyDispensationLocations: {
+    id: 'sp.health:many-dispensation-locations',
+    defaultMessage: 'Margir afgreiðslustaðir',
+  },
+  seeList: {
+    id: 'sp.health:see-list',
+    defaultMessage: 'Sjá lista',
+  },
+  dispensationPlaces: {
+    id: 'sp.health:dispensation-places',
+    defaultMessage: 'Afgreiðslustaðir',
+  },
 })

@@ -53,7 +53,9 @@ export const generateAidOrNutrition = (
     location: data.location
       ? typeof data.location === 'string'
         ? data.location.split('#')
-        : []
+        : typeof data.location === 'object' && Array.isArray(data.location)
+        ? data.location
+        : undefined
       : undefined,
     expiring: data.expiring ? data.expiring : false,
     renewalStatus:
