@@ -351,11 +351,11 @@ export const getApplicationExternalData = (
     'childInformation.data.affiliations',
   )
 
-  const healthProfile = getValueViaPath<HealthProfileModel>(
+  const healthProfile = getValueViaPath<HealthProfileModel | null>(
     externalData,
     'childInformation.data.healthProfile',
   )
-  const socialProfile = getValueViaPath<SocialProfile>(
+  const socialProfile = getValueViaPath<SocialProfile | null>(
     externalData,
     'childInformation.data.socialProfile',
   )
