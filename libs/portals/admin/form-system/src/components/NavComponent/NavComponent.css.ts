@@ -6,7 +6,7 @@ const base = style({
   borderRadius: theme.border.radius.standard,
   marginBottom: '2px',
   height: '46px',
-  // marginLeft: 'auto',
+  marginLeft: 'auto',
   lineHeight: '46px',
   ':hover': {
     fontWeight: 'bolder',
