@@ -38,7 +38,7 @@ const IndictmentCasesDataExport = () => {
 
   return (
     <StatisticPageLayout>
-      <PageHeader title="Gögn úr sakamálum'" />
+      <PageHeader title="Gögn úr sakamálum" />
       <Box>
         <StatisticReturnButton />
         <StatisticHeader title="Gögn úr sakamálum" />
@@ -57,9 +57,8 @@ const IndictmentCasesDataExport = () => {
             marginTop={2}
             marginBottom={2}
           >
-            {/* TODO: Update link */}
             <a
-              href="https://rettarvorslugatt.island.is/"
+              href="https://docs.google.com/spreadsheets/d/1f7eaTaza81TXIF4zybQ_ZIoATb-lw0BKAocyPFmqELs/edit?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
               download

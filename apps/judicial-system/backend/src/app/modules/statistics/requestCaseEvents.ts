@@ -166,7 +166,7 @@ const caseReceivedByCourt = (c: Case): RequestCaseEvent | undefined => {
     event: 'CASE_RECEIVED_BY_COURT',
     eventDescriptor: 'Krafa móttekin af héraðsdómi',
     date,
-    institution: c.prosecutorsOffice?.name,
+    institution: c.court?.name,
     ...commonFields(c),
   }
 }
@@ -309,7 +309,7 @@ const caseCompletedByCourtOfAppeals = (
   }
 }
 
-export const eventFunctions = [
+export const requestCaseEventFunctions = [
   createCase,
   caseSentToCourt,
   caseReceivedByCourt,

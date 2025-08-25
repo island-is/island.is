@@ -11,13 +11,16 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseNotificationType,
   CaseState,
   CaseType,
   DataGroups,
   dateTypes,
+  defendantEventTypes,
   EventType,
+  InstitutionType,
   isCompletedCase,
   isIndictmentCase,
   ServiceStatus,
@@ -25,10 +28,14 @@ import {
 
 import { AwsS3Service } from '../aws-s3'
 import { Case, DateLog } from '../case'
+import { Defendant, DefendantEventLog } from '../defendant'
 import { EventLog } from '../event-log'
+import { IndictmentCount } from '../indictment-count'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena } from '../subpoena'
+import { Verdict } from '../verdict/models/verdict.model'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
@@ -39,7 +46,8 @@ import {
   SubpoenaStatistics,
 } from './models/subpoenaStatistics.response'
 import { DateFilter } from './statistics/types'
-import { eventFunctions } from './caseEvents'
+import { indictmentCaseEventFunctions } from './indictmentCaseEvents'
+import { requestCaseEventFunctions } from './requestCaseEvents'
 
 const isDateInPeriod = (
   date: Date,
@@ -81,6 +89,8 @@ export const partition = <T>(
 @Injectable()
 export class StatisticsService {
   constructor(
+    @InjectModel(Institution)
+    private readonly institutionModel: typeof Institution,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     private readonly awsS3Service: AwsS3Service,
@@ -519,7 +529,7 @@ export class StatisticsService {
     const fromDate = new Date(period.fromDate ?? Date.now())
     const toDate = new Date(period.toDate ?? Date.now())
     const events = cases
-      .flatMap((c) => eventFunctions.flatMap((func) => func(c)))
+      .flatMap((c) => requestCaseEventFunctions.flatMap((func) => func(c)))
       .filter(
         (event) =>
           !!event && isDateInPeriod(new Date(event.date), { fromDate, toDate }),
@@ -528,46 +538,175 @@ export class StatisticsService {
     return events
   }
 
-  async extractTransformLoadRvgDataToS3({
+  private async extractAndTransformIndictmentCases(period?: DateFilter) {
+    const where: WhereOptions = {
+      type: CaseType.INDICTMENT,
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+      order: [['created', 'ASC']],
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+        },
+        {
+          model: IndictmentCount,
+          as: 'indictmentCounts',
+          required: false,
+          order: [['created', 'ASC']],
+          include: [
+            {
+              model: Offense,
+              as: 'offenses',
+              required: false,
+              order: [['created', 'ASC']],
+              separate: true,
+            },
+          ],
+          separate: true,
+        },
+        { model: Institution, as: 'prosecutorsOffice' },
+        { model: Institution, as: 'court' },
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          required: false,
+          where: { dateType: dateTypes },
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: false,
+          order: [['created', 'ASC']],
+          include: [
+            {
+              model: Subpoena,
+              as: 'subpoenas',
+              required: false,
+              order: [['created', 'DESC']],
+              separate: true,
+            },
+            {
+              model: DefendantEventLog,
+              as: 'eventLogs',
+              required: false,
+              where: { eventType: defendantEventTypes },
+              separate: true,
+            },
+            {
+              model: Verdict,
+              as: 'verdict',
+              required: false,
+            },
+          ],
+          separate: true,
+        },
+      ],
+    })
+
+    // get institutions that are not linked directly to a case but
+    // are known to handle certain events
+    const institutions = await this.institutionModel.findAll({
+      where: {
+        active: true,
+        type: [
+          InstitutionType.PRISON_ADMIN,
+          InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+        ],
+      },
+    })
+
+    // create events for data analytics for each case
+    if (!period) return []
+
+    const fromDate = new Date(period.fromDate ?? Date.now())
+    const toDate = new Date(period.toDate ?? Date.now())
+
+    const events = cases.flatMap((c) => {
+      return indictmentCaseEventFunctions
+        .flatMap((func) => func(c, institutions))
+        .filter(
+          (event) =>
+            !!event &&
+            isDateInPeriod(new Date(event.date), { fromDate, toDate }),
+        )
+    })
+
+    return events
+  }
+
+  async extractTransformLoadEventDataToS3({
     type,
+    user,
     period,
   }: {
     type: DataGroups
+    user: User
     period?: DateFilter
   }): Promise<{ url: string }> {
     const getData = async () => {
       if (type === DataGroups.REQUESTS) {
         return {
           data: await this.extractAndTransformRequestCases(period),
+          columns: [
+            { key: 'id', header: 'ID' },
+            { key: 'eventDescriptor', header: 'Atburður' },
+            { key: 'date', header: 'Dagsetning' },
+            { key: 'institution', header: 'Stofnun' },
+            { key: 'caseTypeDescriptor', header: 'Tegund máls' },
+            { key: 'origin', header: 'Stofnað í' },
+            { key: 'isExtended', header: 'Mál framlengt' },
+            {
+              key: 'requestDecisionDescriptor',
+              header: 'Niðurstaða kröfu',
+            },
+            {
+              key: 'courtOfAppealDecisionDescriptor',
+              header: 'Niðurstaða Landsréttar',
+            },
+          ],
           key: `krofur_from_${getDateString(
             period?.fromDate,
-          )}_to_${getDateString(period?.toDate)}`,
+          )}_to_${getDateString(period?.toDate)}_${user.nationalId}`,
         }
       }
-      // TODO: implement events for indictments
+      if (type === DataGroups.INDICTMENTS) {
+        return {
+          data: await this.extractAndTransformIndictmentCases(period),
+          columns: [
+            { key: 'id', header: 'Mál' },
+            { key: 'eventDescriptor', header: 'Atburður' },
+            { key: 'date', header: 'Dagsetning' },
+            { key: 'institution', header: 'Stofnun' },
+            { key: 'caseTypeDescriptor', header: 'Tegund máls' },
+            { key: 'subtypeDescriptor', header: 'Sakarefni' },
+            { key: 'origin', header: 'Stofnað í' },
+            { key: 'defendantId', header: 'Varnaraðili' },
+            { key: 'serviceStatusDescriptor', header: 'Birting' },
+            { key: 'rulingDecisionDescriptor', header: 'Uppkvaðning' },
+            {
+              key: 'timeToServeSubpoena',
+              header: 'Birtingartími fyrirkalls (dagar)',
+            },
+          ],
+          key: `ákærur_from_${getDateString(
+            period?.fromDate,
+          )}_to_${getDateString(period?.toDate)}_${user.nationalId}`,
+        }
+      }
+
       return undefined
     }
     const result = await getData()
     if (!result) return { url: '' }
 
-    const { data, key } = result
-    const columns = [
-      { key: 'id', header: 'ID' },
-      { key: 'eventDescriptor', header: 'Atburður' },
-      { key: 'date', header: 'Dagsetning' },
-      { key: 'institution', header: 'Stofnun' },
-      { key: 'caseTypeDescriptor', header: 'Tegund máls' },
-      { key: 'origin', header: 'Stofnað í' },
-      { key: 'isExtended', header: 'Mál framlengt' },
-      {
-        key: 'requestDecisionDescriptor',
-        header: 'Niðurstaða kröfu',
-      },
-      {
-        key: 'courtOfAppealDecisionDescriptor',
-        header: 'Niðurstaða Landsréttar',
-      },
-    ]
+    const { data, columns, key } = result
+
     stringify(data, { header: true, columns }, async (error, csvOutput) => {
       if (error) {
         this.logger.error('Failed to convert data to csv file')
