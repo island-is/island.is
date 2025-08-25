@@ -1,31 +1,36 @@
-import * as React from 'react'
-import { useEffect, useRef, useState, forwardRef } from 'react'
-import cn from 'classnames'
-import {
-  default as ReactDatePicker,
-  registerLocale,
-  ReactDatePickerProps,
-} from 'react-datepicker'
-import getYear from 'date-fns/getYear'
-import is from 'date-fns/locale/is'
-import en from 'date-fns/locale/en-US'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { VisuallyHidden } from '@ariakit/react'
 import {
   dateFormat,
-  timeFormat,
   dateFormatWithTime,
+  timeFormat,
 } from '@island.is/shared/constants'
-import { VisuallyHidden } from '@ariakit/react'
+import cn from 'classnames'
+import getYear from 'date-fns/getYear'
+import en from 'date-fns/locale/en-US'
+import is from 'date-fns/locale/is'
 import range from 'lodash/range'
+import * as React from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
+import {
+  default as ReactDatePicker,
+  ReactDatePickerProps,
+  registerLocale,
+} from 'react-datepicker'
 
 import { Icon } from '../IconRC/Icon'
 import { ErrorMessage } from '../Input/ErrorMessage'
 import { Text } from '../Text/Text'
 
-import * as styles from './DatePicker.css'
-import * as coreStyles from './react-datepicker.css'
+import { Box } from '../Box/Box'
 import { Input } from '../Input/Input'
 import { InputProps } from '../Input/types'
-import { DatePickerProps, DatePickerCustomHeaderProps } from './types'
+import { ScrollToSelectedMenuList } from '../Select/Components/ScrollToSelectedMenuList'
+import { Select } from '../Select/Select'
+import CustomCalendarContainer from './CustomCalendarContainer'
+import * as styles from './DatePicker.css'
+import * as coreStyles from './react-datepicker.css'
+import { DatePickerCustomHeaderProps, DatePickerProps } from './types'
 
 const languageConfig = {
   is: {
@@ -70,9 +75,13 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   showTimeInput = false,
   timeInputLabel = 'Tími:',
   readOnly = false,
-  calendarStartDay = 0,
+  calendarStartDay = 1,
+  range = false,
+  ranges,
 }) => {
   const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
+
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
@@ -117,10 +126,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           name={name}
           disabled={disabled}
           selected={startDate ?? selected}
-          locale={currentLanguage.locale}
+          locale={currentLanguage.locale ?? 'is'}
           minDate={minDate}
           maxDate={maxDate}
           excludeDates={excludeDates}
+          //formatWeekDay={(nameOfDay) => nameOfDay.toString().substr(0, 3)}
           dateFormat={
             showTimeInput
               ? currentLanguage.formatWithTime
@@ -136,11 +146,26 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             setDatePickerState('closed')
             handleCloseCalendar && handleCloseCalendar(startDate)
           }}
-          onChange={(date: Date) => {
-            setStartDate(date)
-            handleChange && handleChange(date)
-          }}
+          onChange={
+            range
+              ? (date: any) => {
+                  const [start, end] = date
+                  setStartDate(start)
+                  range && setEndDate(end)
+                  if (range && end) {
+                    start && handleChange && handleChange(start, end)
+                  } else {
+                    start && handleChange && handleChange(start)
+                  }
+                }
+              : (date: any) => {
+                  setStartDate(date)
+                  handleChange && handleChange(date)
+                }
+          }
           startDate={startDate}
+          endDate={range ? endDate : undefined}
+          selectsRange={range}
           required={required}
           autoComplete="off"
           calendarClassName={cn({
@@ -170,6 +195,22 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               minYear={minYear}
               maxYear={maxYear}
               {...props}
+            />
+          )}
+          calendarContainer={(props) => (
+            <CustomCalendarContainer
+              {...props}
+              setDate={(startDay, endDay) => {
+                setStartDate(startDay)
+                endDay && setEndDate(endDay)
+
+                handleChange &&
+                  startDay &&
+                  endDay &&
+                  handleChange(startDay, endDay)
+              }}
+              ranges={ranges}
+              children={props.children}
             />
           )}
           {...ariaError}
@@ -224,14 +265,22 @@ const CustomHeader = ({
 }: DatePickerCustomHeaderProps) => {
   const monthRef = useRef<HTMLSpanElement>(null)
   const month = locale.localize ? locale.localize.month(date.getMonth()) : ''
+  const shortMonth = month.slice(0, 3)
   const months = monthsIndex.map((i) => {
     if (locale.localize) {
       return locale.localize.month(i)
     }
     return undefined
   })
+
+  const year = getYear(date)
+  const currentYear = new Date().getFullYear()
+  const defaultMin = currentYear - 100
+  const defaultMax = currentYear + 10
   const years =
-    minYear && maxYear && minYear < maxYear && range(minYear, maxYear + 1)
+    (minYear && maxYear && minYear < maxYear && range(minYear, maxYear + 1)) ??
+    range(defaultMin, defaultMax + 1)
+
   return (
     <div
       className={cn(styles.customHeaderContainer, 'date-picker-custom-header')}
@@ -244,49 +293,70 @@ const CustomHeader = ({
       >
         <Icon icon="chevronBack" type="outline" color="blue400" />
       </button>
-      <div>
+      <Box
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        columnGap={1}
+        flexWrap="wrap"
+        justifyContent="center"
+      >
         <VisuallyHidden>
           <Text variant="h4" as="span" ref={monthRef}>
             {month}
           </Text>
         </VisuallyHidden>
-        <select
+        <Select
+          size="xs"
           aria-label="Select month"
           className={styles.headerSelect}
-          value={month}
-          onChange={({ target: { value } }) =>
-            changeMonth(months.indexOf(value))
+          value={{ label: shortMonth, value: month }}
+          onChange={(selectedOption) =>
+            changeMonth(months.indexOf(selectedOption?.value))
           }
-          style={{
-            textAlign: 'center',
-            width: 'auto',
-            marginRight: 8,
+          options={months.map((option) => ({
+            label: option.slice(0, 3),
+            value: option,
+          }))}
+          styles={{
+            control: (base) => ({
+              ...base,
+              textAlign: 'center',
+              width: 'auto',
+              marginRight: 4,
+            }),
           }}
-        >
-          {months.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        {years && years.length > 0 ? (
-          <select
+        />
+        {years && years.length > 0 && (
+          <Select
+            size="xs"
+            aria-label="Select year"
             className={styles.headerSelect}
-            value={date.getFullYear()}
-            onChange={({ target: { value } }) => changeYear(parseInt(value))}
-          >
-            {years.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <Text variant="h4" as="span">
-            {getYear(date)}
-          </Text>
+            value={{
+              label: year.toString(),
+              value: year,
+            }}
+            onChange={(selectedOption) =>
+              changeYear(Number(selectedOption?.value) ?? year)
+            }
+            options={years.map((option) => ({
+              label: option.toString(),
+              value: option,
+            }))}
+            styles={{
+              control: (base) => ({
+                ...base,
+                textAlign: 'center',
+                width: 'auto',
+                marginRight: 4,
+              }),
+            }}
+            components={{
+              MenuList: ScrollToSelectedMenuList,
+            }}
+          />
         )}
-      </div>
+      </Box>
       <button
         data-testid="datepickerIncreaseMonth"
         type="button"
