@@ -1,6 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { Contract } from '@island.is/clients/hms-rental-agreement'
+import {
+  Contract,
+  TerminationReason,
+} from '@island.is/clients/hms-rental-agreement'
 import * as m from '../lib/messages'
 
 export const rentalContractOptions = (application: Application) => {
@@ -31,27 +34,27 @@ export const rentalContractOptions = (application: Application) => {
 }
 
 const terminationReasons = {
-  'Leigusali býr í sama húsnæði':
+  [TerminationReason.OWNERINBUILDING]:
     m.unboundTerminationMessages.reasonOptionsCohabitation,
-  'Húsnæði er leigt út með húsgögnum':
+  [TerminationReason.FURNISHEDRENT]:
     m.unboundTerminationMessages.reasonOptionsFurnishedRent,
-  'Leigusali tekur húsnæðið til eigin nota':
+  [TerminationReason.OWNERTAKINGBACK]:
     m.unboundTerminationMessages.reasonOptionsTakingBack,
-  'Leigusali ráðstafar húsnæði til skyldmenna':
+  [TerminationReason.OWNERRELATIVES]:
     m.unboundTerminationMessages.reasonOptionsRelatives,
-  'Leigusali hyggst selja húsnæðið á næstu 6 mánuðum':
+  [TerminationReason.OWNERSELLING]:
     m.unboundTerminationMessages.reasonOptionsSelling,
-  'Fyrirhugaðar eru verulegar viðgerðir á húsnæði':
+  [TerminationReason.SIGNIFICANTREPAIRS]:
     m.unboundTerminationMessages.reasonOptionsSignificantRepairs,
-  'Leigjandi var starfsmaður leigusala og hefur látið af störfum':
+  [TerminationReason.TENANTEMPLOYEE]:
     m.unboundTerminationMessages.reasonOptionsEmployee,
-  'Leigjandi hefur gerst sekur um vanefndir eða brot sem varða riftun':
+  [TerminationReason.TENANTNONCOMPLIANCE]:
     m.unboundTerminationMessages.reasonOptionsNonCompliance,
-  'Leigjandi hefur á annan hátt vanefnt skyldur sínar':
+  [TerminationReason.TENANTBEHAVIOR]:
     m.unboundTerminationMessages.reasonOptionsBehavior,
-  'Sanngjarnt mat á hagsmunum og aðstæðum réttlætir uppsögn':
+  [TerminationReason.BOTHPARTIESINTERESTS]:
     m.unboundTerminationMessages.reasonOptionsBothPartiesInterests,
-  'Leigusali er lögaðili sem er ekki rekinn í hagnaðarskyni og leigjandi uppfyllir ekki lengur skilyrði fyrir leigu':
+  [TerminationReason.NONPROFITTENANT]:
     m.unboundTerminationMessages.reasonOptionsNonProfitTenant,
 }
 
