@@ -545,13 +545,13 @@ export class StatisticsService {
       }
 
       try {
-        this.awsS3Service.uploadCsvToS3(key, csvOutput)
+        await this.awsS3Service.uploadCsvToS3(key, csvOutput)
       } catch (error) {
         this.logger.error(`Failed to upload csv ${key} to AWS S3`, { error })
       }
     })
 
-    const url = await this.awsS3Service.getSignedUrl('statistics', key, 60 * 60) // timeToLive: 1H
+    const url = await this.awsS3Service.getSignedUrl('statistics', key, 60 * 60) // TTL: 1h
     return { url }
   }
 }

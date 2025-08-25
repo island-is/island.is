@@ -92,12 +92,14 @@ const RequestStatisticsBody = ({ minDate }: { minDate?: Date }) => {
     fetchPolicy: 'cache-and-network',
   })
 
-  const { data: preprocessedData } = useGetPreprocessedDataUrlQuery({
-    variables: {
-      input: {},
-    },
-    fetchPolicy: 'cache-and-network',
-  })
+  const { loading: csvLoading, refetch: refetchPreprocessedData } =
+    useGetPreprocessedDataUrlQuery({
+      variables: {
+        input: queryVariables,
+      },
+      fetchPolicy: 'no-cache',
+      skip: true,
+    })
 
   useEffect(() => {
     if (data?.requestCaseStatistics) {
@@ -121,22 +123,24 @@ const RequestStatisticsBody = ({ minDate }: { minDate?: Date }) => {
         />
         <Statistics stats={stats} loading={loading} />
         <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-          <a
-            href={preprocessedData?.getPreprocessedDataCsvSignedUrl?.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
+          <Button
+            variant="ghost"
+            size="small"
+            icon="download"
+            iconType="outline"
+            loading={csvLoading}
+            onClick={async () => {
+              const res = await refetchPreprocessedData({
+                input: queryVariables,
+              })
+              const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
+              if (url) {
+                window.open(url, '_blank', 'noopener,noreferrer')
+              }
+            }}
           >
-            <Button
-              variant="ghost"
-              size="small"
-              icon="download"
-              iconType="outline"
-              disabled={!preprocessedData}
-            >
-              Sækja gögn
-            </Button>
-          </a>
+            Sækja gögn
+          </Button>
         </Box>
       </Box>
     </StatisticPageLayout>
