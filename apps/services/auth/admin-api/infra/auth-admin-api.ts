@@ -1,7 +1,6 @@
 import {
   CodeOwners,
   json,
-  ref,
   service,
   ServiceBuilder,
 } from '../../../../../infra/src/dsl/dsl'
@@ -77,6 +76,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         staging: 'digitaliceland',
         dev: 'digitaliceland',
       },
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/auth-admin-api',
+      AUDIT_SERVICE_NAME: 'services-auth-admin-api',
     })
     .secrets({
       NOVA_URL: '/k8s/services-auth/NOVA_URL',
