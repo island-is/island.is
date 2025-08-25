@@ -6,7 +6,8 @@ export default function Index() {
           <div id="welcome">
             <h1>
               <span role="img" aria-label="unicorn">
-                Welcome unicorn 🦄 Hey there test
+                Welcome unicorn 🦄 Hey there test and we are testing that
+                dirtybot token works correctly!
               </span>
             </h1>
           </div>
