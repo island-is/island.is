@@ -125,7 +125,7 @@ export class PoliceService {
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
     skjalasnid: z.optional(z.string()),
-    tegundSkjals: z.optional(this.policeCaseFileType),
+    tegundSkjals: this.policeCaseFileType.nullish(),
   })
   private readonly crimeSceneStructure = z.object({
     vettvangur: z.optional(z.string()),
