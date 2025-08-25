@@ -13,11 +13,12 @@ import {
   GridContainer,
   Text,
   Button,
-  LoadingDots,
 } from '@island.is/island-ui/core'
 import { ApplicationList } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
+
 interface Params {
   slug?: string
 }
@@ -111,7 +112,7 @@ export const Applications = () => {
     [deleteApplicationMutation],
   )
 
-  if (loading) return <LoadingDots />
+  if (loading) return <ApplicationLoading />
 
   return (
     <>
