@@ -277,7 +277,6 @@ export class CaseService {
       id: updatedDefendant.id,
       defenderChoice: updatedDefendant.defenderChoice,
       defenderName: updatedDefendant.defenderName,
-      verdictAppealDecision: updatedDefendant.verdictAppealDecision,
     } as InternalDefendantResponse
   }
 
@@ -289,7 +288,7 @@ export class CaseService {
     await this.makeRequest(
       `${this.config.backendUrl}/api/internal/case/${caseId}/defendant/${nationalId}/verdict-appeal`,
       'PATCH',
-      verdictAppeal,
+      { appealDecision: verdictAppeal.verdictAppealDecision },
     )
   }
 

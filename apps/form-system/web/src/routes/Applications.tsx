@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   CREATE_APPLICATION,
+  DELETE_APPLICATION,
   GET_ALL_APPLICATIONS,
 } from '@island.is/form-system/graphql'
 import { useLazyQuery, useMutation } from '@apollo/client'
@@ -12,11 +13,12 @@ import {
   GridContainer,
   Text,
   Button,
-  LoadingDots,
 } from '@island.is/island-ui/core'
 import { ApplicationList } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
+
 interface Params {
   slug?: string
 }
@@ -82,15 +84,35 @@ export const Applications = () => {
       const apps = await fetchApplications()
       if (apps && apps.length > 0) {
         setApplications(apps)
+        setLoading(false)
       } else {
         createApplication()
       }
-      setLoading(false)
     }
     fetchData()
   }, [slug, createApplication, fetchApplications])
 
-  if (loading) return <LoadingDots />
+  const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
+
+  const deleteApplication = useCallback(
+    async (applicationId: string) => {
+      try {
+        await deleteApplicationMutation({
+          variables: {
+            input: applicationId,
+          },
+        })
+        setApplications((prev) =>
+          prev.filter((app) => app.id !== applicationId),
+        )
+      } catch (error) {
+        console.error('Error deleting application:', error)
+      }
+    },
+    [deleteApplicationMutation],
+  )
+
+  if (loading) return <ApplicationLoading />
 
   return (
     <>
@@ -109,7 +131,10 @@ export const Applications = () => {
         <Page>
           <GridContainer>
             {applications.length > 0 && (
-              <ApplicationList applications={applications} />
+              <ApplicationList
+                applications={applications}
+                onDelete={deleteApplication}
+              />
             )}
           </GridContainer>
         </Page>

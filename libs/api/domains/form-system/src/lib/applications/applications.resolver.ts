@@ -21,7 +21,6 @@ import {
   SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
-import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 import { Screen } from '../../models/screen.model'
 
 @Resolver()
@@ -76,10 +75,11 @@ export class ApplicationsResolver {
 
   @Mutation(() => Boolean, {
     name: 'updateFormSystemApplicationDependencies',
+    nullable: true,
   })
   async updateApplicationDependencies(
-    @Args('input', { type: () => UpdateApplicationDependenciesInput })
-    input: UpdateApplicationDependenciesInput,
+    @Args('input', { type: () => UpdateApplicationInput })
+    input: UpdateApplicationInput,
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.applicationsService.updateDependencies(user, input)
@@ -87,6 +87,7 @@ export class ApplicationsResolver {
 
   @Mutation(() => Boolean, {
     name: 'submitFormSystemApplication',
+    nullable: true,
   })
   async submitApplication(
     @Args('input', { type: () => GetApplicationInput })
@@ -95,18 +96,6 @@ export class ApplicationsResolver {
   ): Promise<void> {
     return this.applicationsService.submitApplication(user, input)
   }
-
-  // @Mutation(() => SubmitScreenResponse, {
-  //   name: 'submitFormSystemScreen',
-  // })
-  // async submitScreen(
-  //   @Args('input', { type: () => SubmitScreenInput })
-  //   input: SubmitScreenInput,
-  //   @CurrentUser() user: User,
-  // ): Promise<SubmitScreenResponse> {
-  //   console.log('submitScreen', input)
-  //   return this.applicationsService.submitScreen(user, input)
-  // }
 
   @Mutation(() => Boolean, {
     name: 'updateFormSystemApplication',
@@ -140,5 +129,17 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.applicationsService.submitSection(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'deleteFormSystemApplication',
+    nullable: true,
+  })
+  async deleteApplication(
+    @Args('input', { type: () => String })
+    input: string,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.applicationsService.deleteApplication(user, input)
   }
 }

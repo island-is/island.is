@@ -83,7 +83,7 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: 'overview.selfAssessmentQuestionnaire',
-      backId: editable ? 'selfAssessmentQuestionnaire' : undefined,
+      backId: editable ? 'selfAssessment.questionnaire[0]' : undefined,
       items: selfAssessmentQuestionnaireItems,
     }),
     buildOverviewField({

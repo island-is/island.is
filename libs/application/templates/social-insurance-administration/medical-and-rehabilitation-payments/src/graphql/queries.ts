@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 export const siaRehabilitationPlanQuery = gql`
   query SiaRehabilitationPlan {
     socialInsuranceRehabilitationPlan {
+      referenceId
       serviceProvider {
         serviceProviderName
         coordinatorName
@@ -88,21 +89,32 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
       certificateDate
       disabilityDate
       diagnoses {
-        icd
-        others
+        icd {
+          code
+          displayValue
+          category
+        }
+        others {
+          code
+          displayValue
+          category
+        }
       }
       previousHealthHistory
       currentStatus
       physicalDifficulty {
         value
+        displayValue
         explanation
       }
       mentalDifficulty {
         value
+        displayValue
         explanation
       }
       activityParticipationDifficulty {
         value
+        displayValue
         explanation
       }
       other
@@ -116,11 +128,6 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
         treatmentMeasures
         explanation
         progress
-        estimatedDuration {
-          start
-          end
-          months
-        }
       }
     }
   }
