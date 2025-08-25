@@ -59,7 +59,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && !github.event.localrun }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          persist-credentials: false
 
       - uses: actions/checkout@v4
         if: ${{ github.event_name != 'pull_request' || github.event.localrun }}
@@ -82,9 +82,12 @@ jobs:
 
       - name: Commit any changes to charts
         if: ${{ github.event_name == 'pull_request' }}
+        env:
+          DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
         run: |
           (cd infra && yarn charts)
-          ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirtybot"
+          node scripts/ci/docker/git-check-dirty.mjs "charts/" "charts" "dirtybot"
 
   check-secrets:
     needs:

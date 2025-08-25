@@ -12,10 +12,19 @@ jobs:
       pull-requests: write
       actions: write
     steps:
+      - name: Get token
+        id: get-token
+        working-directory: ${{ inputs.working-directory }}
+        shell: bash
+        env:
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
       - name: Clean up `deploy-feature` label usage
         uses: actions/stale@v9
         with:
-          repo-token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          repo-token: ${{ steps.get-token.outputs.token }}
           days-before-stale: 7
           days-before-close: -1 # Never auto-close
           only-pr-labels: deploy-feature
