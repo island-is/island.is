@@ -144,7 +144,7 @@ export const workerSetup = (services: {
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
     })
-    .args('main.js', '--job', 'worker')
+    .args('main.cjs', '--job', 'worker')
     .command('node')
     .extraAttributes({
       dev: { schedule: '*/30 * * * *' },
@@ -171,7 +171,7 @@ export const serviceSetup = (services: {
     .command('node')
     .redis()
     .codeOwner(CodeOwners.NordaApplications)
-    .args('main.js')
+    .args('main.cjs')
     .env({
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -321,6 +321,22 @@ export const serviceSetup = (services: {
               : 'application-system'
           }.svc.cluster.local`,
       ),
+      HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
+        dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        staging:
+          'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        prod: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+      },
+      HMS_CONTRACTS_AUTH_TENANT_ID: {
+        dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        staging: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        prod: 'c7256472-2622-417e-8955-a54eeb0a110e',
+      },
+      HMS_CONTRACTS_AUTH_CLIENT_ID: {
+        dev: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
+      },
     })
     .xroad(
       Base,
@@ -409,6 +425,8 @@ export const serviceSetup = (services: {
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      HMS_CONTRACTS_AUTH_CLIENT_SECRET:
+        '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
     })
     .db()
     .migrations()
