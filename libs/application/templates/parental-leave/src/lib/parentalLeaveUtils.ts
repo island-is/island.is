@@ -1347,7 +1347,7 @@ export const getLastValidPeriodEndDate = (
   // LastPeriod's endDate is in current month
   if (isThisMonth(lastEndDate)) {
     // Applicant has to start from begining of next month if today is >= 24
-    if (today.getDate() >= 24) {
+    if (today.getDate() >= 25) {
       return addMonths(beginningOfMonth, 1)
     }
 
@@ -1355,7 +1355,7 @@ export const getLastValidPeriodEndDate = (
   }
 
   // Current Date is >= 24 and lastEndDate is in the past then Applicant could only start from next month
-  if (today.getDate() >= 24 && lastEndDate.getTime() < today.getTime()) {
+  if (today.getDate() >= 25 && lastEndDate.getTime() < today.getTime()) {
     return addMonths(beginningOfMonth, 1)
   }
 
@@ -1645,7 +1645,7 @@ export const synchronizeVMSTPeriods = (
     if (period.paid) {
       newPeriods.push(obj)
     } else if (isThisMonth(new Date(period.from))) {
-      if (today.getDate() >= 20) {
+      if (today.getDate() >= 24) {
         newPeriods.push(obj)
       }
     } else if (new Date(period.from).getTime() <= today.getTime()) {
