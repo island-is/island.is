@@ -1,3 +1,4 @@
+import core from '@actions/core'
 // @ts-check
 import githubAppJwt from 'universal-github-app-jwt'
 
@@ -11,7 +12,7 @@ export async function getGithubToken(APP_ID, PRIVATE_KEY) {
     id: APP_ID,
     privateKey: PRIVATE_KEY,
   })
-
+  core.setSecret(authData.token);
   const response = await fetch('https://api.github.com/app/installations', {
     method: 'GET',
     headers: {
@@ -19,7 +20,7 @@ export async function getGithubToken(APP_ID, PRIVATE_KEY) {
       Authorization: `Bearer ${authData.token}`,
     },
   })
-
+  
   if (!response.ok) {
     throw new Error(
       `Failed to fetch installations: ${response.status} ${response.statusText}`,
@@ -56,6 +57,6 @@ export async function getGithubToken(APP_ID, PRIVATE_KEY) {
   if (!actionJson.token) {
     throw new Error('No token received from GitHub API')
   }
-
+  core.setSecret(actionJson.token)
   return actionJson.token
 }
