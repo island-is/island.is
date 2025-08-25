@@ -18,7 +18,7 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'application-system-api'
 args:
-  - 'main.js'
+  - 'main.cjs'
 command:
   - 'node'
 enabled: true
