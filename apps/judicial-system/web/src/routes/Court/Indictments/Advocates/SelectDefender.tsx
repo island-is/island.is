@@ -1,12 +1,19 @@
 import { ChangeEvent, FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Checkbox,
+  Text,
+} from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContext,
+  IconButton,
   InputAdvocate,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
@@ -118,15 +125,42 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
     handleSetAndSendDefendantToServer(update)
   }
 
+  const getDefenceChoice = () => {
+    switch (defendant.requestedDefenderChoice) {
+      case DefenderChoice.WAIVE:
+        return 'Ég óska ekki eftir verjanda.'
+      case DefenderChoice.CHOOSE:
+        return `${defendant.defenderName} ${defendant.defenderNationalId}`
+      case DefenderChoice.DELAY:
+        return 'Ég óska eftir fresti fram að þingfestingu til þess að tilnefna verjanda.'
+      case DefenderChoice.DELEGATE:
+        return 'Ég fel dómara málsins að tilnefna og skipa mér verjanda.'
+      default:
+        return 'Ekkert valið.'
+    }
+  }
+
   return (
     <Box component="section" marginBottom={5}>
       <BlueBox>
         <Box marginBottom={2}>
-          <Text variant="h4">
-            {`${capitalize(
-              formatMessage(core.indictmentDefendant, { gender }),
-            )} ${defendant.name}`}
-          </Text>
+          <Box display="flex" justifyContent="spaceBetween">
+            <Text variant="h4">
+              {`${capitalize(
+                formatMessage(core.indictmentDefendant, { gender }),
+              )} ${defendant.name}`}
+            </Text>
+            {defendant.isDefenderChoiceConfirmed && (
+              <IconButton
+                icon="pencil"
+                colorScheme="blue"
+                onClick={() => setDisplayModal(true)}
+              />
+            )}
+          </Box>
+          {defendant.requestedDefenderChoice && (
+            <Text variant="small">{`Ósk ákærða um verjanda: ${getDefenceChoice()}`}</Text>
+          )}
         </Box>
         <Box marginBottom={2}>
           <Checkbox
@@ -202,7 +236,10 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             name={`shareFilesWithDefender-${defendant.id}`}
             label={formatMessage(strings.shareFilesWithDefender)}
             checked={Boolean(defendant.caseFilesSharedWithDefender)}
-            disabled={!defendant.defenderName && !defendant.defenderEmail}
+            disabled={
+              defendant.isDefenderChoiceConfirmed ||
+              (!defendant.defenderName && !defendant.defenderEmail)
+            }
             onChange={() => {
               toggleCaseFilesSharedWithDefender(
                 defendant,
@@ -215,21 +252,36 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             filled
           />
         </Box>
-        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-          <Button
-            variant="text"
-            colorScheme={
-              defendant.isDefenderChoiceConfirmed ? 'destructive' : 'default'
-            }
-            onClick={() => {
-              setDisplayModal(true)
-            }}
-          >
-            {defendant.isDefenderChoiceConfirmed
-              ? formatMessage(strings.changeDefenderChoice)
-              : formatMessage(strings.confirmDefenderChoice)}
-          </Button>
-        </Box>
+        {defendant.isDefenderChoiceConfirmed && defendant.defenderName && (
+          <Box marginTop={2}>
+            <AlertMessage
+              title="Verjandi staðfestur"
+              message={`${
+                defendant.defenderName
+              } hefur fengið tilkynningu um skráningu í tölvupósti${
+                defendant.caseFilesSharedWithDefender
+                  ? ' og aðgang að gögnum málsins.'
+                  : '.'
+              }`}
+              type="success"
+            />
+          </Box>
+        )}
+        {!defendant.isDefenderChoiceConfirmed && (
+          <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+            <Button
+              variant="text"
+              colorScheme={
+                defendant.isDefenderChoiceConfirmed ? 'destructive' : 'default'
+              }
+              onClick={() => {
+                setDisplayModal(true)
+              }}
+            >
+              {formatMessage(strings.confirmDefenderChoice)}
+            </Button>
+          </Box>
+        )}
       </BlueBox>
       {displayModal && (
         <Modal
