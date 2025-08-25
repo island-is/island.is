@@ -54,7 +54,6 @@ jobs:
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
       - name: Get token
         id: get-token
-        working-directory: ${{ inputs.working-directory }}
         shell: bash
         env:
           APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
