@@ -29,12 +29,14 @@ const RequestCasesDataExport = () => {
     return { type: DataGroups.REQUESTS, period: filters.period }
   }, [filters])
 
-  const { data } = useGetPreprocessedDataUrlQuery({
-    variables: {
-      input: queryVariables,
-    },
-    fetchPolicy: 'cache-and-network',
-  })
+  const { loading: csvLoading, refetch: refetchPreprocessedData } =
+    useGetPreprocessedDataUrlQuery({
+      variables: {
+        input: queryVariables,
+      },
+      fetchPolicy: 'no-cache',
+      skip: true,
+    })
 
   return (
     <StatisticPageLayout>
@@ -68,7 +70,6 @@ const RequestCasesDataExport = () => {
                 size="small"
                 icon="open"
                 iconType="outline"
-                disabled={!data}
               >
                 Sækja sniðmát
               </Button>
@@ -86,22 +87,24 @@ const RequestCasesDataExport = () => {
           onClear={() => setFilters({})}
         />
         <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-          <a
-            href={data?.getPreprocessedDataCsvSignedUrl?.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
+          <Button
+            variant="ghost"
+            size="small"
+            icon="download"
+            iconType="outline"
+            loading={csvLoading}
+            onClick={async () => {
+              const res = await refetchPreprocessedData({
+                input: queryVariables,
+              })
+              const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
+              if (url) {
+                window.open(url, '_blank', 'noopener,noreferrer')
+              }
+            }}
           >
-            <Button
-              variant="ghost"
-              size="small"
-              icon="download"
-              iconType="outline"
-              disabled={!data}
-            >
-              Sækja gögn
-            </Button>
-          </a>
+            Sækja gögn
+          </Button>
         </Box>
       </Box>
     </StatisticPageLayout>
