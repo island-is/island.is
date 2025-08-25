@@ -626,11 +626,6 @@ export class DelegationsIndexService {
       },
     )
 
-    console.log({
-      indexCurrRecords: currRecords,
-      inComingNewRecords: newRecords,
-    })
-
     const deleted = currRecords.filter(
       (delegation) =>
         !newRecords.some(
@@ -640,12 +635,6 @@ export class DelegationsIndexService {
             d.provider === delegation.provider,
         ),
     )
-
-    console.log({
-      deleted,
-      created,
-      updated,
-    })
 
     return { deleted, created, updated }
   }
