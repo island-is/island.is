@@ -628,17 +628,6 @@ export class StatisticsService {
     const toDate = new Date(period.toDate ?? Date.now())
 
     const events = cases.flatMap((c) => {
-      // get all selected subtypes per case
-      // const caseIndictmentSubtypes = c.indictmentSubtypes
-      // const subtypes = caseIndictmentSubtypes
-      //   ? c.policeCaseNumbers?.flatMap(
-      //       (number) => caseIndictmentSubtypes[number],
-      //     )
-      //   : []
-      // const subtypeDescriptors = subtypes.map((subtype) =>
-      //   capitalize(indictmentSubtypes[subtype]),
-      // )
-
       return indictmentCaseEventFunctions
         .flatMap((func) => func(c, institutions))
         .filter(
