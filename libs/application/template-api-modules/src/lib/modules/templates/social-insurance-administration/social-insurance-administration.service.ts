@@ -18,6 +18,7 @@ import { Application, ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
+  ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
   ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
@@ -43,6 +44,7 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
+import { ApplicationTypeEnum } from '@island.is/clients/social-insurance-administration'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -625,9 +627,21 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     { auth }: TemplateApiModuleActionProps,
     languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest = {},
   ) {
-    return await this.siaClientService.getMARPSelfAssessmentQuestionnaire(
+    return await this.siaClientService.getSelfAssessmentQuestionnaire(
       auth,
       languages,
+      'MARP',
+    )
+  }
+
+  async getDisabilityPensionSelfAssessmentQuestionnaire(
+    { auth }: TemplateApiModuleActionProps,
+    languages: ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest = {},
+  ) {
+    return await this.siaClientService.getSelfAssessmentQuestionnaire(
+      auth,
+      languages,
+      'DisabilityPension',
     )
   }
 
@@ -651,6 +665,30 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       auth,
       marpApplicationType || '',
     )
+  }
+
+  async getEducationLevelsWithEnum({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
+      return await this.siaClientService.getEducationLevelsWithEnum(
+        auth,
+        ApplicationTypeEnum.DISABILITY_PENSION,
+      )
+    }
+  }
+
+  async getCertificate({ application, auth }: TemplateApiModuleActionProps) {
+    if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
+      return await this.siaClientService.getCertificateForDisabilityPension(
+        auth,
+      )
+    }
+  }
+
+  async getCountries({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getCountries(auth)
   }
 
   async getMedicalAndRehabilitationApplicationType({

@@ -35,9 +35,12 @@ import {
   TrWebExternalModelsServicePortalNationalRegistryAddress,
   TrWebExternalModelsServicePortalBaseCertificate,
   TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebExternalModelsServicePortalDisabilityPensionCertificate,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
+import { ApplicationTypeEnum } from './enums'
+import { mapApplicationEnumToType } from './mapper'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -229,17 +232,27 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
   }
 
-  async getMARPSelfAssessmentQuestionnaire(
+  async getSelfAssessmentQuestionnaire(
     user: User,
     languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
+    applicationType: 'MARP' | 'DisabilityPension',
   ): Promise<
     Array<TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto>
   > {
-    return this.questionnairesApiWithAuth(
-      user,
-    ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
-      languages,
-    )
+    switch (applicationType) {
+      case 'MARP':
+        return this.questionnairesApiWithAuth(
+          user,
+        ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
+          languages,
+        )
+      case 'DisabilityPension':
+        return this.questionnairesApiWithAuth(
+          user,
+        ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
+          languages,
+        )
+    }
   }
 
   async getCertificateForSicknessAndRehabilitation(
@@ -250,10 +263,24 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1MedicalDocumentsBasecertificateGet()
   }
 
+  async getCertificateForDisabilityPension(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalDisabilityPensionCertificate> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsDisabilitypensioncertificateGet()
+  }
+
   async getCountries(
     user: User,
   ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
-    return this.generalApiWithAuth(user).apiProtectedV1GeneralCountriesGet()
+    const data = await this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralCountriesGet()
+
+    return data.filter(
+      (country) => country.code && country.nameIcelandic && country.name,
+    )
   }
 
   async getEducationalInstitutions(
@@ -280,6 +307,26 @@ export class SocialInsuranceAdministrationClientService {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantResidenceInformationGet()
+  }
+
+  /**
+   * TODO: Map all used application types to the enum and deprecate the old method
+   */
+  async getEducationLevelsWithEnum(
+    user: User,
+    applicationType: ApplicationTypeEnum,
+  ): Promise<Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto> | null> {
+    const applicationTypeMapped = mapApplicationEnumToType(applicationType)
+
+    if (!applicationTypeMapped) {
+      return Promise.resolve(null)
+    }
+
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationlevelsApplicationTypeGet({
+      applicationType: applicationTypeMapped,
+    })
   }
 
   async getEducationLevels(
