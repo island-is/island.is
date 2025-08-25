@@ -28,7 +28,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
     .codeOwner(CodeOwners.Origo)
     .command('node')
     .redis()
-    .args('main.js')
+    .args('main.cjs')
     .resources({
       limits: { cpu: '200m', memory: '384Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
@@ -87,7 +87,7 @@ export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
     .codeOwner(CodeOwners.Origo)
     .command('node')
     .redis()
-    .args('main.js', '--job', 'worker')
+    .args('main.cjs', '--job', 'worker')
     .resources({
       limits: { cpu: '200m', memory: '384Mi' },
       requests: { cpu: '50m', memory: '256Mi' },

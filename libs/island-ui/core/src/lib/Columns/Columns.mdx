@@ -1,0 +1,63 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks'
+import * as ColumnsStories from './Columns.stories'
+
+import { AlertMessage } from '../AlertMessage/AlertMessage'
+import { Box } from '../Box/Box'
+import { Columns } from './Columns'
+import { Column } from '../Column/Column'
+import { Text } from '../Text/Text'
+
+export const DemoBox = ({ background, minHeight = 'auto', children }) => (
+  <Box padding={4} background={background} style={{ minHeight }}>
+    {children}
+  </Box>
+)
+
+<Meta of={ColumnsStories} />
+
+# Columns
+
+## Provides spacing between *Column*s
+
+<Box marginY={3}>
+  <AlertMessage
+    type="error"
+    title="Please use the Grid component for page layouts."
+  />
+</Box>
+
+### Default
+
+By default it acts as a flex container
+
+<Canvas>
+  <Story of={ColumnsStories.Default} />
+</Canvas>
+
+### Spacing
+
+Space items equally
+
+<Canvas>
+  <Story of={ColumnsStories.Spacing} />
+</Canvas>
+
+### Collapse
+
+Collapse columns when below a certain breakpoint
+
+<Canvas>
+  <Story of={ColumnsStories.Collapse} />
+</Canvas>
+
+### Alignment
+
+Control vertical and horizontal alignment
+
+<Canvas>
+  <Story of={ColumnsStories.Alignment} />
+</Canvas>
+
+# Props
+
+<Controls />

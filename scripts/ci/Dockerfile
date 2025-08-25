@@ -29,6 +29,12 @@ COPY .yarn/patches .yarn/patches
 COPY .yarn/releases .yarn/releases
 COPY apps/native/app/package.json ./apps/native/app/
 
+# Add logging to show what package.json files we're installing from
+RUN echo "=== Installing dependencies from the following package.json files ===" && \
+  echo "Root package.json:" && cat package.json | jq '.name' && \
+  echo "Native app package.json:" && cat apps/native/app/package.json | jq '.name' && \
+  echo "=== Starting yarn install ==="
+
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
   yarn install --immutable
 
@@ -101,6 +107,40 @@ ENV GIT_BRANCH=${GIT_BRANCH} \
 LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
 
 CMD ["node", "--no-experimental-fetch", "main.js"]
+
+# ------------------------------------------------
+# Express yarn output
+# ------------------------------------------------
+FROM output-base AS output-express-yarn
+
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
+RUN npm install -g sequelize sequelize-cli pg
+
+COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+COPY .yarnrc.yml /webapp/
+COPY .yarn/patches /webapp/.yarn/patches
+COPY .yarn/releases /webapp/.yarn/releases
+
+# Install production dependencies
+RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
+  yarn workspaces focus --production
+
+USER runner
+
+ENV GIT_BRANCH=${GIT_BRANCH} \
+  GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
+  DD_GIT_BRANCH=${GIT_BRANCH} \
+  DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+
+LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
+
+CMD ["node", "--no-experimental-fetch", "main.cjs"]
 
 # ------------------------------------------------
 # Next.js output

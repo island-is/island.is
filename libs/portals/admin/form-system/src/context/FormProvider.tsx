@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer, useState } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { ControlContext, IControlContext } from './ControlContext'
 import {
   FormSystemForm,
@@ -158,7 +158,27 @@ export const FormProvider: React.FC<{
     }),
     [control, controlDispatch, inListBuilder, selectStatus, selectedUrls],
   )
-
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') return
+    // Dev-only logic
+    console.debug('[FormProvider] Dev mode', {
+      formId: control.form?.id,
+      activeItemType: control.activeItem?.type,
+      inSettings,
+      inListBuilder,
+      selectStatus,
+      control,
+    })
+    console.log('dependencies:', control.form.dependencies)
+    console.log('form:', control.form)
+  }, [
+    control.form?.id,
+    control.activeItem?.type,
+    inSettings,
+    inListBuilder,
+    selectStatus,
+    control,
+  ])
   return (
     <ControlContext.Provider value={context}>
       {children}
