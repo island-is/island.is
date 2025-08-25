@@ -4,7 +4,6 @@ import {
   Animated,
   FlatList,
   Image,
-  Linking,
   ListRenderItemInfo,
   RefreshControl,
   SafeAreaView,
@@ -26,7 +25,6 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
-import { evaluateUrl } from '../../lib/deep-linking'
 import { syncLicenseWidgetData } from '../../lib/widget-sync'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import {
@@ -111,14 +109,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     false,
   )
   const [selectedTab, setSelectedTab] = useState(0)
-
-  useEffect(() => {
-    Linking.getInitialURL().then((url) => {
-      if (url?.includes('wallet/')) {
-        return evaluateUrl(url)
-      }
-    })
-  }, [])
 
   // Query list of licenses
   const res = useListLicensesQuery({
