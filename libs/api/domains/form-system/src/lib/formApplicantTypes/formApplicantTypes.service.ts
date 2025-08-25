@@ -8,12 +8,6 @@ import {
   FormApplicantTypesControllerDeleteRequest,
 } from '@island.is/clients/form-system'
 import {
-  FormApplicantTypeDeleteInput,
-  FormApplicantTypeCreateInput,
-  FormApplicantTypeUpdateInput,
-} from '../../dto/formApplicantType.input'
-import { FormApplicantType } from '../../models/formApplicantTypes.model'
-import {
   CreateApplicantInput,
   DeleteApplicantInput,
 } from '../../dto/applicant.input'
@@ -69,15 +63,4 @@ export class FormApplicantTypesService {
 
     return response as Screen
   }
-
-  // async updateFormApplicantType(
-  //   auth: User,
-  //   input: FormApplicantTypeUpdateInput,
-  // ): Promise<void> {
-  //   await this.formApplicantTypesApiWithAuth(
-  //     auth,
-  //   ).formApplicantTypesControllerUpdate(
-  //     input as FormApplicantTypesControllerUpdateRequest,
-  //   )
-  // }
 }

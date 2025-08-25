@@ -7,7 +7,7 @@ import {
   DELETE_APPLICANT,
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
-import { FormSystemField, FormSystemFormApplicant } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { m } from '@island.is/form-system/ui'
 import { removeTypename } from '../../../../lib/utils/removeTypename'
 import { applicantTypeGroups } from '../../../../lib/utils/applicantTypeGroups'
@@ -18,10 +18,7 @@ export const RelevantParties = () => {
   const [deleteApplicant] = useMutation(DELETE_APPLICANT)
   const { control, controlDispatch } = useContext(ControlContext)
   const { formatMessage } = useIntl()
-  const { id: formId, applicantTypes } = control.form
-  const [formApplicants, setFormApplicants] = useState<
-    FormSystemFormApplicant[]
-  >(applicantTypes?.filter((a): a is FormSystemFormApplicant => !!a) ?? [])
+  const { id: formId } = control.form
 
   const [applicantFields, setApplicantFields] = useState<FormSystemField[]>(
     Array.isArray(control.form.fields)

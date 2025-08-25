@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  Param,
   Post,
   UseGuards,
   VERSION_NEUTRAL,
@@ -10,9 +9,7 @@ import {
 import {
   ApiBody,
   ApiCreatedResponse,
-  ApiNoContentResponse,
   ApiOperation,
-  ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
 import { FormApplicantTypesService } from './formApplicantTypes.service'

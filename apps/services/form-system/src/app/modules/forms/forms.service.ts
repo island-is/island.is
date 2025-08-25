@@ -30,7 +30,7 @@ import {
   ApplicantType,
   ApplicantTypes,
 } from '../../dataTypes/applicantTypes/applicantType.model'
-import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
+// import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
 import {
@@ -41,7 +41,7 @@ import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { randomUUID } from 'crypto'
 import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
-import { FormApplicantTypeDto } from '../formApplicantTypes/models/dto/formApplicantType.dto'
+// import { FormApplicantTypeDto } from '../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
 import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
@@ -75,8 +75,8 @@ export class FormsService {
     private readonly organizationUrlModel: typeof OrganizationUrl,
     @InjectModel(FormCertificationType)
     private readonly formCertificationTypeModel: typeof FormCertificationType,
-    @InjectModel(FormApplicantType)
-    private readonly formApplicantTypeModel: typeof FormApplicantType,
+    // @InjectModel(FormApplicantType)
+    // private readonly formApplicantTypeModel: typeof FormApplicantType,
     @InjectModel(FormUrl)
     private readonly formUrlModel: typeof FormUrl,
     private readonly sequelize: Sequelize,
@@ -358,10 +358,6 @@ export class FormsService {
           as: 'formCertificationTypes',
         },
         {
-          model: FormApplicantType,
-          as: 'formApplicantTypes',
-        },
-        {
           model: FormUrl,
           as: 'formUrls',
         },
@@ -573,7 +569,7 @@ export class FormsService {
       ),
       {
         certificationTypes: [],
-        applicantTypes: [],
+        // applicantTypes: [],
         urls: [],
         sections: [],
         screens: [],
@@ -595,15 +591,15 @@ export class FormsService {
       )
     })
 
-    const applicantKeys = ['id', 'applicantTypeId', 'name']
-    form.formApplicantTypes?.map((formApplicant) => {
-      formDto.applicantTypes?.push(
-        defaults(
-          pick(formApplicant, applicantKeys),
-          zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
-        ) as FormApplicantTypeDto,
-      )
-    })
+    // const applicantKeys = ['id', 'applicantTypeId', 'name']
+    // form.formApplicantTypes?.map((formApplicant) => {
+    //   formDto.applicantTypes?.push(
+    //     defaults(
+    //       pick(formApplicant, applicantKeys),
+    //       zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
+    //     ) as FormApplicantTypeDto,
+    //   )
+    // })
 
     form.formUrls?.map((formUrl) => {
       formDto.urls?.push(formUrl.organizationUrlId)
@@ -760,7 +756,7 @@ export class FormsService {
     const fields: Field[] = []
     const listItems: ListItem[] = []
     const formCertificationTypes: FormCertificationType[] = []
-    const formApplicantTypes: FormApplicantType[] = []
+    // const formApplicantTypes: FormApplicantType[] = []
     const formUrls: FormUrl[] = []
 
     for (const section of existingForm.sections) {
@@ -810,16 +806,16 @@ export class FormsService {
       }
     }
 
-    if (existingForm.formApplicantTypes) {
-      for (const applicantType of existingForm.formApplicantTypes) {
-        const newFormApplicantType = applicantType.toJSON()
-        newFormApplicantType.id = uuidV4()
-        newFormApplicantType.formId = newForm.id
-        newFormApplicantType.created = new Date()
-        newFormApplicantType.modified = new Date()
-        formApplicantTypes.push(newFormApplicantType)
-      }
-    }
+    // if (existingForm.formApplicantTypes) {
+    //   for (const applicantType of existingForm.formApplicantTypes) {
+    //     const newFormApplicantType = applicantType.toJSON()
+    //     newFormApplicantType.id = uuidV4()
+    //     newFormApplicantType.formId = newForm.id
+    //     newFormApplicantType.created = new Date()
+    //     newFormApplicantType.modified = new Date()
+    //     formApplicantTypes.push(newFormApplicantType)
+    //   }
+    // }
 
     if (existingForm.formUrls) {
       for (const formUrl of existingForm.formUrls) {
@@ -841,9 +837,9 @@ export class FormsService {
       await this.formCertificationTypeModel.bulkCreate(formCertificationTypes, {
         transaction,
       })
-      await this.formApplicantTypeModel.bulkCreate(formApplicantTypes, {
-        transaction,
-      })
+      // await this.formApplicantTypeModel.bulkCreate(formApplicantTypes, {
+      //   transaction,
+      // })
       await this.formUrlModel.bulkCreate(formUrls, { transaction })
     })
 

@@ -8,12 +8,6 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { FormApplicantTypesService } from './formApplicantTypes.service'
-import { FormApplicantType } from '../../models/formApplicantTypes.model'
-import {
-  FormApplicantTypeCreateInput,
-  FormApplicantTypeDeleteInput,
-  FormApplicantTypeUpdateInput,
-} from '../../dto/formApplicantType.input'
 import { Screen } from '../../models/screen.model'
 import {
   CreateApplicantInput,

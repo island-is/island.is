@@ -4,7 +4,7 @@ import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { Dependency } from '../../../../dataTypes/dependency.model'
-import { FormApplicantTypeDto } from '../../../formApplicantTypes/models/dto/formApplicantType.dto'
+// import { FormApplicantTypeDto } from '../../../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 
 export class FormDto {
@@ -74,8 +74,8 @@ export class FormDto {
   @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
 
-  @ApiPropertyOptional({ type: [FormApplicantTypeDto] })
-  applicantTypes?: FormApplicantTypeDto[]
+  // @ApiPropertyOptional({ type: [FormApplicantTypeDto] })
+  // applicantTypes?: FormApplicantTypeDto[]
 
   @ApiPropertyOptional({ type: [String] })
   urls?: string[]

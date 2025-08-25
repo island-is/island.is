@@ -1,36 +1,36 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+// import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-export class ApplicationApplicantDto {
-  @ApiProperty()
-  id!: string
+// export class ApplicationApplicantDto {
+//   @ApiProperty()
+//   id!: string
 
-  @ApiProperty({ type: Date })
-  created!: Date
+//   @ApiProperty({ type: Date })
+//   created!: Date
 
-  @ApiProperty({ type: Date })
-  modified!: Date
+//   @ApiProperty({ type: Date })
+//   modified!: Date
 
-  @ApiPropertyOptional()
-  lastLogin?: Date
+//   @ApiPropertyOptional()
+//   lastLogin?: Date
 
-  @ApiProperty()
-  name!: string
+//   @ApiProperty()
+//   name!: string
 
-  @ApiProperty()
-  nationalId!: string
+//   @ApiProperty()
+//   nationalId!: string
 
-  @ApiProperty()
-  email!: string
+//   @ApiProperty()
+//   email!: string
 
-  @ApiProperty()
-  phoneNumber!: string
+//   @ApiProperty()
+//   phoneNumber!: string
 
-  @ApiProperty()
-  address!: string
+//   @ApiProperty()
+//   address!: string
 
-  @ApiProperty()
-  municipality!: string
+//   @ApiProperty()
+//   municipality!: string
 
-  @ApiProperty()
-  applicantTypeId!: string
-}
+//   @ApiProperty()
+//   applicantTypeId!: string
+// }
