@@ -18,7 +18,7 @@ import {
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { CanSignApi, GetListApi, MunicipalIdentityApi } from '../dataProviders'
+import { CanSignApi, GetListApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Features } from '@island.is/feature-flags'
 
@@ -69,7 +69,6 @@ const SignListTemplate: ApplicationTemplate<
                 UserProfileApi,
                 CanSignApi,
                 GetListApi,
-                MunicipalIdentityApi,
               ],
             },
           ],
