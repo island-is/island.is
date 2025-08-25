@@ -14,11 +14,11 @@ export const updateFormFn = async (
   updateForm: (
     options?:
       | MutationFunctionOptions<
-          any,
-          OperationVariables,
-          DefaultContext,
-          ApolloCache<any>
-        >
+        any,
+        OperationVariables,
+        DefaultContext,
+        ApolloCache<any>
+      >
       | undefined,
   ) => Promise<any>,
   updatedForm?: FormSystemForm,
@@ -32,7 +32,10 @@ export const updateFormFn = async (
           updateFormDto: {
             organizationId: newForm.organizationId,
             name: newForm.name,
-            organizationDisplayName: newForm.organizationDisplayName,
+            organizationDisplayName: {
+              is: newForm.organizationDisplayName?.is ?? '',
+              en: newForm.organizationDisplayName?.en ?? '',
+            },
             slug: newForm.slug,
             invalidationDate:
               newForm.invalidationDate === null
