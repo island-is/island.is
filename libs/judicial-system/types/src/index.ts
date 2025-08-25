@@ -6,6 +6,7 @@ export {
   SubpoenaType,
   DefendantPlea,
   ServiceStatus,
+  VerdictServiceStatus,
   PunishmentType,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
