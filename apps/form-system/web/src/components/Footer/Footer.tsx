@@ -2,8 +2,12 @@ import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import * as styles from './Footer.css'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { useIntl } from 'react-intl'
-import { webMessages } from '@island.is/form-system/ui'
-import { SAVE_SCREEN, SUBMIT_SECTION } from '@island.is/form-system/graphql'
+import { SectionTypes, webMessages } from '@island.is/form-system/ui'
+import {
+  SAVE_SCREEN,
+  SUBMIT_APPLICATION,
+  SUBMIT_SECTION,
+} from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 import { useFormContext } from 'react-hook-form'
 
@@ -13,6 +17,7 @@ interface Props {
 
 export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
+  const { currentSection } = state
   const { formatMessage } = useIntl()
   const { trigger } = useFormContext()
 
@@ -23,19 +28,35 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const continueButtonText =
     state.currentSection.index === 0
       ? formatMessage(webMessages.externalDataConfirmation)
+      : currentSection.data.sectionType === SectionTypes.SUMMARY
+      ? formatMessage(webMessages.submitApplication)
       : formatMessage(webMessages.continue)
   const enableContinueButton =
-    state.currentSection.index === 0 ? externalDataAgreement : true //state.currentSection.index !== state.sections.length - 1
-
+    state.currentSection.index === 0 ? externalDataAgreement : true
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
+  const [submitApplication] = useMutation(SUBMIT_APPLICATION)
+
   const handleIncrement = async () => {
     const isValid = await validate()
+
+    if (currentSection.data.sectionType === SectionTypes.SUMMARY) {
+      return submitApplication({
+        variables: {
+          input: {
+            id: state.application.id,
+          },
+        },
+      })
+    }
+
     dispatch({
       type: 'SET_VALIDITY',
       payload: { isValid },
     })
+
     if (!isValid) return
+
     dispatch({
       type: 'INCREMENT',
       payload: {

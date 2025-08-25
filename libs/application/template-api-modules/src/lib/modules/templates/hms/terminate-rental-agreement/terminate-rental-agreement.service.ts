@@ -52,7 +52,7 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
     }
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
       const files = await this.attachmentService.getFiles(application, [
         'fileUpload',
@@ -60,12 +60,12 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
 
       if (isCancellation(application)) {
         const parsedApplication = parseCancelContract(application, files)
-        return await this.homeApiWithAuth(auth).contractCancelPost({
+        return await this.homeApi.contractCancelPost({
           cancelContract: parsedApplication,
         })
       } else {
         const parsedApplication = parseTerminateContract(application, files)
-        return await this.homeApiWithAuth(auth).contractTerminatePost({
+        return await this.homeApi.contractTerminatePost({
           terminateContract: parsedApplication,
         })
       }

@@ -67,6 +67,7 @@ import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-regi
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
+import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { AuditConfig } from '@island.is/nest/audit'
@@ -136,6 +137,7 @@ import { AuditConfig } from '@island.is/nest/audit'
         SeminarsClientConfig,
         SecondarySchoolClientConfig,
         PaymentsApiClientConfig,
+        VmstUnemploymentClientConfig,
         HmsRentalAgreementClientConfig,
         ExemptionForTransportationClientConfig,
         AuditConfig,

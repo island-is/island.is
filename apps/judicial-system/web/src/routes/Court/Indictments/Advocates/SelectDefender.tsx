@@ -150,7 +150,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           />
         </Box>
         <InputAdvocate
-          advocateType="defender"
+          advocateType="litigator"
           name={defendant.defenderName}
           email={defendant.defenderEmail}
           phoneNumber={defendant.defenderPhoneNumber}

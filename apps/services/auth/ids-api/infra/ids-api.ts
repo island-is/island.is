@@ -155,7 +155,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
     .namespace(namespace)
     .image(imageName)
     .command('node')
-    .args('main.js', '--job=cleanup')
+    .args('main.cjs', '--job=cleanup')
     .resources({
       limits: {
         cpu: '400m',
