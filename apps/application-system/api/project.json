@@ -8,11 +8,14 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/application-system/api",
         "main": "apps/application-system/api/src/main.ts",
         "tsConfig": "apps/application-system/api/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           {
             "glob": "*",
@@ -104,15 +107,12 @@
             "input": "libs/application/template-api-modules/src/lib/modules/templates/id-card/emailGenerators/assets",
             "output": "./id-card-assets"
           }
-        ],
-        "webpackConfig": "apps/application-system/api/webpack.config.js",
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -179,8 +179,8 @@
         "cwd": "apps/application-system/api"
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     },
     "dev-init": {
       "executor": "nx:run-commands",

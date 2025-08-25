@@ -19,7 +19,7 @@ interface Props {
   hasError?: boolean
 }
 
-export const Radio = ({ item, dispatch, lang, hasError }: Props) => {
+export const Radio = ({ item, dispatch, lang = 'is', hasError }: Props) => {
   const radioButtons = item.list as FormSystemListItem[]
   const [value, setValue] = useState<string>(getValue(item, 'listValue'))
   const [radioChecked, setRadioChecked] = useState<boolean[]>([])
@@ -46,7 +46,12 @@ export const Radio = ({ item, dispatch, lang, hasError }: Props) => {
   }
 
   const radioButton = (rb: FormSystemListItem, index: number) => (
-    <Box width="half" padding={1} onClick={() => handleChange(index)}>
+    <Box
+      width="half"
+      padding={1}
+      onClick={() => handleChange(index)}
+      key={rb.id}
+    >
       <RadioButton
         label={rb?.label?.[language]}
         tooltip={
@@ -57,9 +62,25 @@ export const Radio = ({ item, dispatch, lang, hasError }: Props) => {
         large
         backgroundColor="blue"
         checked={radioChecked[index]}
+        onChange={() => handleChange(index)}
       />
     </Box>
   )
+
+  const selected = item?.list?.find((listItem) => listItem?.isSelected === true)
+
+  useEffect(() => {
+    if (selected && dispatch) {
+      if (!value) {
+        dispatch({
+          type: 'SET_LIST_VALUE',
+          payload: { id: item.id, value: selected.label?.[lang] ?? '' },
+        })
+        setValue(selected.label?.[lang] ?? '')
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>
