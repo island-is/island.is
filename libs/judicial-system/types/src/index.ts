@@ -79,6 +79,8 @@ export {
 } from './lib/user'
 export type { User, UserDescriptor, InstitutionUser } from './lib/user'
 
+export { DataGroups } from './lib/statistics'
+
 export {
   CaseOrigin,
   CaseType,

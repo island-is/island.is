@@ -6,7 +6,7 @@ import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { FilterLayout } from './StatisticFilterLayout'
 
-export type FilterType = 'created' | 'sentToCourt' | 'institution'
+export type FilterType = 'period' | 'created' | 'sentToCourt' | 'institution'
 
 const DatePickers = ({
   name,
@@ -44,7 +44,7 @@ const DatePickers = ({
         size="xs"
         maxDate={new Date()}
         minDate={selectedDateFilter.fromDate ?? minDate}
-        selected={selectedDateFilter.toDate ?? new Date()}
+        selected={selectedDateFilter.toDate}
         handleChange={(date: Date | null) => setToDate(date ?? undefined)}
       />
     </Box>
@@ -138,6 +138,31 @@ const FilterComponent = <T extends object>({
           }))
         }
         value={currentValue}
+      />
+    )
+  }
+
+  if (type === 'period') {
+    const currentValue = (type in filters ? filters.period : {}) as DateFilter
+    return (
+      <DatePickers
+        name="period"
+        labelFrom="Dagsetning frá"
+        labelTo="Dagsetning til"
+        selectedDateFilter={currentValue}
+        minDate={minDate}
+        setFromDate={(fromDate) =>
+          setFilters((prev) => ({
+            ...prev,
+            period: { ...currentValue, fromDate },
+          }))
+        }
+        setToDate={(toDate) =>
+          setFilters((prev) => ({
+            ...prev,
+            period: { ...currentValue, toDate },
+          }))
+        }
       />
     )
   }
