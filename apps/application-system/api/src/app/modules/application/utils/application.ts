@@ -109,6 +109,31 @@ export const getApplicationStatisticsNameTranslationString = (
   return formatMessage(template.name)
 }
 
+export const getApplicationGenericNameTranslationString = (
+  template: Template,
+  typeId: string,
+  formatMessage: FormatMessage,
+) => {
+  if (typeof template.name === 'function') {
+    const returnValue = template.name(
+      mockApplicationFromTypeId(typeId as ApplicationTypes),
+    )
+
+    if (
+      isObject(returnValue) &&
+      'value' in returnValue &&
+      'name' in returnValue
+    ) {
+      return formatMessage(returnValue.name, {
+        value: returnValue.value,
+      })
+    }
+    return formatMessage(returnValue)
+  }
+
+  return formatMessage(template.name)
+}
+
 export const getPaymentStatusForAdmin = (
   payment: { fulfilled: boolean; created: Date } | null,
 ) => {

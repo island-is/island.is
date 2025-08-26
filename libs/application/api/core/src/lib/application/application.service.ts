@@ -146,14 +146,20 @@ export class ApplicationService {
     applicantNationalId?: string,
     from?: string,
     to?: string,
+    typeIdFilter?: string,
   ): Promise<ApplicationPaginatedResponse> {
-    const statuses = status?.split(',')
-    const typeIds = getTypeIdsForInstitution(nationalId)
+    const statuses = status?.split(',').filter(Boolean)
+    const typeIds = typeIdFilter?.split(',').filter(Boolean)
+    const institutionTypeIds = getTypeIdsForInstitution(nationalId)
     const toDate = to ? new Date(to) : undefined
     const fromDate = from ? new Date(from) : undefined
 
+    const filteredInstitutionTypeIds = typeIds?.length
+      ? institutionTypeIds.filter((t) => typeIds.includes(t))
+      : institutionTypeIds
+
     // No applications for this institution ID
-    if (typeIds.length < 1) {
+    if (filteredInstitutionTypeIds.length < 1) {
       return {
         rows: [],
         count: 0,
@@ -169,7 +175,7 @@ export class ApplicationService {
 
     return this.applicationModel.findAndCountAll({
       where: {
-        ...{ typeId: { [Op.in]: typeIds } },
+        ...{ typeId: { [Op.in]: filteredInstitutionTypeIds } },
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
           applicantNationalId ? applicantAccessConditions : {},
@@ -191,6 +197,29 @@ export class ApplicationService {
       offset: (page - 1) * count,
       order: [['modified', 'DESC']],
     })
+  }
+
+  async getAllApplicationTypesInstitutionAdmin(
+    nationalId: string,
+  ): Promise<{ id: string }[]> {
+    const typeIds = getTypeIdsForInstitution(nationalId)
+
+    if (!typeIds || typeIds.length === 0) {
+      return []
+    }
+
+    const results = await this.applicationModel.findAll({
+      attributes: ['typeId'],
+      where: {
+        typeId: {
+          [Op.in]: typeIds,
+        },
+      },
+      group: ['typeId'],
+      raw: true,
+    })
+
+    return results.map((row) => ({ id: row.typeId ?? 'xx' }))
   }
 
   async findAllByNationalIdAndFilters(

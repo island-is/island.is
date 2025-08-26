@@ -19,6 +19,7 @@ import {
   ApplicationApplicationsAdminInput,
   ApplicationApplicationsAdminStatisticsInput,
   ApplicationApplicationsInstitutionAdminInput,
+  ApplicationTypesInstitutionAdminInput,
 } from './application-admin/dto/applications-applications-admin-input'
 
 @Injectable()
@@ -109,7 +110,23 @@ export class ApplicationService {
       applicantNationalId: input.applicantNationalId,
       from: input.from,
       to: input.to,
+      typeIdFilter: input.typeIdFilter?.join(','),
     })
+  }
+
+  async findAllApplicationTypesInstitutionAdmin(
+    user: User,
+    locale: Locale,
+    input: ApplicationTypesInstitutionAdminInput,
+  ) {
+    const res = await this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetApplicationTypesInstitutionAdmin({
+      nationalId: input.nationalId,
+      locale,
+    })
+    console.log('2 ----- TODOx service', res)
+    return res
   }
 
   async create(input: CreateApplicationInput, auth: Auth) {

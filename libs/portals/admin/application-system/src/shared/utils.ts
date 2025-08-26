@@ -75,6 +75,7 @@ export const getBaseUrlForm = () => {
   return isLocalhost ? 'http://localhost:4242/umsoknir' : `${path}/umsoknir`
 }
 
+// TODOx add MultiChoiceFilter.TYPE_ID
 export const getFilteredApplications = (
   applications: AdminApplication[],
   {

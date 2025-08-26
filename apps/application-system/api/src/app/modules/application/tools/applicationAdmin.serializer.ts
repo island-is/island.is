@@ -36,11 +36,15 @@ import { PaymentService } from '@island.is/application/api/payment'
 import {
   getAdminData,
   getApplicantName,
+  getApplicationGenericNameTranslationString,
   getApplicationNameTranslationString,
   getApplicationStatisticsNameTranslationString,
   getPaymentStatusForAdmin,
 } from '../utils/application'
-import { ApplicationListAdminResponseDto } from '../dto/applicationAdmin.response.dto'
+import {
+  ApplicationListAdminResponseDto,
+  ApplicationTypeAdminInstitution,
+} from '../dto/applicationAdmin.response.dto'
 
 @Injectable()
 export class ApplicationAdminSerializer
@@ -208,6 +212,67 @@ export class ApplicationAdminSerializer
           showHistory,
         ),
       ),
+    )
+  }
+}
+
+@Injectable()
+export class ApplicationTypeAdminSerializer
+  implements NestInterceptor<ApplicationTypeAdminInstitution, Promise<unknown>>
+{
+  constructor(private intlService: IntlService) {}
+
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler<ApplicationTypeAdminInstitution>,
+  ): Observable<Promise<unknown>> {
+    const locale = getCurrentLocale(context)
+
+    return next.handle().pipe(
+      map(
+        async (
+          res:
+            | ApplicationTypeAdminInstitution
+            | Array<ApplicationTypeAdminInstitution>,
+        ) => {
+          const isArray = Array.isArray(res)
+
+          if (isArray) {
+            const applicationTypes =
+              res as Array<ApplicationTypeAdminInstitution>
+            return this.serializeArray(applicationTypes, locale)
+          }
+        },
+      ),
+    )
+  }
+
+  async serialize(type: ApplicationTypeAdminInstitution, locale: Locale) {
+    const template = await getApplicationTemplateByTypeId(
+      type.id as ApplicationTypes,
+    )
+    const namespaces = [
+      'application.system',
+      ...(template?.translationNamespaces ?? []),
+    ]
+    const intl = await this.intlService.useIntl(namespaces, locale)
+    const name = getApplicationGenericNameTranslationString(
+      template,
+      type.id,
+      intl.formatMessage,
+    )
+
+    const res = instanceToPlain({ id: type.id ?? 'yy', name: name ?? '' })
+    console.log('3 ----- TODOx serializer', res)
+    return res
+  }
+
+  async serializeArray(
+    applicationTypes: ApplicationTypeAdminInstitution[],
+    locale: Locale,
+  ) {
+    return await Promise.allSettled(
+      applicationTypes.map((item) => this.serialize(item, locale)),
     )
   }
 }

@@ -106,3 +106,15 @@ export class ApplicationStatistics {
   @IsString()
   name?: string
 }
+
+export class ApplicationTypeAdminInstitution {
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  id!: string
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  name?: string
+}

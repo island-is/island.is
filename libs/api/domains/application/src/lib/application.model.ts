@@ -252,3 +252,12 @@ export class ApplicationPayment {
   @Field()
   paymentUrl!: string
 }
+
+@ObjectType()
+export class ApplicationTypeAdminInstitution {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => String, { nullable: true })
+  name?: string
+}

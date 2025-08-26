@@ -42,6 +42,11 @@ export class ApplicationApplicationsInstitutionAdminInput extends OmitType(
   @Field(() => String, { nullable: true })
   @IsOptional()
   to?: string
+
+  // Note: Need to create new field instead of using typeId because of DelegationGuard
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  typeIdFilter?: string[]
 }
 
 @InputType()
@@ -50,4 +55,10 @@ export class ApplicationApplicationsAdminStatisticsInput {
   startDate!: string
   @Field(() => String)
   endDate!: string
+}
+
+@InputType()
+export class ApplicationTypesInstitutionAdminInput {
+  @Field(() => String)
+  nationalId!: string
 }

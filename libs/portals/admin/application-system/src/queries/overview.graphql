@@ -90,6 +90,15 @@ query getInstitutionApplications(
   }
 }
 
+query getInstitutionApplicationTypes(
+  $input: ApplicationTypesInstitutionAdminInput!
+) {
+  applicationTypesInstitutionAdmin(input: $input) {
+    id
+    name
+  }
+}
+
 query getOrganizations($input: GetOrganizationsInput) {
   getOrganizations(input: $input) {
     items {

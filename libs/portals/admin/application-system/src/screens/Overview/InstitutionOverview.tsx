@@ -10,14 +10,14 @@ import {
   useGetInstitutionApplicationsQuery,
   useGetOrganizationsQuery,
 } from '../../queries/overview.generated'
-import invertBy from 'lodash/invertBy'
+// import invertBy from 'lodash/invertBy'
 import { InstitutionFilters } from '../../components/Filters/InstitutionFilters'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ApplicationsTable } from '../../components/ApplicationsTable/ApplicationsTable'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
-import { institutionMapper } from '@island.is/application/types'
+// import { institutionMapper } from '@island.is/application/types'
 import { AdminApplication } from '../../types/adminApplication'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import endOfDay from 'date-fns/endOfDay'
@@ -34,14 +34,15 @@ const defaultMultiChoiceFilters: Record<
   [MultiChoiceFilter.STATUS]: undefined,
   [MultiChoiceFilter.INSTITUTION]: undefined,
   [MultiChoiceFilter.APPLICATION]: undefined,
+  [MultiChoiceFilter.TYPE_ID]: undefined,
 }
 
 const pageSize = 12
 
 const InstitutionOverview = () => {
-  const institutionApplications = invertBy(institutionMapper, (application) => {
-    return application.slug
-  })
+  // const institutionApplications = invertBy(institutionMapper, (application) => {
+  //   return application.slug
+  // })
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState(defaultFilters)
@@ -70,16 +71,17 @@ const InstitutionOverview = () => {
           : '',
         from: filters.period.from?.toISOString(),
         to: filters.period.to?.toISOString(),
+        // typeIdFilter: ['TransferOfVehicleOwnership'],
         status: multiChoiceFilters?.status,
       },
     },
-    onCompleted: (q) => {
-      // Initialize available applications from the initial response
-      // So that we can use them to filter by
-      const names = q.applicationApplicationsInstitutionAdmin?.rows
-        ?.filter((x) => !!x.name)
-        .map((x) => x.name ?? '')
-    },
+    // onCompleted: (q) => {
+    //   // Initialize available applications from the initial response
+    //   // So that we can use them to filter by
+    //   const names = q.applicationApplicationsInstitutionAdmin?.rows
+    //     ?.filter((x) => !!x.name)
+    //     .map((x) => x.name ?? '')
+    // },
   })
 
   const isLoading = queryLoading || orgsLoading
@@ -141,7 +143,7 @@ const InstitutionOverview = () => {
   useEffect(() => {
     setPage(1)
     refetch()
-  }, [filters, multiChoiceFilters])
+  }, [filters, multiChoiceFilters, refetch])
 
   return (
     <Box>
