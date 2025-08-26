@@ -130,7 +130,7 @@ export const mapRentalApplicationData = (
       hasInspectionFiles: files && files.length > 0,
       indipendantInspector: inspectorName,
       fireProtections: {
-        fireBlanket: parseToNumber(fireBlanket || '0'),
+        fireBlanket: fireBlanket === YesOrNoEnum.YES ? 1 : 0,
         emergencyExits: parseToNumber(emergencyExits || '0'),
         smokeDetectors: parseToNumber(smokeDetectors || '0'),
         fireExtinguisher: parseToNumber(fireExtinguisher || '0'),
