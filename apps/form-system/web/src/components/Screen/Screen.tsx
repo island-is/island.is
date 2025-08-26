@@ -51,7 +51,7 @@ export const Screen = () => {
             }
           />
         )}
-        {currentSectionType === SectionTypes.SUMMARY && (
+        {currentSectionType === SectionTypes.SUMMARY && state.application.hasSummaryScreen && (
           <Summary state={state} />
         )}
         {currentScreen &&
