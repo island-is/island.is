@@ -71,8 +71,8 @@ const academicBackgroundSchema = z.object({
       z.object({
         levelOfStudy: z.string(),
         degree: z.string(),
-        subject: z.string().nullish(),
-        endOfStudy: z.string().optional(),
+        subject: z.string(),
+        endOfStudy: z.string().nullish(),
         isStillStudying: z.array(z.enum([YES])).optional(),
       }),
     )
@@ -155,29 +155,28 @@ const contactSchema = z
 
 const incomeSchema = z
   .array(
-    z
-      .object({
-        checkbox: z
-          .array(z.enum([IncomeCheckboxValues.INCOME_FROM_OTHER_THAN_JOB]))
-          .optional(),
-        employer: z.string(),
-        month: z.string(),
-        salaryIncome: z.number(),
-        hasEmploymentEnded: z.enum([YES, NO]),
-        endOfEmploymentDate: z.string().optional(),
-        explanation: z.string().optional(),
-        hasLeaveDays: z.enum([YES, NO]),
-        numberOfLeaveDays: z.string().optional(),
-        leaveDates: z
-          .array(
-            z.object({
-              dateFrom: z.string(),
-              dateTo: z.string(),
-            }),
-          )
-          .optional(),
-      })
-      .optional(),
+    z.object({
+      checkbox: z
+        .array(z.enum([IncomeCheckboxValues.INCOME_FROM_OTHER_THAN_JOB]))
+        .optional(),
+      employer: z.string(),
+      month: z.string(),
+      salaryIncome: z.number(),
+      hasEmploymentEnded: z.enum([YES, NO]).optional(),
+      endOfEmploymentDate: z.string().optional(),
+      explanation: z.string().optional(),
+      hasLeaveDays: z.enum([YES, NO]).optional(),
+      numberOfLeaveDays: z.string().optional(),
+      leaveDates: z
+        .array(
+          z.object({
+            dateFrom: z.string(),
+            dateTo: z.string(),
+          }),
+        )
+        .optional()
+        .or(z.literal('')), // Explicitly allow empty strings since clearing this field turns it to an empty string
+    }),
   )
   .optional()
 
@@ -210,3 +209,4 @@ export type DrivingLicensesAnswer = z.TypeOf<typeof drivingLicensesSchema>
 export type JobWishesAnswer = z.TypeOf<typeof jobWishesSchema>
 export type PaymentInformationAnswer = z.TypeOf<typeof paymentInformationSchema>
 export type CVAnswers = z.TypeOf<typeof cvSchema>
+export type IncomeAnswers = z.TypeOf<typeof incomeSchema>

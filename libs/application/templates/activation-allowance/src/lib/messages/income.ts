@@ -48,7 +48,7 @@ export const income = {
     },
     endOfEmployment: {
       id: 'aa.application:income.labels.endOfEmployment',
-      defaultMessage: 'Hvenær laukst/lýkur þú störfum?',
+      defaultMessage: 'Hvenær lýkur þú störfum?',
       description: 'When do you/did you end employment label',
     },
     endOfEmploymentDate: {
@@ -82,12 +82,19 @@ export const income = {
       defaultMessage: 'Áttirðu ótekið orlof þegar þú hættir í starfi?',
       description: 'Had remaining leave days description label',
     },
-    numberAndUsageOfLeaveDescription: {
-      id: 'aa.application:income.labels.numberAndUsageOfLeaveDescription',
+    numberAndUsageOfLeaveTitle: {
+      id: 'aa.application:income.labels.numberAndUsageOfLeaveTitle',
       defaultMessage:
         'Vinsamlegast tilgreindu fjölda orlofsdaga og hvenær þú ætlar að nýta þá',
       description: 'If user has leave days left, label for that',
     },
+    numberAndUsageOfLeaveDescription: {
+      id: 'aa.application:income.labels.numberAndUsageOfLeaveDescription#markdown',
+      defaultMessage:
+        'Námundaðu upp í næsta heila dag, dagur telst 8 klukkustundir. Ef klukkutímafjöldi fer framyfir 8 klukkustundir þá telst það sem næsti dagur.  Dæmi:  8 tímar=1 dagur, 9 tímar=2 dagar, 15 tímar=2 dagar, 16 tímar=2 dagar, 17 tímar=3 dagar.',
+      description: 'If user has leave days left, label for that',
+    },
+
     numberOfLeaveDays: {
       id: 'aa.application:income.labels.numberOfLeaveDays',
       defaultMessage: 'Fjöldi orlofsdaga',

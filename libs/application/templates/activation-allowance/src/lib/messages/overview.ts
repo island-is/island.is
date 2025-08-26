@@ -61,5 +61,30 @@ export const overview = {
       defaultMessage: 'Vinnuvélaréttindi: {value}',
       description: 'heavy machinery license label for overview information',
     },
+    employer: {
+      id: 'aa.application:overview.labels.employer',
+      defaultMessage: 'Launagreiðandi: {value}',
+      description: 'company label for overview information',
+    },
+    paymentMonth: {
+      id: 'aa.application:overview.labels.paymentMonth',
+      defaultMessage: 'Launamánuður: {value}',
+      description: 'payment month label for overview information',
+    },
+    income: {
+      id: 'aa.application:overview.labels.income',
+      defaultMessage: 'Launatekjur: {value} kr.',
+      description: 'income label for overview information',
+    },
+    incomeHeading: {
+      id: 'aa.application:overview.labels.incomeHeading',
+      defaultMessage: 'Tekjur {value}',
+      description: 'income heading for each income for overview information',
+    },
+    submitButtonText: {
+      id: 'aa.application:overview.labels.submitButtonText',
+      defaultMessage: 'Sækja um',
+      description: 'Submit button text',
+    },
   }),
 }
