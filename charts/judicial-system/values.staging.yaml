@@ -326,7 +326,7 @@ judicial-system-digital-mailbox-api:
 judicial-system-message-handler:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -391,7 +391,7 @@ judicial-system-message-handler:
 judicial-system-scheduler:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
