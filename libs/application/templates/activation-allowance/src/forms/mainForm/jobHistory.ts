@@ -63,6 +63,8 @@ export const jobHistorySection = buildSection({
               component: 'date',
               label: jobHistory.labels.startDate,
               width: 'half',
+              minYear: 1940,
+              maxYear: new Date().getFullYear(),
               maxDate: new Date(),
               required: true,
             },
@@ -71,6 +73,18 @@ export const jobHistorySection = buildSection({
               label: jobHistory.labels.endDate,
               width: 'half',
               required: true,
+              minYear: 1940,
+              maxYear: new Date().getFullYear(),
+              minDate: (_, activeField) => {
+                if (activeField?.startDate) {
+                  const startDate = new Date(activeField.startDate as string)
+                  const nextDay = new Date(startDate)
+                  nextDay.setDate(startDate.getDate() + 1)
+                  return nextDay
+                }
+
+                return new Date()
+              },
               maxDate: () => {
                 const today = new Date()
                 const endOfMonth = new Date(

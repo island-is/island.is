@@ -35,6 +35,7 @@ export class VehiclesClientService {
     ).currentvehicleswithmileageandinspGet({
       page: input.page,
       pageSize: input.pageSize,
+      includeNextMainInspectionDate: input.includeNextMainInspectionDate,
       onlyMileageRegisterableVehicles: input.onlyMileageRegisterableVehicles,
       onlyMileageRequiredVehicles: input.onlyMileageRequiredVehicles,
       permno: input.query
