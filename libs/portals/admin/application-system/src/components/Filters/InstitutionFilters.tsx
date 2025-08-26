@@ -100,7 +100,7 @@ export const InstitutionFilters = ({
     <>
       <Box marginBottom={3} width="full">
         <Select
-          placeholder="Tegund umsóknar"
+          placeholder={formatMessage(m.applicationType)}
           backgroundColor="blue"
           options={institutionTypeIds}
           onChange={(v) => {
