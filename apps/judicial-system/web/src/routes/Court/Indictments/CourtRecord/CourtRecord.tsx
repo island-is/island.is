@@ -1,13 +1,14 @@
 import { FC, useContext, useEffect, useState } from 'react'
+import { Reorder, useDragControls } from 'motion/react'
 
+import { Box, Tag } from '@island.is/island-ui/core'
 import {
   CaseFile,
   FormContext,
   MultipleValueList,
 } from '@island.is/judicial-system-web/src/components'
 import { useCourtDocuments } from '@island.is/judicial-system-web/src/components/CourtDocuments/CourtDocuments'
-import { Box, Tag } from '@island.is/island-ui/core'
-import { Reorder, useDragControls } from 'motion/react'
+
 import * as styles from './CourtRecord.css'
 
 const CourtRecord: FC = () => {
