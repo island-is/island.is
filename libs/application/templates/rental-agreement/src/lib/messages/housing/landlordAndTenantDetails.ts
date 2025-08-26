@@ -37,6 +37,12 @@ export const landlordDetails = defineMessages({
 
     description: 'Applicant already exists on application error',
   },
+  duplicateNationalIdError: {
+    id: 'ra.application:landlordDetails.duplicateNationalIdError',
+    defaultMessage:
+      'Þessi kennitala er þegar skráð í töfluna. Ekki er hægt að skrá sama aðila tvisvar.',
+    description: 'Duplicate national ID error in table',
+  },
 })
 
 export const tenantDetails = defineMessages({
@@ -79,6 +85,12 @@ export const tenantDetails = defineMessages({
     defaultMessage:
       'Sami aðili má ekki vera skráður oftar en einu sinni á leigusamninginn.',
     description: 'Applicant already exists on application error',
+  },
+  duplicateNationalIdError: {
+    id: 'ra.application:tenantDetails.duplicateNationalIdError',
+    defaultMessage:
+      'Þessi kennitala er þegar skráð í töfluna. Ekki er hægt að skrá sama aðila tvisvar.',
+    description: 'Duplicate national ID error in table',
   },
 })
 
