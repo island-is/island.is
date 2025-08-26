@@ -21,7 +21,6 @@ import { Navigation } from 'react-native-navigation'
 import { getConfig } from '../../config'
 import { isIos } from '../devices'
 import { performanceMetrics } from '../performance-metrics'
-import { setupQuickActions } from '../quick-actions'
 import { app } from '../../lib/firebase'
 
 type PatchedStyleSheet = typeof StyleSheet & {
@@ -126,9 +125,6 @@ export function setupGlobals() {
     KeyboardManager.setEnable(true)
     KeyboardManager.setEnableAutoToolbar(true)
     KeyboardManager.setToolbarPreviousNextButtonEnable(true)
-
-    // quick actions
-    setupQuickActions()
   }
 
   // set NSUserDefaults

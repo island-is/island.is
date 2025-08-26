@@ -12,6 +12,7 @@ import { setupEventHandlers } from './utils/lifecycle/setup-event-handlers'
 import { setupGlobals } from './utils/lifecycle/setup-globals'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { performanceMetricsAppLaunched } from './utils/performance-metrics'
+import { setupQuickActions } from './utils/quick-actions'
 
 async function startApp() {
   // setup global packages and polyfills
@@ -54,6 +55,9 @@ async function startApp() {
 
     // Set the app root
     await Navigation.setRoot({ root })
+
+    // Quick actions setup, make sure to call this after setting the root
+    setupQuickActions()
 
     handleInitialUrl()
 
