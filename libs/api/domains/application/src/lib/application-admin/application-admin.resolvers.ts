@@ -61,14 +61,11 @@ export class ApplicationAdminResolver {
     locale: Locale = 'is',
     @Args('input') input: ApplicationTypesInstitutionAdminInput,
   ): Promise<ApplicationTypeAdminInstitution[] | null> {
-    const res =
-      await this.applicationService.findAllApplicationTypesInstitutionAdmin(
-        user,
-        locale,
-        input,
-      )
-    console.log('1 ----- TODOx resolver', res)
-    return res
+    return this.applicationService.findAllApplicationTypesInstitutionAdmin(
+      user,
+      locale,
+      input,
+    )
   }
 
   @Query(() => [ApplicationStatistics], { nullable: true })

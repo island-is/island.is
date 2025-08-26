@@ -119,14 +119,12 @@ export class ApplicationService {
     locale: Locale,
     input: ApplicationTypesInstitutionAdminInput,
   ) {
-    const res = await this.applicationApiWithAuth(
+    return this.applicationApiWithAuth(
       user,
     ).adminControllerGetApplicationTypesInstitutionAdmin({
       nationalId: input.nationalId,
       locale,
     })
-    console.log('2 ----- TODOx service', res)
-    return res
   }
 
   async create(input: CreateApplicationInput, auth: Auth) {

@@ -219,7 +219,7 @@ export class ApplicationService {
       raw: true,
     })
 
-    return results.map((row) => ({ id: row.typeId ?? 'xx' }))
+    return results.map((row) => ({ id: row.typeId }))
   }
 
   async findAllByNationalIdAndFilters(
