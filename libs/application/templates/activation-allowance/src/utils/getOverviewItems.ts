@@ -17,6 +17,7 @@ import {
   languageSkills,
   paymentInformation,
   drivingLicenses,
+  income,
 } from '../lib/messages'
 import { overview } from '../lib/messages/overview'
 import { isSamePlaceOfResidenceChecked } from './isSamePlaceOfResidenceChecked'
@@ -32,6 +33,7 @@ import { Locale } from '@island.is/shared/types'
 import {
   CVAnswers,
   EducationAnswer,
+  IncomeAnswers,
   JobHistoryAnswer,
   LanguageAnswers,
 } from '../lib/dataSchema'
@@ -456,4 +458,46 @@ export const getCVText = (
       ],
     },
   ]
+}
+
+export const getIncomeOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const incomeAnswers = getValueViaPath<IncomeAnswers>(answers, 'income') || []
+  const valueTexts = incomeAnswers.map((income) => {
+    return [
+      {
+        ...overview.labels.employer,
+        values: {
+          value: income.employer,
+        },
+      },
+      {
+        ...overview.labels.paymentMonth,
+        values: {
+          value: income.month,
+        },
+      },
+      {
+        ...overview.labels.income,
+        values: {
+          value: income.salaryIncome,
+        },
+      },
+    ]
+  })
+
+  return (
+    valueTexts.map((val, index) => {
+      return {
+        width: 'full',
+        keyText: {
+          ...overview.labels.incomeHeading,
+          values: { value: index + 1 },
+        },
+        valueText: val,
+      } as KeyValueItem
+    }) || []
+  )
 }

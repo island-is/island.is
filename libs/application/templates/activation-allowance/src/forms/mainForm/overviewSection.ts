@@ -17,6 +17,7 @@ import {
   getLanguageSkillsOverviewItems,
   getCVData,
   getCVText,
+  getIncomeOverviewItems,
 } from '../../utils/getOverviewItems'
 import { FormValue } from '@island.is/application/types'
 import { EducationAnswer, JobHistoryAnswer } from '../../lib/dataSchema'
@@ -45,6 +46,11 @@ export const overviewSection = buildSection({
           id: 'overview.paymentInfo',
           backId: 'paymentInformationMultiField',
           items: getPaymentOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'overview.income',
+          backId: 'incomeMultiField[0]',
+          items: getIncomeOverviewItems,
         }),
         buildOverviewField({
           id: 'overview.jobWishes',
@@ -118,12 +124,12 @@ export const overviewSection = buildSection({
         }),
         buildSubmitField({
           id: 'submit',
-          title: 'Submit',
+          title: overview.labels.submitButtonText,
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: 'SUBMIT',
-              name: 'Submit',
+              name: overview.labels.submitButtonText,
               type: 'primary',
             },
           ],
