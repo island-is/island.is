@@ -22,7 +22,6 @@ import {
   ApplicationStatus,
   ApplicationEvents,
   FieldTypesEnum,
-  ApplicantTypesEnum,
 } from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
@@ -30,8 +29,6 @@ import { ApplicationEvent } from './models/applicationEvent.model'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { User } from '@island.is/auth-nest-tools'
-// import { Applicant } from '../applicants/models/applicant.model'
-// import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
@@ -42,8 +39,6 @@ export class ApplicationsService {
   constructor(
     @InjectModel(Application)
     private readonly applicationModel: typeof Application,
-    // @InjectModel(Applicant)
-    // private readonly applicantModel: typeof Applicant,
     @InjectModel(Value)
     private readonly valueModel: typeof Value,
     @InjectModel(Form)
@@ -100,16 +95,6 @@ export class ApplicationsService {
         } as Application,
         { transaction },
       )
-
-      // await this.applicantModel.create(
-      //   {
-      //     nationalId: user.nationalId,
-      //     applicationId: newApplication.id,
-      //     applicantTypeId: ApplicantTypesEnum.INDIVIDUAL,
-      //     lastLogin: new Date(),
-      //   } as Applicant,
-      //   { transaction },
-      // )
 
       await this.applicationEventModel.create(
         {

@@ -3,7 +3,7 @@ import { FormSystemField } from '@island.is/api/schema'
 /**
  * Find the first field whose fieldSettings contains the given key/value.
  */
-export function getFieldBySettings(
+export const getFieldBySettings = function (
   key: string,
   value: string,
   fields: Array<FormSystemField | null | undefined>,
