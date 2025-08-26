@@ -50,8 +50,8 @@ jobs:
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' && steps.dedupe.outputs.should == 'true' }}
         with:
-          token: ${{ inputs.token || secrets.DIRTY_FIX_BOT_TOKEN || github.token }}
           ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: false
 
       - name: Setup yarn
         if: ${{ steps.dedupe.outputs.should == 'true' }}
@@ -62,6 +62,9 @@ jobs:
         run: yarn dedupe --check
       - name: Deduplicate (write)
         if: ${{ inputs.write && steps.dedupe.outputs.should == 'true' }}
+        env:
+          DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
         run: |
           yarn dedupe
-          ./infra/scripts/ci/git-check-dirty.sh ./yarn.lock dedupe dirtybot
+          node scripts/ci/docker/git-check-dirty.mjs "./yarn.lock" "dedupe" "dirtybot"
