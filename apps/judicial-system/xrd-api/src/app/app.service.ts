@@ -276,9 +276,14 @@ export class AppService {
     policeDocumentId: string,
     updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ) {
+    const parsedPoliceUpdate = {
+      // TODO: Map status and appeal decision
+      serviceDate: updatePoliceDocumentDelivery.servedAt,
+      servedBy: updatePoliceDocumentDelivery.servedBy,
+      comment: updatePoliceDocumentDelivery.comment,
+    }
     try {
       const res = await fetch(
-        // TODO: implement endpoint, backend + table
         `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
         {
           method: 'PATCH',
@@ -286,7 +291,7 @@ export class AppService {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.backend.accessToken}`,
           },
-          body: JSON.stringify(updatePoliceDocumentDelivery),
+          body: JSON.stringify(parsedPoliceUpdate),
         },
       )
 
@@ -294,8 +299,7 @@ export class AppService {
 
       if (res.ok) {
         return {
-          // TODO: not supported atm
-          policeDocumentId: response.policeDocumentId,
+          policeDocumentId: response.externalPoliceDocumentId,
         } as PoliceDocumentDelivery
       }
 
@@ -311,7 +315,7 @@ export class AppService {
 
       throw new BadGatewayException({
         ...reason,
-        message: `Failed to update document delivery information for file type code ${updatePoliceDocumentDelivery.fileTypeCode}`,
+        message: `Failed to update document delivery ${policeDocumentId} information for file type code ${updatePoliceDocumentDelivery.fileTypeCode}`,
       })
     }
   }

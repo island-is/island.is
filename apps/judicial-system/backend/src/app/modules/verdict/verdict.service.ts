@@ -25,6 +25,7 @@ import { Defendant } from '../defendant'
 import { FileService } from '../file'
 import { PoliceService } from '../police'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
+import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Verdict } from './models/verdict.model'
@@ -174,6 +175,14 @@ export class VerdictService {
   async updateRestricted(
     verdict: Verdict,
     update: InternalUpdateVerdictDto,
+  ): Promise<Verdict> {
+    const updatedVerdict = await this.updateVerdict(verdict, update)
+    return updatedVerdict
+  }
+
+  async updatePoliceDelivery(
+    verdict: Verdict,
+    update: PoliceUpdateVerdictDto,
   ): Promise<Verdict> {
     const updatedVerdict = await this.updateVerdict(verdict, update)
     return updatedVerdict

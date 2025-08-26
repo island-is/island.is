@@ -1,6 +1,5 @@
 import { Type } from 'class-transformer'
 import {
-  IsArray,
   IsDate,
   IsEnum,
   IsOptional,
@@ -11,7 +10,7 @@ import {
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
-  InformationForDefendant,
+  ServiceStatus,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
@@ -21,6 +20,17 @@ export class PoliceUpdateVerdictDto {
   @IsDate()
   @ApiPropertyOptional({ type: Date, nullable: true })
   serviceDate?: Date | null
+
+  @IsOptional()
+  @IsEnum(ServiceStatus)
+  @ApiPropertyOptional({ enum: ServiceStatus })
+  serviceStatus?: ServiceStatus
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  comment?: string
 
   @IsOptional()
   @IsString()
@@ -38,10 +48,4 @@ export class PoliceUpdateVerdictDto {
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   appealDate?: Date
-
-  @IsOptional()
-  @IsArray()
-  @IsEnum(InformationForDefendant, { each: true })
-  @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
-  serviceInformationForDefendant?: InformationForDefendant[]
 }

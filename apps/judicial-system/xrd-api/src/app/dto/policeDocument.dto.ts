@@ -33,16 +33,18 @@ export class UpdatePoliceDocumentDeliveryDto {
   servedAt?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean, required: false })
-  delivered?: boolean
+  @IsString()
+  @ApiPropertyOptional({ type: String, required: false })
+  comment?: string
 
+  // TODO: How does RLS want to send us delivery status?
+  // below is a propisal, but ideally it would be GREAT if this could
+  // be managed within a single field :-)
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean, required: false })
   deliveredOnPaper?: boolean
 
-  // TODO: sync with RLS to rename this to a more generic name
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean, required: false })
@@ -53,17 +55,14 @@ export class UpdatePoliceDocumentDeliveryDto {
   @ApiPropertyOptional({ type: Boolean, required: false })
   deliveredToLawyer?: boolean
 
+  // Note: we can't know if a verdict is delivered in the legal paper
+  // but we can know if it is requested
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean, required: false })
-  deliveredInLegalPaper?: boolean
+  requestedDeliveryInLegalPaper?: boolean
 
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String, required: false })
-  comment?: string
-
-  // TODO: sync with RLS on this later
+  // TODO: How does RLS want to send us verdict appeal decision?
   @IsOptional()
   @IsEnum(VerdictAppealDecision)
   @ApiPropertyOptional({ enum: VerdictAppealDecision })
