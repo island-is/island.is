@@ -6,6 +6,7 @@ export enum MultiChoiceFilter {
 }
 
 export type ApplicationFilters = {
+  searchStr?: string
   nationalId?: string
   period: {
     from?: Date

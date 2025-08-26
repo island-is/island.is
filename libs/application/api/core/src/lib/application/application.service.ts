@@ -146,16 +146,16 @@ export class ApplicationService {
     applicantNationalId?: string,
     from?: string,
     to?: string,
-    typeIdFilter?: string,
+    typeIdValue?: string,
+    searchStrValue?: string,
   ): Promise<ApplicationPaginatedResponse> {
     const statuses = status?.split(',').filter(Boolean)
-    const typeIds = typeIdFilter?.split(',').filter(Boolean)
     const institutionTypeIds = getTypeIdsForInstitution(nationalId)
     const toDate = to ? new Date(to) : undefined
     const fromDate = from ? new Date(from) : undefined
 
-    const filteredInstitutionTypeIds = typeIds?.length
-      ? institutionTypeIds.filter((t) => typeIds.includes(t))
+    const filteredInstitutionTypeIds = typeIdValue
+      ? institutionTypeIds.filter((t) => typeIdValue === t)
       : institutionTypeIds
 
     // No applications for this institution ID
@@ -173,6 +173,16 @@ export class ApplicationService {
       ],
     }
 
+    const searchCondition = searchStrValue
+      ? {
+          [Op.or]: [
+            { applicant: { [Op.eq]: searchStrValue } },
+            { assignees: { [Op.contains]: [searchStrValue] } },
+            Sequelize.literal(`"answers"::text ILIKE '%${searchStrValue}%'`),
+          ],
+        }
+      : {}
+
     return this.applicationModel.findAndCountAll({
       where: {
         ...{ typeId: { [Op.in]: filteredInstitutionTypeIds } },
@@ -188,6 +198,7 @@ export class ApplicationService {
                 ],
               }
             : {},
+          searchCondition,
         ],
         isListed: {
           [Op.eq]: true,

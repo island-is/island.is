@@ -70,6 +70,7 @@ export interface ApplicationTemplate<
      * `isListed` - whether the field should be explicitly listed in the admin portal.
      *   - If `false`, the field is only retained so it can be displayed normally until pruning (e.g. in pendingActionCard).
      * `label` - only used when `isListed` is `true`, as the display label in the admin portal.
+     * If array use dollar sign for index ($), e.g. 'key.$.subKey'
      */
     answers?: { key: string; isListed: boolean; label?: StaticText }[]
     /**

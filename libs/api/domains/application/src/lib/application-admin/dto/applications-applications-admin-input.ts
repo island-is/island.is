@@ -43,10 +43,14 @@ export class ApplicationApplicationsInstitutionAdminInput extends OmitType(
   @IsOptional()
   to?: string
 
-  // Note: Need to create new field instead of using typeId because of DelegationGuard
-  @Field(() => [String], { nullable: true })
+  // Note: Need to create new field (typeIdValue) instead of using typeId because of DelegationGuard
+  @Field(() => String, { nullable: true })
   @IsOptional()
-  typeIdFilter?: string[]
+  typeIdValue?: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  searchStrValue?: string
 }
 
 @InputType()

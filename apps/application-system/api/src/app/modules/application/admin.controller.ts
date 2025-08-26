@@ -185,10 +185,15 @@ export class AdminController {
           required: false,
           description: 'Only return results created before specified date',
         },
-        typeIdFilter: {
+        typeIdValue: {
           type: 'string',
           required: false,
           description: 'To filter applications by typeId',
+        },
+        searchStrValue: {
+          type: 'string',
+          required: false,
+          description: 'To filter applications by any search string',
         },
       },
     },
@@ -201,7 +206,8 @@ export class AdminController {
     @Query('applicantNationalId') applicantNationalId?: string,
     @Query('from') from?: string,
     @Query('to') to?: string,
-    @Query('typeIdFilter') typeIdFilter?: string,
+    @Query('typeIdValue') typeIdValue?: string,
+    @Query('searchStrValue') searchStrValue?: string,
   ) {
     return this.applicationService.findAllByInstitutionAndFilters(
       nationalId,
@@ -211,7 +217,8 @@ export class AdminController {
       applicantNationalId,
       from,
       to,
-      typeIdFilter,
+      typeIdValue,
+      searchStrValue,
     )
   }
 

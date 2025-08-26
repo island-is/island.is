@@ -110,7 +110,8 @@ export class ApplicationService {
       applicantNationalId: input.applicantNationalId,
       from: input.from,
       to: input.to,
-      typeIdFilter: input.typeIdFilter?.join(','),
+      typeIdValue: input.typeIdValue,
+      searchStrValue: input.searchStrValue,
     })
   }
 

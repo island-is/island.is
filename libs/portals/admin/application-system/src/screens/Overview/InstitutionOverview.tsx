@@ -23,6 +23,7 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import endOfDay from 'date-fns/endOfDay'
 
 const defaultFilters: ApplicationFilters = {
+  searchStr: '',
   nationalId: '',
   period: {},
 }
@@ -55,6 +56,8 @@ const InstitutionOverview = () => {
     ssr: false,
   })
 
+  const useAdvancedSearch = !!filters.typeId
+
   const {
     data: response,
     loading: queryLoading,
@@ -66,12 +69,17 @@ const InstitutionOverview = () => {
         nationalId: userInfo.profile.nationalId,
         page: page,
         count: pageSize,
-        applicantNationalId: filters.nationalId
-          ? filters.nationalId.replace('-', '')
-          : '',
+        applicantNationalId:
+          !useAdvancedSearch && filters.nationalId
+            ? filters.nationalId.replace('-', '')
+            : '',
         from: filters.period.from?.toISOString(),
         to: filters.period.to?.toISOString(),
-        typeIdFilter: filters.typeId ? [filters.typeId] : undefined,
+        typeIdValue: filters.typeId,
+        searchStrValue:
+          useAdvancedSearch && filters.searchStr
+            ? filters.searchStr.replace('-', '')
+            : undefined,
         status: multiChoiceFilters?.status,
       },
     },
@@ -98,6 +106,13 @@ const InstitutionOverview = () => {
     setFilters((prev) => ({
       ...prev,
       typeId: typeId,
+    }))
+  }
+
+  const handleSearchStrChange = (searchStr: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      searchStr,
     }))
   }
 
@@ -165,6 +180,7 @@ const InstitutionOverview = () => {
       </Text>
       <InstitutionFilters
         onTypeIdChange={handleTypeIdChange}
+        onSearchStrChange={handleSearchStrChange}
         onSearchChange={handleSearchChange}
         onFilterChange={handleMultiChoiceFilterChange}
         onDateChange={handleDateChange}
@@ -172,6 +188,7 @@ const InstitutionOverview = () => {
         multiChoiceFilters={multiChoiceFilters}
         filters={filters}
         numberOfDocuments={numberOfItems}
+        useAdvancedSearch={useAdvancedSearch}
       />
       {isLoading && filters.nationalId?.length === 11 ? (
         <SkeletonLoader
@@ -189,7 +206,7 @@ const InstitutionOverview = () => {
           pageSize={pageSize}
           shouldShowCardButtons={false}
           numberOfItems={numberOfItems}
-          showAdminData={!!filters.typeId}
+          showAdminData={useAdvancedSearch}
         />
       )}
     </Box>

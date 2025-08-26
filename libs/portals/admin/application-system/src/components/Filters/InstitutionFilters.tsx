@@ -23,6 +23,7 @@ import { useGetInstitutionApplicationTypesQuery } from '../../queries/overview.g
 
 interface Props {
   onTypeIdChange: (period: ApplicationFilters['typeId']) => void
+  onSearchStrChange: (query: string) => void
   onSearchChange: (query: string) => void
   onDateChange: (period: ApplicationFilters['period']) => void
   onFilterChange: FilterMultiChoiceProps['onChange']
@@ -30,10 +31,12 @@ interface Props {
   multiChoiceFilters: Record<MultiChoiceFilter, string[] | undefined>
   filters: ApplicationFilters
   numberOfDocuments?: number
+  useAdvancedSearch?: boolean
 }
 
 export const InstitutionFilters = ({
   onTypeIdChange,
+  onSearchStrChange,
   onSearchChange,
   onFilterChange,
   onFilterClear,
@@ -41,8 +44,10 @@ export const InstitutionFilters = ({
   multiChoiceFilters,
   filters,
   numberOfDocuments,
+  useAdvancedSearch,
 }: Props) => {
   const [nationalId, setNationalId] = useState('')
+  const [searchStr, setSearchStr] = useState('')
   const { formatMessage } = useLocale()
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -63,6 +68,14 @@ export const InstitutionFilters = ({
     },
     debounceTime.search,
     [nationalId],
+  )
+
+  useDebounce(
+    () => {
+      onSearchStrChange(searchStr)
+    },
+    debounceTime.search,
+    [searchStr],
   )
 
   useEffect(() => {
@@ -118,17 +131,27 @@ export const InstitutionFilters = ({
           onFilterClear={() => onFilterClear()}
           filterInput={
             <Box display="flex" flexDirection={['column', 'column', 'row']}>
-              <FilterInput
-                placeholder={formatMessage(m.searchPlaceholder)}
-                name="admin-applications-nationalId"
-                value={
-                  nationalId.length > 6
-                    ? formatNationalId(nationalId)
-                    : nationalId
-                }
-                onChange={setNationalId}
-                backgroundColor="blue"
-              />
+              {useAdvancedSearch ? (
+                <FilterInput
+                  placeholder={formatMessage(m.searchStrPlaceholder)}
+                  name="admin-applications-search-str"
+                  value={searchStr}
+                  onChange={setSearchStr}
+                  backgroundColor="blue"
+                />
+              ) : (
+                <FilterInput
+                  placeholder={formatMessage(m.searchPlaceholder)}
+                  name="admin-applications-nationalId"
+                  value={
+                    nationalId.length > 6
+                      ? formatNationalId(nationalId)
+                      : nationalId
+                  }
+                  onChange={setNationalId}
+                  backgroundColor="blue"
+                />
+              )}
               <Box marginX={[0, 0, 2]} marginY={[2, 2, 0]}>
                 <DatePicker
                   id="periodFrom"
