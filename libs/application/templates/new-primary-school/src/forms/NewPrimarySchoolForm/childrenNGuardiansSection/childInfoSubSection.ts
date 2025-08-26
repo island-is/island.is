@@ -1,6 +1,7 @@
 import {
   buildCheckboxField,
   buildCustomField,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -14,6 +15,7 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getApplicationType,
   getGenderMessage,
   getSelectedChild,
 } from '../../../utils/newPrimarySchoolUtils'
@@ -181,6 +183,11 @@ export const childInfoSubSection = buildSubSection({
 
             return childInfo?.differentPlaceOfResidence === YES
           },
+        }),
+        buildHiddenInput({
+          id: 'applicationType',
+          defaultValue: (application: Application) =>
+            getApplicationType(application.externalData),
         }),
       ],
     }),
