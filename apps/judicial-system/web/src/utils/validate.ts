@@ -484,13 +484,20 @@ export const isCourtRecordStepValidRC = (workingCase: Case): boolean => {
 }
 
 export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
+  const validationsWithRuling = !workingCase.isCompletedWithoutRuling
+    ? [
+        [workingCase.conclusion, ['empty']],
+        [workingCase.ruling, ['empty']],
+      ]
+    : []
+
+  console.log({ validationsWithRuling })
   const validations = [
     [workingCase.courtStartDate, ['empty', 'date-format']],
     [workingCase.courtLocation, ['empty']],
     [workingCase.courtEndTime, ['empty', 'date-format']],
     [workingCase.decision, ['empty']],
-    [workingCase.conclusion, ['empty']],
-    [workingCase.ruling, ['empty']],
+    ...validationsWithRuling,
   ] as ValidateItem[]
 
   if (workingCase.sessionArrangements !== SessionArrangements.NONE_PRESENT) {
