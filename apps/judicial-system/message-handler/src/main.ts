@@ -7,6 +7,8 @@ import { LoggingModule } from '@island.is/logging'
 
 import { AppModule, appModuleConfig, MessageHandlerService } from './app'
 
+import '@island.is/infra-tracing'
+
 const bootstrap = async () => {
   const port = process.env.PORT || 3366
 

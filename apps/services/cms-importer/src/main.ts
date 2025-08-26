@@ -1,3 +1,5 @@
+import '@island.is/infra-tracing'
+
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app/app.module'
 import { AppService } from './app/app.service'

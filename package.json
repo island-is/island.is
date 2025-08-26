@@ -382,6 +382,7 @@
     "@nx/workspace": "21.2.2",
     "@openapitools/openapi-generator-cli": "1.0.15-4.3.1",
     "@playwright/test": "1.48",
+    "@pmmmwh/react-refresh-webpack-plugin": "0.6.1",
     "@react-native-community/cli-platform-android": "15.0.1",
     "@react-native/babel-preset": "0.74.87",
     "@react-native/metro-config": "0.74.87",
