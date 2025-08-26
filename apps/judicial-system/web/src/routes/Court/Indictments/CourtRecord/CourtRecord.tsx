@@ -58,12 +58,16 @@ const CourtRecord: FC = () => {
           onReorder={setReorderableItems}
           className={styles.ul}
         >
-          {reorderableItems.map((item, index) => {
+          {reorderableItems.map((item) => {
             return (
               <Reorder.Item key={item.id} value={item} data-reorder-item>
                 <EditableCaseFile
                   enableDrag
-                  caseFile={{ id: item.id, displayText: item.name }}
+                  caseFile={{
+                    id: item.id,
+                    displayText: item.name,
+                    canEdit: true,
+                  }}
                   backgroundColor="white"
                   onOpen={function (id: string): void {
                     throw new Error('Function not implemented.')
@@ -75,15 +79,13 @@ const CourtRecord: FC = () => {
                   ): void {
                     throw new Error('Function not implemented.')
                   }}
-                  onDelete={function (file: TUploadFile): void {
-                    throw new Error('Function not implemented.')
+                  onDelete={(file: TUploadFile) => {
+                    setReorderableItems((prev) =>
+                      prev.filter((i) => i.id !== file.id),
+                    )
                   }}
-                  onStartEditing={function (): void {
-                    throw new Error('Function not implemented.')
-                  }}
-                  onStopEditing={function (): void {
-                    throw new Error('Function not implemented.')
-                  }}
+                  onStartEditing={() => console.log('start')}
+                  onStopEditing={() => console.log('stop')}
                 />
               </Reorder.Item>
             )
