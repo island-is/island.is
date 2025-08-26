@@ -390,12 +390,17 @@ export class ApplicationsService {
     formId: string,
     isTest: boolean,
   ): Promise<ApplicationDto[]> {
-    const delegationType = user.delegationType
-    const nationalId = delegationType ? user.actor?.nationalId : user.nationalId
-    const delegatorNationalId = delegationType ? user.nationalId : null
+    const hasDelegation =
+      Array.isArray(user.delegationType) && user.delegationType.length > 0
+    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
+    const delegatorNationalId = hasDelegation ? user.nationalId : null
 
     const applications = await this.applicationModel.findAll({
-      where: { formId, status: !ApplicationStatus.PRUNED, isTest },
+      where: {
+        formId,
+        status: { [Op.ne]: ApplicationStatus.PRUNED },
+        isTest,
+      },
       include: [{ model: Value, as: 'values' }],
     })
 

@@ -50,7 +50,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
                 },
               })
             }}
-            onBlur={(e) =>
+            onBlur={async (e) =>
               e.target.value !== focus &&
               updateField({
                 variables: {
@@ -58,8 +58,8 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
                     id: currentApplicant.id,
                     updateFieldDto: {
                       name: {
-                        ...currentApplicant.name,
                         is: e.target.value,
+                        en: currentApplicant.name?.en ?? undefined,
                       },
                     },
                   },

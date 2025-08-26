@@ -42,25 +42,31 @@ export class FormApplicantTypesService {
     auth: User,
     input: CreateApplicantInput,
   ): Promise<Screen> {
-    const response = await this.formApplicantTypesApiWithAuth(
-      auth,
-    ).formApplicantTypesControllerCreate(
-      input as FormApplicantTypesControllerCreateRequest,
-    )
-
-    return response as Screen
+    try {
+      const response = await this.formApplicantTypesApiWithAuth(
+        auth,
+      ).formApplicantTypesControllerCreate(
+        input as FormApplicantTypesControllerCreateRequest,
+      )
+      return response as Screen
+    } catch (error) {
+      this.handleError(error, 'formApplicantTypesControllerCreate failed')
+    }
   }
 
   async deleteFormApplicantType(
     auth: User,
     input: DeleteApplicantInput,
   ): Promise<Screen> {
-    const response = await this.formApplicantTypesApiWithAuth(
-      auth,
-    ).formApplicantTypesControllerDelete(
-      input as FormApplicantTypesControllerDeleteRequest,
-    )
-
-    return response as Screen
+    try {
+      const response = await this.formApplicantTypesApiWithAuth(
+        auth,
+      ).formApplicantTypesControllerDelete(
+        input as FormApplicantTypesControllerDeleteRequest,
+      )
+      return response as Screen
+    } catch (error) {
+      this.handleError(error, 'formApplicantTypesControllerDelete failed')
+    }
   }
 }

@@ -4,12 +4,15 @@ module.exports = {
   async up(queryInterface /*, Sequelize */) {
     return queryInterface.sequelize.transaction(async (t) => {
       // Drop dependent table first (if any FK to applicant)
-      await queryInterface
-        .dropTable('form_applicant_type', { transaction: t })
-        .catch(() => {})
-      await queryInterface
-        .dropTable('applicant', { transaction: t })
-        .catch(() => {})
+      await queryInterface.sequelize.query(
+        'DROP TABLE IF EXISTS form_applicant_type',
+        { transaction: t },
+      )
+      await queryInterface.sequelize.query(
+        'DROP TABLE IF EXISTS applicant',
+        { transaction: t },
+      )
+        .catch(() => { })
     })
   },
 
@@ -26,8 +29,8 @@ module.exports = {
             defaultValue: Sequelize.UUIDV4,
           },
           name: {
-            type: Sequelize.JSON,
-            allowNull: false,
+            type: Sequelize.STRING,
+            allowNull: true,
           },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',

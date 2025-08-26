@@ -93,6 +93,7 @@ export class ValueTypeFactory {
           'postalCode',
           'municipality',
           'email',
+          'phoneNumber',
           'delegationType',
         ]
         return this.pickSettings(valueType, keys)

@@ -146,6 +146,9 @@ export class FormApplicantTypesService {
       ],
     })
 
+    if (!partiesSection) {
+      throw new NotFoundException('PARTIES section not found for form')
+    }
     const targetScreen = partiesSection?.screens?.find((screen) =>
       (screen.fields ?? []).some(
         (f) =>
@@ -234,6 +237,8 @@ export class FormApplicantTypesService {
       'displayOrder',
       'isCompleted',
       'callRuleset',
+      'isHidden',
+      'multiset',
     ]
     const screenDto: ScreenDto = defaults(
       pick(screen, screenKeys),

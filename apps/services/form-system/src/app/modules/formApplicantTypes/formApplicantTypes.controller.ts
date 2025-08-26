@@ -42,12 +42,13 @@ export class FormApplicantTypesController {
   }
 
   @ApiOperation({ summary: 'Delete form applicant' })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Delete form applicant',
     type: ScreenDto,
   })
   @ApiBody({ type: DeleteFormApplicantTypeDto })
   @Delete()
+  @HttpCode(200)
   async delete(
     @Body() deleteFormApplicantTypeDto: DeleteFormApplicantTypeDto,
   ): Promise<ScreenDto> {
