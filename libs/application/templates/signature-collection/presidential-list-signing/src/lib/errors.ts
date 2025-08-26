@@ -20,7 +20,7 @@ export const errorMessages = {
       description: '',
     },
     summary: {
-      id: 'sls.application:error.citizenship.summary',
+      id: 'sls.application:error.citizenship.summary#markdown',
       defaultMessage: 'Þú þarft að vera með íslenskt ríkisfang',
       description: '',
     },
@@ -41,12 +41,12 @@ export const errorMessages = {
   residency: defineMessages({
     title: {
       id: 'sls.application:error.residency.title',
-      defaultMessage: 'Ekki með búsetu á Íslandi',
+      defaultMessage: 'Ekki með lögheimili á Íslandi',
       description: '',
     },
     summary: {
       id: 'sls.application:error.residency.summary',
-      defaultMessage: 'Skilyrði um búsetu á Íslandi eru ekki uppfyllt',
+      defaultMessage: 'Skilyrði um lögheimili á Íslandi eru ekki uppfyllt',
       description: '',
     },
   }),

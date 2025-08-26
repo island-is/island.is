@@ -876,7 +876,7 @@ export const createCollectionErrorMessages = defineMessages({
   },
   residency: {
     id: 'admin-portal.signature-collection:residency',
-    defaultMessage: 'Eftirfarandi aðili er ekki með búsetu á Íslandi.',
+    defaultMessage: 'Eftirfarandi aðili er ekki með lögheimili á Íslandi.',
     description: '',
   },
   active: {
