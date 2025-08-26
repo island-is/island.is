@@ -17,6 +17,7 @@ import {
   toast,
   UploadFile,
 } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
 import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
@@ -24,7 +25,6 @@ import { CaseFileCategory } from '../../graphql/schema'
 import { TUploadFile } from '../../utils/hooks'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
-import { Colors } from '@island.is/island-ui/theme'
 
 export interface TEditableCaseFile {
   id: string
