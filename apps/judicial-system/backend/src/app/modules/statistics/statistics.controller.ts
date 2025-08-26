@@ -20,6 +20,7 @@ import {
 } from './models/caseStatistics.response'
 import { SubpoenaStatistics } from './models/subpoenaStatistics.response'
 import { CaseDataExportDto } from './statistics/caseDataExport.dto'
+import { ExportDataResponse } from './statistics/exportData.response'
 import { IndictmentStatisticsDto } from './statistics/indictmentStatistics.dto'
 import { RequestStatisticsDto } from './statistics/requestStatistics.dto'
 import { SubpoenaStatisticsDto } from './statistics/subpoenaStatistics.dto'
@@ -117,8 +118,8 @@ export class StatisticsController {
   @RolesRules(adminRule, localAdminRule)
   @Get('cases/statistics/export-csv')
   @ApiOkResponse({
-    type: String,
-    description: 'Export transformed event case data',
+    description: 'Export transformed request case data',
+    type: ExportDataResponse,
   })
   exportCaseEventData(
     @CurrentHttpUser() user: User,

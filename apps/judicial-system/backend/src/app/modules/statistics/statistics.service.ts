@@ -1,4 +1,5 @@
 import stringify from 'csv-stringify'
+import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
@@ -66,7 +67,7 @@ const isDateInPeriod = (
 }
 
 const getDateString = (date?: Date) =>
-  new Date(date ?? Date.now()).toISOString().split('T')[0] // Gets the date in YYYY-MM-DD format
+  format(date ? new Date(date) : new Date(), 'yyyy-MM-dd')
 
 export const partition = <T>(
   array: T[],
@@ -714,13 +715,13 @@ export class StatisticsService {
       }
 
       try {
-        this.awsS3Service.uploadCsvToS3(key, csvOutput)
+        await this.awsS3Service.uploadCsvToS3(key, csvOutput)
       } catch (error) {
         this.logger.error(`Failed to upload csv ${key} to AWS S3`, { error })
       }
     })
 
-    const url = await this.awsS3Service.getSignedUrl('statistics', key, 60 * 60) // timeToLive: 1H
+    const url = await this.awsS3Service.getSignedUrl('statistics', key, 60 * 60) // TTL: 1h
     return { url }
   }
 }
