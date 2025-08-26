@@ -21629,7 +21629,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserify-zlib@npm:^0.2.0":
+"browserify-zlib@npm:0.2.0, browserify-zlib@npm:^0.2.0":
   version: 0.2.0
   resolution: "browserify-zlib@npm:0.2.0"
   dependencies:
@@ -33023,6 +33023,7 @@ __metadata:
     babel-plugin-transform-imports: "npm:2.0.0"
     beygla: "npm:1.5.2"
     bottleneck: "npm:2.19.5"
+    browserify-zlib: "npm:0.2.0"
     bull: "npm:4.10.4"
     cache-manager: "npm:5.2.3"
     cache-manager-ioredis-yet: "npm:1.1.0"

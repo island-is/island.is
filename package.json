@@ -161,6 +161,7 @@
     "aws4": "1.11.0",
     "axios": "1.7.2",
     "bottleneck": "2.19.5",
+    "browserify-zlib": "0.2.0",
     "bull": "4.10.4",
     "cache-manager": "5.2.3",
     "cache-manager-ioredis-yet": "1.1.0",
