@@ -32,7 +32,6 @@ import { Locale } from '@island.is/shared/types'
 import { IncomeCheckboxValues } from '@island.is/application/templates/activation-allowance'
 import { MONTH_LOOKUP } from './constants'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { throwError } from 'rxjs'
 
 export const parseDateSafe = (dateStr?: string): Date | undefined => {
   if (!dateStr) return undefined
