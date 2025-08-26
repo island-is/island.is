@@ -31,12 +31,11 @@ import { AwsS3Service } from '../aws-s3'
 import { Case, DateLog } from '../case'
 import { Defendant, DefendantEventLog } from '../defendant'
 import { EventLog } from '../event-log'
-import { IndictmentCount } from '../indictment-count'
-import { Offense } from '../indictment-count/models/offense.model'
+import { IndictmentCount, Offense } from '../indictment-count'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena } from '../subpoena'
-import { Verdict } from '../verdict/models/verdict.model'
+import { Verdict } from '../verdict'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
