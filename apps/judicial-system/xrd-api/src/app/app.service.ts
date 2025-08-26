@@ -294,6 +294,8 @@ export class AppService {
           body: JSON.stringify(parsedPoliceUpdate),
         },
       )
+      // TODO: Call verdict-appeal endpoint to validate and update the appeal decision specifically
+      // once service date has been recorded for the verdict
 
       const response = await res.json()
 

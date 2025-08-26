@@ -163,7 +163,7 @@ export class InternalVerdictController {
 
   @UseGuards(ExternalPoliceVerdictExistsGuard)
   @Patch('verdict/:policeDocumentId')
-  updateVerdict(
+  async updateVerdict(
     @Param('policeDocumentId') policeDocumentId: string,
     @CurrentVerdict() verdict: Verdict,
     @Body() update: PoliceUpdateVerdictDto,
@@ -171,8 +171,7 @@ export class InternalVerdictController {
     this.logger.debug(
       `Updating verdict by external police document id ${policeDocumentId}`,
     )
-
-    return this.verdictService.updatePoliceDelivery(verdict, update)
+    return await this.verdictService.updatePoliceDelivery(verdict, update)
   }
 
   @UseGuards(

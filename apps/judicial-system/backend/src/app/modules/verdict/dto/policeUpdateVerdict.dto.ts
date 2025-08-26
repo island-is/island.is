@@ -9,10 +9,7 @@ import {
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import {
-  ServiceStatus,
-  VerdictAppealDecision,
-} from '@island.is/judicial-system/types'
+import { ServiceStatus } from '@island.is/judicial-system/types'
 
 export class PoliceUpdateVerdictDto {
   @IsOptional()
@@ -37,15 +34,4 @@ export class PoliceUpdateVerdictDto {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   servedBy?: string
-
-  @IsOptional()
-  @IsEnum(VerdictAppealDecision)
-  @ApiPropertyOptional({ enum: VerdictAppealDecision })
-  appealDecision?: VerdictAppealDecision
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  appealDate?: Date
 }
