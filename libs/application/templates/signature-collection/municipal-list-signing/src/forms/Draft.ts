@@ -12,12 +12,12 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
-import { IndividualDto } from '@island.is/clients/national-registry-v2'
 import { format as formatNationalId } from 'kennitala'
 
 export const Draft: Form = buildForm({
@@ -132,11 +132,12 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ externalData }: Application) => {
-                const municipalIdentity = getValueViaPath<IndividualDto>(
-                  externalData,
-                  'municipalIdentity.data',
-                )
-                return municipalIdentity?.legalDomicile?.locality
+                const municipality =
+                  getValueViaPath<NationalRegistryIndividual>(
+                    externalData,
+                    'nationalRegistry.data',
+                  )?.address?.locality
+                return municipality
               },
             }),
             buildSubmitField({

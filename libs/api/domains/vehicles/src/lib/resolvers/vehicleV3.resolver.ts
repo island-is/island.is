@@ -33,6 +33,7 @@ export class VehiclesV3Resolver {
   ) {
     return this.vehiclesService.getVehiclesListV3(user, input)
   }
+
   @Scopes(ApiScope.vehicles)
   @Query(() => MileageRegistrationHistory, {
     name: 'vehiclesMileageRegistrationHistory',
