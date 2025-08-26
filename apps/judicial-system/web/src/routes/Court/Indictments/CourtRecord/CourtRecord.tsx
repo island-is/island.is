@@ -89,7 +89,12 @@ const CourtRecord: FC = () => {
             )
           })}
         </Reorder.Group>
-        <Box display="flex" flexDirection="column" rowGap={2}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="spaceAround"
+          rowGap={2}
+        >
           {reorderableItems.map((item, index) => (
             <Box key={item.name}>
               <Tag variant="darkerBlue" outlined disabled>
