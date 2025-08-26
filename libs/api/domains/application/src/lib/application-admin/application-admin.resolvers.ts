@@ -52,7 +52,6 @@ export class ApplicationAdminResolver {
     return this.applicationService.findAllInstitutionAdmin(user, locale, input)
   }
 
-  // TODOx use nationalId from user instead of input
   @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   async applicationTypesInstitutionAdmin(
