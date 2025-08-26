@@ -86,6 +86,7 @@
     "react-native-share": "12.1.0",
     "react-native-spotlight-search": "2.2.0",
     "react-native-svg": "15.12.1",
+    "react-native-svg-transformer": "1.5.1",
     "react-native-vision-camera": "4.7.1",
     "react-native-webview": "13.13.1",
     "react-native-widgetkit": "1.0.9",

@@ -2148,7 +2148,7 @@ DEPENDENCIES:
   - RNQuickAction (from `../../../../node_modules/react-native-quick-actions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNShare (from `../../../../node_modules/react-native-share`)
-  - RNSVG (from `../node_modules/react-native-svg`)
+  - RNSVG (from `../../../../node_modules/react-native-svg`)
   - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - Yoga (from `../../../../node_modules/react-native/ReactCommon/yoga`)
 
@@ -2407,7 +2407,7 @@ EXTERNAL SOURCES:
   RNShare:
     :path: "../../../../node_modules/react-native-share"
   RNSVG:
-    :path: "../node_modules/react-native-svg"
+    :path: "../../../../node_modules/react-native-svg"
   VisionCamera:
     :path: "../node_modules/react-native-vision-camera"
   Yoga:

@@ -1,14 +1,8 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import {
-  Image,
-  RefreshControl,
-  SafeAreaView,
-  ScrollView,
-  View,
-} from 'react-native'
+import { Image, RefreshControl, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { useTheme } from 'styled-components'
+import styled, { useTheme } from 'styled-components/native'
 
 import { EmptyList, StatusCardSkeleton } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-jobs-s3.png'
@@ -23,6 +17,11 @@ import { useLocale } from '../../hooks/use-locale'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsPreview } from './components/applications-preview'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+
+const Host = styled.SafeAreaView`
+  flex: 1;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+`
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -134,7 +133,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   }, [applicationsRes])
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <Host>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
@@ -185,7 +184,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         />
       </ScrollView>
       <BottomTabsIndicator index={3} total={5} />
-    </SafeAreaView>
+    </Host>
   )
 }
 

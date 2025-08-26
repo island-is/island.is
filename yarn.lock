@@ -14900,6 +14900,7 @@ __metadata:
     react-native-share: "npm:12.1.0"
     react-native-spotlight-search: "npm:2.2.0"
     react-native-svg: "npm:15.12.1"
+    react-native-svg-transformer: "npm:1.5.1"
     react-native-vision-camera: "npm:4.7.1"
     react-native-webview: "npm:13.13.1"
     react-native-widgetkit: "npm:1.0.9"
@@ -19284,13 +19285,6 @@ __metadata:
   version: 0.77.3
   resolution: "@react-native/normalize-colors@npm:0.77.3"
   checksum: 10/08be5ac97da4abb765484f04403980225554674f36a4f1dd39224b04cec6d09d56d7b8634d8fd8ef345bb89576ea7dcd05eb395492cf69be86af6c01efab21af
-  languageName: node
-  linkType: hard
-
-"@react-native/normalize-colors@npm:^0.74.1":
-  version: 0.74.88
-  resolution: "@react-native/normalize-colors@npm:0.74.88"
-  checksum: 10/997f3c4f50832a34b0624dfcfc4b8c33ce84462e62d4abc4bee8cd71aea9ed1f378a28f792408813bfb26fd903800595930d643721014b684a309ac814edacfa
   languageName: node
   linkType: hard
 
@@ -30739,15 +30733,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-in-js-utils@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "css-in-js-utils@npm:3.1.0"
-  dependencies:
-    hyphenate-style-name: "npm:^1.0.3"
-  checksum: 10/bd2f569f1870389004cfacfd7b798c0f40933d34af1f040c391a08322d097790b9a9524affb2ba4d26122e9cb8f4256afb59edb6077dbe607506944a9c673c67
-  languageName: node
-  linkType: hard
-
 "css-loader@npm:^6.4.0, css-loader@npm:^6.7.1":
   version: 6.8.1
   resolution: "css-loader@npm:6.8.1"
@@ -35279,13 +35264,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-loops@npm:^1.1.3":
-  version: 1.1.4
-  resolution: "fast-loops@npm:1.1.4"
-  checksum: 10/52516fc8bb95a60e512271e731c4dc7b7672af90c5e54681004ee2f509d6ccc8e62d5222e731377dafd48a31218f915fd6d0d02efe602b1b822e1ff93994d2a6
-  languageName: node
-  linkType: hard
-
 "fast-memoize@npm:^2.5.2":
   version: 2.5.2
   resolution: "fast-memoize@npm:2.5.2"
@@ -35420,7 +35398,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fbjs@npm:^3.0.0, fbjs@npm:^3.0.4":
+"fbjs@npm:^3.0.0":
   version: 3.0.5
   resolution: "fbjs@npm:3.0.5"
   dependencies:
@@ -38322,13 +38300,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hyphenate-style-name@npm:^1.0.3":
-  version: 1.1.0
-  resolution: "hyphenate-style-name@npm:1.1.0"
-  checksum: 10/b9ed74e29181d96bd58a2d0e62fc4a19879db591dba268275829ff0ae595fcdf11faafaeaa63330a45c3004664d7db1f0fc7cdb372af8ee4615ed8260302c207
-  languageName: node
-  linkType: hard
-
 "hypher@npm:0.2.5":
   version: 0.2.5
   resolution: "hypher@npm:0.2.5"
@@ -38676,16 +38647,6 @@ __metadata:
   dependencies:
     css-in-js-utils: "npm:^2.0.0"
   checksum: 10/f5657337f81e2730c59b02c93d277c376ca67aef5a068bd05c51b5132e72d3de65262a1f3088e39713a70409fb0a1f57deb422dda18df910eabf81a53ff3b9c2
-  languageName: node
-  linkType: hard
-
-"inline-style-prefixer@npm:^6.0.1":
-  version: 6.0.4
-  resolution: "inline-style-prefixer@npm:6.0.4"
-  dependencies:
-    css-in-js-utils: "npm:^3.1.0"
-    fast-loops: "npm:^1.1.3"
-  checksum: 10/5ee7a082b4d23ac220fabe2353a8452bd50c587ae0d9e20e6c0f4ebc456377c7a3a4ce9d13486e0cfc9032db00d9b0ae33d3944a183340b1b3d34cef2d5df80b
   languageName: node
   linkType: hard
 
@@ -40223,11 +40184,7 @@ __metadata:
     react-keyed-flatten-children: "npm:1.2.0"
     react-modal: "npm:3.15.1"
     react-native-fs: "npm:2.20.0"
-    react-native-svg: "npm:15.8.0"
-    react-native-svg-transformer: "npm:1.5.1"
-    react-native-svg-web: "npm:~1.0.9"
     react-native-url-polyfill: "npm:2.0.0"
-    react-native-web: "npm:0.19.13"
     react-number-format: "npm:4.9.1"
     react-pdf: "npm:9.1.0"
     react-popper: "npm:2.3.0"
@@ -51131,17 +51088,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-svg-web@npm:~1.0.9":
-  version: 1.0.9
-  resolution: "react-native-svg-web@npm:1.0.9"
-  peerDependencies:
-    prop-types: "*"
-    react: "*"
-    react-native-web: ">= 0.10.1"
-  checksum: 10/fb217afb275a3e06f8c4e5e79d6099cdabb16fa294cd7611bc4cdbbc3ffcaa6c848cdb23dbe7673d11ab57a635c82a0f752a627fbc183f4884c255346f1c53e5
-  languageName: node
-  linkType: hard
-
 "react-native-svg@npm:15.12.1":
   version: 15.12.1
   resolution: "react-native-svg@npm:15.12.1"
@@ -51153,20 +51099,6 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/aa7b3a54cf2eb52aeb1322ba4a3f63176d4da0725ea4b9ec0051a59df0a511dc189fd101abf7993e94676c1cdea736e4abb207a0aea6f3083b5982c48e4648ac
-  languageName: node
-  linkType: hard
-
-"react-native-svg@npm:15.8.0":
-  version: 15.8.0
-  resolution: "react-native-svg@npm:15.8.0"
-  dependencies:
-    css-select: "npm:^5.1.0"
-    css-tree: "npm:^1.1.3"
-    warn-once: "npm:0.1.1"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10/9a60d1f33539c41ca50b2c21e6d8909e52a3bdf67b29b9231c7ffe72120fc8cb6d7fca45723bd9219b993202ade2343c97c7e4f53de7ee2446279ac91426b096
   languageName: node
   linkType: hard
 
@@ -51198,25 +51130,6 @@ __metadata:
     react-native-worklets-core:
       optional: true
   checksum: 10/706db577a13748b029179d31bde00e67744e2d7c93d65448922b92b105df5d126aa5c4a969bd1780890eb153fe92ae5703f400b1e08d6d3b8c8d185bb3391dfe
-  languageName: node
-  linkType: hard
-
-"react-native-web@npm:0.19.13":
-  version: 0.19.13
-  resolution: "react-native-web@npm:0.19.13"
-  dependencies:
-    "@babel/runtime": "npm:^7.18.6"
-    "@react-native/normalize-colors": "npm:^0.74.1"
-    fbjs: "npm:^3.0.4"
-    inline-style-prefixer: "npm:^6.0.1"
-    memoize-one: "npm:^6.0.0"
-    nullthrows: "npm:^1.1.1"
-    postcss-value-parser: "npm:^4.2.0"
-    styleq: "npm:^0.1.3"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 10/65e0660fb37c1f7e3864a7b506acdd3bbf249de516166775cbf2f371bc28f6e965bc01cbd214bfe820c1a933aee58b6fb29298ccd0dc5f412f147a57e7126dd9
   languageName: node
   linkType: hard
 
@@ -55846,13 +55759,6 @@ __metadata:
   peerDependencies:
     postcss: ^8.2.15
   checksum: 10/95c31f29b339f09d38b7bf78e3b7b4de01ecf06217d59a62e44f4f59abb8569483ba36952000516ae28cfc0fdf26b69c11fab65fdb36cef611725fd04ac9bdf3
-  languageName: node
-  linkType: hard
-
-"styleq@npm:^0.1.3":
-  version: 0.1.3
-  resolution: "styleq@npm:0.1.3"
-  checksum: 10/9a75a1b635f8ebf5c0fdc3ffb56f466254f29aa1b2962ab2af776015d3b3bb1732a53edcda0c9ac9b97be96c22459db768feac0d61c1a319cc3954011ca9dcd8
   languageName: node
   linkType: hard
 
