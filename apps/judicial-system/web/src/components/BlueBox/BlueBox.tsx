@@ -1,5 +1,5 @@
-import cn from 'classnames'
 import { FC, PropsWithChildren } from 'react'
+import cn from 'classnames'
 
 import { TestSupport } from '@island.is/island-ui/utils'
 
