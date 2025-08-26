@@ -176,15 +176,22 @@ export const InstitutionFilters = ({
             ]}
           />
         </Filter>
-
-        {numberOfDocuments !== undefined && (
+      </Box>
+      {numberOfDocuments !== undefined && (
+        <Box
+          display="flex"
+          flexDirection="row"
+          justifyContent="flexEnd"
+          alignItems="center"
+          width="full"
+        >
           <Hidden below="md">
             <Text variant="small" fontWeight="semiBold" whiteSpace="nowrap">
               {formatMessage(m.resultCount, { count: numberOfDocuments })}
             </Text>
           </Hidden>
-        )}
-      </Box>
+        </Box>
+      )}
     </>
   )
 }
