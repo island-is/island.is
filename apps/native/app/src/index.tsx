@@ -3,6 +3,7 @@ import { Navigation } from 'react-native-navigation'
 import { initializeApolloClient } from './graphql/client'
 import { readAuthorizeResult } from './stores/auth-store'
 import { showAppLockOverlay } from './utils/app-lock'
+import { isIos } from './utils/devices'
 import { getDefaultOptions } from './utils/get-default-options'
 import { getAppRoot } from './utils/lifecycle/get-app-root'
 import { handleInitialUrl } from './utils/lifecycle/handle-initial-url'
@@ -56,8 +57,10 @@ async function startApp() {
     // Set the app root
     await Navigation.setRoot({ root })
 
-    // Quick actions setup, make sure to call this after setting the root
-    setupQuickActions()
+    if (isIos) {
+      // Quick actions setup, make sure to call this after setting the root
+      setupQuickActions()
+    }
 
     handleInitialUrl()
 
