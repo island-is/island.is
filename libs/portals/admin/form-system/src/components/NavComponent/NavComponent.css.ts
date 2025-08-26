@@ -12,6 +12,7 @@ const base = style({
     fontWeight: 'bolder',
   },
   cursor: 'grab',
+  flexShrink: 0,
 })
 
 export const step = style({
@@ -69,9 +70,14 @@ export const navComponent = styleVariants({
 
 const baseBackground = style({
   width: '25px',
+  minWidth: '25px',
   height: '44px',
   borderRadius: `${theme.border.radius.standard} 0 0 ${theme.border.radius.standard}`,
   textAlign: 'center',
+  flex: '0 0 25px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 })
 
 export const navBackgroundActive = styleVariants({

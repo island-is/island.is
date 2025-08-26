@@ -120,6 +120,7 @@ export const NavComponent = ({
             paddingLeft={2}
             overflow="hidden"
             display="flex"
+            minWidth={0}
             alignItems="center"
             justifyContent="center"
           >
@@ -151,7 +152,6 @@ export const NavComponent = ({
             display: 'flex',
             flexDirection: 'row',
           }}
-          overflow="hidden"
         >
           <Box
             id="1"
@@ -164,11 +164,14 @@ export const NavComponent = ({
             {/* {index} */}
           </Box>
           <Box
-            id="2"
+            data-testid="navcomponent-content"
             paddingLeft={1}
             display="flex"
             alignItems="center"
-            justifyContent="center"
+            flexGrow={1}
+            minWidth={0}
+            overflow="hidden"
+            justifyContent="flexStart"
           >
             <Text
               id={`formSystem.${type.toLowerCase()}.name`}
