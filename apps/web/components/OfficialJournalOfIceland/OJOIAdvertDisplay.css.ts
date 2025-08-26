@@ -9,7 +9,7 @@ export const departmentDate = style({
 
 export const advertDescription = style({
   width: '90%',
-  margin: '0 auto'
+  margin: '0 auto',
 })
 
 export const bodyText = style({})
