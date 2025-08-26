@@ -380,8 +380,8 @@ export const getIncome = (
 
   const incomePayload: Array<ActivationGrantIncomeFormDTO> = incomeAnswers.map(
     (income, index) => {
-      const employerSSN = incomeExternal[index].employerSSN
-      const year = incomeExternal[index].year
+      const employerSSN = incomeExternal?.[index]?.employerSSN
+      const year = incomeExternal?.[index]?.year
       const hasEnded = income.hasEmploymentEnded === YES
       const unpaidVacationDays = income.numberOfLeaveDays
         ? parseInt(income.numberOfLeaveDays, 10)
