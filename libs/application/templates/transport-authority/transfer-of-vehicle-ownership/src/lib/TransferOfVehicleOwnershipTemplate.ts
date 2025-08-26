@@ -134,7 +134,11 @@ const template: ApplicationTemplate<
         isListed: true,
         label: information.labels.buyer.nationalId,
       },
-      { key: 'pickVehicle.plate', isListed: false },
+      {
+        key: 'pickVehicle.plate',
+        isListed: true,
+        label: information.labels.pickVehicle.vehicle,
+      },
       { key: 'buyer', isListed: false },
       { key: 'buyerCoOwnerAndOperator', isListed: false },
       { key: 'sellerCoOwner', isListed: false },

@@ -32,7 +32,7 @@ import {
   CurrentVehiclesApi,
   MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
-import { application as applicationMessage } from './messages'
+import { application as applicationMessage, information } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -126,7 +126,11 @@ const template: ApplicationTemplate<
   adminDataConfig: {
     whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
     answers: [
-      { key: 'pickVehicle.plate', isListed: false },
+      {
+        key: 'pickVehicle.plate',
+        isListed: true,
+        label: information.labels.pickVehicle.vehicle,
+      },
       { key: 'ownerCoOwners', isListed: false },
       { key: 'coOwners', isListed: false },
     ],

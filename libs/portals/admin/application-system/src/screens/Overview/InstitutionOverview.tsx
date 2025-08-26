@@ -189,6 +189,7 @@ const InstitutionOverview = () => {
           pageSize={pageSize}
           shouldShowCardButtons={false}
           numberOfItems={numberOfItems}
+          showAdminData={!!filters.typeId}
         />
       )}
     </Box>

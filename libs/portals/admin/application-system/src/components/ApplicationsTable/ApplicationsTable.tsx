@@ -34,6 +34,7 @@ interface Props {
   organizations: Organization[]
   shouldShowCardButtons?: boolean
   numberOfItems?: number // Set this if using paginated data from api
+  showAdminData?: boolean
 }
 
 export const ApplicationsTable = ({
@@ -44,6 +45,7 @@ export const ApplicationsTable = ({
   organizations,
   shouldShowCardButtons = true,
   numberOfItems,
+  showAdminData,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -88,10 +90,15 @@ export const ApplicationsTable = ({
         <T.Head>
           <T.Row>
             <T.HeadData>{formatMessage(m.dateCreated)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.application)}</T.HeadData>
+            {!showAdminData && (
+              <T.HeadData>{formatMessage(m.application)}</T.HeadData>
+            )}
             <T.HeadData>{formatMessage(m.applicant)}</T.HeadData>
             <T.HeadData>{formatMessage(m.nationalId)}</T.HeadData>
-            {/* <T.HeadData>Admin data</T.HeadData> */}
+            {showAdminData &&
+              applications[0]?.adminData?.map((x) => (
+                <T.HeadData>{formatMessage(x.label) ?? ''}</T.HeadData>
+              ))}
             <T.HeadData>{formatMessage(m.dateModified)}</T.HeadData>
             <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
             <T.HeadData>{formatMessage(m.status)}</T.HeadData>
@@ -124,25 +131,28 @@ export const ApplicationsTable = ({
                       <T.Data text={{ color: cellText }}>
                         {format(new Date(application.created), 'dd.MM.yyyy')}
                       </T.Data>
-                      <T.Data>
-                        <Text
-                          variant="eyebrow"
-                          color={application.pruned ? 'dark300' : 'blue400'}
-                        >
-                          {application.name}
-                        </Text>
-                      </T.Data>
+                      {!showAdminData && (
+                        <T.Data>
+                          <Text
+                            variant="eyebrow"
+                            color={application.pruned ? 'dark300' : 'blue400'}
+                          >
+                            {application.name}
+                          </Text>
+                        </T.Data>
+                      )}
                       <T.Data text={{ color: cellText }}>
                         {application.applicantName ?? ''}
                       </T.Data>
                       <T.Data text={{ color: cellText }}>
                         {application.applicant}
                       </T.Data>
-                      {/* <T.Data text={{ color: cellText }}>
-                        {application.adminData
-                          ?.map((x) => `${formatMessage(x.label)}: ${x.value}`)
-                          ?.join('\n') ?? ''}
-                      </T.Data> */}
+                      {showAdminData &&
+                        application.adminData?.map((x) => (
+                          <T.Data text={{ color: cellText }}>
+                            {x.value ?? ''}
+                          </T.Data>
+                        ))}
                       <T.Data text={{ color: cellText }}>
                         {format(new Date(application.modified), 'dd.MM.yyyy')}
                       </T.Data>

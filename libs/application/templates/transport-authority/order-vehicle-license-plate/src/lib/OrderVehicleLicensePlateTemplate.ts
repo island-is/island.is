@@ -17,7 +17,7 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { application as applicationMessage } from './messages'
+import { application as applicationMessage, information } from './messages'
 import { ApiActions } from '../shared'
 import { OrderVehicleLicensePlateSchema } from './dataSchema'
 import {
@@ -73,7 +73,8 @@ const template: ApplicationTemplate<
     answers: [
       {
         key: 'pickVehicle.plate',
-        isListed: false,
+        isListed: true,
+        label: information.labels.pickVehicle.vehicle,
       },
     ],
     externalData: [{ key: 'identity.data.name' }],
