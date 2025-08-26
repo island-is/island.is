@@ -18,7 +18,7 @@ class AppDelegate: RNNAppDelegate, RNAppAuthAuthorizationFlowManager {
 
     override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
-        
+
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
@@ -35,6 +35,7 @@ class AppDelegate: RNNAppDelegate, RNAppAuthAuthorizationFlowManager {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
+        // Handle AppAuth web flow
         if userActivity.activityType == NSUserActivityTypeBrowsingWeb,
            let delegate = authorizationFlowManagerDelegate,
            delegate.resumeExternalUserAgentFlow(with: userActivity.webpageURL)
@@ -42,6 +43,10 @@ class AppDelegate: RNNAppDelegate, RNAppAuthAuthorizationFlowManager {
             return true
         }
 
+        // Spotlight Search
+        RCTSpotlightSearch.handleContinue(userActivity)
+
+        // React Native Linking fallback
         return RCTLinkingManager.application(
             application,
             continue: userActivity,
@@ -49,10 +54,19 @@ class AppDelegate: RNNAppDelegate, RNAppAuthAuthorizationFlowManager {
         )
     }
 
+    override func application(
+        _: UIApplication,
+        performActionFor shortcutItem: UIApplicationShortcutItem,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
+        // Handle quick actions
+        RNQuickActionManager.onQuickActionPress(shortcutItem, completionHandler: completionHandler)
+    }
+
     override func extraModules(for bridge: RCTBridge) -> [RCTBridgeModule] {
         return ReactNativeNavigation.extraModules(for: bridge)
     }
-    
+
     override func sourceURL(for _: RCTBridge) -> URL? {
         #if DEBUG
             RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
