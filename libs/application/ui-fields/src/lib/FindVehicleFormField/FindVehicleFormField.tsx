@@ -185,8 +185,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       }
     }
 
-    console.log('machineDetails', machineDetails)
-
     setValue(
       `${field.id}.paymentRequiredForOwnerChange`,
       machineDetails.paymentRequiredForOwnerChange,

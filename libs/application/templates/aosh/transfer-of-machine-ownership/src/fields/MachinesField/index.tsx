@@ -35,7 +35,7 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   return (
     <Box paddingTop={2}>
-      {machineList.totalCount > 20 ? (
+      {machineList.totalCount > 50 ? (
         <FindVehicleFormField
           application={application}
           setFieldLoadingState={props.setFieldLoadingState}
