@@ -201,7 +201,7 @@ export const m = defineMessages({
   nextStepsDescription: {
     id: 'mlc.application:nextStepsDescription#markdown',
     defaultMessage:
-      'Hægt er að afrita og deila hlekknum til fólks svo þau geti á einfaldan hátt mælt með stjórnmálasamtökunum í viðeigandi kjördæmi.',
+      'Hægt er að afrita og deila hlekknum til fólks svo þau geti á einfaldan hátt mælt með stjórnmálasamtökunum í viðeigandi sveitarfélagi.',
     description: '',
   },
   copyLink: {
@@ -217,7 +217,7 @@ export const m = defineMessages({
   linkFieldMessage: {
     id: 'mlc.application:linkFieldMessage',
     defaultMessage:
-      'Á mínum síðum sést hve mörgum meðmælum hefur verið safnað í hverju kjördæmi.',
+      'Á mínum síðum sést hve mörgum meðmælum hefur verið safnað í hverju sveitarfélagi.',
     description: '',
   },
   linkFieldButtonCompanyTitle: {
@@ -228,7 +228,7 @@ export const m = defineMessages({
   linkFieldCompanyMessage: {
     id: 'mlc.application:linkFieldCompanyMessage',
     defaultMessage:
-      'Á mínum síðum fyrirtækja sést hve mörgum meðmælum hefur verið safnað í hverju kjördæmi.',
+      'Á mínum síðum fyrirtækja sést hve mörgum meðmælum hefur verið safnað í hverju sveitarfélagi.',
     description: '',
   },
 
