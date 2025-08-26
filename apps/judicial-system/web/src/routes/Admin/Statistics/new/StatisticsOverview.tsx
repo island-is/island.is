@@ -17,12 +17,28 @@ const StatisticsOverview: FC = () => {
       {
         route: 'rannsoknarmal',
         title: 'Rannsóknarnarmál',
-        description: 'Tölfræði úr rannsóknarmálum.',
+        description: 'Einföld tölfræðigreining úr rannsóknarmálum.',
       },
       {
         route: 'sakamal',
         title: 'Sakamál',
-        description: 'Tölfræði úr sakamálum.',
+        description: 'Einföld tölfræðigreining úr sakamálum.',
+      },
+    ],
+  }
+
+  const data = {
+    title: 'Gögn',
+    pages: [
+      {
+        route: 'gogn/rannsoknarmal',
+        title: 'Rannsóknarnarmál',
+        description: 'Gögn úr rannsóknarmálum fyrir tölfræðigreiningu.',
+      },
+      {
+        route: 'gogn/sakamal',
+        title: 'Sakamál',
+        description: 'Gögn úr sakamálum fyrir tölfræðigreiningu.',
       },
     ],
   }
@@ -30,18 +46,26 @@ const StatisticsOverview: FC = () => {
   return (
     <CasesLayout>
       <PageHeader title="Tölfræði" />
-      {
-        <CasesDashboardLayout title={statistics.title}>
-          {statistics.pages.map((t, idx) => (
-            <CasesCard
-              title={t.title}
-              description={t.description}
-              href={`${router.asPath}/${t.route}`}
-              key={idx}
-            />
-          ))}
-        </CasesDashboardLayout>
-      }
+      <CasesDashboardLayout title={data.title}>
+        {data.pages.map((t, idx) => (
+          <CasesCard
+            title={t.title}
+            description={t.description}
+            href={`${router.asPath}/${t.route}`}
+            key={idx}
+          />
+        ))}
+      </CasesDashboardLayout>
+      <CasesDashboardLayout title={statistics.title}>
+        {statistics.pages.map((t, idx) => (
+          <CasesCard
+            title={t.title}
+            description={t.description}
+            href={`${router.asPath}/${t.route}`}
+            key={idx}
+          />
+        ))}
+      </CasesDashboardLayout>
     </CasesLayout>
   )
 }
