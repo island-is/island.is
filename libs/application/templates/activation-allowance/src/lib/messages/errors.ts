@@ -14,7 +14,7 @@ export const serviceErrors = defineMessages({
   },
   cannotApplyErrorTitle: {
     id: 'aa.application:cannotApplyErrorTitle',
-    defaultMessage: 'Vinasamlegast athugið',
+    defaultMessage: 'Vinsamlegast athugið',
     description: `Error title when user can not apply`,
   },
   cannotApplyErrorSummary: {
@@ -26,13 +26,13 @@ export const serviceErrors = defineMessages({
   bankInfoNetworkFail: {
     id: 'aa.application:bankInfoNetworkFail',
     defaultMessage:
-      'Ekki tókst að staðfesta bankaupplýsingar, ef villa endurtekur sig vinsamlegar hafið samband við Vinnumálastofnun',
+      'Ekki tókst að staðfesta bankaupplýsingar, ef villa endurtekur sig vinsamlegast hafið samband við Vinnumálastofnun',
     description: `Error summary when network call fails to validate bank info`,
   },
   bankInfoNotValid: {
     id: 'aa.application:bankInfoNotValid',
     defaultMessage:
-      'Bankaupplýsingar ekki skráðar á notanda, athugaðu hvort bankaupplýsingar séu rétt sláðar inn',
+      'Bankaupplýsingar ekki skráðar á notanda, athugaðu hvort bankaupplýsingar séu rétt slegnar inn',
     description: `Error summary when users bank info is no valid`,
   },
   cvS3Error: {

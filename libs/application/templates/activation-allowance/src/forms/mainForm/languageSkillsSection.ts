@@ -52,7 +52,7 @@ export const languageSkillsSection = buildSection({
           defaultValue: (application: Application, _field: Field) => {
             const locale = getValueViaPath<Locale>(
               application.externalData,
-              'startingLocale',
+              'startingLocale.data',
             )
             return locale === 'is' ? 'Enska' : 'English'
           },
