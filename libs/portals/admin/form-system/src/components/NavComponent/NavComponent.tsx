@@ -164,7 +164,7 @@ export const NavComponent = ({
             {/* {index} */}
           </Box>
           <Box
-            id="2"
+            data-testid="navcomponent-content"
             paddingLeft={1}
             display="flex"
             alignItems="center"
