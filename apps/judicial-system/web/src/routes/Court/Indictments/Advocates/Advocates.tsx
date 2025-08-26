@@ -68,14 +68,14 @@ const Advocates = () => {
             <AnimatePresence>
               {!allDefendersHaveBeenConfirmed && (
                 <motion.div
-                  initial={{ opacity: 0, transform: 'scale(1)' }}
+                  initial={{ opacity: 0, scale: 0 }}
                   animate={{
                     opacity: 1,
-                    transform: 'scale(1)',
+                    scale: 1,
                   }}
                   exit={{
                     opacity: 0,
-                    transform: 'scale(0)',
+                    scale: 0,
                   }}
                 >
                   <TooltipProvider timeout={0}>
