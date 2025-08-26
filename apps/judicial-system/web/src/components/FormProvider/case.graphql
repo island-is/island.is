@@ -362,7 +362,6 @@ query Case($input: CaseQueryInput!) {
         punishmentType
         subpoenas {
           id
-          created
           serviceStatus
           serviceDate
           servedBy
