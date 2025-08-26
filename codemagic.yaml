@@ -65,7 +65,7 @@ definitions:
         export YARN_CACHE_FOLDER=~/.yarn
 
         # Install dependencies
-        yarn install --immutable-cache --check-cache
+        yarn install --immutable
     - &codegen
       name: Run codegen
       working_directory: .
