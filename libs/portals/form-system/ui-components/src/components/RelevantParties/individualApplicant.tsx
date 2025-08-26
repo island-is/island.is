@@ -17,6 +17,7 @@ import {
 import { useQuery } from '@apollo/client'
 import { User } from './types'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
+import { useEffect, useState } from 'react'
 
 interface Props {
   applicantType: FormSystemApplicant
@@ -32,10 +33,7 @@ export const IndividualApplicant = ({
   actor,
 }: Props) => {
   const { formatMessage } = useIntl()
-  const nationalId = actor ?? user?.nationalId
-  const email =
-    user?.emails.find((email: { primary: boolean }) => email.primary)?.email ??
-    user?.emails[0]?.email
+  const nationalId = actor != ''?  actor : user?.nationalId ?? ''
   const shouldQuery = !!nationalId
   const { data: nameData, loading: nameLoading } = useQuery(
     GET_NAME_BY_NATIONALID,
@@ -54,11 +52,25 @@ export const IndividualApplicant = ({
     },
   )
   const address = addressData?.formSystemHomeByNationalId?.heimilisfang
-  const isLoading = shouldQuery && (nameLoading || addressLoading) && !email
+  const phoneNumberCatcher = user?.mobilePhoneNumber ?? ''
+  const emails =
+    user?.emails.find((email: { primary: boolean }) => email.primary)?.email ??
+    user?.emails[0]?.email
+  const isLoading = shouldQuery && (nameLoading || addressLoading)
+  const [email, setEmail] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+
+  useEffect(() => {
+    setEmail(emails ?? '')
+    setPhoneNumber(phoneNumberCatcher)
+  }, [emails, phoneNumberCatcher])
+
+  console.log("ADDRESS", address?.postnumer)
+
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
-        {applicantType?.name?.[lang]}
+        {applicantType?.name?.[lang] + 'INDIVIDUAL'}
       </Text>
       <Stack space={2}>
         {isLoading ? (
@@ -66,19 +78,18 @@ export const IndividualApplicant = ({
         ) : (
           <>
             <NationalIdField
-              disabled={true}
+              disabled
               nationalId={nationalId}
               name={nameData?.formSystemNameByNationalId?.fulltNafn}
             />
-
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
                 <Input
                   label={formatMessage(m.address)}
                   name="address"
                   placeholder={formatMessage(m.address)}
-                  disabled={true}
-                  defaultValue={address?.husHeiti}
+                  disabled
+                  value={address?.husHeiti}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
@@ -87,28 +98,29 @@ export const IndividualApplicant = ({
                     label={formatMessage(webMessages.postalCode)}
                     name="postalCode"
                     placeholder={formatMessage(webMessages.postalCode)}
-                    disabled={true}
-                    defaultValue={address?.postnumer}
+                    disabled
+                    value={address?.postnumer ?? ''}
                   />
                 </Box>
               </GridColumn>
             </GridRow>
-
             <Input
               label={formatMessage(m.email)}
               name="email"
               placeholder="Email"
               backgroundColor="blue"
-              required={true}
-              defaultValue={email}
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Input
               label={formatMessage(m.phoneNumber)}
               name="phone"
               placeholder={formatMessage(m.phoneNumber)}
               backgroundColor="blue"
-              required={true}
-              defaultValue={user?.mobilePhoneNumber}
+              required
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
             />
           </>
         )}
