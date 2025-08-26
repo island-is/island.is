@@ -9,6 +9,7 @@ import {
   Charge,
   ChargeResponse,
   ChargeToValidate,
+  PayeeInfo,
 } from './chargeFjsV2Client.types'
 
 @Injectable()
@@ -120,6 +121,20 @@ export class ChargeFjsV2ClientService {
         chargeItemName: item.chargeItemName,
         priceAmount: item.priceAmount,
       })),
+    }
+  }
+
+  async getPayeeInfo(payeeNationalId: string): Promise<PayeeInfo> {
+    const response = await this.api.payeeInfonationalIDGET6({
+      nationalID: payeeNationalId,
+    })
+
+    return {
+      nationalId: response.payeeInfo.nationalID,
+      name: response.payeeInfo.name,
+      address: response.payeeInfo.address,
+      zip: response.payeeInfo.postcode,
+      city: response.payeeInfo.city,
     }
   }
 }

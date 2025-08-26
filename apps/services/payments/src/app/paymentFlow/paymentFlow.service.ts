@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { ConfigType } from '@nestjs/config'
-import { isCompany, isValid } from 'kennitala'
+import { isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
 
 import type { Logger } from '@island.is/logging'
@@ -10,8 +10,6 @@ import {
   ChargeFjsV2ClientService,
   Charge,
 } from '@island.is/clients/charge-fjs-v2'
-import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
-import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { retry } from '@island.is/shared/utils/server'
 
 import {
@@ -78,8 +76,6 @@ export class PaymentFlowService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
-    private nationalRegistryV3: NationalRegistryV3ClientService,
-    private companyRegistryApi: CompanyRegistryClientService,
     private jwksConfigService: JwksConfigService,
     @Inject(PaymentFlowModuleConfig.KEY)
     private readonly paymentFlowConfig: ConfigType<
@@ -221,30 +217,20 @@ export class PaymentFlowService {
     }
   }
 
-  private async getPayerName(payerNationalId: string) {
+  private async getPayerName(payerNationalId: string): Promise<string> {
     if (!isValid(payerNationalId)) {
       throw new BadRequestException(PaymentServiceCode.InvalidPayerNationalId)
     }
 
-    if (isCompany(payerNationalId)) {
-      const company = await this.companyRegistryApi.getCompany(payerNationalId)
-
-      if (!company) {
-        throw new BadRequestException(PaymentServiceCode.CompanyNotFound)
-      }
-
-      return company.name
-    }
-
-    const person = await this.nationalRegistryV3.getAllDataIndividual(
+    const payeeInfo = await this.chargeFjsV2ClientService.getPayeeInfo(
       payerNationalId,
     )
 
-    if (!person) {
-      throw new BadRequestException(PaymentServiceCode.PersonNotFound)
+    if (!payeeInfo || !payeeInfo.name) {
+      return ''
     }
 
-    return person.nafn ?? ''
+    return payeeInfo.name
   }
 
   async isEligibleToBePaid(id: string) {
