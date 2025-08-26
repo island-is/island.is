@@ -58,7 +58,6 @@ definitions:
       working_directory: .
       script: |
         corepack enable
-        corepack prepare
         yarn install --immutable-cache
     - &codegen
       name: Run codegen
