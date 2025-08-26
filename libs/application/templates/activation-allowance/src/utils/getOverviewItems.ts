@@ -17,7 +17,6 @@ import {
   languageSkills,
   paymentInformation,
   drivingLicenses,
-  income,
 } from '../lib/messages'
 import { overview } from '../lib/messages/overview'
 import { isSamePlaceOfResidenceChecked } from './isSamePlaceOfResidenceChecked'
