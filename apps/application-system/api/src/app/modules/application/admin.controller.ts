@@ -238,11 +238,8 @@ export class AdminController {
   async getApplicationTypesInstitutionAdmin(
     @Param('nationalId') nationalId: string,
   ) {
-    const res =
-      await this.applicationService.getAllApplicationTypesInstitutionAdmin(
-        nationalId,
-      )
-    console.log('4 ----- TODOx controller', res)
-    return res
+    return this.applicationService.getAllApplicationTypesInstitutionAdmin(
+      nationalId,
+    )
   }
 }

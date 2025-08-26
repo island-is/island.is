@@ -12,7 +12,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { debounceTime } from '@island.is/shared/constants'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { m } from '../../lib/messages'
 import { statusMapper } from '../../shared/utils'
@@ -22,6 +22,7 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { useGetInstitutionApplicationTypesQuery } from '../../queries/overview.generated'
 
 interface Props {
+  onTypeIdChange: (period: ApplicationFilters['typeId']) => void
   onSearchChange: (query: string) => void
   onDateChange: (period: ApplicationFilters['period']) => void
   onFilterChange: FilterMultiChoiceProps['onChange']
@@ -32,6 +33,7 @@ interface Props {
 }
 
 export const InstitutionFilters = ({
+  onTypeIdChange,
   onSearchChange,
   onFilterChange,
   onFilterClear,
@@ -70,11 +72,16 @@ export const InstitutionFilters = ({
     setIsMobile(false)
   }, [width])
 
-  const institutionTypeIds =
-    typeData?.applicationTypesInstitutionAdmin?.map((type) => ({
-      value: type.id,
-      label: type.name ?? '',
-    })) ?? []
+  const institutionTypeIds = useMemo(() => {
+    return (
+      typeData?.applicationTypesInstitutionAdmin
+        ?.map((type) => ({
+          value: type.id,
+          label: type.name ?? '',
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label, 'is')) ?? []
+    )
+  }, [typeData])
 
   return (
     <>
@@ -84,14 +91,10 @@ export const InstitutionFilters = ({
           backgroundColor="blue"
           options={institutionTypeIds}
           onChange={(v) => {
-            if (v?.value) {
-              onFilterChange({
-                categoryId: MultiChoiceFilter.TYPE_ID,
-                selected: [v.value],
-              })
-            }
+            onTypeIdChange(v?.value ?? undefined)
           }}
           isLoading={typesLoading}
+          isClearable={true}
         />
       </Box>
       <Box

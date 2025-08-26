@@ -262,16 +262,14 @@ export class ApplicationTypeAdminSerializer
       intl.formatMessage,
     )
 
-    const res = instanceToPlain({ id: type.id ?? 'yy', name: name ?? '' })
-    console.log('3 ----- TODOx serializer', res)
-    return res
+    return instanceToPlain({ id: type.id, name: name ?? '' })
   }
 
   async serializeArray(
     applicationTypes: ApplicationTypeAdminInstitution[],
     locale: Locale,
   ) {
-    return await Promise.allSettled(
+    return Promise.all(
       applicationTypes.map((item) => this.serialize(item, locale)),
     )
   }

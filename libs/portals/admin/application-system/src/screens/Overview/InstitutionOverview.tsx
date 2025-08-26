@@ -71,7 +71,7 @@ const InstitutionOverview = () => {
           : '',
         from: filters.period.from?.toISOString(),
         to: filters.period.to?.toISOString(),
-        // typeIdFilter: ['TransferOfVehicleOwnership'],
+        typeIdFilter: filters.typeId ? [filters.typeId] : undefined,
         status: multiChoiceFilters?.status,
       },
     },
@@ -93,6 +93,13 @@ const InstitutionOverview = () => {
     response?.applicationApplicationsInstitutionAdmin?.count ?? 0
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
+
+  const handleTypeIdChange = (typeId: ApplicationFilters['typeId']) => {
+    setFilters((prev) => ({
+      ...prev,
+      typeId: typeId,
+    }))
+  }
 
   const handleSearchChange = (nationalId: string) => {
     if (nationalId.length === 11 || nationalId.length === 0) {
@@ -157,6 +164,7 @@ const InstitutionOverview = () => {
         {formatMessage(m.applicationSystemApplications)}
       </Text>
       <InstitutionFilters
+        onTypeIdChange={handleTypeIdChange}
         onSearchChange={handleSearchChange}
         onFilterChange={handleMultiChoiceFilterChange}
         onDateChange={handleDateChange}
