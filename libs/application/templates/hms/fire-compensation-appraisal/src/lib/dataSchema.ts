@@ -11,15 +11,15 @@ const readFireCompensationInfo = z.array(z.literal(YES)).length(1)
 // Main form
 const applicantSchema = z.object({
   address: z.string().refine((v) => !!v),
-  city: z.string().refine((v) => !!v),
+  city: z.string().optional(),
   email: z.string().refine((v) => !!v),
   name: z.string().refine((v) => !!v),
   nationalId: z.string().refine((v) => !!v),
   phoneNumber: z.string().refine((v) => !!v),
-  postalCode: z.string().refine((v) => !!v),
+  postalCode: z.string().optional(),
 })
 
-const realEstateSchema = z.string().min(2)
+const realEstateSchema = z.string()
 
 const usageUnitsSchema = z.array(z.string()).min(1)
 
@@ -40,6 +40,11 @@ export const dataSchema = z.object({
     if (data.length < 3) {
       ctx.addIssue({
         params: m.photoMessages.alertMessage,
+        code: z.ZodIssueCode.custom,
+      })
+    } else if (data.length > 10) {
+      ctx.addIssue({
+        params: m.photoMessages.maxPhotos,
         code: z.ZodIssueCode.custom,
       })
     }

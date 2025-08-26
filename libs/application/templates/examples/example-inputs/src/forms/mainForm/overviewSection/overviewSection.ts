@@ -12,6 +12,7 @@ import {
   getOverviewLoadItems,
   getSumItems,
   getTableData,
+  getLoadTableData,
 } from '../../../utils/overviewUtils'
 
 export const overviewSection = buildSection({
@@ -50,6 +51,12 @@ export const overviewSection = buildSection({
           title: 'Table overview',
           backId: 'tableRepeater',
           tableData: getTableData,
+        }),
+        buildOverviewField({
+          id: 'overviewZAsync',
+          title: 'Async Table overview',
+          backId: 'tableRepeater',
+          loadTableData: getLoadTableData,
         }),
         buildOverviewField({
           id: 'overviewXX',

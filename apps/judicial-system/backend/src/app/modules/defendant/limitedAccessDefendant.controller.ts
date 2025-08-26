@@ -54,11 +54,6 @@ export class LimitedAccessDefendantController {
     this.logger.debug(
       `Updating limitedAccess defendant ${defendantId} of case ${caseId}`,
     )
-    return this.defendantService.updateRequestCaseDefendant(
-      theCase,
-      defendant,
-      updateDto,
-      user,
-    )
+    return this.defendantService.update(theCase, defendant, updateDto, user)
   }
 }

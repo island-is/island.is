@@ -24,7 +24,7 @@ const OwnerView = ({
 
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
     collectionType,
-    currentCollection?.id,
+    '',
   )
 
   return (

@@ -18,18 +18,11 @@ export class ChargeFjsV2ClientService {
   async getChargeStatus(
     chargeId: string,
   ): Promise<ChargeStatusByRequestIDrequestIDGETResponse | null> {
-    try {
-      const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
-        requestID: chargeId,
-      })
+    const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
+      requestID: chargeId,
+    })
 
-      return response
-    } catch (e) {
-      if (e.status === 404) {
-        return null
-      }
-      throw e
-    }
+    return response
   }
 
   async deleteCharge(chargeId: string): Promise<string | undefined> {

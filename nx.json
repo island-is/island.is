@@ -29,20 +29,13 @@
           "codegen/backend-schema",
           "codegen/frontend-client",
           "generateDevIndexHTML"
-        ],
-        "nxCloudId": "64e4eb6a54304f090734e8df"
-      }
-    },
-    "docker-test": {
-      "runner": "@nx/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [],
-        "cacheDirectory": ".cache/nx"
+        ]
       }
     }
   },
+  "nxCloudId": "64e4eb6a54304f090734e8df",
   "generators": {
-    "@nrwl/nx-plugin": {
+    "@nx/nx-plugin": {
       "plugin": {
         "linter": "eslint"
       }
@@ -114,7 +107,9 @@
       "inputs": ["production", "^production", "DevOps"]
     },
     "e2e": {
-      "inputs": ["default", "^production"],
+      "dependsOn": [],
+      "inputs": ["production", "^production", "DevOps"],
+      "outputs": [],
       "cache": true
     },
     "lint": {
@@ -231,5 +226,13 @@
     ]
   },
   "useInferencePlugins": false,
-  "defaultBase": "main"
+  "defaultBase": "main",
+  "plugins": [
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    }
+  ]
 }

@@ -195,6 +195,13 @@ const requestCaseCompletionSideEffect =
       rulingDate: currentCourtEndTime,
     }
 
+    // Handle completed without ruling
+    const isCompletedWithoutRuling =
+      update.isCompletedWithoutRuling ?? theCase.isCompletedWithoutRuling
+    if (isCompletedWithoutRuling) {
+      newUpdate.rulingSignatureDate = null
+    }
+
     // Handle appealed in court
     const hasBeenAppealed = update.appealState ?? theCase.appealState
     const prosecutorAppealedInCourt =
