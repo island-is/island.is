@@ -66,6 +66,22 @@ export class VerdictService {
     return verdict
   }
 
+  async findByExternalPoliceDocumentId(
+    externalPoliceDocumentId: string,
+  ): Promise<Verdict> {
+    const verdict = await this.verdictModel.findOne({
+      where: { externalPoliceDocumentId },
+    })
+
+    if (!verdict) {
+      throw new NotFoundException(
+        `Verdict with police document id ${externalPoliceDocumentId} does not exist`,
+      )
+    }
+
+    return verdict
+  }
+
   async createVerdict(
     defendantId: string,
     caseId: string,

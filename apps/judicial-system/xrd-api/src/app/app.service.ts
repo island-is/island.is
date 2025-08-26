@@ -226,7 +226,6 @@ export class AppService {
       const response = await res.json()
 
       if (res.ok) {
-        // why are we returning this again?
         return {
           subpoenaComment: response.comment,
           defenderInfo: {

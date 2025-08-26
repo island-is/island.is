@@ -46,6 +46,7 @@ import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { DeliverResponse } from './models/deliver.response'
+import { ExternalPoliceVerdictExistsGuard } from './guards/ExternalPoliceVerdictExists.guard'
 
 const validateVerdictAppealUpdate = ({
   caseId,
@@ -156,6 +157,20 @@ export class InternalVerdictController {
       caseId,
       getDeliveredVerdictNationalCommissionersOfficeLogDetails,
     )
+  }
+
+  @UseGuards(ExternalPoliceVerdictExistsGuard)
+  @Patch('verdict/:policeDocumentId')
+  updateVerdict(
+    @Param('policeDocumentId') policeDocumentId: string,
+    @CurrentVerdict() verdict: Verdict,
+    @Body() update: UpdateSubpoenaDto,
+  ): Promise<Verdict> {
+    this.logger.debug(
+      `Updating verdict by external police document id ${policeDocumentId}`,
+    )
+
+    return this.verdictService.update(verdict, update)
   }
 
   @UseGuards(DefendantNationalIdExistsGuard, VerdictExistsGuard)

@@ -78,12 +78,12 @@ export class AppController {
     return this.appService.updateSubpoena(policeSubpoenaId, updateSubpoena)
   }
 
-  // called by the police centralized file service
+  // called by the national commissioners office
   @Patch('policeDocumentDelivery/:policeDocumentId')
   @ApiResponse({ status: 400, description: 'Invalid input' })
   @ApiResponse({
     status: 502,
-    description: 'Failed to update police document delivery information',
+    description: 'Failed to update document information',
   })
   async updatePoliceDocumentDelivery(
     @Param('policeDocumentId', new ParseUUIDPipe()) policeDocumentId: string,

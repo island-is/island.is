@@ -13,10 +13,9 @@ import {
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
-// TODO: this is just a temp idea where we assume we get one document update request dto from the police
-// to serve updates for both subpoena and verdict documents
+// Note: This is just a temp idea where we assume we get one document update request dto from the police
+// to serve updates for both subpoena (soon) and verdict documents (current)
 
-// Note: this is missing subpoena specific props
 export class UpdatePoliceDocumentDeliveryDto {
   @IsNotEmpty()
   @IsString()
