@@ -22,18 +22,18 @@ const CourtRecord: FC = () => {
     { id: string; name: string }[]
   >([])
 
-  useEffect(() => {
-    if (!workingCase.courtDocuments) {
-      return
-    }
+  // useEffect(() => {
+  //   if (!workingCase.courtDocuments) {
+  //     return
+  //   }
 
-    setReorderableItems(
-      workingCase.courtDocuments.map((doc) => ({
-        id: doc.id,
-        name: doc.name,
-      })),
-    )
-  }, [workingCase.courtDocuments])
+  //   setReorderableItems(
+  //     workingCase.courtDocuments.map((doc) => ({
+  //       id: doc.id,
+  //       name: doc.name,
+  //     })),
+  //   )
+  // }, [workingCase.courtDocuments])
 
   return (
     <MultipleValueList
@@ -64,6 +64,7 @@ const CourtRecord: FC = () => {
                 <EditableCaseFile
                   enableDrag
                   caseFile={{ id: item.id, displayText: item.name }}
+                  backgroundColor="white"
                   onOpen={function (id: string): void {
                     throw new Error('Function not implemented.')
                   }}

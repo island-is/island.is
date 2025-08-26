@@ -24,6 +24,7 @@ import { CaseFileCategory } from '../../graphql/schema'
 import { TUploadFile } from '../../utils/hooks'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
+import { Colors } from '@island.is/island-ui/theme'
 
 export interface TEditableCaseFile {
   id: string
@@ -42,6 +43,8 @@ export interface TEditableCaseFile {
 interface Props {
   enableDrag: boolean
   caseFile: TEditableCaseFile
+  // Overwrites the default background color based on file status
+  backgroundColor?: 'white'
   onOpen: (id: string) => void
   onRename: (id: string, name: string, displayDate: string) => void
   onDelete: (file: TUploadFile) => void
@@ -52,8 +55,9 @@ interface Props {
 
 const EditableCaseFile: FC<Props> = (props) => {
   const {
-    caseFile,
     enableDrag,
+    caseFile,
+    backgroundColor,
     onOpen,
     onRename,
     onDelete,
@@ -120,9 +124,12 @@ const EditableCaseFile: FC<Props> = (props) => {
   return (
     <div
       className={cn(styles.caseFileWrapper, {
-        [styles.error]: styleIndex === FileUploadStatus.error,
-        [styles.done]: styleIndex === FileUploadStatus.done,
-        [styles.uploading]: styleIndex === FileUploadStatus.uploading,
+        [styles.caseFileWrapperBackground[backgroundColor!]]: backgroundColor,
+        [styles.error]:
+          !backgroundColor && styleIndex === FileUploadStatus.error,
+        [styles.done]: !backgroundColor && styleIndex === FileUploadStatus.done,
+        [styles.uploading]:
+          !backgroundColor && styleIndex === FileUploadStatus.uploading,
       })}
     >
       {enableDrag && (
