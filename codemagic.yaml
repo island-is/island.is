@@ -57,9 +57,15 @@ definitions:
       name: Install npm dependencies
       working_directory: .
       script: |
+        # Enable Corepack and use vendored Yarn
         corepack enable
-        corepack prepare
-        yarn install --immutable --immutable-cache --check-cache
+
+        # Ensure Yarn’s global cache folder exists
+        mkdir -p ~/.yarn
+        export YARN_CACHE_FOLDER=~/.yarn
+
+        # Install dependencies
+        yarn install --immutable-cache --check-cache
     - &codegen
       name: Run codegen
       working_directory: .
