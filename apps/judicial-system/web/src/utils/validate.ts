@@ -460,6 +460,10 @@ export const isRulingValidRC = (workingCase: Case): boolean => {
 }
 
 export const isRulingValidIC = (workingCase: Case): boolean => {
+  if (workingCase.isCompletedWithoutRuling) {
+    return true
+  }
+
   return validate([
     [workingCase.prosecutorDemands, ['empty']],
     [workingCase.courtCaseFacts, ['empty']],
@@ -491,7 +495,6 @@ export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
       ]
     : []
 
-  console.log({ validationsWithRuling })
   const validations = [
     [workingCase.courtStartDate, ['empty', 'date-format']],
     [workingCase.courtLocation, ['empty']],
