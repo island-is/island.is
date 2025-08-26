@@ -43,6 +43,7 @@ export const AdvancedSettings = ({
       return `${claim.type}=${claim.value}`
     }) ?? []
   ).join('\n')
+
   const [inputValues, setInputValues] = useEnvironmentState({
     requirePkce,
     allowOfflineAccess,
@@ -52,6 +53,7 @@ export const AdvancedSettings = ({
     singleSession,
     customClaims: customClaimsString,
   })
+
   const { formatErrorMessage } = useErrorFormatMessage()
   const readableAccessTokenLifetime = useReadableSeconds(accessTokenLifetime)
 

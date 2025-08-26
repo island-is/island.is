@@ -11,7 +11,11 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { ServiceStatus } from '@island.is/judicial-system/types'
+import {
+  HashAlgorithm,
+  ServiceStatus,
+  SubpoenaType,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 import { Defendant } from '../../defendant/models/defendant.model'
@@ -21,20 +25,6 @@ import { Defendant } from '../../defendant/models/defendant.model'
   timestamps: true,
 })
 export class Subpoena extends Model {
-  static serviceStatusText(serviceStatus: ServiceStatus) {
-    return serviceStatus === ServiceStatus.DEFENDER
-      ? 'Birt fyrir verjanda'
-      : serviceStatus === ServiceStatus.ELECTRONICALLY
-      ? 'Birt rafrænt'
-      : serviceStatus === ServiceStatus.IN_PERSON
-      ? 'Birt persónulega'
-      : serviceStatus === ServiceStatus.FAILED
-      ? 'Árangurslaus birting'
-      : serviceStatus === ServiceStatus.EXPIRED
-      ? 'Rann út á tíma'
-      : 'Í birtingarferli' // This should never happen
-  }
-
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -54,14 +44,14 @@ export class Subpoena extends Model {
 
   @ApiPropertyOptional({ type: String })
   @Column({ type: DataType.STRING, allowNull: true })
-  subpoenaId?: string
+  policeSubpoenaId?: string
 
   @ForeignKey(() => Defendant)
   @Column({ type: DataType.UUID, allowNull: false })
   defendantId!: string
 
   @BelongsTo(() => Defendant, 'defendantId')
-  @ApiProperty({ type: Defendant })
+  @ApiProperty({ type: () => Defendant })
   defendant?: Defendant
 
   @ForeignKey(() => Case)
@@ -70,7 +60,7 @@ export class Subpoena extends Model {
   caseId!: string
 
   @BelongsTo(() => Case, 'caseId')
-  @ApiPropertyOptional({ type: Case })
+  @ApiPropertyOptional({ type: () => Case })
   case?: Case
 
   @Column({
@@ -108,4 +98,20 @@ export class Subpoena extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   hash?: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(HashAlgorithm),
+  })
+  @ApiPropertyOptional({ enum: HashAlgorithm })
+  hashAlgorithm?: HashAlgorithm
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(SubpoenaType),
+  })
+  @ApiPropertyOptional({ enum: SubpoenaType })
+  type?: SubpoenaType
 }

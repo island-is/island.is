@@ -38,6 +38,7 @@ describe('IndictmentCaseService', () => {
   const prosecutorsOfficeEmail = prosecutorsOffice.email
   const prosecutorInstitutionId = uuid()
   const courtCaseNumber = uuid()
+  const policeCaseNumbers = [uuid()]
   let theCase = {
     id: caseId,
     court: { name: courtName },
@@ -47,14 +48,14 @@ describe('IndictmentCaseService', () => {
         defenderNationalId: defender.nationalId,
         defenderName: defender.name,
         defenderEmail: defender.email,
-        serviceRequirement: ServiceRequirement.REQUIRED,
+        verdict: { serviceRequirement: ServiceRequirement.REQUIRED },
       },
     ],
     prosecutor: {
       institution: { name: prosecutorsOfficeName, id: prosecutorInstitutionId },
     },
-
     courtCaseNumber,
+    policeCaseNumbers,
   } as Case
 
   let mockEmailService: EmailService

@@ -4,7 +4,12 @@ import {
   DefaultApi,
   ChargeStatusResultStatusEnum,
 } from '../../gen/fetch'
-import { Catalog, Charge, ChargeResponse } from './chargeFjsV2Client.types'
+import {
+  Catalog,
+  Charge,
+  ChargeResponse,
+  ChargeToValidate,
+} from './chargeFjsV2Client.types'
 
 @Injectable()
 export class ChargeFjsV2ClientService {
@@ -13,18 +18,11 @@ export class ChargeFjsV2ClientService {
   async getChargeStatus(
     chargeId: string,
   ): Promise<ChargeStatusByRequestIDrequestIDGETResponse | null> {
-    try {
-      const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
-        requestID: chargeId,
-      })
+    const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
+      requestID: chargeId,
+    })
 
-      return response
-    } catch (e) {
-      if (e.status === 404) {
-        return null
-      }
-      throw e
-    }
+    return response
   }
 
   async deleteCharge(chargeId: string): Promise<string | undefined> {
@@ -43,6 +41,22 @@ export class ChargeFjsV2ClientService {
       })
       return response.receptionID
     }
+  }
+
+  async validateCharge(chargeToValidate: ChargeToValidate): Promise<boolean> {
+    const response = await this.api.validatePOST5({
+      input: chargeToValidate,
+    })
+
+    if (response.error) {
+      throw new Error(
+        response.error.errors?.[0]?.message ??
+          response.error.message ??
+          'Failed to validate charge',
+      )
+    }
+
+    return true
   }
 
   async createCharge(upcomingPayment: Charge): Promise<ChargeResponse> {

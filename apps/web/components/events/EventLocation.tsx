@@ -14,7 +14,8 @@ export const EventLocation = ({ location }: EventLocationProps) => {
           {location?.streetAddress &&
             (location?.floor || location?.postalCode) &&
             ', '}
-          {location?.floor ? location.floor + ', ' : ''}
+          {location?.floor ? location.floor : ''}
+          {location?.postalCode && location?.floor ? ', ' : ''}
         </Text>
         <Text>{location?.postalCode}</Text>
       </Box>

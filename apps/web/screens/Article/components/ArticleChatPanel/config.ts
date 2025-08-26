@@ -291,6 +291,266 @@ export const watsonConfig: Record<
     },
   },
   is: {
+    // Góð ráð fyrir eldra fólk
+    '4CfFS8hwEd7kgDywM4dR6g': {
+      integrationID: '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      serviceDesk: {
+        integrationType: 'genesyswebmessenger',
+        genesysMessenger: {
+          scriptURL:
+            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
+          deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
+          environment: 'prod-euc1',
+        },
+        skipConnectAgentCard: true,
+      },
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'adeldast',
+          '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+        )
+      },
+    },
+    // Félags- og þjónustumiðstöðvar
+    '5IACQSPuDm0tOazEpVRgfY': {
+      integrationID: '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      serviceDesk: {
+        integrationType: 'genesyswebmessenger',
+        genesysMessenger: {
+          scriptURL:
+            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
+          deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
+          environment: 'prod-euc1',
+        },
+        skipConnectAgentCard: true,
+      },
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'adeldast',
+          '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+        )
+      },
+    },
+    // Hreyfing í boði
+    '2S0d5HmHvXhFE3tweHw1z1': {
+      integrationID: '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      serviceDesk: {
+        integrationType: 'genesyswebmessenger',
+        genesysMessenger: {
+          scriptURL:
+            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
+          deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
+          environment: 'prod-euc1',
+        },
+        skipConnectAgentCard: true,
+      },
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'adeldast',
+          '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+        )
+      },
+    },
+    // Hjúkrunarheimili
+    '15wf63DoLq4pvhhrzPCGhU': {
+      integrationID: '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      serviceDesk: {
+        integrationType: 'genesyswebmessenger',
+        genesysMessenger: {
+          scriptURL:
+            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
+          deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
+          environment: 'prod-euc1',
+        },
+        skipConnectAgentCard: true,
+      },
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'adeldast',
+          '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+        )
+      },
+    },
+    // Íbúðir fyrir eldra fólk
+    '1rufrpXBhf7unlyO0wZaAk': {
+      integrationID: '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      serviceDesk: {
+        integrationType: 'genesyswebmessenger',
+        genesysMessenger: {
+          scriptURL:
+            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
+          deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
+          environment: 'prod-euc1',
+        },
+        skipConnectAgentCard: true,
+      },
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'adeldast',
+          '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+        )
+      },
+    },
+    // Að búa heima með stuðningi
+    '6vGTPmxwGs1sPdZ0OdvzJw': {
+      integrationID: '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      serviceDesk: {
+        integrationType: 'genesyswebmessenger',
+        genesysMessenger: {
+          scriptURL:
+            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
+          deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
+          environment: 'prod-euc1',
+        },
+        skipConnectAgentCard: true,
+      },
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'adeldast',
+          '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+        )
+      },
+    },
+    // Dagdvalir og dagþjálfun eldra fólks
+    '2cS3oHZhftq2LsQaT0AqwF': {
+      integrationID: '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      serviceDesk: {
+        integrationType: 'genesyswebmessenger',
+        genesysMessenger: {
+          scriptURL:
+            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
+          deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
+          environment: 'prod-euc1',
+        },
+        skipConnectAgentCard: true,
+      },
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'adeldast',
+          '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+        )
+      },
+    },
+    // Heilbrigðisþjónusta fyrir eldra fólks
+    LHQTpUAQntQZtM59p2C9Q: {
+      integrationID: '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      serviceDesk: {
+        integrationType: 'genesyswebmessenger',
+        genesysMessenger: {
+          scriptURL:
+            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
+          deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
+          environment: 'prod-euc1',
+        },
+        skipConnectAgentCard: true,
+      },
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'adeldast',
+          '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+        )
+      },
+    },
+    // Aðstandendur
+    '3ZDTr5rAZ9G7wKRVNpMX0J': {
+      integrationID: '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      serviceDesk: {
+        integrationType: 'genesyswebmessenger',
+        genesysMessenger: {
+          scriptURL:
+            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
+          deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
+          environment: 'prod-euc1',
+        },
+        skipConnectAgentCard: true,
+      },
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'adeldast',
+          '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+        )
+      },
+    },
+    // Breytingar á heilsufari eldra fólks
+    '3ZD1FAUtrnGKbSg329YgP8RqqTr5rAZ9G7wKRVNpMX0J': {
+      integrationID: '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      serviceDesk: {
+        integrationType: 'genesyswebmessenger',
+        genesysMessenger: {
+          scriptURL:
+            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
+          deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
+          environment: 'prod-euc1',
+        },
+        skipConnectAgentCard: true,
+      },
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'adeldast',
+          '580730f3-3d88-4c5a-92e6-30e79ea09f24',
+        )
+      },
+    },
     // Samgöngustofa - Organization
     '6IZT17s7stKJAmtPutjpD7': {
       integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
@@ -893,4 +1153,44 @@ export const excludedOrganizationWatsonConfig: string[] = [
   // HMS
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/53jrbgxPKpbNtordSfEZUK
   '53jrbgxPKpbNtordSfEZUK',
+
+  // Sýslumenn - Organization
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
+  'kENblMMMvZ3DlyXw1dwxQ',
+
+  // Sýslumaðurinn á Austurlandi
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Xnes7x1ccvBvuZxInRXDm
+  'Xnes7x1ccvBvuZxInRXDm',
+
+  // Sýslumaðurinn á höfuðborgarsvæðinu
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6puIJvhGxFBzxExVHxi5sr
+  '6puIJvhGxFBzxExVHxi5sr',
+
+  // Sýslumaðurinn á Norðurlandi eystra
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/12JLsyDmODBfZedYPOQXtX
+  '12JLsyDmODBfZedYPOQXtX',
+
+  // Sýslumaðurinn á Vestfjörðum
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/5MDZoq1DGsJospUnQz4y98
+  '5MDZoq1DGsJospUnQz4y98',
+
+  // Sýslumaðurinn í Vestmannaeyjum
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/145ctmpqLPrOM7rHZIpC6F
+  '145ctmpqLPrOM7rHZIpC6F',
+
+  // Sýslumaðurinn á Suðurnesjum
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/cRCuTTXXSrpBj27nBiLbc
+  'cRCuTTXXSrpBj27nBiLbc',
+
+  // Sýslumaðurinn á Suðurlandi
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2uyNnLcRooCNk7u6CMpsIv
+  '2uyNnLcRooCNk7u6CMpsIv',
+
+  // Sýslumaðurinn á Norðurlandi vestra
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ZefqpCw4y5oy9lREilQY3
+  'ZefqpCw4y5oy9lREilQY3',
+
+  // Sýslumaðurinn á Vesturlandi
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/43KqapFNoM9m4MNXXc8UPU
+  '43KqapFNoM9m4MNXXc8UPU',
 ]

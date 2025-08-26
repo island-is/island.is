@@ -123,7 +123,7 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
         host: {
           dev: 'search-indexer-service',
           staging: 'search-indexer-service',
-          prod: 'search-indexer-service.devland.is',
+          prod: 'search-indexer-service',
         },
         paths: ['/'],
         extraAnnotations: {

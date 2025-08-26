@@ -393,9 +393,10 @@
       "Preregistration": {
         "type": "object",
         "additionalProperties": false,
+        "required": ["appliedForPersonId", "priority", "type", "subType"],
         "properties": {
           "guid": { "type": "string", "nullable": true },
-          "appliedForPersonId": { "type": "string", "nullable": true },
+          "appliedForPersonId": { "type": "string", "minLength": 1 },
           "priority": { "type": "integer", "format": "int32" },
           "bioInfo": {
             "nullable": true,
@@ -424,8 +425,8 @@
             "nullable": true,
             "items": { "$ref": "#/components/schemas/Document" }
           },
-          "type": { "type": "string", "nullable": true },
-          "subType": { "type": "string", "nullable": true }
+          "type": { "type": "string", "minLength": 1 },
+          "subType": { "type": "string", "minLength": 1 }
         }
       },
       "BioInfo": {

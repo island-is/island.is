@@ -1,29 +1,37 @@
 {
   "name": "infra",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
+  "engines": {
+    "npm": "please-use-yarn",
+    "node": "20.15.0",
+    "yarn": "4.6"
+  },
   "scripts": {
     "test": "jest",
     "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
     "update": "yarn update:packagejson",
     "update:packagejson": "node -r esbuild-register scripts/update-package-json.ts",
     "cli": "echo 'Please use `yarn infra` instead of `yarn cli`' && exit 1",
-    "infra": "node -r esbuild-register src/cli/cli.ts"
+    "infra": "node -r esbuild-register src/cli/cli.ts",
+    "feature-env": "node -r esbuild-register src/feature-env.ts",
+    "secrets": "node -r esbuild-register src/secrets.ts"
   },
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "7.23.9",
     "@babel/plugin-transform-modules-commonjs": "7.23.3",
-    "@nx/js": "16",
-    "@types/jest": "26.0.15",
-    "@types/js-yaml": "3.12.5",
-    "@types/node": "14.14.14",
-    "@zeit/ncc": "0.22.3",
+    "@nx/js": "21.2.2",
+    "@types/jest": "29.5.14",
+    "@types/js-yaml": "4.0.3",
+    "@types/node": "20.15.0",
+    "@types/yargs": "17.0.33",
+    "@vercel/ncc": "0.38.3",
     "esbuild": "0.14.39",
     "esbuild-jest": "0.5.0",
     "esbuild-register": "3.3.2",
-    "jest": "27.2.4",
-    "typescript": "4.6.4"
+    "jest": "29.7.0",
+    "typescript": "5.8.3"
   },
   "dependencies": {
     "@aws-sdk/client-ssm": "3.145.0",
@@ -37,6 +45,11 @@
     "yargs": "17.7.2"
   },
   "volta": {
-    "node": "18.12.1"
+    "node": "20.15.0",
+    "yarn": "4.6.0"
+  },
+  "packageManager": "yarn@4.6.0",
+  "resolutions": {
+    "@parcel/watcher": "2.5.1"
   }
 }

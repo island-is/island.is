@@ -1,11 +1,20 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
+import { m, searchTagsMessages } from '@island.is/portals/my-pages/core'
 import { PetitionPaths } from '@island.is/portals/my-pages/petitions'
 import { SignatureCollectionPaths } from '@island.is/portals/my-pages/signature-collection'
 import { InformationPaths } from './paths'
 
 export const informationNavigation: PortalNavigationItem = {
   name: m.userInfo,
+  description: m.userInfoDescription,
+  searchTags: [
+    searchTagsMessages.informationMe,
+    searchTagsMessages.informationWife,
+    searchTagsMessages.informationHusband,
+    searchTagsMessages.informationSpouse,
+    searchTagsMessages.informationChild,
+    searchTagsMessages.informationFamily,
+  ],
   path: InformationPaths.MyInfoRoot,
   icon: {
     icon: 'person',
@@ -13,6 +22,7 @@ export const informationNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.myInfo,
+      description: m.userInfoIntro,
       path: InformationPaths.MyInfoRootOverview,
       children: [
         {
@@ -43,10 +53,12 @@ export const informationNavigation: PortalNavigationItem = {
       children: [
         {
           name: m.mySettingsInformation,
+          searchHide: true,
           path: InformationPaths.Settings,
         },
         {
           name: m.mySettingsNotifications,
+          searchHide: true,
           path: InformationPaths.SettingsNotifications,
         },
       ],
@@ -55,6 +67,18 @@ export const informationNavigation: PortalNavigationItem = {
       name: m.lists,
       path: InformationPaths.Lists,
       children: [
+        // Municipal
+        {
+          name: m.signatureCollectionMunicipalLists,
+          path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
+          children: [
+            {
+              name: m.viewSignatureList,
+              navHide: true,
+              path: SignatureCollectionPaths.ViewMunicipalList,
+            },
+          ],
+        },
         // Parliamentary
         {
           name: m.signatureCollectionParliamentaryLists,
@@ -115,11 +139,11 @@ export const informationNavigation: PortalNavigationItem = {
       path: InformationPaths.Notifications,
     },
   ],
-  description: m.userInfoDescription,
 }
 
 export const companyNavigation: PortalNavigationItem = {
   name: m.companyTitle,
+  searchHide: true,
   path: InformationPaths.Company,
   icon: {
     icon: 'business',

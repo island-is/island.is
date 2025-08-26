@@ -3,5 +3,6 @@ mutation SignatureCollectionAdminUpdatePaperSignaturePageNumber(
 ) {
   signatureCollectionAdminUpdatePaperSignaturePageNumber(input: $input) {
     success
+    reasons
   }
 }

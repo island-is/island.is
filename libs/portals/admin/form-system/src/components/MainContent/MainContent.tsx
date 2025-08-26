@@ -9,34 +9,43 @@ import {
 } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../context/ControlContext'
-import { FormSystemGroup, FormSystemStep } from '@island.is/api/schema'
+import { FormSystemSection, FormSystemScreen } from '@island.is/api/schema'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
 import { Premises } from './components/Premises/Premises'
-import { InputContent } from './components/InputContent/InputContent'
+import { FieldContent } from './components/FieldContent/FieldContent'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
-import { RelevantParties } from './components/RelevantParties/RevelantParties'
 import { useIntl } from 'react-intl'
-import { m } from '../../lib/messages'
+import { RelevantParties } from './components/RelevantParties/RelevantParties'
+import { m } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/enums'
 
 export const MainContent = () => {
-  const { control, controlDispatch, updateActiveItem, setFocus, focus } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    updateActiveItem,
+    setFocus,
+    focus,
+    getTranslation,
+  } = useContext(ControlContext)
   const { activeItem } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
 
   return (
     <Box padding={2}>
-      {activeItem.type === 'Input' ? (
-        <InputContent />
-      ) : activeItem.type === 'Step' &&
-        (activeItem.data as FormSystemStep).type === 'BaseSetting' ? (
+      {activeItem.type === 'Field' ? (
+        <FieldContent />
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).id === 'BaseSettings' ? (
         <BaseSettings />
-      ) : activeItem.type === 'Step' &&
-        (activeItem.data as FormSystemStep).type === 'Premises' ? (
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).sectionType ===
+          SectionTypes.PREMISES ? (
         <Premises />
-      ) : activeItem.type === 'Step' &&
-        (activeItem.data as FormSystemStep).type === 'Parties' ? (
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).sectionType ===
+          SectionTypes.PARTIES ? (
         <RelevantParties />
       ) : openPreview ? (
         <PreviewStepOrGroup setOpenPreview={setOpenPreview} />
@@ -79,18 +88,38 @@ export const MainContent = () => {
                     },
                   })
                 }
-                onFocus={(e) => setFocus(e.target.value)}
+                onFocus={async (e) => {
+                  if (
+                    !activeItem?.data?.name?.en &&
+                    activeItem?.data?.name?.is !== ''
+                  ) {
+                    const translation = await getTranslation(
+                      activeItem?.data?.name?.is ?? '',
+                    )
+                    controlDispatch({
+                      type: 'CHANGE_NAME',
+                      payload: {
+                        lang: 'en',
+                        newValue: translation.translation,
+                      },
+                    })
+                  }
+                  setFocus(e.target.value)
+                }}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
               />
             </Column>
           </Row>
-          {activeItem.type === 'Group' && (
+          {activeItem.type === 'Screen' && (
             <Row>
               <Column>
                 <Checkbox
                   name="multi"
                   label={formatMessage(m.allowMultiple)}
-                  checked={(activeItem.data as FormSystemGroup).multiSet !== 0}
+                  checked={
+                    (activeItem.data as FormSystemScreen).multiset !== 0 &&
+                    (activeItem.data as FormSystemScreen).multiset !== null
+                  }
                   onChange={(e) =>
                     controlDispatch({
                       type: 'TOGGLE_MULTI_SET',

@@ -16,24 +16,24 @@ export const errorMessages = {
   citizenship: defineMessages({
     title: {
       id: 'slc.application:error.citizenship.title',
-      defaultMessage: 'Ekki með íslenkst ríkisfang',
+      defaultMessage: 'Ekki með íslenskt ríkisfang',
       description: '',
     },
     summary: {
       id: 'slc.application:error.citizenship.summary#markdown',
-      defaultMessage: 'Þú þarft að vera með íslenkst ríkisfang',
+      defaultMessage: 'Þú þarft að vera með íslenskt ríkisfang',
       description: '',
     },
   }),
   residency: defineMessages({
     title: {
       id: 'slc.application:error.residency.title',
-      defaultMessage: 'Ekki með búsetu á Íslandi',
+      defaultMessage: 'Ekki með lögheimili á Íslandi',
       description: '',
     },
     summary: {
       id: 'slc.application:error.residency.summary#markdown',
-      defaultMessage: 'Skilyrði um búsetu á Íslandi eru ekki uppfyllt',
+      defaultMessage: 'Skilyrði um lögheimili á Íslandi eru ekki uppfyllt',
       description: '',
     },
   }),

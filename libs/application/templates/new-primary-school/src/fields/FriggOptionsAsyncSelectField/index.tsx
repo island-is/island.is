@@ -1,5 +1,6 @@
 import { coreErrorMessages } from '@island.is/application/core'
 import {
+  Application,
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
@@ -8,8 +9,8 @@ import {
 import { AsyncSelectFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
-import { OptionsType } from '../../lib/constants'
 import { friggOptionsQuery } from '../../graphql/queries'
+import { OptionsType } from '../../utils/constants'
 import {
   FriggOptionsQuery,
   FriggOptionsQueryVariables,
@@ -18,9 +19,10 @@ import {
 type FriggOptionsAsyncSelectFieldProps = {
   field: {
     props: {
-      optionsType: OptionsType
+      optionsType: OptionsType | ((application: Application) => OptionsType)
       placeholder: FormText
       isMulti?: boolean
+      useIdAndKey?: boolean
     }
   }
 }
@@ -30,7 +32,19 @@ const FriggOptionsAsyncSelectField: FC<
 > = ({ error, field, application }) => {
   const { lang } = useLocale()
   const { title, props, defaultValue, id, marginBottom } = field
-  const { isMulti = false, optionsType, placeholder } = props
+  const {
+    isMulti = false,
+    optionsType,
+    placeholder,
+    useIdAndKey = false,
+  } = props
+
+  let friggOptionsType: OptionsType
+  if (typeof optionsType === 'function') {
+    friggOptionsType = optionsType(application)
+  } else {
+    friggOptionsType = optionsType
+  }
 
   return (
     <AsyncSelectFormField
@@ -54,23 +68,23 @@ const FriggOptionsAsyncSelectField: FC<
             query: friggOptionsQuery,
             variables: {
               type: {
-                type: optionsType,
+                type: friggOptionsType,
               },
             },
           })
 
           const options =
             data?.friggOptions?.flatMap(({ options }) =>
-              options.flatMap(({ value, key }) => {
-                let content = value.find(
+              options.flatMap(({ value, key, id }) => {
+                const content = value.find(
                   ({ language }) => language === lang,
                 )?.content
-                if (!content) {
-                  content = value.find(
-                    ({ language }) => language === 'is',
-                  )?.content
-                }
-                return { value: key ?? '', label: content ?? '' }
+
+                if (!content) return []
+
+                const contentValue = useIdAndKey ? `${id}::${key}` : id
+
+                return { value: contentValue, label: content }
               }),
             ) ?? []
 

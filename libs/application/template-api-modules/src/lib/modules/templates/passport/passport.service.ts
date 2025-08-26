@@ -3,11 +3,13 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { coreErrorMessages, getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import {
-  DiscountCheck,
-  DistrictCommissionerAgencies,
-} from './constants'
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+  YesOrNo,
+} from '@island.is/application/core'
+import { DiscountCheck, DistrictCommissionerAgencies } from './constants'
 import { info } from 'kennitala'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
 import { PassportSchema } from '@island.is/application/templates/passport'

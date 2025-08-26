@@ -2,7 +2,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   coreHistoryMessages,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -20,22 +19,18 @@ import {
   TeachersApi,
   ExistingApplicationApi,
   InstitutionNationalIds,
-  Application,
   ApplicationConfigurations,
-  BasicChargeItem,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   Events,
   States,
   Roles,
+  ApiActions,
   BE,
   B_TEMP,
   B_FULL,
   B_FULL_RENEWAL_65,
-  ApiActions,
-  CHARGE_ITEM_CODES,
-  DELIVERY_FEE,
 } from './constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -43,51 +38,19 @@ import {
   DrivingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
-import { hasCompletedPrerequisitesStep } from './utils'
+import { getCodes, hasCompletedPrerequisitesStep } from './utils/formUtils'
 import {
   GlassesCheckApi,
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
-import { Pickup } from './types'
 import { CodeOwners } from '@island.is/shared/constants'
-
-const getCodes = (application: Application): BasicChargeItem[] => {
-  const applicationFor = getValueViaPath<
-    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
-  >(application.answers, 'applicationFor', 'B-full')
-
-  const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
-
-  const codes: BasicChargeItem[] = []
-
-  const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
-
-  const targetCode =
-    typeof applicationFor === 'string'
-      ? CHARGE_ITEM_CODES[applicationFor]
-        ? CHARGE_ITEM_CODES[applicationFor]
-        : DEFAULT_ITEM_CODE
-      : DEFAULT_ITEM_CODE
-
-  codes.push({ code: targetCode })
-
-  if (pickup === Pickup.POST) {
-    codes.push({ code: CHARGE_ITEM_CODES[DELIVERY_FEE] })
-  }
-
-  if (!targetCode) {
-    throw new Error('No selected charge item code')
-  }
-
-  return codes
-}
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.DRIVING_LICENSE]
 
-const template: ApplicationTemplate<
+const DrivingLicenseTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
@@ -204,7 +167,8 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: async () => (await import('../forms/draft')).draft,
+              formLoader: async () =>
+                (await import('../forms/draft/getForm')).draft,
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -288,4 +252,4 @@ const template: ApplicationTemplate<
   },
 }
 
-export default template
+export default DrivingLicenseTemplate

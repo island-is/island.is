@@ -1,6 +1,6 @@
 import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
@@ -12,6 +12,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -29,7 +30,7 @@ import {
   PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
-  ServiceAnnouncement,
+  ServiceAnnouncements,
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -141,7 +142,7 @@ const Overview: FC = () => {
       return
     }
 
-    router.push(constants.CASES_ROUTE)
+    router.push(getStandardUserDashboardRoute(user))
   }
 
   const handleAskForCancellation = async () => {
@@ -153,7 +154,7 @@ const Overview: FC = () => {
       return
     }
 
-    router.push(constants.CASES_ROUTE)
+    router.push(getStandardUserDashboardRoute(user))
   }
 
   const hasLawsBroken = lawsBroken.size > 0
@@ -199,15 +200,7 @@ const Overview: FC = () => {
             />
           </Box>
         )}
-        {workingCase.defendants?.map((defendant) =>
-          defendant.subpoenas?.map((subpoena) => (
-            <ServiceAnnouncement
-              key={`${subpoena.id}-${subpoena.created}`}
-              subpoena={subpoena}
-              defendantName={defendant.name}
-            />
-          )),
-        )}
+        <ServiceAnnouncements defendants={workingCase.defendants} />
         {workingCase.court &&
           latestDate?.date &&
           workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
@@ -315,7 +308,7 @@ const Overview: FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={
             isIndictmentReceived || isIndictmentWaitingForCancellation
-              ? constants.CASES_ROUTE
+              ? getStandardUserDashboardRoute(user)
               : `${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
@@ -364,9 +357,9 @@ const Overview: FC = () => {
           <Modal
             title={formatMessage(strings.indictmentSentForConfirmationTitle)}
             text={formatMessage(strings.indictmentSentForConfirmationText)}
-            onClose={() => router.push(constants.CASES_ROUTE)}
+            onClose={() => router.push(getStandardUserDashboardRoute(user))}
             onPrimaryButtonClick={() => {
-              router.push(constants.CASES_ROUTE)
+              router.push(getStandardUserDashboardRoute(user))
             }}
             primaryButtonText={formatMessage(core.closeModal)}
           />
@@ -375,7 +368,7 @@ const Overview: FC = () => {
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
             onClose={() => setModal('noModal')}
-            onComplete={() => router.push(constants.CASES_ROUTE)}
+            onComplete={() => router.push(getStandardUserDashboardRoute(user))}
           />
         ) : modal === 'askForCancellationModal' ? (
           <Modal

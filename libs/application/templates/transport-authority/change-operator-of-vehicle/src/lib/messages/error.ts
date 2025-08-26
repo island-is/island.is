@@ -24,7 +24,7 @@ export const error = defineMessages({
     description: 'Failed to submit application',
   },
   invalidMileage: {
-    id: 'ta.tvo.application:error.invalidMileage',
+    id: 'ta.cov.application:error.invalidMileage',
     defaultMessage:
       'Km skráning þarf að vera sama eða hærri en síðasta skráning',
     description: 'Invalid mileage error',

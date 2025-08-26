@@ -15,19 +15,19 @@ export const caseFileWrapper = style({
   transition: 'background-color 0.2s ease-in-out',
 })
 
-export const caseFileWrapperStates = styleVariants({
-  error: {
-    background: theme.color.red100,
-    borderColor: 'transparent',
-  },
-  done: {
-    background: theme.color.blue100,
-    borderColor: 'transparent',
-  },
-  uploading: {
-    background: 'transparent',
-    borderColor: theme.color.blue200,
-  },
+export const error = style({
+  background: theme.color.red100,
+  borderColor: 'transparent',
+})
+
+export const done = style({
+  background: theme.color.blue100,
+  borderColor: 'transparent',
+})
+
+export const uploading = style({
+  background: 'transparent',
+  borderColor: theme.color.blue200,
 })
 
 export const editCaseFileInputContainer = style({

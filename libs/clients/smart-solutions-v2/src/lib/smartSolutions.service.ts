@@ -215,7 +215,7 @@ export class SmartSolutionsService {
   ): Promise<Result<RevokePassData>> {
     const variables: DeletePassMutationVariables = {
       passTemplateId,
-      values: payload,
+      values: payload.inputFieldValues ?? [],
     }
 
     const res = await this.fetcher.fetch<DeletePassResponseData>(

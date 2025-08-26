@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react'
 
 import {
+  buildFieldReadOnly,
   buildFieldRequired,
   formatText,
   formatTextWithLocale,
@@ -11,6 +12,8 @@ import {
   DateField,
   MaybeWithApplicationAndField,
   Application,
+  FormValue,
+  BaseField,
 } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -20,6 +23,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
+import { useWatch } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: DateField
@@ -48,11 +52,24 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    tempDisabled,
   } = field
   const { formatMessage, lang } = useLocale()
+  const allValues = useWatch({ defaultValue: application.answers }) as FormValue
+  const updatedApplication = useMemo(
+    () => ({ ...application, answers: allValues }),
+    [application, allValues],
+  )
+
+  const isDisabled = useMemo(() => {
+    if (tempDisabled) {
+      return tempDisabled(updatedApplication)
+    }
+    return disabled
+  }, [disabled, tempDisabled, updatedApplication])
 
   const computeMinDate = (
-    maybeMinDate: MaybeWithApplicationAndField<Date>,
+    maybeMinDate: MaybeWithApplicationAndField<Date | undefined>,
     memoApplication: Application,
     memoField: DateField,
   ) => {
@@ -64,7 +81,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const computeMaxDate = (
-    maybeMaxDate: MaybeWithApplicationAndField<Date>,
+    maybeMaxDate: MaybeWithApplicationAndField<Date | undefined>,
     memoApplication: Application,
     memoField: DateField,
   ) => {
@@ -90,31 +107,31 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
   const finalMinDate = useMemo(
     () =>
       computeMinDate(
-        minDate as MaybeWithApplicationAndField<Date>,
-        application,
+        minDate as MaybeWithApplicationAndField<Date | undefined>,
+        updatedApplication,
         field,
       ),
-    [minDate, application, field],
+    [minDate, updatedApplication, field],
   )
 
   const finalMaxDate = useMemo(
     () =>
       computeMaxDate(
-        maxDate as MaybeWithApplicationAndField<Date>,
-        application,
+        maxDate as MaybeWithApplicationAndField<Date | undefined>,
+        updatedApplication,
         field,
       ),
-    [maxDate, application, field],
+    [maxDate, updatedApplication, field],
   )
 
   const finalExcludeDates = useMemo(
     () =>
       computeExcludeDates(
         excludeDates as MaybeWithApplicationAndField<Date[]>,
-        application,
+        updatedApplication,
         field,
       ),
-    [excludeDates, application, field],
+    [excludeDates, updatedApplication, field],
   )
 
   return (
@@ -132,10 +149,10 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
 
       <Box paddingTop={2}>
         <DatePickerController
-          disabled={disabled}
+          disabled={isDisabled}
           defaultValue={
             (getValueViaPath(application.answers, id) as string) ??
-            getDefaultValue(field, application)
+            getDefaultValue(field as BaseField, application)
           }
           id={id}
           name={id}
@@ -147,7 +164,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           minYear={minYear}
           maxYear={maxYear}
           backgroundColor={backgroundColor}
-          readOnly={readOnly}
+          readOnly={buildFieldReadOnly(application, readOnly)}
           label={formatTextWithLocale(title, application, lang, formatMessage)}
           placeholder={
             placeholder

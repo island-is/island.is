@@ -10,16 +10,5 @@ export const container = style({
 export const dataContainer = style({
   display: 'grid',
   gap: theme.spacing[2],
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      gridTemplateColumns: '1fr auto',
-    },
-  },
-})
-
-export const titleContainer = style({
-  display: 'grid',
-  gap: theme.spacing[2],
   gridTemplateColumns: '1fr auto',
 })

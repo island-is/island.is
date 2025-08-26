@@ -1,3 +1,4 @@
+import { prosecutorsOfficeTypes } from '@island.is/judicial-system/types'
 import {
   Institution,
   InstitutionType,
@@ -39,7 +40,8 @@ const useInstitution = (skip = false) => {
     )
 
     institutions.prosecutorsOffices = allInstitutions.filter(
-      (institution) => institution.type === InstitutionType.PROSECUTORS_OFFICE,
+      (institution) =>
+        institution.type && prosecutorsOfficeTypes.includes(institution.type),
     )
 
     institutions.prisonInstitutions = allInstitutions.filter(

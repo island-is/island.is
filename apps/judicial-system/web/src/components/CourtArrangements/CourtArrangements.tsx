@@ -8,10 +8,10 @@ import {
   DateTime,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   DateLog,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   formatDateForServer,
   UpdateCase,

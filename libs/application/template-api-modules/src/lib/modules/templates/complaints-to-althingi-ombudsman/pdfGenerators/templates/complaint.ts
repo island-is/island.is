@@ -28,7 +28,6 @@ export const generateComplaintPdf = async (application: Application) => {
   addValue(
     `${answers.applicant.name}, ${formatNationalId(
       answers.applicant.nationalId,
-      '-',
     )}`,
     doc,
   )
@@ -65,7 +64,6 @@ export const generateComplaintPdf = async (application: Application) => {
     addValue(
       `${answers.complainedForInformation.name}, ${formatNationalId(
         answers.complainedForInformation.nationalId,
-        '-',
       )}`,
       doc,
     )

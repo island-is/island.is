@@ -41,7 +41,8 @@ describe('Postgres', () => {
         DB_NAME: 'service_portal_api',
         DB_HOST: 'a',
         DB_REPLICAS_HOST: 'a',
-        NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init',
+        NODE_OPTIONS:
+          '--max-old-space-size=230 --enable-source-maps -r dd-trace/init',
         SERVERSIDE_FEATURES_ON: '',
         LOG_LEVEL: 'info',
       })

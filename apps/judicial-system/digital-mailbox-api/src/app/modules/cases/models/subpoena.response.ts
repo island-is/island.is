@@ -103,6 +103,7 @@ export class SubpoenaResponse {
           defendant.nationalId,
         ),
     )
+    // TODO: Change to latestSubpoena.type
     const subpoenaType = defendantInfo?.subpoenaType
 
     const intro = getIntro(defendantInfo?.gender, lang)
@@ -120,9 +121,14 @@ export class SubpoenaResponse {
       defendantInfo?.requestedDefenderChoice === DefenderChoice.WAIVE
     const hasDefender = defendantInfo?.requestedDefenderNationalId !== null
     const subpoenas = defendantInfo?.subpoenas ?? []
+
+    const latestSubpoena = subpoenas.sort(
+      (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime(),
+    )[0]
+
     const hasBeenServed =
       subpoenas.length > 0 &&
-      isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
+      isSuccessfulServiceStatus(latestSubpoena.serviceStatus)
     const canChangeDefenseChoice = !waivedRight && !hasDefender
 
     const subpoenaDateLog = internalCase.dateLogs?.find(
@@ -130,10 +136,11 @@ export class SubpoenaResponse {
     )
     const arraignmentDate = subpoenaDateLog?.date ?? ''
     const subpoenaCreatedDate = subpoenaDateLog?.created ?? '' //TODO: Change to subpoena created in RLS
+    const courtName = internalCase.court?.name ?? t.notAvailable
     const arraignmentLocation = subpoenaDateLog?.location
-      ? `${internalCase.court.name}, Dómsalur ${subpoenaDateLog.location}`
-      : internalCase.court.name
-    const courtNameAndAddress = `${internalCase.court.name}, ${internalCase.court.address}`
+      ? `${courtName}, Dómsalur ${subpoenaDateLog.location}`
+      : courtName
+    const courtNameAndAddress = `${courtName}, ${internalCase.court?.address}`
 
     return {
       caseId: internalCase.id,

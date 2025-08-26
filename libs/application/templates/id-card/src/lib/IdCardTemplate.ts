@@ -21,7 +21,6 @@ import {
   PendingAction,
   StaticText,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import {
   DeliveryAddressApi,
@@ -83,9 +82,8 @@ const IdCardTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ID_CARD,
-  name: applicationMessage.name, // TODO make dynamic if possible
+  name: applicationMessage.name,
   codeOwner: CodeOwners.Origo,
-  featureFlag: Features.idCardApplication,
   dataSchema: IdCardSchema,
   translationNamespaces: [ApplicationConfigurations.IdCard.translation],
   stateMachineConfig: {

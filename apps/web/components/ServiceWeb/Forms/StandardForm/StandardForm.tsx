@@ -106,6 +106,7 @@ const labels: Record<string, string> = {
   nafn_fyrirtaekis: 'Nafn fyrirtækis',
   starfsstod: 'Starfsstöð',
   oska_eftir_vernd_uppljostrara: 'Óska eftir vernd uppljóstrara',
+  kennitala_thess_sem_malid_vardar: 'Kennitala þess sem málið varðar',
 }
 
 // these should be skipped in the message itself
@@ -469,11 +470,15 @@ export const StandardForm = ({
         fields = (
           <GridColumn span="12/12" paddingBottom={3}>
             <BasicInput
-              name="kennitala"
+              name="kennitala_thess_sem_malid_vardar"
               format="######-####"
-              label={fn('kennitala', 'label', 'Kennitala')}
+              label={fn(
+                'kennitala_thess_sem_malid_vardar',
+                'label',
+                'Kennitala þess sem málið varðar',
+              )}
               requiredMessage={fn(
-                'kennitala',
+                'kennitala_thess_sem_malid_vardar',
                 'requiredMessage',
                 'Kennitölu vantar',
               )}
@@ -488,11 +493,15 @@ export const StandardForm = ({
           <>
             <GridColumn paddingBottom={3}>
               <BasicInput
-                name="kennitala"
+                name="kennitala_thess_sem_malid_vardar"
                 format="######-####"
-                label={fn('kennitala', 'label', 'Kennitala')}
+                label={fn(
+                  'kennitala_thess_sem_malid_vardar',
+                  'label',
+                  'Kennitala þess sem málið varðar',
+                )}
                 requiredMessage={fn(
-                  'kennitala',
+                  'kennitala_thess_sem_malid_vardar',
                   'requiredMessage',
                   'Kennitölu vantar',
                 )}

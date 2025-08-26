@@ -7,7 +7,7 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import { getApplicationExternalData } from '../../lib/newPrimarySchoolUtils'
+import { getApplicationExternalData } from '../../utils/newPrimarySchoolUtils'
 
 export const childrenSubSection = buildSubSection({
   id: 'childrenSubSection',
@@ -26,11 +26,12 @@ export const childrenSubSection = buildSubSection({
               application.externalData,
             )
 
-            return children.map((child) => {
+            return children.map((child, index) => {
               return {
                 value: child.nationalId,
                 label: child.fullName,
                 subLabel: formatKennitala(child.nationalId),
+                dataTestId: `child-${index}`,
               }
             })
           },

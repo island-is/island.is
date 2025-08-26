@@ -21,6 +21,7 @@ export type DetailedProps = BaseProps & {
   logo?: string
   logoAlt?: string
   subEyebrow?: string
+  subDescription?: string
   //max 5 lines
   detailLines?: Array<{
     icon: IconMapIcon
@@ -35,6 +36,7 @@ export const DetailedInfoCard = ({
   size = 'medium',
   eyebrow,
   subEyebrow,
+  subDescription,
   detailLines,
   tags,
   logo,
@@ -46,8 +48,8 @@ export const DetailedInfoCard = ({
     }
 
     return (
-      <Box style={{ flex: '0 0 40px' }}>
-        <img height={40} src={logo} alt={logoAlt} />
+      <Box style={{ flex: '0 0 48px' }}>
+        <img height={48} src={logo} alt={logoAlt} />
       </Box>
     )
   }
@@ -114,12 +116,7 @@ export const DetailedInfoCard = ({
 
   const renderHeader = () => {
     return (
-      <Box
-        display="flex"
-        flexDirection="row"
-        justifyContent="spaceBetween"
-        marginBottom={3}
-      >
+      <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         {subEyebrow ? (
           <Box>
             <Text fontWeight="semiBold" variant="eyebrow" color={eyebrowColor}>
@@ -154,13 +151,20 @@ export const DetailedInfoCard = ({
                 </Text>
               </Box>
             )}
+            {subDescription && (
+              <Box flexGrow={1} marginTop={description ? 3 : 1}>
+                <Text variant="small" fontWeight="regular">
+                  {subDescription}
+                </Text>
+              </Box>
+            )}
           </GridColumn>
           <GridColumn span="4/12">{renderDetails()}</GridColumn>
         </GridRow>
       )
     }
     return (
-      <>
+      <Box marginTop={2}>
         <Text variant="h3" color="blue400">
           {title}
         </Text>
@@ -171,8 +175,15 @@ export const DetailedInfoCard = ({
             </Text>
           </Box>
         )}
+        {subDescription && (
+          <Box flexGrow={1} marginTop={description ? 2 : 1}>
+            <Text variant="small" fontWeight="regular">
+              {subDescription}
+            </Text>
+          </Box>
+        )}
         {renderDetails()}
-      </>
+      </Box>
     )
   }
 

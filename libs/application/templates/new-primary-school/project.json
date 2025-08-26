@@ -3,6 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/new-primary-school/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
   "targets": {
     "lint": {
@@ -35,6 +36,5 @@
         "command": "graphql-codegen --config libs/application/templates/new-primary-school/codegen.yml"
       }
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

@@ -5,8 +5,6 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
   Collection,
-  CreateParliamentaryCandidacyInput,
-  MandateType,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { errorMessages } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
@@ -20,20 +18,24 @@ import { isCompany } from 'kennitala'
 import { coreErrorMessages } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { getCollectionTypeFromApplicationType } from '../shared/utils'
 @Injectable()
 export class ParliamentaryListCreationService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
-    private nationalRegisryClientService: NationalRegistryClientService,
+    private nationalRegistryClientService: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.PARLIAMENTARY_LIST_CREATION)
   }
-
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.PARLIAMENTARY_LIST_CREATION,
+  )
   async candidate({ auth }: TemplateApiModuleActionProps) {
     const candidate = await this.signatureCollectionClientService.getSignee(
       auth,
+      this.collectionType,
     )
 
     if (!candidate.hasPartyBallotLetter) {
@@ -44,9 +46,11 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
   }
 
   async parliamentaryCollection({ auth }: TemplateApiModuleActionProps) {
-    const currentCollection =
-      await this.signatureCollectionClientService.currentCollection()
-    if (currentCollection.collectionType !== CollectionType.Parliamentary) {
+    const latestCollection =
+      await this.signatureCollectionClientService.getLatestCollectionForType(
+        this.collectionType,
+      )
+    if (latestCollection.collectionType !== CollectionType.Parliamentary) {
       throw new TemplateApiError(
         errorMessages.currentCollectionNotParliamentary,
         405,
@@ -55,14 +59,14 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     // Candidates are stored on user national id never the actors so should be able to check just the auth national id
 
     if (
-      currentCollection.candidates.some(
+      latestCollection.candidates.some(
         (c) => c.nationalId.replace('-', '') === auth.nationalId,
       )
     ) {
       throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
     }
 
-    return currentCollection
+    return latestCollection
   }
 
   async parliamentaryIdentity({ auth }: TemplateApiModuleActionProps) {
@@ -70,7 +74,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
       ? auth.actor?.nationalId ?? auth.nationalId
       : auth.nationalId
 
-    const identity = await this.nationalRegisryClientService.getIndividual(
+    const identity = await this.nationalRegistryClientService.getIndividual(
       contactNationalId,
     )
 
@@ -98,40 +102,14 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     const parliamentaryCollection = application.externalData
       .parliamentaryCollection.data as Collection
 
-    const input: CreateParliamentaryCandidacyInput = {
+    const input = {
+      collectionType: this.collectionType,
       owner: {
         ...answers.applicant,
         nationalId: application?.applicantActors?.[0]
           ? application.applicant
           : answers.applicant.nationalId,
       },
-      agents: (answers.managers ?? [])
-        .map((manager) => ({
-          nationalId: manager.manager.nationalId,
-          phoneNumber: '',
-          mandateType: MandateType.Guarantor,
-          email: '',
-          areas: answers.constituency.map((constituency) => {
-            const [id, _name] = constituency.split('|')
-            return {
-              areaId: id,
-            }
-          }),
-        }))
-        .concat(
-          (answers.supervisors ?? []).map((supervisor) => ({
-            nationalId: supervisor.supervisor.nationalId,
-            phoneNumber: '',
-            mandateType: MandateType.Administrator,
-            email: '',
-            areas: supervisor.constituency.map((constituency) => {
-              const [id, _name] = constituency.split('|')
-              return {
-                areaId: id,
-              }
-            }),
-          })),
-        ),
       collectionId: parliamentaryCollection.id,
       areas: answers.constituency.map((constituency) => {
         const [id, _name] = constituency.split('|')

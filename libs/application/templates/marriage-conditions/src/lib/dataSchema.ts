@@ -3,11 +3,9 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import { coreErrorMessages } from '@island.is/application/core/messages'
 import { m } from './messages'
-import { NO, YES } from '@island.is/application/core'
+import { EMAIL_REGEX, NO, YES } from '@island.is/application/core'
 
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-const isValidEmail = (value: string) => emailRegex.test(value)
+const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')

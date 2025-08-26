@@ -124,16 +124,10 @@ describe('SocialInsuranceAdministrationService', () => {
       answers: {
         paymentInfo: {
           bank: '222200123456',
-          iban: '',
-          swift: '',
           taxLevel: '2',
-          bankAccountType: 'icelandic',
           personalAllowance: 'no',
         },
         'period.year': '2023',
-        'fileUploadAdditionalFiles.additionalDocuments': [
-          { key: 'key', name: 'name' },
-        ],
       },
       typeId: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
     })

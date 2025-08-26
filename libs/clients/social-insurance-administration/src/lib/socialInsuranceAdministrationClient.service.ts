@@ -1,17 +1,29 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
 import {
   ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   ApiProtectedV1PensionCalculatorPostRequest,
+  ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   ApplicantApi,
   ApplicationApi,
+  DeathBenefitsApi,
   GeneralApi,
   IncomePlanApi,
+  MedicalDocumentsApi,
   PaymentPlanApi,
   PensionCalculatorApi,
-  DeathBenefitsApi,
+  QuestionnairesApi,
+  TrWebApiServicesCommonCountriesModelsCountryDto,
+  TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto,
+  TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
+  TrWebApiServicesDomainUnionsModelsUnionDto,
+  TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
@@ -20,11 +32,12 @@ import {
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
-  TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
+  TrWebExternalModelsServicePortalNationalRegistryAddress,
+  TrWebExternalModelsServicePortalBaseCertificate,
+  TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '../../gen/fetch'
-import { handle404 } from '@island.is/clients/middlewares'
-import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
+import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -37,6 +50,9 @@ export class SocialInsuranceAdministrationClientService {
     private readonly pensionCalculatorApi: PensionCalculatorApi,
     private readonly deathBenefitsApi: DeathBenefitsApi,
     private readonly incomePlanApi: IncomePlanApi,
+    private readonly generalApi: GeneralApi,
+    private readonly medicalDocumentsApi: MedicalDocumentsApi,
+    private readonly questionnairesApi: QuestionnairesApi,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -59,6 +75,15 @@ export class SocialInsuranceAdministrationClientService {
 
   private incomePlanApiWithAuth = (user: User) =>
     this.incomePlanApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private generalApiWithAuth = (user: User) =>
+    this.generalApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private medicalDocumentsApiWithAuth = (user: User) =>
+    this.medicalDocumentsApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private questionnairesApiWithAuth = (user: User) =>
+    this.questionnairesApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   getPaymentPlan(
     user: User,
@@ -188,5 +213,93 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1IncomePlanTemporaryCalculationsPost({
       trWebApiServicesDomainFinanceModelsIslandIsIncomePlanDto: parameters,
     })
+  }
+
+  async getUnions(
+    user: User,
+  ): Promise<Array<TrWebApiServicesDomainUnionsModelsUnionDto>> {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralUnionsGet()
+  }
+
+  async getRehabilitationPlan(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
+  }
+
+  async getMARPSelfAssessmentQuestionnaire(
+    user: User,
+    languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
+  ): Promise<
+    Array<TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto>
+  > {
+    return this.questionnairesApiWithAuth(
+      user,
+    ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
+      languages,
+    )
+  }
+
+  async getCertificateForSicknessAndRehabilitation(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalBaseCertificate> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsBasecertificateGet()
+  }
+
+  async getCountries(
+    user: User,
+  ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralCountriesGet()
+  }
+
+  async getEducationalInstitutions(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationalinstitutionsGet()
+  }
+
+  async getEctsUnits(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto>
+  > {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralEctsUnitsGet()
+  }
+
+  async getResidenceInformation(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalNationalRegistryAddress> {
+    return this.applicantApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicantResidenceInformationGet()
+  }
+
+  async getEducationLevels(
+    user: User,
+    applicationType: string,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationlevelsApplicationTypeGet({
+      applicationType,
+    })
+  }
+
+  async getMedicalAndRehabilitationApplicationType(
+    user: User,
+  ): Promise<TrWebApiServicesDomainApplicationsModelsApplicationTypeDto> {
+    return this.applicantApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
   }
 }

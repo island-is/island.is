@@ -9,6 +9,7 @@ export interface BaseProps {
   eyebrow: string
   background?: BoxProps['background']
   size: 'large' | 'medium' | 'small'
+  padding?: BoxProps['padding']
   borderColor?: BoxProps['borderColor']
   link: {
     label: string
@@ -37,7 +38,7 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
       width="full"
       borderRadius="large"
     >
-      <Box width="full" padding={2}>
+      <Box width="full" padding={restOfProps.padding ?? 3}>
         {restOfProps.variant === 'detailed' ? (
           <DetailedInfoCard size={size} {...restOfProps} />
         ) : (

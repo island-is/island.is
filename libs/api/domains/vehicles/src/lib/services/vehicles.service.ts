@@ -11,23 +11,24 @@ import {
   VehicleDtoListPagedResponse,
   PersidnoLookupResultDto,
   CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
+  VehiclesClientService,
 } from '@island.is/clients/vehicles'
 import {
   CanregistermileagePermnoGetRequest,
   GetMileageReadingRequest,
   MileageReadingApi,
   MileageReadingDto,
-  PostMileageReadingModel,
   RequiresmileageregistrationPermnoGetRequest,
   RootPostRequest,
   RootPutRequest,
+  VehiclesMileageClientService,
 } from '@island.is/clients/vehicles-mileage'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
-import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
+import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import {
   GetVehiclesForUserInput,
   GetVehiclesListV2Input,
@@ -45,7 +46,6 @@ import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
 import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
 import { UpdateResponseError } from '../dto/updateResponseError.dto'
-import { MileageRegistration } from '../models/v3/mileageRegistration.model'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -67,6 +67,8 @@ const isReadDateToday = (d?: Date) => {
 @Injectable()
 export class VehiclesService {
   constructor(
+    private vehicleClientService: VehiclesClientService,
+    private vehicleMileageClientService: VehiclesMileageClientService,
     private vehiclesApi: VehicleSearchApi,
     private mileageReadingApi: MileageReadingApi,
     @Inject(PublicVehicleSearchApi)
@@ -104,72 +106,40 @@ export class VehiclesService {
     auth: User,
     input: VehiclesListInputV3,
   ): Promise<VehiclesCurrentListResponse | null> {
-    const res = await this.getVehiclesWithAuth(
-      auth,
-    ).currentvehicleswithmileageandinspGet({
-      showCoowned: true,
-      showOperated: true,
-      showOwned: true,
-      onlyMileageRequiredVehicles: input.filterOnlyRequiredMileageRegistration,
-      page: input.page,
+    const res = await this.vehicleClientService.getVehicles(auth, {
       pageSize: input.pageSize,
-      permno: input.query
-        ? input.query.length < 5
-          ? `${input.query}*`
-          : `${input.query}`
-        : undefined,
+      page: input.page,
+      includeNextMainInspectionDate: input.includeNextMainInspectionDate,
+      onlyMileageRegisterableVehicles:
+        input.filterOnlyVehiclesUserCanRegisterMileage,
+      query: input.query,
     })
 
-    if (
-      !res.pageNumber ||
-      !res.pageSize ||
-      !res.totalPages ||
-      !res.totalRecords
-    ) {
+    if (!res) {
       return null
     }
 
     return {
-      pageNumber: res.pageNumber,
       pageSize: res.pageSize,
+      pageNumber: res.pageNumber,
       totalPages: res.totalPages,
       totalRecords: res.totalRecords,
-      data:
-        res.data
-          ?.map((d) => {
-            if (!d.permno) {
-              return null
-            }
-
-            let lastMileageRegistration: MileageRegistration | undefined
-
-            if (
-              d.latestOriginCode &&
-              d.latestMileage &&
-              d.latestMileageReadDate
-            ) {
-              lastMileageRegistration = {
-                originCode: d.latestOriginCode,
-                mileage: d.latestMileage,
-                date: d.latestMileageReadDate,
-                internalId: d.latestMileageInternalId ?? undefined,
+      data: res.vehicles.map((v) => ({
+        ...v,
+        nextInspection: v.nextInspection
+          ? v.nextInspection.toISOString()
+          : undefined,
+        mileageDetails: {
+          canRegisterMileage: v.canRegisterMileage,
+          requiresMileageRegistration: v.requiresMileageRegistration,
+          lastMileageRegistration: v.lastMileageRegistration
+            ? {
+                ...v.lastMileageRegistration,
+                date: v.lastMileageRegistration.date.toISOString(),
               }
-            }
-            return {
-              vehicleId: d.permno,
-              registrationNumber: d.regno ?? undefined,
-              userRole: d.role ?? undefined,
-              type: d.make ?? undefined,
-              color: d.colorName ?? undefined,
-              mileageDetails: {
-                lastMileageRegistration,
-                canRegisterMileage: d.canRegisterMilage ?? undefined,
-                requiresMileageRegistration:
-                  d.requiresMileageRegistration ?? undefined,
-              },
-            }
-          })
-          .filter(isDefined) ?? [],
+            : undefined,
+        },
+      })),
     }
   }
 
@@ -183,6 +153,7 @@ export class VehiclesService {
       requestedPersidno: auth.nationalId,
       showDeregistered: input.showDeregeristered,
       showHistory: input.showHistory,
+
       page: input.page,
       pageSize: input.pageSize,
       type: input.type,
@@ -206,20 +177,6 @@ export class VehiclesService {
       showDeregistered: showDeregistered,
       showHistory: showHistory,
     })
-  }
-
-  async getExcelVehiclesForUser(auth: User): Promise<VehiclesExcel> {
-    const res = await this.getVehiclesWithAuth(auth).ownershipReportDataGet({
-      ssn: auth.nationalId,
-    })
-
-    return {
-      persidno: res.persidno ?? undefined,
-      name: res.name ?? undefined,
-      vehicles: res.vehicles?.map((item) =>
-        basicVehicleInformationMapper(item),
-      ),
-    }
   }
 
   async getPublicVehicleSearch(search: string) {
@@ -379,42 +336,36 @@ export class VehiclesService {
     auth: User,
     input: GetVehicleMileageInput,
   ): Promise<MileageRegistrationHistory | null> {
-    const res = await this.getMileageWithAuth(auth).getMileageReading({
-      permno: input.permno,
-    })
+    const data = await this.vehicleMileageClientService.getMileageHistory(
+      auth,
+      {
+        vehicleId: input.permno,
+      },
+    )
 
-    const samplePermno = res[0].permno
-
-    if (!samplePermno) {
+    if (!data) {
       return null
     }
 
     return {
-      vehicleId: samplePermno,
-      mileageRegistrationHistory: res?.length
-        ? res
-            .map((h) => {
-              if (h.permno !== samplePermno) {
-                return null
-              }
-              if (!h.originCode || !h.mileage || !h.readDate) {
-                return null
-              }
-              return {
-                originCode: h.originCode,
-                mileage: h.mileage,
-                date: h.readDate,
-              }
-            })
-            .filter(isDefined)
-        : undefined,
+      vehicleId: data.vehicleId,
+      mileageRegistrationHistory: data.registrationHistory.map((r) => ({
+        originCode: r.originCode,
+        mileage: r.mileage,
+        date: r.readDate.toISOString(),
+        internalId: r.internalId,
+        operation: r.operation,
+        transactionDate: r.transactionDate
+          ? r.transactionDate.toISOString()
+          : undefined,
+      })),
     }
   }
 
   async postMileageReading(
     auth: User,
     input: RootPostRequest['postMileageReadingModel'],
-  ): Promise<PostMileageReadingModel | null> {
+  ): Promise<MileageReadingDto | null> {
     if (!input) return null
 
     const isAllowed = await this.isAllowedMileageRegistration(
@@ -460,18 +411,32 @@ export class VehiclesService {
       })
       throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
     }
+    try {
+      const res = await this.getMileageWithAuth(auth).rootPutRaw({
+        putMileageReadingModel: input,
+      })
 
-    const dtos = await this.getMileageWithAuth(auth).rootPut({
-      putMileageReadingModel: input,
-    })
-
-    return dtos.length > 0 ? dtos[0] : null
+      if (res.raw.status === 204) {
+        this.logger.debug('Successfully updated mileage reading')
+        return {
+          ...input,
+          internalId: input.internalId + 1,
+        }
+      }
+      return null
+    } catch (error) {
+      this.logger.warn('milege update failed', {
+        category: LOG_CATEGORY,
+        error,
+      })
+      throw error
+    }
   }
 
   async postMileageReadingV2(
     auth: User,
     input: RootPostRequest['postMileageReadingModel'],
-  ): Promise<PostMileageReadingModel | VehiclesMileageUpdateError | null> {
+  ): Promise<MileageReadingDto | VehiclesMileageUpdateError | null> {
     if (!input) return null
 
     const isAllowed = await this.isAllowedMileageRegistration(
@@ -530,10 +495,23 @@ export class VehiclesService {
     }
 
     try {
-      const dtos = await this.getMileageWithAuth(auth).rootPut({
+      const res = await this.getMileageWithAuth(auth).rootPutRaw({
         putMileageReadingModel: input,
       })
-      return dtos.length > 0 ? dtos[0] : null
+
+      if (res.raw.status === 204) {
+        this.logger.debug('mileage update successful')
+        return {
+          ...input,
+          internalId: input.internalId + 1,
+        }
+      }
+
+      this.logger.warn('Something went wrong while updating mileage')
+      return {
+        code: 500,
+        message: 'Something went wrong while updating mileage',
+      }
     } catch (e) {
       if (e instanceof FetchError && (e.status === 400 || e.status === 429)) {
         const errorBody = e.body as UpdateResponseError

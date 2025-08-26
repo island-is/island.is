@@ -15,8 +15,6 @@ import {
   PostCodeDto,
   SizeOfTheEnterpriseDto,
 } from '@island.is/clients/work-accident-ver'
-import { FormValue } from '@island.is/application/types'
-import { isCompany } from '../../../utils'
 
 export const companySection = buildSubSection({
   id: 'company',
@@ -178,15 +176,14 @@ export const companySection = buildSubSection({
           alertType: 'info',
           doesNotRequireAnswer: true,
           marginBottom: 0,
-          condition: (_, externalData) => isCompany(externalData),
         }),
         buildTextField({
           id: 'companyInformation.nameOfBranch',
           title: information.labels.company.nameOfBranch,
           backgroundColor: 'blue',
           width: 'half',
-          defaultValue: (application: Application) => '',
-          condition: (_, externalData) => isCompany(externalData),
+          required: true,
+          defaultValue: (_application: Application) => '',
         }),
         buildTextField({
           id: 'companyInformation.addressOfBranch',
@@ -194,15 +191,15 @@ export const companySection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           doesNotRequireAnswer: true,
-          defaultValue: (application: Application) => '',
-          condition: (_, externalData) => isCompany(externalData),
+          defaultValue: (_application: Application) => '',
+          maxLength: 21,
         }),
         buildSelectField({
           id: 'companyInformation.postnumberOfBranch',
           title: information.labels.company.postNumberAndTownOfBranch,
           width: 'half',
           doesNotRequireAnswer: true,
-          condition: (_, externalData) => isCompany(externalData),
+          defaultValue: '',
           isClearable: true,
           options: (application) => {
             const postCodes =

@@ -18,6 +18,7 @@ import {
   MultiValue,
   MultiValueLabel,
   customStyles,
+  NoOptionsMessage,
   ClearIndicator,
 } from './Components'
 import { Option as OptionType, SelectProps } from './Select.types'
@@ -54,6 +55,7 @@ export const Select = <
   dataTestId,
   filterConfig,
   isLoading = false,
+  hideSelectedOptions,
 }: SelectProps<OptionType<Value>, IsMulti, Group>) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -118,6 +120,7 @@ export const Select = <
           MultiValue,
           MultiValueLabel,
           ClearIndicator,
+          NoOptionsMessage,
         }}
         isClearable
         backspaceRemovesValue
@@ -167,6 +170,7 @@ export const Select = <
         required={required}
         formatGroupLabel={formatGroupLabel}
         filterOption={createFilter(filterConfig)}
+        hideSelectedOptions={hideSelectedOptions}
         components={{
           Control,
           Input,
@@ -180,6 +184,7 @@ export const Select = <
           MultiValue,
           MultiValueLabel,
           ClearIndicator,
+          NoOptionsMessage,
         }}
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}

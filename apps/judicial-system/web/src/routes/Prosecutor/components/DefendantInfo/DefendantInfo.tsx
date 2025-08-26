@@ -18,14 +18,12 @@ import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import InputName from '@island.is/judicial-system-web/src/components/Inputs/InputName'
 import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 import {
+  Case,
   Defendant,
   Gender,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  ReactSelectOption,
-  TempCase as Case,
-} from '@island.is/judicial-system-web/src/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,

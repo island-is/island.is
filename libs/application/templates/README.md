@@ -4,7 +4,9 @@
 
 If desired it is possible to have a custom message sent to an application's applicant when it is pruned.
 This is done by adding a `pruneMessage` object of type `PruningNotification` or a function returning a `PruningNotification` to the application's lifecycle configuration.
-When executed, the function will be passed an argument that is a `PruningApplication` object which contains the application's data. The `PruningNotification` object has `externalBody`, `internalBody` and `notificationTemplateId`. The former two can be used to fill in the values for the `externalBody` and `internalBody` template variables in the notification that will be sent to the user. The `notificationTemplateId` is the id of the notification template that will be used to send the notification. It is up to the user whether to use the body variables or not.
+When executed, the function will be passed an argument that is a `PruningApplication` object which contains the application's data. The `PruningNotification` object has `externalBody`, `internalBody` and `notificationTemplateId`. The former two can be used to fill in the values for the `externalBody` and `internalBody` template variables in the notification that will be sent to the user.
+The `notificationTemplateId` is the id of the notification template that will be used to send the notification.
+It is up to the user whether to use the body variables or not.
 
 For example an application might want to send a notification when an application that was in the draft stage was pruned. Here is an example of how that might be accomplished in the application template:
 
@@ -26,6 +28,26 @@ stateMachineConfig: {
     },
   },
 ```
+
+### Testing pruning notifications locally
+
+To test locally you'll need to proxy the user notifiction service on you local system.
+
+Here's how to do that:
+
+- Add the following line to your .envrc.private file: `export USER_NOTIFICATION_API_URL=http://localhost:8088`
+
+- Make sure your terminal has an active AWS SSO session see [here](https://docs.devland.is/development/aws-secrets) and more info [here](https://www.notion.so/Onboarding-Tips-and-Tricks-c1e89b284db44e06947af9fc258dd88f#1835a76701d680c1b50acd2b5fb7e786)
+
+- Start your port forwarding with the following command `kubectl port-forward -n user-notification service/user-notification 8088:80`
+
+- To test pruning you must run the api worker once the test application has expired, that means you'll want to set the whenToPrune field to just a couple of seconds and then you can run `yarn nx run application-system-api:worker` to perform the pruning.
+
+- You can then log into the [notifications page](https://beta.dev01.devland.is/minarsidur/min-gogn/tilkynningar) for the user you used to create the application to check if the message has arrived.
+
+Please note that messages can sometimes take severaly minutes to make their way through the system so just because you don't see your message right away that does not necessarily mean there was a problem.
+
+Finally here is a link to the [HNIPP section on devland](https://docs.devland.is/products/notifications-hnipp)
 
 ## Mocking XROAD endpoints with Mockoon for templates
 

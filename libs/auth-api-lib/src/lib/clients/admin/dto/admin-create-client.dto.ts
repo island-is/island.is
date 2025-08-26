@@ -9,7 +9,7 @@ import {
 
 import { AuthDelegationType } from '@island.is/shared/types'
 
-import { ClientType } from '../../../types'
+import { ClientSso, ClientType } from '../../../types'
 import { AdminPatchClientDto } from './admin-patch-client.dto'
 
 type CreateClientType = Extract<
@@ -58,4 +58,13 @@ export class AdminCreateClientDto extends OmitType(AdminPatchClientDto, [
     type: [String],
   })
   supportedDelegationTypes?: AuthDelegationType[]
+
+  @IsNotEmpty()
+  @IsEnum(ClientSso)
+  @ApiProperty({
+    example: 'enabled',
+    enum: ClientSso,
+    enumName: 'ClientSso',
+  })
+  readonly sso!: ClientSso
 }

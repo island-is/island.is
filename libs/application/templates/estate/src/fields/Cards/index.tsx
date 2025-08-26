@@ -28,6 +28,7 @@ export const Cards: FC<React.PropsWithChildren<FieldBaseProps & Props>> = ({
   field,
 }) => {
   const { formatMessage } = useLocale()
+  const { props } = field
 
   const notFilledOut = (
     <Box marginY={3}>
@@ -37,8 +38,8 @@ export const Cards: FC<React.PropsWithChildren<FieldBaseProps & Props>> = ({
 
   return (
     <GridRow>
-      {field.props.cards(application).length ? (
-        field.props.cards(application).map(({ title, description }, idx) => {
+      {props.cards(application).length ? (
+        props.cards(application).map(({ title, description }, idx) => {
           return (
             <GridColumn span={['12/12', '12/12', '6/12']} key={idx}>
               {title && title !== '' ? (

@@ -1,12 +1,14 @@
 import { Platform } from 'react-native'
 import DeviceInfo from 'react-native-device-info'
 import {
+  EnvironmentConfig,
   environmentStore,
   useEnvironmentStore,
 } from './stores/environment-store'
 
-// Initial environment
-export const environments = {
+type EnvironmentId = 'prod' | 'staging' | 'dev' | 'local' | 'mock'
+
+export const environments: Record<EnvironmentId, EnvironmentConfig> = {
   prod: {
     id: 'prod',
     label: 'Production',
@@ -34,6 +36,14 @@ export const environments = {
   local: {
     id: 'local',
     label: 'Local',
+    idsIssuer: 'https://identity-server.dev01.devland.is/',
+    apiUrl: 'http://localhost:4444/api',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
+    datadog: null,
+  },
+  mock: {
+    id: 'mock',
+    label: 'Mock',
     idsIssuer: 'https://identity-server.dev01.devland.is/',
     apiUrl: 'http://localhost:4444/api',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',

@@ -7,9 +7,10 @@ import {
 } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
+import { useSubmitApplication, usePaymentStatus } from './hooks'
 import { getRedirectUrl, isComingFromRedirect } from './util'
 import { Company } from '../../assets'
+import { useLocale } from '@island.is/localization'
 
 export interface Props extends FieldBaseProps {
   field: CustomField
@@ -17,7 +18,7 @@ export interface Props extends FieldBaseProps {
 
 export const PaymentPending: FC<Props> = (props) => {
   const { application, refetch } = props
-  const msg = useMsg(application)
+  const { formatMessage } = useLocale()
 
   const paymentUrl = getValueViaPath<string>(
     application.externalData,
@@ -41,9 +42,9 @@ export const PaymentPending: FC<Props> = (props) => {
   if (!paymentUrl || backError) {
     return (
       <PaymentError
-        title={msg(m.submitErrorTitle)}
-        errorMessage={msg(m.submitErrorMessage)}
-        buttonCaption={msg(m.submitErrorButtonCaption)}
+        title={formatMessage(m.submitErrorTitle)}
+        errorMessage={formatMessage(m.submitErrorMessage)}
+        buttonCaption={formatMessage(m.submitErrorButtonCaption)}
       />
     )
   } else if (isComingFromRedirect()) {
@@ -52,7 +53,7 @@ export const PaymentPending: FC<Props> = (props) => {
     return (
       <ForwardToPaymentFlow
         url={getRedirectUrl(paymentUrl)}
-        message={msg(m.forwardingToPayment)}
+        message={formatMessage(m.forwardingToPayment)}
       />
     )
   }
@@ -70,7 +71,7 @@ const ForwardToPaymentFlow: FC<{ url: string; message: string }> = ({
 }
 
 const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
-  const msg = useMsg(application)
+  const { formatMessage } = useLocale()
 
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
@@ -94,15 +95,15 @@ const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
   }, [submitApplication, paymentStatus, stopPolling])
 
   if (pollingError) {
-    return <Text>{msg(m.examplePaymentPendingFieldError)}</Text>
+    return <Text>{formatMessage(m.examplePaymentPendingFieldError)}</Text>
   }
 
   if (submitError) {
     return (
       <PaymentError
-        title={msg(m.submitErrorTitle)}
-        errorMessage={msg(m.submitErrorMessage)}
-        buttonCaption={msg(m.submitErrorButtonCaption)}
+        title={formatMessage(m.submitErrorTitle)}
+        errorMessage={formatMessage(m.submitErrorMessage)}
+        buttonCaption={formatMessage(m.submitErrorButtonCaption)}
         onClick={() => refetch?.()}
       />
     )
@@ -112,7 +113,7 @@ const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
     <>
       {error && { error }}
       <Box>
-        <Text variant="h3">{msg(m.paymentPendingDescription)}</Text>
+        <Text variant="h3">{formatMessage(m.paymentPendingDescription)}</Text>
         <Company />
       </Box>
     </>

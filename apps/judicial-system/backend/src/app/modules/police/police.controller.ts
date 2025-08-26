@@ -15,7 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -39,7 +39,7 @@ import { PoliceService } from './police.service'
 @Controller('api/case/:caseId')
 @ApiTags('police files')
 @UseGuards(
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   CaseExistsGuard,
   CaseReadGuard,

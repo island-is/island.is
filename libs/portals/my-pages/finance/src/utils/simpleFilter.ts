@@ -1,8 +1,8 @@
-import { CustomerRecordsDetails } from '../screens/FinanceTransactions/FinanceTransactionsData.types'
 import { DocumentsListItemTypes } from '../components/DocumentScreen/DocumentScreen.types'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import { GetChargeTypesDetailsByYearQuery } from '../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
+import { CustomerRecordsDetails } from '../lib/types'
 
 export const transactionFilter = (
   data: CustomerRecordsDetails[],

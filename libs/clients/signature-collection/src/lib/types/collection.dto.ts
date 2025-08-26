@@ -1,4 +1,4 @@
-import { Area, mapArea } from './area.dto'
+import { Area } from './area.dto'
 import { MedmaelasofnunExtendedDTO } from '../../../gen/fetch'
 import { logger } from '@island.is/logging'
 import { Candidate, mapCandidate } from './candidate.dto'
@@ -13,30 +13,55 @@ export enum CollectionStatus {
   Inactive = 'inactive',
 }
 
-// We are storing this enum such that an unknown category maps to 0
-// Then the rest is ordered to reflect the numerical values present in the
-// Signature Collection API (see /Tegund/Kosning in the API)
+// We transform the raw numbers coming from the client
+// to string representations so that these values will be comparable
+// when travelling through the GraphQL layers since numerical enums
+// and other objects will default to `Scalar['Float']` which is
+// not accurate enough for comparisons to survive through that layer.
 export enum CollectionType {
-  OtherUnknown,
-  Parliamentary,
-  Presidential,
-  Referendum, // is: Þjóðaratkvæðagreiðsla
-  OtherSameRulesAsParliamentary,
-  LocalGovernmental, // is: Sveitarstjórnarkosningar
-  SpecialLocalGovernmental,
-  ResidentPoll, // is: Íbúakönnun
-  ForeignResidentPoll,
+  OtherUnknown = 'OtherUnknown',
+  Parliamentary = 'Parliamentary',
+  Presidential = 'Presidential',
+  Referendum = 'Referendum', // is: Þjóðaratkvæðagreiðsla
+  OtherSameRulesAsParliamentary = 'OtherSameRulesAsParliamentary',
+  LocalGovernmental = 'LocalGovernmental', // is: Sveitarstjórnarkosningar
+  SpecialLocalGovernmental = 'SpecialLocalGovernmental',
+  ResidentPoll = 'ResidentPoll', // is: Íbúakönnun
 }
 
-export const getCollectionTypeFromNumber = (
-  nr: number | undefined,
-): CollectionType => {
-  // Make sure to add to the enum and iterate on the numbers
-  // if needed and when other types of collections are added.
-  if (nr && nr > 0 && nr <= 8) {
-    return nr as CollectionType
+// If you need to update these values, please take a look at the
+// Signature Collection API → see /Tegund/Kosning
+const collectionTypeTable = {
+  0: CollectionType.OtherUnknown,
+  1: CollectionType.Parliamentary,
+  2: CollectionType.Presidential,
+  3: CollectionType.Referendum,
+  4: CollectionType.OtherSameRulesAsParliamentary,
+  5: CollectionType.LocalGovernmental,
+  6: CollectionType.SpecialLocalGovernmental,
+  9: CollectionType.ResidentPoll,
+}
+
+// Typeguard
+export const isCollectionType = (value: unknown): value is CollectionType => {
+  return Object.values(CollectionType).includes(value as CollectionType)
+}
+
+export const getCollectionTypeFromNumber = (number: number): CollectionType => {
+  const index = number as keyof typeof collectionTypeTable
+  if (collectionTypeTable?.[index]) {
+    return collectionTypeTable[index]
   }
   return CollectionType.OtherUnknown
+}
+
+export const getNumberFromCollectionType = (
+  collectionType: CollectionType,
+): number => {
+  const found = Object.entries(collectionTypeTable).find(
+    (e) => e[1] === collectionType,
+  )
+  return parseInt(found?.[0] ?? '0', 10)
 }
 
 export interface Collection {
@@ -44,7 +69,6 @@ export interface Collection {
   startTime: Date
   endTime: Date
   isActive: boolean
-  isPresidential: boolean
   isSignatureCollection: boolean
   name: string
   areas: Area[]
@@ -52,6 +76,7 @@ export interface Collection {
   processed: boolean
   status: CollectionStatus
   collectionType: CollectionType
+  electionId?: string
 }
 
 const getStatus = ({
@@ -91,6 +116,7 @@ const getStatus = ({
 
 export const mapCollection = (
   collection: MedmaelasofnunExtendedDTO,
+  participatingAreas: Area[],
 ): Collection => {
   const {
     id,
@@ -109,7 +135,9 @@ export const mapCollection = (
       'Received partial collection information from the national registry.',
     )
   }
-  const collectionType = getCollectionTypeFromNumber(kosning?.kosningTegundNr)
+  const collectionType = getCollectionTypeFromNumber(
+    collection.kosning?.kosningTegundNr ?? 0,
+  )
   const isActive = startTime < new Date() && endTime > new Date()
   const processed = collection.lokadHandvirkt ?? false
   const hasActiveLists = collection.opnirListar ?? false
@@ -121,20 +149,24 @@ export const mapCollection = (
     hasActiveLists,
     hasExtendedLists,
   })
+  const governmentalArea =
+    collectionType === CollectionType.LocalGovernmental && areas.length > 0
+      ? areas[0].id?.toString()
+      : undefined
   return {
     id: id.toString(),
     name: collection.kosningNafn ?? '',
     startTime,
     endTime,
     isActive,
-    isPresidential: collectionType === CollectionType.Presidential,
     isSignatureCollection: kosning?.erMedmaelakosning ?? false,
     candidates: candidates
-      ? candidates.map((candidate) => mapCandidate(candidate))
+      ? candidates.map((candidate) => mapCandidate(candidate, governmentalArea))
       : [],
-    areas: areas.map((area) => mapArea(area)),
+    areas: participatingAreas,
     processed,
     status,
     collectionType,
+    electionId: kosning?.id?.toString(),
   }
 }

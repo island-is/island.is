@@ -3,15 +3,10 @@ import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Stack, Text, TextInput } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-import slugify from '@sindresorhus/slugify'
 
-import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
+import { slugify } from '../../utils'
 
 const DEBOUNCE_TIME = 100
-const config = {
-  environmentId: CONTENTFUL_ENVIRONMENT,
-  spaceId: CONTENTFUL_SPACE,
-}
 
 const OrganizationSubpageSlugField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
@@ -20,6 +15,9 @@ const OrganizationSubpageSlugField = () => {
   const [isValid, setIsValid] = useState(true)
   const [organizationPageId, setOrganizationPageId] = useState(
     sdk.entry.fields.organizationPage.getValue()?.sys?.id,
+  )
+  const [parentSubpageId, setParentSubpageId] = useState(
+    sdk.entry.fields.organizationParentSubpage.getValue()?.sys?.id,
   )
   const initialTitleChange = useRef(true)
   const [hasEntryBeenPublished, setHasEntryBeenPublished] = useState(
@@ -62,6 +60,15 @@ const OrganizationSubpageSlugField = () => {
     })
   }, [sdk.entry.fields.organizationPage])
 
+  // Store in state what the above parent subpage id is
+  useEffect(() => {
+    return sdk.entry.fields.organizationParentSubpage.onValueChanged(
+      (newParentSubpage) => {
+        setParentSubpageId(newParentSubpage?.sys?.id)
+      },
+    )
+  }, [sdk.entry.fields.organizationParentSubpage])
+
   useEffect(() => {
     sdk.window.startAutoResizer()
   }, [sdk.window])
@@ -73,31 +80,72 @@ const OrganizationSubpageSlugField = () => {
         setIsValid(true)
         return
       }
-      const subpagesWithSameSlug =
-        (
-          await cma.entry.getMany({
-            ...config,
-            query: {
-              locale: sdk.field.locale,
-              content_type: 'organizationSubpage',
-              'fields.slug': value,
-              'sys.id[ne]': sdk.entry.getSys().id,
-              'sys.archivedVersion[exists]': false,
-              limit: 1000,
-            },
-          })
-        )?.items ?? []
+
+      const entryId = sdk.entry.getSys().id
+
+      const [
+        siblingPagesUnderSameParentSubpageWithSameSlugResponse,
+        subpagesWithSameSlugAndDontBelongToParentSubpageResponse,
+        parentSubpagesWithSameSlugResponse,
+      ] = await Promise.all([
+        parentSubpageId
+          ? cma.entry.getMany({
+              query: {
+                locale: sdk.field.locale,
+                content_type: 'organizationSubpage',
+                'fields.slug': value,
+                'sys.id[ne]': entryId,
+                'sys.archivedVersion[exists]': false,
+                limit: 1,
+                'fields.organizationParentSubpage.sys.id': parentSubpageId,
+              },
+            })
+          : { items: [] },
+        cma.entry.getMany({
+          query: {
+            locale: sdk.field.locale,
+            content_type: 'organizationSubpage',
+            'fields.slug': value,
+            'sys.id[ne]': entryId,
+            'sys.archivedVersion[exists]': false,
+            limit: 1,
+            'fields.organizationPage.sys.id': organizationPageId,
+            'fields.organizationParentSubpage[exists]': false,
+          },
+        }),
+        cma.entry.getMany({
+          query: {
+            locale: sdk.field.locale,
+            content_type: 'organizationParentSubpage',
+            'fields.slug': value,
+            'sys.archivedVersion[exists]': false,
+            limit: 1,
+            'fields.organizationPage.sys.id': organizationPageId,
+            'sys.id[ne]': parentSubpageId,
+          },
+        }),
+      ])
 
       if (
-        subpagesWithSameSlug.some(
-          (subpage) =>
-            subpage.fields.organizationPage?.[sdk.locales.default]?.sys?.id ===
-            organizationPageId,
-        )
+        siblingPagesUnderSameParentSubpageWithSameSlugResponse.items.length > 0
       ) {
         setIsValid(false)
         return
       }
+
+      if (parentSubpagesWithSameSlugResponse.items.length > 0) {
+        setIsValid(false)
+        return
+      }
+
+      if (
+        subpagesWithSameSlugAndDontBelongToParentSubpageResponse.items.length >
+        0
+      ) {
+        setIsValid(false)
+        return
+      }
+
       setIsValid(true)
     },
     DEBOUNCE_TIME,
@@ -133,7 +181,7 @@ const OrganizationSubpageSlugField = () => {
       )}
       {value.length > 0 && isInvalid && (
         <Text fontColor="red400">
-          Organization subpage already exists with this slug
+          Another page already exists with this slug
         </Text>
       )}
     </Stack>

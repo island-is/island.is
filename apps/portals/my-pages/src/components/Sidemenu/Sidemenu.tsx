@@ -1,4 +1,3 @@
-import React, { ReactElement, useEffect } from 'react'
 import {
   Box,
   GridContainer,
@@ -7,19 +6,21 @@ import {
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
 import {
+  m,
   ServicePortalPaths,
   useDynamicRoutesWithNavigation,
-  useIsMobile,
 } from '@island.is/portals/my-pages/core'
-import * as styles from './Sidemenu.css'
 import { sharedMessages } from '@island.is/shared/translations'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import cn from 'classnames'
+import { ReactElement } from 'react'
+import { useWindowSize } from 'react-use'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+import * as styles from './Sidemenu.css'
 import SidemenuItem from './SidemenuItem'
-import { m } from '@island.is/portals/my-pages/core'
-
+import { CloseButton } from '../Button/CloseButton/CloseButton'
 interface Props {
   setSideMenuOpen: (status: boolean) => void
   sideMenuOpen: boolean
@@ -30,37 +31,14 @@ const Sidemenu = ({
   sideMenuOpen,
   rightPosition,
 }: Props): ReactElement | null => {
-  useNamespaces(['service.portal'])
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
-
-  const isMobile = useIsMobile()
-
-  // In your component logic, you can toggle the attribute on the HTML element
-  useEffect(() => {
-    if (sideMenuOpen) {
-      document.documentElement.setAttribute('data-sidemenu-open', 'true')
-    } else {
-      document.documentElement.setAttribute('data-sidemenu-open', 'false')
-    }
-
-    return () => {
-      document.documentElement.removeAttribute('data-sidemenu-open')
-    }
-  }, [sideMenuOpen])
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   const onClose = () => {
     setSideMenuOpen(false)
   }
-  const closeButton = (
-    <button
-      className={styles.closeButton}
-      onClick={() => setSideMenuOpen(false)}
-      aria-label={formatMessage(sharedMessages.close)}
-    >
-      <Icon icon="close" color="blue600" />
-    </button>
-  )
 
   const content = (
     <Box display="flex" justifyContent="flexEnd">
@@ -120,7 +98,12 @@ const Sidemenu = ({
             )}
           </Box>
         </Box>
-        <Hidden below="md">{closeButton}</Hidden>
+        <Hidden below="md">
+          <CloseButton
+            onClick={() => setSideMenuOpen(false)}
+            aria-label={formatMessage(sharedMessages.close)}
+          />
+        </Hidden>
       </Box>
     </Box>
   )

@@ -9,9 +9,9 @@ export const strings = {
         'Notað sem titill í tilkynningu um stöðu birtingar dóms í lokinni ákæru',
     },
     body: {
-      id: 'judicial.system.backend:indictment_case_notifications.verdict_service.body',
+      id: 'judicial.system.backend:indictment_case_notifications.verdict_service.body_v2',
       defaultMessage:
-        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.\n\nNiðurstaða: Dómur\n\n{serviceRequirement, select, REQUIRED {Birta skal dómfellda dóminn} NOT_REQUIRED {Birting dóms ekki þörf} NOT_APPLICABLE {Dómfelldi var viðstaddur dómsuppkvaðningu} other {}}\n\n{caseOrigin, select, LOKE {Dómur er aðgengilegur í LÖKE.} other {}}',
+        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.\n\nNiðurstaða: Dómur\n\n{serviceRequirement, select, REQUIRED {Birta skal dómfellda dóminn} NOT_REQUIRED {Birting dóms ekki þörf} NOT_APPLICABLE {Dómfelldi var viðstaddur dómsuppkvaðningu} other {}}\n\n{caseOrigin, select, LOKE {Dómur er aðgengilegur í LÖKE ({policeCaseNumber}).} other {}}',
       description:
         'Notað sem body í tilkynningu um stöðu birtingar dóms í lokinni ákæru',
     },

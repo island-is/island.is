@@ -4,9 +4,9 @@ if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
-# shellcheck disable=SC1091
+# shellcheck source-path=SCRIPTDIR
 source "$DIR"/_common.sh
-# shellcheck disable=SC1091
+# shellcheck source-path=SCRIPTDIR
 source "$DIR"/09_load-buildkit-driver.sh
 
 APP_DIST_HOME="dist/${APP_HOME}"
@@ -16,6 +16,8 @@ ACTION=${3:-docker_build}
 PLAYWRIGHT_VERSION="$(yarn info --json @playwright/test | jq -r '.children.Version')"
 CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
+UPLOAD_ARTIFACT_DOCKER="${UPLOAD_ARTIFACT_DOCKER:-false}"
+
 
 BUILD_ARGS=()
 
@@ -68,5 +70,16 @@ main() {
   eval "${ACTION}"
 }
 
+_upload_artifact() {
+  case $UPLOAD_ARTIFACT_DOCKER in
+  true)
+    IMAGE_NAME="$APP" APP_NAME="$APP" TARGET="$TARGET"  node "$DIR/docker/write-build-data.mjs"
+    ;;
+  false)
+    ;;
+  esac
+}
+
 _set_publish
 main "$@"
+_upload_artifact

@@ -1,7 +1,3 @@
-import flatten from 'lodash/flatten'
-
-import { CaseFileCategory } from './file'
-
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -152,6 +148,7 @@ export enum CaseTransition {
   RETURN_INDICTMENT = 'RETURN_INDICTMENT',
   SUBMIT = 'SUBMIT',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
+  MOVE = 'MOVE',
 }
 
 export enum IndictmentCaseTransition {
@@ -161,8 +158,10 @@ export enum IndictmentCaseTransition {
   DELETE = CaseTransition.DELETE,
   DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
   RECEIVE = CaseTransition.RECEIVE,
+  REOPEN = CaseTransition.REOPEN,
   RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
   SUBMIT = CaseTransition.SUBMIT,
+  MOVE = CaseTransition.MOVE,
 }
 
 export enum RequestCaseTransition {
@@ -179,6 +178,7 @@ export enum RequestCaseTransition {
   REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
   SUBMIT = CaseTransition.SUBMIT,
   WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
+  MOVE = CaseTransition.MOVE,
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -263,6 +263,12 @@ export enum RequestSharedWithDefender {
   READY_FOR_COURT = 'READY_FOR_COURT',
   COURT_DATE = 'COURT_DATE', // TODO: Rename to ARRAIGNMENT_DATE at some point
   NOT_SHARED = 'NOT_SHARED',
+}
+
+export enum RequestSharedWhen {
+  READY_FOR_COURT = 'READY_FOR_COURT',
+  ARRAIGNMENT_DATE_ASSIGNED = 'ARRAIGNMENT_DATE_ASSIGNED',
+  OBLIGATED = 'OBLIGATED',
 }
 
 export enum CourtSessionType {
@@ -372,27 +378,6 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
         CaseState.RECEIVED,
         ...completedIndictmentCaseStates,
       ].includes(state),
-  )
-}
-
-export const isTrafficViolationCase = (theCase: {
-  type?: CaseType | null
-  indictmentSubtypes?: IndictmentSubtypeMap
-  caseFiles?: { category?: CaseFileCategory | null }[] | null
-}): boolean => {
-  if (theCase.type !== CaseType.INDICTMENT || !theCase.indictmentSubtypes) {
-    return false
-  }
-
-  const flatIndictmentSubtypes = flatten(
-    Object.values(theCase.indictmentSubtypes),
-  )
-
-  return (
-    flatIndictmentSubtypes.length > 0 &&
-    flatIndictmentSubtypes.every(
-      (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
-    )
   )
 }
 

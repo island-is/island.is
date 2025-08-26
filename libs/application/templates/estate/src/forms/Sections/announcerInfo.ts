@@ -1,35 +1,32 @@
-import { UserProfile, Application } from '@island.is/api/schema'
+import { Application } from '@island.is/api/schema'
 import {
-  buildDescriptionField,
   buildMultiField,
   buildPhoneField,
   buildRadioField,
   buildSection,
   buildSelectField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { JA, YES, NEI, NO } from '../../lib/constants'
+import { JA, YES, NEI, NO, EstateTypes } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
-import { EstateTypes } from '../../lib/constants'
 
 export const announcerInfo = buildSection({
   id: 'information',
-  title: (application) =>
-    application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+  title: ({ answers }) =>
+    answers.selectedEstate === EstateTypes.estateWithoutAssets
       ? m.announcerNoAssets
-      : application.answers.selectedEstate ===
-        EstateTypes.permitForUndividedEstate
+      : answers.selectedEstate === EstateTypes.permitForUndividedEstate
       ? m.announcerPTP
       : m.announcer,
   children: [
     buildMultiField({
       id: 'applicant',
-      title: (application) =>
-        application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+      title: ({ answers }) =>
+        answers.selectedEstate === EstateTypes.estateWithoutAssets
           ? m.announcerNoAssets
-          : application.answers.selectedEstate ===
-            EstateTypes.permitForUndividedEstate
+          : answers.selectedEstate === EstateTypes.permitForUndividedEstate
           ? m.announcerPermitToPostpone
           : m.announcer,
       description: m.applicantsInfoSubtitle,
@@ -39,29 +36,33 @@ export const announcerInfo = buildSection({
           title: m.name,
           readOnly: true,
           width: 'half',
-          defaultValue: ({ externalData }: Application) => {
-            return externalData.nationalRegistry?.data.fullName
-          },
+          defaultValue: ({ externalData }: Application) =>
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
+            '',
         }),
         buildTextField({
           id: 'applicant.nationalId',
           title: m.nationalId,
           readOnly: true,
           width: 'half',
-          defaultValue: ({ externalData }: Application) => {
-            return formatNationalId(
-              externalData.nationalRegistry?.data.nationalId,
-            )
-          },
+          defaultValue: ({ externalData }: Application) =>
+            formatNationalId(
+              getValueViaPath(
+                externalData,
+                'nationalRegistry.data.nationalId',
+              ) ?? '',
+            ),
         }),
         buildTextField({
           id: 'applicant.address',
           title: m.address,
           readOnly: true,
           width: 'half',
-          defaultValue: ({ externalData }: Application) => {
-            return externalData.nationalRegistry?.data.address.streetAddress
-          },
+          defaultValue: ({ externalData }: Application) =>
+            getValueViaPath(
+              externalData,
+              'nationalRegistry.data.address.streetAddress',
+            ) ?? '',
         }),
         buildPhoneField({
           id: 'applicant.phone',
@@ -69,26 +70,19 @@ export const announcerInfo = buildSection({
           width: 'half',
           required: true,
           enableCountrySelector: true,
-          defaultValue: (application: Application) => {
-            const phone =
-              (
-                application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                }
-              )?.mobilePhoneNumber ?? ''
-
-            return phone
-          },
+          defaultValue: ({ externalData }: Application) =>
+            getValueViaPath(
+              externalData,
+              'userProfile.data.mobilePhoneNumber',
+            ) ?? '',
         }),
         buildTextField({
           id: 'applicant.email',
           title: m.email,
           width: 'half',
           required: true,
-          defaultValue: ({ externalData }: Application) => {
-            const data = externalData.userProfile?.data as UserProfile
-            return data?.email
-          },
+          defaultValue: ({ externalData }: Application) =>
+            getValueViaPath(externalData, 'userProfile.data.email') ?? '',
         }),
         buildSelectField({
           id: 'applicant.relationToDeceased',
@@ -103,11 +97,10 @@ export const announcerInfo = buildSection({
             },
           }) => {
             return (data as { relationOptions: string[] }).relationOptions.map(
-              (option) =>
-                ({
-                  value: option,
-                  label: option,
-                } || []),
+              (option) => ({
+                value: option,
+                label: option,
+              }),
             )
           },
         }),

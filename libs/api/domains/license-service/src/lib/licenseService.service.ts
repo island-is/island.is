@@ -50,6 +50,7 @@ import {
 import { UserAgent } from '@island.is/nest/core'
 import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -73,6 +74,7 @@ export class LicenseService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly barcodeService: BarcodeService,
     private readonly licenseClient: LicenseClientService,
+    private readonly featureService: FeatureFlagService,
     @Inject(LICENSE_MAPPER_FACTORY)
     private readonly licenseMapperFactory: (
       type: GenericLicenseType,
@@ -159,6 +161,7 @@ export class LicenseService {
     }
 
     const mappedLicenseType = this.mapLicenseType(licenseTypeDefinition.type)
+
     const client = await this.getClient(mappedLicenseType)
 
     const licensesFetchResponse = await client.getLicenses(user)
@@ -341,7 +344,17 @@ export class LicenseService {
       )
     }
 
-    const pkPassRes = await client.getPkPassUrl(user)
+    const useVersionV2 = await this.featureService.getValue(
+      Features.pkPassV2,
+      false,
+      user,
+    )
+
+    const pkPassRes = await client.getPkPassUrl(
+      user,
+      undefined,
+      useVersionV2 ? 'v2' : undefined,
+    )
 
     if (pkPassRes.ok) {
       return pkPassRes.data
@@ -382,7 +395,17 @@ export class LicenseService {
       )
     }
 
-    const pkPassRes = await client.getPkPassQRCode(user)
+    const useVersionV2 = await this.featureService.getValue(
+      Features.pkPassV2,
+      false,
+      user,
+    )
+
+    const pkPassRes = await client.getPkPassQRCode(
+      user,
+      undefined,
+      useVersionV2 ? 'v2' : undefined,
+    )
 
     if (pkPassRes.ok) {
       return pkPassRes.data

@@ -9,7 +9,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'pls.application:error.age.summary',
-      defaultMessage: '18 ára aldursmark er ekki náð',
+      defaultMessage: '18 ára aldursmarki er ekki náð',
       description: '',
     },
   }),
@@ -41,12 +41,12 @@ export const errorMessages = {
   residency: defineMessages({
     title: {
       id: 'pls.application:error.residency.title',
-      defaultMessage: 'Ekki með búsetu á Íslandi',
+      defaultMessage: 'Ekki með lögheimili á Íslandi',
       description: '',
     },
     summary: {
       id: 'pls.application:error.residency.summary',
-      defaultMessage: 'Skilyrði um búsetu á Íslandi eru ekki uppfyllt',
+      defaultMessage: 'Skilyrði um lögheimili á Íslandi eru ekki uppfyllt',
       description: '',
     },
   }),
@@ -82,7 +82,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'pls.application:error.signer.summary#markdown',
-      defaultMessage: 'Hægt er að draga meðmæli tilbaka inni á Mínum Síðum.',
+      defaultMessage: 'Hægt er að draga meðmæli til baka inni á Mínum Síðum.',
       description: '',
     },
   }),

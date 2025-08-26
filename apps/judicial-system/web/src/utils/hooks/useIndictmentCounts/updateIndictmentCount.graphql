@@ -6,13 +6,18 @@ mutation UpdateIndictmentCount($input: UpdateIndictmentCountInput!) {
     caseId
     policeCaseNumber
     vehicleRegistrationNumber
-    deprecatedOffenses
-    substances
     lawsBroken
     incidentDescription
     legalArguments
     indictmentCountSubtypes
     recordedSpeed
-    speedLimit
+    offenses {
+      id
+      indictmentCountId
+      created
+      modified
+      offense
+      substances
+    }
   }
 }

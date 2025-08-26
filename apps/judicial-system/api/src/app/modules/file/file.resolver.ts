@@ -10,12 +10,13 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CreateCivilClaimantFileInput } from './dto/createCivilClaimantFile.input'
+import { CreateCriminalRecordInput } from './dto/createCriminalRecord.input'
 import { CreateDefendantFileInput } from './dto/createDefendantFile.input'
 import { CreateFileInput } from './dto/createFile.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
@@ -28,9 +29,10 @@ import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UpdateFilesResponse } from './models/updateFiles.response'
+import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
 export class FileResolver {
   constructor(
@@ -98,6 +100,27 @@ export class FileResolver {
       AuditedAction.CREATE_FILE,
       backendService.createDefendantCaseFile(caseId, createFile, defendantId),
       (file) => file.id,
+    )
+  }
+
+  @Mutation(() => UploadCriminalRecordFileResponse)
+  uploadCriminalRecordFile(
+    @Args('input', { type: () => CreateCriminalRecordInput })
+    input: CreateCriminalRecordInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<UploadCriminalRecordFileResponse> {
+    const { caseId, defendantId } = input
+    this.logger.debug(
+      `Uploading the latest criminal record file for defendant ${defendantId} of case ${caseId} to S3`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPLOAD_CRIMINAL_RECORD_CASE_FILE,
+      backendService.uploadCriminalRecordFile(caseId, defendantId),
+      input.caseId,
     )
   }
 

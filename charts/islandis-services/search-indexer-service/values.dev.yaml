@@ -30,7 +30,7 @@ env:
   ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
   ENVIRONMENT: 'dev'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=3686 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=3686 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces: []
 grantNamespacesEnabled: false

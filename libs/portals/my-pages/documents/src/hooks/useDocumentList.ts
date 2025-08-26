@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useDocumentContext } from '../screens/Overview/DocumentContext'
-import { useDocumentsV2Query } from '../screens/Overview/Overview.generated'
+import { useDocumentsV3Query } from '../queries/Overview.generated'
 
 export const pageSize = 10
 
@@ -35,8 +35,9 @@ export const useDocumentList = (props?: UseDocumentListProps) => {
     },
   }
 
-  const { data, loading, error, client, refetch } = useDocumentsV2Query({
+  const { data, loading, error, client, refetch } = useDocumentsV3Query({
     variables: fetchObject,
+    fetchPolicy: 'cache-first',
   })
 
   const invalidateCache = async () => {
@@ -66,6 +67,7 @@ export const useDocumentList = (props?: UseDocumentListProps) => {
   }, [loading, data, sendersAvailable, categoriesAvailable])
 
   const totalCount = data?.documentsV2?.totalCount || 0
+
   useEffect(() => {
     const pageCount = Math.ceil(totalCount / pageSize)
     if (pageCount !== totalPages && !loading) {
@@ -75,6 +77,7 @@ export const useDocumentList = (props?: UseDocumentListProps) => {
 
   const filteredDocuments = data?.documentsV2?.data || []
   const activeArchive = filterValue.archived === true
+
   return {
     activeArchive,
     filteredDocuments,

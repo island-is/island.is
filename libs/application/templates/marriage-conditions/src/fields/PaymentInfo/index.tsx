@@ -31,7 +31,7 @@ type PaymentInfoProps = {
 
 export const PaymentInfo: FC<
   React.PropsWithChildren<FieldBaseProps> & PaymentInfoProps
-> = ({ field, application }) => {
+> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   // Get Payment Catalog

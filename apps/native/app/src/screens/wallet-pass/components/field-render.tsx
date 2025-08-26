@@ -1,6 +1,6 @@
 import React from 'react'
 import { View } from 'react-native'
-import { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components/native'
 
 import { Field, FieldCard, FieldGroup, FieldLabel, FieldRow } from '../../../ui'
 import {
@@ -22,7 +22,7 @@ export const FieldRender = ({
     <>
       {(data || []).map(
         (
-          { type, name, label, value, fields }: GenericLicenseDataField,
+          { type, name, label, value, fields, link }: GenericLicenseDataField,
           i: number,
         ) => {
           const key = `field-${type}-${i}`
@@ -37,12 +37,21 @@ export const FieldRender = ({
                         size={i === 0 ? 'large' : 'small'}
                         label={label}
                         value={value}
+                        link={link}
                       />
                     </FieldRow>
                   </FieldGroup>
                 )
               } else {
-                return <Field key={key} label={label} value={value} compact />
+                return (
+                  <Field
+                    key={key}
+                    label={label}
+                    value={value}
+                    link={link}
+                    compact
+                  />
+                )
               }
 
             case 'Group':
@@ -127,7 +136,7 @@ export const FieldRender = ({
               )
 
             default:
-              return <Field key={key} label={label} value={value} />
+              return <Field key={key} label={label} value={value} link={link} />
           }
         },
       )}

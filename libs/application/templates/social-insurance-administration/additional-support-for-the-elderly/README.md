@@ -32,11 +32,15 @@ If TR needs additional documents to finish processing the application they can m
 
 #### Approved
 
-Application have been approved by TR.
+Application has been approved by TR.
 
 #### Rejected
 
-Application have been rejected by TR.
+Application has been rejected by TR.
+
+#### Dismissed
+
+Application has been dismissed by TR.
 
 ### Localisation
 

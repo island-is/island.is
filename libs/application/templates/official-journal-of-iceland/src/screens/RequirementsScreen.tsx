@@ -9,16 +9,8 @@ import {
 import { error, requirements } from '../lib/messages'
 import { Controller, useFormContext } from 'react-hook-form'
 import { getErrorViaPath, YesOrNoEnum } from '@island.is/application/core'
-import {
-  DEFAULT_ADDITIONS_COUNT,
-  DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT,
-  DEFAULT_REGULAR_SIGNATURE_COUNT,
-  DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
-  OJOI_INPUT_HEIGHT,
-} from '../lib/constants'
+import { OJOI_INPUT_HEIGHT } from '../lib/constants'
 import { useApplication } from '../hooks/useUpdateApplication'
-import { getAddition } from '../lib/utils'
-import set from 'lodash/set'
 import { useEffect } from 'react'
 
 export const RequirementsScreen = ({
@@ -41,11 +33,7 @@ export const RequirementsScreen = ({
    * Set default values for the application
    */
   useEffect(() => {
-    let currentAnswers = structuredClone(application.answers)
-
-    currentAnswers = set(currentAnswers, InputFields.advert.additions, [
-      getAddition(DEFAULT_ADDITIONS_COUNT, false),
-    ])
+    const currentAnswers = structuredClone(application.answers)
 
     setValue(InputFields.misc.signatureType, currentAnswers.misc?.signatureType)
 

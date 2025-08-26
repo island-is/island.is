@@ -1,4 +1,4 @@
-import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
 import { CivilClaimantController } from '../../civilClaimant.controller'
 
@@ -12,7 +12,7 @@ describe('CivilClaimantController - guards', () => {
 
   it('should have the right guard configuration', () => {
     expect(guards).toHaveLength(2)
-    expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
+    expect(new guards[0]()).toBeInstanceOf(JwtAuthUserGuard)
     expect(new guards[1]()).toBeInstanceOf(RolesGuard)
   })
 })

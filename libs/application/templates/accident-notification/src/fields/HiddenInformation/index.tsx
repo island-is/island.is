@@ -21,8 +21,8 @@ export const HiddenInformation = ({
   const answers = application.answers as AccidentNotification
 
   if (isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)) {
-    setValue(`${id}.name`, answers.applicant.name)
-    setValue(`${id}.email`, answers.applicant.email)
+    setValue(`${id}.name`, answers?.applicant?.name)
+    setValue(`${id}.email`, answers?.applicant?.email)
   }
 
   return !isInjuredAndRepresentativeOfCompanyOrInstitute(

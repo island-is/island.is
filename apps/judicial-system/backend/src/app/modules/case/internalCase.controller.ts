@@ -230,6 +230,31 @@ export class InternalCaseController {
   @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
   @Post(
     `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_ARRAIGNMENT_DATE]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers set arraignment date in indictment case to court',
+  })
+  deliverIndictmentArraignmentDateToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the set arraignment date of the indictment case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverIndictmentArraignmentDateToCourt(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
       messageEndpoint[
         MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE
       ]
@@ -361,6 +386,35 @@ export class InternalCaseController {
     this.logger.debug(`Delivering the court record for case ${caseId} to court`)
 
     return this.internalCaseService.deliverSignedRulingToCourt(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_SIGNED_COURT_RECORD]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a signed court record to court',
+  })
+  deliverSignedCourtRecordToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the signed court record for case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverSignedCourtRecordToCourt(
       theCase,
       deliverDto.user,
     )

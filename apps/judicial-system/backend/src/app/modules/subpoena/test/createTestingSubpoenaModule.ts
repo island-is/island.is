@@ -7,6 +7,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule } from '@island.is/nest/config'
 
 import {
+  auditTrailModuleConfig,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
+import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
@@ -38,7 +42,12 @@ jest.mock('../../case/internalCase.service')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
-    imports: [ConfigModule.forRoot({ load: [sharedAuthModuleConfig] })],
+    imports: [
+      ConfigModule.forRoot({
+        isGlobal: true,
+        load: [sharedAuthModuleConfig, auditTrailModuleConfig],
+      }),
+    ],
     controllers: [
       SubpoenaController,
       InternalSubpoenaController,
@@ -87,6 +96,7 @@ export const createTestingSubpoenaModule = async () => {
         },
       },
       SubpoenaService,
+      AuditTrailService,
       MessageService,
     ],
   }).compile()

@@ -8,6 +8,8 @@ export default {
   coverageDirectory: '<rootDir>/coverage/apps/judicial-system/api',
   displayName: 'judicial-system-api',
   testEnvironment: 'node',
+  detectOpenHandles: false,
+  detectLeaks: false,
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',

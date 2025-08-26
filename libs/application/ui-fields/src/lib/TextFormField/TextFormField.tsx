@@ -1,9 +1,8 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-
 import {
+  buildFieldReadOnly,
   buildFieldRequired,
-  formatText,
   formatTextWithLocale,
 } from '@island.is/application/core'
 import { FieldBaseProps, TextField } from '@island.is/application/types'
@@ -37,11 +36,13 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     backgroundColor,
     format,
     variant = 'text',
+    thousandSeparator,
     suffix,
     rows,
     required,
     readOnly,
     maxLength,
+    showMaxLength,
     dataTestId,
     rightAlign,
     max,
@@ -52,9 +53,11 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     tooltip,
     onChange = () => undefined,
     clearOnChange,
+    setOnChange,
   } = field
-  const { clearErrors } = useFormContext()
+  const { clearErrors, watch } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
+  const value = watch(id)
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -78,7 +81,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
             formatMessage,
           )}
           disabled={disabled}
-          readOnly={readOnly}
+          readOnly={buildFieldReadOnly(application, readOnly)}
           id={id}
           dataTestId={dataTestId}
           placeholder={formatTextWithLocale(
@@ -89,12 +92,18 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           )}
           label={
             showFieldName
-              ? formatTextWithLocale(
+              ? `${formatTextWithLocale(
                   title,
                   application,
                   locale as Locale,
                   formatMessage,
-                )
+                )} ${
+                  maxLength && showMaxLength
+                    ? `(${
+                        value && value?.length ? value.length : 0
+                      }/${maxLength})`
+                    : ''
+                }`
               : undefined
           }
           autoFocus={autoFocus}
@@ -112,7 +121,16 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
             variant !== 'textarea' && variant !== 'currency' ? variant : 'text'
           }
           format={format}
-          suffix={suffix}
+          thousandSeparator={thousandSeparator}
+          suffix={
+            suffix &&
+            formatTextWithLocale(
+              suffix,
+              application,
+              locale as Locale,
+              formatMessage,
+            )
+          }
           defaultValue={getDefaultValue(field, application)}
           backgroundColor={backgroundColor}
           rows={rows}
@@ -122,6 +140,12 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           min={min}
           step={step}
           clearOnChange={clearOnChange}
+          setOnChange={
+            typeof setOnChange === 'function'
+              ? async (optionValue) =>
+                  await setOnChange(optionValue, application)
+              : setOnChange
+          }
         />
       </Box>
     </Box>

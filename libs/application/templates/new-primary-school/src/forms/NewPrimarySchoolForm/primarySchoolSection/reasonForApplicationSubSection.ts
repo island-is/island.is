@@ -6,13 +6,15 @@ import {
   buildTextField,
   NO,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import {
   ApplicationType,
   OptionsType,
   ReasonForApplicationOptions,
-} from '../../../lib/constants'
+  SchoolType,
+} from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 
 export const reasonForApplicationSubSection = buildSubSection({
   id: 'reasonForApplicationSubSection',
@@ -33,8 +35,22 @@ export const reasonForApplicationSubSection = buildSubSection({
       title:
         newPrimarySchoolMessages.primarySchool
           .reasonForApplicationSubSectionTitle,
-      description:
-        newPrimarySchoolMessages.primarySchool.reasonForApplicationDescription,
+      description: (application) => {
+        const { applicationType, selectedSchoolType } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (
+          applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+          selectedSchoolType === SchoolType.PUBLIC_SCHOOL
+        ) {
+          return newPrimarySchoolMessages.primarySchool
+            .reasonForApplicationEnrollmentDescription
+        } else {
+          return newPrimarySchoolMessages.primarySchool
+            .reasonForApplicationDescription
+        }
+      },
       children: [
         buildCustomField(
           {
@@ -43,13 +59,23 @@ export const reasonForApplicationSubSection = buildSubSection({
               newPrimarySchoolMessages.primarySchool
                 .reasonForApplicationSubSectionTitle,
             component: 'FriggOptionsAsyncSelectField',
-            dataTestId: 'reason-for-application',
           },
           {
-            optionsType: OptionsType.REASON,
+            optionsType: (application: Application) => {
+              const { selectedSchoolType } = getApplicationAnswers(
+                application.answers,
+              )
+
+              return selectedSchoolType === SchoolType.PRIVATE_SCHOOL
+                ? OptionsType.REASON_PRIVATE_SCHOOL
+                : selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+                ? OptionsType.REASON_INTERNATIONAL_SCHOOL
+                : OptionsType.REASON
+            },
             placeholder:
               newPrimarySchoolMessages.primarySchool
                 .reasonForApplicationPlaceholder,
+            useIdAndKey: true,
           },
         ),
         buildTextField({

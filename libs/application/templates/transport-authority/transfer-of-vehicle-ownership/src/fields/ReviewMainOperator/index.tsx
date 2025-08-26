@@ -91,7 +91,6 @@ export const ReviewMainOperator: FC<
               value: operator.nationalId!,
               label: `${operator.name} - ${kennitala.format(
                 operator.nationalId!,
-                '-',
               )}`,
             }
           })}

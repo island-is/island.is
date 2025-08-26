@@ -6,21 +6,24 @@ import {
   buildRadioField,
   buildSelectField,
   buildSubSection,
-  YES,
   NO,
+  YES,
 } from '@island.is/application/core'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
-import { LanguageEnvironmentOptions, OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
-  getApplicationAnswers,
   hasForeignLanguages,
   showPreferredLanguageFields,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/conditionUtils'
+import {
+  LanguageEnvironmentOptions,
+  OptionsType,
+} from '../../../utils/constants'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 
 export const languageSubSection = buildSubSection({
   id: 'languageSubSection',
-  title: newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
+  title: newPrimarySchoolMessages.shared.language,
   children: [
     buildMultiField({
       id: 'languages',
@@ -39,26 +42,23 @@ export const languageSubSection = buildSubSection({
             title:
               newPrimarySchoolMessages.differentNeeds.languageEnvironmentTitle,
             component: 'FriggOptionsAsyncSelectField',
-            dataTestId: 'languages-language-environment',
           },
           {
             optionsType: OptionsType.LANGUAGE_ENVIRONMENT,
             placeholder:
               newPrimarySchoolMessages.differentNeeds
                 .languageEnvironmentPlaceholder,
+            useIdAndKey: true,
           },
         ),
         buildDescriptionField({
           id: 'languages.selectedLanguages.title',
-          title:
-            newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
+          title: newPrimarySchoolMessages.shared.language,
           description:
             newPrimarySchoolMessages.differentNeeds.languagesDescription,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => {
-            return hasForeignLanguages(answers)
-          },
+          condition: (answers) => hasForeignLanguages(answers),
         }),
         buildFieldsRepeaterField({
           id: 'languages.selectedLanguages',
@@ -67,10 +67,8 @@ export const languageSubSection = buildSubSection({
             newPrimarySchoolMessages.differentNeeds.addLanguageButton,
           removeItemButtonText:
             newPrimarySchoolMessages.differentNeeds.removeLanguageButton,
-          minRows: (application) => {
-            const { languageEnvironment } = getApplicationAnswers(
-              application.answers,
-            )
+          minRows: (answers) => {
+            const { languageEnvironment } = getApplicationAnswers(answers)
 
             return languageEnvironment ===
               LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
@@ -79,17 +77,13 @@ export const languageSubSection = buildSubSection({
           },
           maxRows: 4,
           marginTop: 0,
-          condition: (answers) => {
-            return hasForeignLanguages(answers)
-          },
+          condition: (answers) => hasForeignLanguages(answers),
           fields: {
             code: {
               component: 'select',
               label:
                 newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
-              placeholder:
-                newPrimarySchoolMessages.differentNeeds
-                  .languageSelectionPlaceholder,
+              placeholder: newPrimarySchoolMessages.shared.languagePlaceholder,
               width: 'full',
               options: (application) => {
                 const { languageEnvironment } = getApplicationAnswers(
@@ -121,18 +115,12 @@ export const languageSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.preferredLanguageTitle,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => {
-            return showPreferredLanguageFields(answers)
-          },
+          condition: (answers) => showPreferredLanguageFields(answers),
         }),
         buildSelectField({
           id: 'languages.preferredLanguage',
-          dataTestId: 'languages-preferred-language',
-          title:
-            newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .languageSelectionPlaceholder,
+          title: newPrimarySchoolMessages.shared.language,
+          placeholder: newPrimarySchoolMessages.shared.languagePlaceholder,
           options: (application) => {
             const { selectedLanguages } = getApplicationAnswers(
               application.answers,
@@ -153,9 +141,7 @@ export const languageSubSection = buildSubSection({
                 }
               })
           },
-          condition: (answers) => {
-            return showPreferredLanguageFields(answers)
-          },
+          condition: (answers) => showPreferredLanguageFields(answers),
         }),
         buildRadioField({
           id: 'languages.signLanguage',
@@ -178,28 +164,6 @@ export const languageSubSection = buildSubSection({
           condition: (answers) => {
             const { languageEnvironment } = getApplicationAnswers(answers)
             return !!languageEnvironment
-          },
-        }),
-        buildRadioField({
-          id: 'languages.guardianRequiresInterpreter',
-          title: newPrimarySchoolMessages.differentNeeds.interpreter,
-          width: 'half',
-          required: true,
-          space: 4,
-          options: [
-            {
-              label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'guardianRequiresInterpreter',
-              value: YES,
-            },
-            {
-              label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-guardianRequiresInterpreter',
-              value: NO,
-            },
-          ],
-          condition: (answers) => {
-            return hasForeignLanguages(answers)
           },
         }),
       ],

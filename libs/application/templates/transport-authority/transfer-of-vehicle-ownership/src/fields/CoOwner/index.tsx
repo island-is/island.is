@@ -10,7 +10,10 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  PhoneInputController,
+} from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
@@ -106,7 +109,7 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                    <InputController
+                    <PhoneInputController
                       id={phoneField}
                       name={phoneField}
                       label={formatMessage(information.labels.coOwner.phone)}
@@ -117,11 +120,11 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
                           '',
                         ) as string
                       }
-                      type="tel"
-                      format="###-####"
                       backgroundColor="blue"
                       required
                       error={errors && getErrorViaPath(errors, phoneField)}
+                      allowedCountryCodes={['IS']}
+                      disableDropdown={true}
                     />
                   </GridColumn>
                 </GridRow>

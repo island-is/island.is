@@ -2,12 +2,12 @@ import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
+import { SubstanceMap } from '@island.is/judicial-system/types'
+import { errors } from '@island.is/judicial-system-web/messages'
 import {
   IndictmentCountOffense,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
-import { errors } from '@island.is/judicial-system-web/messages'
-import { UpdateOffenseInput } from '@island.is/judicial-system-web/src/graphql/schema'
+  UpdateOffenseInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCreateOffenseMutation } from './createOffense.generated'
 import { useDeleteOffenseMutation } from './deleteOffense.generated'

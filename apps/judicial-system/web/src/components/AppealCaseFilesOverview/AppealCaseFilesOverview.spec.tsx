@@ -4,20 +4,20 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
+  Case,
   CaseAppealState,
   CaseFileCategory,
   CaseState,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { mockCaseFile } from '../../utils/mocks'
 import { FormContextWrapper, UserContextWrapper } from '../../utils/testHelpers'
 import AppealCaseFilesOverview from './AppealCaseFilesOverview'
 
 describe('<AppealCaseFilesOverview />', () => {
-  test('should display a context menu for all files', () => {
+  test('should display a context menu for all files', async () => {
     const theCase = {
       id: 'asd',
       type: CaseType.CUSTODY,
@@ -41,7 +41,7 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    expect(screen.queryAllByRole('button')).toHaveLength(2)
+    expect(await screen.findAllByRole('button')).toHaveLength(2)
   })
 
   test('should not have an option to delete file if the file is of category APPEAL_RULING', async () => {
@@ -64,9 +64,9 @@ describe('<AppealCaseFilesOverview />', () => {
         </ApolloProvider>
       </IntlProvider>,
     )
-
-    await userEvent.click(screen.getByRole('button'))
-    expect(screen.getAllByRole('menuitem')).toHaveLength(1)
+    const button = await screen.findByRole('button')
+    await userEvent.click(button)
+    expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
 
   test('should not have an option to delete file if the file of category PROSECUTOR_APPEAL_BRIEF even though the user is a prosecutor', async () => {
@@ -93,8 +93,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    await userEvent.click(screen.getByRole('button'))
-    expect(screen.getAllByRole('menuitem')).toHaveLength(1)
+    const button = await screen.findByRole('button')
+    await userEvent.click(button)
+    expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
 
   test('should not have an option to delete file if the file of category PROSECUTOR_APPEAL_CASE_FILE even though the user is a defender', async () => {
@@ -120,8 +121,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    await userEvent.click(screen.getByRole('button'))
-    expect(screen.getAllByRole('menuitem')).toHaveLength(1)
+    const button = await screen.findByRole('button')
+    await userEvent.click(button)
+    expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
 
   test('should have an option to delete file if the file of category PROSECUTOR_APPEAL_CASE_FILE even though the user is a prosecutor', async () => {
@@ -147,7 +149,8 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    await userEvent.click(screen.getByRole('button'))
-    expect(screen.getAllByRole('menuitem')).toHaveLength(2)
+    const button = await screen.findByRole('button')
+    await userEvent.click(button)
+    expect(await screen.findAllByRole('menuitem')).toHaveLength(2)
   })
 })

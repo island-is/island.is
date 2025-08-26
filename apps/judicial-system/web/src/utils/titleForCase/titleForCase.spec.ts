@@ -1,18 +1,14 @@
-import { createIntl } from 'react-intl'
-
 import {
+  Case,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
+import { createFormatMessage } from '../testHelpers.logic'
 import { titleForCase } from './titleForCase'
 
 describe('titleForCase', () => {
-  const formatMessage = createIntl({
-    locale: 'is',
-    onError: jest.fn,
-  }).formatMessage
+  const formatMessage = createFormatMessage()
   const fn = (theCase: Case) => titleForCase(formatMessage, theCase)
 
   test('should handle rejected investigation case', () => {

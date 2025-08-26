@@ -68,6 +68,7 @@ describe('CaseController - Create', () => {
         then.result = await caseController.create(user, {
           ...createProperties,
           type,
+          prosecutorId: userId,
         } as unknown as CreateCaseDto)
       } catch (error) {
         then.error = error as Error

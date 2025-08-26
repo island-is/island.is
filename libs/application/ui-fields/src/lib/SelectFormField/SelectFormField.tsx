@@ -41,16 +41,26 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    setOnChange,
     isClearable,
   } = field
   const { formatMessage, lang: locale } = useLocale()
   const { getValues } = useFormContext()
   const values = getValues()
 
+  const updatedApplication = useMemo(() => {
+    return {
+      ...application,
+      answers: {
+        ...application.answers,
+        ...values,
+      },
+    }
+  }, [application, values])
+
   const finalOptions = useMemo(() => {
-    const updatedApplication = { ...application, answers: values }
     return buildFieldOptions(options, updatedApplication, field, locale)
-  }, [options, application, field, locale, values])
+  }, [options, updatedApplication, field, locale])
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -102,6 +112,12 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           // @ts-ignore make web strict
           onSelect={onSelect}
           clearOnChange={clearOnChange}
+          setOnChange={
+            typeof setOnChange === 'function'
+              ? async (optionValue) =>
+                  await setOnChange(optionValue, updatedApplication)
+              : setOnChange
+          }
           isClearable={isClearable}
         />
       </Box>

@@ -16,11 +16,11 @@ import {
   StaticText,
   StaticTextObject,
 } from '@island.is/application/types'
+import { StartDateOptions, MINIMUM_PERIOD_LENGTH } from '../../constants'
 import {
-  StartDateOptions,
-  MINIMUM_PERIOD_LENGTH,
-} from '../../constants'
-import { getExpectedDateOfBirthOrAdoptionDateOrBirthDate } from '../parentalLeaveUtils'
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
+  isPeriodsContinuous,
+} from '../parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minimumRatio,
@@ -133,9 +133,10 @@ export const validatePeriod = (
     return buildError(null, errorMessages.dateOfBirth)
   }
 
-  const dob = StartDateOptions.ACTUAL_DATE_OF_BIRTH
-    ? parseISO(expectedDateOfBirthOrAdoptionDateOrBirthDate)
-    : parseISO(expectedDateOfBirthOrAdoptionDate)
+  const dob =
+    period.firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
+      ? parseISO(expectedDateOfBirthOrAdoptionDateOrBirthDate)
+      : parseISO(expectedDateOfBirthOrAdoptionDate)
   const today = new Date()
   const minimumStartDate = addMonths(
     dob,
@@ -231,7 +232,7 @@ export const validatePeriod = (
       )
     }
 
-    if (endDateValue > maximumEndDate) {
+    if (endDateValue >= maximumEndDate) {
       return buildError(
         useLength === YES ? 'endDateDuration' : 'endDate',
         errorMessages.periodsPeriodRange,
@@ -257,7 +258,8 @@ export const validatePeriod = (
     if (
       !(
         endDateValue.getTime() < today.getTime() && !isThisMonth(startDateValue)
-      )
+      ) &&
+      !isPeriodsContinuous(existingPeriods.at(-1), period)
     ) {
       if (
         calculatePeriodLength(startDateValue, endDateValue) <

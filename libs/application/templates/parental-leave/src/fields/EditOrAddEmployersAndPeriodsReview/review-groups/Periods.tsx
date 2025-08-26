@@ -40,7 +40,7 @@ const Periods: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
             <DataValue
               key={`SummaryTimeline-${index}`}
               label={period.title}
-              value={value}
+              value={value ?? ''}
             />
           )
         })}

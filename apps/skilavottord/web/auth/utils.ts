@@ -1,6 +1,6 @@
-import { Role } from '@island.is/skilavottord-web/graphql/schema'
+import { Role } from '../graphql/schema'
 
-type Page =
+export type Page =
   | 'myCars'
   | 'recycleVehicle'
   | 'deregisterVehicle'
@@ -9,6 +9,7 @@ type Page =
   | 'accessControl'
   | 'accessControlCompany'
   | 'companyInfo'
+  | 'municipalities'
 
 export const hasDeveloperRole = (role: Role | undefined) =>
   role === Role.developer

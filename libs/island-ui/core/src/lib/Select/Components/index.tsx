@@ -25,6 +25,7 @@ import {
 } from 'react-select'
 
 import { Icon } from '../../IconRC/Icon'
+import { Text } from '../../Text/Text'
 import { Option as OptionType } from '../Select.types'
 import * as styles from '../Select.css'
 
@@ -220,7 +221,13 @@ export const ValueContainer = <
   // @ts-ignore make web strict
   props: ValueContainerProps<OptionType<Value>, IsMulti, Group>,
 ) => (
-  <components.ValueContainer className={styles.valueContainer} {...props}>
+  <components.ValueContainer
+    className={cn(
+      styles.valueContainer,
+      props.isMulti && styles.multiValueContainer,
+    )}
+    {...props}
+  >
     {props.children}
   </components.ValueContainer>
 )
@@ -357,3 +364,11 @@ export const customStyles = <
     opacity: state.isDisabled ? '0.5' : '1',
   }),
 })
+
+export const NoOptionsMessage = (props: any) => {
+  return (
+    <components.NoOptionsMessage {...props}>
+      <Text>{props.children}</Text>
+    </components.NoOptionsMessage>
+  )
+}

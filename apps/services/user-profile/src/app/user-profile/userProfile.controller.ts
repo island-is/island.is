@@ -235,7 +235,7 @@ export class UserProfileController {
     userProfileToUpdate = {
       ...userProfileToUpdate,
       mobileStatus: profile.mobileStatus as DataStatus,
-      emailStatus: profile.emailStatus as DataStatus,
+      emailStatus: profile.emails?.[0].emailStatus as DataStatus,
     }
 
     if (userProfileToUpdate.mobilePhoneNumber) {
@@ -318,7 +318,7 @@ export class UserProfileController {
     // findOneByNationalId must be first as it implictly checks if the
     // route param matches the authenticated user.
     const profile = await this.findOneByNationalId(nationalId, user)
-    if (!profile.email) {
+    if (!profile.emails?.[0].email) {
       throw new BadRequestException(
         'Profile does not have a configured email address.',
       )
@@ -326,7 +326,7 @@ export class UserProfileController {
 
     await this.verificationService.createEmailVerification(
       profile.nationalId,
-      profile.email,
+      profile.emails?.[0].email,
     )
   }
 

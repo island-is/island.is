@@ -24,7 +24,7 @@ import 'intl/locale-data/jsonp/en'
 import 'intl/locale-data/jsonp/is'
 import '@formatjs/intl-locale/polyfill'
 import '@formatjs/intl-getcanonicallocales/polyfill'
-import '@formatjs/intl-pluralrules/polyfill'
+import '@formatjs/intl-pluralrules/polyfill-force'
 import '@formatjs/intl-pluralrules/locale-data/en'
 import '@formatjs/intl-pluralrules/locale-data/is'
 import '@formatjs/intl-numberformat/polyfill'
@@ -106,6 +106,7 @@ if (__DEV__) {
   ddconfig.nativeCrashReportEnabled = true
   ddconfig.site = 'EU'
   ddconfig.serviceName = 'mobile-app'
+  ddconfig.sessionSamplingRate = 10
 
   // initialize datadog rum
   DdSdkReactNative.initialize(ddconfig)

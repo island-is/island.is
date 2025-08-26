@@ -1,5 +1,3 @@
-import CryptoJS from 'crypto-js'
-
 import {
   forwardRef,
   Inject,
@@ -14,6 +12,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   SubpoenaType,
@@ -23,9 +22,12 @@ import {
 import {
   Confirmation,
   createCaseFilesRecord,
+  createFineSentToPrisonAdminPdf,
   createIndictment,
+  createRulingSentToPrisonAdminPdf,
   createServiceCertificate,
   createSubpoena,
+  getCaseFileHash,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
   getRequestPdfAsBuffer,
@@ -33,6 +35,7 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant } from '../defendant'
+import { EventLog } from '../event-log'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
 import { Case } from './models/case.model'
@@ -217,19 +220,20 @@ export class PdfService {
         }
       }
 
-      const confirmationEvent = theCase.eventLogs?.find(
-        (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+      const confirmationEvent = EventLog.getEventLogByEventType(
+        EventType.INDICTMENT_CONFIRMED,
+        theCase.eventLogs,
       )
 
-      if (confirmationEvent && confirmationEvent.nationalId) {
-        const actor = await this.userService.findByNationalId(
-          confirmationEvent.nationalId,
-        )
-
+      if (
+        confirmationEvent &&
+        confirmationEvent.userName &&
+        confirmationEvent.institutionName
+      ) {
         confirmation = {
-          actor: actor.name,
-          title: actor.title,
-          institution: actor.institution?.name ?? '',
+          actor: confirmationEvent.userName,
+          title: confirmationEvent.userTitle,
+          institution: confirmationEvent.institutionName,
           date: confirmationEvent.created,
         }
       }
@@ -244,13 +248,14 @@ export class PdfService {
     )
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state) && confirmation) {
-      const indictmentHash = CryptoJS.MD5(
-        generatedPdf.toString('binary'),
-      ).toString(CryptoJS.enc.Hex)
+      const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
       this.caseModel
-        .update({ indictmentHash }, { where: { id: theCase.id } })
+        .update(
+          { indictmentHash: hash, indictmentHashAlgorithm: hashAlgorithm },
+          { where: { id: theCase.id } },
+        )
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
@@ -330,13 +335,11 @@ export class PdfService {
     )
 
     if (subpoena) {
-      const subpoenaHash = CryptoJS.MD5(
-        generatedPdf.toString('binary'),
-      ).toString(CryptoJS.enc.Hex)
+      const subpoenaHash = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
       this.subpoenaService
-        .setHash(subpoena.id, subpoenaHash)
+        .setHash(subpoena.id, subpoenaHash.hash, subpoenaHash.hashAlgorithm)
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
@@ -364,5 +367,15 @@ export class PdfService {
     )
 
     return generatedPdf
+  }
+
+  async getRulingSentToPrisonAdminPdf(theCase: Case): Promise<Buffer> {
+    if (
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+    ) {
+      return await createFineSentToPrisonAdminPdf(theCase)
+    } else {
+      return await createRulingSentToPrisonAdminPdf(theCase)
+    }
   }
 }

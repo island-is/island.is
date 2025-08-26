@@ -9,9 +9,11 @@ import {
   LICENSE_NAMESPACE,
 } from '../licenseService.constants'
 import {
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
+  GenericLicenseType,
   GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import { FirearmLicenseDto } from '@island.is/clients/license-client'
@@ -24,6 +26,7 @@ import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 import { UserAgent } from '@island.is/nest/core'
 import { enableAppCompatibilityMode } from '../utils/appCompatibilityMode'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { formatPhoto } from '../utils/formatPhoto'
 
 const APP_VERSION_CUTOFF = '1.4.7'
 
@@ -140,6 +143,12 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                     formatMessage(m.unknown),
                 }),
                 licenseId: DEFAULT_LICENSE_ID,
+                expiryStatus:
+                  isExpired === undefined
+                    ? ExpiryStatus.UNKNOWN
+                    : isExpired
+                    ? ExpiryStatus.EXPIRED
+                    : ExpiryStatus.ACTIVE,
                 expired: isExpired,
                 expireDate: t.licenseInfo?.expirationDate ?? undefined,
                 displayTag:
@@ -168,6 +177,10 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                 description: [
                   { text: formatMessage(m.yourFirearmLicenseDescription) },
                 ],
+                photo: formatPhoto(
+                  t.licenseInfo?.licenseImgBase64,
+                  GenericLicenseType.FirearmLicense,
+                ),
               },
             },
           }

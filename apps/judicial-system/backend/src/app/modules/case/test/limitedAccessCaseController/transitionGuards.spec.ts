@@ -1,4 +1,4 @@
-import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import {
   investigationCases,
   restrictionCases,
@@ -23,7 +23,7 @@ describe('LimitedAccessCaseController - Transition guards', () => {
 
   it('should have six guards', () => {
     expect(guards).toHaveLength(6)
-    expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
+    expect(new guards[0]()).toBeInstanceOf(JwtAuthUserGuard)
     expect(new guards[1]()).toBeInstanceOf(LimitedAccessCaseExistsGuard)
     expect(new guards[2]()).toBeInstanceOf(RolesGuard)
     expect(guards[3]).toBeInstanceOf(CaseTypeGuard)

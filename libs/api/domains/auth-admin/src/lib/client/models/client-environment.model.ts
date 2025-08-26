@@ -4,8 +4,10 @@ import { Environment } from '@island.is/shared/types'
 
 import { RefreshTokenExpiration } from '../../models/refreshTokenExpiration.enum'
 import { ClientType } from '../../models/client-type.enum'
+
 import { TranslatedValue } from '../../models/translated-value.model'
 import { ClientClaim } from './client-claim.model'
+import { ClientSso } from '../../models/client-sso.enum'
 
 @ObjectType('AuthAdminClientEnvironment')
 export class ClientEnvironment {
@@ -23,6 +25,9 @@ export class ClientEnvironment {
 
   @Field(() => ClientType)
   clientType!: ClientType
+
+  @Field(() => ClientSso)
+  sso!: ClientSso
 
   @Field(() => [TranslatedValue])
   displayName!: TranslatedValue[]

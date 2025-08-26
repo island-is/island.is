@@ -1,8 +1,26 @@
-import { UploadFile, fileToObject } from '@island.is/island-ui/core'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import {
+  UploadFileDeprecated,
+  fileToObjectDeprecated,
+} from '@island.is/island-ui/core'
 import { uuid } from 'uuidv4'
 import XLSX from 'xlsx'
+import { SignatureCollectionList } from '@island.is/api/schema'
+import { m } from '../lib/messages'
+import { TagVariant } from '@island.is/island-ui/core'
 
 export const pageSize = 10
+
+export const allowedScopesAdminAndMunicipality: string[] = [
+  AdminPortalScope.signatureCollectionManage,
+  AdminPortalScope.signatureCollectionProcess,
+  AdminPortalScope.signatureCollectionMunicipality,
+]
+
+export const allowedScopesAdmin: string[] = [
+  AdminPortalScope.signatureCollectionManage,
+  AdminPortalScope.signatureCollectionProcess,
+]
 
 export const countryAreas = [
   { value: 'Sunnlendingafjórðungur', label: 'Sunnlendingafjórðungur' },
@@ -75,8 +93,11 @@ export const downloadFile = () => {
 }
 
 // Bulk upload and compare
-export const createFileList = (files: File[], fileList: UploadFile[]) => {
-  const uploadFiles = files.map((file) => fileToObject(file))
+export const createFileList = (
+  files: File[],
+  fileList: UploadFileDeprecated[],
+) => {
+  const uploadFiles = files.map((file) => fileToObjectDeprecated(file))
   const uploadFilesWithKey = uploadFiles.map((f) => ({
     ...f,
     key: uuid(),
@@ -88,15 +109,42 @@ export const getFileData = async (newFile: File[]) => {
   const buffer = await newFile[0].arrayBuffer()
   const file = XLSX.read(buffer, { type: 'buffer' })
 
-  const data = [] as any
+  const data: Record<string, unknown>[] = []
   const sheets = file.SheetNames
 
   for (let i = 0; i < sheets.length; i++) {
     const temp = XLSX.utils.sheet_to_json(file.Sheets[file.SheetNames[i]])
     temp.forEach((res) => {
-      data.push(res)
+      data.push(res as Record<string, unknown>)
     })
   }
 
   return data
+}
+
+export const getTagConfig = (list: SignatureCollectionList) => {
+  // Lista læst
+  if (!list.active && !list.reviewed) {
+    return {
+      label: m.listLocked.defaultMessage,
+      variant: 'blueberry' as TagVariant,
+      outlined: false,
+    }
+  }
+
+  // Úrvinnslu lokið
+  if (!list.active && list.reviewed) {
+    return {
+      label: m.confirmListReviewed.defaultMessage,
+      variant: 'mint' as TagVariant,
+      outlined: false,
+    }
+  }
+
+  // Söfnun í gangi
+  return {
+    label: m.listOpen.defaultMessage,
+    variant: 'blue' as TagVariant,
+    outlined: false,
+  }
 }

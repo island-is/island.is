@@ -1,56 +1,77 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  ActivityIndicator,
+  Alert,
   Animated,
   FlatList,
   Image,
   ListRenderItemInfo,
   RefreshControl,
   View,
-  Alert,
-  ActivityIndicator,
 } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+import { useNavigationButtonPress } from 'react-native-navigation-hooks'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
 import styled, { useTheme } from 'styled-components/native'
 
-import {
-  Button,
-  EmptyList,
-  ListItem,
-  ListItemSkeleton,
-  SearchBar,
-  Tag,
-  TopLine,
-  InboxCard,
-} from '../../ui'
+import { useApolloClient } from '@apollo/client'
 import filterIcon from '../../assets/icons/filter-icon.png'
 import inboxReadIcon from '../../assets/icons/inbox-read.png'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
-  useMarkAllDocumentsAsReadMutation,
+  DocumentCategory,
   DocumentV2,
-  useListDocumentsQuery,
   useGetDocumentsCategoriesAndSendersQuery,
+  useListDocumentsQuery,
+  useMarkAllDocumentsAsReadMutation,
+  usePostMailActionMutationMutation,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
-import { ComponentRegistry } from '../../utils/component-registry'
+import {
+  Button,
+  EmptyList,
+  InboxCard,
+  ListItem,
+  ListItemSkeleton,
+  SearchBar,
+  Tag,
+  TopLine,
+} from '../../ui'
+import {
+  ButtonRegistry,
+  ComponentRegistry,
+} from '../../utils/component-registry'
+import { isAndroid, isIos } from '../../utils/devices'
 import { testIDs } from '../../utils/test-ids'
-import { isAndroid } from '../../utils/devices'
-import { useApolloClient } from '@apollo/client'
-import { isIos } from '../../utils/devices'
+import { ActionBar } from './components/action-bar'
+import { Toast, ToastVariant } from './components/toast'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
   | (DocumentV2 & { type: undefined })
+
+type Filters = {
+  opened?: boolean
+  archived?: boolean
+  bookmarked?: boolean
+  subjectContains?: string
+  senderNationalId?: string[]
+  categoryIds?: string[]
+  dateFrom?: Date
+  dateTo?: Date
+}
+
+export type ListParams = Filters & { category?: DocumentCategory }
 
 const DEFAULT_PAGE_SIZE = 50
 
@@ -114,8 +135,26 @@ const { useNavigationOptions, getNavigationOptions } =
   )
 
 const PressableListItem = React.memo(
-  ({ item, listParams }: { item: DocumentV2; listParams: any }) => {
+  ({
+    item,
+    listParams,
+    selectable,
+    selectedItems,
+    setSelectedItems,
+    setSelectedState,
+    isFeature2WayMailboxEnabled,
+  }: {
+    item: DocumentV2
+    listParams: ListParams
+    selectable: boolean
+    selectedItems: string[]
+    setSelectedItems: (items: string[]) => void
+    setSelectedState: (state: boolean) => void
+    isFeature2WayMailboxEnabled: boolean
+  }) => {
     const { getOrganizationLogoUrl } = useOrganizationsStore()
+    const isSelected = selectable && selectedItems.includes(item.id)
+
     return (
       <InboxCard
         key={item.id}
@@ -126,12 +165,24 @@ const PressableListItem = React.memo(
         senderName={item.sender.name}
         icon={item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)}
         isUrgent={item.isUrgent}
+        replyable={isFeature2WayMailboxEnabled ? item.replyable : false}
+        bookmarked={item.bookmarked}
+        selectable={selectable}
+        selected={isSelected}
+        onPressIcon={() => {
+          setSelectedState(true)
+          setSelectedItems([...selectedItems, item.id])
+        }}
         onPress={() =>
-          navigateTo(`/inbox/${item.id}`, {
-            title: item.sender.name,
-            isUrgent: item.isUrgent,
-            listParams,
-          })
+          selectable
+            ? isSelected
+              ? setSelectedItems(selectedItems.filter((id) => id !== item.id))
+              : setSelectedItems([...selectedItems, item.id])
+            : navigateTo(`/inbox/${item.id}`, {
+                title: item.sender.name,
+                isUrgent: item.isUrgent,
+                listParams,
+              })
         }
       />
     )
@@ -148,17 +199,6 @@ function useThrottleState(state: string, delay = 500) {
     return () => clearTimeout(timeout)
   }, [state, delay])
   return throttledState
-}
-
-type Filters = {
-  opened?: boolean
-  archived?: boolean
-  bookmarked?: boolean
-  subjectContains?: string
-  senderNationalId?: string[]
-  categoryIds?: string[]
-  dateFrom?: Date
-  dateTo?: Date
 }
 
 function applyFilters(filters?: Filters) {
@@ -204,6 +244,21 @@ export const InboxScreen: NavigationFunctionComponent<{
   const queryString = useThrottleState(query)
   const [hiddenContent, setHiddenContent] = useState(isIos)
   const [refetching, setRefetching] = useState(false)
+  const isFeature2WayMailboxEnabled = useFeatureFlag(
+    'is2WayMailboxEnabled',
+    false,
+  )
+
+  const [toastInfo, setToastInfo] = useState<{
+    variant: ToastVariant
+    title: string
+    message?: string
+  }>({
+    variant: 'success',
+    title: '',
+  })
+  const [toastVisible, setToastVisible] = useState(false)
+
   const pageRef = useRef(1)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
   const isFilterApplied =
@@ -238,6 +293,26 @@ export const InboxScreen: NavigationFunctionComponent<{
   ])
 
   const [filters, setFilters] = useState(applyFilters(incomingFilters))
+  const [selectState, setSelectedState] = useState(false)
+  const [selectedItems, setSelectedItems] = useState<string[]>([])
+
+  const rightButtons = selectState
+    ? [
+        {
+          id: ButtonRegistry.InboxBulkSelectCancelButton,
+          text: intl.formatMessage({
+            id: 'inbox.bulkSelectCancelButton',
+          }),
+        },
+      ]
+    : [
+        {
+          id: ButtonRegistry.InboxBulkSelectButton,
+          text: intl.formatMessage({
+            id: 'inbox.bulkSelectButton',
+          }),
+        },
+      ]
 
   const res = useListDocumentsQuery({
     variables: {
@@ -250,11 +325,16 @@ export const InboxScreen: NavigationFunctionComponent<{
     },
   })
 
+  const [bulkSelectActionMutation, { loading: bulkSelectActionLoading }] =
+    usePostMailActionMutationMutation()
+
   const sendersAndCategories = useGetDocumentsCategoriesAndSendersQuery()
 
   const availableSenders = sendersAndCategories.data?.getDocumentSenders ?? []
   const availableCategories =
     sendersAndCategories.data?.getDocumentCategories ?? []
+  const allDocumentsSelected =
+    selectedItems.length === res.data?.documentsV2?.data?.length
 
   const [markAllAsRead, { loading: markAllAsReadLoading }] =
     useMarkAllDocumentsAsReadMutation({
@@ -290,8 +370,24 @@ export const InboxScreen: NavigationFunctionComponent<{
   useConnectivityIndicator({
     componentId,
     queryResult: res,
+    rightButtons: rightButtons,
     refetching: refetching || markAllAsReadLoading,
   })
+
+  useNavigationButtonPress(({ buttonId }) => {
+    if (buttonId === ButtonRegistry.InboxBulkSelectButton) {
+      setSelectedState(true)
+    }
+    if (buttonId === ButtonRegistry.InboxBulkSelectCancelButton) {
+      resetSelectState()
+    }
+    if (buttonId === ButtonRegistry.InboxBulkSelectAllButton) {
+      setSelectedItems(res.data?.documentsV2?.data.map((doc) => doc.id) ?? [])
+    }
+    if (buttonId === ButtonRegistry.InboxBulkDeselectAllButton) {
+      setSelectedItems([])
+    }
+  }, componentId)
 
   useEffect(() => {
     const appliedFilters = applyFilters(incomingFilters)
@@ -305,6 +401,39 @@ export const InboxScreen: NavigationFunctionComponent<{
     // Reset page on filter changes
     setFilters(appliedFilters)
   }, [incomingFilters, filters])
+
+  useEffect(() => {
+    // Make sure to reset select state when switching tabs
+    if (ui.selectedTab !== 0 && selectState) {
+      resetSelectState()
+    }
+  }, [ui.selectedTab, selectState])
+
+  useEffect(() => {
+    Navigation.mergeOptions(componentId, {
+      topBar: {
+        leftButtons: selectState
+          ? allDocumentsSelected
+            ? [
+                {
+                  id: ButtonRegistry.InboxBulkDeselectAllButton,
+                  text: intl.formatMessage({
+                    id: 'inbox.bulkDeselectAllButton',
+                  }),
+                },
+              ]
+            : [
+                {
+                  id: ButtonRegistry.InboxBulkSelectAllButton,
+                  text: intl.formatMessage({
+                    id: 'inbox.bulkSelectAllButton',
+                  }),
+                },
+              ]
+          : [],
+      },
+    })
+  }, [componentId, intl, selectState, allDocumentsSelected])
 
   const items = useMemo(() => res.data?.documentsV2?.data ?? [], [res.data])
   const isSearch = ui.inboxQuery.length > 2
@@ -356,6 +485,37 @@ export const InboxScreen: NavigationFunctionComponent<{
     setLoadingMore(false)
   }
 
+  const handleBulkActionError = (
+    actionType: 'star' | 'archive' | 'markAsRead',
+  ) => {
+    showToastForBulkSelectAction({
+      variant: 'error',
+      title: intl.formatMessage({
+        id: `inbox.bulkSelect.${actionType}Error`,
+      }),
+      message: intl.formatMessage({
+        id: 'inbox.bulkSelect.pleaseTryAgain',
+      }),
+    })
+  }
+
+  const showToastForBulkSelectAction = ({
+    variant,
+    title,
+    message,
+  }: {
+    variant: ToastVariant
+    title: string
+    message?: string
+  }) => {
+    setToastInfo({
+      variant: variant,
+      title: title,
+      message: message ?? undefined,
+    })
+    setToastVisible(true)
+  }
+
   useEffect(() => {
     Navigation.mergeOptions(ComponentRegistry.InboxScreen, {
       bottomTab: {
@@ -371,12 +531,36 @@ export const InboxScreen: NavigationFunctionComponent<{
         badge: unreadCount > 0 ? unreadCount.toString() : (null as any),
         badgeColor: theme.color.red400,
       },
+      topBar: {
+        rightButtons: selectState
+          ? [
+              {
+                id: ButtonRegistry.InboxBulkSelectCancelButton,
+                text: intl.formatMessage({
+                  id: 'inbox.bulkSelectCancelButton',
+                }),
+              },
+            ]
+          : [
+              {
+                id: ButtonRegistry.InboxBulkSelectButton,
+                text: intl.formatMessage({
+                  id: 'inbox.bulkSelectButton',
+                }),
+              },
+            ],
+      },
     })
-  }, [intl, theme, unreadCount])
+  }, [intl, theme, unreadCount, selectState])
 
   const keyExtractor = useCallback((item: ListItem) => {
     return item.id.toString()
   }, [])
+
+  const resetSelectState = () => {
+    setSelectedItems([])
+    setSelectedState(false)
+  }
 
   const onRefresh = useCallback(async () => {
     try {
@@ -419,16 +603,36 @@ export const InboxScreen: NavigationFunctionComponent<{
           </View>
         )
       }
+
+      const document = item as DocumentV2
+      const category = availableCategories.find(
+        ({ id }) => id === document?.categoryId,
+      )
+
       return (
         <PressableListItem
-          item={item as DocumentV2}
+          item={document}
+          selectable={selectState}
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
+          setSelectedState={setSelectedState}
+          isFeature2WayMailboxEnabled={isFeature2WayMailboxEnabled}
           listParams={{
             ...filters,
+            category,
           }}
         />
       )
     },
-    [intl, filters],
+    [
+      intl,
+      filters,
+      selectState,
+      selectedItems,
+      setSelectedItems,
+      availableCategories,
+      isFeature2WayMailboxEnabled,
+    ],
   )
 
   const data = useMemo(() => {
@@ -510,6 +714,11 @@ export const InboxScreen: NavigationFunctionComponent<{
                 })}
                 value={query}
                 onChangeText={(text) => setQuery(text)}
+                onFocus={() => {
+                  if (selectState) {
+                    resetSelectState()
+                  }
+                }}
               />
               <Button
                 title={intl.formatMessage({
@@ -525,6 +734,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                 icon={filterIcon}
                 iconStyle={{ tintColor: theme.color.blue400 }}
                 onPress={() => {
+                  resetSelectState()
                   navigateTo('/inbox-filter', {
                     opened,
                     archived,
@@ -674,6 +884,89 @@ export const InboxScreen: NavigationFunctionComponent<{
             </LoadingWrapper>
           ) : null
         }
+      />
+      {selectState && selectedItems.length ? (
+        <ActionBar
+          loading={bulkSelectActionLoading}
+          onClickStar={async () => {
+            const result = await bulkSelectActionMutation({
+              variables: {
+                input: { action: 'bookmark', documentIds: selectedItems },
+              },
+            })
+            if (result.data?.postMailActionV2?.success) {
+              // If success, update selected documents to be starred in the cache
+              selectedItems.forEach((id) => {
+                client.cache.modify({
+                  id: client.cache.identify({ __typename: 'DocumentV2', id }),
+                  fields: {
+                    bookmarked: () => true,
+                  },
+                })
+              })
+              resetSelectState()
+              showToastForBulkSelectAction({
+                variant: 'success',
+                title: intl.formatMessage({
+                  id: 'inbox.bulkSelect.starSuccess',
+                }),
+              })
+            } else {
+              handleBulkActionError('star')
+            }
+          }}
+          onClickArchive={async () => {
+            const result = await bulkSelectActionMutation({
+              variables: {
+                input: { action: 'archive', documentIds: selectedItems },
+              },
+            })
+            if (result.data?.postMailActionV2?.success) {
+              resetSelectState()
+              res.refetch()
+              showToastForBulkSelectAction({
+                variant: 'success',
+                title: intl.formatMessage({
+                  id: 'inbox.bulkSelect.archiveSuccess',
+                }),
+              })
+            } else {
+              handleBulkActionError('archive')
+            }
+          }}
+          onClickMarkAsRead={async () => {
+            const result = await bulkSelectActionMutation({
+              variables: {
+                input: { action: 'read', documentIds: selectedItems },
+              },
+            })
+            if (result.data?.postMailActionV2?.success) {
+              // If success, update selected documents to be marked as read in the cache
+              selectedItems.forEach((id) => {
+                client.cache.modify({
+                  id: client.cache.identify({ __typename: 'DocumentV2', id }),
+                  fields: {
+                    opened: () => true,
+                  },
+                })
+              })
+              resetSelectState()
+              showToastForBulkSelectAction({
+                variant: 'success',
+                title: intl.formatMessage({
+                  id: 'inbox.bulkSelect.markAsReadSuccess',
+                }),
+              })
+            } else {
+              handleBulkActionError('markAsRead')
+            }
+          }}
+        />
+      ) : null}
+      <Toast
+        {...toastInfo}
+        visible={toastVisible}
+        onHide={() => setToastVisible(false)}
       />
       <BottomTabsIndicator index={0} total={5} />
       {!isSearch && <TopLine scrollY={scrollY} />}

@@ -1,6 +1,7 @@
 import { Base64 } from 'js-base64'
-import { Includeable, Sequelize } from 'sequelize'
+import { Includeable } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   forwardRef,
@@ -14,6 +15,7 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { getServiceStatusText } from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -21,10 +23,12 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  HashAlgorithm,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
   ServiceStatus,
   SubpoenaNotificationType,
+  SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -36,6 +40,7 @@ import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
+import { Institution } from '../institution'
 import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
 import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
@@ -54,6 +59,14 @@ export const include: Includeable[] = [
       {
         model: User,
         as: 'registrar',
+      },
+      {
+        model: Institution,
+        as: 'prosecutorsOffice',
+      },
+      {
+        model: Institution,
+        as: 'court',
       },
     ],
   },
@@ -106,6 +119,7 @@ export class SubpoenaService {
     transaction: Transaction,
     arraignmentDate?: Date,
     location?: string,
+    subpoenaType?: SubpoenaType,
   ): Promise<Subpoena> {
     return this.subpoenaModel.create(
       {
@@ -113,14 +127,19 @@ export class SubpoenaService {
         caseId,
         arraignmentDate,
         location,
+        type: subpoenaType,
       },
       { transaction },
     )
   }
 
-  async setHash(id: string, hash: string): Promise<void> {
+  async setHash(
+    id: string,
+    hash: string,
+    hashAlgorithm: HashAlgorithm,
+  ): Promise<void> {
     const [numberOfAffectedRows] = await this.subpoenaModel.update(
-      { hash },
+      { hash, hashAlgorithm },
       { where: { id } },
     )
 
@@ -211,15 +230,6 @@ export class SubpoenaService {
           requestedDefenderNationalId ||
           requestedDefenderName)
       ) {
-        // If there is a change in the defender choice after the judge has confirmed the choice,
-        // we need to set the isDefenderChoiceConfirmed to false
-        const resetDefenderChoiceConfirmed =
-          subpoena.defendant?.isDefenderChoiceConfirmed &&
-          ((defenderChoice &&
-            subpoena.defendant?.defenderChoice !== defenderChoice) ||
-            (defenderNationalId &&
-              subpoena.defendant?.defenderNationalId !== defenderNationalId))
-
         // Færa message handling í defendant service
         await this.defendantService.updateRestricted(
           subpoena.case,
@@ -234,7 +244,6 @@ export class SubpoenaService {
             requestedDefenderNationalId,
             requestedDefenderName,
           },
-          resetDefenderChoiceConfirmed ? false : undefined,
           transaction,
         )
       }
@@ -252,7 +261,7 @@ export class SubpoenaService {
         'SUBPOENA_SERVICE_STATUS',
         subpoena.case,
         false,
-        { Staða: Subpoena.serviceStatusText(update.serviceStatus) },
+        { Staða: getServiceStatusText(update.serviceStatus) },
       )
     }
 
@@ -272,10 +281,10 @@ export class SubpoenaService {
     return subpoena
   }
 
-  async findBySubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
+  async findByPoliceSubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
     const subpoena = await this.subpoenaModel.findOne({
       include,
-      where: { subpoenaId: policeSubpoenaId },
+      where: { policeSubpoenaId },
     })
 
     if (!subpoena) {
@@ -294,7 +303,7 @@ export class SubpoenaService {
     })
   }
 
-  async deliverSubpoenaToPolice(
+  async deliverSubpoenaToNationalCommissionersOffice(
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
@@ -339,7 +348,7 @@ export class SubpoenaService {
       }
 
       const [numberOfAffectedRows] = await this.subpoenaModel.update(
-        { subpoenaId: createdSubpoena.subpoenaId },
+        { policeSubpoenaId: createdSubpoena.policeSubpoenaId },
         { where: { id: subpoena.id } },
       )
 
@@ -350,7 +359,7 @@ export class SubpoenaService {
       }
 
       this.logger.info(
-        `Subpoena ${createdSubpoena.subpoenaId} delivered to the police centralized file service`,
+        `Subpoena with police subpoena id ${createdSubpoena.policeSubpoenaId} delivered to the police centralized file service`,
       )
 
       return { delivered: true }
@@ -467,27 +476,27 @@ export class SubpoenaService {
       })
   }
 
-  async deliverSubpoenaRevocationToPolice(
+  async deliverSubpoenaRevocationToNationalCommissionersOffice(
     theCase: Case,
     subpoena: Subpoena,
     user: TUser,
   ): Promise<DeliverResponse> {
-    if (!subpoena.subpoenaId) {
+    if (!subpoena.policeSubpoenaId) {
       this.logger.warn(
-        `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the police`,
+        `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the national commissioners office`,
       )
       return { delivered: true }
     }
 
     const subpoenaRevoked = await this.policeService.revokeSubpoena(
       theCase,
-      subpoena.id,
+      subpoena.policeSubpoenaId,
       user,
     )
 
     if (subpoenaRevoked) {
       this.logger.info(
-        `Subpoena ${subpoena.subpoenaId} successfully revoked from police`,
+        `Subpoena ${subpoena.policeSubpoenaId} successfully revoked from police`,
       )
       return { delivered: true }
     } else {
@@ -496,12 +505,12 @@ export class SubpoenaService {
   }
 
   async getSubpoena(subpoena: Subpoena, user?: TUser): Promise<Subpoena> {
-    if (!subpoena.subpoenaId) {
+    if (!subpoena.policeSubpoenaId) {
       // The subpoena has not been delivered to the police
       return subpoena
     }
 
-    if (subpoena.serviceStatus) {
+    if (isSuccessfulServiceStatus(subpoena.serviceStatus)) {
       // The subpoena has already been served to the defendant
       return subpoena
     }
@@ -509,7 +518,7 @@ export class SubpoenaService {
     // We don't know if the subpoena has been served to the defendant
     // so we need to check the police service
     const subpoenaInfo = await this.policeService.getSubpoenaStatus(
-      subpoena.subpoenaId,
+      subpoena.policeSubpoenaId,
       user,
     )
 

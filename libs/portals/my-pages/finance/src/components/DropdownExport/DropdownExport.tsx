@@ -6,6 +6,7 @@ import { m } from '@island.is/portals/my-pages/core'
 interface Props {
   onGetCSV: () => void
   onGetExcel: () => void
+  label?: string
   dropdownItems?: {
     href?: string
     onClick?: () => void
@@ -20,9 +21,11 @@ interface Props {
 const DropdownExport = ({
   onGetCSV,
   onGetExcel,
+  label,
   dropdownItems = [],
 }: Props) => {
   const { formatMessage } = useLocale()
+
   return (
     <Box>
       <DropdownMenu
@@ -39,7 +42,7 @@ const DropdownExport = ({
           },
           ...dropdownItems,
         ]}
-        title={formatMessage(m.more)}
+        title={label ?? formatMessage(m.more)}
       />
     </Box>
   )

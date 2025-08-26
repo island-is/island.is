@@ -1,41 +1,10 @@
-import { createIntl } from 'react-intl'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
-import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
-import { IndictmentCountOffense as offense } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { getLegalArguments, getRelevantSubstances } from './IndictmentCount'
-
-const formatMessage = createIntl({
-  locale: 'is',
-  onError: jest.fn,
-}).formatMessage
-
-describe('getRelevantSubstances', () => {
-  test('should return relevant substances in the correct order for the indictment description', () => {
-    const deprecatedOffenses = [
-      offense.DRUNK_DRIVING,
-      offense.ILLEGAL_DRUGS_DRIVING,
-      offense.PRESCRIPTION_DRUGS_DRIVING,
-    ]
-    const substances: SubstanceMap = {
-      [Substance.AMPHETAMINE]: '10',
-      [Substance.MORPHINE]: '30',
-      [Substance.ETIZOLAM]: '0.5',
-      [Substance.ALCOHOL]: '1.10',
-    }
-
-    const result = getRelevantSubstances(deprecatedOffenses, substances)
-
-    expect(result).toEqual([
-      ['ALCOHOL', '1.10'],
-      ['AMPHETAMINE', '10'],
-      ['ETIZOLAM', '0.5'],
-      ['MORPHINE', '30'],
-    ])
-  })
-})
+import { getLegalArguments } from './IndictmentCount'
 
 describe('getLegalArguments', () => {
+  const formatMessage = createFormatMessage()
+
   test('should format legal arguments with article 95 and one other article', () => {
     const lawsBroken = [
       [58, 1],

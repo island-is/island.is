@@ -15,7 +15,6 @@ import { estateWithoutAssets } from './Sections/estateWithoutAssets'
 import { applicationDescription } from './Sections/description'
 
 /* EINKASKIPTI */
-
 export const privateDivisionForm: Form = buildForm({
   id: 'privateDivisionForm',
   mode: FormModes.DRAFT,
@@ -38,7 +37,6 @@ export const privateDivisionForm: Form = buildForm({
 })
 
 /* SETA Í ÓSKIPTU BÚI */
-
 export const undividedEstateForm: Form = buildForm({
   id: 'undividedEstateForm',
   mode: FormModes.DRAFT,
@@ -58,7 +56,6 @@ export const undividedEstateForm: Form = buildForm({
 })
 
 /* EIGNALAUST DÁNARBU */
-
 export const estateWithoutAssetsForm: Form = buildForm({
   id: 'estateWithoutAssetsForm',
   mode: FormModes.DRAFT,
@@ -79,7 +76,6 @@ export const estateWithoutAssetsForm: Form = buildForm({
 })
 
 /* OPINBER SKIPTI */
-
 export const officialDivisionForm: Form = buildForm({
   id: 'officialDivisionForm',
   mode: FormModes.DRAFT,

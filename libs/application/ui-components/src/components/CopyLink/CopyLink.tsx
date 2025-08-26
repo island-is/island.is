@@ -7,11 +7,13 @@ import { coreMessages, coreErrorMessages } from '@island.is/application/core'
 interface CopyLinkProps {
   linkUrl: string
   buttonTitle?: string
+  semiBoldLink?: boolean
 }
 
 const CopyLink: FC<React.PropsWithChildren<CopyLinkProps>> = ({
   linkUrl,
-  buttonTitle = 'Afrita tengil',
+  buttonTitle,
+  semiBoldLink,
 }) => {
   const { formatMessage } = useLocale()
   return (
@@ -24,7 +26,12 @@ const CopyLink: FC<React.PropsWithChildren<CopyLinkProps>> = ({
       borderRadius="large"
     >
       <Box style={{ overflowWrap: 'anywhere' }} paddingRight={4}>
-        <Text color="blue400">{linkUrl}</Text>
+        <Text
+          color="blue400"
+          fontWeight={semiBoldLink ? 'semiBold' : 'regular'}
+        >
+          {linkUrl}
+        </Text>
       </Box>
       <Box marginTop={[3, 0]}>
         <Button
@@ -33,14 +40,10 @@ const CopyLink: FC<React.PropsWithChildren<CopyLinkProps>> = ({
             const copied = copyToClipboard(linkUrl)
             if (!copied) {
               return toast.error(
-                formatMessage(
-                  coreErrorMessages.copyLinkErrorToast.defaultMessage,
-                ),
+                formatMessage(coreErrorMessages.copyLinkErrorToast),
               )
             }
-            toast.success(
-              formatMessage(coreMessages.copyLinkSuccessToast.defaultMessage),
-            )
+            toast.success(formatMessage(coreMessages.copyLinkSuccessToast))
           }}
           variant="ghost"
           nowrap
@@ -49,7 +52,7 @@ const CopyLink: FC<React.PropsWithChildren<CopyLinkProps>> = ({
           iconType="outline"
           size="small"
         >
-          {buttonTitle}
+          {buttonTitle ?? formatMessage(coreMessages.copyLinkButtonTitle)}
         </Button>
       </Box>
     </Box>

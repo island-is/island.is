@@ -3,6 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/admin/form-system/src",
   "projectType": "library",
+  "tags": ["scope:portals-admin", "lib:portals-admin"],
   "generators": {},
   "targets": {
     "lint": {
@@ -19,14 +20,6 @@
         "jestConfig": "libs/portals/admin/form-system/jest.config.ts",
         "passWithNoTests": true
       }
-    },
-    "codegen/frontend-client": {
-      "executor": "nx:run-commands",
-      "options": {
-        "output": "libs/portals/admin/form-system/src/**/*.generated.ts",
-        "command": "graphql-codegen --config libs/portals/admin/form-system/codegen.yml"
-      }
     }
-  },
-  "tags": ["scope:portals-admin", "lib:portals-admin"]
+  }
 }

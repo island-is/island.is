@@ -30,5 +30,5 @@ export class GetEventsInput {
 
   @Field(() => Boolean, { nullable: true })
   @IsOptional()
-  includePastEvents?: boolean
+  onlyIncludePastEvents?: boolean
 }

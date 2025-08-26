@@ -6,9 +6,9 @@ export const menu = style({
   margin: 0,
   width: '100%',
   position: 'absolute',
-  backgroundColor: theme.color.white,
   maxHeight: 455,
   overflowY: 'auto',
+  backgroundColor: theme.color.white,
   outline: 0,
   opacity: 0,
   borderColor: theme.color.mint400,
@@ -17,6 +17,10 @@ export const menu = style({
   borderTopWidth: 0,
   borderBottomLeftRadius: 6,
   borderBottomRightRadius: 6,
+})
+
+export const blueBackgroundColor = style({
+  backgroundColor: theme.color.blue100,
 })
 
 export const open = style({

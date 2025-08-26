@@ -8,3 +8,22 @@ query getIncomePlan {
     status
   }
 }
+
+query getIncomePlanApplication(
+  $input: ApplicationApplicationsInput!
+  $locale: String!
+) {
+  applicationApplications(input: $input, locale: $locale) {
+    id
+    created
+    modified
+    applicant
+    assignees
+    applicantActors
+    state
+    typeId
+    answers
+    externalData
+    status
+  }
+}

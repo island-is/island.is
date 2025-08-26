@@ -13,25 +13,20 @@ import {
   FeatureProvider,
   FormProvider,
   Header as HeaderContainer,
+  LawyerRegistryProvider,
   ServiceInterruptionBanner,
   UserProvider,
   ViewportProvider,
 } from '../src/components'
 
 const {
-  publicRuntimeConfig: {
-    ddRumApplicationId,
-    ddRumClientToken,
-    appVersion,
-    environment,
-  },
+  publicRuntimeConfig: { ddLogsClientToken, appVersion, environment },
 } = getConfig()
 
-if (ddRumApplicationId && ddRumClientToken && typeof window !== 'undefined') {
-  userMonitoring.initDdRum({
+if (ddLogsClientToken && typeof window !== 'undefined') {
+  userMonitoring.initDdLogs({
     service: 'judicial-system-web',
-    applicationId: ddRumApplicationId,
-    clientToken: ddRumClientToken,
+    clientToken: ddLogsClientToken,
     env: environment,
     version: appVersion,
   })
@@ -83,6 +78,7 @@ class JudicialSystemApplication extends App<Props> {
       translations,
     }
   }
+
   render() {
     const { Component, pageProps, translations } = this.props
 
@@ -104,12 +100,12 @@ class JudicialSystemApplication extends App<Props> {
             <FeatureProvider>
               <UserProvider>
                 <LocaleProvider locale="is" messages={translations || {}}>
-                  <>
+                  <LawyerRegistryProvider>
                     <ServiceInterruptionBanner />
-                    <HeaderContainer />
                     <FormProvider>
+                      <HeaderContainer />
                       <Component {...pageProps} />
-                      <ToastContainer useKeyframeStyles />
+                      <ToastContainer />
                     </FormProvider>
                     <style jsx global>{`
                       @font-face {
@@ -172,7 +168,7 @@ class JudicialSystemApplication extends App<Props> {
                             format('woff');
                       }
                     `}</style>
-                  </>
+                  </LawyerRegistryProvider>
                 </LocaleProvider>
               </UserProvider>
             </FeatureProvider>

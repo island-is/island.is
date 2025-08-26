@@ -5,7 +5,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   FootNote,
   IntroHeader,
-  MENNTAMALASTOFNUN_SLUG,
+  MMS_SLUG,
   m,
 } from '@island.is/portals/my-pages/core'
 import { CareerCards } from './components/CareerCards'
@@ -24,11 +24,11 @@ const EducationCareer = () => {
             'Hér birtast einkunnir þínar og barna þinna úr samræmdum prófum frá árinu 2020 sem sóttar eru til Menntamálastofnunar. Unnið er að því að því að koma öllum einkunnum úr menntakerfi Íslands á einn stað.',
           description: 'education career intro',
         })}
-        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderSlug={MMS_SLUG}
         serviceProviderTooltip={formatMessage(m.mmsTooltip)}
       />
       <CareerCards />
-      <FootNote serviceProviderSlug={MENNTAMALASTOFNUN_SLUG} />
+      <FootNote serviceProviderSlug={MMS_SLUG} />
     </Box>
   )
 }

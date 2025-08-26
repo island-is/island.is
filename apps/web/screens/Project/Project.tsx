@@ -12,7 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
-  Form,
+  DigitalIcelandLatestNewsSlice,
   HeadWithSocialSharing,
   OneColumnTextSlice,
   SliceMachine,
@@ -279,7 +279,7 @@ const ProjectPage: Screen<PageProps> = ({
   return (
     <>
       <HeadWithSocialSharing
-        title={`${projectPage?.title} | Ísland.is`}
+        title={`${subpage?.title ?? projectPage?.title} | Ísland.is`}
         description={projectPage?.featuredDescription || projectPage?.intro}
         imageUrl={projectPage?.featuredImage?.url}
         imageContentType={projectPage?.featuredImage?.contentType}
@@ -313,6 +313,21 @@ const ProjectPage: Screen<PageProps> = ({
               </Box>
             )
           }
+          if (
+            slice.__typename === 'LatestNewsSlice' &&
+            slice.news.length >= 3 &&
+            projectPage?.slug
+          ) {
+            return (
+              <Box paddingBottom={[2, 2, 5]} key={slice.id}>
+                <DigitalIcelandLatestNewsSlice
+                  slice={slice}
+                  slug={projectPage.slug}
+                  seeMoreLinkVariant="project"
+                />
+              </Box>
+            )
+          }
           return (
             <SliceMachine
               key={slice.id}
@@ -337,12 +352,14 @@ const ProjectPage: Screen<PageProps> = ({
           )
         })}
       </Stack>
-      <ProjectFooter
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        projectPage={projectPage}
-        namespace={projectNamespace}
-      />
+      <Box marginTop="auto">
+        <ProjectFooter
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          projectPage={projectPage}
+          namespace={projectNamespace}
+        />
+      </Box>
     </>
   )
 }

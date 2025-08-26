@@ -232,7 +232,7 @@ export interface InputImageUploadProps {
   maxSize?: number
   onRemove: (file: UploadImage) => void
   onRetry?: (file: UploadImage) => void
-  onChange?: (files: File[]) => void
+  onChange?: (files: File[], uploadCount?: number) => void
   onUploadRejection?: (files: FileRejection[]) => void
   errorMessage?: string
   defaultFileBackgroundColor?: Colors
@@ -270,7 +270,7 @@ export const InputImageUpload = ({
     if (acceptedFiles.length === 0 || !onChange) return
 
     if (!multiple) {
-      onChange(acceptedFiles.slice(0, 1))
+      onChange(acceptedFiles.slice(0, 1), acceptedFiles.length)
       return
     }
 

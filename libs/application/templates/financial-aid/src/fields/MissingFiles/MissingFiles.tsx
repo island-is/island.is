@@ -33,7 +33,10 @@ const MissingFiles = ({
   const { currentApplication, updateApplication, loading } = useApplication(
     application.externalData.currentApplication.data?.currentApplicationId,
   )
-  const isSpouse = getValueViaPath(field as RecordObject<any>, 'props.isSpouse')
+  const isSpouse = getValueViaPath(
+    field as unknown as RecordObject,
+    'props.isSpouse',
+  )
 
   const { formatMessage } = useIntl()
   const { setValue, getValues } = useFormContext()

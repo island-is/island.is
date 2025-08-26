@@ -6,3 +6,11 @@ export {
   OrganDonorDto,
   Locale as organLocale,
 } from './organ-donation'
+export {
+  HealthDirectorateHealthClientConfig,
+  HealthDirectorateHealthService,
+  PrescribedItemDtoRenewalBlockedReasonEnum,
+  PrescribedItemDtoRenewalStatusEnum,
+  PrescribedItemDtoCategoryEnum,
+  PrescriptionRenewalRequestDto,
+} from './health'

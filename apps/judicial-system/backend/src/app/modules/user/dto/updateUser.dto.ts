@@ -1,15 +1,6 @@
-import {
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsUUID,
-  MaxLength,
-} from 'class-validator'
+import { IsBoolean, IsOptional, IsString, MaxLength } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
-
-import { UserRole } from '@island.is/judicial-system/types'
 
 export class UpdateUserDto {
   @IsOptional()
@@ -35,16 +26,6 @@ export class UpdateUserDto {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly email?: string
-
-  @IsOptional()
-  @IsEnum(UserRole)
-  @ApiPropertyOptional({ enum: UserRole })
-  readonly role?: UserRole
-
-  @IsOptional()
-  @IsUUID()
-  @ApiPropertyOptional({ type: String })
-  readonly institutionId?: string
 
   @IsOptional()
   @IsBoolean()

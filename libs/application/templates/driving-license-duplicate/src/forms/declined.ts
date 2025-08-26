@@ -6,20 +6,14 @@ import {
   getValueViaPath,
   buildAlertMessageField,
   buildKeyValueField,
-  YES,
-  NO,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
-import { HasQualitySignatureData } from '../fields/QualitySignature/hooks/useQualitySignature'
 import { m } from '../lib/messages'
-import { allowFakeCondition, requirementsMet } from '../lib/utils'
-import { NationalRegistryUser } from '@island.is/api/schema'
+import { requirementsMet } from '../lib/utils'
 import { format as formatNationalId } from 'kennitala'
 
 export const declined: Form = buildForm({
   id: 'declined',
-  title: m.rejected,
   mode: FormModes.REJECTED,
   renderLastScreenButton: true,
   children: [
@@ -33,12 +27,14 @@ export const declined: Form = buildForm({
         buildKeyValueField({
           label: m.applicantsName,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
+          value: ({ externalData }) =>
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
+            '',
         }),
         buildKeyValueField({
           label: m.applicantsNationalId,
           width: 'half',
+          marginBottom: 'gutter',
           value: (application: Application) =>
             formatNationalId(application.applicant),
         }),
@@ -47,55 +43,21 @@ export const declined: Form = buildForm({
           component: 'CurrentLicense',
         }),
         buildDescriptionField({
-          id: 'rejected.signatureTitle',
+          id: 'rejectedAlertTitle',
           title: m.requirementsTitle,
           titleVariant: 'h4',
+          marginTop: 'gutter',
         }),
         buildAlertMessageField({
           id: 'rejectedAlertForPhoto',
-          title: m.rejectedImageTitle,
-          message: m.rejectedImageMessage,
+          title: m.rejectedImageTitleNew,
+          message: m.rejectedImageMessageNew,
           alertType: 'warning',
-          condition: (answers, externalData) => {
-            if (allowFakeCondition(YES)(answers)) {
-              const hasQualityPhoto = getValueViaPath<string>(
-                answers,
-                'fakeData.qualityPhoto',
-              )
-              return hasQualityPhoto === NO
-            }
-            return (
-              (externalData.qualityPhoto as HasQualityPhotoData)?.data
-                ?.hasQualityPhoto === false
-            )
-          },
-        }),
-        buildAlertMessageField({
-          id: 'rejectedAlertForSignature',
-          title: m.rejectedSignatureTitle,
-          message: m.rejectedSignatureMessage,
-          alertType: 'warning',
-          condition: (answers, externalData) => {
-            if (allowFakeCondition(YES)(answers)) {
-              const hasQualitySig = getValueViaPath<string>(
-                answers,
-                'fakeData.qualitySignature',
-              )
-              return hasQualitySig === NO
-            }
-            return (
-              (externalData.qualitySignature as HasQualitySignatureData)?.data
-                ?.hasQualitySignature === false
-            )
-          },
+          marginBottom: 'gutter',
         }),
         buildDescriptionField({
-          id: 'rejected.space',
-          space: 'containerGutter',
-        }),
-        buildDescriptionField({
-          id: 'rejected.space1',
-          space: 'containerGutter',
+          id: 'rejected.extraSpace',
+          space: 'gutter',
         }),
       ],
     }),

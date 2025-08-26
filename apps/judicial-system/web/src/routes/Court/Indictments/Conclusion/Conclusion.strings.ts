@@ -2,10 +2,10 @@ import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
   title: {
-    id: 'judicial.system.core:court.indictments.conclusion.title',
-    defaultMessage: 'Niðurstaða',
+    id: 'judicial.system.core:court.indictments.conclusion.title_v1',
+    defaultMessage: 'Staða og lyktir',
     description:
-      'Notaður sem titill á síðu á Niðurstaða ákæru skrefi í dómaraflæði.',
+      'Notaður sem titill á síðu á Staða og lyktir ákæru skrefi í dómaraflæði.',
   },
   decisionTitle: {
     id: 'judicial.system.core:court.indictments.conclusion.decision_title',

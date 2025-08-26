@@ -8,7 +8,7 @@ import { InfoCard, InfoCardProps } from './InfoCard'
 
 export type InfoCardItemProps = Omit<
   InfoCardProps,
-  'size' | 'variant' | 'background'
+  'size' | 'variant' | 'background' | 'padding'
 >
 
 interface Props {
@@ -66,6 +66,7 @@ export const InfoCardGrid = ({
         <InfoCard
           key={`${c.title}-${index}`}
           background={cardsBackground}
+          padding={isMobile ? 2 : 3}
           borderColor={cardsBorder}
           variant={variant}
           size={isMobile ? 'medium' : cardSize}

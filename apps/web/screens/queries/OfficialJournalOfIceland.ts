@@ -15,11 +15,9 @@ export const ADVERTS_QUERY = gql`
         publicationDate
         categories {
           title
-          slug
         }
         involvedParty {
           title
-          slug
         }
       }
       paging {
@@ -69,6 +67,20 @@ export const ADVERT_QUERY = gql`
           isLegacy
           html
           pdfUrl
+        }
+        additions {
+          id
+          title
+          html
+          order
+        }
+        corrections {
+          description
+          advertId
+          documentPdfUrl
+          createdDate
+          legacyDate
+          isLegacy
         }
       }
     }

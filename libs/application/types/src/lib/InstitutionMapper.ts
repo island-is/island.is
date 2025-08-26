@@ -4,7 +4,37 @@ import { InstitutionContentfulIds } from './InstitutionContentfulIds'
 import { InstitutionNationalIds } from './InstitutionNationalIds'
 
 export const institutionMapper = {
-  [ApplicationTypes.EXAMPLE]: {
+  [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_INPUTS]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_PAYMENT]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
@@ -129,11 +159,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
   },
-  [ApplicationTypes.EXAMPLE_PAYMENT]: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
-  },
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
@@ -150,11 +175,6 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.FJARSYSLA_RIKISINS,
   },
   [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
-    nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
-    slug: InstitutionTypes.RIKISENDURSKODUN,
-    contentfulId: InstitutionContentfulIds.RIKISENDURSKODUN,
-  },
-  [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
     slug: InstitutionTypes.RIKISENDURSKODUN,
     contentfulId: InstitutionContentfulIds.RIKISENDURSKODUN,
@@ -279,6 +299,16 @@ export const institutionMapper = {
     slug: InstitutionTypes.THJODSKRA,
     contentfulId: InstitutionContentfulIds.THJODSKRA,
   },
+  [ApplicationTypes.MUNICIPAL_LIST_CREATION]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+    contentfulId: InstitutionContentfulIds.THJODSKRA,
+  },
+  [ApplicationTypes.MUNICIPAL_LIST_SIGNING]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+    contentfulId: InstitutionContentfulIds.THJODSKRA,
+  },
   [ApplicationTypes.CITIZENSHIP]: {
     nationalId: InstitutionNationalIds.UTLENDINGASTOFNUN,
     slug: InstitutionTypes.UTLENDINGASTOFNUN,
@@ -384,7 +414,37 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
+  [ApplicationTypes.RENTAL_AGREEMENT]: {
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  },
+  [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  },
+  [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: {
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  },
   [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.PRACTICAL_EXAM]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.SEMINAR_REGISTRATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
@@ -393,5 +453,30 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
     slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
     contentfulId: InstitutionContentfulIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+  },
+  [ApplicationTypes.ACTIVATION_ALLOWANCE]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
+    nationalId: InstitutionNationalIds.INNHEIMTUMADUR,
+    slug: InstitutionTypes.INNHEIMTUMADUR,
+    contentfulId: InstitutionContentfulIds.INNHEIMTUMADUR,
+  },
+  [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {
+    nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
+    slug: InstitutionTypes.TRYGGINGASTOFNUN,
+    contentfulId: InstitutionContentfulIds.TRYGGINGASTOFNUN,
+  },
+  [ApplicationTypes.LEGAL_GAZETTE]: {
+    nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
+    slug: InstitutionTypes.DOMSMALARADUNEYTID,
+    contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
+  },
+  [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
+    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
+    slug: InstitutionTypes.SAMGONGUSTOFA,
+    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
   },
 }

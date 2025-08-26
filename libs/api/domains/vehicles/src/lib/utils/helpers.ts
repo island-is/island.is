@@ -6,6 +6,7 @@ import {
   PostMileageReadingModel,
 } from '@island.is/clients/vehicles-mileage'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isNumeric = (value: any) => {
   return isNumber(value) || (!isEmpty(value) && !isNaN(parseFloat(value)))
 }

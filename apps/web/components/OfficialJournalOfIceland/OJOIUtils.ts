@@ -1,6 +1,5 @@
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import sortBy from 'lodash/sortBy'
 
 import { StringOption as Option } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
@@ -46,19 +45,39 @@ export type EntityOption = Option & {
   department?: OfficialJournalOfIcelandAdvertEntity
 }
 
+type Entity =
+  | OfficialJournalOfIcelandAdvertEntity
+  | OfficialJournalOfIcelandAdvertType
+  | OfficialJournalOfIcelandAdvertCategory
+  | OfficialJournalOfIcelandAdvertMainCategory
+
 export const mapEntityToOptions = (
-  entities?: Array<
-    | OfficialJournalOfIcelandAdvertEntity
-    | OfficialJournalOfIcelandAdvertType
-    | OfficialJournalOfIcelandAdvertCategory
-    | OfficialJournalOfIcelandAdvertMainCategory
-  >,
+  entities?: Array<Entity>,
 ): EntityOption[] => {
   if (!entities) {
     return []
   }
-  const sortedEntities = sortBy(entities, (d) => d.title.trim())
+  const sortedEntities = [...entities].sort(sortAlpha<Entity>('title'))
 
+  // Combine duplicate titles for OfficialJournalOfIcelandAdvertType
+  if (sortedEntities[0]?.__typename === 'OfficialJournalOfIcelandAdvertType') {
+    const combinedTypes = sortedEntities.reduce<Record<string, string[]>>(
+      (acc, entity) => {
+        const e = entity as OfficialJournalOfIcelandAdvertType
+        if (!acc[e.title]) {
+          acc[e.title] = []
+        }
+        acc[e.title].push(e.slug)
+        return acc
+      },
+      {},
+    )
+
+    return Object.entries(combinedTypes).map(([title, slugs]) => ({
+      label: title,
+      value: slugs.join(','),
+    }))
+  }
   return sortedEntities.map((e) => {
     if (e.__typename === 'OfficialJournalOfIcelandAdvertCategory') {
       return {
@@ -75,8 +94,22 @@ export const mapEntityToOptions = (
   })
 }
 
+export const mapYearOptions = () => {
+  const currentYear = new Date().getFullYear()
+  const firstYear = 1995 // The oldest available year in OJOI
+
+  const years: { label: string; value: string }[] = Array.from(
+    { length: currentYear - firstYear + 1 },
+    (_, i) => {
+      const year = (firstYear + i).toString()
+      return { label: year, value: year }
+    },
+  ).reverse()
+  return years
+}
+
 export const sortCategories = (cats: EntityOption[]) => {
-  return cats.sort(sortAlpha('label'))
+  return [...cats].sort(sortAlpha('label'))
 }
 
 export const formatDate = (date?: string, df = 'dd.MM.yyyy') => {

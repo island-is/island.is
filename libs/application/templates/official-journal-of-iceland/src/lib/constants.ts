@@ -1,5 +1,3 @@
-export const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
-
 export const ALLOWED_FILE_TYPES = ['.pdf', '.doc', '.docx']
 
 export const FILE_SIZE_LIMIT = 10000000
@@ -16,6 +14,7 @@ export const DEPARTMENT_C = 'c-deild'
 export enum ApplicationAttachmentType {
   ORIGINAL = 'frumrit',
   ADDITIONS = 'fylgiskjol',
+  SUPPORTING = 'fylgigogn',
 }
 
 export const DEFAULT_PAGE = 1

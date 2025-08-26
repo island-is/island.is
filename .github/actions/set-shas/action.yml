@@ -1,0 +1,17 @@
+name: 'Set NX shas'
+description: 'Export shas using nx-set-shas action'
+runs:
+  using: 'composite'
+  steps:
+    - name: Derive appropriate SHAs
+      uses: nrwl/nx-set-shas@v4
+
+    - name: Export shas
+      shell: bash
+      run: |
+        BASE_SHA=${{ env.NX_BASE }}
+        HEAD_SHA=${{ env.NX_HEAD }}
+        echo BASE="$BASE_SHA" >> "$GITHUB_ENV"
+        echo HEAD="$HEAD_SHA" >> "$GITHUB_ENV"
+        echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
+        echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > "${{ github.workspace }}/event.json"

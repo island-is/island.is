@@ -59,6 +59,13 @@ export class UserProfileService extends BaseTemplateApiService {
         throw error
       })
 
+    if (isRunningOnEnvironment('local') && !mobilePhoneNumber && !email) {
+      return {
+        email: 'mockEmail@island.is',
+        mobilePhoneNumber: '9999999',
+      }
+    }
+
     /// Temporary dependency on íslykill for bank info retrieval via FJS API.
     /// A refactor is planned to integrate bank info directly from FJS API to eliminate íslykill dependency.
     const bankInfo = await this.getBankInfoFromIslykill(auth)
@@ -154,7 +161,7 @@ export class UserProfileService extends BaseTemplateApiService {
 
   private getIDSLink(
     application: ApplicationWithAttachments,
-    include: { email?: boolean, phone?: boolean },
+    include: { email?: boolean; phone?: boolean },
   ) {
     let idsUserProfileLink = ''
     if (include.email && include.phone) {

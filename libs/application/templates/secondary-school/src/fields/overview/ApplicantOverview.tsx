@@ -9,6 +9,7 @@ import {
   formatPhoneNumber,
   Routes,
   checkIsEditable,
+  checkUseAnswersCopy,
 } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { getValueViaPath } from '@island.is/application/core'
@@ -19,9 +20,12 @@ export const ApplicantOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
+  const useAnswersCopy = checkUseAnswersCopy(application)
+  const copyPrefix = useAnswersCopy ? 'copy.' : ''
+
   const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
     application.answers,
-    'applicant',
+    copyPrefix + 'applicant',
   )
 
   const onClick = (page: string) => {

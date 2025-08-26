@@ -1,11 +1,5 @@
 import { Transform } from 'class-transformer'
-import {
-  IsEnum,
-  IsOptional,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator'
+import { IsEnum, IsOptional, IsString, Length } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -21,8 +15,7 @@ export class InternalUpdateDefendantDto {
 
   @IsOptional()
   @IsString()
-  @MinLength(10)
-  @MaxLength(10)
+  @Length(10, 10)
   @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
@@ -49,8 +42,7 @@ export class InternalUpdateDefendantDto {
 
   @IsOptional()
   @IsString()
-  @MinLength(10)
-  @MaxLength(10)
+  @Length(10, 10)
   @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderNationalId?: string

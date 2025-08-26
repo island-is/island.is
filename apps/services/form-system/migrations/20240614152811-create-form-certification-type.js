@@ -1,9 +1,7 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.createTable(
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.createTable(
         'form_certification_type',
         {
           id: {
@@ -31,24 +29,32 @@ module.exports = {
             },
           },
           certification_type_id: {
-            type: Sequelize.UUID,
+            type: Sequelize.STRING,
             allowNull: false,
-            references: {
-              model: 'certification_type',
-              key: 'id',
-            },
           },
         },
         { transaction: t },
-      ),
-    )
+      )
+
+      await queryInterface.addConstraint('form_certification_type', {
+        fields: ['form_id', 'certification_type_id'],
+        type: 'unique',
+        name: 'unique_form_id_certification_type_id_pair',
+        transaction: t,
+      })
+    })
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('form_certification_type', {
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.removeConstraint(
+        'form_certification_type',
+        'unique_form_id_certification_type_id_pair',
+        { transaction: t },
+      )
+      await queryInterface.dropTable('form_certification_type', {
         transaction: t,
-      }),
-    )
+      })
+    })
   },
 }

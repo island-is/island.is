@@ -1,4 +1,3 @@
-import { IsNationalId } from '@island.is/nest/core'
 import {
   Field,
   GraphQLISODateTime,

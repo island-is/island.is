@@ -5,6 +5,7 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -18,12 +19,12 @@ import {
   DefenderChoice,
   Gender,
   PunishmentType,
-  ServiceRequirement,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 import { Subpoena } from '../../subpoena/models/subpoena.model'
+import { Verdict } from '../../verdict/models/verdict.model'
 import { DefendantEventLog } from './defendantEventLog.model'
 
 @Table({
@@ -94,6 +95,11 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: String })
   nationalId?: string
 
+  // ATTENTION: This will contain the DOB from **LOKE** but we can migrate later internal DOB currently stored as nationalId in the same schema
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  dateOfBirth?: string
+
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   name?: string
@@ -146,22 +152,10 @@ export class Defendant extends Model {
   @ApiProperty({ enum: DefendantPlea })
   defendantPlea?: DefendantPlea
 
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(ServiceRequirement),
-  })
-  @ApiProperty({ enum: ServiceRequirement })
-  serviceRequirement?: ServiceRequirement
-
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  verdictViewDate?: Date
-
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  verdictAppealDate?: Date
-
+  // This is the currently selected subpoena type per defendant but we also
+  // store the subpoena type in the subpoenas table to keep the history.
+  // We will later remove it from the defendant table when we fix the
+  // handling of new subpoenas per defendant.
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -213,4 +207,17 @@ export class Defendant extends Model {
   @HasMany(() => DefendantEventLog, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => DefendantEventLog, isArray: true })
   eventLogs?: DefendantEventLog[]
+
+  // Note: specific for subpoena service, if it was delivered via specific process like the legal paper
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isAlternativeService?: boolean
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  alternativeServiceDescription?: string
+
+  @HasOne(() => Verdict, { foreignKey: 'defendantId' })
+  @ApiPropertyOptional({ type: () => Verdict })
+  verdict?: Verdict
 }

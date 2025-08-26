@@ -7,7 +7,7 @@ export const serviceSetup = (services: {
     .namespace('judicial-system')
     .serviceAccount('judicial-system-api')
     .env({
-      AUTH_IDS_SCOPE: 'openid profile',
+      AUTH_IDS_SCOPE: 'openid profile offline_access',
       AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -46,9 +46,9 @@ export const serviceSetup = (services: {
         prod: 'master',
       },
       HIDDEN_FEATURES: {
-        dev: 'OFFENSE_ENDPOINTS',
-        staging: 'OFFENSE_ENDPOINTS',
-        prod: 'OFFENSE_ENDPOINTS',
+        dev: '',
+        staging: 'SERVICE_PORTAL',
+        prod: 'SERVICE_PORTAL',
       },
     })
     .secrets({

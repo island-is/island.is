@@ -53,6 +53,9 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'true',
         prod: 'true',
       },
+      AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
+      AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log',
+      AUDIT_TRAIL_REGION: 'eu-west-1',
     })
     .xroad(Base, JudicialSystem)
     .secrets({
@@ -91,6 +94,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         '/k8s/judicial-system/COURT_ROBOT_CLIENT_SECRET',
       COURT_ROBOT_USER: '/k8s/judicial-system/COURT_ROBOT_USER',
       COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL',
+      LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
     })
     .liveness('/liveness')
     .readiness('/liveness')

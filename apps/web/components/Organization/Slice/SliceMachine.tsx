@@ -11,6 +11,7 @@ import {
 import {
   EmailSignup,
   GenericListWrapper,
+  IntroLinkImageSlice,
   RichText,
   SectionWithVideo,
 } from '@island.is/web/components'
@@ -229,7 +230,14 @@ export const renderSlice = (
     case 'FeaturedLinks':
       return <FeaturedLinksSlice slice={slice} />
     case 'OrganizationParentSubpageList':
-      return <OrganizationParentSubpageListSlice slice={slice} />
+      return (
+        <OrganizationParentSubpageListSlice
+          slice={slice}
+          isFrontpage={params?.isFrontpage}
+        />
+      )
+    case 'IntroLinkImage':
+      return <IntroLinkImageSlice slice={slice} />
     default:
       return <RichText body={[slice]} />
   }

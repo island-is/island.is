@@ -19,8 +19,14 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 export const dataSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
-  jurisdiction: z.string().min(1),
-  pickup: z.enum([Pickup.POST, Pickup.DISTRICT]).optional(),
+  delivery: z
+    .object({
+      deliveryMethod: z.enum([Pickup.POST, Pickup.DISTRICT]).optional(),
+      jurisdiction: z.string().nullish(),
+    })
+    .refine(({ deliveryMethod, jurisdiction }) => {
+      return deliveryMethod === Pickup.DISTRICT ? !!jurisdiction : true
+    }),
   healthDeclaration: z.object({
     usesContactGlasses: z.enum([YES, NO]),
     hasReducedPeripheralVision: z.enum([YES, NO]),

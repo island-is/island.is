@@ -19,17 +19,25 @@ export enum Features {
   homeSupport = 'isHomeSupportEnabled',
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
-  idCardApplication = 'isIdCardApplicationEnabled',
+  legalGazette = 'isLegalGazetteEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
   FinancialStatementCemetery = 'isFinancialStatementCemeteryEnabled',
   ParliamentaryElectionApplication = 'isParliamentaryElectionApplicationEnabled',
+  municipalElectionApplication = 'isMunicipalElectionApplicationEnabled',
   FinancialStatementIndividualElectionEnabled = 'isFinancialStatementIndividualElectionEnabled',
   deathBenefits = 'isdeathbenefitsapplicationenabled',
   FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
-  IncomePlanEnabled = 'isIncomePlanEnabled',
-  WorkAccidentNotificationEnabled = 'isWorkAccidentNotificationEnabled',
-  SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
+  rentalAgreement = 'isRentalAgreementEnabled',
+  SeminarRegistrationEnabled = 'isSeminarRegistrationEnabled',
+  TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
+  medicalAndRehabilitationPayments = 'isMedicalAndRehabilitationPaymentsEnabled',
+  PracticalExamEnabled = 'isPracticalExamEnabled',
+  pensionSupplementEnabled = 'isPensionSupplementEnabled',
+  fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
+  ExemptionForTransportation = 'isExemptionForTransportationEnabled',
+  TerminateRentalAgreementEnabled = 'isterminaterentalagreementsenabled',
+  ActivationAllowanceApplicationEnabled = 'isActivationAllowanceApplicationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -40,17 +48,22 @@ export enum Features {
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
   servicePortalHealthVaccinationsPageEnabled = 'isServicePortalHealthVaccinationsPageEnabled',
   servicePortalHealthOrganDonationPageEnabled = 'isServicePortalHealthOrganDonationPageEnabled',
+  servicePortalHealthReferralsPageEnabled = 'isServicePortalReferralsPageEnabled',
+  servicePortalHealthWaitlistsPageEnabled = 'isServicePortalHealthWaitlistsPageEnabled',
+  servicePortalHealthMedicineLandlaeknirPageEnabled = 'isServicePortalHealthMedicineLandlaeknirPageEnabled',
+  servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
+  isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
   healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
-
-  //Occupational License Health directorate fetch enabled
-  occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
+  isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
+  isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
 
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
+  pkPassV2 = 'isPkPassV2Enabled',
 
   //Is social administration payment plan 2025 enabled?
   isServicePortalPaymentPlan2025Enabled = 'isServicePortalPaymentPlan2025Enabled',
@@ -99,8 +112,17 @@ export enum Features {
   isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
   isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
 
+  // Islandis Payment
+  isIslandisPaymentEnabled = 'islandisPayment',
+  useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
+
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
+
+  delegationTypesWithNotificationsEnabled = 'delegationTypesWithNotificationsEnabled',
+
+  // Allow fake data
+  digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
 }
 
 export enum ServerSideFeature {

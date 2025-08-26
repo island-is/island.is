@@ -1,6 +1,6 @@
 import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { AccidentTypeEnum } from '../types'
+import { AccidentTypeEnum } from './enums'
 
 export const isWorkAccident = (formValue: FormValue) => {
   const accidentType = getValueViaPath<AccidentTypeEnum>(

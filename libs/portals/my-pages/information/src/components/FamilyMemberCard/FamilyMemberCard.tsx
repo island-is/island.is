@@ -97,11 +97,17 @@ export const FamilyMemberCard: FC<
               variant: 'purple',
             }
       }
-      cta={{
-        label: formatMessage(spmm.seeInfo),
-        variant: 'text',
-        url: getUrl(),
-      }}
+      cta={
+        familyRelation === 'bio-child'
+          ? {
+              label: '',
+            }
+          : {
+              label: formatMessage(spmm.seeInfo),
+              variant: 'text',
+              url: getUrl(),
+            }
+      }
     />
   )
 }

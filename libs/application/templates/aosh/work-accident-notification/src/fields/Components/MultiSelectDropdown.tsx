@@ -2,8 +2,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Group, Item } from './MultiSelectDropdownController'
 import { Box, Select } from '@island.is/island-ui/core'
-import { Controller } from 'react-hook-form'
-import { Option } from '../Components/types'
+import { Option } from './types'
 import { useLocale } from '@island.is/localization'
 import { causeAndConsequences } from '../../lib/messages'
 
@@ -34,9 +33,11 @@ export const MultiSelectDropdown: FC<
         isMulti={true}
         label={group.name}
         closeMenuOnSelect={false}
+        hideSelectedOptions={false}
         placeholder={formatMessage(
           causeAndConsequences.shared.selectPlaceholder,
         )}
+        isClearable={false}
         options={options.map((option) => ({
           value: option.code,
           label: option.name,

@@ -3,13 +3,18 @@ import {
   FormValue,
   ApplicationContext,
   ExternalData,
+  BasicChargeItem,
+  Application,
 } from '@island.is/application/types'
 import { m } from '../messages'
 import { ConditionFn, DrivingLicense } from '../types'
 import {
   B_FULL,
   B_TEMP,
+  CHARGE_ITEM_CODES,
+  DELIVERY_FEE,
   DrivingLicenseApplicationFor,
+  Pickup,
 } from '../constants'
 
 export const allowFakeCondition =
@@ -38,9 +43,7 @@ export const isApplicationForCondition =
   (answers: FormValue) => {
     const strings = Array.isArray(result) ? result : [result]
 
-    return strings.some(
-      (x) => x === getValueViaPath(answers, 'applicationFor') ?? B_FULL,
-    )
+    return strings.some((x) => x === getValueViaPath(answers, 'applicationFor'))
   }
 
 export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
@@ -83,4 +86,38 @@ export const hasHealthRemarks = (externalData: ExternalData) => {
         ?.remarks || []
     ).length > 0
   )
+}
+
+export const getCodes = (application: Application): BasicChargeItem[] => {
+  const applicationFor = getValueViaPath<
+    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
+  >(application.answers, 'applicationFor', 'B-full')
+
+  const deliveryMethod = getValueViaPath<Pickup>(
+    application.answers,
+    'delivery.deliveryMethod',
+  )
+
+  const codes: BasicChargeItem[] = []
+
+  const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
+
+  const targetCode =
+    typeof applicationFor === 'string'
+      ? CHARGE_ITEM_CODES[applicationFor]
+        ? CHARGE_ITEM_CODES[applicationFor]
+        : DEFAULT_ITEM_CODE
+      : DEFAULT_ITEM_CODE
+
+  codes.push({ code: targetCode })
+
+  if (deliveryMethod === Pickup.POST) {
+    codes.push({ code: CHARGE_ITEM_CODES[DELIVERY_FEE] })
+  }
+
+  if (!targetCode) {
+    throw new Error('No selected charge item code')
+  }
+
+  return codes
 }

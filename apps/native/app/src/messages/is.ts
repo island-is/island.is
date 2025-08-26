@@ -23,6 +23,7 @@ export const is = {
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
   'applock.attempts': 'tilraunir eftir',
+  'applock.attempt': 'tilraun eftir',
 
   // onboarding
   'onboarding.notifications.title':
@@ -237,10 +238,49 @@ export const is = {
   'inbox.filterDateConfirm': 'Staðfesta',
   'inbox.filterDateCancel': 'Hætta við',
 
+  // inbox bulk select
+  'inbox.bulkSelectButton': 'Velja skjöl',
+  'inbox.bulkSelectAllButton': 'Velja allt',
+  'inbox.bulkDeselectAllButton': 'Afvelja allt',
+  'inbox.bulkSelectCancelButton': 'Hætta við',
+  'inbox.bulkSelectActionStar': 'Stjörnumerkja',
+  'inbox.bulkSelectActionArchive': 'Geymsla',
+  'inbox.bulkSelectActionRead': 'Merkja lesið',
+  'inbox.bulkSelect.starSuccess': 'Valin skjöl stjörnumerkt',
+  'inbox.bulkSelect.archiveSuccess': 'Valin skjöl færð í geymslu',
+  'inbox.bulkSelect.markAsReadSuccess': 'Valin skjöl merkt sem lesin',
+  'inbox.bulkSelect.starError': 'Ekki tókst að stjörnumerkja skjöl',
+  'inbox.bulkSelect.archiveError': 'Ekki tókst að færa skjöl í geymslu',
+  'inbox.bulkSelect.markAsReadError': 'Ekki tókst að merkja skjöl sem lesin',
+  'inbox.bulkSelect.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
+
   // document detail
-  'documentDetail.screenTitle': 'Skjal',
+  'documentDetail.screenTitle': 'Póstur',
   'documentDetail.loadingText': 'Sæki skjal',
   'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
+  'documentDetail.buttonReply': 'Svara pósti',
+  'documentDetail.buttonCommunications': 'Samskipti',
+
+  // document reply
+  'documentReply.to': 'Til',
+  'documentReply.from': 'Frá',
+  'documentReply.message': 'Skilaboð',
+  'documentReply.messagePlaceholder': 'Skrifaðu skilaboð hér',
+  'documentReply.uploadAttachment': 'Hlaða upp skjali',
+  'documentReply.sendMessage': 'Senda skilaboð',
+
+  // document communications
+  'documentCommunications.caseNumber': 'Málsnúmer',
+  'documentCommunications.initialReply':
+    'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}.',
+  'documentCommunications.cannotReply':
+    'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+
+  // register email
+  'registerEmail.title': 'Vinsamlegast skráðu netfang',
+  'registerEmail.description': 'Til þess að svara pósti þarf að skrá netfang',
+  'registerEmail.button': 'Skrá netfang',
+  'registerEmail.cancel': 'Hætta við',
 
   // profile
   'profile.screenTitle': 'Meira',
@@ -388,6 +428,8 @@ export const is = {
     'Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera birtast þau hér.',
   'wallet.lastUpdated': 'Síðast uppfært: {date}',
   'wallet.update': 'Uppfæra',
+  'wallet.yourLicenses': 'Þín skírteini',
+  'wallet.childLicenses': 'Skírteini barna þinna',
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
@@ -406,31 +448,43 @@ export const is = {
     'Þú getur ekki bætt við skírteinum á þetta tæki.',
   'walletPass.barcodeErrorNotConnected':
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
-  'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja barkóða',
+  'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja strikamerki',
   'walletPass.barcodeErrorBadSession':
-    'Of stutt síðan skírteini var sótt á öðru tæki',
+    'Strikamerki var nýverið sótt á öðru tæki. Vinsamlegast reyndu aftur síðar.',
   'walletPass.validLicense': 'Í gildi',
   'walletPass.expiredLicense': 'Útrunnið',
-  'walletPass.passportNumber': 'Númer vegabréfs: {licenseNumber}',
-  'walletPass.licenseNumber': 'Skírteinisnúmer: {licenseNumber}',
   'walletPass.errorFetchingLicense': 'Ekki tókst að uppfæra',
 
-  // wallet passport
-  'walletPassport.screenTitle': 'Vegabréf',
-  'walletPassport.infoTitle': 'Mundu eftir vegabréfinu!',
-  'walletPassport.infoDescription':
-    'Þetta yfirlit gildir ekki sem ferðaskilríki.',
-  'walletPassport.warningTitle': 'Rennur út innan 6 mánaða',
-  'walletPassport.warningDescription':
+  // license details
+  'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
+  'licenseDetail.pcard.alert.description':
+    'Þetta yfirlit gildir ekki sem stæðiskort.',
+  'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
+  'licenseDetail.ehic.alert.description':
+    'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
+  'licenseDetail.passport.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónu- eða ferðaskilríki',
+  'licenseDetail.passport.alert.description':
+    'Einungis skilríkið sjálft er gilt persónu- og ferðaskilríki.',
+  'licenseDetail.identityDocument.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónuskilríki',
+  'licenseDetail.identityDocument.alert.description':
+    'Einungis skilríkið sjálft er fullgilt persónuskilríki.',
+  'licenseDetail.identityTravelDocument.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónu- eða ferðaskilríki',
+  'licenseDetail.identityTravelDocument.alert.description':
+    'Einungis skilríkið sjálft er gilt persónu- og ferðaskilríki.',
+  'licenseDetail.warning.title': 'Rennur út innan 6 mánaða',
+  'licenseDetail.passport.warning.description':
     'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða.',
-  'walletPassport.displayName': 'Nafn einstaklings',
-  'walletPassport.number': 'Númer vegabréfs',
-  'walletPassport.issuingDate': 'Útgáfudagur',
-  'walletPassport.expirationDate': 'Lokadagur',
-  'walletPassport.mrzName': 'Nafn á tölvulesanlegu formi',
-  'walletPassport.children': 'Vegabréf barna',
-  'walletPassport.noPassport': 'Ekki til útgefið vegabréf.',
-  'walletPassport.noPassportLink': 'Nánar á island.is/vegabref',
+  'licenseDetail.identityDocument.warning.description':
+    'Athugið að nafnskírteinið þitt mun renna út innan næstu 6 mánaða.',
+  'licenseDetail.passport.noPassport': 'Engin gild vegabréf',
+  'licenseDetail.identityDocument.noIdentityDocument':
+    'Engin gild nafnskilríki',
+  'licenseDetail.apply': 'Sækja um',
+  'licenseDetail.passport.title': 'Vegabréf',
+  'licenseDetail.identityDocument.title': 'Nafnskírteini',
 
   // license scanner
   'licenseScanner.title': 'Skilríkjaskanni',
@@ -475,14 +529,6 @@ export const is = {
   'licenseScannerResult.nationalId': 'Kennitala',
   'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
 
-  // license details
-  'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
-  'licenseDetail.pcard.alert.description':
-    'Þetta yfirlit gildir ekki sem stæðiskort.',
-  'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
-  'licenseDetail.ehic.alert.description':
-    'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
-
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
   'notifications.markAllAsRead': 'Merkja allt lesið',
@@ -519,6 +565,8 @@ export const is = {
     completed {Afgreidd}
     rejected {Hafnað}
     draft {Í vinnslu hjá þér}
+    approved {Samþykkt}
+    notstarted {Ekki hafin}
     other {Staða óþekkt}
   }`,
   'applicationStatusCard.draftProgress':

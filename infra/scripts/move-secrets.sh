@@ -5,8 +5,7 @@ set -euo pipefail
 : "${FORCE:=false}"
 : "${DELETE_OLD:=false}"
 : "${OVERWRITE:=false}"
-: "${APPLY:=false}"
-: "${DRY:=$(test "$APPLY" = true && echo "false" || echo "true")}"
+: "${DRY:=}"
 : "${SECRETS:=}"
 ACTION="$(test "$DELETE_OLD" = true && echo "move" || echo "copy")"
 
@@ -23,7 +22,7 @@ dry() {
     return $?
   fi
   if dry; then
-    echo "~> $*" >&2
+    echo "(DRY) ~> $*" >&2
     return
   fi
   "$@"
@@ -36,18 +35,22 @@ aws() {
   fi
 }
 
+AWS_BIN=$(which aws)
+AWS_VERSION=$(aws --version)
+AWS_CALLER_IDENTITY=$(aws sts get-caller-identity)
+
 echo "Supported parameters and their current value:"
 echo "  FORCE=$FORCE"
 echo "  DELETE_OLD=$DELETE_OLD"
 echo "  OVERWRITE=$OVERWRITE"
-echo "  APPLY=$APPLY"
 echo "  DRY=$DRY"
 echo "  SECRETS=$SECRETS"
 echo ""
 echo "Debug information:"
+echo "  aws binary: $AWS_BIN"
 echo "  AWS_PROFILE: ${AWS_PROFILE:-<unset>}"
-echo "  aws-cli version: $(aws --version)"
-echo "  Current AWS user: $(aws sts get-caller-identity)"
+echo "  aws-cli version: $AWS_VERSION"
+echo "  Current AWS user: $AWS_CALLER_IDENTITY"
 echo ""
 
 if ! aws sts get-caller-identity &>/dev/null; then
@@ -109,8 +112,11 @@ for secret in ${SECRETS}; do
 done
 
 # Report number of changed secrets
-echo "Performed successful ${ACTION} for ${#AFFECTED_SECRETS[@]} secrets$(dry && echo " (dry-run)")."
+DRY_SUFFIX=$(dry && echo " (dry-run)") || :
+echo "Performed successful ${ACTION} for ${#AFFECTED_SECRETS[@]} secrets${DRY_SUFFIX}."
 echo "Affected secrets:"
 for affected in "${AFFECTED_SECRETS[@]}"; do
   echo "  $affected"
 done
+
+echo "DONE"

@@ -8,7 +8,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   CurrentLicenseApi,
-  QualitySignatureApi,
+  AllPhotosFromThjodskraApi,
   QualityPhotoApi,
   NationalRegistryUserApi,
   UserProfileApi,
@@ -28,6 +28,7 @@ import {
 } from './getApplicationFeatureFlags'
 import {
   DuplicateEligibilityApi,
+  MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import {
@@ -36,6 +37,8 @@ import {
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
+import { DriversLicense } from '@island.is/clients/driving-license'
+import { info } from 'kennitala'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -47,16 +50,36 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
   }
 }
+
 const getCodes = (application: Application): BasicChargeItem[] => {
-  const chargeItemCode = getValueViaPath<string>(
-    application.answers,
-    'chargeItemCode',
+  const codes: BasicChargeItem[] = []
+  let chargeItemCode = 'AY116'
+  const licenseData = getValueViaPath<DriversLicense>(
+    application.externalData,
+    'currentLicense.data',
   )
 
-  if (!chargeItemCode) {
-    throw new Error('chargeItemCode missing in answers')
+  // Temporary Driving License
+  if (licenseData?.categories.some((category) => category.validToCode === 8)) {
+    chargeItemCode = 'AY114'
   }
-  return [{ code: chargeItemCode }]
+
+  // Change price based on age, takes precedence over temporary license
+  // and therefore simply overrides chargeItemCode instead of pushing a new one
+  const age = info(application.applicant).age
+  if (age >= 65) {
+    chargeItemCode = 'AY137'
+  }
+
+  const withDeliveryFee =
+    getValueViaPath<number>(application.answers, 'deliveryMethod') === 1
+
+  codes.push({ code: chargeItemCode as string })
+  if (withDeliveryFee) {
+    codes.push({ code: 'AY145' })
+  }
+
+  return codes
 }
 
 const configuration =
@@ -68,10 +91,11 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
-  name: m.applicationTitle,
   codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
+  institution: m.applicantInstitution,
+  name: m.applicationTitle,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -110,6 +134,10 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                     featureFlags[
                       DrivingLicenseDuplicateFeatureFlags.ALLOW_FAKE
                     ],
+                  allowThjodskraPhotos:
+                    featureFlags[
+                      DrivingLicenseDuplicateFeatureFlags.ALLOW_THJODSKRA_PHOTOS
+                    ],
                 })
               },
               actions: [
@@ -128,7 +156,8 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                   },
                 }),
                 SyslumadurPaymentCatalogApi,
-                QualitySignatureApi,
+                MockableSyslumadurPaymentCatalogApi,
+                AllPhotosFromThjodskraApi,
                 QualityPhotoApi,
                 UserProfileApi,
                 DuplicateEligibilityApi,
@@ -161,8 +190,6 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           lifecycle: pruneAfter(thirtyDays),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
           }),
           roles: [
             {

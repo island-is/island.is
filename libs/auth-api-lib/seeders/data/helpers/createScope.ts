@@ -3,6 +3,11 @@ import { QueryInterface } from 'sequelize'
 import { DbScope } from './types'
 import { safeBulkInsert } from './safeBulkInsert'
 
+interface TranslatedText {
+  en: string
+  is: string
+}
+
 interface ScopeOptions {
   /**
    * The internal name of the scope. Should be prefixed with the organisation domain, eg `@island.is`.
@@ -11,13 +16,15 @@ interface ScopeOptions {
 
   /**
    * The public name of the scope, shown to users.
+   * Can be a string (for Icelandic only) or an object with 'en' and 'is' properties for translations.
    */
-  displayName: string
+  displayName: string | TranslatedText
 
   /**
    * Description of what the scope gives access to, also shown to users.
+   * Can be a string (for Icelandic only) or an object with 'en' and 'is' properties for translations.
    */
-  description: string
+  description: string | TranslatedText
 
   /**
    * Configures if the scope should be automatically granted to legal guardians and procuring holders, or if it should support custom delegations. Defaults to no delegation support.
@@ -56,8 +63,14 @@ interface ScopeOptions {
 
 const getScopeFields = (options: ScopeOptions): DbScope => ({
   name: options.name,
-  display_name: options.displayName,
-  description: options.description,
+  display_name:
+    typeof options.displayName === 'string'
+      ? options.displayName
+      : options.displayName.is,
+  description:
+    typeof options.description === 'string'
+      ? options.description
+      : options.description.is,
   grant_to_legal_guardians: options.delegation?.legalGuardians === true,
   grant_to_procuring_holders: options.delegation?.procuringHolders === true,
   also_for_delegated_user: options.alsoForDelegatedUser ?? false,
@@ -71,7 +84,7 @@ const getScopeFields = (options: ScopeOptions): DbScope => ({
   show_in_discovery_document: true,
   required: false,
   emphasize: false,
-  allow_explicit_delegation_grant: false,
+  allow_explicit_delegation_grant: options.delegation?.custom === true,
   automatic_delegation_grant: false,
 })
 
@@ -111,6 +124,59 @@ export const createScope =
       [scope],
       () => `creating scope ${scope.name}`,
     )
+
+    // Store translations if TranslatedText objects are provided
+    const translations = []
+
+    if (typeof options.displayName !== 'string') {
+      // Add English translation for display_name
+      translations.push({
+        language: 'en',
+        class_name: 'apiscope',
+        key: scope.name,
+        property: 'displayName',
+        value: options.displayName.en,
+      })
+
+      // Add Icelandic translation for display_name
+      translations.push({
+        language: 'is',
+        class_name: 'apiscope',
+        key: scope.name,
+        property: 'displayName',
+        value: options.displayName.is,
+      })
+    }
+
+    if (typeof options.description !== 'string') {
+      // Add English translation for description
+      translations.push({
+        language: 'en',
+        class_name: 'apiscope',
+        key: scope.name,
+        property: 'description',
+        value: options.description.en,
+      })
+
+      // Add Icelandic translation for description
+      translations.push({
+        language: 'is',
+        class_name: 'apiscope',
+        key: scope.name,
+        property: 'description',
+        value: options.description.is,
+      })
+    }
+
+    if (translations.length > 0) {
+      await safeBulkInsert(
+        queryInterface,
+        'translation',
+        translations,
+        ({ language, property }) =>
+          `creating ${language} translation for ${scope.name}.${property}`,
+      )
+    }
 
     const delegationTypes = getDelegationTypes(options.delegation)
     if (delegationTypes.length) {

@@ -4,16 +4,14 @@ import { NO, YES } from '@island.is/application/core'
 import { error } from './messages'
 
 const UserSchemaBase = z.object({
-  nationalId: z
-    .string()
-    .refine(
-      (nationalId) =>
-        nationalId &&
-        nationalId.length !== 0 &&
-        kennitala.isValid(nationalId) &&
-        (kennitala.isCompany(nationalId) ||
-          kennitala.info(nationalId).age >= 18),
-    ),
+  nationalId: z.string().refine((nationalId) => {
+    return (
+      nationalId &&
+      nationalId.length !== 0 &&
+      kennitala.isValid(nationalId) &&
+      (kennitala.isCompany(nationalId) || kennitala.info(nationalId).age >= 18)
+    )
+  }),
   name: z.string().min(1),
   address: z.string().min(1),
   postalCode: z.string().min(1),
@@ -352,7 +350,7 @@ export const CitizenshipSchema = z.object({
   formerIcelander: z.enum([YES, NO]), //.refine((v) => v === YES) // TODO REVERT WHEN UTL FIXED SERVICES
   supportingDocuments: SupportingDocumentsSchema,
   childrenSupportingDocuments: z
-    .array(ChildrenSupportingDocumentsSchema)
+    .array(ChildrenSupportingDocumentsSchema.nullable())
     .optional(),
 })
 

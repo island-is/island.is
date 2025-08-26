@@ -7,6 +7,7 @@ const PaymentModule = z.object({
   arkBaseUrl: z.string(),
   clientLocationOrigin: z.string(),
   authIssuer: z.string(),
+  paymentApiCallbackUrl: z.string(),
 })
 
 export const PaymentModuleConfig = defineConfig({
@@ -29,6 +30,10 @@ export const PaymentModuleConfig = defineConfig({
     authIssuer: env.required(
       'IDENTITY_SERVER_ISSUER_URL',
       'https://identity-server.dev01.devland.is',
+    ),
+    paymentApiCallbackUrl: env.required(
+      'PAYMENT_API_CALLBACK_URL',
+      'http://localhost:3333/applications/',
     ),
   }),
 })

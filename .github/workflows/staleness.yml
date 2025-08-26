@@ -1,0 +1,34 @@
+name: 'Staleness'
+on:
+  schedule:
+    - cron: '0 3 * * *' # Daily at 03:00 UTC
+  workflow_dispatch: # Allow manual run
+
+jobs:
+  deploy-feature:
+    name: Stale `deploy-feature`
+    runs-on: arc-shared
+    permissions:
+      pull-requests: write
+      actions: write
+    steps:
+      - name: Get token
+        id: get-token
+        working-directory: ${{ inputs.working-directory }}
+        shell: bash
+        env:
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
+      - name: Clean up `deploy-feature` label usage
+        uses: actions/stale@v9
+        with:
+          repo-token: ${{ steps.get-token.outputs.token }}
+          days-before-stale: 7
+          days-before-close: -1 # Never auto-close
+          only-pr-labels: deploy-feature
+          labels-to-remove-when-stale: deploy-feature
+          stale-pr-message: |
+            This PR has been inactive for over a week. The `deploy-feature` label has been removed. Re-add the label to re-enable automatic deploy previews.
+          operations-per-run: 100

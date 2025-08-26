@@ -12,7 +12,11 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { sanitize } from '@island.is/judicial-system/formatters'
-import type { User, UserRole } from '@island.is/judicial-system/types'
+import type {
+  User,
+  UserDescriptor,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
@@ -128,6 +132,7 @@ enum RobotEmailType {
   APPEAL_CASE_FILE = 'APPEAL_CASE_FILE',
   NEW_INDICTMENT_INFO = 'INDICTMENT_INFO',
   INDICTMENT_CASE_ASSIGNED_ROLES = 'INDICTMENT_CASE_ASSIGNED_ROLES',
+  INDICTMENT_CASE_ARRAIGNMENT_DATE = 'INDICTMENT_CASE_ARRAIGNMENT_DATE',
   INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
   INDICTMENT_CASE_CANCELLATION_NOTICE = 'INDICTMENT_CASE_CANCELLATION_NOTICE',
 }
@@ -376,7 +381,7 @@ export class CourtService {
   }
 
   async createEmail(
-    user: User,
+    user: UserDescriptor,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -674,6 +679,38 @@ export class CourtService {
     } catch (error) {
       this.eventService.postErrorEvent(
         'Failed to update indictment case with assigned roles',
+        {
+          caseId,
+          actor: user.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  updateIndictmentCaseWithArraignmentDate(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    arraignmentDate?: Date,
+  ): Promise<unknown> {
+    try {
+      const subject = `${courtName} - ${courtCaseNumber} - þingfesting`
+      const content = JSON.stringify({ arraignmentDate })
+
+      return this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_ARRAIGNMENT_DATE,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with arraignment date',
         {
           caseId,
           actor: user.name,

@@ -32,7 +32,6 @@ import { formatCurrency as formatCurrencyUtil } from '@island.is/web/utils/curre
 import { MarkdownText } from '../../Organization'
 import { translations as t } from './translations.strings'
 import { Calculator, Status, Union, WorkPercentage } from './utils'
-import * as styles from './ParentalLeaveCalculator.css'
 
 interface FieldProps {
   heading: string
@@ -731,37 +730,35 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
     <Stack space={5}>
       <Stack space={3}>
         <Box background="blue100" paddingY={3} paddingX={4}>
-          <Box className={styles.resultBorder} paddingY={2} paddingX={3}>
-            <Stack space={2}>
-              <Text variant="h3">
-                {status === Status.PARENTAL_LEAVE
-                  ? formatMessage(
-                      mainSectionKeys[status][
-                        parentalLeavePeriod ?? ParentalLeavePeriod.MONTH
-                      ].heading,
-                    )
-                  : formatMessage(mainSectionKeys[status].heading)}
-              </Text>
-              <Text>
-                {status === Status.PARENTAL_LEAVE
-                  ? formatMessage(
-                      mainSectionKeys[status][
-                        parentalLeavePeriod ?? ParentalLeavePeriod.MONTH
-                      ].description,
-                      {
-                        ratio,
-                      },
-                    )
-                  : formatMessage(mainSectionKeys[status].description, {
+          <Stack space={2}>
+            <Text variant="h3">
+              {status === Status.PARENTAL_LEAVE
+                ? formatMessage(
+                    mainSectionKeys[status][
+                      parentalLeavePeriod ?? ParentalLeavePeriod.MONTH
+                    ].heading,
+                  )
+                : formatMessage(mainSectionKeys[status].heading)}
+            </Text>
+            <Text>
+              {status === Status.PARENTAL_LEAVE
+                ? formatMessage(
+                    mainSectionKeys[status][
+                      parentalLeavePeriod ?? ParentalLeavePeriod.MONTH
+                    ].description,
+                    {
                       ratio,
-                    })}
-              </Text>
-              <Text fontWeight="semiBold" variant="h3">
-                {formatCurrency(results.mainResultAfterDeduction)}
-              </Text>
-              <Text>{formatMessage(t.results.mainDisclaimer)}</Text>
-            </Stack>
-          </Box>
+                    },
+                  )
+                : formatMessage(mainSectionKeys[status].description, {
+                    ratio,
+                  })}
+            </Text>
+            <Text fontWeight="semiBold" variant="h3">
+              {formatCurrency(results.mainResultAfterDeduction)}
+            </Text>
+            <Text>{formatMessage(t.results.mainDisclaimer)}</Text>
+          </Stack>
         </Box>
 
         <Button onClick={changeScreen} variant="text" preTextIcon="arrowBack">

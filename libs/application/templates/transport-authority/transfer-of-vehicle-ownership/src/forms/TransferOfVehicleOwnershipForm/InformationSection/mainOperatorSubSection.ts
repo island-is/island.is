@@ -46,7 +46,6 @@ export const mainOperatorSubSection = buildSubSection({
                 value: operator.nationalId!,
                 label: `${operator.name} - ${kennitala.format(
                   operator.nationalId!,
-                  '-',
                 )}`,
               }
             })

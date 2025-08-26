@@ -4,8 +4,8 @@ import styled, { useTheme } from 'styled-components/native'
 import { ImageSourcePropType, Text } from 'react-native'
 import { fontByWeight } from '../../utils'
 
-const Host = styled.View`
-  border-bottom-width: 1px;
+const Host = styled.View<{ underlined: boolean }>`
+  border-bottom-width: ${({ underlined }) => (underlined ? 1 : 0)}px;
   border-bottom-color: ${(props) => props.theme.color.blue400};
   padding-bottom: 2px;
   align-items: center;
@@ -23,9 +23,15 @@ interface LinkTextProps {
   children: string | React.ReactNode
   variant?: LinkVariant
   icon?: ImageSourcePropType
+  underlined?: boolean
 }
 
-export function LinkText({ children, variant = 'large', icon }: LinkTextProps) {
+export function LinkText({
+  children,
+  variant = 'large',
+  icon,
+  underlined = true,
+}: LinkTextProps) {
   const theme = useTheme()
   const styles = variants[variant]
   const variantLineHeight = styles.lineHeight / styles.fontSize
@@ -33,7 +39,7 @@ export function LinkText({ children, variant = 'large', icon }: LinkTextProps) {
   const fontFamily = fontByWeight(styles.fontWeight)
 
   return (
-    <Host>
+    <Host underlined={underlined}>
       <Text
         style={{
           lineHeight,

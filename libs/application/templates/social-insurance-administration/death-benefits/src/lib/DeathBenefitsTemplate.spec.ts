@@ -106,6 +106,40 @@ describe('Death Benefits Template', () => {
   })
 
   describe('state transitions', () => {
+    it('should transition from tryggingastofnunSubmitted to additionalDocumentsRequired on ADDITIONALDOCUMENTSREQUIRED', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'tryggingastofnunSubmitted',
+        }),
+        DeathBenefitsTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('additionalDocumentsRequired')
+    })
+  })
+
+  describe('state transitions', () => {
+    it('should transition from tryggingastofnunSubmitted to dismissed on dismissed', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'tryggingastofnunSubmitted',
+        }),
+        DeathBenefitsTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: OAPEvents.DISMISS,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('dismissed')
+    })
+  })
+
+  describe('state transitions', () => {
     it('should transition from tryggingastofnunInReview to approved on approve', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
@@ -165,6 +199,23 @@ describe('Death Benefits Template', () => {
   })
 
   describe('state transitions', () => {
+    it('should transition from tryggingastofnunInReview to dismissed on dismissed', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'tryggingastofnunInReview',
+        }),
+        DeathBenefitsTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: OAPEvents.DISMISS,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('dismissed')
+    })
+  })
+
+  describe('state transitions', () => {
     it('should transition from additionalDocumentsRequired to tryggingastofnunInReview on submit', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
@@ -186,6 +237,23 @@ describe('Death Benefits Template', () => {
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe('tryggingastofnunInReview')
+    })
+  })
+
+  describe('state transitions', () => {
+    it('should transition from additionalDocumentsRequired to dismissed on dismissed', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'additionalDocumentsRequired',
+        }),
+        DeathBenefitsTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: OAPEvents.DISMISS,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('dismissed')
     })
   })
 })

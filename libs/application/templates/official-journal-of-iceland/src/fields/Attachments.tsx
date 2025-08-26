@@ -1,5 +1,10 @@
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
-import { Box, Button, InputFileUpload, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  InputFileUploadDeprecated,
+  Stack,
+} from '@island.is/island-ui/core'
 import { useFileUpload } from '../hooks/useFileUpload'
 import { ALLOWED_FILE_TYPES, ApplicationAttachmentType } from '../lib/constants'
 import { useLocale } from '@island.is/localization'
@@ -59,7 +64,7 @@ export const Attachments = ({ application }: OJOIFieldBaseProps) => {
         </Button>
       </Box>
       {asDocument ? (
-        <InputFileUpload
+        <InputFileUploadDeprecated
           header={f(attachments.inputs.fileUpload.header)}
           description={f(attachments.inputs.fileUpload.description)}
           buttonLabel={f(attachments.inputs.fileUpload.buttonLabel)}

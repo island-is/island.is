@@ -4,9 +4,10 @@ export interface Lawyer {
   email: string
   phoneNr: string
   nationalId: string
+  isLitigator: boolean
 }
 
-type LawyerFull = {
+export type LawyerFull = {
   Id: number
   Name: string
   Title: string
@@ -42,12 +43,29 @@ type LawyerFull = {
   InternationConnection: string
 }
 
-export const mapToLawyer = (lawyer: LawyerFull): Lawyer => {
+export type LawyerRegistry = {
+  id: string
+  created: Date
+  modified: Date
+  name: string
+  email: string
+  nationalId: string
+  phoneNumber: string
+  practice: string
+  isLitigator: boolean
+}
+
+export const mapToLawyer = (lawyer: LawyerRegistry): Lawyer => {
   return {
-    name: lawyer.Name,
-    practice: lawyer.Practice,
-    email: lawyer.Email,
-    phoneNr: lawyer.GSM,
-    nationalId: lawyer.SSN.replace(/\D/g, ''), // Remove all non-numeric characters
+    name: lawyer.name,
+    practice: lawyer.practice,
+    email: lawyer.email,
+    phoneNr: lawyer.phoneNumber,
+    nationalId: lawyer.nationalId.replace(/\D/g, ''), // Remove all non-numeric characters
+    isLitigator: lawyer.isLitigator,
   }
+}
+
+export enum LawyerType {
+  LITIGATORS = 'LITIGATORS',
 }

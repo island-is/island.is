@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -19,7 +19,7 @@ import { CaseListQueryInput } from './dto/caseList.input'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CaseListEntry } from './models/caseList.model'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => [CaseListEntry])
 export class CaseListResolver {
   constructor(

@@ -66,7 +66,7 @@ export const requestHandlers = [
       return res(ctx.status(401), ctx.json(VHFAIL))
     }
   }),
-  rest.get(url('/api/Fasteignasalar/'), (req, res, ctx) => {
+  rest.get(url('/api/Fasteignasalar'), (req, res, ctx) => {
     const success = req.url.searchParams.get('audkenni') ? true : false
     if (success) {
       return res(ctx.status(200), ctx.json(REAL_ESTATE_AGENTS))
@@ -74,7 +74,7 @@ export const requestHandlers = [
       return res(ctx.status(401), ctx.json(VHFAIL))
     }
   }),
-  rest.get(url('/api/Logmannalisti/'), (req, res, ctx) => {
+  rest.get(url('/api/Logmannalisti'), (req, res, ctx) => {
     const success = req.url.searchParams.get('audkenni') ? true : false
     if (success) {
       return res(ctx.status(200), ctx.json(LAWYERS))

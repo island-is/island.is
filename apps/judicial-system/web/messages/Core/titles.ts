@@ -109,12 +109,6 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Yfirlit ákæru skjá hjá saksóknara í ákærum',
       }),
-      addFiles: defineMessage({
-        id: 'judicial.system.core:titles.prosecutor.indictments.add_files',
-        defaultMessage: 'Bæta við gögnum - Réttarvörslugátt',
-        description:
-          'Notaður sem titill fyrir Bæta við gögnum skjá hjá saksóknara í ákærum',
-      }),
     },
   },
   court: {
@@ -210,10 +204,10 @@ export const titles = {
           'Notaður sem titill fyrir verjenda skjá hjá dómstólum í ákærum',
       },
       conclusion: {
-        id: 'judicial.system.core:titles.court.indictments.conclusion',
-        defaultMessage: 'Niðurstaða - Réttarvörslugátt',
+        id: 'judicial.system.core:titles.court.indictments.conclusion_v1',
+        defaultMessage: 'Staða og lyktir - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Niðurstaða úrskurðar skjá hjá dómstólum í ákærum',
+          'Notaður sem titill fyrir Staða og lyktir úrskurðar skjá hjá dómstólum í ákærum',
       },
       completed: {
         id: 'judicial.system.core:titles.court.indictments.completed',
@@ -236,16 +230,6 @@ export const titles = {
     }),
   },
   shared: {
-    login: defineMessage({
-      id: 'judicial.system.core:titles.shared.login',
-      defaultMessage: 'Réttarvörslugátt',
-      description: 'Notaður sem titill fyrir innskráningarskjá',
-    }),
-    cases: defineMessage({
-      id: 'judicial.system.core:titles.shared.cases',
-      defaultMessage: 'Öll mál - Réttarvörslugátt',
-      description: 'Notaður sem titill fyrir öll mál skjá',
-    }),
     closedCaseOverview: defineMessage({
       id: 'judicial.system.core:titles.shared.closed_case_overview',
       defaultMessage: '{courtCaseNumber} - Réttarvörslugátt',

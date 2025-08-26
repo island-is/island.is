@@ -20,7 +20,7 @@ export const VehiclesClientConfig = defineConfig<z.infer<typeof schema>>({
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
       ),
       fetch: {
-        timeout: 30000,
+        timeout: 120000,
       },
       scope: [VehiclesScope.vehicle], // TODO: Change to new scope when it has been created
     }

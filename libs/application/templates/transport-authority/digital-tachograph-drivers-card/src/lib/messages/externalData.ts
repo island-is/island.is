@@ -46,7 +46,8 @@ export const externalData = {
     },
     subTitle: {
       id: 'ta.dtdc.application:externalData.nationalRegistry.subTitle',
-      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
+      defaultMessage:
+        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
       description:
         'Information from the National Registry will be used to prefill the data in the application',
     },

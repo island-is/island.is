@@ -10,11 +10,7 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
-import {
-  IntroHeader,
-  MENNTAMALASTOFNUN_SLUG,
-  m,
-} from '@island.is/portals/my-pages/core'
+import { IntroHeader, MMS_SLUG, m } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -111,7 +107,7 @@ const StudentAssessmentTable = () => {
             defaultMessage:
               'Hér birtast einkunnir þínar og barna þinna úr samræmdum prófum frá árinu 2020 sem sóttar eru til Menntamálastofnunar. Unnið er að því að því að koma öllum einkunnum úr menntakerfi Íslands á einn stað.',
           }}
-          serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+          serviceProviderSlug={MMS_SLUG}
           serviceProviderTooltip={formatMessage(m.mmsTooltip)}
         />
       )}

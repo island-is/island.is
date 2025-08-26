@@ -33,7 +33,7 @@ export const SubmitFormField: FC<React.PropsWithChildren<Props>> = ({
         value: a.event as string,
       }
     })
-  }, [actions, formatMessage])
+  }, [actions, application, formatMessage])
 
   if (placement === 'footer') {
     return null

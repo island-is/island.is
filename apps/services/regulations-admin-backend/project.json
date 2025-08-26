@@ -7,11 +7,14 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "@anatine/esbuildnx:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/regulations-admin-backend",
         "main": "apps/services/regulations-admin-backend/src/main.ts",
         "tsConfig": "apps/services/regulations-admin-backend/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           {
             "glob": "*",
@@ -33,8 +36,7 @@
             "input": "apps/services/regulations-admin-backend",
             "output": "./"
           }
-        ],
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
         "production": {
@@ -105,8 +107,8 @@
         "cwd": "apps/services/regulations-admin-backend"
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     },
     "extract-strings": {
       "executor": "nx:run-commands",

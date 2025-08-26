@@ -49,10 +49,11 @@ const AddConstituencyModal = ({
   const onAddConstituency = async () => {
     addNewConstituency({
       variables: {
-        inputAdd: {
+        input: {
           collectionId: collection?.id,
           areaIds: selectedConstituencies,
           candidateId: candidateId,
+          collectionType: collection?.collectionType,
         },
       },
     })
@@ -77,9 +78,8 @@ const AddConstituencyModal = ({
           setModalIsOpen(false)
           setSelectedConstituencies([])
         }}
-        label={''}
       >
-        <Box display="block" width="full">
+        <Box>
           <Text marginBottom={2} variant="h2">
             {formatMessage(m.addConstituency)}
           </Text>

@@ -23,7 +23,7 @@ import {
   PlateInfo,
   UseStatus,
 } from '@island.is/skilavottord-web/utils/consts'
-import { Controller } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 
 interface BoxProps {
   vehicleId: string
@@ -61,9 +61,13 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
   const [missingPlates, setMissingPlates] = useState(false)
   const [lostPlate, setLostPlate] = useState(false)
 
+  const {
+    formState: { errors },
+  } = useFormContext()
+
   return (
     <GridContainer>
-      <Stack space={3}>
+      <Stack space={2}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
             <Box
@@ -86,11 +90,36 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
           >
             <InputController
               id="mileage"
-              label={t.currentMileage}
+              label={t.currentMileage.label}
               name="mileage"
               type="number"
               defaultValue={mileage?.toString()}
+              rules={{
+                validate: (value) => {
+                  const newMileage = Number(value)
+                  const registeredMileage = Number(mileage)
+
+                  // Ensure mileage is defined and newMileage is greater than or equal to registeredMileage
+                  if (mileage !== undefined) {
+                    return (
+                      newMileage >= registeredMileage ||
+                      t.currentMileage.rules.validate
+                    )
+                  }
+                  return true
+                },
+              }}
+              error={
+                typeof errors?.mileage?.message === 'string'
+                  ? errors.mileage.message
+                  : undefined
+              }
             />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn span="12/12">
+            <AlertMessage type="info" message={t.currentMileage.info} />
           </GridColumn>
         </GridRow>
         <GridRow>
@@ -126,73 +155,74 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
           </Box>
         ) : (
           <Box>
-            {(outInStatus === OutInUsage.IN ||
-              (outInStatus === OutInUsage.OUT &&
-                useStatus === UseStatus.OUT_TICKET)) && (
-              <GridRow>
-                <GridColumn span="12/12">
-                  <SelectController
-                    label={t.numberplate.count}
-                    id="plateCount"
-                    name="plateCount"
-                    options={[
-                      { label: '0', value: 0 },
-                      { label: '1', value: 1 },
-                      { label: '2', value: 2 },
-                    ]}
-                    onSelect={(option) => {
-                      onPlateCountChange(option?.value)
+            <Stack space={2}>
+              {(outInStatus === OutInUsage.IN ||
+                (outInStatus === OutInUsage.OUT &&
+                  useStatus === UseStatus.OUT_TICKET)) && (
+                <GridRow>
+                  <GridColumn span="12/12">
+                    <SelectController
+                      label={t.numberplate.count}
+                      id="plateCount"
+                      name="plateCount"
+                      options={[
+                        { label: '0', value: 0 },
+                        { label: '1', value: 1 },
+                        { label: '2', value: 2 },
+                      ]}
+                      onSelect={(option) => {
+                        onPlateCountChange(option?.value)
 
-                      if (option?.value === 2) {
-                        setMissingPlates(false)
-                        setLostPlate(false)
-                      } else {
-                        setMissingPlates(true)
-                      }
-                    }}
-                    defaultValue={plateCount}
-                  />
-                </GridColumn>
-              </GridRow>
-            )}
-            {missingPlates && (
-              <GridRow>
-                <GridColumn span="12/12">
-                  <Controller
-                    name="plateLost"
-                    render={({ field: { onChange, value, name } }) => {
-                      return (
-                        <Checkbox
-                          large
-                          name={name}
-                          label={t.numberplate.lost}
-                          onChange={() => {
-                            if (!lostPlate) {
-                              onChange(PlateInfo.PLATE_LOST)
-                            } else {
-                              onChange()
-                            }
+                        if (option?.value === 2) {
+                          setMissingPlates(false)
+                          setLostPlate(false)
+                        } else {
+                          setMissingPlates(true)
+                        }
+                      }}
+                      defaultValue={plateCount}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
+              {missingPlates && (
+                <GridRow>
+                  <GridColumn span="12/12">
+                    <Controller
+                      name="plateLost"
+                      render={({ field: { onChange, name } }) => {
+                        return (
+                          <Checkbox
+                            large
+                            name={name}
+                            label={t.numberplate.lost}
+                            onChange={() => {
+                              if (!lostPlate) {
+                                onChange(PlateInfo.PLATE_LOST)
+                              } else {
+                                onChange()
+                              }
 
-                            setLostPlate(!lostPlate)
-                          }}
-                        />
-                      )
-                    }}
-                  />
-                </GridColumn>
-              </GridRow>
-            )}
-
-            {lostPlate && (
-              <GridRow>
-                <GridColumn span="12/12">
-                  <AlertMessage
-                    type="info"
-                    message={t.numberplate.missingInfo}
-                  />
-                </GridColumn>
-              </GridRow>
-            )}
+                              setLostPlate(!lostPlate)
+                            }}
+                          />
+                        )
+                      }}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
+              {lostPlate && (
+                <GridRow>
+                  <GridColumn span="12/12">
+                    <AlertMessage
+                      type="info"
+                      message={t.numberplate.missingInfo}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
+            </Stack>
           </Box>
         )}
       </Stack>

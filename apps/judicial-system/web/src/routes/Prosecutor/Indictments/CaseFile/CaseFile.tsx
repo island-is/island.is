@@ -1,6 +1,6 @@
 import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { LayoutGroup } from 'framer-motion'
+import { LayoutGroup } from 'motion/react'
 import router from 'next/router'
 
 import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'

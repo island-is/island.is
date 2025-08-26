@@ -1,0 +1,83 @@
+name: Feature deployments
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - closed
+      - unlabeled
+      - auto_merge_enabled
+
+concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  # We want feature modifications to happen sequentially to completion,
+  # to avoid race conditions and orphaned deployments
+  group: push-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: false
+
+env:
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+
+jobs:
+  close_feature:
+    name: Terminate feature deployment
+    runs-on: arc-shared
+    if: ${{ github.event.label.name == 'deploy-feature' || github.event.pull_request.merged == true }}
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: Generate feature name
+        id: git-feature-name
+        run: |
+          set -euo pipefail
+
+          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          GIT_BRANCH_DEPLOY="$GIT_BRANCH"
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
+              # If event is pull request but branch is not prefixed with feature/
+              GIT_BRANCH_DEPLOY="feature/$GIT_BRANCH_DEPLOY"
+            fi
+            # Avoid too long resource names
+            GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
+          fi
+
+          FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
+          echo "FEATURE_NAME=$FEATURE_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Get token
+        id: get-token
+        shell: bash
+        env:
+          APP_ID: ${{ secrets.HELM_VALUES_APP_ID }}
+          PRIVATE_KEY: ${{ secrets.HELM_VALUES_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
+
+      - name: Prepare feature deployment tag
+        uses: ./.github/actions/feature-checkout
+        id: prepare-docker-tag
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+
+      - name: Dispatch workflow to helm-values repository
+        env:
+          HELM_VALUES_TOKEN: ${{ steps.get-token.outputs.token }}
+          FEATURE_NAME: ${{ steps.git-feature-name.outputs.FEATURE_NAME }}
+        run: |
+          repo_owner="island-is"
+          repository="helm-values"
+          echo "Dispatch workflow for feature name: $FEATURE_NAME"
+          curl -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer $HELM_VALUES_TOKEN" \
+          "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
+          -d "{\"event_type\":\"destroy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\", \"delete_value_files\": false }}"

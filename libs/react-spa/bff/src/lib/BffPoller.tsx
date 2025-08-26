@@ -49,7 +49,10 @@ export const BffPoller = ({
   const bffBaseUrl = bffUrlGenerator()
 
   const url = useMemo(
-    () => bffUrlGenerator('/user', { refresh: 'true' }),
+    () =>
+      bffUrlGenerator('/user', {
+        refresh: 'false',
+      }),
     [bffUrlGenerator],
   )
 

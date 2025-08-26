@@ -3,16 +3,17 @@ import * as styles from './selectNavComponent.css'
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import {
-  FormSystemGroup,
-  FormSystemInput,
-  FormSystemStep,
+  FormSystemSection,
+  FormSystemScreen,
+  FormSystemField,
 } from '@island.is/api/schema'
-import ControlContext from '../../../context/ControlContext'
+
 import { ItemType, NavbarSelectStatus } from '../../../lib/utils/interfaces'
+import { ControlContext } from '../../../context/ControlContext'
 
 type Props = {
   type: ItemType
-  data: FormSystemStep | FormSystemGroup | FormSystemInput
+  data: FormSystemField | FormSystemSection | FormSystemScreen
   active: boolean
   selectable: boolean
 }
@@ -23,16 +24,23 @@ export default function SelectNavComponent({
   active,
   selectable,
 }: Props) {
-  const { control, selectStatus, controlDispatch, updateSettings } =
+  const { control, selectStatus, controlDispatch, formUpdate } =
     useContext(ControlContext)
   const { activeItem, activeListItem, form } = control
   const activeGuid =
     selectStatus === NavbarSelectStatus.LIST_ITEM
-      ? activeListItem?.guid ?? ''
-      : activeItem?.data?.guid ?? ''
-  const connected: boolean = form.dependencies[activeGuid]?.includes(
-    data.guid as string,
-  )
+      ? activeListItem?.id ?? ''
+      : activeItem?.data?.id ?? ''
+
+  const connected = () => {
+    const hasDependency = form.dependencies?.find((dep) => {
+      return dep?.parentProp === activeGuid
+    })
+    if (hasDependency) {
+      return hasDependency.childProps?.includes(data.id as string) ?? false
+    }
+    return false
+  }
 
   const truncateText = (text: string, maxLength: number) => {
     return text.length > maxLength ? text.slice(0, maxLength) + '...' : text
@@ -43,13 +51,13 @@ export default function SelectNavComponent({
 
     if (active) {
       switch (type) {
-        case 'Step':
+        case 'Section':
           maxLength = 23
           break
-        case 'Group':
+        case 'Screen':
           maxLength = 16
           break
-        case 'Input':
+        case 'Field':
           maxLength = 12
           break
         default:
@@ -57,13 +65,13 @@ export default function SelectNavComponent({
       }
     } else {
       switch (type) {
-        case 'Step':
+        case 'Section':
           maxLength = 26
           break
-        case 'Group':
+        case 'Screen':
           maxLength = 19
           break
-        case 'Input':
+        case 'Field':
           maxLength = 16
           break
         default:
@@ -77,18 +85,18 @@ export default function SelectNavComponent({
   return (
     <Box
       className={cn({
-        [styles.navComponent.step]: type === 'Step',
-        [styles.navComponent.group]: type === 'Group',
-        [styles.navComponent.input]: type === 'Input',
+        [styles.navComponent.step]: type === 'Section',
+        [styles.navComponent.group]: type === 'Screen',
+        [styles.navComponent.input]: type === 'Field',
       })}
     >
       {active ? (
         <Box display="flex" flexDirection="row">
           <Box
             className={cn({
-              [styles.navBackgroundActive.step]: type === 'Step',
-              [styles.navBackgroundActive.group]: type === 'Group',
-              [styles.navBackgroundActive.input]: type === 'Input',
+              [styles.navBackgroundActive.step]: type === 'Section',
+              [styles.navBackgroundActive.group]: type === 'Screen',
+              [styles.navBackgroundActive.input]: type === 'Field',
             })}
           >
             {/* Index */}
@@ -114,9 +122,9 @@ export default function SelectNavComponent({
           <Box
             id="1"
             className={cn({
-              [styles.navBackgroundDefault.step]: type === 'Step',
-              [styles.navBackgroundDefault.group]: type === 'Group',
-              [styles.navBackgroundDefault.input]: type === 'Input',
+              [styles.navBackgroundDefault.step]: type === 'Section',
+              [styles.navBackgroundDefault.group]: type === 'Screen',
+              [styles.navBackgroundDefault.input]: type === 'Field',
             })}
           >
             {/* {index} */}
@@ -127,14 +135,14 @@ export default function SelectNavComponent({
           {selectable && (
             <Box className={cn(styles.selectableComponent)} marginLeft="auto">
               <Checkbox
-                checked={connected}
+                checked={connected()}
                 onChange={() =>
                   controlDispatch({
                     type: 'TOGGLE_DEPENDENCY',
                     payload: {
                       activeId: activeGuid,
-                      itemId: data.guid as string,
-                      update: updateSettings,
+                      itemId: data.id as string,
+                      update: formUpdate,
                     },
                   })
                 }

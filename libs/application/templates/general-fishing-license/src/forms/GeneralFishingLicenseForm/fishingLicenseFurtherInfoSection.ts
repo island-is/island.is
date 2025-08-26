@@ -1,6 +1,5 @@
 import {
   buildCustomField,
-  buildDateField,
   buildDescriptionField,
   buildFileUploadField,
   buildMultiField,

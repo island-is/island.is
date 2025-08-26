@@ -13,6 +13,9 @@ const nextConfig = {
     config,
     { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack },
   ) => {
+    if (!dev && isServer) {
+      config.devtool = 'source-map'
+    }
     // Important: return the modified config
     return config
   },

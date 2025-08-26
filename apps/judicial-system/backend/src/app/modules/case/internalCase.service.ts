@@ -53,6 +53,7 @@ import { CourtDocumentFolder, CourtService } from '../court'
 import { courtSubtypes } from '../court/court.service'
 import { Defendant, DefendantService } from '../defendant'
 import { EventService } from '../event'
+import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
@@ -60,6 +61,7 @@ import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User, UserService } from '../user'
+import { Verdict } from '../verdict/models/verdict.model'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
@@ -231,9 +233,11 @@ export class InternalCaseService {
   private async uploadCourtRecordPdfToCourt(
     theCase: Case,
     user: TUser,
+    buffer?: Buffer,
   ): Promise<boolean> {
     try {
-      const pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+      const pdf =
+        buffer || (await getCourtRecordPdfAsBuffer(theCase, this.formatMessage))
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -330,18 +334,39 @@ export class InternalCaseService {
       })
   }
 
+  private async deliverSignedCourtRecordPdfToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<boolean> {
+    return this.getSignedCourtRecordPdf(theCase)
+      .then((pdf) => this.uploadCourtRecordPdfToCourt(theCase, user, pdf))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to deliver the signed court record for case ${theCase.id} to court`,
+          { reason },
+        )
+
+        return false
+      })
+  }
+
   async create(caseToCreate: InternalCreateCaseDto): Promise<Case> {
-    const creator = await this.userService
+    const users = await this.userService
       .findByNationalId(caseToCreate.prosecutorNationalId)
       .catch(() => undefined)
 
-    if (!creator) {
-      throw new BadRequestException('Creating user not found')
-    }
+    // TODO: Sync with LÖKE so we can select the correct user
+    const creator = users?.find(
+      (user) =>
+        isProsecutionUser(user) &&
+        (!caseToCreate.prosecutorsOfficeNationalId ||
+          user.institution?.nationalId ===
+            caseToCreate.prosecutorsOfficeNationalId),
+    )
 
-    if (!isProsecutionUser(creator)) {
+    if (!creator) {
       throw new BadRequestException(
-        'Creating user is not registered as a prosecution user',
+        'Creating user not found or is not registered as a prosecution user',
       )
     }
 
@@ -378,6 +403,7 @@ export class InternalCaseService {
             theCase.id,
             {
               nationalId: caseToCreate.accusedNationalId,
+              dateOfBirth: caseToCreate.accusedDOB,
               name: caseToCreate.accusedName,
               gender: caseToCreate.accusedGender,
               address: (caseToCreate.accusedAddress || '').trim(),
@@ -548,8 +574,8 @@ export class InternalCaseService {
           required: true,
         },
       ],
+      where: { state: { [Op.eq]: CaseState.RECEIVED } },
       order: [[{ model: DateLog, as: 'dateLogs' }, 'date', 'ASC']],
-      where: { state: { [Op.is]: CaseState.RECEIVED } },
     })
   }
 
@@ -624,9 +650,10 @@ export class InternalCaseService {
 
     const mappedSubtypes = subtypeList.flatMap((key) => courtSubtypes[key])
     const indictmentIssuedByProsecutorAndReceivedByCourt =
-      theCase.eventLogs?.find(
-        (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
-      )?.created
+      EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_CONFIRMED,
+        theCase.eventLogs,
+      )
 
     return this.courtService
       .updateIndictmentCaseWithIndictmentInfo(
@@ -698,6 +725,30 @@ export class InternalCaseService {
       })
   }
 
+  async deliverIndictmentArraignmentDateToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)?.date
+    return this.courtService
+      .updateIndictmentCaseWithArraignmentDate(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        arraignmentDate,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update indictment case ${theCase.id} with the arraignment date`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
   async deliverIndictmentCancellationNoticeToCourt(
     theCase: Case,
     withCourtCaseNumber: boolean,
@@ -724,7 +775,10 @@ export class InternalCaseService {
               prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
               caseNumber,
             },
-          )} ${this.formatMessage(notifications.emailTail)}`,
+          )} ${this.formatMessage(notifications.emailTail, {
+            linkStart: `<a href="${this.config.clientUrl}">`,
+            linkEnd: '</a>',
+          })}`,
         ),
       )
       .then(() => ({ delivered: true }))
@@ -805,6 +859,17 @@ export class InternalCaseService {
     await this.refreshFormatMessage()
 
     return this.deliverSignedRulingPdfToCourt(theCase, user).then(
+      (delivered) => ({ delivered }),
+    )
+  }
+
+  async deliverSignedCourtRecordToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
+    return this.deliverSignedCourtRecordPdfToCourt(theCase, user).then(
       (delivered) => ({ delivered }),
     )
   }
@@ -1026,7 +1091,6 @@ export class InternalCaseService {
             caseFile.key,
         )
         .map(async (caseFile) => {
-          // TODO: Tolerate failure, but log error
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
             caseFile,
@@ -1176,7 +1240,6 @@ export class InternalCaseService {
       theCase.caseFiles
         ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
         .map(async (caseFile) => {
-          // TODO: Tolerate failure, but log error
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
             caseFile,
@@ -1274,6 +1337,11 @@ export class InternalCaseService {
               as: 'subpoenas',
               order: [['created', 'DESC']],
             },
+            {
+              model: Verdict,
+              as: 'verdict',
+              required: false,
+            },
           ],
         },
         { model: Institution, as: 'court' },
@@ -1286,7 +1354,13 @@ export class InternalCaseService {
         },
         { model: DateLog, as: 'dateLogs' },
       ],
-      attributes: ['courtCaseNumber', 'id'],
+      attributes: [
+        'courtCaseNumber',
+        'id',
+        'state',
+        'indictmentRulingDecision',
+        'rulingDate',
+      ],
       where: {
         type: CaseType.INDICTMENT,
         id: caseId,

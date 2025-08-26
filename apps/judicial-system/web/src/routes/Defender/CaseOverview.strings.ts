@@ -26,6 +26,12 @@ export const strings = defineMessages({
     description:
       'Texti sem birtist ef úrskurður er ekki undirritaður á yfirlitsskjá verjanda',
   },
+  noRuling: {
+    id: 'judicial.system.core:defender_case_overview.no_ruling',
+    defaultMessage: 'Máli lokið án úrskurðar',
+    description:
+      'Texti sem birtist ef enginn úrskurður er skráður á yfirlitsskjá verjanda',
+  },
   confirmAppealAfterDeadlineModalTitle: {
     id: 'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_title',
     defaultMessage: 'Kærufrestur er liðinn',

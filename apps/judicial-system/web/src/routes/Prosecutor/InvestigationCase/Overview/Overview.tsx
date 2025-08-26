@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -73,6 +74,8 @@ export const Overview = () => {
     registrar,
     prosecutor,
     caseType,
+    victims,
+    showItem,
   } = useInfoCardItems()
 
   const [modal, setModal] = useState<
@@ -175,6 +178,14 @@ export const Overview = () => {
                 id: 'defendants-section',
                 items: [defendants(workingCase.type)],
               },
+              ...(showItem(victims)
+                ? [
+                    {
+                      id: 'victims-section',
+                      items: [victims],
+                    },
+                  ]
+                : []),
               {
                 id: 'case-info-section',
                 items: [
@@ -320,9 +331,9 @@ export const Overview = () => {
           <Modal
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
-            onClose={() => router.push(constants.CASES_ROUTE)}
+            onClose={() => router.push(getStandardUserDashboardRoute(user))}
             onSecondaryButtonClick={() => {
-              router.push(constants.CASES_ROUTE)
+              router.push(getStandardUserDashboardRoute(user))
             }}
             errorMessage={
               sendNotificationError

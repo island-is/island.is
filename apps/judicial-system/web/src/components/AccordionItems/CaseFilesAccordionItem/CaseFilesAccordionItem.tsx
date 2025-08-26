@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { AccordionItem, Box, Button, Text } from '@island.is/island-ui/core'
 import {
@@ -9,8 +9,7 @@ import {
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case, User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,

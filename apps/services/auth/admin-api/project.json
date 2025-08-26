@@ -8,19 +8,20 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/auth/admin-api",
         "main": "apps/services/auth/admin-api/src/main.ts",
         "tsConfig": "apps/services/auth/admin-api/tsconfig.app.json",
-        "assets": ["apps/services/auth/admin-api/src/assets"],
-        "maxWorkers": 2
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "assets": ["apps/services/auth/admin-api/src/assets"]
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -55,19 +56,8 @@
       },
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
-    },
-    "dev": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          {
-            "command": "yarn start --project services-auth-admin-api"
-          }
-        ],
-        "parallel": true
-      }
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

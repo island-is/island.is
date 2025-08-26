@@ -1,10 +1,7 @@
-version: '3.3'
-
+name: islandis-user-notification
 services:
   localstack:
     image: public.ecr.aws/localstack/localstack:3
-    networks:
-      - local
     ports:
       - 4566:4566
     environment:
@@ -12,24 +9,9 @@ services:
   db_user_notification:
     image: public.ecr.aws/docker/library/postgres:15.3-alpine
     container_name: db_user_notification
-    networks:
-      - local
     environment:
       - POSTGRES_DB=dev_db
       - POSTGRES_USER=dev_db
       - POSTGRES_PASSWORD=dev_db
     ports:
       - 5432:5432
-  redis_cluster:
-    container_name: redis_cluster
-    image: docker.io/grokzen/redis-cluster:6.0.16
-    networks:
-      - local
-    privileged: true
-    environment:
-      - IP=0.0.0.0
-    ports:
-      - '7000-7005:7000-7005'
-
-networks:
-  local:

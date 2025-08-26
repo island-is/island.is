@@ -33,8 +33,7 @@ export const serviceSetup = (services: {
       ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
-      DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
-      DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
+      DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
       IDENTITY_SERVER_SECRET:
         '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET',
     })
@@ -54,15 +53,11 @@ export const serviceSetup = (services: {
           },
           staging: {
             ...extraAnnotations,
-            'nginx.ingress.kubernetes.io/configuration-snippet':
-              'rewrite /$ https://beta.staging01.devland.is/loftbru; rewrite /en$ https://beta.staging01.devland.is/en/lower-airfares-for-residents-in-rural-areas;',
           },
           prod: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            'nginx.ingress.kubernetes.io/configuration-snippet':
-              'rewrite /$ https://island.is/loftbru; rewrite /en$ https://island.is/en/lower-airfares-for-residents-in-rural-areas;',
           },
         },
         paths: ['/'],

@@ -1,5 +1,10 @@
 import * as faker from 'faker'
-import { Client, ClientAllowedScope, ClientType } from '@island.is/auth-api-lib'
+import {
+  Client,
+  ClientAllowedScope,
+  ClientType,
+  ClientSso,
+} from '@island.is/auth-api-lib'
 
 export type CreateClient = Pick<
   Omit<Client, 'supportedDelegationTypes'>,
@@ -14,6 +19,7 @@ export type CreateClient = Pick<
   | 'supportsPersonalRepresentatives'
   | 'requireApiScopes'
   | 'singleSession'
+  | 'sso'
 > & {
   redirectUris?: string[]
   postLogoutRedirectUris?: string[]
@@ -36,6 +42,7 @@ const createRandomClient = (): CreateClient => {
     requireApiScopes: false,
     singleSession: false,
     supportedDelegationTypes: [],
+    sso: ClientSso.Enabled,
   }
 }
 

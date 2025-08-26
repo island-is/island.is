@@ -186,7 +186,7 @@ globalStyle(`${root} .Toastify__progress-bar`, {
   width: '100%',
   height: '5px',
   zIndex: 9999,
-  opacity: 0.7,
+  opacity: 1,
   backgroundColor: theme.color.mint400,
   transformOrigin: 'left',
 })

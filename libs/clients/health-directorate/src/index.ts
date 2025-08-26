@@ -4,13 +4,20 @@ export * from './lib/clients/occupational-license/gen/fetch/models'
 export {
   HealthDirectorateVaccinationsClientConfig,
   HealthDirectorateOrganDonationClientConfig,
+  HealthDirectorateHealthClientConfig,
   HealthDirectorateClientConfig,
-  HealthDirectorateClientService,
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
+  HealthDirectorateClientService,
+  HealthDirectorateHealthService,
   OrganDonorDto,
   Locale,
   organLocale,
   VaccinationDto,
   DiseaseVaccinationDtoVaccinationStatusEnum,
+  PrescribedItemDtoRenewalBlockedReasonEnum,
+  PrescribedItemDtoRenewalStatusEnum,
+  PrescribedItemDtoCategoryEnum,
+  PrescriptionRenewalRequestDto,
 } from './lib/clients'
+export { DispensationHistoryItemDto } from './lib/clients/health/gen/fetch/models/DispensationHistoryItemDto'

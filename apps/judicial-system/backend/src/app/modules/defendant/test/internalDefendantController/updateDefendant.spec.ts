@@ -68,7 +68,7 @@ describe('InternalDefendantController - Update defendant', () => {
     })
     it('should update the defendant', async () => {
       expect(mockDefendantModel.update).toHaveBeenCalledWith(
-        { ...update, isDefenderChoiceConfirmed: false },
+        { ...update },
         { where: { id: defendantId, caseId }, returning: true },
       )
       expect(then.result).toEqual(updatedDefendant)

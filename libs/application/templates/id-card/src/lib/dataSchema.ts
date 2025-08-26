@@ -2,31 +2,25 @@ import { z } from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { error } from './messages'
 import { Services } from '../shared/types'
+import { EMAIL_REGEX, NATIONAL_ID_REGEX } from '@island.is/application/core'
 
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-const isValidEmail = (value: string) => emailRegex.test(value)
+const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone && phone.isValid()
 }
 
-const personInfo = z
-  .object({
-    name: z.string(),
-    nationalId: z.string(),
-    email: z
-      .string()
-      .refine((v) => isValidEmail(v), { params: error.invalidValue }),
-    phoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
-      params: error.invalidValue,
-    }),
-    hasDisabilityLicense: z.boolean().optional(),
-  })
-  .refine((x) => {
-    return true
-  })
+const personInfo = z.object({
+  name: z.string(),
+  nationalId: z.string(),
+  email: z
+    .string()
+    .refine((v) => isValidEmail(v), { params: error.invalidValue }),
+  phoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
+    params: error.invalidValue,
+  }),
+  hasDisabilityLicense: z.boolean().optional(),
+})
 
 export const IdCardSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -36,7 +30,9 @@ export const IdCardSchema = z.object({
   firstGuardianInformation: personInfo,
   secondGuardianInformation: z.object({
     name: z.string().min(1),
-    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
+    nationalId: z
+      .string()
+      .refine((x) => (x ? NATIONAL_ID_REGEX.test(x) : false)),
     email: z.string().refine((v) => isValidEmail(v) || v === '', {
       params: error.invalidValue,
     }),

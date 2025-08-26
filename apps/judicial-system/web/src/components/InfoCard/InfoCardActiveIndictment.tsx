@@ -18,6 +18,8 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     policeCaseNumbers,
     court,
     offenses,
+    registrar,
+    judge,
     mergedCasePoliceCaseNumbers,
     mergedCaseCourtCaseNumber,
     mergedCaseProsecutor,
@@ -25,6 +27,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     mergedCaseCourt,
     civilClaimants,
     courtCaseNumber,
+    showItem,
   } = useInfoCardItems()
 
   return (
@@ -42,11 +45,13 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
         {
           id: 'case-info-section',
           items: [
-            indictmentCreated,
+            ...(showItem(indictmentCreated) ? [indictmentCreated] : []),
             prosecutor(workingCase.type),
             policeCaseNumbers,
+            ...(workingCase.judge ? [judge] : []),
+            ...(workingCase.registrar ? [registrar] : []),
             court,
-            courtCaseNumber,
+            ...(showItem(courtCaseNumber) ? [courtCaseNumber] : []),
             offenses,
           ],
           columns: 2,

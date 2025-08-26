@@ -13,7 +13,7 @@ import {
   Result,
   VerifyInputData,
 } from '../../../licenseClient.type'
-import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
+import { BaseLicenseUpdateClient } from '../../base/baseLicenseUpdateClient'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import {
   createPkPassDataInput,
@@ -26,6 +26,7 @@ import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.confi
 const LOG_CATEGORY = 'driving-license-service'
 
 @Injectable()
+/** @deprecated */
 export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(
     @Inject(LOGGER_PROVIDER) protected logger: Logger,

@@ -11,6 +11,7 @@ import {
   isAvailableForApplication,
 } from '../../../utils'
 import { formatDate } from '../../../utils/formatDate'
+import { Option } from '@island.is/application/types'
 
 export const ChosenApplicantsSubSection = buildSubSection({
   id: Routes.CHOSENAPPLICANTS,
@@ -40,9 +41,9 @@ export const ChosenApplicantsSubSection = buildSubSection({
               applicantInformation,
             )
 
-            const passportList: Array<any> = [
+            const passportList: Array<Option> = [
               {
-                label: applicantInformation.name,
+                label: applicantInformation.name ?? '',
                 subLabel: applicantInformation.passport
                   ? {
                       ...idInformation.labels.idNumber,
@@ -60,12 +61,14 @@ export const ChosenApplicantsSubSection = buildSubSection({
                   : {
                       ...idInformation.labels.noIdNumber,
                     },
-                value: applicantInformation.nationalId,
-                disabled: applicantIIDisabled && applicantIDDisabled,
+                value: applicantInformation.nationalId ?? '',
+                disabled:
+                  (applicantIIDisabled && applicantIDDisabled) ||
+                  applicantInformation.citizenship?.code !== 'IS',
               },
             ]
 
-            applicantInformation.children.map((item) => {
+            applicantInformation.children?.map((item) => {
               const isDisabledDueToCitizenship = item.citizenship?.kodi !== 'IS'
               const idDocument =
                 item.passports && item.passports.length > 0
@@ -80,7 +83,7 @@ export const ChosenApplicantsSubSection = buildSubSection({
                 passport: idDocument,
               })
               return passportList.push({
-                label: item.childName,
+                label: item.childName ?? '',
                 subLabel: idDocument
                   ? {
                       ...idInformation.labels.idNumber,
@@ -95,7 +98,7 @@ export const ChosenApplicantsSubSection = buildSubSection({
                       ...idInformation.labels.noIdNumber,
                     },
 
-                value: item.childNationalId,
+                value: item.childNationalId ?? '',
                 disabled:
                   (IIDisabled && IDDisabled) || isDisabledDueToCitizenship,
               })

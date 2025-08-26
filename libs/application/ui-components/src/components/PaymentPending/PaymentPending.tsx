@@ -66,7 +66,7 @@ export const PaymentPending: FC<
 
     if (!paymentStatus.fulfilled) {
       if (shouldRedirect) {
-        window.document.location.href = getRedirectUrl(paymentStatus.paymentUrl)
+        window.document.location.href = paymentStatus.paymentUrl
       }
       return
     }

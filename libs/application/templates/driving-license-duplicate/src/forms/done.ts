@@ -1,40 +1,18 @@
-import {
-  buildForm,
-  buildCustomField,
-  buildMultiField,
-  buildDescriptionField,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const done: Form = buildForm({
   id: 'DrivingLicenseDuplicateApplicationComplete',
-  title: 'Umsókn staðfest',
   mode: FormModes.COMPLETED,
   children: [
-    buildMultiField({
-      id: 'done',
-      title: 'Umsókn staðfest',
-      children: [
-        buildCustomField(
-          {
-            id: 'congratulationsAlert',
-            component: 'Alert',
-          },
-          {
-            title: m.congratulationsTitle,
-            type: 'success',
-            message: m.congratulationsTitleSuccess,
-          },
-        ),
-        buildDescriptionField({
-          id: 'nextStepsDescription',
-          title: m.congratulationsNextStepsTitle,
-          titleVariant: 'h3',
-          description: m.congratulationsNextStepsDescription,
-          space: 'containerGutter',
-        }),
-      ],
+    buildFormConclusionSection({
+      multiFieldTitle: m.congratulationsTitle,
+      alertTitle: m.congratulationsTitle,
+      alertMessage: m.congratulationsTitleSuccess,
+      expandableHeader: m.congratulationsNextStepsTitle,
+      expandableDescription: m.congratulationsNextStepsDescription,
     }),
   ],
 })

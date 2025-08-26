@@ -20,7 +20,7 @@ const configFactory = (
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-secondary-school',
-    organizationSlug: 'menntamalastofnun',
+    organizationSlug: 'midstod-menntunar-og-skolathjonustu',
     autoAuth: idsClientConfig.isConfigured
       ? {
           mode: 'tokenExchange',

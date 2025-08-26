@@ -393,6 +393,7 @@ describe('DrivingLicenseService', () => {
         needsToPresentHealthCertificate: false,
         needsToPresentQualityPhoto: false,
         licenseCategory: DrivingLicenseCategory.B,
+        sendLicenseInMail: 0,
       })
 
       expect(response).toStrictEqual({
@@ -410,6 +411,7 @@ describe('DrivingLicenseService', () => {
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
           licenseCategory: DrivingLicenseCategory.B,
+          sendLicenseInMail: 0,
         })
         .catch((e) => expect(e).toBeTruthy())
     })
@@ -427,6 +429,7 @@ describe('DrivingLicenseService', () => {
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
           email: 'mock@email.com',
           phone: '9999999',
+          sendLicenseInMail: false,
         },
       )
 
@@ -448,6 +451,7 @@ describe('DrivingLicenseService', () => {
             teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
             email: 'mock@email.com',
             phone: '9999999',
+            sendLicenseInMail: false,
           },
         )
         .catch((e) => expect(e).toBeTruthy())

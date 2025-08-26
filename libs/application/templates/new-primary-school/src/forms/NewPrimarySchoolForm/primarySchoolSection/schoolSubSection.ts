@@ -5,19 +5,19 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType } from '../../../lib/constants'
+import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getNeighbourhoodSchoolName,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const schoolSubSection = buildSubSection({
   id: 'schoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.schoolSubSectionTitle,
   condition: (answers) => {
-    const { applicationType } = getApplicationAnswers(answers)
     // Only display section if application type is "Enrollment in primary school"
+    const { applicationType } = getApplicationAnswers(answers)
     return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
   },
   children: [
@@ -40,8 +40,9 @@ export const schoolSubSection = buildSubSection({
                   ...newPrimarySchoolMessages.primarySchool
                     .schoolApplyForNeighbourhoodSchoolSubLabel,
                   values: {
-                    neighbourhoodSchoolName:
-                      getNeighbourhoodSchoolName(application),
+                    neighbourhoodSchoolName: getNeighbourhoodSchoolName(
+                      application.externalData,
+                    ),
                   },
                 },
                 value: YES,

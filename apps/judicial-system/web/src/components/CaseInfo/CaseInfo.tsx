@@ -14,10 +14,10 @@ import {
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  Case,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { strings } from './CaseInfo.strings'
 
@@ -96,10 +96,9 @@ const Prosecutor: FC<Props> = ({ workingCase }) => {
   )
 }
 
-export const ProsecutorCaseInfo: FC<Props & { hideCourt?: boolean }> = ({
-  workingCase,
-  hideCourt = false,
-}) => {
+export const ProsecutorCaseInfo: FC<
+  Props & { hideCourt?: boolean; hideDefendants?: boolean }
+> = ({ workingCase, hideCourt = false, hideDefendants = false }) => {
   const { policeCaseNumbers, court } = workingCase
   const { formatMessage } = useIntl()
 
@@ -111,7 +110,7 @@ export const ProsecutorCaseInfo: FC<Props & { hideCourt?: boolean }> = ({
       {!hideCourt && court?.name && (
         <Entry label={formatMessage(core.court)} value={court?.name} />
       )}
-      <Defendants workingCase={workingCase} />
+      {!hideDefendants && <Defendants workingCase={workingCase} />}
     </Box>
   )
 }

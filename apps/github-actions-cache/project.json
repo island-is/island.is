@@ -7,19 +7,21 @@
   "tags": ["scope:node"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/github-actions-cache",
         "main": "apps/github-actions-cache/src/main.ts",
         "tsConfig": "apps/github-actions-cache/tsconfig.app.json",
-        "assets": ["apps/github-actions-cache/src/assets"]
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "assets": ["apps/github-actions-cache/src/assets"]
         }
       }
     },
@@ -39,8 +41,14 @@
         "jestConfig": "apps/github-actions-cache/jest.config.ts"
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "dev-services": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f scripts/docker-compose/redis-cluster.yml up -d"
+      }
+    },
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

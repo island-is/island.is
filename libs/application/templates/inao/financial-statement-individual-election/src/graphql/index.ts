@@ -1,14 +1,6 @@
 import { gql } from '@apollo/client'
 
-export const IdentityQuery = gql`
-  query IdentityQuery($input: IdentityInput!) {
-    identity(input: $input) {
-      name
-      nationalId
-    }
-  }
-`
-export const getAvailableElections = gql`
+export const availableElectionsQuery = gql`
   query FinancialStatementsInaoElections {
     financialStatementsInaoElections {
       electionId
@@ -19,7 +11,7 @@ export const getAvailableElections = gql`
   }
 `
 
-export const getFinancialLimit = gql`
+export const electionFinancialLimitQuery = gql`
   query FinancialStatementsInaoClientFinancialLimit(
     $input: InaoClientFinancialLimitInput!
   ) {

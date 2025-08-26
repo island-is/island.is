@@ -18,7 +18,7 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-auth-ids-api-cleanup'
 args:
-  - 'main.js'
+  - 'main.cjs'
   - '--job=cleanup'
 command:
   - 'node'
@@ -30,7 +30,7 @@ env:
   DB_USER: 'servicesauth'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'nginx-ingress-external'

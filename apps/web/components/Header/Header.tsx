@@ -34,6 +34,7 @@ interface HeaderProps {
   organizationSearchFilter?: string
   searchPlaceholder?: string
   customTopLoginButtonItem?: LayoutProps['customTopLoginButtonItem']
+  loginButtonType?: 'dropdown' | 'link'
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -46,6 +47,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationSearchFilter,
   searchPlaceholder,
   customTopLoginButtonItem,
+  loginButtonType = 'dropdown',
   children,
 }) => {
   const { activeLocale, t } = useI18n()
@@ -109,6 +111,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                       <LoginButton
                         colorScheme={buttonColorScheme}
                         topItem={customTopLoginButtonItem}
+                        type={loginButtonType}
                       />
                     </Box>
 

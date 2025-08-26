@@ -79,6 +79,7 @@ export const GET_ORGANIZATION_QUERY = gql`
       title
       hasALandingPage
       trackingDomain
+      canPagesBeFoundInSearchResults
       logo {
         title
         url
@@ -178,6 +179,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         email
         phone
         trackingDomain
+        canPagesBeFoundInSearchResults
         publishedMaterialSearchFilterGenericTags {
           id
           title
@@ -257,6 +259,45 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
 export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
   query GetOrganizationSubpage($input: GetOrganizationSubpageInput!) {
     getOrganizationSubpage(input: $input) {
+      id
+      title
+      slug
+      signLanguageVideo {
+        url
+        thumbnailImageUrl
+      }
+      description {
+        ...AllSlices
+        ${nestedFields}
+      }
+      links {
+        text
+        url
+      }
+      slices {
+        ...AllSlices
+        ${nestedFields}
+      }
+      bottomSlices {
+        ...AllSlices
+      }
+      showTableOfContents
+      sliceCustomRenderer
+      sliceExtraText
+      featuredImage {
+        url
+        title
+        width
+        height
+      }
+    }
+  }
+  ${slices}
+`
+
+export const GET_ORGANIZATION_SUBPAGE_BY_ID_QUERY = gql`
+  query GetOrganizationSubpageById($input: GetOrganizationSubpageByIdInput!) {
+    getOrganizationSubpageById(input: $input) {
       id
       title
       slug
@@ -430,6 +471,7 @@ export const GET_ORGANIZATION_PARENT_SUBPAGE_QUERY = gql`
       id
       title
       childLinks {
+        id
         label
         href
       }

@@ -105,7 +105,9 @@ export const ProjectWrapper: React.FC<
   return (
     <>
       <ProjectChatPanel projectPage={projectPage} />
-      <ProjectHeader projectPage={projectPage} isSubpage={isSubpage} />
+      <Box>
+        <ProjectHeader projectPage={projectPage} isSubpage={isSubpage} />
+      </Box>
       {withSidebar ? (
         <SidebarLayout
           isSticky={true}

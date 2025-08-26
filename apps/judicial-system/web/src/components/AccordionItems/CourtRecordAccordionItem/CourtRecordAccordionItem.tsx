@@ -12,8 +12,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  Case,
+  SessionArrangements,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { courtRecordAccordion as m } from './CourtRecordAccordion.strings'

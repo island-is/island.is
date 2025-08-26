@@ -299,6 +299,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Hlekkur afritaður',
     description: 'Copy link success toast',
   },
+  copyLinkButtonTitle: {
+    id: 'application.system:copyLinkButtonTitle',
+    defaultMessage: 'Afrita tengil',
+    description: 'Copy link button title',
+  },
 })
 
 export const coreDefaultFieldMessages = defineMessages({
@@ -385,10 +390,27 @@ export const coreErrorMessages = defineMessages({
     description:
       'Text that appears when district comissioner has validation fails in pre-data',
   },
+  errorDataProviderEstateValidationNothingFoundSummary: {
+    id: 'application.system:core.error.dataProviderEstateValidationNothingFoundSummary',
+    defaultMessage:
+      'Engin dánarbú fundust. Vinsamlegast hafðu samband við Sýslumenn ef þú telur að um villu sé að ræða.',
+    description:
+      'Text that appears when district comissioner has no estate data in pre-data',
+  },
   fileUpload: {
     id: 'application.system:core.error.file.upload',
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
     description: 'Error message when upload file fails',
+  },
+  fileUploadMalware: {
+    id: 'application.system:core.error.file.uploadMalware',
+    defaultMessage: 'Eftirfarandi skrár hafa verið merktar sýktar: {files}',
+    description: 'Error message when upload file has been flagged for malware',
+  },
+  uploadMultipleNotAllowed: {
+    id: 'application.system:core.error.file.uploadMultipleNotAllowed',
+    defaultMessage: 'Það má bara hlaða upp einni skrá',
+    description: 'Error message when multi upload is not allowed.',
   },
   fileRemove: {
     id: 'application.system:core.error.file.remove',
@@ -406,6 +428,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage:
       'Skrárnar eru samtals of stórar. Hægt er að hlaða inn skrám sem eru samtals {maxSizeInMb}MB eða minni.',
     description: 'Error message when sum of file sizes exceeds max size limit',
+  },
+  fileMaxCountLimitExceeded: {
+    id: 'application.system:core.error.file.maxCountLimitExceeded',
+    defaultMessage:
+      'Of margar skrár. Mest er hægt að hlaða inn {maxFileCount} skrám.',
+    description: 'Error message when file count exceeds max count limit',
   },
   fileInvalidExtension: {
     id: 'application.system:core.error.file.invalidExtension',
@@ -745,6 +773,16 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Ekki fundust nein tæki',
     description: 'Did not find any machines',
   },
+  cantConnectToVer: {
+    id: 'application.system:core.fetch.data.cantConnectToVer',
+    defaultMessage: 'Ekki tókst að senda inn umsókn til Vinnueftirlitsins',
+    description: 'Cant connect to Vinnueftirlit',
+  },
+  licensesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.licensesEmptyListDefault',
+    defaultMessage: 'Ekki fundust nein réttindi',
+    description: 'Did not find any licenses',
+  },
   nationalRegistryName: {
     id: 'application.system:core.fetch.data.nationalRegistryName',
     defaultMessage: 'Nafn',
@@ -754,6 +792,16 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.nationalRegistryNationalId',
     defaultMessage: 'Kennitala',
     description: 'National ID',
+  },
+  nationalRegistryPhone: {
+    id: 'application.system:core.fetch.data.nationalRegistryPhone',
+    defaultMessage: 'Símanúmer',
+    description: 'Phone number',
+  },
+  nationalRegistryEmail: {
+    id: 'application.system:core.fetch.data.nationalRegistryEmail',
+    defaultMessage: 'Netfang',
+    description: 'Email',
   },
   nationalRegistryNameNotFoundForNationalId: {
     id: 'application.system:core.fetch.data.nationalRegistryNameNotFoundForNationalId',
@@ -775,6 +823,12 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.drivingLicenseBookActiveBookNotFound',
     defaultMessage: 'Ekki fannst virk ökunámsbók',
     description: 'Did not find active student book',
+  },
+  vehicleNotFoundForPermno: {
+    id: 'application.system:core.fetch.data.vehicleNotFoundForPermno',
+    defaultMessage: 'Tókst ekki að sækja ökutæki út frá þessu bílnúmeri.',
+    description:
+      'Error message if there was no vehicle associated with given permno',
   },
 })
 

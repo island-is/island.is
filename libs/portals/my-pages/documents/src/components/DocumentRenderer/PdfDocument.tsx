@@ -1,10 +1,11 @@
 import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Modal, m } from '@island.is/portals/my-pages/core'
+import { DOMSMAL_DOC_ID, Modal, m } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
 import { ActiveDocumentType2 } from '../../lib/types'
-import { downloadFile } from '../../utils/downloadDocumentV2'
+import { usePdfRendererLazyQuery } from '../../queries/PdfRenderer.generated'
+import { downloadFile } from '../../utils/downloadDocument'
 import { messages } from '../../utils/messages'
 import * as styles from './DocumentRenderer.css'
 
@@ -25,6 +26,8 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
   const ref = useRef<HTMLDivElement>(null)
   const { formatMessage } = useLocale()
 
+  const [pdfRendererQuery] = usePdfRendererLazyQuery()
+
   useEffect(() => {
     if (scalePDF > 1) {
       ref.current?.scrollBy(35, 0)
@@ -32,6 +35,11 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
 
     // Size of PDF Canvas
   }, [ref.current?.querySelectorAll('canvas')?.[0]?.width])
+
+  const isCourtCase = document.categoryId === DOMSMAL_DOC_ID
+
+  const formatZoomLevel = (scale: number) =>
+    ((scale / initScale) * 100).toFixed(0) + '%'
 
   return (
     <>
@@ -48,6 +56,9 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             icon="remove"
             variant="ghost"
             size="small"
+            aria-label={formatMessage(messages.zoomOut, {
+              arg: formatZoomLevel(scalePDF - 0.1),
+            })}
             onClick={() => setScalePDF(scalePDF - 0.1)}
             disabled={0.6 > scalePDF}
           />
@@ -56,16 +67,18 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             display="flex"
             justifyContent="center"
             alignItems="center"
+            aria-label={formatMessage(messages.currentZoomLevel)}
           >
-            <Text variant="small">
-              {((scalePDF / initScale) * 100).toFixed(0) + '%'}
-            </Text>
+            <Text variant="small">{formatZoomLevel(scalePDF)}</Text>
           </Box>
           <Button
             circle
             icon="add"
             variant="ghost"
             size="small"
+            aria-label={formatMessage(messages.zoomIn, {
+              arg: formatZoomLevel(scalePDF + 0.1),
+            })}
             onClick={() => {
               setScalePDF(scalePDF + 0.1)
             }}
@@ -78,6 +91,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             icon="expand"
             variant="ghost"
             size="small"
+            aria-label={formatMessage(messages.openExpandedModal)}
             onClick={() => expandCallback(true)}
           />
         ) : onClose ? (
@@ -86,21 +100,49 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             icon="close"
             variant="ghost"
             size="small"
+            aria-label={formatMessage(messages.closeExpandedModal)}
             onClick={onClose}
           />
         ) : undefined}
       </Box>
-      <Box
-        className={styles.pdfPage}
-        height="full"
-        overflow="auto"
-        boxShadow="subtle"
-        ref={ref}
-      >
+      <Box className={styles.pdfPage} height="full" overflow="auto" ref={ref}>
         <PdfViewer
           file={`data:application/pdf;base64,${document.document.value}`}
           scale={scalePDF}
           autoWidth={false}
+          onLoadingError={(error) => {
+            pdfRendererQuery({
+              variables: {
+                input: {
+                  id: document.id,
+                  success: false,
+                  error: error.message,
+                  isCourtCase: isCourtCase,
+                  actions: isCourtCase
+                    ? document.actions?.map(
+                        (action) => `${action.title}: ${action.data}`,
+                      ) ?? []
+                    : undefined,
+                },
+              },
+            })
+          }}
+          onLoadingSuccess={() => {
+            pdfRendererQuery({
+              variables: {
+                input: {
+                  id: document.id,
+                  success: true,
+                  isCourtCase: isCourtCase,
+                  actions: isCourtCase
+                    ? document.actions?.map(
+                        (action) => `${action.title}: ${action.data}`,
+                      ) ?? []
+                    : undefined,
+                },
+              },
+            })
+          }}
           errorComponent={
             <Box>
               <Problem
@@ -139,6 +181,8 @@ export const PdfDocWithModal = (
   props: PdfDocumentProps & { modalCallback?: () => void },
 ) => {
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const { formatMessage } = useLocale()
+
   return (
     <>
       <PdfDocument expandCallback={(v) => setModalIsOpen(v)} {...props} />
@@ -146,15 +190,31 @@ export const PdfDocWithModal = (
         onCloseModal={() => setModalIsOpen(false)}
         isVisible={modalIsOpen}
         initialVisibility={false}
+        label={formatMessage(m.activeDocumentOpenEnlargedAriaLabel, {
+          subject: props.document.subject,
+        })}
         id="pdf-doc-modal"
         skeleton
       >
         {modalIsOpen ? (
-          <PdfDocument
-            initScale={1.3}
-            onClose={() => setModalIsOpen(false)}
-            {...props}
-          />
+          <>
+            <PdfDocument
+              initScale={1.3}
+              onClose={() => setModalIsOpen(false)}
+              {...props}
+            />
+            <Box className={styles.reveal}>
+              <button
+                onClick={() => {
+                  document
+                    .getElementById(`button-${props.document.id}`)
+                    ?.focus()
+                }}
+              >
+                {formatMessage(m.backToList)}
+              </button>
+            </Box>
+          </>
         ) : undefined}
       </Modal>
     </>

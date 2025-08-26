@@ -154,6 +154,12 @@ export class ProxyService {
         headers: {
           'Content-Type': reqHeaderContentType || 'application/json',
           Authorization: `Bearer ${accessToken}`,
+          ...(req.headers['user-agent'] && {
+            'user-agent': req.headers['user-agent'],
+          }),
+          ...((req.headers['x-forwarded-for'] ?? req.ip) && {
+            'x-forwarded-for': String(req.headers['x-forwarded-for'] ?? req.ip),
+          }),
         },
         body: finalBody ? JSON.stringify(finalBody) : undefined,
         agent: (parsedUrl) => {
