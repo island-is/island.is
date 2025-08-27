@@ -73,9 +73,6 @@ export function prepareServiceForEnv(
   const ingress = Object.entries(serviceDef.ingress).reduce(
     (acc, [name, ingress]) => {
       const envType = localFromDev(env.type)
-      if (!ingress) {
-        return acc
-      }
       return {
         ...acc,
         ...(ingress.host[envType] === MissingSetting
