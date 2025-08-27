@@ -11,6 +11,7 @@ import {
   ChargeToValidate,
   PayeeInfo,
 } from './chargeFjsV2Client.types'
+import { isValid } from 'kennitala'
 
 @Injectable()
 export class ChargeFjsV2ClientService {
@@ -125,26 +126,42 @@ export class ChargeFjsV2ClientService {
   }
 
   async getPayeeInfo(payeeNationalId: string): Promise<PayeeInfo> {
-    const response = await this.api.payeeInfonationalIDGET6({
-      nationalID: payeeNationalId,
-    })
-
-    if (response.error) {
-      throw new Error(
-        `Failed to get payee info [${response.error.code}] ${response.error.message}`,
-      )
+    if (!payeeNationalId) {
+      throw new Error('Payee national ID is required')
     }
 
-    if (!response.payeeInfo) {
-      throw new Error('Failed to get payee info')
+    if (!isValid(payeeNationalId)) {
+      throw new Error('Invalid payee national ID')
     }
 
-    return {
-      nationalId: response.payeeInfo.nationalID,
-      name: response.payeeInfo.name,
-      address: response.payeeInfo.address,
-      zip: response.payeeInfo.postcode,
-      city: response.payeeInfo.city,
+    try {
+      const response = await this.api.payeeInfonationalIDGET6({
+        nationalID: payeeNationalId,
+      })
+
+      if (response.error) {
+        throw new Error(
+          `Failed to get payee info [${response.error.code}] ${response.error.message}`,
+        )
+      }
+
+      if (!response || !response.payeeInfo) {
+        throw new Error('Payee info not found in response')
+      }
+
+      return {
+        nationalId: response.payeeInfo.nationalID,
+        name: response.payeeInfo.name,
+        address: response.payeeInfo.address,
+        zip: response.payeeInfo.postcode,
+        city: response.payeeInfo.city,
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error
+      }
+
+      throw new Error(`Unexpected error while fetching payee info: ${error}`)
     }
   }
 }
