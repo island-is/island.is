@@ -7,7 +7,7 @@ import { Field } from './components/Field/Field'
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Applicants } from './components/Applicants/Applicants'
-import { FormSystemApplicant } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 
 export const Screen = () => {
   const { state } = useApplicationContext()
@@ -46,7 +46,7 @@ export const Screen = () => {
             applicantTypes={
               (state.application.applicantTypes?.filter(
                 (item) => item !== null,
-              ) as FormSystemApplicant[]) ?? []
+              ) as FormSystemField[]) ?? []
             }
           />
         )}

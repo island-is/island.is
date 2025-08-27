@@ -1,4 +1,4 @@
-import { FormSystemApplicant } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import {
   Agent,
   ApplicantTypesEnum,
@@ -8,7 +8,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 interface Props {
-  applicantTypes: FormSystemApplicant[]
+  applicantTypes: FormSystemField[]
 }
 
 export const Applicants = ({ applicantTypes }: Props) => {
