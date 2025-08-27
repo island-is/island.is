@@ -45,7 +45,8 @@ const VehicleBulkMileageUpload = () => {
     variables: {
       input: {
         page: 1,
-        pageSize: 10000,
+        pageSize: 20000,
+        includeNextMainInspectionDate: false,
         filterOnlyVehiclesUserCanRegisterMileage: true,
       },
     },
