@@ -50,6 +50,7 @@ const VehicleBulkMileage = () => {
           page,
           pageSize: 10,
           query: undefined,
+          includeNextMainInspectionDate: false,
           filterOnlyVehiclesUserCanRegisterMileage: true,
         },
       },
