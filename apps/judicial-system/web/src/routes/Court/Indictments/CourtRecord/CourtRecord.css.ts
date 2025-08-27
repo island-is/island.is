@@ -2,6 +2,11 @@ import { style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
+export const containerGrid = style({
+  display: 'grid',
+  gap: theme.spacing[5],
+})
+
 export const grid = style({
   display: 'grid',
   gap: theme.spacing[2],
