@@ -25,7 +25,6 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '../../stores/preferences-store'
-import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
 import { needsToUpdateAppVersion } from '../../utils/minimum-app-version'
 import { getRightButtons } from '../../utils/get-main-root'
@@ -127,7 +126,7 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
   )
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
-  const ui = useUiStore()
+
   const vehiclesWidgetEnabled = usePreferencesStore(
     ({ vehiclesWidgetEnabled }) => vehiclesWidgetEnabled,
   )
