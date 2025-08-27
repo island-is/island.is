@@ -129,6 +129,16 @@ export class ChargeFjsV2ClientService {
       nationalID: payeeNationalId,
     })
 
+    if (response.error) {
+      throw new Error(
+        `Failed to get payee info [${response.error.code}] ${response.error.message}`,
+      )
+    }
+
+    if (!response.payeeInfo) {
+      throw new Error('Failed to get payee info')
+    }
+
     return {
       nationalId: response.payeeInfo.nationalID,
       name: response.payeeInfo.name,
