@@ -71,6 +71,7 @@ const VehicleMileage = () => {
       input: {
         page: 1,
         pageSize: 1,
+        includeNextMainInspectionDate: false,
         filterOnlyVehiclesUserCanRegisterMileage: true,
         query: id,
       },
