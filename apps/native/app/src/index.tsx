@@ -1,5 +1,6 @@
 import './utils/intl-polyfill'
 import { Navigation } from 'react-native-navigation'
+import SpotlightSearch from 'react-native-spotlight-search'
 import { initializeApolloClient } from './graphql/client'
 import { readAuthorizeResult } from './stores/auth-store'
 import { showAppLockOverlay } from './utils/app-lock'
@@ -14,6 +15,7 @@ import { setupGlobals } from './utils/lifecycle/setup-globals'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { performanceMetricsAppLaunched } from './utils/performance-metrics'
 import { setupQuickActions } from './utils/quick-actions'
+import { navigateTo } from './lib/deep-linking'
 
 async function startApp() {
   // setup global packages and polyfills
@@ -60,6 +62,15 @@ async function startApp() {
     if (isIos) {
       // Quick actions setup, make sure to call this after setting the root
       setupQuickActions()
+
+      // Spotlight search setup, make sure to call this after setting the root
+      SpotlightSearch.searchItemTapped((url) => {
+        navigateTo(url)
+      })
+
+      SpotlightSearch.getInitialSearchItem().then((url) => {
+        navigateTo(url)
+      })
     }
 
     handleInitialUrl()
