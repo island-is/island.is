@@ -426,7 +426,7 @@ export const ApplicationConfigurations = {
     translation: ['ip.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
-    slug: 'nyr-grunnskoli',
+    slug: 'grunnskoli',
     translation: ['nps.application', 'uiForms.application'],
   },
   [ApplicationTypes.MACHINE_REGISTRATION]: {
