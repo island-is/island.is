@@ -453,7 +453,7 @@ export const m = defineMessages({
     description: '',
   },
   managersDescription: {
-    id: 'sp.signatureCollection:managersDescription',
+    id: 'sp.signatureCollection:managersDescription#markdown',
     defaultMessage:
       'Hægt er að bæta við umsjónaraðilum með því að veita þeim umboð hér. Umsjónaraðilar hafa sömu aðgangsheimildir og stofnandi söfnunar en geta ekki eytt söfnuninni.',
     description: '',
