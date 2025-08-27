@@ -21,7 +21,7 @@ const applicantSchema = z.object({
 
 const realEstateSchema = z.string()
 
-const usageUnitsSchema = z.array(z.string()).min(1)
+const usageUnitsSchema = z.array(z.string().min(1)).min(1)
 
 const appraisalMethodSchema = z.array(z.string()).min(1)
 
