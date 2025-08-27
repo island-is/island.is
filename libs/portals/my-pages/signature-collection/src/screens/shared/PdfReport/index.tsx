@@ -1,5 +1,5 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Button } from '@island.is/island-ui/core'
 import { usePDF } from '@react-pdf/renderer'
 import MyPdfDocument from './Document'
 import { useEffect } from 'react'
