@@ -3,7 +3,9 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/application-system/form/src",
   "projectType": "application",
-  "tags": ["scope:application-system-web"],
+  "tags": [
+    "scope:application-system-web"
+  ],
   "generators": {},
   "targets": {
     "build": {
@@ -20,10 +22,13 @@
           "apps/application-system/form/src/mockServiceWorker.js",
           "apps/application-system/form/src/assets"
         ],
-        "styles": ["apps/application-system/form/src/styles.css"],
+        "styles": [
+          "apps/application-system/form/src/styles.css"
+        ],
         "scripts": [],
         "webpackConfig": "apps/application-system/form/webpack.config.js",
-        "maxWorkers": 2
+        "maxWorkers": 2,
+        "memoryLimit": 8192
       },
       "configurations": {
         "production": {
@@ -44,7 +49,9 @@
           ]
         }
       },
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "dependsOn": [
         {
           "target": "generateDevIndexHTML"
@@ -58,7 +65,9 @@
           "node scripts/dockerfile-assets/bash/extract-environment.js apps/application-system/form/src"
         ]
       },
-      "outputs": ["{workspaceRoot}/apps/application-system/form/src/index.html"]
+      "outputs": [
+        "{workspaceRoot}/apps/application-system/form/src/index.html"
+      ]
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
@@ -85,7 +94,9 @@
       "options": {
         "jestConfig": "apps/application-system/form/jest.config.ts"
       },
-      "outputs": ["{workspaceRoot}/coverage/apps/application-system/form"]
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/application-system/form"
+      ]
     },
     "extract-strings": {
       "executor": "nx:run-commands",
@@ -126,7 +137,9 @@
     "mock": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["API_MOCKS=true yarn start application-system-form"]
+        "commands": [
+          "API_MOCKS=true yarn start application-system-form"
+        ]
       }
     },
     "docker-static": {
