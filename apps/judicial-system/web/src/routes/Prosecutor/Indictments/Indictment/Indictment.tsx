@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
@@ -11,6 +11,7 @@ import {
   applyDativeCaseToCourtName,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { getIndictmentCountCompare } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -414,6 +415,15 @@ const Indictment = () => {
 
   useOnceOn(isCaseUpToDate, initialize)
 
+  const indictmentCounts = useMemo(() => {
+    const indictmentCounts = workingCase.indictmentCounts ?? []
+
+    // We don't want to mutate the original array, so we create a copy
+    return [...indictmentCounts].sort(
+      getIndictmentCountCompare(workingCase.policeCaseNumbers),
+    )
+  }, [workingCase.indictmentCounts, workingCase.policeCaseNumbers])
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -468,9 +478,9 @@ const Indictment = () => {
             autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
-        {workingCase.indictmentCounts?.map((indictmentCount, index) => (
+        {indictmentCounts.map((indictmentCount, index) => (
           <motion.div
-            key={index}
+            key={indictmentCount.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
