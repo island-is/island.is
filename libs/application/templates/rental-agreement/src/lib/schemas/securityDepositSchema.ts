@@ -29,7 +29,6 @@ export const securityDeposit = z
       securityAmount,
       securityAmountOther,
       rentalAmount,
-      securityAmountCalculated,
       bankGuaranteeInfo,
       thirdPartyGuaranteeInfo,
       insuranceCompanyInfo,

@@ -51,7 +51,9 @@ export const tenantInfo = z
     representativeTable: z.array(personInfoSchema),
   })
   .superRefine((data, ctx) => {
-    if (data.table && data.table.length === 0) {
+    const { table, representativeTable } = data
+
+    if (table && table.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -61,9 +63,9 @@ export const tenantInfo = z
     }
 
     // Check for duplicate national IDs in tenant table
-    if (data.table && data.table.length > 1) {
+    if (table && table.length > 1) {
       const nationalIds = new Set<string>()
-      data.table.forEach((tenant, index) => {
+      table.forEach((tenant, index) => {
         const nationalId = tenant.nationalIdWithName?.nationalId
         if (nationalId) {
           if (nationalIds.has(nationalId)) {
@@ -81,9 +83,9 @@ export const tenantInfo = z
     }
 
     // Check for duplicate national IDs in representative table
-    if (data.representativeTable && data.representativeTable.length > 1) {
+    if (representativeTable && representativeTable.length > 1) {
       const nationalIds = new Set<string>()
-      data.representativeTable.forEach((representative, index) => {
+      representativeTable.forEach((representative, index) => {
         const nationalId = representative.nationalIdWithName?.nationalId
         if (nationalId) {
           if (nationalIds.has(nationalId)) {
@@ -112,7 +114,9 @@ export const landlordInfo = z
     representativeTable: z.array(personInfoSchema),
   })
   .superRefine((data, ctx) => {
-    if (data.table && data.table.length === 0) {
+    const { table, representativeTable } = data
+
+    if (table && table.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -122,9 +126,9 @@ export const landlordInfo = z
     }
 
     // Check for duplicate national IDs in landlord table
-    if (data.table && data.table.length > 1) {
+    if (table && table.length > 1) {
       const nationalIds = new Set<string>()
-      data.table.forEach((landlord, index) => {
+      table.forEach((landlord, index) => {
         const nationalId = landlord.nationalIdWithName?.nationalId
         if (nationalId) {
           if (nationalIds.has(nationalId)) {
@@ -142,9 +146,9 @@ export const landlordInfo = z
     }
 
     // Check for duplicate national IDs in representative table
-    if (data.representativeTable && data.representativeTable.length > 1) {
+    if (representativeTable && representativeTable.length > 1) {
       const nationalIds = new Set<string>()
-      data.representativeTable.forEach((representative, index) => {
+      representativeTable.forEach((representative, index) => {
         const nationalId = representative.nationalIdWithName?.nationalId
         if (nationalId) {
           if (nationalIds.has(nationalId)) {
