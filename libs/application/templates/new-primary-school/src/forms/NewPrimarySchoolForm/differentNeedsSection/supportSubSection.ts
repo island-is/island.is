@@ -145,12 +145,15 @@ export const supportSubSection = buildSubSection({
 
             const { socialProfile } = getApplicationExternalData(externalData)
 
-            return (
-              hasDiagnoses === YES ||
-              hasHadSupport === YES ||
-              socialProfile?.hasDiagnoses === true ||
-              socialProfile?.hasHadSupport === true
-            )
+            const hasDiagnosesCalculated =
+              (!hasDiagnoses && socialProfile?.hasDiagnoses === true) ||
+              hasDiagnoses === YES
+
+            const hasHadSupportCalculated =
+              (!hasHadSupport && socialProfile?.hasHadSupport === true) ||
+              hasHadSupport === YES
+
+            return hasDiagnosesCalculated || hasHadSupportCalculated
           },
           defaultValue: (application: Application) =>
             hasDefaultSupportCaseworker(
@@ -230,7 +233,8 @@ export const supportSubSection = buildSubSection({
             return (
               (isWelfareContactSelected(answers, externalData) &&
                 hasCaseManager === YES) ||
-              caseWorker !== undefined
+              (isWelfareContactSelected(answers, externalData) &&
+                caseWorker !== undefined)
             )
           },
           defaultValue: (application: Application) =>
@@ -254,7 +258,8 @@ export const supportSubSection = buildSubSection({
             return (
               (isWelfareContactSelected(answers, externalData) &&
                 hasCaseManager === YES) ||
-              caseWorker !== undefined
+              (isWelfareContactSelected(answers, externalData) &&
+                caseWorker !== undefined)
             )
           },
           defaultValue: (application: Application) =>

@@ -31,6 +31,55 @@ export const getGenderCode = (genderCode: string) => {
   }
 }
 
+export const getSocialProfile = (application: Application) => {
+  const {
+    hasDiagnoses,
+    hasHadSupport,
+    hasWelfareContact,
+    welfareContactName,
+    welfareContactEmail,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
+    hasIntegratedServices,
+  } = getApplicationAnswers(application.answers)
+
+  if (
+    (hasHadSupport === YES || hasDiagnoses === YES) &&
+    hasWelfareContact === YES
+  ) {
+    return {
+      hasHadSupport: hasHadSupport === YES,
+      hasDiagnoses: hasDiagnoses === YES,
+      hasIntegratedServices: hasIntegratedServices === YES,
+      caseWorkers: [
+        {
+          name: welfareContactName ?? '',
+          email: welfareContactEmail ?? '',
+          type: CaseWorkerInputTypeEnum.SupportManager,
+        },
+        ...(hasCaseManager === YES
+          ? [
+              {
+                name: caseManagerName ?? '',
+                email: caseManagerEmail ?? '',
+                type: CaseWorkerInputTypeEnum.CaseManager,
+              },
+            ]
+          : []),
+      ],
+    }
+  }
+
+  // If hasWelfareContact is NO or not defined, return empty caseWorkers array
+  return {
+    hasHadSupport: hasHadSupport === YES,
+    hasDiagnoses: hasDiagnoses === YES,
+    hasIntegratedServices: false,
+    caseWorkers: [],
+  }
+}
+
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
 ): ApplicationInput => {
@@ -56,15 +105,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     usesEpiPen,
     hasConfirmedMedicalDiagnoses,
     requestsMedicationAdministration,
-    hasDiagnoses,
-    hasHadSupport,
-    hasWelfareContact,
-    welfareContactName,
-    welfareContactEmail,
-    hasCaseManager,
-    caseManagerName,
-    caseManagerEmail,
-    hasIntegratedServices,
     requestingMeeting,
     expectedStartDate,
     temporaryStay,
@@ -189,29 +229,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         requestsMedicationAdministration === YES,
     },
     social: {
-      hasHadSupport: hasHadSupport === YES,
-      hasDiagnoses: hasDiagnoses === YES,
-      ...((hasHadSupport === YES || hasDiagnoses === YES) && {
-        ...(hasWelfareContact === YES && {
-          hasIntegratedServices: hasIntegratedServices === YES,
-          caseWorkers: [
-            {
-              name: welfareContactName ?? '',
-              email: welfareContactEmail ?? '',
-              type: CaseWorkerInputTypeEnum.SupportManager,
-            },
-            ...(hasCaseManager === YES
-              ? [
-                  {
-                    name: caseManagerName ?? '',
-                    email: caseManagerEmail ?? '',
-                    type: CaseWorkerInputTypeEnum.CaseManager,
-                  },
-                ]
-              : []),
-          ],
-        }),
-      }),
+      ...getSocialProfile(application),
     },
     language: {
       languageEnvironment: languageEnvironmentId,

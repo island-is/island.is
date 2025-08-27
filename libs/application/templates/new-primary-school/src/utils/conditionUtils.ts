@@ -25,16 +25,25 @@ export const isWelfareContactSelected = (
 
   const { socialProfile } = getApplicationExternalData(externalData)
 
-  return (
-    (hasDiagnoses === YES ||
-      hasHadSupport === YES ||
-      socialProfile?.hasDiagnoses === true ||
-      socialProfile?.hasHadSupport === true) &&
-    (hasWelfareContact === YES ||
+  const hasDiagnosesCalculated =
+    (!hasDiagnoses && socialProfile?.hasDiagnoses === true) ||
+    hasDiagnoses === YES
+
+  const hasHadSupportCalculated =
+    (!hasHadSupport && socialProfile?.hasHadSupport === true) ||
+    hasHadSupport === YES
+
+  const hasWelfareContactCalculated =
+    (!hasWelfareContact &&
       !!getDefaultSupportCaseworker(
         externalData,
         CaseWorkerInputTypeEnum.SupportManager,
-      ))
+      )) ||
+    hasWelfareContact === YES
+
+  return (
+    (hasDiagnosesCalculated || hasHadSupportCalculated) &&
+    hasWelfareContactCalculated
   )
 }
 
