@@ -415,10 +415,14 @@ const Indictment = () => {
 
   useOnceOn(isCaseUpToDate, initialize)
 
-  const compareIndictmentCounts = useMemo(
-    () => getIndictmentCountCompare(workingCase.policeCaseNumbers),
-    [workingCase.policeCaseNumbers],
-  )
+  const indictmentCounts = useMemo(() => {
+    const indictmentCounts = workingCase.indictmentCounts ?? []
+
+    // We don't want to mutate the original array, so we create a copy
+    return [...indictmentCounts].sort(
+      getIndictmentCountCompare(workingCase.policeCaseNumbers),
+    )
+  }, [workingCase.indictmentCounts, workingCase.policeCaseNumbers])
 
   return (
     <PageLayout
@@ -474,42 +478,37 @@ const Indictment = () => {
             autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
-        {workingCase.indictmentCounts &&
-          workingCase.indictmentCounts
-            .sort(compareIndictmentCounts)
-            .map((indictmentCount, index) => (
-              <motion.div
-                key={indictmentCount.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-              >
-                <Box
-                  component="section"
-                  marginBottom={
-                    index - 1 === workingCase.indictmentCounts?.length ? 0 : 3
-                  }
-                >
-                  <SectionHeading
-                    title={formatMessage(strings.indictmentCountHeading, {
-                      count: index + 1,
-                    })}
-                  />
-                  <AnimatePresence>
-                    <IndictmentCount
-                      indictmentCount={indictmentCount}
-                      workingCase={workingCase}
-                      onDelete={
-                        index > 0 ? handleDeleteIndictmentCount : undefined
-                      }
-                      onChange={handleUpdateIndictmentCount}
-                      setWorkingCase={setWorkingCase}
-                      updateIndictmentCountState={updateIndictmentCountState}
-                    />
-                  </AnimatePresence>
-                </Box>
-              </motion.div>
-            ))}
+        {indictmentCounts.map((indictmentCount, index) => (
+          <motion.div
+            key={indictmentCount.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+          >
+            <Box
+              component="section"
+              marginBottom={
+                index - 1 === workingCase.indictmentCounts?.length ? 0 : 3
+              }
+            >
+              <SectionHeading
+                title={formatMessage(strings.indictmentCountHeading, {
+                  count: index + 1,
+                })}
+              />
+              <AnimatePresence>
+                <IndictmentCount
+                  indictmentCount={indictmentCount}
+                  workingCase={workingCase}
+                  onDelete={index > 0 ? handleDeleteIndictmentCount : undefined}
+                  onChange={handleUpdateIndictmentCount}
+                  setWorkingCase={setWorkingCase}
+                  updateIndictmentCountState={updateIndictmentCountState}
+                />
+              </AnimatePresence>
+            </Box>
+          </motion.div>
+        ))}
         <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
           <Button
             variant="ghost"
