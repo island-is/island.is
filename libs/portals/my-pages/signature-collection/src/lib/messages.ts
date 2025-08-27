@@ -58,6 +58,16 @@ export const m = defineMessages({
     defaultMessage: 'Skoða nánar',
     description: '',
   },
+  collectionActive: {
+    id: 'sp.signatureCollection:collectionActive',
+    defaultMessage: 'Söfnun í gangi',
+    description: '',
+  },
+  collectionLocked: {
+    id: 'sp.signatureCollection:collectionLocked',
+    defaultMessage: 'Lista læst',
+    description: '',
+  },
   collectionClosed: {
     id: 'sp.signatureCollection:collectionClosed',
     defaultMessage: 'Söfnuninni lokið',
@@ -223,6 +233,16 @@ export const m = defineMessages({
   coOwners: {
     id: 'sp.signatureCollection:coOwners',
     defaultMessage: 'Umsjónaraðilar:',
+    description: '',
+  },
+  pdfReport: {
+    id: 'sp.signatureCollection:pdfReport',
+    defaultMessage: 'Skýrsla',
+    description: '',
+  },
+  pdfReportDescription: {
+    id: 'sp.signatureCollection:pdfReportDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð kemur hér.',
     description: '',
   },
   downloadPdf: {
