@@ -17,7 +17,6 @@ import {
 import { m } from '../lib/messages'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
-import { IndividualDto } from '@island.is/clients/national-registry-v2'
 import { format as formatNationalId } from 'kennitala'
 
 export const Draft: Form = buildForm({
@@ -29,13 +28,16 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: 'selectCandidateSection',
-      condition: (_, externalData) => {
+      condition: (answers, externalData) => {
         const lists =
           getValueViaPath<SignatureCollectionList[]>(
             externalData,
             'getList.data',
           ) || []
-        return lists.length > 1
+
+        const initialQuery = getValueViaPath(answers, 'initialQuery')
+
+        return lists.length > 0 && !initialQuery
       },
       children: [
         buildMultiField({
@@ -45,7 +47,6 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
-              backgroundColor: 'white',
               defaultValue: '',
               required: true,
               options: ({ externalData }) => {
@@ -99,10 +100,17 @@ export const Draft: Form = buildForm({
                     'getList.data',
                   ) || []
 
-                return lists.length === 1
-                  ? lists[0].candidate.name
-                  : lists.find((list) => list.id === answers.listId)?.candidate
-                      .name
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.candidate?.name
               },
             }),
             buildTextField({
@@ -131,12 +139,24 @@ export const Draft: Form = buildForm({
               title: m.municipality,
               width: 'half',
               readOnly: true,
-              defaultValue: ({ externalData }: Application) => {
-                const municipalIdentity = getValueViaPath<IndividualDto>(
-                  externalData,
-                  'municipalIdentity.data',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
                 )
-                return municipalIdentity?.legalDomicile?.locality
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.area?.name
               },
             }),
             buildSubmitField({

@@ -130,6 +130,7 @@ export const GetListsForOwner = gql`
         name
       }
       active
+      reviewed
       collectionId
       slug
       numberOfSignatures
