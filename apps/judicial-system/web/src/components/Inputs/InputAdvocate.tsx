@@ -30,7 +30,12 @@ import {
 } from './InputAdvocate.strings'
 
 interface Props {
-  advocateType: 'defender' | 'spokesperson' | 'lawyer' | 'legalRightsProtector'
+  advocateType:
+    | 'defender'
+    | 'spokesperson'
+    | 'lawyer'
+    | 'legalRightsProtector'
+    | 'litigator'
   name: string | undefined | null
   email: string | undefined | null
   phoneNumber: string | undefined | null
@@ -88,15 +93,21 @@ const InputAdvocate: FC<Props> = ({
 
   const { lawyers } = useContext(LawyerRegistryContext)
 
-  const options = useMemo(
-    () =>
-      lawyers?.map((l: Lawyer) => ({
-        label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
-        value: l.email,
-      })),
+  const options = useMemo(() => {
+    const filteredLawyers =
+      advocateType === 'litigator'
+        ? lawyers?.filter((l) => l.isLitigator)
+        : lawyers
 
-    [lawyers],
-  )
+    if (!filteredLawyers || filteredLawyers.length === 0) {
+      return []
+    }
+
+    return filteredLawyers?.map((l) => ({
+      label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
+      value: l.email,
+    }))
+  }, [lawyers, advocateType])
 
   const handleAdvocateChange = useCallback(
     (selectedOption: SingleValue<ReactSelectOption>) => {
