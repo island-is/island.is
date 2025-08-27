@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     // Wrap in transaction
     await queryInterface.sequelize.transaction(async (transaction) => {
       // Remove email field from user_profile table
