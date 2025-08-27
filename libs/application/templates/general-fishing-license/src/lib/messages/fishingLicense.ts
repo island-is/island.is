@@ -100,6 +100,11 @@ export const fishingLicense = {
       defaultMessage: 'Krabbaveiðileyfi',
       description: 'Crustaceans',
     },
+    skollakopp: {
+      id: 'gfl.application:shipSelection.labels.skollakopp',
+      defaultMessage: 'Skollakoppuveiðileyfi',
+      description: 'Skollakoppuveiðileyfi',
+    },
     unknown: {
       id: 'gfl.application:shipSelection.labels.notSpecified',
       defaultMessage: 'Ekki tilgreint',

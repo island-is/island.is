@@ -17,5 +17,7 @@ export enum FishingLicenseEnum {
   OCEANQUAHOGIN = 'oceanQuahogin', // Kúfiskveiðileyfi
   CRUSTACEANS = 'crustaceans', // Krabbaveiðileyfi
 
+  SKOLLAKOPP = 'skollakopp', // Skollakóppuveiðileyfi
+
   UNKNOWN = 'unknown', // Unknown, signals error
 }
