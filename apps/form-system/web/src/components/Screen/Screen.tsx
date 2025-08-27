@@ -6,8 +6,8 @@ import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Applicants } from './components/Applicants/Applicants'
-import { FormSystemField } from '@island.is/api/schema'
+// import { Applicants } from './components/Applicants/Applicants'
+// import { FormSystemField } from '@island.is/api/schema'
 
 export const Screen = () => {
   const { state } = useApplicationContext()
@@ -41,7 +41,7 @@ export const Screen = () => {
         {currentSectionType === SectionTypes.PREMISES && (
           <ExternalData setExternalDataAgreement={setExternalDataAgreement} />
         )}
-        {currentSectionType === SectionTypes.PARTIES && (
+        {/* {currentSectionType === SectionTypes.PARTIES && (
           <Applicants
             applicantTypes={
               (state.application.applicantTypes?.filter(
@@ -49,7 +49,7 @@ export const Screen = () => {
               ) as FormSystemField[]) ?? []
             }
           />
-        )}
+        )} */}
 
         {currentScreen &&
           currentScreen?.data?.fields
