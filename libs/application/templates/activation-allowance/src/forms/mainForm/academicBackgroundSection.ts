@@ -73,6 +73,7 @@ export const academicBackgroundSection = buildSection({
             subject: {
               label: academicBackground.labels.subject,
               component: 'select',
+              required: true,
               options: (application, activeField) => {
                 const education = getValueViaPath<
                   GaldurDomainModelsEducationProgramDTO[]

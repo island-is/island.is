@@ -36,6 +36,7 @@ const buildRepeatableSections = (): SubSection[] => {
 
   const subSections = incomeBlocks.flat().map((incomeField, index) => {
     return buildSubSection({
+      id: `incomeSubSection[${index}]`,
       title: {
         ...income.general.subSectionTitle,
         values: {
@@ -61,6 +62,7 @@ const buildRepeatableSections = (): SubSection[] => {
 const getIncomeSections = (index: number) => {
   const fields: MultiField[] = [
     buildMultiField({
+      id: `incomeMultiField[${index}]`,
       children: [
         buildDescriptionField({
           id: `income[${index}].taxInfo`,
@@ -238,6 +240,7 @@ const getIncomeSections = (index: number) => {
         buildAlertMessageField({
           id: `income[${index}].numberAndUsageOfLeaveDescription`,
           alertType: 'info',
+          title: income.labels.numberAndUsageOfLeaveTitle,
           message: income.labels.numberAndUsageOfLeaveDescription,
           condition: (formValue: FormValue) => {
             return hasLeaveDays(index, formValue)
