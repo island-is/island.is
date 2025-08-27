@@ -8,11 +8,9 @@ module.exports = {
         'DROP TABLE IF EXISTS form_applicant_type',
         { transaction: t },
       )
-      await queryInterface.sequelize.query(
-        'DROP TABLE IF EXISTS applicant',
-        { transaction: t },
-      )
-        .catch(() => { })
+      await queryInterface.sequelize
+        .query('DROP TABLE IF EXISTS applicant', { transaction: t })
+        .catch(() => {})
     })
   },
 
