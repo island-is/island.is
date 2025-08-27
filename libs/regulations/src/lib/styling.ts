@@ -182,11 +182,14 @@ export const regulationContentStyling = (wrapper: string) => {
   })
 
   styleRegulation('table', {
-    width: '100%',
     borderCollapse: 'separate',
     borderSpacing: 0,
 
-    '@media': { print: { marginBottom: '1em' } },
+    '@media': { print: { marginBottom: '1em', width: '100%' } },
+  })
+
+  styleRegulation('table:not([width])', {
+    width: '100%',
   })
 
   styleRegulation('th, td', {
