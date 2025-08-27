@@ -3,7 +3,7 @@ import {
   getInitialNotification,
   onNotificationOpenedApp,
 } from '@react-native-firebase/messaging'
-import { useLinkingURL } from 'expo-linking'
+import { useURL } from 'expo-linking'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useMarkUserNotificationAsReadMutation } from '../graphql/types/schema'
 
@@ -35,7 +35,7 @@ function useLastNotificationResponse() {
 }
 
 export function useDeepLinkHandling() {
-  const url = useLinkingURL()
+  const url = useURL()
   const notification = useLastNotificationResponse()
   const [markUserNotificationAsRead] = useMarkUserNotificationAsReadMutation()
   const lockScreenActivatedAt = useAuthStore(
