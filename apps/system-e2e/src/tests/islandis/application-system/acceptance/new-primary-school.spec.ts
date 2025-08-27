@@ -10,7 +10,7 @@ import { label } from '../../../../support/i18n'
 import { helpers } from '../../../../support/locator-helpers'
 import { session } from '../../../../support/session'
 import { setupXroadMocks } from './setup-xroad.mocks'
-const homeUrl = '/umsoknir/nyr-grunnskoli'
+const homeUrl = '/umsoknir/grunnskoli'
 
 const applicationTest = base.extend<{ applicationPage: Page }>({
   applicationPage: async ({ browser }, use) => {
@@ -25,7 +25,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(applicationPage).toBeApplication('nyr-grunnskoli')
+    await expect(applicationPage).toBeApplication('grunnskoli')
     await setupXroadMocks()
     await use(applicationPage)
 
