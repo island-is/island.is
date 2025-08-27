@@ -66,7 +66,7 @@ const CourtRecord: FC = () => {
                   caseFile={{
                     id: item.id,
                     displayText: item.name,
-                    canEdit: true,
+                    canEdit: ['fileName'],
                   }}
                   backgroundColor="white"
                   onOpen={function (id: string): void {
