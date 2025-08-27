@@ -12,7 +12,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryIndividual,
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
@@ -29,13 +28,16 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: 'selectCandidateSection',
-      condition: (_, externalData) => {
+      condition: (answers, externalData) => {
         const lists =
           getValueViaPath<SignatureCollectionList[]>(
             externalData,
             'getList.data',
           ) || []
-        return lists.length > 1
+
+        const initialQuery = getValueViaPath(answers, 'initialQuery')
+
+        return lists.length > 0 && !initialQuery
       },
       children: [
         buildMultiField({
@@ -45,7 +47,6 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
-              backgroundColor: 'white',
               defaultValue: '',
               required: true,
               options: ({ externalData }) => {
@@ -99,10 +100,17 @@ export const Draft: Form = buildForm({
                     'getList.data',
                   ) || []
 
-                return lists.length === 1
-                  ? lists[0].candidate.name
-                  : lists.find((list) => list.id === answers.listId)?.candidate
-                      .name
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.candidate?.name
               },
             }),
             buildTextField({
@@ -131,13 +139,24 @@ export const Draft: Form = buildForm({
               title: m.municipality,
               width: 'half',
               readOnly: true,
-              defaultValue: ({ externalData }: Application) => {
-                const municipality =
-                  getValueViaPath<NationalRegistryIndividual>(
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
                     externalData,
-                    'nationalRegistry.data',
-                  )?.address?.locality
-                return municipality
+                    'getList.data',
+                  ) || []
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.area?.name
               },
             }),
             buildSubmitField({
