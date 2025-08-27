@@ -59,12 +59,7 @@ definitions:
       script: |
         corepack enable
         corepack prepare
-
-        # Ensure Yarn's global cache folder exists
-        mkdir -p ~/.yarn
-        export YARN_CACHE_FOLDER=~/.yarn
-
-        yarn install --immutable
+        yarn install --immutable --verbose --network-timeout 300000 --no-progress
     - &codegen
       name: Run codegen
       working_directory: .
