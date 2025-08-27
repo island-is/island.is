@@ -48,18 +48,13 @@ export const RentalHousingLandlordInfo = buildSubSection({
           alertType: 'warning',
           title: landlordDetails.uniqueApplicantsError,
           condition: (answers) => {
-            const {
-              landlords,
-              tenants,
-              landlordRepresentatives,
-              tenantRepresentatives,
-            } = applicationAnswers(answers)
+            const { landlords, tenants, landlordRepresentatives } =
+              applicationAnswers(answers)
 
             const allApplicants = [
               ...landlords,
               ...tenants,
               ...landlordRepresentatives,
-              ...tenantRepresentatives,
             ]
 
             return hasDuplicateApplicants(allApplicants)

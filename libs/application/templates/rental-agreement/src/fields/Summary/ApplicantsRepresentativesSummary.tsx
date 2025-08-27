@@ -19,17 +19,10 @@ interface Props extends FieldBaseProps {
 
 export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
-  const {
-    application,
-    goToScreen,
-    landlordsRoute,
-    tenantsRoute,
-    hasChangeButton,
-  } = props
+  const { application, goToScreen, landlordsRoute, hasChangeButton } = props
   const { answers } = application
 
-  const { landlordRepresentatives, tenantRepresentatives } =
-    applicationAnswers(answers)
+  const { landlordRepresentatives } = applicationAnswers(answers)
 
   return (
     <>
@@ -69,48 +62,6 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
                   <KeyValue
                     label={summary.phoneNumberLabel}
                     value={formatPhoneNumber(landlordRep.phone || '-')}
-                  />
-                </GridColumn>
-              </SummaryCardRow>
-            )
-          })}
-        </SummaryCard>
-      )}
-      {tenantRepresentatives.length > 0 && (
-        <SummaryCard
-          cardLabel={formatMessage(summary.tenantsRepresentativeLabel)}
-        >
-          {tenantRepresentatives?.map((tenantRep) => {
-            return (
-              <SummaryCardRow
-                key={tenantRep.nationalIdWithName?.nationalId}
-                editAction={props.goToScreen}
-                route={tenantsRoute}
-                hasChangeButton={hasChangeButton}
-              >
-                <GridColumn span={['12/12']}>
-                  <KeyValue
-                    labelVariant="h5"
-                    labelAs="p"
-                    label={tenantRep.nationalIdWithName?.name}
-                    value={`${formatMessage(
-                      summary.nationalIdLabel,
-                    )}${formatNationalId(
-                      tenantRep.nationalIdWithName?.nationalId,
-                    )}`}
-                    gap={'smallGutter'}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '8/12']}>
-                  <KeyValue
-                    label={summary.emailLabel}
-                    value={tenantRep.email || '-'}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '4/12']}>
-                  <KeyValue
-                    label={summary.phoneNumberLabel}
-                    value={formatPhoneNumber(tenantRep.phone || '-')}
                   />
                 </GridColumn>
               </SummaryCardRow>

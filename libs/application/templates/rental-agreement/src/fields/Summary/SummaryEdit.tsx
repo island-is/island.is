@@ -30,7 +30,6 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     landlords,
     landlordRepresentatives,
     tenants,
-    tenantRepresentatives,
     smokeDetectors,
     fireExtinguisher,
     emergencyExits,
@@ -50,7 +49,6 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     ...landlords,
     ...tenants,
     ...landlordRepresentatives,
-    ...tenantRepresentatives,
   ])
 
   const AlertMessageConditions = [

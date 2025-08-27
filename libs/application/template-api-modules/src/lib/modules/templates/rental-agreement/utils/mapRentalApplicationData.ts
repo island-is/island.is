@@ -32,7 +32,6 @@ export const mapRentalApplicationData = (
     landlords,
     landlordRepresentatives,
     tenants,
-    tenantRepresentatives,
     searchResults,
     units,
     categoryType,
@@ -94,10 +93,6 @@ export const mapRentalApplicationData = (
     ...(tenants?.map((person) => ({
       ...mapPersonToArray(person),
       isRepresentative: false,
-    })) || []),
-    ...(tenantRepresentatives?.map((person) => ({
-      ...mapPersonToArray(person),
-      isRepresentative: true,
     })) || []),
   ]
 

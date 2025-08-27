@@ -32,12 +32,6 @@ const extractParticipants = (
     ) ?? [],
   tenants:
     getValueViaPath<ApplicantsInfo[]>(answers, 'tenantInfo.table', []) ?? [],
-  tenantRepresentatives:
-    getValueViaPath<ApplicantsInfo[]>(
-      answers,
-      'tenantInfo.representativeTable',
-      [],
-    ) ?? [],
 })
 
 const extractPropertyInfo = (

@@ -31,33 +31,19 @@ export const RentalHousingTenantInfo = buildSubSection({
           fields: applicantTableFields,
           table: applicantTableConfig,
         }),
-        buildTableRepeaterField({
-          id: 'tenantInfo.representativeTable',
-          title: landlordAndTenantDetails.representativeTableTitle,
-          editField: true,
-          marginTop: 6,
-          maxRows: 10,
-          fields: applicantTableFields,
-          table: applicantTableConfig,
-        }),
         buildAlertMessageField({
           id: 'tenantInfo.uniqueApplicantsError',
           alertType: 'error',
           title: tenantDetails.uniqueApplicantsError,
           shouldBlockInSetBeforeSubmitCallback: true,
           condition: (answers) => {
-            const {
-              landlords,
-              tenants,
-              landlordRepresentatives,
-              tenantRepresentatives,
-            } = applicationAnswers(answers)
+            const { landlords, tenants, landlordRepresentatives } =
+              applicationAnswers(answers)
 
             const allApplicants = [
               ...landlords,
               ...tenants,
               ...landlordRepresentatives,
-              ...tenantRepresentatives,
             ]
 
             return hasDuplicateApplicants(allApplicants)

@@ -207,7 +207,7 @@ export const otherFees = z
           if (
             item.amount !== undefined &&
             item.amount !== null &&
-            Number(item.amount) > 20000
+            Number(item.amount) > 100000
           ) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
