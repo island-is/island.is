@@ -3,18 +3,24 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/form-system/src",
   "projectType": "application",
-  "tags": ["scope:nest"],
+  "tags": [
+    "scope:nest"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/services/form-system",
         "main": "apps/services/form-system/src/main.ts",
         "tsConfig": "apps/services/form-system/tsconfig.app.json",
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"],
+        "format": [
+          "cjs"
+        ],
         "assets": [
           "apps/services/form-system/src/assets",
           {
@@ -57,15 +63,21 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/services/form-system/**/*.ts"]
+        "lintFilePatterns": [
+          "apps/services/form-system/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "apps/services/form-system/jest.config.ts",
         "passWithNoTests": true
@@ -89,7 +101,9 @@
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/form-system/tsconfig.app.json apps/services/form-system/src/buildOpenApi.ts"
       },
-      "outputs": ["{projectRoot}/src/openapi.yaml"]
+      "outputs": [
+        "{projectRoot}/src/openapi.yaml"
+      ]
     },
     "migrate": {
       "executor": "nx:run-commands",
@@ -121,7 +135,9 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start services-form-system-api"],
+        "commands": [
+          "yarn start services-form-system-api"
+        ],
         "parallel": true
       }
     }

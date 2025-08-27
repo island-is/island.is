@@ -3,18 +3,27 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/judicial-system-sp/src",
   "projectType": "library",
-  "tags": ["lib:client", "scope:client"],
+  "tags": [
+    "lib:client",
+    "scope:client"
+  ],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["libs/clients/judicial-system-sp/**/*.ts"]
+        "lintFilePatterns": [
+          "libs/clients/judicial-system-sp/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "libs/clients/judicial-system-sp/jest.config.ts",
         "passWithNoTests": true
@@ -42,7 +51,9 @@
       "options": {
         "command": "yarn openapi-generator -o libs/clients/judicial-system-sp/gen/fetch -i libs/clients/judicial-system-sp/src/clientConfig.json"
       },
-      "outputs": ["{projectRoot}/gen/fetch"]
+      "outputs": [
+        "{projectRoot}/gen/fetch"
+      ]
     }
   }
 }

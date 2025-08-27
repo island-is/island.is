@@ -3,11 +3,14 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/new-primary-school/src",
   "projectType": "library",
-  "tags": ["scope:application-system", "lib:application-system"],
+  "tags": [
+    "scope:application-system",
+    "lib:application-system"
+  ],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/new-primary-school/**/*.{ts,tsx,js,jsx}"
