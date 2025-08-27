@@ -11,6 +11,7 @@ import {
   SecurityDepositTypeOptions,
 } from './enums'
 import { applicationAnswers, ConsumerIndexItem } from '../shared'
+import { addMonths } from 'date-fns'
 
 // Amount utils
 export const rentalAmountConnectedToIndex = (answers: FormValue) => {
@@ -42,6 +43,16 @@ export const rentalInsuranceRequired = (answers: FormValue) => {
 export const rentalPeriodIsDefinite = (answers: FormValue) => {
   const { isDefinite } = applicationAnswers(answers)
   return isDefinite?.includes(YesOrNoEnum.YES) || false
+}
+
+export const isDateMoreThanOneYearInFuture = (answers: FormValue) => {
+  const startDate = getValueViaPath<string>(answers, 'rentalPeriod.startDate')
+  if (!startDate) return false
+
+  const selectedDate = new Date(startDate)
+  const oneYearFromNow = addMonths(new Date(), 12)
+
+  return selectedDate > oneYearFromNow
 }
 
 // Other fees utils
