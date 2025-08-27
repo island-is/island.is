@@ -14,6 +14,8 @@ import {
 } from './utils'
 import { AttachmentS3Service } from '../../../shared/services'
 import { ContractStatus } from './types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { mockGetRentalAgreements } from './mockedRentalAgreements'
 
 @Injectable()
 export class TerminateRentalAgreementService extends BaseTemplateApiService {
@@ -44,6 +46,10 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
             })
             .filter((contract) => contract !== undefined)
         })
+
+      if (isRunningOnEnvironment('local') && contracts.length === 0) {
+        return mockGetRentalAgreements()
+      }
 
       return contracts
     } catch (e) {
