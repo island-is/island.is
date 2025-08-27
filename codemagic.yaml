@@ -59,7 +59,7 @@ definitions:
       script: |
         corepack enable
         corepack prepare
-        yarn install --immutable --verbose --network-timeout 300000 --no-progress
+        yarn install --immutable --inline-builds --network-timeout 300000
     - &codegen
       name: Run codegen
       working_directory: .
