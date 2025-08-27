@@ -136,6 +136,7 @@ export const Municipality = () => {
             <CompareLists
               collectionId={collection?.id}
               collectionType={collection?.collectionType}
+              municipalAreaId={municipalityLists[0]?.collectionId}
             />
           )}
         </GridColumn>

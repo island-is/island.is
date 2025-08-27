@@ -71,7 +71,6 @@ export const List = () => {
                       Actions.LockList,
                       Actions.ReviewComplete,
                       Actions.ExtendDeadline,
-                      Actions.RemoveCandidate,
                     ]}
                     withManagers
                   />

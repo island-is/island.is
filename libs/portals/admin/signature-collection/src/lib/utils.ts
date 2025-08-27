@@ -64,8 +64,8 @@ export enum CollectionStatus {
 }
 
 export const downloadFile = () => {
-  const name = 'meðmæli.xlsx'
-  const sheetData = [['Kennitala', 'Bls'], []]
+  const name = 'beraSaman.xlsx'
+  const sheetData = [['Kennitala'], []]
 
   const getFile = (name: string, output: string | undefined) => {
     const uri =
@@ -80,6 +80,9 @@ export const downloadFile = () => {
   }
 
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
+  // Set first column to "Text" format
+  worksheet.getColumn(1).numFmt = '@'
+
   const workbook: XLSX.WorkBook = {
     Sheets: { [name]: worksheet },
     SheetNames: [name],

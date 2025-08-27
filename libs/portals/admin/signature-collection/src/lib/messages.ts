@@ -634,7 +634,7 @@ export const m = defineMessages({
   },
   downloadTemplate: {
     id: 'admin-portal.signature-collection:downloadTemplate',
-    defaultMessage: 'Sækja sniðmat',
+    defaultMessage: 'Sækja sniðmát',
     description: '',
   },
   uploadButton: {
