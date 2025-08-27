@@ -38,6 +38,7 @@ const signListTemplate: ApplicationTemplate<
     ApplicationConfigurations[ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]
       .translation,
   ],
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

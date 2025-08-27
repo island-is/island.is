@@ -53,7 +53,7 @@ const CancelCollection = ({
   }
 
   return (
-    <Box marginTop={7} display="flex" justifyContent="center">
+    <Box display="flex" justifyContent="center">
       <Modal
         id="cancelCollection"
         isVisible={modalIsOpen}
