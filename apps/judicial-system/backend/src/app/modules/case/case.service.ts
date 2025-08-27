@@ -736,6 +736,15 @@ export class CaseService {
         )
       }
     }
+
+    // Add a single indictment count for each added police case numbers
+    for (const policeCaseNumber of addedPoliceCaseNumbers) {
+      await this.indictmentCountService.createWithPoliceCaseNumber(
+        theCase.id,
+        policeCaseNumber,
+        transaction,
+      )
+    }
   }
 
   private getDeliverDefendantToCourtMessages(

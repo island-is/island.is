@@ -61,6 +61,17 @@ export class IndictmentCountService {
     return this.indictmentCountModel.create({ caseId })
   }
 
+  async createWithPoliceCaseNumber(
+    caseId: string,
+    policeCaseNumber: string,
+    transaction: Transaction,
+  ): Promise<IndictmentCount> {
+    return this.indictmentCountModel.create(
+      { caseId, policeCaseNumber },
+      { transaction },
+    )
+  }
+
   async update(
     caseId: string,
     indictmentCountId: string,
