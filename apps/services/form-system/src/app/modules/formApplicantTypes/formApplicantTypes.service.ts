@@ -18,6 +18,7 @@ import { Section } from '../sections/models/section.model'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
 import { DeleteFormApplicantTypeDto } from './models/dto/deleteFormApplicantType.dto'
+import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class FormApplicantTypesService {
@@ -28,6 +29,7 @@ export class FormApplicantTypesService {
     private readonly screenModel: typeof Screen,
     @InjectModel(Field)
     private readonly fieldModel: typeof Field,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async create(
@@ -75,45 +77,54 @@ export class FormApplicantTypesService {
       )
     }
 
-    let allowedDelegationTypes: string[] = []
+    let screenDto = new ScreenDto()
 
-    if (Array.isArray(form.allowedDelegationTypes)) {
-      allowedDelegationTypes = [...form.allowedDelegationTypes]
-    } else if (
-      form.allowedDelegationTypes &&
-      typeof form.allowedDelegationTypes === 'object'
-    ) {
-      allowedDelegationTypes = Object.values(form.allowedDelegationTypes)
-    } else {
-      allowedDelegationTypes = []
-    }
+    await this.sequelize.transaction(async (transaction) => {
+      let allowedDelegationTypes: string[] = []
 
-    const delegationType = await this.getDelegationType(
-      createFormApplicantTypeDto.applicantTypeId,
-    )
-    if (
-      delegationType !== 'Other' &&
-      !allowedDelegationTypes.includes(delegationType)
-    ) {
-      allowedDelegationTypes.push(delegationType)
-      form.allowedDelegationTypes = allowedDelegationTypes
-      await form.save()
-    }
+      if (Array.isArray(form.allowedDelegationTypes)) {
+        allowedDelegationTypes = [...form.allowedDelegationTypes]
+      } else if (
+        form.allowedDelegationTypes &&
+        typeof form.allowedDelegationTypes === 'object'
+      ) {
+        allowedDelegationTypes = Object.values(form.allowedDelegationTypes)
+      } else {
+        allowedDelegationTypes = []
+      }
 
-    const newScreen = new this.screenModel()
-    newScreen.sectionId = form.sections[0].id // PARTIES is the only section here
-    await newScreen.save()
+      const delegationType = await this.getDelegationType(
+        createFormApplicantTypeDto.applicantTypeId,
+      )
+      if (
+        delegationType !== 'Other' &&
+        !allowedDelegationTypes.includes(delegationType)
+      ) {
+        allowedDelegationTypes.push(delegationType)
+        form.allowedDelegationTypes = allowedDelegationTypes
+        await form.save({ transaction })
+      }
 
-    const newField = new this.fieldModel()
-    newField.screenId = newScreen.id
-    newField.fieldType = FieldTypesEnum.APPLICANT
-    newField.fieldSettings = {
-      applicantType: applicantType.id,
-    } as FieldSettings
-    await newField.save()
+      const newScreen = await this.screenModel.create(
+        {
+          sectionId: form.sections[0].id, // PARTIES is the only section
+        } as Screen,
+        { transaction },
+      )
 
-    const screenDto = this.mapToScreenDto(newScreen, newField)
+      const newField = await this.fieldModel.create(
+        {
+          screenId: newScreen.id,
+          fieldType: FieldTypesEnum.APPLICANT,
+          fieldSettings: {
+            applicantType: applicantType.id,
+          } as FieldSettings,
+        } as Field,
+        { transaction },
+      )
 
+      screenDto = this.mapToScreenDto(newScreen, newField)
+    })
     return screenDto
   }
 
