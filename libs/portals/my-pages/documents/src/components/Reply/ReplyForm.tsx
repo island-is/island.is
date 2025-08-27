@@ -161,14 +161,14 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
         return
       }
 
-      // if (!userEmail) {
-      //   console.error('User email is missing')
-      //   methods.setError('reply', {
-      //     message: formatMessage(messages.emailMissing),
-      //   })
+      if (!userEmail) {
+        console.error('User email is missing')
+        methods.setError('reply', {
+          message: formatMessage(messages.emailMissing),
+        })
 
-      //   return
-      // }
+        return
+      }
 
       postReply({
         variables: {

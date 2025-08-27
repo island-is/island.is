@@ -30,6 +30,7 @@ const ReplyContainer = () => {
   const [showAllReplies, setShowAllReplies] = useState(false)
 
   const { data, loading, refetch } = useGetDocumentTicketQuery({
+    skip: !activeDocument?.id,
     variables: {
       input: {
         id: activeDocument?.id ?? '',
@@ -195,8 +196,8 @@ const ReplyContainer = () => {
             )}
           </>
         ) : !hideReplies ? (
-          repliesComments?.map((reply) => (
-            <Box key={reply.id || `reply-${Math.random()}`}>
+          repliesComments?.map((reply, index) => (
+            <Box key={reply.id || `reply-${index}`}>
               <Box paddingY={1}>
                 <Divider />
               </Box>
