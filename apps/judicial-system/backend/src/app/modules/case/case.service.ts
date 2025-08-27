@@ -615,6 +615,12 @@ export class CaseService {
       { transaction },
     )
 
+    await this.createIndictmentsForNewPoliceCaseNumbers(
+      theCase.policeCaseNumbers,
+      theCase,
+      transaction,
+    )
+
     return theCase.id
   }
 
@@ -738,7 +744,19 @@ export class CaseService {
     }
 
     // Add a single indictment count for each added police case numbers
-    for (const policeCaseNumber of addedPoliceCaseNumbers) {
+    await this.createIndictmentsForNewPoliceCaseNumbers(
+      addedPoliceCaseNumbers,
+      theCase,
+      transaction,
+    )
+  }
+
+  private async createIndictmentsForNewPoliceCaseNumbers(
+    newPoliceCaseNumbers: string[],
+    theCase: Case,
+    transaction: Transaction,
+  ) {
+    for (const policeCaseNumber of newPoliceCaseNumbers) {
       await this.indictmentCountService.createWithPoliceCaseNumber(
         theCase.id,
         policeCaseNumber,

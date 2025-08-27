@@ -380,44 +380,48 @@ export class InternalCaseService {
     }
 
     return this.sequelize.transaction(async (transaction) => {
-      return this.caseModel
-        .create(
-          {
-            ...caseToCreate,
-            state: isRequestCase(caseToCreate.type)
-              ? CaseState.NEW
-              : CaseState.DRAFT,
-            origin: CaseOrigin.LOKE,
-            creatingProsecutorId: creator.id,
-            prosecutorId:
-              creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
-            courtId: isRequestCase(caseToCreate.type)
-              ? creator.institution?.defaultCourtId
-              : undefined,
-            prosecutorsOfficeId: creator.institution?.id,
-          },
-          { transaction },
+      const newCase = await this.caseModel.create(
+        {
+          ...caseToCreate,
+          state: isRequestCase(caseToCreate.type)
+            ? CaseState.NEW
+            : CaseState.DRAFT,
+          origin: CaseOrigin.LOKE,
+          creatingProsecutorId: creator.id,
+          prosecutorId:
+            creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
+          courtId: isRequestCase(caseToCreate.type)
+            ? creator.institution?.defaultCourtId
+            : undefined,
+          prosecutorsOfficeId: creator.institution?.id,
+        },
+        { transaction },
+      )
+
+      for (const policeCaseNumber of newCase.policeCaseNumbers) {
+        await this.indictmentCountService.createWithPoliceCaseNumber(
+          newCase.id,
+          policeCaseNumber,
+          transaction,
         )
-        .then((theCase) =>
-          this.defendantService.createForNewCase(
-            theCase.id,
-            {
-              nationalId: caseToCreate.accusedNationalId,
-              dateOfBirth: caseToCreate.accusedDOB,
-              name: caseToCreate.accusedName,
-              gender: caseToCreate.accusedGender,
-              address: (caseToCreate.accusedAddress || '').trim(),
-              citizenship: caseToCreate.citizenship,
-            },
-            transaction,
-          ),
-        )
-        .then(
-          (defendant) =>
-            this.caseModel.findByPk(defendant.caseId, {
-              transaction,
-            }) as Promise<Case>,
-        )
+      }
+
+      await this.defendantService.createForNewCase(
+        newCase.id,
+        {
+          nationalId: caseToCreate.accusedNationalId,
+          dateOfBirth: caseToCreate.accusedDOB,
+          name: caseToCreate.accusedName,
+          gender: caseToCreate.accusedGender,
+          address: (caseToCreate.accusedAddress || '').trim(),
+          citizenship: caseToCreate.citizenship,
+        },
+        transaction,
+      )
+
+      const theCase = await this.caseModel.findByPk(newCase.id, { transaction })
+
+      return theCase as Case
     })
   }
 
