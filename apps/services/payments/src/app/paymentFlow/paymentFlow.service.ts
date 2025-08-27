@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { ConfigType } from '@nestjs/config'
-import { isValid } from 'kennitala'
+import { isCompany, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
 
 import type { Logger } from '@island.is/logging'
@@ -222,15 +222,27 @@ export class PaymentFlowService {
       throw new BadRequestException(PaymentServiceCode.InvalidPayerNationalId)
     }
 
-    const payeeInfo = await this.chargeFjsV2ClientService.getPayeeInfo(
-      payerNationalId,
-    )
+    let payerName: string | null = null
 
-    if (!payeeInfo || !payeeInfo.name) {
-      return ''
+    try {
+      const payeeInfo = await this.chargeFjsV2ClientService.getPayeeInfo(
+        payerNationalId,
+      )
+
+      payerName = payeeInfo.name
+    } catch (e) {
+      this.logger.error(`Failed to get payer name from FJS`, { error: e })
     }
 
-    return payeeInfo.name
+    if (payerName === null || payerName.length === 0) {
+      if (isCompany(payerNationalId)) {
+        throw new BadRequestException(PaymentServiceCode.CompanyNotFound)
+      }
+
+      throw new BadRequestException(PaymentServiceCode.PersonNotFound)
+    }
+
+    return payerName
   }
 
   async isEligibleToBePaid(id: string) {
