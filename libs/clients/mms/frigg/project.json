@@ -3,24 +3,17 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/mms/frigg/src",
   "projectType": "library",
-  "tags": [
-    "lib:client",
-    "scope:client"
-  ],
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
       "options": {
-        "lintFilePatterns": [
-          "libs/clients/mms/frigg/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["libs/clients/mms/frigg/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/libs/clients/mms"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/mms"],
       "options": {
         "jestConfig": "libs/clients/mms/frigg/jest.config.ts",
         "passWithNoTests": true
@@ -42,9 +35,7 @@
       "options": {
         "command": "yarn openapi-generator -o libs/clients/mms/frigg/gen/fetch -i libs/clients/mms/frigg/src/clientConfig.json"
       },
-      "outputs": [
-        "{projectRoot}/gen/fetch"
-      ]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   }
 }

@@ -3,16 +3,11 @@
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/signature-collection/parliamentary-list-signing/src",
   "projectType": "library",
-  "tags": [
-    "scope:application-system",
-    "lib:application-system"
-  ],
+  "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/signature-collection/parliamentary-list-signing/**/*.{ts,tsx,js,jsx}"

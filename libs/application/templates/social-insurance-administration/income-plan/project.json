@@ -3,16 +3,11 @@
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/social-insurance-administration/income-plan/src",
   "projectType": "library",
-  "tags": [
-    "scope:application-system",
-    "lib:application-system"
-  ],
+  "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/social-insurance-administration/income-plan/**/*.{ts,tsx,js,jsx}"

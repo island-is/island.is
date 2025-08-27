@@ -3,10 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/car-recycling/src",
   "projectType": "library",
-  "tags": [
-    "lib:application-system",
-    "scope:application-system"
-  ],
+  "tags": ["lib:application-system", "scope:application-system"],
   "generators": {},
   "targets": {
     "lint": {

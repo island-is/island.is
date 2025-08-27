@@ -3,16 +3,11 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/ums-cost-of-living-calculator/src",
   "projectType": "library",
-  "tags": [
-    "lib:client",
-    "scope:client"
-  ],
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "libs/clients/ums-cost-of-living-calculator/**/*.ts"
@@ -21,9 +16,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/clients/ums-cost-of-living-calculator/jest.config.ts",
         "passWithNoTests": true
