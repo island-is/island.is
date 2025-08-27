@@ -216,7 +216,8 @@ const Aids = ({ data }: Props) => {
                     type: 'text',
                     label: formatMessage(messages.valid),
                   }
-                : RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
+                : rowItem.renewalStatus ===
+                  RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
                 ? {
                     type: 'action',
                     label: formatMessage(messages.renew),
@@ -225,8 +226,8 @@ const Aids = ({ data }: Props) => {
                   }
                 : {
                     type: 'info',
-                    label: formatMessage(messages.notValidForRenewal),
-                    text: formatMessage(messages.notValidForRenewalDetail),
+                    label: formatMessage(messages.notValidForRenewalDetail),
+                    text: formatMessage(messages.notValidForRenewal),
                   },
             children: (
               <NestedInfoLines
