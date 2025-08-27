@@ -523,14 +523,16 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
     // Set feature-deployment prefix for URLs
-    Object.values(s.ingress).forEach((ingress) => {
-      if (!Array.isArray(ingress.host.dev)) {
-        ingress.host.dev = [ingress.host.dev]
-      }
-      ingress.host.dev = ingress.host.dev.map(
-        (host) => `${env.feature}-${host}`,
-      )
-    })
+    Object.values(s.ingress)
+      .filter((ingress) => !!ingress)
+      .forEach((ingress) => {
+        if (!Array.isArray(ingress.host.dev)) {
+          ingress.host.dev = [ingress.host.dev]
+        }
+        ingress.host.dev = ingress.host.dev.map(
+          (host) => `${env.feature}-${host}`,
+        )
+      })
     s.replicaCount = {
       min: Math.min(1, s.replicaCount?.min ?? 1),
       max: Math.min(2, s.replicaCount?.max ?? 1),
