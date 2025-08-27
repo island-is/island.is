@@ -82,7 +82,7 @@ export const downloadFile = () => {
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
   // Set first column to "Text" format
   worksheet.getColumn(1).numFmt = '@'
-  
+
   const workbook: XLSX.WorkBook = {
     Sheets: { [name]: worksheet },
     SheetNames: [name],
