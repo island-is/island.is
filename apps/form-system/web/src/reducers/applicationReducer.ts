@@ -42,7 +42,7 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
     .flatMap((section) => section.screens ?? [])
     .filter(Boolean) as FormSystemScreen[]
 
-  if (application.hasPayment == false) {
+  if (application.hasPayment === false) {
     sections.forEach((s) => {
       if (s.sectionType === SectionTypes.PAYMENT) s.isHidden = true
     })
@@ -52,7 +52,7 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
     })
   }
 
-  if (application.hasSummaryScreen == false) {
+  if (application.hasSummaryScreen === false) {
     sections.forEach((s) => {
       if (s.sectionType === SectionTypes.SUMMARY) s.isHidden = true
     })
