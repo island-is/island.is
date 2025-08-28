@@ -39,7 +39,7 @@ export class News {
   @CacheField(() => [GenericTag])
   genericTags: GenericTag[] = []
 
-  @Field({nullable: true})
+  @Field({ nullable: true })
   imageText?: string
 
   @Field(() => Boolean, { nullable: true })
