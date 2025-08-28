@@ -47,8 +47,6 @@ export const otherFees = z
       heatingCostMeterStatusDate,
       otherCosts,
       otherCostItems,
-      otherCostsDescription,
-      otherCostsAmount,
     } = data
 
     const tenantPaysHousingFund = housingFund === OtherFeesPayeeOptions.TENANT

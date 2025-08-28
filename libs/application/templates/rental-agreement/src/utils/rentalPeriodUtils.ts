@@ -1,6 +1,7 @@
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'
 import is from 'date-fns/locale/is'
+import addMonths from 'date-fns/addMonths'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import {
@@ -11,7 +12,6 @@ import {
   SecurityDepositTypeOptions,
 } from './enums'
 import { applicationAnswers, ConsumerIndexItem } from '../shared'
-import { addMonths } from 'date-fns'
 
 // Amount utils
 export const rentalAmountConnectedToIndex = (answers: FormValue) => {
