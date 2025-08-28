@@ -38,55 +38,58 @@ export const Summary = ({ state }: Props) => {
         section?.screens
           ?.filter((scr) => !scr?.isHidden)
           .map((screen, index) => (
-          <Box key={screen?.id ?? `screen-${index}`} marginTop={5}>
-            <Divider />
-            <GridContainer>
-              <GridRow>
-                <GridColumn span={['12/12', '1/2']}>
-                  <Box marginTop={5}>
-                    <Text as="h3" variant="h3" fontWeight="semiBold">
-                      {screen?.name?.[lang]}
-                    </Text>
-                  </Box>
-                </GridColumn>
-                <GridColumn span={['12/12', '1/2']}>
-                  <Box
-                    display="flex"
-                    marginTop={5}
-                    justifyContent={['flexStart', 'flexEnd']}
-                  >
-                    <Button
-                      icon="pencil"
-                      iconType="filled"
-                      variant="utility"
-                      inline={true}
-                      onClick={() => {
-                        handleButtonClick(
-                          section?.displayOrder ?? undefined,
-                          screen?.displayOrder ?? undefined,
-                        )
-                      }}
+            <Box key={screen?.id ?? `screen-${index}`} marginTop={5}>
+              <Divider />
+              <GridContainer>
+                <GridRow>
+                  <GridColumn span={['12/12', '1/2']}>
+                    <Box marginTop={5}>
+                      <Text as="h3" variant="h3" fontWeight="semiBold">
+                        {screen?.name?.[lang]}
+                      </Text>
+                    </Box>
+                  </GridColumn>
+                  <GridColumn span={['12/12', '1/2']}>
+                    <Box
+                      display="flex"
+                      marginTop={5}
+                      justifyContent={['flexStart', 'flexEnd']}
                     >
-                      {formatMessage({ id: 'form-system:edit', defaultMessage: 'Breyta' })}
-                    </Button>
-                  </Box>
-                </GridColumn>
-              </GridRow>
-              <GridRow>
-                <GridColumn span={['12/12', '1/2']}>
-                  {screen?.fields
-                    ?.filter(
-                      (field): field is NonNullable<typeof field> =>
-                        field != null && !field.isHidden,
-                    )
-                    .map((field, index) => (
-                      <Display field={field} key={index} />
-                    ))}
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          </Box>
-        )),
+                      <Button
+                        icon="pencil"
+                        iconType="filled"
+                        variant="utility"
+                        inline={true}
+                        onClick={() => {
+                          handleButtonClick(
+                            section?.displayOrder ?? undefined,
+                            screen?.displayOrder ?? undefined,
+                          )
+                        }}
+                      >
+                        {formatMessage({
+                          id: 'form-system:edit',
+                          defaultMessage: 'Breyta',
+                        })}
+                      </Button>
+                    </Box>
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn span={['12/12', '1/2']}>
+                    {screen?.fields
+                      ?.filter(
+                        (field): field is NonNullable<typeof field> =>
+                          field != null && !field.isHidden,
+                      )
+                      .map((field, index) => (
+                        <Display field={field} key={index} />
+                      ))}
+                  </GridColumn>
+                </GridRow>
+              </GridContainer>
+            </Box>
+          )),
       )}
     </Box>
   )

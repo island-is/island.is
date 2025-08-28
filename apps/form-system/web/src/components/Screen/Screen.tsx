@@ -51,9 +51,9 @@ export const Screen = () => {
             }
           />
         )}
-        {currentSectionType === SectionTypes.SUMMARY &&  
-          !!state.application.hasSummaryScreen &&  
-          !currentSection?.data?.isHidden && <Summary state={state} />} 
+        {currentSectionType === SectionTypes.SUMMARY &&
+          !!state.application.hasSummaryScreen &&
+          !currentSection?.data?.isHidden && <Summary state={state} />}
         {currentScreen &&
           currentScreen?.data?.fields
             ?.filter(

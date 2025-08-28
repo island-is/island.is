@@ -260,10 +260,10 @@ export const setCurrentScreen = (
       data: currentSection,
       index: sectionIndex,
     },
-    currentScreen:  
-      currentScreen !== undefined  
-        ? { data: currentScreen, index: screenIndex }  
-        : undefined, 
+    currentScreen:
+      currentScreen !== undefined
+        ? { data: currentScreen, index: screenIndex }
+        : undefined,
   }
 }
 
