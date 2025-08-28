@@ -100,7 +100,7 @@ const addNodeModulesPolyfill = (config) => {
 
   // Handle the npm zlib package specifically
   config.resolve.alias = {
-    ...config.resolve.alias,
+    ...(config.resolve.alias ?? {}),
     zlib$: require.resolve('browserify-zlib'),
     'zlib/lib/zlib_bindings': false,
   }
