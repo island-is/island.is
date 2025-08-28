@@ -16,11 +16,10 @@ import {
   IndictmentCountService,
 } from '../../../indictment-count'
 import { Offense } from '../../../indictment-count/models/offense.model'
-import { Case, CaseArchive } from '../../../repository'
+import { Case, CaseArchive, CaseString } from '../../../repository'
 import { caseModuleConfig } from '../../case.config'
 import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
-import { CaseString } from '../../models/caseString.model'
 
 jest.mock('crypto-js')
 jest.mock('../../../../factories')

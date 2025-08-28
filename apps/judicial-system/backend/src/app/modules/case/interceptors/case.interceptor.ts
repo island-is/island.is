@@ -16,8 +16,7 @@ import {
 
 import { Defendant, DefendantEventLog } from '../../defendant'
 import { EventLog } from '../../event-log'
-import { Case } from '../../repository'
-import { CaseString } from '../models/caseString.model'
+import { Case, CaseString } from '../../repository'
 
 export const transformDefendants = (defendants?: Defendant[]) => {
   return defendants?.map((defendant) => ({

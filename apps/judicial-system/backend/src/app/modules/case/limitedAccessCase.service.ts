@@ -48,12 +48,11 @@ import {
 import { IndictmentCount } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
-import { Case } from '../repository'
+import { Case, CaseString } from '../repository'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
 import { Verdict } from '../verdict/models/verdict.model'
 import { Victim } from '../victim'
-import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
 import { PdfService } from './pdf.service'
 
