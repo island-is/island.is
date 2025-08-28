@@ -12,9 +12,12 @@ export class BloodClientService {
     return this.api.withMiddleware(new AuthMiddleware(auth))
   }
 
-  getBloodType = async (user: User): Promise<BloodTypeDto | null> => {
+  getBloodType = async (
+    user: User,
+    locale: string,
+  ): Promise<BloodTypeDto | null> => {
     const bloodType = await this.bloodTypeWithAuth(user)
-      .apiBloodGet()
+      .apiBloodGet({ locale: locale })
       .catch(handle404)
 
     if (!bloodType) {
