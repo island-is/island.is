@@ -73,7 +73,9 @@ const PaymentsAndRights: React.FC<Props> = ({
                 ? {
                     label:
                       formatMessage(messages.medicineStepStatusShort, {
-                        step: medicine.data?.levelNumber,
+                        step:
+                          medicine.data?.levelNumber ??
+                          formatMessage(messages.unknown),
                       }) ?? '',
                     value: medicine.data?.levelPercentage + '%',
                   }
@@ -88,9 +90,11 @@ const PaymentsAndRights: React.FC<Props> = ({
           },
           {
             title: formatMessage(messages.hasHealthInsurance),
-            description: `${formatMessage(
-              messages.from,
-            ).toLocaleLowerCase()} ${formatDate(insurance.data?.from)}`,
+            description: `${formatMessage(messages.from).toLocaleLowerCase()} ${
+              insurance.data?.from
+                ? formatDate(insurance.data?.from)
+                : formatMessage(messages.unknown)
+            }`,
             to: insurance.error ? currentPath : HealthPaths.HealthPaymentRights,
 
             loading: insurance.loading,
@@ -107,15 +111,16 @@ const PaymentsAndRights: React.FC<Props> = ({
           },
           {
             title: formatMessage(messages.ehic),
-            description: isInsuranceCardValid
-              ? `${formatMessage(messages.medicineValidTo)}: ${formatDate(
-                  ehicDate,
-                )}`
-              : ehicDate
-              ? formatMessage(messages.expiredOn, {
-                  arg: formatDate(ehicDate),
-                })
-              : formatMessage(messages.vaccineExpired),
+            description:
+              isInsuranceCardValid && ehicDate
+                ? `${formatMessage(messages.medicineValidTo)}: ${formatDate(
+                    ehicDate,
+                  )}`
+                : ehicDate
+                ? formatMessage(messages.expiredOn, {
+                    arg: formatDate(ehicDate),
+                  })
+                : formatMessage(messages.vaccineExpired),
             to: insurance.error ? currentPath : HealthPaths.HealthPaymentRights,
 
             tags: [
