@@ -44,7 +44,6 @@ import {
   publicProsecutorStaffRule,
 } from '../../guards'
 import {
-  Case,
   CaseExistsGuard,
   CaseNotCompletedGuard,
   CaseReadGuard,
@@ -60,6 +59,7 @@ import {
   Defendant,
   DefendantExistsGuard,
 } from '../defendant'
+import { Case } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'

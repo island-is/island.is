@@ -23,7 +23,8 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { Case, CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
+import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
+import { Case } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'

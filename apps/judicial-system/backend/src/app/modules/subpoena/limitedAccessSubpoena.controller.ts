@@ -22,7 +22,6 @@ import {
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
-  Case,
   CaseExistsGuard,
   CaseReadGuard,
   CaseTypeGuard,
@@ -31,6 +30,7 @@ import {
   PdfService,
 } from '../case'
 import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
+import { Case } from '../repository'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
 import { Subpoena } from './models/subpoena.model'

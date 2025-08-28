@@ -31,7 +31,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
-  Case,
   CaseCompletedGuard,
   CaseExistsGuard,
   CaseTypeGuard,
@@ -39,6 +38,7 @@ import {
 } from '../case'
 import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
+import { Case } from '../repository'
 import { Verdict } from '../verdict/models/verdict.model'
 import { VerdictService } from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'

@@ -36,9 +36,9 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import { Defendant } from '../defendant'
 import { EventLog } from '../event-log'
+import { Case } from '../repository'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
-import { Case } from './models/case.model'
 
 @Injectable()
 export class PdfService {

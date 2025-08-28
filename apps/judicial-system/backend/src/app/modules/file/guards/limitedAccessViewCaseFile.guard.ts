@@ -8,7 +8,7 @@ import {
 
 import { User } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case'
+import { Case } from '../../repository'
 import { CaseFile } from '../models/file.model'
 import { canLimitedAccessUserViewCaseFile } from './caseFileCategory'
 

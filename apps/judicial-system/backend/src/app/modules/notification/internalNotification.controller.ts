@@ -18,7 +18,7 @@ import {
 } from '@island.is/judicial-system/message'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { Case, CaseHasExistedGuard, CaseTypeGuard, CurrentCase } from '../case'
+import { CaseHasExistedGuard, CaseTypeGuard, CurrentCase } from '../case'
 import {
   CivilClaimant,
   CivilClaimantExistsGuard,
@@ -27,6 +27,7 @@ import {
   Defendant,
   DefendantExistsGuard,
 } from '../defendant'
+import { Case } from '../repository'
 import { SubpoenaExistsGuard } from '../subpoena'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
 import { CivilClaimantNotificationDto } from './dto/civilClaimantNotification.dto'

@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { DefendantEventLog, DefendantService } from '../../defendant'
-import { Case } from '../models/case.model'
+import { Case } from '../../repository'
 
 const hasValidOpenByPrisonAdminEvent = (
   defendantEventLogs: DefendantEventLog[],

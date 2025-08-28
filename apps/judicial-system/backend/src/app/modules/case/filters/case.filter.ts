@@ -24,8 +24,8 @@ import {
 
 import { CivilClaimant, Defendant } from '../../defendant'
 import { EventLog } from '../../event-log'
+import { Case } from '../../repository'
 import { Victim } from '../../victim'
-import { Case } from '../models/case.model'
 import { MinimalCase } from '../models/case.types'
 import { DateLog } from '../models/dateLog.model'
 

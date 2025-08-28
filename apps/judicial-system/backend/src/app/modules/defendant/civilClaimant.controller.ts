@@ -26,7 +26,8 @@ import {
   prosecutorRepresentativeRule,
   prosecutorRule,
 } from '../../guards'
-import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { Case } from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CurrentCivilClaimant } from './guards/civilClaimaint.decorator'
 import { CivilClaimantExistsGuard } from './guards/civilClaimantExists.guard'

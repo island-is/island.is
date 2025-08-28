@@ -29,8 +29,8 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case/models/case.model'
 import { CourtService } from '../court'
+import { Case } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'

@@ -4,9 +4,9 @@ import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
+import { Case } from '../../../repository'
 import { caseListInclude, listOrder } from '../../case.service'
 import { getCasesQueryFilter } from '../../filters/cases.filter'
-import { Case } from '../../models/case.model'
 
 jest.mock('../../filters/cases.filter')
 

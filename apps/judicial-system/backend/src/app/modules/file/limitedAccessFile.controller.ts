@@ -28,7 +28,6 @@ import {
 
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import {
-  Case,
   CaseCompletedGuard,
   CaseReadGuard,
   CaseTypeGuard,
@@ -38,6 +37,7 @@ import {
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
 import { CivilClaimantExistsGuard } from '../defendant'
+import { Case } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'

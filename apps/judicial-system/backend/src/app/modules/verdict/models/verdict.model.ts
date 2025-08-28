@@ -19,8 +19,8 @@ import {
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case/models/case.model'
 import { Defendant } from '../../defendant/models/defendant.model'
+import { Case } from '../../repository'
 
 @Table({
   tableName: 'verdict',

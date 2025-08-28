@@ -19,7 +19,8 @@ import {
 } from '@island.is/judicial-system/auth'
 import { type User } from '@island.is/judicial-system/types'
 
-import { Case, CaseExistsGuard, CurrentCase } from '../case'
+import { CaseExistsGuard, CurrentCase } from '../case'
+import { Case } from '../repository'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'

@@ -35,7 +35,6 @@ import {
   publicProsecutorStaffRule,
 } from '../../guards'
 import {
-  Case,
   CaseExistsGuard,
   CaseReadGuard,
   CaseTypeGuard,
@@ -45,6 +44,7 @@ import {
 import { Defendant } from '../defendant'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
+import { Case } from '../repository'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import {
   SubpoenaExistsGuard,

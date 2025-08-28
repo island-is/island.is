@@ -1,7 +1,7 @@
 import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
 import { verifyGuards } from '../../../test'
-import { MinimalCaseAccessGuard, MinimalCaseExistsGuard } from '../../case'
+import { MinimalCaseAccessGuard, MinimalCaseExistsGuard } from '../../repository'
 import { ValidateVictimGuard } from '../guards/validateVictim.guard'
 import { VictimWriteGuard } from '../guards/victimWrite.guard'
 import { VictimController } from '../victim.controller'

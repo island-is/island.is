@@ -24,10 +24,10 @@ import {
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
-import { Case } from '../case/models/case.model'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { Defendant } from '../defendant/models/defendant.model'
+import { Case } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { PoliceSubpoenaExistsGuard } from './guards/policeSubpoenaExists.guard'

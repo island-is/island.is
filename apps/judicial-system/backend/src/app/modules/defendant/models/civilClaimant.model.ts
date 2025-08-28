@@ -13,7 +13,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 
-import { Case } from '../../case/models/case.model'
+import { Case } from '../../repository'
 
 @Table({
   tableName: 'civil_claimant',

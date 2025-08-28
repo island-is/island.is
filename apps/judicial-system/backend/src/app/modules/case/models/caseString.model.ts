@@ -12,7 +12,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { StringType } from '@island.is/judicial-system/types'
 
-import { Case } from './case.model'
+import { Case } from '../../repository'
 
 @Table({
   tableName: 'case_string',

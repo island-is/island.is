@@ -22,7 +22,7 @@ import {
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case/models/case.model'
+import { Case } from '../../repository'
 import { Subpoena } from '../../subpoena/models/subpoena.model'
 import { Verdict } from '../../verdict/models/verdict.model'
 import { DefendantEventLog } from './defendantEventLog.model'

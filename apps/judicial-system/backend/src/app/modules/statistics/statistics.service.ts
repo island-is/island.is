@@ -13,8 +13,8 @@ import {
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case'
 import { EventLog } from '../event-log'
+import { Case } from '../repository'
 import { Subpoena } from '../subpoena'
 import {
   CaseStatistics,

@@ -17,7 +17,7 @@ import {
   CivilClaimantNotificationType,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case/models/case.model'
+import { Case } from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CivilClaimant } from './models/civilClaimant.model'
 

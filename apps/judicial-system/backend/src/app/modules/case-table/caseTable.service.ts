@@ -21,8 +21,8 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case/models/case.model'
 import { Defendant } from '../defendant'
+import { Case } from '../repository'
 import { User } from '../user'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'

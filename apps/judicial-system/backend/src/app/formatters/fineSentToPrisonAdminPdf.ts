@@ -6,9 +6,9 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { DefendantEventType, EventType } from '@island.is/judicial-system/types'
 
-import { Case } from '../modules/case'
 import { DefendantEventLog } from '../modules/defendant'
 import { EventLog } from '../modules/event-log'
+import { Case } from '../modules/repository'
 import {
   addEmptyLines,
   addLargeHeading,

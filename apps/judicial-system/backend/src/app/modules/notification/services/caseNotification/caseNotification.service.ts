@@ -75,7 +75,7 @@ import {
   formatProsecutorReceivedByCourtSmsNotification,
 } from '../../../../formatters'
 import { notifications } from '../../../../messages'
-import { type Case, DateLog } from '../../../case'
+import { DateLog } from '../../../case'
 import { CourtService } from '../../../court'
 import {
   type CivilClaimant,
@@ -83,6 +83,7 @@ import {
   DefendantService,
 } from '../../../defendant'
 import { EventService } from '../../../event'
+import { type Case } from '../../../repository'
 import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification, Recipient } from '../../models/notification.model'

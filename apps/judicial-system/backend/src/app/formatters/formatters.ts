@@ -31,7 +31,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { core, custodyNotice, notifications } from '../messages'
-import { Case, DateLog } from '../modules/case'
+import { DateLog } from '../modules/case'
+import { Case } from '../modules/repository'
 
 type SubjectAndBody = {
   subject: string

@@ -17,8 +17,8 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { type Case } from '../case'
 import { DateLog } from '../case/models/dateLog.model'
+import { type Case } from '../repository'
 import { eventModuleConfig } from './event.config'
 
 const errorEmojis = [

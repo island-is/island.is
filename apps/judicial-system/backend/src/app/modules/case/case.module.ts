@@ -19,8 +19,8 @@ import {
   UserModule,
   VictimModule,
 } from '../index'
+import { Case } from '../repository'
 import { VerdictModule } from '../verdict/verdict.module'
-import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'

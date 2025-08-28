@@ -29,7 +29,8 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { Case } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
