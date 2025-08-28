@@ -87,37 +87,39 @@ export const SpeedMeasurementCalculator = ({
 
   return (
     <Stack space={3}>
-      <Input
-        label={formatMessage(
-          m.speedMeasurementCalculator.measuredSpeedInputLabel,
-        )}
-        name="measured-speed-input"
-        size="xs"
-        type="number"
-        inputMode="numeric"
-        value={measuredSpeed}
-        onChange={(e) => {
-          if (Number.isNaN(Number(e.target.value))) {
-            return
-          }
-          setMeasuredSpeed(e.target.value)
-        }}
-      />
+      <Stack space={2}>
+        <Input
+          label={formatMessage(
+            m.speedMeasurementCalculator.measuredSpeedInputLabel,
+          )}
+          name="measured-speed-input"
+          size="xs"
+          type="number"
+          inputMode="numeric"
+          value={measuredSpeed}
+          onChange={(e) => {
+            if (Number.isNaN(Number(e.target.value))) {
+              return
+            }
+            setMeasuredSpeed(e.target.value)
+          }}
+        />
 
-      <Box display="flex" columnGap={5}>
-        <Stack space={1}>
-          <Text variant="eyebrow">
-            {formatMessage(m.speedMeasurementCalculator.vikmorkInputLabel)}
-          </Text>
-          <Text fontWeight="semiBold">{vikmork}</Text>
-        </Stack>
-        <Stack space={1}>
-          <Text variant="eyebrow">
-            {formatMessage(m.speedMeasurementCalculator.nidurstadaInputLabel)}
-          </Text>
-          <Text fontWeight="semiBold">{nidurstada}</Text>
-        </Stack>
-      </Box>
+        <Box display="flex" columnGap={5}>
+          <Stack space={1}>
+            <Text variant="eyebrow">
+              {formatMessage(m.speedMeasurementCalculator.vikmorkInputLabel)}
+            </Text>
+            <Text fontWeight="semiBold">{vikmork}</Text>
+          </Stack>
+          <Stack space={1}>
+            <Text variant="eyebrow">
+              {formatMessage(m.speedMeasurementCalculator.nidurstadaInputLabel)}
+            </Text>
+            <Text fontWeight="semiBold">{nidurstada}</Text>
+          </Stack>
+        </Box>
+      </Stack>
 
       <Select
         label={formatMessage(
