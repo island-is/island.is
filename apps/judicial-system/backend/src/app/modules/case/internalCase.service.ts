@@ -398,12 +398,14 @@ export class InternalCaseService {
         { transaction },
       )
 
-      for (const policeCaseNumber of newCase.policeCaseNumbers) {
-        await this.indictmentCountService.createWithPoliceCaseNumber(
-          newCase.id,
-          policeCaseNumber,
-          transaction,
-        )
+      if (isIndictmentCase(newCase.type)) {
+        for (const policeCaseNumber of newCase.policeCaseNumbers) {
+          await this.indictmentCountService.createWithPoliceCaseNumber(
+            newCase.id,
+            policeCaseNumber,
+            transaction,
+          )
+        }
       }
 
       await this.defendantService.createForNewCase(

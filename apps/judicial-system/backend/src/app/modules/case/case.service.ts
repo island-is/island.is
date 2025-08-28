@@ -615,11 +615,13 @@ export class CaseService {
       { transaction },
     )
 
-    await this.createIndictmentsForNewPoliceCaseNumbers(
-      theCase.policeCaseNumbers,
-      theCase,
-      transaction,
-    )
+    if (isIndictmentCase(theCase.type)) {
+      await this.createIndictmentsForNewPoliceCaseNumbers(
+        theCase.policeCaseNumbers,
+        theCase,
+        transaction,
+      )
+    }
 
     return theCase.id
   }
@@ -744,11 +746,13 @@ export class CaseService {
     }
 
     // Add a single indictment count for each added police case numbers
-    await this.createIndictmentsForNewPoliceCaseNumbers(
-      addedPoliceCaseNumbers,
-      theCase,
-      transaction,
-    )
+    if (isIndictmentCase(theCase.type)) {
+      await this.createIndictmentsForNewPoliceCaseNumbers(
+        addedPoliceCaseNumbers,
+        theCase,
+        transaction,
+      )
+    }
   }
 
   private async createIndictmentsForNewPoliceCaseNumbers(
