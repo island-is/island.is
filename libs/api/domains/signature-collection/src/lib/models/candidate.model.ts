@@ -11,6 +11,9 @@ export class SignatureCollectionCandidate {
   @Field()
   name!: string
 
+  @Field()
+  ownerName!: string
+
   @Field({ nullable: true })
   phone?: string
 
