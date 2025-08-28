@@ -209,7 +209,7 @@ const subpoenaCreated = (c: Case): IndictmentCaseEvent[] | undefined => {
 
       return option.some({
         defendantId: defendant.id,
-        date: subpoena.created, // TODO: store the date when we send subpoena to the police
+        date: subpoena.created,
         serviceStatus: subpoena.serviceStatus,
       })
     }),
@@ -222,7 +222,7 @@ const subpoenaCreated = (c: Case): IndictmentCaseEvent[] | undefined => {
   return subpoenas.map((subpoena) => ({
     id: c.id,
     event: 'SUBPOENA_CREATED',
-    eventDescriptor: 'Fyrirkall stofnað',
+    eventDescriptor: 'Fyrirkall sent í birtingu',
     date: subpoena.date.toISOString(),
     institution: c.court?.name,
     defendantId: subpoena.defendantId,

@@ -46,8 +46,24 @@ import {
   SubpoenaStatistics,
 } from './models/subpoenaStatistics.response'
 import { DateFilter } from './statistics/types'
-import { indictmentCaseEventFunctions } from './indictmentCaseEvents'
-import { requestCaseEventFunctions } from './requestCaseEvents'
+import {
+  IndictmentCaseEvent,
+  indictmentCaseEventFunctions,
+} from './indictmentCaseEvents'
+import {
+  RequestCaseEvent,
+  requestCaseEventFunctions,
+} from './requestCaseEvents'
+interface Column {
+  key: string
+  header: string
+}
+
+type CsvExportObject<T extends RequestCaseEvent | IndictmentCaseEvent> = {
+  data: T[]
+  columns: Column[]
+  key: string
+}
 
 const isDateInPeriod = (
   date: Date,
@@ -64,6 +80,13 @@ const isDateInPeriod = (
     isBeforeOrEqual(date, period.toDate)
   )
 }
+
+const isValidEvent = (
+  event: RequestCaseEvent | IndictmentCaseEvent | undefined,
+  fromDate: Date,
+  toDate: Date,
+): event is RequestCaseEvent | IndictmentCaseEvent =>
+  !!event && isDateInPeriod(new Date(event.date), { fromDate, toDate })
 
 const getDateString = (date?: Date) =>
   format(date ? new Date(date) : new Date(), 'yyyy-MM-dd')
@@ -530,10 +553,7 @@ export class StatisticsService {
     const toDate = new Date(period.toDate ?? Date.now())
     const events = cases
       .flatMap((c) => requestCaseEventFunctions.flatMap((func) => func(c)))
-      .filter(
-        (event) =>
-          !!event && isDateInPeriod(new Date(event.date), { fromDate, toDate }),
-      )
+      .filter((event) => isValidEvent(event, fromDate, toDate))
 
     return events
   }
@@ -630,14 +650,33 @@ export class StatisticsService {
     const events = cases.flatMap((c) => {
       return indictmentCaseEventFunctions
         .flatMap((func) => func(c, institutions))
-        .filter(
-          (event) =>
-            !!event &&
-            isDateInPeriod(new Date(event.date), { fromDate, toDate }),
-        )
+        .filter((event) => isValidEvent(event, fromDate, toDate))
     })
-
     return events
+  }
+
+  private async uploadCsvDataToS3({
+    data,
+    columns,
+    key,
+  }: CsvExportObject<RequestCaseEvent | IndictmentCaseEvent>): Promise<void> {
+    return new Promise((resolve, reject) => {
+      stringify(data, { header: true, columns }, async (error, csvOutput) => {
+        if (error) {
+          this.logger.error('Failed to convert data to csv file')
+          reject(error)
+          return
+        }
+
+        try {
+          await this.awsS3Service.uploadCsvToS3(key, csvOutput)
+          resolve()
+        } catch (error) {
+          this.logger.error(`Failed to upload csv ${key} to AWS S3`, { error })
+          reject(error)
+        }
+      })
+    })
   }
 
   async extractTransformLoadEventDataToS3({
@@ -654,7 +693,7 @@ export class StatisticsService {
         return {
           data: await this.extractAndTransformRequestCases(period),
           columns: [
-            { key: 'id', header: 'ID' },
+            { key: 'id', header: 'Mál' },
             { key: 'eventDescriptor', header: 'Atburður' },
             { key: 'date', header: 'Dagsetning' },
             { key: 'institution', header: 'Stofnun' },
@@ -669,7 +708,7 @@ export class StatisticsService {
               key: 'courtOfAppealDecisionDescriptor',
               header: 'Niðurstaða Landsréttar',
             },
-          ],
+          ] as Column[],
           key: `krofur_from_${getDateString(
             period?.fromDate,
           )}_to_${getDateString(period?.toDate)}_${user.nationalId}`,
@@ -688,12 +727,12 @@ export class StatisticsService {
             { key: 'origin', header: 'Stofnað í' },
             { key: 'defendantId', header: 'Varnaraðili' },
             { key: 'serviceStatusDescriptor', header: 'Birting' },
-            { key: 'rulingDecisionDescriptor', header: 'Uppkvaðning' },
+            { key: 'rulingDecisionDescriptor', header: 'Lyktir' },
             {
               key: 'timeToServeSubpoena',
               header: 'Birtingartími fyrirkalls (dagar)',
             },
-          ],
+          ] as Column[],
           key: `ákærur_from_${getDateString(
             period?.fromDate,
           )}_to_${getDateString(period?.toDate)}_${user.nationalId}`,
@@ -705,22 +744,11 @@ export class StatisticsService {
     const result = await getData()
     if (!result) return { url: '' }
 
-    const { data, columns, key } = result
+    const url = await this.uploadCsvDataToS3(result).then(
+      async () =>
+        await this.awsS3Service.getSignedUrl('statistics', result.key, 60 * 60),
+    )
 
-    stringify(data, { header: true, columns }, async (error, csvOutput) => {
-      if (error) {
-        this.logger.error('Failed to convert data to csv file')
-        return
-      }
-
-      try {
-        await this.awsS3Service.uploadCsvToS3(key, csvOutput)
-      } catch (error) {
-        this.logger.error(`Failed to upload csv ${key} to AWS S3`, { error })
-      }
-    })
-
-    const url = await this.awsS3Service.getSignedUrl('statistics', key, 60 * 60) // TTL: 1h
     return { url }
   }
 }
