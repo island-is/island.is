@@ -68,6 +68,10 @@ export const Summary = ({ state }: Props) => {
                             section?.displayOrder ?? -1,
                             screen?.displayOrder ?? -1,
                           )
+                          handleButtonClick(
+                            section?.displayOrder ?? -1,
+                            screen?.displayOrder ?? -1,
+                          )
                         }}
                       >
                         {formatMessage(m.edit)}
