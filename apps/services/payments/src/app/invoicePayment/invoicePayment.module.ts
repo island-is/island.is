@@ -6,8 +6,6 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
 
 import { InvoicePaymentController } from './invoicePayment.controller'
-import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
-import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import {
   PaymentFlow,
   PaymentFlowCharge,
@@ -34,8 +32,6 @@ import { JwksConfig } from '../jwks/jwks.config'
     }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
-    NationalRegistryV3ClientModule,
-    CompanyRegistryClientModule,
     JwksModule,
   ],
   controllers: [InvoicePaymentController],
