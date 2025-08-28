@@ -8,7 +8,7 @@ import {
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
 } from '../utils/enums'
-import { tenantInfo, landlordInfo } from './schemas/landlordAndTenantSchema'
+import { parties } from './schemas/landlordAndTenantSchema'
 import { registerProperty } from './schemas/propertySearchSchema'
 import { otherFees } from './schemas/otherFeesSchema'
 import { securityDeposit } from './schemas/securityDepositSchema'
@@ -229,8 +229,7 @@ const preSignatureInfo = z.object({
 export const dataSchema = z.object({
   approveExternalData,
   applicant,
-  landlordInfo,
-  tenantInfo,
+  parties,
   registerProperty,
   propertyInfo,
   rentalPeriod,

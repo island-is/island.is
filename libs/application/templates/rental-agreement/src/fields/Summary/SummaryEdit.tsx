@@ -69,12 +69,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     },
     {
       isFilled: !hasRepeatedApplicants,
-      route: Routes.LANDLORDINFORMATION,
-      message: summary.uniqueApplicantsError,
-    },
-    {
-      isFilled: !hasRepeatedApplicants,
-      route: Routes.TENANTINFORMATION,
+      route: Routes.PARTIESINFORMATION,
       message: summary.uniqueApplicantsError,
     },
   ]
@@ -97,16 +92,14 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         application={application}
         field={field}
         goToScreen={goToScreen}
-        landlordsRoute={Routes.LANDLORDINFORMATION}
-        tenantsRoute={Routes.TENANTINFORMATION}
+        partiesRoute={Routes.PARTIESINFORMATION}
         hasChangeButton={true}
       />
       <ApplicantsRepresentativesSummary
         application={application}
         field={field}
         goToScreen={goToScreen}
-        landlordsRoute={Routes.LANDLORDINFORMATION}
-        tenantsRoute={Routes.TENANTINFORMATION}
+        partiesRoute={Routes.PARTIESINFORMATION}
         hasChangeButton={true}
       />
       <RentalInfoSummary

@@ -12,14 +12,13 @@ import { summary } from '../../lib/messages'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
-  landlordsRoute?: Routes
-  tenantsRoute?: Routes
+  partiesRoute?: Routes
   hasChangeButton: boolean
 }
 
 export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
-  const { application, goToScreen, landlordsRoute, hasChangeButton } = props
+  const { application, goToScreen, partiesRoute, hasChangeButton } = props
   const { answers } = application
 
   const { landlordRepresentatives } = applicationAnswers(answers)
@@ -35,7 +34,7 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
               <SummaryCardRow
                 key={landlordRep.nationalIdWithName?.nationalId}
                 editAction={goToScreen}
-                route={landlordsRoute}
+                route={partiesRoute}
                 hasChangeButton={hasChangeButton}
               >
                 <GridColumn span={['12/12']}>
