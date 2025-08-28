@@ -50,6 +50,9 @@ export class ApplicationDto {
   @ApiPropertyOptional()
   hasSummaryScreen?: boolean
 
+  @ApiPropertyOptional()
+  hasPayment?: boolean
+
   @ApiPropertyOptional({ type: [ApplicationEventDto] })
   events?: ApplicationEventDto[]
 

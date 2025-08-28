@@ -141,6 +141,10 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:summary-screen',
     defaultMessage: 'Yfirlit',
   },
+  payment: {
+    id: 'portals-admin.form-system:payment',
+    defaultMessage: 'Greiðsla',
+  },
   certifications: {
     id: 'portals-admin.form-system:certifications',
     defaultMessage: 'Vottorð',

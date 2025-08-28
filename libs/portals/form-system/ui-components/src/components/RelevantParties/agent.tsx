@@ -28,12 +28,10 @@ export const Agent = ({ applicantType, lang, nationalId }: Props) => {
   let address: string | undefined = undefined
   let isLoading = false
   let postalCode: string | undefined = ''
-  console.log("AGENT", applicantType)
   if (
     applicantType.applicantTypeId ===
     ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL
   ) {
-    console.log("IN INDIVIDUAL")
     const nameQuery = useQuery(GET_NAME_BY_NATIONALID, {
       variables: { input: nationalId },
       fetchPolicy: 'cache-first',
@@ -65,7 +63,7 @@ export const Agent = ({ applicantType, lang, nationalId }: Props) => {
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
-        {applicantType?.name?.[lang] + 'AGENT'}
+        {applicantType?.name?.[lang]}
       </Text>
       <Stack space={2}>
         {isLoading ? (

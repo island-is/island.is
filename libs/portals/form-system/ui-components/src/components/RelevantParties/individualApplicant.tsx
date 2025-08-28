@@ -65,12 +65,10 @@ export const IndividualApplicant = ({
     setPhoneNumber(phoneNumberCatcher)
   }, [emails, phoneNumberCatcher])
 
-  console.log("ADDRESS", address?.postnumer)
-
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
-        {applicantType?.name?.[lang] + 'INDIVIDUAL'}
+        {applicantType?.name?.[lang]}
       </Text>
       <Stack space={2}>
         {isLoading ? (

@@ -285,6 +285,28 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
+            <Row>
+        <Column>
+          <Checkbox
+            label={formatMessage(m.payment)}
+            checked={
+              form.hasPayment !== null &&
+              form.hasPayment !== undefined
+                ? form.hasPayment
+                : false
+            }
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_HAS_PAYMENT',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate,
+                },
+              })
+            }}
+          />
+        </Column>
+      </Row>
       <Urls />
     </Stack>
   )

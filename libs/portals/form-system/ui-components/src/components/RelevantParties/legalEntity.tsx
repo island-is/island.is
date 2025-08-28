@@ -32,7 +32,7 @@ export const LegalEntity = ({ applicantType, lang, user, id }: Props) => {
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
-        {applicantType?.name?.[lang] + "LEGAL"}
+        {applicantType?.name?.[lang]}
       </Text>
       <Stack space={2}>
         {isLoading ? (
