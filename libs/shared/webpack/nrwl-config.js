@@ -70,39 +70,9 @@ const fixPostcss = (config) => {
 const addNodeModulesPolyfill = (config) => {
   // ToDo: Refactor our apps and dependant libraries to use WebCrypto and WebStreams to get rid of this workaround.
   config.resolve.fallback = {
-    ...(config.resolve.fallback ?? {}),
     crypto: require.resolve('crypto-browserify'),
     stream: require.resolve('stream-browserify'),
     vm: require.resolve('vm-browserify'),
-    http: require.resolve('stream-http'),
-    https: require.resolve('https-browserify'),
-    os: require.resolve('os-browserify/browser'),
-    url: require.resolve('url'),
-    util: require.resolve('util'),
-    zlib: require.resolve('browserify-zlib'),
-    fs: false,
-    net: false,
-    tls: false,
-    child_process: false,
-    async_hooks: false,
-    dgram: false,
-    dns: false,
-    cluster: false,
-    v8: false,
-    perf_hooks: false,
-    inspector: false,
-    worker_threads: false,
-    path: false,
-    readline: false,
-    repl: false,
-    module: false,
-  }
-
-  // Handle the npm zlib package specifically
-  config.resolve.alias = {
-    ...config.resolve.alias,
-    zlib$: require.resolve('browserify-zlib'),
-    'zlib/lib/zlib_bindings': false,
   }
 
   config.plugins.push(

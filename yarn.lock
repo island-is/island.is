@@ -21672,7 +21672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserify-zlib@npm:0.2.0, browserify-zlib@npm:^0.2.0":
+"browserify-zlib@npm:^0.2.0":
   version: 0.2.0
   resolution: "browserify-zlib@npm:0.2.0"
   dependencies:
@@ -21833,13 +21833,6 @@ __metadata:
   version: 0.0.6
   resolution: "buildcheck@npm:0.0.6"
   checksum: 10/194ee8d3b0926fd6f3e799732130ad7ab194882c56900b8670ad43c81326f64871f49b7d9f1e9baad91ca3070eb4e8b678797fe9ae78cf87dde86d8916eb25d2
-  languageName: node
-  linkType: hard
-
-"builtin-status-codes@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "builtin-status-codes@npm:3.0.0"
-  checksum: 10/1119429cf4b0d57bf76b248ad6f529167d343156ebbcc4d4e4ad600484f6bc63002595cbb61b67ad03ce55cd1d3c4711c03bbf198bf24653b8392420482f3773
   languageName: node
   linkType: hard
 
@@ -31343,13 +31336,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"https-browserify@npm:1.0.0":
-  version: 1.0.0
-  resolution: "https-browserify@npm:1.0.0"
-  checksum: 10/2d707c457319e1320adf0e7556174c190865fb345b6a183f033cee440f73221dbe7fa3f0adcffb1e6b0664726256bd44771a82e50fe6c66976c10b237100536a
-  languageName: node
-  linkType: hard
-
 "https-proxy-agent@npm:5, https-proxy-agent@npm:^5.0.0, https-proxy-agent@npm:^5.0.1":
   version: 5.0.1
   resolution: "https-proxy-agent@npm:5.0.1"
@@ -33074,7 +33060,6 @@ __metadata:
     babel-plugin-transform-imports: "npm:2.0.0"
     beygla: "npm:1.5.2"
     bottleneck: "npm:2.19.5"
-    browserify-zlib: "npm:0.2.0"
     bull: "npm:4.10.4"
     cache-manager: "npm:5.2.3"
     cache-manager-ioredis-yet: "npm:1.1.0"
@@ -33146,7 +33131,6 @@ __metadata:
     hot-shots: "npm:10.0.0"
     http-cache-semantics: "npm:4.1.1"
     http-proxy-middleware: "npm:2.0.6"
-    https-browserify: "npm:1.0.0"
     hypher: "npm:0.2.5"
     identicon.js: "npm:2.3.3"
     imap-simple: "npm:5.1.0"
@@ -33199,7 +33183,6 @@ __metadata:
     oidc-client-ts: "npm:2.4.0"
     openapi3-ts: "npm:2.0.0"
     opossum: "npm:6.1.0"
-    os-browserify: "npm:0.3.0"
     passport: "npm:0.6.0"
     passport-jwt: "npm:4.0.1"
     pdf-lib: "npm:1.17.1"
@@ -33274,7 +33257,6 @@ __metadata:
     storybook-addon-apollo-client: "npm:9.0.0"
     storybook-addon-designs: "npm:6.3.1"
     stream-browserify: "npm:3.0.0"
-    stream-http: "npm:3.2.0"
     styled-components: "npm:5.3.6"
     supertest: "npm:4.0.2"
     swagger-ui-express: "npm:4.3.0"
@@ -40164,13 +40146,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"os-browserify@npm:0.3.0":
-  version: 0.3.0
-  resolution: "os-browserify@npm:0.3.0"
-  checksum: 10/16e37ba3c0e6a4c63443c7b55799ce4066d59104143cb637ecb9fce586d5da319cdca786ba1c867abbe3890d2cbf37953f2d51eea85e20dd6c4570d6c54bfebf
-  languageName: node
-  linkType: hard
-
 "os-homedir@npm:^1.0.0":
   version: 1.0.2
   resolution: "os-homedir@npm:1.0.2"
@@ -47022,18 +46997,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stream-http@npm:3.2.0":
-  version: 3.2.0
-  resolution: "stream-http@npm:3.2.0"
-  dependencies:
-    builtin-status-codes: "npm:^3.0.0"
-    inherits: "npm:^2.0.4"
-    readable-stream: "npm:^3.6.0"
-    xtend: "npm:^4.0.2"
-  checksum: 10/4f85738cbc6de70ecf0a04bc38b6092b4d91dd5317d3d93c88a84c48e63b82a8724ab5fd591df9f587b5139fe439d1748e4e3db3cb09c2b1e23649cb9d89859e
-  languageName: node
-  linkType: hard
-
 "stream-shift@npm:^1.0.2":
   version: 1.0.3
   resolution: "stream-shift@npm:1.0.3"
@@ -51661,7 +51624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xtend@npm:^4.0.0, xtend@npm:^4.0.2, xtend@npm:~4.0.1":
+"xtend@npm:^4.0.0, xtend@npm:~4.0.1":
   version: 4.0.2
   resolution: "xtend@npm:4.0.2"
   checksum: 10/ac5dfa738b21f6e7f0dd6e65e1b3155036d68104e67e5d5d1bde74892e327d7e5636a076f625599dc394330a731861e87343ff184b0047fef1360a7ec0a5a36a
