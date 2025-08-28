@@ -233,7 +233,7 @@ export const m = defineMessages({
   downloadPdfDescription: {
     id: 'sp.signatureCollection:downloadPdfDescription',
     defaultMessage:
-      '              Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
+      'Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
     description: '',
   },
   copyLink: {
