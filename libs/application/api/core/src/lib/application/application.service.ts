@@ -297,7 +297,7 @@ export class ApplicationService {
       attributes: ['id'],
       where: {
         [Op.and]: {
-          postPruneAte: {
+          postPruneAt: {
             [Op.and]: {
               [Op.not]: null,
               [Op.lt]: new Date(),

@@ -87,7 +87,7 @@ export const ApplicationDetails = ({
           {application.adminData?.map((item) => (
             <GridColumn span={['2/2', '2/2', '1/2']} key={item.key}>
               <ValueLine title={formatMessage(item.label)}>
-                {item.value}
+                {item.values?.join(', ') ?? ''}
               </ValueLine>
             </GridColumn>
           ))}

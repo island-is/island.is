@@ -60,7 +60,7 @@ query getInstitutionApplications(
       status
       adminData {
         key
-        value
+        values
         label
       }
       applicantName

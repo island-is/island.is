@@ -15,11 +15,12 @@ export const getReviewers = (
     [],
   ) as UserInformation[]
   coOwners.forEach((item) => {
-    result.push({
-      nationalId: item.nationalId,
-      name: item.name,
-      hasApproved: item.approved ?? false,
-    })
+    if (item?.nationalId)
+      result.push({
+        nationalId: item.nationalId,
+        name: item.name,
+        hasApproved: item.approved ?? false,
+      })
   })
 
   // New operator
@@ -27,13 +28,12 @@ export const getReviewers = (
     getValueViaPath(answers, 'operators', []) as OperatorInformation[]
   ).filter(({ wasRemoved }) => wasRemoved !== 'true')
   newOperators.forEach((item) => {
-    if (item.nationalId) {
+    if (item?.nationalId)
       result.push({
         nationalId: item.nationalId,
         name: item.name ?? '',
         hasApproved: item.approved ?? false,
       })
-    }
   })
 
   return result

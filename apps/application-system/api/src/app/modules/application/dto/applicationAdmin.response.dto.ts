@@ -16,8 +16,9 @@ class ApplicationAdminData {
 
   @ApiPropertyOptional()
   @Expose()
+  @IsArray()
   @IsString()
-  value?: string
+  values?: string[]
 }
 
 export class ApplicationListAdminResponseDto extends BaseApplicationResponseDto {

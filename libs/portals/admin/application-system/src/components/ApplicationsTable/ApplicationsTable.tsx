@@ -150,7 +150,7 @@ export const ApplicationsTable = ({
                       {showAdminData &&
                         application.adminData?.map((x) => (
                           <T.Data text={{ color: cellText }}>
-                            {x.value ?? ''}
+                            {x.values?.join(', ') ?? ''}
                           </T.Data>
                         ))}
                       <T.Data text={{ color: cellText }}>

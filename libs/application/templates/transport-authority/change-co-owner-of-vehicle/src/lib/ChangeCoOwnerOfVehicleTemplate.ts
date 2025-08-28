@@ -80,7 +80,9 @@ const reviewStatePendingAction = (
           values: {
             value: getReviewers(application.answers)
               .filter((x) => !x.hasApproved)
-              .map((x) => `${x.name} (${x.nationalId})`)
+              .map((x) =>
+                x.name ? `${x.name} (${x.nationalId})` : x.nationalId,
+              )
               .join(', '),
           },
         },
@@ -131,10 +133,11 @@ const template: ApplicationTemplate<
         isListed: true,
         label: information.labels.pickVehicle.vehicle,
       },
-      { key: 'ownerCoOwners', isListed: false },
-      { key: 'coOwners', isListed: false },
+      { key: 'ownerCoOwners.$.nationalId', isListed: false },
+      { key: 'ownerCoOwners.$.approved', isListed: false },
+      { key: 'coOwners.$.nationalId', isListed: false },
+      { key: 'coOwners.$.approved', isListed: false },
     ],
-    externalData: [{ key: 'identity.data.name' }],
   },
   stateMachineConfig: {
     initial: States.DRAFT,

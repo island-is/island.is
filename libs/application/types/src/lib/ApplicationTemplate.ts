@@ -55,29 +55,56 @@ export interface ApplicationTemplate<
   ): ApplicationRole | undefined
   answerValidators?: Record<string, AnswerValidator>
   /**
-   * Defines which fields in `answers` and `externalData` remain after pruning
-   * for admin portal visibility, and which of them should be explicitly listed there.
-   * Note: All retained fields are removed during post-pruning.
+   * Configuration for retaining and displaying specific fields in the admin portal after pruning.
+   *
+   * After pruning, most data from `answers` and `externalData` is removed. This config allows
+   * certain fields to be temporarily retained for admin portal visibility. These fields will be
+   * fully removed during post-pruning.
    */
   readonly adminDataConfig?: {
     /**
-     * Date or milliseconds after pruning when the application will be post-pruned.
-     * At that time, all `answers` and `externalData` will be cleared.
+     * When the application should be post-pruned.
+     * Can be either:
+     * - A number (milliseconds after pruning), e.g., `2 * 365 * 24 * 3600 * 1000` for 2 years.
+     * - A function returning a Date, e.g., `(application) => addMonths(new Date(), 6)`.
+     *
+     * At post-pruning, all remaining `answers` and `externalData` will be cleared.
      */
     whenToPostPrune: number | ((application: PruningApplication) => Date)
+
     /**
-     * `key` - path to a value in the `answers` object.
-     * `isListed` - whether the field should be explicitly listed in the admin portal.
-     *   - If `false`, the field is only retained so it can be displayed normally until pruning (e.g. in pendingActionCard).
-     * `label` - only used when `isListed` is `true`, as the display label in the admin portal.
-     * If array use dollar sign for index ($), e.g. 'key.$.subKey'
+     * List of fields from the `answers` object to retain after pruning.
+     *
+     * Each item includes:
+     * - `key`: Path to a value in `answers`. Supports dot notation for nested fields.
+     * - `isListed`: If `true`, the field will be explicitly displayed in the admin portal.
+     *               If `false`, the field is only retained for internal display (e.g., pendingActionCard).
+     * - `label`: Optional. Only applies when `isListed` is `true`. This is the display label in the admin portal.
+     *
+     * **Array support**:
+     * Use `$` as a wildcard for array elements.
+     * For example:
+     *   - `coOwners.$.name` - Keeps `name` for each item in `coOwners`.
+     *
+     * Example:
+     * answers: [
+     *   { key: 'buyer.name', isListed: true, label: 'Buyer Name' },
+     *   { key: 'coOwners.$.name', isListed: false },
+     *   { key: 'coOwners.$.nationalId', isListed: false },
+     * ]
      */
     answers?: { key: string; isListed: boolean; label?: StaticText }[]
+
     /**
-     * `key` - path to a value in the `externalData` object.
-     * Should include the applicant's name, usually from:
-     * - nationalRegistry.data.fullName
-     * - identity.data.name
+     * List of fields from the `externalData` object to retain after pruning.
+     *
+     * Each item includes:
+     * - `key`: Path to a value in `externalData`.
+     *
+     * Example:
+     * externalData: [
+     *   { key: 'currentVehicle.data.permno' }
+     * ]
      */
     externalData?: { key: string }[]
   }

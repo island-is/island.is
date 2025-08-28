@@ -78,7 +78,9 @@ const reviewStatePendingAction = (
           values: {
             value: getReviewers(application.answers)
               .filter((x) => !x.hasApproved)
-              .map((x) => `${x.name} (${x.nationalId})`)
+              .map((x) =>
+                x.name ? `${x.name} (${x.nationalId})` : x.nationalId,
+              )
               .join(', '),
           },
         },
@@ -125,25 +127,21 @@ const template: ApplicationTemplate<
     whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
     answers: [
       {
-        key: 'buyer.name',
+        key: 'pickVehicle.plate',
         isListed: true,
-        label: information.labels.buyer.name,
+        label: information.labels.pickVehicle.vehicle,
       },
       {
         key: 'buyer.nationalId',
         isListed: true,
         label: information.labels.buyer.nationalId,
       },
-      {
-        key: 'pickVehicle.plate',
-        isListed: true,
-        label: information.labels.pickVehicle.vehicle,
-      },
-      { key: 'buyer', isListed: false },
-      { key: 'buyerCoOwnerAndOperator', isListed: false },
-      { key: 'sellerCoOwner', isListed: false },
+      { key: 'buyer.approved', isListed: false },
+      { key: 'buyerCoOwnerAndOperator.$.nationalId', isListed: false },
+      { key: 'buyerCoOwnerAndOperator.$.approved', isListed: false },
+      { key: 'sellerCoOwner.$.nationalId', isListed: false },
+      { key: 'sellerCoOwner.$.approved', isListed: false },
     ],
-    externalData: [{ key: 'identity.data.name' }],
   },
   stateMachineConfig: {
     initial: States.DRAFT,

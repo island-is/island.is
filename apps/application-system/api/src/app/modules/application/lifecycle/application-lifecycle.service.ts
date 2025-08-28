@@ -15,8 +15,7 @@ import {
   RecordObject,
 } from '@island.is/application/types'
 import {
-  getAdminDataAnswers,
-  getAdminDataExternalData,
+  getAdminDataForPruning,
   getPostPruneAtDate,
 } from './application-lifecycle.utils'
 
@@ -138,13 +137,13 @@ export class ApplicationLifeCycleService {
           template?.adminDataConfig?.externalData
         ) {
           if (template?.adminDataConfig?.externalData) {
-            prunedExternalData = getAdminDataExternalData(
+            prunedExternalData = getAdminDataForPruning(
               prune.application.externalData,
               template.adminDataConfig.externalData.map((x) => x.key),
             )
           }
           if (template?.adminDataConfig?.answers) {
-            prunedAnswers = getAdminDataAnswers(
+            prunedAnswers = getAdminDataForPruning(
               prune.application.answers,
               template.adminDataConfig.answers.map((x) => x.key),
             )

@@ -34,7 +34,7 @@ import {
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { PaymentService } from '@island.is/application/api/payment'
 import {
-  getAdminData,
+  getAdminDataForAdminPortal,
   getApplicantName,
   getApplicationGenericNameTranslationString,
   getApplicationNameTranslationString,
@@ -184,7 +184,11 @@ export class ApplicationAdminSerializer
       externalData: [],
       paymentStatus: getPaymentStatusForAdmin(payment),
       applicantName: getApplicantName(application),
-      adminData: getAdminData(template, application, intl.formatMessage),
+      adminData: getAdminDataForAdminPortal(
+        template,
+        application,
+        intl.formatMessage,
+      ),
     })
     return instanceToPlain(dto)
   }

@@ -175,8 +175,8 @@ class ApplicationAdminData {
   @Field(() => String)
   key!: string
 
-  @Field(() => String, { nullable: true })
-  value?: string
+  @Field(() => [String], { nullable: true })
+  values?: string[]
 }
 
 @ObjectType()

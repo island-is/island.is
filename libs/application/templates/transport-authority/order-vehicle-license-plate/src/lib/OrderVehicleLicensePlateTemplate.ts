@@ -77,7 +77,6 @@ const template: ApplicationTemplate<
         label: information.labels.pickVehicle.vehicle,
       },
     ],
-    externalData: [{ key: 'identity.data.name' }],
   },
   stateMachineConfig: {
     initial: States.DRAFT,

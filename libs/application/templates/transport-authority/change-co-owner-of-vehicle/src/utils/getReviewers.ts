@@ -15,13 +15,12 @@ export const getReviewers = (
     [],
   ) as OwnerCoOwnersInformation[]
   oldCoOwners.forEach((item) => {
-    if (item.nationalId) {
+    if (item?.nationalId)
       result.push({
         nationalId: item.nationalId,
         name: item.name ?? '',
         hasApproved: item.approved ?? false,
       })
-    }
   })
 
   // New co-owner
@@ -29,13 +28,12 @@ export const getReviewers = (
     getValueViaPath(answers, 'coOwners', []) as CoOwnersInformation[]
   ).filter(({ wasRemoved }) => wasRemoved !== 'true')
   newCoOwners.forEach((item) => {
-    if (item.nationalId) {
+    if (item?.nationalId)
       result.push({
         nationalId: item.nationalId,
         name: item.name ?? '',
         hasApproved: item.approved ?? false,
       })
-    }
   })
 
   return result

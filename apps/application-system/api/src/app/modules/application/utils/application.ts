@@ -20,6 +20,7 @@ import { EventObject } from 'xstate'
 import { FormatMessage } from '@island.is/cms-translations'
 import { ApplicationStatistics } from '../dto/applicationAdmin.response.dto'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+import { expandFieldKeys } from '../lifecycle/application-lifecycle.utils'
 
 export const getApplicationLifecycle = (
   application: Application,
@@ -163,24 +164,6 @@ export const getApplicantName = (application: Application) => {
   return null
 }
 
-export const getAdminData = (
-  template: Template,
-  application: Application,
-  formatMessage: FormatMessage,
-) => {
-  if (template.adminDataConfig?.answers) {
-    return template.adminDataConfig.answers
-      .filter((config) => config.isListed)
-      .map((config) => {
-        return {
-          key: config.key,
-          value: getValueViaPath<string>(application.answers, config.key),
-          label: formatMessage(config.label ?? ''),
-        }
-      })
-  }
-}
-
 export const mockApplicationFromTypeId = (
   typeId: ApplicationTypes,
 ): Application => {
@@ -299,4 +282,48 @@ const hasContent = (value: unknown): boolean => {
     return Object.keys(value).length > 0
   }
   return false
+}
+
+/**
+ * Collects and formats admin-visible data from an application for the admin portal.
+ *
+ * - Expands keys with `$` wildcards (e.g. `coOwners.$.name`) into explicit paths.
+ * - Gathers all values for each key (single or multiple, depending on wildcard).
+ * - Keeps the original `key` with the `$` placeholder intact for readability in config.
+ * - Returns values as a string array (`value`), even for single-value fields.
+ *
+ * Example:
+ *   config.key = 'coOwners.$.name'
+ *   answers = { coOwners: [{ name: 'Alice' }, { name: 'Bob' }] }
+ *
+ *   result = {
+ *     key: 'coOwners.$.name',
+ *     value: ['Alice', 'Bob'],
+ *     label: 'Co-owner Name'
+ *   }
+ */
+export const getAdminDataForAdminPortal = (
+  template: Template,
+  application: Application,
+  formatMessage: FormatMessage,
+) => {
+  if (!template.adminDataConfig?.answers) return []
+
+  return template.adminDataConfig.answers
+    .filter((config) => config.isListed)
+    .map((config) => {
+      const expandedKeys = expandFieldKeys(application.answers, [config.key])
+
+      const values: string[] = expandedKeys
+        .map((expandedKey) =>
+          getValueViaPath<string>(application.answers, expandedKey),
+        )
+        .filter((v): v is string => v !== undefined)
+
+      return {
+        key: config.key,
+        values,
+        label: formatMessage(config.label ?? ''),
+      }
+    })
 }

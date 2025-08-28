@@ -77,7 +77,9 @@ const reviewStatePendingAction = (
           values: {
             value: getReviewers(application.answers)
               .filter((x) => !x.hasApproved)
-              .map((x) => `${x.name} (${x.nationalId})`)
+              .map((x) =>
+                x.name ? `${x.name} (${x.nationalId})` : x.nationalId,
+              )
               .join(', '),
           },
         },
@@ -123,12 +125,16 @@ const template: ApplicationTemplate<
   adminDataConfig: {
     whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
     answers: [
-      { key: 'pickVehicle.plate', isListed: true,
-              label: information.labels.pickVehicle.vehicle,},
-      { key: 'ownerCoOwner', isListed: false },
-      { key: 'operators', isListed: false },
+      {
+        key: 'pickVehicle.plate',
+        isListed: true,
+        label: information.labels.pickVehicle.vehicle,
+      },
+      { key: 'ownerCoOwner.$.nationalId', isListed: false },
+      { key: 'ownerCoOwner.$.approved', isListed: false },
+      { key: 'operators.$.nationalId', isListed: false },
+      { key: 'operators.$.approved', isListed: false },
     ],
-    externalData: [{ key: 'identity.data.name' }],
   },
   stateMachineConfig: {
     initial: States.DRAFT,
