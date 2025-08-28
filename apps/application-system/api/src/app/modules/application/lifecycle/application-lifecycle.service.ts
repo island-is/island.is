@@ -69,6 +69,10 @@ export class ApplicationLifeCycleService {
     return this.processingApplications
   }
 
+  public getProcessingApplicationsPostPruning() {
+    return this.processingApplicationsPostPruning
+  }
+
   private async fetchApplicationsToBePruned() {
     const applications =
       (await this.applicationService.findAllDueToBePruned()) as PruningApplication[]
