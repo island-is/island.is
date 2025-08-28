@@ -1,0 +1,114 @@
+import {
+  Meta,
+  Story,
+  Canvas,
+  Controls,
+  Description,
+  Source,
+} from '@storybook/blocks'
+import { dedent } from 'ts-dedent'
+import * as SelectFormFieldStories from './SelectFormField.stories'
+
+import { SelectFormField } from './SelectFormField'
+
+export const createMockApplication = (data = {}) => ({
+  id: '123',
+  assignees: [],
+  state: data.state || 'draft',
+  applicant: '111111-3000',
+  typeId: data.typeId || 'ExampleForm',
+  modified: new Date(),
+  created: new Date(),
+  attachments: {},
+  answers: data.answers || {},
+  externalData: data.externalData || {},
+})
+
+<Meta of={SelectFormFieldStories} />
+
+# SelectFormField
+
+### Usage in a template
+
+You can create a SelectFormField using the following function `buildSelectField`.
+
+<Source
+  language="typescript"
+  code={dedent(`
+    buildSelectField({
+      id: 'field.id',
+      title: 'Field title',
+      options: [
+        {
+          value: '20',
+          label: '20%',
+        },
+        {
+          value: '40',
+          label: '40%',
+        },
+        {
+          value: '60',
+          label: '60%',
+        },
+        {
+          value: '80',
+          label: '80%',
+        },
+      ],
+    })`)}
+/>
+
+The previous configuration object will result in the following component:
+
+<Canvas>
+  <Story of={SelectFormFieldStories.Default} />
+</Canvas>
+
+# SelectFormField, multi select
+
+### Usage in a template
+
+You can create a SelectFormField using the following function `buildSelectField`.
+
+<Source
+  language="typescript"
+  code={dedent(`
+    buildSelectField({
+      id: 'field.id',
+      title: 'Field title',
+      isMulti: true,
+      options: [
+        {
+          value: '20',
+          label: '20%',
+        },
+        {
+          value: '40',
+          label: '40%',
+        },
+        {
+          value: '60',
+          label: '60%',
+        },
+        {
+          value: '80',
+          label: '80%',
+        },
+      ],
+    })`)}
+/>
+
+The previous configuration object will result in the following component:
+
+<Canvas>
+  <Story of={SelectFormFieldStories.Multi} />
+</Canvas>
+
+You can also use this field into a custom component by using `<SelectFormField field={...} />` with the configuration object defined above.
+
+# Props
+
+## SelectFormField
+
+<Controls />

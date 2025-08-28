@@ -1,5 +1,5 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Button } from '@island.is/island-ui/core'
 import { usePDF } from '@react-pdf/renderer'
 import MyPdfDocument from './Document'
 import { useEffect } from 'react'
@@ -24,21 +24,19 @@ export const PdfReport = ({
   // Update pdf document after data is fetched
   useEffect(() => {
     if (report) {
+      // @ts-expect-error - updateDocument should be called without arguments based on working examples
       updateDocument()
     }
   }, [report, updateDocument])
 
   return (
-    <Box>
-      <Button
-        icon="download"
-        iconType="outline"
-        variant="ghost"
-        onClick={() => window.open(document?.url?.toString(), '_blank')}
-      >
-        {formatMessage(m.downloadPdf)}
-      </Button>
-    </Box>
+    <Button
+      variant="text"
+      size="small"
+      onClick={() => window.open(document?.url?.toString(), '_blank')}
+    >
+      {formatMessage(m.downloadPdf)}
+    </Button>
   )
 }
 

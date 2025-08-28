@@ -64,8 +64,8 @@ export enum CollectionStatus {
 }
 
 export const downloadFile = () => {
-  const name = 'meðmæli.xlsx'
-  const sheetData = [['Kennitala', 'Bls'], []]
+  const name = 'beraSaman.xlsx'
+  const sheetData = [['Kennitala'], []]
 
   const getFile = (name: string, output: string | undefined) => {
     const uri =
@@ -80,6 +80,9 @@ export const downloadFile = () => {
   }
 
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
+  // Set first column to "Text" format
+  worksheet.getColumn(1).numFmt = '@'
+
   const workbook: XLSX.WorkBook = {
     Sheets: { [name]: worksheet },
     SheetNames: [name],
@@ -109,13 +112,13 @@ export const getFileData = async (newFile: File[]) => {
   const buffer = await newFile[0].arrayBuffer()
   const file = XLSX.read(buffer, { type: 'buffer' })
 
-  const data = [] as any
+  const data: Record<string, unknown>[] = []
   const sheets = file.SheetNames
 
   for (let i = 0; i < sheets.length; i++) {
     const temp = XLSX.utils.sheet_to_json(file.Sheets[file.SheetNames[i]])
     temp.forEach((res) => {
-      data.push(res)
+      data.push(res as Record<string, unknown>)
     })
   }
 
