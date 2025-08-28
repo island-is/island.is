@@ -13,6 +13,16 @@ export const grid = style({
   width: '100%',
 })
 
+export const twoColGrid = style({
+  display: 'grid',
+  gap: theme.spacing[2],
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      gridTemplateColumns: '1fr 1fr',
+    },
+  },
+})
+
 export const reorderGroup = style({
   marginTop: theme.spacing[2],
   gap: theme.spacing[2],
