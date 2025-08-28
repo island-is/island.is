@@ -1,7 +1,14 @@
 import { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, Stack, Table, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Hyphen,
+  Stack,
+  Table,
+  Text,
+} from '@island.is/island-ui/core'
 import type { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
@@ -318,7 +325,7 @@ export const FineAndSpeedMeasurementCalculator = ({
                       variant="text"
                       size="small"
                     >
-                      Sjá sundurliðun
+                      <Hyphen>Sjá sundurliðun</Hyphen>
                     </Button>
                   </Box>
                 </Stack>
