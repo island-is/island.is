@@ -2,8 +2,8 @@ import { uuid } from 'uuidv4'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { Case, PdfService } from '../../../case'
-import { Defendant } from '../../../defendant'
+import { PdfService } from '../../../case'
+import { Case, Defendant } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Subpoena } from '../../models/subpoena.model'

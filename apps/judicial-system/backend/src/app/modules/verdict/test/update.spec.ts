@@ -3,8 +3,7 @@ import { uuid } from 'uuidv4'
 
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
-import { Defendant } from '../../defendant'
-import { Case } from '../../repository'
+import { Case, Defendant } from '../../repository'
 import { UpdateVerdictDto } from '../dto/updateVerdict.dto'
 import { Verdict } from '../models/verdict.model'
 import { createTestingVerdictModule } from './creatingTestingVerdictModule'

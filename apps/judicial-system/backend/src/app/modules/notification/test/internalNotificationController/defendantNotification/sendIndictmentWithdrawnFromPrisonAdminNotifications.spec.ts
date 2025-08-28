@@ -9,8 +9,7 @@ import {
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import { Case } from '../../../../case'
-import { Defendant } from '../../../../defendant'
+import { Case, Defendant } from '../../../../repository'
 import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
 import { Notification } from '../../../models/notification.model'

@@ -36,9 +36,9 @@ import {
   CaseTypeGuard,
   CurrentCase,
 } from '../case'
-import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
+import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
-import { Case } from '../repository'
+import { Case, Defendant } from '../repository'
 import { Verdict } from '../verdict/models/verdict.model'
 import { VerdictService } from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'

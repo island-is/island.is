@@ -12,7 +12,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { DefendantEventType } from '@island.is/judicial-system/types'
 
-import { Case } from '../../repository'
+import { Case } from './case.model'
 import { Defendant } from './defendant.model'
 
 @Table({

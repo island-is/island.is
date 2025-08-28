@@ -39,10 +39,9 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-import { Defendant, DefendantEventLog } from '../defendant'
 import { EventLog } from '../event-log/models/eventLog.model'
 import { Institution } from '../institution'
-import { Case, DateLog } from '../repository'
+import { Case, DateLog, Defendant, DefendantEventLog } from '../repository'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
 import { Verdict } from '../verdict/models/verdict.model'

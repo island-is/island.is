@@ -12,8 +12,8 @@ import {
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import { Case } from '../../../../case'
 import { CaseFile } from '../../../../file'
+import { Case } from '../../../../repository'
 import { InternalNotificationController } from '../../../internalNotification.controller'
 
 describe('InternalNotificationController - Dispatch event notifications', () => {

@@ -56,10 +56,9 @@ import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
 import {
   CivilClaimantExistsGuard,
   CurrentDefendant,
-  Defendant,
   DefendantExistsGuard,
 } from '../defendant'
-import { Case } from '../repository'
+import { Case, Defendant } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'

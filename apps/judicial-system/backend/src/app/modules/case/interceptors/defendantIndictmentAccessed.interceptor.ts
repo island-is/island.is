@@ -12,8 +12,8 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { DefendantEventLog, DefendantService } from '../../defendant'
-import { Case } from '../../repository'
+import { DefendantService } from '../../defendant'
+import { Case, DefendantEventLog } from '../../repository'
 
 const hasValidOpenByPrisonAdminEvent = (
   defendantEventLogs: DefendantEventLog[],

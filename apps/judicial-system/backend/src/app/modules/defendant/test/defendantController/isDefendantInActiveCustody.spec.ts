@@ -4,8 +4,7 @@ import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case } from '../../../repository'
-import { Defendant } from '../../models/defendant.model'
+import { Case, Defendant } from '../../../repository'
 
 interface Then {
   result: boolean

@@ -15,7 +15,7 @@ import {
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { randomDate } from '../../../../test'
-import { Case } from '../../../case'
+import { Case } from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
 import { CaseFile } from '../../models/file.model'
 

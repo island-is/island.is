@@ -4,8 +4,8 @@ import { User } from '@island.is/judicial-system/types'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { Case } from '../../../case'
 import { PoliceService } from '../../../police/police.service'
+import { Case } from '../../../repository'
 import { Subpoena } from '../../models/subpoena.model'
 
 interface Then {

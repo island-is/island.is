@@ -30,12 +30,11 @@ import {
   publicProsecutorStaffRule,
 } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
-import { Case } from '../repository'
+import { Case, Defendant } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
-import { Defendant } from './models/defendant.model'
 import { DeleteDefendantResponse } from './models/delete.response'
 import { DefendantService } from './defendant.service'
 

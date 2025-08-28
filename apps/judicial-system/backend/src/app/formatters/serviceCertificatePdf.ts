@@ -18,8 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { serviceCertificate as strings } from '../messages'
-import { Defendant } from '../modules/defendant'
-import { Case } from '../modules/repository'
+import { Case, Defendant } from '../modules/repository'
 import { Subpoena } from '../modules/subpoena'
 import {
   addEmptyLines,

@@ -11,8 +11,7 @@ import {
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import { Case } from '../../../../case'
-import { CivilClaimant } from '../../../../defendant'
+import { Case, CivilClaimant } from '../../../../repository'
 import { CivilClaimantNotificationDto } from '../../../dto/civilClaimantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
 import { Notification } from '../../../models/notification.model'

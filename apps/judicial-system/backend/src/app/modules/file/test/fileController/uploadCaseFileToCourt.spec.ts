@@ -13,8 +13,8 @@ import {
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../case'
 import { CourtDocumentFolder, CourtService } from '../../../court'
+import { Case } from '../../../repository'
 import { CaseFile } from '../../models/file.model'
 import { UploadFileToCourtResponse } from '../../models/uploadFileToCourt.response'
 

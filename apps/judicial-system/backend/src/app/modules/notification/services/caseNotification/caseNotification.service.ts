@@ -76,13 +76,14 @@ import {
 } from '../../../../formatters'
 import { notifications } from '../../../../messages'
 import { CourtService } from '../../../court'
-import {
-  type CivilClaimant,
-  type Defendant,
-  DefendantService,
-} from '../../../defendant'
+import { DefendantService } from '../../../defendant'
 import { EventService } from '../../../event'
-import { type Case, DateLog } from '../../../repository'
+import {
+  type Case,
+  type CivilClaimant,
+  DateLog,
+  type Defendant,
+} from '../../../repository'
 import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification, Recipient } from '../../models/notification.model'

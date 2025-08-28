@@ -15,8 +15,7 @@ import { SubpoenaType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories/date.factory'
 import { subpoena as strings } from '../messages'
-import { Defendant } from '../modules/defendant'
-import { Case } from '../modules/repository'
+import { Case, Defendant } from '../modules/repository'
 import { Subpoena } from '../modules/subpoena'
 import {
   addConfirmation,

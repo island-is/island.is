@@ -61,12 +61,7 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import {
-  CivilClaimant,
-  Defendant,
-  DefendantEventLog,
-  DefendantService,
-} from '../defendant'
+import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
@@ -74,7 +69,14 @@ import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
-import { Case, CaseString, DateLog } from '../repository'
+import {
+  Case,
+  CaseString,
+  CivilClaimant,
+  DateLog,
+  Defendant,
+  DefendantEventLog,
+} from '../repository'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User } from '../user'
 import { Verdict } from '../verdict/models/verdict.model'

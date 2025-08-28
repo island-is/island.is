@@ -1,5 +1,8 @@
 export { Case } from './models/case.model'
 export { CaseArchive } from './models/caseArchive.model'
 export { CaseString } from './models/caseString.model'
+export { CivilClaimant } from './models/civilClaimant.model'
 export { DateLog } from './models/dateLog.model'
+export { Defendant } from './models/defendant.model'
+export { DefendantEventLog } from './models/defendantEventLog.model'
 export { RobotLog } from './models/robotLog.model'

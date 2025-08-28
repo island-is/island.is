@@ -7,8 +7,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CivilClaimant, Defendant } from '../../defendant'
-import { Case } from '../../repository'
+import { Case, CivilClaimant, Defendant } from '../../repository'
 import { TransitionCaseDto } from '../dto/transitionCase.dto'
 import { UpdateCaseDto } from '../dto/updateCase.dto'
 

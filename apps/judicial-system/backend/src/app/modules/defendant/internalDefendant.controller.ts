@@ -24,13 +24,12 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
-import { Case } from '../repository'
+import { Case, Defendant } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { DefendantNationalIdExistsGuard } from './guards/defendantNationalIdExists.guard'
-import { Defendant } from './models/defendant.model'
 import { DeliverResponse } from './models/deliver.response'
 import { DefendantService } from './defendant.service'
 

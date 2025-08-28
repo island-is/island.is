@@ -3,8 +3,8 @@ import { uuid } from 'uuidv4'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { Case, PdfService } from '../../../case'
-import { Defendant } from '../../../defendant/models/defendant.model'
+import { PdfService } from '../../../case'
+import { Case, Defendant } from '../../../repository'
 import { Subpoena } from '../../models/subpoena.model'
 
 interface Then {

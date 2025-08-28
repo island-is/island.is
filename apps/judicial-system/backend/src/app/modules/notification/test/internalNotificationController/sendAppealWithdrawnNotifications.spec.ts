@@ -17,7 +17,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../case'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'

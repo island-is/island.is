@@ -20,14 +20,12 @@ import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseHasExistedGuard, CaseTypeGuard, CurrentCase } from '../case'
 import {
-  CivilClaimant,
   CivilClaimantExistsGuard,
   CurrentCivilClaimant,
   CurrentDefendant,
-  Defendant,
   DefendantExistsGuard,
 } from '../defendant'
-import { Case } from '../repository'
+import { Case, CivilClaimant, Defendant } from '../repository'
 import { SubpoenaExistsGuard } from '../subpoena'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
 import { CivilClaimantNotificationDto } from './dto/civilClaimantNotification.dto'

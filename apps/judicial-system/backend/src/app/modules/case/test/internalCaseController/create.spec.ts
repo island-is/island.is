@@ -15,8 +15,7 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { DefendantService } from '../../../defendant/defendant.service'
-import { Defendant } from '../../../defendant/models/defendant.model'
-import { Case } from '../../../repository'
+import { Case, Defendant } from '../../../repository'
 import { User, UserService } from '../../../user'
 import { InternalCreateCaseDto } from '../../dto/internalCreateCase.dto'
 

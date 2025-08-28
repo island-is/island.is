@@ -12,9 +12,8 @@ import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import { Defendant } from '../../../defendant'
 import { Institution } from '../../../institution'
-import { Case, DateLog } from '../../../repository'
+import { Case, DateLog, Defendant } from '../../../repository'
 import { Subpoena } from '../../../subpoena'
 import { User } from '../../../user'
 import { Verdict } from '../../../verdict/models/verdict.model'

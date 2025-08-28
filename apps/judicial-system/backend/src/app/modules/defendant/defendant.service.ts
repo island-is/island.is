@@ -30,12 +30,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../court'
-import { Case } from '../repository'
+import { Case, Defendant, DefendantEventLog } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
-import { Defendant } from './models/defendant.model'
-import { DefendantEventLog } from './models/defendantEventLog.model'
 import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()

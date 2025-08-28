@@ -41,10 +41,9 @@ import {
   CurrentCase,
   PdfService,
 } from '../case'
-import { Defendant } from '../defendant'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
-import { Case } from '../repository'
+import { Case, Defendant } from '../repository'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import {
   SubpoenaExistsGuard,
