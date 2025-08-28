@@ -34,8 +34,7 @@ const PatientDataPermits: React.FC = () => {
   const filteredData = data?.healthDirectoratePatientDataPermits.data.filter(
     (permit) =>
       showExipredPermits ||
-      permit.status === HealthDirectoratePermitStatus.active ||
-      permit.status === HealthDirectoratePermitStatus.inactive,
+      permit.status === HealthDirectoratePermitStatus.active,
   )
   return (
     <IntroWrapper

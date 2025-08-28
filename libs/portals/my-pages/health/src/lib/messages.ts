@@ -1746,7 +1746,7 @@ export const messages = defineMessages({
     id: 'sp.health:how-long-should-permit-apply',
   },
   showExipredPermits: {
-    defaultMessage: 'Sýna útrunnar heimildir',
+    defaultMessage: 'Sýna ógildar heimildir',
     id: 'sp.health:show-expired-permits',
   },
   permit: {
