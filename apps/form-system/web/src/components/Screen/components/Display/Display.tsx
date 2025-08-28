@@ -41,11 +41,11 @@ export const Display = ({ field }: Props) => {
       ? (FIELD_COMPONENT_MAP[
           field.fieldType as keyof typeof FIELD_COMPONENT_MAP
         ] as React.ElementType)
-      : undefined
+      : DefaultDisplay
 
   return (
     <Box paddingTop={5}>
-      {FieldComponent ? <FieldComponent {...fieldItems} /> : null}
+      {<FieldComponent {...fieldItems} />}
     </Box>
   )
 }

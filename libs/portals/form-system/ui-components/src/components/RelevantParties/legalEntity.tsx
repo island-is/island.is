@@ -41,7 +41,7 @@ export const LegalEntity = ({ applicantType, lang, user, id }: Props) => {
           <>
             <NationalIdField
               disabled={true}
-              nationalId={id}
+              nationalId={nationalId}
               name={companyData?.formSystemCompanyByNationalId?.name}
             />
             <Input

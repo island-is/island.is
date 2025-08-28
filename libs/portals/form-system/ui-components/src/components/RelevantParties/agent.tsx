@@ -56,14 +56,14 @@ export const Agent = ({ applicantType, lang, nationalId }: Props) => {
     ? addressQuery.data?.formSystemHomeByNationalId?.heimilisfang?.husHeiti
     : companyQuery.data?.formSystemCompanyByNationalId?.address?.streetAddress
 
-  const postalCode = isIndividualDelegation
-    ? addressQuery.data?.formSystemHomeByNationalId?.heimilisfang?.postalCode
+ const postalCode = isIndividualDelegation  
+    ? addressQuery.data?.formSystemHomeByNationalId?.heimilisfang?.postnumer  
     : companyQuery.data?.formSystemCompanyByNationalId?.address?.postalCode
 
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
-        {applicantType?.name?.[lang] + 'AGENT'}
+        {applicantType?.name?.[lang]}
       </Text>
       <Stack space={2}>
         {isLoading ? (
@@ -77,8 +77,7 @@ export const Agent = ({ applicantType, lang, nationalId }: Props) => {
               disabled
               name="address"
               placeholder={formatMessage(m.address)}
-              backgroundColor="blue"
-              required
+              backgroundColor="white"
               value={address ?? ''}
             />
 
@@ -87,8 +86,7 @@ export const Agent = ({ applicantType, lang, nationalId }: Props) => {
               disabled
               name="postalCode"
               placeholder={formatMessage(webMessages.postalCode)}
-              backgroundColor="blue"
-              required
+              backgroundColor="white"
               value={postalCode ?? ''}
             />
 

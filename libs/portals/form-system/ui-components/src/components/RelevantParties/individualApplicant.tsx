@@ -54,8 +54,8 @@ export const IndividualApplicant = ({
   const address = addressData?.formSystemHomeByNationalId?.heimilisfang
   const phoneNumberCatcher = user?.mobilePhoneNumber ?? ''
   const emails =
-    user?.emails.find((email: { primary: boolean }) => email.primary)?.email ??
-    user?.emails[0]?.email
+    user?.emails?.find((email) => email.primary)?.email ??
+    user?.emails?.[0]?.email
   const isLoading = shouldQuery && (nameLoading || addressLoading)
   const [email, setEmail] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
@@ -87,7 +87,7 @@ export const IndividualApplicant = ({
                   name="address"
                   placeholder={formatMessage(m.address)}
                   disabled
-                  value={address?.husHeiti}
+                  value={address?.husHeiti ?? ''}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
@@ -105,7 +105,7 @@ export const IndividualApplicant = ({
             <Input
               label={formatMessage(m.email)}
               name="email"
-              placeholder="Email"
+              placeholder={formatMessage(m.email)}
               backgroundColor="blue"
               required
               value={email}
