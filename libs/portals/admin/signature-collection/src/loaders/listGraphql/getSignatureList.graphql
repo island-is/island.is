@@ -17,7 +17,6 @@ query listbyid($input: SignatureCollectionListIdInput!) {
       phone
       email
       ownerName
-      ownerBirthDate
     }
     collectors {
       nationalId
