@@ -5,7 +5,7 @@ import { BloodTypeDto, mapBloodTypeDto } from './dtos/bloodTypes.dto'
 import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
-export class BloodClientService {
+export class LshClientService {
   constructor(private readonly api: BloodApi) {}
 
   private bloodTypeWithAuth(auth: Auth) {
