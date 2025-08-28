@@ -10,13 +10,16 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { FormSystemNameByNationalId } from '../../models/nationalRegistryName.model'
 import { FormSystemHomeByNationalId } from '../../models/nationalRegistryHome.model'
+import { Audit } from '@island.is/nest/audit'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
+@Audit({ namespace: '@island.is/api/form-system/national-registry' })
 export class NationalRegistryResolver {
   constructor(private readonly service: NationalRegistryV3ClientService) {}
 
+  @Audit()
   @Query(() => FormSystemNameByNationalId, {
     name: 'formSystemNameByNationalId',
     nullable: true,
@@ -36,6 +39,7 @@ export class NationalRegistryResolver {
     return this.service.getName(normalized)
   }
 
+  @Audit()
   @Query(() => FormSystemHomeByNationalId, {
     name: 'formSystemHomeByNationalId',
     nullable: true,

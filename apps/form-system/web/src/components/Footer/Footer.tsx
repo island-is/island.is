@@ -32,9 +32,10 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         state.application.hasPayment === undefined)) ||
     currentSection.data.sectionType === SectionTypes.PAYMENT ||
     (state.application.hasPayment === false &&
+      state.application.hasSummaryScreen === false &&
       state.currentScreen?.index ===
         state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
-
+  
   const continueButtonText =
     state.currentSection.index === 0
       ? formatMessage(webMessages.externalDataConfirmation)

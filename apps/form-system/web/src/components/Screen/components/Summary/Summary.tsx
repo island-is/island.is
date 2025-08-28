@@ -38,7 +38,7 @@ export const Summary = ({ state }: Props) => {
         section?.screens
           ?.filter((scr) => !scr?.isHidden)
           .map((screen, screenIndex) => (
-          <Box key={screen?.id ?? `screen-${screenIndex}`} marginTop={5}>
+           <Box key={screen?.id ?? `screen-${sectionIndex}-${screenIndex}`} marginTop={5}>
               <Divider />
               <GridContainer>
                 <GridRow>
