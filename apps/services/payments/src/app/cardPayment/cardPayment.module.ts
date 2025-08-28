@@ -6,8 +6,6 @@ import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
 
 import { CardPaymentController } from './cardPayment.controller'
 import { CardPaymentService } from './cardPayment.service'
-import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
-import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import {
   PaymentFlow,
   PaymentFlowCharge,
@@ -38,8 +36,6 @@ import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
     }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
-    NationalRegistryV3ClientModule,
-    CompanyRegistryClientModule,
     CardPaymentCacheModule,
     JwksModule,
   ],
