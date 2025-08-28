@@ -23,51 +23,47 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
 
   const { landlordRepresentatives } = applicationAnswers(answers)
 
-  return (
-    <>
-      {landlordRepresentatives.length > 0 && (
-        <SummaryCard
-          cardLabel={formatMessage(summary.landlordsRepresentativeLabel)}
-        >
-          {landlordRepresentatives?.map((landlordRep) => {
-            return (
-              <SummaryCardRow
-                key={landlordRep.nationalIdWithName?.nationalId}
-                editAction={goToScreen}
-                route={partiesRoute}
-                hasChangeButton={hasChangeButton}
-              >
-                <GridColumn span={['12/12']}>
-                  <KeyValue
-                    labelVariant="h5"
-                    labelAs="p"
-                    label={landlordRep.nationalIdWithName?.name ?? '-'}
-                    value={`${formatMessage(
-                      summary.nationalIdLabel,
-                    )}${formatNationalId(
-                      landlordRep.nationalIdWithName?.nationalId ?? '-',
-                    )}`}
-                    gap={'smallGutter'}
-                  />
-                </GridColumn>
+  return landlordRepresentatives.length > 0 ? (
+    <SummaryCard
+      cardLabel={formatMessage(summary.landlordsRepresentativeLabel)}
+    >
+      {landlordRepresentatives?.map((landlordRep) => {
+        return (
+          <SummaryCardRow
+            key={landlordRep.nationalIdWithName?.nationalId}
+            editAction={goToScreen}
+            route={partiesRoute}
+            hasChangeButton={hasChangeButton}
+          >
+            <GridColumn span={['12/12']}>
+              <KeyValue
+                labelVariant="h5"
+                labelAs="p"
+                label={landlordRep.nationalIdWithName?.name ?? '-'}
+                value={`${formatMessage(
+                  summary.nationalIdLabel,
+                )}${formatNationalId(
+                  landlordRep.nationalIdWithName?.nationalId ?? '-',
+                )}`}
+                gap={'smallGutter'}
+              />
+            </GridColumn>
 
-                <GridColumn span={['12/12', '8/12']}>
-                  <KeyValue
-                    label={summary.emailLabel}
-                    value={landlordRep.email || '-'}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '4/12']}>
-                  <KeyValue
-                    label={summary.phoneNumberLabel}
-                    value={formatPhoneNumber(landlordRep.phone || '-')}
-                  />
-                </GridColumn>
-              </SummaryCardRow>
-            )
-          })}
-        </SummaryCard>
-      )}
-    </>
-  )
+            <GridColumn span={['12/12', '8/12']}>
+              <KeyValue
+                label={summary.emailLabel}
+                value={landlordRep.email || '-'}
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '4/12']}>
+              <KeyValue
+                label={summary.phoneNumberLabel}
+                value={formatPhoneNumber(landlordRep.phone || '-')}
+              />
+            </GridColumn>
+          </SummaryCardRow>
+        )
+      })}
+    </SummaryCard>
+  ) : null
 }
