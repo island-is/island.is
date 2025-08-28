@@ -76,13 +76,10 @@ export class ApplicationAdminResolver {
     @Args('input')
     input: ApplicationApplicationsAdminStatisticsInput,
   ) {
-    const res =
-      await this.applicationService.getApplicationCountByTypeIdAndStatus(
-        user,
-        locale,
-        input,
-      )
-    console.log('resolver', res)
-    return res
+    return this.applicationService.getApplicationCountByTypeIdAndStatus(
+      user,
+      locale,
+      input,
+    )
   }
 }
