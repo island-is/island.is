@@ -412,7 +412,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/id-card/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/id-card/                                 @island-is/origo
 
-/libs/clients/charge-fjs-v2/                                                                              @island-is/origo
+/libs/clients/charge-fjs-v2/                                                                              @island-is/origo @island-is/aranja
 /libs/clients/vehicle-service-fjs-v1/                                                                     @island-is/origo
 
 /libs/application/templates/transport-authority/anonymity-in-vehicle-registry                             @island-is/origo
