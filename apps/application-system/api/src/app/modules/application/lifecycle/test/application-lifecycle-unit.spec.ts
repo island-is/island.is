@@ -62,6 +62,9 @@ class ApplicationServiceMock {
   findAllDueToBePruned(): Application[] {
     return createApplications()
   }
+  findAllDueToBePostPruned(): Application[] {
+    return []
+  }
   update(
     id: string,
     application: Partial<
