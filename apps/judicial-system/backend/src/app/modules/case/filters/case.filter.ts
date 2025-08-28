@@ -24,10 +24,9 @@ import {
 
 import { CivilClaimant, Defendant } from '../../defendant'
 import { EventLog } from '../../event-log'
-import { Case } from '../../repository'
+import { Case, DateLog } from '../../repository'
 import { Victim } from '../../victim'
 import { MinimalCase } from '../models/case.types'
-import { DateLog } from '../models/dateLog.model'
 
 const canProsecutionUserAccessCase = (
   theCase: Case,

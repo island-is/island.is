@@ -31,10 +31,9 @@ import {
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { DateLog } from '../case/models/dateLog.model'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
-import { Case } from '../repository'
+import { Case, DateLog } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'

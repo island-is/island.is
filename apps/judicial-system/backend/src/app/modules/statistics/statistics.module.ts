@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { DateLog } from '../case'
-import { Case, CaseArchive } from '../repository'
+import { Case, CaseArchive, DateLog } from '../repository'
 import { Subpoena } from '../subpoena'
 import { StatisticsController } from './statistics.controller'
 import { StatisticsService } from './statistics.service'

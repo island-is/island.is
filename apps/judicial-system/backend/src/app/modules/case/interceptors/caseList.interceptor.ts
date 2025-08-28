@@ -10,8 +10,7 @@ import {
 import { EventType, IndictmentDecision } from '@island.is/judicial-system/types'
 
 import { EventLog } from '../../event-log'
-import { Case, CaseString } from '../../repository'
-import { DateLog } from '../models/dateLog.model'
+import { Case, CaseString, DateLog } from '../../repository'
 import { transformDefendants } from './case.interceptor'
 
 @Injectable()

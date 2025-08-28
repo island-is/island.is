@@ -14,11 +14,10 @@ import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
 import { Defendant } from '../../../defendant'
 import { Institution } from '../../../institution'
-import { Case } from '../../../repository'
+import { Case, DateLog } from '../../../repository'
 import { Subpoena } from '../../../subpoena'
 import { User } from '../../../user'
 import { Verdict } from '../../../verdict/models/verdict.model'
-import { DateLog } from '../../models/dateLog.model'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
 
 interface Then {
