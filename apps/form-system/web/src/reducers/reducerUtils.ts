@@ -250,12 +250,21 @@ export const setCurrentScreen = (
     return state
   }
   const currentSection = sections[sectionIndex] as FormSystemSection
-   const screens = currentSection.screens ?? []
+  const screens = currentSection.screens ?? []
   let currentScreen: FormSystemScreen | undefined
-  if (hasScreens(currentSection) && screenIndex >= 0 && screenIndex < screens.length) {
-    const candidate = screens[screenIndex] as FormSystemScreen | null | undefined
+  if (
+    hasScreens(currentSection) &&
+    screenIndex >= 0 &&
+    screenIndex < screens.length
+  ) {
+    const candidate = screens[screenIndex] as
+      | FormSystemScreen
+      | null
+      | undefined
     currentScreen =
-      candidate && candidate.isHidden !== true ? (candidate as FormSystemScreen) : undefined
+      candidate && candidate.isHidden !== true
+        ? (candidate as FormSystemScreen)
+        : undefined
   } else {
     currentScreen = undefined
   }
