@@ -30,6 +30,7 @@ const PaymentsAndRights: React.FC<Props> = ({
   const isInsuranceCardValid = isDateAfterToday(
     insurance.data?.ehicCardExpiryDate ?? undefined,
   )
+  const hasInsuranceCardDate = Boolean(insurance.data?.from)
   const isInsured = insurance.data?.isInsured
   const ehicDate = insurance.data?.ehicCardExpiryDate
 
@@ -120,14 +121,16 @@ const PaymentsAndRights: React.FC<Props> = ({
                 ? formatMessage(messages.expiredOn, {
                     arg: formatDate(ehicDate),
                   })
-                : formatMessage(messages.vaccineExpired),
+                : formatMessage(messages.noInsurance),
             to: insurance.error ? currentPath : HealthPaths.HealthPaymentRights,
 
             tags: [
               {
                 label: isInsuranceCardValid
                   ? formatMessage(messages.valid)
-                  : formatMessage(messages.vaccineExpired),
+                  : hasInsuranceCardDate
+                  ? formatMessage(messages.vaccineExpired)
+                  : formatMessage(messages.unvalidInsurance),
                 variant: isInsuranceCardValid ? 'blue' : 'red',
                 outlined: true,
               },
