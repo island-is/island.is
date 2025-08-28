@@ -26,4 +26,7 @@ export interface MedicalAndRehabilitationPaymentsDTO {
   baseCertificateReference: string
   rehabilitationPlanReference?: string
   incomePlan?: IncomePlanInfo
+  confirmedTreatmentReference?: string
+  confirmationOfPendingResolutionReference?: string
+  confirmationOfIllHealthReference?: string
 }

@@ -10,6 +10,9 @@ import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
 import { CertificateForSicknessAndRehabilitation } from '../models/medicalDocuments/certificateForSicknessAndRehabilitation.model'
+import { ConfirmationOfIllHealth } from '../models/medicalDocuments/confirmationOfIllHealth.model'
+import { ConfirmationOfPendingResolution } from '../models/medicalDocuments/confirmationOfPendingResolution.model'
+import { ConfirmedTreatment } from '../models/medicalDocuments/confirmedTreatment.model'
 import { RehabilitationPlan } from '../models/medicalDocuments/rehabilitationPlan.model'
 import { SocialInsuranceService } from '../socialInsurance.service'
 
@@ -34,5 +37,26 @@ export class MedicalDocumentsResolver {
     @CurrentUser() user: User,
   ) {
     return this.service.getCertificateForSicknessAndRehabilitation(user)
+  }
+
+  @Query(() => ConfirmedTreatment, {
+    name: 'socialInsuranceConfirmedTreatment',
+  })
+  async siaGetConfirmedTreatment(@CurrentUser() user: User) {
+    return this.service.getConfirmedTreatment(user)
+  }
+
+  @Query(() => ConfirmationOfPendingResolution, {
+    name: 'socialInsuranceConfirmationOfPendingResolution',
+  })
+  async siaGetConfirmationOfPendingResolution(@CurrentUser() user: User) {
+    return this.service.getConfirmationOfPendingResolution(user)
+  }
+
+  @Query(() => ConfirmationOfIllHealth, {
+    name: 'socialInsuranceConfirmationOfIllHealth',
+  })
+  async siaGetConfirmationOfIllHealth(@CurrentUser() user: User) {
+    return this.service.getConfirmationOfIllHealth(user)
   }
 }

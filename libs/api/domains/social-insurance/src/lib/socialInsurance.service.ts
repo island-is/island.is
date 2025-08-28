@@ -7,6 +7,9 @@ import {
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   TrWebExternalModelsServicePortalBaseCertificate,
+  TrWebExternalModelsServicePortalConfirmationOfIllHealth,
+  TrWebExternalModelsServicePortalConfirmationOfPendingResolution,
+  TrWebExternalModelsServicePortalConfirmedTreatment,
   TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -248,6 +251,26 @@ export class SocialInsuranceService {
     return await this.socialInsuranceApi.getCertificateForSicknessAndRehabilitation(
       user,
     )
+  }
+
+  async getConfirmedTreatment(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmedTreatment> {
+    return await this.socialInsuranceApi.getConfirmedTreatment(user)
+  }
+
+  async getConfirmationOfPendingResolution(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmationOfPendingResolution> {
+    return await this.socialInsuranceApi.getConfirmationOfPendingResolution(
+      user,
+    )
+  }
+
+  async getConfirmationOfIllHealth(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmationOfIllHealth> {
+    return await this.socialInsuranceApi.getConfirmationOfIllHealth(user)
   }
 
   async getCountries(

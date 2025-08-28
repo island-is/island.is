@@ -301,6 +301,15 @@ export const dataSchema = z.object({
   rehabilitationPlan: z.object({
     confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
   }),
+  confirmedTreatment: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
+  confirmationOfPendingResolution: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
+  confirmationOfIllHealth: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
   selfAssessment: z
     .object({
       hadAssistance: z.enum([YES, NO]).optional(),

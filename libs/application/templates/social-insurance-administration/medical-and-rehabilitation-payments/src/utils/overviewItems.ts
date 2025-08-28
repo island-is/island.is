@@ -418,6 +418,42 @@ export const rehabilitationPlanItems = (): Array<KeyValueItem> => [
   },
 ]
 
+export const confirmedTreatmentItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.confirmedTreatment
+        .sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmedTreatmentConfirmed,
+  },
+]
+
+export const confirmationOfPendingResolutionItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage
+        .confirmationOfPendingResolution.sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmationOfPendingResolutionConfirmed,
+  },
+]
+
+export const confirmationOfIllHealthItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.confirmationOfIllHealth
+        .sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmationOfIllHealthConfirmed,
+  },
+]
+
 export const selfAssessmentQuestionsOneItems = (
   answers: FormValue,
   externalData: ExternalData,

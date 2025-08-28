@@ -51,8 +51,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation.managedBy,
+              medicalAndRehabilitationPaymentsFormMessage.shared.managedBy,
             )}
           </Text>
         </GridColumn>
@@ -84,8 +83,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation.managedByLocation,
+              medicalAndRehabilitationPaymentsFormMessage.shared.location,
             )}
           </Label>
           <Text>
@@ -105,8 +103,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation.information,
+              medicalAndRehabilitationPaymentsFormMessage.shared.information,
             )}
           </Text>
         </GridColumn>
