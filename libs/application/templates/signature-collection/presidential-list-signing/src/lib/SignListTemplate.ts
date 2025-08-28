@@ -36,6 +36,7 @@ const SignListTemplate: ApplicationTemplate<
   initialQueryParameter: 'candidate',
   dataSchema,
   translationNamespaces: [configuration.translation],
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
