@@ -1437,6 +1437,18 @@ export const messages = defineMessages({
     defaultMessage: 'Staða óþekkt',
     id: 'sp.health:unknown-status',
   },
+  unknown: {
+    defaultMessage: 'Óþekkt',
+    id: 'sp.health:unknown',
+  },
+  unvalidInsurance: {
+    defaultMessage: 'Óvirk',
+    id: 'sp.health:unvalid-insurance',
+  },
+  noInsurance: {
+    defaultMessage: 'Engin trygging',
+    id: 'sp.health:no-insurance',
+  },
   usage: {
     defaultMessage: 'Notkun',
     id: 'sp.health:usage',

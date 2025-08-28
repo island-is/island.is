@@ -72,6 +72,7 @@ export interface InfoCardProps {
   img?: string
   variant?: 'default' | 'detail' | 'appointment' | 'link'
   loading?: boolean
+  error?: boolean
 }
 
 export const InfoCard: React.FC<InfoCardProps> = ({

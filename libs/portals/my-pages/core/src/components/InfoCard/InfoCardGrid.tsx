@@ -5,6 +5,7 @@ import { useWindowSize } from 'react-use'
 import EmptyCard from './EmptyCard'
 import InfoCard, { InfoCardProps } from './InfoCard'
 import * as styles from './InfoCard.css'
+import { ErrorCard } from './ErrorCard'
 
 interface InfoCardGridProps {
   cards: (InfoCardProps | null)[]
@@ -15,6 +16,7 @@ interface InfoCardGridProps {
     img?: string
   }
   variant?: 'default' | 'detail' | 'appointment' | 'link'
+  error?: boolean
 }
 
 export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
@@ -22,12 +24,13 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
   size = 'small',
   empty,
   variant = 'default',
+  error,
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const isTablet = width < theme.breakpoints.lg && !isMobile
 
-  if (cards.length === 0 && empty) {
+  if (!error && cards.length === 0 && empty) {
     return (
       <EmptyCard
         title={empty?.title}
@@ -46,20 +49,24 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
             className={styles.gridCard}
             key={`infocard-${card?.title ?? index}`}
           >
-            {card && (
-              <InfoCard
-                tags={card.tags}
-                img={card.img}
-                size={card.size ?? size ?? 'small'}
-                title={card.title}
-                description={card.description}
-                to={card.to}
-                detail={card.detail}
-                variant={variant}
-                appointment={card.appointment}
-                loading={card.loading}
-                tooltip={card.tooltip}
-              />
+            {card?.error ? (
+              <ErrorCard title={card.title} to={card.to} />
+            ) : (
+              card && (
+                <InfoCard
+                  tags={card.tags}
+                  img={card.img}
+                  size={card.size ?? size ?? 'small'}
+                  title={card.title}
+                  description={card.description}
+                  to={card.to}
+                  detail={card.detail}
+                  variant={variant}
+                  appointment={card.appointment}
+                  loading={card.loading}
+                  tooltip={card.tooltip}
+                />
+              )
             )}
           </GridColumn>
         ))}
