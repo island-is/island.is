@@ -38,7 +38,10 @@ export const Summary = ({ state }: Props) => {
         section?.screens
           ?.filter((scr) => !scr?.isHidden)
           .map((screen, screenIndex) => (
-           <Box key={screen?.id ?? `screen-${sectionIndex}-${screenIndex}`} marginTop={5}>
+            <Box
+              key={screen?.id ?? `screen-${sectionIndex}-${screenIndex}`}
+              marginTop={5}
+            >
               <Divider />
               <GridContainer>
                 <GridRow>
@@ -54,14 +57,17 @@ export const Summary = ({ state }: Props) => {
                       display="flex"
                       marginTop={5}
                       justifyContent={['flexStart', 'flexEnd']}
-                    > 
+                    >
                       <Button
                         icon="pencil"
                         iconType="filled"
                         variant="utility"
                         inline={true}
                         onClick={() => {
-                          handleButtonClick(section?.displayOrder ?? -1, screen?.displayOrder ?? -1)
+                          handleButtonClick(
+                            section?.displayOrder ?? -1,
+                            screen?.displayOrder ?? -1,
+                          )
                         }}
                       >
                         {formatMessage(m.edit)}

@@ -5,7 +5,11 @@ import {
 } from '@island.is/auth-nest-tools'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { UseGuards, BadRequestException, ForbiddenException } from '@nestjs/common'
+import {
+  UseGuards,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { FormSystemNameByNationalId } from '../../models/nationalRegistryName.model'
