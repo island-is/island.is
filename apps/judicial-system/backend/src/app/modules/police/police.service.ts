@@ -69,6 +69,18 @@ export interface SubpoenaInfo {
   serviceDate?: Date
 }
 
+export interface CaseSupplement {
+  courtCaseNumber: string | undefined
+  policeCaseNumbers: string[]
+  ruling: string | undefined
+  rulingDate: Date | undefined
+  courtInstitution: string | undefined
+  courtAddress: string | undefined
+  prosecutorInstitution: string | undefined
+  prosecutorSsn: string | undefined
+  defenderSsn: string | undefined
+}
+
 interface CreateDocumentResponse {
   externalPoliceDocumentId: string
 }
@@ -626,6 +638,7 @@ export class PoliceService {
     documentFiles,
     documentDates,
     fileTypeCode,
+    caseSupplement,
   }: {
     caseId: string
     defendantId: string
@@ -635,6 +648,7 @@ export class PoliceService {
     documentFiles: { name: string; documentBase64: string }[]
     documentDates: { code: string; value: Date }[]
     fileTypeCode: string
+    caseSupplement: CaseSupplement
   }): Promise<CreateDocumentResponse> {
     const { name: actor } = user
 
@@ -656,6 +670,7 @@ export class PoliceService {
           supplements: [
             { code: 'RVG_CASE_ID', value: caseId },
             { code: 'RECEIVER_SSN', value: defendantNationalId },
+            { code: 'VERDICT', value: caseSupplement },
           ],
           dates: documentDates,
         }),

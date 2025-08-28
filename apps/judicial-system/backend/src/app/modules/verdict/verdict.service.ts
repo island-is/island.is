@@ -190,8 +190,19 @@ export class VerdictService {
     )[0]
     const documentName = `Dómur í máli ${theCase.courtCaseNumber}`
 
+    const caseSupplement = {
+      courtCaseNumber: theCase.courtCaseNumber,
+      policeCaseNumbers: theCase.policeCaseNumbers,
+      ruling: theCase.ruling,
+      rulingDate: theCase.rulingDate,
+      courtInstitution: theCase.court?.name,
+      courtAddress: theCase.court?.address,
+      prosecutorInstitution: theCase.prosecutorsOffice?.name,
+      prosecutorSsn: theCase.prosecutor?.nationalId,
+      defenderSsn: defendant.defenderNationalId,
+    }
+
     // deliver the verdict by creating the document at the police
-    // TODO: Adjust the document in collaboration with RLS
     const createdDocument = await this.policeService.createDocument({
       caseId: theCase.id,
       defendantId: defendant.id,
@@ -206,6 +217,7 @@ export class VerdictService {
       ],
       documentDates: [{ code: 'ORDER_BY_DATE', value: verdictFile.created }],
       fileTypeCode: 'BRTNG_DOMUR',
+      caseSupplement,
     })
     if (!createdDocument) {
       return { delivered: false }
