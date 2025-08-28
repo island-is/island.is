@@ -1,9 +1,4 @@
-import {
-  ActionCard,
-  Box,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { ActionCard, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { EmptyState } from '@island.is/portals/my-pages/core'
 import { useGetListsForUser, useGetSignedList } from '../../../hooks'

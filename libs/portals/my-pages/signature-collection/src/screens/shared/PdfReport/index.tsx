@@ -1,5 +1,5 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Button } from '@island.is/island-ui/core'
 import { usePDF, Document } from '@react-pdf/renderer'
 import MyPdfDocument from './Document'
 import { useGetPdfReport } from '../../../hooks'
@@ -21,21 +21,19 @@ export const PdfReport = ({
 
   useEffect(() => {
     if (report) {
-      updateInstance(<MyPdfDocument report={report} collectionType={collectionType} />)
+      updateInstance(
+        <MyPdfDocument report={report} collectionType={collectionType} />,
+      )
     }
   }, [report, updateInstance])
 
   return (
-    <Box>
-      <Button
-        icon="download"
-        iconType="outline"
-        variant="ghost"
-        onClick={() => window.open(instance.url?.toString(), '_blank')}
-      >
-        {formatMessage(m.downloadPdf)}
-      </Button>
-    </Box>
+    <Button
+      variant="text"
+      onClick={() => window.open(instance.url?.toString(), '_blank')}
+    >
+      {formatMessage(m.downloadPdf)}
+    </Button>
   )
 }
 

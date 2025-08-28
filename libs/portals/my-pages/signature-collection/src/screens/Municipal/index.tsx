@@ -22,10 +22,7 @@ const SignatureCollectionMunicipal = () => {
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection(collectionType)
   const { isOwner } = useIsOwner(collectionType)
-  const { listsForOwner } = useGetListsForOwner(
-    collectionType,
-    currentCollection?.id || '',
-  )
+  const { listsForOwner } = useGetListsForOwner(collectionType, '')
 
   return (
     <Box>
@@ -34,6 +31,7 @@ const SignatureCollectionMunicipal = () => {
         intro={formatMessage(m.pageIntro)}
         slug={listsForOwner?.[0]?.slug}
       />
+
       {!loadingCurrentCollection && (isOwner.success || user.profile.actor) ? (
         <OwnerView
           currentCollection={currentCollection}

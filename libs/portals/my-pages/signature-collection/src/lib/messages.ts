@@ -247,7 +247,7 @@ export const m = defineMessages({
   },
   downloadPdf: {
     id: 'sp.signatureCollection:downloadPdf',
-    defaultMessage: 'Sækja skýrslu',
+    defaultMessage: 'Hlaða niður skýrslu',
     description: '',
   },
   downloadPdfDescription: {
