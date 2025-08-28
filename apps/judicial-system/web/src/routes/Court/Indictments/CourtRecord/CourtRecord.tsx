@@ -88,11 +88,11 @@ const CourtRecord: FC = () => {
   const [isClosedProceeding, setIsClosedProceeding] = useState<boolean>(false)
 
   const containerVariants = {
-    open: {
-      height: 'auto',
-    },
-    closed: {
+    hidden: {
       height: 0,
+    },
+    visible: {
+      height: 'auto',
     },
     exit: {
       height: 0,
@@ -250,8 +250,8 @@ const CourtRecord: FC = () => {
                           </motion.div>
                           <motion.div
                             variants={containerVariants}
-                            initial="closed"
-                            animate="open"
+                            initial="hidden"
+                            animate="visible"
                             exit="exit"
                             className={styles.twoColGrid}
                             key="grid"
