@@ -165,7 +165,11 @@ export const siaConfirmedTreatmentQuery = gql`
         discharge
         plannedFollowup
       }
-      treatmentType
+      treatmentType {
+        value
+        name
+        display
+      }
       estimatedDuration {
         start
         end

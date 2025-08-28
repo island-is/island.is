@@ -67,8 +67,8 @@ export class ConfirmedTreatment {
   @Field(() => TreatmentPlan, { nullable: true })
   treatmentPlan?: TreatmentPlan
 
-  @Field(() => [String], { nullable: true })
-  treatmentType?: Array<string>
+  @Field(() => [EnumType], { nullable: true })
+  treatmentType?: Array<EnumType>
 
   @Field(() => EstimatedDuration, { nullable: true })
   estimatedDuration?: EstimatedDuration
