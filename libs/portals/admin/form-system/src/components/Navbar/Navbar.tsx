@@ -246,12 +246,15 @@ export const Navbar = () => {
     <div>
       <Box className={styles.minimalScrollbar}>
         {parties && (
-          <NavComponent
-            type="Section"
-            data={parties}
-            active={activeItem.data?.id === parties.id}
-            focusComponent={focusComponent}
-          />
+          <>
+            <NavComponent
+              type="Section"
+              data={parties}
+              active={activeItem.data?.id === parties.id}
+              focusComponent={focusComponent}
+            />
+            {/* {renderScreensForSection(parties as FormSystemSection)} */}
+          </>
         )}
         <DndContext
           sensors={sensors}

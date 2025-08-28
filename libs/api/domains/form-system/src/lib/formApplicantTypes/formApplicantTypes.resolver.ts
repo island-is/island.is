@@ -8,12 +8,11 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { FormApplicantTypesService } from './formApplicantTypes.service'
-import { FormApplicantType } from '../../models/formApplicantTypes.model'
+import { Screen } from '../../models/screen.model'
 import {
-  FormApplicantTypeCreateInput,
-  FormApplicantTypeDeleteInput,
-  FormApplicantTypeUpdateInput,
-} from '../../dto/formApplicantType.input'
+  CreateApplicantInput,
+  DeleteApplicantInput,
+} from '../../dto/applicant.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -23,36 +22,33 @@ export class FormApplicantTypesResolver {
     private readonly formApplicantTypesService: FormApplicantTypesService,
   ) {}
 
-  @Mutation(() => FormApplicantType, {
+  @Mutation(() => Screen, {
     name: 'createFormSystemApplicantType',
   })
   async createFormApplicantType(
-    @Args('input', { type: () => FormApplicantTypeCreateInput })
-    input: FormApplicantTypeCreateInput,
+    @Args('input', { type: () => CreateApplicantInput })
+    input: CreateApplicantInput,
     @CurrentUser() user: User,
-  ): Promise<FormApplicantType> {
-    return this.formApplicantTypesService.createFormApplicantType(user, input)
+  ): Promise<Screen> {
+    const result = await this.formApplicantTypesService.createFormApplicantType(
+      user,
+      input,
+    )
+    return result
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => Screen, {
     name: 'deleteFormSystemApplicantType',
   })
   async deleteFormApplicantType(
-    @Args('input', { type: () => FormApplicantTypeDeleteInput })
-    input: FormApplicantTypeDeleteInput,
+    @Args('input', { type: () => DeleteApplicantInput })
+    input: DeleteApplicantInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.formApplicantTypesService.deleteFormApplicantType(user, input)
-  }
-
-  @Mutation(() => Boolean, {
-    name: 'updateFormSystemApplicantType',
-  })
-  async updateFormApplicantType(
-    @Args('input', { type: () => FormApplicantTypeUpdateInput })
-    input: FormApplicantTypeUpdateInput,
-    @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.formApplicantTypesService.updateFormApplicantType(user, input)
+  ): Promise<Screen> {
+    const result = await this.formApplicantTypesService.deleteFormApplicantType(
+      user,
+      input,
+    )
+    return result
   }
 }

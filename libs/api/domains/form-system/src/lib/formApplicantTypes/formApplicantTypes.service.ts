@@ -6,14 +6,12 @@ import {
   FormApplicantTypesApi,
   FormApplicantTypesControllerCreateRequest,
   FormApplicantTypesControllerDeleteRequest,
-  FormApplicantTypesControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
-  FormApplicantTypeDeleteInput,
-  FormApplicantTypeCreateInput,
-  FormApplicantTypeUpdateInput,
-} from '../../dto/formApplicantType.input'
-import { FormApplicantType } from '../../models/formApplicantTypes.model'
+  CreateApplicantInput,
+  DeleteApplicantInput,
+} from '../../dto/applicant.input'
+import { Screen } from '../../models/screen.model'
 
 @Injectable()
 export class FormApplicantTypesService {
@@ -42,36 +40,25 @@ export class FormApplicantTypesService {
 
   async createFormApplicantType(
     auth: User,
-    input: FormApplicantTypeCreateInput,
-  ): Promise<FormApplicantType> {
+    input: CreateApplicantInput,
+  ): Promise<Screen> {
     const response = await this.formApplicantTypesApiWithAuth(
       auth,
     ).formApplicantTypesControllerCreate(
       input as FormApplicantTypesControllerCreateRequest,
     )
-
-    return response as FormApplicantType
+    return response as Screen
   }
 
   async deleteFormApplicantType(
     auth: User,
-    input: FormApplicantTypeDeleteInput,
-  ): Promise<void> {
-    await this.formApplicantTypesApiWithAuth(
+    input: DeleteApplicantInput,
+  ): Promise<Screen> {
+    const response = await this.formApplicantTypesApiWithAuth(
       auth,
     ).formApplicantTypesControllerDelete(
       input as FormApplicantTypesControllerDeleteRequest,
     )
-  }
-
-  async updateFormApplicantType(
-    auth: User,
-    input: FormApplicantTypeUpdateInput,
-  ): Promise<void> {
-    await this.formApplicantTypesApiWithAuth(
-      auth,
-    ).formApplicantTypesControllerUpdate(
-      input as FormApplicantTypesControllerUpdateRequest,
-    )
+    return response as Screen
   }
 }

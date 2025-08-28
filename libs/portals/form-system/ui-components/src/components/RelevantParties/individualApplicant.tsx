@@ -1,4 +1,4 @@
-import { FormSystemApplicant } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import {
   GridColumn,
   GridRow,
@@ -12,7 +12,7 @@ import { m, webMessages } from '../../lib/messages'
 import { NationalIdField } from './components/nationalIdField'
 
 interface Props {
-  applicantType: FormSystemApplicant
+  applicantType: FormSystemField
   lang: 'is' | 'en'
 }
 

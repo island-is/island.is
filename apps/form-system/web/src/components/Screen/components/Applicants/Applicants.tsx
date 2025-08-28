@@ -1,52 +1,17 @@
-import { FormSystemApplicant } from '@island.is/api/schema'
-import {
-  Agent,
-  ApplicantTypesEnum,
-  IndividualApplicant,
-  LegalEntity,
-} from '@island.is/form-system/ui'
+import { FormSystemField } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 
 interface Props {
-  applicantTypes: FormSystemApplicant[]
+  applicantFields: FormSystemField[]
 }
 
-export const Applicants = ({ applicantTypes }: Props) => {
+export const Applicants = ({ applicantFields }: Props) => {
   const { lang } = useLocale()
-  const agentType =
-    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
-    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY
+  console.log('applicantFields:', applicantFields)
   return (
     <>
-      {applicantTypes.map((applicantType) => {
-        if (applicantType.applicantTypeId === ApplicantTypesEnum.INDIVIDUAL) {
-          return (
-            <IndividualApplicant
-              applicantType={applicantType}
-              lang={lang}
-              key={applicantType.id}
-            />
-          )
-        } else if (applicantType.applicantTypeId === agentType) {
-          return (
-            <Agent
-              applicantType={applicantType}
-              lang={lang}
-              key={applicantType.id}
-            />
-          )
-        } else if (
-          applicantType.applicantTypeId === ApplicantTypesEnum.LEGAL_ENTITY
-        ) {
-          return (
-            <LegalEntity
-              applicantType={applicantType}
-              lang={lang}
-              key={applicantType.id}
-            />
-          )
-        }
-        return null
+      {applicantFields.map((applicantField, index) => {
+        return <h4 key={index}>{applicantField.name[lang]}</h4>
       })}
     </>
   )

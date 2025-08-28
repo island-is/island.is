@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import { Op } from 'sequelize'
 import { Application } from './models/application.model'
 import { ApplicationDto } from './models/dto/application.dto'
 import { Form } from '../forms/models/form.model'
@@ -22,7 +23,6 @@ import {
   ApplicationStatus,
   ApplicationEvents,
   FieldTypesEnum,
-  ApplicantTypesEnum,
 } from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
@@ -30,8 +30,6 @@ import { ApplicationEvent } from './models/applicationEvent.model'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { User } from '@island.is/auth-nest-tools'
-import { Applicant } from '../applicants/models/applicant.model'
-import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
@@ -42,8 +40,6 @@ export class ApplicationsService {
   constructor(
     @InjectModel(Application)
     private readonly applicationModel: typeof Application,
-    @InjectModel(Applicant)
-    private readonly applicantModel: typeof Applicant,
     @InjectModel(Value)
     private readonly valueModel: typeof Value,
     @InjectModel(Form)
@@ -98,16 +94,6 @@ export class ApplicationsService {
           dependencies: form.dependencies,
           status: ApplicationStatus.IN_PROGRESS,
         } as Application,
-        { transaction },
-      )
-
-      await this.applicantModel.create(
-        {
-          nationalId: user.nationalId,
-          applicationId: newApplication.id,
-          applicantTypeId: ApplicantTypesEnum.INDIVIDUAL,
-          lastLogin: new Date(),
-        } as Applicant,
         { transaction },
       )
 
@@ -403,72 +389,48 @@ export class ApplicationsService {
   private async findAllByUserAndForm(
     user: User,
     formId: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isTest: boolean,
   ): Promise<ApplicationDto[]> {
-    const delegationType = user.delegationType
-    const nationalId = delegationType ? user.actor?.nationalId : user.nationalId
-    const delegatorNationalId = delegationType ? user.nationalId : null
+    const hasDelegation =
+      Array.isArray(user.delegationType) && user.delegationType.length > 0
+    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
+    const delegatorNationalId = hasDelegation ? user.nationalId : null
 
-    // 1. Find all applicants by nationalId
-    const applicants = await this.applicantModel.findAll({
-      where: { nationalId },
-      attributes: ['applicationId', 'nationalId'],
+    const applications = await this.applicationModel.findAll({
+      where: {
+        formId,
+        status: { [Op.ne]: ApplicationStatus.PRUNED },
+        isTest,
+      },
+      include: [{ model: Value, as: 'values' }],
     })
 
-    let applicationIds = applicants.map((a) => a.applicationId)
+    const applicationDtos: ApplicationDto[] = []
 
-    if (delegatorNationalId) {
-      // If delegatorNationalId is present, find applicants for delegatorNationalId as well
-      const delegatorApplicants = await this.applicantModel.findAll({
-        where: { nationalId: delegatorNationalId },
-        attributes: ['applicationId', 'nationalId'],
-      })
-      const delegatorApplicationIds = delegatorApplicants.map(
-        (a) => a.applicationId,
+    for (const application of applications) {
+      const loggedInUser = application.values?.find(
+        (value) =>
+          value.fieldType === FieldTypesEnum.APPLICANT &&
+          value.json?.nationalId === nationalId,
       )
-      // Only include applications that have both applicants (intersection)
-      applicationIds = applicationIds.filter((id) =>
-        delegatorApplicationIds.includes(id),
-      )
-    } else {
-      // If no delegator, exclude applications that have more than one applicant
-      // Find all applicants for these applicationIds
-      const allApplicants = await this.applicantModel.findAll({
-        where: { applicationId: applicationIds },
-        attributes: ['applicationId'],
-      })
-      // Count applicants per applicationId
-      const counts = allApplicants.reduce((acc, a) => {
-        acc[a.applicationId] = (acc[a.applicationId] || 0) + 1
-        return acc
-      }, {} as Record<string, number>)
-      // Only keep applications with a single applicant
-      applicationIds = applicationIds.filter((id) => counts[id] === 1)
+
+      const delegator = delegatorNationalId
+        ? application.values?.find(
+            (value) =>
+              value.fieldType === FieldTypesEnum.APPLICANT &&
+              value.json?.nationalId === delegatorNationalId,
+          )
+        : null
+
+      if (
+        loggedInUser &&
+        (!delegatorNationalId || (delegatorNationalId && delegator))
+      ) {
+        const applicationDto = await this.getApplication(application.id)
+        applicationDtos.push(applicationDto)
+      }
     }
-    // 2. Find all applications that match the formId and filtered applicationIds
-    // const applications = applicationIds.length
-    //   ? await this.applicationModel.findAll({
-    //       where: {
-    //         formId,
-    //         id: applicationIds,
-    //         status: ApplicationStatus.IN_PROGRESS,
-    //         isTest: isTest,
-    //       },
-    //     })
-    //   : []
-    // 3. Map the applications to ApplicationDto
-    const applicationDtos = await Promise.all(
-      applicationIds.map(async (applicationId) => {
-        return this.getApplication(applicationId)
-      }),
-    )
-
-    return applicationDtos.filter(
-      (application) =>
-        application.formId === formId &&
-        application.status === ApplicationStatus.IN_PROGRESS,
-    )
+    return applicationDtos
   }
 
   private async getApplicationForm(
@@ -506,10 +468,6 @@ export class ApplicationsService {
               ],
             },
           ],
-        },
-        {
-          model: FormApplicantType,
-          as: 'formApplicantTypes',
         },
         {
           model: FormCertificationType,
