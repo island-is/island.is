@@ -65,6 +65,8 @@ const Signees = ({
 
     setPage(1)
     setSignees(filtered)
+
+    // eslint-disable-next-line
   }, [searchTerm])
 
   return (

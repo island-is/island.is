@@ -25,6 +25,7 @@ export const PdfReport = ({
         <MyPdfDocument report={report} collectionType={collectionType} />,
       )
     }
+    // eslint-disable-next-line
   }, [report, updateInstance])
 
   return (
