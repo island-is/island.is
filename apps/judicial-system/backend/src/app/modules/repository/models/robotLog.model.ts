@@ -7,7 +7,7 @@ import {
   Table,
 } from 'sequelize-typescript'
 
-import { Case } from '../../repository'
+import { Case } from '..'
 
 @Table({
   tableName: 'robot_log',
