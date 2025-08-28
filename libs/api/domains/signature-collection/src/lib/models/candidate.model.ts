@@ -15,6 +15,9 @@ export class SignatureCollectionCandidate {
   ownerName!: string
 
   @Field({ nullable: true })
+  ownerBirthDate!: Date | null
+
+  @Field({ nullable: true })
   phone?: string
 
   @Field({ nullable: true })
