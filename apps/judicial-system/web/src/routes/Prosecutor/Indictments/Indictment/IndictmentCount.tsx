@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import {
@@ -39,7 +46,10 @@ import {
   UpdateIndictmentCount,
   useLawTag,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  getDefaultDefendantGender,
+  isPartiallyVisible,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { getIncidentDescription } from './lib/getIncidentDescription'
 import { Offenses } from './Offenses/Offenses'
@@ -219,8 +229,9 @@ export const IndictmentCount: FC<Props> = ({
   const { formatMessage } = useIntl()
   const lawTag = useLawTag()
 
-  const gender = getDefaultDefendantGender(workingCase.defendants)
-
+  const [originalPoliceCaseNumber, setOriginalPoliceCaseNumber] = useState(
+    indictmentCount.policeCaseNumber,
+  )
   const [
     vehicleRegistrationNumberErrorMessage,
     setVehicleRegistrationNumberErrorMessage,
@@ -233,6 +244,11 @@ export const IndictmentCount: FC<Props> = ({
   const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
     : []
+
+  const gender = useMemo(
+    () => getDefaultDefendantGender(workingCase.defendants),
+    [workingCase.defendants],
+  )
 
   const lawsBrokenOptions: LawsBrokenOption[] = useMemo(
     () =>
@@ -248,6 +264,24 @@ export const IndictmentCount: FC<Props> = ({
       })),
     [lawTag, indictmentCount.lawsBroken],
   )
+
+  useEffect(() => {
+    if (indictmentCount.policeCaseNumber !== originalPoliceCaseNumber) {
+      // Our position in the list may have changed because we changed the police case number
+      const dateElement = document.getElementById(indictmentCount.id)
+      console.log(dateElement)
+      // Make sure the indictment count is visible
+      if (dateElement && !isPartiallyVisible(dateElement)) {
+        dateElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+
+      setOriginalPoliceCaseNumber(indictmentCount.policeCaseNumber)
+    }
+  }, [
+    indictmentCount.id,
+    indictmentCount.policeCaseNumber,
+    originalPoliceCaseNumber,
+  ])
 
   const showLegalArticleSelection = indictmentCount.offenses?.some(
     ({ offense }) => offense !== IndictmentCountOffense.OTHER,
@@ -360,6 +394,7 @@ export const IndictmentCount: FC<Props> = ({
       <Box marginBottom={1}>
         <Select
           name="policeCaseNumber"
+          id={indictmentCount.id}
           options={workingCase.policeCaseNumbers?.map((val) => ({
             value: val,
             label: val,
