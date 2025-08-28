@@ -18,3 +18,8 @@ export const totalContainer = style({
     },
   }),
 })
+
+export const totalOuterContainer = style({
+  position: 'sticky',
+  top: 130,
+})

@@ -276,7 +276,7 @@ export const FineAndSpeedMeasurementCalculator = ({
     <Stack space={3}>
       <Box display="flex" flexDirection="rowReverse" columnGap={[1, 3, 3, 5]}>
         <Box position="relative">
-          <Box position="sticky" top={9}>
+          <Box className={styles.totalOuterContainer}>
             <Box display="flex" justifyContent="flexEnd">
               <Box
                 borderRadius="standard"
