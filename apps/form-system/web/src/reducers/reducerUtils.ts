@@ -245,23 +245,25 @@ export const setCurrentScreen = (
   sectionIndex: number,
   screenIndex: number,
 ): ApplicationState => {
-  const currentSection = state.sections[sectionIndex]
-  let currentScreen: FormSystemScreen | undefined = undefined
-  if (hasScreens(currentSection)) {
-    const maybeScreen = currentSection.screens?.find(
-      (screen) => screen?.displayOrder === screenIndex,
-    )
-    currentScreen = maybeScreen === null ? undefined : maybeScreen
+  const sections = state.sections ?? []
+  if (sectionIndex < 0 || sectionIndex >= sections.length) {
+    return state
   }
+  const currentSection = sections[sectionIndex] as FormSystemSection
+  const screens = currentSection.screens ?? []
+  const currentScreen = hasScreens(currentSection)
+    ? (screens[screenIndex] as FormSystemScreen | undefined)
+    : undefined
   return {
     ...state,
     currentSection: {
       data: currentSection,
       index: sectionIndex,
     },
-    currentScreen: currentScreen
-      ? { data: currentScreen, index: screenIndex }
-      : undefined,
+    currentScreen:  
+      currentScreen !== undefined  
+        ? { data: currentScreen, index: screenIndex }  
+        : undefined, 
   }
 }
 

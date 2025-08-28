@@ -6,7 +6,7 @@ interface Props {
   lang?: 'is' | 'en'
 }
 
-const AWNSER_MAP = {
+const ANSWER_MAP = {
   is: {
     true: 'Já',
     false: 'Nei',
@@ -42,7 +42,7 @@ export const CheckBoxDisplay = ({ item, lang = 'is' }: Props) => {
         {item.name?.[lang]}
       </Text>
       <Text fontWeight="light">
-        {AWNSER_MAP[lang][value as 'true' | 'false'] ?? ''}
+        {ANSWER_MAP[lang][value as 'true' | 'false'] ?? ''}
       </Text>
     </Box>
   )

@@ -28,15 +28,17 @@ export const Summary = ({ state }: Props) => {
       payload: { screenIndex: screenIndex, sectionIndex: sectionIndex },
     })
   }
-  //TODO: filter ishidden sections and screens
+  const sections = state?.sections?.filter((s) => !s?.isHidden)
   return (
     <Box marginTop={2}>
       <Text fontWeight="light" as="p">
         {formatMessage(m.reviewApplication)}
       </Text>
-      {state?.sections.map((section) =>
-        section?.screens?.map((screen, index) => (
-          <Box key={index} marginTop={5}>
+      {sections?.map((section) =>
+        section?.screens
+          ?.filter((scr) => !scr?.isHidden)
+          .map((screen, index) => (
+          <Box key={screen?.id ?? `screen-${index}`} marginTop={5}>
             <Divider />
             <GridContainer>
               <GridRow>
@@ -65,7 +67,7 @@ export const Summary = ({ state }: Props) => {
                         )
                       }}
                     >
-                      Breyta
+                      {formatMessage({ id: 'form-system:edit', defaultMessage: 'Breyta' })}
                     </Button>
                   </Box>
                 </GridColumn>
