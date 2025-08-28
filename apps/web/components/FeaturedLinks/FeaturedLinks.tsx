@@ -11,7 +11,7 @@ export const FeaturedLinks = ({ links }: FeaturedLinksProps) => {
   return (
     <Inline space={2}>
       {links
-        .filter((link) => Boolean(link.title))
+        .filter((link) => Boolean(link.title?.trim()))
         .map(({ title, attention, thing }) => {
           if (!thing?.type || !thing?.slug) {
             return (
