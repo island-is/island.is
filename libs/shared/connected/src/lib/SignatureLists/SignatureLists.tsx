@@ -98,7 +98,13 @@ export const SignatureLists: FC<
                         eyebrow={area.name}
                         text={
                           t('candidateOwnerName', 'Stofnandi söfnunar: ') +
-                          candidate.ownerName
+                          candidate.ownerName +
+                          ' (' +
+                          format(
+                            new Date(candidate.ownerBirthDate),
+                            'dd.MM.yyyy',
+                          ) +
+                          ')'
                         }
                         cta={
                           collection.isActive
