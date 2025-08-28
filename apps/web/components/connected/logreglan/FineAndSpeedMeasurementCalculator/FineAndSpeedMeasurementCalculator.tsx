@@ -325,7 +325,7 @@ export const FineAndSpeedMeasurementCalculator = ({
                       variant="text"
                       size="small"
                     >
-                      <Hyphen>Sjá sundurliðun</Hyphen>
+                      <Hyphen>{formatMessage(m.results.showBreakdown)}</Hyphen>
                     </Button>
                   </Box>
                 </Stack>

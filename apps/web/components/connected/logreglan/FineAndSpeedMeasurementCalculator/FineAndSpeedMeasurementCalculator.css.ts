@@ -25,5 +25,5 @@ export const totalContainer = style({
 
 export const totalOuterContainer = style({
   position: 'sticky',
-  top: 130,
+  top: '130px',
 })
