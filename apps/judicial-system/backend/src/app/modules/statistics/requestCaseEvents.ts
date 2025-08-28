@@ -12,7 +12,7 @@ import { courtSubtypes } from '../court/court.service'
 import { EventLog } from '../event-log'
 import { RequestCaseEventType } from './models/event.model'
 
-interface RequestCaseEvent {
+export interface RequestCaseEvent {
   id: string
   event: RequestCaseEventType
   eventDescriptor: string
@@ -309,7 +309,7 @@ const caseCompletedByCourtOfAppeals = (
   }
 }
 
-export const eventFunctions = [
+export const requestCaseEventFunctions = [
   createCase,
   caseSentToCourt,
   caseReceivedByCourt,
