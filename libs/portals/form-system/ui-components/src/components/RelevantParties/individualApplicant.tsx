@@ -33,7 +33,7 @@ export const IndividualApplicant = ({
   actor,
 }: Props) => {
   const { formatMessage } = useIntl()
-  const nationalId = actor != ''?  actor : user?.nationalId ?? ''
+  const nationalId = actor !== '' ? actor : user?.nationalId ?? ''
   const shouldQuery = !!nationalId
   const { data: nameData, loading: nameLoading } = useQuery(
     GET_NAME_BY_NATIONALID,

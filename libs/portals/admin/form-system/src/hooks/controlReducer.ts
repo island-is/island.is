@@ -116,7 +116,7 @@ type ChangeActions =
       type: 'CHANGE_HAS_SUMMARY_SCREEN'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
-      | {
+  | {
       type: 'CHANGE_HAS_PAYMENT'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }

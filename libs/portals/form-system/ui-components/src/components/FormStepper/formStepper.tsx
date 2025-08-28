@@ -19,12 +19,16 @@ export const FormStepper = ({
   sections,
   currentSection,
   currentScreen,
-  hasSummaryScreen
+  hasSummaryScreen,
 }: Props) => {
   const { lang } = useLocale()
 
   const visibleSections = (sections ?? []).filter(
-    (s) => !!s && !s.isHidden && s.sectionType !== SectionTypes.PREMISES && (s.sectionType !== SectionTypes.SUMMARY || hasSummaryScreen),
+    (s) =>
+      !!s &&
+      !s.isHidden &&
+      s.sectionType !== SectionTypes.PREMISES &&
+      (s.sectionType !== SectionTypes.SUMMARY || hasSummaryScreen),
   )
   const activeSectionId = currentSection?.data?.id
   const activeScreenId = currentScreen?.data?.id

@@ -285,13 +285,12 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
-            <Row>
+      <Row>
         <Column>
           <Checkbox
             label={formatMessage(m.payment)}
             checked={
-              form.hasPayment !== null &&
-              form.hasPayment !== undefined
+              form.hasPayment !== null && form.hasPayment !== undefined
                 ? form.hasPayment
                 : false
             }

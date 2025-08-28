@@ -11,9 +11,7 @@ import { Dispatch } from 'react'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { useFormContext, Controller } from 'react-hook-form'
-import {
-  GET_NAME_BY_NATIONALID,
-} from '@island.is/form-system/graphql'
+import { GET_NAME_BY_NATIONALID } from '@island.is/form-system/graphql'
 import { useQuery } from '@apollo/client'
 import { useEffect, useState } from 'react'
 
@@ -31,26 +29,22 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const name = getValue(item, 'name')
   const nationalId = getValue(item, 'nationalId')
 
-  const shouldQuery = nationalIdRegex.test(nationalId)
+  const shouldQuery = nationalIdRegex.test(nationalId) && name !== ''
 
-  const { data: nameData } = useQuery(
-    GET_NAME_BY_NATIONALID,
-    {
-      variables: { input: nationalId.replace('-', '') },
-      fetchPolicy: 'cache-first',
-      skip: !shouldQuery,
-    },
-  )
+  const { data: nameData } = useQuery(GET_NAME_BY_NATIONALID, {
+    variables: { input: nationalId.replace('-', '') },
+    fetchPolicy: 'cache-first',
+    skip: !shouldQuery,
+  })
   const [fetchedName, setFetchedName] = useState<string>('')
 
   useEffect(() => {
     if (shouldQuery && nameData?.formSystemNameByNationalId?.fulltNafn) {
       setFetchedName(nameData.formSystemNameByNationalId.fulltNafn)
-          } else if (!shouldQuery) {
+    } else if (!shouldQuery) {
       setFetchedName('')
     }
   }, [shouldQuery, nameData, dispatch, item.id])
-
 
   return (
     <Stack space={2}>
@@ -112,9 +106,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
             label={formatMessage(m.namePerson)}
             name="nafn"
             disabled
-            value={
-              fetchedName
-            }
+            value={fetchedName}
           />
         </Column>
       </Row>

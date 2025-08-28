@@ -26,9 +26,14 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     return valid
   }
 
-  const onSubmit = (currentSection.data.sectionType === SectionTypes.SUMMARY && (state.application.hasPayment === false || state.application.hasPayment === undefined)
-      || currentSection.data.sectionType === SectionTypes.PAYMENT
-    || (state.application.hasPayment === false && state.currentScreen?.index == state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder) )
+  const onSubmit =
+    (currentSection.data.sectionType === SectionTypes.SUMMARY &&
+      (state.application.hasPayment === false ||
+        state.application.hasPayment === undefined)) ||
+    currentSection.data.sectionType === SectionTypes.PAYMENT ||
+    (state.application.hasPayment === false &&
+      state.currentScreen?.index ==
+        state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
 
   const continueButtonText =
     state.currentSection.index === 0
@@ -43,7 +48,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const [submitApplication] = useMutation(SUBMIT_APPLICATION)
   const handleIncrement = async () => {
     const isValid = await validate()
-
 
     if (onSubmit) {
       return submitApplication({
