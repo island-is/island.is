@@ -9,13 +9,18 @@ import {
 } from '@react-pdf/renderer'
 import logo from './logo.png'
 import { dark200 } from '@island.is/island-ui/theme'
-import { SignatureCollectionListSummary } from '@island.is/api/schema'
+import {
+  SignatureCollectionCollectionType,
+  SignatureCollectionListSummary,
+} from '@island.is/api/schema'
 import format from 'date-fns/format'
 
 const PdfDocument = ({
   report,
+  collectionType,
 }: {
   report: SignatureCollectionListSummary
+  collectionType: SignatureCollectionCollectionType
 }) => {
   return (
     <Document>
@@ -37,8 +42,13 @@ const PdfDocument = ({
               {format(new Date(), 'dd.MM.yyyy HH:mm')}
             </Text>
 
-            <Text style={styles.header}>Listabókstafur:</Text>
-            <Text style={styles.text}>{report.partyBallotLetter}</Text>
+            {collectionType ===
+              SignatureCollectionCollectionType.Parliamentary && (
+              <>
+                <Text style={styles.header}>Listabókstafur:</Text>
+                <Text style={styles.text}>{report.partyBallotLetter}</Text>
+              </>
+            )}
 
             <Text style={styles.header}>Rafræn meðmæli:</Text>
             <Text style={styles.text}>{report.nrOfDigitalSignatures}</Text>

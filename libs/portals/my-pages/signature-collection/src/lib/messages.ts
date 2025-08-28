@@ -247,13 +247,13 @@ export const m = defineMessages({
   },
   downloadPdf: {
     id: 'sp.signatureCollection:downloadPdf',
-    defaultMessage: 'Sækja skýrslu',
+    defaultMessage: 'Hlaða niður skýrslu',
     description: '',
   },
   downloadPdfDescription: {
     id: 'sp.signatureCollection:downloadPdfDescription',
     defaultMessage:
-      '              Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
+      'Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
     description: '',
   },
   copyLink: {

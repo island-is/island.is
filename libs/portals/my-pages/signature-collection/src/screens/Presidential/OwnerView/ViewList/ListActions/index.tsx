@@ -32,20 +32,20 @@ const ListActions = ({ listId }: { listId: string }) => {
           {formatMessage(m.listActions)}
         </Text>
         <Divider />
-        <Text marginTop={6} marginBottom={8}>
-          {formatMessage(m.listActionsDescription)}
-        </Text>
+        <Text marginY={6}>{formatMessage(m.listActionsDescription)}</Text>
         <Box
           display={['block', 'block', 'flex']}
           justifyContent="spaceBetween"
           marginBottom={10}
         >
           <Box display="flex">
-            <Tag>
-              <Box display="flex" justifyContent="center">
-                <Icon icon="document" type="outline" color="blue600" />
-              </Box>
-            </Tag>
+            <Box marginTop={1}>
+              <Tag>
+                <Box display="flex" justifyContent="center">
+                  <Icon icon="document" type="outline" color="blue600" />
+                </Box>
+              </Tag>
+            </Box>
             <Box marginLeft={5}>
               <Text variant="h4">{formatMessage(m.pdfReport)}</Text>
               <Text marginBottom={2}>

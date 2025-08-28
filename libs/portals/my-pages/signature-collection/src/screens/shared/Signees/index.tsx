@@ -55,9 +55,7 @@ const Signees = ({
 
   // list search
   useEffect(() => {
-    let filteredSignees: Signature[] = listSignees
-
-    filteredSignees = filteredSignees.filter((s) => {
+    const filtered = listSignees.filter((s) => {
       return (
         s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         formatNationalId(s.signee.nationalId).includes(searchTerm) ||
@@ -66,24 +64,25 @@ const Signees = ({
     })
 
     setPage(1)
-    setSignees(filteredSignees)
-  }, [searchTerm, listSignees])
+    setSignees(filtered)
+
+    // eslint-disable-next-line
+  }, [searchTerm])
 
   return (
     <Box>
-      <Text variant="h4" marginBottom={1}>
+      <Text variant="h4" marginBottom={2}>
         {formatMessage(m.signeesHeader)}
       </Text>
-
       <GridContainer>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
             <FilterInput
               name="searchSignee"
               value={searchTerm}
               onChange={(v) => setSearchTerm(v)}
               placeholder={formatMessage(m.searchInListPlaceholder)}
-              backgroundColor="white"
+              backgroundColor="blue"
             />
           </GridColumn>
         </GridRow>
@@ -92,6 +91,11 @@ const Signees = ({
       {!loadingSignees ? (
         signees.length > 0 ? (
           <Box marginTop={3}>
+            <Box display="flex" justifyContent="flexEnd">
+              <Text variant="eyebrow" marginBottom={2}>
+                {formatMessage(m.numberOfSigns) + ' ' + signees.length}
+              </Text>
+            </Box>
             <T.Table>
               <T.Head>
                 <T.Row>

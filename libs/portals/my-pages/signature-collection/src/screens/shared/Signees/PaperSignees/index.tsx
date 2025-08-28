@@ -115,7 +115,7 @@ export const PaperSignees = ({
       </Box>
 
       <Box
-        background="blue100"
+        background="white"
         height="full"
         padding={3}
         border="standard"
@@ -132,6 +132,7 @@ export const PaperSignees = ({
                 format="######-####"
                 required
                 defaultValue={nationalIdInput}
+                backgroundColor="blue"
                 onChange={(e) => {
                   setNationalIdInput(e.target.value.replace(/\W/g, ''))
                 }}
@@ -146,6 +147,7 @@ export const PaperSignees = ({
                   id="page"
                   name="page"
                   type="number"
+                  backgroundColor="blue"
                   required
                   label={formatMessage(m.paperNumber)}
                   value={page}
@@ -160,7 +162,6 @@ export const PaperSignees = ({
                 id="name"
                 name="name"
                 label={formatMessage(m.paperSigneeName)}
-                backgroundColor="white"
                 value={!loadingCanSign ? name : ''}
                 readOnly
               />

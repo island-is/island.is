@@ -1,4 +1,4 @@
-import { Box, Text, Button, toast } from '@island.is/island-ui/core'
+import { Box, Text, Button, toast, Tag, Icon } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import { useState } from 'react'
@@ -39,52 +39,59 @@ const CancelCollection = ({ listId }: { listId: string }) => {
     })
 
   return (
-    <Box display={['block', 'block', 'flex']} justifyContent="spaceBetween">
-      <Box marginBottom={[2, 2, 0]}>
-        <Text variant="h4">{formatMessage(m.deleteCollection)}</Text>
-        <Text>{formatMessage(m.deleteCollectionDescription)}</Text>
-      </Box>
-      <Modal
-        id="cancelCollection"
-        isVisible={modalIsOpen}
-        toggleClose={false}
-        initialVisibility={false}
-        onCloseModal={() => setModalIsOpen(false)}
-        disclosure={
-          <Button
-            iconType="outline"
-            variant="ghost"
-            icon="trash"
-            colorScheme="destructive"
-            onClick={() => setModalIsOpen(true)}
-          >
-            {formatMessage(m.deleteCollection)}
-          </Button>
-        }
-      >
-        <Box display="block" width="full">
-          <Text variant="h2" marginTop={[5, 0]}>
-            {formatMessage(m.cancelCollectionButton)}
-          </Text>
-          <Text variant="default" marginTop={2}>
-            {formatMessage(m.cancelCollectionModalMessage)}
-          </Text>
-          <Box
-            marginTop={[7, 10]}
-            marginBottom={5}
-            display="flex"
-            justifyContent="center"
-          >
-            <Button
-              onClick={() => cancelCollection()}
-              loading={loading}
-              colorScheme="destructive"
-            >
-              {formatMessage(m.cancelCollectionModalConfirmButton)}
-            </Button>
+    <Box display="flex">
+      <Box marginTop={1}>
+        <Tag variant="red">
+          <Box display="flex" justifyContent="center">
+            <Icon icon="trash" type="outline" color="red600" />
           </Box>
-        </Box>
-      </Modal>
+        </Tag>
+      </Box>
+      <Box marginLeft={5}>
+        <Text variant="h4">{formatMessage(m.deleteCollection)}</Text>
+        <Text marginBottom={2}>
+          {formatMessage(m.deleteCollectionDescription)}
+        </Text>
+        <Modal
+          id="cancelCollection"
+          isVisible={modalIsOpen}
+          toggleClose={false}
+          initialVisibility={false}
+          onCloseModal={() => setModalIsOpen(false)}
+          disclosure={
+            <Button
+              variant="text"
+              colorScheme="destructive"
+              onClick={() => setModalIsOpen(true)}
+            >
+              {formatMessage(m.deleteCollection)}
+            </Button>
+          }
+        >
+          <Box display="block" width="full">
+            <Text variant="h2" marginTop={[5, 0]}>
+              {formatMessage(m.cancelCollectionButton)}
+            </Text>
+            <Text variant="default" marginTop={2}>
+              {formatMessage(m.cancelCollectionModalMessage)}
+            </Text>
+            <Box
+              marginTop={[7, 10]}
+              marginBottom={5}
+              display="flex"
+              justifyContent="center"
+            >
+              <Button
+                onClick={() => cancelCollection()}
+                loading={loading}
+                colorScheme="destructive"
+              >
+                {formatMessage(m.cancelCollectionModalConfirmButton)}
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
+      </Box>
     </Box>
   )
 }
