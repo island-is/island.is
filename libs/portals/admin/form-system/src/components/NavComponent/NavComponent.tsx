@@ -6,13 +6,14 @@ import {
 } from '@island.is/api/schema'
 import { ItemType, NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { useSortable } from '@dnd-kit/sortable'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { ControlContext } from '../../context/ControlContext'
 import * as styles from './NavComponent.css'
 import cn from 'classnames'
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
 import { NavButtons } from './components/NavButtons'
 import { SectionTypes } from '@island.is/form-system/enums'
+
 
 type Props = {
   type: ItemType
@@ -51,15 +52,12 @@ export const NavComponent = ({
     return false
   }
 
-  const [editMode] = useState(false)
-
   const { setNodeRef, attributes, listeners, isDragging } = useSortable({
     id: data.id as UniqueIdentifier,
     data: {
       type: type,
       data,
     },
-    disabled: editMode,
   })
 
   if (isDragging) {
@@ -215,3 +213,5 @@ export const NavComponent = ({
     </Box>
   )
 }
+
+
