@@ -44,6 +44,11 @@ export const m = {
     },
   }),
   results: defineMessages({
+    showBreakdown: {
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:results.showBreakdown',
+      defaultMessage: 'Sjá sundurliðun',
+      description: 'Sjá sundurliðun',
+    },
     heading: {
       id: 'web.logreglan.fineAndSpeedMeasurementCalculator:results.heading',
       defaultMessage: 'Sundurliðun',
