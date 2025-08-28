@@ -4,6 +4,8 @@ import {
   Stack,
   ActionCard,
   SkeletonLoader,
+  AccordionItem,
+  Accordion,
 } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import { FC } from 'react'
@@ -32,122 +34,190 @@ export const SignatureLists: FC<
   const { openLists, openListsLoading } = useGetOpenLists(collection)
   const t = useLocalization(slice.json)
 
-  return !loading && !openListsLoading ? (
-    <Box marginTop={5}>
-      {(collection?.candidates.length > 0 || openLists?.length > 0) && (
-        <Box
-          marginBottom={3}
-          display={['block', 'flex']}
-          justifyContent={'spaceBetween'}
-          alignItems={'baseline'}
-        >
-          {collection?.isActive ? (
-            <>
-              <Text variant="h3">{t('title', 'Forsetakosningar 2024')}</Text>
-              <Text variant="eyebrow">
-                {t('totalCandidates', 'Fjöldi frambjóðenda: ') +
-                  collection?.candidates.length}
-              </Text>
-            </>
-          ) : (
-            <>
-              <Text variant="h3">
-                {t('title2', 'Forsetakosningar 2024 - Framlengt')}
-              </Text>
-              <Text variant="eyebrow">
-                {t('totalLists', 'Fjöldi lista: ') + openLists?.length}
-              </Text>
-            </>
-          )}
-        </Box>
-      )}
-      <Stack space={3}>
-        {/* if collection time is over yet there are still open lists, show them */}
-        {!collection?.isActive && openLists?.length > 0 ? (
-          [...openLists]
-            ?.sort(sortAlpha('title'))
-            .map((list: SignatureCollectionListBase) => {
-              return (
-                <ActionCard
-                  eyebrow={
-                    t('openTil', 'Lokadagur:') +
-                    ' ' +
-                    format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')
-                  }
-                  key={list.id}
-                  backgroundColor="white"
-                  heading={list.title.split(' -')[0]}
-                  text={list.area?.name}
-                  cta={{
-                    label: t('sign', 'Mæla með framboði'),
-                    variant: 'text',
-                    icon: 'open',
-                    iconType: 'outline',
-                    size: 'small',
-                    onClick: () =>
-                      window.open(
-                        `${window.location.origin}${list.slug}`,
-                        '_blank',
-                      ),
-                  }}
-                />
-              )
-            })
-        ) : collection?.candidates?.length > 0 ? (
-          [...collection.candidates]
-            ?.sort(sortAlpha('name'))
-            .map((candidate: SignatureCollectionCandidate) => {
-              return (
-                <ActionCard
-                  key={candidate.id}
-                  backgroundColor="white"
-                  heading={candidate.name}
-                  eyebrow={
-                    t('openTil', 'Lokadagur:') +
-                    ' ' +
-                    format(new Date(collection.endTime), 'dd.MM.yyyy')
-                  }
-                  cta={
-                    collection.isActive
-                      ? {
-                          label: t('sign', 'Mæla með framboði'),
-                          variant: 'text',
-                          icon: 'open',
-                          iconType: 'outline',
-                          size: 'small',
-                          onClick: () =>
-                            window.open(
-                              `${window.location.origin}/umsoknir/${
-                                collectionType ===
-                                SignatureCollectionCollectionType.Presidential
-                                  ? 'maela-med-frambodi'
-                                  : collectionType ===
-                                    SignatureCollectionCollectionType.LocalGovernmental
-                                  ? 'maela-med-sveitarstjornarframbodi'
-                                  : 'maela-med-althingisframbodi'
-                              }/?candidate=${candidate.id}`,
-                              '_blank',
-                            ),
-                        }
-                      : undefined
-                  }
-                  tag={
-                    !collection.isActive
-                      ? {
-                          label: t('closed', 'Söfnuninni lokið'),
-                          variant: 'red',
-                        }
-                      : undefined
-                  }
-                />
-              )
-            })
+  const hasCandidates = collection?.candidates?.length > 0
+  const hasLists = openLists?.length > 0
+  const isLocalGov =
+    collectionType === SignatureCollectionCollectionType.LocalGovernmental
+
+  const CollectionHeader = () => {
+    if (!(hasCandidates || hasLists)) return null
+
+    return (
+      <Box
+        marginBottom={5}
+        display={['block', 'flex']}
+        justifyContent="spaceBetween"
+        alignItems="baseline"
+      >
+        {collection?.isActive ? (
+          <>
+            <Text variant="h3">{t('title', 'Forsetakosningar 2024')}</Text>
+            <Text variant="eyebrow">
+              {t('totalCandidates', 'Fjöldi frambjóðenda: ') +
+                collection?.candidates.length}
+            </Text>
+          </>
         ) : (
-          <Text variant="h4">
-            {t('noLists', 'Engin meðmælasöfnun er í gangi í augnablikinu.')}
-          </Text>
+          <>
+            <Text variant="h3">
+              {t('title2', 'Forsetakosningar 2024 - Framlengt')}
+            </Text>
+            <Text variant="eyebrow">
+              {t('totalLists', 'Fjöldi lista: ') + openLists?.length}
+            </Text>
+          </>
         )}
-      </Stack>
+      </Box>
+    )
+  }
+
+  return !loading && !openListsLoading ? (
+    <Box marginY={5}>
+      <CollectionHeader />
+
+      {/* Sveitó - Accordion setup */}
+      {isLocalGov ? (
+        <Accordion>
+          {[...(collection?.areas || [])]
+            // alphabetical order
+            .sort((a, b) => a.name.localeCompare(b.name))
+            // keep only areas with items
+            .filter((area) =>
+              collection.candidates?.some(
+                (candidate) => candidate.areaId === area.id,
+              ),
+            )
+            .map((area) => (
+              <AccordionItem id="test" label={area.name} key={area.id}>
+                {collection.candidates
+                  ?.filter((candidate) => candidate.areaId === area.id)
+                  .map((candidate) => (
+                    <Box marginBottom={3} key={candidate.id}>
+                      <ActionCard
+                        heading={candidate.name}
+                        eyebrow={area.name}
+                        text="Stofnandi söfnunar: TBD"
+                        cta={
+                          collection.isActive
+                            ? {
+                                label: t('sign', 'Mæla með framboði'),
+                                variant: 'text',
+                                icon: 'open',
+                                iconType: 'outline',
+                                size: 'small',
+                                onClick: () =>
+                                  window.open(
+                                    `${
+                                      window.location.origin
+                                    }/umsoknir/${'maela-med-sveitarstjornarframbodi'}/?candidate=${
+                                      candidate.id
+                                    }`,
+                                    '_blank',
+                                  ),
+                              }
+                            : undefined
+                        }
+                        tag={
+                          !collection.isActive
+                            ? {
+                                label: t('closed', 'Söfnuninni lokið'),
+                                variant: 'red',
+                              }
+                            : undefined
+                        }
+                      />
+                    </Box>
+                  ))}
+              </AccordionItem>
+            ))}
+        </Accordion>
+      ) : (
+        <Stack space={3}>
+          {/* ATH - þarf að tékka þetta setup með openLists eftir endTime fyrir sveitó */}
+          {/* if collection time is over yet there are still open lists, show them */}
+          {!collection?.isActive && hasLists ? (
+            [...openLists]
+              ?.sort(sortAlpha('title'))
+              .map((list: SignatureCollectionListBase) => {
+                return (
+                  <ActionCard
+                    eyebrow={
+                      t('openTil', 'Lokadagur:') +
+                      ' ' +
+                      format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')
+                    }
+                    key={list.id}
+                    backgroundColor="white"
+                    heading={list.title.split(' -')[0]}
+                    text={list.area?.name}
+                    cta={{
+                      label: t('sign', 'Mæla með framboði'),
+                      variant: 'text',
+                      icon: 'open',
+                      iconType: 'outline',
+                      size: 'small',
+                      onClick: () =>
+                        window.open(
+                          `${window.location.origin}${list.slug}`,
+                          '_blank',
+                        ),
+                    }}
+                  />
+                )
+              })
+          ) : hasCandidates ? (
+            [...collection.candidates]
+              ?.sort(sortAlpha('name'))
+              .map((candidate: SignatureCollectionCandidate) => {
+                return (
+                  <ActionCard
+                    key={candidate.id}
+                    backgroundColor="white"
+                    heading={candidate.name}
+                    eyebrow={
+                      t('openTil', 'Lokadagur:') +
+                      ' ' +
+                      format(new Date(collection.endTime), 'dd.MM.yyyy')
+                    }
+                    cta={
+                      collection.isActive
+                        ? {
+                            label: t('sign', 'Mæla með framboði'),
+                            variant: 'text',
+                            icon: 'open',
+                            iconType: 'outline',
+                            size: 'small',
+                            onClick: () =>
+                              window.open(
+                                `${window.location.origin}/umsoknir/${
+                                  collectionType ===
+                                  SignatureCollectionCollectionType.Presidential
+                                    ? 'maela-med-frambodi'
+                                    : 'maela-med-althingisframbodi'
+                                }/?candidate=${candidate.id}`,
+                                '_blank',
+                              ),
+                          }
+                        : undefined
+                    }
+                    tag={
+                      !collection.isActive
+                        ? {
+                            label: t('closed', 'Söfnuninni lokið'),
+                            variant: 'red',
+                          }
+                        : undefined
+                    }
+                  />
+                )
+              })
+          ) : (
+            <Text variant="h4">
+              {t('noLists', 'Engin meðmælasöfnun er í gangi í augnablikinu.')}
+            </Text>
+          )}
+        </Stack>
+      )}
     </Box>
   ) : (
     <SkeletonLoader height={110} repeat={4} space={3} />
