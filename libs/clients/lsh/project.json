@@ -30,7 +30,7 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/blood/gen/fetch -i libs/clients/blood/src/clientConfig.json"
+        "command": "yarn openapi-generator -o libs/clients/blood/gen/fetch -i libs/clients/lsh/src/clientConfig.json"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
