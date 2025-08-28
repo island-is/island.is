@@ -852,6 +852,11 @@ export const webMessages = defineMessages({
     defaultMessage: 'Fullt nafn',
     description: 'Full name',
   },
+  edit:{
+    id: 'form-system:edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit',
+  },
   openApplication: {
     id: 'form-system:open-application',
     defaultMessage: 'Opna umsókn',

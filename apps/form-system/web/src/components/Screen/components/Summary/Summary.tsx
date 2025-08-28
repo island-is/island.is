@@ -34,11 +34,11 @@ export const Summary = ({ state }: Props) => {
       <Text fontWeight="light" as="p">
         {formatMessage(m.reviewApplication)}
       </Text>
-      {sections?.map((section) =>
+      {sections?.map((section, sectionIndex) =>
         section?.screens
           ?.filter((scr) => !scr?.isHidden)
-          .map((screen, index) => (
-            <Box key={screen?.id ?? `screen-${index}`} marginTop={5}>
+          .map((screen, screenIndex) => (
+          <Box key={screen?.id ?? `screen-${screenIndex}`} marginTop={5}>
               <Divider />
               <GridContainer>
                 <GridRow>
@@ -54,23 +54,17 @@ export const Summary = ({ state }: Props) => {
                       display="flex"
                       marginTop={5}
                       justifyContent={['flexStart', 'flexEnd']}
-                    >
+                    > 
                       <Button
                         icon="pencil"
                         iconType="filled"
                         variant="utility"
                         inline={true}
                         onClick={() => {
-                          handleButtonClick(
-                            section?.displayOrder ?? undefined,
-                            screen?.displayOrder ?? undefined,
-                          )
+                          handleButtonClick(section?.displayOrder ?? -1, screen?.displayOrder ?? -1)
                         }}
                       >
-                        {formatMessage({
-                          id: 'form-system:edit',
-                          defaultMessage: 'Breyta',
-                        })}
+                        {formatMessage(m.edit)}
                       </Button>
                     </Box>
                   </GridColumn>

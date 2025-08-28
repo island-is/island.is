@@ -1,7 +1,11 @@
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  type User,
+} from '@island.is/auth-nest-tools'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { UseGuards } from '@nestjs/common'
+import { UseGuards, BadRequestException, ForbiddenException } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { FormSystemNameByNationalId } from '../../models/nationalRegistryName.model'
@@ -19,8 +23,17 @@ export class NationalRegistryResolver {
   })
   async getName(
     @Args('input', { type: () => String }) input: string,
+    @CurrentUser() user: User,
   ): Promise<FormSystemNameByNationalId | null> {
-    return this.service.getName(input)
+    const normalized = input.replace(/\D/g, '')
+    if (!this.isValidNationalId(normalized)) {
+      throw new BadRequestException('Invalid national id format')
+    }
+    const normalizedActorId = user?.nationalId?.replace(/\D/g, '')
+    if (!normalizedActorId || normalizedActorId !== normalized) {
+      throw new ForbiddenException('Not authorized to query this national id')
+    }
+    return this.service.getName(normalized)
   }
 
   @Query(() => FormSystemHomeByNationalId, {
@@ -29,7 +42,20 @@ export class NationalRegistryResolver {
   })
   async getAddress(
     @Args('input', { type: () => String }) input: string,
+    @CurrentUser() user: User,
   ): Promise<FormSystemHomeByNationalId | null> {
-    return this.service.getHousing(input)
+    const normalized = input.replace(/\D/g, '')
+    if (!this.isValidNationalId(normalized)) {
+      throw new BadRequestException('Invalid national id format')
+    }
+    const normalizedActorId = user?.nationalId?.replace(/\D/g, '')
+    if (!normalizedActorId || normalizedActorId !== normalized) {
+      throw new ForbiddenException('Not authorized to query this national id')
+    }
+    return this.service.getHousing(normalized)
+  }
+
+  private isValidNationalId(id: string): boolean {
+    return /^\d{10}$/.test(id)
   }
 }
