@@ -96,7 +96,10 @@ export const SignatureLists: FC<
                       <ActionCard
                         heading={candidate.name}
                         eyebrow={area.name}
-                        text="Stofnandi söfnunar: TBD"
+                        text={
+                          t('candidateOwnerName', 'Stofnandi söfnunar: ') +
+                          candidate.ownerName
+                        }
                         cta={
                           collection.isActive
                             ? {
