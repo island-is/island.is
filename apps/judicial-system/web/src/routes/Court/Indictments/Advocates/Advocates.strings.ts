@@ -7,37 +7,17 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á síðu á verjenda skrefi í dómaraflæði í ákærum.',
   },
-  alertBannerText: {
-    id: 'judicial.system.core:court_indictments.advocates.alert_banner_text',
-    defaultMessage:
-      'Verjendur í sakamálum fá tilkynningu um skráningu í tölvupósti, aðgang að gögnum málsins og boð í þingfestingu.',
-    description:
-      'Notaður sem texti í alert banner á málflytjendurskjá í ákærum.',
-  },
-  selectDefenderHeading: {
-    id: 'judicial.system.core:court_indictments.advocates.select_defender_heading',
-    defaultMessage: 'Verjandi',
-    description: 'Notaður sem texti fyrir val á skipaðan verjanda í ákærum.',
-  },
   defendantWaivesRightToCounsel: {
     id: 'judicial.system.core:court_indictments.advocates.defendant_waives_right_to_counsel',
     defaultMessage: '{accused} óskar ekki eftir að sér sé skipaður verjandi',
     description:
       'Notaður sem texti fyrir takka þegar ákærðu óska ekki eftir verjanda í dómaraflæði í ákærum. ',
   },
-
   confirmDefenderChoice: {
     id: 'judicial.system.core:court_indictments.advocates.confirm_defender_choice_v1',
     defaultMessage: 'Staðfesta val',
-
     description:
       'Notaður sem texti fyrir takka til að staðfesta val á verjanda í dómaraflæði í ákærum.',
-  },
-  changeDefenderChoice: {
-    id: 'judicial.system.core:court_indictments.advocates.change_defender_choice_v1',
-    defaultMessage: 'Breyta vali',
-    description:
-      'Notaður sem texti fyrir takka til að breyta vali á verjanda í dómaraflæði í ákærum.',
   },
   confirmSpokespersonChoice: {
     id: 'judicial.system.core:court_indictments.advocates.confirm_spokesperson_choice',
@@ -101,19 +81,6 @@ export const strings = defineMessages({
     defaultMessage: 'Enginn lögmaður skráður',
     description:
       'Notaður sem texti þegar enginn lögmaður er skráður í dómaraflæði í ákærum.',
-  },
-  defenderChoiceAlertTitle: {
-    id: 'judicial.system.core:court_indictments.advocates.defender_choice_alert_title',
-    defaultMessage: 'Val á verjanda - {defendantName}',
-    description:
-      'Notaður sem texti þegar ákærði hefur valið verjanda í dómaraflæði í ákærum.',
-  },
-  defenderChoiceAlertMessage: {
-    id: 'judicial.system.core:court_indictments.advocates.defender_choice_alert_message',
-    defaultMessage:
-      '{requestedDefenderChoice, select, WAIVE {Ég óska ekki eftir verjanda.} CHOOSE {Ég óska þess að valinn lögmaður verji skipaður verjandi minn: {requestedDefenderName} kt. {requestedDefenderNationalId}.} DELAY {Ég óska eftir fresti fram að þingfestingu til þess að tilnefna verjanda.} DELEGATE {Ég fel dómara málsins að tilnefna og skipa mér verjanda.} other {Ekkert valið.}}',
-    description:
-      'Notaður sem texti þegar ákærði hefur valið verjanda í dómaraflæði í ákærum.',
   },
   confirmDefenderChoiceModalTitle: {
     id: 'judicial.system.core:court_indictments.advocates.confirm_defender_choice_modal_title_v2',
