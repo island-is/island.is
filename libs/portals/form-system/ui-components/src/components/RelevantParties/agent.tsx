@@ -56,8 +56,8 @@ export const Agent = ({ applicantType, lang, nationalId }: Props) => {
     ? addressQuery.data?.formSystemHomeByNationalId?.heimilisfang?.husHeiti
     : companyQuery.data?.formSystemCompanyByNationalId?.address?.streetAddress
 
- const postalCode = isIndividualDelegation  
-    ? addressQuery.data?.formSystemHomeByNationalId?.heimilisfang?.postnumer  
+  const postalCode = isIndividualDelegation
+    ? addressQuery.data?.formSystemHomeByNationalId?.heimilisfang?.postnumer
     : companyQuery.data?.formSystemCompanyByNationalId?.address?.postalCode
 
   return (
