@@ -1,6 +1,6 @@
 import {
-  HealthDirectoratePermitCodes,
   HealthDirectoratePatientDataPermitInput,
+  HealthDirectoratePermitCodes,
 } from '@island.is/api/schema'
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

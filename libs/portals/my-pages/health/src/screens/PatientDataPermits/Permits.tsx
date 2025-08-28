@@ -11,14 +11,13 @@ import {
   ActionCardLoader,
   formatDate,
   IntroWrapper,
-  NoDataScreen,
 } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetPatientDataPermitsQuery } from './PatientDataPermits.generated'
-import { Problem } from '@island.is/react-spa/shared'
 
 const PatientDataPermits: React.FC = () => {
   useNamespaces('sp.health')
