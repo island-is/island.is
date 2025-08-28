@@ -47,7 +47,11 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
             .filter((contract) => contract !== undefined)
         })
 
-      if (isRunningOnEnvironment('local') && contracts.length === 0) {
+      if (
+        (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
+        contracts.length === 0
+      ) {
+        this.logger.debug('Mocking rental agreements')
         return mockGetRentalAgreements()
       }
 
