@@ -276,11 +276,33 @@ export class AppService {
     policeDocumentId: string,
     updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ) {
+    const getPoliceDocumentDeliveryStatus = ({
+      delivered,
+      deliveredOnPaper,
+      deliveredOnIslandis,
+      deliveredToLawyer,
+    }: UpdatePoliceDocumentDeliveryDto) => {
+      if (delivered) {
+        if (deliveredOnPaper) {
+          return ServiceStatus.IN_PERSON
+        }
+        if (deliveredOnIslandis) {
+          return ServiceStatus.ELECTRONICALLY
+        }
+        if (deliveredToLawyer) {
+          return ServiceStatus.DEFENDER
+        }
+      }
+      return ServiceStatus.FAILED
+    }
+
     const parsedPoliceUpdate = {
-      // TODO: Map status and appeal decision
       serviceDate: updatePoliceDocumentDelivery.servedAt,
       servedBy: updatePoliceDocumentDelivery.servedBy,
       comment: updatePoliceDocumentDelivery.comment,
+      serviceStatus: getPoliceDocumentDeliveryStatus(
+        updatePoliceDocumentDelivery,
+      ),
     }
     try {
       const res = await fetch(
@@ -294,7 +316,7 @@ export class AppService {
           body: JSON.stringify(parsedPoliceUpdate),
         },
       )
-      // TODO: Call verdict-appeal endpoint to validate and update the appeal decision specifically
+      // TODO: When we update the verdict appeal decision, call verdict-appeal endpoint to validate and update the appeal decision specifically
       // once service date has been recorded for the verdict
 
       const response = await res.json()
