@@ -61,6 +61,7 @@ import {
   LSH,
   PracticalExams,
   FireCompensation,
+  VMSTUnemployment,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -82,7 +83,7 @@ export const serviceSetup = (services: {
     .namespace('islandis')
     .serviceAccount()
     .command('node')
-    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
+    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.cjs')
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
@@ -293,6 +294,22 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
+        dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        staging:
+          'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        prod: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+      },
+      HMS_CONTRACTS_AUTH_TENANT_ID: {
+        dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        staging: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        prod: 'c7256472-2622-417e-8955-a54eeb0a110e',
+      },
+      HMS_CONTRACTS_AUTH_CLIENT_ID: {
+        dev: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
+      },
     })
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
@@ -409,6 +426,8 @@ export const serviceSetup = (services: {
         '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET',
       VERDICTS_GOPRO_USERNAME: '/k8s/api/VERDICTS_GOPRO_USERNAME',
       VERDICTS_GOPRO_PASSWORD: '/k8s/api/VERDICTS_GOPRO_PASSWORD',
+      HMS_CONTRACTS_AUTH_CLIENT_SECRET:
+        '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
     })
     .xroad(
       AdrAndMachine,
@@ -472,6 +491,7 @@ export const serviceSetup = (services: {
       SecondarySchool,
       LSH,
       PracticalExams,
+      VMSTUnemployment,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

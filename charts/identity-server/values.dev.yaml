@@ -559,7 +559,7 @@ services-auth-ids-api:
     privileged: false
 services-auth-ids-api-cleanup:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'

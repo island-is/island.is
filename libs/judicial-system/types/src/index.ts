@@ -109,8 +109,6 @@ export {
   isInvestigationCase,
   isRequestCase,
   isAcceptingCaseDecision,
-  isTrafficViolationCase,
-  hasTrafficViolationSubtype,
   completedRequestCaseStates,
   completedIndictmentCaseStates,
   completedCaseStates,
@@ -142,6 +140,8 @@ export type {
 export {
   IndictmentCountOffense,
   offenseSubstances,
+  isTrafficViolationIndictmentCount,
+  getIndictmentCountCompare,
 } from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 

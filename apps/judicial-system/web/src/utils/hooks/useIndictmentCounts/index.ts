@@ -27,11 +27,7 @@ const useIndictmentCounts = () => {
     async (caseId: string) => {
       try {
         const { data } = await createIndictmentCountMutation({
-          variables: {
-            input: {
-              caseId,
-            },
-          },
+          variables: { input: { caseId } },
         })
 
         if (!data) {
@@ -50,12 +46,7 @@ const useIndictmentCounts = () => {
     async (caseId: string, indictmentCountId: string) => {
       try {
         const { data } = await deleteIndictmentCountMutation({
-          variables: {
-            input: {
-              caseId,
-              indictmentCountId,
-            },
-          },
+          variables: { input: { caseId, indictmentCountId } },
         })
 
         return data?.deleteIndictmentCount?.deleted
@@ -74,18 +65,13 @@ const useIndictmentCounts = () => {
     ) => {
       try {
         const { data } = await updateIndictmentCountMutation({
-          variables: {
-            input: {
-              indictmentCountId,
-              caseId,
-              ...update,
-            },
-          },
+          variables: { input: { indictmentCountId, caseId, ...update } },
         })
 
         if (!data) {
           toast.error(formatMessage(errors.updateIndictmentCount))
         }
+
         return data?.updateIndictmentCount
       } catch (e) {
         toast.error(formatMessage(errors.updateIndictmentCount))

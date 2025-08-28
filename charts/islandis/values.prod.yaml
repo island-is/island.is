@@ -257,7 +257,7 @@ api:
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -289,6 +289,9 @@ api:
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
     FORM_SYSTEM_API_BASE_PATH: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
+    HMS_CONTRACTS_AUTH_CLIENT_ID: '44055958-a462-4ba8-bbd2-5bfedbbd18c0'
+    HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
+    HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
     HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK'
     HUNTING_LICENSE_PASS_TEMPLATE_ID: '5f42f942-d8d6-40bf-a186-5a9e12619d9f'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
@@ -317,6 +320,7 @@ api:
     UNIVERSITY_GATEWAY_API_URL: 'http://services-university-gateway.services-university-gateway.svc.cluster.local'
     USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
     USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
+    VMST_UNEMPLOYMENT_XROAD_PATH: 'IS/GOV/7005942039/VMST-Protected/vmst-unemployment-v1'
     WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: 'island-is-assistant-feedback'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/brautskraning-v1'
@@ -522,6 +526,7 @@ api:
     FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
     FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
     FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY: '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY'
+    HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
     HOUSING_BENEFIT_CALCULATOR_PASSWORD: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_PASSWORD'
     HOUSING_BENEFIT_CALCULATOR_USERNAME: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_USERNAME'
     HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET'
@@ -575,6 +580,8 @@ api:
     XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
     XROAD_PROPERTIES_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
     XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
+    XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
+    XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
     ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
     ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
   securityContext:
@@ -587,7 +594,7 @@ api:
     name: 'api'
 application-system-api:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -618,6 +625,9 @@ application-system-api:
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
     GRAPHQL_API_URL: 'http://api.islandis.svc.cluster.local'
+    HMS_CONTRACTS_AUTH_CLIENT_ID: '44055958-a462-4ba8-bbd2-5bfedbbd18c0'
+    HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
+    HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
@@ -644,6 +654,7 @@ application-system-api:
     SERVICE_USER_PROFILE_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     UNIVERSITY_GATEWAY_API_URL: 'http://services-university-gateway.services-university-gateway.svc.cluster.local'
     USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
+    VMST_UNEMPLOYMENT_XROAD_PATH: 'IS/GOV/7005942039/VMST-Protected/vmst-unemployment-v1'
     WORKPOINT_ARBORG_SERVICE_PATH: 'IS/MUN/10036/Arborg-Protected/tengill-application-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/brautskraning-v1'
     XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS/GOV/5605882089/UA-Protected/kvortun-v1'
@@ -826,6 +837,7 @@ application-system-api:
     EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
     FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
     FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+    HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
@@ -845,6 +857,8 @@ application-system-api:
     XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
     XROAD_PROPERTIES_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
     XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
+    XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
+    XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -855,7 +869,7 @@ application-system-api:
     name: 'application-system-api'
 application-system-api-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job'
     - 'worker'
   command:
@@ -1030,7 +1044,7 @@ application-system-form:
     privileged: false
 cms-importer-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -1383,7 +1397,7 @@ endorsement-system-api:
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -2601,8 +2615,6 @@ services-documents:
 services-payments:
   enabled: true
   env:
-    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
-    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_payments'
@@ -2611,12 +2623,6 @@ services-payments:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
-    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
-    NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5'
     PAYMENTS_WEB_URL: 'https://island.is/greida'
@@ -2714,7 +2720,6 @@ services-payments:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-payments/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
-    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-payments/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     PAYMENTS_GATEWAY_API_HEADER_KEY: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_KEY'
     PAYMENTS_GATEWAY_API_HEADER_VALUE: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_VALUE'
     PAYMENTS_GATEWAY_API_SECRET: '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET'
@@ -2800,7 +2805,7 @@ services-sessions:
     privileged: false
 services-sessions-cleanup:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -2862,7 +2867,7 @@ services-sessions-cleanup:
     privileged: false
 services-sessions-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
   command:
     - 'node'
@@ -2958,7 +2963,7 @@ services-sessions-worker:
     name: 'sessions-worker'
 services-university-gateway:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -3086,7 +3091,7 @@ services-university-gateway:
     name: 'services-university-gateway'
 services-university-gateway-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job'
     - 'worker'
   command:
@@ -3341,7 +3346,7 @@ skilavottord-ws:
 user-notification:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -3458,7 +3463,7 @@ user-notification:
 user-notification-birthday-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
     - '--isBirthdayWorker'
   command:
@@ -3559,7 +3564,7 @@ user-notification-birthday-worker:
 user-notification-cleanup-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -3653,7 +3658,7 @@ user-notification-cleanup-worker:
 user-notification-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
   command:
     - 'node'
@@ -3851,7 +3856,7 @@ web:
 xroad-collector:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
