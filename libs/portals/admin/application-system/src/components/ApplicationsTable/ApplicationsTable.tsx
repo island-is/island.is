@@ -97,7 +97,9 @@ export const ApplicationsTable = ({
             <T.HeadData>{formatMessage(m.nationalId)}</T.HeadData>
             {showAdminData &&
               applications[0]?.adminData?.map((x) => (
-                <T.HeadData>{formatMessage(x.label) ?? ''}</T.HeadData>
+                <T.HeadData key={x.key}>
+                  {formatMessage(x.label) ?? ''}
+                </T.HeadData>
               ))}
             <T.HeadData>{formatMessage(m.dateModified)}</T.HeadData>
             <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
@@ -149,7 +151,7 @@ export const ApplicationsTable = ({
                       </T.Data>
                       {showAdminData &&
                         application.adminData?.map((x) => (
-                          <T.Data text={{ color: cellText }}>
+                          <T.Data key={x.key} text={{ color: cellText }}>
                             {x.values?.join(', ') ?? ''}
                           </T.Data>
                         ))}

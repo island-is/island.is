@@ -153,7 +153,8 @@ const InstitutionOverview = () => {
   useEffect(() => {
     setPage(1)
     refetch()
-  }, [filters, multiChoiceFilters, refetch])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, multiChoiceFilters])
 
   return (
     <Box>

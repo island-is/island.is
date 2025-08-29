@@ -37,7 +37,7 @@ const template: ApplicationTemplate<
       {
         key: 'pickVehicle.plate',
         isListed: true,
-        label: information.labels.pickVehicle.vehicle,
+        label: 'Bílnúmer',
       },
     ],
   },
