@@ -1,7 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { Box, Input, SkeletonLoader } from '@island.is/island-ui/core'
 import { Controller, Control, FieldValues } from 'react-hook-form'
-import { IsFetchingProviderOrganisationContext } from './SingleDocumentProvider'
 import {
   Validate,
   ValidationRule,
@@ -39,7 +38,7 @@ export const DocumentProviderInput: FC<React.PropsWithChildren<Props>> = ({
   placeholder,
   rules,
 }) => {
-  const loading = useContext(IsFetchingProviderOrganisationContext)
+  const loading = false
   return (
     <Box marginBottom={2}>
       {loading ? (

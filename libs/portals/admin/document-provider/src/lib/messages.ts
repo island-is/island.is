@@ -97,8 +97,7 @@ export const m = defineMessages({
   },
   documentProvidersDescription: {
     id: 'portals-admin.document-provider:document-providers-description',
-    defaultMessage:
-      'Hér getur þú fundið alla þá skjalaveitur sem nota pósthólf á island.is',
+    defaultMessage: 'Ítarlegar upplýsingar um skjalaveitu',
   },
   documentProvidersSearchPlaceholder: {
     id: 'portals-admin.document-provider:document-providers-search-placeholder',
@@ -766,6 +765,10 @@ export const m = defineMessages({
   statisticsBoxNetworkError: {
     id: 'portals-admin.document-provider:statistics-box-network-error',
     defaultMessage: 'Ekki tókst að sækja tölfræði',
+  },
+  statisticsBoxFailures: {
+    id: 'portals-admin.document-provider:failures',
+    defaultMessage: 'Mistök við afhendingu',
   },
 
   // Paper
