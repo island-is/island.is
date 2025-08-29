@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-blood',
+  displayName: 'clients-lsh',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
