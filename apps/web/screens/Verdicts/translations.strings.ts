@@ -2,6 +2,16 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    revealMoreLabel: {
+      id: 'web.verdicts:listPage.revealMoreLabel',
+      defaultMessage: 'Sjá reifun',
+      description: 'Sjá reifun',
+    },
+    hideMoreLabel: {
+      id: 'web.verdicts:listPage.hideMoreLabel',
+      defaultMessage: 'Fela reifun',
+      description: 'Fela reifun',
+    },
     heading: {
       id: 'web.verdicts:listPage.heading',
       defaultMessage: 'Dómar og úrskurðir',
