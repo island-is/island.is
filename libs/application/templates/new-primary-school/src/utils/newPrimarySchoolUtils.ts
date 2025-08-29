@@ -464,9 +464,13 @@ export const determineNameFromApplicationAnswers = (
 ) => {
   const { applicationType } = getApplicationAnswers(application.answers)
 
+  if (!applicationType) {
+    return newPrimarySchoolMessages.shared.applicationName
+  }
+
   return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
     ? newPrimarySchoolMessages.shared.enrollmentApplicationName
-    : newPrimarySchoolMessages.shared.applicationName
+    : newPrimarySchoolMessages.shared.newPrimarySchoolApplicationName
 }
 
 export const formatGender = (genderCode?: string): MessageDescriptor => {

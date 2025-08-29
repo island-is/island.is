@@ -133,45 +133,45 @@ describe('getMunicipalityCodeBySchoolUnitId', () => {
     const schoolId = 'unknown-school-id'
     expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBeUndefined()
   })
+})
 
-  describe('getApplicationType', () => {
-    const mockCurrentDate = new Date('2025-01-01')
+describe('getApplicationType', () => {
+  const mockCurrentDate = new Date('2025-01-01')
 
-    beforeEach(() => {
-      jest.useFakeTimers()
-      jest.setSystemTime(mockCurrentDate)
-    })
+  beforeEach(() => {
+    jest.useFakeTimers()
+    jest.setSystemTime(mockCurrentDate)
+  })
 
-    afterEach(() => {
-      jest.useRealTimers()
-    })
+  afterEach(() => {
+    jest.useRealTimers()
+  })
 
-    it('should return NEW_PRIMARY_SCHOOL for child born before 2019', () => {
-      const externalData = {
-        childInformation: {
-          data: {
-            nationalId: kennitala.generatePerson(new Date('2018-12-31')),
-          },
+  it('should return NEW_PRIMARY_SCHOOL for child born before 2019', () => {
+    const externalData = {
+      childInformation: {
+        data: {
+          nationalId: kennitala.generatePerson(new Date('2018-12-31')),
         },
-      } as unknown as ExternalData
+      },
+    } as unknown as ExternalData
 
-      expect(getApplicationType(externalData)).toBe(
-        ApplicationType.NEW_PRIMARY_SCHOOL,
-      )
-    })
+    expect(getApplicationType(externalData)).toBe(
+      ApplicationType.NEW_PRIMARY_SCHOOL,
+    )
+  })
 
-    it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child born in or after 2019', () => {
-      const externalData = {
-        childInformation: {
-          data: {
-            nationalId: kennitala.generatePerson(new Date('2019-01-01')),
-          },
+  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child born in or after 2019', () => {
+    const externalData = {
+      childInformation: {
+        data: {
+          nationalId: kennitala.generatePerson(new Date('2019-01-01')),
         },
-      } as unknown as ExternalData
+      },
+    } as unknown as ExternalData
 
-      expect(getApplicationType(externalData)).toBe(
-        ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
-      )
-    })
+    expect(getApplicationType(externalData)).toBe(
+      ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+    )
   })
 })

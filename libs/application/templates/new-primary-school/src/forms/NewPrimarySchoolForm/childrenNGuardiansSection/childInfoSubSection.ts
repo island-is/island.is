@@ -1,7 +1,6 @@
 import {
   buildCheckboxField,
   buildCustomField,
-  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -10,12 +9,11 @@ import {
   YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { OptionsType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { OptionsType } from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getApplicationType,
   getGenderMessage,
   getSelectedChild,
 } from '../../../utils/newPrimarySchoolUtils'
@@ -183,11 +181,6 @@ export const childInfoSubSection = buildSubSection({
 
             return childInfo?.differentPlaceOfResidence === YES
           },
-        }),
-        buildHiddenInput({
-          id: 'applicationType',
-          defaultValue: (application: Application) =>
-            getApplicationType(application.externalData),
         }),
       ],
     }),
