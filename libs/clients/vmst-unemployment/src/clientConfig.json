@@ -1109,6 +1109,14 @@
               },
               "hasApplicationInLast4Weeks": {
                 "type": "boolean"
+              },
+              "userMessageIS": {
+                "type": "string",
+                "nullable": true
+              },
+              "userMessageEN": {
+                "type": "string",
+                "nullable": true
               }
             }
           }
@@ -1416,6 +1424,12 @@
             "items": {
               "$ref": "#/components/schemas/ActivationGrantIncomeFormDTO"
             }
+          },
+          "trActivationGrantId": {
+            "type": "string",
+            "description": "Auðkenni umsóknar hjá TR",
+            "format": "guid",
+            "nullable": true
           }
         }
       },
@@ -2078,6 +2092,11 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "employerSSN": {
+            "type": "string",
+            "description": "kennitala Launagreiðandi",
+            "nullable": true
+          },
           "employerName": {
             "type": "string",
             "description": "Launagreiðandi",
@@ -3705,6 +3724,10 @@
             "type": "string",
             "nullable": true
           },
+          "english": {
+            "type": "string",
+            "nullable": true
+          },
           "id": {
             "type": "string",
             "nullable": true
@@ -4516,6 +4539,14 @@
         "properties": {
           "canApplyForActivationGrant": {
             "type": "boolean"
+          },
+          "userMessageIS": {
+            "type": "string",
+            "nullable": true
+          },
+          "userMessageEN": {
+            "type": "string",
+            "nullable": true
           },
           "reason": {
             "type": "string",

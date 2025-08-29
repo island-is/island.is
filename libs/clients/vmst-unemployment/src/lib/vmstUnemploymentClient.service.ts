@@ -1,6 +1,7 @@
 import {
   ActivationGrantApi,
   ActivationGrantCreateActivationGrantRequest,
+  ActivationGrantValidateBankInformationRequest,
   AttachmentApi,
   AttachmentCreateAttachmentRequest,
   AuthApi,
@@ -128,6 +129,22 @@ export class VmstUnemploymentClientService {
     const response = await api.activationGrantCreateActivationGrant(
       requestParameter,
     )
+    return response
+  }
+
+  async validateBankInfo(
+    requestParameter: ActivationGrantValidateBankInformationRequest,
+  ): Promise<boolean> {
+    const api = await this.createApiClient(
+      ActivationGrantApi,
+      'clients-vmst-unemployment',
+      'Activation Grant API auth failed',
+    )
+
+    const response = await api.activationGrantValidateBankInformation(
+      requestParameter,
+    )
+
     return response
   }
 }

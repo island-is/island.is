@@ -23,6 +23,7 @@ export const paymentInformationSection = buildSection({
         buildCustomField({
           id: 'paymentInformationValidation',
           component: 'PaymentInformationValidation',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),
