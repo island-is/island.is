@@ -48,8 +48,8 @@ import {
   Institution,
   Subpoena,
   User,
+  Verdict,
 } from '../repository'
-import { Verdict } from '../verdict/models/verdict.model'
 import {
   CaseTableCellValue,
   StringGroupValue,

@@ -22,11 +22,10 @@ import { ServiceRequirement } from '@island.is/judicial-system/types'
 
 import { FileService } from '../file'
 import { PoliceService } from '../police'
-import { Case, Defendant } from '../repository'
+import { Case, Defendant, Verdict } from '../repository'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { DeliverResponse } from './models/deliver.response'
-import { Verdict } from './models/verdict.model'
 
 type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   Verdict,

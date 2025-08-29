@@ -81,9 +81,9 @@ import {
   Offense,
   Subpoena,
   User,
+  Verdict,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
-import { Verdict } from '../verdict/models/verdict.model'
 import { VerdictService } from '../verdict/verdict.service'
 import { Victim } from '../victim/models/victim.model'
 import { CreateCaseDto } from './dto/createCase.dto'

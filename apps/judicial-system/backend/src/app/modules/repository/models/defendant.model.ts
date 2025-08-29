@@ -22,10 +22,10 @@ import {
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
-import { Verdict } from '../../verdict/models/verdict.model'
 import { Case } from './case.model'
 import { DefendantEventLog } from './defendantEventLog.model'
 import { Subpoena } from './subpoena.model'
+import { Verdict } from './verdict.model'
 
 @Table({
   tableName: 'defendant',

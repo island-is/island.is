@@ -69,10 +69,10 @@ import {
   Offense,
   Subpoena,
   User,
+  Verdict,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
-import { Verdict } from '../verdict/models/verdict.model'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'

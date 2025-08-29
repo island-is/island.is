@@ -48,8 +48,8 @@ import {
   Offense,
   Subpoena,
   User,
+  Verdict,
 } from '../repository'
-import { Verdict } from '../verdict/models/verdict.model'
 import { Victim } from '../victim'
 import { PdfService } from './pdf.service'
 
