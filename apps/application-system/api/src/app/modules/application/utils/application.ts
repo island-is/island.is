@@ -112,13 +112,11 @@ export const getApplicationStatisticsNameTranslationString = (
 
 export const getApplicationGenericNameTranslationString = (
   template: Template,
-  typeId: string,
+  typeId: ApplicationTypes,
   formatMessage: FormatMessage,
 ) => {
   if (typeof template.name === 'function') {
-    const returnValue = template.name(
-      mockApplicationFromTypeId(typeId as ApplicationTypes),
-    )
+    const returnValue = template.name(mockApplicationFromTypeId(typeId))
 
     if (
       isObject(returnValue) &&

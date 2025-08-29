@@ -151,7 +151,7 @@ export class ApplicationService {
     typeIdValue?: string,
     searchStrValue?: string,
   ): Promise<ApplicationPaginatedResponse> {
-    const statuses = status?.split(',').filter(Boolean)
+    const statuses = status?.split(',')
     const institutionTypeIds = getTypeIdsForInstitution(nationalId)
     const toDate = to ? new Date(to) : undefined
     const fromDate = from ? new Date(from) : undefined
