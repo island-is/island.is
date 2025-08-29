@@ -313,7 +313,7 @@ export const defaultRenderNodeObject: RenderNode = {
         const isEnglishLocale = entry?.sys?.locale?.startsWith('en')
         const prefix = getOrganizationPageUrlPrefix(entry?.sys?.locale)
         const organizationPageSlug = isEnglishLocale
-          ? 'icelandic-blood-bank'
+          ? 'affecting-factors'
           : 'blodbankinn'
         const slug = isEnglishLocale
           ? 'icelandic-blood-bank'
