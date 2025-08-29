@@ -1,5 +1,5 @@
 import * as Types from '@island.is/api/schema'
-import { ActionCardMetaData } from '@island.is/api/schema'
+import { ActionCardMetaData, ApplicationAdminData } from '@island.is/api/schema'
 
 export interface AdminApplication {
   id: string
@@ -19,4 +19,5 @@ export interface AdminApplication {
   status: Types.ApplicationListAdminResponseDtoStatusEnum
   applicantName?: string
   paymentStatus?: string
+  adminData?: Array<ApplicationAdminData>
 }

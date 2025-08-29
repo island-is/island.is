@@ -32,11 +32,16 @@ import {
   CurrentVehiclesApi,
   MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
-import { application as applicationMessage } from './messages'
+import { application as applicationMessage, information } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { getChargeItems, getExtraData, canReviewerApprove } from '../utils'
+import {
+  getChargeItems,
+  getExtraData,
+  canReviewerApprove,
+  getReviewers,
+} from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -66,18 +71,35 @@ const reviewStatePendingAction = (
   role: string,
   nationalId: string,
 ): PendingAction => {
-  if (nationalId && canReviewerApprove(nationalId, application.answers)) {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'warning',
+  if (nationalId) {
+    if (nationalId === InstitutionNationalIds.SAMGONGUSTOFA) {
+      return {
+        title: corePendingActionMessages.waitingForReviewTitle,
+        content: {
+          ...corePendingActionMessages.whoNeedsToReviewDescription,
+          values: {
+            value: getReviewers(application.answers)
+              .filter((x) => !x.hasApproved)
+              .map((x) =>
+                x.name ? `${x.name} (${x.nationalId})` : x.nationalId,
+              )
+              .join(', '),
+          },
+        },
+        displayStatus: 'info',
+      }
+    } else if (canReviewerApprove(nationalId, application.answers)) {
+      return {
+        title: corePendingActionMessages.waitingForReviewTitle,
+        content: corePendingActionMessages.youNeedToReviewDescription,
+        displayStatus: 'warning',
+      }
     }
-  } else {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.waitingForReviewDescription,
-      displayStatus: 'info',
-    }
+  }
+  return {
+    title: corePendingActionMessages.waitingForReviewTitle,
+    content: corePendingActionMessages.waitingForReviewDescription,
+    displayStatus: 'info',
   }
 }
 
@@ -103,6 +125,20 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
+  adminDataConfig: {
+    whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
+    answers: [
+      {
+        key: 'pickVehicle.plate',
+        isListed: true,
+        label: information.labels.pickVehicle.vehicle,
+      },
+      { key: 'ownerCoOwners.$.nationalId', isListed: false },
+      { key: 'ownerCoOwners.$.approved', isListed: false },
+      { key: 'coOwners.$.nationalId', isListed: false },
+      { key: 'coOwners.$.approved', isListed: false },
+    ],
+  },
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

@@ -17,15 +17,16 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { application as applicationMessage } from './messages'
+import { application as applicationMessage, information } from './messages'
 import { ApiActions } from '../shared'
 import { OrderVehicleLicensePlateSchema } from './dataSchema'
 import {
-  SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   DeliveryStationsApi,
-  PlateTypesApi,
+  IdentityApi,
   MockableSamgongustofaPaymentCatalogApi,
+  PlateTypesApi,
+  SamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -67,6 +68,16 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
+  adminDataConfig: {
+    whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
+    answers: [
+      {
+        key: 'pickVehicle.plate',
+        isListed: true,
+        label: information.labels.pickVehicle.vehicle,
+      },
+    ],
+  },
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -113,6 +124,7 @@ const template: ApplicationTemplate<
                 CurrentVehiclesApi,
                 DeliveryStationsApi,
                 PlateTypesApi,
+                IdentityApi,
               ],
             },
           ],
