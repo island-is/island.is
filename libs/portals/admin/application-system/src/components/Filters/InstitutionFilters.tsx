@@ -46,6 +46,7 @@ export const InstitutionFilters = ({
   numberOfDocuments,
   useAdvancedSearch,
 }: Props) => {
+  const [typeId, setTypeId] = useState<string | undefined>(undefined)
   const [nationalId, setNationalId] = useState('')
   const [searchStr, setSearchStr] = useState('')
   const { formatMessage } = useLocale()
@@ -85,6 +86,12 @@ export const InstitutionFilters = ({
     setIsMobile(false)
   }, [width])
 
+  useEffect(() => {
+    if (!filters.typeId) setTypeId(undefined)
+    if (!filters.nationalId) setNationalId('')
+    if (!filters.searchStr) setSearchStr('')
+  }, [filters.typeId, filters.nationalId, filters.searchStr])
+
   const institutionTypeIds = useMemo(() => {
     return (
       typeData?.applicationTypesInstitutionAdmin
@@ -104,8 +111,10 @@ export const InstitutionFilters = ({
           backgroundColor="blue"
           options={institutionTypeIds}
           onChange={(v) => {
-            onTypeIdChange(v?.value ?? undefined)
+            setTypeId(v?.value)
+            onTypeIdChange(v?.value)
           }}
+          value={institutionTypeIds.find((opt) => opt.value === typeId) || null}
           isLoading={typesLoading}
           isClearable={true}
         />
