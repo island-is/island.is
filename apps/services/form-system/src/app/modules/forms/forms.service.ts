@@ -701,7 +701,7 @@ export class FormsService {
       {
         formId: form.id,
         sectionType: SectionTypes.SUMMARY,
-        displayOrder: 9998,
+        displayOrder: 9911,
         name: { is: 'Yfirlit', en: 'Summary' },
       } as Section,
     ])
@@ -709,7 +709,7 @@ export class FormsService {
     const paymentSection = await this.sectionModel.create({
       formId: form.id,
       sectionType: SectionTypes.PAYMENT,
-      displayOrder: 9999,
+      displayOrder: 9921,
       name: { is: 'Greiðsla', en: 'Payment' },
     } as Section)
 
@@ -731,7 +731,21 @@ export class FormsService {
       displayOrder: 0,
       name: { is: 'innsláttarsíða 1', en: 'Input screen 1' },
     } as Screen)
+
+    const completedSection = await this.sectionModel.create({ 
+      formId: form.id,
+      sectionType: SectionTypes.COMPLETED,
+      displayOrder: 9931,
+      name: { is: 'Greiðsla', en: 'Payment' },
+    } as Section)
+
+    await this.screenModel.create({
+      sectionId: completedSection.id,
+      displayOrder: 0,
+      name: { is: 'Staðfesting', en: 'Confirmation' }
+    } as Screen)
   }
+
 
   private async copyForm(id: string, isDerived: boolean): Promise<Form> {
     const existingForm = await this.findById(id)
