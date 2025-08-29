@@ -28,16 +28,18 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const { control } = useFormContext()
   const name = getValue(item, 'name')
   const nationalId = getValue(item, 'nationalId')
-  const shouldQuery = nationalIdRegex.test(nationalId) && (name === '' || name === undefined)
+  const shouldQuery =
+    nationalIdRegex.test(nationalId) && (name === '' || name === undefined)
 
-const queryId = nationalId !== undefined ? nationalId.replace('-', '') : undefined
+  const queryId =
+    nationalId !== undefined ? nationalId.replace('-', '') : undefined
 
-const { data: nameData } = useQuery(GET_NAME_BY_NATIONALID, {
-  variables: { input: queryId },
-  fetchPolicy: 'cache-first',
-  skip: !shouldQuery,
-})
-const [fetchedName, setFetchedName] = useState<string>('')
+  const { data: nameData } = useQuery(GET_NAME_BY_NATIONALID, {
+    variables: { input: queryId },
+    fetchPolicy: 'cache-first',
+    skip: !shouldQuery,
+  })
+  const [fetchedName, setFetchedName] = useState<string>('')
 
   useEffect(() => {
     if (shouldQuery && nameData?.formSystemNameByNationalId?.fulltNafn) {
