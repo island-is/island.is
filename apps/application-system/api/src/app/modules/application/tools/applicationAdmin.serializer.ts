@@ -245,6 +245,11 @@ export class ApplicationTypeAdminSerializer
             const applicationTypes =
               res as Array<ApplicationTypeAdminInstitution>
             return this.serializeArray(applicationTypes, locale)
+          } else {
+            return this.serialize(
+              res as ApplicationTypeAdminInstitution,
+              locale,
+            )
           }
         },
       ),
@@ -260,11 +265,13 @@ export class ApplicationTypeAdminSerializer
       ...(template?.translationNamespaces ?? []),
     ]
     const intl = await this.intlService.useIntl(namespaces, locale)
-    const name = getApplicationGenericNameTranslationString(
-      template,
-      type.id,
-      intl.formatMessage,
-    )
+    const name = template
+      ? getApplicationGenericNameTranslationString(
+          template,
+          type.id,
+          intl.formatMessage,
+        )
+      : ''
 
     return instanceToPlain({ id: type.id, name: name ?? '' })
   }

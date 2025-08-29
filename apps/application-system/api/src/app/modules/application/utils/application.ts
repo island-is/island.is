@@ -315,15 +315,19 @@ export const getAdminDataForAdminPortal = (
       const expandedKeys = expandFieldKeys(application.answers, [config.key])
 
       const values: string[] = expandedKeys
-        .map((expandedKey) =>
-          getValueViaPath<string>(application.answers, expandedKey),
-        )
-        .filter((v): v is string => v !== undefined)
+        .map((expandedKey) => getValueViaPath(application.answers, expandedKey))
+        .flatMap((v) => {
+          if (v === undefined || v === null) return []
+          if (Array.isArray(v)) return v.filter((x) => x != null).map(String)
+          if (typeof v === 'object') return []
+          return [String(v)]
+        })
+      const label = config.label ? formatMessage(config.label) : ''
 
       return {
         key: config.key,
         values,
-        label: formatMessage(config.label ?? ''),
+        label,
       }
     })
 }
