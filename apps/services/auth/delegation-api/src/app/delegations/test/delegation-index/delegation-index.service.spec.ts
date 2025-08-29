@@ -235,6 +235,76 @@ describe('DelegationsIndexService', () => {
       },
     )
 
+    describe('Delegation deletion', () => {
+      const testCase = indexingTestCases.custom
+
+      beforeEach(async () => {
+        await setup(testCase)
+
+        await delegationIndexService.indexDelegations(user)
+      })
+
+      afterEach(async () => {
+        await delegationIndexMetaModel.destroy({ where: {} })
+        await delegationIndexModel.destroy({ where: {} })
+        await delegationModel.destroy({ where: {} })
+      })
+
+      it('should delete one delegation of two', async () => {
+        // Arrange
+        const fromNationalId = testCase.customDelegations[0].fromNationalId
+        const fromNationalId2 = testCase.customDelegations[1].fromNationalId
+
+        // Act
+        await delegationModel.destroy({
+          where: {
+            fromNationalId,
+            toNationalId: user.nationalId,
+          },
+        })
+        await delegationIndexMetaModel.destroy({ where: {} }) // delete meta to force reindex
+
+        // Index delegations
+        await delegationIndexService.indexDelegations(user)
+
+        // Assert
+        const delegations = await delegationIndexModel.findAll({
+          where: {
+            toNationalId: user.nationalId,
+          },
+        })
+
+        expect(delegations).toHaveLength(1)
+        expect(delegations[0].fromNationalId).toBe(fromNationalId2)
+      })
+
+      it('should delete delegations when it is the last of its type in the index', async () => {
+        // Arrange
+        await delegationModel.destroy({
+          where: {
+            toNationalId: user.nationalId,
+          },
+        }) // Delete all delegations for the user
+
+        // Act
+        await delegationIndexMetaModel.destroy({
+          where: {
+            nationalId: user.nationalId,
+          },
+        }) // delete meta to force reindex
+        await delegationIndexService.indexDelegations(user) // Index delegations
+
+        // Assert
+        const delegations = await delegationIndexModel.findAll({
+          where: {
+            toNationalId: user.nationalId,
+          },
+        })
+
+        expect(delegations).toHaveLength(0) // No delegations should be in the index
+      })
+    })
+
     describe('Reindex (multiple indexing)', () => {
       const testCase = indexingTestCases.custom
 
