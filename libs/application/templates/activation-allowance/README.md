@@ -30,6 +30,8 @@ Short state where user has to agree to Directorate of Labor's terms
 Basic user information is presented in read-only mode for the user to confirm, along with input fields for place of residence if it differs from their legal residence, and a "password" meant for phone-call verification if the Directorate of Labor calls.
 This is followed by a short user-contact screen where the user can either mark themselves as the contact or input another person as their contact.
 
+Note that this password is exclusively uses for phone call verification and is not sensitive like a login password etc. that is why there is no encryption.
+
 #### Bank information screen
 
 Required fields to input bank number, ledger, and account number. Validated via a custom component because we need to check external data to verify that the bank number and ledger exist.
