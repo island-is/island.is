@@ -40,7 +40,7 @@ export const MachineSelectField: FC<
     currentMachine && currentMachine.regNumber ? currentMachine : null,
   )
   const [machineId, setMachineId] = useState<string>(
-    getValueViaPath(application.answers, 'machine.id', '') as string, // TODO does this work now?
+    getValueViaPath(application.answers, 'machine.id', '') as string,
   )
 
   const getMachineDetails = useLazyMachineDetails()
@@ -94,7 +94,7 @@ export const MachineSelectField: FC<
           )
           setValue(
             'machine.isValid',
-            response.getWorkerMachineDetails.disabled ? undefined : true, // TODO this work now?
+            response.getWorkerMachineDetails.disabled ? undefined : true,
           )
           setMachineId(currentMachine?.id || '')
           setIsLoading(false)
@@ -109,7 +109,7 @@ export const MachineSelectField: FC<
 
   return (
     <Box>
-      <SelectController // TODO changed this, work now?
+      <SelectController
         label={formatMessage(information.labels.pickMachine.vehicle)}
         id={`${field.id}`}
         name={`${field.id}`}
