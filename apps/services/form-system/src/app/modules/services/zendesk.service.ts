@@ -32,7 +32,6 @@ export class ZendeskService {
     // upload file
     // create ticket
 
-
     // try {
     //   const response = await enhancedFetch(
     //     `https://translation.googleapis.com/language/translate/v2`,
