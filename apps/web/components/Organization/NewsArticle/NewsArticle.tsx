@@ -36,6 +36,7 @@ const NewsItemImage = ({ newsItem }: NewsArticleProps) =>
         {...newsItem?.image}
         url={newsItem?.image?.url ? newsItem.image?.url : ''}
         height={newsItem.image.height ?? ''}
+        caption={newsItem?.imageText ?? undefined}
       />
     </Box>
   )
