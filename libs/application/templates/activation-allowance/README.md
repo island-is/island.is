@@ -79,6 +79,9 @@ All localisation can be found on Contentful.
 
 ## Test users
 
+These are users with partial disability (26-50%) which allows them to apply.
+Note that this can change if TR changes their disability status etc.
+
 - **Gervimaður Bretland 010130-2429**
 - **Gervimaður Færeyja 01030-2399**
 - **Tómas Tinni 020684-1439**
