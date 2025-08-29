@@ -82,7 +82,7 @@ export interface ApplicationTemplate<
      * - `label`: Optional. Only applies when `isListed` is `true`. This is the display label in the admin portal.
      *
      * **Array support**:
-     * Use `$` as a wildcard for array elements.
+     * Use `$` as a wildcard for array elements (single level only).
      * For example:
      *   - `coOwners.$.name` - Keeps `name` for each item in `coOwners`.
      *

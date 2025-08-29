@@ -59,6 +59,7 @@ const normalizeArrays = (obj: RecordObject): RecordObject => {
 /**
  * Expands keys containing the '.$.' wildcard into explicit index-based paths.
  * Useful when retaining only specific fields from arrays.
+ * Only handles one level of wildcard; nested wildcards are not expanded.
  *
  * Example:
  *   fieldKeys = ['items.$.name']
@@ -75,15 +76,29 @@ export const expandFieldKeys = (
   const expandedKeys: string[] = []
 
   for (const key of fieldKeys) {
+    const wildcardCount = (key.match(/\.\$\./g) || []).length
+
+    if (wildcardCount > 1) {
+      throw new Error(`Key "${key}" contains more than one '$' wildcard`)
+    }
+
+    if (key.startsWith('$.')) {
+      throw new Error(`Key "${key}" cannot start with '$.'`)
+    }
+
     if (key.includes('.$.')) {
       const [prefix, ...suffixParts] = key.split('.$.')
       const arrayValue = getValueViaPath(source, prefix)
 
-      if (Array.isArray(arrayValue)) {
-        arrayValue.forEach((_, index) => {
-          expandedKeys.push(`${prefix}.${index}.${suffixParts.join('.')}`)
-        })
+      if (!Array.isArray(arrayValue)) {
+        throw new Error(
+          `Expected array at path "${prefix}" for key "${key}", got ${typeof arrayValue}`,
+        )
       }
+
+      arrayValue.forEach((_, index) => {
+        expandedKeys.push(`${prefix}.${index}.${suffixParts.join('.')}`)
+      })
     } else {
       expandedKeys.push(key)
     }
