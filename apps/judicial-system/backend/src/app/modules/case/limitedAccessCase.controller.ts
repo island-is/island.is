@@ -39,7 +39,7 @@ import {
 import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import { EventService } from '../event'
-import { User } from '../user'
+import { Case, User } from '../repository'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
@@ -62,7 +62,6 @@ import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { DefendantIndictmentAccessedInterceptor } from './interceptors/defendantIndictmentAccessed.interceptor'
 import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
-import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
 import {
   LimitedAccessCaseService,
