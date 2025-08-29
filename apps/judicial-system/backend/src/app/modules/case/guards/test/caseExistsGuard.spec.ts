@@ -11,8 +11,8 @@ import { CaseState } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
+import { Case } from '../../../repository'
 import { include } from '../../case.service'
-import { Case } from '../../models/case.model'
 import { CaseExistsGuard } from '../caseExists.guard'
 
 interface Then {

@@ -25,8 +25,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../factories'
+import { Case } from '../../repository'
 import { UpdateCase } from '../case.service'
-import { Case } from '../models/case.model'
 
 type Actor = 'Prosecution' | 'Defence' | 'Neutral'
 
