@@ -27,7 +27,6 @@ export const BaseSettings = () => {
   const { form } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
-
   return (
     <Stack space={2}>
       <Row>
@@ -255,6 +254,49 @@ export const BaseSettings = () => {
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate,
+                },
+              })
+            }}
+          />
+        </Column>
+      </Row>
+      <Row>
+        <Column>
+          <Checkbox
+            label={formatMessage(m.summaryScreen)}
+            checked={
+              form.hasSummaryScreen !== null &&
+              form.hasSummaryScreen !== undefined
+                ? form.hasSummaryScreen
+                : false
+            }
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_HAS_SUMMARY_SCREEN',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate,
+                },
+              })
+            }}
+          />
+        </Column>
+      </Row>
+      <Row>
+        <Column>
+          <Checkbox
+            label={formatMessage(m.payment)}
+            checked={
+              form.hasPayment !== null && form.hasPayment !== undefined
+                ? form.hasPayment
+                : false
+            }
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_HAS_PAYMENT',
                 payload: {
                   value: e.target.checked,
                   update: formUpdate,
