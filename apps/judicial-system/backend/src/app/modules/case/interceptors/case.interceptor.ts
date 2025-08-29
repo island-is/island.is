@@ -14,10 +14,13 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Defendant, DefendantEventLog } from '../../defendant'
-import { EventLog } from '../../event-log'
-import { Case } from '../models/case.model'
-import { CaseString } from '../models/caseString.model'
+import {
+  Case,
+  CaseString,
+  Defendant,
+  DefendantEventLog,
+  EventLog,
+} from '../../repository'
 
 export const transformDefendants = (defendants?: Defendant[]) => {
   return defendants?.map((defendant) => ({

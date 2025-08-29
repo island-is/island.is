@@ -8,8 +8,7 @@ import { getIndictmentCountCompare } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
-import { Case } from '../modules/case'
-import { CaseString } from '../modules/case/models/caseString.model'
+import { Case, CaseString } from '../modules/repository'
 import {
   addEmptyLines,
   addGiganticHeading,

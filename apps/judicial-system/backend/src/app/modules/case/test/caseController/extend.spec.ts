@@ -16,8 +16,8 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomDate, randomEnum } from '../../../../test'
 import { DefendantService } from '../../../defendant'
+import { Case } from '../../../repository'
 import { include } from '../../case.service'
-import { Case } from '../../models/case.model'
 
 interface Then {
   result: Case

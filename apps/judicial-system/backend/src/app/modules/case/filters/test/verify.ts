@@ -1,6 +1,6 @@
 import { User } from '@island.is/judicial-system/types'
 
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { canUserAccessCase } from '../case.filter'
 
 export const verifyNoAccess = (theCase: Case, user: User) => {

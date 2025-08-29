@@ -32,29 +32,25 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
+import { CivilClaimantService, DefendantService } from '../defendant'
+import { FileService, getDefenceUserCaseFileCategories } from '../file'
 import {
+  Case,
+  CaseFile,
+  CaseString,
   CivilClaimant,
-  CivilClaimantService,
+  DateLog,
   Defendant,
   DefendantEventLog,
-  DefendantService,
-} from '../defendant'
-import { EventLog } from '../event-log'
-import {
-  CaseFile,
-  FileService,
-  getDefenceUserCaseFileCategories,
-} from '../file'
-import { IndictmentCount } from '../indictment-count'
-import { Offense } from '../indictment-count/models/offense.model'
-import { Institution } from '../institution'
-import { Subpoena } from '../subpoena'
-import { User } from '../user'
-import { Verdict } from '../verdict/models/verdict.model'
-import { Victim } from '../victim'
-import { Case } from './models/case.model'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
+  EventLog,
+  IndictmentCount,
+  Institution,
+  Offense,
+  Subpoena,
+  User,
+  Verdict,
+  Victim,
+} from '../repository'
 import { PdfService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [

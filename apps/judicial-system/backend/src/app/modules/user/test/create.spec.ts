@@ -5,7 +5,7 @@ import { UserRole } from '@island.is/judicial-system/types'
 import { createTestingUserModule } from './createTestingUserModule'
 
 import { randomEnum } from '../../../test'
-import { User } from '../user.model'
+import { User } from '../../repository'
 
 interface Then {
   result: User

@@ -12,7 +12,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 
 jest.mock('../../../../factories')
 

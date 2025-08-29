@@ -7,8 +7,7 @@ import { CaseType } from '@island.is/judicial-system/types'
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../case'
-import { CaseFile } from '../../models/file.model'
+import { Case, CaseFile } from '../../../repository'
 import { SignedUrl } from '../../models/signedUrl.model'
 
 interface Then {

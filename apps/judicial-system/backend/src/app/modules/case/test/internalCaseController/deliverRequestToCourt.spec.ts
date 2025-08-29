@@ -15,7 +15,7 @@ import { nowFactory } from '../../../../factories'
 import { getRequestPdfAsBuffer } from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../factories/date.factory')

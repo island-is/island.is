@@ -13,7 +13,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
-import { Institution } from '../institution'
+import { Institution } from './institution.model'
 
 @Table({
   tableName: 'user',

@@ -51,24 +51,31 @@ import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { courtSubtypes } from '../court/court.service'
-import { Defendant, DefendantService } from '../defendant'
+import { DefendantService } from '../defendant'
 import { EventService } from '../event'
-import { EventLog } from '../event-log'
-import { CaseFile, FileService } from '../file'
-import { IndictmentCount, IndictmentCountService } from '../indictment-count'
-import { Offense } from '../indictment-count/models/offense.model'
-import { Institution } from '../institution'
+import { FileService } from '../file'
+import { IndictmentCountService } from '../indictment-count'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { User, UserService } from '../user'
-import { Verdict } from '../verdict/models/verdict.model'
+import {
+  Case,
+  CaseArchive,
+  CaseFile,
+  CaseString,
+  DateLog,
+  Defendant,
+  EventLog,
+  IndictmentCount,
+  Institution,
+  Offense,
+  Subpoena,
+  User,
+  Verdict,
+} from '../repository'
+import { SubpoenaService } from '../subpoena'
+import { UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
-import { Case } from './models/case.model'
-import { CaseArchive } from './models/caseArchive.model'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'

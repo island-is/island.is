@@ -6,8 +6,7 @@ import { createTestingUserModule } from './createTestingUserModule'
 
 import { nowFactory } from '../../../factories'
 import { randomDate } from '../../../test'
-import { Institution } from '../../institution'
-import { User } from '../user.model'
+import { Institution, User } from '../../repository'
 
 jest.mock('../../../factories')
 

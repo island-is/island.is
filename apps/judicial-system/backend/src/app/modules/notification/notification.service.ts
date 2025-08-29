@@ -13,8 +13,8 @@ import {
   CaseState,
 } from '@island.is/judicial-system/types'
 
-import { type Case } from '../case'
 import { EventService } from '../event'
+import { type Case } from '../repository'
 import { SendNotificationResponse } from './models/sendNotification.response'
 
 @Injectable()

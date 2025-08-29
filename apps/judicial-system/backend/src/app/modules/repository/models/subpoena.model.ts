@@ -13,20 +13,18 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   HashAlgorithm,
-  InformationForDefendant,
-  ServiceRequirement,
   ServiceStatus,
-  VerdictAppealDecision,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case/models/case.model'
-import { Defendant } from '../../defendant/models/defendant.model'
+import { Case } from './case.model'
+import { Defendant } from './defendant.model'
 
 @Table({
-  tableName: 'verdict',
+  tableName: 'subpoena',
   timestamps: true,
 })
-export class Verdict extends Model {
+export class Subpoena extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -46,10 +44,10 @@ export class Verdict extends Model {
 
   @ApiPropertyOptional({ type: String })
   @Column({ type: DataType.STRING, allowNull: true })
-  externalPoliceDocumentId?: string
+  policeSubpoenaId?: string
 
   @ForeignKey(() => Defendant)
-  @Column({ type: DataType.UUID, allowNull: false, unique: true })
+  @Column({ type: DataType.UUID, allowNull: false })
   defendantId!: string
 
   @BelongsTo(() => Defendant, 'defendantId')
@@ -64,14 +62,6 @@ export class Verdict extends Model {
   @BelongsTo(() => Case, 'caseId')
   @ApiPropertyOptional({ type: () => Case })
   case?: Case
-
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(ServiceRequirement),
-  })
-  @ApiProperty({ enum: ServiceRequirement })
-  serviceRequirement?: ServiceRequirement
 
   @Column({
     type: DataType.ENUM,
@@ -95,6 +85,18 @@ export class Verdict extends Model {
 
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
+  defenderNationalId?: string
+
+  @Column({ type: DataType.DATE, allowNull: false })
+  @ApiProperty({ type: Date })
+  arraignmentDate!: Date
+
+  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiProperty({ type: String })
+  location!: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   hash?: string
 
   @Column({
@@ -108,20 +110,8 @@ export class Verdict extends Model {
   @Column({
     type: DataType.ENUM,
     allowNull: true,
-    values: Object.values(VerdictAppealDecision),
+    values: Object.values(SubpoenaType),
   })
-  @ApiPropertyOptional({ enum: VerdictAppealDecision })
-  appealDecision?: VerdictAppealDecision
-
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  appealDate?: Date
-
-  @Column({
-    type: DataType.ARRAY(DataType.ENUM),
-    allowNull: true,
-    values: Object.values(InformationForDefendant),
-  })
-  @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
-  serviceInformationForDefendant?: InformationForDefendant[]
+  @ApiPropertyOptional({ enum: SubpoenaType })
+  type?: SubpoenaType
 }

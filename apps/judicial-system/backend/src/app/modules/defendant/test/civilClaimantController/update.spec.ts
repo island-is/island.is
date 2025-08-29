@@ -5,8 +5,8 @@ import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
+import { CivilClaimant } from '../../../repository'
 import { UpdateCivilClaimantDto } from '../../dto/updateCivilClaimant.dto'
-import { CivilClaimant } from '../../models/civilClaimant.model'
 
 interface Then {
   result: CivilClaimant

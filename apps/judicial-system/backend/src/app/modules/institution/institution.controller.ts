@@ -6,7 +6,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { JwtAuthUserGuard } from '@island.is/judicial-system/auth'
 
-import { Institution } from './institution.model'
+import { Institution } from '../repository/models/institution.model'
 import { InstitutionService } from './institution.service'
 
 @Controller('api')

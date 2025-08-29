@@ -14,10 +14,10 @@ import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
 import { InternalCaseService } from '../../../case'
 import { EventService } from '../../../event'
-import { type User, UserService } from '../../../user'
+import { Notification, type User } from '../../../repository'
+import { UserService } from '../../../user'
 import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 import { strings } from './institutionNotification.strings'
 

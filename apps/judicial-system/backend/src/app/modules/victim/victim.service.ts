@@ -9,9 +9,9 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { Victim } from '../repository'
 import { CreateVictimDto } from './dto/createVictim.dto'
 import { UpdateVictimDto } from './dto/updateVictim.dto'
-import { Victim } from './models/victim.model'
 
 @Injectable()
 export class VictimService {

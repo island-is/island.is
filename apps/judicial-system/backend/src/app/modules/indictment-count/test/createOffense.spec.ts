@@ -4,7 +4,7 @@ import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
-import { Offense } from '../models/offense.model'
+import { Offense } from '../../repository'
 
 interface Then {
   result: Offense

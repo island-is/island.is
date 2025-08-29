@@ -16,7 +16,7 @@ import {
   SubpoenaModule,
   UserModule,
 } from '../index'
-import { Notification } from './models/notification.model'
+import { Notification } from '../repository'
 import { CaseNotificationService } from './services/caseNotification/caseNotification.service'
 import { CivilClaimantNotificationService } from './services/civilClaimantNotification/civilClaimantNotification.service'
 import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'

@@ -26,11 +26,11 @@ import {
   prosecutorRepresentativeRule,
   prosecutorRule,
 } from '../../guards'
-import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { Case, CivilClaimant } from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CurrentCivilClaimant } from './guards/civilClaimaint.decorator'
 import { CivilClaimantExistsGuard } from './guards/civilClaimantExists.guard'
-import { CivilClaimant } from './models/civilClaimant.model'
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 import { CivilClaimantService } from './civilClaimant.service'
 

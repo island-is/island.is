@@ -27,11 +27,9 @@ import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { EventLogService } from '../../../event-log/eventLog.service'
 import { FileService } from '../../../file'
+import { Case, CaseString, DateLog } from '../../../repository'
 import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
-import { Case } from '../../models/case.model'
-import { CaseString } from '../../models/caseString.model'
-import { DateLog } from '../../models/dateLog.model'
 
 jest.mock('../../../../factories')
 

@@ -16,9 +16,8 @@ import {
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { randomDate } from '../../../../test'
-import { Case } from '../../../case'
+import { Case, CaseFile } from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
-import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: CaseFile

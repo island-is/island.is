@@ -13,9 +13,9 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { DefendantService } from '../../../defendant'
+import { Case } from '../../../repository'
 import { include } from '../../case.service'
 import { CreateCaseDto } from '../../dto/createCase.dto'
-import { Case } from '../../models/case.model'
 
 interface Then {
   result: Case

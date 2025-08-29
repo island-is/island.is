@@ -6,7 +6,7 @@ import { EmailModule } from '@island.is/email-service'
 import { CourtClientModule } from '@island.is/judicial-system/court-client'
 
 import { EventModule } from '../index'
-import { RobotLog } from './models/robotLog.model'
+import { RobotLog } from '../repository'
 import { CourtService } from './court.service'
 
 @Module({

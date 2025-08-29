@@ -8,8 +8,8 @@ import {
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
+import { Case } from '../../../repository'
 import { include } from '../../case.service'
-import { Case } from '../../models/case.model'
 import { CaseHasExistedGuard } from '../caseHasExisted.guard'
 
 interface Then {

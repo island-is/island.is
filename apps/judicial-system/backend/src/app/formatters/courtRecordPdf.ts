@@ -19,7 +19,7 @@ import {
 
 import { nowFactory } from '../factories'
 import { courtRecord } from '../messages'
-import { Case } from '../modules/case'
+import { Case } from '../modules/repository'
 import {
   addCoatOfArms,
   addEmptyLines,

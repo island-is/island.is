@@ -20,6 +20,7 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
+import { IndictmentCount, Offense } from '..//repository'
 import { MinimalCaseAccessGuard, MinimalCaseExistsGuard } from '../case'
 import { CreateOffenseDto } from './dto/createOffense.dto'
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
@@ -27,8 +28,6 @@ import { UpdateOffenseDto } from './dto/updateOffense.dto'
 import { IndictmentCountExistsGuard } from './guards/indictmentCountExists.guard'
 import { OffenseExistsGuard } from './guards/offenseExists.guard'
 import { DeleteResponse } from './models/delete.response'
-import { IndictmentCount } from './models/indictmentCount.model'
-import { Offense } from './models/offense.model'
 import { IndictmentCountService } from './indictmentCount.service'
 
 @Controller('api/case/:caseId/indictmentCount')

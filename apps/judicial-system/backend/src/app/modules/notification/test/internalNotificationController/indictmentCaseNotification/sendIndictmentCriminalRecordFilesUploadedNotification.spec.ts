@@ -7,7 +7,7 @@ import { IndictmentCaseNotificationType } from '@island.is/judicial-system/types
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import { Case } from '../../../../case'
+import { Case } from '../../../../repository'
 import { DeliverResponse } from '../../../models/deliver.response'
 import { notificationModuleConfig } from '../../../notification.config'
 

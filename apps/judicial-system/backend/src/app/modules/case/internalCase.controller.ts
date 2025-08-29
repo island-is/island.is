@@ -26,6 +26,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
+import { Case } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
@@ -39,7 +40,6 @@ import {
   CasesInterceptor,
 } from './interceptors/case.interceptor'
 import { ArchiveResponse } from './models/archive.response'
-import { Case } from './models/case.model'
 import { DeliverResponse } from './models/deliver.response'
 import { InternalCaseService } from './internalCase.service'
 

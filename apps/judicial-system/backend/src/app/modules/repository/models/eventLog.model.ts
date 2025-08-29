@@ -11,7 +11,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { EventType, UserRole } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case/models/case.model'
+import { Case } from './case.model'
 
 @Table({
   tableName: 'event_log',

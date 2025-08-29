@@ -6,7 +6,7 @@ import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 
 interface Then {
   result: SigningServiceResponse

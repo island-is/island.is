@@ -11,8 +11,7 @@ import {
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../models/case.model'
-import { DateLog } from '../models/dateLog.model'
+import { Case, DateLog } from '../../repository'
 
 @Injectable()
 export class RequestSharedWithDefenderGuard implements CanActivate {
