@@ -14,12 +14,12 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { EventLog } from '../../event-log'
 import {
   Case,
   CaseString,
   Defendant,
   DefendantEventLog,
+  EventLog,
 } from '../../repository'
 
 export const transformDefendants = (defendants?: Defendant[]) => {

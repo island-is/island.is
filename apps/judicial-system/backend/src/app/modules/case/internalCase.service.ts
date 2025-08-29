@@ -53,7 +53,6 @@ import { CourtDocumentFolder, CourtService } from '../court'
 import { courtSubtypes } from '../court/court.service'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
-import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
@@ -65,6 +64,7 @@ import {
   CaseString,
   DateLog,
   Defendant,
+  EventLog,
 } from '../repository'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User, UserService } from '../user'

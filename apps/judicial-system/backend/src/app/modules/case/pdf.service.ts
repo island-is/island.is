@@ -34,8 +34,7 @@ import {
   getRulingPdfAsBuffer,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { EventLog } from '../event-log'
-import { Case, Defendant } from '../repository'
+import { Case, Defendant, EventLog } from '../repository'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
 

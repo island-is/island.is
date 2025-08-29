@@ -22,8 +22,13 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { EventLog } from '../../event-log'
-import { Case, CivilClaimant, DateLog, Defendant } from '../../repository'
+import {
+  Case,
+  CivilClaimant,
+  DateLog,
+  Defendant,
+  EventLog,
+} from '../../repository'
 import { Victim } from '../../victim'
 import { MinimalCase } from '../models/case.types'
 

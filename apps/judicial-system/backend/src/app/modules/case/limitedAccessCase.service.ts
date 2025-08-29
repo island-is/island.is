@@ -33,7 +33,6 @@ import {
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { CivilClaimantService, DefendantService } from '../defendant'
-import { EventLog } from '../event-log'
 import {
   CaseFile,
   FileService,
@@ -49,6 +48,7 @@ import {
   DateLog,
   Defendant,
   DefendantEventLog,
+  EventLog,
 } from '../repository'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
