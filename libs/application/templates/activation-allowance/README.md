@@ -11,13 +11,13 @@
 ## Clients and template-api-modules
 
 - [Client](https://github.com/island-is/island.is/tree/main/libs/clients/vmst-unemployment/src/lib/vmstUnemploymentClient.service.ts)
-- [Template-api-module](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/activation-allowance')
+- [Template-api-module](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/activation-allowance)
 
 ## States
 
 ### Prerequisite
 
-Data fetching from National Registry, User profile, RSK and Social Insurance Administration
+Data is fetched from the National Registry, user profile, RSK, and the Social Insurance Administration.
 
 ### Terms
 
@@ -27,16 +27,16 @@ Short state where user has to agree to Directorate of Labor's terms
 
 #### User information screen
 
-Basic user information presented in readonly for user to confirm along with input fields for place of residence if it differs from your legal home and a "password" meant for phone call use if Directorate of Labor calls.
-Followed by a short user contact screen where user can either mark themselves as contact or input another person as their contact
+Basic user information is presented in read-only mode for the user to confirm, along with input fields for place of residence if it differs from their legal residence, and a "password" meant for phone-call verification if the Directorate of Labor calls.
+This is followed by a short user-contact screen where the user can either mark themselves as the contact or input another person as their contact.
 
 #### Bank information screen
 
-Required fields to input bank number, ledger and account number. validated via custom component because we need to check external data if bank number and ledger exist.
+Required fields to input bank number, ledger, and account number. Validated via a custom component because we need to check external data to verify that the bank number and ledger exist.
 
 #### Optional income screen
 
-This screen is optional if and only if user has registered income in the last 2 month from RSK.
+This screen is optional only if the user has registered income in the last 2 months with RSK.
 
 #### Job wishes screen
 
@@ -44,19 +44,19 @@ Simple screen where user can (optionally) pick ESCO job wishes.
 
 #### Job history screen
 
-Another optional set of input where user can input history of jobs
+Another optional set of inputs where the user can enter job history
 
 #### Academic history screen
 
-Users academic history. This is also optional like the previous two screens.
+The user's academic history. This is also optional, like the previous two screens.
 
 #### Driving licenses screen
 
-Users driving and machine licenses. Optional like the previous three screens.
+The user's driving and machinery licenses. Optional, like the previous three screens.
 
 #### Language skills screen
 
-Required to answer English and Icelandic language skills with the option to add other languages
+Required to answer questions about English and Icelandic language skills, with the option to add other languages
 
 #### CV screen
 
@@ -68,7 +68,7 @@ Typical overview of the applications data.
 
 ### Completed
 
-Information of what happens next, process is now in Directorate of Labor's hands.
+Information about what happens next; the process is now in the Directorate of Labor's hands
 
 ## Localisation
 
