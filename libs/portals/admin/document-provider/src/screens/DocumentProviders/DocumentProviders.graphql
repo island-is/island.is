@@ -1,7 +1,0 @@
-query GetStatisticsTotal($input: StatisticsInput!) {
-  getStatisticsTotal(input: $input) {
-    published
-    notifications
-    opened
-  }
-}

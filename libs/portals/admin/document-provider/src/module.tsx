@@ -28,7 +28,7 @@ export const documentProviderModule: PortalModule = {
         path: DocumentProviderPaths.DocumentProviderRoot,
         element: (
           <Navigate
-            to={DocumentProviderPaths.DocumentProviderOverview}
+            to={DocumentProviderPaths.DocumentProviderRootOverview}
             replace
           />
         ),
@@ -44,13 +44,8 @@ export const documentProviderModule: PortalModule = {
         element: <SingleDocumentProvider />,
       },
       {
-        name: m.paper,
-        path: DocumentProviderPaths.DocumentProviderPaper,
-        element: <PaperScreen />,
-      },
-      {
-        name: m.catAndTypeName,
-        path: DocumentProviderPaths.DocumentProviderCategoryAndType,
+        name: m.Settings,
+        path: DocumentProviderPaths.DocumentProviderSettings,
         element: <CategoriesAndTypesScreen />,
       },
     ]

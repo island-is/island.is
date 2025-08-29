@@ -22,7 +22,7 @@ export class DocumentOauthConnection {
       }
     }
 
-    logger.debug('Fetching token for Document Provider Service')
+    logger.debug('Fetching token for Document Provider Service', config)
     try {
       const postData = {
         client_id: config.clientId,
