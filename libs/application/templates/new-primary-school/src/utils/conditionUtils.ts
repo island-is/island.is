@@ -92,3 +92,19 @@ export const showPreferredLanguageFields = (answers: FormValue) => {
 
   return false
 }
+
+export const showCaseManagerFields = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { hasCaseManager } = getApplicationAnswers(answers)
+  const caseWorker = getDefaultSupportCaseworker(
+    externalData,
+    CaseWorkerInputTypeEnum.CaseManager,
+  )
+
+  return (
+    isWelfareContactSelected(answers, externalData) &&
+    (hasCaseManager === YES || caseWorker !== undefined)
+  )
+}

@@ -10,7 +10,10 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { isWelfareContactSelected } from '../../../utils/conditionUtils'
+import {
+  isWelfareContactSelected,
+  showCaseManagerFields,
+} from '../../../utils/conditionUtils'
 import {
   ApplicationType,
   CaseWorkerInputTypeEnum,
@@ -100,7 +103,6 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
-
           defaultValue: (application: Application) => {
             const { socialProfile } = getApplicationExternalData(
               application.externalData,
@@ -223,20 +225,8 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.caseManagerName,
           width: 'half',
           required: true,
-          condition: (answers, externalData) => {
-            const { hasCaseManager } = getApplicationAnswers(answers)
-            const caseWorker = getDefaultSupportCaseworker(
-              externalData,
-              CaseWorkerInputTypeEnum.CaseManager,
-            )
-
-            return (
-              (isWelfareContactSelected(answers, externalData) &&
-                hasCaseManager === YES) ||
-              (isWelfareContactSelected(answers, externalData) &&
-                caseWorker !== undefined)
-            )
-          },
+          condition: (answers, externalData) =>
+            showCaseManagerFields(answers, externalData),
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,
@@ -248,20 +238,8 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
           width: 'half',
           required: true,
-          condition: (answers, externalData) => {
-            const { hasCaseManager } = getApplicationAnswers(answers)
-            const caseWorker = getDefaultSupportCaseworker(
-              externalData,
-              CaseWorkerInputTypeEnum.CaseManager,
-            )
-
-            return (
-              (isWelfareContactSelected(answers, externalData) &&
-                hasCaseManager === YES) ||
-              (isWelfareContactSelected(answers, externalData) &&
-                caseWorker !== undefined)
-            )
-          },
+          condition: (answers, externalData) =>
+            showCaseManagerFields(answers, externalData),
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,

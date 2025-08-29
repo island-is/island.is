@@ -47,12 +47,11 @@ export const healthProtectionSubSection = buildSubSection({
                   .hasFoodAllergiesOrIntolerances,
             },
           ],
-          defaultValue: (application: Application) => {
-            const v = hasDefaultFoodAllergiesOrIntolerances(
-              application.externalData,
-            )
-            return v === YES ? [YES] : []
-          },
+          defaultValue: (application: Application) =>
+            hasDefaultFoodAllergiesOrIntolerances(application.externalData) ===
+            YES
+              ? [YES]
+              : [],
         }),
         buildCustomField(
           {
@@ -95,10 +94,8 @@ export const healthProtectionSubSection = buildSubSection({
               label: newPrimarySchoolMessages.differentNeeds.hasOtherAllergies,
             },
           ],
-          defaultValue: (application: Application) => {
-            const v = hasDefaultAllergies(application.externalData)
-            return v === YES ? [YES] : []
-          },
+          defaultValue: (application: Application) =>
+            hasDefaultAllergies(application.externalData) === YES ? [YES] : [],
         }),
         buildCustomField(
           {

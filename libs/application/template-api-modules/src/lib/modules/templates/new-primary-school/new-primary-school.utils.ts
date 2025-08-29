@@ -228,9 +228,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       requestsMedicationAdministration:
         requestsMedicationAdministration === YES,
     },
-    social: {
-      ...getSocialProfile(application),
-    },
+    social: getSocialProfile(application),
     language: {
       languageEnvironment: languageEnvironmentId,
       signLanguage: signLanguage === YES,
