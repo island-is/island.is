@@ -19,6 +19,8 @@ global:
 name: 'service-portal-api'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/user-profile'
+  AUDIT_SERVICE_NAME: 'services-user-profile'
   AUTH_DELEGATION_API_URL: 'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
   CODE_OWNER: 'aranja'

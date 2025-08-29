@@ -32,7 +32,7 @@ import { ApplicationActionService } from './application-action.service'
 @Module({
   imports: [
     PaymentModule,
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     AuthModule.register(environment.auth),
     TemplateAPIModule.register(environment.templateApi),
     ApplicationApiCoreModule,

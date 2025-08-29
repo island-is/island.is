@@ -22,9 +22,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { environment } from '../../../environments'
 
-const namespace = `${environment.audit.defaultNamespace}/client-secret`
+const namespace = `@island.is/auth-admin-api/client-secret`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()

@@ -31,11 +31,8 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { environment } from '../../../environments'
 import { Audit, AuditService } from '@island.is/nest/audit'
-
-const namespace = `${environment.audit.defaultNamespace}/personal-representative`
-
+const namespace = '@island.is/personal-representative/personal-representative'
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.adminPersonalRepresentative)
 @ApiTags('Personal Representatives')

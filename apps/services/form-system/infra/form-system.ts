@@ -18,6 +18,8 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/form-system',
+      AUDIT_SERVICE_NAME: 'services-form-system-api',
     })
     .ingress({
       primary: {

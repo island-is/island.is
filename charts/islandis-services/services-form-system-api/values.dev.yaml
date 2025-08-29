@@ -19,6 +19,8 @@ global:
 name: 'services-form-system-api'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/form-system'
+  AUDIT_SERVICE_NAME: 'services-form-system-api'
   CODE_OWNER: 'Advania'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'services_form_system_api'

@@ -9,9 +9,6 @@ const devConfig = {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
   },
-  audit: {
-    defaultNamespace: '@island.is/university-gateway',
-  },
 }
 
 const prodConfig = {
@@ -27,11 +24,6 @@ const prodConfig = {
   events: {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
-  },
-  audit: {
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'services-university-gateway',
-    defaultNamespace: '@island.is/university-gateway',
   },
 }
 

@@ -4,9 +4,6 @@ const devConfig = {
     audience: '@identityserver.api',
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? 'https://localhost:5001',
   },
-  audit: {
-    defaultNamespace: '@island.is/auth-api',
-  },
   port: 4333,
 }
 
@@ -22,11 +19,6 @@ const prodConfig = {
     audience: '@identityserver.api',
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,
-  },
-  audit: {
-    defaultNamespace: '@island.is/auth-api',
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'services-auth-api',
   },
   port: 3333,
 }

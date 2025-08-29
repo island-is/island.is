@@ -1,6 +1,5 @@
 import { DocumentBuilder } from '@nestjs/swagger'
 import { environment } from './environments'
-import { AuthScope } from '@island.is/auth/scopes'
 
 export const openApi = new DocumentBuilder()
   .setTitle('IdentityServer Admin api')
