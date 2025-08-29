@@ -13,6 +13,16 @@ let s3Service: S3Service
 
 jest.mock('@island.is/application/template-loader')
 
+beforeEach(() => {
+  ;(getApplicationTemplateByTypeId as jest.Mock).mockResolvedValue({
+    adminDataConfig: undefined,
+  })
+})
+
+afterEach(() => {
+  jest.resetAllMocks()
+})
+
 export const createApplications = () => [
   createApplication({
     state: 'draft',
@@ -92,7 +102,12 @@ class ApplicationServiceMock {
     application: Partial<
       Pick<
         Application,
-        'attachments' | 'answers' | 'externalData' | 'pruned' | 'postPruneAt'
+        | 'attachments'
+        | 'answers'
+        | 'externalData'
+        | 'pruned'
+        | 'postPruneAt'
+        | 'postPruned'
       >
     >,
   ) {
