@@ -14,10 +14,9 @@ import {
   createTestUsers,
 } from '../../createTestingNotificationModule'
 
-import { Case, Defendant } from '../../../../repository'
+import { Case, Defendant, Notification } from '../../../../repository'
 import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
-import { Notification } from '../../../models/notification.model'
 import { notificationModuleConfig } from '../../../notification.config'
 
 jest.mock('../../../../../factories')

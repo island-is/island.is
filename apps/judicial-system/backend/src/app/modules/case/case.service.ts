@@ -66,7 +66,6 @@ import { EventService } from '../event'
 import { EventLogService } from '../event-log'
 import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
-import { Notification } from '../notification'
 import {
   Case,
   CaseFile,
@@ -78,10 +77,12 @@ import {
   EventLog,
   IndictmentCount,
   Institution,
+  Notification,
   Offense,
+  Subpoena,
+  User,
 } from '../repository'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { User } from '../user'
+import { SubpoenaService } from '../subpoena'
 import { Verdict } from '../verdict/models/verdict.model'
 import { VerdictService } from '../verdict/verdict.service'
 import { Victim } from '../victim/models/victim.model'

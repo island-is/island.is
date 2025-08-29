@@ -46,9 +46,9 @@ import {
   IndictmentCount,
   Institution,
   Offense,
+  Subpoena,
+  User,
 } from '../repository'
-import { Subpoena } from '../subpoena'
-import { User } from '../user'
 import { Verdict } from '../verdict/models/verdict.model'
 import { Victim } from '../victim'
 import { PdfService } from './pdf.service'

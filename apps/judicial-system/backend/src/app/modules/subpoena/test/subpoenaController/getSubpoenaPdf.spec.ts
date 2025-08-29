@@ -4,8 +4,7 @@ import { uuid } from 'uuidv4'
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
 import { PdfService } from '../../../case'
-import { Case, Defendant } from '../../../repository'
-import { Subpoena } from '../../models/subpoena.model'
+import { Case, Defendant, Subpoena } from '../../../repository'
 
 interface Then {
   error: Error

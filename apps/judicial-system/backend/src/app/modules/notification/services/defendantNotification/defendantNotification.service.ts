@@ -29,10 +29,15 @@ import {
 } from '../../../../formatters'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
-import { Case, DateLog, Defendant } from '../../../repository'
+import {
+  Case,
+  DateLog,
+  Defendant,
+  Notification,
+  Recipient,
+} from '../../../repository'
 import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 import { strings } from './defendantNotification.strings'
 

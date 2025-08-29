@@ -38,8 +38,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Notification } from '../../notification'
-import { User } from '../../user'
 import { Victim } from '../../victim/models/victim.model'
 import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
@@ -49,6 +47,8 @@ import { Defendant } from './defendant.model'
 import { EventLog } from './eventLog.model'
 import { IndictmentCount } from './indictmentCount.model'
 import { Institution } from './institution.model'
+import { Notification } from './notification.model'
+import { User } from './user.model'
 
 @Table({
   tableName: 'case',

@@ -34,8 +34,8 @@ import {
   getRulingPdfAsBuffer,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { Case, Defendant, EventLog } from '../repository'
-import { Subpoena, SubpoenaService } from '../subpoena'
+import { Case, Defendant, EventLog, Subpoena } from '../repository'
+import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
 
 @Injectable()

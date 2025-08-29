@@ -10,8 +10,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory, uuidFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { CivilClaimantService, DefendantService } from '../../../defendant'
-import { Case } from '../../../repository'
-import { User } from '../../../user'
+import { Case, User } from '../../../repository'
 
 jest.mock('../../../../factories')
 

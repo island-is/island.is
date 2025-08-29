@@ -17,10 +17,14 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
 
 import { EventService } from '../../../event'
-import { Case, CivilClaimant } from '../../../repository'
+import {
+  Case,
+  CivilClaimant,
+  Notification,
+  Recipient,
+} from '../../../repository'
 import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 import { strings } from './civilClaimantNotification.strings'
 

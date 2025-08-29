@@ -67,9 +67,11 @@ import {
   IndictmentCount,
   Institution,
   Offense,
+  Subpoena,
+  User,
 } from '../repository'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { User, UserService } from '../user'
+import { SubpoenaService } from '../subpoena'
+import { UserService } from '../user'
 import { Verdict } from '../verdict/models/verdict.model'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'

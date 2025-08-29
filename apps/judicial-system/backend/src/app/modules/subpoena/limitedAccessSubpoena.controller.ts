@@ -30,10 +30,9 @@ import {
   PdfService,
 } from '../case'
 import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
-import { Case, Defendant } from '../repository'
+import { Case, Defendant, Subpoena } from '../repository'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
-import { Subpoena } from './models/subpoena.model'
 
 @Controller([
   'api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena/:subpoenaId',

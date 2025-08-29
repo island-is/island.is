@@ -11,10 +11,9 @@ import {
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import { Case, CivilClaimant } from '../../../../repository'
+import { Case, CivilClaimant, Notification } from '../../../../repository'
 import { CivilClaimantNotificationDto } from '../../../dto/civilClaimantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
-import { Notification } from '../../../models/notification.model'
 import { notificationModuleConfig } from '../../../notification.config'
 
 jest.mock('../../../../../factories')

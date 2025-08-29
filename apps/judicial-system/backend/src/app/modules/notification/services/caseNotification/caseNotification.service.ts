@@ -83,10 +83,11 @@ import {
   type CivilClaimant,
   DateLog,
   type Defendant,
+  Notification,
+  Recipient,
 } from '../../../repository'
 import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 
 interface RecipientInfo {

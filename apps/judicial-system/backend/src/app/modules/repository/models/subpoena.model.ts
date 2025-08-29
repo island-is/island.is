@@ -17,7 +17,8 @@ import {
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
-import { Case, Defendant } from '../../repository'
+import { Case } from './case.model'
+import { Defendant } from './defendant.model'
 
 @Table({
   tableName: 'subpoena',

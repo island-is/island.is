@@ -46,9 +46,9 @@ import {
   DefendantEventLog,
   EventLog,
   Institution,
+  Subpoena,
+  User,
 } from '../repository'
-import { Subpoena } from '../subpoena'
-import { User } from '../user'
 import { Verdict } from '../verdict/models/verdict.model'
 import {
   CaseTableCellValue,

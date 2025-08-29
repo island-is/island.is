@@ -11,7 +11,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { NotificationType } from '@island.is/judicial-system/types'
 
-import { Case } from '../../repository'
+import { Case } from './case.model'
 
 export interface Recipient {
   success: boolean
