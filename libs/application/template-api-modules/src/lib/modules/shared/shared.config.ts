@@ -95,11 +95,6 @@ export const sharedModuleConfig = defineConfig({
           'http://localhost:3366',
         ),
       },
-      islykill: {
-        cert: env.required('ISLYKILL_CERT', ''),
-        passphrase: env.required('ISLYKILL_SERVICE_PASSPHRASE', ''),
-        basePath: env.required('ISLYKILL_SERVICE_BASEPATH', ''),
-      },
     },
     contentful: {
       accessToken: env.required('CONTENTFUL_ACCESS_TOKEN'),

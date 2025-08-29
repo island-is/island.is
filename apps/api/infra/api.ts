@@ -280,6 +280,11 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
+      XROAD_FJS_BANKINFO_PATH: {
+        dev: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+        staging: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+        prod: 'IS/GOV/5402697509/FJS-Public/TBRBankMgrService_v1',
+      },
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
