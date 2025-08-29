@@ -266,11 +266,7 @@ export class ApplicationTypeAdminSerializer
     ]
     const intl = await this.intlService.useIntl(namespaces, locale)
     const name = template
-      ? getApplicationGenericNameTranslationString(
-          template,
-          type.id,
-          intl.formatMessage,
-        )
+      ? getApplicationGenericNameTranslationString(template, intl.formatMessage)
       : ''
 
     return instanceToPlain({ id: type.id, name: name ?? '' })
