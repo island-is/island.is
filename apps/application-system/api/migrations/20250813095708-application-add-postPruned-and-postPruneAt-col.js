@@ -3,37 +3,36 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction(async (t) => {
-      await Promise.all([
-        queryInterface.addColumn(
-          'application',
-          'post_pruned',
-          {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-          },
-          { transaction: t },
-        ),
-        queryInterface.addColumn(
-          'application',
-          'post_prune_at',
-          {
-            type: Sequelize.DATE,
-            allowNull: true,
-            defaultValue: null,
-          },
-          { transaction: t },
-        ),
-      ])
-
-      await queryInterface.addIndex(
+      await queryInterface.addColumn(
         'application',
-        ['post_pruned', 'post_prune_at'],
+        'post_pruned',
         {
-          name: 'application_post_prune_pending_idx',
-          transaction: t,
+          type: Sequelize.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
         },
+        { transaction: t },
       )
+
+      await queryInterface.addColumn(
+        'application',
+        'post_prune_at',
+        {
+          type: Sequelize.DATE,
+          allowNull: true,
+          defaultValue: null,
+        },
+        { transaction: t },
+      )
+
+      await queryInterface.addIndex('application', ['post_prune_at'], {
+        name: 'application_post_prune_pending_idx',
+        where: {
+          pruned: true,
+          post_pruned: false,
+        },
+        transaction: t,
+      })
     })
   },
 
@@ -44,9 +43,11 @@ module.exports = {
         'application_post_prune_pending_idx',
         { transaction: t },
       )
+
       await queryInterface.removeColumn('application', 'post_pruned', {
         transaction: t,
       })
+
       await queryInterface.removeColumn('application', 'post_prune_at', {
         transaction: t,
       })
