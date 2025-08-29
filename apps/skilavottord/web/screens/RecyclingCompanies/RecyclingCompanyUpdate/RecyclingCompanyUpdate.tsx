@@ -146,7 +146,7 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <AuthGuard permission={permission} loading={loading}>
+    <AuthGuard permission={permission} loading={loading && !data}>
       <PartnerPageLayout
         side={<NavigationLinks activeSection={activeSection} />}
       >
