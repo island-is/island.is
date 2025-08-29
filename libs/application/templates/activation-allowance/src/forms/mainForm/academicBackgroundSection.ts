@@ -50,6 +50,7 @@ export const academicBackgroundSection = buildSection({
                 index,
                 _activeField,
               ) => {
+                // This setOnChange is responsible for auto-filling degree and subject if there is only 1 option to select
                 const education =
                   getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
                     application.externalData,
