@@ -1,6 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose, Type } from 'class-transformer'
-import { IsBoolean, IsString, IsDate, IsArray, IsNumber } from 'class-validator'
+import {
+  IsBoolean,
+  IsString,
+  IsDate,
+  IsArray,
+  IsNumber,
+  ValidateNested,
+} from 'class-validator'
 import { BaseApplicationResponseDto } from './application.response.dto'
 
 class ApplicationAdminData {
@@ -14,10 +21,10 @@ class ApplicationAdminData {
   @IsString()
   key!: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: [String] })
   @Expose()
   @IsArray()
-  @IsString()
+  @IsString({ each: true })
   values?: string[]
 }
 
@@ -45,6 +52,7 @@ export class ApplicationListAdminResponseDto extends BaseApplicationResponseDto 
   @ApiPropertyOptional({ type: [ApplicationAdminData], default: [] })
   @Expose()
   @IsArray()
+  @ValidateNested({ each: true })
   @Type(() => ApplicationAdminData)
   adminData?: ApplicationAdminData[]
 
