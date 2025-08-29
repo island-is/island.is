@@ -9,6 +9,8 @@ export interface Candidate extends UserBase {
   collectionId: string
   partyBallotLetter: string
   areaId?: string
+  ownerName: string
+  ownerBirthDate: Date | null
 }
 
 export const mapCandidate = (
@@ -32,5 +34,7 @@ export const mapCandidate = (
     collectionId: candidate.medmaelasofnunID?.toString() ?? '',
     partyBallotLetter: candidate.listabokstafur ?? '',
     areaId,
+    ownerName: candidate.abyrgdaradili?.nafn ?? '',
+    ownerBirthDate: candidate.abyrgdaradili?.faedingardagur ?? null,
   }
 }

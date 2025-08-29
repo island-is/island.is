@@ -27,12 +27,10 @@ import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.i
 import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
-import {
-  SignatureCollectionListIdInput,
-  SignatureCollectionUploadPaperSignatureInput,
-} from './dto'
+import { SignatureCollectionUploadPaperSignatureInput } from './dto'
 import { SignatureCollectionAdmin } from './models/admin.model'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { SignatureCollectionLockListInput } from './dto/lockList.input'
 
 @Injectable()
 export class SignatureCollectionAdminService {
@@ -267,10 +265,10 @@ export class SignatureCollectionAdminService {
   }
 
   async lockList(
-    input: SignatureCollectionListIdInput,
+    input: SignatureCollectionLockListInput,
     admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.getService(admin.adminScope).lockList(admin, input.listId)
+    return await this.getService(admin.adminScope).lockList(admin, input)
   }
 
   async uploadPaperSignature(

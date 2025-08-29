@@ -200,6 +200,8 @@ describe('UserAccessGuard', () => {
             id: '1',
             name: 'Test',
             nationalId: user.nationalId,
+            ownerName: 'Test',
+            ownerBirthDate: new Date(),
           },
         })
       })

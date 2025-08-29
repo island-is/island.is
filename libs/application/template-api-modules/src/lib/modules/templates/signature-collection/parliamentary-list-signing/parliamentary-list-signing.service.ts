@@ -3,6 +3,7 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
+  CollectionType,
   List,
   ReasonKey,
   SignatureCollectionClientService,
@@ -105,6 +106,7 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
       candidateId: isCandidateId ? ownerId : undefined,
       areaId,
       onlyActive: true,
+      collectionType: CollectionType.Parliamentary,
     })
     // If candidateId existed or if there is only one list, check if maxReached
     if (lists.length === 1) {

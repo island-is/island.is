@@ -431,6 +431,11 @@ export const m = defineMessages({
   },
 
   /* Municipal */
+  collectionTitleMunicipal: {
+    id: 'sp.signatureCollection:collectionTitleMunicipal',
+    defaultMessage: 'Sveitarstjórnarkosningar',
+    description: '',
+  },
   pageTitleMunicipal: {
     id: 'sp.signatureCollection:pageTitleMunicipal',
     defaultMessage: 'Meðmælasafnanir fyrir sveitarstjórnarkosningar',

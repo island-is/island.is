@@ -47,7 +47,7 @@ const ListManagers = () => {
           <Body>
             <Row>
               <Data>{formatNationalId(list.candidate.nationalId)}</Data>
-              <Data>{list.candidate.name}</Data>
+              <Data>{list.candidate.ownerName}</Data>
             </Row>
           </Body>
         </Table>
