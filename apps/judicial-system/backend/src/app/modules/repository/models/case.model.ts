@@ -38,7 +38,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { Notification } from '../../notification'
 import { User } from '../../user'
@@ -49,6 +48,7 @@ import { CivilClaimant } from './civilClaimant.model'
 import { DateLog } from './dateLog.model'
 import { Defendant } from './defendant.model'
 import { EventLog } from './eventLog.model'
+import { IndictmentCount } from './indictmentCount.model'
 
 @Table({
   tableName: 'case',

@@ -54,8 +54,7 @@ import { courtSubtypes } from '../court/court.service'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
-import { IndictmentCount, IndictmentCountService } from '../indictment-count'
-import { Offense } from '../indictment-count/models/offense.model'
+import { IndictmentCountService } from '../indictment-count'
 import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import {
@@ -66,6 +65,8 @@ import {
   DateLog,
   Defendant,
   EventLog,
+  IndictmentCount,
+  Offense,
 } from '../repository'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User, UserService } from '../user'

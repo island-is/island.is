@@ -11,17 +11,15 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { uuidFactory } from '../../../../factories'
 import { DefendantService } from '../../../defendant'
 import { FileService } from '../../../file'
-import {
-  IndictmentCount,
-  IndictmentCountService,
-} from '../../../indictment-count'
-import { Offense } from '../../../indictment-count/models/offense.model'
+import { IndictmentCountService } from '../../../indictment-count'
 import {
   Case,
   CaseArchive,
   CaseFile,
   CaseString,
   Defendant,
+  IndictmentCount,
+  Offense,
 } from '../../../repository'
 import { caseModuleConfig } from '../../case.config'
 import { archiveFilter } from '../../filters/case.archiveFilter'
