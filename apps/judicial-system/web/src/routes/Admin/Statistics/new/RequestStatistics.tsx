@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence } from 'motion/react'
 
-import { Box, SkeletonLoader } from '@island.is/island-ui/core'
+import { Box, Button, SkeletonLoader } from '@island.is/island-ui/core'
 import {
   InfoCard,
   LabelValue,
@@ -13,6 +13,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useRequestCaseStatisticsQuery } from '../getRequestCaseStatistics.generated'
+import { useGetPreprocessedDataUrlQuery } from '../preprocessedDataUrl.generated'
 import { Filters } from './shared/StatisticFilter'
 import { StatisticHeader } from './shared/StatisticHeader'
 import { StatisticsLayout } from './shared/StatisticLayout'
@@ -91,6 +92,15 @@ const RequestStatisticsBody = ({ minDate }: { minDate?: Date }) => {
     fetchPolicy: 'cache-and-network',
   })
 
+  const { loading: csvLoading, refetch: refetchPreprocessedData } =
+    useGetPreprocessedDataUrlQuery({
+      variables: {
+        input: queryVariables,
+      },
+      fetchPolicy: 'no-cache',
+      skip: true,
+    })
+
   useEffect(() => {
     if (data?.requestCaseStatistics) {
       setStats(data.requestCaseStatistics)
@@ -112,6 +122,26 @@ const RequestStatisticsBody = ({ minDate }: { minDate?: Date }) => {
           minDate={minDate}
         />
         <Statistics stats={stats} loading={loading} />
+        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+          <Button
+            variant="ghost"
+            size="small"
+            icon="download"
+            iconType="outline"
+            loading={csvLoading}
+            onClick={async () => {
+              const res = await refetchPreprocessedData({
+                input: queryVariables,
+              })
+              const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
+              if (url) {
+                window.open(url, '_blank', 'noopener,noreferrer')
+              }
+            }}
+          >
+            Sækja gögn
+          </Button>
+        </Box>
       </Box>
     </StatisticPageLayout>
   )
