@@ -72,7 +72,7 @@ const SignedList = ({
                   heading={list.title.split(' - ')[0]}
                   eyebrow={list.area?.name}
                   text={
-                    currentCollection.collectionType ===
+                    currentCollection?.collectionType ===
                     SignatureCollectionCollectionType.Presidential
                       ? formatMessage(m.collectionTitle)
                       : formatMessage(m.collectionTitleParliamentary)

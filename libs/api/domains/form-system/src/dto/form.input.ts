@@ -98,6 +98,9 @@ export class UpdateFormDtoInput {
   @Field(() => Boolean, { nullable: true })
   stopProgressOnValidatingScreen?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  hasSummaryScreen?: boolean
+
   @Field(() => LanguageTypeInput, { nullable: true })
   completedMessage?: LanguageTypeInput
 

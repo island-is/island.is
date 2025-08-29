@@ -61,30 +61,34 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { DefendantService } from '../defendant'
+import { EventService } from '../event'
+import { EventLogService } from '../event-log'
+import { FileService } from '../file'
+import { IndictmentCountService } from '../indictment-count'
 import {
+  Case,
+  CaseFile,
+  CaseString,
   CivilClaimant,
+  DateLog,
   Defendant,
   DefendantEventLog,
-  DefendantService,
-} from '../defendant'
-import { EventService } from '../event'
-import { EventLog, EventLogService } from '../event-log'
-import { CaseFile, FileService } from '../file'
-import { IndictmentCount, IndictmentCountService } from '../indictment-count'
-import { Offense } from '../indictment-count/models/offense.model'
-import { Institution } from '../institution'
-import { Notification } from '../notification'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { User } from '../user'
-import { Verdict } from '../verdict/models/verdict.model'
+  EventLog,
+  IndictmentCount,
+  Institution,
+  Notification,
+  Offense,
+  Subpoena,
+  User,
+  Verdict,
+  Victim,
+} from '../repository'
+import { SubpoenaService } from '../subpoena'
 import { VerdictService } from '../verdict/verdict.service'
-import { Victim } from '../victim/models/victim.model'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
-import { Case } from './models/case.model'
 import { MinimalCase } from './models/case.types'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { caseModuleConfig } from './case.config'

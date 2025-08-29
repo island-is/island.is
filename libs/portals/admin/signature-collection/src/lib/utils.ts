@@ -64,19 +64,20 @@ export enum CollectionStatus {
 }
 
 export const downloadFile = () => {
-  const name = 'beraSaman.xlsx'
+  const fileName = 'beraSaman.xlsx'
+  const sheetName = 'Bera saman'
   const sheetData = [['Kennitala'], []]
 
-  const getFile = (name: string, output: string | undefined) => {
-    const uri =
-      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'
-    const encodedUri = encodeURI(`${uri}${output}`)
+  const getFile = (downloadName: string, output: string | undefined) => {
+    if (!output) return
     const link = document.createElement('a')
-    link.setAttribute('href', encodedUri)
-    link.setAttribute('download', name)
+    link.href =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' +
+      output
+    link.download = downloadName
     document.body.appendChild(link)
-
     link.click()
+    document.body.removeChild(link)
   }
 
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
@@ -84,15 +85,15 @@ export const downloadFile = () => {
   worksheet.getColumn(1).numFmt = '@'
 
   const workbook: XLSX.WorkBook = {
-    Sheets: { [name]: worksheet },
-    SheetNames: [name],
+    Sheets: { [sheetName]: worksheet },
+    SheetNames: [sheetName],
   }
 
   const excelBuffer = XLSX.write(workbook, {
     bookType: 'xlsx',
     type: 'base64',
   })
-  getFile(name, excelBuffer)
+  getFile(fileName, excelBuffer)
 }
 
 // Bulk upload and compare

@@ -19,8 +19,8 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate, randomEnum } from '../../../../test'
 import { CourtService } from '../../../court'
+import { Case } from '../../../repository'
 import { include } from '../../case.service'
-import { Case } from '../../models/case.model'
 
 jest.mock('../../../../factories')
 

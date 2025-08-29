@@ -30,8 +30,11 @@ const PaymentsAndRights: React.FC<Props> = ({
   const isInsuranceCardValid = isDateAfterToday(
     insurance.data?.ehicCardExpiryDate ?? undefined,
   )
+  const hasInsuranceCardDate = Boolean(insurance.data?.from)
   const isInsured = insurance.data?.isInsured
   const ehicDate = insurance.data?.ehicCardExpiryDate
+
+  const currentPath = HealthPaths.HealthOverview
 
   return (
     <Box>
@@ -40,98 +43,101 @@ const PaymentsAndRights: React.FC<Props> = ({
       </Text>
       <InfoCardGrid
         cards={[
-          payments.error
-            ? null
-            : {
-                title: formatMessage(messages.paymentsAndRights),
-                description: formatMessage(
-                  messages.paymentsAndRightsDescription,
-                ),
-                to: HealthPaths.HealthPaymentParticipation,
-                detail: [
-                  {
-                    label: formatMessage(messages.maximumMonthlyPaymentShort),
-                    value: amountFormat(payments.data?.maximumMonthlyPayment),
-                  },
-                  {
-                    label: formatMessage(messages.paymentTarget),
-                    value: amountFormat(payments.data?.maximumPayment),
-                  },
-                ],
-                loading: payments.loading,
+          {
+            title: formatMessage(messages.paymentsAndRights),
+            description: formatMessage(messages.paymentsAndRightsDescription),
+            to: payments.error
+              ? currentPath
+              : HealthPaths.HealthPaymentParticipation,
+            detail: [
+              {
+                label: formatMessage(messages.maximumMonthlyPaymentShort),
+                value: amountFormat(payments.data?.maximumMonthlyPayment),
               },
+              {
+                label: formatMessage(messages.paymentTarget),
+                value: amountFormat(payments.data?.maximumPayment),
+              },
+            ],
+            loading: payments.loading,
+            error: payments.error,
+          },
 
-          medicine.error
-            ? null
-            : {
-                title: formatMessage(messages.medicinePurchase),
-                description: formatMessage(
-                  messages.medicinePurchaseDescription,
-                ),
-                to: HealthPaths.HealthMedicinePaymentParticipation,
-                detail: [
-                  medicine.data
-                    ? {
-                        label:
-                          formatMessage(messages.medicineStepStatusShort, {
-                            step: medicine.data?.levelNumber,
-                          }) ?? '',
-                        value: medicine.data?.levelPercentage + '%',
-                      }
-                    : null,
-                  {
-                    label: formatMessage(messages.medicinePaymentStatus),
-                    value: amountFormat(medicine.data?.paymentStatus),
-                  },
-                ],
-                loading: medicine.loading,
+          {
+            title: formatMessage(messages.medicinePurchase),
+            description: formatMessage(messages.medicinePurchaseDescription),
+            to: medicine.error
+              ? currentPath
+              : HealthPaths.HealthMedicinePaymentParticipation,
+            detail: [
+              medicine.data
+                ? {
+                    label:
+                      formatMessage(messages.medicineStepStatusShort, {
+                        step:
+                          medicine.data?.levelNumber ??
+                          formatMessage(messages.unknown),
+                      }) ?? '',
+                    value: medicine.data?.levelPercentage + '%',
+                  }
+                : null,
+              {
+                label: formatMessage(messages.medicinePaymentStatus),
+                value: amountFormat(medicine.data?.paymentStatus),
               },
-          insurance.error
-            ? null
-            : {
-                title: formatMessage(messages.hasHealthInsurance),
-                description: `${formatMessage(
-                  messages.from,
-                ).toLocaleLowerCase()} ${formatDate(insurance.data?.from)}`,
-                to: HealthPaths.HealthPaymentRights,
+            ],
+            loading: medicine.loading,
+            error: medicine.error,
+          },
+          {
+            title: formatMessage(messages.hasHealthInsurance),
+            description: `${formatMessage(messages.from).toLocaleLowerCase()} ${
+              insurance.data?.from
+                ? formatDate(insurance.data?.from)
+                : formatMessage(messages.unknown)
+            }`,
+            to: insurance.error ? currentPath : HealthPaths.HealthPaymentRights,
 
-                loading: insurance.loading,
-                tags: [
-                  {
-                    label: isInsured
-                      ? formatMessage(messages.valid)
-                      : formatMessage(messages.vaccineExpired),
-                    variant: isInsured ? 'blue' : 'red',
-                    outlined: true,
-                  },
-                ],
-              },
-          insurance.error
-            ? null
-            : {
-                title: formatMessage(messages.ehic),
-                description: isInsuranceCardValid
-                  ? `${formatMessage(messages.medicineValidTo)}: ${formatDate(
-                      ehicDate,
-                    )}`
-                  : ehicDate
-                  ? formatMessage(messages.expiredOn, {
-                      arg: formatDate(ehicDate),
-                    })
+            loading: insurance.loading,
+            error: insurance.error,
+            tags: [
+              {
+                label: isInsured
+                  ? formatMessage(messages.valid)
                   : formatMessage(messages.vaccineExpired),
-                to: HealthPaths.HealthPaymentRights,
-
-                tags: [
-                  {
-                    label: isInsuranceCardValid
-                      ? formatMessage(messages.valid)
-                      : formatMessage(messages.vaccineExpired),
-                    variant: isInsuranceCardValid ? 'blue' : 'red',
-                    outlined: true,
-                  },
-                ],
-                loading: insurance.loading,
+                variant: isInsured ? 'blue' : 'red',
+                outlined: true,
               },
+            ],
+          },
+          {
+            title: formatMessage(messages.ehic),
+            description:
+              isInsuranceCardValid && ehicDate
+                ? `${formatMessage(messages.medicineValidTo)}: ${formatDate(
+                    ehicDate,
+                  )}`
+                : ehicDate
+                ? formatMessage(messages.expiredOn, {
+                    arg: formatDate(ehicDate),
+                  })
+                : formatMessage(messages.noInsurance),
+            to: insurance.error ? currentPath : HealthPaths.HealthPaymentRights,
+
+            tags: [
+              {
+                label: isInsuranceCardValid
+                  ? formatMessage(messages.valid)
+                  : hasInsuranceCardDate
+                  ? formatMessage(messages.vaccineExpired)
+                  : formatMessage(messages.unvalidInsurance),
+                variant: isInsuranceCardValid ? 'blue' : 'red',
+                outlined: true,
+              },
+            ],
+            loading: insurance.loading,
+            error: insurance.error,
+          },
         ]}
         size="small"
       />
