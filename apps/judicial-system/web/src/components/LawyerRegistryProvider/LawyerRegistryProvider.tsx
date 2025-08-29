@@ -4,6 +4,7 @@ import {
   isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
+  isPublicProsecutionOfficeUser,
   Lawyer,
 } from '@island.is/judicial-system/types'
 
@@ -21,7 +22,10 @@ export const LawyerRegistryContext = createContext<LawyerRegistryContext>({
 export const LawyerRegistryProvider: FC<PropsWithChildren> = ({ children }) => {
   const { user } = useContext(UserContext)
   const shouldFetch =
-    isDistrictCourtUser(user) || isDefenceUser(user) || isProsecutionUser(user)
+    isDistrictCourtUser(user) ||
+    isDefenceUser(user) ||
+    isProsecutionUser(user) ||
+    isPublicProsecutionOfficeUser(user)
   const { allLawyers: lawyers } = useLawyerRegistry(shouldFetch)
 
   return (

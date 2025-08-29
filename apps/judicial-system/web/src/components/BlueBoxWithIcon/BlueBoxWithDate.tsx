@@ -191,7 +191,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   ])
 
   const serviceDateVariants = {
-    hidden: { opacity: 0, y: 15, marginTop: '16px' },
+    hidden: { opacity: 0, y: 15 },
     visible: { opacity: 1, y: 0 },
     exit: {
       opacity: 0,
@@ -200,7 +200,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   }
 
   const appealDateVariants = {
-    hidden: { opacity: 0, y: 15, marginTop: '16px' },
+    hidden: { opacity: 0, y: 15 },
     visible: {
       opacity: 1,
       y: 0,
@@ -210,7 +210,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     exit: {
       opacity: 0,
       height: 0,
-      marginTop: 0,
       transition: { opacity: { duration: 0.2 } },
     },
   }
@@ -223,21 +222,18 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             isFine ? strings.indictmentRulingDecisionFine : strings.keyDates,
           )}
           heading="h4"
-          marginBottom={2}
+          marginBottom={0}
         />
         {icon && (
           <Icon icon={icon} type="outline" color="blue400" size="large" />
         )}
-        <Box marginBottom={1}>
-          <Text variant="eyebrow">{defendant.name}</Text>
-        </Box>
+        <Text variant="eyebrow">{defendant.name}</Text>
       </Box>
       <AnimatePresence>
         {textItems.map((text, index) => (
           <motion.div
             key={index}
             initial={{
-              marginTop: 0,
               opacity: 0,
               y: 20,
               height: triggerAnimation2 ? 0 : 'auto',
@@ -246,7 +242,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
               opacity: 1,
               y: 0,
               height: 'auto',
-              marginTop: index === 0 ? 0 : '16px',
             }}
             exit={{ opacity: 0, y: 20, height: 0 }}
             transition={{
@@ -255,7 +250,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             }}
             onAnimationComplete={() => setTriggerAnimation(true)}
           >
-            <Text marginBottom={1}>{`• ${text}`}</Text>
+            <Text>{`• ${text}`}</Text>
           </motion.div>
         ))}
       </AnimatePresence>
