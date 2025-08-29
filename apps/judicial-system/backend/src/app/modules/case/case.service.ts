@@ -82,10 +82,10 @@ import {
   Subpoena,
   User,
   Verdict,
+  Victim,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { VerdictService } from '../verdict/verdict.service'
-import { Victim } from '../victim/models/victim.model'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { MinimalCase } from './models/case.types'

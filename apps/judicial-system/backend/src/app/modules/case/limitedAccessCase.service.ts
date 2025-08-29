@@ -49,8 +49,8 @@ import {
   Subpoena,
   User,
   Verdict,
+  Victim,
 } from '../repository'
-import { Victim } from '../victim'
 import { PdfService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [

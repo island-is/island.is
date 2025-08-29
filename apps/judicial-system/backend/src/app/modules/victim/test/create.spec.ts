@@ -2,8 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { createTestingVictimModule } from './createTestingVictimModule'
 
-import { Case } from '../../repository'
-import { Victim } from '../models/victim.model'
+import { Case, Victim } from '../../repository'
 
 interface Then {
   result: Victim

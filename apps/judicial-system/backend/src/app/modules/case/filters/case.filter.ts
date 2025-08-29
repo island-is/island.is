@@ -28,8 +28,8 @@ import {
   DateLog,
   Defendant,
   EventLog,
+  Victim,
 } from '../../repository'
-import { Victim } from '../../victim'
 import { MinimalCase } from '../models/case.types'
 
 const canProsecutionUserAccessCase = (
