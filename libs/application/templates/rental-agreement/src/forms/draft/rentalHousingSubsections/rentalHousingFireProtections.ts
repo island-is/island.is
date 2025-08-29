@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
 import { housingFireProtections } from '../../../lib/messages'
-import { getEmergencyExitOptions } from '../../../utils/utils'
+import { getYesNoOptions } from '../../../utils/utils'
 
 export const RentalHousingFireProtections = buildSubSection({
   id: Routes.FIREPROTECTIONS,
@@ -45,15 +45,18 @@ export const RentalHousingFireProtections = buildSubSection({
           min: 0,
           max: 9,
         }),
-        buildTextField({
-          id: 'fireProtections.fireBlanket',
+        buildDescriptionField({
+          id: 'fireProtections.fireBlanketRequirements',
           title: housingFireProtections.fireBlanketLabel,
-          placeholder: '0',
+          titleVariant: 'h3',
+          description: housingFireProtections.fireBlanketRequirements,
+          space: 4,
+        }),
+        buildRadioField({
+          id: 'fireProtections.fireBlanket',
+          options: getYesNoOptions(),
           width: 'half',
-          maxLength: 1,
-          format: '#',
-          min: 0,
-          max: 9,
+          space: 0,
         }),
         buildDescriptionField({
           id: 'fireProtections.exitRequirements',
@@ -64,7 +67,7 @@ export const RentalHousingFireProtections = buildSubSection({
         }),
         buildRadioField({
           id: 'fireProtections.emergencyExits',
-          options: getEmergencyExitOptions(),
+          options: getYesNoOptions(),
           width: 'half',
           space: 0,
         }),

@@ -1,6 +1,7 @@
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'
 import is from 'date-fns/locale/is'
+import addMonths from 'date-fns/addMonths'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import {
@@ -42,6 +43,16 @@ export const rentalInsuranceRequired = (answers: FormValue) => {
 export const rentalPeriodIsDefinite = (answers: FormValue) => {
   const { isDefinite } = applicationAnswers(answers)
   return isDefinite?.includes(YesOrNoEnum.YES) || false
+}
+
+export const isDateMoreThanOneYearInFuture = (answers: FormValue) => {
+  const startDate = getValueViaPath<string>(answers, 'rentalPeriod.startDate')
+  if (!startDate) return false
+
+  const selectedDate = new Date(startDate)
+  const oneYearFromNow = addMonths(new Date(), 12)
+
+  return selectedDate > oneYearFromNow
 }
 
 // Other fees utils

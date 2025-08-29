@@ -63,7 +63,6 @@ export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
   landlordRepresentatives: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
-  tenantRepresentatives: ApplicantsInfo[]
 }
 
 export interface PropertySection {

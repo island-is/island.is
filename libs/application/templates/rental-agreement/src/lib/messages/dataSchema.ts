@@ -41,4 +41,10 @@ export const dataSchema = defineMessages({
       'Enginn aðili í Þjóðskrá hefur þessa kennitölu. Aðilar leigusamnings verða að hafa kennitölu til að geta undirritað samning rafrænt.',
     description: 'National id not found error',
   },
+  crossTableDuplicateError: {
+    id: 'ra.application:dataSchema.crossTableDuplicateError',
+    defaultMessage:
+      'Sami aðili má ekki vera skráður sem bæði leigusali og leigjandi eða sem fulltrúi fyrir báða aðila.',
+    description: 'Cross-table duplicate national ID error',
+  },
 })

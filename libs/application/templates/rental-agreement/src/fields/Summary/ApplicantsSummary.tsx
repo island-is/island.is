@@ -12,20 +12,13 @@ import { summary } from '../../lib/messages'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
-  landlordsRoute?: Routes
-  tenantsRoute?: Routes
+  partiesRoute?: Routes
   hasChangeButton: boolean
 }
 
 export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
-  const {
-    application,
-    goToScreen,
-    landlordsRoute,
-    tenantsRoute,
-    hasChangeButton,
-  } = props
+  const { application, goToScreen, partiesRoute, hasChangeButton } = props
   const { answers } = application
 
   const { landlords, tenants } = applicationAnswers(answers)
@@ -44,7 +37,7 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
             <SummaryCardRow
               key={landlord.nationalIdWithName?.nationalId}
               editAction={goToScreen}
-              route={landlordsRoute}
+              route={partiesRoute}
               hasChangeButton={hasChangeButton}
             >
               <GridColumn span={['12/12']}>
@@ -90,7 +83,7 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
               <SummaryCardRow
                 key={tenant.nationalIdWithName?.nationalId}
                 editAction={goToScreen}
-                route={tenantsRoute}
+                route={partiesRoute}
                 hasChangeButton={hasChangeButton}
               >
                 <GridColumn span={['12/12']}>
