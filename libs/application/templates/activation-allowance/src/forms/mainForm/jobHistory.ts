@@ -87,12 +87,12 @@ export const jobHistorySection = buildSection({
               },
               maxDate: () => {
                 const today = new Date()
-                const endOfMonth = new Date(
+                const plusMonth = new Date(
                   today.getFullYear(),
                   today.getMonth() + 1,
-                  0,
+                  today.getDate(),
                 )
-                return endOfMonth
+                return plusMonth
               },
             },
           },

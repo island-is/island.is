@@ -31,6 +31,7 @@ const PaymentsAndRights: React.FC<Props> = ({
   const isInsuranceCardValid = isDateAfterToday(
     insurance.data?.ehicCardExpiryDate ?? undefined,
   )
+  const hasInsuranceCardDate = Boolean(insurance.data?.from)
   const isInsured = insurance.data?.isInsured
   const ehicDate = insurance.data?.ehicCardExpiryDate
   const paymentsDefined = isDefined(payments.data)
@@ -40,6 +41,8 @@ const PaymentsAndRights: React.FC<Props> = ({
   const allEmpty = !paymentsDefined && !medicineDefined && !insuranceDefined
   const allError = payments.error && medicine.error && insurance.error
   const anyLoading = payments.loading || medicine.loading || insurance.loading
+
+  const currentPath = HealthPaths.HealthOverview
 
   return (
     <Box>
@@ -60,10 +63,10 @@ const PaymentsAndRights: React.FC<Props> = ({
         cards={[
           {
             title: formatMessage(messages.paymentsAndRights),
-            description: paymentsDefined
-              ? formatMessage(messages.paymentsAndRightsDescription)
-              : formatMessage(messages.noData),
-            to: HealthPaths.HealthPaymentParticipation,
+            description: formatMessage(messages.paymentsAndRightsDescription),
+            to: payments.error
+              ? currentPath
+              : HealthPaths.HealthPaymentParticipation,
             detail: [
               {
                 label: formatMessage(messages.maximumMonthlyPaymentShort),
@@ -81,13 +84,17 @@ const PaymentsAndRights: React.FC<Props> = ({
           {
             title: formatMessage(messages.medicinePurchase),
             description: formatMessage(messages.medicinePurchaseDescription),
-            to: HealthPaths.HealthMedicinePaymentParticipation,
+            to: medicine.error
+              ? currentPath
+              : HealthPaths.HealthMedicinePaymentParticipation,
             detail: [
               medicine.data
                 ? {
                     label:
                       formatMessage(messages.medicineStepStatusShort, {
-                        step: medicine.data?.levelNumber,
+                        step:
+                          medicine.data?.levelNumber ??
+                          formatMessage(messages.unknown),
                       }) ?? '',
                     value: medicine.data?.levelPercentage + '%',
                   }
@@ -107,9 +114,10 @@ const PaymentsAndRights: React.FC<Props> = ({
                   messages.from,
                 ).toLocaleLowerCase()} ${formatDate(insurance.data?.from)}`
               : formatMessage(messages.noHealthInsurance),
-            to: HealthPaths.HealthPaymentRights,
+            to: insurance.error ? currentPath : HealthPaths.HealthPaymentRights,
 
             loading: insurance.loading,
+            error: insurance.error,
             tags: [
               {
                 label: isInsured
@@ -119,26 +127,28 @@ const PaymentsAndRights: React.FC<Props> = ({
                 outlined: true,
               },
             ],
-            error: insurance.error,
           },
           {
             title: formatMessage(messages.ehic),
-            description: isInsuranceCardValid
-              ? `${formatMessage(messages.medicineValidTo)}: ${formatDate(
-                  ehicDate,
-                )}`
-              : ehicDate
-              ? formatMessage(messages.expiredOn, {
-                  arg: formatDate(ehicDate),
-                })
-              : formatMessage(messages.vaccineExpired),
-            to: HealthPaths.HealthPaymentRights,
+            description:
+              isInsuranceCardValid && ehicDate
+                ? `${formatMessage(messages.medicineValidTo)}: ${formatDate(
+                    ehicDate,
+                  )}`
+                : ehicDate
+                ? formatMessage(messages.expiredOn, {
+                    arg: formatDate(ehicDate),
+                  })
+                : formatMessage(messages.noInsurance),
+            to: insurance.error ? currentPath : HealthPaths.HealthPaymentRights,
 
             tags: [
               {
                 label: isInsuranceCardValid
                   ? formatMessage(messages.valid)
-                  : formatMessage(messages.vaccineExpired),
+                  : hasInsuranceCardDate
+                  ? formatMessage(messages.vaccineExpired)
+                  : formatMessage(messages.unvalidInsurance),
                 variant: isInsuranceCardValid ? 'blue' : 'red',
                 outlined: true,
               },

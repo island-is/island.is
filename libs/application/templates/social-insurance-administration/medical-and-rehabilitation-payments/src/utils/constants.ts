@@ -28,3 +28,10 @@ export enum MedicalAndRehabilitationPaymentsApplicationType {
   EH1 = 'ENDURHAEFINGARGREIDSLUR_FYRSTA',
   EH2 = 'ENDURHAEFINGARGREIDSLUR_FRAMHALDS',
 }
+
+export enum MedicalAndRehabilitationPaymentsConfirmationType {
+  BID_EFTIR_URRAEDI = 'BID_EFTIR_URRAEDI',
+  ENDURHAEFING = 'ENDURHAEFING',
+  HEILSUBRESTUR = 'HEILSUBRESTUR',
+  VIDURKENND_MEDFERD = 'VIDURKENND_MEDFERD',
+}
