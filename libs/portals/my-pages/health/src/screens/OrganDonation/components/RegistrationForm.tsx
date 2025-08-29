@@ -80,6 +80,7 @@ export const OrganRegistrationForm = () => {
     if (radioValue !== donorStatus) {
       setRadioValue(donorStatus)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [donorStatus])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
