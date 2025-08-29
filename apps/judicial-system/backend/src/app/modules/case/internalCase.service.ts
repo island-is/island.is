@@ -60,6 +60,7 @@ import {
   Case,
   CaseArchive,
   CaseFile,
+  CaseRepositoryService,
   CaseString,
   DateLog,
   Defendant,
@@ -159,6 +160,7 @@ export class InternalCaseService {
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,
     @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @InjectModel(CaseArchive)
     private readonly caseArchiveModel: typeof CaseArchive,
     @Inject(caseModuleConfig.KEY)
@@ -421,7 +423,7 @@ export class InternalCaseService {
         )
         .then(
           (defendant) =>
-            this.caseModel.findByPk(defendant.caseId, {
+            this.caseRepositoryService.findById(defendant.caseId, {
               transaction,
             }) as Promise<Case>,
         )
@@ -1278,7 +1280,7 @@ export class InternalCaseService {
     let originalAncestor: Case = theCase
 
     while (originalAncestor.parentCaseId) {
-      const parentCase = await this.caseModel.findByPk(
+      const parentCase = await this.caseRepositoryService.findById(
         originalAncestor.parentCaseId,
       )
 
