@@ -13,7 +13,7 @@ import {
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { Case, EventLog, Subpoena } from '../repository'
+import { Case, CaseRepositoryService, EventLog, Subpoena } from '../repository'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
@@ -48,6 +48,7 @@ export class StatisticsService {
   constructor(
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
+    private readonly caseRepositoryService: CaseRepositoryService,
   ) {}
 
   async getIndictmentCaseStatistics(
@@ -67,7 +68,7 @@ export class StatisticsService {
     }
 
     // fetch only the earliest indictment with the base filter
-    const earliestCase = await this.caseModel.findOne({
+    const earliestCase = await this.caseRepositoryService.findOne({
       where,
       order: [['created', 'ASC']],
       attributes: ['created'],

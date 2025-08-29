@@ -12,6 +12,14 @@ interface FindByIdOptions {
   include?: FindOptions['include']
 }
 
+interface FindOneOptions {
+  where?: FindOptions['where']
+  transaction?: Transaction
+  include?: FindOptions['include']
+  attributes?: FindOptions['attributes']
+  order?: FindOptions['order']
+}
+
 @Injectable()
 export class CaseRepositoryService {
   constructor(
@@ -40,6 +48,46 @@ export class CaseRepositoryService {
       return result
     } catch (error) {
       this.logger.error(`Error finding case by ID ${id}:`, error)
+
+      throw error
+    }
+  }
+
+  async findOne(options?: FindOneOptions): Promise<Case | null> {
+    try {
+      this.logger.debug(`Finding case with conditions:`, options?.where)
+
+      const findOptions: FindOptions = {}
+
+      if (options?.where) {
+        findOptions.where = options.where
+      }
+
+      if (options?.transaction) {
+        findOptions.transaction = options.transaction
+      }
+
+      if (options?.include) {
+        findOptions.include = options.include
+      }
+
+      if (options?.attributes) {
+        findOptions.attributes = options.attributes
+      }
+
+      if (options?.order) {
+        findOptions.order = options.order
+      }
+
+      const result = await this.caseModel.findOne(findOptions)
+
+      this.logger.debug(
+        `Case with conditions ${result ? 'found' : 'not found'}`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error(`Error finding case with conditions:`, error)
 
       throw error
     }

@@ -6,6 +6,7 @@ import { SigningModule } from '@island.is/dokobit-signing'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
+import { Case, CaseArchive, CaseString, DateLog } from '../repository'
 import {
   AwsS3Module,
   CourtModule,
@@ -18,10 +19,9 @@ import {
   RepositoryModule,
   SubpoenaModule,
   UserModule,
+  VerdictModule,
   VictimModule,
-} from '../index'
-import { Case, CaseArchive, CaseString, DateLog } from '../repository'
-import { VerdictModule } from '../verdict/verdict.module'
+} from '..'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 import { InternalCaseController } from './internalCase.controller'
