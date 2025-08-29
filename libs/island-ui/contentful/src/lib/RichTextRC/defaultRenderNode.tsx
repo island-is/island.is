@@ -174,14 +174,11 @@ export const defaultRenderNodeObject: RenderNode = {
     const contentType = node?.data?.target?.fields?.file?.contentType
 
     if (!contentType || contentType.startsWith('image/')) {
-      if (url) {
-        return (
-          <Box marginTop={url ? 5 : 0}>
-            <img src={url} alt={description || ''} />
-          </Box>
-        )
-      }
-      return null
+      return (
+        <Box marginTop={url ? 5 : 0}>
+          <img src={url} alt={description || ''} />
+        </Box>
+      )
     }
 
     if (url && title) {
