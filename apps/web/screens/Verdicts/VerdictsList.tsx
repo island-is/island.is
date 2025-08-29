@@ -1274,7 +1274,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
                     return {
                       description: verdict.title,
-                      subDescription: verdict.keywords.join(', '),
                       eyebrow: '',
                       id: verdict.id,
                       link: { href: `/domar/${verdict.id}`, label: '' },
