@@ -169,6 +169,7 @@ export const defaultRenderNodeObject: RenderNode = {
   [BLOCKS.EMBEDDED_ASSET]: (node) => {
     const url = node?.data?.target?.fields?.file?.url
     const title = node?.data?.target?.fields?.title
+    const description = node?.data?.target?.fields?.description
 
     const contentType = node?.data?.target?.fields?.file?.contentType
 
@@ -176,7 +177,7 @@ export const defaultRenderNodeObject: RenderNode = {
       if (url) {
         return (
           <Box marginTop={url ? 5 : 0}>
-            <img src={url} alt={title} />
+            <img src={url} alt={description || ''} />
           </Box>
         )
       }
