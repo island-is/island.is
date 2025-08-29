@@ -3,7 +3,7 @@ import { FormValue } from '@island.is/application/types'
 import { Rejecter, UserInformation } from '../shared'
 
 export const getRejecter = (reviewerNationalId: string, answers: FormValue) => {
-  const id = getValueViaPath(answers, 'pickMachine.id', '') as string
+  const id = getValueViaPath(answers, 'machine.id', '') as string
   const buyer = getValueViaPath(answers, 'buyer') as UserInformation
 
   if (buyer && buyer.nationalId === reviewerNationalId) {

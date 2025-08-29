@@ -14,7 +14,13 @@ const UserSchemaBase = z.object({
     ),
   name: z.string().min(1),
   email: z.string().min(1),
-  phone: z.string().min(1),
+  phone: z
+    .string()
+    .min(1)
+    .refine((phone) => {
+      const countryCodeIS = phone.startsWith('+354')
+      return countryCodeIS ? phone.length === 11 : true
+    }),
 })
 
 const RemovableUserSchemaBase = z
@@ -22,7 +28,13 @@ const RemovableUserSchemaBase = z
     nationalId: z.string().optional(),
     name: z.string().optional(),
     email: z.string().optional(),
-    phone: z.string().optional(),
+    phone: z
+      .string()
+      .optional()
+      .refine((phone) => {
+        const countryCodeIS = phone?.startsWith('+354')
+        return countryCodeIS && phone ? phone?.length === 11 : true
+      }),
     wasRemoved: z.string().optional(),
   })
   .refine(
@@ -76,21 +88,23 @@ export const RejecterSchema = z.object({
 export const MachineAnswersSchema = z.object({
   buyer: UserInformationSchema,
   seller: UserInformationSchema,
-  machine: z.object({
-    id: z.string().optional(),
-    date: z.string().optional(),
-    type: z.string().optional(),
-    plate: z.string().optional(),
-    subType: z.string().optional(),
-    category: z.string().optional(),
-    regNumber: z.string().optional(),
-    ownerNumber: z.string().optional(),
-    paymentRequiredForOwnerChange: z.boolean().optional(),
-  }),
-  pickMachine: z.object({
-    index: z.string().optional(),
-    id: z.string().min(1),
-  }),
+  machine: z
+    .object({
+      id: z.string().optional(),
+      date: z.string().optional(),
+      type: z.string().optional(),
+      plate: z.string().optional(),
+      subType: z.string().optional(),
+      category: z.string().optional(),
+      regNumber: z.string().optional(),
+      ownerNumber: z.string().optional(),
+      paymentRequiredForOwnerChange: z.boolean().optional(),
+      findVehicle: z.boolean().optional(),
+      isValid: z.boolean().optional(),
+    })
+    .refine(({ isValid, findVehicle }) => {
+      return (findVehicle && isValid) || !findVehicle
+    }),
   location: z.object({
     address: z.string(),
     postCode: z.number().optional(),
