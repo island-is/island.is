@@ -23,7 +23,7 @@ export const Agent = ({ applicantType, lang, nationalId }: Props) => {
   const shouldQuery = !!nationalId
 
   const isIndividualDelegation =
-    applicantType.applicantTypeId ===
+    applicantType?.fieldSettings?.applicantType ===
     ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL
 
   const nameQuery = useQuery(GET_NAME_BY_NATIONALID, {
