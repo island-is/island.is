@@ -1355,7 +1355,7 @@ export const getLastValidPeriodEndDate = (
   }
 
   // Current Date is >= 24 and lastEndDate is in the past then Applicant could only start from next month
-  if (today.getDate() >= 25 && lastEndDate.getTime() < today.getTime()) {
+  if (today.getDate() >= 24 && lastEndDate.getTime() < today.getTime()) {
     return addMonths(beginningOfMonth, 1)
   }
 
