@@ -99,18 +99,18 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     if (!machineId) {
       throw new Error('Machine has not been selected')
     }
-    // await this.workMachineClientService.confirmOwnerChange(auth, {
-    //   applicationId: application.id,
-    //   machineId: machineId,
-    //   machineMoreInfo: answers?.location?.moreInfo,
-    //   machinePostalCode: answers?.location?.postCode,
-    //   buyerNationalId: answers.buyer.nationalId,
-    //   delegateNationalId: auth.nationalId || answers.buyer.nationalId,
-    //   supervisorNationalId: answers.buyerOperator?.nationalId,
-    //   supervisorEmail: answers.buyerOperator?.email,
-    //   supervisorPhoneNumber: answers.buyerOperator?.phone?.replace(/-/g, ''),
-    //   machineAddress: answers?.location?.address,
-    // })
+    await this.workMachineClientService.confirmOwnerChange(auth, {
+      applicationId: application.id,
+      machineId: machineId,
+      machineMoreInfo: answers?.location?.moreInfo,
+      machinePostalCode: answers?.location?.postCode,
+      buyerNationalId: answers.buyer.nationalId,
+      delegateNationalId: auth.nationalId || answers.buyer.nationalId,
+      supervisorNationalId: answers.buyerOperator?.nationalId,
+      supervisorEmail: answers.buyerOperator?.email,
+      supervisorPhoneNumber: answers.buyerOperator?.phone?.replace(/-/g, ''),
+      machineAddress: answers?.location?.address,
+    })
 
     // send email/sms to all recipients
     const recipientList = getRecipients(answers, [
@@ -188,10 +188,10 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       phoneNumber: answers.buyer.phone?.replace(/\+\d{3}/, ''),
       email: answers.buyer.email,
     }
-    // await this.workMachineClientService.initiateOwnerChangeProcess(
-    //   auth,
-    //   ownerChange,
-    // )
+    await this.workMachineClientService.initiateOwnerChangeProcess(
+      auth,
+      ownerChange,
+    )
 
     const recipientList = getRecipients(answers, [EmailRole.buyer])
     // 2b. Send email/sms individually to each recipient

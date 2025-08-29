@@ -23,7 +23,7 @@ interface MachineSearchFieldProps {
 
 export const MachineSelectField: FC<
   React.PropsWithChildren<MachineSearchFieldProps & FieldBaseProps>
-> = ({ currentMachineList, application, setFieldLoadingState }) => {
+> = ({ currentMachineList, application, setFieldLoadingState, field }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const machineValue = getValueViaPath(
@@ -87,6 +87,11 @@ export const MachineSelectField: FC<
           )
           setValue('machine.id', response.getWorkerMachineDetails.id)
           setValue('machine.date', new Date().toISOString())
+          setValue('machine.findVehicle', true)
+          setValue(
+            'machine.paymentRequiredForOwnerChange',
+            response.getWorkerMachineDetails.paymentRequiredForOwnerChange,
+          )
           setValue(
             'machine.isValid',
             response.getWorkerMachineDetails.disabled ? undefined : true, // TODO this work now?
@@ -106,8 +111,8 @@ export const MachineSelectField: FC<
     <Box>
       <SelectController // TODO changed this, work now?
         label={formatMessage(information.labels.pickMachine.vehicle)}
-        id="machine.id"
-        name="machine.id"
+        id={`${field.id}`}
+        name={`${field.id}`}
         onSelect={(option) => onChange(option as Option)}
         options={currentMachineList.map((machine, index) => {
           return {

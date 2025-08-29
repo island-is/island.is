@@ -88,18 +88,23 @@ export const RejecterSchema = z.object({
 export const MachineAnswersSchema = z.object({
   buyer: UserInformationSchema,
   seller: UserInformationSchema,
-  machine: z.object({
-    id: z.string().optional(),
-    date: z.string().optional(),
-    type: z.string().optional(),
-    plate: z.string().optional(),
-    subType: z.string().optional(),
-    category: z.string().optional(),
-    regNumber: z.string().optional(),
-    ownerNumber: z.string().optional(),
-    paymentRequiredForOwnerChange: z.boolean().optional(),
-    findVehicle: z.boolean().optional(),
-  }),
+  machine: z
+    .object({
+      id: z.string().optional(),
+      date: z.string().optional(),
+      type: z.string().optional(),
+      plate: z.string().optional(),
+      subType: z.string().optional(),
+      category: z.string().optional(),
+      regNumber: z.string().optional(),
+      ownerNumber: z.string().optional(),
+      paymentRequiredForOwnerChange: z.boolean().optional(),
+      findVehicle: z.boolean().optional(),
+      isValid: z.boolean().optional(),
+    })
+    .refine(({ isValid, findVehicle }) => {
+      return (findVehicle && isValid) || !findVehicle
+    }),
   location: z.object({
     address: z.string(),
     postCode: z.number().optional(),
