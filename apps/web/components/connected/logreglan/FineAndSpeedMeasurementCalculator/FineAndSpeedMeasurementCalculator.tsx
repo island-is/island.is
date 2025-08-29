@@ -1,7 +1,14 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Stack, Table, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Hyphen,
+  Stack,
+  Table,
+  Text,
+} from '@island.is/island-ui/core'
 import type { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
@@ -236,6 +243,7 @@ export const FineAndSpeedMeasurementCalculator = ({
   slice,
 }: FineAndSpeedMeasurementCalculatorProps) => {
   const { formatMessage } = useIntl()
+  const breakdownRef = useRef<HTMLDivElement>(null)
 
   const speedLimitOptions: typeof DEFAULT_SPEED_LIMIT_OPTIONS =
     slice.json?.speedLimitOptions ?? DEFAULT_SPEED_LIMIT_OPTIONS
@@ -275,7 +283,7 @@ export const FineAndSpeedMeasurementCalculator = ({
     <Stack space={3}>
       <Box display="flex" flexDirection="rowReverse" columnGap={[1, 3, 3, 5]}>
         <Box position="relative">
-          <Box position="sticky" top={9}>
+          <Box className={styles.totalOuterContainer}>
             <Box display="flex" justifyContent="flexEnd">
               <Box
                 borderRadius="standard"
@@ -283,19 +291,43 @@ export const FineAndSpeedMeasurementCalculator = ({
                 padding={[1, 2]}
                 className={styles.totalContainer}
               >
-                <Stack space={0}>
-                  <Text variant="eyebrow" fontWeight="semiBold">
-                    {formatMessage(m.fines.total)}
-                  </Text>
-                  <Text textAlign="right" variant="small" fontWeight="semiBold">
-                    {formatCurrency(price)}
-                  </Text>
-                  <Text textAlign="right" variant="small" fontWeight="semiBold">
-                    {points}
-                    {points === 1
-                      ? formatMessage(m.fines.pointsPostfixSingular)
-                      : formatMessage(m.fines.pointsPostfixPlural)}
-                  </Text>
+                <Stack space={2}>
+                  <Stack space={0}>
+                    <Text variant="eyebrow" fontWeight="semiBold">
+                      {formatMessage(m.fines.total)}
+                    </Text>
+                    <Text
+                      textAlign="right"
+                      variant="small"
+                      fontWeight="semiBold"
+                    >
+                      {formatCurrency(price)}
+                    </Text>
+                    <Text
+                      textAlign="right"
+                      variant="small"
+                      fontWeight="semiBold"
+                    >
+                      {points}
+                      {points === 1
+                        ? formatMessage(m.fines.pointsPostfixSingular)
+                        : formatMessage(m.fines.pointsPostfixPlural)}
+                    </Text>
+                  </Stack>
+                  <Box display="flex" justifyContent="center">
+                    <Button
+                      onClick={() => {
+                        breakdownRef.current?.scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'center',
+                        })
+                      }}
+                      variant="text"
+                      size="small"
+                    >
+                      <Hyphen>{formatMessage(m.results.showBreakdown)}</Hyphen>
+                    </Button>
+                  </Box>
                 </Stack>
               </Box>
             </Box>
@@ -325,24 +357,26 @@ export const FineAndSpeedMeasurementCalculator = ({
           </Stack>
         </Stack>
       </Box>
-      <Stack space={2}>
-        <Text variant="h2" as="h2">
-          {formatMessage(m.results.heading)}
-        </Text>
-        <FineCalculatorDetails
-          fines={fines}
-          slice={slice}
-          speedMeasurementData={{
-            points: speedMeasurementPoints ?? 0,
-            price: speedMeasurementPrice ?? 0,
-            measuredSpeed: Number(measuredSpeed),
-            vikmork,
-            speedLimit,
-            over3500kgOrWithTrailer,
-            akaera,
-          }}
-        />
-      </Stack>
+      <Box ref={breakdownRef}>
+        <Stack space={2}>
+          <Text variant="h2" as="h2">
+            {formatMessage(m.results.heading)}
+          </Text>
+          <FineCalculatorDetails
+            fines={fines}
+            slice={slice}
+            speedMeasurementData={{
+              points: speedMeasurementPoints ?? 0,
+              price: speedMeasurementPrice ?? 0,
+              measuredSpeed: Number(measuredSpeed),
+              vikmork,
+              speedLimit,
+              over3500kgOrWithTrailer,
+              akaera,
+            }}
+          />
+        </Stack>
+      </Box>
     </Stack>
   )
 }
