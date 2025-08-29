@@ -1,59 +1,62 @@
-import React from 'react'
 import { useLocale } from '@island.is/localization'
-import { GridRow, GridColumn, Box } from '@island.is/island-ui/core'
-import { StatisticBox } from '../../components/StatisticBox/StatisticBox'
-import { useGetProviderStatistics } from '../../shared/useGetProviderStatistics'
-import { m } from '../../lib/messages'
+import { GridRow, Box, Text } from '@island.is/island-ui/core'
+import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/OpenedFilesDonutChart'
+import { useGetProviderStatisticCategoriesByNationalId } from '../../shared/useGetProviderStatisticCategoriesByNationalId'
+import { useGetProviderStatisticsBreakdownByNationalId } from '../../shared/useGetProviderStatisticsBreakdownByNationalId'
+import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
+import { SentFilesChartDataItem, StatisticsOverview } from '../../lib/types'
 
 interface Props {
-  organisationsCount: number
+  statistics: StatisticsOverview
+  nationalId: string
+  sentFilesData?: Array<SentFilesChartDataItem>
   fromDate?: Date
   toDate?: Date
 }
-interface StatisticsBoxData {
-  name: string
-  value: number
-}
 
 export const DocumentProvidersDashboard = ({
-  organisationsCount,
+  statistics,
+  nationalId,
+  sentFilesData,
   fromDate,
   toDate,
 }: Props) => {
   const { formatMessage } = useLocale()
 
-  const { statistics } = useGetProviderStatistics(undefined, fromDate, toDate)
+  const { categories } = useGetProviderStatisticCategoriesByNationalId(
+    nationalId,
+    fromDate,
+    toDate,
+  )
+  const opened = statistics?.statistics?.opened || 0
+  const published = statistics?.statistics?.published || 0
 
-  const data: StatisticsBoxData[] = [
-    {
-      name: formatMessage(m.statisticsBoxOrganisationsCount),
-      value: organisationsCount,
-    },
-    {
-      name: formatMessage(m.statisticsBoxPublishedDocuments),
-      value: statistics?.published || 0,
-    },
-    {
-      name: formatMessage(m.statisticsBoxOpenedDocuments),
-      value: statistics?.opened || 0,
-    },
-    {
-      name: formatMessage(m.statisticsBoxNotifications),
-      value: statistics?.notifications || 0,
-    },
+  const openedPercentage =
+    published > 0 ? Math.round((opened / published) * 100) : 0
+
+  const openedFilesData = [
+    { name: 'Opnuð skjöl', value: openedPercentage || 0, color: '#007bff' },
+    { name: 'Óopnuð skjöl', value: 100 - openedPercentage, color: '#d6b3ff' },
   ]
 
   return (
     <Box marginBottom={2}>
-      {data && (
-        <GridRow>
-          {data.map((statData, index) => (
-            <GridColumn span={['12/12', '3/12']} key={index}>
-              <StatisticBox name={statData.name} value={statData.value} />
-            </GridColumn>
-          ))}
-        </GridRow>
-      )}
+      <Text variant="h4" marginBottom={1} marginTop={4}>
+        Tölfræði
+      </Text>
+      <Text marginBottom={2}>Hér er tölfræði síðustu 6 mánuða</Text>
+
+      <GridRow>
+        <SentFilesBarChart title="Send skjöl" data={sentFilesData || []} />
+
+        <OpenedFilesDonutChart
+          valueIndex={0}
+          title="Opnuð skjöl"
+          data={openedFilesData}
+        />
+
+        <OpenedFilesDonutChart title="Flokkar" data={categories} />
+      </GridRow>
     </Box>
   )
 }
