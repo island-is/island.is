@@ -1,9 +1,13 @@
 import { YES } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { LanguageEnvironmentOptions } from './constants'
+import {
+  CaseWorkerInputTypeEnum,
+  LanguageEnvironmentOptions,
+} from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getDefaultSupportCaseworker,
   getOtherGuardian,
 } from './newPrimarySchoolUtils'
 
@@ -12,12 +16,34 @@ export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
   return !!primaryOrgId
 }
 
-export const isWelfareContactSelected = (answers: FormValue) => {
+export const isWelfareContactSelected = (
+  answers: FormValue,
+  externalData: ExternalData,
+): boolean => {
   const { hasDiagnoses, hasHadSupport, hasWelfareContact } =
     getApplicationAnswers(answers)
 
+  const { socialProfile } = getApplicationExternalData(externalData)
+
+  const hasDiagnosesCalculated =
+    (!hasDiagnoses && socialProfile?.hasDiagnoses === true) ||
+    hasDiagnoses === YES
+
+  const hasHadSupportCalculated =
+    (!hasHadSupport && socialProfile?.hasHadSupport === true) ||
+    hasHadSupport === YES
+
+  const hasWelfareContactCalculated =
+    (!hasWelfareContact &&
+      !!getDefaultSupportCaseworker(
+        externalData,
+        CaseWorkerInputTypeEnum.SupportManager,
+      )) ||
+    hasWelfareContact === YES
+
   return (
-    (hasDiagnoses === YES || hasHadSupport === YES) && hasWelfareContact === YES
+    (hasDiagnosesCalculated || hasHadSupportCalculated) &&
+    hasWelfareContactCalculated
   )
 }
 
@@ -65,4 +91,20 @@ export const showPreferredLanguageFields = (answers: FormValue) => {
   }
 
   return false
+}
+
+export const showCaseManagerFields = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { hasCaseManager } = getApplicationAnswers(answers)
+  const caseWorker = getDefaultSupportCaseworker(
+    externalData,
+    CaseWorkerInputTypeEnum.CaseManager,
+  )
+
+  return (
+    isWelfareContactSelected(answers, externalData) &&
+    ((!hasCaseManager && caseWorker !== undefined) || hasCaseManager === YES)
+  )
 }

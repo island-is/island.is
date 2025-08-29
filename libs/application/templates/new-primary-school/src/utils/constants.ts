@@ -78,3 +78,8 @@ export enum SchoolType {
   INTERNATIONAL_SCHOOL = 'internationalSchool',
   NURSERY_SCHOOL = 'nurserySchool',
 }
+
+export enum CaseWorkerInputTypeEnum {
+  CaseManager = 'caseManager',
+  SupportManager = 'supportManager',
+}

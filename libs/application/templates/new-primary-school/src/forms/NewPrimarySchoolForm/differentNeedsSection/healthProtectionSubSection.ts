@@ -9,9 +9,16 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { OptionsType } from '../../../utils/constants'
+import { Application } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
+import { OptionsType } from '../../../utils/constants'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getDefaultYESNOValue,
+  hasDefaultAllergies,
+  hasDefaultFoodAllergiesOrIntolerances,
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const healthProtectionSubSection = buildSubSection({
   id: 'healthProtectionSubSection',
@@ -40,6 +47,11 @@ export const healthProtectionSubSection = buildSubSection({
                   .hasFoodAllergiesOrIntolerances,
             },
           ],
+          defaultValue: (application: Application) =>
+            hasDefaultFoodAllergiesOrIntolerances(application.externalData) ===
+            YES
+              ? [YES]
+              : [],
         }),
         buildCustomField(
           {
@@ -49,11 +61,20 @@ export const healthProtectionSubSection = buildSubSection({
                 .typeOfFoodAllergiesOrIntolerances,
             component: 'FriggOptionsAsyncSelectField',
             marginBottom: 3,
-            condition: (answers) => {
+            condition: (answers, externalData) => {
               const { hasFoodAllergiesOrIntolerances } =
                 getApplicationAnswers(answers)
 
-              return hasFoodAllergiesOrIntolerances?.includes(YES)
+              return (
+                hasFoodAllergiesOrIntolerances?.includes(YES) ||
+                hasDefaultFoodAllergiesOrIntolerances(externalData) === YES
+              )
+            },
+            defaultValue: (application: Application) => {
+              const { healthProfile } = getApplicationExternalData(
+                application.externalData,
+              )
+              return healthProfile?.foodAllergiesOrIntolerances ?? []
             },
           },
           {
@@ -73,16 +94,27 @@ export const healthProtectionSubSection = buildSubSection({
               label: newPrimarySchoolMessages.differentNeeds.hasOtherAllergies,
             },
           ],
+          defaultValue: (application: Application) =>
+            hasDefaultAllergies(application.externalData) === YES ? [YES] : [],
         }),
         buildCustomField(
           {
             id: 'healthProtection.otherAllergies',
             title: newPrimarySchoolMessages.differentNeeds.typeOfOtherAllergies,
             component: 'FriggOptionsAsyncSelectField',
-            condition: (answers) => {
+            condition: (answers, externalData) => {
               const { hasOtherAllergies } = getApplicationAnswers(answers)
 
-              return hasOtherAllergies?.includes(YES)
+              return (
+                hasOtherAllergies?.includes(YES) ||
+                hasDefaultAllergies(externalData) === YES
+              )
+            },
+            defaultValue: (application: Application) => {
+              const { healthProfile } = getApplicationExternalData(
+                application.externalData,
+              )
+              return healthProfile?.allergies ?? []
             },
           },
           {
@@ -102,13 +134,15 @@ export const healthProtectionSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           alertType: 'info',
           marginTop: 4,
-          condition: (answers) => {
+          condition: (answers, externalData) => {
             const { hasFoodAllergiesOrIntolerances, hasOtherAllergies } =
               getApplicationAnswers(answers)
 
             return (
               hasFoodAllergiesOrIntolerances?.includes(YES) ||
-              hasOtherAllergies?.includes(YES)
+              hasDefaultFoodAllergiesOrIntolerances(externalData) === YES ||
+              hasOtherAllergies?.includes(YES) ||
+              hasDefaultAllergies(externalData) === YES
             )
           },
         }),
@@ -129,14 +163,23 @@ export const healthProtectionSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers) => {
+          condition: (answers, externalData) => {
             const { hasFoodAllergiesOrIntolerances, hasOtherAllergies } =
               getApplicationAnswers(answers)
 
             return (
               hasFoodAllergiesOrIntolerances?.includes(YES) ||
-              hasOtherAllergies?.includes(YES)
+              hasDefaultFoodAllergiesOrIntolerances(externalData) === YES ||
+              hasOtherAllergies?.includes(YES) ||
+              hasDefaultAllergies(externalData) === YES
             )
+          },
+          defaultValue: (application: Application) => {
+            const { healthProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return getDefaultYESNOValue(healthProfile?.usesEpipen)
           },
         }),
         buildRadioField({
@@ -162,6 +205,15 @@ export const healthProtectionSubSection = buildSubSection({
               value: NO,
             },
           ],
+          defaultValue: (application: Application) => {
+            const { healthProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return getDefaultYESNOValue(
+              healthProfile?.hasConfirmedMedicalDiagnoses,
+            )
+          },
         }),
         buildDescriptionField({
           id: 'healthProtection.requestsMedicationAdministrationDescription',
@@ -191,6 +243,15 @@ export const healthProtectionSubSection = buildSubSection({
               value: NO,
             },
           ],
+          defaultValue: (application: Application) => {
+            const { healthProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return getDefaultYESNOValue(
+              healthProfile?.requestsMedicationAdministration,
+            )
+          },
         }),
         buildAlertMessageField({
           id: 'healthProtection.schoolNurseAlertMessage',
@@ -200,15 +261,19 @@ export const healthProtectionSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           alertType: 'info',
           marginTop: 4,
-          condition: (answers) => {
+          condition: (answers, externalData) => {
             const {
               hasConfirmedMedicalDiagnoses,
               requestsMedicationAdministration,
             } = getApplicationAnswers(answers)
 
+            const { healthProfile } = getApplicationExternalData(externalData)
+
             return (
               hasConfirmedMedicalDiagnoses === YES ||
-              requestsMedicationAdministration === YES
+              requestsMedicationAdministration === YES ||
+              healthProfile?.hasConfirmedMedicalDiagnoses === true ||
+              healthProfile?.requestsMedicationAdministration === true
             )
           },
         }),
