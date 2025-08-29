@@ -55,7 +55,6 @@ import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
-import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
@@ -66,6 +65,7 @@ import {
   Defendant,
   EventLog,
   IndictmentCount,
+  Institution,
   Offense,
 } from '../repository'
 import { Subpoena, SubpoenaService } from '../subpoena'

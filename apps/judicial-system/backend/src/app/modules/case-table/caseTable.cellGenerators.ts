@@ -39,13 +39,13 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-import { Institution } from '../institution'
 import {
   Case,
   DateLog,
   Defendant,
   DefendantEventLog,
   EventLog,
+  Institution,
 } from '../repository'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'

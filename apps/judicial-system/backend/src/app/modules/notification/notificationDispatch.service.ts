@@ -19,8 +19,8 @@ import {
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
-import { Institution, InstitutionService } from '../institution'
-import { Case } from '../repository'
+import { InstitutionService } from '../institution'
+import { Case, Institution } from '../repository'
 import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()

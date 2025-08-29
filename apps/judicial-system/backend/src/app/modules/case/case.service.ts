@@ -66,7 +66,6 @@ import { EventService } from '../event'
 import { EventLogService } from '../event-log'
 import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
-import { Institution } from '../institution'
 import { Notification } from '../notification'
 import {
   Case,
@@ -78,6 +77,7 @@ import {
   DefendantEventLog,
   EventLog,
   IndictmentCount,
+  Institution,
   Offense,
 } from '../repository'
 import { Subpoena, SubpoenaService } from '../subpoena'

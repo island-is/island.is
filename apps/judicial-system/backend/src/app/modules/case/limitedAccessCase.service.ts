@@ -34,7 +34,6 @@ import {
 import { nowFactory, uuidFactory } from '../../factories'
 import { CivilClaimantService, DefendantService } from '../defendant'
 import { FileService, getDefenceUserCaseFileCategories } from '../file'
-import { Institution } from '../institution'
 import {
   Case,
   CaseFile,
@@ -45,6 +44,7 @@ import {
   DefendantEventLog,
   EventLog,
   IndictmentCount,
+  Institution,
   Offense,
 } from '../repository'
 import { Subpoena } from '../subpoena'
