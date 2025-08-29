@@ -42,6 +42,8 @@ const applicationByNationalId = (id: string, nationalId?: string) => ({
     : {}),
 })
 
+const escapeLike = (s: string) => s.replace(/[\\%_]/g, (m) => '\\' + m)
+
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -178,7 +180,9 @@ export class ApplicationService {
           [Op.or]: [
             { applicant: { [Op.eq]: searchStrValue } },
             { assignees: { [Op.contains]: [searchStrValue] } },
-            Sequelize.literal(`"answers"::text ILIKE '%${searchStrValue}%'`),
+            Sequelize.where(Sequelize.cast(Sequelize.col('answers'), 'text'), {
+              [Op.iLike]: `%${escapeLike(searchStrValue)}%`,
+            }),
           ],
         }
       : {}
