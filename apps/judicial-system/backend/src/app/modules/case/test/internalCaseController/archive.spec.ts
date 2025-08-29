@@ -10,13 +10,19 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { uuidFactory } from '../../../../factories'
 import { DefendantService } from '../../../defendant'
-import { CaseFile, FileService } from '../../../file'
+import { FileService } from '../../../file'
 import {
   IndictmentCount,
   IndictmentCountService,
 } from '../../../indictment-count'
 import { Offense } from '../../../indictment-count/models/offense.model'
-import { Case, CaseArchive, CaseString, Defendant } from '../../../repository'
+import {
+  Case,
+  CaseArchive,
+  CaseFile,
+  CaseString,
+  Defendant,
+} from '../../../repository'
 import { caseModuleConfig } from '../../case.config'
 import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'

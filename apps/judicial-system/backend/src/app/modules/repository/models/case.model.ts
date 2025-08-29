@@ -38,17 +38,17 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CaseFile } from '../../file/models/file.model'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { Notification } from '../../notification'
-import { EventLog } from '../../repository'
 import { User } from '../../user'
 import { Victim } from '../../victim/models/victim.model'
+import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
 import { CivilClaimant } from './civilClaimant.model'
 import { DateLog } from './dateLog.model'
 import { Defendant } from './defendant.model'
+import { EventLog } from './eventLog.model'
 
 @Table({
   tableName: 'case',

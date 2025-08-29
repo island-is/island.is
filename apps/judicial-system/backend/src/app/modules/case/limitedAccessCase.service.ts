@@ -33,16 +33,13 @@ import {
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { CivilClaimantService, DefendantService } from '../defendant'
-import {
-  CaseFile,
-  FileService,
-  getDefenceUserCaseFileCategories,
-} from '../file'
+import { FileService, getDefenceUserCaseFileCategories } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import {
   Case,
+  CaseFile,
   CaseString,
   CivilClaimant,
   DateLog,

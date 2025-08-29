@@ -16,8 +16,11 @@ import {
   HashAlgorithm,
 } from '@island.is/judicial-system/types'
 
+import { Case } from './case.model'
+import { CivilClaimant } from './civilClaimant.model'
+import { Defendant } from './defendant.model'
+
 // TODO Find a way to import from an index file
-import { Case, CivilClaimant, Defendant } from '../../repository'
 
 @Table({
   tableName: 'case_file',

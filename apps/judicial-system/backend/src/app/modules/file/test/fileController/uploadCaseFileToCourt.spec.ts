@@ -14,8 +14,7 @@ import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { Case } from '../../../repository'
-import { CaseFile } from '../../models/file.model'
+import { Case, CaseFile } from '../../../repository'
 import { UploadFileToCourtResponse } from '../../models/uploadFileToCourt.response'
 
 interface Then {

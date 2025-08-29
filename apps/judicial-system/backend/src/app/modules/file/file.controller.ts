@@ -58,7 +58,7 @@ import {
   CurrentDefendant,
   DefendantExistsGuard,
 } from '../defendant'
-import { Case, Defendant } from '../repository'
+import { Case, CaseFile, Defendant } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
@@ -68,7 +68,6 @@ import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCa
 import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
-import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
