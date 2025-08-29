@@ -169,7 +169,30 @@ export const FormField = ({
           </Stack>
         </Box>
       )
-    case FormFieldType.ACCEPT_TERMS:
+    case FormFieldType.ACCEPT_TERMS: {
+      const hasError = !!error
+
+      if (!field.placeholder) {
+        return (
+          <Stack space={2}>
+            <Checkbox
+              id={slug}
+              label={field.title}
+              checked={value === 'true'}
+              onChange={(e) =>
+                onChange(slug, e.target.checked ? 'true' : 'false')
+              }
+              hasError={hasError}
+            />
+            {hasError && (
+              <Text variant="eyebrow" color="red600">
+                {error}
+              </Text>
+            )}
+          </Stack>
+        )
+      }
+
       return (
         <Stack space={2}>
           <Text variant="h5" color="blue600">
@@ -180,20 +203,23 @@ export const FormField = ({
               </span>
             )}
           </Text>
-          {!!error && (
+          {hasError && (
             <Text variant="eyebrow" color="red600">
               {error}
             </Text>
           )}
           <Checkbox
+            id={slug}
             label={field.placeholder}
             checked={value === 'true'}
             onChange={(e) =>
               onChange(slug, e.target.checked ? 'true' : 'false')
             }
+            hasError={hasError}
           />
         </Stack>
       )
+    }
     case FormFieldType.CHECKBOXES:
       return (
         <Stack space={2}>
