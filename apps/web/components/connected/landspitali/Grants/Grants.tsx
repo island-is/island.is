@@ -1,10 +1,14 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
+import { isValid as isValidKennitala } from 'kennitala'
+import { useMutation, useQuery } from '@apollo/client'
 
 import {
+  AlertMessage,
   Box,
   Button,
+  Checkbox,
   RadioButton,
   Stack,
   Text,
@@ -13,7 +17,18 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import type { ConnectedComponent } from '@island.is/web/graphql/schema'
+import type {
+  ConnectedComponent,
+  WebLandspitaliCatalogQuery,
+  WebLandspitaliCatalogQueryVariables,
+  WebLandspitaliCreateDirectGrantPaymentUrlMutation,
+  WebLandspitaliCreateDirectGrantPaymentUrlMutationVariables,
+} from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
+import {
+  CREATE_LANDSPITALI_DIRECT_GRANT_PAYMENT_URL,
+  GET_LANDSPITALI_CATALOG,
+} from '@island.is/web/screens/queries/Landspitali'
 
 import { m } from './translation.strings'
 
@@ -26,6 +41,7 @@ interface DirectGrants {
   project: string
   amountISK: string
   senderName: string
+  senderEmail: string
   senderNationalId: string
   senderAddress: string
   senderPostalCode: string
@@ -36,65 +52,151 @@ interface DirectGrants {
 
 const DEFAULT_GRANT_OPTIONS = [
   {
-    label: 'Styrktarsjóður barna- og unglingageðdeildar',
-    value: 'MR106',
-  },
-  {
-    label: 'Styrktarsjóður Barnaspítala Hringsins',
-    value: 'MR105',
-  },
-  {
-    label: 'Styrktarsjóður Blóðbankans',
-    value: 'MR133',
-  },
-  {
-    label: 'Styrktarsjóður bráðasviðs',
-    value: 'MR104',
-  },
-  {
-    label: 'Styrktarsjóður endurhæfingar',
-    value: 'MR112',
+    label: 'Styrktarsjóður Landspítala',
+    value: 'MR102',
   },
   {
     label: 'Styrktarsjóður geðsviðs',
     value: 'MR103',
   },
   {
+    label: 'Styrktarsjóður bráðasviðs',
+    value: 'MR104',
+  },
+  {
+    label: 'Styrktarsjóður barnaspítala Hringsins',
+    value: 'MR105',
+  },
+  {
+    label: 'Styrktarsjóður barna- og unglingageðdeildar',
+    value: 'MR106',
+  },
+  {
     label: 'Styrktarsjóður gjörgæslu',
     value: 'MR110',
   },
   {
-    label: 'Styrktarsjóður hjartadeildar',
-    value: 'MR130',
-  },
-  {
-    label: 'Styrktarsjóður kvenna- og fæðingardeildar',
-    value: 'MR125',
-  },
-  {
-    label: 'Styrktarsjóður Landspítala',
-    value: 'MR101',
-  },
-  {
-    label: 'Styrktarsjóður lyflækningadeilda',
+    label: 'Styrktarsjóður lyflækninga',
     value: 'MR111',
   },
   {
-    label: 'Styrktarsjóður myndgreininga',
-    value: 'MR115',
+    label: 'Styrktarsjóður endurhæfingar',
+    value: 'MR112',
+  },
+  {
+    label: 'Styrktarsjóður öldrunar',
+    value: 'MR113',
   },
   {
     label: 'Styrktarsjóður rannsóknarstofa',
     value: 'MR114',
   },
   {
-    label: 'Styrktarsjóður skurðlækningadeildar',
-    value: 'MR107',
+    label: 'Styrktarsjóður myndgreininga',
+    value: 'MR115',
   },
   {
-    label: 'Styrktarsjóður öldrunar',
-    value: 'MR113',
+    label: 'Styrktarsjóður vegna ristilkrabbameins',
+    value: 'MR116',
   },
+  {
+    label: 'Gjafasjóður kvennadeilda LHS',
+    value: 'MR125',
+  },
+  {
+    label: 'Minningarsjóður öldrunardeildar',
+    value: 'MR126',
+  },
+  {
+    label: 'Blóð- og krabbameinslækningadeild',
+    value: 'MR127',
+  },
+  {
+    label: 'Líknardeild og heimahlynning ',
+    value: 'MR128',
+  },
+  {
+    label: 'Minningarsjóður skurðdeildar',
+    value: 'MR129',
+  },
+  {
+    label: 'Minningarsjóður hjartadeildar',
+    value: 'MR130',
+  },
+  {
+    label: 'Minningarsjóður RHLÖ',
+    value: 'MR131',
+  },
+  {
+    label: 'Minningargjafasjóður Landspítala',
+    value: 'MR132',
+  },
+  {
+    label: 'Styrktarsjóður Blóðbankans',
+    value: 'MR133',
+  },
+
+  // TODO: Remove these
+  // {
+  //   label: 'Styrktarsjóður barna- og unglingageðdeildar',
+  //   value: 'MR106',
+  // },
+  // {
+  //   label: 'Styrktarsjóður Barnaspítala Hringsins',
+  //   value: 'MR105',
+  // },
+  // {
+  //   label: 'Styrktarsjóður Blóðbankans',
+  //   value: 'MR133',
+  // },
+  // {
+  //   label: 'Styrktarsjóður bráðasviðs',
+  //   value: 'MR104',
+  // },
+  // {
+  //   label: 'Styrktarsjóður endurhæfingar',
+  //   value: 'MR112',
+  // },
+  // {
+  //   label: 'Styrktarsjóður geðsviðs',
+  //   value: 'MR103',
+  // },
+  // {
+  //   label: 'Styrktarsjóður gjörgæslu',
+  //   value: 'MR110',
+  // },
+  // {
+  //   label: 'Styrktarsjóður hjartadeildar',
+  //   value: 'MR130',
+  // },
+  // {
+  //   label: 'Styrktarsjóður kvenna- og fæðingardeildar',
+  //   value: 'MR125',
+  // },
+  // {
+  //   label: 'Styrktarsjóður Landspítala',
+  //   value: 'MR101',
+  // },
+  // {
+  //   label: 'Styrktarsjóður lyflækningadeilda',
+  //   value: 'MR111',
+  // },
+  // {
+  //   label: 'Styrktarsjóður myndgreininga',
+  //   value: 'MR115',
+  // },
+  // {
+  //   label: 'Styrktarsjóður rannsóknarstofa',
+  //   value: 'MR114',
+  // },
+  // {
+  //   label: 'Styrktarsjóður skurðlækningadeildar',
+  //   value: 'MR107',
+  // },
+  // {
+  //   label: 'Styrktarsjóður öldrunar',
+  //   value: 'MR113',
+  // },
 ]
 
 const PRESET_AMOUNTS = ['5.000', '10.000', '50.000', '100.000']
@@ -103,6 +205,14 @@ const PRESET_PROJECTS = ['Endurmennt', 'Ótilgreint', 'Rannsóknir', 'Tækjakaup
 
 export const DirectGrants = ({ slice }: DirectGrantsProps) => {
   const { formatMessage } = useIntl()
+
+  const { data: catalogData } = useQuery<
+    WebLandspitaliCatalogQuery,
+    WebLandspitaliCatalogQueryVariables
+  >(GET_LANDSPITALI_CATALOG) // TODO: Remove this gql endpoint altogether
+
+  const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
+
   const grantOptions = slice.json?.grantOptions ?? DEFAULT_GRANT_OPTIONS
 
   const methods = useForm<DirectGrants>({
@@ -112,6 +222,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
       project: '',
       amountISK: '',
       senderName: '',
+      senderEmail: '',
       senderNationalId: '',
       senderAddress: '',
       senderPostalCode: '',
@@ -132,8 +243,53 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
   const selectedAmount = watch('amountISK')
   const selectedProject = watch('project')
 
-  const onSubmit = () => {
-    //
+  const { activeLocale } = useI18n()
+
+  const [createDirectGrantPaymentUrl] = useMutation<
+    WebLandspitaliCreateDirectGrantPaymentUrlMutation,
+    WebLandspitaliCreateDirectGrantPaymentUrlMutationVariables
+  >(CREATE_LANDSPITALI_DIRECT_GRANT_PAYMENT_URL)
+  const [
+    errorOccuredWhenCreatingPaymentUrl,
+    setErrorOccuredWhenCreatingPaymentUrl,
+  ] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const onSubmit = async () => {
+    const data = methods.getValues()
+    const amountISK =
+      data.amountISK === 'other' ? data.amountISKCustom : data.amountISK
+    try {
+      setLoading(true)
+
+      const response = await createDirectGrantPaymentUrl({
+        variables: {
+          input: {
+            grantChargeItemCode: data.grant,
+            project: data.project,
+            payerAddress: data.senderAddress,
+            payerGrantExplanation: data.senderGrantExplanation,
+            payerName: data.senderName,
+            payerEmail: data.senderEmail,
+            payerNationalId: data.senderNationalId,
+            payerPostalCode: data.senderPostalCode,
+            payerPlace: data.senderPlace,
+            amountISK: parseInt(amountISK.replace(/\./g, '')),
+            locale: activeLocale,
+          },
+        },
+      })
+      const url = response.data?.webLandspitaliDirectGrantPaymentUrl.url
+      setErrorOccuredWhenCreatingPaymentUrl(!url)
+      if (url) {
+        window.location.href = url
+      } else {
+        setLoading(false)
+      }
+    } catch {
+      setErrorOccuredWhenCreatingPaymentUrl(true)
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -253,21 +409,55 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               control={control}
             />
             <InputController
-              id="senderNationalId"
-              label={formatMessage(m.info.senderNationalIdLabel)}
+              id="senderEmail"
+              type="email"
+              label={formatMessage(m.info.senderEmailLabel)}
               size="xs"
-              error={errors.senderNationalId?.message}
-              type="number"
-              inputMode="numeric"
-              rules={{
-                ...requiredRule,
-                pattern: {
-                  value: /^\d{10}$/,
-                  message: formatMessage(m.validation.invalidNationalId),
-                },
-              }}
+              error={errors.senderEmail?.message}
               control={control}
             />
+
+            <Stack space={1}>
+              <InputController
+                id="senderNationalId"
+                label={formatMessage(m.info.senderNationalIdLabel)}
+                size="xs"
+                error={
+                  nationalIdSkipped
+                    ? undefined
+                    : errors.senderNationalId?.message
+                }
+                type="number"
+                inputMode="numeric"
+                disabled={nationalIdSkipped}
+                rules={{
+                  validate: (value) => {
+                    if (nationalIdSkipped) {
+                      return true
+                    }
+                    if (!isValidKennitala(value)) {
+                      return formatMessage(m.validation.invalidNationalIdFormat)
+                    }
+                    return true
+                  },
+                }}
+                control={control}
+              />
+              <Checkbox
+                id="senderNationalIdSkipped"
+                label={formatMessage(m.info.senderNationalIdSkippedLabel)}
+                checked={nationalIdSkipped}
+                onChange={() => {
+                  const newValue = !nationalIdSkipped
+                  setNationalIdSkipped(newValue)
+                  if (newValue) {
+                    setValue('senderNationalId', '')
+                  }
+                }}
+                labelVariant="small"
+              />
+            </Stack>
+
             <InputController
               id="senderAddress"
               label={formatMessage(m.info.senderAddressLabel)}
@@ -310,8 +500,17 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             <Text>{formatMessage(m.info.amountISKExtra)}</Text>
           </Box>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
-            <Button type="submit">{formatMessage(m.info.pay)}</Button>
+            <Button loading={loading} type="submit">
+              {formatMessage(m.info.pay)}
+            </Button>
           </Box>
+          {errorOccuredWhenCreatingPaymentUrl && (
+            <AlertMessage
+              title={formatMessage(m.validation.errorTitle)}
+              message={formatMessage(m.validation.errorMessage)}
+              type="error"
+            />
+          )}
         </Stack>
       </form>
     </FormProvider>
