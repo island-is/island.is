@@ -173,10 +173,12 @@ export const defaultRenderNodeObject: RenderNode = {
 
     const contentType = node?.data?.target?.fields?.file?.contentType
 
+    const secureUrl = url?.startsWith('//') ? `https:${url}` : url
+
     if (!contentType || contentType.startsWith('image/')) {
       return (
         <Box marginTop={url ? 5 : 0}>
-          <img src={url} alt={description || ''} />
+          <img src={secureUrl} alt={description || ''} loading="lazy" />
         </Box>
       )
     }
@@ -184,7 +186,7 @@ export const defaultRenderNodeObject: RenderNode = {
     if (url && title) {
       return (
         <Box marginTop={5}>
-          <AssetLink title={title} url={url} />
+          <AssetLink title={title} url={secureUrl} />
         </Box>
       )
     }
