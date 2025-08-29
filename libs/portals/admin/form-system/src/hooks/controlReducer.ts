@@ -122,6 +122,14 @@ type ChangeActions =
       type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
+  | {
+      type: 'CHANGE_HAS_SUMMARY_SCREEN'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
+  | {
+      type: 'CHANGE_HAS_PAYMENT'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
   | { type: 'CHANGE_FORM_SETTINGS'; payload: { newForm: FormSystemForm } }
   | {
       type: 'TOGGLE_DEPENDENCY'
@@ -634,6 +642,28 @@ export const controlReducer = (
         form: {
           ...form,
           stopProgressOnValidatingScreen: action.payload.value,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'CHANGE_HAS_SUMMARY_SCREEN': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          hasSummaryScreen: action.payload.value,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'CHANGE_HAS_PAYMENT': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          hasPayment: action.payload.value,
         },
       }
       action.payload.update({ ...updatedState.form })

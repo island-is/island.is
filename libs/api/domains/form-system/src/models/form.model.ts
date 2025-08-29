@@ -78,6 +78,9 @@ export class Form {
   @Field(() => Boolean)
   stopProgressOnValidatingScreen!: boolean
 
+  @Field(() => Boolean)
+  hasSummaryScreen!: boolean
+
   @Field(() => Boolean, { nullable: true })
   isZendeskEnabled?: boolean
 

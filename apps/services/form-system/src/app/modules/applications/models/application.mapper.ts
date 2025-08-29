@@ -26,6 +26,8 @@ export class ApplicationMapper {
       slug: form.slug,
       formName: form.name,
       stopProgressOnValidatingScreen: form.stopProgressOnValidatingScreen,
+      hasPayment: form.hasPayment,
+      hasSummaryScreen: form.hasSummaryScreen,
       submittedAt: application.submittedAt,
       events: application.events,
       sections: [],
@@ -104,6 +106,8 @@ export class ApplicationMapper {
       slug: form?.slug,
       formName: form?.name,
       stopProgressOnValidatingScreen: form?.stopProgressOnValidatingScreen,
+      hasPayment: form?.hasPayment,
+      hasSummaryScreen: form?.hasSummaryScreen,
       submittedAt: application.submittedAt,
       events: application.events?.map((event) => {
         return {
