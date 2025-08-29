@@ -105,6 +105,6 @@ export const showCaseManagerFields = (
 
   return (
     isWelfareContactSelected(answers, externalData) &&
-    (hasCaseManager === YES || caseWorker !== undefined)
+    ((!hasCaseManager && caseWorker !== undefined) || hasCaseManager === YES)
   )
 }
