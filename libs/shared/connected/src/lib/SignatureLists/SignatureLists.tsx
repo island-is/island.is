@@ -83,13 +83,13 @@ export const SignatureLists: FC<
             .sort((a, b) => a.name.localeCompare(b.name))
             // keep only areas with items
             .filter((area) =>
-              collection.candidates?.some(
+              collection?.candidates?.some(
                 (candidate) => candidate.areaId === area.id,
               ),
             )
             .map((area) => (
               <AccordionItem id="test" label={area.name} key={area.id}>
-                {collection.candidates
+                {collection?.candidates
                   ?.filter((candidate) => candidate.areaId === area.id)
                   .map((candidate) => (
                     <Box marginBottom={3} key={candidate.id}>
