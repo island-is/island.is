@@ -65,6 +65,11 @@ export class UpdateFormDto {
   @ApiPropertyOptional()
   stopProgressOnValidatingScreen?: boolean
 
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  hasSummaryScreen?: boolean
+
   @ValidateNested()
   @Type(() => LanguageType)
   @IsOptional()

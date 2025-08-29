@@ -124,6 +124,13 @@ export class Form extends Model<Form> {
   stopProgressOnValidatingScreen!: boolean
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  })
+  hasSummaryScreen!: boolean
+
+  @Column({
     type: DataType.JSON,
     allowNull: true,
     defaultValue: () => new LanguageType(),

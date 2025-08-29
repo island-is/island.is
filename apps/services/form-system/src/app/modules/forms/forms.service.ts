@@ -133,6 +133,7 @@ export class FormsService {
       'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
+      'hasSummaryScreen',
     ]
 
     const formResponseDto: FormResponseDto = {
@@ -563,6 +564,7 @@ export class FormsService {
       'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
+      'hasSummaryScreen',
       'completedMessage',
       'dependencies',
     ]

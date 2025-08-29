@@ -81,6 +81,9 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
+          "./scripts/run-xroad-proxy.sh",
+          "yarn start services-user-profile",
+          "yarn start service-portal",
           "yarn nx run form-system-web:start-bff",
           "yarn start form-system-web"
         ],

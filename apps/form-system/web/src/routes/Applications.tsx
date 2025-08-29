@@ -17,8 +17,7 @@ import {
 import { ApplicationList } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
-import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
-
+import { ApplicationLoading } from '@island.is/form-system/ui'
 interface Params {
   slug?: string
 }

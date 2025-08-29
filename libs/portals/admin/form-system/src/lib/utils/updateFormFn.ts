@@ -45,6 +45,8 @@ export const updateFormFn = async (
             applicationDaysToRemove: newForm.applicationDaysToRemove,
             stopProgressOnValidatingScreen:
               newForm.stopProgressOnValidatingScreen,
+            hasPayment: newForm.hasPayment,
+            hasSummaryScreen: newForm.hasSummaryScreen,
             completedMessage: newForm.completedMessage,
             dependencies: newForm.dependencies ?? [],
           },
