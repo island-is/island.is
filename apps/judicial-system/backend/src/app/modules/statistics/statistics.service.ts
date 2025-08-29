@@ -238,7 +238,7 @@ export class StatisticsService {
     }
 
     // fetch only the earliest case with the base filter
-    const earliestCase = await this.caseModel.findOne({
+    const earliestCase = await this.caseRepositoryService.findOne({
       where,
       order: [['created', 'ASC']],
       attributes: ['created'],

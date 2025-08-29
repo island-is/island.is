@@ -69,6 +69,7 @@ import { IndictmentCountService } from '../indictment-count'
 import {
   Case,
   CaseFile,
+  CaseRepositoryService,
   CaseString,
   CivilClaimant,
   DateLog,
@@ -545,6 +546,7 @@ export class CaseService {
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
     private readonly messageService: MessageService,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -1769,13 +1771,12 @@ export class CaseService {
   }
 
   async findMinimalById(id: string): Promise<MinimalCase> {
-    const minimalCase = await this.caseModel.findOne({
+    const minimalCase = await this.caseRepositoryService.findOne({
       where: {
         id,
         isArchived: false,
         state: { [Op.not]: CaseState.DELETED },
       },
-      include: [],
     })
 
     if (!minimalCase) {
