@@ -18,6 +18,7 @@ import { m } from '../lib/messages'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 import { format as formatNationalId } from 'kennitala'
+import format from 'date-fns/format'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
@@ -57,7 +58,12 @@ export const Draft: Form = buildForm({
                   ) || []
                 return data?.map((list) => ({
                   value: list.id,
-                  label: list.title,
+                  label: `${list.candidate.name} (${
+                    list.candidate.ownerName
+                  } - ${format(
+                    new Date(list.candidate.ownerBirthDate),
+                    'dd.MM.yy',
+                  )})`,
                   disabled:
                     list.maxReached || new Date(list.endTime) < new Date(),
                   tag: list.maxReached
