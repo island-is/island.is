@@ -306,6 +306,9 @@ export class ApplicationService {
           postPruned: {
             [Op.eq]: false,
           },
+          pruned: {
+            [Op.eq]: true,
+          },
         },
       },
     })

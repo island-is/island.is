@@ -153,10 +153,11 @@ export class ApplicationLifeCycleService {
             )
           }
 
-          postPruneAt = getPostPruneAtDate(
-            template.adminDataConfig.whenToPostPrune,
-            prune.application,
-          )
+          if (prune.pruned)
+            postPruneAt = getPostPruneAtDate(
+              template.adminDataConfig.whenToPostPrune,
+              prune.application,
+            )
         }
 
         const { updatedApplication } = await this.applicationService.update(
