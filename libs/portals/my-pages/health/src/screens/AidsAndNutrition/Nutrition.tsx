@@ -24,9 +24,10 @@ import LocationModal from './LocationModal'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
+  refetch: () => void
 }
 
-const Nutrition = ({ data }: Props) => {
+const Nutrition = ({ data, refetch }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const [activeItem, setActiveItem] =
@@ -54,6 +55,7 @@ const Nutrition = ({ data }: Props) => {
 
     if (success) {
       toast.success(formatMessage(messages.renewalFormSuccess))
+      refetch()
     }
     if (error) {
       toast.error(formatMessage(messages.renewalFormError))

@@ -32,9 +32,10 @@ import LocationModal from './LocationModal'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
+  refetch: () => void
 }
 
-const Aids = ({ data }: Props) => {
+const Aids = ({ data, refetch }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const [activeItem, setActiveItem] =
@@ -102,7 +103,7 @@ const Aids = ({ data }: Props) => {
   )
 
   const handleSubmit = async (item: RightsPortalAidOrNutrition) => {
-    const data = await renewAidsAndNutrition({
+    const result = await renewAidsAndNutrition({
       variables: {
         input: {
           id: item.id,
@@ -110,10 +111,11 @@ const Aids = ({ data }: Props) => {
       },
     })
 
-    const success = data?.data?.rightsPortalRenewAidOrNutrition?.success
-    const error = data?.data?.rightsPortalRenewAidOrNutrition?.errorMessage
+    const success = result?.data?.rightsPortalRenewAidOrNutrition?.success
+    const error = result?.data?.rightsPortalRenewAidOrNutrition?.errorMessage
 
     if (success) {
+      refetch()
       toast.success(formatMessage(messages.renewalFormSuccess))
     }
     if (error) {

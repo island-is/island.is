@@ -17,7 +17,7 @@ const AidsAndNutrition = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
-  const { loading, error, data } = useGetAidsAndNutritionQuery()
+  const { loading, error, data, refetch } = useGetAidsAndNutritionQuery()
 
   const aidsAndNutrition = data?.rightsPortalPaginatedAidOrNutrition?.data
   const aids =
@@ -34,13 +34,13 @@ const AidsAndNutrition = () => {
     aids.length > 0
       ? {
           label: formatMessage(messages.aids),
-          content: <Aids data={aids} />,
+          content: <Aids data={aids} refetch={refetch} />,
         }
       : null,
     nutrition.length > 0
       ? {
           label: formatMessage(messages.nutrition),
-          content: <Nutrition data={nutrition} />,
+          content: <Nutrition data={nutrition} refetch={refetch} />,
         }
       : null,
   ].filter(isDefined)
