@@ -89,6 +89,31 @@ export const Draft: Form = buildForm({
           description: m.listDescription,
           children: [
             buildTextField({
+              id: 'municipality',
+              title: m.municipality,
+              width: 'full',
+              readOnly: true,
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.area?.name
+              },
+            }),
+            buildTextField({
               id: 'candidateName',
               title: m.candidateName,
               width: 'full',
@@ -135,8 +160,8 @@ export const Draft: Form = buildForm({
               },
             }),
             buildTextField({
-              id: 'municipality',
-              title: m.municipality,
+              id: 'guarantorsName',
+              title: m.guarantorsName,
               width: 'half',
               readOnly: true,
               defaultValue: ({ answers, externalData }: Application) => {
@@ -146,17 +171,13 @@ export const Draft: Form = buildForm({
                     'getList.data',
                   ) || []
 
-                const initialQuery = getValueViaPath(
-                  answers,
-                  'initialQuery',
-                  '',
-                )
+                const name =
+                  lists.length === 1
+                    ? lists[0].candidate.ownerName
+                    : lists.find((list) => list.id === answers.listId)
+                        ?.candidate.ownerName
 
-                return lists.find((list) =>
-                  initialQuery
-                    ? list.candidate.id === initialQuery
-                    : list.id === answers.listId,
-                )?.area?.name
+                return name
               },
             }),
             buildSubmitField({
