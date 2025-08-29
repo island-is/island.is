@@ -117,6 +117,10 @@ const CourtRecord: FC = () => {
     'endOfSessionBookings',
   ])
 
+  const hasMissingInfoInRulingStep = workingCase.isCompletedWithoutRuling
+    ? !workingCase.decision
+    : !workingCase.decision || !workingCase.ruling || !workingCase.conclusion
+
   const initialize = useCallback(() => {
     const autofillAttendees = []
 
@@ -511,17 +515,9 @@ const CourtRecord: FC = () => {
             handleNavigationTo(constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
-          hideNextButton={
-            !workingCase.isCompletedWithoutRuling
-              ? !workingCase.decision ||
-                !workingCase.conclusion ||
-                !workingCase.ruling
-              : !workingCase.decision
-          }
+          hideNextButton={hasMissingInfoInRulingStep}
           infoBoxText={
-            !workingCase.decision ||
-            !workingCase.conclusion ||
-            !workingCase.ruling
+            hasMissingInfoInRulingStep
               ? formatMessage(m.sections.nextButtonInfo.text, {
                   isCompletedWithoutRuling:
                     workingCase.isCompletedWithoutRuling,
