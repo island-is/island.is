@@ -155,7 +155,7 @@ const Lists = () => {
           <Box marginTop={9} />
           {lists?.length > 0 && (
             <GridRow marginBottom={5}>
-              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
                 <FilterInput
                   name="input"
                   placeholder={formatMessage(m.searchInAllListsPlaceholder)}
@@ -164,7 +164,7 @@ const Lists = () => {
                   backgroundColor="blue"
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <Box
                   display="flex"
                   justifyContent="spaceBetween"

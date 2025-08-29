@@ -14,6 +14,7 @@ const Intro = ({
   title: string
   intro: string
 }) => {
+  console.log(slug)
   return (
     <Box marginBottom={5}>
       <IntroWrapper

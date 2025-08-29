@@ -12,17 +12,23 @@ interface Props {
   sections: FormSystemSection[]
   currentSection: Current<FormSystemSection>
   currentScreen?: Current<FormSystemScreen>
+  hasSummaryScreen: boolean
 }
 
 export const FormStepper = ({
   sections,
   currentSection,
   currentScreen,
+  hasSummaryScreen,
 }: Props) => {
   const { lang } = useLocale()
 
   const visibleSections = (sections ?? []).filter(
-    (s) => !!s && !s.isHidden && s.sectionType !== SectionTypes.PREMISES,
+    (s) =>
+      !!s &&
+      !s.isHidden &&
+      s.sectionType !== SectionTypes.PREMISES &&
+      (s.sectionType !== SectionTypes.SUMMARY || hasSummaryScreen),
   )
   const activeSectionId = currentSection?.data?.id
   const activeScreenId = currentScreen?.data?.id
