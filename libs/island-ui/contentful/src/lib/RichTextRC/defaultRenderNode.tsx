@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import Hyperlink from '../Hyperlink/Hyperlink'
+import AssetLink from '../AssetLink/AssetLink'
 import * as styles from './RichText.css'
 
 const defaultHeaderMargins: {
@@ -167,12 +168,30 @@ export const defaultRenderNodeObject: RenderNode = {
   [BLOCKS.TABLE_CELL]: (_node, children) => <T.Data>{children}</T.Data>,
   [BLOCKS.EMBEDDED_ASSET]: (node) => {
     const url = node?.data?.target?.fields?.file?.url
-    const title = node?.data?.target?.fields
-    return (
-      <Box marginTop={url ? 5 : 0}>
-        <img src={url} alt={title} />
-      </Box>
-    )
+    const title = node?.data?.target?.fields?.title
+
+    const contentType = node?.data?.target?.fields?.file?.contentType
+
+    if (!contentType || contentType.startsWith('image/')) {
+      if (url) {
+        return (
+          <Box marginTop={url ? 5 : 0}>
+            <img src={url} alt={title} />
+          </Box>
+        )
+      }
+      return null
+    }
+
+    if (url && title) {
+      return (
+        <Box marginTop={5}>
+          <AssetLink title={title} url={url} />
+        </Box>
+      )
+    }
+
+    return null
   },
   [INLINES.EMBEDDED_ENTRY]: (node) => {
     // In case something other than the price content type is inline embedded we ignore it
