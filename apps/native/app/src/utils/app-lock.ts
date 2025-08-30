@@ -2,7 +2,6 @@ import { Keyboard } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { authStore } from '../stores/auth-store'
 import { preferencesStore } from '../stores/preferences-store'
-import { uiStore } from '../stores/ui-store'
 import { ComponentRegistry } from './component-registry'
 import { isOnboarded } from './onboarding'
 
@@ -15,10 +14,6 @@ export function skipAppLock() {
   const isNotAuthorized = !authorizeResult
   const isDisabledByDev = dev__useLockScreen === false
   const skip = isNotOnboarded || isNotAuthorized || isDisabledByDev
-
-  if (skip) {
-    uiStore.setState({ initializedApp: true })
-  }
 
   return skip
 }

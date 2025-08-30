@@ -427,17 +427,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const renderButtons = () => {
     if (isIos) {
-      return (
-        <AddPassButton
-          style={{ height: 52 }}
-          addPassButtonStyle={
-            theme.isDark
-              ? PassKit.AddPassButtonStyle.blackOutline
-              : PassKit.AddPassButtonStyle.black
-          }
-          onPress={onAddPkPass}
-        />
-      )
+      return <AddPassButton style={{ height: 52 }} onPress={onAddPkPass} />
     }
 
     return (

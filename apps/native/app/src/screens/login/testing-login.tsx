@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   Alert,
   AlertButton,
   Image,
   Linking,
-  NativeEventEmitter,
   NativeModules,
   Platform,
   SafeAreaView,
@@ -15,19 +14,19 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 
-import { Button, dynamicColor, font } from '../../ui'
 import logo from '../../assets/logo/logo-64w.png'
 import testinglogo from '../../assets/logo/testing-logo-64w.png'
 import { environments, isTestingApp, useConfig } from '../../config'
-import { useBrowser } from '../../lib/use-browser'
 import { openNativeBrowser } from '../../lib/rn-island'
 import { showPicker } from '../../lib/show-picker'
+import { useBrowser } from '../../lib/use-browser'
 import { useAuthStore } from '../../stores/auth-store'
 import {
   environmentStore,
   useEnvironmentStore,
 } from '../../stores/environment-store'
 import { preferencesStore } from '../../stores/preferences-store'
+import { Button, dynamicColor, font } from '../../ui'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
 
@@ -90,27 +89,6 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
   const { openBrowser } = useBrowser()
   const intl = useIntl()
   const [isLoggingIn, setIsLoggingIn] = useState(false)
-  const [authState, setAuthState] = useState<{
-    nonce: string
-    codeChallenge: string
-    state: string
-  } | null>(null)
-
-  useEffect(() => {
-    try {
-      const eventEmitter = new NativeEventEmitter(NativeModules.RNAppAuth)
-      const onAuthRequestInitiated = (event: any) => setAuthState(event)
-      const subscription = eventEmitter.addListener(
-        'onAuthRequestInitiated',
-        onAuthRequestInitiated,
-      )
-      return () => {
-        subscription.remove()
-      }
-    } catch (err) {
-      // noop
-    }
-  }, [])
 
   const onLoginPress = async () => {
     // Skip all login functionality if we are in mock environment
@@ -225,13 +203,6 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
             <Title>
               <FormattedMessage id="login.welcomeMessage" />
             </Title>
-          </View>
-          <View style={{ position: 'absolute', opacity: 0, top: 0, left: 0 }}>
-            <Text testID="auth_nonce">{authState?.nonce ?? 'noop1'}</Text>
-            <Text testID="auth_code">
-              {authState?.codeChallenge ?? 'noop2'}
-            </Text>
-            <Text testID="auth_state">{authState?.state ?? 'noop3'}</Text>
           </View>
           <Button
             title={intl.formatMessage({ id: 'login.loginButtonText' })}

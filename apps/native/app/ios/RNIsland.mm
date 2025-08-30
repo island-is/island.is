@@ -1,7 +1,6 @@
 #import "ReactNativeNavigation.h"
 #import "RNIsland.h"
-
-@import SafariServices;
+#import <SafariServices/SafariServices.h>
 
 @implementation RNIsland
 
@@ -70,7 +69,9 @@ RCT_EXPORT_METHOD(openSafari:(NSString *)componentId options:(NSDictionary *)opt
     safariViewController.modalPresentationStyle = UIModalPresentationAutomatic;
   }
 
-  [vc.navigationController presentViewController:safariViewController animated:YES completion:nil];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [vc presentViewController:safariViewController animated:YES completion:nil];
+  });
 }
 
 RCT_EXPORT_METHOD(setPreferencesValue:(NSString *)key value:(NSString *)value suite:(NSString *)suite)
