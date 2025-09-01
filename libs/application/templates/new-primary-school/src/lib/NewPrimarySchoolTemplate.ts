@@ -59,7 +59,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
-        exit: ['setApplicationType'],
         meta: {
           name: States.PREREQUISITES,
           status: FormModes.DRAFT,
@@ -110,6 +109,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: ['setApplicationType'],
         exit: [
           'clearApplicationIfReasonForApplication',
           'clearPlaceOfResidence',

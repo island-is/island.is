@@ -5,7 +5,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-import * as kennitala from 'kennitala'
+import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
@@ -20,6 +20,7 @@ import {
 } from '../types'
 import {
   ApplicationType,
+  FIRST_GRADE_AGE,
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
@@ -569,11 +570,18 @@ export const getApplicationType = (externalData: ExternalData) => {
   }
 
   const currentYear = new Date().getFullYear()
-  const firstGradeYear = currentYear - 6 // 1st grade
+  const firstGradeYear = currentYear - FIRST_GRADE_AGE
 
-  const yearOfBirth = kennitala
-    .info(childInformation?.nationalId)
-    .birthday.getFullYear()
+  const nationalId = childInformation.nationalId
+  if (!isValid?.(nationalId)) {
+    return ApplicationType.NEW_PRIMARY_SCHOOL
+  }
+  const nationalIdInfo = info(nationalId)
+  if (!info || !nationalIdInfo.birthday) {
+    return ApplicationType.NEW_PRIMARY_SCHOOL
+  }
+
+  const yearOfBirth = nationalIdInfo.birthday.getFullYear()
 
   return yearOfBirth < firstGradeYear
     ? ApplicationType.NEW_PRIMARY_SCHOOL
