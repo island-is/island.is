@@ -103,20 +103,20 @@ const PatientDataPermits: React.FC = () => {
                 tag={
                   permit.status === HealthDirectoratePermitStatus.active
                     ? {
-                        label: formatMessage(messages.valid),
+                        label: formatMessage(messages.active),
                         variant: 'blue',
-                        outlined: false,
+                        outlined: true,
                       }
                     : permit.status === HealthDirectoratePermitStatus.expired
                     ? {
                         label: formatMessage(messages.expired),
                         variant: 'red',
-                        outlined: false,
+                        outlined: true,
                       }
                     : {
                         label: formatMessage(messages.invalid),
-                        variant: 'red',
-                        outlined: false,
+                        variant: 'purple',
+                        outlined: true,
                       }
                 }
                 cta={{

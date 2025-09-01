@@ -1746,7 +1746,7 @@ export const messages = defineMessages({
     id: 'sp.health:how-long-should-permit-apply',
   },
   showExipredPermits: {
-    defaultMessage: 'Sýna ógildar heimildir',
+    defaultMessage: 'Sýna óvirkar heimildir',
     id: 'sp.health:show-expired-permits',
   },
   permit: {
@@ -1821,15 +1821,15 @@ export const messages = defineMessages({
     id: 'sp.health:health-directorate',
   },
   invalidatePermit: {
-    defaultMessage: 'Ógilda heimild',
+    defaultMessage: 'Óvirkja heimild',
     id: 'sp.health:invalidate-permit',
   },
   areYouSureAboutInvalidatingPermit: {
-    defaultMessage: 'Ertu viss um að þú viljir ógilda heimild?',
+    defaultMessage: 'Ertu viss um að þú viljir óvirkja heimild?',
     id: 'sp.health:are-you-sure-about-invalidating-permit',
   },
   youAreAboutToInvalidateThisPermit: {
-    defaultMessage: 'Þú ert að fara gera eftirfarandi heimild ógilda:',
+    defaultMessage: 'Þú ert að fara gera eftirfarandi heimild óvirka:',
     id: 'sp.health:you-are-about-to-invalidate-this-permit',
   },
   cancel: {
@@ -1850,12 +1850,12 @@ export const messages = defineMessages({
     id: 'sp.health:permit-created-error',
   },
   permitInvalidated: {
-    defaultMessage: 'Heimild hefur verið ógild',
+    defaultMessage: 'Heimild hefur verið óvirkjuð',
     id: 'sp.health:permit-invalidated',
   },
   permitInvalidatedError: {
     defaultMessage:
-      'Ekki tókst að ógilda heimild. Vinsamlegast reyndu aftur síðar.',
+      'Ekki tókst að óvirkja heimild. Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:permit-invalidated-error',
   },
   countriesError: {
@@ -1870,5 +1870,13 @@ export const messages = defineMessages({
   noPermitsRegistered: {
     defaultMessage: 'Það eru engar skráðar heimildir.',
     id: 'sp.health:no-permits-registered',
+  },
+  active: {
+    defaultMessage: 'Virk',
+    id: 'sp.health:active',
+  },
+  inactive: {
+    defaultMessage: 'Óvirk',
+    id: 'sp.health:inactive',
   },
 })

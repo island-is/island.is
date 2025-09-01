@@ -1,5 +1,5 @@
 import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
-import { Box, Button, toast } from '@island.is/island-ui/core'
+import { Box, Button, Tag, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   formatDate,
@@ -95,11 +95,24 @@ const PermitDetail: React.FC = () => {
             <InfoLine
               label={formatMessage(messages.status) ?? ''}
               content={
-                permit?.status === HealthDirectoratePermitStatus.active
-                  ? formatMessage(messages.valid)
-                  : permit?.status === HealthDirectoratePermitStatus.expired
-                  ? formatMessage(messages.expired)
-                  : formatMessage(messages.invalid)
+                <Tag
+                  variant={
+                    permit?.status === HealthDirectoratePermitStatus.active
+                      ? 'blue'
+                      : permit?.status ===
+                        HealthDirectoratePermitStatus.inactive
+                      ? 'purple'
+                      : 'red'
+                  }
+                  disabled
+                  outlined
+                >
+                  {permit?.status === HealthDirectoratePermitStatus.active
+                    ? formatMessage(messages.active)
+                    : permit?.status === HealthDirectoratePermitStatus.expired
+                    ? formatMessage(messages.expired)
+                    : formatMessage(messages.invalid)}
+                </Tag>
               }
               button={
                 permit?.status === HealthDirectoratePermitStatus.active
