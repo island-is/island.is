@@ -39,6 +39,7 @@ interface FindAndCountAllOptions {
   limit?: FindAndCountOptions['limit']
   offset?: FindAndCountOptions['offset']
   distinct?: FindAndCountOptions['distinct']
+  raw?: FindAndCountOptions['raw']
 }
 
 @Injectable()
@@ -202,6 +203,10 @@ export class CaseRepositoryService {
 
       if (options?.distinct !== undefined) {
         findOptions.distinct = options.distinct
+      }
+
+      if (options?.raw !== undefined) {
+        findOptions.raw = options.raw
       }
 
       const results = await this.caseModel.findAndCountAll(findOptions)
