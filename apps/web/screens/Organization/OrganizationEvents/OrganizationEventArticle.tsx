@@ -110,6 +110,8 @@ const EventInformationBox = ({
         <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
           <Icon color="blue400" icon="calendar" type="outline" />
           <Text>{formattedDate}</Text>
+          {event.startDateTime && <Text>{format(new Date(event.startDateTime), 'do MMMM yyyy')}</Text>}
+          {event.endDateTime && <Text>{format(new Date(event.endDateTime), 'do MMMM yyyy')}</Text>}
         </Box>
         {Boolean(event.time?.startTime) && (
           <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>

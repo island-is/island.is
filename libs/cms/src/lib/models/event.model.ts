@@ -57,6 +57,12 @@ export class Event {
   @CacheField(() => EventTime)
   time!: EventTime
 
+  @Field({description: 'ISO8601'})
+  startDateTime!: string
+
+  @Field({description: 'ISO8601'})
+  endDateTime!: string
+
   @CacheField(() => EventLocation)
   location!: EventLocation
 
@@ -100,6 +106,8 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
     startDate: fields.startDate ?? '',
     endDate,
     time: (fields.time as Event['time']) ?? { startTime: '', endTime: '' },
+    startDateTime: fields.startDateTime ?? '',
+    endDateTime: fields.endDateTime ?? '',
     location: (fields.location as Event['location']) ?? {
       streetAddress: '',
       floor: '',
