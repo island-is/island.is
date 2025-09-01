@@ -7,7 +7,7 @@ export const formatBankInfo = (bankInfo: BankAccountDT): string | null => {
     !!bankInfo.ledger &&
     !!bankInfo.accountNumber
   ) {
-    return `${bankInfo.bank} - ${bankInfo.ledger} - ${bankInfo.accountNumber}`
+    return `${bankInfo.bank}-${bankInfo.ledger}-${bankInfo.accountNumber}`
   }
   return null
 }
