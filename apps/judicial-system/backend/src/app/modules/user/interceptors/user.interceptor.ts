@@ -10,7 +10,7 @@ import {
 import { isAdminUser, User as TUser } from '@island.is/judicial-system/types'
 
 import { EventLogService } from '../../event-log'
-import { User } from '../user.model'
+import { User } from '../../repository'
 
 @Injectable()
 export class UserInterceptor implements NestInterceptor {

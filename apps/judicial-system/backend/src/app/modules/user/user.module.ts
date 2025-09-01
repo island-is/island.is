@@ -3,8 +3,8 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { EventLogModule } from '../event-log/eventLog.module'
 import { InstitutionModule } from '../institution/institution.module'
+import { User } from '../repository'
 import { UserController } from './user.controller'
-import { User } from './user.model'
 import { UserService } from './user.service'
 
 @Module({
