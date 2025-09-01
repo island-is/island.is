@@ -113,7 +113,7 @@ export default async function handler(
 
   // This will throw an error if the JWT is invalid
   try {
-    await validateIncomingJwt(token, req.body)
+    await validateIncomingJwt(token, JSON.stringify(req.body))
   } catch (error) {
     logger.warn('Web payment callback JWT validation failed', { error })
     return res.status(401).json({ message: 'Unauthorized' })
