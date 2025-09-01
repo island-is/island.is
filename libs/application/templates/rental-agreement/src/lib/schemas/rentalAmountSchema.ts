@@ -12,7 +12,7 @@ export const rentalAmount = z
   .object({
     amount: z.string().optional(),
     rentalPeriodIsDefinite: z.string().array().optional(),
-    rentalPeriodStartDate: z.string(),
+    rentalPeriodStartDate: z.string().optional(),
     rentalPeriodEndDate: z.string().optional(),
     indexValue: z.string().optional(),
     isIndexConnected: z.string().array().optional(),
@@ -105,7 +105,7 @@ export const rentalAmount = z
     }
 
     if (
-      paymentDateOptions === RentalAmountPaymentDateOptions.OTHER &&
+      paymentDateOptions?.includes(RentalAmountPaymentDateOptions.OTHER) &&
       !paymentDateOther?.trim().length
     ) {
       ctx.addIssue({

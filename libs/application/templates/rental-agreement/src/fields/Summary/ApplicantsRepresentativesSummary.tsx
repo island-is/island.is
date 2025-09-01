@@ -21,7 +21,7 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
   const { application, goToScreen, partiesRoute, hasChangeButton } = props
   const { answers } = application
 
-  const { landlordRepresentatives = [] } = applicationAnswers(answers)
+  const { landlordRepresentatives } = applicationAnswers(answers)
 
   return landlordRepresentatives.length > 0 ? (
     <SummaryCard

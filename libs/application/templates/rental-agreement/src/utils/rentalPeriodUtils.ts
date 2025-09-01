@@ -1,8 +1,7 @@
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'
 import is from 'date-fns/locale/is'
-import startOfDay from 'date-fns/startOfDay'
-import addYears from 'date-fns/addYears'
+import addMonths from 'date-fns/addMonths'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import {
@@ -50,16 +49,10 @@ export const isDateMoreThanOneYearInFuture = (answers: FormValue) => {
   const startDate = getValueViaPath<string>(answers, 'rentalPeriod.startDate')
   if (!startDate) return false
 
-  const parsedDate = new Date(startDate)
+  const selectedDate = new Date(startDate)
+  const oneYearFromNow = addMonths(new Date(), 12)
 
-  if (!isFinite(parsedDate.getTime())) {
-    return false
-  }
-
-  const oneYearFromNow = startOfDay(addYears(new Date(), 1))
-  const selectedDay = startOfDay(parsedDate)
-
-  return selectedDay > oneYearFromNow
+  return selectedDate > oneYearFromNow
 }
 
 // Other fees utils
