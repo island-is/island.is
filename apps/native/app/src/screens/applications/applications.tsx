@@ -2,8 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Image, RefreshControl, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
-import { useTheme } from 'styled-components'
+import styled, { useTheme } from 'styled-components/native'
 
 import { EmptyList, StatusCardSkeleton } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-jobs-s3.png'
@@ -16,13 +15,17 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
 import { testIDs } from '../../utils/test-ids'
-import { isIos } from '../../utils/devices'
 import { ApplicationsPreview } from './components/applications-preview'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
+const Host = styled.SafeAreaView`
+  flex: 1;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
+    (theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'applications.title' }),
@@ -33,16 +36,11 @@ const { useNavigationOptions, getNavigationOptions } =
       },
       bottomTab: {
         iconColor: theme.color.blue400,
-        text: initialized
-          ? intl.formatMessage({ id: 'applications.bottomTabText' })
-          : '',
+        text: intl.formatMessage({ id: 'applications.bottomTabText' }),
       },
     }),
     {
       topBar: {
-        largeTitle: {
-          visible: true,
-        },
         scrollEdgeAppearance: {
           active: true,
           noBorder: true,
@@ -101,7 +99,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const theme = useTheme()
   const [refetching, setRefetching] = useState(false)
-  const [hiddenContent, setHiddenContent] = useState(isIos)
 
   const applicationsRes = useListApplicationsQuery({
     variables: { locale: useLocale() },
@@ -123,10 +120,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     [applications],
   )
 
-  useNavigationComponentDidAppear(() => {
-    setHiddenContent(false)
-  }, componentId)
-
   const onRefresh = useCallback(async () => {
     setRefetching(true)
 
@@ -139,13 +132,8 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     }
   }, [applicationsRes])
 
-  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
-  if (hiddenContent) {
-    return null
-  }
-
   return (
-    <>
+    <Host>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
@@ -196,7 +184,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         />
       </ScrollView>
       <BottomTabsIndicator index={3} total={5} />
-    </>
+    </Host>
   )
 }
 

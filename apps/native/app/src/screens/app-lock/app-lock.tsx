@@ -14,7 +14,7 @@ import {
 import {
   useNavigationComponentDidAppear,
   useNavigationComponentDidDisappear,
-} from 'react-native-navigation-hooks/dist'
+} from 'react-native-navigation-hooks'
 import styled from 'styled-components/native'
 
 import { dynamicColor, font } from '../../ui'
@@ -26,7 +26,7 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '../../stores/preferences-store'
-import { uiStore, useUiStore } from '../../stores/ui-store'
+import { useUiStore } from '../../stores/ui-store'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 
@@ -212,7 +212,6 @@ export const AppLockScreen: NavigationFunctionComponent<{
     authStore.setState(() => ({
       lockScreenComponentId: componentId,
     }))
-    uiStore.setState({ initializedApp: true })
   })
 
   useNavigationComponentDidDisappear(() => {

@@ -1,0 +1,43 @@
+diff --git a/android/src/main/java/org/wonday/pdf/PdfView.java b/android/src/main/java/org/wonday/pdf/PdfView.java
+index 7b7a1253afc6c522307606f5d21d53494f47f2e2..ea8c0d3f575e93f944337578abc0639f4b9d382d 100644
+--- a/android/src/main/java/org/wonday/pdf/PdfView.java
++++ b/android/src/main/java/org/wonday/pdf/PdfView.java
+@@ -20,7 +20,8 @@ import android.net.Uri;
+ import android.util.AttributeSet;
+ import android.view.MotionEvent;
+ import android.graphics.Canvas;
+-
++import android.os.Handler;
++import android.os.Looper;
+ 
+ import com.facebook.react.uimanager.ThemedReactContext;
+ import com.facebook.react.uimanager.UIManagerHelper;
+@@ -105,7 +106,8 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
+         TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
+ 
+         if (dispatcher != null) {
+-            dispatcher.dispatchEvent(tce);
++            new Handler(Looper.getMainLooper()).postDelayed(() -> 
++                dispatcher.dispatchEvent(tce), 10);
+         }
+ 
+ //        ReactContext reactContext = (ReactContext)this.getContext();
+diff --git a/package.json b/package.json
+index 7fb18b7bb2a308492b3f1138e1b193b68318dbc4..d2deffaf02422f7079a5be09a9347c3af94d2a81 100644
+--- a/package.json
++++ b/package.json
+@@ -62,7 +62,12 @@
+         "type": "components",
+         "jsSrcsDir": "./fabric",
+         "android": {
+-          "javaPackageName": "org.wonday.pdf"
++            "javaPackageName": "org.wonday.pdf"
++        },
++        "ios": {
++            "componentProvider": {
++                "RNPDFPdfView": "RNPDFPdfView"
++            }
+         }
+-      }
++    }
+ }

@@ -8,6 +8,7 @@ import {
   Image,
   ListRenderItemInfo,
   RefreshControl,
+  SafeAreaView,
   View,
 } from 'react-native'
 import {
@@ -15,7 +16,6 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useApolloClient } from '@apollo/client'
@@ -23,6 +23,7 @@ import filterIcon from '../../assets/icons/filter-icon.png'
 import inboxReadIcon from '../../assets/icons/inbox-read.png'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   DocumentCategory,
   DocumentV2,
@@ -50,11 +51,10 @@ import {
   ButtonRegistry,
   ComponentRegistry,
 } from '../../utils/component-registry'
-import { isAndroid, isIos } from '../../utils/devices'
+import { isAndroid } from '../../utils/devices'
 import { testIDs } from '../../utils/test-ids'
 import { ActionBar } from './components/action-bar'
 import { Toast, ToastVariant } from './components/toast'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -99,7 +99,7 @@ const TagsWrapper = styled.View`
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
+    (theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'inbox.screenTitle' }),
@@ -107,17 +107,12 @@ const { useNavigationOptions, getNavigationOptions } =
       },
       bottomTab: {
         iconColor: theme.color.blue400,
-        text: initialized
-          ? intl.formatMessage({ id: 'inbox.bottomTabText' })
-          : '',
+        text: intl.formatMessage({ id: 'inbox.bottomTabText' }),
       },
     }),
     {
       topBar: {
         elevation: 0,
-        largeTitle: {
-          visible: true,
-        },
         scrollEdgeAppearance: {
           active: true,
           noBorder: true,
@@ -242,7 +237,6 @@ export const InboxScreen: NavigationFunctionComponent<{
   const [query, setQuery] = useState('')
   const [loadingMore, setLoadingMore] = useState(false)
   const queryString = useThrottleState(query)
-  const [hiddenContent, setHiddenContent] = useState(isIos)
   const [refetching, setRefetching] = useState(false)
   const isFeature2WayMailboxEnabled = useFeatureFlag(
     'is2WayMailboxEnabled',
@@ -648,10 +642,6 @@ export const InboxScreen: NavigationFunctionComponent<{
     return items
   }, [res.loading, res.data, items]) as ListItem[]
 
-  useNavigationComponentDidAppear(() => {
-    setHiddenContent(false)
-  }, componentId)
-
   const onPressMarkAllAsRead = () => {
     Alert.alert(
       intl.formatMessage({
@@ -680,211 +670,209 @@ export const InboxScreen: NavigationFunctionComponent<{
     )
   }
 
-  // Fix for a bug in react-native-navigation/react-native where the large title is not visible on iOS with
-  // bottom tabs https://github.com/wix/react-native-navigation/issues/6717
-  if (hiddenContent) {
-    return null
-  }
-
   return (
     <>
-      <Animated.FlatList
-        ref={flatListRef}
-        scrollEventThrottle={16}
-        scrollToOverflowEnabled
-        onEndReachedThreshold={0.5}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          {
-            useNativeDriver: true,
-          },
-        )}
-        style={{ marginHorizontal: 0 }}
-        data={data}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        keyboardDismissMode="on-drag"
-        keyboardShouldPersistTaps="handled"
-        ListHeaderComponent={
-          <>
-            <ListHeaderWrapper>
-              <SearchBar
-                placeholder={intl.formatMessage({
-                  id: 'inbox.searchPlaceholder',
-                })}
-                value={query}
-                onChangeText={(text) => setQuery(text)}
-                onFocus={() => {
-                  if (selectState) {
+      <SafeAreaView>
+        <Animated.FlatList
+          ref={flatListRef}
+          scrollEventThrottle={16}
+          scrollToOverflowEnabled
+          onEndReachedThreshold={0.5}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            {
+              useNativeDriver: true,
+            },
+          )}
+          style={{ marginHorizontal: 0 }}
+          data={data}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="handled"
+          ListHeaderComponent={
+            <>
+              <ListHeaderWrapper>
+                <SearchBar
+                  placeholder={intl.formatMessage({
+                    id: 'inbox.searchPlaceholder',
+                  })}
+                  value={query}
+                  onChangeText={(text) => setQuery(text)}
+                  onFocus={() => {
+                    if (selectState) {
+                      resetSelectState()
+                    }
+                  }}
+                />
+                <Button
+                  title={intl.formatMessage({
+                    id: 'inbox.filterButtonTitle',
+                  })}
+                  isOutlined
+                  isUtilityButton
+                  style={{
+                    marginLeft: 8,
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                  }}
+                  icon={filterIcon}
+                  iconStyle={{ tintColor: theme.color.blue400 }}
+                  onPress={() => {
                     resetSelectState()
-                  }
-                }}
-              />
-              <Button
-                title={intl.formatMessage({
-                  id: 'inbox.filterButtonTitle',
-                })}
-                isOutlined
-                isUtilityButton
-                style={{
-                  marginLeft: 8,
-                  paddingTop: 0,
-                  paddingBottom: 0,
-                }}
-                icon={filterIcon}
-                iconStyle={{ tintColor: theme.color.blue400 }}
-                onPress={() => {
-                  resetSelectState()
-                  navigateTo('/inbox-filter', {
-                    opened,
-                    archived,
-                    bookmarked,
-                    availableSenders,
-                    availableCategories,
-                    selectedSenders: senderNationalId,
-                    selectedCategories: categoryIds,
-                    dateFrom,
-                    dateTo,
-                  })
-                }}
-              />
-              <Button
-                icon={inboxReadIcon}
-                isUtilityButton
-                isOutlined
-                style={{
-                  paddingTop: 0,
-                  paddingBottom: 0,
-                  paddingLeft: 12,
-                  paddingRight: 12,
-                  minWidth: 40,
-                }}
-                onPress={onPressMarkAllAsRead}
-              />
-            </ListHeaderWrapper>
-            {isFilterApplied ? (
-              <TagsWrapper>
-                {opened && (
-                  <Tag
-                    title={intl.formatMessage({
-                      id: 'inbox.filterOpenedTagTitle',
+                    navigateTo('/inbox-filter', {
+                      opened,
+                      archived,
+                      bookmarked,
+                      availableSenders,
+                      availableCategories,
+                      selectedSenders: senderNationalId,
+                      selectedCategories: categoryIds,
+                      dateFrom,
+                      dateTo,
+                    })
+                  }}
+                />
+                <Button
+                  icon={inboxReadIcon}
+                  isUtilityButton
+                  isOutlined
+                  style={{
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                    paddingLeft: 12,
+                    paddingRight: 12,
+                    minWidth: 40,
+                  }}
+                  onPress={onPressMarkAllAsRead}
+                />
+              </ListHeaderWrapper>
+              {isFilterApplied ? (
+                <TagsWrapper>
+                  {opened && (
+                    <Tag
+                      title={intl.formatMessage({
+                        id: 'inbox.filterOpenedTagTitle',
+                      })}
+                      closable
+                      onClose={() =>
+                        Navigation.updateProps(componentId, { opened: false })
+                      }
+                    />
+                  )}
+                  {archived && (
+                    <Tag
+                      title={intl.formatMessage({
+                        id: 'inbox.filterArchivedTagTitle',
+                      })}
+                      closable
+                      onClose={() =>
+                        Navigation.updateProps(componentId, { archived: false })
+                      }
+                    />
+                  )}
+                  {bookmarked && (
+                    <Tag
+                      title={intl.formatMessage({
+                        id: 'inbox.filterStarredTagTitle',
+                      })}
+                      closable
+                      onClose={() =>
+                        Navigation.updateProps(componentId, {
+                          bookmarked: false,
+                        })
+                      }
+                    />
+                  )}
+                  {!!senderNationalId.length &&
+                    senderNationalId.map((senderId) => {
+                      const name = availableSenders.find(
+                        (sender) => sender.id === senderId,
+                      )
+                      return (
+                        <Tag
+                          key={senderId}
+                          title={name?.name?.trim() ?? senderId}
+                          closable
+                          onClose={() =>
+                            Navigation.updateProps(componentId, {
+                              senderNationalId: senderNationalId.filter(
+                                (id) => id !== senderId,
+                              ),
+                            })
+                          }
+                        />
+                      )
                     })}
-                    closable
-                    onClose={() =>
-                      Navigation.updateProps(componentId, { opened: false })
-                    }
-                  />
-                )}
-                {archived && (
-                  <Tag
-                    title={intl.formatMessage({
-                      id: 'inbox.filterArchivedTagTitle',
+                  {!!categoryIds.length &&
+                    categoryIds.map((categoryId) => {
+                      const name = availableCategories.find(
+                        (category) => category.id === categoryId,
+                      )
+                      return (
+                        <Tag
+                          key={categoryId}
+                          title={name?.name ?? categoryId}
+                          closable
+                          onClose={() =>
+                            Navigation.updateProps(componentId, {
+                              categoryIds: categoryIds.filter(
+                                (id) => id !== categoryId,
+                              ),
+                            })
+                          }
+                        />
+                      )
                     })}
-                    closable
-                    onClose={() =>
-                      Navigation.updateProps(componentId, { archived: false })
-                    }
-                  />
-                )}
-                {bookmarked && (
-                  <Tag
-                    title={intl.formatMessage({
-                      id: 'inbox.filterStarredTagTitle',
-                    })}
-                    closable
-                    onClose={() =>
-                      Navigation.updateProps(componentId, { bookmarked: false })
-                    }
-                  />
-                )}
-                {!!senderNationalId.length &&
-                  senderNationalId.map((senderId) => {
-                    const name = availableSenders.find(
-                      (sender) => sender.id === senderId,
-                    )
-                    return (
-                      <Tag
-                        key={senderId}
-                        title={name?.name?.trim() ?? senderId}
-                        closable
-                        onClose={() =>
-                          Navigation.updateProps(componentId, {
-                            senderNationalId: senderNationalId.filter(
-                              (id) => id !== senderId,
-                            ),
-                          })
-                        }
-                      />
-                    )
-                  })}
-                {!!categoryIds.length &&
-                  categoryIds.map((categoryId) => {
-                    const name = availableCategories.find(
-                      (category) => category.id === categoryId,
-                    )
-                    return (
-                      <Tag
-                        key={categoryId}
-                        title={name?.name ?? categoryId}
-                        closable
-                        onClose={() =>
-                          Navigation.updateProps(componentId, {
-                            categoryIds: categoryIds.filter(
-                              (id) => id !== categoryId,
-                            ),
-                          })
-                        }
-                      />
-                    )
-                  })}
-                {dateFrom && (
-                  <Tag
-                    title={`${intl.formatMessage({
-                      id: 'inbox.filterDateFromLabel',
-                    })} - ${intl.formatDate(dateFrom)}`}
-                    closable
-                    onClose={() =>
-                      Navigation.updateProps(componentId, {
-                        dateFrom: undefined,
-                      })
-                    }
-                  />
-                )}
-                {dateTo && (
-                  <Tag
-                    title={`${intl.formatMessage({
-                      id: 'inbox.filterDateToLabel',
-                    })} - ${intl.formatDate(dateTo)}`}
-                    closable
-                    onClose={() =>
-                      Navigation.updateProps(componentId, {
-                        dateTo: undefined,
-                      })
-                    }
-                  />
-                )}
-              </TagsWrapper>
-            ) : null}
-          </>
-        }
-        refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
-        }
-        onEndReached={() => {
-          loadMore()
-        }}
-        ListFooterComponent={
-          loadingMore && !res.error ? (
-            <LoadingWrapper>
-              <ActivityIndicator
-                size="small"
-                animating
-                color={theme.color.blue400}
-              />
-            </LoadingWrapper>
-          ) : null
-        }
-      />
+                  {dateFrom && (
+                    <Tag
+                      title={`${intl.formatMessage({
+                        id: 'inbox.filterDateFromLabel',
+                      })} - ${intl.formatDate(dateFrom)}`}
+                      closable
+                      onClose={() =>
+                        Navigation.updateProps(componentId, {
+                          dateFrom: undefined,
+                        })
+                      }
+                    />
+                  )}
+                  {dateTo && (
+                    <Tag
+                      title={`${intl.formatMessage({
+                        id: 'inbox.filterDateToLabel',
+                      })} - ${intl.formatDate(dateTo)}`}
+                      closable
+                      onClose={() =>
+                        Navigation.updateProps(componentId, {
+                          dateTo: undefined,
+                        })
+                      }
+                    />
+                  )}
+                </TagsWrapper>
+              ) : null}
+            </>
+          }
+          refreshControl={
+            <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+          }
+          onEndReached={() => {
+            loadMore()
+          }}
+          ListFooterComponent={
+            loadingMore && !res.error ? (
+              <LoadingWrapper>
+                <ActivityIndicator
+                  size="small"
+                  animating
+                  color={theme.color.blue400}
+                />
+              </LoadingWrapper>
+            ) : null
+          }
+        />
+      </SafeAreaView>
       {selectState && selectedItems.length ? (
         <ActionBar
           loading={bulkSelectActionLoading}

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ActionSheetIOS, DevSettings } from 'react-native'
 import DialogAndroid from 'react-native-dialogs'
 import { Navigation } from 'react-native-navigation'
