@@ -1,9 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import {
-  Contract,
-  TerminationReason,
-} from '@island.is/clients/hms-rental-agreement'
+import { Contract } from '@island.is/clients/hms-rental-agreement'
 import * as m from '../lib/messages'
 
 export const rentalContractOptions = (application: Application) => {
@@ -31,6 +28,21 @@ export const rentalContractOptions = (application: Application) => {
       },
     },
   }))
+}
+
+// Copied from @island.is/clients/hms-rental-agreement
+export enum TerminationReason {
+  OWNERINBUILDING = 'OWNER_IN_BUILDING',
+  FURNISHEDRENT = 'FURNISHED_RENT',
+  OWNERTAKINGBACK = 'OWNER_TAKING_BACK',
+  OWNERRELATIVES = 'OWNER_RELATIVES',
+  OWNERSELLING = 'OWNER_SELLING',
+  SIGNIFICANTREPAIRS = 'SIGNIFICANT_REPAIRS',
+  TENANTEMPLOYEE = 'TENANT_EMPLOYEE',
+  TENANTNONCOMPLIANCE = 'TENANT_NON_COMPLIANCE',
+  TENANTBEHAVIOR = 'TENANT_BEHAVIOR',
+  BOTHPARTIESINTERESTS = 'BOTH_PARTIES_INTERESTS',
+  NONPROFITTENANT = 'NON_PROFIT_TENANT',
 }
 
 const terminationReasons = {
