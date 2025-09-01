@@ -6,10 +6,13 @@ import {
   buildHiddenInputWithWatchedValue,
   buildRadioField,
   buildAlertMessageField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
 import * as m from '../../../lib/messages'
-import { getYesNoOptions } from '../../../utils/utils'
+import { getRentalPropertySize, getYesNoOptions } from '../../../utils/utils'
+import { shouldShowSmokeDetectorsAlert } from '../../../utils/conditions'
+import { PropertyUnit } from '../../../shared/types'
 
 export const RentalHousingFireProtections = buildSubSection({
   id: Routes.FIREPROTECTIONS,
@@ -28,15 +31,24 @@ export const RentalHousingFireProtections = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'fireProtections.smokeDetectorsRequirements',
+          condition: shouldShowSmokeDetectorsAlert,
           title: m.housingFireProtections.smokeDetectorsAlertTitle,
           message: (application) => {
             console.log('application: ', application)
 
+            const propertySize = getValueViaPath<Array<PropertyUnit>>(
+              application.answers,
+              'registerProperty.searchresults.units',
+            )
+
+            const size = getRentalPropertySize(propertySize ?? [])
+            const requiredSmokeDetectors = Math.ceil(Number(size) / 80)
+
             return {
               ...m.housingFireProtections.smokeDetectorsAlertMessage,
               values: {
-                propertySize: 80,
-                requiredSmokeDetectors: 1,
+                propertySize: size,
+                requiredSmokeDetectors,
               },
             }
           },
