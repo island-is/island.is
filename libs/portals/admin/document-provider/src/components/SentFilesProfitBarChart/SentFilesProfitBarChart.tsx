@@ -1,10 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Text,
-  GridColumn,
-  GridRow,
-} from '@island.is/island-ui/core'
+import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   BarChart,

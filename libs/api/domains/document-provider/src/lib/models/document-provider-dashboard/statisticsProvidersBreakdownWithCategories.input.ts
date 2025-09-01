@@ -1,9 +1,4 @@
-import {
-  Field,
-  InputType,
-  Int,
-  registerEnumType,
-} from '@nestjs/graphql'
+import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
 import { Min } from 'class-validator'
 
 export enum CategoryStatisticsSortBy {
