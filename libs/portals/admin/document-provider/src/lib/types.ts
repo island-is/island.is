@@ -50,11 +50,6 @@ export type ProviderStatisticsBreakdownWithCategories = {
   categoryStatistics: Array<CategoryItemChartData>
 }
 
-export type SentFilesByCategoryChartData = {
-  items: Array<ProviderStatisticsBreakdownWithCategories>
-  totalCount: number
-}
-
 export type SentFilesChartDataItem = {
   name: string
   cat1: SentFilesChartDataItemInfo

@@ -15,12 +15,13 @@ export function useGetStatisticsOverviewByProviderId(
 ): GetStatisticsByNationalIdReturnType {
   const statisticsInput: ApiV1StatisticsNationalIdProvidersProviderIdGetRequest =
     {
-      nationalId: nationalId ?? '',
-      providerId: providerId ?? '',
-      from: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),
-      to: !fromDate ? undefined : toDate?.toISOString().slice(0, 10),
+      nationalId: nationalId!,
+      providerId: providerId!,
+      from: fromDate ? fromDate.toISOString().slice(0, 10) : undefined,
+      to: toDate ? toDate.toISOString().slice(0, 10) : undefined,
     }
 
+  const shouldSkip = !nationalId || !providerId
   const { data, loading, error } = useQuery(
     GET_STATISTICS_OVERVIEW_BY_PROVIDERID,
     {
@@ -28,6 +29,7 @@ export function useGetStatisticsOverviewByProviderId(
         input: statisticsInput,
       },
       fetchPolicy: 'cache-and-network',
+      skip: shouldSkip,
     },
   )
 

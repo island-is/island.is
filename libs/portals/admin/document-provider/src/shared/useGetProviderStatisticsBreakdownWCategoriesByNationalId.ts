@@ -1,10 +1,8 @@
 import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import {
   ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest,
-  ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest,
-  CategoryStatisticsSortBy,
   TotalStatisticsSortBy,
 } from '@island.is/api/schema'
 import { GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_NATIONALID } from '../queries'
@@ -12,9 +10,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
 import {
   CategoryItemChartData,
-  ChartData,
   GetProviderStatisticsBreakdownWithCategoriesReturnType,
-  ProviderStatisticsBreakdown,
   ProviderStatisticsBreakdownWithCategories,
   SentFilesChartDataItem,
   SentFilesChartDataItemInfo,
@@ -25,9 +21,9 @@ export function useGetProviderStatisticsBreakdownWCategoriesByNationalId(
   fromDate?: Date,
   toDate?: Date,
   sortBy?: string,
-  desc: boolean = false,
-  page: number = 1,
-  pageSize: number = 10,
+  desc = false,
+  page = 1,
+  pageSize = 10,
 ): GetProviderStatisticsBreakdownWithCategoriesReturnType {
   const statisticsInput: ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest =
     {

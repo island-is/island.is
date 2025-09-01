@@ -16,7 +16,7 @@ export function getDocumentProviderNavigationItems(
   const markActive = (items: NavigationItem[]): NavigationItem[] =>
     items.map((item) => {
       const isActive = item.href === normalizedPath
-      let newItems = item.items ? markActive(item.items) : []
+      const newItems = item.items ? markActive(item.items) : []
       // If any child is active, parent is also active
       const childActive = newItems.some((child) => child.active)
       return {

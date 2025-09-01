@@ -10,16 +10,6 @@ interface DocumentProvidersNavigationProps {
   providers: ProviderInfo[]
 }
 
-type NavChildrenBase = {
-  active: boolean
-  href: string | undefined
-  title: string
-}
-
-type NavChildren = NavChildrenBase & {
-  items?: NavChildren[]
-}
-
 const findActiveNav = (
   navigation?: NavigationItem,
 ): NavigationItem | undefined => {

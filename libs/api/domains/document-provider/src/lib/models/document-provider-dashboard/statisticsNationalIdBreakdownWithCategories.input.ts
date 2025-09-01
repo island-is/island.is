@@ -1,14 +1,11 @@
 import {
   Field,
-  GraphQLISODateTime,
-  ID,
   Int,
   InputType,
   registerEnumType,
 } from '@nestjs/graphql'
 import { TotalStatisticsSortBy } from './statisticsNationalIdBreakdown.input'
-
-registerEnumType(TotalStatisticsSortBy, { name: 'TotalStatisticsSortBy' })
+import { Min } from 'class-validator'
 
 @InputType('ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest')
 export class ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest {
@@ -28,8 +25,10 @@ export class ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest {
   desc?: boolean
 
   @Field(() => Int, { nullable: true })
+  @Min(1)
   page?: number
 
   @Field(() => Int, { nullable: true })
+  @Min(1)
   pageSize?: number
 }

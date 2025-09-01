@@ -1,24 +1,16 @@
-import React from 'react'
 import { useLocale } from '@island.is/localization'
 import {
   GridRow,
-  GridColumn,
   Box,
   Text,
-  Bullet,
 } from '@island.is/island-ui/core'
-import { StatisticBox } from '../../components/StatisticBox/StatisticBox'
-import { m } from '../../lib/messages'
 import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/OpenedFilesDonutChart'
-import { useParams } from 'react-router-dom'
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
 import { SentFilesAndErrorsBarChart } from '../../components/SentFilesAndErrorsBarChart/SentFilesAndErrorsBarChart'
 import { SentFilesProfitBarChart } from '../../components/SentFilesProfitBarChart/SentFilesProfitBarChart'
 import {
   ChartData,
   SentFilesChartDataItem,
-  StatisticsBoxData,
-  StatisticsOverview,
 } from '../../lib/types'
 
 interface Props {

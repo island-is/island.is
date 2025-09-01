@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { ApiV1StatisticsNationalIdCategoriesGetRequest } from '@island.is/api/schema'
 import { GET_STATISTIC_PROVIDER_CATEGORIES_BY_NATIONALID } from '../queries'
 import { useLocale } from '@island.is/localization'
