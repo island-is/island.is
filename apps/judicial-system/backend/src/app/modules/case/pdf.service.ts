@@ -34,11 +34,9 @@ import {
   getRulingPdfAsBuffer,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { Defendant } from '../defendant'
-import { EventLog } from '../event-log'
-import { Subpoena, SubpoenaService } from '../subpoena'
+import { Case, Defendant, EventLog, Subpoena } from '../repository'
+import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
-import { Case } from './models/case.model'
 
 @Injectable()
 export class PdfService {

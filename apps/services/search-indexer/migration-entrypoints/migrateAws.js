@@ -1,2 +1,2 @@
-const { migrateAws } = require('./main')
+const { migrateAws } = require('./main.cjs')
 migrateAws()

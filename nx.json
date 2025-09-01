@@ -234,5 +234,8 @@
         "targetName": "e2e"
       }
     }
-  ]
+  ],
+  "tui": {
+    "enabled": false
+  }
 }

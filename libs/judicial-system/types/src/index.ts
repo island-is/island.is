@@ -142,6 +142,7 @@ export {
   IndictmentCountOffense,
   offenseSubstances,
   isTrafficViolationIndictmentCount,
+  getIndictmentCountCompare,
 } from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 
