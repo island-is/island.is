@@ -9,8 +9,7 @@ import {
 
 import { createTestingUserModule } from './createTestingUserModule'
 
-import { Institution } from '../../institution'
-import { User } from '../user.model'
+import { Institution, User } from '../../repository'
 
 interface Then {
   result: User[]

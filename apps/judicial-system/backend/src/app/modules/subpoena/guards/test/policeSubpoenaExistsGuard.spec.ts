@@ -8,7 +8,7 @@ import {
 
 import { createTestingSubpoenaModule } from '../../test/createTestingSubpoenaModule'
 
-import { Subpoena } from '../../models/subpoena.model'
+import { Subpoena } from '../../../repository'
 import { include } from '../../subpoena.service'
 import { PoliceSubpoenaExistsGuard } from '../policeSubpoenaExists.guard'
 
