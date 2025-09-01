@@ -77,7 +77,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!searchResults) {
+      if (!searchResults || searchResults[1] === 0) {
         return
       }
 
@@ -157,6 +157,8 @@ const SearchModal: FC<Props> = ({ onClose }) => {
               ],
           results.data?.searchCases.rowCount,
         ])
+
+        setFocusIndex(-1)
       } catch (error) {
         console.error('Error searching cases:', error)
       }
