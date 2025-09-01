@@ -234,7 +234,6 @@ export const parties = z
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `Duplicate national ID found: ${landlordTable[duplicateIndexInLandlordTable].nationalIdWithName?.nationalId}`,
         params: m.partiesDetails.duplicateNationalIdError,
         path: [
           'landlordInfo',
@@ -252,7 +251,6 @@ export const parties = z
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `Duplicate national ID found: ${representativeTable[duplicateIndexInRepresentativeTable].nationalIdWithName?.nationalId}`,
         params: m.partiesDetails.duplicateNationalIdError,
         path: [
           'landlordInfo',
@@ -270,7 +268,6 @@ export const parties = z
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `Duplicate national ID found: ${tenantTable[duplicateIndexInTenantTable].nationalIdWithName?.nationalId}`,
         params: m.partiesDetails.duplicateNationalIdError,
         path: [
           'tenantInfo',
