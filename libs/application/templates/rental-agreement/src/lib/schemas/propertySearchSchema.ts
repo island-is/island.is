@@ -40,7 +40,9 @@ export const registerProperty = z
       .optional(),
   })
   .superRefine((data, ctx) => {
-    if (!data?.searchresults?.units || data.searchresults.units.length === 0) {
+    const { searchresults } = data
+
+    if (!searchresults?.units || searchresults.units.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -48,8 +50,8 @@ export const registerProperty = z
         path: ['searchresults'],
       })
     }
-    if (data?.searchresults?.units && data.searchresults.units.length > 0) {
-      const totalRooms = data.searchresults.units.reduce(
+    if (searchresults?.units && searchresults.units.length > 0) {
+      const totalRooms = searchresults.units.reduce(
         (sum, unit) => sum + (unit.numOfRooms || 0),
         0,
       )
@@ -70,7 +72,7 @@ export const registerProperty = z
         })
       }
 
-      const totalChangedSize = data.searchresults.units.reduce(
+      const totalChangedSize = searchresults.units.reduce(
         (sum, unit) => sum + (unit.changedSize || 0),
         0,
       )
