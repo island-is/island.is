@@ -372,7 +372,7 @@ export class LimitedAccessCaseService {
     update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
-    const [numberOfAffectedRows] = await this.caseModel.update(
+    const [numberOfAffectedRows] = await this.caseRepositoryService.update(
       { ...update },
       { where: { id: theCase.id } },
     )

@@ -389,7 +389,7 @@ export class InternalCaseService {
     }
 
     return this.sequelize.transaction(async (transaction) => {
-      const newCase = await this.caseModel.create(
+      const newCase = await this.caseRepositoryService.create(
         {
           ...caseToCreate,
           state: isRequestCase(caseToCreate.type)
@@ -561,7 +561,7 @@ export class InternalCaseService {
         { transaction },
       )
 
-      await this.caseModel.update(
+      await this.caseRepositoryService.update(
         { ...clearedCaseProperties, isArchived: true },
         { where: { id: theCase.id }, transaction },
       )
@@ -1417,7 +1417,7 @@ export class InternalCaseService {
   }
 
   countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {
-    return this.caseModel.count({
+    return this.caseRepositoryService.count({
       include: [{ model: User, as: 'creatingProsecutor' }],
       where: {
         type: CaseType.INDICTMENT,

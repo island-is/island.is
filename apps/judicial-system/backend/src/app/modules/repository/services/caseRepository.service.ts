@@ -1,4 +1,11 @@
-import { FindAndCountOptions, FindOptions, Transaction } from 'sequelize'
+import {
+  CountOptions,
+  CreateOptions,
+  FindAndCountOptions,
+  FindOptions,
+  Transaction,
+  UpdateOptions,
+} from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -6,6 +13,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { Case } from '../models/case.model'
+import { UpdateCase } from '../types/caseRepository.types'
 
 interface FindByIdOptions {
   transaction?: Transaction
@@ -40,6 +48,22 @@ interface FindAndCountAllOptions {
   offset?: FindAndCountOptions['offset']
   distinct?: FindAndCountOptions['distinct']
   raw?: FindAndCountOptions['raw']
+}
+
+interface CreateCaseOptions {
+  transaction?: Transaction
+}
+
+interface UpdateCaseOptions {
+  where: UpdateOptions['where']
+  transaction?: Transaction
+}
+
+interface CountCaseOptions {
+  where?: CountOptions['where']
+  transaction?: Transaction
+  include?: CountOptions['include']
+  distinct?: CountOptions['distinct']
 }
 
 @Injectable()
@@ -218,6 +242,93 @@ export class CaseRepositoryService {
       return results
     } catch (error) {
       this.logger.error(`Error finding and counting all cases:`, error)
+
+      throw error
+    }
+  }
+
+  async create(
+    data: Partial<Case>,
+    options?: CreateCaseOptions,
+  ): Promise<Case> {
+    try {
+      this.logger.debug('Creating new case with data:', data)
+
+      const createOptions: CreateOptions = {}
+
+      if (options?.transaction) {
+        createOptions.transaction = options.transaction
+      }
+
+      const result = await this.caseModel.create(data, createOptions)
+
+      this.logger.debug(`Case created with ID: ${result.id}`)
+
+      return result
+    } catch (error) {
+      this.logger.error('Error creating case:', error)
+
+      throw error
+    }
+  }
+
+  async update(
+    data: UpdateCase,
+    options: UpdateCaseOptions,
+  ): Promise<[affectedCount: number]> {
+    try {
+      this.logger.debug('Updating case with data:', data)
+      this.logger.debug('Update conditions:', options.where)
+
+      const updateOptions: UpdateOptions = {
+        where: options.where,
+      }
+
+      if (options.transaction) {
+        updateOptions.transaction = options.transaction
+      }
+
+      const result = await this.caseModel.update(data, updateOptions)
+
+      this.logger.debug(`Updated ${result[0]} case(s)`)
+
+      return result
+    } catch (error) {
+      this.logger.error('Error updating case:', error)
+
+      throw error
+    }
+  }
+
+  async count(options?: CountCaseOptions): Promise<number> {
+    try {
+      this.logger.debug('Counting cases with conditions:', options?.where)
+
+      const countOptions: CountOptions = {}
+
+      if (options?.where) {
+        countOptions.where = options.where
+      }
+
+      if (options?.transaction) {
+        countOptions.transaction = options.transaction
+      }
+
+      if (options?.include) {
+        countOptions.include = options.include
+      }
+
+      if (options?.distinct !== undefined) {
+        countOptions.distinct = options.distinct
+      }
+
+      const result = await this.caseModel.count(countOptions)
+
+      this.logger.debug(`Counted ${result} case(s)`)
+
+      return result
+    } catch (error) {
+      this.logger.error('Error counting cases:', error)
 
       throw error
     }

@@ -19,3 +19,5 @@ export { Verdict } from './models/verdict.model'
 export { Victim } from './models/victim.model'
 
 export { CaseRepositoryService } from './services/caseRepository.service'
+
+export { UpdateCase } from './types/caseRepository.types'
