@@ -68,8 +68,8 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
   const intro = locale === 'is' ? 'Góðan dag.' : 'Hello.'
   const introText =
     locale === 'is'
-      ? 'Vinsamlegast lestu yfir leigusamninginn hér að neðan. Ef þú ert með athugasemdir við innihald hans væri best að þú svaraðir þessum tölvupósti með þeim.'
-      : 'Please read the rental agreement below. If you have any comments on its content, it would be best if you replied to this email with them.'
+      ? 'Vinsamlegast lestu vandlega yfir samningsdrögin hér að neðan. Ef þú telur þau ekki rétt eða vilt breyta þeim á einhvern hátt þarftu að hafa samband við gagnaðila samningsins (leigusala eða leigutaka eftir því hver hóf samningsgerðina) og koma athugasemdum á framfæri. Ef þú hefur engar athugasemdir við samningsdrögin þarftu að halda áfram í rafræna undirritun.'
+      : 'Please read the rental agreement below carefully. If you think they are not correct or you want to change them in any way, you need to contact the parties to the agreement (landlord or tenant, depending on who started the agreement) and bring your comments to their attention. If you have no comments on the agreement, you need to continue with the electronic signing.'
 
   return {
     from: {

@@ -23,19 +23,21 @@ const extractParticipants = (
   answers: Application['answers'],
 ): ParticipantsSection => ({
   landlords:
-    getValueViaPath<ApplicantsInfo[]>(answers, 'landlordInfo.table', []) ?? [],
+    getValueViaPath<ApplicantsInfo[]>(
+      answers,
+      'parties.landlordInfo.table',
+      [],
+    ) ?? [],
   landlordRepresentatives:
     getValueViaPath<ApplicantsInfo[]>(
       answers,
-      'landlordInfo.representativeTable',
+      'parties.landlordInfo.representativeTable',
       [],
     ) ?? [],
   tenants:
-    getValueViaPath<ApplicantsInfo[]>(answers, 'tenantInfo.table', []) ?? [],
-  tenantRepresentatives:
     getValueViaPath<ApplicantsInfo[]>(
       answers,
-      'tenantInfo.representativeTable',
+      'parties.tenantInfo.table',
       [],
     ) ?? [],
 })

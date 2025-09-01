@@ -313,13 +313,13 @@ export const getNextStepInReviewOptions = () => [
   },
 ]
 
-export const getEmergencyExitOptions = () => [
+export const getYesNoOptions = () => [
   {
     value: EmergencyExitOptions.YES,
-    label: m.housingFireProtections.typeRadioYesExit,
+    label: m.misc.yes,
   },
   {
     value: EmergencyExitOptions.NO,
-    label: m.housingFireProtections.typeRadioNoExit,
+    label: m.misc.no,
   },
 ]

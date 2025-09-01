@@ -6,9 +6,13 @@ import {
   buildCheckboxField,
   YesOrNoEnum,
   getValueViaPath,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
-import { rentalPeriodIsDefinite } from '../../../utils/rentalPeriodUtils'
+import {
+  isDateMoreThanOneYearInFuture,
+  rentalPeriodIsDefinite,
+} from '../../../utils/rentalPeriodUtils'
 import { rentalPeriod } from '../../../lib/messages'
 import addMonths from 'date-fns/addMonths'
 
@@ -21,6 +25,13 @@ export const RentalPeriodDetails = buildSubSection({
       title: rentalPeriod.pageTitle,
       description: rentalPeriod.pageDescription,
       children: [
+        buildAlertMessageField({
+          id: 'rentalPeriod.alertMessage',
+          title: rentalPeriod.alertMessageTitle,
+          message: rentalPeriod.alertMessage,
+          alertType: 'warning',
+          condition: isDateMoreThanOneYearInFuture,
+        }),
         buildDateField({
           id: 'rentalPeriod.startDate',
           title: rentalPeriod.startDateTitle,

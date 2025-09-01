@@ -368,38 +368,16 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     clearErrors(ERROR_ID)
   }
 
-  const handleUnitSizeChange = (unit: PropertyUnit, value: number) => {
+  const handleUnitChange = (
+    unit: PropertyUnit,
+    keyToUpdate: keyof PropertyUnit,
+    value: string,
+  ) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-    setUnitSizeChangedValue((prev) => {
-      const newValues = {
-        ...prev,
-        [unitKey]: value,
-      }
-      const updatedUnits = (storedValue?.units || []).map((u: PropertyUnit) => {
-        if (
-          u.propertyCode === unit.propertyCode &&
-          u.unitCode === unit.unitCode
-        ) {
-          return {
-            ...u,
-            changedSize: value || 0,
-          }
-        }
-        return u
-      })
-      setValue(id, {
-        ...getValues(id),
-        units: updatedUnits,
-      })
-      return newValues
-    })
-    clearErrors(ERROR_ID)
-  }
+    const parsed = Number(value)
+    const numberValue = Number.isFinite(parsed) ? parsed : 0
 
-  const handleUnitRoomsChange = (unit: PropertyUnit, value: string) => {
-    const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-    const numberValue = value ? Number(value) : 0
-    setNumOfRoomsValue((prev) => {
+    const updateFunc = (prev: Record<string, number>) => {
       const newValues = {
         ...prev,
         [unitKey]: numberValue,
@@ -411,7 +389,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         ) {
           return {
             ...u,
-            numOfRooms: numberValue,
+            [keyToUpdate]: numberValue,
           }
         }
         return u
@@ -421,7 +399,14 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         units: updatedUnits,
       })
       return newValues
-    })
+    }
+
+    if (keyToUpdate === 'changedSize') {
+      setUnitSizeChangedValue(updateFunc)
+    } else if (keyToUpdate === 'numOfRooms') {
+      setNumOfRoomsValue(updateFunc)
+    }
+
     clearErrors(ERROR_ID)
   }
 
@@ -586,14 +571,16 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                                             )
                                           }
                                           onUnitSizeChange={(e) =>
-                                            handleUnitSizeChange(
+                                            handleUnitChange(
                                               unit,
-                                              Number(e.target.value),
+                                              'changedSize',
+                                              e.target.value,
                                             )
                                           }
                                           onUnitRoomsChange={(e) =>
-                                            handleUnitRoomsChange(
+                                            handleUnitChange(
                                               unit,
+                                              'numOfRooms',
                                               e.target.value,
                                             )
                                           }

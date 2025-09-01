@@ -16,6 +16,13 @@ import {
 } from '../propertySearch.css'
 import { registerProperty } from '../../../lib/messages'
 
+const isValidInteger = (value: string): boolean => {
+  return /^\d*$/.test(value)
+}
+
+const isValidDecimal = (value: string): boolean => {
+  return /^\d*\.?\d*$/.test(value)
+}
 interface PropertyUnitsProps {
   unitCode?: string
   propertyUsageDescription?: string
@@ -123,12 +130,16 @@ export const PropertyTableUnits = ({
                 className={`${input} ${sizeInput} ${noInputArrows} ${
                   checkedUnits && sizeInputError ? inputError : ''
                 }`}
-                type="number"
+                type="text"
                 name="propertySize"
                 min={0}
                 step={0.1}
-                value={unitSizeValue}
-                onChange={onUnitSizeChange}
+                value={Number(unitSizeValue)}
+                onChange={(e) => {
+                  if (isValidDecimal(e.target.value)) {
+                    onUnitSizeChange?.(e)
+                  }
+                }}
                 onWheel={preventScrollChange}
                 disabled={isUnitSizeDisabled}
               />
@@ -149,10 +160,9 @@ export const PropertyTableUnits = ({
               min={0}
               value={Number(numOfRoomsValue)}
               onChange={(e) => {
-                if (!/^\d*$/.test(e.target.value)) {
-                  return
+                if (isValidInteger(e.target.value)) {
+                  onUnitRoomsChange?.(e)
                 }
-                onUnitRoomsChange?.(e)
               }}
               onWheel={preventScrollChange}
               disabled={isNumOfRoomsDisabled}

@@ -14,8 +14,7 @@ export enum Roles {
 }
 
 export enum Routes {
-  LANDLORDINFORMATION = 'landlordInfo',
-  TENANTINFORMATION = 'tenantInfo',
+  PARTIESINFORMATION = 'partiesInfo',
   REGISTERPROPERTY = 'registerProperty',
   PROPERTYINFORMATION = 'propertyInfo',
   PROPERTYSEARCH = 'registerProperty.searchresults',

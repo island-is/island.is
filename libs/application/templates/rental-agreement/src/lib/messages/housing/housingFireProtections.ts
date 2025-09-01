@@ -58,6 +58,11 @@ export const housingFireProtections = defineMessages({
     defaultMessage: 'Nei',
     description: 'Label for no - property does not have an emergency exit',
   },
+  fireBlanketRequirements: {
+    id: 'ra.application:housingFireProtections.fireBlanketRequirements',
+    defaultMessage: 'Er eldvarnarteppi til staðar?',
+    description: 'Fire blanket requirements',
+  },
 
   // dataSchema
   smokeDetectorMinRequiredError: {
