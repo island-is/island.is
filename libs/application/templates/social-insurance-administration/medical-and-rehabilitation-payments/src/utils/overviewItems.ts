@@ -1,12 +1,10 @@
-import { ApolloClient } from '@apollo/client'
 import { NO, YES } from '@island.is/application/core'
-import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   formatBankAccount,
   getTaxLevelOption,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+
 import {
   ExternalData,
   FormValue,
