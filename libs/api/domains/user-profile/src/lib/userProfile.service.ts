@@ -146,7 +146,7 @@ export class UserProfileService {
     input: CreateEmailVerificationInput,
     user: User,
   ): Promise<void> {
-    await this.v2MeUserProfileApiWithAuth(
+    await this.v2ActorApiWithAuth(
       user,
     ).actorUserProfileControllerCreateVerification({
       createVerificationDto: input,
