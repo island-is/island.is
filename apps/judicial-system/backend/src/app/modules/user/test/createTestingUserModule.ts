@@ -11,9 +11,9 @@ import {
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
 
+import { User } from '../../repository'
 import { userModuleConfig } from '../user.config'
 import { UserController } from '../user.controller'
-import { User } from '../user.model'
 import { UserService } from '../user.service'
 
 export const createTestingUserModule = async () => {
