@@ -144,9 +144,6 @@
       "@island.is/api/domains/intellectual-properties": [
         "libs/api/domains/intellectual-properties/src/index.ts"
       ],
-      "@island.is/api/domains/islykill": [
-        "libs/api/domains/islykill/src/index.ts"
-      ],
       "@island.is/api/domains/law-and-order": [
         "libs/api/domains/law-and-order/src/index.ts"
       ],

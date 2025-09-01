@@ -33,11 +33,6 @@ const SharedModuleConfig = z.object({
     userProfile: z.object({
       serviceBasePath: z.string(),
     }),
-    islykill: z.object({
-      cert: z.string(),
-      passphrase: z.string(),
-      basePath: z.string(),
-    }),
   }),
   contentful: z.object({
     accessToken: z.string(),
