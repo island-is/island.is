@@ -209,6 +209,9 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
             },
           },
         )
+      if (!cvResponse.success) {
+        throw new Error(cvResponse.errorMessage || 'create attachment failed')
+      }
     }
 
     const payload: ActivationGrantCreateActivationGrantRequest = {
