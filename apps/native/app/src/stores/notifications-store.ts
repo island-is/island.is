@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import messaging, { getToken } from '@react-native-firebase/messaging'
+import { getToken } from '@react-native-firebase/messaging'
 import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'

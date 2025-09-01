@@ -38,6 +38,7 @@ async function initialize() {
   // set default timezone
   if (typeof HermesInternal === 'object' && HermesInternal !== null) {
     if ('__setDefaultTimeZone' in Intl.DateTimeFormat) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(Intl.DateTimeFormat as any).__setDefaultTimeZone('UTC')
     }
   }
@@ -47,12 +48,9 @@ async function initialize() {
     await polyfillDateTimeFormat()
 
     // overwrite global Intl
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     global.Intl = (global as any).IntlPolyfill
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(global.Intl as any).__disableRegExpRestore()
   }
 }
