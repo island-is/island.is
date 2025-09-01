@@ -415,7 +415,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
-    unionNationalId,
+    unionInfo,
     comment,
     questionnaire,
     currentEmploymentStatus,
@@ -453,7 +453,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     applicationId: application.id,
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
       domesticBankInfo: {
-        bank: getBankIsk(paymentInfo),
+        bank: formatBank(getBankIsk(paymentInfo)),
       },
     }),
     taxInfo: {
@@ -502,7 +502,8 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
         ),
         ...((hasUtilizedUnionSickPayRights === YES ||
           hasUtilizedUnionSickPayRights === NO) && {
-          unionNationalId,
+          unionNationalId: unionInfo.split('::')[0],
+          unionName: unionInfo.split('::')[1],
           unionSickPayEndDate,
         }),
       },
