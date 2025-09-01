@@ -33,19 +33,15 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseService } from '../case/internalCase.service'
-import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { DefendantService } from '../defendant/defendant.service'
-import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { Institution } from '../institution'
 import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
-import { User } from '../user'
+import { Case, Defendant, Institution, Subpoena, User } from '../repository'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
-import { Subpoena } from './models/subpoena.model'
 
 export const include: Includeable[] = [
   {
