@@ -24,7 +24,11 @@ import {
   capitalize,
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
-import { isDefenceUser, Lawyer } from '@island.is/judicial-system/types'
+import {
+  isAdminUser,
+  isDefenceUser,
+  Lawyer,
+} from '@island.is/judicial-system/types'
 import { SearchModal } from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 
@@ -272,20 +276,21 @@ const HeaderContainer = () => {
                 }
                 onLogout={handleLogout}
               />
-
-              <Box
-                border="standard"
-                borderRadius="full"
-                display="flex"
-                alignItems="center"
-                justifyContent={'spaceBetween'}
-                className={styles.searchButton}
-                component="button"
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-              >
-                <Text>Leit</Text>
-                <Icon icon="search" color="blue400" size="small" />
-              </Box>
+              {!isDefenceUser(user) && !isAdminUser(user) && (
+                <Box
+                  border="standard"
+                  borderRadius="full"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent={'spaceBetween'}
+                  className={styles.searchButton}
+                  component="button"
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                >
+                  <Text>Leit</Text>
+                  <Icon icon="search" color="blue400" size="small" />
+                </Box>
+              )}
             </>
           )}
         </Inline>
