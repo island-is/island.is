@@ -453,7 +453,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     applicationId: application.id,
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
       domesticBankInfo: {
-        bank: getBankIsk(paymentInfo),
+        bank: formatBank(getBankIsk(paymentInfo)),
       },
     }),
     taxInfo: {
