@@ -111,7 +111,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
     if (focusIndex !== null && itemRefs.current[focusIndex]) {
       itemRefs.current[focusIndex]?.scrollIntoView({
         behavior: 'smooth',
-        block: 'nearest', // keeps it from jumping too much
+        block: 'nearest',
       })
     }
   }, [focusIndex])
