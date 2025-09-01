@@ -8,7 +8,7 @@ export const generateMemorialCardPaymentConfirmationEmailMessage = (
 ) => {
   const lines: string[] = []
 
-  lines.push(`Minningarsjóður: ${input.fundChargeItemCode}`) // TODO: Perhaps send the name of the fund and not the "id"?
+  lines.push(`Minningarsjóður: ${input.fundChargeItemCode}`)
   lines.push(`Til minningar um: ${input.inMemoryOf}`)
   lines.push(`Fjárhæð: ${input.amountISK} krónur`)
   lines.push(`Undirskrift sendanda: ${input.senderSignature}`)
@@ -33,7 +33,7 @@ export const generateDirectGrantPaymentConfirmationEmailMessage = (
 ) => {
   const lines: string[] = []
 
-  lines.push(`Styrktarsjóður: ${input.grantChargeItemCode}`) // TODO: Perhaps send the name of the grant and not the "id"?
+  lines.push(`Styrktarsjóður: ${input.grantChargeItemCode}`)
   lines.push(`Verkefni: ${input.project}`)
   lines.push(`Fjárhæð: ${input.amountISK}`)
 

@@ -29,7 +29,7 @@ import {
 
 // eslint-disable-next-line local-rules/disallow-kennitalas
 const LANDSPITALI_NATIONAL_ID = '5003002130'
-const FEE_CHARGE_ITEM_CODE = 'MR101' // Styrktar- og gjafasjóður Landspítala (TODO: let's verify that is where the 500 kr fee should go)
+const FEE_CHARGE_ITEM_CODE = 'MR101'
 
 @Injectable()
 export class LandspitaliService {
@@ -110,10 +110,10 @@ export class LandspitaliService {
     const { urls } =
       await this.paymentsClient.paymentFlowControllerCreatePaymentUrl({
         createPaymentFlowInput: {
-          // TODO: Verify this should be the product title
-          // TODO: Perhaps fetch product title from somewhere else?
-          // TODO: Should the product title be localized?
-          productTitle: 'Minningarkort - Landspítali',
+          productTitle:
+            locale === 'is'
+              ? 'Minningarkort - Landspítali'
+              : 'Memorial Card - Landspítali',
           availablePaymentMethods: [
             CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
           ],
@@ -121,13 +121,13 @@ export class LandspitaliService {
             {
               price: input.amountISK,
               chargeItemCode: input.fundChargeItemCode,
-              chargeType: 'MemorialCard', // TODO: Verify this is the correct charge type
+              chargeType: input.fundChargeItemCode.slice(0, 3),
               quantity: 1,
             },
             {
               price: 500,
               chargeItemCode: FEE_CHARGE_ITEM_CODE,
-              chargeType: 'MemorialCardFee', // TODO: Verify this is the correct charge type
+              chargeType: FEE_CHARGE_ITEM_CODE.slice(0, 3),
               quantity: 1,
             },
           ],
@@ -135,7 +135,6 @@ export class LandspitaliService {
             input.payerNationalId || this.config.paymentNationalIdFallback,
           organisationId: LANDSPITALI_NATIONAL_ID,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
-          // TODO: Find out just how much data should be sent to FJS and how that data should be structured
           extraData: [
             {
               name: 'recipientName',
@@ -177,8 +176,11 @@ export class LandspitaliService {
               name: 'senderSignature',
               value: input.senderSignature,
             },
+            {
+              name: 'inMemoryOf',
+              value: input.inMemoryOf,
+            },
           ],
-          // TODO: Find out just how much data should be sent to Zendesk
           metadata: {
             ...input,
             landspitaliPaymentType: PaymentType.MemorialCard,
@@ -206,13 +208,13 @@ export class LandspitaliService {
             {
               price: input.amountISK,
               chargeItemCode: input.grantChargeItemCode,
-              chargeType: 'directGrant', // TODO: What is a charge type?
+              chargeType: input.grantChargeItemCode.slice(0, 3),
               quantity: 1,
             },
             {
               price: 500,
               chargeItemCode: FEE_CHARGE_ITEM_CODE,
-              chargeType: 'directGrantFee', // TODO: What is a charge type?
+              chargeType: FEE_CHARGE_ITEM_CODE.slice(0, 3),
               quantity: 1,
             },
           ],
@@ -220,7 +222,6 @@ export class LandspitaliService {
             input.payerNationalId || this.config.paymentNationalIdFallback,
           organisationId: LANDSPITALI_NATIONAL_ID,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
-          // TODO: Find out just how much data should be sent to FJS and how that data should be structured
           extraData: [
             {
               name: 'payerName',
@@ -246,8 +247,11 @@ export class LandspitaliService {
               name: 'payerGrantExplanation',
               value: input.payerGrantExplanation,
             },
+            {
+              name: 'project',
+              value: input.project,
+            },
           ],
-          // TODO: Find out just how much data should be sent to Zendesk
           metadata: {
             ...input,
             landspitaliPaymentType: PaymentType.DirectGrant,

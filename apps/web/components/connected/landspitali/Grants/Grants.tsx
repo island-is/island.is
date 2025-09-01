@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { isValid as isValidKennitala } from 'kennitala'
@@ -18,7 +18,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { isDefined } from '@island.is/shared/utils'
+import { isDefined, sortAlpha } from '@island.is/shared/utils'
 import type {
   ConnectedComponent,
   WebLandspitaliCatalogQuery,
@@ -137,68 +137,6 @@ const DEFAULT_GRANT_OPTIONS: Option<string>[] = [
     label: 'Styrktarsjóður Blóðbankans',
     value: 'MR133',
   },
-
-  // TODO: Remove these
-  // {
-  //   label: 'Styrktarsjóður barna- og unglingageðdeildar',
-  //   value: 'MR106',
-  // },
-  // {
-  //   label: 'Styrktarsjóður Barnaspítala Hringsins',
-  //   value: 'MR105',
-  // },
-  // {
-  //   label: 'Styrktarsjóður Blóðbankans',
-  //   value: 'MR133',
-  // },
-  // {
-  //   label: 'Styrktarsjóður bráðasviðs',
-  //   value: 'MR104',
-  // },
-  // {
-  //   label: 'Styrktarsjóður endurhæfingar',
-  //   value: 'MR112',
-  // },
-  // {
-  //   label: 'Styrktarsjóður geðsviðs',
-  //   value: 'MR103',
-  // },
-  // {
-  //   label: 'Styrktarsjóður gjörgæslu',
-  //   value: 'MR110',
-  // },
-  // {
-  //   label: 'Styrktarsjóður hjartadeildar',
-  //   value: 'MR130',
-  // },
-  // {
-  //   label: 'Styrktarsjóður kvenna- og fæðingardeildar',
-  //   value: 'MR125',
-  // },
-  // {
-  //   label: 'Styrktarsjóður Landspítala',
-  //   value: 'MR101',
-  // },
-  // {
-  //   label: 'Styrktarsjóður lyflækningadeilda',
-  //   value: 'MR111',
-  // },
-  // {
-  //   label: 'Styrktarsjóður myndgreininga',
-  //   value: 'MR115',
-  // },
-  // {
-  //   label: 'Styrktarsjóður rannsóknarstofa',
-  //   value: 'MR114',
-  // },
-  // {
-  //   label: 'Styrktarsjóður skurðlækningadeildar',
-  //   value: 'MR107',
-  // },
-  // {
-  //   label: 'Styrktarsjóður öldrunar',
-  //   value: 'MR113',
-  // },
 ]
 
 const PRESET_AMOUNTS = ['5.000', '10.000', '50.000', '100.000']
@@ -211,20 +149,32 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
   const { data: catalogData } = useQuery<
     WebLandspitaliCatalogQuery,
     WebLandspitaliCatalogQueryVariables
-  >(GET_LANDSPITALI_CATALOG) // TODO: Remove this gql endpoint altogether
+  >(GET_LANDSPITALI_CATALOG)
 
   const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
 
-  const grantOptions = (
-    (slice.json?.grantOptions as typeof DEFAULT_GRANT_OPTIONS) ??
-    DEFAULT_GRANT_OPTIONS
-  ).filter((option) => {
-    const contains = catalogData?.webLandspitaliCatalog?.item?.some(
-      (item) => item.chargeItemCode === option.value,
-    )
-    if (!isDefined(contains)) return true
-    return contains
-  })
+  const grantOptions = useMemo(() => {
+    const options = (
+      (slice.json?.grantOptions as typeof DEFAULT_GRANT_OPTIONS) ??
+      DEFAULT_GRANT_OPTIONS
+    ).filter((option) => {
+      const contains = catalogData?.webLandspitaliCatalog?.item?.some(
+        (item) => item.chargeItemCode === option.value,
+      )
+      if (!isDefined(contains)) return true
+      return contains
+    })
+
+    if (slice.configJson?.sortGrantOptionsAlphabetically) {
+      options.sort(sortAlpha('label'))
+    }
+
+    return options
+  }, [
+    catalogData?.webLandspitaliCatalog?.item,
+    slice.json?.grantOptions,
+    slice.configJson?.sortGrantOptionsAlphabetically,
+  ])
 
   const methods = useForm<DirectGrants>({
     mode: 'onChange',

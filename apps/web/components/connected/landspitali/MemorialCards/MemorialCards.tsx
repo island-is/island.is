@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { isValid as isValidKennitala } from 'kennitala'
@@ -18,7 +18,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { isDefined } from '@island.is/shared/utils'
+import { isDefined, sortAlpha } from '@island.is/shared/utils'
 import type {
   ConnectedComponent,
   WebLandspitaliCatalogQuery,
@@ -97,48 +97,6 @@ const DEFAULT_FUND_OPTIONS: Option<string>[] = [
     label: 'Minningagjafasjóður Landspítala',
     value: 'MR124',
   },
-
-  // TODO: Remove these
-  // {
-  //   label: 'Minningargjafasjóður Landspítala Íslands',
-  //   value: 'MR124',
-  // },
-  // {
-  //   label: 'Minningarsjóður blóð- og krabbameinslækningadeilda',
-  //   value: 'MR119',
-  // },
-  // {
-  //   label: 'Minningarsjóður gjörgæslu',
-  //   value: 'MR108',
-  // },
-  // {
-  //   label: 'Minningarsjóður hjartadeildar',
-  //   value: 'MR122',
-  // },
-  // {
-  //   label: 'Minningarsjóður kvenlækningadeildar',
-  //   value: 'MR117',
-  // },
-  // {
-  //   label: 'Minningarsjóður líknardeildar og HERU',
-  //   value: 'MR128',
-  // },
-  // {
-  //   label: 'Minningarsjóður lyflækningadeilda',
-  //   value: 'MR109',
-  // },
-  // {
-  //   label: 'Minningarsjóður Rannsóknarstofu HÍ og LSH í öldrunarfræðum',
-  //   value: 'MR131',
-  // },
-  // {
-  //   label: 'Minningarsjóður skurðdeildar',
-  //   value: 'MR121',
-  // },
-  // {
-  //   label: 'Minningarsjóður öldrunardeildar',
-  //   value: 'MR118',
-  // },
 ]
 
 const PRESET_AMOUNTS = ['5.000', '10.000', '50.000', '100.000']
@@ -149,20 +107,32 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
   const { data: catalogData } = useQuery<
     WebLandspitaliCatalogQuery,
     WebLandspitaliCatalogQueryVariables
-  >(GET_LANDSPITALI_CATALOG) // TODO: Remove this gql endpoint altogether
+  >(GET_LANDSPITALI_CATALOG)
 
   const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
 
-  const fundOptions = (
-    (slice.json?.fundOptions as typeof DEFAULT_FUND_OPTIONS) ??
-    DEFAULT_FUND_OPTIONS
-  ).filter((option) => {
-    const contains = catalogData?.webLandspitaliCatalog?.item?.some(
-      (item) => item.chargeItemCode === option.value,
-    )
-    if (!isDefined(contains)) return true
-    return contains
-  })
+  const fundOptions = useMemo(() => {
+    const options = (
+      (slice.json?.fundOptions as typeof DEFAULT_FUND_OPTIONS) ??
+      DEFAULT_FUND_OPTIONS
+    ).filter((option) => {
+      const contains = catalogData?.webLandspitaliCatalog?.item?.some(
+        (item) => item.chargeItemCode === option.value,
+      )
+      if (!isDefined(contains)) return true
+      return contains
+    })
+
+    if (slice.configJson?.sortFundOptionsAlphabetically) {
+      options.sort(sortAlpha('label'))
+    }
+
+    return options
+  }, [
+    catalogData?.webLandspitaliCatalog?.item,
+    slice.configJson?.sortFundOptionsAlphabetically,
+    slice.json?.fundOptions,
+  ])
 
   const methods = useForm<MemorialCard>({
     mode: 'onChange',

@@ -310,7 +310,6 @@ export const serviceSetup = (services: {
         staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
         prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
       },
-      // TODO: Verify this is correct for all environments (dev, staging, prod)
       LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
         (ctx) =>
           `http://${
