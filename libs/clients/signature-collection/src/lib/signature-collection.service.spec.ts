@@ -253,6 +253,16 @@ describe('MyService', () => {
           svaediID === 123 ? lists.filter((l) => l.svaedi?.id === 123) : lists,
         ),
       )
+    jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
+      Promise.resolve([
+        {
+          id: 123,
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          nafn: 'bbbb',
+        },
+      ]),
+    )
 
     // Act
     const all = await service.getLists({})

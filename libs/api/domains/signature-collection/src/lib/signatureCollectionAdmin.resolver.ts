@@ -34,6 +34,7 @@ import { SignatureCollectionBaseInput } from './dto/signatureCollectionBase.inpu
 import { SignatureCollectionAreaInput } from './dto'
 import { CurrentAdmin } from './decorators'
 import { SignatureCollectionAdmin } from './models'
+import { SignatureCollectionLockListInput } from './dto/lockList.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(
@@ -253,7 +254,7 @@ export class SignatureCollectionAdminResolver {
   @Audit()
   async signatureCollectionLockList(
     @CurrentAdmin() admin: SignatureCollectionAdmin,
-    @Args('input') input: SignatureCollectionListIdInput,
+    @Args('input') input: SignatureCollectionLockListInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.lockList(input, admin)
   }

@@ -22,6 +22,7 @@ query collection($input: SignatureCollectionBaseInput!) {
       phone
       email
       collectionId
+      ownerName
     }
   }
 }

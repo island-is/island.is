@@ -496,13 +496,17 @@ export class SignatureCollectionAdminClientService
     }
   }
 
-  async lockList(auth: Auth, listId: string): Promise<Success> {
+  async lockList(
+    auth: Auth,
+    { listId, setLocked }: { listId: string; setLocked: boolean },
+  ): Promise<Success> {
     try {
       const res = await this.getApiWithAuth(
         this.adminApi,
         auth,
       ).adminMedmaelalistiIDLockListPatch({
         iD: parseInt(listId, 10),
+        shouldLock: setLocked,
       })
       return { success: res.listaLokad ?? false }
     } catch (error) {
