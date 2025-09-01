@@ -87,7 +87,7 @@ const validateVerdictAppealUpdate = ({
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal verdict')
 @UseGuards(
-  TokenGuard,
+  // TokenGuard,
   CaseExistsGuard,
   new CaseTypeGuard(indictmentCases),
   CaseCompletedGuard,
