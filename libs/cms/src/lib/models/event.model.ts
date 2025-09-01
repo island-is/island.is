@@ -57,10 +57,10 @@ export class Event {
   @CacheField(() => EventTime)
   time!: EventTime
 
-  @Field({description: 'ISO8601'})
+  @Field({ description: 'ISO8601' })
   startDateTime!: string
 
-  @Field({description: 'ISO8601'})
+  @Field({ description: 'ISO8601' })
   endDateTime!: string
 
   @CacheField(() => EventLocation)
