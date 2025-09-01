@@ -16,7 +16,7 @@ import {
 } from '@island.is/clients/fjs/bank-info'
 import { AdminUserProfile } from './adminUserProfile.model'
 import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
-import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
+import { CreateEmailVerificationInput } from './dto/createEmailVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 

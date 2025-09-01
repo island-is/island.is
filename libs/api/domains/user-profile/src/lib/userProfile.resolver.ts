@@ -18,7 +18,7 @@ import {
 
 import { EmailsDto } from '@island.is/clients/user-profile'
 import { ActorProfileDetails } from './dto/actorProfileDetails'
-import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
+import { CreateEmailVerificationInput } from './dto/createEmailVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { DeleteEmailOrPhoneInput } from './dto/deleteEmailOrPhoneInput'
