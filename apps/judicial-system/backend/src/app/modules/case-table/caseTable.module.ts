@@ -5,9 +5,7 @@ import { CaseTableController } from './caseTable.controller'
 import { CaseTableService } from './caseTable.service'
 
 @Module({
-  imports: [
-    forwardRef(() => RepositoryModule),
-  ],
+  imports: [forwardRef(() => RepositoryModule)],
   providers: [CaseTableService],
   controllers: [CaseTableController],
 })
