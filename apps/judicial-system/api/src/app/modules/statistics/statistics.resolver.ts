@@ -15,6 +15,7 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { SignedUrl } from '../file'
 import {
   CaseStatisticsInput,
   IndictmentStatisticsInput,
@@ -122,6 +123,29 @@ export class StatisticsResolver {
       backendService.getRequestCaseStatistics(input),
       (caseStatistics: RequestCaseStatistics) =>
         caseStatistics.count.toString(),
+    )
+
+    return result
+  }
+
+  @Query(() => SignedUrl, { nullable: true })
+  getPreprocessedDataCsvSignedUrl(
+    @Args('input', { type: () => RequestStatisticsInput, nullable: true })
+    input: RequestStatisticsInput,
+    @CurrentGraphQlUser()
+    user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<SignedUrl> {
+    this.logger.debug(
+      'Getting preprocessed data as csv for request case statistics',
+    )
+
+    const result = this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_CASES_STATISTICS,
+      backendService.getPreprocessedDataCsvSignedUrl(input),
+      'export',
     )
 
     return result

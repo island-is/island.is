@@ -15,21 +15,19 @@ export interface UIStore extends State {
   modalsOpen: number
   inboxQuery: string
   applicationQuery: string
-  initializedApp: boolean
   authenticationTypes: AuthenticationType[]
   isEnrolledBiometrics: boolean
   setInboxQuery(query: string): void
   setApplicationQuery(query: string): void
 }
 
-export const uiStore = create<UIStore>((set, get) => ({
+export const uiStore = create<UIStore>((set) => ({
   theme: undefined,
   selectedTab: 2,
   unselectedTab: 2,
   modalsOpen: 0,
   inboxQuery: '',
   applicationQuery: '',
-  initializedApp: false,
   authenticationTypes: [],
   isEnrolledBiometrics: false,
   setInboxQuery(inboxQuery: string) {
