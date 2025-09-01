@@ -576,7 +576,7 @@ export class InternalCaseService {
     const startOfDay = new Date(date.setHours(0, 0, 0, 0))
     const endOfDay = new Date(date.setHours(23, 59, 59, 999))
 
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: [
         {
           model: DateLog,
@@ -1307,7 +1307,7 @@ export class InternalCaseService {
   // As this is only currently used by the digital mailbox API
   // we will only return indictment cases that have a court date
   async getAllDefendantIndictmentCases(nationalId: string): Promise<Case[]> {
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: [
         {
           model: Defendant,

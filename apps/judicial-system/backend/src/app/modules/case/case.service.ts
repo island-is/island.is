@@ -1818,7 +1818,7 @@ export class CaseService {
   }
 
   getAll(user: TUser): Promise<Case[]> {
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: caseListInclude,
       where: getCasesQueryFilter(user),
     })
@@ -1828,7 +1828,7 @@ export class CaseService {
     caseId: string,
     defendant: Defendant,
   ): Promise<Case[]> {
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: [
         { model: Institution, as: 'court' },
         {

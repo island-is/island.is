@@ -108,7 +108,7 @@ export class StatisticsService {
       }
     }
 
-    const cases = await this.caseModel.findAll({
+    const cases = await this.caseRepositoryService.findAll({
       where,
       include: [
         {
@@ -289,7 +289,7 @@ export class StatisticsService {
       }
     }
 
-    const cases = await this.caseModel.findAll({
+    const cases = await this.caseRepositoryService.findAll({
       where,
       include: [
         {
@@ -372,7 +372,7 @@ export class StatisticsService {
       }
     }
 
-    const cases = await this.caseModel.findAll({
+    const cases = await this.caseRepositoryService.findAll({
       where,
       include: [
         {
@@ -470,7 +470,7 @@ export class StatisticsService {
       },
     }
 
-    const cases = await this.caseModel.findAll({
+    const cases = await this.caseRepositoryService.findAll({
       where,
       order: [['created', 'ASC']],
       include: [
