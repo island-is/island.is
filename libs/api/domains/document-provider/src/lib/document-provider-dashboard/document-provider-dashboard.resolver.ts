@@ -108,7 +108,7 @@ export class DocumentProviderDashboardResolverV1 {
           },
         },
         this.documentProviderDashboardServiceV1.getStatisticsCategories({
-          ...input
+          ...input,
         }),
       )
 

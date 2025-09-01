@@ -59,17 +59,16 @@ const SingleDocumentProvider = () => {
   const { loading: loadingProviders, items: providers } =
     useGetProvidersByNationalId(user.profile.nationalId, undefined, undefined)
 
-  const { chartData } =
-    useGetProviderStatisticsBreakdownByProviderId(
-      providerId,
-      user.profile.nationalId,
-      undefined,
-      undefined,
-      'Date',
-      true,
-      1,
-      6,
-    )
+  const { chartData } = useGetProviderStatisticsBreakdownByProviderId(
+    providerId,
+    user.profile.nationalId,
+    undefined,
+    undefined,
+    'Date',
+    true,
+    1,
+    6,
+  )
   const { loading: loadingSentFiles, chartData: sentFilesChartData } =
     useGetProviderStatisticsBreakdownWCategoriesByProviderId(
       providerId,

@@ -1,17 +1,10 @@
 import { useLocale } from '@island.is/localization'
-import {
-  GridRow,
-  Box,
-  Text,
-} from '@island.is/island-ui/core'
+import { GridRow, Box, Text } from '@island.is/island-ui/core'
 import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/OpenedFilesDonutChart'
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
 import { SentFilesAndErrorsBarChart } from '../../components/SentFilesAndErrorsBarChart/SentFilesAndErrorsBarChart'
 import { SentFilesProfitBarChart } from '../../components/SentFilesProfitBarChart/SentFilesProfitBarChart'
-import {
-  ChartData,
-  SentFilesChartDataItem,
-} from '../../lib/types'
+import { ChartData, SentFilesChartDataItem } from '../../lib/types'
 
 interface Props {
   sentFilesData?: Array<SentFilesChartDataItem>
