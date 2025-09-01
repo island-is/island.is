@@ -4,7 +4,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'

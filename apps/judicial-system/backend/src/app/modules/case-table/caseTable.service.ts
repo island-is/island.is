@@ -2,7 +2,7 @@ import { Includeable, literal, Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Injectable } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import {
   CaseActionType,
