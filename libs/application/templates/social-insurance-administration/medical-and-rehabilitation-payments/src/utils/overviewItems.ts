@@ -1,12 +1,10 @@
-import { ApolloClient } from '@apollo/client'
 import { NO, YES } from '@island.is/application/core'
-import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   formatBankAccount,
   getTaxLevelOption,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+
 import {
   ExternalData,
   FormValue,
@@ -352,20 +350,11 @@ export const unionSickPayItems = async (
   answers: FormValue,
   _externalData: ExternalData,
   _userNationalId: string,
-  apolloClient: ApolloClient<object>,
 ): Promise<KeyValueItem[]> => {
-  const {
-    hasUtilizedUnionSickPayRights,
-    unionSickPayEndDate,
-    unionNationalId,
-  } = getApplicationAnswers(answers)
+  const { hasUtilizedUnionSickPayRights, unionSickPayEndDate, unionInfo } =
+    getApplicationAnswers(answers)
 
-  const { data } = await apolloClient.query<SiaUnionsQuery>({
-    query: siaUnionsQuery,
-  })
-  const unionName = data?.socialInsuranceGeneral?.unions?.find(
-    (union) => union?.nationalId === unionNationalId,
-  )?.name
+  const unionName = unionInfo.split('::')[1]
 
   const baseItems: Array<KeyValueItem> = [
     {
