@@ -166,7 +166,8 @@ export interface EmployeeSickPay {
 
 export interface UnionSickPay {
   hasUtilizedUnionSickPayRights: number | null
-  unionInfo?: string
+  unionNationalId?: string
+  unionName?: string
   unionSickPayEndDate?: string
 }
 
