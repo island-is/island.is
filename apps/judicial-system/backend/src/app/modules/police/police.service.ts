@@ -651,17 +651,7 @@ export class PoliceService {
     const { name: actor } = user
 
     const createDocumentPath = `${this.xRoadPath}/CreateDocument`
-    const body = JSON.stringify({
-      documentName: documentName,
-      documentFiles,
-      fileTypeCode,
-      supplements: [
-        { code: 'RVG_CASE_ID', value: caseId },
-        { code: 'RECEIVER_SSN', value: defendantNationalId },
-      ],
-      dates: documentDates,
-    })
-    console.log({ body })
+
     try {
       const res = await this.fetchPoliceCaseApi(createDocumentPath, {
         method: 'POST',
@@ -672,7 +662,16 @@ export class PoliceService {
           'X-API-KEY': this.config.policeApiKey,
         },
         agent: this.agent,
-        body,
+        body: JSON.stringify({
+          documentName: documentName,
+          documentFiles,
+          fileTypeCode,
+          supplements: [
+            { code: 'RVG_CASE_ID', value: caseId },
+            { code: 'RECEIVER_SSN', value: defendantNationalId },
+          ],
+          dates: documentDates,
+        }),
       } as RequestInit)
 
       if (res.ok) {
@@ -707,27 +706,66 @@ export class PoliceService {
     // TODO: not implemented in RLS XROAD api
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetDocumentStatus?id=${policeDocumentId}`,
-    ).then(async (res: Response) => {
-      if (res.ok) {
-        const response: z.infer<typeof this.documentStructure> =
-          await res.json()
-        this.documentStructure.parse(response)
+    )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const response: z.infer<typeof this.documentStructure> =
+            await res.json()
+          this.documentStructure.parse(response)
 
-        return {
-          serviceStatus: mapPoliceVerdictDeliveryStatus({
-            delivered: response.delivered ?? false,
-            deliveredOnPaper: response.deliveredOnPaper ?? false,
-            deliveredOnIslandis: response.deliveredOnIslandis ?? false,
-            deliveredToLawyer: response.deliveredToLawyer ?? false,
-          }),
-          comment: response.comment ?? undefined,
-          servedBy: response.servedBy ?? undefined,
-          serviceDate: response.servedAt
-            ? new Date(response.servedAt)
-            : undefined,
+          return {
+            serviceStatus: mapPoliceVerdictDeliveryStatus({
+              delivered: response.delivered ?? false,
+              deliveredOnPaper: response.deliveredOnPaper ?? false,
+              deliveredOnIslandis: response.deliveredOnIslandis ?? false,
+              deliveredToLawyer: response.deliveredToLawyer ?? false,
+            }),
+            comment: response.comment ?? undefined,
+            servedBy: response.servedBy ?? undefined,
+            serviceDate: response.servedAt
+              ? new Date(response.servedAt)
+              : undefined,
+          }
         }
-      }
-    })
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When a document does not exist, a stack trace is returned.
+        throw new NotFoundException({
+          message: `Document with police document id ${policeDocumentId} does not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the document does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Police document ${policeDocumentId} does not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get police document status',
+          {
+            policeDocumentId,
+            actor: user?.name || 'Digital-mailbox',
+            institution: user?.institution?.name,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get police document status ${policeDocumentId}`,
+          detail: reason.message,
+        })
+      })
   }
 
   async createSubpoena(
