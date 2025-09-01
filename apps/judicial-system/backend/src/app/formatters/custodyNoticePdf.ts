@@ -12,7 +12,7 @@ import {
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
 import { custodyNotice } from '../messages'
-import { Case } from '../modules/case'
+import { Case } from '../modules/repository'
 import { formatCustodyRestrictions } from './formatters'
 import {
   addEmptyLines,

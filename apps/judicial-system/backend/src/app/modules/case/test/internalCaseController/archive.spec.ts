@@ -9,19 +9,21 @@ import { UserRole } from '@island.is/judicial-system/types'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { uuidFactory } from '../../../../factories'
-import { Defendant, DefendantService } from '../../../defendant'
-import { CaseFile, FileService } from '../../../file'
+import { DefendantService } from '../../../defendant'
+import { FileService } from '../../../file'
+import { IndictmentCountService } from '../../../indictment-count'
 import {
+  Case,
+  CaseArchive,
+  CaseFile,
+  CaseString,
+  Defendant,
   IndictmentCount,
-  IndictmentCountService,
-} from '../../../indictment-count'
-import { Offense } from '../../../indictment-count/models/offense.model'
+  Offense,
+} from '../../../repository'
 import { caseModuleConfig } from '../../case.config'
 import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
-import { Case } from '../../models/case.model'
-import { CaseArchive } from '../../models/caseArchive.model'
-import { CaseString } from '../../models/caseString.model'
 
 jest.mock('crypto-js')
 jest.mock('../../../../factories')
