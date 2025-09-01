@@ -17,6 +17,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
+import { isDefined } from '@island.is/shared/utils'
 import type {
   ConnectedComponent,
   WebLandspitaliCatalogQuery,
@@ -151,7 +152,16 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
 
   const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
 
-  const fundOptions = slice.json?.fundOptions ?? DEFAULT_FUND_OPTIONS
+  const fundOptions = (
+    (slice.json?.fundOptions as typeof DEFAULT_FUND_OPTIONS) ??
+    DEFAULT_FUND_OPTIONS
+  ).filter((option) => {
+    const contains = catalogData?.webLandspitaliCatalog?.item?.some(
+      (item) => item.chargeItemCode === option.value,
+    )
+    if (!isDefined(contains)) return true
+    return contains
+  })
 
   const methods = useForm<MemorialCard>({
     mode: 'onChange',

@@ -17,6 +17,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
+import { isDefined } from '@island.is/shared/utils'
 import type {
   ConnectedComponent,
   WebLandspitaliCatalogQuery,
@@ -213,7 +214,16 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
 
   const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
 
-  const grantOptions = slice.json?.grantOptions ?? DEFAULT_GRANT_OPTIONS
+  const grantOptions = (
+    (slice.json?.grantOptions as typeof DEFAULT_GRANT_OPTIONS) ??
+    DEFAULT_GRANT_OPTIONS
+  ).filter((option) => {
+    const contains = catalogData?.webLandspitaliCatalog?.item?.some(
+      (item) => item.chargeItemCode === option.value,
+    )
+    if (!isDefined(contains)) return true
+    return contains
+  })
 
   const methods = useForm<DirectGrants>({
     mode: 'onChange',
