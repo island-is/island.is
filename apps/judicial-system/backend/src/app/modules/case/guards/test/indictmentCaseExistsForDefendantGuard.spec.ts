@@ -12,13 +12,15 @@ import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import { Defendant } from '../../../defendant'
-import { Institution } from '../../../institution'
-import { Subpoena } from '../../../subpoena'
-import { User } from '../../../user'
-import { Verdict } from '../../../verdict/models/verdict.model'
-import { Case } from '../../models/case.model'
-import { DateLog } from '../../models/dateLog.model'
+import {
+  Case,
+  DateLog,
+  Defendant,
+  Institution,
+  Subpoena,
+  User,
+  Verdict,
+} from '../../../repository'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
 
 interface Then {

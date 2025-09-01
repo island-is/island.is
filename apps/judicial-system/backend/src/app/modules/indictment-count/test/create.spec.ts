@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
-import { IndictmentCount } from '../models/indictmentCount.model'
+import { IndictmentCount } from '../../repository'
 
 interface Then {
   result: IndictmentCount

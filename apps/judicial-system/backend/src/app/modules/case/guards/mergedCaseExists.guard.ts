@@ -6,8 +6,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
+import { Case } from '../../repository'
 import { CaseService } from '../case.service'
-import { Case } from '../models/case.model'
 
 @Injectable()
 export class MergedCaseExistsGuard implements CanActivate {
