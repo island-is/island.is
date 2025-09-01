@@ -496,7 +496,6 @@ export const serviceSetup = (services: {
       PracticalExams,
       VMSTUnemployment,
     )
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
         host: {

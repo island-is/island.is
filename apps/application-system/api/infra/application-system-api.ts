@@ -441,7 +441,6 @@ export const serviceSetup = (services: {
       max: 60,
       min: 2,
     })
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
         host: {

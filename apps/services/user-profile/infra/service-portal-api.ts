@@ -78,7 +78,6 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
       max: 30,
       min: 2,
     })
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       internal: {
         host: {
