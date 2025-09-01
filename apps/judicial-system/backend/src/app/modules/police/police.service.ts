@@ -723,6 +723,21 @@ export class PoliceService {
     const documentName = `Fyrirkall í máli ${theCase.courtCaseNumber}`
     const arraignmentInfo = DateLog.arraignmentDate(dateLogs)
 
+    const body = JSON.stringify({
+      documentName: documentName,
+      documentsBase64: [subpoena, indictment, ...civilClaims],
+      courtRegistrationDate: arraignmentInfo?.date,
+      prosecutorSsn: prosecutor?.nationalId,
+      prosecutedSsn: normalizedNationalId,
+      courtAddress: court?.address,
+      courtRoomNumber: arraignmentInfo?.location || '',
+      courtCeremony: 'Þingfesting',
+      lokeCaseNumber: policeCaseNumbers?.[0],
+      courtCaseNumber: courtCaseNumber,
+      fileTypeCode: 'BRTNG',
+      rvgCaseId: theCase.id,
+    })
+    console.log({ body })
     try {
       const res = await this.fetchPoliceCaseApi(
         `${this.xRoadPath}/CreateSubpoena`,
@@ -735,20 +750,7 @@ export class PoliceService {
             'X-API-KEY': this.config.policeApiKey,
           },
           agent: this.agent,
-          body: JSON.stringify({
-            documentName: documentName,
-            documentsBase64: [subpoena, indictment, ...civilClaims],
-            courtRegistrationDate: arraignmentInfo?.date,
-            prosecutorSsn: prosecutor?.nationalId,
-            prosecutedSsn: normalizedNationalId,
-            courtAddress: court?.address,
-            courtRoomNumber: arraignmentInfo?.location || '',
-            courtCeremony: 'Þingfesting',
-            lokeCaseNumber: policeCaseNumbers?.[0],
-            courtCaseNumber: courtCaseNumber,
-            fileTypeCode: 'BRTNG',
-            rvgCaseId: theCase.id,
-          }),
+          body,
         } as RequestInit,
       )
 
