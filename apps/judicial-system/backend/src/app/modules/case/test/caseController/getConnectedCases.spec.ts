@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 
 interface Then {
   result: Case[]

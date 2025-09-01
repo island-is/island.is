@@ -36,6 +36,7 @@ const buildRepeatableSections = (): SubSection[] => {
 
   const subSections = incomeBlocks.flat().map((incomeField, index) => {
     return buildSubSection({
+      id: `incomeSubSection[${index}]`,
       title: {
         ...income.general.subSectionTitle,
         values: {
@@ -61,6 +62,7 @@ const buildRepeatableSections = (): SubSection[] => {
 const getIncomeSections = (index: number) => {
   const fields: MultiField[] = [
     buildMultiField({
+      id: `incomeMultiField[${index}]`,
       children: [
         buildDescriptionField({
           id: `income[${index}].taxInfo`,
@@ -163,24 +165,15 @@ const getIncomeSections = (index: number) => {
           condition: (formValue: FormValue) => {
             return employmentHasNotEnded(index, formValue)
           },
-          minDate: () => {
-            const today = new Date()
-            const threeMonthsAgo = new Date(
-              today.getFullYear(),
-              today.getMonth() - 3,
-              today.getDate(),
-            )
-            return threeMonthsAgo
-          },
-
+          minDate: new Date(),
           maxDate: () => {
             const today = new Date()
-            const endOfMonth = new Date(
+            const plusMonth = new Date(
               today.getFullYear(),
               today.getMonth() + 1,
-              0,
+              today.getDate(),
             )
-            return endOfMonth
+            return plusMonth
           },
         }),
         buildCheckboxField({
@@ -238,6 +231,7 @@ const getIncomeSections = (index: number) => {
         buildAlertMessageField({
           id: `income[${index}].numberAndUsageOfLeaveDescription`,
           alertType: 'info',
+          title: income.labels.numberAndUsageOfLeaveTitle,
           message: income.labels.numberAndUsageOfLeaveDescription,
           condition: (formValue: FormValue) => {
             return hasLeaveDays(index, formValue)

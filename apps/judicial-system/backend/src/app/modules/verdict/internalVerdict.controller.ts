@@ -31,15 +31,14 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
-  Case,
   CaseCompletedGuard,
   CaseExistsGuard,
   CaseTypeGuard,
   CurrentCase,
 } from '../case'
-import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
+import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
-import { Verdict } from '../verdict/models/verdict.model'
+import { Case, Defendant, Verdict } from '../repository'
 import { VerdictService } from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
