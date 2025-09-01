@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, Inject } from '@nestjs/common'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
@@ -28,10 +28,15 @@ import { UserProfileUpdateActorProfileInput } from './dto/userProfileUpdateActor
 import { UserProfileSetActorProfileEmailInput } from './dto/userProfileSetActorProfileEmail.input'
 import { UpdateActorProfileEmailInput } from './dto/updateActorProfileEmail.input'
 import { ActorProfileDetails } from './dto/actorProfileDetails'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { ApolloError } from '@apollo/client'
 
 @Injectable()
 export class UserProfileService {
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
     private v2MeApi: V2MeApi,
     private v2UserProfileApi: V2UsersApi,
     private v2ActorApi: V2ActorApi,
@@ -106,7 +111,9 @@ export class UserProfileService {
           },
         )
       } catch (e) {
-        throw new BadRequestException(e, 'Failed to update bank account')
+        this.logger.error('Failed to update bank account', e)
+
+        throw new ApolloError(e.message || 'Failed to update bank account')
       }
     }
 
