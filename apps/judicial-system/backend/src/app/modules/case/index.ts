@@ -1,5 +1,3 @@
-export { Case } from './models/case.model'
-export { DateLog } from './models/dateLog.model'
 export { CaseExistsGuard } from './guards/caseExists.guard'
 export { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 export { CaseHasExistedGuard } from './guards/caseHasExisted.guard'

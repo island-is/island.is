@@ -75,6 +75,9 @@ const SignedList = ({
                     currentCollection?.collectionType ===
                     SignatureCollectionCollectionType.Presidential
                       ? formatMessage(m.collectionTitle)
+                      : currentCollection?.collectionType ===
+                        SignatureCollectionCollectionType.LocalGovernmental
+                      ? formatMessage(m.collectionTitleMunicipal)
                       : formatMessage(m.collectionTitleParliamentary)
                   }
                   cta={
