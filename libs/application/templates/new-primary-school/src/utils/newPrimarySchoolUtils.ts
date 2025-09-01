@@ -573,11 +573,11 @@ export const getApplicationType = (externalData: ExternalData) => {
   const firstGradeYear = currentYear - FIRST_GRADE_AGE
 
   const nationalId = childInformation.nationalId
-  if (!isValid?.(nationalId)) {
+  if (!isValid(nationalId)) {
     return ApplicationType.NEW_PRIMARY_SCHOOL
   }
   const nationalIdInfo = info(nationalId)
-  if (!info || !nationalIdInfo.birthday) {
+  if (!nationalIdInfo || !nationalIdInfo.birthday) {
     return ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
