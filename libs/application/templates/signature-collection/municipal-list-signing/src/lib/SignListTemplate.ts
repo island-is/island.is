@@ -38,6 +38,7 @@ const SignListTemplate: ApplicationTemplate<
   featureFlag: Features.municipalElectionApplication,
   dataSchema,
   translationNamespaces: [configuration.translation],
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

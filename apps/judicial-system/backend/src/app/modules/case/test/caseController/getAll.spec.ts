@@ -4,9 +4,9 @@ import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { caseListInclude, listOrder } from '../../case.service'
+import { Case } from '../../../repository'
+import { caseListInclude } from '../../case.service'
 import { getCasesQueryFilter } from '../../filters/cases.filter'
-import { Case } from '../../models/case.model'
 
 jest.mock('../../filters/cases.filter')
 
@@ -58,7 +58,6 @@ describe('CaseController - Get all', () => {
       expect(getCasesQueryFilter).toHaveBeenCalledWith(user)
       expect(mockCaseModel.findAll).toHaveBeenCalledWith({
         include: caseListInclude,
-        order: listOrder,
         where: filter,
       })
       expect(then.result).toBe(cases)

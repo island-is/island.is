@@ -6,6 +6,7 @@ export {
   SubpoenaType,
   DefendantPlea,
   ServiceStatus,
+  VerdictServiceStatus,
   PunishmentType,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
@@ -141,6 +142,7 @@ export {
   IndictmentCountOffense,
   offenseSubstances,
   isTrafficViolationIndictmentCount,
+  getIndictmentCountCompare,
 } from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 
