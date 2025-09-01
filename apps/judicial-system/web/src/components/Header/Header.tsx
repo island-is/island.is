@@ -87,9 +87,10 @@ const HeaderContainer = () => {
   const { lawyers } = useContext(LawyerRegistryContext)
 
   const isLawyerInLawyersRegistry = isDefenceUser(user) && lawyer
+  const canUseSearch = !!user && !isDefenceUser(user) && !isAdminUser(user)
 
   useKeyboardCombo('Meta + k', () => {
-    setIsSearchOpen(!isSearchOpen)
+    if (canUseSearch) setIsSearchOpen(!isSearchOpen)
   })
 
   useEffect(() => {
@@ -276,7 +277,7 @@ const HeaderContainer = () => {
                 }
                 onLogout={handleLogout}
               />
-              {!isDefenceUser(user) && !isAdminUser(user) && (
+              {canUseSearch && (
                 <Box
                   border="standard"
                   borderRadius="full"
