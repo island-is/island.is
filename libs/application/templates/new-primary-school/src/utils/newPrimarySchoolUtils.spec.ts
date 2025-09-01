@@ -136,22 +136,15 @@ describe('getMunicipalityCodeBySchoolUnitId', () => {
 })
 
 describe('getApplicationType', () => {
-  const mockCurrentDate = new Date('2025-01-01')
+  const currentDate = new Date()
 
-  beforeEach(() => {
-    jest.useFakeTimers()
-    jest.setSystemTime(mockCurrentDate)
-  })
+  it('should return NEW_PRIMARY_SCHOOL for child in 2. grade', () => {
+    const yearBorn = currentDate.getFullYear() - 7 //2. grade
 
-  afterEach(() => {
-    jest.useRealTimers()
-  })
-
-  it('should return NEW_PRIMARY_SCHOOL for child born before 2019', () => {
     const externalData = {
       childInformation: {
         data: {
-          nationalId: kennitala.generatePerson(new Date('2018-12-31')),
+          nationalId: kennitala.generatePerson(new Date(yearBorn + '-12-31')),
         },
       },
     } as unknown as ExternalData
@@ -161,11 +154,12 @@ describe('getApplicationType', () => {
     )
   })
 
-  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child born in or after 2019', () => {
+  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade', () => {
+    const yearBorn = currentDate.getFullYear() - 6 //1. grade
     const externalData = {
       childInformation: {
         data: {
-          nationalId: kennitala.generatePerson(new Date('2019-01-01')),
+          nationalId: kennitala.generatePerson(new Date(yearBorn + '-01-01')),
         },
       },
     } as unknown as ExternalData
