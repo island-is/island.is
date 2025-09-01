@@ -322,12 +322,9 @@ export class MeUserProfileController {
     @CurrentUser() user: User,
     @Body() body: DeviceTokenDto,
   ): Promise<UserDeviceTokenDto> {
-    await this.userProfileService.patch(
-      {
-        nationalId: user.nationalId,
-      },
-      {},
-    )
+    // Users can be installing the app the first time without having onboarding via the Service Portal.
+    // So we need to create an empty user profile to be able to add the device token.
+    await this.userProfileService.findOrCreateUserProfile(user.nationalId)
     // The behaviour of returning the token if it already exists is not following API Design Guide
     // It should respond with 303 See Other and a Location header to the existing resource
     // But as the v1 of the user profile is not following this, we will keep the same behaviour.
