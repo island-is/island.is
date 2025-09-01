@@ -6,7 +6,7 @@
   "tags": ["lib:form-system", "scope:form-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/portals/form-system/graphql/**/*.ts"]
