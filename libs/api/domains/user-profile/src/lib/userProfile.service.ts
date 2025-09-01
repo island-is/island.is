@@ -30,7 +30,6 @@ import { UpdateActorProfileEmailInput } from './dto/updateActorProfileEmail.inpu
 import { ActorProfileDetails } from './dto/actorProfileDetails'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { ApolloError } from '@apollo/client'
 
 @Injectable()
 export class UserProfileService {
@@ -113,7 +112,9 @@ export class UserProfileService {
       } catch (e) {
         this.logger.error('Failed to update bank account', e)
 
-        throw new ApolloError(e.message || 'Failed to update bank account')
+        throw new BadRequestException(
+          e.message || 'Failed to update bank account',
+        )
       }
     }
 
