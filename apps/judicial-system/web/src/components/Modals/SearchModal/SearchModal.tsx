@@ -84,22 +84,27 @@ const SearchModal: FC<Props> = ({ onClose }) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault()
         setFocusIndex((prev) =>
-          prev === null ? 0 : (prev + 1) % searchResults[0].length,
+          prev < 0 ? 0 : (prev + 1) % searchResults[0].length,
         )
       }
 
       if (e.key === 'ArrowUp') {
         e.preventDefault()
         setFocusIndex((prev) =>
-          prev === null
+          prev < 0
             ? searchResults[0].length - 1
             : (prev - 1 + searchResults[0].length) % searchResults[0].length,
         )
       }
 
-      if (e.key === 'Enter' && focusIndex !== null) {
-        handleOpenCase(searchResults[0][focusIndex].props.caseId)
-        onClose()
+      if (e.key === 'Enter' && focusIndex >= 0) {
+        const el = searchResults[0][focusIndex]
+        const caseId = el?.props?.caseId
+
+        if (caseId) {
+          handleOpenCase(caseId)
+          onClose()
+        }
       }
     }
 
