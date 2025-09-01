@@ -5,30 +5,46 @@ import {
   buildTextField,
   buildHiddenInputWithWatchedValue,
   buildRadioField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
-import { housingFireProtections } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
 import { getYesNoOptions } from '../../../utils/utils'
 
 export const RentalHousingFireProtections = buildSubSection({
   id: Routes.FIREPROTECTIONS,
-  title: housingFireProtections.subSectionName,
+  title: m.housingFireProtections.subSectionName,
   children: [
     buildMultiField({
       id: Routes.FIREPROTECTIONS,
-      title: housingFireProtections.pageTitle,
-      description: housingFireProtections.pageDescription,
+      title: m.housingFireProtections.pageTitle,
+      description: m.housingFireProtections.pageDescription,
       children: [
         buildDescriptionField({
           id: 'fireProtections.smokeDetectorsFireExtinguisherRequirements',
           description:
-            housingFireProtections.smokeDetectorsFireExtinguisherRequirements,
+            m.housingFireProtections.smokeDetectorsFireExtinguisherRequirements,
           space: 0,
+        }),
+        buildAlertMessageField({
+          id: 'fireProtections.smokeDetectorsRequirements',
+          title: m.housingFireProtections.smokeDetectorsAlertTitle,
+          message: (application) => {
+            console.log('application: ', application)
+
+            return {
+              ...m.housingFireProtections.smokeDetectorsAlertMessage,
+              values: {
+                propertySize: 80,
+                requiredSmokeDetectors: 1,
+              },
+            }
+          },
+          alertType: 'warning',
         }),
         buildTextField({
           id: 'fireProtections.smokeDetectors',
-          title: housingFireProtections.smokeDetectorsLabel,
-          placeholder: '0',
+          title: m.housingFireProtections.smokeDetectorsLabel,
           width: 'half',
           maxLength: 1,
           format: '#',
@@ -37,8 +53,7 @@ export const RentalHousingFireProtections = buildSubSection({
         }),
         buildTextField({
           id: 'fireProtections.fireExtinguisher',
-          title: housingFireProtections.fireExtinguisherLabel,
-          placeholder: '0',
+          title: m.housingFireProtections.fireExtinguisherLabel,
           width: 'half',
           maxLength: 1,
           format: '#',
@@ -47,9 +62,9 @@ export const RentalHousingFireProtections = buildSubSection({
         }),
         buildDescriptionField({
           id: 'fireProtections.fireBlanketRequirements',
-          title: housingFireProtections.fireBlanketLabel,
+          title: m.housingFireProtections.fireBlanketLabel,
           titleVariant: 'h3',
-          description: housingFireProtections.fireBlanketRequirements,
+          description: m.housingFireProtections.fireBlanketRequirements,
           space: 4,
         }),
         buildRadioField({
@@ -60,9 +75,9 @@ export const RentalHousingFireProtections = buildSubSection({
         }),
         buildDescriptionField({
           id: 'fireProtections.exitRequirements',
-          title: housingFireProtections.exitsLabel,
+          title: m.housingFireProtections.exitsLabel,
           titleVariant: 'h3',
-          description: housingFireProtections.exitRequirements,
+          description: m.housingFireProtections.exitRequirements,
           space: 4,
         }),
         buildRadioField({

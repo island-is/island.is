@@ -38,6 +38,12 @@ export interface ExternalData {
   }
 }
 
+export interface PropertyInfo {
+  categoryType: RentalHousingCategoryTypes
+  categoryClass: RentalHousingCategoryClass
+  categoryClassGroup: RentalHousingCategoryClassGroup
+}
+
 export interface ApplicationAnswers {
   registerProperty?: {
     categoryClass?: RentalHousingCategoryClass

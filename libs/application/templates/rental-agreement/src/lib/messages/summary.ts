@@ -252,10 +252,25 @@ export const summary = defineMessages({
     defaultMessage: 'Sérákvæði eða húsreglur',
     description: 'Special conditions label',
   },
+  propertyConditionTitle: {
+    id: 'ra.application:summary.propertyConditionTitle',
+    defaultMessage: 'Ástand húsnæðis',
+    description: 'Property condition title',
+  },
   propertyConditionInspectorLabel: {
     id: 'ra.application:summary.propertyConditionInspectorLabel',
     defaultMessage: 'Ástandsskoðun',
     description: 'Property condition inspector label',
+  },
+  propertyConditionInspectorValueIndependentParty: {
+    id: 'ra.application:summary.propertyConditionInspectorValueIndependentParty',
+    defaultMessage: 'Framkvæmd af ${inspectorName}',
+    description: 'Property condition inspector value independent party',
+  },
+  propertyConditionInspectorValueSelfPerformed: {
+    id: 'ra.application:summary.propertyConditionInspectorValueSelfPerformed',
+    defaultMessage: 'Framkvæmd af samningsaðilum',
+    description: 'Property condition inspector value self performed',
   },
   propertyConditionInspectorValuePrefix: {
     id: 'ra.application:summary.propertyConditionInspectorValuePrefix',
@@ -267,6 +282,7 @@ export const summary = defineMessages({
     defaultMessage: 'samningsaðilum',
     description: 'Property condition inspector value contract parties',
   },
+
   propertyConditionDescriptionLabel: {
     id: 'ra.application:summary.propertyConditionDescriptionLabel',
     defaultMessage: 'Ástandsúttekt',
@@ -329,6 +345,11 @@ export const summary = defineMessages({
     defaultMessage: 'Umboðsaðili leigusala',
     description: 'Delegator label',
   },
+  landlordsRepresentativeLabelPlural: {
+    id: 'ra.application:summary.landlordsRepresentativeLabelPlural',
+    defaultMessage: 'Umboðsaðilar leigusala',
+    description: 'Delegator label',
+  },
   nationalIdLabel: {
     id: 'ra.application:summary.nationalIdLabel',
     defaultMessage: 'Kennitala: ',
@@ -343,6 +364,11 @@ export const summary = defineMessages({
     id: 'ra.application:summary.emailLabel',
     defaultMessage: 'Netfang',
     description: 'Email label',
+  },
+  fireProtectionsTitle: {
+    id: 'ra.application:summary.fireProtectionsTitle',
+    defaultMessage: 'Brunavarnir',
+    description: 'Fire protections title',
   },
 
   // Share link

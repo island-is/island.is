@@ -40,8 +40,6 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     housingFundPayee,
   } = applicationAnswers(answers)
 
-  const isFireProtectionsPresent =
-    smokeDetectors && fireExtinguisher && emergencyExits
   const isConditionPresent = conditionDescription || (files && files.length > 0)
   const isOtherFeesPresent =
     electricityCostPayee && heatingCostPayee && housingFundPayee
@@ -52,11 +50,6 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ])
 
   const AlertMessageConditions = [
-    {
-      isFilled: isFireProtectionsPresent,
-      route: Routes.FIREPROTECTIONS,
-      message: summary.alertMissingInfoFireProtections,
-    },
     {
       isFilled: isConditionPresent,
       route: Routes.CONDITION,
@@ -88,30 +81,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   return (
     <Box className={summaryWrap} id="email-summary-container">
-      <ApplicantsSummary
-        application={application}
-        field={field}
-        goToScreen={goToScreen}
-        partiesRoute={Routes.PARTIESINFORMATION}
-        hasChangeButton={true}
-      />
-      <ApplicantsRepresentativesSummary
-        application={application}
-        field={field}
-        goToScreen={goToScreen}
-        partiesRoute={Routes.PARTIESINFORMATION}
-        hasChangeButton={true}
-      />
-      <RentalInfoSummary
-        application={application}
-        field={field}
-        goToScreen={goToScreen}
-        rentalPeriodRoute={Routes.RENTALPERIOD}
-        rentalAmountRoute={Routes.RENTALAMOUNT}
-        securityDepositRoute={Routes.SECURITYDEPOSIT}
-        hasChangeButton={true}
-      />
-      <PropertyInfoSummary
+      {/* <PropertyInfoSummary
         application={application}
         field={field}
         goToScreen={goToScreen}
@@ -123,7 +93,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         fileUploadRoute={Routes.CONDITION}
         fireProtectionsRoute={Routes.FIREPROTECTIONS}
         hasChangeButton={true}
-      />
+      /> */}
       <OtherFeesSummary
         application={application}
         field={field}
