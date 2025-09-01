@@ -84,13 +84,5 @@ export const shouldShowSmokeDetectorsAlert = (answers: FormValue) => {
 
   const requiredSmokeDetectors = Math.ceil(Number(size) / 80)
 
-  console.log(
-    'Number(smokeDetectors) < requiredSmokeDetectors: ',
-    Number(smokeDetectors) < requiredSmokeDetectors,
-  )
-  console.log('smokeDetectors: ', smokeDetectors)
-  console.log('requiredSmokeDetectors: ', requiredSmokeDetectors)
-  console.log('size: ', size)
-
   return Number(smokeDetectors) < requiredSmokeDetectors
 }

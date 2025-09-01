@@ -34,8 +34,6 @@ export const RentalHousingFireProtections = buildSubSection({
           condition: shouldShowSmokeDetectorsAlert,
           title: m.housingFireProtections.smokeDetectorsAlertTitle,
           message: (application) => {
-            console.log('application: ', application)
-
             const propertySize = getValueViaPath<Array<PropertyUnit>>(
               application.answers,
               'registerProperty.searchresults.units',
