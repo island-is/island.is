@@ -334,28 +334,30 @@ export const FineAndSpeedMeasurementCalculator = ({
           </Box>
         </Box>
 
-        <Stack space={3}>
-          <Stack space={2}>
-            <Text variant="h2" as="h2">
-              {formatMessage(m.speedMeasurementCalculator.heading)}
-            </Text>
-            <SpeedMeasurementCalculator
-              measuredSpeed={measuredSpeed}
-              speedLimit={speedLimit}
-              over3500kgOrWithTrailer={over3500kgOrWithTrailer}
-              setMeasuredSpeed={setMeasuredSpeed}
-              setSpeedLimit={setSpeedLimit}
-              setOver3500kgOrWithTrailer={setOver3500kgOrWithTrailer}
-              speedLimitOptions={speedLimitOptions}
-            />
+        <Box width="full">
+          <Stack space={3}>
+            <Stack space={2}>
+              <Text variant="h2" as="h2">
+                {formatMessage(m.speedMeasurementCalculator.heading)}
+              </Text>
+              <SpeedMeasurementCalculator
+                measuredSpeed={measuredSpeed}
+                speedLimit={speedLimit}
+                over3500kgOrWithTrailer={over3500kgOrWithTrailer}
+                setMeasuredSpeed={setMeasuredSpeed}
+                setSpeedLimit={setSpeedLimit}
+                setOver3500kgOrWithTrailer={setOver3500kgOrWithTrailer}
+                speedLimitOptions={speedLimitOptions}
+              />
+            </Stack>
+            <Stack space={2}>
+              <Text variant="h2" as="h2">
+                {formatMessage(m.fines.heading)}
+              </Text>
+              <FineCalculator fines={fines} setFines={setFines} />
+            </Stack>
           </Stack>
-          <Stack space={2}>
-            <Text variant="h2" as="h2">
-              {formatMessage(m.fines.heading)}
-            </Text>
-            <FineCalculator fines={fines} setFines={setFines} />
-          </Stack>
-        </Stack>
+        </Box>
       </Box>
       <Box ref={breakdownRef}>
         <Stack space={2}>

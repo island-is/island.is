@@ -13,8 +13,8 @@ import { NotificationType } from '@island.is/judicial-system/types'
 import { filterWhitelistEmails, stripHtmlTags } from '../../formatters'
 import { notifications } from '../../messages'
 import { EventService } from '../event'
+import { Notification, Recipient } from '../repository'
 import { DeliverResponse } from './models/deliver.response'
-import { Notification, Recipient } from './models/notification.model'
 import { notificationModuleConfig } from './notification.config'
 
 interface Attachment {
