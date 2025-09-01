@@ -21,6 +21,7 @@ import {
   InformationForDefendant,
   LawyerRegistry,
   LawyerType,
+  mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
@@ -279,33 +280,16 @@ export class AppService {
     policeDocumentId: string,
     updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ) {
-    const getPoliceDocumentDeliveryStatus = ({
-      delivered,
-      deliveredOnPaper,
-      deliveredOnIslandis,
-      deliveredToLawyer,
-    }: UpdatePoliceDocumentDeliveryDto) => {
-      if (delivered) {
-        if (deliveredOnPaper) {
-          return ServiceStatus.IN_PERSON
-        }
-        if (deliveredOnIslandis) {
-          return ServiceStatus.ELECTRONICALLY
-        }
-        if (deliveredToLawyer) {
-          return ServiceStatus.DEFENDER
-        }
-      }
-      return ServiceStatus.FAILED
-    }
-
     const parsedPoliceUpdate = {
       serviceDate: updatePoliceDocumentDelivery.servedAt,
       servedBy: updatePoliceDocumentDelivery.servedBy,
       comment: updatePoliceDocumentDelivery.comment,
-      serviceStatus: getPoliceDocumentDeliveryStatus(
-        updatePoliceDocumentDelivery,
-      ),
+      serviceStatus: mapPoliceVerdictDeliveryStatus({
+        delivered: updatePoliceDocumentDelivery.delivered,
+        deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
+        deliveredOnPaper: updatePoliceDocumentDelivery.deliveredOnPaper,
+        deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
+      }),
     }
     try {
       const res = await fetch(

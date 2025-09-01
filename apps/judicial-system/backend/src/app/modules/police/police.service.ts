@@ -26,8 +26,10 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -152,6 +154,17 @@ export class PoliceService {
     delivered: z.boolean().nullish(),
     deliveredOnPaper: z.boolean().nullish(),
     deliveredToLawyer: z.boolean().nullish(),
+  })
+
+  // TODO: Template - confirm with RLS
+  private documentStructure = z.object({
+    comment: z.string().nullish(),
+    servedBy: z.string().nullish(),
+    servedAt: z.string().nullish(),
+    delivered: z.boolean().nullish(),
+    deliveredOnPaper: z.boolean().nullish(),
+    deliveredToLawyer: z.boolean().nullish(),
+    deliveredOnIslandis: z.boolean().nullish(),
   })
 
   constructor(
@@ -638,6 +651,17 @@ export class PoliceService {
     const { name: actor } = user
 
     const createDocumentPath = `${this.xRoadPath}/CreateDocument`
+    const body = JSON.stringify({
+      documentName: documentName,
+      documentFiles,
+      fileTypeCode,
+      supplements: [
+        { code: 'RVG_CASE_ID', value: caseId },
+        { code: 'RECEIVER_SSN', value: defendantNationalId },
+      ],
+      dates: documentDates,
+    })
+    console.log({ body })
     try {
       const res = await this.fetchPoliceCaseApi(createDocumentPath, {
         method: 'POST',
@@ -648,16 +672,7 @@ export class PoliceService {
           'X-API-KEY': this.config.policeApiKey,
         },
         agent: this.agent,
-        body: JSON.stringify({
-          documentName: documentName,
-          documentFiles,
-          fileTypeCode,
-          supplements: [
-            { code: 'RVG_CASE_ID', value: caseId },
-            { code: 'RECEIVER_SSN', value: defendantNationalId },
-          ],
-          dates: documentDates,
-        }),
+        body,
       } as RequestInit)
 
       if (res.ok) {
@@ -686,6 +701,33 @@ export class PoliceService {
 
       throw error
     }
+  }
+
+  async getDocumentStatus(policeDocumentId: string, user?: User) {
+    // TODO: not implemented in RLS XROAD api
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/GetDocumentStatus?id=${policeDocumentId}`,
+    ).then(async (res: Response) => {
+      if (res.ok) {
+        const response: z.infer<typeof this.documentStructure> =
+          await res.json()
+        this.documentStructure.parse(response)
+
+        return {
+          serviceStatus: mapPoliceVerdictDeliveryStatus({
+            delivered: response.delivered ?? false,
+            deliveredOnPaper: response.deliveredOnPaper ?? false,
+            deliveredOnIslandis: response.deliveredOnIslandis ?? false,
+            deliveredToLawyer: response.deliveredToLawyer ?? false,
+          }),
+          comment: response.comment ?? undefined,
+          servedBy: response.servedBy ?? undefined,
+          serviceDate: response.servedAt
+            ? new Date(response.servedAt)
+            : undefined,
+        }
+      }
+    })
   }
 
   async createSubpoena(
