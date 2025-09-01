@@ -159,7 +159,6 @@ export class InternalCaseService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
     private readonly caseRepositoryService: CaseRepositoryService,
     @InjectModel(CaseArchive)
     private readonly caseArchiveModel: typeof CaseArchive,

@@ -344,7 +344,6 @@ export class LimitedAccessCaseService {
     private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}

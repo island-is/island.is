@@ -415,7 +415,6 @@ export const caseListInclude: Includeable[] = [
 export class CaseService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,

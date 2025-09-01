@@ -34,7 +34,13 @@ import {
   getRulingPdfAsBuffer,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { Case, Defendant, EventLog, Subpoena } from '../repository'
+import {
+  Case,
+  CaseRepositoryService,
+  Defendant,
+  EventLog,
+  Subpoena,
+} from '../repository'
 import { SubpoenaService } from '../subpoena'
 
 @Injectable()
@@ -46,7 +52,7 @@ export class PdfService {
     private readonly intlService: IntlService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -247,7 +253,7 @@ export class PdfService {
       const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
-      this.caseModel
+      this.caseRepositoryService
         .update(
           { indictmentHash: hash, indictmentHashAlgorithm: hashAlgorithm },
           { where: { id: theCase.id } },

@@ -95,6 +95,7 @@ export interface UpdateCase
     | 'hasCivilClaims'
     | 'isRegisteredInPrisonSystem'
     | 'isArchived'
+    | 'indictmentHashAlgorithm'
   > {
   type?: CaseType
   state?: CaseState
