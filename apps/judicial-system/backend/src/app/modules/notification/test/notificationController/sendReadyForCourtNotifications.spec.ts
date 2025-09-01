@@ -9,7 +9,7 @@ import {
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
-import { Case } from '../../../case'
+import { Case } from '../../../repository'
 import { SendNotificationResponse } from '../../models/sendNotification.response'
 
 interface Then {

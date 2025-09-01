@@ -4,8 +4,8 @@ import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
+import { Offense } from '../../repository'
 import { UpdateOffenseDto } from '../dto/updateOffense.dto'
-import { Offense } from '../models/offense.model'
 
 interface Then {
   result: Offense | null
