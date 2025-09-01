@@ -17,40 +17,67 @@ import {
 import { useQuery } from '@apollo/client'
 import { User } from './types'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
-import { useEffect, useState } from 'react'
+import { Dispatch, useEffect, useState } from 'react'
+import { useLocale } from '@island.is/localization'
+import { Action } from '../../lib'
+
+
 
 interface Props {
-  applicantType: FormSystemField
-  user?: User
-  lang: 'is' | 'en'
+  applicant: FormSystemField
   actor: string
+  dispatch: Dispatch<Action>
+  user?: User
 }
 
 export const IndividualApplicant = ({
-  applicantType,
-  lang,
+  applicant,
   user,
   actor,
+  dispatch
 }: Props) => {
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
   const nationalId = actor !== '' ? actor : user?.nationalId ?? ''
   const shouldQuery = !!nationalId
+
   const { data: nameData, loading: nameLoading } = useQuery(
     GET_NAME_BY_NATIONALID,
     {
       variables: { input: nationalId },
       fetchPolicy: 'cache-first',
       skip: !shouldQuery,
+      onCompleted: (data) => {
+        dispatch({
+          type: 'SET_NAME',
+          payload: {
+            id: applicant.id,
+            value: data.formSystemNameByNationalId.fulltNafn,
+          },
+        })
+      }
     },
   )
+
   const { data: addressData, loading: addressLoading } = useQuery(
     GET_ADDRESS_BY_NATIONALID,
     {
       variables: { input: nationalId },
       fetchPolicy: 'cache-first',
       skip: !shouldQuery,
+      onCompleted: (data) => {
+        dispatch({
+          type: 'SET_ADDRESS',
+          payload: {
+            id: applicant.id,
+            address: data.formSystemHomeByNationalId.heimilisfang,
+            postalCode: data.formSystemHomeByNationalId.postnumer,
+          },
+        })
+      }
     },
   )
+
   const address = addressData?.formSystemHomeByNationalId?.heimilisfang
   const phoneNumberCatcher = user?.mobilePhoneNumber ?? ''
   const emails =
@@ -63,12 +90,13 @@ export const IndividualApplicant = ({
   useEffect(() => {
     setEmail(emails ?? '')
     setPhoneNumber(phoneNumberCatcher)
+    console.log(`email: ${emails} phone:${phoneNumberCatcher}`)
   }, [emails, phoneNumberCatcher])
 
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
-        {applicantType?.name?.[lang]}
+        {applicant?.name?.[lang]}
       </Text>
       <Stack space={2}>
         {isLoading ? (

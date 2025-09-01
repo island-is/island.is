@@ -26,27 +26,36 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     return valid
   }
 
-  const onSubmit =
-    (currentSection.data.sectionType === SectionTypes.SUMMARY &&
-      (state.application.hasPayment === false ||
-        state.application.hasPayment === undefined)) ||
-    currentSection.data.sectionType === SectionTypes.PAYMENT ||
-    (state.application.hasPayment === false &&
-      state.application.hasSummaryScreen === false &&
-      state.currentScreen?.index ===
-        state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
+  console.log(state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
+
+  // const onSubmit =
+  //   (currentSection.data.sectionType === SectionTypes.SUMMARY &&
+  //     (state.application.hasPayment === false ||
+  //       state.application.hasPayment === undefined)) ||
+  //   currentSection.data.sectionType === SectionTypes.PAYMENT ||
+  //   (state.application.hasPayment === false &&
+  //     state.application.hasSummaryScreen === false &&
+  //     state.currentScreen?.index ===
+  //     state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
+
+  const onSubmit = false
+
+  const displayBack = state.currentSection.index > 0 && !(state.currentSection.index === 1 && (state.currentScreen?.index ?? 0) === 0)
 
   const continueButtonText =
     state.currentSection.index === 0
       ? formatMessage(webMessages.externalDataConfirmation)
       : onSubmit
-      ? formatMessage(webMessages.submitApplication)
-      : formatMessage(webMessages.continue)
+        ? formatMessage(webMessages.submitApplication)
+        : formatMessage(webMessages.continue)
+
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
+
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
   const [submitApplication] = useMutation(SUBMIT_APPLICATION)
+
   const handleIncrement = async () => {
     const isValid = await validate()
 
@@ -100,7 +109,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               {continueButtonText}
             </Button>
           </Box>
-          {state.currentSection.index > 1 && (
+          {displayBack && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button
                 icon="arrowBack"

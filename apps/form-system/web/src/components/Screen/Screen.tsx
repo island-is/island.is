@@ -46,7 +46,7 @@ export const Screen = () => {
         )}
         {currentSectionType === SectionTypes.PARTIES && (
           <Applicants
-            applicantFields={currentScreen?.data?.fields as FormSystemField[]}
+            applicantField={currentScreen?.data?.fields?.[0] as FormSystemField}
           />
         )}
         {currentSectionType === SectionTypes.SUMMARY &&
