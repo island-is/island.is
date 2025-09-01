@@ -17,10 +17,9 @@ import {
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 
+import { IndictmentCount, Offense } from '../repository'
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
 import { UpdateOffenseDto } from './dto/updateOffense.dto'
-import { IndictmentCount } from './models/indictmentCount.model'
-import { Offense } from './models/offense.model'
 
 @Injectable()
 export class IndictmentCountService {
@@ -59,6 +58,17 @@ export class IndictmentCountService {
 
   async create(caseId: string): Promise<IndictmentCount> {
     return this.indictmentCountModel.create({ caseId })
+  }
+
+  async createWithPoliceCaseNumber(
+    caseId: string,
+    policeCaseNumber: string,
+    transaction: Transaction,
+  ): Promise<IndictmentCount> {
+    return this.indictmentCountModel.create(
+      { caseId, policeCaseNumber },
+      { transaction },
+    )
   }
 
   async update(

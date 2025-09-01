@@ -25,10 +25,21 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     const valid = await trigger()
     return valid
   }
+
+  const onSubmit =
+    (currentSection.data.sectionType === SectionTypes.SUMMARY &&
+      (state.application.hasPayment === false ||
+        state.application.hasPayment === undefined)) ||
+    currentSection.data.sectionType === SectionTypes.PAYMENT ||
+    (state.application.hasPayment === false &&
+      state.application.hasSummaryScreen === false &&
+      state.currentScreen?.index ===
+        state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
+
   const continueButtonText =
     state.currentSection.index === 0
       ? formatMessage(webMessages.externalDataConfirmation)
-      : currentSection.data.sectionType === SectionTypes.SUMMARY
+      : onSubmit
       ? formatMessage(webMessages.submitApplication)
       : formatMessage(webMessages.continue)
   const enableContinueButton =
@@ -36,11 +47,10 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
   const [submitApplication] = useMutation(SUBMIT_APPLICATION)
-
   const handleIncrement = async () => {
     const isValid = await validate()
 
-    if (currentSection.data.sectionType === SectionTypes.SUMMARY) {
+    if (onSubmit) {
       return submitApplication({
         variables: {
           input: {
