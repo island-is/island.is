@@ -3,6 +3,7 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -61,14 +62,11 @@ export const healthProtectionSubSection = buildSubSection({
                 .typeOfFoodAllergiesOrIntolerances,
             component: 'FriggOptionsAsyncSelectField',
             marginBottom: 3,
-            condition: (answers, externalData) => {
+            condition: (answers) => {
               const { hasFoodAllergiesOrIntolerances } =
                 getApplicationAnswers(answers)
 
-              return (
-                hasFoodAllergiesOrIntolerances?.includes(YES) ||
-                hasDefaultFoodAllergiesOrIntolerances(externalData) === YES
-              )
+              return hasFoodAllergiesOrIntolerances?.includes(YES)
             },
             defaultValue: (application: Application) => {
               const { healthProfile } = getApplicationExternalData(
@@ -102,13 +100,10 @@ export const healthProtectionSubSection = buildSubSection({
             id: 'healthProtection.otherAllergies',
             title: newPrimarySchoolMessages.differentNeeds.typeOfOtherAllergies,
             component: 'FriggOptionsAsyncSelectField',
-            condition: (answers, externalData) => {
+            condition: (answers) => {
               const { hasOtherAllergies } = getApplicationAnswers(answers)
 
-              return (
-                hasOtherAllergies?.includes(YES) ||
-                hasDefaultAllergies(externalData) === YES
-              )
+              return hasOtherAllergies?.includes(YES)
             },
             defaultValue: (application: Application) => {
               const { healthProfile } = getApplicationExternalData(
@@ -134,15 +129,13 @@ export const healthProtectionSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           alertType: 'info',
           marginTop: 4,
-          condition: (answers, externalData) => {
+          condition: (answers) => {
             const { hasFoodAllergiesOrIntolerances, hasOtherAllergies } =
               getApplicationAnswers(answers)
 
             return (
               hasFoodAllergiesOrIntolerances?.includes(YES) ||
-              hasDefaultFoodAllergiesOrIntolerances(externalData) === YES ||
-              hasOtherAllergies?.includes(YES) ||
-              hasDefaultAllergies(externalData) === YES
+              hasOtherAllergies?.includes(YES)
             )
           },
         }),
@@ -163,15 +156,13 @@ export const healthProtectionSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers, externalData) => {
+          condition: (answers) => {
             const { hasFoodAllergiesOrIntolerances, hasOtherAllergies } =
               getApplicationAnswers(answers)
 
             return (
               hasFoodAllergiesOrIntolerances?.includes(YES) ||
-              hasDefaultFoodAllergiesOrIntolerances(externalData) === YES ||
-              hasOtherAllergies?.includes(YES) ||
-              hasDefaultAllergies(externalData) === YES
+              hasOtherAllergies?.includes(YES)
             )
           },
           defaultValue: (application: Application) => {
@@ -261,21 +252,20 @@ export const healthProtectionSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           alertType: 'info',
           marginTop: 4,
-          condition: (answers, externalData) => {
+          condition: (answers) => {
             const {
               hasConfirmedMedicalDiagnoses,
               requestsMedicationAdministration,
             } = getApplicationAnswers(answers)
 
-            const { healthProfile } = getApplicationExternalData(externalData)
-
             return (
               hasConfirmedMedicalDiagnoses === YES ||
-              requestsMedicationAdministration === YES ||
-              healthProfile?.hasConfirmedMedicalDiagnoses === true ||
-              healthProfile?.requestsMedicationAdministration === true
+              requestsMedicationAdministration === YES
             )
           },
+        }),
+        buildHiddenInput({
+          id: 'healthProtection.triggerHiddenInput',
         }),
       ],
     }),
