@@ -31,7 +31,7 @@ export const getBankIsk = (bankInfo?: BankInfo | PaymentInfo) => {
   const bank = 'bankNumber' in bankInfo ? bankInfo.bankNumber : bankInfo.bank
 
   return bank && bankInfo.ledger && bankInfo.accountNumber
-    ? bank + bankInfo.ledger + bankInfo.accountNumber
+    ? bank + '-' + bankInfo.ledger + '-' + bankInfo.accountNumber
     : ''
 }
 

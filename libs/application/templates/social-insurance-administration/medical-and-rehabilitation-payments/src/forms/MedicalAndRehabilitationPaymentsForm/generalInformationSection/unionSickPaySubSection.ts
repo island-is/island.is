@@ -92,7 +92,7 @@ export const unionSickPaySubSection = buildSubSection({
             shouldShowUnionSickPayUnionAndEndDate(answers),
         }),
         buildAsyncSelectField({
-          id: 'unionSickPay.unionNationalId',
+          id: 'unionSickPay.unionInfo',
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionSelectTitle,
@@ -109,7 +109,7 @@ export const unionSickPaySubSection = buildSubSection({
             return (
               data?.socialInsuranceGeneral?.unions
                 ?.map(({ name, nationalId }) => ({
-                  value: nationalId || '',
+                  value: `${nationalId}::${name}` || '',
                   label: name || '',
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
