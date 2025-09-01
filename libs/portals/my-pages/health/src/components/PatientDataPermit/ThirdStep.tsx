@@ -39,6 +39,10 @@ const ThirdStep: FC<ThirdStepProps> = ({
         <DatePicker
           backgroundColor="blue"
           range
+          minDate={today}
+          minYear={today.getFullYear()}
+          maxDate={addYears(today, 3)}
+          maxYear={addYears(today, 3).getFullYear()}
           ranges={[
             {
               startDate: today,
