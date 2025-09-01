@@ -19,9 +19,7 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import {
-  SignatureCollectionList,
-} from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import {
@@ -85,7 +83,7 @@ const Lists = () => {
 
     setPage(1)
     setLists(filteredList)
-  }, [filters])
+  }, [filters, allLists])
 
   useEffect(() => {
     // set candidates on initial load of lists
@@ -108,7 +106,7 @@ const Lists = () => {
 
       setCandidates(candidates)
     }
-  }, [])
+  }, [lists])
 
   return (
     <GridContainer>
@@ -157,7 +155,7 @@ const Lists = () => {
           <Box marginTop={9} />
           {lists?.length > 0 && (
             <GridRow marginBottom={5}>
-              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
                 <FilterInput
                   name="input"
                   placeholder={formatMessage(m.searchInAllListsPlaceholder)}
@@ -166,7 +164,7 @@ const Lists = () => {
                   backgroundColor="blue"
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <Box
                   display="flex"
                   justifyContent="spaceBetween"

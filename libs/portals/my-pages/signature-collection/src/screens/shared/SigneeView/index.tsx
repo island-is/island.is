@@ -1,15 +1,8 @@
-import {
-  ActionCard,
-  AlertMessage,
-  Box,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { ActionCard, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { EmptyState } from '@island.is/portals/my-pages/core'
 import { useGetListsForUser, useGetSignedList } from '../../../hooks'
 import { Skeleton } from '../../../lib/skeletons'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { sortAlpha } from '@island.is/shared/utils'
 import { m } from '../../../lib/messages'
 import SignedList from '../SignedList'
@@ -25,13 +18,12 @@ const SigneeView = ({
   currentCollection: SignatureCollection
   collectionType: SignatureCollectionCollectionType
 }) => {
-  const user = useUserInfo()
   const { formatMessage } = useLocale()
   const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
   const { listsForUser, loadingUserLists, getListsForUserError } =
     useGetListsForUser(collectionType, currentCollection?.id)
 
-  if (getListsForUserError !== undefined) {
+  if (getListsForUserError) {
     return (
       <EmptyState
         title={m.noUserFound}
@@ -42,7 +34,7 @@ const SigneeView = ({
 
   return (
     <Box>
-      {!user?.profile.actor && !loadingSignedLists && !loadingUserLists ? (
+      {!loadingSignedLists && !loadingUserLists ? (
         <Box>
           {listsForUser?.length === 0 && signedLists?.length === 0 && (
             <Box marginTop={10}>
@@ -121,12 +113,6 @@ const SigneeView = ({
             </Box>
           </Box>
         </Box>
-      ) : user?.profile.actor ? (
-        <AlertMessage
-          type="warning"
-          title={formatMessage(m.actorNoAccessTitle)}
-          message={formatMessage(m.actorNoAccessDescription)}
-        />
       ) : (
         <Skeleton />
       )}
