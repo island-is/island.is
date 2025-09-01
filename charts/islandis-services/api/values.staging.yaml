@@ -60,7 +60,6 @@ env:
   ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-  ISLYKILL_CERT: '/etc/config/islyklar.p12'
   LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   LOG_LEVEL: 'info'
   MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'
@@ -185,8 +184,6 @@ env:
   XROAD_WORK_ACCIDENT_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token'
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
-files:
-  - 'islyklar.p12'
 grantNamespaces:
   - 'nginx-ingress-external'
   - 'api-catalogue'
