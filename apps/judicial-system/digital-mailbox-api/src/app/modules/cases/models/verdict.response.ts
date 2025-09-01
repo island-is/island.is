@@ -1,7 +1,3 @@
-import { option } from 'fp-ts'
-import { filterMap } from 'fp-ts/lib/Array'
-import { pipe } from 'fp-ts/lib/function'
-
 import { ApiProperty } from '@nestjs/swagger'
 
 import {
@@ -13,7 +9,6 @@ import {
   CaseIndictmentRulingDecision,
   getIndictmentAppealDeadlineDate,
   hasDatePassed,
-  informationForDefendantMap,
   ServiceRequirement,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
