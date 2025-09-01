@@ -18,7 +18,7 @@ import {
 import { CaseService } from '../../case'
 import { FileService } from '../../file'
 import { PoliceService } from '../../police'
-import { Verdict } from '../models/verdict.model'
+import { Verdict } from '../../repository'
 import { VerdictController } from '../verdict.controller'
 import { VerdictService } from '../verdict.service'
 

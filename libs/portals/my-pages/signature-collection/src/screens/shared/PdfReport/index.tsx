@@ -1,11 +1,11 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button } from '@island.is/island-ui/core'
-import { usePDF } from '@react-pdf/renderer'
+import { Button } from '@island.is/island-ui/core'
+import { usePDF, Document } from '@react-pdf/renderer'
 import MyPdfDocument from './Document'
-import { useEffect } from 'react'
 import { useGetPdfReport } from '../../../hooks'
 import { m } from '../../../lib/messages'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import { useEffect } from 'react'
 
 export const PdfReport = ({
   listId,
@@ -17,29 +17,24 @@ export const PdfReport = ({
   const { formatMessage } = useLocale()
   const { report } = useGetPdfReport(listId || '', collectionType)
 
-  const [document, updateDocument] = usePDF({
-    document: report && <MyPdfDocument report={report} />,
-  })
+  const [instance, updateInstance] = usePDF({ document: <Document /> })
 
-  // Update pdf document after data is fetched
   useEffect(() => {
     if (report) {
-      // @ts-expect-error - updateDocument should be called without arguments based on working examples
-      updateDocument()
+      updateInstance(
+        <MyPdfDocument report={report} collectionType={collectionType} />,
+      )
     }
-  }, [report, updateDocument])
+    // eslint-disable-next-line
+  }, [report, updateInstance])
 
   return (
-    <Box>
-      <Button
-        icon="download"
-        iconType="outline"
-        variant="ghost"
-        onClick={() => window.open(document?.url?.toString(), '_blank')}
-      >
-        {formatMessage(m.downloadPdf)}
-      </Button>
-    </Box>
+    <Button
+      variant="text"
+      onClick={() => window.open(instance.url?.toString(), '_blank')}
+    >
+      {formatMessage(m.downloadPdf)}
+    </Button>
   )
 }
 
