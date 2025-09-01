@@ -134,26 +134,10 @@ const rentalPeriod = z
   .superRefine((data, ctx) => {
     const { startDate, endDate, isDefinite } = data
 
-    const start = startDate ? new Date(startDate) : ''
-    const end = endDate ? new Date(endDate) : ''
+    // Parse dates and validate them properly
+    const start = startDate ? new Date(startDate) : null
+    const end = endDate ? new Date(endDate) : null
     const isDefiniteChecked = isDefinite?.includes(YesOrNoEnum.YES)
-
-    if (start) {
-      const oneYearFromNow = new Date()
-      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1)
-
-      if (
-        start instanceof Date &&
-        !isNaN(start.getTime()) &&
-        start.getTime() > oneYearFromNow.getTime()
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['startDate'],
-          params: m.rentalPeriod.errorStartDateTooFarInFuture,
-        })
-      }
-    }
 
     if (!isDefiniteChecked) {
       return
@@ -167,7 +151,14 @@ const rentalPeriod = z
       })
       return
     }
-    if (start >= end) {
+
+    if (
+      start &&
+      end &&
+      isFinite(start.getTime()) &&
+      isFinite(end.getTime()) &&
+      start.getTime() >= end.getTime()
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['endDate'],

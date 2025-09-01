@@ -18,12 +18,12 @@ export const partiesDetails = defineMessages({
     description: 'Parties details multi field description',
   },
   landlordTableTitle: {
-    id: 'ra.application:partiesDetails.pageTitle',
+    id: 'ra.application:partiesDetails.landlordTableTitle',
     defaultMessage: 'Leigusalar',
     description: 'Parties details page title',
   },
   landlordTitle: {
-    id: 'ra.application:partiesDetails.tableTitle',
+    id: 'ra.application:partiesDetails.landlordTitle',
     defaultMessage: 'Leigusali',
     description: 'Parties details table title',
   },
@@ -49,7 +49,7 @@ export const partiesDetails = defineMessages({
     description: 'Duplicate national ID error in table',
   },
   tenantTableTitle: {
-    id: 'ra.application:tenantDetails.tableTitle',
+    id: 'ra.application:tenantDetails.tenantTableTitle',
     defaultMessage: 'Leigjendur',
     description: 'Tenant details table title',
   },

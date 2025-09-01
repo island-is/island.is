@@ -374,7 +374,8 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     value: string,
   ) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-    const numberValue = Number(value) ?? 0
+    const parsed = Number(value)
+    const numberValue = Number.isFinite(parsed) ? parsed : 0
 
     const updateFunc = (prev: Record<string, number>) => {
       const newValues = {
