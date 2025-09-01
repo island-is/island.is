@@ -68,7 +68,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
   const [searchResults, setSearchResults] =
     useState<[JSX.Element[], number | undefined]>()
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const itemRefs = useRef<(HTMLSpanElement | null)[]>([])
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([])
 
   const [searchCases] = useSearchCasesLazyQuery({
     fetchPolicy: 'no-cache',
@@ -113,7 +113,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
   }, [focusIndex, handleOpenCase, onClose, searchResults])
 
   useEffect(() => {
-    if (focusIndex !== null && itemRefs.current[focusIndex]) {
+    if (focusIndex >= 0 && itemRefs.current[focusIndex]) {
       itemRefs.current[focusIndex]?.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
@@ -216,16 +216,19 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                 <Text variant="eyebrow" color="dark300">
                   {`Leitarniðurstöður (${searchResults[1]})`}
                 </Text>
-                {searchResults[0].map((searchResult, index) => (
-                  <span
-                    className={cn({ [styles.focus]: focusIndex === index })}
-                    ref={(el) => {
-                      itemRefs.current[index] = el
-                    }}
-                  >
-                    {searchResult}
-                  </span>
-                ))}
+                <ul className={styles.searchResults}>
+                  {searchResults[0].map((searchResult, index) => (
+                    <li
+                      key={searchResult.props.caseId ?? index}
+                      className={cn({ [styles.focus]: focusIndex === index })}
+                      ref={(el) => {
+                        itemRefs.current[index] = el
+                      }}
+                    >
+                      {searchResult}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </motion.div>
           )}

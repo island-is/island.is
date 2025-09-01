@@ -4,6 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const resultButton = style({
   width: '100%',
+  borderRadius: theme.border.radius.large,
 
   selectors: {
     '&:hover': {
@@ -23,8 +24,8 @@ export const searchResultsContainer = style({
 })
 
 export const focus = style({
+  borderRadius: theme.border.radius.large,
   background: theme.color.blue100,
-  borderRadius: theme.border.radius.standard,
 })
 
 export const searchResults = style({
