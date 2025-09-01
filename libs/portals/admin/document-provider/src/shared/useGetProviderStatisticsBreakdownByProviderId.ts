@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import {
   ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest,
   CategoryStatisticsSortBy,
@@ -21,9 +21,9 @@ export function useGetProviderStatisticsBreakdownByProviderId(
   fromDate?: Date,
   toDate?: Date,
   sortBy?: string,
-  desc: boolean = false,
-  page: number = 1,
-  pageSize: number = 10,
+  desc = false,
+  page = 1,
+  pageSize = 10,
 ): GetProviderStatisticsBreakdownReturnType {
   const statisticsInput: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest =
     {
@@ -60,7 +60,7 @@ export function useGetProviderStatisticsBreakdownByProviderId(
   let chartData: Array<ChartData> | undefined
   if (breakdown) {
     chartData = breakdown.items.map(
-      (item: ProviderStatisticsBreakdown, idx: number): ChartData => ({
+      (item: ProviderStatisticsBreakdown): ChartData => ({
         name:
           item.year && item.month
             ? new Date(item.year, item.month - 1).toLocaleString('is', {

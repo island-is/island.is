@@ -1,16 +1,9 @@
-import type { User } from '@island.is/auth-nest-tools'
 import {
   ApiV1StatisticsNationalIdCategoriesGetRequest,
   DocumentProviderDashboardService,
 } from '@island.is/clients/document-provider-dashboard'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import type { ConfigType } from '@island.is/nest/config'
-import { DownloadServiceConfig } from '@island.is/nest/config'
-import type { Locale } from '@island.is/shared/types'
-import { AuthDelegationType } from '@island.is/shared/types'
-import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
-import differenceInYears from 'date-fns/differenceInYears'
 import { ApiV1StatisticsNationalIdProvidersGetRequest } from '../models/document-provider-dashboard/statisticsNationalIdProviders.input'
 import { ProviderStatisticsPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsPaginationResponse.model'
 import { StatisticsSortBy } from '../models/document-provider-dashboard/statisticsNationalIdProviders.input'
@@ -31,7 +24,6 @@ import {
   ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest,
   CategoryStatisticsSortBy,
 } from '../models/document-provider-dashboard/statisticsProvidersBreakdownWithCategories.input'
-import { publish } from 'rxjs'
 
 const LOG_CATEGORY = 'document-provider-dashboard-api-v1'
 
@@ -45,6 +37,7 @@ export class DocumentProviderDashboardServiceV1 {
   async getStatisticProvidersByNationalId(
     input: ApiV1StatisticsNationalIdProvidersGetRequest,
   ): Promise<ProviderStatisticsPaginationResponse | null> {
+    console.log('input in service', input)
     const statisticProviders =
       await this.documentDashboardService.getStatisticProvidersByNationalId({
         ...input,
@@ -141,8 +134,8 @@ export class DocumentProviderDashboardServiceV1 {
       ...breakdown,
       totalCount: breakdown.totalCount ?? 0,
       items: (breakdown.items ?? []).map((item) => ({
-        year: item.year,
-        month: item.month,
+        year: item.year ?? 0,
+        month: item.month ?? 0,
         statistics: item.statistics
           ? {
               published: item.statistics.published ?? 0,
@@ -207,8 +200,8 @@ export class DocumentProviderDashboardServiceV1 {
       ...breakdown,
       totalCount: breakdown.totalCount ?? 0,
       items: (breakdown.items ?? []).map((item) => ({
-        year: item.year,
-        month: item.month,
+        year: item.year ?? 0,
+        month: item.month ?? 0,
         statistics: item.statistics
           ? {
               published: item.statistics.published ?? 0,

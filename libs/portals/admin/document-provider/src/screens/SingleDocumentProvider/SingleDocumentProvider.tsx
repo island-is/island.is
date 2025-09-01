@@ -43,7 +43,7 @@ const SingleDocumentProvider = () => {
   const [toDate, setToDate] = useState<Date | undefined>(firstOfThisMonth)
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize] = useState(10)
   const { formatMessage } = useLocale()
 
   const { providerId } = useParams<{ providerId: string }>()
@@ -59,7 +59,7 @@ const SingleDocumentProvider = () => {
   const { loading: loadingProviders, items: providers } =
     useGetProvidersByNationalId(user.profile.nationalId, undefined, undefined)
 
-  const { loading: loadingBreakdownSix, chartData } =
+  const { chartData } =
     useGetProviderStatisticsBreakdownByProviderId(
       providerId,
       user.profile.nationalId,

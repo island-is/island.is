@@ -56,6 +56,7 @@ export class DocumentProviderDashboardResolverV1 {
     locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<ProviderStatisticsPaginationResponse | null> {
+    console.log('input in resolver', input)
     try {
       const data = await this.auditService.auditPromise(
         {
@@ -107,7 +108,7 @@ export class DocumentProviderDashboardResolverV1 {
           },
         },
         this.documentProviderDashboardServiceV1.getStatisticsCategories({
-          ...input,
+          ...input
         }),
       )
 
@@ -368,9 +369,10 @@ export class DocumentProviderDashboardResolverV1 {
           auth: user,
           namespace: '@island.is/api/document-provider-dashboard',
           action: 'getStatisticsBreakdownWithCategoriesByProviderId',
-          resources: input.nationalId,
+          resources: input.providerId,
           meta: {
             nationalId: input.nationalId,
+            providerId: input.providerId,
           },
         },
         this.documentProviderDashboardServiceV1.getStatisticsBreakdownWithCategoriesByProviderId(

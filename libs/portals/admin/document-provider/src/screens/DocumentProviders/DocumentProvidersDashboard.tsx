@@ -2,7 +2,6 @@ import { useLocale } from '@island.is/localization'
 import { GridRow, Box, Text } from '@island.is/island-ui/core'
 import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/OpenedFilesDonutChart'
 import { useGetProviderStatisticCategoriesByNationalId } from '../../shared/useGetProviderStatisticCategoriesByNationalId'
-import { useGetProviderStatisticsBreakdownByNationalId } from '../../shared/useGetProviderStatisticsBreakdownByNationalId'
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
 import { SentFilesChartDataItem, StatisticsOverview } from '../../lib/types'
 

@@ -23,6 +23,7 @@ export function useGetStatisticsByNationalId(
       input: statisticsInput,
     },
     fetchPolicy: 'cache-and-network',
+    skip: !nationalId,
   })
 
   const { formatMessage } = useLocale()

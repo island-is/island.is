@@ -26,7 +26,6 @@ export const OpenedFilesDonutChart: FC<React.PropsWithChildren<Props>> = ({
   data,
   title,
   valueIndex,
-  children,
 }) => {
   const { formatMessage } = useLocale()
 

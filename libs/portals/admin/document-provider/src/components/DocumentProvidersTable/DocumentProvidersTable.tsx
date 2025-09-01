@@ -2,11 +2,8 @@ import {
   Box,
   Table as T,
   Text,
-  Link,
   LinkV2,
   Button,
-  LinkColor,
-  Icon,
 } from '@island.is/island-ui/core'
 import { ProviderInfo } from '../../lib/types'
 import { formatNumber } from '../../lib/utils'
