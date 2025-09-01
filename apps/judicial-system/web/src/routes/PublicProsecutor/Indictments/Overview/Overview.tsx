@@ -7,11 +7,13 @@ import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { Feature } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   BlueBoxWithDate,
   CourtCaseInfo,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -26,6 +28,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
+import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
   Defendant,
@@ -47,6 +50,7 @@ import {
 } from '../../components/utils'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
+import * as styles from './Overview.css'
 
 type VisibleModal = {
   type: 'REVOKE_SEND_TO_PRISON_ADMIN'
@@ -62,6 +66,8 @@ export const Overview = () => {
   const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { features } = useContext(FeatureContext)
+
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
   const [isReviewedDecisionChanged, setIsReviewedDecisionChanged] =
@@ -150,47 +156,58 @@ export const Overview = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) => {
           const { verdict } = defendant
+
+          if (!verdict) {
+            return null
+          }
+
           const isFine =
             workingCase.indictmentRulingDecision ===
             CaseIndictmentRulingDecision.FINE
 
           const isServiceRequired =
-            verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+            verdict.serviceRequirement === ServiceRequirement.REQUIRED
 
           const isServiceNotApplicable =
-            verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
 
           return (
             <Fragment key={defendant.id}>
-              <Box component="section" marginBottom={2}>
-                <BlueBoxWithDate defendant={defendant} icon="calendar" />
-              </Box>
-              {verdict &&
-                (isServiceNotApplicable ||
-                  (isServiceRequired && verdict.serviceDate)) && (
-                  <Box component="section" marginBottom={2}>
-                    <BlueBox>
-                      <SectionHeading
-                        title="Afstaða dómfellda til dóms"
-                        heading="h4"
-                        marginBottom={2}
-                        required
-                      />
-                      <Box marginBottom={2}>
-                        <Text variant="eyebrow">{defendant.name}</Text>
-                      </Box>
-                      <VerdictAppealDecisionChoice
-                        defendant={defendant}
-                        verdict={verdict}
-                        disabled={!!defendant.isSentToPrisonAdmin}
-                      />
-                    </BlueBox>
-                  </Box>
+              <Box className={styles.container}>
+                {features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) && (
+                  <VerdictStatusAlert verdict={verdict} defendant={defendant} />
                 )}
+                <Box component="section">
+                  <BlueBoxWithDate defendant={defendant} icon="calendar" />
+                </Box>
+                {verdict &&
+                  (isServiceNotApplicable ||
+                    (isServiceRequired && verdict.serviceDate)) && (
+                    <Box component="section">
+                      <BlueBox>
+                        <SectionHeading
+                          title="Afstaða dómfellda til dóms"
+                          heading="h4"
+                          marginBottom={2}
+                          required
+                        />
+                        <Box marginBottom={2}>
+                          <Text variant="eyebrow">{defendant.name}</Text>
+                        </Box>
+                        <VerdictAppealDecisionChoice
+                          defendant={defendant}
+                          verdict={verdict}
+                          disabled={!!defendant.isSentToPrisonAdmin}
+                        />
+                      </BlueBox>
+                    </Box>
+                  )}
+              </Box>
               <Box
                 display="flex"
                 justifyContent="flexEnd"
                 marginBottom={5}
+                marginTop={1}
                 columnGap={2}
               >
                 <Button
