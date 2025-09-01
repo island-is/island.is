@@ -317,12 +317,12 @@ export const serviceSetup = (services: {
             ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
           }web.islandis.svc.cluster.local/payments/event-callback`,
       ),
-      LANDSPITALI_MEMORIAL_CARD_PAYMENT_CONFIRMATION_SUBJECT: {
+      LANDSPITALI_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: {
         dev: '[TEST] Minningarkort - Landspítali',
         staging: '[TEST] Minningarkort - Landspítali',
         prod: 'Minningarkort - Landspítali',
       },
-      LANDSPITALI_DIRECT_GRANT_PAYMENT_CONFIRMATION_SUBJECT: {
+      LANDSPITALI_DIRECT_GRANT_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: {
         dev: '[TEST] Beinn styrkur - Landspítali',
         staging: '[TEST] Beinn styrkur - Landspítali',
         prod: 'Beinn styrkur - Landspítali',
