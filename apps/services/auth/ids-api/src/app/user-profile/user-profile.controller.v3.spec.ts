@@ -27,7 +27,7 @@ import { createNationalRegistryV3User } from '../../../test/nationalRegistryV3Us
 import { setupWithAuth } from '../../../test/setup'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mocked = <T extends (...args: any) => any>(value: T) => {
+function mocked<T extends (...args: any) => any>(value: T) {
   return value as unknown as jest.Mock<ReturnType<T>, Parameters<T>>
 }
 
@@ -38,7 +38,7 @@ const mockNationalRegistry = (
   mocked(nationalRegistryApi.getAllDataIndividual).mockResolvedValue(data)
 }
 
-const createCompany = (): CompanyExtendedInfo => {
+function createCompany(): CompanyExtendedInfo {
   return {
     name: faker.company.companyName(),
     address: {
@@ -70,7 +70,7 @@ const createCompany = (): CompanyExtendedInfo => {
   } as CompanyExtendedInfo
 }
 
-const createUserProfile = ({ isRestricted = false }): UserProfileDto => {
+function createUserProfile({ isRestricted = false }): UserProfileDto {
   return {
     nationalId: faker.datatype.string(),
     email: faker.internet.email(),
