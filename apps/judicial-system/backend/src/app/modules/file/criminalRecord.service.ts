@@ -20,8 +20,8 @@ import {
 import type { CaseType, User } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
-import { Defendant } from '../defendant'
 import { EventService } from '../event'
+import { Defendant } from '../repository'
 import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { criminalRecordModuleConfig } from './criminalRecord.config'
 

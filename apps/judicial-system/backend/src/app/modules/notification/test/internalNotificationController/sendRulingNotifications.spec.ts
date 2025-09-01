@@ -21,8 +21,8 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../case'
-import { Defendant, DefendantService } from '../../../defendant'
+import { DefendantService } from '../../../defendant'
+import { Case, Defendant } from '../../../repository'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
