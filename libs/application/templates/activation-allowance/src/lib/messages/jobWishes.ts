@@ -20,7 +20,7 @@ export const jobWishes = {
       description: 'Job wishes what kind of job label',
     },
     escoInfo: {
-      id: 'aa.application:jobWishes.labels.escoInfo',
+      id: 'aa.application:jobWishes.labels.escoInfo#markdown',
       defaultMessage: 'Hér gæti komið útskýringartexti á ESCO kóðunum',
       description: 'ESCO information label',
     },
