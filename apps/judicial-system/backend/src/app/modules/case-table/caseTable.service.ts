@@ -237,7 +237,6 @@ const getContextMenuActions = (
 export class CaseTableService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
     private readonly caseRepositoryService: CaseRepositoryService,
   ) {}
 

@@ -67,7 +67,6 @@ export const partition = <T>(
 @Injectable()
 export class StatisticsService {
   constructor(
-    @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly awsS3Service: AwsS3Service,

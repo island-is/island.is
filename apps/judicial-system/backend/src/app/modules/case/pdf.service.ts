@@ -36,7 +36,6 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import { Case, Defendant, EventLog, Subpoena } from '../repository'
 import { SubpoenaService } from '../subpoena'
-import { UserService } from '../user'
 
 @Injectable()
 export class PdfService {
@@ -45,7 +44,6 @@ export class PdfService {
   constructor(
     private readonly awsS3Service: AwsS3Service,
     private readonly intlService: IntlService,
-    private readonly userService: UserService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
     @InjectModel(Case) private readonly caseModel: typeof Case,

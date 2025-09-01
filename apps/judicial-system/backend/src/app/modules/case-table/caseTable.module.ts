@@ -1,14 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
-import { Case } from '../repository'
 import { RepositoryModule } from '..'
 import { CaseTableController } from './caseTable.controller'
 import { CaseTableService } from './caseTable.service'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Case]),
     forwardRef(() => RepositoryModule),
   ],
   providers: [CaseTableService],
