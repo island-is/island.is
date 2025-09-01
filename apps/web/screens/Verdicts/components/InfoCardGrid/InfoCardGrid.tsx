@@ -17,7 +17,6 @@ interface Props {
   columns?: 1 | 2 | 3
   cardsBackground?: BoxProps['background']
   cardsBorder?: BoxProps['borderColor']
-  notFoundText?: string
 }
 
 type CardSize = 'small' | 'medium' | 'large'

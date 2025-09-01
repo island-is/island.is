@@ -78,6 +78,8 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
     Boolean(restOfProps.revealMoreButtonProps?.hideLabel) &&
     Boolean(restOfProps.revealMoreButtonProps?.revealedText)
 
+  const revealRegionId = `${restOfProps.id}-reveal`
+
   return (
     <FocusableBox
       background={restOfProps.background ?? 'white'}
@@ -108,13 +110,15 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
               onClick={() => {
                 setIsAccordionOpen((previousState) => !previousState)
               }}
+              aria-expanded={isAccordionOpen}
+              aria-controls={revealRegionId}
             >
               {isAccordionOpen
                 ? restOfProps.revealMoreButtonProps?.hideLabel
                 : restOfProps.revealMoreButtonProps?.revealLabel}
             </Button>
             <AnimateHeight duration={300} height={isAccordionOpen ? 'auto' : 0}>
-              <Text variant="small">
+              <Text variant="small" id={revealRegionId}>
                 {restOfProps.revealMoreButtonProps?.revealedText}
               </Text>
             </AnimateHeight>
