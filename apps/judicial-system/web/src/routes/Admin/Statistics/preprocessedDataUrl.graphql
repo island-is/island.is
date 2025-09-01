@@ -1,0 +1,5 @@
+query GetPreprocessedDataUrl($input: RequestStatisticsInput!) {
+  getPreprocessedDataCsvSignedUrl(input: $input) {
+    url
+  }
+}
