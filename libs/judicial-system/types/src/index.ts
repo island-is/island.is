@@ -17,6 +17,7 @@ export {
   VerdictAppealDecision,
   InformationForDefendant,
   informationForDefendantMap,
+  mapPoliceVerdictDeliveryStatus,
 } from './lib/verdict'
 
 export {

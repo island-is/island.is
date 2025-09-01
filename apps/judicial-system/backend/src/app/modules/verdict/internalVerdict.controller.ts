@@ -89,7 +89,7 @@ const validateVerdictAppealUpdate = ({
 
 @Controller('api/internal')
 @ApiTags('internal verdict')
-@UseGuards(TokenGuard)
+// @UseGuards(TokenGuard)
 export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
