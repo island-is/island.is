@@ -9,6 +9,7 @@ import {
   Box,
   Button,
   Checkbox,
+  type Option,
   RadioButton,
   Stack,
   Text,
@@ -51,7 +52,7 @@ interface DirectGrants {
   amountISKCustom: string
 }
 
-const DEFAULT_GRANT_OPTIONS = [
+const DEFAULT_GRANT_OPTIONS: Option<string>[] = [
   {
     label: 'Styrktarsjóður Landspítala',
     value: 'MR102',
@@ -332,9 +333,9 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             size="xs"
             label={formatMessage(m.info.grantLabel)}
             options={grantOptions}
-            defaultValue={grantOptions.find(
-              (opt: { value: string }) => opt.value === watch('grant'),
-            )}
+            defaultValue={
+              grantOptions.find((opt) => opt.value === watch('grant'))?.value
+            }
             onSelect={(opt) => setValue('grant', (opt?.value as string) || '')}
             error={errors.grant?.message}
             rules={requiredRule}

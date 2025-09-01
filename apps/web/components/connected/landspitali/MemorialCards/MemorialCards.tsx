@@ -9,6 +9,7 @@ import {
   Box,
   Button,
   Checkbox,
+  type Option,
   RadioButton,
   Stack,
   Text,
@@ -55,7 +56,7 @@ interface MemorialCard {
   amountISKCustom: string
 }
 
-const DEFAULT_FUND_OPTIONS = [
+const DEFAULT_FUND_OPTIONS: Option<string>[] = [
   {
     label: 'Styrktarsjóður gjörgæslu',
     value: 'MR108',
@@ -231,7 +232,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
   const handleReset = () => setSubmitted(false)
 
   const { activeLocale } = useI18n()
-  console.log(catalogData)
+
   if (submitted) {
     const data = methods.getValues()
     const amountISK =
@@ -378,9 +379,9 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             size="xs"
             label={formatMessage(m.info.fundLabel)}
             options={fundOptions}
-            defaultValue={fundOptions.find(
-              (opt: { value: string }) => opt.value === watch('fund'),
-            )}
+            defaultValue={
+              fundOptions.find((opt) => opt.value === watch('fund'))?.value
+            }
             onSelect={(opt) => setValue('fund', (opt?.value as string) || '')}
             error={errors.fund?.message}
             rules={requiredRule}
