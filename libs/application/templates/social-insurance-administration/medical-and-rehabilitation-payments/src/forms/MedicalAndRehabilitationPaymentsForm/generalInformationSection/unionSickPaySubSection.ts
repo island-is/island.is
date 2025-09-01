@@ -82,7 +82,7 @@ export const unionSickPaySubSection = buildSubSection({
           required: true,
         }),
         buildDescriptionField({
-          id: 'unionSickPay.unionNationalId.description',
+          id: 'unionSickPay.unionInfo.description',
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionDescriptionTitle,
