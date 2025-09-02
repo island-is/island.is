@@ -266,6 +266,7 @@ export const healthProtectionSubSection = buildSubSection({
         }),
         buildHiddenInput({
           id: 'healthProtection.triggerHiddenInput',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),
