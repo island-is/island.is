@@ -1,4 +1,4 @@
-import { Args, Context, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import {
   IdsUserGuard,
@@ -8,7 +8,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Audit, AuditService } from '@island.is/nest/audit'
+import { Audit } from '@island.is/nest/audit'
 import { VehiclesService } from '../services/vehicles.service'
 import { VehiclesListInputV3 } from '../dto/vehiclesListInputV3'
 import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
@@ -25,7 +25,6 @@ const namespace = '@island.is/api/vehicles'
 export class VehiclesV3Resolver {
   constructor(
     private readonly vehiclesService: VehiclesService,
-    private readonly auditService: AuditService,
     @Inject(DownloadServiceConfig.KEY)
     private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
   ) {}

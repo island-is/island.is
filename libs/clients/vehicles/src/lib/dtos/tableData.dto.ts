@@ -1,5 +1,4 @@
 import {
-  CurrentVehiclesWithMilageAndNextInspDto,
   CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
 } from '../..'
 import format from 'date-fns/format'
