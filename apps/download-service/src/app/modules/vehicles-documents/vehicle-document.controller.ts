@@ -105,7 +105,6 @@ export class VehicleController {
         resources: fileType,
       })
 
-
       if (fileType === 'excel') {
         const sheetName = `km_template_${format(new Date(), 'ddMMyyyy')}.xlsx`
           .replace(/[:\\/?*[\]]/g, '_')
@@ -123,7 +122,10 @@ export class VehicleController {
           type: 'buffer',
         })
 
-        res.header('Content-length', Buffer.byteLength(excelBuffer, 'utf8').toString())
+        res.header(
+          'Content-length',
+          Buffer.byteLength(excelBuffer, 'utf8').toString(),
+        )
         res.header('Content-Disposition', `attachment; filename=${sheetName}`)
         res.type(
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -134,8 +136,11 @@ export class VehicleController {
           .replace(/[:\\/?*[\]]/g, '_')
           .trim()
 
-        const csvString = csvStringify(documentResponse, {bom: true})
-        res.header('Content-length', Buffer.byteLength(csvString, 'utf8').toString())
+        const csvString = csvStringify(documentResponse, { bom: true })
+        res.header(
+          'Content-length',
+          Buffer.byteLength(csvString, 'utf8').toString(),
+        )
         res.header('Content-Disposition', `attachment; filename=${sheetName}`)
         res.type('text/csv; charset=utf-8')
         return res.status(200).end(csvString)
