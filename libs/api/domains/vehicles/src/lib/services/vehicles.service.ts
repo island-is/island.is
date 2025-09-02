@@ -40,14 +40,12 @@ import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import { VehicleSearchCustomDto } from '../vehicles.type'
 import { operatorStatusMapper } from '../utils/operatorStatusMapper'
 import { VehiclesListInputV3 } from '../dto/vehiclesListInputV3'
-import { VehiclesCurrentListResponse } from '../models/v3/currentVehicleListResponse.model'
 import { isDefined } from '@island.is/shared/utils'
 import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
 import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
 import { UpdateResponseError } from '../dto/updateResponseError.dto'
-import { DownloadServiceConfig } from '@island.is/nest/config'
-import { ConfigType } from '@nestjs/config'
+import { VehiclePagedList } from '../models/v3/vehiclePagedList.model'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -73,10 +71,6 @@ export class VehiclesService {
     private vehicleMileageClientService: VehiclesMileageClientService,
     private vehiclesApi: VehicleSearchApi,
     private mileageReadingApi: MileageReadingApi,
-    @Inject(DownloadServiceConfig.KEY)
-    private readonly downloadServiceConfig: ConfigType<
-      typeof DownloadServiceConfig
-    >,
     @Inject(PublicVehicleSearchApi)
     private publicVehiclesApi: PublicVehicleSearchApi,
     @Inject(LOGGER_PROVIDER)
@@ -111,7 +105,7 @@ export class VehiclesService {
   async getVehiclesListV3(
     auth: User,
     input: VehiclesListInputV3,
-  ): Promise<VehiclesCurrentListResponse | null> {
+  ): Promise<VehiclePagedList | null> {
     const res = await this.vehicleClientService.getVehicles(auth, {
       pageSize: input.pageSize,
       page: input.page,
@@ -130,8 +124,7 @@ export class VehiclesService {
       pageNumber: res.pageNumber,
       totalPages: res.totalPages,
       totalRecords: res.totalRecords,
-      downloadServiceUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/mileagetemplate`,
-      data: res.vehicles.map((v) => ({
+      vehicleList: res.vehicles.map((v) => ({
         ...v,
         nextInspection: v.nextInspection
           ? v.nextInspection.toISOString()

@@ -2,7 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { VehicleCurrentWithMileage } from './currentVehicleWithMileage.model'
 
 @ObjectType()
-export class VehiclesCurrentListResponse {
+export class VehiclePagedList {
   @Field(() => Int)
   pageNumber!: number
 
@@ -15,9 +15,6 @@ export class VehiclesCurrentListResponse {
   @Field(() => Int)
   totalRecords!: number
 
-  @Field( { nullable: true })
-  downloadServiceUrl?: string
-
   @Field(() => [VehicleCurrentWithMileage], { nullable: true })
-  data?: Array<VehicleCurrentWithMileage>
+  vehicleList?: Array<VehicleCurrentWithMileage>
 }

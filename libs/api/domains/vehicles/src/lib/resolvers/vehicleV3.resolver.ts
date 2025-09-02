@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Context, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import {
   IdsUserGuard,
@@ -8,23 +8,30 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { VehiclesService } from '../services/vehicles.service'
-import { VehiclesCurrentListResponse } from '../models/v3/currentVehicleListResponse.model'
 import { VehiclesListInputV3 } from '../dto/vehiclesListInputV3'
 import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
 import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import { ConfigType } from '@nestjs/config'
+import { VehiclePagedList } from '../models/v3/vehiclePagedList.model'
+
+const namespace = '@island.is/api/vehicles'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Resolver(() => VehiclesCurrentListResponse)
-@Audit({ namespace: '@island.is/api/vehicles' })
+@Resolver(() => VehiclePagedList)
+@Audit({ namespace })
 export class VehiclesV3Resolver {
   constructor(
     private readonly vehiclesService: VehiclesService,
+    private readonly auditService: AuditService,
+    @Inject(DownloadServiceConfig.KEY)
+    private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
   ) {}
 
   @Scopes(ApiScope.vehicles)
-  @Query(() => VehiclesCurrentListResponse, {
+  @Query(() => VehiclePagedList, {
     name: 'vehiclesListV3',
     nullable: true,
   })
@@ -35,6 +42,7 @@ export class VehiclesV3Resolver {
   ) {
     return this.vehiclesService.getVehiclesListV3(user, input)
   }
+
 
   @Scopes(ApiScope.vehicles)
   @Query(() => MileageRegistrationHistory, {
@@ -47,5 +55,17 @@ export class VehiclesV3Resolver {
     @Args('input', { nullable: true }) input: GetVehicleMileageInput,
   ) {
     return this.vehiclesService.getVehicleMileageHistory(user, input)
+  }
+
+
+  @Scopes(ApiScope.vehicles)
+  @Query(() => String,{
+    name: 'vehiclesMileageTemplateFileDownloadUrl',
+    nullable: true,
+  })
+  @Audit()
+  async vehiclesMileageTemplateFileDownloadUrl(
+  ) {
+    return `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/mileagetemplate`
   }
 }
