@@ -65,7 +65,9 @@ export const IndividualApplicant = ({
       fetchPolicy: 'cache-first',
       skip: !shouldQuery,
       onCompleted: (data) => {
-        const home = removeTypename(data.formSystemHomeByNationalId.heimilisfang)
+        const home = removeTypename(
+          data.formSystemHomeByNationalId.heimilisfang,
+        )
         dispatch({
           type: 'SET_ADDRESS',
           payload: {
