@@ -60,9 +60,8 @@ export const fieldReducer = (
     }
     case 'SET_ADDRESS': {
       const { address, postalCode, id } = action.payload
-      console.log(address)
       const value = {
-        address: address.husheiti,
+        address: address,
         postalCode: postalCode,
       }
 
