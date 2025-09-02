@@ -20,7 +20,8 @@ import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 import { Dispatch, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Action } from '../../lib'
-
+import { getValue } from '../../lib/getValue'
+import { removeTypename } from '@island.is/form-system/graphql'
 
 
 interface Props {
@@ -40,7 +41,6 @@ export const IndividualApplicant = ({
   const { lang } = useLocale()
   const nationalId = actor !== '' ? actor : user?.nationalId ?? ''
   const shouldQuery = !!nationalId
-
   const { data: nameData, loading: nameLoading } = useQuery(
     GET_NAME_BY_NATIONALID,
     {
@@ -48,11 +48,12 @@ export const IndividualApplicant = ({
       fetchPolicy: 'cache-first',
       skip: !shouldQuery,
       onCompleted: (data) => {
+        console.log('nameData', data)
         dispatch({
           type: 'SET_NAME',
           payload: {
             id: applicant.id,
-            value: data.formSystemNameByNationalId.fulltNafn,
+            value: removeTypename(data.formSystemNameByNationalId.fulltNafn),
           },
         })
       }
@@ -70,28 +71,37 @@ export const IndividualApplicant = ({
           type: 'SET_ADDRESS',
           payload: {
             id: applicant.id,
-            address: data.formSystemHomeByNationalId.heimilisfang,
-            postalCode: data.formSystemHomeByNationalId.postnumer,
+            address: removeTypename(data.formSystemHomeByNationalId.heimilisfang),
+            postalCode: removeTypename(data.formSystemHomeByNationalId.postnumer),
           },
         })
       }
     },
   )
 
+  const onChange = (field: string, value: string) => {
+    if (field === 'email') {
+      dispatch({ type: 'SET_EMAIL', payload: { id: applicant.id, value } })
+      setEmail(value)
+    } else if (field === 'phone') {
+      dispatch({ type: 'SET_PHONE_NUMBER', payload: { id: applicant.id, value } })
+      setPhoneNumber(value)
+    }
+  }
+
   const address = addressData?.formSystemHomeByNationalId?.heimilisfang
-  const phoneNumberCatcher = user?.mobilePhoneNumber ?? ''
   const emails =
     user?.emails?.find((email) => email.primary)?.email ??
     user?.emails?.[0]?.email
   const isLoading = shouldQuery && (nameLoading || addressLoading)
-  const [email, setEmail] = useState('')
-  const [phoneNumber, setPhoneNumber] = useState('')
+
+  const [email, setEmail] = useState(user?.emails?.find((email) => email.primary)?.email ??
+    user?.emails?.[0]?.email ?? getValue(applicant, 'email'))
+  const [phoneNumber, setPhoneNumber] = useState(user?.mobilePhoneNumber ?? getValue(applicant,'phoneNumber') ?? '')
 
   useEffect(() => {
-    setEmail(emails ?? '')
-    setPhoneNumber(phoneNumberCatcher)
-    console.log(`email: ${emails} phone:${phoneNumberCatcher}`)
-  }, [emails, phoneNumberCatcher])
+    dispatch({type: 'SET_NATIONAL_ID', payload: { id: applicant.id, value: nationalId }})
+  }, [dispatch, applicant.id, nationalId])
 
   return (
     <Box marginTop={4}>
@@ -137,7 +147,7 @@ export const IndividualApplicant = ({
               backgroundColor="blue"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => onChange('email', e.target.value)}
             />
             <Input
               label={formatMessage(m.phoneNumber)}
@@ -146,7 +156,7 @@ export const IndividualApplicant = ({
               backgroundColor="blue"
               required
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={(e) => onChange('phone', e.target.value)}
             />
           </>
         )}

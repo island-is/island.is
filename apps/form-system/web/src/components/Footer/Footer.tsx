@@ -75,7 +75,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     })
 
     if (!isValid) return
-
+    
     dispatch({
       type: 'INCREMENT',
       payload: {

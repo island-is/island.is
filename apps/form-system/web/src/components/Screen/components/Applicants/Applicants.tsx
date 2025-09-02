@@ -21,7 +21,6 @@ export const Applicants = ({ applicantField }: Props) => {
   const userInfo = useUserInfo()
   const { dispatch } = useApplicationContext()
   const { applicantType } = applicantField.fieldSettings ?? {}
-  console.log(userInfo)
   return (
     <>
       {applicantType === ApplicantTypesEnum.INDIVIDUAL && (
