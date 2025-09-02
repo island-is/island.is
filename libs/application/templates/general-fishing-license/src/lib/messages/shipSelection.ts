@@ -169,7 +169,7 @@ export const shipSelection = {
     },
     igulker: {
       id: 'gfl.application:shipSelection.tags.igulker',
-      defaultMessage: 'Ígulkeraveiðileyfi',
+      defaultMessage: 'Ígulkerjaveiðileyfi',
       description: 'Igulker',
     },
   }),
