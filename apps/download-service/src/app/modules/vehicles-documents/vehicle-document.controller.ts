@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
-import XLSX from 'xlsx'
+import * as XLSX from 'xlsx'
 import {
   CurrentUser,
   IdsUserGuard,
