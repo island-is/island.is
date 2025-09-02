@@ -5,6 +5,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
@@ -23,18 +24,17 @@ import {
 import {
   AffiliationRole,
   ApplicationType,
+  FIRST_GRADE_AGE,
   CaseWorkerInputTypeEnum,
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  let applicationType = getValueViaPath<ApplicationType>(
+  const applicationType = getValueViaPath<ApplicationType>(
     answers,
     'applicationType',
   )
-
-  if (!applicationType) applicationType = ApplicationType.NEW_PRIMARY_SCHOOL
 
   const childNationalId = getValueViaPath<string>(answers, 'childNationalId')
 
@@ -481,9 +481,13 @@ export const determineNameFromApplicationAnswers = (
 ) => {
   const { applicationType } = getApplicationAnswers(application.answers)
 
+  if (!applicationType) {
+    return newPrimarySchoolMessages.shared.applicationName
+  }
+
   return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
     ? newPrimarySchoolMessages.shared.enrollmentApplicationName
-    : newPrimarySchoolMessages.shared.applicationName
+    : newPrimarySchoolMessages.shared.newPrimarySchoolApplicationName
 }
 
 export const formatGender = (genderCode?: string): MessageDescriptor => {
@@ -572,6 +576,32 @@ export const getMunicipalityCodeBySchoolUnitId = (schoolUnitId: string) => {
 export const getInternationalSchoolsIds = () => {
   // Since the data from Frigg is not structured for international schools, we need to manually identify them
   return ['G-2250-A', 'G-2250-B', 'G-1157-A', 'G-1157-B'] //Alþjóðaskólinn G-2250-x & Landkotsskóli G-1157-x
+}
+
+export const getApplicationType = (externalData: ExternalData) => {
+  const { childInformation } = getApplicationExternalData(externalData)
+
+  if (!childInformation?.nationalId) {
+    return ApplicationType.NEW_PRIMARY_SCHOOL
+  }
+
+  const currentYear = new Date().getFullYear()
+  const firstGradeYear = currentYear - FIRST_GRADE_AGE
+
+  const nationalId = childInformation.nationalId
+  if (!isValid(nationalId)) {
+    return ApplicationType.NEW_PRIMARY_SCHOOL
+  }
+  const nationalIdInfo = info(nationalId)
+  if (!nationalIdInfo || !nationalIdInfo.birthday) {
+    return ApplicationType.NEW_PRIMARY_SCHOOL
+  }
+
+  const yearOfBirth = nationalIdInfo.birthday.getFullYear()
+
+  return yearOfBirth < firstGradeYear
+    ? ApplicationType.NEW_PRIMARY_SCHOOL
+    : ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
 }
 
 export const getGuardianByNationalId = (

@@ -1936,6 +1936,14 @@
         },
         "additionalProperties": false
       },
+      "FrambodAbyrgdaradiliDTO": {
+        "type": "object",
+        "properties": {
+          "nafn": { "type": "string" },
+          "faedingardagur": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
       "FrambodBaseDTO": {
         "required": ["kennitala", "nafn"],
         "type": "object",
@@ -1946,7 +1954,10 @@
           "listabokstafur": { "type": "string", "nullable": true },
           "simi": { "type": "string", "nullable": true },
           "netfang": { "type": "string", "nullable": true },
-          "medmaelasofnunID": { "type": "integer", "format": "int32" }
+          "medmaelasofnunID": { "type": "integer", "format": "int32" },
+          "abyrgdaradili": {
+            "$ref": "#/components/schemas/FrambodAbyrgdaradiliDTO"
+          }
         },
         "additionalProperties": false
       },
@@ -1961,6 +1972,9 @@
           "simi": { "type": "string", "nullable": true },
           "netfang": { "type": "string", "nullable": true },
           "medmaelasofnunID": { "type": "integer", "format": "int32" },
+          "abyrgdaradili": {
+            "$ref": "#/components/schemas/FrambodAbyrgdaradiliDTO"
+          },
           "medmaelasofnun": {
             "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
           },
