@@ -100,8 +100,8 @@ export const fishingLicense = {
       defaultMessage: 'Krabbaveiðileyfi',
       description: 'Crustaceans',
     },
-    igulker: {
-      id: 'gfl.application:shipSelection.labels.igulker',
+    urchin: {
+      id: 'gfl.application:shipSelection.labels.urchin',
       defaultMessage: 'Ígulkeraveiðileyfi',
       description: 'Ígulkeraveiðileyfi',
     },

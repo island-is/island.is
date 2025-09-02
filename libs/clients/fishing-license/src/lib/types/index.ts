@@ -42,7 +42,7 @@ export type FishingLicenseInfo = {
 export enum FishingLicenseCodeType {
   catchMark = '1', // Almennt krókaflamarksveiðileyfi
   fishWithDanishSeine = '8', // Dragnótaveiðileyfi
-  igulker = '7', // Ígulkeraveiðileyfi
+  urchin = '7', // Ígulkeraveiðileyfi
 
   greyslepp = '11', // TODO naming -  Grásleppuveiðileyfi
   northIceOceanCod = '25', // TODO naming - Norðuríshafsþorskveiðileyfi í norskri lögsögu
@@ -91,8 +91,8 @@ export const mapFishingLicenseToCode = (license: string) => {
       return FishingLicenseCodeType.oceanQuahogin
     case 'crustaceans':
       return FishingLicenseCodeType.crustaceans
-    case 'igulker':
-      return FishingLicenseCodeType.igulker
+    case 'urchin':
+      return FishingLicenseCodeType.urchin
     default:
       return FishingLicenseCodeType.unknown
   }
