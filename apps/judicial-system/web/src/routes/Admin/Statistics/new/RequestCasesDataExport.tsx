@@ -50,15 +50,40 @@ const RequestCasesDataExport = () => {
             Réttarvörslugátt.
           </Text>
           <Text>
+            Veldu tímabil hér að neðan fyrir gögnin sem þú vilt sækja.
+          </Text>
+          <Filters
+            id="request"
+            types={requestFilterKeys}
+            filters={filters}
+            setFilters={setFilters}
+            onClear={() => setFilters({})}
+          />
+          <Box display="flex" justifyContent="flexEnd" paddingBottom={4}>
+            <Button
+              variant="ghost"
+              size="small"
+              icon="download"
+              iconType="outline"
+              loading={csvLoading}
+              onClick={async () => {
+                const res = await refetchPreprocessedData({
+                  input: queryVariables,
+                })
+                const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
+                if (url) {
+                  window.open(url, '_blank', 'noopener,noreferrer')
+                }
+              }}
+            >
+              Sækja gögn
+            </Button>
+          </Box>
+          <Text>
             Þú getur hlaðið gögnunum upp í sniðmát og notað tilbúnar
             tölfræðigreiningar.
           </Text>
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            marginTop={2}
-            marginBottom={2}
-          >
+          <Box display="flex" justifyContent="flexEnd" marginTop={2}>
             <Button
               variant="ghost"
               size="small"
@@ -75,36 +100,6 @@ const RequestCasesDataExport = () => {
               Sækja sniðmát
             </Button>
           </Box>
-          <Text>
-            Veldu tímabil hér að neðan fyrir gögnin sem þú vilt sækja.
-          </Text>
-        </Box>
-        <Filters
-          id="request"
-          types={requestFilterKeys}
-          filters={filters}
-          setFilters={setFilters}
-          onClear={() => setFilters({})}
-        />
-        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-          <Button
-            variant="ghost"
-            size="small"
-            icon="download"
-            iconType="outline"
-            loading={csvLoading}
-            onClick={async () => {
-              const res = await refetchPreprocessedData({
-                input: queryVariables,
-              })
-              const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
-              if (url) {
-                window.open(url, '_blank', 'noopener,noreferrer')
-              }
-            }}
-          >
-            Sækja gögn
-          </Button>
         </Box>
       </Box>
     </StatisticPageLayout>

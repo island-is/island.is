@@ -5,10 +5,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CurrentHttpUser,
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 
 import { adminRule, localAdminRule } from '../../guards'
 import {
@@ -120,13 +122,15 @@ export class StatisticsController {
     type: ExportDataResponse,
   })
   exportCaseEventData(
+    @CurrentHttpUser() user: User,
     @Query('query') query: CaseDataExportDto,
   ): Promise<{ url: string }> {
     this.logger.debug('Create and export csv file for data analytics', query)
 
-    return this.statisticService.extractTransformLoadRvgDataToS3({
+    return this.statisticService.extractTransformLoadEventDataToS3({
       type: query.type,
       period: query.period,
+      user,
     })
   }
 }
