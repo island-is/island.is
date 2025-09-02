@@ -212,7 +212,10 @@ const AccessControlCompany: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <AuthGuard permission="accessControlCompany" loading={loading}>
+    <AuthGuard
+      permission="accessControlCompany"
+      loading={loading && !accessControlsData}
+    >
       <PartnerPageLayout
         side={
           <Sidenav

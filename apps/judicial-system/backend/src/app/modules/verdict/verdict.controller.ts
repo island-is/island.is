@@ -25,7 +25,6 @@ import {
   publicProsecutorStaffRule,
 } from '../../guards'
 import {
-  Case,
   CaseCompletedGuard,
   CaseExistsGuard,
   CaseTypeGuard,
@@ -33,10 +32,10 @@ import {
   CurrentCase,
 } from '../case'
 import { DefendantExistsGuard } from '../defendant'
+import { Case, Verdict } from '../repository'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
-import { Verdict } from './models/verdict.model'
 import { VerdictService } from './verdict.service'
 
 @Controller('api/case/:caseId')

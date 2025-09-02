@@ -328,6 +328,26 @@ export const defaultRenderNodeObject: RenderNode = {
           </Hyperlink>
         )
       }
+      case 'bloodDonationRestriction': {
+        const isEnglishLocale = entry?.sys?.locale?.startsWith('en')
+        const prefix = getOrganizationPageUrlPrefix(entry?.sys?.locale)
+        const organizationPageSlug = isEnglishLocale
+          ? 'icelandic-blood-bank'
+          : 'blodbankinn'
+        const slug = isEnglishLocale ? 'affecting-factors' : 'ahrif-a-blodgjof'
+
+        const id = entry?.sys?.id
+
+        if (!id) {
+          return null
+        }
+
+        return (
+          <Hyperlink href={`/${prefix}/${organizationPageSlug}/${slug}/${id}`}>
+            {children}
+          </Hyperlink>
+        )
+      }
       default:
         return null
     }

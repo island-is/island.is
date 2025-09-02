@@ -3,12 +3,11 @@ import { uuid } from 'uuidv4'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { Case, InternalCaseService, PdfService } from '../../../case'
-import { Defendant } from '../../../defendant'
+import { InternalCaseService, PdfService } from '../../../case'
 import { PoliceDocumentType } from '../../../police'
+import { Case, Defendant, Subpoena } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Subpoena } from '../../models/subpoena.model'
 
 interface Then {
   result: DeliverResponse
