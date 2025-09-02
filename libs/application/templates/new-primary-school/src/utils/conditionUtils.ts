@@ -1,13 +1,9 @@
 import { YES } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
-import {
-  CaseWorkerInputTypeEnum,
-  LanguageEnvironmentOptions,
-} from './constants'
+import { LanguageEnvironmentOptions } from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getDefaultSupportCaseworker,
   getOtherGuardian,
 } from './newPrimarySchoolUtils'
 
@@ -71,18 +67,8 @@ export const showPreferredLanguageFields = (answers: FormValue) => {
   return false
 }
 
-export const showCaseManagerFields = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
+export const showCaseManagerFields = (answers: FormValue) => {
   const { hasCaseManager } = getApplicationAnswers(answers)
-  const caseWorker = getDefaultSupportCaseworker(
-    externalData,
-    CaseWorkerInputTypeEnum.CaseManager,
-  )
 
-  return (
-    isWelfareContactSelected(answers) &&
-    ((!hasCaseManager && caseWorker !== undefined) || hasCaseManager === YES)
-  )
+  return isWelfareContactSelected(answers) && hasCaseManager === YES
 }

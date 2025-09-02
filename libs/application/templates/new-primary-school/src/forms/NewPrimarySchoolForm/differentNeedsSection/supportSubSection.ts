@@ -216,8 +216,7 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.caseManagerName,
           width: 'half',
           required: true,
-          condition: (answers, externalData) =>
-            showCaseManagerFields(answers, externalData),
+          condition: (answers) => showCaseManagerFields(answers),
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,
@@ -229,8 +228,7 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
           width: 'half',
           required: true,
-          condition: (answers, externalData) =>
-            showCaseManagerFields(answers, externalData),
+          condition: (answers) => showCaseManagerFields(answers),
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
               application.externalData,
