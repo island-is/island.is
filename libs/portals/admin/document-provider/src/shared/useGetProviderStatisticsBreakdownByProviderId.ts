@@ -15,7 +15,7 @@ import {
 } from '../lib/types'
 import { DELIVERY_PRICE } from '../lib/constants'
 
-export function useGetProviderStatisticsBreakdownByProviderId(
+export const useGetProviderStatisticsBreakdownByProviderId = (
   providerId?: string,
   nationalId?: string,
   fromDate?: Date,
@@ -24,7 +24,7 @@ export function useGetProviderStatisticsBreakdownByProviderId(
   desc = false,
   page = 1,
   pageSize = 10,
-): GetProviderStatisticsBreakdownReturnType {
+): GetProviderStatisticsBreakdownReturnType => {
   const statisticsInput: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest =
     {
       providerId: providerId ?? '',

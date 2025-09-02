@@ -2,12 +2,9 @@ import React, { FC } from 'react'
 import {
   Box,
   Text,
-  Inline,
   GridColumn,
   GridRow,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
 import { Cell, Label, Pie, PieChart, ResponsiveContainer } from 'recharts'
 
 interface ChartData {
@@ -27,7 +24,6 @@ export const OpenedFilesDonutChart: FC<React.PropsWithChildren<Props>> = ({
   title,
   valueIndex,
 }) => {
-  const { formatMessage } = useLocale()
 
   return (
     <GridColumn span={['12/12', '6/12']}>

@@ -8,7 +8,6 @@ import {
   ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest,
   ApiV1StatisticsNationalIdProvidersProviderIdGetRequest,
   CategoryStatistics,
-  ProviderStatistics,
   ProviderStatisticsBreakdownPaginationResponse,
   ProviderStatisticsCategoryBreakdownPaginationResponse,
   ProviderStatisticsOverview,
@@ -18,10 +17,8 @@ import {
 } from '../../gen/fetch'
 import { Injectable, Inject } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
-import { isDefined } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-const LOG_CATEGORY = 'clients-document-provider-dashboard-v1'
 
 @Injectable()
 export class DocumentProviderDashboardService {

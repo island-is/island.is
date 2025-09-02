@@ -11,7 +11,6 @@ const DocumentProviders = lazy(() =>
 const SingleDocumentProvider = lazy(() =>
   import('./screens/SingleDocumentProvider/SingleDocumentProvider'),
 )
-const PaperScreen = lazy(() => import('./screens/Paper/Paper'))
 const CategoriesAndTypesScreen = lazy(() =>
   import('./screens/CategoriesAndTypes'),
 )

@@ -7,11 +7,11 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
 import { GetStatisticsByNationalIdReturnType } from '../lib/types'
 
-export function useGetStatisticsByNationalId(
+export const useGetStatisticsByNationalId = (
   nationalId?: string,
   fromDate?: Date,
   toDate?: Date,
-): GetStatisticsByNationalIdReturnType {
+): GetStatisticsByNationalIdReturnType => {
   const statisticsInput: ApiV1StatisticsNationalIdCategoriesGetRequest = {
     nationalId: nationalId ?? '',
     from: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),

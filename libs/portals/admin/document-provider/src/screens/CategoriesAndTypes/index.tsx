@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -9,7 +9,7 @@ import {
   Tabs,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
+import { IntroHeader } from '@island.is/portals/core'
 //import { documentProviderNavigation } from '../../lib/navigation'
 import DocumentCategories from './Categories'
 import DocumentTypes from './Types'

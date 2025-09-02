@@ -1,4 +1,4 @@
-import { Box, Table as T, Text, Link } from '@island.is/island-ui/core'
+import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { ProviderStatisticsBreakdownPaginationResponse } from '../../lib/types'
 import { DELIVERY_PRICE } from '../../lib/constants'
 import { formatNumber } from '../../lib/utils'

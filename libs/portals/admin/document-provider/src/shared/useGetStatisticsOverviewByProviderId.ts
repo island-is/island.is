@@ -7,27 +7,28 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
 import { GetStatisticsByNationalIdReturnType } from '../lib/types'
 
-export function useGetStatisticsOverviewByProviderId(
+export const useGetStatisticsOverviewByProviderId = (
   nationalId?: string,
   providerId?: string,
   fromDate?: Date,
   toDate?: Date,
-): GetStatisticsByNationalIdReturnType {
-  const statisticsInput: ApiV1StatisticsNationalIdProvidersProviderIdGetRequest =
-    {
-      nationalId: nationalId!,
-      providerId: providerId!,
-      from: fromDate ? fromDate.toISOString().slice(0, 10) : undefined,
-      to: toDate ? toDate.toISOString().slice(0, 10) : undefined,
-    }
-
+): GetStatisticsByNationalIdReturnType => {
   const shouldSkip = !nationalId || !providerId
+
+  const statisticsInput: ApiV1StatisticsNationalIdProvidersProviderIdGetRequest | undefined =
+    !shouldSkip
+      ? {
+          nationalId,
+          providerId,
+          from: fromDate ? fromDate.toISOString().slice(0, 10) : undefined,
+          to: toDate ? toDate.toISOString().slice(0, 10) : undefined,
+        }
+      : undefined
+
   const { data, loading, error } = useQuery(
     GET_STATISTICS_OVERVIEW_BY_PROVIDERID,
     {
-      variables: {
-        input: statisticsInput,
-      },
+      variables: statisticsInput ? { input: statisticsInput } : undefined,
       fetchPolicy: 'cache-and-network',
       skip: shouldSkip,
     },

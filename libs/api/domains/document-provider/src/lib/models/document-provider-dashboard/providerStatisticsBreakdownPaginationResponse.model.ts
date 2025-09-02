@@ -1,4 +1,4 @@
-import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { ProviderStatisticsBreakdown } from './providerStatisticsBreakdown.model'
 
 @ObjectType('ProviderStatisticsBreakdownPaginationResponse')

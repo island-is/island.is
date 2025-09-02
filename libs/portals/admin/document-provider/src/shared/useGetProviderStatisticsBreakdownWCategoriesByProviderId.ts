@@ -16,7 +16,7 @@ import {
   SentFilesChartDataItemInfo,
 } from '../lib/types'
 
-export function useGetProviderStatisticsBreakdownWCategoriesByProviderId(
+export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
   providerId?: string,
   nationalId?: string,
   fromDate?: Date,
@@ -25,7 +25,7 @@ export function useGetProviderStatisticsBreakdownWCategoriesByProviderId(
   desc = false,
   page = 1,
   pageSize = 10,
-): GetProviderStatisticsBreakdownWithCategoriesReturnType {
+): GetProviderStatisticsBreakdownWithCategoriesReturnType => {
   const statisticsInput: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest =
     {
       providerId: providerId ?? '',

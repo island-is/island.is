@@ -3,7 +3,6 @@ import { HttpModule } from '@nestjs/axios'
 import { Configuration, OrganisationsApi, ProvidersApi } from '../../gen/fetch'
 import {
   FeatureFlagModule,
-  FEATURE_FLAG_CLIENT,
   FeatureFlagService,
 } from '@island.is/nest/feature-flags'
 import { DocumentProviderResolver } from './document-provider/document-provider.resolver'

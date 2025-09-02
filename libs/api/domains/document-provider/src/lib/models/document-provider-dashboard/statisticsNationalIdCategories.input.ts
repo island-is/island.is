@@ -1,4 +1,4 @@
-import { Field, GraphQLISODateTime, ID, Int, InputType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 
 @InputType('ApiV1StatisticsNationalIdCategoriesGetRequest')
 export class ApiV1StatisticsNationalIdCategoriesGetRequest {
