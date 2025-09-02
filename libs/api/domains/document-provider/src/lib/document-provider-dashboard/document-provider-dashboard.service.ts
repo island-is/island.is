@@ -25,8 +25,6 @@ import {
   CategoryStatisticsSortBy,
 } from '../models/document-provider-dashboard/statisticsProvidersBreakdownWithCategories.input'
 
-const LOG_CATEGORY = 'document-provider-dashboard-api-v1'
-
 @Injectable()
 export class DocumentProviderDashboardServiceV1 {
   constructor(

@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Query } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -15,8 +15,6 @@ import {
   FeatureFlagGuard,
   FeatureFlagService,
 } from '@island.is/nest/feature-flags'
-import type { Locale } from '@island.is/shared/types'
-import { isDefined } from '@island.is/shared/utils'
 import { DocumentProviderDashboardServiceV1 } from './document-provider-dashboard.service'
 import { ApiV1StatisticsNationalIdProvidersGetRequest } from '../models/document-provider-dashboard/statisticsNationalIdProviders.input'
 import { ProviderStatisticsPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsPaginationResponse.model'
@@ -52,11 +50,8 @@ export class DocumentProviderDashboardResolverV1 {
   })
   async statisticProvidersByNationalId(
     @Args('input') input: ApiV1StatisticsNationalIdProvidersGetRequest,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<ProviderStatisticsPaginationResponse | null> {
-    console.log('input in resolver', input)
     try {
       const data = await this.auditService.auditPromise(
         {
@@ -85,15 +80,12 @@ export class DocumentProviderDashboardResolverV1 {
   }
 
   @Scopes(AdminPortalScope.documentProvider)
-  //@ResolveField('data', () => [CategoryStatistics])
   @Query(() => [CategoryStatistics], {
     nullable: true,
     name: 'statisticsCategories',
   })
   async statisticsCategories(
     @Args('input') input: ApiV1StatisticsNationalIdCategoriesGetRequest,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<Array<CategoryStatistics> | null> {
     try {
@@ -135,8 +127,6 @@ export class DocumentProviderDashboardResolverV1 {
   })
   async statisticsByNationalId(
     @Args('input') input: ApiV1StatisticsNationalIdGetRequest,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<StatisticsOverview | null> {
     try {
@@ -179,8 +169,6 @@ export class DocumentProviderDashboardResolverV1 {
   async statisticsBreakdownByProvidersId(
     @Args('input')
     input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     try {
@@ -223,8 +211,6 @@ export class DocumentProviderDashboardResolverV1 {
   async statisticsOverviewByProviderId(
     @Args('input')
     input: ApiV1StatisticsNationalIdProvidersProviderIdGetRequest,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<DocumentProviderDashboardStatisticsOverview | null> {
     try {
@@ -268,8 +254,6 @@ export class DocumentProviderDashboardResolverV1 {
   })
   async statisticsBreakdownByNationalId(
     @Args('input') input: ApiV1StatisticsNationalIdBreakdownGetRequest,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     try {
@@ -312,8 +296,6 @@ export class DocumentProviderDashboardResolverV1 {
   async statisticsBreakdownWithCategoriesByNationalId(
     @Args('input')
     input: ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     try {
@@ -359,8 +341,6 @@ export class DocumentProviderDashboardResolverV1 {
   async statisticsBreakdownWithCategoriesByProviderId(
     @Args('input')
     input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     try {

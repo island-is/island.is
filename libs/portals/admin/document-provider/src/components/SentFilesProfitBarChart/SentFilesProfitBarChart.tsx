@@ -1,6 +1,10 @@
 import React, { FC } from 'react'
-import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import {
+  Box,
+  Text,
+  GridColumn,
+  GridRow,
+} from '@island.is/island-ui/core'
 import {
   BarChart,
   Bar,
@@ -27,7 +31,7 @@ const TITLES = ['Ávinningur']
 export const SentFilesProfitBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
-  const { formatMessage } = useLocale()
+
 
   return (
     <GridColumn span={['12/12', '12/12', '6/12']}>

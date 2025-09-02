@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
 import { Box, Input, SkeletonLoader } from '@island.is/island-ui/core'
 import { Controller, Control, FieldValues } from 'react-hook-form'
 import {

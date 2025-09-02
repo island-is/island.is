@@ -1,30 +1,17 @@
 'use client'
 import { ProviderInfo } from '../../lib/types'
 import { getDocumentProviderNavigationItems } from '../../lib/navigation'
-import { useLocale } from '@island.is/localization'
 import { Navigation, NavigationItem } from '@island.is/island-ui/core'
 import { DocumentProviderPaths } from '../../lib/paths'
-import { useParams, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 interface DocumentProvidersNavigationProps {
   providers: ProviderInfo[]
 }
 
-const findActiveNav = (
-  navigation?: NavigationItem,
-): NavigationItem | undefined => {
-  if (!navigation) {
-    return undefined
-  }
-  const activeChild = navigation.items?.find((item) => item.active)
-  return findActiveNav(activeChild) || activeChild
-}
-
-export function DocumentProvidersNavigation({
+export const DocumentProvidersNavigation = ({
   providers,
-}: DocumentProvidersNavigationProps) {
-  const { formatMessage } = useLocale()
-  const params = useParams()
+}: DocumentProvidersNavigationProps) => {
   const location = useLocation()
 
   const dynamicChildren: NavigationItem[] =

@@ -1,13 +1,12 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from './messages'
 import { DocumentProviderPaths } from './paths'
-import cloneDeep from 'lodash/cloneDeep'
 import { NavigationItem, NavigationProps } from '@island.is/island-ui/core'
 
-export function getDocumentProviderNavigationItems(
+export const getDocumentProviderNavigationItems = (
   dynamicChildren: NavigationItem[],
   currentPath: string,
-): NavigationProps {
+): NavigationProps => {
   // Remove the first character from currentPath (e.g., '/')
   const normalizedPath =
     currentPath.length > 0 ? currentPath.substring(1) : currentPath

@@ -23,7 +23,7 @@ const UPDATE_ADMINISTRATIVE_CONTACT_MUTATION = gql`
   }
 `
 
-export function useUpdateAdministrativeContact(organisationId: string) {
+export const useUpdateAdministrativeContact = (organisationId: string) => {
   const [updateAdministrativeContactMutation, { called, loading, error }] =
     useMutation(UPDATE_ADMINISTRATIVE_CONTACT_MUTATION)
 

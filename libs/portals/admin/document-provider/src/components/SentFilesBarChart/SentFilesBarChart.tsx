@@ -1,6 +1,10 @@
 import React, { FC } from 'react'
-import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import {
+  Box,
+  Text,
+  GridColumn,
+  GridRow,
+} from '@island.is/island-ui/core'
 import {
   BarChart,
   Bar,
@@ -25,7 +29,7 @@ const CAT_KEYS = ['cat1', 'cat2', 'cat3', 'cat4']
 export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
-  const { formatMessage } = useLocale()
+
 
   const TITLES =
     data && data.length > 0

@@ -15,7 +15,7 @@ import {
 } from '../lib/types'
 import { DELIVERY_PRICE } from '../lib/constants'
 
-export function useGetProviderStatisticsBreakdownByNationalId(
+export const useGetProviderStatisticsBreakdownByNationalId = (
   nationalId?: string,
   fromDate?: Date,
   toDate?: Date,
@@ -23,7 +23,7 @@ export function useGetProviderStatisticsBreakdownByNationalId(
   desc = false,
   page = 1,
   pageSize = 10,
-): GetProviderStatisticsBreakdownReturnType {
+): GetProviderStatisticsBreakdownReturnType => {
   const statisticsInput: ApiV1StatisticsNationalIdBreakdownGetRequest = {
     nationalId: nationalId ?? '',
     //from: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),

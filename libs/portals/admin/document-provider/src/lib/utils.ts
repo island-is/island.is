@@ -1,8 +1,8 @@
 // Utility for formatting numbers in Icelandic locale
-export function formatNumber(
+export const formatNumber = (
   value: number | undefined | null,
   locale = 'is-IS',
-): string {
+): string => {
   if (typeof value === 'number') return value.toLocaleString(locale)
   if (value === undefined || value === null) return ''
   return String(value)

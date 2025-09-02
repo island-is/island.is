@@ -10,11 +10,11 @@ import {
   ProviderStatisticCategory,
 } from '../lib/types'
 
-export function useGetProviderStatisticCategoriesByNationalId(
+export const useGetProviderStatisticCategoriesByNationalId = (
   nationalId?: string,
   fromDate?: Date,
   toDate?: Date,
-): GetProviderStatisticCategoriesReturnType {
+): GetProviderStatisticCategoriesReturnType => {
   const statisticsInput: ApiV1StatisticsNationalIdCategoriesGetRequest = {
     nationalId: nationalId ?? '',
     //from: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),

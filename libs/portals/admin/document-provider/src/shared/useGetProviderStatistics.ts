@@ -20,11 +20,11 @@ type GetProviderStatisticsReturnType = {
   loading: boolean
 }
 
-export function useGetProviderStatistics(
+export const useGetProviderStatistics = (
   organisationId?: string,
   fromDate?: Date,
   toDate?: Date,
-): GetProviderStatisticsReturnType {
+): GetProviderStatisticsReturnType => {
   const statisticsInput: StatisticsInput = {
     organisationId,
     fromDate: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),

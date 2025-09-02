@@ -20,7 +20,7 @@ export const DocumentProvidersDashboard = ({
   fromDate,
   toDate,
 }: Props) => {
-  const { formatMessage } = useLocale()
+  useLocale()
 
   const { categories } = useGetProviderStatisticCategoriesByNationalId(
     nationalId,
