@@ -6,7 +6,7 @@ import { applicationAnswers, RentalHousingCategoryClass } from '../../shared'
 import {
   getPropertyTypeOptions,
   getPropertyClassGroupOptions,
-  getEmergencyExitOptions,
+  getYesNoOptions,
   getRentalPropertySize,
 } from '../../utils/utils'
 import { Routes, RentalHousingConditionInspector } from '../../utils/enums'
@@ -240,11 +240,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
           <KeyValue
             label={summary.fireProtectionsEmergencyExitsLabel}
             value={
-              getOptionLabel(
-                emergencyExits || '',
-                getEmergencyExitOptions,
-                '',
-              ) || '-'
+              getOptionLabel(emergencyExits || '', getYesNoOptions, '') || '-'
             }
           />
         </GridColumn>

@@ -21,16 +21,14 @@ export const SummaryNoEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         application={application}
         field={field}
         goToScreen={goToScreen}
-        landlordsRoute={Routes.LANDLORDINFORMATION}
-        tenantsRoute={Routes.TENANTINFORMATION}
+        partiesRoute={Routes.PARTIESINFORMATION}
         hasChangeButton={false}
       />
       <ApplicantsRepresentativesSummary
         application={application}
         field={field}
         goToScreen={goToScreen}
-        landlordsRoute={Routes.LANDLORDINFORMATION}
-        tenantsRoute={Routes.TENANTINFORMATION}
+        partiesRoute={Routes.PARTIESINFORMATION}
         hasChangeButton={false}
       />
       <RentalInfoSummary

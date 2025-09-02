@@ -10,9 +10,8 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case } from '../../../case'
+import { Case, Defendant } from '../../../repository'
 import { UpdateDefendantDto } from '../../dto/updateDefendant.dto'
-import { Defendant } from '../../models/defendant.model'
 
 interface Then {
   result: Defendant

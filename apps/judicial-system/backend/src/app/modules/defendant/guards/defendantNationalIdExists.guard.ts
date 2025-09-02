@@ -8,7 +8,7 @@ import {
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 
-import { Case } from '../../case'
+import { Case } from '../../repository'
 
 @Injectable()
 export class DefendantNationalIdExistsGuard implements CanActivate {
