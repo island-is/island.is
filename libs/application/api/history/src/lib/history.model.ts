@@ -5,7 +5,7 @@ import {
   Table,
   ForeignKey,
 } from 'sequelize-typescript'
-import { ApiProperty , ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Application } from '@island.is/application/api/core'
 @Table({
   tableName: 'state_history',

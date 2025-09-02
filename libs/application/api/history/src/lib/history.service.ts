@@ -37,7 +37,9 @@ export class HistoryService {
           exitTimestamp: new Date(),
           exitEvent,
           exitEventSubjectNationalId: auth.nationalId,
-          exitEventActorNationalId: auth.actor ? auth.actor.nationalId : auth.nationalId
+          exitEventActorNationalId: auth.actor
+            ? auth.actor.nationalId
+            : auth.nationalId,
         },
         { where: { id: lastState.id } },
       )
