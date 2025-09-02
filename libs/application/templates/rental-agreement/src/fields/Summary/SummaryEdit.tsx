@@ -10,14 +10,10 @@ import {
 } from '@island.is/island-ui/core'
 import { applicationAnswers } from '../../shared'
 import { Routes } from '../../utils/enums'
-import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
-import { ApplicantsSummary } from './ApplicantsSummary'
 import { OtherFeesSummary } from './OtherFeesSummary'
-import { PropertyInfoSummary } from './PropertyInfoSummary'
-import { RentalInfoSummary } from './RentalInfoSummary'
 import { summaryWrap } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
-import { hasDuplicateApplicants } from '../../utils/utils'
+import { PropertyInfoSummary } from './PropertyInfoSummary'
 
 export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -27,12 +23,6 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { answers } = application
 
   const {
-    landlords,
-    landlordRepresentatives,
-    tenants,
-    smokeDetectors,
-    fireExtinguisher,
-    emergencyExits,
     conditionDescription,
     files,
     electricityCostPayee,
@@ -43,11 +33,6 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const isConditionPresent = conditionDescription || (files && files.length > 0)
   const isOtherFeesPresent =
     electricityCostPayee && heatingCostPayee && housingFundPayee
-  const hasRepeatedApplicants = hasDuplicateApplicants([
-    ...landlords,
-    ...tenants,
-    ...landlordRepresentatives,
-  ])
 
   const AlertMessageConditions = [
     {
@@ -59,11 +44,6 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       isFilled: isOtherFeesPresent,
       route: Routes.OTHERFEES,
       message: summary.alertMissingInfoOtherFees,
-    },
-    {
-      isFilled: !hasRepeatedApplicants,
-      route: Routes.PARTIESINFORMATION,
-      message: summary.uniqueApplicantsError,
     },
   ]
 

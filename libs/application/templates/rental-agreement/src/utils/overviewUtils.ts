@@ -4,21 +4,23 @@ import {
   FormValue,
   KeyValueItem,
 } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import { ApplicantsInfo, Files, PropertyUnit } from '../shared/types'
 import {
   formatPhoneNumber,
+  getOtherFeesPayeeOptions,
   getPropertyClassGroupOptions,
   getPropertyTypeOptions,
   getRentalPropertySize,
   getYesNoOptions,
 } from './utils'
 import * as m from '../lib/messages'
-import { PropertyInfo } from './types'
+import { OtherFees, PropertyInfo } from './types'
 import { width } from 'pdfkit/js/page'
 import { RentalHousingCategoryClass } from '../shared/enums'
 import { getOptionLabel } from './summaryUtils'
-import { RentalHousingConditionInspector } from './enums'
+import { OtherFeesPayeeOptions, RentalHousingConditionInspector } from './enums'
+import { formatCurrency } from '@island.is/shared/utils'
 
 const formatPatyItems = (items: Array<ApplicantsInfo>): Array<KeyValueItem> => {
   return (
@@ -75,7 +77,7 @@ export const landlordRepresentativeOverview = (
 ): Array<KeyValueItem> => {
   const landlordsRepresentatives = getValueViaPath<Array<ApplicantsInfo>>(
     answers,
-    'parties.landlordRepresentativeInfo.table',
+    'parties.landlordInfo.representativeTable',
   )
 
   if (!landlordsRepresentatives) {
@@ -296,5 +298,140 @@ export const fireProtectionsOverview = (
       valueText:
         getOptionLabel(emergencyExits || '', getYesNoOptions, '') || '-',
     },
+  ]
+}
+
+export const otherCostsOverview = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  console.log('answers: ', answers)
+
+  const otherFees = getValueViaPath<OtherFees>(answers, 'otherFees')
+
+  if (!otherFees) {
+    return []
+  }
+  const spacer = [
+    {
+      width: 'half' as const,
+      lineAboveKeyText: true,
+    },
+    {
+      width: 'half' as const,
+    },
+  ]
+
+  const tenantPaysHouseFund =
+    otherFees.housingFund === OtherFeesPayeeOptions.TENANT
+
+  const houseFundAmount = tenantPaysHouseFund
+    ? [
+        {
+          width: 'half' as const,
+          keyText: m.summary.houseFundAmountLabel,
+          valueText: formatCurrency(
+            parseInt(otherFees.housingFundAmount ?? '0'),
+          ),
+        },
+      ]
+    : []
+
+  const tenantPaysElectricity =
+    otherFees.electricityCost === OtherFeesPayeeOptions.TENANT
+
+  const electricityCostMeterNumber = tenantPaysElectricity
+    ? [
+        {
+          width: 'half' as const,
+          keyText: m.summary.electricityMeterNumberLabel,
+          valueText: otherFees.electricityCostMeterNumber || '-',
+        },
+        {
+          width: 'half' as const,
+          keyText: m.summary.meterStatusLabel,
+          valueText: otherFees.electricityCostMeterStatus || '-',
+        },
+        {
+          width: 'half' as const,
+          keyText: m.summary.dateOfMeterReadingLabel,
+          valueText: otherFees.electricityCostMeterStatusDate || '-',
+        },
+      ]
+    : []
+
+  const tenantPaysHeating =
+    otherFees.heatingCost === OtherFeesPayeeOptions.TENANT
+
+  const heatingCostMeterNumber = tenantPaysHeating
+    ? [
+        {
+          width: 'half' as const,
+          keyText: m.summary.heatingCostMeterNumberLabel,
+          valueText: otherFees.heatingCostMeterNumber || '-',
+        },
+        {
+          width: 'half' as const,
+          keyText: m.summary.meterStatusLabel,
+          valueText: otherFees.heatingCostMeterStatus || '-',
+        },
+        {
+          width: 'half' as const,
+          keyText: m.summary.dateOfMeterReadingLabel,
+          valueText: otherFees.heatingCostMeterStatusDate || '-',
+        },
+      ]
+    : []
+
+  const hasOtherCosts = otherFees.otherCosts?.includes(YesOrNoEnum.YES)
+
+  const otherCostsItems = hasOtherCosts
+    ? otherFees.otherCostItems?.map((item) => {
+        return {
+          width: 'half' as const,
+          keyText: m.summary.otherCostsLabel,
+          valueText: item.description || '-',
+        }
+      })
+    : []
+
+  const otherCostItemsSpacer =
+    otherCostsItems && otherCostsItems?.length > 0 ? spacer : []
+
+  return [
+    {
+      width: 'half',
+      keyText: m.summary.houseFundLabel,
+      valueText: getOptionLabel(
+        otherFees.housingFund || '',
+        getOtherFeesPayeeOptions,
+        '',
+      ),
+    },
+    ...houseFundAmount,
+    ...spacer,
+    {
+      width: 'half',
+      keyText: m.summary.electricityCostLabel,
+      valueText: getOptionLabel(
+        otherFees.electricityCost || '',
+        getOtherFeesPayeeOptions,
+        '',
+      ),
+    },
+    ...electricityCostMeterNumber,
+    ...spacer,
+    {
+      width: 'half',
+      keyText: m.summary.heatingCostLabel,
+      valueText: getOptionLabel(
+        otherFees.heatingCost || '',
+        getOtherFeesPayeeOptions,
+        '',
+      ),
+    },
+    ...heatingCostMeterNumber,
+    ...otherCostItemsSpacer,
+    // ...otherCostsItems
   ]
 }

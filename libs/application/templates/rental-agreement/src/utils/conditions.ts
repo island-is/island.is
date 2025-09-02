@@ -26,7 +26,7 @@ export const shouldShowRepresentative = (answers: FormValue) => {
     'parties.landlordInfo.representativeTable',
   )
 
-  if (!representatives) {
+  if (!representatives || representatives.length === 0) {
     return false
   }
 
