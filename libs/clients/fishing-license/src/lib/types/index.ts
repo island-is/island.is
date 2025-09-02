@@ -42,7 +42,7 @@ export type FishingLicenseInfo = {
 export enum FishingLicenseCodeType {
   catchMark = '1', // Almennt krókaflamarksveiðileyfi
   fishWithDanishSeine = '8', // Dragnótaveiðileyfi
-  igulker = '7', // Ígulkeraveiðileyfi
+  igulker = '7', // Ígulkerjaveiðileyfi
 
   greyslepp = '11', // TODO naming -  Grásleppuveiðileyfi
   northIceOceanCod = '25', // TODO naming - Norðuríshafsþorskveiðileyfi í norskri lögsögu
