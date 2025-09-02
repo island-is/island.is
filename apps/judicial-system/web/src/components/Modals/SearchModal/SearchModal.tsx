@@ -1,5 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import cn from 'classnames'
+import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Input, Tag, Text } from '@island.is/island-ui/core'
 import {
@@ -61,15 +62,64 @@ const SearchResultButton: FC<ResultsProps> = ({
 
 const SearchModal: FC<Props> = ({ onClose }) => {
   const [searchString, setSearchString] = useState<string>('')
+  const [focusIndex, setFocusIndex] = useState<number>(-1)
+  const { handleOpenCase } = useCaseList()
 
   const [searchResults, setSearchResults] =
     useState<[JSX.Element[], number | undefined]>()
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([])
 
   const [searchCases] = useSearchCasesLazyQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!searchResults || searchResults[1] === 0) {
+        return
+      }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setFocusIndex((prev) =>
+          prev < 0 ? 0 : (prev + 1) % searchResults[0].length,
+        )
+      }
+
+      if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setFocusIndex((prev) =>
+          prev < 0
+            ? searchResults[0].length - 1
+            : (prev - 1 + searchResults[0].length) % searchResults[0].length,
+        )
+      }
+
+      if (e.key === 'Enter' && focusIndex >= 0) {
+        const el = searchResults[0][focusIndex]
+        const caseId = el?.props?.caseId
+
+        if (caseId) {
+          handleOpenCase(caseId)
+          onClose()
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [focusIndex, handleOpenCase, onClose, searchResults])
+
+  useEffect(() => {
+    if (focusIndex >= 0 && itemRefs.current[focusIndex]) {
+      itemRefs.current[focusIndex]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      })
+    }
+  }, [focusIndex])
 
   useEffect(() => {
     if (searchInputRef.current) {
@@ -107,6 +157,8 @@ const SearchModal: FC<Props> = ({ onClose }) => {
               ],
           results.data?.searchCases.rowCount,
         ])
+
+        setFocusIndex(-1)
       } catch (error) {
         console.error('Error searching cases:', error)
       }
@@ -116,6 +168,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
       handleSearch()
     } else {
       setSearchResults(undefined)
+      setFocusIndex(-1)
     }
   }, [onClose, searchCases, searchString])
 
@@ -155,7 +208,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
               initial={{ opacity: 0, maxHeight: 0, marginTop: '32px' }}
               animate={{ opacity: 1, maxHeight: 500, marginTop: '32px' }}
               exit={{ opacity: 0, maxHeight: 0, marginTop: 0 }}
-              className={styles.searchResultsContainer}
+              className={cn(styles.searchResultsContainer)}
               transition={{
                 opacity: { duration: 0.2 },
                 maxHeight: { duration: 0.5, ease: 'easeOut' },
@@ -165,7 +218,19 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                 <Text variant="eyebrow" color="dark300">
                   {`Leitarniðurstöður (${searchResults[1]})`}
                 </Text>
-                {searchResults[0]}
+                <ul className={styles.searchResults}>
+                  {searchResults[0].map((searchResult, index) => (
+                    <li
+                      key={searchResult.props.caseId ?? index}
+                      className={cn({ [styles.focus]: focusIndex === index })}
+                      ref={(el) => {
+                        itemRefs.current[index] = el
+                      }}
+                    >
+                      {searchResult}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </motion.div>
           )}

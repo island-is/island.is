@@ -141,7 +141,7 @@ export const getTagConfig = (list: SignatureCollectionList) => {
     return {
       label: m.confirmListReviewed.defaultMessage,
       variant: 'mint' as TagVariant,
-      outlined: false,
+      outlined: true,
     }
   }
 

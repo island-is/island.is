@@ -18,11 +18,11 @@ import { Case } from './case.model'
   timestamps: false,
 })
 export class EventLog extends Model {
-  static getEventLogByEventType(
+  private static getEventLogs(
     eventType: EventType | EventType[],
     eventLogs: EventLog[] | undefined,
     userRole?: UserRole,
-  ): EventLog | undefined {
+  ): EventLog[] | undefined {
     if (!eventLogs) {
       return undefined
     }
@@ -37,11 +37,33 @@ export class EventLog extends Model {
       // Don't assume any ordering
       .sort((a, b) => b.created.getTime() - a.created.getTime())
 
-    if (relevantLogs.length === 0) {
+    return relevantLogs
+  }
+
+  static getEventLogByEventType(
+    eventType: EventType | EventType[],
+    eventLogs: EventLog[] | undefined,
+    userRole?: UserRole,
+  ): EventLog | undefined {
+    const relevantLogs = this.getEventLogs(eventType, eventLogs, userRole)
+    if (!relevantLogs || relevantLogs.length === 0) {
       return undefined
     }
 
     return relevantLogs[0]
+  }
+
+  static getAllEventLogsByEventType(
+    eventType: EventType | EventType[],
+    eventLogs: EventLog[] | undefined,
+    userRole?: UserRole,
+  ): EventLog[] | undefined {
+    const relevantLogs = this.getEventLogs(eventType, eventLogs, userRole)
+    if (!relevantLogs || relevantLogs.length === 0) {
+      return undefined
+    }
+
+    return relevantLogs
   }
 
   static getEventLogDateByEventType(
