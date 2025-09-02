@@ -46,6 +46,8 @@ import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
 import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
 import { UpdateResponseError } from '../dto/updateResponseError.dto'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import { ConfigType } from '@nestjs/config'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -71,6 +73,10 @@ export class VehiclesService {
     private vehicleMileageClientService: VehiclesMileageClientService,
     private vehiclesApi: VehicleSearchApi,
     private mileageReadingApi: MileageReadingApi,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
     @Inject(PublicVehicleSearchApi)
     private publicVehiclesApi: PublicVehicleSearchApi,
     @Inject(LOGGER_PROVIDER)
@@ -124,6 +130,7 @@ export class VehiclesService {
       pageNumber: res.pageNumber,
       totalPages: res.totalPages,
       totalRecords: res.totalRecords,
+      downloadServiceUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/mileagetemplate`,
       data: res.vehicles.map((v) => ({
         ...v,
         nextInspection: v.nextInspection

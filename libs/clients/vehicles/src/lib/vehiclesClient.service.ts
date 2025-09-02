@@ -68,7 +68,7 @@ export class VehiclesClientService {
         : undefined,
     })
 
-    return mapVehicleDataToNestedArray(res)
+   return mapVehicleDataToNestedArray(res)
   }
 
 

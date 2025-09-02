@@ -22,6 +22,7 @@ import { VehiclesClientService } from '@island.is/clients/vehicles'
 import { AuditService } from '@island.is/nest/audit'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import format from 'date-fns/format'
+import csvStringify from 'csv-stringify/lib/sync'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.vehicles)
@@ -97,26 +98,40 @@ export class VehicleController {
         resources: fileType,
       })
 
-      //if (fileType === 'excel') {
-      const sheetName = `magnskraning_kilometrastodu_template_${format(new Date(), 'dd.MM.yyyy_HH:mm')}.xlsx`.replace(/[:\\/?*[\]]/g, '_').trim()
-      const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(documentResponse)
-      const workbook: XLSX.WorkBook = {
-        Sheets: { [sheetName]: worksheet },
-        SheetNames: [sheetName],
+      if (fileType === 'excel') {
+        const sheetName = `km_template_${format(new Date(), 'ddMMYyyyy')}.xlsx`.replace(/[:\\/?*[\]]/g, '_').trim()
+        console.log(sheetName)
+
+        const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(documentResponse)
+        const workbook: XLSX.WorkBook = {
+          Sheets: { [sheetName]: worksheet },
+          SheetNames: [sheetName],
+        }
+
+        const excelBuffer = XLSX.writeXLSX(workbook, {
+          bookType: 'xlsx',
+          type: 'buffer',
+        })
+
+        res.header('Content-length', excelBuffer.length.toString())
+        res.header(
+          'Content-Disposition',
+          `inline; filename=${sheetName}`,
+        )
+        res.type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        return res.status(200).end(excelBuffer)
+      } else {
+        const sheetName = `km_template_${format(new Date(), 'ddMMYyyyy')}.csv`.replace(/[:\\/?*[\]]/g, '_').trim()
+
+        const csvString = csvStringify(documentResponse)
+        res.header('Content-length', csvString.length.toString())
+        res.header(
+          'Content-Disposition',
+          `inline; filename=${sheetName}`,
+        )
+        res.type('text/csv');
+        return res.status(200).end(csvString)
       }
-
-      const excelBuffer = XLSX.write(workbook, {
-        bookType: 'xlsx',
-        type: 'base64',
-      })
-
-      res.header('Content-length', excelBuffer.length.toString())
-      res.header(
-        'Content-Disposition',
-        `inline; filename=${sheetName}`,
-      )
-      res.type('data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64');
-      return res.status(200).end(excelBuffer)
     }
     return res.end()
   }

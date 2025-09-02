@@ -1,4 +1,4 @@
-import { CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse } from "../.."
+import { CurrentVehiclesWithMilageAndNextInspDto, CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse } from "../.."
 import format from 'date-fns/format'
 
 export const mapVehicleDataToNestedArray = (data?: CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse): unknown[][] | null => {
@@ -22,17 +22,14 @@ export const mapVehicleDataToNestedArray = (data?: CurrentVehiclesWithMilageAndN
   const header = Object.keys(indexes)
   const rows: Array<Array<unknown>> = []
 
- data.data?.forEach((vehicle) => {
-   rows[indexes.bilnumer].push(vehicle.permno)
-   rows[indexes["seinasta skraning"]].push(
-     vehicle.latestMileageReadDate
-       ? format(vehicle.latestMileageReadDate, 'dd.MM.yyyy - HH:mm')
-       : '',
-   )
-   rows[indexes["seinasta skrada stada"]].push(
-     vehicle.latestMileage ?? 0,
-   )
-   rows[indexes['kilometrastada']].push(undefined)
+  data.data?.forEach(({permno, latestMileageReadDate, latestMileage}) => {
+    const dataRow = [
+      permno,
+      latestMileageReadDate ? format(latestMileageReadDate, 'dd.MM.yyyy - HH:mm') : '',
+      latestMileage ?? 0,
+      undefined,
+    ]
+    rows.push(dataRow)
   })
 
   return [header, ...rows]

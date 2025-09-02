@@ -15,6 +15,9 @@ export class VehiclesCurrentListResponse {
   @Field(() => Int)
   totalRecords!: number
 
+  @Field( { nullable: true })
+  downloadServiceUrl?: string
+
   @Field(() => [VehicleCurrentWithMileage], { nullable: true })
   data?: Array<VehicleCurrentWithMileage>
 }

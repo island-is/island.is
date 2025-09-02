@@ -1,5 +1,5 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -19,7 +19,9 @@ import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 @Resolver(() => VehiclesCurrentListResponse)
 @Audit({ namespace: '@island.is/api/vehicles' })
 export class VehiclesV3Resolver {
-  constructor(private readonly vehiclesService: VehiclesService) {}
+  constructor(
+    private readonly vehiclesService: VehiclesService,
+  ) {}
 
   @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesCurrentListResponse, {
