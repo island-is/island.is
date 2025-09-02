@@ -1,6 +1,7 @@
 import {
   buildAlertMessageField,
   buildCheckboxField,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -168,8 +169,8 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.welfareContactName,
           width: 'half',
           required: true,
-          condition: (answers, externalData) => {
-            return isWelfareContactSelected(answers, externalData)
+          condition: (answers) => {
+            return isWelfareContactSelected(answers)
           },
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
@@ -182,8 +183,8 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.welfareContactEmail,
           width: 'half',
           required: true,
-          condition: (answers, externalData) => {
-            return isWelfareContactSelected(answers, externalData)
+          condition: (answers) => {
+            return isWelfareContactSelected(answers)
           },
           defaultValue: (application: Application) =>
             getDefaultSupportCaseworker(
@@ -211,8 +212,8 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers, externalData) => {
-            return isWelfareContactSelected(answers, externalData)
+          condition: (answers) => {
+            return isWelfareContactSelected(answers)
           },
           defaultValue: (application: Application) =>
             hasDefaultSupportCaseworker(
@@ -267,8 +268,8 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers, externalData) => {
-            return isWelfareContactSelected(answers, externalData)
+          condition: (answers) => {
+            return isWelfareContactSelected(answers)
           },
           defaultValue: (application: Application) => {
             const { socialProfile } = getApplicationExternalData(
@@ -315,6 +316,10 @@ export const supportSubSection = buildSubSection({
                   .requestingMeetingDescription,
             },
           ],
+        }),
+        buildHiddenInput({
+          id: 'support.triggerHiddenInput',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

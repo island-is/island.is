@@ -16,34 +16,12 @@ export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
   return !!primaryOrgId
 }
 
-export const isWelfareContactSelected = (
-  answers: FormValue,
-  externalData: ExternalData,
-): boolean => {
+export const isWelfareContactSelected = (answers: FormValue): boolean => {
   const { hasDiagnoses, hasHadSupport, hasWelfareContact } =
     getApplicationAnswers(answers)
 
-  const { socialProfile } = getApplicationExternalData(externalData)
-
-  const hasDiagnosesCalculated =
-    (!hasDiagnoses && socialProfile?.hasDiagnoses === true) ||
-    hasDiagnoses === YES
-
-  const hasHadSupportCalculated =
-    (!hasHadSupport && socialProfile?.hasHadSupport === true) ||
-    hasHadSupport === YES
-
-  const hasWelfareContactCalculated =
-    (!hasWelfareContact &&
-      !!getDefaultSupportCaseworker(
-        externalData,
-        CaseWorkerInputTypeEnum.SupportManager,
-      )) ||
-    hasWelfareContact === YES
-
   return (
-    (hasDiagnosesCalculated || hasHadSupportCalculated) &&
-    hasWelfareContactCalculated
+    (hasDiagnoses === YES || hasHadSupport === YES) && hasWelfareContact === YES
   )
 }
 
@@ -104,7 +82,7 @@ export const showCaseManagerFields = (
   )
 
   return (
-    isWelfareContactSelected(answers, externalData) &&
+    isWelfareContactSelected(answers) &&
     ((!hasCaseManager && caseWorker !== undefined) || hasCaseManager === YES)
   )
 }
