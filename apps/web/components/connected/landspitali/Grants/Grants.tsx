@@ -350,7 +350,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               label={formatMessage(m.info.amountOfMoneyOtherInputLabel)}
               type="number"
               inputMode="numeric"
-              maxLength={20}
+              maxLength={14}
               currency={true}
               error={
                 parseInt(watch('amountISKCustom') || '0') < 1000
