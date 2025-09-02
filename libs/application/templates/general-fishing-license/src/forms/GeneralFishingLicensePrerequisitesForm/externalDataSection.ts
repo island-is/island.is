@@ -10,8 +10,10 @@ import {
   DepartmentOfFisheriesPaymentCatalogApi,
   ShipRegistryApi,
   IdentityApi,
+  MockPaymentCatalog,
 } from '../../dataProviders'
 import { externalData } from '../../lib/messages'
+import { DefaultEvents } from '@island.is/application/types'
 
 export const externalDataSection = buildSection({
   id: 'ExternalDataSection',
@@ -38,6 +40,9 @@ export const externalDataSection = buildSection({
           provider: DepartmentOfFisheriesPaymentCatalogApi,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.description,
+        }),
+        buildDataProviderItem({
+          provider: MockPaymentCatalog,
         }),
       ],
     }),
@@ -73,7 +78,7 @@ export const externalDataSection = buildSection({
           placement: 'footer',
           actions: [
             {
-              event: 'SUBMIT',
+              event: DefaultEvents.SUBMIT,
               name: externalData.dataProvider.submitButton,
               type: 'primary',
             },
