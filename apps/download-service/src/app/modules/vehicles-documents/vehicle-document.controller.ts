@@ -100,7 +100,6 @@ export class VehicleController {
 
       if (fileType === 'excel') {
         const sheetName = `km_template_${format(new Date(), 'ddMMYyyyy')}.xlsx`.replace(/[:\\/?*[\]]/g, '_').trim()
-        console.log(sheetName)
 
         const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(documentResponse)
         const workbook: XLSX.WorkBook = {
