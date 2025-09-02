@@ -19,7 +19,7 @@ type RequestFilterType = {
 const requestFilterKeys = ['period'] as (keyof RequestFilterType)[]
 
 const RequestCasesDataExport = () => {
-  const toDate = Date.now()
+  const toDate = new Date()
   const fromDate = startOfYear(toDate)
   const [filters, setFilters] = useState<RequestFilterType>({
     period: { fromDate, toDate },

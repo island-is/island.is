@@ -6,6 +6,7 @@ export {
   SubpoenaType,
   DefendantPlea,
   ServiceStatus,
+  VerdictServiceStatus,
   PunishmentType,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
@@ -49,7 +50,12 @@ export { DateType, dateTypes } from './lib/dateLog'
 
 export { StringType, stringTypes } from './lib/caseString'
 
-export { CaseFileState, CaseFileCategory, HashAlgorithm } from './lib/file'
+export {
+  CaseFileState,
+  CaseFileCategory,
+  HashAlgorithm,
+  PoliceFileTypeCode,
+} from './lib/file'
 
 export {
   UserRole,
@@ -143,6 +149,7 @@ export {
   IndictmentCountOffense,
   offenseSubstances,
   isTrafficViolationIndictmentCount,
+  getIndictmentCountCompare,
 } from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 

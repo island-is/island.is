@@ -15,13 +15,11 @@ import {
   EventType,
   InstitutionType,
   ServiceStatus,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case'
 import { courtSubtypes } from '../court'
-import { DefendantEventLog } from '../defendant'
-import { EventLog } from '../event-log'
-import { Institution } from '../institution'
+import { Case, DefendantEventLog, EventLog, Institution } from '../repository'
 import {
   IndictmentCaseEventType,
   RequestCaseEventType,
@@ -83,6 +81,26 @@ const getServiceStatusDescriptor = (successStatus: ServiceStatus) => {
     case ServiceStatus.FAILED: {
       return 'Árangurslaus birting'
     }
+    default: {
+      return 'Óþekkt'
+    }
+  }
+}
+
+const getVerdictServiceStatusDescriptor = (
+  successStatus: VerdictServiceStatus,
+) => {
+  switch (successStatus) {
+    case VerdictServiceStatus.ELECTRONICALLY: {
+      return 'Birt í pósthólfi island.is'
+    }
+    case VerdictServiceStatus.IN_PERSON: {
+      return 'Birt varnaraðila'
+    }
+    case VerdictServiceStatus.DEFENDER: {
+      return 'Birt fyrir verjanda'
+    }
+
     default: {
       return 'Óþekkt'
     }
@@ -333,7 +351,7 @@ const verdictServedToDefendant = (
         defendantId: defendant.id,
         date: verdict.serviceDate.toISOString(),
         serviceStatus: verdict.serviceStatus,
-        serviceStatusDescriptor: getServiceStatusDescriptor(
+        serviceStatusDescriptor: getVerdictServiceStatusDescriptor(
           verdict.serviceStatus,
         ),
         event: 'VERDICT_SERVED',

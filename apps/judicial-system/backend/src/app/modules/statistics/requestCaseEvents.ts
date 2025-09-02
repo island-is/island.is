@@ -7,9 +7,8 @@ import {
   NotificationType,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case'
-import { courtSubtypes } from '../court/court.service'
-import { EventLog } from '../event-log'
+import { courtSubtypes } from '../court'
+import { Case, EventLog } from '../repository'
 import { RequestCaseEventType } from './models/event.model'
 
 export interface RequestCaseEvent {
@@ -32,7 +31,6 @@ export interface RequestCaseEvent {
 // utility functions
 const getCaseTypeTranslation = (caseType: CaseType) => {
   if (caseType === CaseType.INDICTMENT) {
-    // TODO: map indictment subtypes
     return 'Ákæra'
   }
   const subtypes = courtSubtypes[caseType]

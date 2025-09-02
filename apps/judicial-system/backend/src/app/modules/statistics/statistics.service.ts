@@ -28,14 +28,19 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
-import { Case, DateLog } from '../case'
-import { Defendant, DefendantEventLog } from '../defendant'
-import { EventLog } from '../event-log'
-import { IndictmentCount, Offense } from '../indictment-count'
-import { Institution } from '../institution'
-import { Notification } from '../notification'
-import { Subpoena } from '../subpoena'
-import { Verdict } from '../verdict'
+import {
+  Case,
+  DateLog,
+  Defendant,
+  DefendantEventLog,
+  EventLog,
+  IndictmentCount,
+  Institution,
+  Notification,
+  Offense,
+  Subpoena,
+  Verdict,
+} from '../repository'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
