@@ -7,7 +7,7 @@ import {
   NotificationType,
 } from '@island.is/judicial-system/types'
 
-import { courtSubtypes } from '../court/court.service'
+import { courtSubtypes } from '../court'
 import { Case, EventLog } from '../repository'
 import { RequestCaseEventType } from './models/event.model'
 

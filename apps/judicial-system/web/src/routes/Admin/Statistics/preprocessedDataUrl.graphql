@@ -1,4 +1,4 @@
-query GetPreprocessedDataUrl($input: RequestStatisticsInput!) {
+query GetPreprocessedDataUrl($input: CaseDataExportInput!) {
   getPreprocessedDataCsvSignedUrl(input: $input) {
     url
   }
