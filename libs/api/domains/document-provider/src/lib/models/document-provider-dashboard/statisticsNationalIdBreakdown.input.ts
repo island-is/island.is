@@ -1,9 +1,4 @@
-import {
-  Field,
-  Int,
-  InputType,
-  registerEnumType,
-} from '@nestjs/graphql'
+import { Field, Int, InputType, registerEnumType } from '@nestjs/graphql'
 import { CategoryStatisticsSortBy } from './statisticsProvidersBreakdownWithCategories.input'
 
 export enum TotalStatisticsSortBy {
