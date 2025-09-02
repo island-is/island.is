@@ -494,8 +494,9 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                     ? undefined
                     : errors.senderNationalId?.message
                 }
-                type="number"
+                type="text"
                 inputMode="numeric"
+                format="######-####"
                 disabled={nationalIdSkipped}
                 rules={{
                   validate: (value) => {

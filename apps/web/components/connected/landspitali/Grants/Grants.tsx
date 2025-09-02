@@ -388,8 +388,9 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
                     ? undefined
                     : errors.senderNationalId?.message
                 }
-                type="number"
+                type="text"
                 inputMode="numeric"
+                format="######-####"
                 disabled={nationalIdSkipped}
                 rules={{
                   validate: (value) => {
