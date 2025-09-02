@@ -554,7 +554,7 @@ export class StatisticsService {
     // create events for data analytics for each case
     if (!period) return []
 
-    const fromDate = new Date(period.fromDate ?? Date.now())
+    const fromDate = new Date(period.fromDate ?? cases[0]?.created ?? 0)
     const toDate = new Date(period.toDate ?? Date.now())
     const events = cases
       .flatMap((c) => requestCaseEventFunctions.flatMap((func) => func(c)))
@@ -649,7 +649,7 @@ export class StatisticsService {
     // create events for data analytics for each case
     if (!period) return []
 
-    const fromDate = new Date(period.fromDate ?? Date.now())
+    const fromDate = new Date(period.fromDate ?? cases[0]?.created ?? 0)
     const toDate = new Date(period.toDate ?? Date.now())
 
     const events = cases.flatMap((c) => {

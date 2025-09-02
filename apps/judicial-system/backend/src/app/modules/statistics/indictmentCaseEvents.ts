@@ -288,8 +288,8 @@ const subpoenaServedToDefendant = (
     serviceStatus: subpoena.serviceStatus,
     serviceStatusDescriptor: getServiceStatusDescriptor(subpoena.serviceStatus),
     timeToServeSubpoena: differenceInDays(
-      subpoena.created,
       subpoena.serviceDate,
+      subpoena.created,
     ),
     ...commonFields(c),
   }))
@@ -490,9 +490,12 @@ const caseSubtypesConfirmed = (c: Case): IndictmentCaseEvent[] | undefined => {
   }
 
   const caseIndictmentSubtypes = c.indictmentSubtypes
-  const subtypes = caseIndictmentSubtypes
-    ? c.policeCaseNumbers?.flatMap((number) => caseIndictmentSubtypes[number])
-    : []
+  const subtypes =
+    caseIndictmentSubtypes && Array.isArray(c.policeCaseNumbers)
+      ? c.policeCaseNumbers.flatMap(
+          (number) => caseIndictmentSubtypes[number] ?? [],
+        )
+      : []
 
   return subtypes.map((subtype) => ({
     id: c.id,
@@ -500,7 +503,7 @@ const caseSubtypesConfirmed = (c: Case): IndictmentCaseEvent[] | undefined => {
     eventDescriptor: 'Sakarefni staðfest',
     date,
     institution: c.prosecutorsOffice?.name,
-    subtype,
+    caseSubtype: subtype,
     subtypeDescriptor: capitalize(indictmentSubtypes[subtype]),
     ...commonFields(c),
   }))
