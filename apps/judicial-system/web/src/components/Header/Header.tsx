@@ -24,7 +24,11 @@ import {
   capitalize,
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
-import { isDefenceUser, Lawyer } from '@island.is/judicial-system/types'
+import {
+  isAdminUser,
+  isDefenceUser,
+  Lawyer,
+} from '@island.is/judicial-system/types'
 import { SearchModal } from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 
@@ -83,9 +87,10 @@ const HeaderContainer = () => {
   const { lawyers } = useContext(LawyerRegistryContext)
 
   const isLawyerInLawyersRegistry = isDefenceUser(user) && lawyer
+  const canUseSearch = !!user && !isDefenceUser(user) && !isAdminUser(user)
 
   useKeyboardCombo('Meta + k', () => {
-    setIsSearchOpen(!isSearchOpen)
+    if (canUseSearch) setIsSearchOpen(!isSearchOpen)
   })
 
   useEffect(() => {
@@ -272,20 +277,21 @@ const HeaderContainer = () => {
                 }
                 onLogout={handleLogout}
               />
-
-              <Box
-                border="standard"
-                borderRadius="full"
-                display="flex"
-                alignItems="center"
-                justifyContent={'spaceBetween'}
-                className={styles.searchButton}
-                component="button"
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-              >
-                <Text>Leit</Text>
-                <Icon icon="search" color="blue400" size="small" />
-              </Box>
+              {canUseSearch && (
+                <Box
+                  border="standard"
+                  borderRadius="full"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent={'spaceBetween'}
+                  className={styles.searchButton}
+                  component="button"
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                >
+                  <Text>Leit</Text>
+                  <Icon icon="search" color="blue400" size="small" />
+                </Box>
+              )}
             </>
           )}
         </Inline>

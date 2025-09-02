@@ -104,10 +104,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'unionSickPay.endDate',
   )
 
-  const unionNationalId = getValueViaPath<string>(
-    answers,
-    'unionSickPay.unionNationalId',
-  )
+  const unionInfo =
+    getValueViaPath<string>(answers, 'unionSickPay.unionInfo') ?? ''
 
   const certificateForSicknessAndRehabilitationReferenceId =
     getValueViaPath<string>(
@@ -123,6 +121,36 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const rehabilitationPlanReferenceId = getValueViaPath<string>(
     answers,
     'rehabilitationPlan.referenceId',
+  )
+
+  const confirmedTreatmentConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmedTreatment.confirmation',
+  )
+
+  const confirmedTreatmentReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmedTreatment.referenceId',
+  )
+
+  const confirmationOfPendingResolutionConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmationOfPendingResolution.confirmation',
+  )
+
+  const confirmationOfPendingResolutionReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmationOfPendingResolution.referenceId',
+  )
+
+  const confirmationOfIllHealthConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmationOfIllHealth.confirmation',
+  )
+
+  const confirmationOfIllHealthReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmationOfIllHealth.referenceId',
   )
 
   const hadAssistance = getValueViaPath<YesOrNo>(
@@ -211,10 +239,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
-    unionNationalId,
+    unionInfo,
     certificateForSicknessAndRehabilitationReferenceId,
     rehabilitationPlanConfirmation,
     rehabilitationPlanReferenceId,
+    confirmedTreatmentConfirmation,
+    confirmedTreatmentReferenceId,
+    confirmationOfPendingResolutionConfirmation,
+    confirmationOfPendingResolutionReferenceId,
+    confirmationOfIllHealthConfirmation,
+    confirmationOfIllHealthReferenceId,
     hadAssistance,
     educationalLevel,
     comment,
@@ -343,6 +377,11 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationMARPApplicationType.data.applicationType',
   )
 
+  const marpConfirmationType = getValueViaPath<string>(
+    externalData,
+    'socialInsuranceAdministrationMARPApplicationType.data.confirmationType',
+  )
+
   const isEligible = getValueViaPath<Eligible>(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data',
@@ -371,6 +410,7 @@ export const getApplicationExternalData = (
     ectsUnits,
     educationLevels,
     marpApplicationType,
+    marpConfirmationType,
     isEligible,
   }
 }

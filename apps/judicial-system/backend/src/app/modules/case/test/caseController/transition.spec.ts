@@ -30,10 +30,10 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { Case } from '../../../repository'
 import { caseModuleConfig } from '../../case.config'
 import { include } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
-import { Case } from '../../models/case.model'
 
 jest.mock('../../../../factories')
 
