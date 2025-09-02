@@ -704,6 +704,13 @@ export class FormsService {
         displayOrder: 9911,
         name: { is: 'Yfirlit', en: 'Summary' },
       } as Section,
+
+      {
+      formId: form.id,
+      sectionType: SectionTypes.COMPLETED,
+      displayOrder: 9931,
+      name: { is: 'Staðfesting', en: 'Confirmation' },
+    } as Section,
     ])
 
     const paymentSection = await this.sectionModel.create({
@@ -732,18 +739,6 @@ export class FormsService {
       name: { is: 'innsláttarsíða 1', en: 'Input screen 1' },
     } as Screen)
 
-    const completedSection = await this.sectionModel.create({ 
-      formId: form.id,
-      sectionType: SectionTypes.COMPLETED,
-      displayOrder: 9931,
-      name: { is: 'Greiðsla', en: 'Payment' },
-    } as Section)
-
-    await this.screenModel.create({
-      sectionId: completedSection.id,
-      displayOrder: 0,
-      name: { is: 'Staðfesting', en: 'Confirmation' }
-    } as Screen)
   }
 
 

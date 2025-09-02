@@ -1,4 +1,5 @@
-import { Box, Button, GridColumn } from '@island.is/island-ui/core'
+import { Box, Button, GridColumn, Text } from '@island.is/island-ui/core'
+import { useState } from 'react'
 import * as styles from './Footer.css'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { useIntl } from 'react-intl'
@@ -21,10 +22,17 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const { formatMessage } = useIntl()
   const { trigger } = useFormContext()
 
-  const validate = async () => {
-    const valid = await trigger()
-    return valid
-  }
+  // Mutations
+  const [saveScreen] = useMutation(SAVE_SCREEN)
+  const [submitSectionMutation] = useMutation(SUBMIT_SECTION)
+  const [submitApplication, { loading: submitLoading }] = useMutation(
+    SUBMIT_APPLICATION,
+    {
+      errorPolicy: 'none',
+    },
+  )
+
+  const validate = async () => trigger()
 
   const onSubmit =
     (currentSection.data.sectionType === SectionTypes.SUMMARY &&
@@ -42,39 +50,67 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       : onSubmit
       ? formatMessage(webMessages.submitApplication)
       : formatMessage(webMessages.continue)
+
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
-  const submitScreen = useMutation(SAVE_SCREEN)
-  const submitSection = useMutation(SUBMIT_SECTION)
-  const [submitApplication] = useMutation(SUBMIT_APPLICATION)
+
   const handleIncrement = async () => {
     const isValid = await validate()
-
-    if (onSubmit) {
-      return submitApplication({
-        variables: {
-          input: {
-            id: state.application.id,
-          },
-        },
-      })
-    }
-
-    dispatch({
-      type: 'SET_VALIDITY',
-      payload: { isValid },
-    })
-
+    dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
     if (!isValid) return
 
-    dispatch({
-      type: 'INCREMENT',
-      payload: {
-        submitScreen,
-        submitSection,
+    const submitScreenTuple: any = [
+      saveScreen,
+      {
+        variables: {
+          input: {
+            applicationId: state.application.id,
+          },
+        },
       },
-    })
+    ]
+    const submitSectionTuple: any = [
+      submitSectionMutation,
+      {
+        variables: {
+          input: {
+            applicationId: state.application.id,
+          },
+        },
+      },
+    ]
+
+    if(state.currentSection.data.sectionType === SectionTypes.COMPLETED) {
+      window.open(`/minarsidur`, '_blank')
+    }
+
+    if (!onSubmit) {
+      dispatch({
+        type: 'INCREMENT',
+        payload: {
+          submitScreen: submitScreenTuple,
+          submitSection: submitSectionTuple,
+        },
+      })
+      return
+    }
+    try {
+      await submitApplication({
+        variables: { input: { id: state.application.id } },
+      })
+      dispatch({
+        type: 'INCREMENT',
+        payload: {
+          submitScreen: submitScreenTuple,
+          submitSection: submitSectionTuple,
+        },
+      })
+      dispatch({ type: 'SUBMITTED', payload: true })
+    } catch {
+      dispatch({ type: 'SUBMITTED', payload: false })
+    }
   }
+
   const handleDecrement = () => dispatch({ type: 'DECREMENT' })
 
   return (
@@ -91,21 +127,24 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           paddingTop={[1, 4]}
         >
           <Box display="inlineFlex" padding={2} paddingRight="none">
-            {/* Implement logic on whether submit button should be rendered */}
             <Button
               icon="arrowForward"
               onClick={handleIncrement}
-              disabled={!enableContinueButton}
+              disabled={!enableContinueButton || submitLoading}
+              loading={submitLoading}
             >
               {continueButtonText}
             </Button>
           </Box>
+
+            {/* Back button */}
           {state.currentSection.index > 1 && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button
                 icon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
+                disabled={submitLoading}
               >
                 {formatMessage(webMessages.back)}
               </Button>

@@ -892,4 +892,24 @@ export const webMessages = defineMessages({
     defaultMessage: 'Senda inn umsókn',
     description: 'Submit application',
   },
+  completedErrorTitle: {
+    id: 'form-system:submit-application-error-title',
+    defaultMessage: 'Ekki tókst að senda umsókn.',
+    description: 'The application could not be submitted.',
+  },
+  completedErrorDescription: {
+    id: 'form-system:submit-application-error-description',
+    defaultMessage: 'Villa hefur komið upp í samskiptum við Zendesk.',
+    description: 'An error has occurred in communication with Zendesk.',
+  },
+  completedSuccessTitle: {
+    id: 'form-system:submit-application-success-title',
+    defaultMessage: 'Umsókn þín er móttekin',
+    description: 'Your application has been received.',
+  },
+  completedSuccessDescription: {
+    id: 'form-system:submit-application-success-description',
+    defaultMessage: 'Umsókn þín hefur verið móttekin og er í vinnslu.',
+    description: 'Your application has been received and is being processed.',
+  }
 })
