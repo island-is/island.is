@@ -84,6 +84,10 @@ export class VehicleController {
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
+    if (fileType !== 'csv' && fileType !== 'excel') {
+      return res.status(400).send('Unsupported fileType')
+    }
+
     const documentResponse = await this.vehicleService.getVehiclesUnknownArray(
       user,
       {
@@ -100,6 +104,7 @@ export class VehicleController {
         auth: user,
         resources: fileType,
       })
+
 
       if (fileType === 'excel') {
         const sheetName = `km_template_${format(new Date(), 'ddMMYyyyy')}.xlsx`
