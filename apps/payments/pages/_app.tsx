@@ -7,6 +7,8 @@ import { LocaleProvider } from '@island.is/localization'
 import initApollo from '../graphql/client'
 import './app.css'
 
+// TODO: remove this comment, the purpose of this comment is to force the payment app to be featured deployed
+
 const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return (
     <div style={{ height: '100%' }}>
