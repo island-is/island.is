@@ -93,7 +93,7 @@ export class CaseRepositoryService {
 
       return result
     } catch (error) {
-      this.logger.error(`Error finding case by ID ${id}:`, error)
+      this.logger.error(`Error finding case by ID ${id}:`, { error })
 
       throw error
     }
@@ -101,7 +101,9 @@ export class CaseRepositoryService {
 
   async findOne(options?: FindOneOptions): Promise<Case | null> {
     try {
-      this.logger.debug(`Finding case with conditions:`, options?.where)
+      this.logger.debug('Finding case with conditions:', {
+        where: Object.keys(options?.where ?? {}),
+      })
 
       const findOptions: FindOptions = {}
 
@@ -133,7 +135,10 @@ export class CaseRepositoryService {
 
       return result
     } catch (error) {
-      this.logger.error(`Error finding case with conditions:`, error)
+      this.logger.error('Error finding case with conditions:', {
+        where: Object.keys(options?.where ?? {}),
+        error,
+      })
 
       throw error
     }
@@ -141,7 +146,9 @@ export class CaseRepositoryService {
 
   async findAll(options?: FindAllOptions): Promise<Case[]> {
     try {
-      this.logger.debug(`Finding all cases with conditions:`, options?.where)
+      this.logger.debug('Finding all cases with conditions:', {
+        where: Object.keys(options?.where ?? {}),
+      })
 
       const findOptions: FindOptions = {}
 
@@ -179,7 +186,10 @@ export class CaseRepositoryService {
 
       return results
     } catch (error) {
-      this.logger.error(`Error finding all cases:`, error)
+      this.logger.error('Error finding all cases with conditions:', {
+        where: Object.keys(options?.where ?? {}),
+        error,
+      })
 
       throw error
     }
@@ -190,10 +200,9 @@ export class CaseRepositoryService {
     rows: Case[]
   }> {
     try {
-      this.logger.debug(
-        `Finding and counting all cases with conditions:`,
-        options?.where,
-      )
+      this.logger.debug('Finding and counting all cases with conditions:', {
+        where: Object.keys(options?.where ?? {}),
+      })
 
       const findOptions: FindAndCountOptions = {}
 
@@ -241,7 +250,10 @@ export class CaseRepositoryService {
 
       return results
     } catch (error) {
-      this.logger.error(`Error finding and counting all cases:`, error)
+      this.logger.error(
+        'Error finding and counting all cases with conditions:',
+        { where: Object.keys(options?.where ?? {}), error },
+      )
 
       throw error
     }
@@ -252,7 +264,9 @@ export class CaseRepositoryService {
     options?: CreateCaseOptions,
   ): Promise<Case> {
     try {
-      this.logger.debug('Creating new case with data:', data)
+      this.logger.debug('Creating case with data:', {
+        data: Object.keys(data ?? {}),
+      })
 
       const createOptions: CreateOptions = {}
 
@@ -266,7 +280,10 @@ export class CaseRepositoryService {
 
       return result
     } catch (error) {
-      this.logger.error('Error creating case:', error)
+      this.logger.error('Error creating case with data:', {
+        data: Object.keys(data ?? {}),
+        error,
+      })
 
       throw error
     }
@@ -277,8 +294,10 @@ export class CaseRepositoryService {
     options: UpdateCaseOptions,
   ): Promise<[affectedCount: number]> {
     try {
-      this.logger.debug('Updating case with data:', data)
-      this.logger.debug('Update conditions:', options.where)
+      this.logger.debug('Updating case with data and conditions:', {
+        data: Object.keys(data ?? {}),
+        where: Object.keys(options?.where ?? {}),
+      })
 
       const updateOptions: UpdateOptions = {
         where: options.where,
@@ -294,7 +313,11 @@ export class CaseRepositoryService {
 
       return result
     } catch (error) {
-      this.logger.error('Error updating case:', error)
+      this.logger.error('Error updating case with data and conditions:', {
+        data: Object.keys(data ?? {}),
+        where: Object.keys(options?.where ?? {}),
+        error,
+      })
 
       throw error
     }
@@ -302,7 +325,9 @@ export class CaseRepositoryService {
 
   async count(options?: CountCaseOptions): Promise<number> {
     try {
-      this.logger.debug('Counting cases with conditions:', options?.where)
+      this.logger.debug('Counting cases with conditions:', {
+        where: Object.keys(options?.where ?? {}),
+      })
 
       const countOptions: CountOptions = {}
 
@@ -328,7 +353,10 @@ export class CaseRepositoryService {
 
       return result
     } catch (error) {
-      this.logger.error('Error counting cases:', error)
+      this.logger.error('Error counting cases with conditions:', {
+        where: Object.keys(options?.where ?? {}),
+        error,
+      })
 
       throw error
     }
