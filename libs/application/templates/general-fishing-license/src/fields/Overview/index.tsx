@@ -36,14 +36,13 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [fishingLicensePrice, setFishingLicensePrice] = useState<number>(0)
 
   // Ships
-  const ships = getValueViaPath<FishingLicenseShip[]>(
-    application.externalData,
-    'directoryOfFisheries.data.ships',
-  ) ?? []
-  const shipIndex = getValueViaPath<string>(
-    answers,
-    'shipSelection.ship',
-  ) ?? '0'
+  const ships =
+    getValueViaPath<FishingLicenseShip[]>(
+      application.externalData,
+      'directoryOfFisheries.data.ships',
+    ) ?? []
+  const shipIndex =
+    getValueViaPath<string>(answers, 'shipSelection.ship') ?? '0'
   const ship = ships[parseInt(shipIndex)]
 
   // ChargeItem
