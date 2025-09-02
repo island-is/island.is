@@ -24,4 +24,7 @@ export const IdentityApi = IdsApi.configure({
   externalDataId: 'identity',
 })
 
-export { MockPaymentCatalog as MockablePaymentCatalogApi, MockPaymentCatalog } from './mockPaymentCatalog'
+export {
+  MockPaymentCatalog as MockablePaymentCatalogApi,
+  MockPaymentCatalog,
+} from './mockPaymentCatalog'
