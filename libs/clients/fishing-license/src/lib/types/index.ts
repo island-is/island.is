@@ -58,7 +58,7 @@ export enum FishingLicenseCodeType {
   commonWhelk = '50', // Beitukóngsveiðileyfi
   oceanQuahogin = '52', // Kúfiskveiðileyfi
   crustaceans = '54', // Krabbaveiðileyfi
-  
+
   unknown = '0',
 }
 
