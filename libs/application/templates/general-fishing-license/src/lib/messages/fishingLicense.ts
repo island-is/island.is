@@ -103,7 +103,7 @@ export const fishingLicense = {
     urchin: {
       id: 'gfl.application:shipSelection.labels.urchin',
       defaultMessage: 'Ígulkeraveiðileyfi',
-      description: 'Ígulkeraveiðileyfi',
+      description: 'Ígulkerjaveiðileyfi',
     },
     unknown: {
       id: 'gfl.application:shipSelection.labels.notSpecified',
