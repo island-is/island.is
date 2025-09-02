@@ -103,7 +103,8 @@ const TransporterSchema = z
 const ConvoySchema = z.object({
   items: z.array(
     z.object({
-      convoyId: z.string(),
+      // Note: this field is actually required, but setting as optional so it is possible to use onSubmitLoad in tableRepeater
+      convoyId: z.string().optional(),
       vehicle: z.object({
         permno: z.string().length(5),
         makeAndColor: z.string().min(1),

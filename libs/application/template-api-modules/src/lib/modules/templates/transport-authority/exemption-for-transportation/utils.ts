@@ -245,7 +245,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
         // Freight pairing
         cargoAssignments: getAllFreightForConvoy(
           freightPairingAnswers || [],
-          item.convoyId,
+          item.convoyId ?? '',
         ).map((item) => ({
           cargoCode: item.freightId,
           height: Number(item.height),
