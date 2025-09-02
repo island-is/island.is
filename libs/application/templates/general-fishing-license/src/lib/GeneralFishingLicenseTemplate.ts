@@ -21,6 +21,7 @@ import {
   DepartmentOfFisheriesPaymentCatalogApi,
   ShipRegistryApi,
   IdentityApi,
+  MockPaymentCatalog,
 } from '../dataProviders'
 import {
   coreHistoryMessages,
@@ -145,6 +146,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 DepartmentOfFisheriesPaymentCatalogApi,
+                MockPaymentCatalog,
                 ShipRegistryApi,
                 IdentityApi,
               ],
