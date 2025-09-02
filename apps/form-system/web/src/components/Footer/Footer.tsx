@@ -2,7 +2,7 @@ import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import * as styles from './Footer.css'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { useIntl } from 'react-intl'
-import { SectionTypes, webMessages } from '@island.is/form-system/ui'
+import {  webMessages } from '@island.is/form-system/ui'
 import {
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
@@ -17,7 +17,6 @@ interface Props {
 
 export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
-  const { currentSection } = state
   const { formatMessage } = useIntl()
   const { trigger } = useFormContext()
 
@@ -25,8 +24,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     const valid = await trigger()
     return valid
   }
-
-  console.log(state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
 
   // const onSubmit =
   //   (currentSection.data.sectionType === SectionTypes.SUMMARY &&
