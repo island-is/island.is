@@ -424,6 +424,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               label={formatMessage(m.info.amountOfMoneyOtherInputLabel)}
               type="number"
               inputMode="numeric"
+              maxLength={20}
               currency={true}
               error={
                 parseInt(watch('amountISKCustom') || '0') < 1000
