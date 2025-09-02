@@ -126,6 +126,8 @@ export default async function handler(
 
   const payment = req.body as PaymentCallbackPayload
 
+  logger.info('Web payment callback received', { type: payment.type })
+
   if (payment.type !== 'success') {
     return res.status(200).send('')
   }
@@ -159,8 +161,10 @@ export default async function handler(
       response.data?.webLandspitaliSendDirectGrantPaymentConfirmationEmail
         ?.success
     ) {
+      logger.info('Direct grant payment confirmation email sent')
       return res.status(200).json({ message: 'Email sent' })
     } else {
+      logger.warn('Failed to send direct grant payment confirmation email')
       return res.status(500).json({ message: 'Failed to send email' })
     }
   } else if (
@@ -195,11 +199,17 @@ export default async function handler(
       response.data?.webLandspitaliSendMemorialCardPaymentConfirmationEmail
         ?.success
     ) {
+      logger.info('Memorial card payment confirmation email sent')
       return res.status(200).json({ message: 'Email sent' })
     } else {
+      logger.warn('Failed to send memorial card payment confirmation email')
       return res.status(500).json({ message: 'Failed to send email' })
     }
   }
+
+  logger.warn('Unknown web payment callback type received', {
+    type: payment.type,
+  })
 
   return res.status(400).json({ message: 'Unknown payment type' })
 }
