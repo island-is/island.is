@@ -154,9 +154,9 @@ export default async function handler(
       response.data?.webLandspitaliSendDirectGrantPaymentConfirmationEmail
         ?.success
     ) {
-      res.status(200).json({ message: 'Email sent' })
+      return res.status(200).json({ message: 'Email sent' })
     } else {
-      res.status(500).json({ message: 'Failed to send email' })
+      return res.status(500).json({ message: 'Failed to send email' })
     }
   } else if (
     payment.paymentFlowMetadata.landspitaliPaymentType === 'MemorialCard'
@@ -190,9 +190,9 @@ export default async function handler(
       response.data?.webLandspitaliSendMemorialCardPaymentConfirmationEmail
         ?.success
     ) {
-      res.status(200).json({ message: 'Email sent' })
+      return res.status(200).json({ message: 'Email sent' })
     } else {
-      res.status(500).json({ message: 'Failed to send email' })
+      return res.status(500).json({ message: 'Failed to send email' })
     }
   }
 
