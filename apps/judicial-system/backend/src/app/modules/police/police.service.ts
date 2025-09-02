@@ -658,7 +658,22 @@ export class PoliceService {
       supplements: [
         { code: 'RVG_CASE_ID', value: caseId },
         { code: 'RECEIVER_SSN', value: defendantNationalId },
-        { code: 'VERDICT', value: caseSupplement },
+        {
+          code: 'COURT_CASE_NUMBER',
+          value: caseSupplement.courtCaseNumber,
+        },
+        {
+          code: 'POLICE_CASE_NUMBERS',
+          value: caseSupplement.policeCaseNumbers?.join(','),
+        },
+        {
+          code: 'RULING',
+          value: caseSupplement.ruling,
+        },
+        {
+          code: 'RULING_DATE',
+          value: caseSupplement.rulingDate?.toISOString(),
+        },
       ],
       dates: documentDates,
     })
