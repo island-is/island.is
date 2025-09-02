@@ -1,4 +1,8 @@
 import stringify from 'csv-stringify'
+import format from 'date-fns/format'
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import isEqual from 'date-fns/isEqual'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 
@@ -12,6 +16,7 @@ import {
   CaseNotificationType,
   CaseState,
   CaseType,
+  DataGroups,
   dateTypes,
   EventType,
   isCompletedCase,
@@ -40,10 +45,24 @@ import {
 import { DateFilter } from './statistics/types'
 import { eventFunctions } from './caseEvents'
 
-export enum DataGroups {
-  REQUESTS = 'REQUESTS',
-  INDICTMENTS = 'INDICTMENTS',
+const isDateInPeriod = (
+  date: Date,
+  period: { fromDate: Date; toDate: Date },
+) => {
+  const isBeforeOrEqual = (date: Date | number, dateToCompare: Date | number) =>
+    isBefore(date, dateToCompare) || isEqual(date, dateToCompare)
+
+  const isAfterOrEqual = (date: Date | number, dateToCompare: Date | number) =>
+    isAfter(date, dateToCompare) || isEqual(date, dateToCompare)
+
+  return (
+    isAfterOrEqual(date, period.fromDate) &&
+    isBeforeOrEqual(date, period.toDate)
+  )
 }
+
+const getDateString = (date?: Date) =>
+  format(date ? new Date(date) : new Date(), 'yyyy-MM-dd')
 
 export const partition = <T>(
   array: T[],
@@ -461,7 +480,7 @@ export class StatisticsService {
     }
   }
 
-  private async extractAndTransformRequestCases() {
+  private async extractAndTransformRequestCases(period?: DateFilter) {
     const where: WhereOptions = {
       type: {
         [Op.not]: [CaseType.INDICTMENT],
@@ -499,25 +518,37 @@ export class StatisticsService {
     })
 
     // create events for data analytics for each case
+    if (!period) return []
+
+    const fromDate = new Date(period.fromDate ?? Date.now())
+    const toDate = new Date(period.toDate ?? Date.now())
     const events = cases
       .flatMap((c) => eventFunctions.flatMap((func) => func(c)))
-      .filter((event) => !!event)
+      .filter(
+        (event) =>
+          !!event && isDateInPeriod(new Date(event.date), { fromDate, toDate }),
+      )
 
     return events
   }
 
   async extractTransformLoadRvgDataToS3({
     type,
+    period,
   }: {
     type: DataGroups
+    period?: DateFilter
   }): Promise<{ url: string }> {
     const getData = async () => {
       if (type === DataGroups.REQUESTS) {
         return {
-          data: await this.extractAndTransformRequestCases(),
-          key: `krofur`,
+          data: await this.extractAndTransformRequestCases(period),
+          key: `krofur_from_${getDateString(
+            period?.fromDate,
+          )}_to_${getDateString(period?.toDate)}`,
         }
       }
+      // TODO: implement events for indictments
       return undefined
     }
     const result = await getData()

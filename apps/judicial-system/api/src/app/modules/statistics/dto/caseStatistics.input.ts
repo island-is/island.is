@@ -21,7 +21,7 @@ export class CaseStatisticsInput {
 }
 
 @InputType()
-class DateFilter {
+export class DateFilter {
   @Allow()
   @IsOptional()
   @Field(() => Date, { nullable: true })
