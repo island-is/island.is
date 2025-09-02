@@ -10,7 +10,7 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
 
 interface Then {

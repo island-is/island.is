@@ -18,7 +18,6 @@ export interface ApplicationState {
   }
   errors?: string[]
   isValid?: boolean
-  showSummary?: boolean
 }
 
 export interface Action {

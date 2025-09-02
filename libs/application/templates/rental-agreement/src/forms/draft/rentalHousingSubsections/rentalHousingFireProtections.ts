@@ -13,6 +13,8 @@ import * as m from '../../../lib/messages'
 import { getRentalPropertySize, getYesNoOptions } from '../../../utils/utils'
 import { shouldShowSmokeDetectorsAlert } from '../../../utils/conditions'
 import { PropertyUnit } from '../../../shared/types'
+import { housingFireProtections } from '../../../lib/messages'
+import { getYesNoOptions } from '../../../utils/utils'
 
 export const RentalHousingFireProtections = buildSubSection({
   id: Routes.FIREPROTECTIONS,

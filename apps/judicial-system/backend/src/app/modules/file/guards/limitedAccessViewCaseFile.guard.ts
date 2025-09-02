@@ -8,8 +8,7 @@ import {
 
 import { User } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case'
-import { CaseFile } from '../models/file.model'
+import { Case, CaseFile } from '../../repository'
 import { canLimitedAccessUserViewCaseFile } from './caseFileCategory'
 
 @Injectable()

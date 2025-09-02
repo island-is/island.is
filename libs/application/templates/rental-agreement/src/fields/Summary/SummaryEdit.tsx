@@ -23,6 +23,12 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { answers } = application
 
   const {
+    landlords,
+    landlordRepresentatives,
+    tenants,
+    smokeDetectors,
+    fireExtinguisher,
+    emergencyExits,
     conditionDescription,
     files,
     electricityCostPayee,
@@ -61,7 +67,30 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   return (
     <Box className={summaryWrap} id="email-summary-container">
-      {/* <PropertyInfoSummary
+      <ApplicantsSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        partiesRoute={Routes.PARTIESINFORMATION}
+        hasChangeButton={true}
+      />
+      <ApplicantsRepresentativesSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        partiesRoute={Routes.PARTIESINFORMATION}
+        hasChangeButton={true}
+      />
+      <RentalInfoSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        rentalPeriodRoute={Routes.RENTALPERIOD}
+        rentalAmountRoute={Routes.RENTALAMOUNT}
+        securityDepositRoute={Routes.SECURITYDEPOSIT}
+        hasChangeButton={true}
+      />
+      <PropertyInfoSummary
         application={application}
         field={field}
         goToScreen={goToScreen}
