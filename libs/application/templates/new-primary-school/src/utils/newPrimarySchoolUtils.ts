@@ -1,4 +1,4 @@
-import { NO, YesOrNo, getValueViaPath } from '@island.is/application/core'
+import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
@@ -13,14 +13,19 @@ import {
   Child,
   ChildInformation,
   FriggChildInformation,
+  HealthProfileModel,
   Person,
   RelativesRow,
   SelectOption,
   SiblingsRow,
+  SocialProfile,
+  YesOrNoOrEmpty,
 } from '../types'
 import {
+  AffiliationRole,
   ApplicationType,
   FIRST_GRADE_AGE,
+  CaseWorkerInputTypeEnum,
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
@@ -346,6 +351,15 @@ export const getApplicationExternalData = (
     'childInformation.data.affiliations',
   )
 
+  const healthProfile = getValueViaPath<HealthProfileModel | null>(
+    externalData,
+    'childInformation.data.healthProfile',
+  )
+  const socialProfile = getValueViaPath<SocialProfile | null>(
+    externalData,
+    'childInformation.data.socialProfile',
+  )
+
   const childCitizenshipCode = getValueViaPath<string>(
     externalData,
     'citizenship.data.childCitizenshipCode',
@@ -371,6 +385,8 @@ export const getApplicationExternalData = (
     childGradeLevel,
     primaryOrgId,
     childAffiliations,
+    healthProfile,
+    socialProfile,
     childCitizenshipCode,
     otherGuardianCitizenshipCode,
   }
@@ -586,4 +602,70 @@ export const getApplicationType = (externalData: ExternalData) => {
   return yearOfBirth < firstGradeYear
     ? ApplicationType.NEW_PRIMARY_SCHOOL
     : ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+}
+
+export const getGuardianByNationalId = (
+  externalData: ExternalData,
+  nationalId: string,
+) => {
+  if (!nationalId) {
+    return undefined
+  }
+
+  const { childInformation } = getApplicationExternalData(externalData)
+
+  return childInformation?.agents?.find(
+    (agent) =>
+      agent.nationalId === nationalId &&
+      agent.type === AffiliationRole.Guardian,
+  )
+}
+
+export const hasDefaultFoodAllergiesOrIntolerances = (
+  externalData: ExternalData,
+) => {
+  const { healthProfile } = getApplicationExternalData(externalData)
+
+  return (healthProfile?.foodAllergiesOrIntolerances?.length ?? 0) > 0
+    ? YES
+    : NO
+}
+
+export const hasDefaultAllergies = (externalData: ExternalData) => {
+  const { healthProfile } = getApplicationExternalData(externalData)
+
+  return (healthProfile?.allergies?.length ?? 0) > 0 ? YES : NO
+}
+
+export const getDefaultSupportCaseworker = (
+  externalData: ExternalData,
+  type: CaseWorkerInputTypeEnum,
+) => {
+  const { socialProfile } = getApplicationExternalData(externalData)
+
+  return socialProfile?.caseWorkers?.find(
+    (caseWorker) => caseWorker.type === type,
+  )
+}
+
+export const hasDefaultSupportCaseworker = (
+  externalData: ExternalData,
+  type: CaseWorkerInputTypeEnum,
+): YesOrNoOrEmpty => {
+  const { socialProfile } = getApplicationExternalData(externalData)
+
+  // If no child information is available (not registered in Frigg), return an empty string
+  if (!socialProfile || !socialProfile?.caseWorkers) {
+    return ''
+  }
+
+  return getDefaultSupportCaseworker(externalData, type) ? YES : NO
+}
+
+export const getDefaultYESNOValue = (
+  value: boolean | null | undefined,
+): YesOrNoOrEmpty => {
+  // If no child information is available (not registered in Frigg), return an empty string
+  // else return YES or NO based on the boolean value comming from Frigg
+  return value ? YES : value === false ? NO : ''
 }

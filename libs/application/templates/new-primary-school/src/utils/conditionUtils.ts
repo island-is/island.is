@@ -12,7 +12,7 @@ export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
   return !!primaryOrgId
 }
 
-export const isWelfareContactSelected = (answers: FormValue) => {
+export const isWelfareContactSelected = (answers: FormValue): boolean => {
   const { hasDiagnoses, hasHadSupport, hasWelfareContact } =
     getApplicationAnswers(answers)
 
@@ -65,4 +65,10 @@ export const showPreferredLanguageFields = (answers: FormValue) => {
   }
 
   return false
+}
+
+export const showCaseManagerFields = (answers: FormValue) => {
+  const { hasCaseManager } = getApplicationAnswers(answers)
+
+  return isWelfareContactSelected(answers) && hasCaseManager === YES
 }

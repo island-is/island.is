@@ -11,8 +11,8 @@ import { TableRepeaterFormField } from '@island.is/application/ui-fields'
 import { format as formatKennitala } from 'kennitala'
 import React, { FC } from 'react'
 import { useFriggOptions } from '../../hooks/useFriggOptions'
-import { OptionsType } from '../../utils/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
+import { OptionsType } from '../../utils/constants'
 import { getSelectedOptionLabel } from '../../utils/newPrimarySchoolUtils'
 
 const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
