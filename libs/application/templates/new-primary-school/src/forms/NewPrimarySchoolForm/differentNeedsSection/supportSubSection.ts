@@ -142,21 +142,11 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers, externalData) => {
+          condition: (answers) => {
             const { hasDiagnoses, hasHadSupport } =
               getApplicationAnswers(answers)
 
-            const { socialProfile } = getApplicationExternalData(externalData)
-
-            const hasDiagnosesCalculated =
-              (!hasDiagnoses && socialProfile?.hasDiagnoses === true) ||
-              hasDiagnoses === YES
-
-            const hasHadSupportCalculated =
-              (!hasHadSupport && socialProfile?.hasHadSupport === true) ||
-              hasHadSupport === YES
-
-            return hasDiagnosesCalculated || hasHadSupportCalculated
+            return hasDiagnoses === YES || hasHadSupport === YES
           },
           defaultValue: (application: Application) =>
             hasDefaultSupportCaseworker(
