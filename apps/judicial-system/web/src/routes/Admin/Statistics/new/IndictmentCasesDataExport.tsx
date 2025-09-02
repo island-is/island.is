@@ -40,7 +40,7 @@ const IndictmentCasesDataExport = () => {
 
   return (
     <StatisticPageLayout>
-      <PageHeader title="Gögn úr sakamálum'" />
+      <PageHeader title="Gögn úr sakamálum" />
       <Box>
         <StatisticReturnButton />
         <StatisticHeader title="Gögn úr sakamálum" />
@@ -50,57 +50,56 @@ const IndictmentCasesDataExport = () => {
             Réttarvörslugátt.
           </Text>
           <Text>
+            Veldu tímabil hér að neðan fyrir gögnin sem þú vilt sækja.
+          </Text>
+          <Filters
+            id="indictment"
+            types={indictmentFilterKeys}
+            filters={filters}
+            setFilters={setFilters}
+            onClear={() => setFilters({})}
+          />
+          <Box display="flex" justifyContent="flexEnd" paddingBottom={4}>
+            <Button
+              variant="ghost"
+              size="small"
+              icon="download"
+              iconType="outline"
+              loading={csvLoading}
+              onClick={async () => {
+                const res = await refetchPreprocessedData({
+                  input: queryVariables,
+                })
+                const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
+                if (url) {
+                  window.open(url, '_blank', 'noopener,noreferrer')
+                }
+              }}
+            >
+              Sækja gögn
+            </Button>
+          </Box>
+          <Text>
             Þú getur hlaðið gögnunum upp í sniðmát og notað tilbúnar
             tölfræðigreiningar.
           </Text>
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            marginTop={2}
-            marginBottom={2}
-          >
+          <Box display="flex" justifyContent="flexEnd" marginTop={2}>
             <Button
               variant="ghost"
               size="small"
               icon="open"
               iconType="outline"
               onClick={async () => {
-                window.open('', '_blank', 'noopener,noreferrer')
+                window.open(
+                  'https://docs.google.com/spreadsheets/d/1f7eaTaza81TXIF4zybQ_ZIoATb-lw0BKAocyPFmqELs/edit?usp=sharing',
+                  '_blank',
+                  'noopener,noreferrer',
+                )
               }}
             >
               Sækja sniðmát
             </Button>
           </Box>
-          <Text>
-            Veldu tímabil hér að neðan fyrir gögnin sem þú vilt sækja.
-          </Text>
-        </Box>
-        <Filters
-          id="indictment"
-          types={indictmentFilterKeys}
-          filters={filters}
-          setFilters={setFilters}
-          onClear={() => setFilters({})}
-        />
-        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-          <Button
-            variant="ghost"
-            size="small"
-            icon="download"
-            iconType="outline"
-            loading={csvLoading}
-            onClick={async () => {
-              const res = await refetchPreprocessedData({
-                input: queryVariables,
-              })
-              const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
-              if (url) {
-                window.open(url, '_blank', 'noopener,noreferrer')
-              }
-            }}
-          >
-            Sækja gögn
-          </Button>
         </Box>
       </Box>
     </StatisticPageLayout>

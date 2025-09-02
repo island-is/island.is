@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { CaseArchive, DateLog, Subpoena } from '../repository'
+import { Institution, Subpoena } from '../repository'
 import { AwsS3Module, RepositoryModule } from '..'
 import { StatisticsController } from './statistics.controller'
 import { StatisticsService } from './statistics.service'
@@ -10,7 +10,7 @@ import { StatisticsService } from './statistics.service'
   imports: [
     forwardRef(() => RepositoryModule),
     forwardRef(() => AwsS3Module),
-    SequelizeModule.forFeature([Subpoena, CaseArchive, DateLog]),
+    SequelizeModule.forFeature([Subpoena, Institution]),
   ],
   providers: [StatisticsService],
   controllers: [StatisticsController],
