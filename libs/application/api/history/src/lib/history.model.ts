@@ -68,17 +68,17 @@ export class History extends Model {
   })
   previousState!: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  exitEventSubjectNationalId!: string
+  exitEventSubjectNationalId?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  exitEventActorNationalId!: string
+  exitEventActorNationalId?: string
 }
