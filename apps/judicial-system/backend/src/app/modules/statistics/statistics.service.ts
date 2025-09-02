@@ -1,21 +1,38 @@
+import stringify from 'csv-stringify'
+import format from 'date-fns/format'
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import isEqual from 'date-fns/isEqual'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
+  CaseNotificationType,
   CaseState,
   CaseType,
+  DataGroups,
+  dateTypes,
   EventType,
   isCompletedCase,
   isIndictmentCase,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case'
-import { EventLog } from '../event-log'
-import { Subpoena } from '../subpoena'
+import { AwsS3Service } from '../aws-s3'
+import {
+  Case,
+  DateLog,
+  EventLog,
+  Institution,
+  Notification,
+  Subpoena,
+} from '../repository'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
@@ -26,6 +43,26 @@ import {
   SubpoenaStatistics,
 } from './models/subpoenaStatistics.response'
 import { DateFilter } from './statistics/types'
+import { eventFunctions } from './caseEvents'
+
+const isDateInPeriod = (
+  date: Date,
+  period: { fromDate: Date; toDate: Date },
+) => {
+  const isBeforeOrEqual = (date: Date | number, dateToCompare: Date | number) =>
+    isBefore(date, dateToCompare) || isEqual(date, dateToCompare)
+
+  const isAfterOrEqual = (date: Date | number, dateToCompare: Date | number) =>
+    isAfter(date, dateToCompare) || isEqual(date, dateToCompare)
+
+  return (
+    isAfterOrEqual(date, period.fromDate) &&
+    isBeforeOrEqual(date, period.toDate)
+  )
+}
+
+const getDateString = (date?: Date) =>
+  format(date ? new Date(date) : new Date(), 'yyyy-MM-dd')
 
 export const partition = <T>(
   array: T[],
@@ -50,6 +87,8 @@ export class StatisticsService {
   constructor(
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
+    private readonly awsS3Service: AwsS3Service,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async getIndictmentCaseStatistics(
@@ -439,5 +478,114 @@ export class StatisticsService {
       inProgressCount,
       completedCount,
     }
+  }
+
+  private async extractAndTransformRequestCases(period?: DateFilter) {
+    const where: WhereOptions = {
+      type: {
+        [Op.not]: [CaseType.INDICTMENT],
+      },
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+      order: [['created', 'ASC']],
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+        },
+        { model: Institution, as: 'prosecutorsOffice' },
+        { model: Institution, as: 'court' },
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          required: false,
+          where: { dateType: dateTypes },
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+        {
+          model: Notification,
+          as: 'notifications',
+          required: false,
+          where: { type: CaseNotificationType.APPEAL_COMPLETED },
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+      ],
+    })
+
+    // create events for data analytics for each case
+    if (!period) return []
+
+    const fromDate = new Date(period.fromDate ?? Date.now())
+    const toDate = new Date(period.toDate ?? Date.now())
+    const events = cases
+      .flatMap((c) => eventFunctions.flatMap((func) => func(c)))
+      .filter(
+        (event) =>
+          !!event && isDateInPeriod(new Date(event.date), { fromDate, toDate }),
+      )
+
+    return events
+  }
+
+  async extractTransformLoadRvgDataToS3({
+    type,
+    period,
+  }: {
+    type: DataGroups
+    period?: DateFilter
+  }): Promise<{ url: string }> {
+    const getData = async () => {
+      if (type === DataGroups.REQUESTS) {
+        return {
+          data: await this.extractAndTransformRequestCases(period),
+          key: `krofur_from_${getDateString(
+            period?.fromDate,
+          )}_to_${getDateString(period?.toDate)}`,
+        }
+      }
+      // TODO: implement events for indictments
+      return undefined
+    }
+    const result = await getData()
+    if (!result) return { url: '' }
+
+    const { data, key } = result
+    const columns = [
+      { key: 'id', header: 'ID' },
+      { key: 'eventDescriptor', header: 'Atburður' },
+      { key: 'date', header: 'Dagsetning' },
+      { key: 'institution', header: 'Stofnun' },
+      { key: 'caseTypeDescriptor', header: 'Tegund máls' },
+      { key: 'origin', header: 'Stofnað í' },
+      { key: 'isExtended', header: 'Mál framlengt' },
+      {
+        key: 'requestDecisionDescriptor',
+        header: 'Niðurstaða kröfu',
+      },
+      {
+        key: 'courtOfAppealDecisionDescriptor',
+        header: 'Niðurstaða Landsréttar',
+      },
+    ]
+    stringify(data, { header: true, columns }, async (error, csvOutput) => {
+      if (error) {
+        this.logger.error('Failed to convert data to csv file')
+        return
+      }
+
+      try {
+        await this.awsS3Service.uploadCsvToS3(key, csvOutput)
+      } catch (error) {
+        this.logger.error(`Failed to upload csv ${key} to AWS S3`, { error })
+      }
+    })
+
+    const url = await this.awsS3Service.getSignedUrl('statistics', key, 60 * 60) // TTL: 1h
+    return { url }
   }
 }

@@ -5,8 +5,7 @@ import { Gender, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case } from '../../../case'
-import { Defendant } from '../../models/defendant.model'
+import { Case, Defendant } from '../../../repository'
 
 interface Then {
   result: Defendant
