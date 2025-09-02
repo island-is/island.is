@@ -13,11 +13,13 @@ import {
   ApplicationApplicationsAdminInput,
   ApplicationApplicationsAdminStatisticsInput,
   ApplicationApplicationsInstitutionAdminInput,
+  ApplicationTypesInstitutionAdminInput,
 } from './dto/applications-applications-admin-input'
 import {
   ApplicationAdmin,
   ApplicationAdminPaginatedResponse,
   ApplicationStatistics,
+  ApplicationTypeAdminInstitution,
 } from '../application.model'
 import { ApplicationService } from '../application.service'
 
@@ -48,6 +50,21 @@ export class ApplicationAdminResolver {
     input: ApplicationApplicationsInstitutionAdminInput,
   ): Promise<ApplicationAdminPaginatedResponse | null> {
     return this.applicationService.findAllInstitutionAdmin(user, locale, input)
+  }
+
+  @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  async applicationTypesInstitutionAdmin(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: ApplicationTypesInstitutionAdminInput,
+  ): Promise<ApplicationTypeAdminInstitution[] | null> {
+    return this.applicationService.findAllApplicationTypesInstitutionAdmin(
+      user,
+      locale,
+      input,
+    )
   }
 
   @Query(() => [ApplicationStatistics], { nullable: true })

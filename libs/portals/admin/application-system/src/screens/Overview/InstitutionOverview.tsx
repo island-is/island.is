@@ -10,19 +10,18 @@ import {
   useGetInstitutionApplicationsQuery,
   useGetOrganizationsQuery,
 } from '../../queries/overview.generated'
-import invertBy from 'lodash/invertBy'
 import { InstitutionFilters } from '../../components/Filters/InstitutionFilters'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ApplicationsTable } from '../../components/ApplicationsTable/ApplicationsTable'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
-import { institutionMapper } from '@island.is/application/types'
 import { AdminApplication } from '../../types/adminApplication'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import endOfDay from 'date-fns/endOfDay'
 
 const defaultFilters: ApplicationFilters = {
+  searchStr: '',
   nationalId: '',
   period: {},
 }
@@ -34,14 +33,12 @@ const defaultMultiChoiceFilters: Record<
   [MultiChoiceFilter.STATUS]: undefined,
   [MultiChoiceFilter.INSTITUTION]: undefined,
   [MultiChoiceFilter.APPLICATION]: undefined,
+  [MultiChoiceFilter.TYPE_ID]: undefined,
 }
 
 const pageSize = 12
 
 const InstitutionOverview = () => {
-  const institutionApplications = invertBy(institutionMapper, (application) => {
-    return application.slug
-  })
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState(defaultFilters)
@@ -54,6 +51,8 @@ const InstitutionOverview = () => {
     ssr: false,
   })
 
+  const useAdvancedSearch = !!filters.typeId
+
   const {
     data: response,
     loading: queryLoading,
@@ -65,20 +64,19 @@ const InstitutionOverview = () => {
         nationalId: userInfo.profile.nationalId,
         page: page,
         count: pageSize,
-        applicantNationalId: filters.nationalId
-          ? filters.nationalId.replace('-', '')
-          : '',
+        applicantNationalId:
+          !useAdvancedSearch && filters.nationalId
+            ? filters.nationalId.replace('-', '')
+            : '',
         from: filters.period.from?.toISOString(),
         to: filters.period.to?.toISOString(),
+        typeIdValue: filters.typeId,
+        searchStrValue:
+          useAdvancedSearch && filters.searchStr
+            ? filters.searchStr.replace('-', '')
+            : undefined,
         status: multiChoiceFilters?.status,
       },
-    },
-    onCompleted: (q) => {
-      // Initialize available applications from the initial response
-      // So that we can use them to filter by
-      const names = q.applicationApplicationsInstitutionAdmin?.rows
-        ?.filter((x) => !!x.name)
-        .map((x) => x.name ?? '')
     },
   })
 
@@ -91,6 +89,20 @@ const InstitutionOverview = () => {
     response?.applicationApplicationsInstitutionAdmin?.count ?? 0
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
+
+  const handleTypeIdChange = (typeId: ApplicationFilters['typeId']) => {
+    setFilters((prev) => ({
+      ...prev,
+      typeId: typeId,
+    }))
+  }
+
+  const handleSearchStrChange = (searchStr: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      searchStr,
+    }))
+  }
 
   const handleSearchChange = (nationalId: string) => {
     if (nationalId.length === 11 || nationalId.length === 0) {
@@ -141,6 +153,7 @@ const InstitutionOverview = () => {
   useEffect(() => {
     setPage(1)
     refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, multiChoiceFilters])
 
   return (
@@ -155,6 +168,8 @@ const InstitutionOverview = () => {
         {formatMessage(m.applicationSystemApplications)}
       </Text>
       <InstitutionFilters
+        onTypeIdChange={handleTypeIdChange}
+        onSearchStrChange={handleSearchStrChange}
         onSearchChange={handleSearchChange}
         onFilterChange={handleMultiChoiceFilterChange}
         onDateChange={handleDateChange}
@@ -162,6 +177,7 @@ const InstitutionOverview = () => {
         multiChoiceFilters={multiChoiceFilters}
         filters={filters}
         numberOfDocuments={numberOfItems}
+        useAdvancedSearch={useAdvancedSearch}
       />
       {isLoading && filters.nationalId?.length === 11 ? (
         <SkeletonLoader
@@ -179,6 +195,7 @@ const InstitutionOverview = () => {
           pageSize={pageSize}
           shouldShowCardButtons={false}
           numberOfItems={numberOfItems}
+          showAdminData={useAdvancedSearch}
         />
       )}
     </Box>
