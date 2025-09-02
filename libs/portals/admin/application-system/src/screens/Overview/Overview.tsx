@@ -36,6 +36,7 @@ const defaultMultiChoiceFilters: Record<
   [MultiChoiceFilter.STATUS]: undefined,
   [MultiChoiceFilter.INSTITUTION]: undefined,
   [MultiChoiceFilter.APPLICATION]: undefined,
+  [MultiChoiceFilter.TYPE_ID]: undefined,
 }
 
 const pageSize = 12

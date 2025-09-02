@@ -34,12 +34,17 @@ import {
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { PaymentService } from '@island.is/application/api/payment'
 import {
+  getAdminDataForAdminPortal,
   getApplicantName,
+  getApplicationGenericNameTranslationString,
   getApplicationNameTranslationString,
   getApplicationStatisticsNameTranslationString,
   getPaymentStatusForAdmin,
 } from '../utils/application'
-import { ApplicationListAdminResponseDto } from '../dto/applicationAdmin.response.dto'
+import {
+  ApplicationListAdminResponseDto,
+  ApplicationTypeAdminInstitution,
+} from '../dto/applicationAdmin.response.dto'
 
 @Injectable()
 export class ApplicationAdminSerializer
@@ -179,6 +184,11 @@ export class ApplicationAdminSerializer
       externalData: [],
       paymentStatus: getPaymentStatusForAdmin(payment),
       applicantName: getApplicantName(application),
+      adminData: getAdminDataForAdminPortal(
+        template,
+        application,
+        intl.formatMessage,
+      ),
     })
     return instanceToPlain(dto)
   }
@@ -206,6 +216,68 @@ export class ApplicationAdminSerializer
           showHistory,
         ),
       ),
+    )
+  }
+}
+
+@Injectable()
+export class ApplicationTypeAdminSerializer
+  implements NestInterceptor<ApplicationTypeAdminInstitution, Promise<unknown>>
+{
+  constructor(private intlService: IntlService) {}
+
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler<ApplicationTypeAdminInstitution>,
+  ): Observable<Promise<unknown>> {
+    const locale = getCurrentLocale(context)
+
+    return next.handle().pipe(
+      map(
+        async (
+          res:
+            | ApplicationTypeAdminInstitution
+            | Array<ApplicationTypeAdminInstitution>,
+        ) => {
+          const isArray = Array.isArray(res)
+
+          if (isArray) {
+            const applicationTypes =
+              res as Array<ApplicationTypeAdminInstitution>
+            return this.serializeArray(applicationTypes, locale)
+          } else {
+            return this.serialize(
+              res as ApplicationTypeAdminInstitution,
+              locale,
+            )
+          }
+        },
+      ),
+    )
+  }
+
+  async serialize(type: ApplicationTypeAdminInstitution, locale: Locale) {
+    const template = await getApplicationTemplateByTypeId(
+      type.id as ApplicationTypes,
+    )
+    const namespaces = [
+      'application.system',
+      ...(template?.translationNamespaces ?? []),
+    ]
+    const intl = await this.intlService.useIntl(namespaces, locale)
+    const name = template
+      ? getApplicationGenericNameTranslationString(template, intl.formatMessage)
+      : ''
+
+    return instanceToPlain({ id: type.id, name: name ?? '' })
+  }
+
+  async serializeArray(
+    applicationTypes: ApplicationTypeAdminInstitution[],
+    locale: Locale,
+  ) {
+    return Promise.all(
+      applicationTypes.map((item) => this.serialize(item, locale)),
     )
   }
 }
@@ -266,6 +338,7 @@ export class ApplicationAdminStatisticsSerializer
       )
     )
       .filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (item): item is PromiseFulfilledResult<Record<string, any>> =>
           item.status === 'fulfilled',
       )

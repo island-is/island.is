@@ -23,10 +23,12 @@ import {
   ApplicationAdminPaginatedResponse,
   ApplicationListAdminResponseDto,
   ApplicationStatistics,
+  ApplicationTypeAdminInstitution,
 } from './dto/applicationAdmin.response.dto'
 import {
   ApplicationAdminSerializer,
   ApplicationAdminStatisticsSerializer,
+  ApplicationTypeAdminSerializer,
 } from './tools/applicationAdmin.serializer'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
@@ -181,7 +183,17 @@ export class AdminController {
         to: {
           type: 'string',
           required: false,
-          description: 'Only return results cerated before specified date',
+          description: 'Only return results created before specified date',
+        },
+        typeIdValue: {
+          type: 'string',
+          required: false,
+          description: 'To filter applications by typeId',
+        },
+        searchStrValue: {
+          type: 'string',
+          required: false,
+          description: 'To filter applications by any search string',
         },
       },
     },
@@ -194,6 +206,8 @@ export class AdminController {
     @Query('applicantNationalId') applicantNationalId?: string,
     @Query('from') from?: string,
     @Query('to') to?: string,
+    @Query('typeIdValue') typeIdValue?: string,
+    @Query('searchStrValue') searchStrValue?: string,
   ) {
     return this.applicationService.findAllByInstitutionAndFilters(
       nationalId,
@@ -203,6 +217,36 @@ export class AdminController {
       applicantNationalId,
       from,
       to,
+      typeIdValue,
+      searchStrValue,
+    )
+  }
+
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  @BypassDelegation()
+  @Get('admin/institution/:nationalId/application-types')
+  @UseInterceptors(ApplicationTypeAdminSerializer)
+  @Documentation({
+    description: 'Get application types for a specific institution',
+    response: {
+      status: 200,
+      type: [ApplicationTypeAdminInstitution],
+    },
+    request: {
+      params: {
+        nationalId: {
+          type: 'string',
+          required: true,
+          description: `To get the application types for a specific institution's national id.`,
+        },
+      },
+    },
+  })
+  async getApplicationTypesInstitutionAdmin(
+    @Param('nationalId') nationalId: string,
+  ) {
+    return this.applicationService.getAllApplicationTypesInstitutionAdmin(
+      nationalId,
     )
   }
 }

@@ -1,8 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  ApplicationService,
-  Application,
-} from '@island.is/application/api/core'
+import { ApplicationService } from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
@@ -15,7 +12,12 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 import {
   ApplicationWithAttachments,
   PruningApplication,
+  RecordObject,
 } from '@island.is/application/types'
+import {
+  getAdminDataForPruning,
+  getPostPruneAtDate,
+} from './application-lifecycle.utils'
 
 export interface ApplicationPruning {
   pruned: boolean
@@ -23,10 +25,16 @@ export interface ApplicationPruning {
   failedAttachments: object
 }
 
+export interface ApplicationPostPruning {
+  postPruned: boolean
+  application: PruningApplication
+}
+
 @Injectable()
 export class ApplicationLifeCycleService {
   private processingApplications: ApplicationPruning[] = []
   private pruneNotifications = new Map<string, CreateHnippNotificationDto>()
+  private processingApplicationsPostPruning: ApplicationPostPruning[] = []
 
   constructor(
     @Inject(LOGGER_PROVIDER)
@@ -40,18 +48,29 @@ export class ApplicationLifeCycleService {
   }
 
   public async run() {
+    // Pruning
     this.logger.info(`Starting application pruning...`)
-
     await this.fetchApplicationsToBePruned()
     await this.pruneAttachments()
     await this.pruneApplicationCharge()
     await this.pruneApplicationData()
-    await this.reportResults()
+    await this.reportPruningResults()
     this.logger.info(`Application pruning done.`)
+
+    // Post-pruning
+    this.logger.info(`Starting application post-pruning...`)
+    await this.fetchApplicationsToBePostPruned()
+    await this.postPruneApplicationData()
+    await this.reportPostPruningResults()
+    this.logger.info(`Application post-pruning done.`)
   }
 
   public getProcessingApplications() {
     return this.processingApplications
+  }
+
+  public getProcessingApplicationsPostPruning() {
+    return this.processingApplicationsPostPruning
   }
 
   private async fetchApplicationsToBePruned() {
@@ -108,13 +127,47 @@ export class ApplicationLifeCycleService {
   private async pruneApplicationData() {
     for (const prune of this.processingApplications) {
       try {
+        let prunedExternalData: RecordObject = {}
+        let prunedAnswers: RecordObject = {}
+        let postPruneAt: Date | undefined
+
+        // Check if template has configured admin data to keep fields in answers/externalData after pruning
+        // Note: These fields will then be completely pruned in post-prune
+        const template = await getApplicationTemplateByTypeId(
+          prune.application.typeId,
+        )
+        if (
+          template?.adminDataConfig?.answers ||
+          template?.adminDataConfig?.externalData
+        ) {
+          if (template?.adminDataConfig?.externalData) {
+            prunedExternalData = getAdminDataForPruning(
+              prune.application.externalData,
+              template.adminDataConfig.externalData.map((x) => x.key),
+            )
+          }
+          if (template?.adminDataConfig?.answers) {
+            prunedAnswers = getAdminDataForPruning(
+              prune.application.answers,
+              template.adminDataConfig.answers.map((x) => x.key),
+            )
+          }
+
+          if (prune.pruned)
+            postPruneAt = getPostPruneAtDate(
+              template.adminDataConfig.whenToPostPrune,
+              prune.application,
+            )
+        }
+
         const { updatedApplication } = await this.applicationService.update(
           prune.application.id,
           {
             attachments: prune.failedAttachments,
-            externalData: {},
-            answers: {},
+            externalData: prunedExternalData,
+            answers: prunedAnswers,
             pruned: prune.pruned,
+            postPruneAt: postPruneAt,
           },
         )
 
@@ -129,7 +182,7 @@ export class ApplicationLifeCycleService {
     }
   }
 
-  private async reportResults() {
+  private async reportPruningResults() {
     const failed = this.processingApplications.filter(
       (application) => !application.pruned,
     )
@@ -218,5 +271,56 @@ export class ApplicationLifeCycleService {
         `Failed to send pruning notification with error: ${error} for application ${applicationId}`,
       )
     }
+  }
+
+  private async fetchApplicationsToBePostPruned() {
+    const applications =
+      (await this.applicationService.findAllDueToBePostPruned()) as PruningApplication[]
+
+    this.logger.info(
+      `Found ${applications.length} applications to be post-pruned.`,
+    )
+
+    this.processingApplicationsPostPruning = applications.map((application) => {
+      return {
+        postPruned: true,
+        application,
+      }
+    })
+  }
+
+  private async postPruneApplicationData() {
+    for (const prune of this.processingApplicationsPostPruning) {
+      try {
+        const { updatedApplication } = await this.applicationService.update(
+          prune.application.id,
+          {
+            externalData: {},
+            answers: {},
+            postPruned: prune.postPruned,
+          },
+        )
+
+        prune.application = updatedApplication as PruningApplication
+      } catch (error) {
+        prune.postPruned = false
+        this.logger.error(
+          `Application data post-prune error on id ${prune.application.id}`,
+          error,
+        )
+      }
+    }
+  }
+
+  private async reportPostPruningResults() {
+    const failed = this.processingApplicationsPostPruning.filter(
+      (application) => !application.postPruned,
+    )
+
+    const success = this.processingApplicationsPostPruning.filter(
+      (application) => application.postPruned,
+    )
+
+    this.logger.info(`Successful: ${success.length}, Failed: ${failed.length}`)
   }
 }

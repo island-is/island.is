@@ -183,9 +183,17 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:clearSelected',
     defaultMessage: 'Hreinsa val',
   },
+  applicationType: {
+    id: 'admin-portal.application-system:applicationType',
+    defaultMessage: 'Tegund umsóknar',
+  },
   searchPlaceholder: {
     id: 'admin-portal.application-system:searchPlaceholder',
     defaultMessage: 'Sláðu inn kennitölu',
+  },
+  searchStrPlaceholder: {
+    id: 'admin-portal.application-system:searchStrPlaceholder',
+    defaultMessage: 'Sláðu inn leitarorð',
   },
   filterFrom: {
     id: 'admin-portal.application-system:filterFrom',

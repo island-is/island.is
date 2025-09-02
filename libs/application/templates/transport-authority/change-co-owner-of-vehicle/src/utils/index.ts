@@ -12,6 +12,7 @@ export { isLastReviewer } from './isLastReviewer'
 export { getApproveAnswers } from './getApproveAnswers'
 export { getRejecter } from './getRejecter'
 export { formatMileage } from './formatMileage'
+export { getReviewers } from './getReviewers'
 
 export const formatPhoneNumber = (phoneNumber: string | undefined): string => {
   if (!phoneNumber) return ''

@@ -9,7 +9,6 @@ import {
   ApplicationResponseDtoStatusEnum,
   ApplicationResponseDtoTypeIdEnum,
 } from '../../gen/fetch'
-import { PageInfoDto } from '@island.is/nest/pagination'
 
 registerEnumType(ApplicationResponseDtoTypeIdEnum, {
   name: 'ApplicationResponseDtoTypeIdEnum',
@@ -169,6 +168,18 @@ export class ApplicationStatistics {
 }
 
 @ObjectType()
+class ApplicationAdminData {
+  @Field(() => String)
+  label!: string
+
+  @Field(() => String)
+  key!: string
+
+  @Field(() => [String], { nullable: true })
+  values?: string[]
+}
+
+@ObjectType()
 export class ApplicationAdmin {
   @Field(() => ID)
   id!: string
@@ -220,6 +231,9 @@ export class ApplicationAdmin {
 
   @Field(() => String, { nullable: true })
   paymentStatus?: string
+
+  @Field(() => [ApplicationAdminData], { nullable: true })
+  adminData?: ApplicationAdminData[]
 }
 
 @ObjectType()
@@ -237,4 +251,13 @@ export class ApplicationPayment {
 
   @Field()
   paymentUrl!: string
+}
+
+@ObjectType()
+export class ApplicationTypeAdminInstitution {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => String, { nullable: true })
+  name?: string
 }
