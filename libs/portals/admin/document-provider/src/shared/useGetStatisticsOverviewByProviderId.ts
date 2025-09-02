@@ -15,15 +15,16 @@ export const useGetStatisticsOverviewByProviderId = (
 ): GetStatisticsByNationalIdReturnType => {
   const shouldSkip = !nationalId || !providerId
 
-  const statisticsInput: ApiV1StatisticsNationalIdProvidersProviderIdGetRequest | undefined =
-    !shouldSkip
-      ? {
-          nationalId,
-          providerId,
-          from: fromDate ? fromDate.toISOString().slice(0, 10) : undefined,
-          to: toDate ? toDate.toISOString().slice(0, 10) : undefined,
-        }
-      : undefined
+  const statisticsInput:
+    | ApiV1StatisticsNationalIdProvidersProviderIdGetRequest
+    | undefined = !shouldSkip
+    ? {
+        nationalId,
+        providerId,
+        from: fromDate ? fromDate.toISOString().slice(0, 10) : undefined,
+        to: toDate ? toDate.toISOString().slice(0, 10) : undefined,
+      }
+    : undefined
 
   const { data, loading, error } = useQuery(
     GET_STATISTICS_OVERVIEW_BY_PROVIDERID,

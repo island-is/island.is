@@ -1,8 +1,4 @@
-import {
-  Field,
-  Int,
-  InputType,
-} from '@nestjs/graphql'
+import { Field, Int, InputType } from '@nestjs/graphql'
 import { TotalStatisticsSortBy } from './statisticsNationalIdBreakdown.input'
 import { Min } from 'class-validator'
 

@@ -1,8 +1,4 @@
-import {
-  GridRow,
-  Box,
-  Text,
-} from '@island.is/island-ui/core'
+import { GridRow, Box, Text } from '@island.is/island-ui/core'
 import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/OpenedFilesDonutChart'
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
 import { SentFilesAndErrorsBarChart } from '../../components/SentFilesAndErrorsBarChart/SentFilesAndErrorsBarChart'
@@ -18,7 +14,6 @@ export const DocumentProviderDashboard = ({
   sentFilesData,
   chartData,
 }: Props) => {
-
   //Get the sum of opened and published from chartData
   const opened =
     chartData?.reduce((acc, item) => acc + (item.opened || 0), 0) || 0

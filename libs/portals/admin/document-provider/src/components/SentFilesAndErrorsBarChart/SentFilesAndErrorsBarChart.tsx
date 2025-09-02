@@ -1,10 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Text,
-  GridColumn,
-  GridRow,
-} from '@island.is/island-ui/core'
+import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
 import {
   BarChart,
   Bar,
@@ -32,8 +27,6 @@ const TITLES = ['Send skjöl', 'Villur']
 export const SentFilesAndErrorsBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
-  
-
   return (
     <GridColumn span={['12/12', '12/12', '6/12']}>
       <Box

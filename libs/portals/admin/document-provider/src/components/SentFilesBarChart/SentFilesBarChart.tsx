@@ -1,10 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Text,
-  GridColumn,
-  GridRow,
-} from '@island.is/island-ui/core'
+import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
 import {
   BarChart,
   Bar,
@@ -29,8 +24,6 @@ const CAT_KEYS = ['cat1', 'cat2', 'cat3', 'cat4']
 export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
-
-
   const TITLES =
     data && data.length > 0
       ? CAT_KEYS.map(

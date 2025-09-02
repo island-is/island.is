@@ -1,10 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Text,
-  GridColumn,
-  GridRow,
-} from '@island.is/island-ui/core'
+import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { Cell, Label, Pie, PieChart, ResponsiveContainer } from 'recharts'
 
 interface ChartData {
@@ -24,7 +19,6 @@ export const OpenedFilesDonutChart: FC<React.PropsWithChildren<Props>> = ({
   title,
   valueIndex,
 }) => {
-
   return (
     <GridColumn span={['12/12', '6/12']}>
       <Box

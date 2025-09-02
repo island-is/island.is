@@ -1,9 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
+import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { StatisticBox } from '../StatisticBox/StatisticBox'
 import { DocumentProvidersLoading } from '../DocumentProvidersLoading/DocumentProvidersLoading'
 
