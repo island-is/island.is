@@ -43,7 +43,6 @@ export class VehiclesV3Resolver {
     return this.vehiclesService.getVehiclesListV3(user, input)
   }
 
-
   @Scopes(ApiScope.vehicles)
   @Query(() => MileageRegistrationHistory, {
     name: 'vehiclesMileageRegistrationHistory',
@@ -57,15 +56,13 @@ export class VehiclesV3Resolver {
     return this.vehiclesService.getVehicleMileageHistory(user, input)
   }
 
-
   @Scopes(ApiScope.vehicles)
-  @Query(() => String,{
+  @Query(() => String, {
     name: 'vehiclesMileageTemplateFileDownloadUrl',
     nullable: true,
   })
   @Audit()
-  async vehiclesMileageTemplateFileDownloadUrl(
-  ) {
+  async vehiclesMileageTemplateFileDownloadUrl() {
     return `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/mileagetemplate`
   }
 }

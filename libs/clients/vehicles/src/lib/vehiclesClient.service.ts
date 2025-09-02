@@ -8,7 +8,7 @@ import {
 import { GetVehiclesInput } from './input/getVehicles.input'
 import { OwnershipReportInput } from './input/ownershipReport.input'
 import { VehicleHistoryInput } from './input/vehicleHistory.input'
-import {  mapVehicleDataToNestedArray } from './dtos/tableData.dto'
+import { mapVehicleDataToNestedArray } from './dtos/tableData.dto'
 
 @Injectable()
 export class VehiclesClientService {
@@ -68,9 +68,8 @@ export class VehiclesClientService {
         : undefined,
     })
 
-   return mapVehicleDataToNestedArray(res)
+    return mapVehicleDataToNestedArray(res)
   }
-
 
   vehicleReport = async (
     user: User,

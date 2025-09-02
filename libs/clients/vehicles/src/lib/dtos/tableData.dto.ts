@@ -1,7 +1,12 @@
-import { CurrentVehiclesWithMilageAndNextInspDto, CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse } from "../.."
+import {
+  CurrentVehiclesWithMilageAndNextInspDto,
+  CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
+} from '../..'
 import format from 'date-fns/format'
 
-export const mapVehicleDataToNestedArray = (data?: CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse): unknown[][] | null => {
+export const mapVehicleDataToNestedArray = (
+  data?: CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
+): unknown[][] | null => {
   if (
     !data ||
     !data.pageNumber ||
@@ -22,10 +27,12 @@ export const mapVehicleDataToNestedArray = (data?: CurrentVehiclesWithMilageAndN
   const header = Object.keys(indexes)
   const rows: Array<Array<unknown>> = []
 
-  data.data?.forEach(({permno, latestMileageReadDate, latestMileage}) => {
+  data.data?.forEach(({ permno, latestMileageReadDate, latestMileage }) => {
     const dataRow = [
       permno,
-      latestMileageReadDate ? format(latestMileageReadDate, 'dd.MM.yyyy - HH:mm') : '',
+      latestMileageReadDate
+        ? format(latestMileageReadDate, 'dd.MM.yyyy - HH:mm')
+        : '',
       latestMileage ?? 0,
       undefined,
     ]

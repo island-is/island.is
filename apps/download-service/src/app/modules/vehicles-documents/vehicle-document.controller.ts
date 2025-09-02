@@ -84,12 +84,15 @@ export class VehicleController {
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    const documentResponse = await this.vehicleService.getVehiclesUnknownArray(user, {
-      pageSize: 20000,
-      page: 1,
-      includeNextMainInspectionDate: false,
-      onlyMileageRegisterableVehicles: true,
-    })
+    const documentResponse = await this.vehicleService.getVehiclesUnknownArray(
+      user,
+      {
+        pageSize: 20000,
+        page: 1,
+        includeNextMainInspectionDate: false,
+        onlyMileageRegisterableVehicles: true,
+      },
+    )
 
     if (documentResponse) {
       this.auditService.audit({
@@ -99,9 +102,12 @@ export class VehicleController {
       })
 
       if (fileType === 'excel') {
-        const sheetName = `km_template_${format(new Date(), 'ddMMYyyyy')}.xlsx`.replace(/[:\\/?*[\]]/g, '_').trim()
+        const sheetName = `km_template_${format(new Date(), 'ddMMYyyyy')}.xlsx`
+          .replace(/[:\\/?*[\]]/g, '_')
+          .trim()
 
-        const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(documentResponse)
+        const worksheet: XLSX.WorkSheet =
+          XLSX.utils.aoa_to_sheet(documentResponse)
         const workbook: XLSX.WorkBook = {
           Sheets: { [sheetName]: worksheet },
           SheetNames: [sheetName],
@@ -113,22 +119,20 @@ export class VehicleController {
         })
 
         res.header('Content-length', excelBuffer.length.toString())
-        res.header(
-          'Content-Disposition',
-          `inline; filename=${sheetName}`,
+        res.header('Content-Disposition', `inline; filename=${sheetName}`)
+        res.type(
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
-        res.type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         return res.status(200).end(excelBuffer)
       } else {
-        const sheetName = `km_template_${format(new Date(), 'ddMMYyyyy')}.csv`.replace(/[:\\/?*[\]]/g, '_').trim()
+        const sheetName = `km_template_${format(new Date(), 'ddMMYyyyy')}.csv`
+          .replace(/[:\\/?*[\]]/g, '_')
+          .trim()
 
         const csvString = csvStringify(documentResponse)
         res.header('Content-length', csvString.length.toString())
-        res.header(
-          'Content-Disposition',
-          `inline; filename=${sheetName}`,
-        )
-        res.type('text/csv');
+        res.header('Content-Disposition', `inline; filename=${sheetName}`)
+        res.type('text/csv')
         return res.status(200).end(csvString)
       }
     }

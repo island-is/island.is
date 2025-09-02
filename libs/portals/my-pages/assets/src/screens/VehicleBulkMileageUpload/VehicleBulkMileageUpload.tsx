@@ -133,20 +133,25 @@ const VehicleBulkMileageUpload = () => {
       serviceProviderSlug={SAMGONGUSTOFA_SLUG}
       serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       buttonGroup={
-        templateData?.vehiclesMileageTemplateFileDownloadUrl ?
-          [
-            <DropdownMenu
-            icon="ellipsisHorizontal"
-            menuLabel={formatMessage(vehicleMessage.downloadTemplate)}
-            items={FILE_TYPES.map((type) => ({
-              title: `.${type}`,
-              onClick: () => formSubmit(`${templateData?.vehiclesMileageTemplateFileDownloadUrl}/${type}`,)
-            }))}
-            title={formatMessage(vehicleMessage.downloadTemplate)}
-            loading={loading}
-            disabled={!!templateLoading}
-          />]
-         : []}
+        templateData?.vehiclesMileageTemplateFileDownloadUrl
+          ? [
+              <DropdownMenu
+                icon="ellipsisHorizontal"
+                menuLabel={formatMessage(vehicleMessage.downloadTemplate)}
+                items={FILE_TYPES.map((type) => ({
+                  title: `.${type}`,
+                  onClick: () =>
+                    formSubmit(
+                      `${templateData?.vehiclesMileageTemplateFileDownloadUrl}/${type}`,
+                    ),
+                }))}
+                title={formatMessage(vehicleMessage.downloadTemplate)}
+                loading={loading}
+                disabled={!!templateLoading}
+              />,
+            ]
+          : []
+      }
     >
       <Stack space={2}>
         {error && <Problem error={error} noBorder={false} />}
