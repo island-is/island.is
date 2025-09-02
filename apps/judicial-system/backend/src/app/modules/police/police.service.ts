@@ -26,6 +26,7 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  PoliceFileTypeCode,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
@@ -747,7 +748,7 @@ export class PoliceService {
             courtCeremony: 'Þingfesting',
             lokeCaseNumber: policeCaseNumbers?.[0],
             courtCaseNumber: courtCaseNumber,
-            fileTypeCode: 'BRTNG',
+            fileTypeCode: PoliceFileTypeCode.SUBPOENA,
             rvgCaseId: theCase.id,
           }),
         } as RequestInit,
