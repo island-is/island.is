@@ -1,6 +1,4 @@
-import {
-  CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
-} from '../..'
+import { CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse } from '../..'
 import format from 'date-fns/format'
 
 export const mapVehicleDataToNestedArray = (
