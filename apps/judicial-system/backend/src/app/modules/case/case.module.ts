@@ -19,10 +19,8 @@ import {
   UserModule,
   VictimModule,
 } from '../index'
-import { Case } from './models/case.model'
-import { CaseArchive } from './models/caseArchive.model'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
+import { Case, CaseArchive, CaseString, DateLog } from '../repository'
+import { VerdictModule } from '../verdict/verdict.module'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 import { InternalCaseController } from './internalCase.controller'
@@ -38,6 +36,7 @@ import { PdfService } from './pdf.service'
     MessageModule,
     forwardRef(() => DefendantModule),
     forwardRef(() => SubpoenaModule),
+    forwardRef(() => VerdictModule),
     forwardRef(() => UserModule),
     forwardRef(() => FileModule),
     forwardRef(() => IndictmentCountModule),

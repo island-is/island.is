@@ -4,7 +4,6 @@ import {
   FormSystemSection,
 } from '@island.is/api/schema'
 import {
-  SectionTypes,
   Action,
   ApplicationState,
   initializeField,
@@ -14,10 +13,12 @@ import {
   decrementWithScreens,
   getDecrementVariables,
   getIncrementVariables,
-  hasScreens,
   incrementWithoutScreens,
   incrementWithScreens,
+  setCurrentScreen,
 } from './reducerUtils'
+import { hasScreens } from '../utils/reducerHelpers'
+import { SectionTypes } from '@island.is/form-system/ui'
 
 export const initialState = {
   application: {} as FormSystemApplication,
@@ -30,27 +31,41 @@ export const initialState = {
 
 export const initialReducer = (state: ApplicationState): ApplicationState => {
   const application = initializeApplication(state.application)
-  const sections = (application.sections ?? []).filter(
-    Boolean,
-  ) as FormSystemSection[]
+  const sections: FormSystemSection[] = (application.sections ?? [])
+    .filter((s): s is FormSystemSection => s != null)
+    .sort(
+      (a, b) =>
+        (a.displayOrder ?? Number.MAX_SAFE_INTEGER) -
+        (b.displayOrder ?? Number.MAX_SAFE_INTEGER),
+    )
   const screens = sections
     .flatMap((section) => section.screens ?? [])
     .filter(Boolean) as FormSystemScreen[]
 
-  // Move payment to the end, should get fixed in the backend
-  const paymentIndex = sections.findIndex(
-    (section) => section.sectionType === SectionTypes.PAYMENT,
-  )
-  if (paymentIndex !== -1) {
-    const payment = sections.splice(paymentIndex, 1)
-    sections.push(payment[0])
+  if (application.hasPayment === false) {
+    sections.forEach((s) => {
+      if (s.sectionType === SectionTypes.PAYMENT) s.isHidden = true
+    })
+  } else {
+    sections.forEach((s) => {
+      if (s.sectionType === SectionTypes.PAYMENT) s.isHidden = false
+    })
+  }
+
+  if (application.hasSummaryScreen === false) {
+    sections.forEach((s) => {
+      if (s.sectionType === SectionTypes.SUMMARY) s.isHidden = true
+    })
+  } else {
+    sections.forEach((s) => {
+      if (s.sectionType === SectionTypes.SUMMARY) s.isHidden = false
+    })
   }
 
   const { currentSection, currentScreen } = getCurrentSectionAndScreen(
     sections,
     screens,
   )
-
   return {
     ...state,
     sections,
@@ -119,31 +134,24 @@ export const applicationReducer = (
   switch (action.type) {
     case 'INCREMENT': {
       const { submitScreen, submitSection } = action.payload
-      const {
-        currentSectionData,
-        maxSectionIndex,
-        nextSectionIndex,
-        currentScreenIndex,
-      } = getIncrementVariables(state)
+      const { currentSectionData, currentScreenIndex } =
+        getIncrementVariables(state)
       if (hasScreens(currentSectionData)) {
         return incrementWithScreens(
           state,
           currentSectionData,
-          maxSectionIndex,
           currentScreenIndex,
           submitScreen,
         )
       }
-      return incrementWithoutScreens(state, nextSectionIndex, submitSection)
+      return incrementWithoutScreens(state, submitSection)
     }
     case 'DECREMENT': {
       const { currentSectionData, currentSectionIndex, currentScreenIndex } =
         getDecrementVariables(state)
-
       if (hasScreens(currentSectionData)) {
         return decrementWithScreens(
           state,
-          currentSectionData,
           currentSectionIndex,
           currentScreenIndex,
         )
@@ -151,6 +159,11 @@ export const applicationReducer = (
 
       return decrementWithoutScreens(state, currentSectionIndex)
     }
+    case 'INDEX_SCREEN': {
+      const { sectionIndex, screenIndex } = action.payload
+      return setCurrentScreen(state, sectionIndex, screenIndex)
+    }
+
     case 'SET_VALIDITY': {
       const { isValid } = action.payload
       return {

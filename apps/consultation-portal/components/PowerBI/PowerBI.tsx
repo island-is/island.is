@@ -13,19 +13,20 @@ export const PowerBI = () => {
   }
 
   return (
-    <></>
-    // <PowerBIEmbed
-    //   embedConfig={{
-    //     type: 'report',
-    //     tokenType: models.TokenType.Embed,
-    //     embedUrl:
-    //       'https://app.powerbi.com/view?r=eyJrIjoiZjFjOWRlODEtNGFlNS00MDkxLTlhNmYtNGUxY2Y0ZWM0M2E5IiwidCI6ImJjMTRhNDRlLWUwZmItNGUwYi1hNTM1LTEwMDU3OWQ0MWI2NSIsImMiOjh9',
-    //     settings: {
-    //       layoutType: models.LayoutType.MobilePortrait,
-    //     },
-    //   }}
-    //   getEmbeddedComponent={getEmbeddedComponent}
-    // />
+    <>
+      <PowerBIEmbed
+        embedConfig={{
+          type: 'report',
+          tokenType: models.TokenType.Embed,
+          embedUrl:
+            'https://app.powerbi.com/view?r=eyJrIjoiMDI0YjI2MjAtOGZlOC00YzVkLWE1YjktYjczMGM5NTYxOGUzIiwidCI6ImJjMTRhNDRlLWUwZmItNGUwYi1hNTM1LTEwMDU3OWQ0MWI2NSIsImMiOjh9',
+          settings: {
+            layoutType: models.LayoutType.MobilePortrait,
+          },
+        }}
+        getEmbeddedComponent={getEmbeddedComponent}
+      />
+    </>
   )
 }
 

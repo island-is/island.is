@@ -2,9 +2,8 @@ import { uuid } from 'uuidv4'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case } from '../../../case'
+import { Case, Defendant } from '../../../repository'
 import { InternalUpdateDefendantDto } from '../../dto/internalUpdateDefendant.dto'
-import { Defendant } from '../../models/defendant.model'
 
 interface Then {
   result: Defendant

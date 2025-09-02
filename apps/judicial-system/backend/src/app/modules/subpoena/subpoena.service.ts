@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
+import { Includeable } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -15,6 +15,7 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { getServiceStatusText } from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -32,23 +33,15 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseService } from '../case/internalCase.service'
-import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { DefendantService } from '../defendant/defendant.service'
-import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { Institution } from '../institution'
 import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
-import { User } from '../user'
+import { Case, Defendant, Institution, Subpoena, User } from '../repository'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
-import { Subpoena } from './models/subpoena.model'
-import {
-  ServiceStatusStatistics,
-  SubpoenaStatistics,
-} from './models/subpoenaStatistics.response'
 
 export const include: Includeable[] = [
   {
@@ -264,7 +257,7 @@ export class SubpoenaService {
         'SUBPOENA_SERVICE_STATUS',
         subpoena.case,
         false,
-        { Staða: Subpoena.serviceStatusText(update.serviceStatus) },
+        { Staða: getServiceStatusText(update.serviceStatus) },
       )
     }
 
@@ -531,87 +524,5 @@ export class SubpoenaService {
     }
 
     return this.update(subpoena, subpoenaInfo)
-  }
-
-  async getStatistics(
-    from?: Date,
-    to?: Date,
-    institutionId?: string,
-  ): Promise<SubpoenaStatistics> {
-    const where: WhereOptions = {
-      policeSubpoenaId: {
-        [Op.ne]: null,
-      },
-    }
-
-    if (from || to) {
-      where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
-      }
-      if (to) {
-        where.created[Op.lte] = to
-      }
-    }
-
-    const include: Includeable[] = []
-
-    if (institutionId) {
-      include.push({
-        model: Case,
-        required: true,
-        attributes: [],
-        where: {
-          [Op.or]: [
-            { courtId: institutionId },
-            { prosecutorsOfficeId: institutionId },
-          ],
-        },
-      })
-    }
-
-    const count = await this.subpoenaModel.count({
-      where,
-      include,
-    })
-
-    const grouped = (await this.subpoenaModel.findAll({
-      where,
-      include,
-      attributes: [
-        'serviceStatus',
-        [fn('COUNT', col('Subpoena.id')), 'count'],
-        [
-          literal(
-            'AVG(EXTRACT(EPOCH FROM "Subpoena"."service_date" - "Subpoena"."created") * 1000)',
-          ),
-          'averageServiceTimeMs',
-        ],
-      ],
-      group: ['serviceStatus'],
-      raw: true,
-    })) as unknown as {
-      serviceStatus: ServiceStatus | null
-      count: string
-      averageServiceTimeMs: string | null
-    }[]
-
-    const serviceStatusStatistics: ServiceStatusStatistics[] = grouped.map(
-      (row) => ({
-        serviceStatus: row.serviceStatus,
-        count: Number(row.count),
-        averageServiceTimeMs: Math.round(Number(row.averageServiceTimeMs) || 0),
-        averageServiceTimeDays:
-          Math.round(Number(row.averageServiceTimeMs) / 1000 / 60 / 60 / 24) ||
-          0,
-      }),
-    )
-
-    const stats: SubpoenaStatistics = {
-      count,
-      serviceStatusStatistics,
-    }
-
-    return stats
   }
 }

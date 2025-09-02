@@ -5,8 +5,8 @@ query Case($input: CaseQueryInput!) {
     modified
     type
     indictmentSubtypes
-    description
     state
+    description
     policeCaseNumbers
     defendants {
       id
@@ -27,13 +27,8 @@ query Case($input: CaseQueryInput!) {
       requestedDefenderName
       isDefenderChoiceConfirmed
       caseFilesSharedWithDefender
-      serviceRequirement
-      verdictViewDate
       verdictAppealDeadline
-      verdictAppealDecision
-      verdictAppealDate
       isVerdictAppealDeadlineExpired
-      informationForDefendant
       subpoenaType
       isSentToPrisonAdmin
       sentToPrisonAdminDate
@@ -44,6 +39,7 @@ query Case($input: CaseQueryInput!) {
       subpoenas {
         id
         created
+        modified
         serviceStatus
         serviceDate
         servedBy
@@ -52,6 +48,21 @@ query Case($input: CaseQueryInput!) {
         caseId
         defendantId
         policeSubpoenaId
+      }
+      verdict {
+        id
+        created
+        appealDate
+        appealDecision
+        serviceRequirement
+        serviceStatus
+        serviceDate
+        serviceInformationForDefendant
+        externalPoliceDocumentId
+        legalPaperRequestDate
+        comment
+        defenderNationalId
+        servedBy
       }
     }
     defenderName
@@ -345,10 +356,7 @@ query Case($input: CaseQueryInput!) {
         requestedDefenderName
         isDefenderChoiceConfirmed
         caseFilesSharedWithDefender
-        serviceRequirement
-        verdictViewDate
         verdictAppealDeadline
-        verdictAppealDate
         isVerdictAppealDeadlineExpired
         subpoenaType
         punishmentType
@@ -362,6 +370,14 @@ query Case($input: CaseQueryInput!) {
           defenderNationalId
           caseId
           policeSubpoenaId
+        }
+        verdict {
+          id
+          appealDate
+          appealDecision
+          serviceRequirement
+          serviceDate
+          serviceInformationForDefendant
         }
       }
       caseFiles {

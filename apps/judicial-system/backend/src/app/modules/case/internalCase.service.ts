@@ -50,24 +50,32 @@ import {
 import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { courtSubtypes } from '../court/court.service'
-import { Defendant, DefendantService } from '../defendant'
+import { courtSubtypes } from '../court'
+import { DefendantService } from '../defendant'
 import { EventService } from '../event'
-import { EventLog } from '../event-log'
-import { CaseFile, FileService } from '../file'
-import { IndictmentCount, IndictmentCountService } from '../indictment-count'
-import { Offense } from '../indictment-count/models/offense.model'
-import { Institution } from '../institution'
+import { FileService } from '../file'
+import { IndictmentCountService } from '../indictment-count'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { User, UserService } from '../user'
+import {
+  Case,
+  CaseArchive,
+  CaseFile,
+  CaseString,
+  DateLog,
+  Defendant,
+  EventLog,
+  IndictmentCount,
+  Institution,
+  Offense,
+  Subpoena,
+  User,
+  Verdict,
+} from '../repository'
+import { SubpoenaService } from '../subpoena'
+import { UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
-import { Case } from './models/case.model'
-import { CaseArchive } from './models/caseArchive.model'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
@@ -379,44 +387,50 @@ export class InternalCaseService {
     }
 
     return this.sequelize.transaction(async (transaction) => {
-      return this.caseModel
-        .create(
-          {
-            ...caseToCreate,
-            state: isRequestCase(caseToCreate.type)
-              ? CaseState.NEW
-              : CaseState.DRAFT,
-            origin: CaseOrigin.LOKE,
-            creatingProsecutorId: creator.id,
-            prosecutorId:
-              creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
-            courtId: isRequestCase(caseToCreate.type)
-              ? creator.institution?.defaultCourtId
-              : undefined,
-            prosecutorsOfficeId: creator.institution?.id,
-          },
-          { transaction },
-        )
-        .then((theCase) =>
-          this.defendantService.createForNewCase(
-            theCase.id,
-            {
-              nationalId: caseToCreate.accusedNationalId,
-              dateOfBirth: caseToCreate.accusedDOB,
-              name: caseToCreate.accusedName,
-              gender: caseToCreate.accusedGender,
-              address: (caseToCreate.accusedAddress || '').trim(),
-              citizenship: caseToCreate.citizenship,
-            },
+      const newCase = await this.caseModel.create(
+        {
+          ...caseToCreate,
+          state: isRequestCase(caseToCreate.type)
+            ? CaseState.NEW
+            : CaseState.DRAFT,
+          origin: CaseOrigin.LOKE,
+          creatingProsecutorId: creator.id,
+          prosecutorId:
+            creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
+          courtId: isRequestCase(caseToCreate.type)
+            ? creator.institution?.defaultCourtId
+            : undefined,
+          prosecutorsOfficeId: creator.institution?.id,
+        },
+        { transaction },
+      )
+
+      if (isIndictmentCase(newCase.type)) {
+        for (const policeCaseNumber of newCase.policeCaseNumbers) {
+          await this.indictmentCountService.createWithPoliceCaseNumber(
+            newCase.id,
+            policeCaseNumber,
             transaction,
-          ),
-        )
-        .then(
-          (defendant) =>
-            this.caseModel.findByPk(defendant.caseId, {
-              transaction,
-            }) as Promise<Case>,
-        )
+          )
+        }
+      }
+
+      await this.defendantService.createForNewCase(
+        newCase.id,
+        {
+          nationalId: caseToCreate.accusedNationalId,
+          dateOfBirth: caseToCreate.accusedDOB,
+          name: caseToCreate.accusedName,
+          gender: caseToCreate.accusedGender,
+          address: (caseToCreate.accusedAddress || '').trim(),
+          citizenship: caseToCreate.citizenship,
+        },
+        transaction,
+      )
+
+      const theCase = await this.caseModel.findByPk(newCase.id, { transaction })
+
+      return theCase as Case
     })
   }
 
@@ -1090,7 +1104,6 @@ export class InternalCaseService {
             caseFile.key,
         )
         .map(async (caseFile) => {
-          // TODO: Tolerate failure, but log error
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
             caseFile,
@@ -1240,7 +1253,6 @@ export class InternalCaseService {
       theCase.caseFiles
         ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
         .map(async (caseFile) => {
-          // TODO: Tolerate failure, but log error
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
             caseFile,
@@ -1337,6 +1349,11 @@ export class InternalCaseService {
               model: Subpoena,
               as: 'subpoenas',
               order: [['created', 'DESC']],
+            },
+            {
+              model: Verdict,
+              as: 'verdict',
+              required: false,
             },
           ],
         },

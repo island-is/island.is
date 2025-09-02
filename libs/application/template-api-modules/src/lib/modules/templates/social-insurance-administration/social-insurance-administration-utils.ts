@@ -31,12 +31,15 @@ import {
 import {
   getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
-  isEHApplication,
   isFirstApplication,
   SelfAssessmentCurrentEmploymentStatus,
   shouldShowCalculatedRemunerationDate,
   shouldShowIsStudyingFields,
   shouldShowPreviousRehabilitationOrTreatmentFields,
+  shouldShowConfirmationOfIllHealth,
+  shouldShowConfirmationOfPendingResolution,
+  shouldShowConfirmedTreatment,
+  shouldShowRehabilitationPlan,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
@@ -412,7 +415,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
-    unionNationalId,
+    unionInfo,
     comment,
     questionnaire,
     currentEmploymentStatus,
@@ -421,6 +424,9 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     lastEmploymentYear,
     certificateForSicknessAndRehabilitationReferenceId,
     rehabilitationPlanReferenceId,
+    confirmedTreatmentReferenceId,
+    confirmationOfPendingResolutionReferenceId,
+    confirmationOfIllHealthReferenceId,
     educationalLevel,
     hadAssistance,
     mainProblem,
@@ -443,7 +449,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     applicationId: application.id,
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
       domesticBankInfo: {
-        bank: getBankIsk(paymentInfo),
+        bank: formatBank(getBankIsk(paymentInfo)),
       },
     }),
     taxInfo: {
@@ -492,14 +498,15 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
         ),
         ...((hasUtilizedUnionSickPayRights === YES ||
           hasUtilizedUnionSickPayRights === NO) && {
-          unionNationalId,
+          unionNationalId: unionInfo.split('::')[0],
+          unionName: unionInfo.split('::')[1],
           unionSickPayEndDate,
         }),
       },
     }),
     baseCertificateReference:
       certificateForSicknessAndRehabilitationReferenceId ?? '',
-    ...(isEHApplication(application.externalData) && {
+    ...(shouldShowRehabilitationPlan(application.externalData) && {
       rehabilitationPlanReference: rehabilitationPlanReferenceId,
     }),
     preQuestionnaire: {
@@ -528,6 +535,16 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
         }),
       }),
     },
+    ...(shouldShowConfirmedTreatment(application.externalData) && {
+      confirmedTreatmentReference: confirmedTreatmentReferenceId,
+    }),
+    ...(shouldShowConfirmationOfPendingResolution(application.externalData) && {
+      confirmationOfPendingResolutionReference:
+        confirmationOfPendingResolutionReferenceId,
+    }),
+    ...(shouldShowConfirmationOfIllHealth(application.externalData) && {
+      confirmationOfIllHealthReference: confirmationOfIllHealthReferenceId,
+    }),
     selfAssessment: {
       hadAssistance: hadAssistance === YES,
       answers: questionnaire,

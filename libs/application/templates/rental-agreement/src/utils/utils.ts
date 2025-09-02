@@ -57,8 +57,13 @@ export const isValidMeterNumber = (value: string) => {
 }
 
 export const isValidMeterStatus = (value: string) => {
-  const meterStatusRegex = /^[0-9]{1,10}(,[0-9])?$/
+  const meterStatusRegex = /^[0-9]{1,10}(\.[0-9])?$/
   return meterStatusRegex.test(value)
+}
+
+export const isValidPhoneNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone && phone.isValid()
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
@@ -72,18 +77,6 @@ export const formatBankInfo = (bankInfo: string) => {
     return formattedBankInfo
   }
   return bankInfo
-}
-
-export const hasAnyMatchingNationalId = (
-  nationalIds: string[],
-  applicants: ApplicantsInfo[] = [],
-) => {
-  return (
-    nationalIds.length > 0 &&
-    applicants?.some((applicant) =>
-      nationalIds.includes(applicant.nationalIdWithName.nationalId),
-    )
-  )
 }
 
 export const hasDuplicateApplicants = (
@@ -320,13 +313,13 @@ export const getNextStepInReviewOptions = () => [
   },
 ]
 
-export const getEmergencyExitOptions = () => [
+export const getYesNoOptions = () => [
   {
     value: EmergencyExitOptions.YES,
-    label: m.housingFireProtections.typeRadioYesExit,
+    label: m.misc.yes,
   },
   {
     value: EmergencyExitOptions.NO,
-    label: m.housingFireProtections.typeRadioNoExit,
+    label: m.misc.no,
   },
 ]
