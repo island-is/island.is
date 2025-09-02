@@ -25,7 +25,6 @@ export class PoliceUpdateVerdictDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   comment?: string
 
