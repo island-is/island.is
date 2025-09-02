@@ -11,9 +11,6 @@ const DocumentProviders = lazy(() =>
 const SingleDocumentProvider = lazy(() =>
   import('./screens/SingleDocumentProvider/SingleDocumentProvider'),
 )
-const CategoriesAndTypesScreen = lazy(() =>
-  import('./screens/CategoriesAndTypes'),
-)
 
 export const documentProviderModule: PortalModule = {
   name: m.rootName,

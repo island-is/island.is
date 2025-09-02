@@ -14,8 +14,8 @@ export const useGetProvidersByNationalId = (
 ): GetProvidersByNationalIdReturnType => {
   const statisticsInput: ApiV1StatisticsNationalIdProvidersGetRequest = {
     nationalId: organisationId ?? '',
-    from: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),
-    to: !fromDate ? undefined : toDate?.toISOString().slice(0, 10),
+    from: fromDate ? fromDate.toISOString().slice(0, 10) : undefined,
+    to: toDate ? toDate.toISOString().slice(0, 10) : undefined,
   }
 
   const { data, loading, error } = useQuery(
@@ -25,6 +25,7 @@ export const useGetProvidersByNationalId = (
         input: statisticsInput,
       },
       fetchPolicy: 'cache-and-network',
+      skip: !organisationId,
     },
   )
 
@@ -38,7 +39,7 @@ export const useGetProvidersByNationalId = (
   const statistics = data?.statisticProvidersByNationalId ?? null
 
   return {
-    ...statistics,
+    ...(statistics ?? { items: [], totalCount: 0 }),
     loading,
   }
 }
