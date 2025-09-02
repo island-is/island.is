@@ -15,6 +15,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Innritun í grunnskóla',
       description: 'Enrollment in primary school',
     },
+    newPrimarySchoolApplicationName: {
+      id: 'nps.application:new.primary.school.application.name',
+      defaultMessage: 'Umsókn í nýjan skóla',
+      description: 'Application for a new school',
+    },
     institution: {
       id: 'nps.application:institution.name',
       defaultMessage: 'Sveitarfélög',
@@ -147,18 +152,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:external.data.section',
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
-    },
-
-    // Application type
-    applicationTypeSubSectionTitle: {
-      id: 'nps.application:application.type.sub.section.title',
-      defaultMessage: 'Tegund umsóknar',
-      description: 'Application type',
-    },
-    applicationTypeSubSectionDescription: {
-      id: 'nps.application:application.type.sub.section.description',
-      defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
-      description: 'Please select application type',
     },
 
     // Data collection

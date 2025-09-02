@@ -22,6 +22,7 @@ import {
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
+import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import { ChildrenApi } from '../dataProviders'
@@ -37,6 +38,7 @@ import {
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
+  getApplicationType,
 } from '../utils/newPrimarySchoolUtils'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages } from './messages'
@@ -107,6 +109,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: ['setApplicationType'],
         exit: [
           'clearApplicationIfReasonForApplication',
           'clearPlaceOfResidence',
@@ -186,6 +189,17 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      setApplicationType: assign((context) => {
+        const { application } = context
+
+        set(
+          application.answers,
+          'applicationType',
+          getApplicationType(application.externalData),
+        )
+
+        return context
+      }),
       // Clear answers depending on what is selected as reason for application
       clearApplicationIfReasonForApplication: assign((context) => {
         const { application } = context
