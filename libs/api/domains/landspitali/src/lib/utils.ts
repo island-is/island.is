@@ -8,22 +8,22 @@ export const generateMemorialCardPaymentConfirmationEmailMessage = (
 ) => {
   const lines: string[] = []
 
-  lines.push(`Minningarsjóður: ${input.fundChargeItemCode}`)
-  lines.push(`Til minningar um: ${input.inMemoryOf}`)
-  lines.push(`Fjárhæð: ${input.amountISK} krónur`)
-  lines.push(`Undirskrift sendanda: ${input.senderSignature}`)
+  lines.push(`Minningarsjóður: ${input.fundChargeItemCode ?? ''}`)
+  lines.push(`Til minningar um: ${input.inMemoryOf ?? ''}`)
+  lines.push(`Fjárhæð: ${input.amountISK ?? ''} krónur`)
+  lines.push(`Undirskrift sendanda: ${input.senderSignature ?? ''}`)
 
-  lines.push(`Nafn viðtakanda korts: ${input.recipientName}`)
-  lines.push(`Heimilisfang viðtakanda korts: ${input.recipientAddress}`)
-  lines.push(`Póstnúmer viðtakanda korts: ${input.recipientPostalCode}`)
-  lines.push(`Staður viðtakanda korts: ${input.recipientPlace}`)
+  lines.push(`Nafn viðtakanda korts: ${input.recipientName ?? ''}`)
+  lines.push(`Heimilisfang viðtakanda korts: ${input.recipientAddress ?? ''}`)
+  lines.push(`Póstnúmer viðtakanda korts: ${input.recipientPostalCode ?? ''}`)
+  lines.push(`Staður viðtakanda korts: ${input.recipientPlace ?? ''}`)
 
-  lines.push(`Nafn greiðanda: ${input.payerName}`)
-  lines.push(`Netfang greiðanda: ${input.payerEmail}`)
-  lines.push(`Kennitala greiðanda: ${input.payerNationalId}`)
-  lines.push(`Heimilisfang greiðanda: ${input.payerAddress}`)
-  lines.push(`Póstnúmer greiðanda: ${input.payerPostalCode}`)
-  lines.push(`Staður greiðanda: ${input.payerPlace}`)
+  lines.push(`Nafn greiðanda: ${input.payerName ?? ''}`)
+  lines.push(`Netfang greiðanda: ${input.payerEmail ?? ''}`)
+  lines.push(`Kennitala greiðanda: ${input.payerNationalId ?? ''}`)
+  lines.push(`Heimilisfang greiðanda: ${input.payerAddress ?? ''}`)
+  lines.push(`Póstnúmer greiðanda: ${input.payerPostalCode ?? ''}`)
+  lines.push(`Staður greiðanda: ${input.payerPlace ?? ''}`)
 
   return lines.join('\n')
 }
@@ -33,18 +33,18 @@ export const generateDirectGrantPaymentConfirmationEmailMessage = (
 ) => {
   const lines: string[] = []
 
-  lines.push(`Styrktarsjóður: ${input.grantChargeItemCode}`)
-  lines.push(`Verkefni: ${input.project}`)
-  lines.push(`Fjárhæð: ${input.amountISK}`)
+  lines.push(`Styrktarsjóður: ${input.grantChargeItemCode ?? ''}`)
+  lines.push(`Verkefni: ${input.project ?? ''}`)
+  lines.push(`Fjárhæð: ${input.amountISK ?? ''}`)
 
-  lines.push(`Nafn greiðanda: ${input.payerName}`)
-  lines.push(`Netfang greiðanda: ${input.payerEmail}`)
-  lines.push(`Kennitala greiðanda: ${input.payerNationalId}`)
-  lines.push(`Heimilisfang greiðanda: ${input.payerAddress}`)
-  lines.push(`Póstnúmer greiðanda: ${input.payerPostalCode}`)
-  lines.push(`Staður greiðanda: ${input.payerPlace}`)
+  lines.push(`Nafn greiðanda: ${input.payerName ?? ''}`)
+  lines.push(`Netfang greiðanda: ${input.payerEmail ?? ''}`)
+  lines.push(`Kennitala greiðanda: ${input.payerNationalId ?? ''}`)
+  lines.push(`Heimilisfang greiðanda: ${input.payerAddress ?? ''}`)
+  lines.push(`Póstnúmer greiðanda: ${input.payerPostalCode ?? ''}`)
+  lines.push(`Staður greiðanda: ${input.payerPlace ?? ''}`)
 
-  lines.push(`Skýring á styrk: ${input.payerGrantExplanation}`)
+  lines.push(`Skýring á styrk: ${input.payerGrantExplanation ?? ''}`)
 
   return lines.join('\n')
 }
