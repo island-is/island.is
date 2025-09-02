@@ -2,7 +2,7 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Accordion, Box, Text } from '@island.is/island-ui/core'
+import { Accordion, Box, PdfViewer, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -37,6 +37,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Summary.strings'
+import * as styles from './Summary.css'
 
 const Summary: FC = () => {
   const { formatMessage } = useIntl()
@@ -50,9 +51,10 @@ const Summary: FC = () => {
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
     useCase()
   const [modalVisible, setModalVisible] = useState<'CONFIRM_INDICTMENT'>()
+  const [rulingUrl, setRulingUrl] = useState<string>()
   const { user } = useContext(UserContext)
 
-  const { onOpen } = useFileList({
+  const { onOpen, getFileUrl } = useFileList({
     caseId: workingCase.id,
   })
 
@@ -90,6 +92,16 @@ const Summary: FC = () => {
     }
 
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
+  }
+
+  const handleNextButtonClick = async () => {
+    const url = await getFileUrl('23a1dedd-d2a6-4750-bd9b-420e685133c1')
+    if (url) {
+      setRulingUrl(url)
+    }
+    // TODO ELSE
+
+    setModalVisible('CONFIRM_INDICTMENT')
   }
 
   const handleCourtEndTimeChange = useCallback(
@@ -149,11 +161,9 @@ const Summary: FC = () => {
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
-
       <FormContentContainer>
         <Box display="flex" justifyContent="spaceBetween">
           <PageTitle>{formatMessage(strings.title)}</PageTitle>
-
           {workingCase.indictmentRulingDecision && (
             <Box marginTop={2}>
               <CaseTag
@@ -163,7 +173,11 @@ const Summary: FC = () => {
             </Box>
           )}
         </Box>
-        <Box component="section" marginBottom={1}>
+        <Box
+          component="section"
+          marginBottom={1}
+          onClick={handleNextButtonClick}
+        >
           <Text variant="h2" as="h2">
             {formatMessage(core.caseNumber, {
               caseNumber: workingCase.courtCaseNumber,
@@ -223,7 +237,7 @@ const Summary: FC = () => {
           previousUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextButtonIcon="checkmark"
           nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
+          onNextButtonClick={handleNextButtonClick}
           hideNextButton={!canUserCompleteCase}
           infoBoxText={
             canUserCompleteCase
@@ -234,20 +248,23 @@ const Summary: FC = () => {
       </FormContentContainer>
       {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
-          title={formatMessage(strings.completeCaseModalTitle)}
-          text={formatMessage(strings.completeCaseModalBody)}
-          primaryButtonText={formatMessage(
-            strings.completeCaseModalPrimaryButton,
-          )}
+          title="Viltu ljúka máli?"
+          text="Dómurinn verður sendur í rafræna birtingu á island.is. Vinsamlegast rýnið skjal fyrir staðfestingu."
+          primaryButtonText="Staðfesta"
           onPrimaryButtonClick={async () =>
             await handleModalPrimaryButtonClick()
           }
-          secondaryButtonText={formatMessage(
-            strings.completeCaseModalSecondaryButton,
-          )}
+          secondaryButtonText="Hætta við"
           onSecondaryButtonClick={() => setModalVisible(undefined)}
           isPrimaryButtonLoading={isTransitioningCase}
-        />
+        >
+          <div className={styles.ruling}>
+            <PdfViewer
+              file="/api/case/96678fdb-44bb-4718-9b6a-ad6d0d1ffc25/courtRecord"
+              showAllPages
+            />
+          </div>
+        </Modal>
       )}
     </PageLayout>
   )

@@ -8,7 +8,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  PdfViewer,
   Text,
   toast,
 } from '@island.is/island-ui/core'
@@ -444,9 +443,6 @@ export const SignedVerdictOverview: FC = () => {
           })}
         />
         <FormContentContainer>
-          <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-            <PdfViewer file="/api/case/96678fdb-44bb-4718-9b6a-ad6d0d1ffc25/courtRecord" />
-          </div>
           <Box marginBottom={5}>
             <Box marginBottom={3}>
               <Button

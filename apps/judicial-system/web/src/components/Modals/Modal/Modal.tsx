@@ -63,6 +63,14 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
     },
   }
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  })
+
   return (
     <FocusLock autoFocus={false}>
       <motion.div
