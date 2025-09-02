@@ -40,14 +40,19 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   const onSubmit = false
 
-  const displayBack = state.currentSection.index > 0 && !(state.currentSection.index === 1 && (state.currentScreen?.index ?? 0) === 0)
+  const displayBack =
+    state.currentSection.index > 0 &&
+    !(
+      state.currentSection.index === 1 &&
+      (state.currentScreen?.index ?? 0) === 0
+    )
 
   const continueButtonText =
     state.currentSection.index === 0
       ? formatMessage(webMessages.externalDataConfirmation)
       : onSubmit
-        ? formatMessage(webMessages.submitApplication)
-        : formatMessage(webMessages.continue)
+      ? formatMessage(webMessages.submitApplication)
+      : formatMessage(webMessages.continue)
 
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
@@ -75,7 +80,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     })
 
     if (!isValid) return
-    
+
     dispatch({
       type: 'INCREMENT',
       payload: {

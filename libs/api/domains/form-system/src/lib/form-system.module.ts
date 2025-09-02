@@ -74,4 +74,4 @@ import { NationalRegistryResolver } from './nationalRegistry/nationalRegistry.re
     CompanyRegistryClientModule,
   ],
 })
-export class FormSystemModule { }
+export class FormSystemModule {}

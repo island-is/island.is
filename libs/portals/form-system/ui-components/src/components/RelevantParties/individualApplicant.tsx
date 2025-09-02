@@ -23,7 +23,6 @@ import { Action } from '../../lib'
 import { getValue } from '../../lib/getValue'
 import { removeTypename } from '@island.is/form-system/graphql'
 
-
 interface Props {
   applicant: FormSystemField
   actor: string
@@ -35,7 +34,7 @@ export const IndividualApplicant = ({
   applicant,
   user,
   actor,
-  dispatch
+  dispatch,
 }: Props) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
@@ -56,7 +55,7 @@ export const IndividualApplicant = ({
             value: removeTypename(data.formSystemNameByNationalId.fulltNafn),
           },
         })
-      }
+      },
     },
   )
 
@@ -71,11 +70,15 @@ export const IndividualApplicant = ({
           type: 'SET_ADDRESS',
           payload: {
             id: applicant.id,
-            address: removeTypename(data.formSystemHomeByNationalId.heimilisfang),
-            postalCode: removeTypename(data.formSystemHomeByNationalId.postnumer),
+            address: removeTypename(
+              data.formSystemHomeByNationalId.heimilisfang,
+            ),
+            postalCode: removeTypename(
+              data.formSystemHomeByNationalId.postnumer,
+            ),
           },
         })
-      }
+      },
     },
   )
 
@@ -84,7 +87,10 @@ export const IndividualApplicant = ({
       dispatch({ type: 'SET_EMAIL', payload: { id: applicant.id, value } })
       setEmail(value)
     } else if (field === 'phone') {
-      dispatch({ type: 'SET_PHONE_NUMBER', payload: { id: applicant.id, value } })
+      dispatch({
+        type: 'SET_PHONE_NUMBER',
+        payload: { id: applicant.id, value },
+      })
       setPhoneNumber(value)
     }
   }
@@ -95,12 +101,20 @@ export const IndividualApplicant = ({
     user?.emails?.[0]?.email
   const isLoading = shouldQuery && (nameLoading || addressLoading)
 
-  const [email, setEmail] = useState(user?.emails?.find((email) => email.primary)?.email ??
-    user?.emails?.[0]?.email ?? getValue(applicant, 'email'))
-  const [phoneNumber, setPhoneNumber] = useState(user?.mobilePhoneNumber ?? getValue(applicant,'phoneNumber') ?? '')
+  const [email, setEmail] = useState(
+    user?.emails?.find((email) => email.primary)?.email ??
+      user?.emails?.[0]?.email ??
+      getValue(applicant, 'email'),
+  )
+  const [phoneNumber, setPhoneNumber] = useState(
+    user?.mobilePhoneNumber ?? getValue(applicant, 'phoneNumber') ?? '',
+  )
 
   useEffect(() => {
-    dispatch({type: 'SET_NATIONAL_ID', payload: { id: applicant.id, value: nationalId }})
+    dispatch({
+      type: 'SET_NATIONAL_ID',
+      payload: { id: applicant.id, value: nationalId },
+    })
   }, [dispatch, applicant.id, nationalId])
 
   return (

@@ -31,11 +31,13 @@ export const Applicants = ({ applicantField }: Props) => {
           dispatch={dispatch}
         />
       )}
-      {applicantType === ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
-        applicantType === ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY && (
+      {applicantType ===
+        ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
+        (applicantType ===
+          ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY && (
           // Display agent
           <></>
-        )}
+        ))}
       {applicantType === ApplicantTypesEnum.LEGAL_ENTITY && (
         // Display legal entity
         <></>
@@ -43,4 +45,3 @@ export const Applicants = ({ applicantField }: Props) => {
     </>
   )
 }
-

@@ -30,7 +30,7 @@ export class FormApplicantTypesService {
     @InjectModel(Field)
     private readonly fieldModel: typeof Field,
     private readonly sequelize: Sequelize,
-  ) { }
+  ) {}
 
   async create(
     createFormApplicantTypeDto: CreateFormApplicantTypeDto,
@@ -108,12 +108,10 @@ export class FormApplicantTypesService {
       const newScreen = await this.screenModel.create(
         {
           sectionId: form.sections[0].id, // PARTIES is the only section
-          name: applicantType.description
+          name: applicantType.description,
         } as Screen,
         { transaction },
       )
-
-
 
       const newField = await this.fieldModel.create(
         {
@@ -168,7 +166,7 @@ export class FormApplicantTypesService {
         (f) =>
           f.fieldSettings &&
           (f.fieldSettings as FieldSettings).applicantType ===
-          deleteFormApplicantTypeDto.applicantTypeId,
+            deleteFormApplicantTypeDto.applicantTypeId,
       ),
     )
 
