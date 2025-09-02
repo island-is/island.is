@@ -1,10 +1,10 @@
 import {
   Box,
   AlertMessage,
+  Text,
 } from '@island.is/island-ui/core'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 import { useIntl } from 'react-intl'
-import { useLocale } from '@island.is/localization'
 import { webMessages } from '@island.is/form-system/ui'
 
 
@@ -22,6 +22,12 @@ export const Completed = () => {
             title={formatMessage(webMessages.completedErrorTitle)}
             message={formatMessage(webMessages.completedErrorDescription)}
           />}
+          <Box marginTop={5} display="flex" justifyContent="center" >
+            <Text>{formatMessage(webMessages.LoremIpsum)}</Text>
+          </Box>
+          <Box marginTop={5} display="flex" justifyContent="center">
+          <img src={'./assets/images/train.svg'} alt="" />
+          </Box>
     </Box>
   )
 }
