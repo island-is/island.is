@@ -15,18 +15,20 @@ import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks
 
 import * as styles from './Modal.css'
 
+interface ButtonProps {
+  text: string
+  onClick: () => void
+  isLoading?: boolean
+  isDisabled?: boolean
+  colorScheme?: 'default' | 'destructive'
+}
+
 interface ModalProps {
   title: string
   text?: string | ReactNode
-  primaryButtonText?: string
-  secondaryButtonText?: string
+  primaryButton?: ButtonProps
+  secondaryButton?: ButtonProps
   onClose?: () => void
-  onSecondaryButtonClick?: () => void
-  onPrimaryButtonClick?: () => void
-  isPrimaryButtonLoading?: boolean
-  isPrimaryButtonDisabled?: boolean
-  primaryButtonColorScheme?: 'default' | 'destructive'
-  isSecondaryButtonLoading?: boolean
   errorMessage?: string
   children?: ReactNode
   invertButtonColors?: boolean
@@ -37,15 +39,9 @@ interface ModalProps {
 const Modal: FC<PropsWithChildren<ModalProps>> = ({
   title,
   text,
-  primaryButtonText,
-  secondaryButtonText,
+  primaryButton,
+  secondaryButton,
   onClose,
-  onSecondaryButtonClick,
-  onPrimaryButtonClick,
-  isPrimaryButtonLoading,
-  isPrimaryButtonDisabled,
-  primaryButtonColorScheme = 'default',
-  isSecondaryButtonLoading,
   errorMessage,
   children,
   invertButtonColors,
@@ -116,29 +112,29 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
           )}
           {children}
           <Box display="flex">
-            {secondaryButtonText && (
+            {secondaryButton && (
               <Box marginRight={3}>
                 <Button
                   data-testid="modalSecondaryButton"
                   variant={invertButtonColors ? undefined : 'ghost'}
-                  onClick={onSecondaryButtonClick}
-                  loading={isSecondaryButtonLoading}
+                  onClick={secondaryButton.onClick}
+                  loading={secondaryButton.isLoading}
                   disabled={loading}
                 >
-                  {secondaryButtonText}
+                  {secondaryButton.text}
                 </Button>
               </Box>
             )}
-            {primaryButtonText && (
+            {primaryButton && (
               <Button
                 data-testid="modalPrimaryButton"
                 variant={invertButtonColors ? 'ghost' : undefined}
-                onClick={onPrimaryButtonClick}
-                loading={isPrimaryButtonLoading}
-                disabled={isPrimaryButtonDisabled}
-                colorScheme={primaryButtonColorScheme}
+                onClick={primaryButton.onClick}
+                loading={primaryButton.isLoading}
+                disabled={primaryButton.isDisabled}
+                colorScheme={primaryButton.colorScheme || 'default'}
               >
-                {primaryButtonText}
+                {primaryButton.text}
               </Button>
             )}
           </Box>
@@ -224,15 +220,9 @@ export const ModalContainer = ({
 const ModalPortal = ({
   title,
   text,
-  primaryButtonText,
-  secondaryButtonText,
+  primaryButton,
+  secondaryButton,
   onClose,
-  onSecondaryButtonClick,
-  onPrimaryButtonClick,
-  isPrimaryButtonLoading,
-  isPrimaryButtonDisabled,
-  primaryButtonColorScheme,
-  isSecondaryButtonLoading,
   errorMessage,
   children,
   invertButtonColors,
@@ -245,15 +235,9 @@ const ModalPortal = ({
     <Modal
       title={title}
       text={text}
-      primaryButtonText={primaryButtonText}
-      secondaryButtonText={secondaryButtonText}
+      primaryButton={primaryButton}
+      secondaryButton={secondaryButton}
       onClose={onClose}
-      onSecondaryButtonClick={onSecondaryButtonClick}
-      onPrimaryButtonClick={onPrimaryButtonClick}
-      isPrimaryButtonLoading={isPrimaryButtonLoading}
-      isPrimaryButtonDisabled={isPrimaryButtonDisabled}
-      primaryButtonColorScheme={primaryButtonColorScheme}
-      isSecondaryButtonLoading={isSecondaryButtonLoading}
       errorMessage={errorMessage}
       children={children}
       invertButtonColors={invertButtonColors}

@@ -250,13 +250,15 @@ const Summary: FC = () => {
         <Modal
           title="Viltu ljúka máli?"
           text="Dómurinn verður sendur í rafræna birtingu á island.is. Vinsamlegast rýnið skjal fyrir staðfestingu."
-          primaryButtonText="Staðfesta"
-          onPrimaryButtonClick={async () =>
-            await handleModalPrimaryButtonClick()
-          }
-          secondaryButtonText="Hætta við"
-          onSecondaryButtonClick={() => setModalVisible(undefined)}
-          isPrimaryButtonLoading={isTransitioningCase}
+          primaryButton={{
+            text: 'Staðfesta',
+            onClick: async () => await handleModalPrimaryButtonClick(),
+            isLoading: isTransitioningCase,
+          }}
+          secondaryButton={{
+            text: 'Hætta við',
+            onClick: () => setModalVisible(undefined),
+          }}
         >
           <div className={styles.ruling}>
             <PdfViewer
