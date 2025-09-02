@@ -103,7 +103,7 @@ export const fishingLicense = {
     igulker: {
       id: 'gfl.application:shipSelection.labels.igulker',
       defaultMessage: 'Ígulkeraveiðileyfi',
-      description: 'Ígulkeraveiðileyfi',
+      description: 'Ígulkerjaveiðileyfi',
     },
     unknown: {
       id: 'gfl.application:shipSelection.labels.notSpecified',
