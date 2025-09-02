@@ -43,6 +43,7 @@ export class UploadStreamApi {
 
     try {
       const response = await axios(url, requestOptions)
+
       return response.data
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -50,6 +51,7 @@ export class UploadStreamApi {
         const message = error.response?.data || error.message
         throw new Error(`Upload failed with status ${status}: ${message}`)
       }
+
       throw new Error(
         `Request failed: ${
           error instanceof Error ? error.message : String(error)
