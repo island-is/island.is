@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { Min, IsNumber } from 'class-validator'
+import { Min, IsInt, IsString, IsEmail, IsOptional } from 'class-validator'
 
 @InputType('WebLandspitaliCreateMemorialCardPaymentUrlInput')
 export class CreateMemorialCardPaymentUrlInput {
@@ -8,48 +8,61 @@ export class CreateMemorialCardPaymentUrlInput {
 
   /* Recipient */
   @Field(() => String)
+  @IsString()
   recipientName!: string
 
   @Field(() => String)
+  @IsString()
   recipientAddress!: string
 
   @Field(() => String)
+  @IsString()
   recipientPostalCode!: string
 
   @Field(() => String)
+  @IsString()
   recipientPlace!: string
 
   /* Payer */
   @Field(() => String)
+  @IsString()
   payerName!: string
 
   @Field(() => String)
+  @IsEmail()
   payerEmail!: string
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
   payerNationalId?: string
 
   @Field(() => String)
+  @IsString()
   payerAddress!: string
 
   @Field(() => String)
+  @IsString()
   payerPostalCode!: string
 
   @Field(() => String)
+  @IsString()
   payerPlace!: string
 
   /* Sender */
   @Field(() => String)
+  @IsString()
   senderSignature!: string
 
-  @IsNumber()
+  @IsInt()
   @Min(1000)
   @Field(() => Int)
   amountISK!: number
 
   @Field(() => String)
+  @IsString()
   fundChargeItemCode!: string
 
   @Field(() => String)
+  @IsString()
   inMemoryOf!: string
 }
