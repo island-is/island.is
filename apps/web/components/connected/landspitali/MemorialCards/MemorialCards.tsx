@@ -156,6 +156,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
   })
 
   const [loading, setLoading] = useState(false)
+  const hasScrolledToOverview = useRef(false)
 
   const [createMemorialCardPaymentUrl] = useMutation<
     WebLandspitaliCreateMemorialCardPaymentUrlMutation,
@@ -191,7 +192,12 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
 
   useEffect(() => {
     if (submitted) {
-      overviewTitleRef.current?.scrollIntoView({ behavior: 'smooth' })
+      if (!hasScrolledToOverview.current) {
+        overviewTitleRef.current?.scrollIntoView({ behavior: 'smooth' })
+        hasScrolledToOverview.current = true
+      }
+    } else {
+      hasScrolledToOverview.current = false
     }
   }, [submitted])
 
