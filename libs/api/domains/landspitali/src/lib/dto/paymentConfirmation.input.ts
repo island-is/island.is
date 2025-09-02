@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
+import { IsEmail, IsInt, IsString, Min } from 'class-validator'
 import type {
   DirectGrantPaymentFlowMetadata,
   MemorialCardPaymentFlowMetadata,
@@ -10,6 +10,8 @@ export class MemorialCardPaymentConfirmationInput
   implements Omit<MemorialCardPaymentFlowMetadata, 'landspitaliPaymentType'>
 {
   @Field(() => Int)
+  @IsInt()
+  @Min(1000)
   amountISK!: number
 
   @Field(() => String)
@@ -25,7 +27,7 @@ export class MemorialCardPaymentConfirmationInput
   payerName!: string
 
   @Field(() => String)
-  @IsString()
+  @IsEmail()
   payerEmail!: string
 
   @Field(() => String, { nullable: true })
@@ -73,6 +75,8 @@ export class DirectGrantPaymentConfirmationInput
   implements Omit<DirectGrantPaymentFlowMetadata, 'landspitaliPaymentType'>
 {
   @Field(() => Int)
+  @IsInt()
+  @Min(1000)
   amountISK!: number
 
   @Field(() => String)
@@ -88,7 +92,7 @@ export class DirectGrantPaymentConfirmationInput
   payerName!: string
 
   @Field(() => String)
-  @IsString()
+  @IsEmail()
   payerEmail!: string
 
   @Field(() => String, { nullable: true })
