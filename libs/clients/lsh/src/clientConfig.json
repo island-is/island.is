@@ -13,6 +13,14 @@
       "get": {
         "tags": ["Blood"],
         "summary": "Get blood information for national id",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "The locale for localization (e.g., 'is', 'en', etc.)",
+            "schema": { "type": "string", "example": "is" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",

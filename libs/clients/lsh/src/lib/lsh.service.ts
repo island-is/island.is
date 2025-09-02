@@ -5,16 +5,19 @@ import { BloodTypeDto, mapBloodTypeDto } from './dtos/bloodTypes.dto'
 import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
-export class BloodClientService {
+export class LshClientService {
   constructor(private readonly api: BloodApi) {}
 
   private bloodTypeWithAuth(auth: Auth) {
     return this.api.withMiddleware(new AuthMiddleware(auth))
   }
 
-  getBloodType = async (user: User): Promise<BloodTypeDto | null> => {
+  getBloodType = async (
+    user: User,
+    locale: string,
+  ): Promise<BloodTypeDto | null> => {
     const bloodType = await this.bloodTypeWithAuth(user)
-      .apiBloodGet()
+      .apiBloodGet({ locale: locale })
       .catch(handle404)
 
     if (!bloodType) {

@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -16,6 +16,8 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import type { Locale } from '@island.is/shared/types'
+
 @Resolver(() => BloodType)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/blood' })
@@ -29,7 +31,11 @@ export class BloodResolver {
     nullable: true,
   })
   @Audit()
-  async getRightsPortalBloodType(@CurrentUser() user: User) {
-    return this.service.getBloodType(user)
+  async getRightsPortalBloodType(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ) {
+    return this.service.getBloodType(user, locale)
   }
 }

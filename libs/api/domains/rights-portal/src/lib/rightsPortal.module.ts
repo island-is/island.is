@@ -18,12 +18,12 @@ import { PaymentResolver } from './payment/payment.resolver'
 import { PaymentService } from './payment/payment.service'
 import { BloodResolver } from './blood/blood.resolver'
 import { BloodService } from './blood/blood.service'
-import { BloodClientModule } from '@island.is/clients/blood'
+import { LshClientModule } from '@island.is/clients/lsh'
 
 @Module({
   imports: [
     RightsPortalClientModule,
-    BloodClientModule,
+    LshClientModule,
     AuthModule,
     FeatureFlagModule,
   ],

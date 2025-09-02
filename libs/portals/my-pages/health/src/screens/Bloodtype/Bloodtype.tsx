@@ -14,9 +14,11 @@ import { useBloodTypeQuery } from './Bloodtype.generated'
 
 const Bloodtype: React.FC = () => {
   useNamespaces('sp.health')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
-  const { data, loading, error } = useBloodTypeQuery()
+  const { data, loading, error } = useBloodTypeQuery({
+    variables: { locale: lang },
+  })
 
   const bloodType = data?.rightsPortalBloodType
 

@@ -199,7 +199,7 @@ codemagic.yaml                                                                  
 /libs/clients/smartsolutions/                                                                             @island-is/hugsmidjan
 /libs/clients/smart-solutions-v2/                                                                         @island-is/hugsmidjan
 /libs/clients/license-client/                                                                             @island-is/hugsmidjan @island-is/aranja
-/libs/clients/blood/                                                                                      @island-is/hugsmidjan
+/libs/clients/lsh/                                                                                        @island-is/hugsmidjan
 /libs/clients/intellectual-properties/                                                                    @island-is/hugsmidjan
 /libs/clients/islykill/                                                                                   @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                       @island-is/hugsmidjan
