@@ -16,7 +16,7 @@ const StatisticsOverview: FC = () => {
     pages: [
       {
         route: 'rannsoknarmal',
-        title: 'Rannsóknarnarmál',
+        title: 'Rannsóknarmál',
         description: 'Einföld tölfræðigreining úr rannsóknarmálum.',
       },
       {
@@ -32,7 +32,7 @@ const StatisticsOverview: FC = () => {
     pages: [
       {
         route: 'gogn/rannsoknarmal',
-        title: 'Rannsóknarnarmál',
+        title: 'Rannsóknarmál',
         description: 'Gögn úr rannsóknarmálum fyrir tölfræðigreiningu.',
       },
       {
