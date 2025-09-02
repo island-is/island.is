@@ -58,6 +58,11 @@ query getInstitutionApplications(
       institution
       progress
       status
+      adminData {
+        key
+        values
+        label
+      }
       applicantName
       paymentStatus
       actionCard {
@@ -82,6 +87,15 @@ query getInstitutionApplications(
       }
     }
     count
+  }
+}
+
+query getInstitutionApplicationTypes(
+  $input: ApplicationTypesInstitutionAdminInput!
+) {
+  applicationTypesInstitutionAdmin(input: $input) {
+    id
+    name
   }
 }
 
