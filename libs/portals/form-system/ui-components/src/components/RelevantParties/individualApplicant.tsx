@@ -47,7 +47,6 @@ export const IndividualApplicant = ({
       fetchPolicy: 'cache-first',
       skip: !shouldQuery,
       onCompleted: (data) => {
-        console.log('nameData', data)
         dispatch({
           type: 'SET_NAME',
           payload: {
@@ -96,9 +95,6 @@ export const IndividualApplicant = ({
   }
 
   const address = addressData?.formSystemHomeByNationalId?.heimilisfang
-  const emails =
-    user?.emails?.find((email) => email.primary)?.email ??
-    user?.emails?.[0]?.email
   const isLoading = shouldQuery && (nameLoading || addressLoading)
 
   const [email, setEmail] = useState(
