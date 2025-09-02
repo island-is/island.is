@@ -21,7 +21,6 @@ import {
   InformationForDefendant,
   LawyerRegistry,
   LawyerType,
-  mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
@@ -30,7 +29,6 @@ import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
-import { Groups } from './models/componentDefinitions/groups.model'
 import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import appModuleConfig from './app.config'
@@ -280,16 +278,33 @@ export class AppService {
     policeDocumentId: string,
     updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ) {
+    const getPoliceDocumentDeliveryStatus = ({
+      delivered,
+      deliveredOnPaper,
+      deliveredOnIslandis,
+      deliveredToLawyer,
+    }: UpdatePoliceDocumentDeliveryDto) => {
+      if (delivered) {
+        if (deliveredOnPaper) {
+          return ServiceStatus.IN_PERSON
+        }
+        if (deliveredOnIslandis) {
+          return ServiceStatus.ELECTRONICALLY
+        }
+        if (deliveredToLawyer) {
+          return ServiceStatus.DEFENDER
+        }
+      }
+      return ServiceStatus.FAILED
+    }
+
     const parsedPoliceUpdate = {
       serviceDate: updatePoliceDocumentDelivery.servedAt,
       servedBy: updatePoliceDocumentDelivery.servedBy,
       comment: updatePoliceDocumentDelivery.comment,
-      serviceStatus: mapPoliceVerdictDeliveryStatus({
-        delivered: updatePoliceDocumentDelivery.delivered,
-        deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
-        deliveredOnPaper: updatePoliceDocumentDelivery.deliveredOnPaper,
-        deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
-      }),
+      serviceStatus: getPoliceDocumentDeliveryStatus(
+        updatePoliceDocumentDelivery,
+      ),
     }
     try {
       const res = await fetch(
@@ -328,69 +343,6 @@ export class AppService {
         ...reason,
         message: `Failed to update document delivery ${policeDocumentId} information for file type code ${updatePoliceDocumentDelivery.fileTypeCode}`,
       })
-    }
-  }
-
-  async getPoliceDocumentSupplements(
-    fileTypeCode: PoliceFileTypeCode,
-    policeDocumentId: string,
-  ) {
-    switch (fileTypeCode) {
-      case PoliceFileTypeCode.VERDICT:
-        return await this.auditTrailService.audit(
-          'digital-mailbox-api',
-          AuditedAction.GET_VERDICT_SUPPLEMENTS,
-          this.getVerdictSupplements(policeDocumentId),
-          policeDocumentId,
-        )
-    }
-
-    throw new BadRequestException('Police file type code not supported')
-  }
-
-  private async getVerdictSupplements(policeDocumentId: string) {
-    try {
-      const res = await fetch(
-        `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${this.config.backend.accessToken}`,
-          },
-        },
-      )
-      if (res.ok) {
-        const verdictSupplements = (await res.json()) as {
-          serviceInformationForDefendant: InformationForDefendant[]
-        }
-        const { serviceInformationForDefendant } = verdictSupplements
-
-        if (
-          serviceInformationForDefendant?.length === 0 ||
-          !serviceInformationForDefendant
-        ) {
-          return { groups: [] }
-        }
-
-        return {
-          groups: [
-            {
-              label: 'Mikilvægar upplýsingar til dómfellda',
-              items: getRulingInstructionItems(serviceInformationForDefendant),
-            } as Groups,
-          ],
-        }
-      }
-
-      throw new BadRequestException()
-    } catch (error) {
-      this.logger.error(
-        `Failed to retrieve verdict supplements for police document id ${policeDocumentId}`,
-        error,
-      )
-
-      throw new BadRequestException('Failed to retrieve verdict supplements')
     }
   }
 }

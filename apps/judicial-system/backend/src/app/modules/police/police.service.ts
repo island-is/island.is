@@ -30,7 +30,6 @@ import type {
 import {
   CaseState,
   CaseType,
-  mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
