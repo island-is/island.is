@@ -1,5 +1,4 @@
-import { Box, Button, GridColumn, Text } from '@island.is/island-ui/core'
-import { useState } from 'react'
+import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import * as styles from './Footer.css'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { useIntl } from 'react-intl'
@@ -23,8 +22,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const { trigger } = useFormContext()
 
   // Mutations
-  const [saveScreen] = useMutation(SAVE_SCREEN)
-  const [submitSectionMutation] = useMutation(SUBMIT_SECTION)
+  const submitScreen = useMutation(SAVE_SCREEN)
+  const submitSection = useMutation(SUBMIT_SECTION)
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -44,7 +43,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       state.currentScreen?.index ===
         state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
 
-  const isCompletedSection = state.currentSection.data.sectionType === SectionTypes.COMPLETED
+  const isCompletedSection =
+    state.currentSection.data.sectionType === SectionTypes.COMPLETED
   const continueButtonText =
     state.currentSection.index === 0
       ? formatMessage(webMessages.externalDataConfirmation)
@@ -52,39 +52,17 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       ? formatMessage(webMessages.submitApplication)
       : isCompletedSection
       ? formatMessage(webMessages.openMyPages)
-      :formatMessage(webMessages.continue)
+      : formatMessage(webMessages.continue)
 
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
-  const isBackButton = 
-    state.currentSection.index <= 1 || isCompletedSection
+  const isBackButton = state.currentSection.index <= 1 || isCompletedSection
   const handleIncrement = async () => {
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
     if (!isValid) return
 
-    const submitScreenTuple: any = [
-      saveScreen,
-      {
-        variables: {
-          input: {
-            applicationId: state.application.id,
-          },
-        },
-      },
-    ]
-    const submitSectionTuple: any = [
-      submitSectionMutation,
-      {
-        variables: {
-          input: {
-            applicationId: state.application.id,
-          },
-        },
-      },
-    ]
-
-    if(isCompletedSection) {
+    if (isCompletedSection) {
       window.open(`/minarsidur`, '_blank')
     }
 
@@ -92,8 +70,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       dispatch({
         type: 'INCREMENT',
         payload: {
-          submitScreen: submitScreenTuple,
-          submitSection: submitSectionTuple,
+          submitScreen: submitScreen,
+          submitSection: submitSection,
         },
       })
       return
@@ -105,8 +83,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       dispatch({
         type: 'INCREMENT',
         payload: {
-          submitScreen: submitScreenTuple,
-          submitSection: submitSectionTuple,
+          submitScreen: submitScreen,
+          submitSection: submitSection,
         },
       })
       dispatch({ type: 'SUBMITTED', payload: true })
@@ -141,7 +119,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             </Button>
           </Box>
 
-            {/* Back button */}
           {!isBackButton && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button

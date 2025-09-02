@@ -29,7 +29,13 @@ export const Summary = ({ state }: Props) => {
       payload: { screenIndex: screenIndex, sectionIndex: sectionIndex },
     })
   }
-  const sections = state?.sections?.filter((s) => !s?.isHidden && s.sectionType != SectionTypes.PAYMENT && s.sectionType != SectionTypes.COMPLETED && s.sectionType != SectionTypes.SUMMARY)
+  const sections = state?.sections?.filter(
+    (s) =>
+      !s?.isHidden &&
+      s.sectionType !== SectionTypes.PAYMENT &&
+      s.sectionType !== SectionTypes.COMPLETED &&
+      s.sectionType !== SectionTypes.SUMMARY,
+  )
   return (
     <Box marginTop={2}>
       <Text fontWeight="light" as="p">
