@@ -258,7 +258,7 @@ export const dataSchema = z.object({
   unionSickPay: z
     .object({
       hasUtilizedUnionSickPayRights: z.string().optional().nullable(),
-      unionNationalId: z.string().optional().nullable(),
+      unionInfo: z.string().optional().nullable(),
       endDate: z.string().optional().nullable(),
       unionName: z.string().optional().nullable(),
     })
@@ -276,18 +276,18 @@ export const dataSchema = z.object({
       },
     )
     .refine(
-      ({ hasUtilizedUnionSickPayRights, unionNationalId, unionName }) => {
+      ({ hasUtilizedUnionSickPayRights, unionInfo, unionName }) => {
         // If the union name is set then we don't need to check the union
         if (unionName) {
           return true
         }
 
         return hasUtilizedUnionSickPayRights !== NOT_APPLICABLE
-          ? !!unionNationalId
+          ? !!unionInfo
           : true
       },
       {
-        path: ['unionNationalId'],
+        path: ['unionInfo'],
       },
     )
     .refine(

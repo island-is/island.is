@@ -141,7 +141,7 @@ export class VerdictsClientService {
             Boolean(judge?.isPresident),
           ),
           keywords: supremeCourtItem.keywords ?? [],
-          presentings: '',
+          presentings: supremeCourtItem.presentings ?? '',
         })
       }
     }
