@@ -97,7 +97,7 @@ export const MockPaymentCatalog = MockablePaymentCatalogApi.configure({
         performingOrgID: InstitutionNationalIds.FISKISTOFA,
         chargeType: 'L51',
         chargeItemCode: 'L5113',
-        chargeItemName: 'Leyfi til veiða í atvinnuskyni - ígulkerveiðileyfi',
+        chargeItemName: 'Leyfi til veiða á ígulkerjum',
         priceAmount: 22000,
       },
     ],
