@@ -10,9 +10,10 @@ import {
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
 import * as m from '../../../lib/messages'
-import { getRentalPropertySize, getYesNoOptions } from '../../../utils/utils'
+import { getRentalPropertySize } from '../../../utils/utils'
 import { shouldShowSmokeDetectorsAlert } from '../../../utils/conditions'
 import { PropertyUnit } from '../../../shared/types'
+import { getYesNoOptions } from '../../../utils/options'
 
 export const RentalHousingFireProtections = buildSubSection({
   id: Routes.FIREPROTECTIONS,

@@ -19,14 +19,8 @@ import {
   formatDate,
   formatNationalId,
   formatPhoneNumber,
-  getOtherFeesPayeeOptions,
-  getPaymentMethodOptions,
-  getPropertyClassGroupOptions,
-  getPropertyTypeOptions,
-  getRentalAmountPaymentDateOptions,
   getRentalPropertySize,
-  getSecurityDepositTypeOptions,
-  getYesNoOptions,
+  toISK,
 } from './utils'
 import * as m from '../lib/messages'
 import { OtherFees, PropertyInfo } from './types'
@@ -39,6 +33,15 @@ import {
   SecurityDepositTypeOptions,
 } from './enums'
 import { formatCurrency } from '@island.is/shared/utils'
+import {
+  getOtherFeesPayeeOptions,
+  getPaymentMethodOptions,
+  getPropertyClassGroupOptions,
+  getPropertyTypeOptions,
+  getRentalAmountPaymentDateOptions,
+  getSecurityDepositTypeOptions,
+  getYesNoOptions,
+} from './options'
 
 const formatPartyItems = (
   items: Array<ApplicantsInfo>,
@@ -50,18 +53,21 @@ const formatPartyItems = (
           {
             width: 'full' as const,
             keyText: party.nationalIdWithName?.name ?? '',
-            valueText: `Kennitala: ${
-              party.nationalIdWithName?.nationalId ?? ''
-            }`,
+            valueText: {
+              ...m.summary.nationalIdPrefix,
+              values: {
+                nationalId: party.nationalIdWithName?.nationalId ?? '',
+              },
+            },
           },
           {
             width: 'half' as const,
-            keyText: 'Netfang',
+            keyText: m.summary.emailLabel,
             valueText: party.email ?? '',
           },
           {
             width: 'half' as const,
-            keyText: 'Símanúmer',
+            keyText: m.summary.phoneNumberLabel,
             valueText: formatPhoneNumber(party.phone ?? ''),
           },
         ]
@@ -345,9 +351,7 @@ export const otherCostsOverview = (
         {
           width: 'half' as const,
           keyText: m.summary.houseFundAmountLabel,
-          valueText: formatCurrency(
-            parseInt(otherFees.housingFundAmount ?? '0'),
-          ),
+          valueText: formatCurrency(toISK(otherFees.housingFundAmount ?? '0')),
         },
       ]
     : []
@@ -505,7 +509,7 @@ export const priceOverview = (
     {
       width: 'half',
       keyText: m.summary.rentalAmountValue,
-      valueText: formatCurrency(parseInt(rentalAmount?.amount ?? '0')),
+      valueText: formatCurrency(toISK(rentalAmount?.amount ?? '0')),
     },
     {
       width: 'half',
@@ -601,7 +605,7 @@ export const depositOverview = (
     {
       width: 'full',
       keyText: m.summary.securityDepositLabel,
-      valueText: formatCurrency(parseInt(securityAmount ?? '0')),
+      valueText: formatCurrency(toISK(securityAmount ?? '0')),
     },
     {
       width: 'half',
@@ -653,10 +657,11 @@ export const rentalPropertyOverview = (
     answers,
     'registerProperty.searchresults',
   )
-  const units = getValueViaPath<PropertyUnit[]>(
-    answers,
-    'registerProperty.searchresults.units',
-  )
+  const units =
+    getValueViaPath<PropertyUnit[]>(
+      answers,
+      'registerProperty.searchresults.units',
+    ) ?? []
 
   const unitIdsAsString = units
     ?.map((unit) => `F${unit.propertyCode}`)

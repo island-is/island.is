@@ -50,6 +50,11 @@ export const summary = defineMessages({
     defaultMessage: 'Fasteignanúmer: {propertyId}',
     description: 'Property id prefix',
   },
+  nationalIdPrefix: {
+    id: 'ra.application:summary.nationalIdPrefix',
+    defaultMessage: 'Kennitala: {nationalId}',
+    description: 'National id prefix',
+  },
 
   // Rental period
   rentalPeriodStartDateLabel: {

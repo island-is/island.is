@@ -12,10 +12,6 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
-  getPaymentMethodOptions,
-  getRentalAmountPaymentDateOptions,
-} from '../../../utils/utils'
-import {
   Routes,
   RentalAmountPaymentDateOptions,
   RentalPaymentMethodOptions,
@@ -30,6 +26,10 @@ import {
   getIndexRateForConsumerIndexDate,
 } from '../../../utils/rentalPeriodUtils'
 import * as m from '../../../lib/messages'
+import {
+  getPaymentMethodOptions,
+  getRentalAmountPaymentDateOptions,
+} from '../../../utils/options'
 
 export const RentalPeriodAmount = buildSubSection({
   id: Routes.RENTALAMOUNT,

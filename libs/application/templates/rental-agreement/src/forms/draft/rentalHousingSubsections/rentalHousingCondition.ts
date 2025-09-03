@@ -7,9 +7,9 @@ import {
   buildFileUploadField,
 } from '@island.is/application/core'
 import { applicationAnswers } from '../../../shared'
-import { getInspectorOptions } from '../../../utils/utils'
 import { Routes, RentalHousingConditionInspector } from '../../../utils/enums'
 import * as m from '../../../lib/messages'
+import { getInspectorOptions } from '../../../utils/options'
 
 export const RentalHousingCondition = buildSubSection({
   id: Routes.CONDITION,

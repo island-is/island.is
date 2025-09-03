@@ -11,10 +11,6 @@ import {
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
-  getSecurityDepositTypeOptions,
-  getSecurityAmountOptions,
-} from '../../../utils/utils'
-import {
   Routes,
   SecurityDepositTypeOptions,
   SecurityDepositAmountOptions,
@@ -32,6 +28,10 @@ import {
   securityDepositIsThirdPartyGuarantee,
 } from '../../../utils/rentalPeriodUtils'
 import * as m from '../../../lib/messages'
+import {
+  getSecurityAmountOptions,
+  getSecurityDepositTypeOptions,
+} from '../../../utils/options'
 
 export const RentalPeriodSecurityDeposit = buildSubSection({
   condition: securityDepositRequired,

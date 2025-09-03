@@ -9,7 +9,6 @@ import {
   YesOrNoEnum,
   buildFieldsRepeaterField,
 } from '@island.is/application/core'
-import { getOtherFeesPayeeOptions } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
 import {
   electricityCostPayedByTenant,
@@ -18,6 +17,7 @@ import {
   otherFeesPayedByTenant,
 } from '../../../utils/rentalPeriodUtils'
 import * as m from '../../../lib/messages'
+import { getOtherFeesPayeeOptions } from '../../../utils/options'
 
 export const RentalPeriodOtherFees = buildSubSection({
   id: Routes.OTHERFEES,
