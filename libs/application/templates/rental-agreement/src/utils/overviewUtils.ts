@@ -40,7 +40,9 @@ import {
 } from './enums'
 import { formatCurrency } from '@island.is/shared/utils'
 
-const formatPatyItems = (items: Array<ApplicantsInfo>): Array<KeyValueItem> => {
+const formatPartyItems = (
+  items: Array<ApplicantsInfo>,
+): Array<KeyValueItem> => {
   return (
     items
       ?.map((party, i) => {
@@ -81,7 +83,7 @@ export const landlordOverview = (
     return []
   }
 
-  const items: Array<KeyValueItem> = formatPatyItems(landlords)
+  const items: Array<KeyValueItem> = formatPartyItems(landlords)
 
   return items
 }
@@ -99,7 +101,7 @@ export const landlordRepresentativeOverview = (
     return []
   }
 
-  const items: Array<KeyValueItem> = formatPatyItems(landlordsRepresentatives)
+  const items: Array<KeyValueItem> = formatPartyItems(landlordsRepresentatives)
 
   return items
 }
@@ -117,7 +119,7 @@ export const tenantOverview = (
     return []
   }
 
-  const items: Array<KeyValueItem> = formatPatyItems(tenants)
+  const items: Array<KeyValueItem> = formatPartyItems(tenants)
 
   return items
 }
