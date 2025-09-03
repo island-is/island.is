@@ -960,7 +960,9 @@ const renderConnectedComponent = (slice) => {
       connectedComponent = <SidebarShipSearchInput key={slice?.id} />
       break
     case 'Personuvernd/SearchInput':
-      connectedComponent = <OrganizationSearchInput key={slice?.id} {...slice?.json} />
+      connectedComponent = (
+        <OrganizationSearchInput key={slice?.id} {...slice?.json} />
+      )
       break
     case 'OrganizationSearchBox':
       connectedComponent = <SearchBox key={slice?.id} {...slice?.json} />
