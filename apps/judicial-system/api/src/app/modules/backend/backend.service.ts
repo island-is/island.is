@@ -25,6 +25,7 @@ import {
 } from '../case'
 import { CaseListEntry } from '../case-list'
 import { CaseTableResponse, SearchCasesResponse } from '../case-table'
+import { CourtSessionResponse } from '../court-session'
 import {
   CivilClaimant,
   Defendant,
@@ -591,6 +592,24 @@ export class BackendService extends DataSource<{ req: Request }> {
     const { caseId, indictmentCountId } = input
 
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
+  }
+
+  createCourtSession(
+    caseId: string,
+    createCourtSession: unknown,
+  ): Promise<CourtSessionResponse> {
+    return this.post(`case/${caseId}/courtSession`, createCourtSession)
+  }
+
+  updateCourtSession(
+    caseId: string,
+    courtSessionId: string,
+    updateCourtSession: unknown,
+  ): Promise<CourtSessionResponse> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}`,
+      updateCourtSession,
+    )
   }
 
   createOffense(input: CreateOffenseInput): Promise<Offense> {
