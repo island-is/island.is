@@ -30,7 +30,6 @@ import {
 } from './utils'
 import * as m from '../lib/messages'
 import { OtherFees, PropertyInfo } from './types'
-import { width } from 'pdfkit/js/page'
 import { RentalHousingCategoryClass } from '../shared/enums'
 import { getOptionLabel } from './summaryUtils'
 import {

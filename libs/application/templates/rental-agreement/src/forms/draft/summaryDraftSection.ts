@@ -1,6 +1,5 @@
 import {
   buildDescriptionField,
-  buildHiddenInput,
   buildMultiField,
   buildOverviewField,
   buildSection,
@@ -55,57 +54,57 @@ export const SummaryDraftSection = buildSection({
           description: summary.pageDescriptionSecondparagraph,
           marginBottom: 6,
         }),
-        // Húsnæði
+        // Property address
         buildOverviewField({
           id: 'rentalInfoOverview',
           title: summary.propertyInfoHeader,
           items: rentalPropertyOverview,
-          backId: Routes.REGISTERPROPERTY,
+          backId: Routes.PROPERTYSEARCH,
         }),
-        // // Leigusalar
+        // Landlords
         buildOverviewField({
           id: 'landlordOverview',
           title: singularOrPluralLandlordsTitle,
           items: landlordOverview,
           backId: Routes.PARTIESINFORMATION,
         }),
-        // // Umboðsaðili leigusala
+        // Landlord representatives
         buildOverviewField({
           id: 'landlordRepresentativeOverview',
           condition: shouldShowRepresentative,
           title: singularOrPluralRepresentativeTitle,
           items: landlordRepresentativeOverview,
-          backId: Routes.PROPERTYINFORMATION,
+          backId: Routes.PARTIESINFORMATION,
         }),
-        // // Leigjendur
+        // Tenants
         buildOverviewField({
           id: 'tenantOverview',
           title: singularOrPluralTenantsTitle,
           items: tenantOverview,
           backId: Routes.PARTIESINFORMATION,
         }),
-        // // Leiguhúsnæðið
+        // Rental property
         buildOverviewField({
           id: 'rentalInfoOverview',
           title: summary.propertyInfoHeader,
           items: rentalInfoOverview,
-          backId: Routes.RENTALPERIOD,
+          backId: Routes.PROPERTYSEARCH,
         }),
-        // // Skráning húsnæðis
+        // Property registration
         buildOverviewField({
           id: 'propertyRegistrationOverview',
           title: m.registerProperty.category.pageTitle,
           items: propertyRegistrationOverview,
-          backId: Routes.REGISTERPROPERTY,
+          backId: Routes.PROPERTYINFORMATION,
         }),
-        // // Nánari lýsing og sérákvæði
+        // Property description and special provisions
         buildOverviewField({
           id: 'specialProvisionsOverview',
           title: m.specialProvisions.subsection.pageTitle,
           items: specialProvisionsOverview,
           backId: Routes.SPECIALPROVISIONS,
         }),
-        // // Ástand húsnæðis
+        // Property condition
         buildOverviewField({
           id: 'propertyConditionOverview',
           title: summary.propertyConditionTitle,
@@ -113,28 +112,28 @@ export const SummaryDraftSection = buildSection({
           attachments: propertyConditionFilesOverview,
           backId: Routes.CONDITION,
         }),
-        // // Brunavarnir
+        // Fire protections
         buildOverviewField({
           id: 'fireProtectionsOverview',
           title: summary.fireProtectionsTitle,
           items: fireProtectionsOverview,
           backId: Routes.FIREPROTECTIONS,
         }),
-        // Verð
-        buildOverviewField({
-          id: 'priceOverview',
-          title: summary.rentalAmountTitle,
-          items: priceOverview,
-          backId: Routes.RENTALAMOUNT,
-        }),
-        // Tímabil
+        // Rental period (start and end date)
         buildOverviewField({
           id: 'rentalPeriodOverview',
           title: summary.rentalPeriodDefiniteLabel,
           items: rentalPeriodOverview,
           backId: Routes.RENTALPERIOD,
         }),
-        // Trygging
+        // Price
+        buildOverviewField({
+          id: 'priceOverview',
+          title: summary.rentalAmountTitle,
+          items: priceOverview,
+          backId: Routes.RENTALAMOUNT,
+        }),
+        // Security deposit
         buildOverviewField({
           id: 'depositOverview',
           condition: securityDepositRequired,
@@ -142,7 +141,7 @@ export const SummaryDraftSection = buildSection({
           items: depositOverview,
           backId: Routes.SECURITYDEPOSIT,
         }),
-        // Önnur gjöld
+        // Other fees
         buildOverviewField({
           id: 'otherCostsOverview',
           title: summary.otherCostsHeader,
@@ -159,32 +158,6 @@ export const SummaryDraftSection = buildSection({
               type: 'primary',
             },
           ],
-        }),
-        buildHiddenInput({
-          id: 'htmlSummary',
-          defaultValue: () => {
-            // Get email summary html
-            const element = document.getElementById('email-summary-container')
-
-            if (!element) {
-              return null
-            }
-
-            // Create a clone of the element to avoid modifying the visible DOM
-            const elementClone = element.cloneNode(true) as HTMLElement
-
-            // Remove buttons from the cloned element only
-            elementClone
-              .querySelectorAll('button')
-              .forEach((button) => button.remove())
-
-            const jsonData = {
-              id: element.id,
-              className: element.className,
-              html: elementClone.outerHTML,
-            }
-            return JSON.stringify(jsonData)
-          },
         }),
       ],
     }),
