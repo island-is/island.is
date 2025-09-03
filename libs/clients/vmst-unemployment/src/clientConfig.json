@@ -299,6 +299,41 @@
         ]
       }
     },
+    "/api/ActivationGrant/validateincomepage": {
+      "post": {
+        "tags": ["ActivationGrant"],
+        "operationId": "ActivationGrant_ValidateIncomePage",
+        "requestBody": {
+          "x-name": "incomeForm",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Income_ActivationGrantIncomeFormDTO"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_ActivationGrantValidation_ValidateActivationGrantResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/ApplicantInfo/getApplicantInfoForRVK/{ssn}": {
       "get": {
         "tags": ["ApplicantInfo"],
@@ -1422,7 +1457,7 @@
             "description": "Tekjur",
             "nullable": true,
             "items": {
-              "$ref": "#/components/schemas/ActivationGrantIncomeFormDTO"
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Income_ActivationGrantIncomeFormDTO"
             }
           },
           "trActivationGrantId": {
@@ -1430,6 +1465,10 @@
             "description": "Auðkenni umsóknar hjá TR",
             "format": "guid",
             "nullable": true
+          },
+          "hasCV": {
+            "type": "boolean",
+            "description": "Er með ferilskrá"
           }
         }
       },
@@ -2088,10 +2127,15 @@
           }
         ]
       },
-      "ActivationGrantIncomeFormDTO": {
+      "Galdur_Domain_Models_Income_ActivationGrantIncomeFormDTO": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "Einkvæmt auðkenni",
+            "format": "guid"
+          },
           "employerSSN": {
             "type": "string",
             "description": "kennitala Launagreiðandi",
@@ -4571,6 +4615,23 @@
             "nullable": true
           },
           "accountNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_Domain_Models_ActivationGrantValidation_ValidateActivationGrantResponseDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isValid": {
+            "type": "boolean"
+          },
+          "userMessageIS": {
+            "type": "string",
+            "nullable": true
+          },
+          "userMessageEN": {
             "type": "string",
             "nullable": true
           }
