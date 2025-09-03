@@ -2,7 +2,7 @@ import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import * as styles from './Footer.css'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { useIntl } from 'react-intl'
-import { webMessages } from '@island.is/form-system/ui'
+import { SectionTypes, webMessages } from '@island.is/form-system/ui'
 import {
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
@@ -32,24 +32,17 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   const validate = async () => trigger()
 
-  // const onSubmit =
-  //   (currentSection.data.sectionType === SectionTypes.SUMMARY &&
-  //     (state.application.hasPayment === false ||
-  //       state.application.hasPayment === undefined)) ||
-  //   currentSection.data.sectionType === SectionTypes.PAYMENT ||
-  //   (state.application.hasPayment === false &&
-  //     state.application.hasSummaryScreen === false &&
-  //     state.currentScreen?.index ===
-  //     state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
+  const onSubmit =
+    (currentSection.data.sectionType === SectionTypes.SUMMARY &&
+      (state.application.hasPayment === false ||
+        state.application.hasPayment === undefined)) ||
+    currentSection.data.sectionType === SectionTypes.PAYMENT ||
+    (state.application.hasPayment === false &&
+      state.application.hasSummaryScreen === false &&
+      state.currentScreen?.index ===
+      state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
 
-  const onSubmit = false
-
-  const displayBack =
-    state.currentSection.index > 0 &&
-    !(
-      state.currentSection.index === 1 &&
-      (state.currentScreen?.index ?? 0) === 0
-    )
+  // const onSubmit = false    
 
   const isCompletedSection =
     state.currentSection.data.sectionType === SectionTypes.COMPLETED
@@ -65,11 +58,11 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
 
-  const submitScreen = useMutation(SAVE_SCREEN)
-  const submitSection = useMutation(SUBMIT_SECTION)
-  const [submitApplication] = useMutation(SUBMIT_APPLICATION)
-
-  const isBackButton = state.currentSection.index <= 1 || isCompletedSection
+  const isBackButton = state.currentSection.index > 0 &&
+    !(
+      state.currentSection.index === 1 &&
+      (state.currentScreen?.index ?? 0) === 0
+    ) || isCompletedSection
 
   const handleIncrement = async () => {
     const isValid = await validate()
