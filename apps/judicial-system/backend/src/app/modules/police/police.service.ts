@@ -68,18 +68,6 @@ export interface SubpoenaInfo {
   serviceDate?: Date
 }
 
-export interface CaseSupplement {
-  courtCaseNumber: string | undefined
-  policeCaseNumbers: string[]
-  ruling: string | undefined
-  rulingDate: Date | undefined
-  courtInstitution: string | undefined
-  courtAddress: string | undefined
-  prosecutorInstitution: string | undefined
-  prosecutorSsn: string | undefined
-  defenderSsn: string | undefined
-}
-
 interface CreateDocumentResponse {
   externalPoliceDocumentId: string
 }
@@ -649,15 +637,7 @@ export class PoliceService {
   }): Promise<CreateDocumentResponse | undefined> {
     const { name: actor } = user
 
-    const body = JSON.stringify({
-      documentName: documentName,
-      documentFiles,
-      fileTypeCode,
-      supplements: caseSupplements,
-      dates: documentDates,
-    })
     const createDocumentPath = `${this.xRoadPath}/CreateDocument`
-    console.log({ body })
 
     try {
       const res = await this.fetchPoliceCaseApi(createDocumentPath, {
@@ -669,7 +649,13 @@ export class PoliceService {
           'X-API-KEY': this.config.policeApiKey,
         },
         agent: this.agent,
-        body,
+        body: JSON.stringify({
+          documentName: documentName,
+          documentFiles,
+          fileTypeCode,
+          supplements: caseSupplements,
+          dates: documentDates,
+        }),
       } as RequestInit)
 
       if (res.ok) {
