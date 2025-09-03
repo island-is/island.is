@@ -830,6 +830,17 @@ export const coreErrorMessages = defineMessages({
     description:
       'Error message if there was no vehicle associated with given permno',
   },
+  noContractFoundTitle: {
+    id: 'application.system:core.fetch.data.noContractFoundTitle',
+    defaultMessage: 'Engir samningar fundust',
+    description: 'No contract found title',
+  },
+  noContractFoundSummary: {
+    id: 'application.system:core.fetch.data.noContractFoundSummary',
+    defaultMessage:
+      'Engir gildir samningar fundust skráðir fyrir þessa kennitölu.',
+    description: 'No contract found summary',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({
