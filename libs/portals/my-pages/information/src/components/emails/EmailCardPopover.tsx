@@ -3,6 +3,7 @@ import { PropsWithChildren } from 'react'
 import { useIntl } from 'react-intl'
 import { PopoverStateReturn, Popover as ReakitPopover } from 'reakit/Popover'
 import { emailsMsg } from '../../lib/messages'
+import * as styles from './EmailCard/EmailCardPopover.css'
 
 type PopoverProps = PropsWithChildren<PopoverStateReturn>
 
@@ -17,7 +18,7 @@ export const EmailCardPopover = ({
       component={ReakitPopover}
       background="white"
       borderRadius="large"
-      boxShadow="large"
+      className={styles.menu}
       aria-label={formatMessage(emailsMsg.emailCardPopover)}
       borderColor="white"
       zIndex={10}

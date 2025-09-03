@@ -113,6 +113,11 @@ export const EmailCard = ({ title, ctaList, tags }: EmailCardProps) => {
                   })}
                 >
                   <Text
+                    className={
+                      cta.isDestructive
+                        ? styles.menuItemDestructive
+                        : styles.menuItemHover
+                    }
                     color={cta.isDestructive ? 'red600' : 'dark400'}
                     key={cta.label}
                     fontWeight="semiBold"
