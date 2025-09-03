@@ -807,11 +807,11 @@ export class FormsService {
         }
       }
     }
-    
+
     const hasCompleted = sections.some(
       (s) => s.sectionType === SectionTypes.COMPLETED,
     )
-   if (!hasCompleted) {
+    if (!hasCompleted) {
       sections.push({
         id: uuidV4(),
         formId: newForm.id,

@@ -23,7 +23,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   // Mutations
   const [submitScreen, { loading: saveLoading }] = useMutation(SAVE_SCREEN)
-  const [submitSection, { loading: sectionLoading }] = useMutation(SUBMIT_SECTION)
+  const [submitSection, { loading: sectionLoading }] =
+    useMutation(SUBMIT_SECTION)
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
     {
