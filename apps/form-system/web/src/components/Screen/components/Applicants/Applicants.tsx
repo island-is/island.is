@@ -7,6 +7,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
+
 interface Props {
   applicantField: FormSystemField
 }
@@ -33,10 +34,12 @@ export const Applicants = ({ applicantField }: Props) => {
         (applicantType ===
           ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY && (
           // Display agent
+          // eslint-disable-next-line react/jsx-no-useless-fragment
           <></>
         ))}
       {applicantType === ApplicantTypesEnum.LEGAL_ENTITY && (
         // Display legal entity
+        // eslint-disable-next-line react/jsx-no-useless-fragment
         <></>
       )}
     </>
