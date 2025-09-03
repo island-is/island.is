@@ -190,12 +190,14 @@ export class VerdictService {
     theCase: Case,
     defendant: Defendant,
   ): { code: string; value: string }[] {
+    const receiverSsn =
+      defendant.nationalId &&
+      normalizeAndFormatNationalId(defendant.nationalId)[0]
+    const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
+
     return [
       { code: 'RVG_CASE_ID', value: theCase.id },
-      {
-        code: 'RECEIVER_SSN',
-        value: normalizeAndFormatNationalId(defendant.nationalId)[0],
-      },
+      ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
       ...(theCase.courtCaseNumber
         ? [
             {
@@ -204,11 +206,11 @@ export class VerdictService {
             },
           ]
         : []),
-      ...(theCase.policeCaseNumbers
+      ...(policeNumbers.length
         ? [
             {
               code: 'POLICE_CASE_NUMBERS',
-              value: theCase.policeCaseNumbers.join(','),
+              value: policeNumbers.join(','),
             },
           ]
         : []),
