@@ -28,7 +28,9 @@ export const FormStepper = ({
       !!s &&
       !s.isHidden &&
       s.sectionType !== SectionTypes.PREMISES &&
-      (s.sectionType !== SectionTypes.SUMMARY || hasSummaryScreen),
+      (s.sectionType !== SectionTypes.SUMMARY || hasSummaryScreen) &&
+      (s.sectionType !== SectionTypes.COMPLETED ||
+        currentSection.data?.sectionType === SectionTypes.COMPLETED),
   )
   const activeSectionId = currentSection?.data?.id
   const activeScreenId = currentScreen?.data?.id

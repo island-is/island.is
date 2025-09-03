@@ -62,6 +62,7 @@ export const SectionTypes = {
   INPUT: 'INPUT',
   PAYMENT: 'PAYMENT',
   SUMMARY: 'SUMMARY',
+  COMPLETED: 'COMPLETED',
 } as const
 
 export const UrlMethods = {

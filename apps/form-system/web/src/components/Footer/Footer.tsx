@@ -21,10 +21,17 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const { formatMessage } = useIntl()
   const { trigger } = useFormContext()
 
-  const validate = async () => {
-    const valid = await trigger()
-    return valid
-  }
+  // Mutations
+  const submitScreen = useMutation(SAVE_SCREEN)
+  const submitSection = useMutation(SUBMIT_SECTION)
+  const [submitApplication, { loading: submitLoading }] = useMutation(
+    SUBMIT_APPLICATION,
+    {
+      errorPolicy: 'none',
+    },
+  )
+
+  const validate = async () => trigger()
 
   const onSubmit =
     (currentSection.data.sectionType === SectionTypes.SUMMARY &&
@@ -36,45 +43,57 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       state.currentScreen?.index ===
         state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
 
+  const isCompletedSection =
+    state.currentSection.data.sectionType === SectionTypes.COMPLETED
   const continueButtonText =
     state.currentSection.index === 0
       ? formatMessage(webMessages.externalDataConfirmation)
       : onSubmit
       ? formatMessage(webMessages.submitApplication)
+      : isCompletedSection
+      ? formatMessage(webMessages.openMyPages)
       : formatMessage(webMessages.continue)
+
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
-  const submitScreen = useMutation(SAVE_SCREEN)
-  const submitSection = useMutation(SUBMIT_SECTION)
-  const [submitApplication] = useMutation(SUBMIT_APPLICATION)
+  const isBackButton = state.currentSection.index <= 1 || isCompletedSection
   const handleIncrement = async () => {
     const isValid = await validate()
-
-    if (onSubmit) {
-      return submitApplication({
-        variables: {
-          input: {
-            id: state.application.id,
-          },
-        },
-      })
-    }
-
-    dispatch({
-      type: 'SET_VALIDITY',
-      payload: { isValid },
-    })
-
+    dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
     if (!isValid) return
 
-    dispatch({
-      type: 'INCREMENT',
-      payload: {
-        submitScreen,
-        submitSection,
-      },
-    })
+    if (isCompletedSection) {
+      window.open('/minarsidur', '_blank', 'noopener,noreferrer')
+      return
+    }
+
+    if (!onSubmit) {
+      dispatch({
+        type: 'INCREMENT',
+        payload: {
+          submitScreen: submitScreen,
+          submitSection: submitSection,
+        },
+      })
+      return
+    }
+    try {
+      await submitApplication({
+        variables: { input: { id: state.application.id } },
+      })
+      dispatch({
+        type: 'INCREMENT',
+        payload: {
+          submitScreen: submitScreen,
+          submitSection: submitSection,
+        },
+      })
+      dispatch({ type: 'SUBMITTED', payload: true })
+    } catch {
+      dispatch({ type: 'SUBMITTED', payload: false })
+    }
   }
+
   const handleDecrement = () => dispatch({ type: 'DECREMENT' })
 
   return (
@@ -91,21 +110,23 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           paddingTop={[1, 4]}
         >
           <Box display="inlineFlex" padding={2} paddingRight="none">
-            {/* Implement logic on whether submit button should be rendered */}
             <Button
               icon="arrowForward"
               onClick={handleIncrement}
-              disabled={!enableContinueButton}
+              disabled={!enableContinueButton || submitLoading}
+              loading={submitLoading}
             >
               {continueButtonText}
             </Button>
           </Box>
-          {state.currentSection.index > 1 && (
+
+          {!isBackButton && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button
                 icon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
+                disabled={submitLoading}
               >
                 {formatMessage(webMessages.back)}
               </Button>

@@ -13,6 +13,7 @@ import { useIntl } from 'react-intl'
 import { useLocale } from '@island.is/localization'
 import { Divider } from '@island.is/island-ui/core'
 import { Display } from '../Display/Display'
+import { SectionTypes } from '@island.is/form-system/ui'
 
 interface Props {
   state?: ApplicationState
@@ -28,7 +29,13 @@ export const Summary = ({ state }: Props) => {
       payload: { screenIndex: screenIndex, sectionIndex: sectionIndex },
     })
   }
-  const sections = state?.sections?.filter((s) => !s?.isHidden)
+  const sections = state?.sections?.filter(
+    (s) =>
+      !s?.isHidden &&
+      s.sectionType !== SectionTypes.PAYMENT &&
+      s.sectionType !== SectionTypes.COMPLETED &&
+      s.sectionType !== SectionTypes.SUMMARY,
+  )
   return (
     <Box marginTop={2}>
       <Text fontWeight="light" as="p">
