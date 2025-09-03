@@ -57,10 +57,10 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
     }
   }, [error, loading, nationalId, fromDate, toDate, formatMessage])
 
-  const breakdown = data?.statisticsBreakdownWithCategoriesByProviderId  ?? {
-      totalCount: 0,
-      items: [],
-    }
+  const breakdown = data?.statisticsBreakdownWithCategoriesByProviderId ?? {
+    totalCount: 0,
+    items: [],
+  }
 
   // Prepare chart data if breakdown is available
   let chartData: Array<SentFilesChartDataItem> | undefined

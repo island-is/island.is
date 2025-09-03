@@ -60,7 +60,9 @@ export const useGetProviderStatisticsBreakdownByProviderId = (
   let chartData: Array<DocumentProviderDashboardChartData> | undefined
   if (breakdown) {
     chartData = breakdown.items.map(
-      (item: ProviderStatisticsBreakdown): DocumentProviderDashboardChartData => ({
+      (
+        item: ProviderStatisticsBreakdown,
+      ): DocumentProviderDashboardChartData => ({
         name:
           item.year && item.month
             ? new Date(item.year, item.month - 1).toLocaleString('is', {

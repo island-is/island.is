@@ -100,7 +100,6 @@ export const m = defineMessages({
     defaultMessage: 'Villur',
   },
 
-  
   //DocumentProviders
   documentProvidersTitle: {
     id: 'portals-admin.document-provider:document-providers-title',

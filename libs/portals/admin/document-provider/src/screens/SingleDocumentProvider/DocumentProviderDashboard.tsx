@@ -3,7 +3,10 @@ import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/Op
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
 import { SentFilesAndErrorsBarChart } from '../../components/SentFilesAndErrorsBarChart/SentFilesAndErrorsBarChart'
 import { SentFilesProfitBarChart } from '../../components/SentFilesProfitBarChart/SentFilesProfitBarChart'
-import { DocumentProviderDashboardChartData , SentFilesChartDataItem } from '../../lib/types'
+import {
+  DocumentProviderDashboardChartData,
+  SentFilesChartDataItem,
+} from '../../lib/types'
 
 interface Props {
   sentFilesData?: Array<SentFilesChartDataItem>

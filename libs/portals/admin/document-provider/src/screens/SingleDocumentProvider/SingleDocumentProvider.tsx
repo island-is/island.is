@@ -198,9 +198,9 @@ const SingleDocumentProvider = () => {
               chartData={chartData}
             />
 
-            { breakdown ? (
-            <DocumentProviderStatisticsTable {...breakdown} />
-            ) : null }
+            {breakdown ? (
+              <DocumentProviderStatisticsTable {...breakdown} />
+            ) : null}
 
             <Box marginTop={2} marginBottom={4}>
               <Pagination

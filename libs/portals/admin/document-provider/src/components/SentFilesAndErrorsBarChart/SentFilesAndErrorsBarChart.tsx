@@ -29,8 +29,7 @@ const TITLES = ['Send skjöl', 'Villur']
 export const SentFilesAndErrorsBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
- const { formatMessage } = useLocale()
-
+  const { formatMessage } = useLocale()
 
   return (
     <GridColumn span={['12/12', '12/12', '6/12']}>
