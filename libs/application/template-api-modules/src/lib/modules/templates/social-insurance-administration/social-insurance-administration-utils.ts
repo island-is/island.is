@@ -445,10 +445,6 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       email: applicantEmail,
       phonenumber: applicantPhonenumber,
     },
-    period: {
-      year: new Date().getFullYear(), //TODO: remove when backend is ready
-      month: new Date().getMonth(), //TODO: remove when backend is ready
-    },
     comment,
     applicationId: application.id,
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
