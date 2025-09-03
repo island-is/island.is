@@ -5,13 +5,27 @@ import {
   KeyValueItem,
 } from '@island.is/application/types'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
-import { ApplicantsInfo, Files, PropertyUnit } from '../shared/types'
 import {
+  AddressProps,
+  ApplicantsInfo,
+  Files,
+  PropertyUnit,
+  RentalAmountSection,
+  RentalPeriodSection,
+  SecurityDepositSection,
+} from '../shared/types'
+import {
+  formatBankInfo,
+  formatDate,
+  formatNationalId,
   formatPhoneNumber,
   getOtherFeesPayeeOptions,
+  getPaymentMethodOptions,
   getPropertyClassGroupOptions,
   getPropertyTypeOptions,
+  getRentalAmountPaymentDateOptions,
   getRentalPropertySize,
+  getSecurityDepositTypeOptions,
   getYesNoOptions,
 } from './utils'
 import * as m from '../lib/messages'
@@ -19,7 +33,12 @@ import { OtherFees, PropertyInfo } from './types'
 import { width } from 'pdfkit/js/page'
 import { RentalHousingCategoryClass } from '../shared/enums'
 import { getOptionLabel } from './summaryUtils'
-import { OtherFeesPayeeOptions, RentalHousingConditionInspector } from './enums'
+import {
+  OtherFeesPayeeOptions,
+  RentalHousingConditionInspector,
+  RentalPaymentMethodOptions,
+  SecurityDepositTypeOptions,
+} from './enums'
 import { formatCurrency } from '@island.is/shared/utils'
 
 const formatPatyItems = (items: Array<ApplicantsInfo>): Array<KeyValueItem> => {
@@ -55,8 +74,6 @@ export const landlordOverview = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  console.log(answers)
-
   const landlords = getValueViaPath<Array<ApplicantsInfo>>(
     answers,
     'parties.landlordInfo.table',
@@ -305,8 +322,6 @@ export const otherCostsOverview = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  console.log('answers: ', answers)
-
   const otherFees = getValueViaPath<OtherFees>(answers, 'otherFees')
 
   if (!otherFees) {
@@ -386,13 +401,22 @@ export const otherCostsOverview = (
   const hasOtherCosts = otherFees.otherCosts?.includes(YesOrNoEnum.YES)
 
   const otherCostsItems = hasOtherCosts
-    ? otherFees.otherCostItems?.map((item) => {
-        return {
-          width: 'half' as const,
-          keyText: m.summary.otherCostsLabel,
-          valueText: item.description || '-',
-        }
-      })
+    ? otherFees.otherCostItems
+        ?.map((item) => {
+          return [
+            {
+              width: 'half' as const,
+              keyText: m.summary.otherCostsLabel,
+              valueText: item.description || '-',
+            },
+            {
+              width: 'half' as const,
+              keyText: m.summary.otherCostsAmountLabel,
+              valueText: formatCurrency(item.amount ?? 0),
+            },
+          ]
+        })
+        .flat()
     : []
 
   const otherCostItemsSpacer =
@@ -400,7 +424,7 @@ export const otherCostsOverview = (
 
   return [
     {
-      width: 'half',
+      width: houseFundAmount.length > 0 ? 'half' : 'full',
       keyText: m.summary.houseFundLabel,
       valueText: getOptionLabel(
         otherFees.housingFund || '',
@@ -411,7 +435,7 @@ export const otherCostsOverview = (
     ...houseFundAmount,
     ...spacer,
     {
-      width: 'half',
+      width: electricityCostMeterNumber.length > 0 ? 'half' : 'full',
       keyText: m.summary.electricityCostLabel,
       valueText: getOptionLabel(
         otherFees.electricityCost || '',
@@ -422,7 +446,7 @@ export const otherCostsOverview = (
     ...electricityCostMeterNumber,
     ...spacer,
     {
-      width: 'half',
+      width: heatingCostMeterNumber.length > 0 ? 'half' : 'full',
       keyText: m.summary.heatingCostLabel,
       valueText: getOptionLabel(
         otherFees.heatingCost || '',
@@ -432,6 +456,222 @@ export const otherCostsOverview = (
     },
     ...heatingCostMeterNumber,
     ...otherCostItemsSpacer,
-    // ...otherCostsItems
+    ...(otherCostsItems ?? []),
+  ]
+}
+
+export const priceOverview = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const rentalAmount = getValueViaPath<RentalAmountSection>(
+    answers,
+    'rentalAmount',
+  )
+  const indexedRent = rentalAmount?.isIndexConnected?.includes(YesOrNoEnum.YES)
+
+  const index = indexedRent
+    ? [
+        {
+          width: 'half' as const,
+          keyText: m.summary.indexRateLabel,
+          valueText: rentalAmount?.indexRate ?? '-',
+        },
+      ]
+    : []
+
+  const paymentBankInfo =
+    rentalAmount?.paymentMethodOptions ===
+    RentalPaymentMethodOptions.BANK_TRANSFER
+      ? [
+          {
+            width: 'half' as const,
+            keyText: m.summary.paymentMethodNationalIdLabel,
+            valueText: formatNationalId(
+              rentalAmount?.paymentMethodNationalId ?? '-',
+            ),
+          },
+          {
+            width: 'half' as const,
+            keyText: m.summary.paymentMethodAccountLabel,
+            valueText: formatBankInfo(
+              rentalAmount?.paymentMethodBankAccountNumber ?? '-',
+            ),
+          },
+        ]
+      : []
+
+  return [
+    {
+      width: 'half',
+      keyText: m.summary.rentalAmountValue,
+      valueText: formatCurrency(parseInt(rentalAmount?.amount ?? '0')),
+    },
+    {
+      width: 'half',
+      keyText: m.summary.rentalAmountIndexedLabel,
+      valueText: indexedRent ? m.misc.yes : m.misc.no,
+    },
+    ...index,
+    {
+      width: 'half',
+      keyText: m.summary.paymentDateOptionsLabel,
+      valueText: getOptionLabel(
+        rentalAmount?.paymentDateOptions ?? '',
+        getRentalAmountPaymentDateOptions,
+        '',
+      ),
+    },
+    {
+      width: 'full',
+      keyText: m.summary.paymentMethodTypeLabel,
+      valueText:
+        rentalAmount?.paymentMethodOptions === RentalPaymentMethodOptions.OTHER
+          ? rentalAmount?.paymentMethodOther || '-'
+          : getOptionLabel(
+              rentalAmount?.paymentMethodOptions || '',
+              getPaymentMethodOptions,
+              '',
+            ),
+    },
+    ...paymentBankInfo,
+  ]
+}
+
+export const depositOverview = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const deposit = getValueViaPath<SecurityDepositSection>(
+    answers,
+    'securityDeposit',
+  )
+
+  const securityAmount = deposit?.securityAmountOther
+    ? deposit?.securityAmountOther
+    : deposit?.securityAmountCalculated
+
+  const securityType = deposit?.securityType as
+    | SecurityDepositTypeOptions
+    | undefined
+
+  const securityNameKeyTexts = {
+    [SecurityDepositTypeOptions.CAPITAL]:
+      m.summary.securityTypeInstitutionLabel,
+    [SecurityDepositTypeOptions.BANK_GUARANTEE]:
+      m.summary.securityTypeInstitutionLabel,
+    [SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE]:
+      m.summary.securityTypeThirdPartyGuaranteeLabel,
+    [SecurityDepositTypeOptions.INSURANCE_COMPANY]:
+      m.summary.securityTypeInsuranceLabel,
+    [SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND]:
+      m.summary.securityTypeMutualFundLabel,
+  }
+
+  const securityNameValueTexts = {
+    [SecurityDepositTypeOptions.CAPITAL]: deposit?.bankGuaranteeInfo || '-',
+    [SecurityDepositTypeOptions.BANK_GUARANTEE]:
+      deposit?.bankGuaranteeInfo || '-',
+    [SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE]:
+      deposit?.thirdPartyGuaranteeInfo || '-',
+    [SecurityDepositTypeOptions.INSURANCE_COMPANY]:
+      deposit?.insuranceCompanyInfo || '-',
+    [SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND]:
+      deposit?.landlordsMutualFundInfo || '-',
+  }
+
+  const securityName =
+    securityType && securityType !== SecurityDepositTypeOptions.CAPITAL
+      ? [
+          {
+            width: 'half' as const,
+            keyText:
+              securityNameKeyTexts[
+                securityType as keyof typeof securityNameKeyTexts
+              ] ?? '-',
+            valueText:
+              securityNameValueTexts[
+                securityType as keyof typeof securityNameValueTexts
+              ] ?? '-',
+          },
+        ]
+      : []
+
+  return [
+    {
+      width: 'full',
+      keyText: m.summary.securityDepositLabel,
+      valueText: formatCurrency(parseInt(securityAmount ?? '0')),
+    },
+    {
+      width: 'half',
+      keyText: m.summary.securityTypeLabel,
+      valueText: getOptionLabel(
+        deposit?.securityType ?? '',
+        getSecurityDepositTypeOptions,
+        '',
+      ),
+    },
+    ...securityName,
+  ]
+}
+
+export const rentalPeriodOverview = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const rentalPeriod = getValueViaPath<RentalPeriodSection>(
+    answers,
+    'rentalPeriod',
+  )
+
+  return [
+    {
+      width: 'snug',
+      keyText: m.summary.rentalPeriodStartDateLabel,
+      valueText: formatDate(rentalPeriod?.startDate ?? ''),
+    },
+    {
+      width: 'snug',
+      keyText: rentalPeriod?.isDefinite?.includes(YesOrNoEnum.YES)
+        ? m.summary.rentalPeriodEndDateLabel
+        : m.summary.rentalPeriodDefiniteLabel,
+      valueText:
+        rentalPeriod?.isDefinite?.includes(YesOrNoEnum.YES) &&
+        rentalPeriod?.endDate
+          ? formatDate(rentalPeriod?.endDate?.toString())
+          : m.summary.rentalPeriodDefiniteValue,
+    },
+  ]
+}
+
+export const rentalPropertyOverview = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const searchResults = getValueViaPath<AddressProps>(
+    answers,
+    'registerProperty.searchresults',
+  )
+  const units = getValueViaPath<PropertyUnit[]>(
+    answers,
+    'registerProperty.searchresults.units',
+  )
+
+  const unitIdsAsString = units
+    ?.map((unit) => `F${unit.propertyCode}`)
+    .join(', ')
+
+  return [
+    {
+      width: 'full',
+      keyText: searchResults?.label,
+      valueText: {
+        ...m.summary.rentalPropertyId,
+        values: {
+          propertyId: unitIdsAsString,
+        },
+      },
+    },
   ]
 }

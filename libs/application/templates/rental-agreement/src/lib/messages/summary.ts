@@ -45,6 +45,11 @@ export const summary = defineMessages({
     defaultMessage: 'Fasteignanúmer: ',
     description: 'Property id prefix',
   },
+  rentalPropertyId: {
+    id: 'ra.application:summary.rentalPropertyId',
+    defaultMessage: 'Fasteignanúmer: {propertyId}',
+    description: 'Property id prefix',
+  },
 
   // Rental period
   rentalPeriodStartDateLabel: {
@@ -369,6 +374,23 @@ export const summary = defineMessages({
     id: 'ra.application:summary.fireProtectionsTitle',
     defaultMessage: 'Brunavarnir',
     description: 'Fire protections title',
+  },
+
+  // Rental amount
+  rentalAmountTitle: {
+    id: 'ra.application:summary.rentalAmountTitle',
+    defaultMessage: 'Leiga',
+    description: 'Rental amount title',
+  },
+  rentalAmountValue: {
+    id: 'ra.application:summary.rentalAmountValue',
+    defaultMessage: 'Upphæð leigu',
+    description: 'Rental amount value',
+  },
+  rentalAmountIndexedLabel: {
+    id: 'ra.application:summary.rentalAmountIndexedLabel',
+    defaultMessage: 'Leiga fylgir vísitölu',
+    description: 'Rental amount indexed label',
   },
 
   // Share link

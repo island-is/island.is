@@ -1,8 +1,9 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import { ApplicantsInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
+import { applicationAnswers } from '../shared/utils'
 
 export const singularOrPluralLandlordsTitle = (application: Application) => {
   const landlords = getValueViaPath<Array<ApplicantsInfo>>(
@@ -20,7 +21,6 @@ export const singularOrPluralLandlordsTitle = (application: Application) => {
 }
 
 export const shouldShowRepresentative = (answers: FormValue) => {
-  console.log('answers: ', answers)
   const representatives = getValueViaPath<Array<ApplicantsInfo>>(
     answers,
     'parties.landlordInfo.representativeTable',
@@ -85,4 +85,13 @@ export const shouldShowSmokeDetectorsAlert = (answers: FormValue) => {
   const requiredSmokeDetectors = Math.ceil(Number(size) / 80)
 
   return Number(smokeDetectors) < requiredSmokeDetectors
+}
+
+export const securityDepositRequired = (answers: FormValue) => {
+  console.log('answers: ', answers)
+  const securityDepositRequired = getValueViaPath<Array<string>>(
+    answers,
+    'rentalAmount.securityDepositRequired',
+  )
+  return securityDepositRequired?.includes(YesOrNoEnum.YES) || false
 }

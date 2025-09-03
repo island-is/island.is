@@ -154,7 +154,6 @@ const rentalPeriod = z
       }
     }
 
-
     if (!isDefiniteChecked) {
       return
     }
@@ -179,48 +178,6 @@ const rentalPeriod = z
         code: z.ZodIssueCode.custom,
         path: ['endDate'],
         params: m.rentalPeriod.errorEndDateBeforeStart,
-      })
-    }
-  })
-
-const fireProtections = z
-  .object({
-    smokeDetectors: z.string().optional(),
-    fireExtinguisher: z.string().optional(),
-    emergencyExits: z.string().optional(),
-    fireBlanket: z.string().optional(),
-    propertySize: z
-      .array(
-        z.object({
-          size: z.number().optional(),
-          changedSize: z.number().optional(),
-        }),
-      )
-      .optional(),
-  })
-  .superRefine((data, ctx) => {
-    const { smokeDetectors, fireExtinguisher } = data
-
-    const propertySize = getRentalPropertySize(
-      (data.propertySize as PropertyUnit[]) || [],
-    )
-    const numberOfSmokeDetectors = Number(smokeDetectors)
-    const requiredSmokeDetectors = Math.ceil(Number(propertySize) / 80)
-    if (smokeDetectors && numberOfSmokeDetectors < requiredSmokeDetectors) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.housingFireProtections.smokeDetectorMinRequiredError,
-        path: ['smokeDetectors'],
-      })
-    }
-
-    if (fireExtinguisher && Number(fireExtinguisher) < 1) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.housingFireProtections.fireExtinguisherNullError,
-        path: ['fireExtinguisher'],
       })
     }
   })

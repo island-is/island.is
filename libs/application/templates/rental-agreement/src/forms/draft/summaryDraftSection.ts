@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
@@ -11,18 +10,23 @@ import { DefaultEvents } from '@island.is/application/types'
 import { Routes } from '../../utils/enums'
 import { summary, application } from '../../lib/messages'
 import {
+  depositOverview,
   fireProtectionsOverview,
   landlordOverview,
   landlordRepresentativeOverview,
   otherCostsOverview,
+  priceOverview,
   propertyConditionFilesOverview,
   propertyConditionOverview,
   propertyRegistrationOverview,
   rentalInfoOverview,
+  rentalPeriodOverview,
+  rentalPropertyOverview,
   specialProvisionsOverview,
   tenantOverview,
 } from '../../utils/overviewUtils'
 import {
+  securityDepositRequired,
   shouldShowRepresentative,
   singularOrPluralLandlordsTitle,
   singularOrPluralRepresentativeTitle,
@@ -49,87 +53,101 @@ export const SummaryDraftSection = buildSection({
         buildDescriptionField({
           id: 'summarySecondDescription',
           description: summary.pageDescriptionSecondparagraph,
+          marginBottom: 6,
+        }),
+        // Húsnæði
+        buildOverviewField({
+          id: 'rentalInfoOverview',
+          title: summary.propertyInfoHeader,
+          items: rentalPropertyOverview,
+          backId: Routes.REGISTERPROPERTY,
         }),
         // // Leigusalar
-        // buildOverviewField({
-        //   id: 'landlordOverview',
-        //   title: singularOrPluralLandlordsTitle,
-        //   items: landlordOverview,
-        //   backId: Routes.PARTIESINFORMATION,
-        //   bottomLine: true,
-        //   marginTop: 4,
-        // }),
+        buildOverviewField({
+          id: 'landlordOverview',
+          title: singularOrPluralLandlordsTitle,
+          items: landlordOverview,
+          backId: Routes.PARTIESINFORMATION,
+        }),
         // // Umboðsaðili leigusala
-        // buildOverviewField({
-        //   id: 'landlordRepresentativeOverview',
-        //   condition: shouldShowRepresentative,
-        //   title: singularOrPluralRepresentativeTitle,
-        //   items: landlordRepresentativeOverview,
-        //   backId: Routes.PROPERTYINFORMATION,
-        //   bottomLine: true,
-        // }),
+        buildOverviewField({
+          id: 'landlordRepresentativeOverview',
+          condition: shouldShowRepresentative,
+          title: singularOrPluralRepresentativeTitle,
+          items: landlordRepresentativeOverview,
+          backId: Routes.PROPERTYINFORMATION,
+        }),
         // // Leigjendur
-        // buildOverviewField({
-        //   id: 'tenantOverview',
-        //   title: singularOrPluralTenantsTitle,
-        //   items: tenantOverview,
-        //   backId: Routes.PARTIESINFORMATION,
-        //   bottomLine: true,
-        // }),
+        buildOverviewField({
+          id: 'tenantOverview',
+          title: singularOrPluralTenantsTitle,
+          items: tenantOverview,
+          backId: Routes.PARTIESINFORMATION,
+        }),
         // // Leiguhúsnæðið
-        // buildOverviewField({
-        //   id: 'rentalInfoOverview',
-        //   title: summary.propertyInfoHeader,
-        //   items: rentalInfoOverview,
-        //   backId: Routes.RENTALPERIOD,
-        //   bottomLine: true,
-        // }),
+        buildOverviewField({
+          id: 'rentalInfoOverview',
+          title: summary.propertyInfoHeader,
+          items: rentalInfoOverview,
+          backId: Routes.RENTALPERIOD,
+        }),
         // // Skráning húsnæðis
-        // buildOverviewField({
-        //   id: 'propertyRegistrationOverview',
-        //   title: m.registerProperty.category.pageTitle,
-        //   items: propertyRegistrationOverview,
-        //   backId: Routes.REGISTERPROPERTY,
-        //   bottomLine: true,
-        // }),
+        buildOverviewField({
+          id: 'propertyRegistrationOverview',
+          title: m.registerProperty.category.pageTitle,
+          items: propertyRegistrationOverview,
+          backId: Routes.REGISTERPROPERTY,
+        }),
         // // Nánari lýsing og sérákvæði
-        // buildOverviewField({
-        //   id: 'specialProvisionsOverview',
-        //   title: m.specialProvisions.subsection.pageTitle,
-        //   items: specialProvisionsOverview,
-        //   backId: Routes.SPECIALPROVISIONS,
-        //   bottomLine: true,
-        // }),
+        buildOverviewField({
+          id: 'specialProvisionsOverview',
+          title: m.specialProvisions.subsection.pageTitle,
+          items: specialProvisionsOverview,
+          backId: Routes.SPECIALPROVISIONS,
+        }),
         // // Ástand húsnæðis
-        // buildOverviewField({
-        //   id: 'propertyConditionOverview',
-        //   title: summary.propertyConditionTitle,
-        //   items: propertyConditionOverview,
-        //   attachments: propertyConditionFilesOverview,
-        //   backId: Routes.CONDITION,
-        //   bottomLine: true,
-        // }),
+        buildOverviewField({
+          id: 'propertyConditionOverview',
+          title: summary.propertyConditionTitle,
+          items: propertyConditionOverview,
+          attachments: propertyConditionFilesOverview,
+          backId: Routes.CONDITION,
+        }),
         // // Brunavarnir
-        // buildOverviewField({
-        //   id: 'fireProtectionsOverview',
-        //   title: summary.fireProtectionsTitle,
-        //   items: fireProtectionsOverview,
-        //   backId: Routes.FIREPROTECTIONS,
-        //   bottomLine: true,
-        // }),
+        buildOverviewField({
+          id: 'fireProtectionsOverview',
+          title: summary.fireProtectionsTitle,
+          items: fireProtectionsOverview,
+          backId: Routes.FIREPROTECTIONS,
+        }),
+        // Verð
+        buildOverviewField({
+          id: 'priceOverview',
+          title: summary.rentalAmountTitle,
+          items: priceOverview,
+          backId: Routes.RENTALAMOUNT,
+        }),
+        // Tímabil
+        buildOverviewField({
+          id: 'rentalPeriodOverview',
+          title: summary.rentalPeriodDefiniteLabel,
+          items: rentalPeriodOverview,
+          backId: Routes.RENTALPERIOD,
+        }),
+        // Trygging
+        buildOverviewField({
+          id: 'depositOverview',
+          condition: securityDepositRequired,
+          title: summary.securityDepositLabel,
+          items: depositOverview,
+          backId: Routes.SECURITYDEPOSIT,
+        }),
         // Önnur gjöld
         buildOverviewField({
           id: 'otherCostsOverview',
           title: summary.otherCostsHeader,
           items: otherCostsOverview,
           backId: Routes.OTHERFEES,
-          bottomLine: true,
-        }),
-
-        buildCustomField({
-          id: 'summaryEditComponent',
-          title: summary.pageTitle,
-          component: 'SummaryEdit',
         }),
         buildSubmitField({
           id: 'toSummary',
