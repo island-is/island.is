@@ -436,15 +436,15 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
+    nationalId: string,
+    application: Application,
   ): ApplicationRole | undefined => {
-    if (_nationalId === _application.applicant) {
+    if (nationalId === application.applicant) {
       return Roles.APPLICANT
     }
 
     const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN
-    if (_nationalId === TR_ID) {
+    if (nationalId === TR_ID) {
       return Roles.ORGANIZATION_REVIEWER
     }
 
