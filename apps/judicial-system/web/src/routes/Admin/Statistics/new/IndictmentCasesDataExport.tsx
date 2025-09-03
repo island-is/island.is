@@ -71,13 +71,17 @@ const IndictmentCasesDataExport = () => {
                   input: queryVariables,
                 })
                 setCsvLoading(true)
-                const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
-                if (url) {
-                  const link = document.createElement('a')
-                  link.href = url
-                  document.body.appendChild(link)
-                  link.click()
-                  document.body.removeChild(link)
+                try {
+                  const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
+                  if (url) {
+                    const link = document.createElement('a')
+                    link.href = url
+                    link.setAttribute('download', '')
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                  }
+                } finally {
                   setCsvLoading(false)
                 }
               }}
