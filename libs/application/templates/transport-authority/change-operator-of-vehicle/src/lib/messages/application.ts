@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const application = defineMessages({
   name: {
     id: 'ta.cov.application:name',
-    defaultMessage: 'Bæta við umráðamanni á ökutæki',
+    defaultMessage: 'Bæta við umráðamanni á ökutæki {value}',
     description: `Application's name`,
   },
   institutionName: {

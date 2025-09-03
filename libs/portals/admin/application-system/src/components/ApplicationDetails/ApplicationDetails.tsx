@@ -84,6 +84,13 @@ export const ApplicationDetails = ({
               {application.applicant}
             </ValueLine>
           </GridColumn>
+          {application.adminData?.map((item) => (
+            <GridColumn span={['2/2', '2/2', '1/2']} key={item.key}>
+              <ValueLine title={formatMessage(item.label)}>
+                {item.values?.join(', ') ?? ''}
+              </ValueLine>
+            </GridColumn>
+          ))}
         </GridRow>
       </Box>
       {application.applicantActors.length > 0 &&
