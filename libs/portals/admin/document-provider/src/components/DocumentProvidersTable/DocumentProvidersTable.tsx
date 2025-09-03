@@ -1,9 +1,4 @@
-import {
-  Box,
-  Table as T,
-  Text,
-  Button,
-} from '@island.is/island-ui/core'
+import { Box, Table as T, Text, Button } from '@island.is/island-ui/core'
 import { useNavigate } from 'react-router-dom'
 import { ProviderInfo } from '../../lib/types'
 import { formatNumber } from '../../lib/utils'
@@ -42,7 +37,9 @@ export const ProvidersTable = ({ providers }: Props) => {
                     icon="arrowForward"
                     variant="text"
                     aria-label={`Skoða nánar: ${item.name}`}
-                    onClick={() => navigate(`/skjalaveitur/yfirlit/${item.providerId}`)}
+                    onClick={() =>
+                      navigate(`/skjalaveitur/yfirlit/${item.providerId}`)
+                    }
                   >
                     Skoða nánar
                   </Button>

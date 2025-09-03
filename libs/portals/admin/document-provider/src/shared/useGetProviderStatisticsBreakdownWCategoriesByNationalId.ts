@@ -31,7 +31,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
       nationalId: nationalId ?? '',
       from: fromDate ? formatDateYYYYMMDD(fromDate) : undefined,
       to: toDate ? formatDateYYYYMMDD(toDate) : undefined,
-      sortBy: (sortBy ?? TotalStatisticsSortBy.Date),
+      sortBy: sortBy ?? TotalStatisticsSortBy.Date,
       desc,
       page,
       pageSize,
@@ -54,7 +54,10 @@ export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
     }
   }, [error, loading, nationalId, fromDate, toDate, formatMessage])
 
-  const breakdown = data?.statisticsBreakdownWithCategoriesByNationalId ??  { totalCount: 0, items: [] }
+  const breakdown = data?.statisticsBreakdownWithCategoriesByNationalId ?? {
+    totalCount: 0,
+    items: [],
+  }
 
   // Prepare chart data if breakdown is available
   let chartData: Array<SentFilesChartDataItem> | undefined

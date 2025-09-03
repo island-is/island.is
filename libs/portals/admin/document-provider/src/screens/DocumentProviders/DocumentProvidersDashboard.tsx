@@ -35,8 +35,16 @@ export const DocumentProvidersDashboard = ({
     published > 0 ? Math.round((opened / published) * 100) : 0
 
   const openedFilesData = [
-    { name: formatMessage(m.statisticsBoxOpenedDocuments), value: openedPercentage || 0, color: '#007bff' },
-    { name: formatMessage(m.statisticsBoxUnopenedDocuments), value: 100 - openedPercentage, color: '#d6b3ff' },
+    {
+      name: formatMessage(m.statisticsBoxOpenedDocuments),
+      value: openedPercentage || 0,
+      color: '#007bff',
+    },
+    {
+      name: formatMessage(m.statisticsBoxUnopenedDocuments),
+      value: 100 - openedPercentage,
+      color: '#d6b3ff',
+    },
   ]
 
   return (
@@ -44,10 +52,15 @@ export const DocumentProvidersDashboard = ({
       <Text variant="h4" marginBottom={1} marginTop={4}>
         {formatMessage(m.Statistics)}
       </Text>
-      <Text marginBottom={2}>{formatMessage(m.statisticsDescription6months)}</Text>
+      <Text marginBottom={2}>
+        {formatMessage(m.statisticsDescription6months)}
+      </Text>
 
       <GridRow>
-        <SentFilesBarChart title={formatMessage(m.statisticsBoxPublishedDocuments)} data={sentFilesData || []} />
+        <SentFilesBarChart
+          title={formatMessage(m.statisticsBoxPublishedDocuments)}
+          data={sentFilesData || []}
+        />
 
         <OpenedFilesDonutChart
           valueIndex={0}
@@ -55,7 +68,10 @@ export const DocumentProvidersDashboard = ({
           data={openedFilesData}
         />
 
-        <OpenedFilesDonutChart title={formatMessage(m.categories)} data={categories} />
+        <OpenedFilesDonutChart
+          title={formatMessage(m.categories)}
+          data={categories}
+        />
       </GridRow>
     </Box>
   )

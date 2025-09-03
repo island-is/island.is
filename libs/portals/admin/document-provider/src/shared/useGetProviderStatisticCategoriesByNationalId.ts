@@ -29,7 +29,7 @@ export const useGetProviderStatisticCategoriesByNationalId = (
         input: statisticsInput,
       },
       fetchPolicy: 'cache-and-network',
-      skip: !nationalId
+      skip: !nationalId,
     },
   )
 
