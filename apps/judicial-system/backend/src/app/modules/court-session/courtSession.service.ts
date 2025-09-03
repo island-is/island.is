@@ -29,13 +29,11 @@ export class CourtSessionService {
     update: UpdateCourtSessionDto,
     transaction?: Transaction,
   ): Promise<CourtSession> {
-    const [numberOfAffectedRows] = await this.courtSessionRepositoryService.update(
-      update,
-      {
+    const [numberOfAffectedRows] =
+      await this.courtSessionRepositoryService.update(update, {
         where: { id: courtSessionId, caseId },
         transaction,
-      },
-    )
+      })
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
