@@ -45,7 +45,7 @@ module.exports = {
             references: { model: 'user', key: 'id' },
             allowNull: true,
           },
-          closingEntries: { type: Sequelize.TEXT, allowNull: true },
+          closing_entries: { type: Sequelize.TEXT, allowNull: true },
         },
         { transaction },
       ),
