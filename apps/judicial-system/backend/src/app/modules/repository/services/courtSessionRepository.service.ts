@@ -1,6 +1,10 @@
 import { CreateOptions, Transaction, UpdateOptions } from 'sequelize'
 
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -78,26 +82,41 @@ export class CourtSessionRepositoryService {
   async update(
     data: UpdateCourtSession,
     options: UpdateCourtSessionOptions,
-  ): Promise<[affectedCount: number]> {
+  ): Promise<CourtSession> {
     try {
       this.logger.debug('Updating court session with data and conditions:', {
         data: Object.keys(data ?? {}),
         where: Object.keys(options?.where ?? {}),
       })
 
-      const updateOptions: UpdateOptions = {
-        where: options.where,
-      }
+      const updateOptions: UpdateOptions = { where: options.where }
 
       if (options.transaction) {
         updateOptions.transaction = options.transaction
       }
 
-      const result = await this.courtSessionModel.update(data, updateOptions)
+      const [numberOfAffectedRows, courtSessions] =
+        await this.courtSessionModel.update(data, {
+          ...updateOptions,
+          returning: true,
+        })
 
-      this.logger.debug(`Updated ${result[0]} court session(s)`)
+      if (numberOfAffectedRows < 1) {
+        throw new InternalServerErrorException(
+          `Could not update court session ${options.where.id} of case ${options.where.caseId}`,
+        )
+      }
 
-      return result
+      if (numberOfAffectedRows > 1) {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating court session ${options.where.id} of case ${options.where.caseId}`,
+        )
+      }
+
+      this.logger.debug(`Updated court session ${courtSessions[0].id}`)
+
+      return courtSessions[0]
     } catch (error) {
       this.logger.error(
         'Error updating court session with data and conditions:',

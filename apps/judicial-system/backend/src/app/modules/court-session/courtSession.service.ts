@@ -29,31 +29,9 @@ export class CourtSessionService {
     update: UpdateCourtSessionDto,
     transaction?: Transaction,
   ): Promise<CourtSession> {
-    const [numberOfAffectedRows] = await this.courtSessionRepositoryService.update(
-      update,
-      {
-        where: { id: courtSessionId, caseId },
-        transaction,
-      },
-    )
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating court session ${courtSessionId} of case ${caseId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update court session ${courtSessionId} of case ${caseId}`,
-      )
-    }
-
-    // Return the updated court session - for simplicity, we'll create a mock return
-    // In a real scenario, you might want to fetch the updated session
-    return {
-      id: courtSessionId,
-      caseId,
-      ...update,
-    } as CourtSession
+    return this.courtSessionRepositoryService.update(update, {
+      where: { id: courtSessionId, caseId },
+      transaction,
+    })
   }
 }
