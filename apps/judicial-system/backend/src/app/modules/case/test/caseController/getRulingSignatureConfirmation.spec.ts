@@ -14,7 +14,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../repository'
+import { Case, CaseRepositoryService } from '../../../repository'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
 
 jest.mock('../../../../factories')
@@ -39,7 +39,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
   let mockMessageService: MessageService
   let mockAwsS3Service: AwsS3Service
   let transaction: Transaction
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -47,11 +47,11 @@ describe('CaseController - Get ruling signature confirmation', () => {
       messageService,
       awsS3Service,
       sequelize,
-      caseModel,
+      caseRepositoryService,
       caseController,
     } = await createTestingCaseModule()
 
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
     mockMessageService = messageService
     mockAwsS3Service = awsS3Service
 
@@ -66,7 +66,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     const mockPutGeneratedObject =
       mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
     mockPutGeneratedObject.mockResolvedValue(uuid())
-    const mockUpdate = mockCaseModel.update as jest.Mock
+    const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
     const mockPostMessageToQueue =
       mockMessageService.sendMessagesToQueue as jest.Mock
@@ -118,14 +118,14 @@ describe('CaseController - Get ruling signature confirmation', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
     it('should return success', () => {
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
@@ -154,14 +154,14 @@ describe('CaseController - Get ruling signature confirmation', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
     it('should set the ruling signature date', () => {
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
@@ -191,7 +191,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     const documentToken = uuid()
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
 
       await givenWhenThen(caseId, user, theCase, documentToken)
@@ -221,7 +221,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
+      const mockUpdate = mockCaseRepositoryService.update as jest.Mock
       mockUpdate.mockRejectedValueOnce(new Error('Some error'))
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
@@ -254,7 +254,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       expect(then.result.documentSigned).toBe(false)
       expect(then.result.message).toBeTruthy()
       expect(then.result.code).toBeUndefined()
-      expect(mockCaseModel.update).not.toHaveBeenCalled()
+      expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
   })

@@ -190,6 +190,7 @@
       "{workspaceRoot}/**/Dockerfile.*"
     ],
     "sharedGlobals": [
+      "{workspaceRoot}/infra/src/dsl/**/*",
       "{workspaceRoot}/eslint-local-rules.js",
       "{workspaceRoot}/nx.json",
       "{workspaceRoot}/tsconfig.base.json",

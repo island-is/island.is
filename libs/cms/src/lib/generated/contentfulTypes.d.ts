@@ -2931,6 +2931,9 @@ export interface INewsFields {
   /** Featured image */
   image: Asset
 
+  /** Image text */
+  imageText?: string | undefined
+
   /** Full Width Image In Content */
   fullWidthImageInContent?: boolean | undefined
 
