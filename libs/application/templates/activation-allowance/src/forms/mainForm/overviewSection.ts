@@ -20,7 +20,11 @@ import {
   getIncomeOverviewItems,
 } from '../../utils/getOverviewItems'
 import { FormValue } from '@island.is/application/types'
-import { EducationAnswer, JobHistoryAnswer } from '../../lib/dataSchema'
+import {
+  EducationAnswer,
+  IncomeAnswers,
+  JobHistoryAnswer,
+} from '../../lib/dataSchema'
 import { hasCv } from '../../utils/hasCv'
 import { overview } from '../../lib/messages/overview'
 
@@ -50,6 +54,12 @@ export const overviewSection = buildSection({
         buildOverviewField({
           id: 'overview.income',
           backId: 'incomeMultiField[0]',
+          condition: (formValue: FormValue) => {
+            const incomeAnswers =
+              getValueViaPath<IncomeAnswers>(formValue, 'income') || []
+            if (incomeAnswers.length === 0) return false
+            return true
+          },
           items: getIncomeOverviewItems,
         }),
         buildOverviewField({
