@@ -19,6 +19,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useIntl()
   const { trigger } = useFormContext()
+  const { currentSection } = state
 
   // Mutations
   const submitScreen = useMutation(SAVE_SCREEN)
