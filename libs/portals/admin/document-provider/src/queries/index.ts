@@ -49,7 +49,7 @@ export const GET_PROVIDER_STATISTICS_BREAKDOWN_BY_PROVIDERID = gql`
   query ProviderStatisticsBreakdownByProviderId(
     $input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest!
   ) {
-    statisticsBreakdownByProvidersId(input: $input) {
+    statisticsBreakdownByProviderId(input: $input) {
       totalCount
       items {
         year

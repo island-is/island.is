@@ -10,6 +10,8 @@ import {
   CartesianGrid,
 } from 'recharts'
 import { formatYAxis } from '../../lib/utils'
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 export interface ChartData {
   name: string
@@ -27,6 +29,9 @@ const TITLES = ['Send skjöl', 'Villur']
 export const SentFilesAndErrorsBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
+ const { formatMessage } = useLocale()
+
+
   return (
     <GridColumn span={['12/12', '12/12', '6/12']}>
       <Box
@@ -38,7 +43,7 @@ export const SentFilesAndErrorsBarChart: FC<React.PropsWithChildren<Props>> = ({
         alignItems={'center'}
       >
         <Text variant="h3" marginBottom={2} color="blue400">
-          Skjöl afhend og villur
+          {formatMessage(m.sentFilesAndErrors)}
         </Text>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart
@@ -66,13 +71,13 @@ export const SentFilesAndErrorsBarChart: FC<React.PropsWithChildren<Props>> = ({
             <Bar
               dataKey="published"
               fill={COLORS[0]}
-              name="Send skjöl"
+              name={formatMessage(m.statisticsBoxPublishedDocuments)}
               radius={[8, 8, 0, 0]}
             />
             <Bar
               dataKey="failures"
               fill={COLORS[1]}
-              name="Villur"
+              name={formatMessage(m.sentErrors)}
               radius={[8, 8, 0, 0]}
             />
           </BarChart>

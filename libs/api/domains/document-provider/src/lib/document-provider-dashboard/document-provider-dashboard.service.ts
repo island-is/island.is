@@ -35,7 +35,6 @@ export class DocumentProviderDashboardServiceV1 {
   async getStatisticProvidersByNationalId(
     input: ApiV1StatisticsNationalIdProvidersGetRequest,
   ): Promise<ProviderStatisticsPaginationResponse | null> {
-    console.log('input in service', input)
     const statisticProviders =
       await this.documentDashboardService.getStatisticProvidersByNationalId({
         ...input,
@@ -93,33 +92,33 @@ export class DocumentProviderDashboardServiceV1 {
   async getStatisticsByNationalId(
     input: ApiV1StatisticsNationalIdGetRequest,
   ): Promise<StatisticsOverview | null> {
-    const statisticCategories =
+    const statistics =
       await this.documentDashboardService.getStatisticsByNationalId({
         ...input,
       })
 
-    if (!statisticCategories) {
+    if (!statistics) {
       return null
     }
 
     return {
-      ...statisticCategories,
-      statistics: statisticCategories.statistics
+      ...statistics,
+      statistics: statistics.statistics
         ? {
-            published: statisticCategories.statistics.published ?? 0,
-            notifications: statisticCategories.statistics.notifications ?? 0,
-            opened: statisticCategories.statistics.opened ?? 0,
-            failures: statisticCategories.statistics.failures ?? 0,
+            published: statistics.statistics.published ?? 0,
+            notifications: statistics.statistics.notifications ?? 0,
+            opened: statistics.statistics.opened ?? 0,
+            failures: statistics.statistics.failures ?? 0,
           }
         : undefined,
     }
   }
 
-  async getStatisticsBreakdownByProvidersId(
+  async getStatisticsBreakdownByProviderId(
     input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     const breakdown =
-      await this.documentDashboardService.getStatisticsBreakdownByProvidersId({
+      await this.documentDashboardService.getStatisticsBreakdownByProviderId({
         ...input,
         sortBy: input.sortBy as TotalStatisticsSortBy | undefined,
       })
@@ -236,8 +235,8 @@ export class DocumentProviderDashboardServiceV1 {
       ...breakdown,
       totalCount: breakdown.totalCount ?? 0,
       items: (breakdown.items ?? []).map((item) => ({
-        year: item.year,
-        month: item.month,
+        year: item.year ?? 0,
+        month: item.month ?? 0,
         categoryStatistics: item.categoryStatistics
           ? (item.categoryStatistics as Array<CategoryStatistics>).map(
               (category) => ({

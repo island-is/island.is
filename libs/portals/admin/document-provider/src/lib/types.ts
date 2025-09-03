@@ -30,7 +30,7 @@ export type ProviderStatisticsBreakdown = {
 
 export type GetProviderStatisticsBreakdownReturnType = {
   breakdown: ProviderStatisticsBreakdownPaginationResponse
-  chartData?: Array<ChartData>
+  chartData?: Array<DocumentProviderDashboardChartData>
   loading: boolean
 }
 export type GetProviderStatisticsBreakdownWithCategoriesReturnType = {
@@ -63,7 +63,7 @@ export type SentFilesChartDataItemInfo = {
   published: number
 }
 
-export type ChartData = {
+export type DocumentProviderDashboardChartData = {
   name: string
   published: number
   failures: number
@@ -89,7 +89,7 @@ export type StatisticsOverview = {
 }
 
 export type GetStatisticsByNationalIdReturnType = {
-  statistics: StatisticsOverview
+  statistics: StatisticsOverview | null
   loading: boolean
 }
 

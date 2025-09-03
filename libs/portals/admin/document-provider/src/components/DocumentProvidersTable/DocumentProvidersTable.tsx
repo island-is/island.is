@@ -2,9 +2,9 @@ import {
   Box,
   Table as T,
   Text,
-  LinkV2,
   Button,
 } from '@island.is/island-ui/core'
+import { useNavigate } from 'react-router-dom'
 import { ProviderInfo } from '../../lib/types'
 import { formatNumber } from '../../lib/utils'
 
@@ -13,6 +13,7 @@ interface Props {
 }
 
 export const ProvidersTable = ({ providers }: Props) => {
+  const navigate = useNavigate()
   return (
     <Box paddingTop={6}>
       <T.Table>
@@ -36,14 +37,15 @@ export const ProvidersTable = ({ providers }: Props) => {
                   {formatNumber(item.statistics?.opened)}
                 </T.Data>
                 <T.Data>
-                  <LinkV2
-                    color={'blue400'}
-                    href={`/stjornbord/skjalaveitur/yfirlit/${item.providerId}`}
+                  <Button
+                    size="small"
+                    icon="arrowForward"
+                    variant="text"
+                    aria-label={`Skoða nánar: ${item.name}`}
+                    onClick={() => navigate(`/skjalaveitur/yfirlit/${item.providerId}`)}
                   >
-                    <Button size="small" icon="arrowForward" variant="text">
-                      Skoða nánar
-                    </Button>
-                  </LinkV2>
+                    Skoða nánar
+                  </Button>
                 </T.Data>
               </T.Row>
             ))

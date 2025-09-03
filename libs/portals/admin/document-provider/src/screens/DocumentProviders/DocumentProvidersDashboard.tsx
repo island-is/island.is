@@ -4,9 +4,10 @@ import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/Op
 import { useGetProviderStatisticCategoriesByNationalId } from '../../shared/useGetProviderStatisticCategoriesByNationalId'
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
 import { SentFilesChartDataItem, StatisticsOverview } from '../../lib/types'
+import { m } from '../../lib/messages'
 
 interface Props {
-  statistics: StatisticsOverview
+  statistics: StatisticsOverview | null
   nationalId: string
   sentFilesData?: Array<SentFilesChartDataItem>
   fromDate?: Date
@@ -20,7 +21,7 @@ export const DocumentProvidersDashboard = ({
   fromDate,
   toDate,
 }: Props) => {
-  useLocale()
+  const { formatMessage } = useLocale()
 
   const { categories } = useGetProviderStatisticCategoriesByNationalId(
     nationalId,
@@ -34,27 +35,27 @@ export const DocumentProvidersDashboard = ({
     published > 0 ? Math.round((opened / published) * 100) : 0
 
   const openedFilesData = [
-    { name: 'Opnuð skjöl', value: openedPercentage || 0, color: '#007bff' },
-    { name: 'Óopnuð skjöl', value: 100 - openedPercentage, color: '#d6b3ff' },
+    { name: formatMessage(m.statisticsBoxOpenedDocuments), value: openedPercentage || 0, color: '#007bff' },
+    { name: formatMessage(m.statisticsBoxUnopenedDocuments), value: 100 - openedPercentage, color: '#d6b3ff' },
   ]
 
   return (
     <Box marginBottom={2}>
       <Text variant="h4" marginBottom={1} marginTop={4}>
-        Tölfræði
+        {formatMessage(m.Statistics)}
       </Text>
-      <Text marginBottom={2}>Hér er tölfræði síðustu 6 mánuða</Text>
+      <Text marginBottom={2}>{formatMessage(m.statisticsDescription6months)}</Text>
 
       <GridRow>
-        <SentFilesBarChart title="Send skjöl" data={sentFilesData || []} />
+        <SentFilesBarChart title={formatMessage(m.statisticsBoxPublishedDocuments)} data={sentFilesData || []} />
 
         <OpenedFilesDonutChart
           valueIndex={0}
-          title="Opnuð skjöl"
+          title={formatMessage(m.statisticsBoxOpenedDocuments)}
           data={openedFilesData}
         />
 
-        <OpenedFilesDonutChart title="Flokkar" data={categories} />
+        <OpenedFilesDonutChart title={formatMessage(m.categories)} data={categories} />
       </GridRow>
     </Box>
   )

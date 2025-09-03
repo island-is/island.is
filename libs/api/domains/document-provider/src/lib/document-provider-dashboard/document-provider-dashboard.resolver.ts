@@ -164,9 +164,9 @@ export class DocumentProviderDashboardResolverV1 {
   @Scopes(AdminPortalScope.documentProvider)
   @Query(() => ProviderStatisticsBreakdownPaginationResponse, {
     nullable: true,
-    name: 'statisticsBreakdownByProvidersId',
+    name: 'statisticsBreakdownByProviderId',
   })
-  async statisticsBreakdownByProvidersId(
+  async statisticsBreakdownByProviderId(
     @Args('input')
     input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest,
     @CurrentUser() user: User,
@@ -176,13 +176,13 @@ export class DocumentProviderDashboardResolverV1 {
         {
           auth: user,
           namespace: '@island.is/api/document-provider-dashboard',
-          action: 'getStatisticsBreakdownByProvidersId',
+          action: 'getStatisticsBreakdownByProviderId',
           resources: input.nationalId,
           meta: {
             nationalId: input.nationalId,
           },
         },
-        this.documentProviderDashboardServiceV1.getStatisticsBreakdownByProvidersId(
+        this.documentProviderDashboardServiceV1.getStatisticsBreakdownByProviderId(
           { ...input },
         ),
       )
@@ -194,7 +194,7 @@ export class DocumentProviderDashboardResolverV1 {
 
       return data
     } catch (e) {
-      this.logger.warn('Failed to getStatisticsBreakdownByProvidersId', {
+      this.logger.warn('Failed to getStatisticsBreakdownByProviderId', {
         category: LOG_CATEGORY,
         nationalId: input.nationalId,
         error: e,
