@@ -109,7 +109,8 @@ const EventInformationBox = ({
           <Icon color="blue400" icon="calendar" type="outline" />
           {event.startDateTime && (
             <Text>{format(new Date(event.startDateTime), 'do MMMM yyyy')}</Text>
-          )} -
+          )}{' '}
+          -
           {event.endDateTime && (
             <Text>{format(new Date(event.endDateTime), 'do MMMM yyyy')}</Text>
           )}

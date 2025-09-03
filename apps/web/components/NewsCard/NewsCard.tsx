@@ -48,9 +48,13 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
 
   const showImage = width > 600
 
-  const sameYear = date && date2 ? new Date(date).getFullYear() === new Date(date2).getFullYear() : false
+  const sameYear =
+    date && date2
+      ? new Date(date).getFullYear() === new Date(date2).getFullYear()
+      : false
 
-  const formattedDate = date && format(new Date(date), sameYear ? 'dd MMM' : 'dd MMM yyyy')
+  const formattedDate =
+    date && format(new Date(date), sameYear ? 'dd MMM' : 'dd MMM yyyy')
   const formattedDate2 = date2 && format(new Date(date2), 'dd MMM yyyy')
 
   if (mini) {
@@ -71,7 +75,9 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
           <Stack space={2}>
             {!!formattedDate && (
               <Text variant="eyebrow" color={dateTextColor}>
-                {formattedDate2 ? `${formattedDate} - ${formattedDate2}` : formattedDate}
+                {formattedDate2
+                  ? `${formattedDate} - ${formattedDate2}`
+                  : formattedDate}
               </Text>
             )}
             <Text variant="h2" as={titleAs} color={titleTextColor}>
@@ -112,7 +118,9 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
           >
             <Stack space={2}>
               <Text variant="eyebrow" color={dateTextColor}>
-                {`${formattedDate} ${formattedDate2 ? '- ' +  formattedDate2 : ''}`}
+                {`${formattedDate} ${
+                  formattedDate2 ? '- ' + formattedDate2 : ''
+                }`}
               </Text>
               <Text variant={titleVariant} as={titleAs} color={titleTextColor}>
                 {title}

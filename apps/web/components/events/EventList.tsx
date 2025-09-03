@@ -87,7 +87,6 @@ export const EventList = ({
               text: string
             }> = []
 
-
             const eventLocation = formatEventLocation(event.location)
             if (eventLocation) {
               detailLines.push({
@@ -133,7 +132,6 @@ export const EventList = ({
                 introduction={
                   <Stack space={4}>
                     <EventLocation location={eventItem.location} />
-
                   </Stack>
                 }
                 date={eventItem.startDateTime ?? undefined}
