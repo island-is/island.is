@@ -161,6 +161,7 @@ export class StatisticsService {
 
     const cases = await this.caseModel.findAll({
       where,
+      order: [['created', 'ASC']],
       include: [
         {
           model: EventLog,
@@ -342,6 +343,7 @@ export class StatisticsService {
 
     const cases = await this.caseModel.findAll({
       where,
+      order: [['created', 'ASC']],
       include: [
         {
           model: EventLog,
@@ -356,14 +358,11 @@ export class StatisticsService {
 
     const filterOnSentToCourt = () => {
       if (sentToCourt) {
-        const sortedCase = cases.sort(
-          (a, b) => a.created.getTime() - b.created.getTime(),
-        )
-        if (!sortedCase.length) {
+        if (!cases.length) {
           return undefined
         }
 
-        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const start = sentToCourt.fromDate ?? cases[0]?.created
         const end = sentToCourt.toDate ?? new Date()
 
         return cases.filter(({ eventLogs }) =>
