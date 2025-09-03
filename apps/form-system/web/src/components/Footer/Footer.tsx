@@ -22,9 +22,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const { trigger } = useFormContext()
 
   // Mutations
-  const [submitScreen, { loading: saveLoading }] = useMutation(SAVE_SCREEN)
-  const [submitSection, { loading: sectionLoading }] =
-    useMutation(SUBMIT_SECTION)
+  const submitScreen = useMutation(SAVE_SCREEN)
+  const submitSection = useMutation(SUBMIT_SECTION)
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
     {
