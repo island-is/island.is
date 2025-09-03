@@ -18,6 +18,7 @@ export interface ApplicationState {
   }
   errors?: string[]
   isValid?: boolean
+  submitted?: boolean
 }
 
 export interface Action {
