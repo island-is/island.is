@@ -45,7 +45,7 @@ const formatPartyItems = (
 ): Array<KeyValueItem> => {
   return (
     items
-      ?.map((party, i) => {
+      ?.map((party) => {
         return [
           {
             width: 'full' as const,

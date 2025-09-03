@@ -1,6 +1,4 @@
 import { z } from 'zod'
-import { getRentalPropertySize } from '../../utils/utils'
-import { PropertyUnit } from '../../shared/types'
 import * as m from '../../lib/messages'
 
 export const fireProtections = z.object({

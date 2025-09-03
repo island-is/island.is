@@ -3,7 +3,6 @@ import { Application, FormValue } from '@island.is/application/types'
 import { ApplicantsInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
-import { applicationAnswers } from '../shared/utils'
 
 export const singularOrPluralLandlordsTitle = (application: Application) => {
   const landlords = getValueViaPath<Array<ApplicantsInfo>>(
