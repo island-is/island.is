@@ -812,11 +812,15 @@ export class FormsService {
       (s) => s.sectionType === SectionTypes.COMPLETED,
     )
     if (!hasCompleted) {
+      const maxOrder =
+        sections.length > 0
+          ? Math.max(...sections.map((s) => s.displayOrder ?? 0))
+          : 0
       sections.push({
         id: uuidV4(),
         formId: newForm.id,
         sectionType: SectionTypes.COMPLETED,
-        displayOrder: 9931,
+        displayOrder: maxOrder + 1,
         name: { is: 'Staðfesting', en: 'Confirmation' },
         created: new Date(),
         modified: new Date(),
