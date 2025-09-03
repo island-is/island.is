@@ -88,7 +88,6 @@ export const shouldShowSmokeDetectorsAlert = (answers: FormValue) => {
 }
 
 export const securityDepositRequired = (answers: FormValue) => {
-  console.log('answers: ', answers)
   const securityDepositRequired = getValueViaPath<Array<string>>(
     answers,
     'rentalAmount.securityDepositRequired',
