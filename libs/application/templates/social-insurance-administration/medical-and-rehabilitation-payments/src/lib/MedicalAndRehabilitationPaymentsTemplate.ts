@@ -439,7 +439,16 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
     _nationalId: string,
     _application: Application,
   ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+    if (_nationalId === _application.applicant) {
+      return Roles.APPLICANT
+    }
+
+    const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN
+    if (_nationalId === TR_ID) {
+      return Roles.ORGANIZATION_REVIEWER
+    }
+
+    return undefined
   },
 }
 
