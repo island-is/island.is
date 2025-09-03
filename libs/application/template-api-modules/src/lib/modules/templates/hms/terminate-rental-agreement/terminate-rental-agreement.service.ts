@@ -14,6 +14,7 @@ import {
 } from './utils'
 import { AttachmentS3Service } from '../../../shared/services'
 import { ContractStatus } from './types'
+import { coreErrorMessages } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { mockGetRentalAgreements } from './mockedRentalAgreements'
 
@@ -55,9 +56,23 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
         return mockGetRentalAgreements()
       }
 
+      if (contracts.length === 0) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.noContractFoundTitle,
+            summary: coreErrorMessages.noContractFoundSummary,
+          },
+          400,
+        )
+      }
+
       return contracts
     } catch (e) {
-      this.logger.error('Failed to fetch properties:', e.message)
+      if (e instanceof TemplateApiError) {
+        // If it's already a TemplateApiError, throw it
+        throw e
+      }
+      this.logger.error('Failed to fetch rental agreements:', e.message)
       throw new TemplateApiError(e, 500)
     }
   }
