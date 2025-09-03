@@ -69,7 +69,8 @@ export class SectionsService {
 
       if (
         section.sectionType === SectionTypes.SUMMARY ||
-        section.sectionType === SectionTypes.PAYMENT
+        section.sectionType === SectionTypes.PAYMENT ||
+        section.sectionType === SectionTypes.COMPLETED
       )
         continue
 
