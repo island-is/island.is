@@ -39,7 +39,6 @@ grantNamespaces:
   - 'application-system'
   - 'consultation-portal'
   - 'search-indexer'
-  - 'payments'
   - 'services-payments'
 grantNamespacesEnabled: true
 healthCheck:
