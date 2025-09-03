@@ -10,7 +10,7 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../repository'
+import { Case, CaseRepositoryService } from '../../../repository'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
 
 interface Then {
@@ -28,22 +28,22 @@ type GivenWhenThen = (
 describe('CaseController - Get court record signature confirmation', () => {
   let mockAwsS3Service: AwsS3Service
   let transaction: Transaction
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, sequelize, caseModel, caseController } =
+    const { awsS3Service, sequelize, caseRepositoryService, caseController } =
       await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     const mockPutGeneratedObject =
       mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
     mockPutGeneratedObject.mockRejectedValue(new Error('Some error'))
-    const mockUpdate = mockCaseModel.update as jest.Mock
+    const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
-    const mockFindOne = mockCaseModel.findOne as jest.Mock
+    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
     mockFindOne.mockRejectedValue(new Error('Some error'))
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -92,7 +92,7 @@ describe('CaseController - Get court record signature confirmation', () => {
     const documentToken = uuid()
 
     beforeEach(() => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
     })
 
@@ -103,16 +103,16 @@ describe('CaseController - Get court record signature confirmation', () => {
         const mockPutGeneratedObject =
           mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
         mockPutGeneratedObject.mockResolvedValueOnce(Promise.resolve())
-        const mockUpdate = mockCaseModel.update as jest.Mock
+        const mockUpdate = mockCaseRepositoryService.update as jest.Mock
         mockUpdate.mockResolvedValueOnce([1, [theCase]])
-        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(theCase)
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
       })
 
       it('should return success after setting the court record signatory and signature date', () => {
-        expect(mockCaseModel.update).toHaveBeenCalledWith(
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
           {
             courtRecordSignatoryId: userId,
             courtRecordSignatureDate: expect.any(Date),
