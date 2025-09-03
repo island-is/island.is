@@ -18,5 +18,5 @@ export const FishingLicenseChargeType = {
   lumpfish: 'L5107',
   northIceOceanCod: 'L5111',
   oceanQuahogin: 'L5110',
-  igulker: 'L5113',
+  urchin: 'L5113',
 }
