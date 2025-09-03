@@ -30,6 +30,7 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import {
   Case,
+  CaseRepositoryService,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -119,8 +120,8 @@ export class StatisticsService {
   constructor(
     @InjectModel(Institution)
     private readonly institutionModel: typeof Institution,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
+    private readonly caseRepositoryService: CaseRepositoryService,
     private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -142,7 +143,7 @@ export class StatisticsService {
     }
 
     // fetch only the earliest indictment with the base filter
-    const earliestCase = await this.caseModel.findOne({
+    const earliestCase = await this.caseRepositoryService.findOne({
       where,
       order: [['created', 'ASC']],
       attributes: ['created'],
@@ -159,8 +160,9 @@ export class StatisticsService {
       }
     }
 
-    const cases = await this.caseModel.findAll({
+    const cases = await this.caseRepositoryService.findAll({
       where,
+      order: [['created', 'ASC']],
       include: [
         {
           model: EventLog,
@@ -312,7 +314,7 @@ export class StatisticsService {
     }
 
     // fetch only the earliest case with the base filter
-    const earliestCase = await this.caseModel.findOne({
+    const earliestCase = await this.caseRepositoryService.findOne({
       where,
       order: [['created', 'ASC']],
       attributes: ['created'],
@@ -340,8 +342,9 @@ export class StatisticsService {
       }
     }
 
-    const cases = await this.caseModel.findAll({
+    const cases = await this.caseRepositoryService.findAll({
       where,
+      order: [['created', 'ASC']],
       include: [
         {
           model: EventLog,
@@ -356,14 +359,11 @@ export class StatisticsService {
 
     const filterOnSentToCourt = () => {
       if (sentToCourt) {
-        const sortedCase = cases.sort(
-          (a, b) => a.created.getTime() - b.created.getTime(),
-        )
-        if (!sortedCase.length) {
+        if (!cases.length) {
           return undefined
         }
 
-        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const start = sentToCourt.fromDate ?? cases[0]?.created
         const end = sentToCourt.toDate ?? new Date()
 
         return cases.filter(({ eventLogs }) =>
@@ -423,7 +423,7 @@ export class StatisticsService {
       }
     }
 
-    const cases = await this.caseModel.findAll({
+    const cases = await this.caseRepositoryService.findAll({
       where,
       include: [
         {
@@ -521,7 +521,7 @@ export class StatisticsService {
       },
     }
 
-    const cases = await this.caseModel.findAll({
+    const cases = await this.caseRepositoryService.findAll({
       where,
       order: [['created', 'ASC']],
       include: [
@@ -568,7 +568,7 @@ export class StatisticsService {
       type: CaseType.INDICTMENT,
     }
 
-    const cases = await this.caseModel.findAll({
+    const cases = await this.caseRepositoryService.findAll({
       where,
       order: [['created', 'ASC']],
       include: [
