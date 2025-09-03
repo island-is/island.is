@@ -269,7 +269,7 @@ export const summary = defineMessages({
   },
   propertyConditionInspectorValueIndependentParty: {
     id: 'ra.application:summary.propertyConditionInspectorValueIndependentParty',
-    defaultMessage: 'Framkvæmd af ${inspectorName}',
+    defaultMessage: 'Framkvæmd af {inspectorName}',
     description: 'Property condition inspector value independent party',
   },
   propertyConditionInspectorValueSelfPerformed: {
