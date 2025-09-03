@@ -18,8 +18,7 @@ const UserSchemaBase = z.object({
     .string()
     .min(1)
     .refine((phone) => {
-      const countryCodeIS = phone.startsWith('+354')
-      return countryCodeIS ? phone.length === 11 : true
+      return phone.length === 11
     }),
 })
 
