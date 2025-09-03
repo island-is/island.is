@@ -1,4 +1,5 @@
 import {
+  ChangeEvent,
   FC,
   isValidElement,
   PropsWithChildren,
@@ -10,7 +11,7 @@ import FocusLock from 'react-focus-lock'
 import cn from 'classnames'
 import { motion } from 'motion/react'
 
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks/useKeyboardCombo/useKeyboardCombo'
 
 import * as styles from './Modal.css'
@@ -23,11 +24,18 @@ interface ButtonProps {
   colorScheme?: 'default' | 'destructive'
 }
 
+interface FooterCheckbox {
+  label: string
+  checked: boolean
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void
+}
+
 interface ModalProps {
   title: string
   text?: string | ReactNode
   primaryButton?: ButtonProps
   secondaryButton?: ButtonProps
+  footerCheckbox?: FooterCheckbox
   onClose?: () => void
   errorMessage?: string
   children?: ReactNode
@@ -41,6 +49,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   text,
   primaryButton,
   secondaryButton,
+  footerCheckbox,
   onClose,
   errorMessage,
   children,
@@ -111,9 +120,23 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
             </Box>
           )}
           {children}
-          <Box display="flex">
-            {secondaryButton && (
-              <Box marginRight={3}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="spaceBetween"
+            columnGap={2}
+          >
+            {footerCheckbox && (
+              <Checkbox
+                id="asd"
+                name="asd"
+                label={footerCheckbox.label}
+                onChange={footerCheckbox.onChange}
+                checked={footerCheckbox.checked}
+              />
+            )}
+            <Box display="flex" columnGap={3}>
+              {secondaryButton && (
                 <Button
                   data-testid="modalSecondaryButton"
                   variant={invertButtonColors ? undefined : 'ghost'}
@@ -123,20 +146,20 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
                 >
                   {secondaryButton.text}
                 </Button>
-              </Box>
-            )}
-            {primaryButton && (
-              <Button
-                data-testid="modalPrimaryButton"
-                variant={invertButtonColors ? 'ghost' : undefined}
-                onClick={primaryButton.onClick}
-                loading={primaryButton.isLoading}
-                disabled={primaryButton.isDisabled}
-                colorScheme={primaryButton.colorScheme || 'default'}
-              >
-                {primaryButton.text}
-              </Button>
-            )}
+              )}
+              {primaryButton && (
+                <Button
+                  data-testid="modalPrimaryButton"
+                  variant={invertButtonColors ? 'ghost' : undefined}
+                  onClick={primaryButton.onClick}
+                  loading={primaryButton.isLoading}
+                  disabled={primaryButton.isDisabled}
+                  colorScheme={primaryButton.colorScheme || 'default'}
+                >
+                  {primaryButton.text}
+                </Button>
+              )}
+            </Box>
           </Box>
           {errorMessage && (
             <Box marginTop={1} data-testid="modalErrorMessage">
@@ -222,6 +245,7 @@ const ModalPortal = ({
   text,
   primaryButton,
   secondaryButton,
+  footerCheckbox,
   onClose,
   errorMessage,
   children,
@@ -237,6 +261,7 @@ const ModalPortal = ({
       text={text}
       primaryButton={primaryButton}
       secondaryButton={secondaryButton}
+      footerCheckbox={footerCheckbox}
       onClose={onClose}
       errorMessage={errorMessage}
       children={children}

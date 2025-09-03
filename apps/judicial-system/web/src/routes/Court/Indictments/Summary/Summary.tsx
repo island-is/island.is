@@ -52,6 +52,7 @@ const Summary: FC = () => {
     useCase()
   const [modalVisible, setModalVisible] = useState<'CONFIRM_INDICTMENT'>()
   const [rulingUrl, setRulingUrl] = useState<string>()
+  const [hasReviewed, setHasReviewed] = useState<boolean>(false)
   const { user } = useContext(UserContext)
 
   const { onOpen, getFileUrl } = useFileList({
@@ -254,10 +255,19 @@ const Summary: FC = () => {
             text: 'Staðfesta',
             onClick: async () => await handleModalPrimaryButtonClick(),
             isLoading: isTransitioningCase,
+            isDisabled: !hasReviewed,
           }}
           secondaryButton={{
             text: 'Hætta við',
-            onClick: () => setModalVisible(undefined),
+            onClick: () => {
+              setModalVisible(undefined)
+              setHasReviewed(false)
+            },
+          }}
+          footerCheckbox={{
+            label: 'Ég hef rýnt þetta dómskjal',
+            checked: hasReviewed,
+            onChange: () => setHasReviewed(!hasReviewed),
           }}
         >
           <div className={styles.ruling}>
