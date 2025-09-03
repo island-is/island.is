@@ -173,5 +173,12 @@ export const applicationReducer = (
     }
     default:
       return state
+
+    case 'SUBMITTED': {
+      return {
+        ...state,
+        submitted: action.payload,
+      }
+    }
   }
 }
