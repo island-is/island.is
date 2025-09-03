@@ -25,6 +25,7 @@ export { canReviewerApprove, canReviewerReApprove } from './canReviewerApprove'
 export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'
+export { getReviewers } from './getReviewers'
 
 export const getChargeItems = (): Array<BasicChargeItem> => {
   return [

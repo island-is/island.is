@@ -45,14 +45,17 @@ export const ConvoyLongTermMultiField = buildMultiField({
           },
         },
       },
+      onSubmitLoad: async ({ tableItems }) => {
+        const index = tableItems.length - 1
+        return {
+          dictionaryOfItems: [
+            { path: `convoy.items[${index}].convoyId`, value: getRandomId() },
+          ],
+        }
+      },
       fields: {
         index: {
           component: 'hiddenInput',
-        },
-        convoyId: {
-          component: 'hiddenInput',
-          defaultValue: () => getRandomId(),
-          displayInTable: false,
         },
         vehicle: {
           component: 'vehiclePermnoWithInfo',

@@ -2,7 +2,7 @@ import { Includeable, literal, Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Injectable } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import {
   CaseActionType,
@@ -21,7 +21,7 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-import { Case, Defendant, User } from '../repository'
+import { Case, CaseRepositoryService, Defendant, User } from '../repository'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
@@ -237,7 +237,7 @@ const getContextMenuActions = (
 export class CaseTableService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
   ) {}
 
   async getCaseTableRows(
@@ -250,7 +250,7 @@ export class CaseTableService {
 
     const include = getIncludes(caseTableCellKeys, user)
 
-    const cases = await this.caseModel.findAll({
+    const cases = await this.caseRepositoryService.findAll({
       attributes,
       include,
       where: caseTableWhereOptions[type](user),
@@ -273,7 +273,7 @@ export class CaseTableService {
   async searchCases(query: string, user: TUser): Promise<SearchCasesResponse> {
     const safeQuery = this.sequelize.escape(`%${query}%`)
 
-    const results = await this.caseModel.findAndCountAll({
+    const results = await this.caseRepositoryService.findAndCountAll({
       attributes: [
         'id',
         'type',
