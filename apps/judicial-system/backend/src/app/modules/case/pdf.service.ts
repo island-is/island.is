@@ -4,7 +4,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
@@ -34,9 +33,14 @@ import {
   getRulingPdfAsBuffer,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { Case, Defendant, EventLog, Subpoena } from '../repository'
+import {
+  Case,
+  CaseRepositoryService,
+  Defendant,
+  EventLog,
+  Subpoena,
+} from '../repository'
 import { SubpoenaService } from '../subpoena'
-import { UserService } from '../user'
 
 @Injectable()
 export class PdfService {
@@ -45,10 +49,9 @@ export class PdfService {
   constructor(
     private readonly awsS3Service: AwsS3Service,
     private readonly intlService: IntlService,
-    private readonly userService: UserService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -249,7 +252,7 @@ export class PdfService {
       const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
-      this.caseModel
+      this.caseRepositoryService
         .update(
           { indictmentHash: hash, indictmentHashAlgorithm: hashAlgorithm },
           { where: { id: theCase.id } },

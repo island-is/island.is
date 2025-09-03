@@ -8,7 +8,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -37,6 +36,7 @@ import { FileService, getDefenceUserCaseFileCategories } from '../file'
 import {
   Case,
   CaseFile,
+  CaseRepositoryService,
   CaseString,
   CivilClaimant,
   DateLog,
@@ -214,11 +214,6 @@ export const include: Includeable[] = [
     separate: true,
   },
   {
-    model: Victim,
-    as: 'victims',
-    required: false,
-  },
-  {
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
@@ -343,12 +338,12 @@ export class LimitedAccessCaseService {
     private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async findById(caseId: string): Promise<Case> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       attributes,
       include,
       where: {
@@ -370,7 +365,7 @@ export class LimitedAccessCaseService {
     update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
-    const [numberOfAffectedRows] = await this.caseModel.update(
+    const [numberOfAffectedRows] = await this.caseRepositoryService.update(
       { ...update },
       { where: { id: theCase.id } },
     )
@@ -473,7 +468,7 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
-    return this.caseModel
+    return this.caseRepositoryService
       .findOne({
         where: {
           defenderNationalId: normalizeAndFormatNationalId(nationalId),

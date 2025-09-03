@@ -5,8 +5,8 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { AwsS3Module, CaseModule, CourtModule, UserModule } from '../index'
 import { CaseFile } from '../repository'
+import { AwsS3Module, CaseModule, CourtModule, UserModule } from '..'
 import { CriminalRecordModule } from './criminalRecord.module'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'

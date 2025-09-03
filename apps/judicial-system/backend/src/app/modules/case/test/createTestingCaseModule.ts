@@ -25,7 +25,12 @@ import { EventLogService } from '../../event-log/eventLog.service'
 import { FileService } from '../../file'
 import { IndictmentCountService } from '../../indictment-count'
 import { PoliceService } from '../../police'
-import { Case, CaseArchive, CaseString, DateLog } from '../../repository'
+import {
+  CaseArchive,
+  CaseRepositoryService,
+  CaseString,
+  DateLog,
+} from '../../repository'
 import { UserService } from '../../user'
 import { caseModuleConfig } from '../case.config'
 import { CaseController } from '../case.controller'
@@ -47,6 +52,7 @@ jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
 jest.mock('../../defendant/civilClaimant.service')
 jest.mock('../../indictment-count/indictmentCount.service')
+jest.mock('../../repository/services/caseRepository.service')
 
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
@@ -74,6 +80,7 @@ export const createTestingCaseModule = async () => {
       DefendantService,
       CivilClaimantService,
       IndictmentCountService,
+      CaseRepositoryService,
       {
         provide: IntlService,
         useValue: {
@@ -95,16 +102,6 @@ export const createTestingCaseModule = async () => {
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
-      {
-        provide: getModelToken(Case),
-        useValue: {
-          create: jest.fn(),
-          findOne: jest.fn(),
-          findByPk: jest.fn(),
-          findAll: jest.fn(),
-          update: jest.fn(),
-        },
-      },
       {
         provide: getModelToken(CaseArchive),
         useValue: { create: jest.fn() },
@@ -160,11 +157,13 @@ export const createTestingCaseModule = async () => {
     IndictmentCountService,
   )
 
+  const caseRepositoryService = caseModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
+
   const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
-
-  const caseModel = caseModule.get<typeof Case>(getModelToken(Case))
 
   const caseArchiveModel = caseModule.get<typeof CaseArchive>(
     getModelToken(CaseArchive),
@@ -211,9 +210,9 @@ export const createTestingCaseModule = async () => {
     defendantService,
     civilClaimantService,
     indictmentCountService,
+    caseRepositoryService,
     logger,
     sequelize,
-    caseModel,
     caseArchiveModel,
     dateLogModel,
     caseStringModel,

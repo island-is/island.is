@@ -64,6 +64,7 @@ import {
 import { CivilClaimantService } from '../defendant'
 import { EventService } from '../event'
 import { Case } from '../repository'
+import { UpdateCase } from '../repository'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -104,7 +105,7 @@ import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
-import { CaseService, UpdateCase } from './case.service'
+import { CaseService } from './case.service'
 import { PdfService } from './pdf.service'
 
 @Controller('api')

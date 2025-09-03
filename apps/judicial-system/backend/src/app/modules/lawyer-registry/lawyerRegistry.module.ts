@@ -1,8 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { EventModule } from '../index'
 import { LawyerRegistry } from '../repository'
+import { EventModule } from '..'
 import { LawyerRegistryController } from './lawyerRegistry.controller'
 import { LawyerRegistryService } from './lawyerRegistry.service'
 

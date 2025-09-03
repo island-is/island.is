@@ -11,7 +11,7 @@ import { CaseState } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import { Case } from '../../../repository'
+import { CaseRepositoryService } from '../../../repository'
 import { include } from '../../case.service'
 import { CaseExistsGuard } from '../caseExists.guard'
 
@@ -24,13 +24,14 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('Case Exists Guard', () => {
   const mockRequest = jest.fn()
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, caseService } = await createTestingCaseModule()
+    const { caseRepositoryService, caseService } =
+      await createTestingCaseModule()
 
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     givenWhenThen = async (): Promise<Then> => {
       const guard = new CaseExistsGuard(caseService)
@@ -56,14 +57,14 @@ describe('Case Exists Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce(request)
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen()
     })
 
     it('should activate', () => {
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         include,
         where: {
           id: caseId,
