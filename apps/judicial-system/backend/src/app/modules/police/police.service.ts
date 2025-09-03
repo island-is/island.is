@@ -631,50 +631,29 @@ export class PoliceService {
   async createDocument({
     caseId,
     defendantId,
-    defendantNationalId,
     user,
     documentName,
     documentFiles,
     documentDates,
     fileTypeCode,
-    caseSupplement,
+    caseSupplements,
   }: {
     caseId: string
     defendantId: string
-    defendantNationalId: string
     user: User
     documentName: string
     documentFiles: { name: string; documentBase64: string }[]
     documentDates: { code: string; value: Date }[]
     fileTypeCode: string
-    caseSupplement: CaseSupplement
-  }): Promise<CreateDocumentResponse> {
+    caseSupplements: { code: string; value: string }[]
+  }): Promise<CreateDocumentResponse | undefined> {
     const { name: actor } = user
 
     const body = JSON.stringify({
       documentName: documentName,
       documentFiles,
       fileTypeCode,
-      supplements: [
-        { code: 'RVG_CASE_ID', value: caseId },
-        { code: 'RECEIVER_SSN', value: defendantNationalId },
-        {
-          code: 'COURT_CASE_NUMBER',
-          value: caseSupplement.courtCaseNumber,
-        },
-        {
-          code: 'POLICE_CASE_NUMBERS',
-          value: caseSupplement.policeCaseNumbers?.join(','),
-        },
-        {
-          code: 'RULING',
-          value: caseSupplement.ruling,
-        },
-        {
-          code: 'RULING_DATE',
-          value: caseSupplement.rulingDate?.toISOString(),
-        },
-      ],
+      supplements: caseSupplements,
       dates: documentDates,
     })
     const createDocumentPath = `${this.xRoadPath}/CreateDocument`
@@ -697,8 +676,6 @@ export class PoliceService {
         const policeResponse = await res.json()
         return { externalPoliceDocumentId: policeResponse.id }
       }
-
-      throw await res.text()
     } catch (error) {
       this.logger.error(
         `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
