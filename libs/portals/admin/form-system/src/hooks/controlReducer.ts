@@ -486,12 +486,12 @@ export const controlReducer = (
         .map((f) =>
           f.id === id
             ? {
-               ...f,
-               name: {
-                 ...(f.name ?? {}),
-                 [lang]: newValue,
-               },
-             }
+                ...f,
+                name: {
+                  ...(f.name ?? {}),
+                  [lang]: newValue,
+                },
+              }
             : f,
         )
 
