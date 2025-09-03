@@ -51,7 +51,6 @@ const formatPatyItems = (items: Array<ApplicantsInfo>): Array<KeyValueItem> => {
             valueText: `Kennitala: ${
               party.nationalIdWithName?.nationalId ?? ''
             }`,
-            // lineAboveKeyText: i > 0,
           },
           {
             width: 'half' as const,
