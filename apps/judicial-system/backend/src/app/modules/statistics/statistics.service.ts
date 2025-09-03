@@ -716,7 +716,7 @@ export class StatisticsService {
           ] as Column[],
           key: `krofur_from_${getDateString(
             period?.fromDate,
-          )}_to_${getDateString(period?.toDate)}_${user.nationalId}`,
+          )}_to_${getDateString(period?.toDate)}_${user.nationalId}.csv`,
         }
       }
       if (type === DataGroups.INDICTMENTS) {
@@ -740,7 +740,7 @@ export class StatisticsService {
           ] as Column[],
           key: `ákærur_from_${getDateString(
             period?.fromDate,
-          )}_to_${getDateString(period?.toDate)}_${user.nationalId}`,
+          )}_to_${getDateString(period?.toDate)}_${user.nationalId}.csv`,
         }
       }
 
