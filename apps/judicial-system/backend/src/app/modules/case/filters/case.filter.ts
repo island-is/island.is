@@ -22,12 +22,15 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CivilClaimant, Defendant } from '../../defendant'
-import { EventLog } from '../../event-log'
-import { Victim } from '../../victim'
-import { Case } from '../models/case.model'
+import {
+  Case,
+  CivilClaimant,
+  DateLog,
+  Defendant,
+  EventLog,
+  Victim,
+} from '../../repository'
 import { MinimalCase } from '../models/case.types'
-import { DateLog } from '../models/dateLog.model'
 
 const canProsecutionUserAccessCase = (
   theCase: Case,
@@ -79,7 +82,7 @@ const canProsecutionUserAccessCase = (
   return true
 }
 
-const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
+export const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
   // Check case type access
   if (!isIndictmentCase(theCase.type)) {
     return false

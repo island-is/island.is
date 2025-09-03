@@ -24,9 +24,21 @@ export const securityDeposit = z
     securityAmountCalculated: z.string().optional(),
   })
   .superRefine((data, ctx) => {
+    const {
+      securityType,
+      securityAmount,
+      securityAmountOther,
+      rentalAmount,
+      bankGuaranteeInfo,
+      thirdPartyGuaranteeInfo,
+      insuranceCompanyInfo,
+      mutualFundInfo,
+      otherInfo,
+    } = data
+
     if (
-      data.securityType === SecurityDepositTypeOptions.BANK_GUARANTEE &&
-      !data.bankGuaranteeInfo
+      securityType === SecurityDepositTypeOptions.BANK_GUARANTEE &&
+      !bankGuaranteeInfo
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -37,8 +49,8 @@ export const securityDeposit = z
     }
 
     if (
-      data.securityType === SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE &&
-      !data.thirdPartyGuaranteeInfo
+      securityType === SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE &&
+      !thirdPartyGuaranteeInfo
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -49,8 +61,8 @@ export const securityDeposit = z
     }
 
     if (
-      data.securityType === SecurityDepositTypeOptions.INSURANCE_COMPANY &&
-      !data.insuranceCompanyInfo
+      securityType === SecurityDepositTypeOptions.INSURANCE_COMPANY &&
+      !insuranceCompanyInfo
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -61,8 +73,8 @@ export const securityDeposit = z
     }
 
     if (
-      data.securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND &&
-      !data.mutualFundInfo
+      securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND &&
+      !mutualFundInfo
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -72,10 +84,7 @@ export const securityDeposit = z
       })
     }
 
-    if (
-      data.securityType === SecurityDepositTypeOptions.OTHER &&
-      !data.otherInfo
-    ) {
+    if (securityType === SecurityDepositTypeOptions.OTHER && !otherInfo) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -85,8 +94,8 @@ export const securityDeposit = z
     }
 
     if (
-      data.securityType !== SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND &&
-      !data.securityAmount
+      securityType !== SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND &&
+      !securityAmount
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -97,9 +106,9 @@ export const securityDeposit = z
     }
 
     if (
-      (data.securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
-        data.securityAmount === SecurityDepositAmountOptions.OTHER) &&
-      !data.securityAmountOther
+      (securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
+        securityAmount === SecurityDepositAmountOptions.OTHER) &&
+      !securityAmountOther
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -110,10 +119,10 @@ export const securityDeposit = z
     }
 
     if (
-      (data.securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
-        data.securityAmount === SecurityDepositAmountOptions.OTHER) &&
-      data.securityAmountOther &&
-      Number(data.securityAmountOther) <= 0
+      (securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
+        securityAmount === SecurityDepositAmountOptions.OTHER) &&
+      securityAmountOther &&
+      Number(securityAmountOther) <= 0
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -124,8 +133,8 @@ export const securityDeposit = z
     }
 
     if (
-      data.securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND &&
-      Number(data.rentalAmount) * 0.1 < Number(data.securityAmountOther)
+      securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND &&
+      Number(rentalAmount) * 0.1 < Number(securityAmountOther)
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -136,10 +145,10 @@ export const securityDeposit = z
     }
 
     if (
-      (data.securityType === SecurityDepositTypeOptions.CAPITAL ||
-        data.securityType ===
-          SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE) &&
-      Number(data.rentalAmount) * 3 < Number(data.securityAmountOther)
+      (securityType === SecurityDepositTypeOptions.CAPITAL ||
+        securityType === SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE ||
+        securityType === SecurityDepositTypeOptions.BANK_GUARANTEE) &&
+      Number(rentalAmount) * 3 < Number(securityAmountOther)
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

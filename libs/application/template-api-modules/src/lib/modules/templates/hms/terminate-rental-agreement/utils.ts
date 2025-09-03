@@ -58,7 +58,7 @@ export const parseCancelContract = (
     ),
     document: files[0].fileContent,
     documentMime: files[0].fileName.split('.').pop() ?? 'pdf',
-    documentFilename: files[0].fileName,
+    documentFilename: truncateMiddle(files[0].fileName, 40),
   }
 
   return obj
@@ -84,12 +84,29 @@ export const parseTerminateContract = (
         'boundTermination.boundTerminationDate',
       ) ?? new Date(),
     reasonUseCode:
-      terminationReasonMap[terminationReason] ??
-      TerminationReason.OWNERINBUILDING,
+      terminationReason in TerminationReason
+        ? (terminationReason as TerminationReason)
+        : terminationReasonMap[terminationReason] ??
+          TerminationReason.OWNERINBUILDING,
     document: files[0].fileContent,
     documentMime: files[0].fileName.split('.').pop() ?? 'pdf',
-    documentFilename: files[0].fileName,
+    documentFilename: truncateMiddle(files[0].fileName, 40),
   }
 
   return obj
+}
+
+export const truncateMiddle = (
+  str: string,
+  maxLength: number,
+  separator = '-',
+): string => {
+  if (str.length <= maxLength) return str
+
+  const separatorLength = separator.length
+  const charsToShow = maxLength - separatorLength
+  const frontChars = Math.ceil(charsToShow / 2)
+  const backChars = Math.floor(charsToShow / 2)
+
+  return str.slice(0, frontChars) + separator + str.slice(-backChars)
 }

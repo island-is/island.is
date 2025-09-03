@@ -12,12 +12,15 @@ import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import { Defendant } from '../../../defendant'
-import { Institution } from '../../../institution'
-import { Subpoena } from '../../../subpoena'
-import { User } from '../../../user'
-import { Case } from '../../models/case.model'
-import { DateLog } from '../../models/dateLog.model'
+import {
+  Case,
+  DateLog,
+  Defendant,
+  Institution,
+  Subpoena,
+  User,
+  Verdict,
+} from '../../../repository'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
 
 interface Then {
@@ -81,6 +84,11 @@ describe('Indictment Case Exists For Defendant Guard', () => {
                 model: Subpoena,
                 as: 'subpoenas',
                 order: [['created', 'DESC']],
+              },
+              {
+                model: Verdict,
+                as: 'verdict',
+                required: false,
               },
             ],
           },
