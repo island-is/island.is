@@ -3,10 +3,10 @@ import { CategoryStatistics } from './categoryStatistics.model'
 
 @ObjectType('ProviderStatisticsCategoryBreakdown')
 export class ProviderStatisticsCategoryBreakdown {
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   year?: number
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   month?: number
 
   @Field(() => [CategoryStatistics], { nullable: true })

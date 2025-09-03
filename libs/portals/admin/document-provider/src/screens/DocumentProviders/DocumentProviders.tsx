@@ -22,6 +22,7 @@ import {
   StatisticBoxList,
   StatisticsBoxData,
 } from '../../components/StatisticBoxList/StatisticBoxList'
+import { TotalStatisticsSortBy } from '@island.is/api/schema'
 
 const DocumentProviders = () => {
   const today = new Date()
@@ -53,7 +54,7 @@ const DocumentProviders = () => {
       user.profile.nationalId,
       fromDate,
       toDate,
-      'Date',
+      TotalStatisticsSortBy.Date,
       true,
       1,
       4,
@@ -157,7 +158,7 @@ const DocumentProviders = () => {
             />
 
             <DocumentProvidersDashboard
-              statistics={statistics || []}
+              statistics={statistics}
               nationalId={user.profile.nationalId}
               sentFilesData={sentFilesChartData || []}
               fromDate={fromDate}

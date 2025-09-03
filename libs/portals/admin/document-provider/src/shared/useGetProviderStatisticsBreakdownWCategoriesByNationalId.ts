@@ -15,12 +15,13 @@ import {
   SentFilesChartDataItem,
   SentFilesChartDataItemInfo,
 } from '../lib/types'
+import { formatDateYYYYMMDD } from '../lib/utils'
 
 export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
   nationalId?: string,
   fromDate?: Date,
   toDate?: Date,
-  sortBy?: string,
+  sortBy?: TotalStatisticsSortBy,
   desc = false,
   page = 1,
   pageSize = 10,
@@ -28,9 +29,9 @@ export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
   const statisticsInput: ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest =
     {
       nationalId: nationalId ?? '',
-      //from: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),
-      //to: !fromDate ? undefined : toDate?.toISOString().slice(0, 10),
-      sortBy: (sortBy as TotalStatisticsSortBy) ?? TotalStatisticsSortBy.Date,
+      from: fromDate ? formatDateYYYYMMDD(fromDate) : undefined,
+      to: toDate ? formatDateYYYYMMDD(toDate) : undefined,
+      sortBy: (sortBy ?? TotalStatisticsSortBy.Date),
       desc,
       page,
       pageSize,
@@ -53,7 +54,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
     }
   }, [error, loading, nationalId, fromDate, toDate, formatMessage])
 
-  const breakdown = data?.statisticsBreakdownWithCategoriesByNationalId ?? null
+  const breakdown = data?.statisticsBreakdownWithCategoriesByNationalId ??  { totalCount: 0, items: [] }
 
   // Prepare chart data if breakdown is available
   let chartData: Array<SentFilesChartDataItem> | undefined

@@ -33,7 +33,7 @@ export class DocumentProviderDashboardService {
       input,
     )
 
-    if (!statistics.totalCount) {
+    if (statistics.totalCount == null) {
       return null
     }
 
@@ -52,7 +52,7 @@ export class DocumentProviderDashboardService {
     return await this.api.apiV1StatisticsNationalIdGet(input)
   }
 
-  async getStatisticsBreakdownByProvidersId(
+  async getStatisticsBreakdownByProviderId(
     input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     const statistics =
@@ -60,7 +60,7 @@ export class DocumentProviderDashboardService {
         input,
       )
 
-    if (!statistics.totalCount) {
+    if (statistics.totalCount == null) {
       return null
     }
 
@@ -80,7 +80,7 @@ export class DocumentProviderDashboardService {
       input,
     )
 
-    if (!statistics.totalCount) {
+    if (statistics.totalCount == null) {
       return null
     }
 
@@ -93,7 +93,7 @@ export class DocumentProviderDashboardService {
     const statistics =
       await this.api.apiV1StatisticsNationalIdBreakdownCategoriesGet(input)
 
-    if (!statistics.totalCount) {
+    if (statistics.totalCount == null) {
       return null
     }
 
@@ -108,7 +108,7 @@ export class DocumentProviderDashboardService {
         input,
       )
 
-    if (!statistics.totalCount) {
+    if (statistics.totalCount == null) {
       return null
     }
 

@@ -9,11 +9,12 @@ import { GET_PROVIDER_STATISTICS_BREAKDOWN_BY_NATIONALID } from '../queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
 import {
-  ChartData,
+  DocumentProviderDashboardChartData,
   GetProviderStatisticsBreakdownReturnType,
   ProviderStatisticsBreakdown,
 } from '../lib/types'
 import { DELIVERY_PRICE } from '../lib/constants'
+import { formatDateYYYYMMDD } from '../lib/utils'
 
 export const useGetProviderStatisticsBreakdownByNationalId = (
   nationalId?: string,
@@ -26,8 +27,8 @@ export const useGetProviderStatisticsBreakdownByNationalId = (
 ): GetProviderStatisticsBreakdownReturnType => {
   const statisticsInput: ApiV1StatisticsNationalIdBreakdownGetRequest = {
     nationalId: nationalId ?? '',
-    //from: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),
-    //to: !fromDate ? undefined : toDate?.toISOString().slice(0, 10),
+    from: fromDate ? formatDateYYYYMMDD(fromDate) : undefined,
+    to: toDate ? formatDateYYYYMMDD(toDate) : undefined,
     sortBy: (sortBy as CategoryStatisticsSortBy) ?? 'Date',
     desc,
     page,
@@ -54,10 +55,10 @@ export const useGetProviderStatisticsBreakdownByNationalId = (
   const breakdown = data?.statisticsBreakdownByNationalId ?? null
 
   // Prepare chart data if breakdown is available
-  let chartData: Array<ChartData> | undefined
+  let chartData: Array<DocumentProviderDashboardChartData> | undefined
   if (breakdown) {
     chartData = breakdown.items.map(
-      (item: ProviderStatisticsBreakdown): ChartData => ({
+      (item: ProviderStatisticsBreakdown): DocumentProviderDashboardChartData => ({
         name:
           item.year && item.month
             ? new Date(item.year, item.month - 1).toLocaleString('is', {

@@ -15,6 +15,7 @@ import {
   SentFilesChartDataItem,
   SentFilesChartDataItemInfo,
 } from '../lib/types'
+import { formatDateYYYYMMDD } from '../lib/utils'
 
 export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
   providerId?: string,
@@ -30,8 +31,8 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
     {
       providerId: providerId ?? '',
       nationalId: nationalId ?? '',
-      //from: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),
-      //to: !fromDate ? undefined : toDate?.toISOString().slice(0, 10),
+      from: fromDate ? formatDateYYYYMMDD(fromDate) : undefined,
+      to: toDate ? formatDateYYYYMMDD(toDate) : undefined,
       sortBy:
         (sortBy as CategoryStatisticsSortBy) ?? CategoryStatisticsSortBy.Date,
       desc,
@@ -56,7 +57,10 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
     }
   }, [error, loading, nationalId, fromDate, toDate, formatMessage])
 
-  const breakdown = data?.statisticsBreakdownWithCategoriesByProviderId ?? null
+  const breakdown = data?.statisticsBreakdownWithCategoriesByProviderId  ?? {
+      totalCount: 0,
+      items: [],
+    }
 
   // Prepare chart data if breakdown is available
   let chartData: Array<SentFilesChartDataItem> | undefined

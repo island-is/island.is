@@ -9,6 +9,7 @@ import {
   GetProviderStatisticCategoriesReturnType,
   ProviderStatisticCategory,
 } from '../lib/types'
+import { formatDateYYYYMMDD } from '../lib/utils'
 
 export const useGetProviderStatisticCategoriesByNationalId = (
   nationalId?: string,
@@ -16,9 +17,9 @@ export const useGetProviderStatisticCategoriesByNationalId = (
   toDate?: Date,
 ): GetProviderStatisticCategoriesReturnType => {
   const statisticsInput: ApiV1StatisticsNationalIdCategoriesGetRequest = {
-    nationalId: nationalId ?? '',
-    //from: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),
-    //to: !fromDate ? undefined : toDate?.toISOString().slice(0, 10),
+    nationalId: (nationalId ?? '') as string,
+    from: fromDate ? formatDateYYYYMMDD(fromDate) : undefined,
+    to: toDate ? formatDateYYYYMMDD(toDate) : undefined,
   }
 
   const { data, loading, error } = useQuery(
@@ -28,6 +29,7 @@ export const useGetProviderStatisticCategoriesByNationalId = (
         input: statisticsInput,
       },
       fetchPolicy: 'cache-and-network',
+      skip: !nationalId
     },
   )
 
