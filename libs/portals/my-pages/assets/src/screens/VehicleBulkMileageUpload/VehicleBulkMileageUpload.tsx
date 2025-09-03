@@ -5,15 +5,16 @@ import {
   AlertMessage,
   Stack,
   InputFileUpload,
+  DropdownMenu,
 } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FileRejection } from 'react-dropzone'
 import { AssetsPaths } from '../../lib/paths'
 import {
   useVehicleBulkMileagePostMutation,
-  useVehiclesListQuery,
+  useVehiclesTemplateDownloadUrlQuery,
 } from './VehicleBulkMileageUpload.generated'
 import { vehicleMessage } from '../../lib/messages'
 import { parseFileToMileageRecord } from '../../utils/parseFileToMileage'
@@ -21,12 +22,11 @@ import {
   IntroWrapper,
   LinkButton,
   SAMGONGUSTOFA_SLUG,
-  formatDateWithTime,
+  formSubmit,
   m,
 } from '@island.is/portals/my-pages/core'
-import VehicleBulkMileageFileDownloader from '../VehicleBulkMileage/VehicleBulkMileageFileDownloader'
 import { Problem } from '@island.is/react-spa/shared'
-import { TableData } from '../VehicleBulkMileage/types'
+import { FILE_TYPES } from '../../utils/constants'
 
 const extensionToType = {
   [fileExtensionWhitelist['.csv']]: 'csv',
@@ -38,19 +38,10 @@ const VehicleBulkMileageUpload = () => {
   const { formatMessage } = useLocale()
 
   const {
-    data: vehicleListData,
-    error: vehicleListError,
-    loading: vehicleListLoading,
-  } = useVehiclesListQuery({
-    variables: {
-      input: {
-        page: 1,
-        pageSize: 20000,
-        includeNextMainInspectionDate: false,
-        filterOnlyVehiclesUserCanRegisterMileage: true,
-      },
-    },
-  })
+    data: templateData,
+    error: templateError,
+    loading: templateLoading,
+  } = useVehiclesTemplateDownloadUrlQuery()
 
   const [vehicleBulkMileagePostMutation, { data, loading, error }] =
     useVehicleBulkMileagePostMutation()
@@ -59,7 +50,6 @@ const VehicleBulkMileageUpload = () => {
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
     null,
   )
-  const [downloadError, setDownloadError] = useState<string | null>()
 
   const [requestGuid, setRequestGuid] = useState<string | null>()
 
@@ -136,35 +126,6 @@ const VehicleBulkMileageUpload = () => {
     }
   }
 
-  const handleFileDownloadError = (error: string) => {
-    setDownloadError(error)
-  }
-  const table = useMemo(() => {
-    if (vehicleListData?.vehiclesListV3?.data) {
-      const table: TableData = {
-        bilnumer: [],
-        'seinasta skraning': [],
-        'seinasta skrada stada': [],
-        kilometrastada: [],
-      }
-
-      vehicleListData.vehiclesListV3.data.forEach((vehicle) => {
-        table['bilnumer'].push(vehicle.vehicleId)
-        table['seinasta skraning'].push(
-          vehicle.mileageDetails?.lastMileageRegistration?.date
-            ? formatDateWithTime(
-                vehicle.mileageDetails?.lastMileageRegistration?.date,
-              )
-            : '',
-        )
-        table['seinasta skrada stada'].push(
-          vehicle.mileageDetails?.lastMileageRegistration?.mileage ?? 0,
-        )
-      })
-      return table
-    }
-  }, [vehicleListData])
-
   return (
     <IntroWrapper
       title={m.vehiclesBulkMileageUpload}
@@ -172,13 +133,21 @@ const VehicleBulkMileageUpload = () => {
       serviceProviderSlug={SAMGONGUSTOFA_SLUG}
       serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       buttonGroup={
-        table || vehicleListLoading
+        templateData?.vehiclesMileageTemplateFileDownloadUrl
           ? [
-              <VehicleBulkMileageFileDownloader
-                onError={handleFileDownloadError}
-                data={table}
-                loading={vehicleListLoading}
-                disabled={!!vehicleListError}
+              <DropdownMenu
+                icon="ellipsisHorizontal"
+                menuLabel={formatMessage(vehicleMessage.downloadTemplate)}
+                items={FILE_TYPES.map((type) => ({
+                  title: `.${type}`,
+                  onClick: () =>
+                    formSubmit(
+                      `${templateData?.vehiclesMileageTemplateFileDownloadUrl}/${type}`,
+                    ),
+                }))}
+                title={formatMessage(vehicleMessage.downloadTemplate)}
+                loading={loading}
+                disabled={!!templateLoading}
               />,
             ]
           : []
@@ -197,11 +166,10 @@ const VehicleBulkMileageUpload = () => {
             }
           />
         )}
-        {downloadError && (
+        {templateError && (
           <AlertMessage
             type="warning"
             title={formatMessage(vehicleMessage.downloadFailed)}
-            message={downloadError}
           />
         )}
         {requestGuid &&

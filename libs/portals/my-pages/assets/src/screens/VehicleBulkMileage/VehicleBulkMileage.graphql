@@ -4,7 +4,7 @@ query vehiclesList($input: VehiclesListInputV3!) {
     pageSize
     totalPages
     totalRecords
-    data {
+    vehicleList {
       vehicleId
       registration {
         number

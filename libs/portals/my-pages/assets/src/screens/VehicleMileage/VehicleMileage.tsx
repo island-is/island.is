@@ -455,7 +455,7 @@ const VehicleMileage = () => {
             </>
           )}
         </Stack>
-        <VehicleCO2 co2={co2?.vehiclesListV3?.data?.[0]?.co2 ?? '0'} />
+        <VehicleCO2 co2={co2?.vehiclesListV3?.vehicleList?.[0]?.co2 ?? '0'} />
       </Box>
 
       <FootNote

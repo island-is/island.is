@@ -57,7 +57,7 @@ const VehicleBulkMileage = () => {
         },
       }).then((res) => {
         const vehicles: Array<VehicleType> =
-          res.data?.vehiclesListV3?.data
+          res.data?.vehiclesListV3?.vehicleList
             ?.map((v) => {
               if (!v.make) {
                 return null
