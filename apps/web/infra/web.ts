@@ -97,6 +97,7 @@ export const serviceSetup = (services: {
       'consultation-portal',
       'search-indexer',
       'payments',
+      'services-payments',
     )
     .redis()
   return web
