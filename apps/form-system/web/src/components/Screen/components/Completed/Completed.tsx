@@ -25,7 +25,7 @@ export const Completed = () => {
         <Text>{formatMessage(webMessages.LoremIpsum)}</Text>
       </Box>
       <Box marginTop={5} display="flex" justifyContent="center">
-        <img src={'./assets/images/train.svg'} alt="" />
+        <img src={'./assets/images/train.svg'} alt="" aria-hidden="true" loading="lazy" />
       </Box>
     </Box>
   )

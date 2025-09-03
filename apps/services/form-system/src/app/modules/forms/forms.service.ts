@@ -807,6 +807,21 @@ export class FormsService {
         }
       }
     }
+    
+    const hasCompleted = sections.some(
+      (s) => s.sectionType === SectionTypes.COMPLETED,
+    )
+   if (!hasCompleted) {
+      sections.push({
+        id: uuidV4(),
+        formId: newForm.id,
+        sectionType: SectionTypes.COMPLETED,
+        displayOrder: 9931,
+        name: { is: 'Staðfesting', en: 'Confirmation' },
+        created: new Date(),
+        modified: new Date(),
+      } as Section)
+    }
 
     if (existingForm.formCertificationTypes) {
       for (const certificationType of existingForm.formCertificationTypes) {
