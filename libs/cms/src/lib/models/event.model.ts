@@ -6,6 +6,7 @@ import { Image, mapImage } from './image.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SliceUnion, mapDocument } from '../unions/slice.union'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
+import addDays from 'date-fns/addDays'
 
 @ObjectType()
 class EventLocation {
@@ -57,11 +58,11 @@ export class Event {
   @CacheField(() => EventTime)
   time!: EventTime
 
-  @Field({ description: 'ISO8601' })
-  startDateTime!: string
+  @Field({ nullable: true, description: 'ISO8601' })
+  startDateTime?: string
 
-  @Field({ description: 'ISO8601' })
-  endDateTime!: string
+  @Field({ nullable: true, description: 'ISO8601' })
+  endDateTime?: string
 
   @CacheField(() => EventLocation)
   location!: EventLocation
@@ -91,6 +92,7 @@ export class Event {
 export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
   let endDate = ''
 
+
   if (fields.startDate && fields.time?.endTime) {
     const date = new Date(fields.startDate)
     const [hours, minutes] = fields.time.endTime.split(':')
@@ -99,6 +101,11 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
     endDate = date.getTime().toString()
   }
 
+  const startDateTime =  new Date(new Date(fields.startDate).setHours(7,37))
+  const endDateTime = addDays(startDateTime.setHours(23, 44), 3)
+
+  console.log('MAP SINGLE EVENT')
+
   return {
     typename: 'Event',
     id: sys.id,
@@ -106,8 +113,8 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
     startDate: fields.startDate ?? '',
     endDate,
     time: (fields.time as Event['time']) ?? { startTime: '', endTime: '' },
-    startDateTime: fields.startDateTime ?? '',
-    endDateTime: fields.endDateTime ?? '',
+    startDateTime: fields.startDateTime ? fields.startDateTime : startDateTime?.toISOString(),
+    endDateTime: fields.endDateTime ? fields.endDateTime : endDateTime?.toISOString(),
     location: (fields.location as Event['location']) ?? {
       streetAddress: '',
       floor: '',

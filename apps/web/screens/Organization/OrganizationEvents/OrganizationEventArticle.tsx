@@ -99,8 +99,6 @@ const EventInformationBox = ({
 }) => {
   const { activeLocale } = useI18n()
   const { format } = useDateUtils()
-  const formattedDate =
-    event.startDate && format(new Date(event.startDate), 'do MMMM yyyy')
   const n = useNamespace(namespace)
   const router = useRouter()
 
@@ -109,10 +107,9 @@ const EventInformationBox = ({
       <Stack space={3}>
         <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
           <Icon color="blue400" icon="calendar" type="outline" />
-          <Text>{formattedDate}</Text>
           {event.startDateTime && (
             <Text>{format(new Date(event.startDateTime), 'do MMMM yyyy')}</Text>
-          )}
+          )} -
           {event.endDateTime && (
             <Text>{format(new Date(event.endDateTime), 'do MMMM yyyy')}</Text>
           )}
@@ -410,9 +407,9 @@ OrganizationEventArticle.getProps = async ({
   }
 
   let hasEventOccurred = true
-  if (Boolean(event.endDate) || Boolean(event.startDate)) {
-    const dateString = event.endDate ? event.endDate : event.startDate
-    hasEventOccurred = addDays(new Date(dateString), 1) < new Date()
+  if (event.endDateTime && event.startDateTime) {
+    const today = new Date().getTime()
+    hasEventOccurred = new Date(event.endDateTime).getTime() < today
   }
 
   const organizationNamespace = extractNamespaceFromOrganization(
