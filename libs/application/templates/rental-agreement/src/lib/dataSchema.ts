@@ -1,8 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YesOrNoEnum } from '@island.is/application/core'
-import { PropertyUnit, RentalHousingCategoryClass } from '../shared'
-import { getRentalPropertySize } from '../utils/utils'
 import {
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
@@ -13,9 +11,10 @@ import { registerProperty } from './schemas/propertySearchSchema'
 import { otherFees } from './schemas/otherFeesSchema'
 import { securityDeposit } from './schemas/securityDepositSchema'
 import { rentalAmount } from './schemas/rentalAmountSchema'
+import { fireProtections } from './schemas/fireProtectionsSchema'
+import { RentalHousingCategoryClass } from '../shared/enums'
 
 import * as m from './messages'
-import { fireProtections } from './schemas/fireProtectionsSchema'
 
 const approveExternalData = z.boolean().refine((v) => v)
 

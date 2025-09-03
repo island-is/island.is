@@ -14,10 +14,10 @@ import {
   getPropertyClassGroupOptions,
 } from '../../../utils/utils'
 import { Routes, RentalHousingCategoryTypes } from '../../../utils/enums'
-import { registerProperty } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
 
-const messagesInfo = registerProperty.info
-const messagesCategory = registerProperty.category
+const messagesInfo = m.registerProperty.info
+const messagesCategory = m.registerProperty.category
 
 export const RentalHousingPropertyInfo: SubSection = buildSubSection({
   id: Routes.PROPERTYINFORMATION,
