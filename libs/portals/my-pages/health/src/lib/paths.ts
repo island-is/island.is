@@ -60,4 +60,7 @@ export enum HealthPaths {
 
   HealthWaitlists = '/heilsa/bidlistar',
   HealthWaitlistsDetail = '/heilsa/bidlistar/:id',
+
+  HealthQuestionnaires = '/heilsa/spurningalistar',
+  HealthQuestionnairesDetail = '/heilsa/spurningalistar/:id',
 }
