@@ -16,10 +16,6 @@ interface CreateCourtSessionOptions {
 }
 
 interface UpdateCourtSessionOptions {
-  where: {
-    id: string
-    caseId: string
-  }
   transaction?: Transaction
 }
 
@@ -51,7 +47,7 @@ export class CourtSessionRepositoryService {
     options?: CreateCourtSessionOptions,
   ): Promise<CourtSession> {
     try {
-      this.logger.debug('Creating court session with data:', {
+      this.logger.debug('Creating new court session with data:', {
         data: Object.keys(data ?? {}),
       })
 
@@ -66,11 +62,11 @@ export class CourtSessionRepositoryService {
         createOptions,
       )
 
-      this.logger.debug(`Court session created with ID: ${courtSession.id}`)
+      this.logger.debug(`Court new court session ${courtSession.id}`)
 
       return courtSession
     } catch (error) {
-      this.logger.error('Error creating court session with data:', {
+      this.logger.error('Error creating new court session with data:', {
         data: Object.keys(data ?? {}),
         error,
       })
@@ -80,18 +76,22 @@ export class CourtSessionRepositoryService {
   }
 
   async update(
+    caseId: string,
+    courtSessionId: string,
     data: UpdateCourtSession,
-    options: UpdateCourtSessionOptions,
+    options?: UpdateCourtSessionOptions,
   ): Promise<CourtSession> {
     try {
-      this.logger.debug('Updating court session with data and conditions:', {
-        data: Object.keys(data ?? {}),
-        where: Object.keys(options?.where ?? {}),
-      })
+      this.logger.debug(
+        `Updating court session ${courtSessionId} of case ${caseId} with data:`,
+        { data: Object.keys(data ?? {}) },
+      )
 
-      const updateOptions: UpdateOptions = { where: options.where }
+      const updateOptions: UpdateOptions = {
+        where: { id: courtSessionId, caseId },
+      }
 
-      if (options.transaction) {
+      if (options?.transaction) {
         updateOptions.transaction = options.transaction
       }
 
@@ -103,28 +103,27 @@ export class CourtSessionRepositoryService {
 
       if (numberOfAffectedRows < 1) {
         throw new InternalServerErrorException(
-          `Could not update court session ${options.where.id} of case ${options.where.caseId}`,
+          `Could not update court session ${courtSessionId} of case ${caseId}`,
         )
       }
 
       if (numberOfAffectedRows > 1) {
         // Tolerate failure, but log error
         this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating court session ${options.where.id} of case ${options.where.caseId}`,
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating court session ${courtSessionId} of case ${caseId} with data:`,
+          { data: Object.keys(data ?? {}) },
         )
       }
 
-      this.logger.debug(`Updated court session ${courtSessions[0].id}`)
+      this.logger.debug(
+        `Updated court session ${courtSessionId} of case ${caseId}`,
+      )
 
       return courtSessions[0]
     } catch (error) {
       this.logger.error(
-        'Error updating court session with data and conditions:',
-        {
-          data: Object.keys(data ?? {}),
-          where: Object.keys(options?.where ?? {}),
-          error,
-        },
+        `Error updating court session ${courtSessionId} of case ${caseId} with data:`,
+        { data: Object.keys(data ?? {}), error },
       )
 
       throw error
