@@ -29,20 +29,13 @@
           "codegen/backend-schema",
           "codegen/frontend-client",
           "generateDevIndexHTML"
-        ],
-        "nxCloudId": "64e4eb6a54304f090734e8df"
-      }
-    },
-    "docker-test": {
-      "runner": "@nx/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [],
-        "cacheDirectory": ".cache/nx"
+        ]
       }
     }
   },
+  "nxCloudId": "64e4eb6a54304f090734e8df",
   "generators": {
-    "@nrwl/nx-plugin": {
+    "@nx/nx-plugin": {
       "plugin": {
         "linter": "eslint"
       }
@@ -197,6 +190,7 @@
       "{workspaceRoot}/**/Dockerfile.*"
     ],
     "sharedGlobals": [
+      "{workspaceRoot}/infra/src/dsl/**/*",
       "{workspaceRoot}/eslint-local-rules.js",
       "{workspaceRoot}/nx.json",
       "{workspaceRoot}/tsconfig.base.json",
@@ -241,5 +235,8 @@
         "targetName": "e2e"
       }
     }
-  ]
+  ],
+  "tui": {
+    "enabled": false
+  }
 }

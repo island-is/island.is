@@ -17,12 +17,12 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 
-import { Case, CaseExistsGuard, CurrentCase } from '../case'
+import { CaseExistsGuard, CurrentCase } from '../case'
+import { Case, CaseFile } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { DeliverResponse } from './models/deliver.response'
-import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 
 @Controller('api/internal/case/:caseId')

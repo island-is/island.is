@@ -257,7 +257,7 @@ api:
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -320,7 +320,7 @@ api:
     UNIVERSITY_GATEWAY_API_URL: 'http://services-university-gateway.services-university-gateway.svc.cluster.local'
     USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
     USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
-    VMST_UNEMPLOYMENT_XROAD_PATH: 'IS/GOV/7005942039/VMST-Protected/XRoadDev-v1'
+    VMST_UNEMPLOYMENT_XROAD_PATH: 'IS/GOV/7005942039/VMST-Protected/vmst-umsoknir-v1'
     WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: 'island-is-assistant-feedback'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/brautskraning-v1'
@@ -594,7 +594,7 @@ api:
     name: 'api'
 application-system-api:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -654,7 +654,7 @@ application-system-api:
     SERVICE_USER_PROFILE_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     UNIVERSITY_GATEWAY_API_URL: 'http://services-university-gateway.services-university-gateway.svc.cluster.local'
     USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
-    VMST_UNEMPLOYMENT_XROAD_PATH: 'IS/GOV/7005942039/VMST-Protected/XRoadDev-v1'
+    VMST_UNEMPLOYMENT_XROAD_PATH: 'IS/GOV/7005942039/VMST-Protected/vmst-umsoknir-v1'
     WORKPOINT_ARBORG_SERVICE_PATH: 'IS/MUN/10036/Arborg-Protected/tengill-application-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/brautskraning-v1'
     XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS/GOV/5605882089/UA-Protected/kvortun-v1'
@@ -869,7 +869,7 @@ application-system-api:
     name: 'application-system-api'
 application-system-api-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job'
     - 'worker'
   command:
@@ -1044,7 +1044,7 @@ application-system-form:
     privileged: false
 cms-importer-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -1397,7 +1397,7 @@ endorsement-system-api:
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -2615,8 +2615,6 @@ services-documents:
 services-payments:
   enabled: true
   env:
-    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
-    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_payments'
@@ -2625,12 +2623,6 @@ services-payments:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
-    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
-    NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5'
     PAYMENTS_WEB_URL: 'https://island.is/greida'
@@ -2728,7 +2720,6 @@ services-payments:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-payments/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
-    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-payments/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     PAYMENTS_GATEWAY_API_HEADER_KEY: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_KEY'
     PAYMENTS_GATEWAY_API_HEADER_VALUE: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_VALUE'
     PAYMENTS_GATEWAY_API_SECRET: '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET'
@@ -2814,7 +2805,7 @@ services-sessions:
     privileged: false
 services-sessions-cleanup:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -2876,7 +2867,7 @@ services-sessions-cleanup:
     privileged: false
 services-sessions-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
   command:
     - 'node'
@@ -2972,7 +2963,7 @@ services-sessions-worker:
     name: 'sessions-worker'
 services-university-gateway:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -3100,7 +3091,7 @@ services-university-gateway:
     name: 'services-university-gateway'
 services-university-gateway-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job'
     - 'worker'
   command:
@@ -3355,7 +3346,7 @@ skilavottord-ws:
 user-notification:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -3472,7 +3463,7 @@ user-notification:
 user-notification-birthday-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
     - '--isBirthdayWorker'
   command:
@@ -3573,7 +3564,7 @@ user-notification-birthday-worker:
 user-notification-cleanup-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -3667,7 +3658,7 @@ user-notification-cleanup-worker:
 user-notification-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
   command:
     - 'node'
@@ -3865,7 +3856,7 @@ web:
 xroad-collector:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true

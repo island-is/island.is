@@ -10,8 +10,6 @@ import {
   ChargeFjsV2ClientService,
   Charge,
 } from '@island.is/clients/charge-fjs-v2'
-import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
-import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { retry } from '@island.is/shared/utils/server'
 
 import {
@@ -78,8 +76,6 @@ export class PaymentFlowService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
-    private nationalRegistryV3: NationalRegistryV3ClientService,
-    private companyRegistryApi: CompanyRegistryClientService,
     private jwksConfigService: JwksConfigService,
     @Inject(PaymentFlowModuleConfig.KEY)
     private readonly paymentFlowConfig: ConfigType<
@@ -221,30 +217,32 @@ export class PaymentFlowService {
     }
   }
 
-  private async getPayerName(payerNationalId: string) {
+  private async getPayerName(payerNationalId: string): Promise<string> {
     if (!isValid(payerNationalId)) {
       throw new BadRequestException(PaymentServiceCode.InvalidPayerNationalId)
     }
 
-    if (isCompany(payerNationalId)) {
-      const company = await this.companyRegistryApi.getCompany(payerNationalId)
+    let payerName: string | null = null
 
-      if (!company) {
+    try {
+      const payeeInfo = await this.chargeFjsV2ClientService.getPayeeInfo(
+        payerNationalId,
+      )
+
+      payerName = payeeInfo.name
+    } catch (e) {
+      this.logger.error(`Failed to get payer name from FJS`, { error: e })
+    }
+
+    if (payerName === null || payerName.length === 0) {
+      if (isCompany(payerNationalId)) {
         throw new BadRequestException(PaymentServiceCode.CompanyNotFound)
       }
 
-      return company.name
-    }
-
-    const person = await this.nationalRegistryV3.getAllDataIndividual(
-      payerNationalId,
-    )
-
-    if (!person) {
       throw new BadRequestException(PaymentServiceCode.PersonNotFound)
     }
 
-    return person.nafn ?? ''
+    return payerName
   }
 
   async isEligibleToBePaid(id: string) {

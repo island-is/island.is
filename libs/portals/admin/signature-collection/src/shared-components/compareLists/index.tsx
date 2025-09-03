@@ -19,21 +19,24 @@ import {
 import { Skeleton } from './skeleton'
 import { useUnsignAdminMutation } from './removeSignatureFromList.generated'
 import { m } from '../../lib/messages'
-import { createFileList, getFileData } from '../../lib/utils'
+import { createFileList, downloadFile, getFileData } from '../../lib/utils'
 
 const { Table, Row, Head, HeadData, Body, Data } = T
 
 const CompareLists = ({
   collectionId,
   collectionType,
+  municipalAreaId,
 }: {
   collectionId: string
   collectionType: SignatureCollectionCollectionType
+  municipalAreaId?: string
 }) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
-  const [uploadResults, setUploadResults] = useState<Array<any>>()
+  const [uploadResults, setUploadResults] =
+    useState<Array<SignatureCollectionSignature>>()
   const [compareMutation, { loading }] = useBulkCompareMutation()
   const [unSignMutation] = useUnsignAdminMutation()
 
@@ -42,7 +45,11 @@ const CompareLists = ({
       const res = await compareMutation({
         variables: {
           input: {
-            collectionId,
+            collectionId:
+              collectionType ===
+              SignatureCollectionCollectionType.LocalGovernmental
+                ? municipalAreaId ?? ''
+                : collectionId,
             nationalIds: nationalIds,
           },
         },
@@ -89,13 +96,14 @@ const CompareLists = ({
 
   const onChange = async (newFile: File[]) => {
     setFileList(createFileList(newFile, fileList))
-    let data = await getFileData(newFile)
+    const data = await getFileData(newFile)
 
-    data = data.map((d: { Kennitala: any }) => {
-      return String(d.Kennitala).replace('-', '')
+    const nationalIds = data.map((d: Record<string, unknown>) => {
+      const kennitala = d.Kennitala
+      return String(kennitala).replace('-', '')
     })
 
-    compareLists(data)
+    compareLists(nationalIds)
   }
 
   return (
@@ -134,6 +142,15 @@ const CompareLists = ({
         label={''}
       >
         <Text>{formatMessage(m.compareListsModalDescription)}</Text>
+        <Box display="flex" justifyContent="flexEnd" paddingTop={3}>
+          <Button
+            variant="utility"
+            icon="document"
+            onClick={() => downloadFile()}
+          >
+            {formatMessage(m.downloadTemplate)}
+          </Button>
+        </Box>
         <Box paddingTop={5} paddingBottom={5}>
           <InputFileUploadDeprecated
             fileList={fileList}
@@ -153,7 +170,7 @@ const CompareLists = ({
               </Text>
               <Text marginBottom={5}>
                 {formatMessage(
-                  uploadResults && uploadResults?.length > 0
+                  loading || (uploadResults?.length ?? 0) > 0
                     ? m.compareListsResultsDescription
                     : m.compareListsNoResultsDescription,
                 )}
@@ -171,29 +188,25 @@ const CompareLists = ({
                   <Body>
                     {!loading ? (
                       uploadResults?.map(
-                        (result: SignatureCollectionSignature) => {
-                          return (
-                            <Row key={result.id}>
-                              <Data style={{ minWidth: '140px' }}>
-                                {formatNationalId(result.signee.nationalId)}
-                              </Data>
-                              <Data style={{ minWidth: '250px' }}>
-                                {result.signee.name}
-                              </Data>
-                              <Data>{result.listTitle}</Data>
-                              <Data style={{ minWidth: '160px' }}>
-                                <Button
-                                  variant="utility"
-                                  onClick={() => {
-                                    unSignFromList(result.id)
-                                  }}
-                                >
-                                  {formatMessage(m.unsignFromList)}
-                                </Button>
-                              </Data>
-                            </Row>
-                          )
-                        },
+                        (result: SignatureCollectionSignature) => (
+                          <Row key={result.id}>
+                            <Data style={{ minWidth: '140px' }}>
+                              {formatNationalId(result.signee.nationalId)}
+                            </Data>
+                            <Data style={{ minWidth: '250px' }}>
+                              {result.signee.name}
+                            </Data>
+                            <Data>{result.listTitle}</Data>
+                            <Data style={{ minWidth: '160px' }}>
+                              <Button
+                                variant="utility"
+                                onClick={() => unSignFromList(result.id)}
+                              >
+                                {formatMessage(m.unsignFromList)}
+                              </Button>
+                            </Data>
+                          </Row>
+                        ),
                       )
                     ) : (
                       <Skeleton />

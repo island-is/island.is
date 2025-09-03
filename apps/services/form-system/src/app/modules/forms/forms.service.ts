@@ -133,6 +133,7 @@ export class FormsService {
       'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
+      'hasSummaryScreen',
     ]
 
     const formResponseDto: FormResponseDto = {
@@ -563,6 +564,7 @@ export class FormsService {
       'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
+      'hasSummaryScreen',
       'completedMessage',
       'dependencies',
     ]
@@ -699,15 +701,22 @@ export class FormsService {
       {
         formId: form.id,
         sectionType: SectionTypes.SUMMARY,
-        displayOrder: 9998,
+        displayOrder: 9911,
         name: { is: 'Yfirlit', en: 'Summary' },
+      } as Section,
+
+      {
+        formId: form.id,
+        sectionType: SectionTypes.COMPLETED,
+        displayOrder: 9931,
+        name: { is: 'Staðfesting', en: 'Confirmation' },
       } as Section,
     ])
 
     const paymentSection = await this.sectionModel.create({
       formId: form.id,
       sectionType: SectionTypes.PAYMENT,
-      displayOrder: 9999,
+      displayOrder: 9921,
       name: { is: 'Greiðsla', en: 'Payment' },
     } as Section)
 
@@ -797,6 +806,25 @@ export class FormsService {
           }
         }
       }
+    }
+
+    const hasCompleted = sections.some(
+      (s) => s.sectionType === SectionTypes.COMPLETED,
+    )
+    if (!hasCompleted) {
+      const maxOrder =
+        sections.length > 0
+          ? Math.max(...sections.map((s) => s.displayOrder ?? 0))
+          : 0
+      sections.push({
+        id: uuidV4(),
+        formId: newForm.id,
+        sectionType: SectionTypes.COMPLETED,
+        displayOrder: maxOrder + 1,
+        name: { is: 'Staðfesting', en: 'Confirmation' },
+        created: new Date(),
+        modified: new Date(),
+      } as Section)
     }
 
     if (existingForm.formCertificationTypes) {

@@ -32,7 +32,10 @@ export const updateFormFn = async (
           updateFormDto: {
             organizationId: newForm.organizationId,
             name: newForm.name,
-            organizationDisplayName: newForm.organizationDisplayName,
+            organizationDisplayName: {
+              is: newForm.organizationDisplayName?.is ?? '',
+              en: newForm.organizationDisplayName?.en ?? '',
+            },
             slug: newForm.slug,
             invalidationDate:
               newForm.invalidationDate === null
@@ -42,6 +45,8 @@ export const updateFormFn = async (
             applicationDaysToRemove: newForm.applicationDaysToRemove,
             stopProgressOnValidatingScreen:
               newForm.stopProgressOnValidatingScreen,
+            hasPayment: newForm.hasPayment,
+            hasSummaryScreen: newForm.hasSummaryScreen,
             completedMessage: newForm.completedMessage,
             dependencies: newForm.dependencies ?? [],
           },
