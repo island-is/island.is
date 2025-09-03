@@ -561,8 +561,9 @@ export class InternalCaseService {
       )
 
       await this.caseRepositoryService.update(
+        theCase.id,
         { ...clearedCaseProperties, isArchived: true },
-        { where: { id: theCase.id }, transaction },
+        { transaction },
       )
     })
 

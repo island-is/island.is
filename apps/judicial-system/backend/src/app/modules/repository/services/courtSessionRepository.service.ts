@@ -47,7 +47,7 @@ export class CourtSessionRepositoryService {
     options?: CreateCourtSessionOptions,
   ): Promise<CourtSession> {
     try {
-      this.logger.debug('Creating new court session with data:', {
+      this.logger.debug('Creating a new court session with data:', {
         data: Object.keys(data ?? {}),
       })
 
@@ -62,11 +62,11 @@ export class CourtSessionRepositoryService {
         createOptions,
       )
 
-      this.logger.debug(`Court new court session ${courtSession.id}`)
+      this.logger.debug(`Created a new court session ${courtSession.id}`)
 
       return courtSession
     } catch (error) {
-      this.logger.error('Error creating new court session with data:', {
+      this.logger.error('Error creating a new court session with data:', {
         data: Object.keys(data ?? {}),
         error,
       })
