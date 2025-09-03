@@ -6,8 +6,8 @@ const schema = z.object({
   scope: z.array(z.string()),
 })
 
-export const BloodClientConfig = defineConfig<z.infer<typeof schema>>({
-  name: 'BloodClientConfig',
+export const LshClientConfig = defineConfig<z.infer<typeof schema>>({
+  name: 'LshClientConfig',
   schema,
   load(env) {
     return {

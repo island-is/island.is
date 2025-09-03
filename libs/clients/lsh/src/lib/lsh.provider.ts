@@ -5,22 +5,22 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { BloodClientConfig } from './blood.config'
+import { LshClientConfig } from './lsh.config'
 import { Provider } from '@nestjs/common'
 import { BloodApi, Configuration } from '../../gen/fetch'
 
-export const BloodApiProvider: Provider<BloodApi> = {
+export const LshApiProvider: Provider<BloodApi> = {
   provide: BloodApi,
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof BloodClientConfig>,
+    config: ConfigType<typeof LshClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
     new BloodApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: 'clients-blood',
+          name: 'clients-lsh',
           organizationSlug: 'landspitali',
           autoAuth: idsClientConfig.isConfigured
             ? {
@@ -40,5 +40,5 @@ export const BloodApiProvider: Provider<BloodApi> = {
         },
       }),
     ),
-  inject: [XRoadConfig.KEY, BloodClientConfig.KEY, IdsClientConfig.KEY],
+  inject: [XRoadConfig.KEY, LshClientConfig.KEY, IdsClientConfig.KEY],
 }
