@@ -40,9 +40,9 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     (state.application.hasPayment === false &&
       state.application.hasSummaryScreen === false &&
       state.currentScreen?.index ===
-      state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
+        state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
 
-  // const onSubmit = false    
+  // const onSubmit = false
 
   const isCompletedSection =
     state.currentSection.data.sectionType === SectionTypes.COMPLETED
@@ -58,11 +58,13 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
 
-  const isBackButton = state.currentSection.index > 0 &&
-    !(
-      state.currentSection.index === 1 &&
-      (state.currentScreen?.index ?? 0) === 0
-    ) || isCompletedSection
+  const isBackButton =
+    (state.currentSection.index > 0 &&
+      !(
+        state.currentSection.index === 1 &&
+        (state.currentScreen?.index ?? 0) === 0
+      )) ||
+    isCompletedSection
 
   const handleIncrement = async () => {
     const isValid = await validate()
