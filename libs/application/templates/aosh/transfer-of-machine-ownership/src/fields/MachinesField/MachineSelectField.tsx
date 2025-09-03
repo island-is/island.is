@@ -111,8 +111,8 @@ export const MachineSelectField: FC<
     <Box>
       <SelectController
         label={formatMessage(information.labels.pickMachine.vehicle)}
-        id={`${field.id}`}
-        name={`${field.id}`}
+        id={`${field.id}.index`}
+        name={`${field.id}.index`}
         onSelect={(option) => onChange(option as Option)}
         options={currentMachineList.map((machine, index) => {
           return {
