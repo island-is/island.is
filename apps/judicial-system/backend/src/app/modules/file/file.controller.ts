@@ -242,7 +242,9 @@ export class FileController {
       `Getting a signed url for file ${fileId} of case ${caseId}`,
     )
 
-    return this.fileService.getCaseFileSignedUrl(theCase, caseFile, Number(ttl))
+    const timeToLive = ttl ? Number(ttl) : undefined
+
+    return this.fileService.getCaseFileSignedUrl(theCase, caseFile, timeToLive)
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseFileExistsGuard)
