@@ -194,7 +194,7 @@ type InputSettingsActions =
       type: 'SET_ZENDESK_FIELD_SETTINGS'
       payload: {
         property:
-          | 'zendeskIsPublic'
+          | 'zendeskIsPrivate'
           | 'zendeskIsCustomField'
           | 'zendeskCustomFieldId'
         value: boolean | string
