@@ -21,6 +21,7 @@ import { GetPaymentQueryResult } from './Payment.loader'
 
 import { PaymentsPaymentFlowEventType } from '@island.is/api/schema'
 import { getPaymentStatusTag } from '../../utils/paymentStatusTag'
+import { PaymentsPaths } from '../../lib/paths'
 
 const Payment = () => {
   const { formatMessage } = useLocale()
@@ -54,11 +55,7 @@ const Payment = () => {
 
   return (
     <Stack space="containerGutter">
-      <BackButton
-        onClick={() => {
-          navigate(-1)
-        }}
-      />
+      <BackButton onClick={() => navigate(PaymentsPaths.Payments)} />
 
       <GridRow marginBottom={4}>
         <GridColumn span={['8/8', '5/8']}>

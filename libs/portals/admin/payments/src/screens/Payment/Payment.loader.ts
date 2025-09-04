@@ -10,7 +10,7 @@ import {
 import { PaymentsPaths } from '../../lib/paths'
 
 export type GetPaymentQueryResult = NonNullable<
-  GetPaymentQuery['paymentsGetFlow']
+  GetPaymentQuery['paymentsGetFlowAdmin']
 >
 
 export const paymentLoader: WrappedLoaderFn = ({ client }) => {
@@ -32,10 +32,10 @@ export const paymentLoader: WrappedLoaderFn = ({ client }) => {
       throw res.error
     }
 
-    if (!res.data?.paymentsGetFlow) {
+    if (!res.data?.paymentsGetFlowAdmin) {
       return redirect(PaymentsPaths.Root)
     }
 
-    return res.data.paymentsGetFlow
+    return res.data.paymentsGetFlowAdmin
   }
 }

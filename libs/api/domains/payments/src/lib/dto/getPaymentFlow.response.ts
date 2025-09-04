@@ -54,7 +54,10 @@ export class GetPaymentFlowResponse {
 
   @Field(() => Date)
   updatedAt!: Date
+}
 
+@ObjectType('PaymentsGetPaymentFlowAdminResponse')
+export class PaymentFlowAdminResponse extends GetPaymentFlowResponse {
   @Field(() => [PaymentFlowEvent], { nullable: true })
   events?: PaymentFlowEvent[]
 }

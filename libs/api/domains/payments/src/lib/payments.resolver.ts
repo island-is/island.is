@@ -2,15 +2,21 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApolloError } from '@apollo/client'
 
-import { ScopesGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
 
-import { GetPaymentFlowInput } from './dto/getPaymentFlow.input'
-import { GetPaymentFlowResponse } from './dto/getPaymentFlow.response'
+import {
+  GetPaymentFlowAdminInput,
+  GetPaymentFlowInput,
+} from './dto/getPaymentFlow.input'
+import {
+  GetPaymentFlowResponse,
+  PaymentFlowAdminResponse,
+} from './dto/getPaymentFlow.response'
 import { PaymentsService } from './payments.service'
 import { VerifyCardResponse } from './dto/verifyCard.response'
 import { VerifyCardInput } from './dto/verifyCard.input'
@@ -24,8 +30,9 @@ import { CardVerificationResponse } from './dto/cardVerificationCallback.respons
 import { GetJwksResponse } from './dto/getJwks.response'
 import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
 import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
+import { AdminPortalScope } from '../../../../../auth/scopes/src/lib/admin-portal.scope'
 
-@UseGuards(ScopesGuard, FeatureFlagGuard)
+@UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
 @Resolver()
 export class PaymentsResolver {
@@ -53,6 +60,16 @@ export class PaymentsResolver {
     } catch (e) {
       throw new ApolloError(e.message)
     }
+  }
+
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.payments)
+  @Query(() => PaymentFlowAdminResponse, { name: 'paymentsGetFlowAdmin' })
+  async getPaymentFlowAdmin(
+    @Args('input', { type: () => GetPaymentFlowAdminInput })
+    input: GetPaymentFlowAdminInput,
+  ): Promise<PaymentFlowAdminResponse> {
+    return this.paymentsService.getPaymentFlow(input, true)
   }
 
   @Query(() => GetPaymentVerificationStatusResponse, {
