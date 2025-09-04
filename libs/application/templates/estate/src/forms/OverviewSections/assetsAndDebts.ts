@@ -79,19 +79,22 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'overviewInventory',
     title: m.inventoryTextField,
-    description: ({ answers }) => getValueViaPath(answers, 'inventory.info'),
+    description: ({ answers }) =>
+      getValueViaPath(answers, 'estate.inventory.info'),
     titleVariant: 'h4',
     space: 'gutter',
-    condition: (answers) => getValueViaPath(answers, 'inventory.info') !== '',
+    condition: (answers) =>
+      getValueViaPath(answers, 'estate.inventory.info') !== '',
   }),
   buildDescriptionField({
     id: 'overviewInventoryValue',
     title: m.inventoryValueTitle,
     description: ({ answers }) => {
-      const value = getValueViaPath<string>(answers, 'inventory.value')
+      const value = getValueViaPath<string>(answers, 'estate.inventory.value')
       return formatCurrency(value ?? '0')
     },
-    condition: (answers) => getValueViaPath(answers, 'inventory.value') !== '',
+    condition: (answers) =>
+      getValueViaPath(answers, 'estate.inventory.value') !== '',
     titleVariant: 'h4',
     marginBottom: 'gutter',
     space: 'gutter',
@@ -101,7 +104,8 @@ export const overviewAssetsAndDebts = [
     description: m.notFilledOutItalic,
     marginTop: [3],
     marginBottom: [3],
-    condition: (answers) => getValueViaPath(answers, 'inventory.value') === '',
+    condition: (answers) =>
+      getValueViaPath(answers, 'estate.inventory.value') === '',
   }),
   buildDividerField({}),
   buildDescriptionField({
@@ -218,8 +222,12 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).bankAccounts ?? []).map(
-          (account) => ({
+        ((answers as unknown as EstateSchema).estate.bankAccounts ?? []).map(
+          (
+            account: NonNullable<
+              EstateSchema['estate']['bankAccounts']
+            >[number],
+          ) => ({
             title: formatBankInfo(account.accountNumber ?? ''),
             description: [
               `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
@@ -237,15 +245,15 @@ export const overviewAssetsAndDebts = [
     id: 'bankAccountsTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers<EstateSchema['bankAccounts']>(
+      getSumFromAnswers<EstateSchema['estate']['bankAccounts']>(
         answers,
-        'bankAccounts',
+        'estate.bankAccounts',
         'accountTotal',
       ),
     condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['bankAccounts']>(
+      !!getSumFromAnswers<EstateSchema['estate']['bankAccounts']>(
         answers,
-        'bankAccounts',
+        'estate.bankAccounts',
         'accountTotal',
       ),
     titleVariant: 'h4',
@@ -281,23 +289,33 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).claims ?? []).map((claim) => ({
-          title: claim.publisher,
-          description: [
-            `${m.claimsAmount.defaultMessage}: ${formatCurrency(
-              claim.value ?? '0',
-            )}`,
-          ],
-        })),
+        ((answers as unknown as EstateSchema).estate?.claims ?? []).map(
+          (claim) => ({
+            title: claim.publisher,
+            description: [
+              `${m.claimsAmount.defaultMessage}: ${formatCurrency(
+                claim.value ?? '0',
+              )}`,
+            ],
+          }),
+        ),
     },
   ),
   buildDescriptionField({
     id: 'claimsTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
+      getSumFromAnswers<EstateSchema['estate']['claims']>(
+        answers,
+        'estate.claims',
+        'value',
+      ),
     condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
+      !!getSumFromAnswers<EstateSchema['estate']['claims']>(
+        answers,
+        'estate.claims',
+        'value',
+      ),
     titleVariant: 'h4',
   }),
   buildDividerField({
@@ -331,34 +349,44 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).stocks ?? []).map((stock) => {
-          return {
-            title: stock.organization,
-            description: [
-              `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
-                stock.nationalId ?? '',
-              )}`,
-              `${m.stocksFaceValue.defaultMessage}: ${customCurrencyFormat(
-                stock.faceValue ?? '0',
-              )}`,
-              `${m.stocksRateOfChange.defaultMessage}: ${
-                stock.rateOfExchange?.replace('.', ',') ?? '0'
-              }`,
-              `${m.stocksValue.defaultMessage}: ${customCurrencyFormat(
-                stock.value ?? '0',
-              )}`,
-            ],
-          }
-        }),
+        ((answers as unknown as EstateSchema).estate?.stocks ?? []).map(
+          (stock) => {
+            return {
+              title: stock.organization,
+              description: [
+                `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
+                  stock.nationalId ?? '',
+                )}`,
+                `${m.stocksFaceValue.defaultMessage}: ${customCurrencyFormat(
+                  stock.faceValue ?? '0',
+                )}`,
+                `${m.stocksRateOfChange.defaultMessage}: ${
+                  stock.rateOfExchange?.replace('.', ',') ?? '0'
+                }`,
+                `${m.stocksValue.defaultMessage}: ${customCurrencyFormat(
+                  stock.value ?? '0',
+                )}`,
+              ],
+            }
+          },
+        ),
     },
   ),
   buildDescriptionField({
     id: 'stocksTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
+      getSumFromAnswers<EstateSchema['estate']['stocks']>(
+        answers,
+        'estate.stocks',
+        'value',
+      ),
     condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
+      !!getSumFromAnswers<EstateSchema['estate']['stocks']>(
+        answers,
+        'estate.stocks',
+        'value',
+      ),
     titleVariant: 'h4',
   }),
   buildDividerField({}),
@@ -376,10 +404,10 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).otherAssets ?? []).map(
+        ((answers as unknown as EstateSchema).estate.otherAssets ?? []).map(
           (otherAsset) => {
             return {
-              title: otherAsset.info,
+              title: otherAsset.description,
               description: [
                 `${m.otherAssetsValue.defaultMessage}: ${formatCurrency(
                   otherAsset.value ?? '0',
@@ -394,15 +422,15 @@ export const overviewAssetsAndDebts = [
     id: 'otherAssetsTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers<EstateSchema['otherAssets']>(
+      getSumFromAnswers<EstateSchema['estate']['otherAssets']>(
         answers,
-        'otherAssets',
+        'estate.otherAssets',
         'value',
       ),
     condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['otherAssets']>(
+      !!getSumFromAnswers<EstateSchema['estate']['otherAssets']>(
         answers,
-        'otherAssets',
+        'estate.otherAssets',
         'value',
       ),
     titleVariant: 'h4',
@@ -418,18 +446,18 @@ export const overviewAssetsAndDebts = [
     id: 'overviewMoneyAndDeposit',
     title: m.moneyAndDepositText,
     description: ({ answers }) =>
-      getValueViaPath<string>(answers, 'moneyAndDeposit.info'),
+      getValueViaPath<string>(answers, 'estate.moneyAndDeposit.info'),
     titleVariant: 'h4',
     space: 'gutter',
     condition: (answers) =>
-      getValueViaPath<string>(answers, 'moneyAndDeposit.info') !== '',
+      getValueViaPath<string>(answers, 'estate.moneyAndDeposit.info') !== '',
   }),
   buildDescriptionField({
     id: 'overviewMoneyAndDepositValue',
     title: m.moneyAndDepositValue,
     description: ({ answers }) => {
       const value =
-        getValueViaPath<string>(answers, 'moneyAndDeposit.value') ?? '0'
+        getValueViaPath<string>(answers, 'estate.moneyAndDeposit.value') ?? '0'
 
       return formatCurrency(value)
     },
@@ -437,7 +465,7 @@ export const overviewAssetsAndDebts = [
     marginBottom: 'gutter',
     space: 'gutter',
     condition: (answers) =>
-      getValueViaPath<string>(answers, 'moneyAndDeposit.value') !== '',
+      getValueViaPath<string>(answers, 'estate.moneyAndDeposit.value') !== '',
   }),
   buildDescriptionField({
     id: 'moneyAndDepositNotFilledOut',
@@ -445,7 +473,9 @@ export const overviewAssetsAndDebts = [
     marginTop: [3],
     marginBottom: [3],
     condition: (answers) => {
-      return getValueViaPath<string>(answers, 'moneyAndDeposit.value') === ''
+      return (
+        getValueViaPath<string>(answers, 'estate.moneyAndDeposit.value') === ''
+      )
     },
   }),
   buildDividerField({}),
@@ -463,27 +493,32 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).debts ?? []).map((debt) => ({
-          title: debt.creditorName,
-          description: [
-            `${m.debtsNationalId.defaultMessage}: ${formatNationalId(
-              debt.nationalId ?? '',
-            )}`,
-            `${m.debtsLoanIdentity.defaultMessage}: ${debt.loanIdentity ?? ''}`,
-            `${m.debtsBalance.defaultMessage}: ${formatCurrency(
-              debt.balance ?? '0',
-            )}`,
-          ],
-        })),
+        ((answers as unknown as EstateSchema).debts?.data ?? []).map(
+          (debt) => ({
+            title: debt.creditorName,
+            description: [
+              debt.nationalId &&
+                `${m.debtsNationalId.defaultMessage}: ${formatNationalId(
+                  debt.nationalId ?? '',
+                )}`,
+              `${m.debtsLoanIdentity.defaultMessage}: ${
+                debt.loanIdentity ?? ''
+              }`,
+              `${m.debtsBalance.defaultMessage}: ${formatCurrency(
+                debt.balance ?? '0',
+              )}`,
+            ],
+          }),
+        ),
     },
   ),
   buildDescriptionField({
     id: 'debtsTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),
+      getSumFromAnswers(answers, 'debts.data', 'balance'),
     condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),
+      !!getSumFromAnswers(answers, 'debts.data', 'balance'),
     titleVariant: 'h4',
   }),
   buildDividerField({}),

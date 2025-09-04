@@ -70,7 +70,7 @@ export const getForm = ({
                   ).estates.map((estate) => {
                     return {
                       value: estate.caseNumber,
-                      label: estate.nameOfDeceased,
+                      label: estate.caseNumber + ' ' + estate.nameOfDeceased,
                     }
                   })
                 },

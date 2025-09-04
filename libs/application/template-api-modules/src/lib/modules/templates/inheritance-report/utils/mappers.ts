@@ -22,6 +22,13 @@ const initialMapper = <T>(element: T) => {
   }
 }
 
+const bankAccountInitialMapper = <T>(element: T) => {
+  return {
+    ...initialMapper(element),
+    exchangeRateOrInterest: (element as any).exchangeRateOrInterest || '',
+  }
+}
+
 export const trueOrHasYes = (element: string | boolean): string => {
   const elementString = element.toString().toLowerCase()
   const value = elementString === 'yes' || elementString === 'true'
@@ -57,36 +64,6 @@ const estateMemberMapper = (element: EstateMember) => {
   }
 }
 
-export const estateTransformer = (estate: EstateInfo): InheritanceData => {
-  const realEstate = estate.assets.map((el) => initialMapper<EstateAsset>(el))
-  const vehicles = estate.vehicles.map((el) => initialMapper<EstateAsset>(el))
-  const guns = estate.guns.map((el) => initialMapper<EstateAsset>(el))
-  const otherAssets = estate.otherAssets.map((el) =>
-    initialMapper<EstateAsset>(el),
-  )
-  const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
-
-  const data = {
-    ...estate,
-    estateMembers,
-    realEstate: {
-      data: realEstate,
-      hasModified: false,
-    },
-    vehicles: {
-      data: vehicles,
-      hasModified: false,
-    },
-    guns: {
-      data: guns,
-    },
-    otherAssets: {
-      data: otherAssets,
-    },
-  }
-
-  return data
-}
 
 // -----------------------------------------------------------------
 // ----------------------- EXPANDERS -------------------------------
