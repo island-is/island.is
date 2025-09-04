@@ -21,9 +21,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import {
-  formatEventLocation,
-} from '@island.is/web/utils/event'
+import { formatEventLocation } from '@island.is/web/utils/event'
 
 interface EventListProps {
   namespace: Record<string, string>
