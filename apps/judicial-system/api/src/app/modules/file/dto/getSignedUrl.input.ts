@@ -19,6 +19,6 @@ export class GetSignedUrlInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   readonly ttl?: number
 }
