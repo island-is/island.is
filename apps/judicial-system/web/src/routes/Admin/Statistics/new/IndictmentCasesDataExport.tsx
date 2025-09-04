@@ -67,10 +67,10 @@ const IndictmentCasesDataExport = () => {
               iconType="outline"
               loading={csvLoading}
               onClick={async () => {
+                setCsvLoading(true)
                 const res = await refetchPreprocessedData({
                   input: queryVariables,
                 })
-                setCsvLoading(true)
                 try {
                   const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
                   if (url) {
