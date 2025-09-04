@@ -37,7 +37,12 @@ export const serviceSetup = (services: {
         staging: `https://beta.staging01.devland.is/greida`,
         prod: `https://island.is/greida`,
       },
-      LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: `http://web.islandis.svc.cluster.local/payments/event-callback`,
+      LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: {
+        dev: 'http://web.islandis.svc.cluster.local/payments/event-callback',
+        staging:
+          'http://web.islandis.svc.cluster.local/payments/event-callback',
+        prod: 'http://web.islandis.svc.cluster.local/payments/event-callback',
+      },
       REDIS_USE_SSL: 'true',
     })
     .secrets({
