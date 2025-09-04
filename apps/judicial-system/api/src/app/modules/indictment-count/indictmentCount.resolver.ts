@@ -40,9 +40,7 @@ export class IndictmentCountResolver {
   ): Promise<IndictmentCount> {
     const { caseId, ...createIndictmentCount } = input
 
-    this.logger.debug(
-      `Creating a new indictment count for case ${caseId}`,
-    )
+    this.logger.debug(`Creating a new indictment count for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
@@ -69,7 +67,11 @@ export class IndictmentCountResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_INDICTMENT_COUNT,
-      backendService.updateIndictmentCount(caseId, indictmentCountId, updateIndictmentCount),
+      backendService.updateIndictmentCount(
+        caseId,
+        indictmentCountId,
+        updateIndictmentCount,
+      ),
       indictmentCountId,
     )
   }

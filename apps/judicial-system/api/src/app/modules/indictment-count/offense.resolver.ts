@@ -69,7 +69,12 @@ export class OffenseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_OFFENSE,
-      backendService.updateOffense(caseId, indictmentCountId, offenseId, updateOffense),
+      backendService.updateOffense(
+        caseId,
+        indictmentCountId,
+        offenseId,
+        updateOffense,
+      ),
       offenseId,
     )
   }
