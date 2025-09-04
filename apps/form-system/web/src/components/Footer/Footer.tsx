@@ -43,7 +43,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       state.currentScreen?.index ===
         state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
 
-
   const isCompletedSection =
     state.currentSection.data.sectionType === SectionTypes.COMPLETED
   const continueButtonText =
