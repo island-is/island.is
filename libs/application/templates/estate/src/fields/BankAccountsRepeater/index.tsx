@@ -88,6 +88,9 @@ export const BankAccountsRepeater: FC<
                   `${formatMessage(m.bankAccountBalance)}: ${
                     bankAccount.balance || '0'
                   } kr.`,
+                  `${formatMessage(m.bankAccountInterestRate)}: ${
+                    bankAccount.exchangeRateOrInterest || '0'
+                  }`,
                   <Box marginTop={1} as="span">
                     <Button
                       variant="text"
