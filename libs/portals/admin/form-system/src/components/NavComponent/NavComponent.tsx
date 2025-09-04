@@ -14,7 +14,6 @@ import { Box, Checkbox, Text } from '@island.is/island-ui/core'
 import { NavButtons } from './components/NavButtons'
 import { SectionTypes } from '@island.is/form-system/enums'
 
-
 type Props = {
   type: ItemType
   data: FormSystemSection | FormSystemScreen | FormSystemField
@@ -213,5 +212,3 @@ export const NavComponent = ({
     </Box>
   )
 }
-
-

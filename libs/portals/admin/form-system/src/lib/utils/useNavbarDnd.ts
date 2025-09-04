@@ -43,8 +43,6 @@ export const useNavbarDnD = () => {
     })
   }
 
-
-
   const onDragOver = (event: DragOverEvent) => {
     const { active, over } = event
     if (!over) return
@@ -89,10 +87,9 @@ export const useNavbarDnD = () => {
     if (hasDependency(dependencies, activeId as string)) {
       controlDispatch({
         type: 'REMOVE_DEPENDENCIES',
-        payload: { activeId, update: formUpdate }
+        payload: { activeId, update: formUpdate },
       })
     }
-
   }
 
   const onDragEnd = () => {

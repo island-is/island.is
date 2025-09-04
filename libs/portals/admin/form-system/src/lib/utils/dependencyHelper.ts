@@ -1,7 +1,10 @@
 import { FormSystemDependency } from '@island.is/api/schema'
 
 export const hasDependency = (
-  dependencyArray: (FormSystemDependency | null | undefined)[] | undefined | null,
+  dependencyArray:
+    | (FormSystemDependency | null | undefined)[]
+    | undefined
+    | null,
   id: string,
 ) => {
   if (!dependencyArray) return false
