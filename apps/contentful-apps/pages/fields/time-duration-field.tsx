@@ -43,6 +43,23 @@ const TimeDurationField = () => {
           ...prevTime,
           [field]: value,
         }
+
+        if (field === 'startTime') {
+          const sd = new Date(`2000-01-01T${value}`)
+          const ed = new Date(`2000-01-01T${updatedTime.endTime ?? ''}`)
+          if (sd >= ed) {
+            updatedTime.endTime = ''
+          }
+        }
+
+        if (field === 'endTime') {
+          const sd = new Date(`2000-01-01T${updatedTime.startTime ?? ''}`)
+          const ed = new Date(`2000-01-01T${value}`)
+          if (sd >= ed) {
+            updatedTime.startTime = ''
+          }
+        }
+
         sdk.field.setValue(updatedTime)
         return updatedTime
       })
