@@ -318,19 +318,26 @@ export class ApplicationTemplateHelper<
 
   getHistoryLogs(
     stateKey: string = this.application.state,
-    event: Event<TEvents>,
+    exitEvent: Event<TEvents>,
+    exitEventSubject: string,
+    exitEventActor: string,
   ): StaticText | undefined {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
     const historyLogs = stateInfo?.actionCard?.historyLogs
+    let historyLog = null;
 
     if (Array.isArray(historyLogs)) {
-      return historyLogs?.find((historyLog) => historyLog.onEvent === event)
-        ?.logMessage
+      historyLog =  historyLogs?.find((historyLog) => historyLog.onEvent === exitEvent)
     } else {
-      return historyLogs?.onEvent === event
-        ? historyLogs?.logMessage
+      historyLog =  historyLogs?.onEvent === exitEvent
+        ? historyLogs
         : undefined
     }
+
+    if (typeof historyLog?.logMessage === 'function') {
+      return historyLog.log(historyLog.logMessage, exitEventSubject, exitEventActor)
+    }
+
   }
 }

@@ -23,11 +23,11 @@ export class HistoryBuilder {
     const result = []
 
     for (const entry of history) {
-      const { entryTimestamp, stateKey, exitEvent } = entry
+      const { entryTimestamp, stateKey, exitEvent, exitEventSubjectNationalId, exitEventActorNationalId } = entry
 
       if (!exitEvent) continue
 
-      const entryLog = templateHelper.getHistoryLogs(stateKey, exitEvent)
+      const entryLog = templateHelper.getHistoryLogs(stateKey, exitEvent, exitEventSubjectNationalId, exitEventActorNationalId)
 
       if (entryLog) {
         result.push(

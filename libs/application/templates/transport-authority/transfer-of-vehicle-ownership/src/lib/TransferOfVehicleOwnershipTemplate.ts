@@ -9,7 +9,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   PendingAction,
-  InstitutionNationalIds,
+  InstitutionNationalIds, StaticText,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -61,6 +61,14 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   return {
     name: applicationMessage.name,
     value: plate ? `- ${plate}` : '',
+  }
+}
+
+const formatHistoryLogWithSubjectAndActor = (logMessage: StaticText, subject: string, actor: string) =>  {
+  return {
+    name: logMessage,
+    actor: actor,
+    subject: subject,
   }
 }
 
@@ -223,7 +231,7 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: applicationMessage.historyLogApprovedByReviewer,
+                logMessage: formatHistoryLogWithSubjectAndActor(logMessage =  applicationMessage.historyLogApprovedByReviewer),
               },
               {
                 onEvent: DefaultEvents.REJECT,
