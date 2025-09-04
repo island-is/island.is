@@ -167,10 +167,10 @@ export const shipSelection = {
       defaultMessage: 'Krabbaveiðileyfi',
       description: 'Crustaceans',
     },
-    igulker: {
-      id: 'gfl.application:shipSelection.tags.igulker',
+    urchin: {
+      id: 'gfl.application:shipSelection.tags.urchin',
       defaultMessage: 'Ígulkerjaveiðileyfi',
-      description: 'Igulker',
+      description: 'Ígulkerjaveiðileyfi',
     },
   }),
 }
