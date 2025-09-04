@@ -119,7 +119,7 @@ export const BaseInput = () => {
         </Column>
       </Row>
       {/* Description  */}
-      {['Message'].includes(currentItem?.fieldType ?? '') && (
+      {['MESSAGE'].includes(currentItem?.fieldType ?? '') && (
         <>
           <Row>
             <Column span="10/10">
