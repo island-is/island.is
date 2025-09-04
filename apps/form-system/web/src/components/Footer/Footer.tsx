@@ -58,7 +58,9 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     state.currentSection.index === 0 ? externalDataAgreement : true
 
   const isBackButton =
-      SectionTypes.PARTIES && (state.currentScreen?.index !== undefined && state.currentScreen.index > 0) ||
+    (SectionTypes.PARTIES &&
+      state.currentScreen?.index !== undefined &&
+      state.currentScreen.index > 0) ||
     isCompletedSection
 
   const handleIncrement = async () => {
