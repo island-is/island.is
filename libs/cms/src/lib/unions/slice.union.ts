@@ -163,7 +163,10 @@ import {
   IntroLinkImage,
   mapIntroLinkImage,
 } from '../models/introLinkImage.model'
-import { LastCallsForGrants, mapLastCallsForGrants } from '../models/lastCallsForGrants.model'
+import {
+  LastCallsForGrants,
+  mapLastCallsForGrants,
+} from '../models/lastCallsForGrants.model'
 
 export type SliceTypes =
   | ITimeline

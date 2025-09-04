@@ -17,7 +17,11 @@ import {
   defaultRenderMarkObject,
   defaultRenderNodeObject,
 } from '@island.is/island-ui/contentful'
-import { GridContainer, InfoCard, InfoCardGrid } from '@island.is/island-ui/core'
+import {
+  GridContainer,
+  InfoCard,
+  InfoCardGrid,
+} from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   AccordionSlice,
@@ -105,7 +109,10 @@ import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSk
 import { WHODASCalculator } from '../components/connected/WHODAS/Calculator'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
-import { GrantCardsList, LastCallsForGrantsList } from '../components/GrantCardsList'
+import {
+  GrantCardsList,
+  LastCallsForGrantsList,
+} from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 

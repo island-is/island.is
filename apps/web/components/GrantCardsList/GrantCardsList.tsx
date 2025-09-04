@@ -25,9 +25,10 @@ const GrantCardsList = ({ slice }: SliceProps) => {
   const getTranslation = (
     key: keyof TranslationKeys,
     argToInterpolate?: string,
-  ) => getTranslationString(key, slice.namespace, argToInterpolate )
+  ) => getTranslationString(key, slice.namespace, argToInterpolate)
 
-  const parseStatus  = (grant: Grant) => parseGrantStatus(grant, activeLocale, getTranslation)
+  const parseStatus = (grant: Grant) =>
+    parseGrantStatus(grant, activeLocale, getTranslation)
 
   const grantItems = [...(slice.resolvedGrantsList?.items ?? [])]
 
@@ -59,8 +60,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
           cta={{
             disabled: isGrantOpen(grant) !== 'open',
             size: 'small',
-            label:
-              grant.applicationButtonLabel ?? getTranslation('apply'),
+            label: grant.applicationButtonLabel ?? getTranslation('apply'),
             onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
             icon: 'open',
             iconType: 'outline',

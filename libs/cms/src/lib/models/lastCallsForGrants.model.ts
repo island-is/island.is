@@ -1,11 +1,14 @@
-import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
-import { CacheField } from "@island.is/nest/graphql";
-import { GraphQLJSONObject } from "graphql-type-json";
-import { GetGrantsInput, GrantsAvailabilityStatus } from "../dto/getGrants.input";
-import { GrantList } from "./grantList.model";
-import { SystemMetadata } from "@island.is/shared/types";
-import { ILastCallsForGrants } from "../generated/contentfulTypes";
-import { ElasticsearchIndexLocale } from "@island.is/content-search-index-manager";
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { GraphQLJSONObject } from 'graphql-type-json'
+import {
+  GetGrantsInput,
+  GrantsAvailabilityStatus,
+} from '../dto/getGrants.input'
+import { GrantList } from './grantList.model'
+import { SystemMetadata } from '@island.is/shared/types'
+import { ILastCallsForGrants } from '../generated/contentfulTypes'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 @ObjectType()
 export class LastCallsForGrants {
@@ -21,7 +24,7 @@ export class LastCallsForGrants {
   @CacheField(() => GrantList, { nullable: true })
   resolvedGrantsList?: GetGrantsInput
 
-  @Field({nullable: true})
+  @Field({ nullable: true })
   onlyShowOpenForApplication?: boolean
 
   @Field(() => Int, { nullable: true })
@@ -29,7 +32,8 @@ export class LastCallsForGrants {
 }
 
 export const mapLastCallsForGrants = ({
-  fields, sys
+  fields,
+  sys,
 }: ILastCallsForGrants): SystemMetadata<LastCallsForGrants> => {
   return {
     typename: 'LastCallsForGrants',
@@ -40,9 +44,13 @@ export const mapLastCallsForGrants = ({
         sys.locale === 'is-IS'
           ? 'is'
           : (sys.locale as ElasticsearchIndexLocale),
-      organizations: fields?.parentOrganization?.fields.slug ? [fields.parentOrganization.fields.slug] : undefined,
+      organizations: fields?.parentOrganization?.fields.slug
+        ? [fields.parentOrganization.fields.slug]
+        : undefined,
       size: fields.maxNumberOfCards,
-      status: fields.onlyShowOpenForApplication ? GrantsAvailabilityStatus.OPEN : undefined
+      status: fields.onlyShowOpenForApplication
+        ? GrantsAvailabilityStatus.OPEN
+        : undefined,
     },
     onlyShowOpenForApplication: fields.onlyShowOpenForApplication,
     maxNumberOfCards: fields.maxNumberOfCards,

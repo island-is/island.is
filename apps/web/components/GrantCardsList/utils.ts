@@ -7,7 +7,6 @@ import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
 
 import { OPEN_GRANT_STATUSES, TranslationKeys } from './types'
 
-
 export const getTranslationString = (
   key: keyof TranslationKeys,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,10 +42,14 @@ export const isGrantOpen = (grant: Grant): 'open' | 'closed' | 'unknown' => {
   return OPEN_GRANT_STATUSES.includes(grant.status) ? 'open' : 'closed'
 }
 
-export const parseGrantStatus = (grant: Grant, locale: Locale, translationFunction: (
-  key: keyof TranslationKeys,
-  argToInterpolate?: string,
-) => string ) =>  {
+export const parseGrantStatus = (
+  grant: Grant,
+  locale: Locale,
+  translationFunction: (
+    key: keyof TranslationKeys,
+    argToInterpolate?: string,
+  ) => string,
+) => {
   switch (grant.status) {
     case GrantStatus.Closed: {
       const date = grant.dateTo

@@ -1,4 +1,4 @@
-import { GrantStatus } from "@island.is/web/graphql/schema"
+import { GrantStatus } from '@island.is/web/graphql/schema'
 
 export type TranslationKeys = Partial<
   Record<
