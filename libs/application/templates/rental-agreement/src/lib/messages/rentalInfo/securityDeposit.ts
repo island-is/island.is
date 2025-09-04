@@ -141,7 +141,7 @@ export const securityDeposit = defineMessages({
     description: 'security deposit amount selection 1 month',
   },
   amountSelection2Month: {
-    id: 'ra.application:securityDeposit.amountSelection1Month',
+    id: 'ra.application:securityDeposit.amountSelection2Month',
     defaultMessage: '2 mánuðir af leiguverði',
     description: 'security deposit amount selection 2 months',
   },
