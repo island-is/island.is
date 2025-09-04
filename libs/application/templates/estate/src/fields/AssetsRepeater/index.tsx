@@ -48,6 +48,7 @@ export const AssetsRepeater: FC<
 
   return (
     <Box marginTop={2}>
+      <div>AssetsRepeater</div>
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
           if (!asset.initial) {

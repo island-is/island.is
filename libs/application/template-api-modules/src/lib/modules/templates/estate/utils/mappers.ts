@@ -18,7 +18,119 @@ const estateAssetMapper = <T>(element: T) => {
     ...element,
     initial: true,
     enabled: true,
-    marketValue: '',
+    marketValue: (element as EstateAsset)?.marketValue || '',
+  }
+}
+
+const bankAccountMapper = (
+  element: EstateAsset & { exchangeRateOrInterest?: string },
+) => {
+  return {
+    accountNumber: element.assetNumber || '',
+    balance: element.marketValue || '',
+    exchangeRateOrInterest: element.exchangeRateOrInterest || '',
+    initial: true,
+    enabled: true,
+  }
+}
+
+const claimsMapper = (element: EstateAsset) => {
+  return {
+    publisher: element.description || '',
+    value: element.marketValue || '',
+    nationalId: element.assetNumber || '',
+    initial: true,
+    enabled: true,
+  }
+}
+
+const stocksMapper = (
+  element: EstateAsset & { upphaed?: string; gengiVextir?: string },
+) => {
+  const faceValue = element.upphaed || element.marketValue || '0'
+  const rateOfExchange = element.gengiVextir?.replace(',', '.') || '1'
+  const calculatedValue = (
+    parseFloat(faceValue) * parseFloat(rateOfExchange)
+  ).toString()
+
+  return {
+    organization: element.description || '',
+    nationalId: element.assetNumber || '',
+    faceValue: faceValue,
+    rateOfExchange: rateOfExchange,
+    value: calculatedValue,
+    initial: true,
+    enabled: true,
+  }
+}
+
+const inventoryMapper = (cashItems: EstateAsset[]) => {
+  const descriptions = cashItems
+    .map((item) => item.description)
+    .filter((desc) => desc && desc.trim() !== '')
+    .join(', ')
+
+  const totalValue = cashItems.reduce((sum, item) => {
+    const value = parseFloat(item.marketValue || '0')
+    return sum + (isNaN(value) ? 0 : value)
+  }, 0)
+
+  return {
+    info: descriptions,
+    value: totalValue.toString(),
+  }
+}
+
+const moneyAndDepositMapper = (elements: EstateAsset[]) => {
+  if (!elements || elements.length === 0) {
+    return { info: '', value: '' }
+  }
+
+  // Aggregate all money and deposit items
+  const totalValue = elements.reduce((sum, element) => {
+    const value = parseFloat(element.marketValue || '0')
+    return sum + value
+  }, 0)
+
+  const descriptions = elements
+    .map((element) => element.description)
+    .filter(Boolean)
+    .join(', ')
+
+  return {
+    info: descriptions || '',
+    value: totalValue.toString(),
+  }
+}
+
+const debtsMapper = (element: any) => {
+  return {
+    creditorName: element.description || '',
+    nationalId: '', // Should be empty - only filled by user
+    loanIdentity: element.assetNumber || '',
+    balance: element.amount || element.marketValue || '',
+    debtType: debtTypeMapping[element.tegundAngalgs] || 'OtherDebts',
+    initial: true,
+    enabled: true,
+  }
+}
+
+const debtTypeMapping: Record<number, string> = {
+  13: 'Duties',
+  14: 'OtherDebts',
+  17: 'PropertyFees',
+  18: 'InsuranceCompany',
+  19: 'Loan',
+  20: 'CreditCard',
+  21: 'Overdraft',
+}
+
+const otherAssetsMapper = (element: EstateAsset) => {
+  return {
+    description: element.description || '',
+    value: element.marketValue || '0',
+    initial: true,
+    enabled: true,
   }
 }
 
@@ -66,6 +178,13 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     estateAssetMapper<EstateAsset>(el),
   )
   const guns = estate.guns.map((el) => estateAssetMapper<EstateAsset>(el))
+  const bankAccounts = estate.bankAccounts.map((el) => bankAccountMapper(el))
+  const claims = estate.claims.map((el) => claimsMapper(el))
+  const stocks = estate.stocks.map((el) => stocksMapper(el))
+  const otherAssets = estate.otherAssets.map((el) => otherAssetsMapper(el))
+  const otherDebts = estate.otherDebts?.map((el: any) => debtsMapper(el)) ?? []
+  const inventory = inventoryMapper(estate.cash)
+  const moneyAndDeposit = moneyAndDepositMapper(estate.moneyAndDeposit)
   const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
 
   return {
@@ -76,6 +195,13 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     ships,
     vehicles,
     guns,
+    bankAccounts,
+    claims,
+    stocks,
+    otherAssets,
+    otherDebts,
+    inventory,
+    moneyAndDeposit,
   }
 }
 
@@ -203,6 +329,15 @@ export const expandStocks = (
   })
 
   return expandedStocks
+}
+
+export const expandMoneyAndDeposit = (
+  moneyAndDeposit: UploadData['moneyAndDeposit'],
+): UploadData['moneyAndDeposit'] => {
+  return {
+    info: moneyAndDeposit.info ?? '',
+    value: moneyAndDeposit.value ?? '',
+  }
 }
 
 export const expandOtherAssets = (

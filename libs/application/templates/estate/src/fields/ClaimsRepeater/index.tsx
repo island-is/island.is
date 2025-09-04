@@ -11,19 +11,21 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
+import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue } from '../../types'
 
-interface OtherAssetFormField {
+interface ClaimFormField {
   id: string
-  description?: string
+  publisher?: string
   value?: string
+  nationalId?: string
   initial?: boolean
   enabled?: boolean
 }
 
-interface OtherAssetsRepeaterProps {
+interface ClaimsRepeaterProps {
   field: {
     props: {
       repeaterButtonText: string
@@ -31,12 +33,12 @@ interface OtherAssetsRepeaterProps {
   }
 }
 
-export const OtherAssetsRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps & OtherAssetsRepeaterProps>
+export const ClaimsRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps & ClaimsRepeaterProps>
 > = ({ application, field, errors }) => {
   const { id } = field
   const repeaterButtonText = field?.props?.repeaterButtonText
-  const error = (errors as ErrorValue)?.estate?.otherAssets
+  const error = (errors as ErrorValue)?.estate?.claims
   const { formatMessage } = useLocale()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
@@ -47,16 +49,16 @@ export const OtherAssetsRepeater: FC<
   const forceUpdate = useCallback(() => updateState({}), [])
 
   useEffect(() => {
-    if (fields.length === 0 && estateData.estate?.otherAssets) {
-      replace(estateData.estate.otherAssets)
+    if (fields.length === 0 && estateData.estate?.claims) {
+      replace(estateData.estate.claims)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Clear errors when other asset value changes
-  const updateOtherAssetValue = (fieldIndex: string) => {
-    const otherAssetValues = getValues(fieldIndex)
-    const value = otherAssetValues?.value?.replace(/[^\d.]/g, '') || '0'
+  // Clear errors when claim value changes
+  const updateClaimValue = (fieldIndex: string) => {
+    const claimValues = getValues(fieldIndex)
+    const value = claimValues?.value?.replace(/[^\d.]/g, '') || '0'
 
     if (parseFloat(value) > 0) {
       clearErrors(`${fieldIndex}.value`)
@@ -65,22 +67,23 @@ export const OtherAssetsRepeater: FC<
     forceUpdate()
   }
 
-  const handleAddOtherAsset = () =>
+  const handleAddClaim = () =>
     append({
-      description: '',
+      publisher: '',
       value: '',
+      nationalId: '',
       initial: false,
       enabled: true,
     })
 
-  const handleRemoveOtherAsset = (index: number) => remove(index)
+  const handleRemoveClaim = (index: number) => remove(index)
 
-  // Calculate values for all fields when they are populated
+  // Calculate claimTotal for all fields when they are populated
   useEffect(() => {
     if (fields.length > 0) {
       fields.forEach((_, index) => {
         const fieldIndex = `${id}[${index}]`
-        updateOtherAssetValue(fieldIndex)
+        updateClaimValue(fieldIndex)
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -88,10 +91,11 @@ export const OtherAssetsRepeater: FC<
 
   return (
     <Box marginTop={2}>
-      {fields.map((field: OtherAssetFormField, index) => {
+      {fields.map((field: ClaimFormField, index) => {
         const fieldIndex = `${id}[${index}]`
-        const descriptionField = `${fieldIndex}.description`
+        const publisherField = `${fieldIndex}.publisher`
         const valueField = `${fieldIndex}.value`
+        const nationalIdField = `${fieldIndex}.nationalId`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
         const fieldError = error && error[index] ? error[index] : null
@@ -125,11 +129,11 @@ export const OtherAssetsRepeater: FC<
                     size="small"
                     iconType="outline"
                     onClick={() => {
-                      const updatedAsset = {
+                      const updatedClaim = {
                         ...field,
                         enabled: !field.enabled,
                       }
-                      update(index, updatedAsset)
+                      update(index, updatedClaim)
                       clearErrors(`${id}[${index}].value`)
                     }}
                   >
@@ -144,7 +148,7 @@ export const OtherAssetsRepeater: FC<
                     size="small"
                     circle
                     icon="remove"
-                    onClick={handleRemoveOtherAsset.bind(null, index)}
+                    onClick={handleRemoveClaim.bind(null, index)}
                   />
                 )}
               </Box>
@@ -156,15 +160,16 @@ export const OtherAssetsRepeater: FC<
                 paddingTop={2}
               >
                 <InputController
-                  id={descriptionField}
-                  name={descriptionField}
-                  label={formatMessage(m.otherAssetsText)}
+                  id={publisherField}
+                  name={publisherField}
+                  label={formatMessage(m.claimsPublisher)}
                   backgroundColor="blue"
-                  defaultValue={field.description}
-                  error={fieldError?.description}
+                  defaultValue={field.publisher}
+                  required
+                  error={fieldError?.publisher}
                   size="sm"
                   disabled={field.initial && !field.enabled}
-                  onChange={() => updateOtherAssetValue(fieldIndex)}
+                  onChange={() => updateClaimValue(fieldIndex)}
                 />
               </GridColumn>
               <GridColumn
@@ -175,15 +180,31 @@ export const OtherAssetsRepeater: FC<
                 <InputController
                   id={valueField}
                   name={valueField}
-                  label={formatMessage(m.otherAssetsValue)}
+                  label={formatMessage(m.claimsAmount)}
                   defaultValue={field.value}
                   placeholder="0 kr."
+                  required
                   error={fieldError?.value}
                   currency
                   size="sm"
                   backgroundColor="blue"
                   disabled={field.initial && !field.enabled}
-                  onChange={() => updateOtherAssetValue(fieldIndex)}
+                  onChange={() => updateClaimValue(fieldIndex)}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={nationalIdField}
+                  name={nationalIdField}
+                  label={formatMessage(m.nationalId)}
+                  defaultValue={field.nationalId}
+                  placeholder="000000-0000"
+                  error={fieldError?.nationalId}
+                  format="######-####"
+                  size="sm"
+                  backgroundColor="blue"
+                  disabled={field.initial && !field.enabled}
+                  onChange={() => updateClaimValue(fieldIndex)}
                 />
               </GridColumn>
             </GridRow>
@@ -195,7 +216,7 @@ export const OtherAssetsRepeater: FC<
           variant="text"
           icon="add"
           iconType="outline"
-          onClick={handleAddOtherAsset}
+          onClick={handleAddClaim}
           size="small"
         >
           {formatMessage(repeaterButtonText)}
@@ -205,4 +226,4 @@ export const OtherAssetsRepeater: FC<
   )
 }
 
-export default OtherAssetsRepeater
+export default ClaimsRepeater

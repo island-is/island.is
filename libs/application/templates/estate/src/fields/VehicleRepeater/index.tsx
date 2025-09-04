@@ -51,6 +51,7 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   return (
     <Box marginTop={2}>
+      <div>VehicleRepeater</div>
       <GridRow>
         {fields.length > 0 &&
           fields.map((vehicle: AssetFormField, index) => {

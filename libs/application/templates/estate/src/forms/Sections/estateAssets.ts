@@ -61,19 +61,13 @@ export const estateAssets = buildSection({
               titleVariant: 'h3',
               marginBottom: 2,
             }),
-            buildTextField({
-              id: 'inventory.info',
-              title: m.inventoryTextField,
-              placeholder: m.inventoryTextFieldPlaceholder,
-              variant: 'textarea',
-              rows: 7,
-            }),
-            buildTextField({
-              id: 'inventory.value',
-              title: m.inventoryValueTitle,
-              width: 'half',
-              variant: 'currency',
-            }),
+            buildCustomField(
+              {
+                id: 'estate.inventory',
+                component: 'InventoryFields',
+              },
+              {},
+            ),
           ],
         }),
       ],
@@ -155,8 +149,8 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                id: 'bankAccounts',
-                component: 'TextFieldsRepeater',
+                id: 'estate.bankAccounts',
+                component: 'BankAccountsRepeater',
               },
               {
                 fields: [
@@ -216,34 +210,58 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                id: 'claims',
-                component: 'TextFieldsRepeater',
+                id: 'estate.claims',
+                component: 'ClaimsRepeater',
               },
               {
-                fields: [
-                  {
-                    title: m.claimsPublisher,
-                    id: 'publisher',
-                  },
-                  {
-                    title: m.claimsAmount,
-                    id: 'value',
-                    currency: true,
-                  },
-                  {
-                    title: m.nationalId,
-                    id: 'nationalId',
-                    format: '######-####',
-                  },
-                ],
                 repeaterButtonText: m.claimsRepeaterButton,
-                repeaterHeaderText: m.claimsTitle,
               },
             ),
           ],
         }),
       ],
     }),
+    // the old (current) version
+    // buildCustomField(
+    //   {
+    //     id: 'stocks',
+    //     title: m.stocksTitle,
+    //     component: 'TextFieldsRepeater',
+    //   },
+    //   {
+    //     fields: [
+    //       {
+    //         title: m.stocksOrganization,
+    //         id: 'organization',
+    //       },
+    //       {
+    //         title: m.stocksNationalId,
+    //         id: 'nationalId',
+    //         format: '######-####',
+    //       },
+    //       {
+    //         title: m.stocksFaceValue,
+    //         id: 'faceValue',
+    //         type: 'number',
+    //         currency: true,
+    //       },
+    //       {
+    //         title: m.stocksRateOfChange,
+    //         id: 'rateOfExchange',
+    //         type: 'number',
+    //       },
+    //       {
+    //         title: m.stocksValue,
+    //         id: 'value',
+    //         backgroundColor: 'white',
+    //         currency: true,
+    //         readOnly: true,
+    //       },
+    //     ],
+    //     repeaterButtonText: m.stocksRepeaterButton,
+    //     repeaterHeaderText: m.stocksTitle,
+    //   },
+    // ),
     buildSubSection({
       id: 'stocks',
       title: m.stocksTitle,
@@ -267,41 +285,11 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                id: 'stocks',
-                component: 'TextFieldsRepeater',
+                id: 'estate.stocks',
+                component: 'StocksRepeater',
               },
               {
-                fields: [
-                  {
-                    title: m.stocksOrganization,
-                    id: 'organization',
-                  },
-                  {
-                    title: m.stocksNationalId,
-                    id: 'nationalId',
-                    format: '######-####',
-                  },
-                  {
-                    title: m.stocksFaceValue,
-                    id: 'faceValue',
-                    type: 'number',
-                    currency: true,
-                  },
-                  {
-                    title: m.stocksRateOfChange,
-                    id: 'rateOfExchange',
-                    type: 'number',
-                  },
-                  {
-                    title: m.stocksValue,
-                    id: 'value',
-                    backgroundColor: 'white',
-                    currency: true,
-                    readOnly: true,
-                  },
-                ],
                 repeaterButtonText: m.stocksRepeaterButton,
-                repeaterHeaderText: m.stocksTitle,
               },
             ),
           ],
@@ -324,19 +312,13 @@ export const estateAssets = buildSection({
               titleVariant: 'h3',
               marginBottom: 2,
             }),
-            buildTextField({
-              id: 'moneyAndDeposit.info',
-              title: m.moneyAndDepositText,
-              placeholder: m.moneyAndDepositPlaceholder,
-              variant: 'textarea',
-              rows: 7,
-            }),
-            buildTextField({
-              id: 'moneyAndDeposit.value',
-              title: m.moneyAndDepositValue,
-              width: 'half',
-              variant: 'currency',
-            }),
+            buildCustomField(
+              {
+                id: 'estate.moneyAndDeposit',
+                component: 'MoneyAndDepositFields',
+              },
+              {},
+            ),
           ],
         }),
       ],
@@ -344,6 +326,11 @@ export const estateAssets = buildSection({
     buildSubSection({
       id: 'otherAssets',
       title: m.otherAssetsTitle,
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
       children: [
         buildMultiField({
           id: 'otherAssets',
@@ -359,24 +346,10 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                id: 'otherAssets',
+                id: 'estate.otherAssets',
                 component: 'OtherAssetsRepeater',
-                doesNotRequireAnswer: true,
               },
               {
-                fields: [
-                  {
-                    id: 'info',
-                    title: m.otherAssetsText,
-                    required: true,
-                  },
-                  {
-                    id: 'value',
-                    title: m.otherAssetsValue,
-                    required: true,
-                    currency: true,
-                  },
-                ],
                 repeaterButtonText: m.otherAssetRepeaterButton,
               },
             ),

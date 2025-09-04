@@ -15,15 +15,17 @@ import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue } from '../../types'
 
-interface OtherAssetFormField {
+interface BankAccountFormField {
   id: string
-  description?: string
-  value?: string
+  accountNumber?: string
+  balance?: string
+  exchangeRateOrInterest?: string
+  accountTotal?: string
   initial?: boolean
   enabled?: boolean
 }
 
-interface OtherAssetsRepeaterProps {
+interface BankAccountsRepeaterProps {
   field: {
     props: {
       repeaterButtonText: string
@@ -31,12 +33,12 @@ interface OtherAssetsRepeaterProps {
   }
 }
 
-export const OtherAssetsRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps & OtherAssetsRepeaterProps>
+export const BankAccountsRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps & BankAccountsRepeaterProps>
 > = ({ application, field, errors }) => {
   const { id } = field
   const repeaterButtonText = field?.props?.repeaterButtonText
-  const error = (errors as ErrorValue)?.estate?.otherAssets
+  const error = (errors as ErrorValue)?.estate?.bankAccounts
   const { formatMessage } = useLocale()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
@@ -47,40 +49,48 @@ export const OtherAssetsRepeater: FC<
   const forceUpdate = useCallback(() => updateState({}), [])
 
   useEffect(() => {
-    if (fields.length === 0 && estateData.estate?.otherAssets) {
-      replace(estateData.estate.otherAssets)
+    if (fields.length === 0 && estateData.estate?.bankAccounts) {
+      replace(estateData.estate.bankAccounts)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Clear errors when other asset value changes
-  const updateOtherAssetValue = (fieldIndex: string) => {
-    const otherAssetValues = getValues(fieldIndex)
-    const value = otherAssetValues?.value?.replace(/[^\d.]/g, '') || '0'
+  // Calculate bank account total from balance + exchangeRateOrInterest
+  const updateBankAccountValue = (fieldIndex: string) => {
+    const bankAccountValues = getValues(fieldIndex)
+    const balance = bankAccountValues?.balance?.replace(/[^\d.]/g, '') || '0'
+    const exchangeRateOrInterest =
+      bankAccountValues?.exchangeRateOrInterest?.replace(/[^\d.]/g, '') || '0'
 
-    if (parseFloat(value) > 0) {
-      clearErrors(`${fieldIndex}.value`)
+    const accountTotal =
+      parseFloat(balance) + parseFloat(exchangeRateOrInterest)
+    setValue(`${fieldIndex}.accountTotal`, accountTotal.toString())
+
+    if (accountTotal > 0) {
+      clearErrors(`${fieldIndex}.balance`)
     }
 
     forceUpdate()
   }
 
-  const handleAddOtherAsset = () =>
+  const handleAddBankAccount = () =>
     append({
-      description: '',
-      value: '',
+      accountNumber: '',
+      balance: '',
+      exchangeRateOrInterest: '0',
+      accountTotal: '',
       initial: false,
       enabled: true,
     })
 
-  const handleRemoveOtherAsset = (index: number) => remove(index)
+  const handleRemoveBankAccount = (index: number) => remove(index)
 
-  // Calculate values for all fields when they are populated
+  // Calculate accountTotal for all fields when they are populated
   useEffect(() => {
     if (fields.length > 0) {
       fields.forEach((_, index) => {
         const fieldIndex = `${id}[${index}]`
-        updateOtherAssetValue(fieldIndex)
+        updateBankAccountValue(fieldIndex)
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -88,10 +98,12 @@ export const OtherAssetsRepeater: FC<
 
   return (
     <Box marginTop={2}>
-      {fields.map((field: OtherAssetFormField, index) => {
+      {fields.map((field: BankAccountFormField, index) => {
         const fieldIndex = `${id}[${index}]`
-        const descriptionField = `${fieldIndex}.description`
-        const valueField = `${fieldIndex}.value`
+        const accountNumberField = `${fieldIndex}.accountNumber`
+        const balanceField = `${fieldIndex}.balance`
+        const exchangeRateField = `${fieldIndex}.exchangeRateOrInterest`
+        const accountTotalField = `${fieldIndex}.accountTotal`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
         const fieldError = error && error[index] ? error[index] : null
@@ -125,12 +137,12 @@ export const OtherAssetsRepeater: FC<
                     size="small"
                     iconType="outline"
                     onClick={() => {
-                      const updatedAsset = {
+                      const updatedBankAccount = {
                         ...field,
                         enabled: !field.enabled,
                       }
-                      update(index, updatedAsset)
-                      clearErrors(`${id}[${index}].value`)
+                      update(index, updatedBankAccount)
+                      clearErrors(`${id}[${index}].balance`)
                     }}
                   >
                     {field.enabled
@@ -144,7 +156,7 @@ export const OtherAssetsRepeater: FC<
                     size="small"
                     circle
                     icon="remove"
-                    onClick={handleRemoveOtherAsset.bind(null, index)}
+                    onClick={handleRemoveBankAccount.bind(null, index)}
                   />
                 )}
               </Box>
@@ -156,15 +168,16 @@ export const OtherAssetsRepeater: FC<
                 paddingTop={2}
               >
                 <InputController
-                  id={descriptionField}
-                  name={descriptionField}
-                  label={formatMessage(m.otherAssetsText)}
+                  id={accountNumberField}
+                  name={accountNumberField}
+                  label={formatMessage(m.bankAccount)}
                   backgroundColor="blue"
-                  defaultValue={field.description}
-                  error={fieldError?.description}
+                  defaultValue={field.accountNumber}
+                  required
+                  error={fieldError?.accountNumber}
                   size="sm"
                   disabled={field.initial && !field.enabled}
-                  onChange={() => updateOtherAssetValue(fieldIndex)}
+                  onChange={() => updateBankAccountValue(fieldIndex)}
                 />
               </GridColumn>
               <GridColumn
@@ -173,29 +186,59 @@ export const OtherAssetsRepeater: FC<
                 paddingTop={2}
               >
                 <InputController
-                  id={valueField}
-                  name={valueField}
-                  label={formatMessage(m.otherAssetsValue)}
-                  defaultValue={field.value}
+                  id={balanceField}
+                  name={balanceField}
+                  label={formatMessage(m.bankAccountBalance)}
+                  defaultValue={field.balance}
                   placeholder="0 kr."
-                  error={fieldError?.value}
+                  required
+                  error={fieldError?.balance}
                   currency
                   size="sm"
                   backgroundColor="blue"
                   disabled={field.initial && !field.enabled}
-                  onChange={() => updateOtherAssetValue(fieldIndex)}
+                  onChange={() => updateBankAccountValue(fieldIndex)}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={exchangeRateField}
+                  name={exchangeRateField}
+                  label={formatMessage(m.bankAccountInterestRate)}
+                  defaultValue={field.exchangeRateOrInterest}
+                  placeholder="0"
+                  error={fieldError?.exchangeRateOrInterest}
+                  size="sm"
+                  backgroundColor="blue"
+                  disabled={field.initial && !field.enabled}
+                  onChange={() => updateBankAccountValue(fieldIndex)}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={accountTotalField}
+                  name={accountTotalField}
+                  label={formatMessage(m.total)}
+                  defaultValue={field.accountTotal}
+                  placeholder="0 kr."
+                  error={fieldError?.accountTotal}
+                  currency
+                  size="sm"
+                  backgroundColor="white"
+                  disabled={field.initial && !field.enabled}
+                  readOnly
                 />
               </GridColumn>
             </GridRow>
           </Box>
         )
       })}
-      <Box marginTop={2}>
+      <Box marginTop={1}>
         <Button
           variant="text"
           icon="add"
           iconType="outline"
-          onClick={handleAddOtherAsset}
+          onClick={handleAddBankAccount}
           size="small"
         >
           {formatMessage(repeaterButtonText)}
@@ -205,4 +248,4 @@ export const OtherAssetsRepeater: FC<
   )
 }
 
-export default OtherAssetsRepeater
+export default BankAccountsRepeater

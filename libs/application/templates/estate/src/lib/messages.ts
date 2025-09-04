@@ -1141,4 +1141,48 @@ export const m = defineMessages({
     defaultMessage: 'Fasteignamat á dánardegi',
     description: '',
   },
+
+  // Debt repeater messages
+
+  // Debt type messages
+  debtsCreditorType: {
+    id: 'es.application:debtsCreditorType',
+    defaultMessage: 'Tegund skuldar',
+    description: 'Debt type label',
+  },
+  debtsTypeDuties: {
+    id: 'es.application:debtsTypeDuties',
+    defaultMessage: 'Opinber gjöld',
+    description: 'Duties debt type',
+  },
+  debtsTypeOther: {
+    id: 'es.application:debtsTypeOther',
+    defaultMessage: 'Aðrar skuldir',
+    description: 'Other debts type',
+  },
+  debtsTypePropertyFees: {
+    id: 'es.application:debtsTypePropertyFees',
+    defaultMessage: 'Fasteignagjöld',
+    description: 'Property fees debt type',
+  },
+  debtsTypeInsurance: {
+    id: 'es.application:debtsTypeInsurance',
+    defaultMessage: 'Tryggingastofnun',
+    description: 'Insurance company debt type',
+  },
+  debtsTypeLoan: {
+    id: 'es.application:debtsTypeLoan',
+    defaultMessage: 'Lán',
+    description: 'Loan debt type',
+  },
+  debtsTypeCreditCard: {
+    id: 'es.application:debtsTypeCreditCard',
+    defaultMessage: 'Kreditkort',
+    description: 'Credit card debt type',
+  },
+  debtsTypeOverdraft: {
+    id: 'es.application:debtsTypeOverdraft',
+    defaultMessage: 'Yfirdráttur',
+    description: 'Overdraft debt type',
+  },
 })

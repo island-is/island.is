@@ -412,6 +412,7 @@ export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
 }
 
 export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
+  console.log('assetRaw', assetRaw)
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
@@ -419,6 +420,55 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
       assetRaw.eignarhlutfall !== undefined
         ? parseShare(assetRaw.eignarhlutfall)
         : 100,
+    marketValue: assetRaw.verdmaeti ?? '',
+  }
+}
+
+export const stocksAssetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
+  console.log('stocksAssetMapper assetRaw', assetRaw)
+  return {
+    description: assetRaw.lysing ?? '',
+    assetNumber: assetRaw.fastanumer ?? '',
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? parseShare(assetRaw.eignarhlutfall)
+        : 100,
+    marketValue: assetRaw.verdmaeti ?? '',
+    // Store stocks-specific fields that can be accessed by stocksMapper
+    ...(assetRaw.upphaed && { upphaed: assetRaw.upphaed }),
+    ...(assetRaw.gengiVextir && { gengiVextir: assetRaw.gengiVextir }),
+  }
+}
+
+export const debtsAssetMapper = (
+  assetRaw: EignirDanarbus,
+): EstateAsset & { tegundAngalgs?: number } => {
+  console.log('debtsAssetMapper assetRaw', assetRaw)
+  return {
+    description: assetRaw.lysing ?? '',
+    assetNumber: assetRaw.fastanumer ?? '',
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? parseShare(assetRaw.eignarhlutfall)
+        : 100,
+    marketValue: assetRaw.verdmaeti ?? '',
+    // Store tegundAngalgs for debt type mapping
+    tegundAngalgs: assetRaw.tegundAngalgs,
+  }
+}
+
+export const bankAccountMapper = (assetRaw: EignirDanarbus): EstateAsset => {
+  console.log('bankAccountMapper assetRaw', assetRaw)
+  return {
+    description: assetRaw.lysing ?? '',
+    assetNumber: assetRaw.fastanumer ?? '',
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? parseShare(assetRaw.eignarhlutfall)
+        : 100,
+    marketValue: assetRaw.upphaed ?? '', // Use upphaed (balance) as marketValue for bank accounts
+    // Store exchangeRateOrInterest in a custom property that can be accessed later
+    exchangeRateOrInterest: assetRaw.gengiVextir || '0',
   }
 }
 
@@ -479,6 +529,11 @@ export const mapEstateRegistrant = (
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_10)
           .map(assetMapper)
       : [],
+    moneyAndDeposit: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_9)
+          .map(assetMapper)
+      : [],
     otherAssets: [],
     estateMembers: syslaData.adilarDanarbus
       ? syslaData.adilarDanarbus.map(estateMemberMapper)
@@ -499,6 +554,11 @@ export const mapEstateRegistrant = (
 
 // TODO: get updated types into the client
 export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
+  console.log(
+    'mapEstateInfo - testin g watch mosss asdasd asdde performance',
+    syslaData,
+  )
+
   return {
     assets: syslaData.eignir
       ? syslaData.eignir
@@ -531,8 +591,50 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
           .map(assetMapper)
       : [],
     // TODO: update once implemented in District Commissioner's backend
-    guns: [],
-    otherAssets: [],
+    guns: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_10)
+          .map(assetMapper)
+      : [],
+    otherAssets: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_6)
+          .map(assetMapper)
+      : [],
+    bankAccounts: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_8)
+          .map(bankAccountMapper)
+      : [],
+    claims: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_11)
+          .map(assetMapper)
+      : [],
+    stocks: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_7)
+          .map(stocksAssetMapper)
+      : [],
+    moneyAndDeposit: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_9)
+          .map(assetMapper)
+      : [],
+    otherDebts: syslaData.eignir
+      ? syslaData.eignir
+          .filter(
+            (a) =>
+              a.tegundAngalgs === TegundAndlags.NUMBER_13 || // OpinberGjold
+              a.tegundAngalgs === TegundAndlags.NUMBER_14 || // AdrarSkuldir
+              a.tegundAngalgs === TegundAndlags.NUMBER_17 || // Fasteignagjold
+              a.tegundAngalgs === TegundAndlags.NUMBER_18 || // Tryggingastofnun
+              a.tegundAngalgs === TegundAndlags.NUMBER_19 || // Lan
+              a.tegundAngalgs === TegundAndlags.NUMBER_20 || // Kreditkort
+              a.tegundAngalgs === TegundAndlags.NUMBER_21, // Yfirdrattur
+          )
+          .map(debtsAssetMapper)
+      : [],
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)
       : [],
@@ -648,7 +750,7 @@ const mapInheritanceReportAsset = (
     share: parseShare(eignarhlutfall ?? 100),
     propertyValuation: fasteignamat ?? '',
     amount: upphaed ?? '',
-    exchangeRateOrInterest: gengiVextir ?? '',
+    exchangeRateOrInterest: gengiVextir || '0',
   }
 }
 

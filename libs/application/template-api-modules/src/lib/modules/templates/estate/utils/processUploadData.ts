@@ -9,6 +9,7 @@ import {
   expandClaims,
   expandDebts,
   expandEstateMembers,
+  expandMoneyAndDeposit,
   expandOtherAssets,
   expandStocks,
   trueOrHasYes,
@@ -73,17 +74,17 @@ export const generateRawUploadData = (
     applicationType: answers.selectedEstate,
     caseNumber: externalData?.caseNumber ?? '',
     assets: expandAssetFrames(processedAssets),
-    claims: expandClaims(answers?.claims ?? []),
-    bankAccounts: expandBankAccounts(answers.bankAccounts ?? []),
-    debts: expandDebts(answers.debts ?? []),
+    claims: expandClaims(answers.estate?.claims ?? []),
+    bankAccounts: expandBankAccounts(answers.estate?.bankAccounts ?? []),
+    debts: expandDebts(answers.debts?.data ?? []),
     estateMembers: expandEstateMembers(processedEstateMembers),
     inventory: {
-      info: answers.inventory?.info ?? '',
-      value: answers.inventory?.value ?? '',
+      info: answers.estate?.inventory?.info ?? '',
+      value: answers.estate?.inventory?.value ?? '',
     },
     moneyAndDeposit: {
-      info: answers.moneyAndDeposit?.info ?? '',
-      value: answers.moneyAndDeposit?.value ?? '',
+      info: answers.estate?.moneyAndDeposit?.info ?? '',
+      value: answers.estate?.moneyAndDeposit?.value ?? '',
     },
     notifier: {
       email: answers.applicant.email ?? '',
@@ -94,7 +95,7 @@ export const generateRawUploadData = (
       autonomous: trueOrHasYes(answers.applicant.autonomous ?? 'false'),
     },
     otherAssets: expandOtherAssets(answers.otherAssets ?? []),
-    stocks: expandStocks(answers.stocks ?? []),
+    stocks: expandStocks(answers.estate?.stocks ?? []),
     vehicles: expandAssetFrames(processedVehicles),
     estateWithoutAssetsInfo: {
       estateAssetsExist: trueOrHasYes(
