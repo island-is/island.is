@@ -3,7 +3,7 @@ import { useLoaderData } from 'react-router-dom'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import ActionExtendDeadline from '../extendDeadline'
 import ActionLockList from '../lockList'
-import ActionReviewComplete from '../completeListReview'
+import CompleteListReview from '../completeListReview'
 import DownloadReports from '../downloadReports'
 import RemoveCandidate from '../removeCandidate'
 import { m } from '../../lib/messages'
@@ -57,12 +57,13 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
         )}
         {allowedActions?.includes(Actions.LockList) && (
           <ActionLockList
+            isLocked={!list.active}
             listId={list.id}
             collectionType={list.collectionType}
           />
         )}
         {allowedActions?.includes(Actions.ReviewComplete) && (
-          <ActionReviewComplete
+          <CompleteListReview
             listId={list?.id}
             listStatus={listStatus}
             collectionType={list.collectionType}
