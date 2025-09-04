@@ -56,7 +56,7 @@ export const sellerSubSection = buildSubSection({
           width: 'half',
           required: true,
           defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.phone,
+            application.externalData?.userProfile?.data?.mobilePhoneNumber,
         }),
       ],
     }),
