@@ -20,7 +20,7 @@ export const MessageWithLink = ({ item }: Props) => {
     return url
   }
 
-  const {lang} = useLocale()
+  const { lang } = useLocale()
 
   return (
     <Box
@@ -30,7 +30,11 @@ export const MessageWithLink = ({ item }: Props) => {
       background="white"
       alignItems="center"
     >
-      <Box display="flex" flexDirection="column" style={{ flex: 1, minWidth: 0 }}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        style={{ flex: 1, minWidth: 0 }}
+      >
         <Box paddingBottom={1}>
           <Text variant="h4">{item?.name?.[lang] ?? ''}</Text>
         </Box>
