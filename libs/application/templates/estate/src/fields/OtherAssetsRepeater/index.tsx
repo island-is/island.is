@@ -71,6 +71,7 @@ export const OtherAssetsRepeater: FC<
 
   return (
     <Box>
+      <div>OtherAssetsRepeater</div>
       {fields.map((repeaterField: any, mainIndex) => {
         const fieldIndex = `${id}[${mainIndex}]`
 

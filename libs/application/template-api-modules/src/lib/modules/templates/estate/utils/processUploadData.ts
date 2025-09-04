@@ -74,7 +74,7 @@ export const generateRawUploadData = (
     caseNumber: externalData?.caseNumber ?? '',
     assets: expandAssetFrames(processedAssets),
     claims: expandClaims(answers?.claims ?? []),
-    bankAccounts: expandBankAccounts(answers.bankAccounts ?? []),
+    bankAccounts: expandBankAccounts(answers.estate?.bankAccounts ?? []),
     debts: expandDebts(answers.debts ?? []),
     estateMembers: expandEstateMembers(processedEstateMembers),
     inventory: {

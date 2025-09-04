@@ -158,7 +158,10 @@ export class EstateTemplateService extends BaseTemplateApiService {
         )
     }
 
+    console.log('estateResponse', estateResponse)
     const estates = estateResponse.map(estateTransformer)
+
+    console.log('estates', estates)
 
     const relationOptions = (await this.syslumennService.getEstateRelations())
       .relations

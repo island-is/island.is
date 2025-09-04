@@ -192,6 +192,46 @@ export const estateSchema = z.object({
     vehicles: asset,
     ships: asset,
     guns: asset,
+    bankAccounts: z
+      .object({
+        accountNumber: z.string(),
+        exchangeRateOrInterest: z.string(),
+        balance: z.string(),
+        initial: z.boolean(),
+        enabled: z.boolean(),
+      })
+      .refine(
+        ({ accountNumber, balance, exchangeRateOrInterest }) => {
+          return accountNumber !== '' || exchangeRateOrInterest !== ''
+            ? isValidString(balance)
+            : true
+        },
+        {
+          path: ['balance'],
+        },
+      )
+      .refine(
+        ({ accountNumber, balance, exchangeRateOrInterest }) => {
+          return balance !== '' || exchangeRateOrInterest !== ''
+            ? accountNumber !== ''
+            : true
+        },
+        {
+          path: ['accountNumber'],
+        },
+      )
+      .refine(
+        ({ accountNumber, balance, exchangeRateOrInterest }) => {
+          return accountNumber !== '' || balance !== ''
+            ? isValidString(exchangeRateOrInterest)
+            : true
+        },
+        {
+          path: ['exchangeRateOrInterest'],
+        },
+      )
+      .array()
+      .optional(),
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
     addressOfDeceased: z.string().optional(),
     caseNumber: z.string().min(1).optional(),
@@ -255,46 +295,6 @@ export const estateSchema = z.object({
     )
     .optional(),
 
-  // is: Innistæður í bönkum
-  bankAccounts: z
-    .object({
-      accountNumber: z.string(),
-      exchangeRateOrInterest: z.string(),
-      balance: z.string(),
-      total: z.number().optional(),
-    })
-    .refine(
-      ({ accountNumber, balance, exchangeRateOrInterest }) => {
-        return accountNumber !== '' || exchangeRateOrInterest !== ''
-          ? isValidString(balance)
-          : true
-      },
-      {
-        path: ['balance'],
-      },
-    )
-    .refine(
-      ({ accountNumber, balance, exchangeRateOrInterest }) => {
-        return balance !== '' || exchangeRateOrInterest !== ''
-          ? accountNumber !== ''
-          : true
-      },
-      {
-        path: ['accountNumber'],
-      },
-    )
-    .refine(
-      ({ accountNumber, balance, exchangeRateOrInterest }) => {
-        return accountNumber !== '' || balance !== ''
-          ? isValidString(exchangeRateOrInterest)
-          : true
-      },
-      {
-        path: ['exchangeRateOrInterest'],
-      },
-    )
-    .array()
-    .optional(),
 
   // is: Verðbréf og kröfur
   claims: z

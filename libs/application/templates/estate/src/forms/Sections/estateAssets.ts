@@ -155,8 +155,8 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                id: 'bankAccounts',
-                component: 'TextFieldsRepeater',
+                id: 'estate.bankAccounts',
+                component: 'BankAccountsRepeater',
               },
               {
                 fields: [

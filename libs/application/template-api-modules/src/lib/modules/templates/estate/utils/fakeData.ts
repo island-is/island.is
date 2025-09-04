@@ -75,6 +75,7 @@ export const getFakeEstateInfo = (
       },
     ],
     otherAssets: [],
+    bankAccounts: [],
     estateMembers: [
       {
         name: 'Gervimaður Afríka',

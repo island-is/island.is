@@ -19,6 +19,8 @@ import { getEstateDataFromApplication } from '../../lib/utils'
 export const RealEstateRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application, field, errors }) => {
+  console.log('application', application)
+  console.log('errors', errors)
   const error = (errors as ErrorValue)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
@@ -49,6 +51,7 @@ export const RealEstateRepeater: FC<
 
   return (
     <Box marginTop={2}>
+      <div>AdditionalRealEstate</div>
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
           const fieldError = error && error[index] ? error[index] : null

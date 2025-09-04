@@ -412,6 +412,7 @@ export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
 }
 
 export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
+  console.log('assetRaw', assetRaw)
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
@@ -419,6 +420,22 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
       assetRaw.eignarhlutfall !== undefined
         ? parseShare(assetRaw.eignarhlutfall)
         : 100,
+    marketValue: assetRaw.verdmaeti ?? '',
+  }
+}
+
+export const bankAccountMapper = (assetRaw: EignirDanarbus): EstateAsset => {
+  console.log('bankAccountMapper assetRaw', assetRaw)
+  return {
+    description: assetRaw.lysing ?? '',
+    assetNumber: assetRaw.fastanumer ?? '',
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? parseShare(assetRaw.eignarhlutfall)
+        : 100,
+    marketValue: assetRaw.upphaed ?? '', // Use upphaed (balance) as marketValue for bank accounts
+    // Store exchangeRateOrInterest in a custom property that can be accessed later
+    ...(assetRaw.gengiVextir && { exchangeRateOrInterest: assetRaw.gengiVextir }),
   }
 }
 
@@ -499,6 +516,11 @@ export const mapEstateRegistrant = (
 
 // TODO: get updated types into the client
 export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
+  console.log(
+    'mapEstateInfo - testin g watch mosss asdasd asdde performance',
+    syslaData,
+  )
+
   return {
     assets: syslaData.eignir
       ? syslaData.eignir
@@ -531,8 +553,21 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
           .map(assetMapper)
       : [],
     // TODO: update once implemented in District Commissioner's backend
-    guns: [],
-    otherAssets: [],
+    guns: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_10)
+          .map(assetMapper)
+      : [],
+    otherAssets: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_6)
+          .map(assetMapper)
+      : [],
+    bankAccounts: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_8)
+          .map(bankAccountMapper)
+      : [],
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)
       : [],

@@ -283,7 +283,11 @@ interface EstateCommon {
   knowledgeOfOtherWills: 'Yes' | 'No'
 }
 
-export interface EstateInfo extends EstateCommon {
+interface EstateCommonWithBankAccounts extends EstateCommon {
+  bankAccounts: EstateAsset[]
+}
+
+export interface EstateInfo extends EstateCommonWithBankAccounts {
   addressOfDeceased: string
   availableSettlements?: AvailableSettlements
 }

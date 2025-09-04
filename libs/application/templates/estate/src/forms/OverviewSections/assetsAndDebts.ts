@@ -218,8 +218,8 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).bankAccounts ?? []).map(
-          (account) => ({
+        ((answers as unknown as EstateSchema).estate.bankAccounts ?? []).map(
+          (account: NonNullable<EstateSchema['estate']['bankAccounts']>[number]) => ({
             title: formatBankInfo(account.accountNumber ?? ''),
             description: [
               `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
@@ -237,15 +237,15 @@ export const overviewAssetsAndDebts = [
     id: 'bankAccountsTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers<EstateSchema['bankAccounts']>(
+      getSumFromAnswers<EstateSchema['estate']['bankAccounts']>(
         answers,
-        'bankAccounts',
+        'estate.bankAccounts',
         'accountTotal',
       ),
     condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['bankAccounts']>(
+      !!getSumFromAnswers<EstateSchema['estate']['bankAccounts']>(
         answers,
-        'bankAccounts',
+        'estate.bankAccounts',
         'accountTotal',
       ),
     titleVariant: 'h4',

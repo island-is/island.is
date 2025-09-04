@@ -14,11 +14,23 @@ type EstateSchema = zinfer<typeof estateSchema>
 type EstateData = EstateSchema['estate']
 
 const estateAssetMapper = <T>(element: T) => {
+  console.log('estateAssetMapper element', element)
   return {
     ...element,
     initial: true,
     enabled: true,
-    marketValue: '',
+    marketValue: (element as EstateAsset)?.marketValue || '',
+  }
+}
+
+const bankAccountMapper = (element: EstateAsset & { exchangeRateOrInterest?: string }) => {
+  console.log('bankAccountMapper element', element)
+  return {
+    accountNumber: element.assetNumber || '',
+    balance: element.marketValue || '',
+    exchangeRateOrInterest: element.exchangeRateOrInterest || '',
+    initial: true,
+    enabled: true,
   }
 }
 
@@ -66,6 +78,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     estateAssetMapper<EstateAsset>(el),
   )
   const guns = estate.guns.map((el) => estateAssetMapper<EstateAsset>(el))
+  const bankAccounts = estate.bankAccounts.map((el) => bankAccountMapper(el))
   const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
 
   return {
@@ -76,6 +89,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     ships,
     vehicles,
     guns,
+    bankAccounts,
   }
 }
 

@@ -22,7 +22,8 @@ const bankAccountsValueKeys = ['balance', 'exchangeRateOrInterest']
 
 export const TextFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & Props>
-> = ({ field, errors }) => {
+> = ({ application, field, errors }) => {
+  console.log('TextFieldsRepeater', { application, field, errors })
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
   const { id, props } = field
@@ -124,6 +125,7 @@ export const TextFieldsRepeater: FC<
 
   return (
     <Box>
+      <div>TextFieldsRepeater</div>
       {/* All types of fields */}
       {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`

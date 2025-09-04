@@ -56,6 +56,10 @@ export const getForm = ({
                     syslumennOnEntry: { data: { estates: EstateInfo[] } }
                   }
                 }) => {
+                  console.log(
+                    'syslumennOnEntry default value',
+                    application.externalData.syslumennOnEntry?.data,
+                  )
                   return (
                     application.externalData.syslumennOnEntry?.data as {
                       estates: Array<EstateInfo>
@@ -70,7 +74,7 @@ export const getForm = ({
                   ).estates.map((estate) => {
                     return {
                       value: estate.caseNumber,
-                      label: estate.nameOfDeceased,
+                      label: estate.caseNumber + ' ' + estate.nameOfDeceased,
                     }
                   })
                 },
