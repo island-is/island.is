@@ -79,19 +79,19 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'overviewInventory',
     title: m.inventoryTextField,
-    description: ({ answers }) => getValueViaPath(answers, 'inventory.info'),
+    description: ({ answers }) => getValueViaPath(answers, 'estate.inventory.info'),
     titleVariant: 'h4',
     space: 'gutter',
-    condition: (answers) => getValueViaPath(answers, 'inventory.info') !== '',
+    condition: (answers) => getValueViaPath(answers, 'estate.inventory.info') !== '',
   }),
   buildDescriptionField({
     id: 'overviewInventoryValue',
     title: m.inventoryValueTitle,
     description: ({ answers }) => {
-      const value = getValueViaPath<string>(answers, 'inventory.value')
+      const value = getValueViaPath<string>(answers, 'estate.inventory.value')
       return formatCurrency(value ?? '0')
     },
-    condition: (answers) => getValueViaPath(answers, 'inventory.value') !== '',
+    condition: (answers) => getValueViaPath(answers, 'estate.inventory.value') !== '',
     titleVariant: 'h4',
     marginBottom: 'gutter',
     space: 'gutter',
@@ -101,7 +101,7 @@ export const overviewAssetsAndDebts = [
     description: m.notFilledOutItalic,
     marginTop: [3],
     marginBottom: [3],
-    condition: (answers) => getValueViaPath(answers, 'inventory.value') === '',
+    condition: (answers) => getValueViaPath(answers, 'estate.inventory.value') === '',
   }),
   buildDividerField({}),
   buildDescriptionField({

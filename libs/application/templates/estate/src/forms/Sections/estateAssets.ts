@@ -61,19 +61,13 @@ export const estateAssets = buildSection({
               titleVariant: 'h3',
               marginBottom: 2,
             }),
-            buildTextField({
-              id: 'inventory.info',
-              title: m.inventoryTextField,
-              placeholder: m.inventoryTextFieldPlaceholder,
-              variant: 'textarea',
-              rows: 7,
-            }),
-            buildTextField({
-              id: 'inventory.value',
-              title: m.inventoryValueTitle,
-              width: 'half',
-              variant: 'currency',
-            }),
+            buildCustomField(
+              {
+                id: 'estate.inventory',
+                component: 'InventoryFields',
+              },
+              {},
+            ),
           ],
         }),
       ],

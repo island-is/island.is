@@ -99,6 +99,12 @@ export const estateSchema = z.object({
 
   // Eignir
   estate: z.object({
+    inventory: z
+      .object({
+        info: z.string(),
+        value: z.string(),
+      })
+      .optional(),
     estateMembers: z
       .object({
         name: z.string(),

@@ -34,6 +34,24 @@ const bankAccountMapper = (element: EstateAsset & { exchangeRateOrInterest?: str
   }
 }
 
+const inventoryMapper = (cashItems: EstateAsset[]) => {
+  const descriptions = cashItems
+    .map(item => item.description)
+    .filter(desc => desc && desc.trim() !== '')
+    .join(', ')
+  
+  const totalValue = cashItems
+    .reduce((sum, item) => {
+      const value = parseFloat(item.marketValue || '0')
+      return sum + (isNaN(value) ? 0 : value)
+    }, 0)
+
+  return {
+    info: descriptions,
+    value: totalValue.toString(),
+  }
+}
+
 const estateMemberMapper = (element: EstateMember) => {
   return {
     ...element,
@@ -79,6 +97,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
   )
   const guns = estate.guns.map((el) => estateAssetMapper<EstateAsset>(el))
   const bankAccounts = estate.bankAccounts.map((el) => bankAccountMapper(el))
+  const inventory = inventoryMapper(estate.cash)
   const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
 
   return {
@@ -90,6 +109,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     vehicles,
     guns,
     bankAccounts,
+    inventory,
   }
 }
 

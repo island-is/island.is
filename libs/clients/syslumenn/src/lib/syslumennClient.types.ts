@@ -285,6 +285,10 @@ interface EstateCommon {
 
 interface EstateCommonWithBankAccounts extends EstateCommon {
   bankAccounts: EstateAsset[]
+  inventory?: {
+    info: string
+    value: string
+  }
 }
 
 export interface EstateInfo extends EstateCommonWithBankAccounts {

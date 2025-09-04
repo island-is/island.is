@@ -78,8 +78,8 @@ export const generateRawUploadData = (
     debts: expandDebts(answers.debts ?? []),
     estateMembers: expandEstateMembers(processedEstateMembers),
     inventory: {
-      info: answers.inventory?.info ?? '',
-      value: answers.inventory?.value ?? '',
+      info: answers.estate?.inventory?.info ?? '',
+      value: answers.estate?.inventory?.value ?? '',
     },
     moneyAndDeposit: {
       info: answers.moneyAndDeposit?.info ?? '',
