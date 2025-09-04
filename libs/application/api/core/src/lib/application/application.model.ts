@@ -146,6 +146,22 @@ export class Application extends Model {
   pruned!: boolean
 
   @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiPropertyOptional()
+  postPruneAt?: Date
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  postPruned!: boolean
+
+  @Column({
     type: DataType.ARRAY(DataType.STRING),
   })
   @ApiProperty()

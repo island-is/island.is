@@ -5,11 +5,12 @@ import {
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
 import {
-  SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   DeliveryStationsApi,
-  PlateTypesApi,
+  IdentityApi,
   MockableSamgongustofaPaymentCatalogApi,
+  PlateTypesApi,
+  SamgongustofaPaymentCatalogApi,
 } from '../../dataProviders'
 
 export const prerequisitesSection = buildSection({
@@ -28,20 +29,19 @@ export const prerequisitesSection = buildSection({
           subTitle: externalData.currentVehicles.subTitle,
         }),
         buildDataProviderItem({
+          provider: IdentityApi,
+        }),
+        buildDataProviderItem({
           provider: SamgongustofaPaymentCatalogApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: MockableSamgongustofaPaymentCatalogApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: DeliveryStationsApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: PlateTypesApi,
-          title: '',
         }),
       ],
     }),

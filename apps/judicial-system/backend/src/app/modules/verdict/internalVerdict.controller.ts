@@ -42,6 +42,8 @@ import { Case, Defendant, Verdict } from '../repository'
 import { VerdictService } from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
+import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
+import { ExternalPoliceVerdictExistsGuard } from './guards/ExternalPoliceVerdictExists.guard'
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { DeliverResponse } from './models/deliver.response'
@@ -84,14 +86,9 @@ const validateVerdictAppealUpdate = ({
   }
 }
 
-@Controller('api/internal/case/:caseId')
+@Controller('api/internal')
 @ApiTags('internal verdict')
-@UseGuards(
-  TokenGuard,
-  CaseExistsGuard,
-  new CaseTypeGuard(indictmentCases),
-  CaseCompletedGuard,
-)
+@UseGuards(TokenGuard)
 export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
@@ -99,7 +96,13 @@ export class InternalVerdictController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(DefendantExistsGuard, VerdictExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseCompletedGuard,
+    DefendantExistsGuard,
+    VerdictExistsGuard,
+  )
   @Post([
     `case/:caseId/${
       messageEndpoint[
@@ -157,8 +160,27 @@ export class InternalVerdictController {
     )
   }
 
-  @UseGuards(DefendantNationalIdExistsGuard, VerdictExistsGuard)
-  @Patch('defendant/:defendantNationalId/verdict-appeal')
+  @UseGuards(ExternalPoliceVerdictExistsGuard)
+  @Patch('verdict/:policeDocumentId')
+  async updateVerdict(
+    @Param('policeDocumentId') policeDocumentId: string,
+    @CurrentVerdict() verdict: Verdict,
+    @Body() update: PoliceUpdateVerdictDto,
+  ): Promise<Verdict> {
+    this.logger.debug(
+      `Updating verdict by external police document id ${policeDocumentId}`,
+    )
+    return await this.verdictService.updatePoliceDelivery(verdict, update)
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseCompletedGuard,
+    DefendantNationalIdExistsGuard,
+    VerdictExistsGuard,
+  )
+  @Patch('/case/:caseId/defendant/:defendantNationalId/verdict-appeal')
   @ApiOkResponse({
     type: Verdict,
     description: 'Updates defendant verdict appeal decision',
