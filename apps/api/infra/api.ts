@@ -78,6 +78,7 @@ export const serviceSetup = (services: {
   userNotificationService: ServiceBuilder<'services-user-notification'>
   paymentsApi: ServiceBuilder<'services-payments'>
   formSystemService: ServiceBuilder<'services-form-system-api'>
+  web: ServiceBuilder<'web'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -311,12 +312,7 @@ export const serviceSetup = (services: {
         prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
       },
       LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
-        (ctx) =>
-          `http://web.${
-            ctx.featureDeploymentName
-              ? `feature-${ctx.featureDeploymentName}`
-              : 'islandis'
-          }.svc.cluster.local/payments/event-callback`,
+        (h) => `http://${h.svc(services.web)}/payments/event-callback`,
       ),
       LANDSPITALI_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: {
         dev: '[TEST] Minningarkort - Landspítali',
