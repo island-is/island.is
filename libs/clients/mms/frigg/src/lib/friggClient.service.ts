@@ -1,7 +1,7 @@
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
-  FormDto,
+  ApplicationInput,
   FriggApi,
   KeyOption,
   OrganizationModel,
@@ -29,13 +29,30 @@ export class FriggClientService {
     return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality({})
   }
 
-  async getUserById(user: User, childNationalId: string): Promise<UserModel> {
-    return await this.friggApiWithAuth(user).getUserBySourcedId({
-      nationalId: childNationalId,
-    })
+  async getUserById(
+    user: User,
+    childNationalId: string,
+  ): Promise<UserModel | { nationalId: string }> {
+    try {
+      return await this.friggApiWithAuth(user).getUserBySourcedId({
+        nationalId: childNationalId,
+      })
+    } catch (error) {
+      // If the student is not found in Frigg
+      if (
+        error?.status === 404 &&
+        error?.body?.message === 'Student not found'
+      ) {
+        return { nationalId: childNationalId }
+      }
+      throw error
+    }
   }
 
-  sendApplication(user: User, form: FormDto): Promise<FormSubmitSuccessModel> {
-    return this.friggApiWithAuth(user).submitForm({ formDto: form })
+  sendApplication(
+    user: User,
+    form: ApplicationInput,
+  ): Promise<FormSubmitSuccessModel> {
+    return this.friggApiWithAuth(user).submitForm({ applicationInput: form })
   }
 }

@@ -53,6 +53,7 @@ import {
   OverviewField,
   CopyLinkField,
   VehiclePermnoWithInfoField,
+  MaybeWithAnswersAndExternalData,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -394,6 +395,7 @@ export const buildFileUploadField = (
     maxSize,
     maxSizeErrorText,
     totalMaxSize,
+    maxFileCount,
     forImageUpload,
   } = data
   return {
@@ -413,6 +415,7 @@ export const buildFileUploadField = (
     maxSize: maxSize ?? DEFAULT_FILE_SIZE_LIMIT,
     maxSizeErrorText,
     totalMaxSize: totalMaxSize ?? DEFAULT_TOTAL_FILE_SIZE_SUM,
+    maxFileCount,
     forImageUpload,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
@@ -592,6 +595,16 @@ export const buildFieldRequired = (
     return maybeRequired(application)
   }
   return maybeRequired
+}
+
+export const buildFieldReadOnly = (
+  application: Application,
+  maybeReadOnly?: MaybeWithAnswersAndExternalData<boolean>,
+) => {
+  if (typeof maybeReadOnly === 'function') {
+    return maybeReadOnly(application.answers, application.externalData)
+  }
+  return maybeReadOnly
 }
 
 export const buildRedirectToServicePortalField = (data: {
@@ -946,6 +959,10 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButton,
+    hideRemoveButton,
+    displayTitleAsAccordion,
+    itemCondition,
     minRows,
     maxRows,
   } = data
@@ -963,6 +980,10 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButton,
+    hideRemoveButton,
+    displayTitleAsAccordion,
+    itemCondition,
     minRows,
     maxRows,
   }
@@ -1167,6 +1188,7 @@ export const buildBankAccountField = (
     marginBottom,
     marginTop,
     titleVariant,
+    required,
     defaultValue,
   } = data
 
@@ -1177,6 +1199,7 @@ export const buildBankAccountField = (
     marginBottom,
     marginTop,
     titleVariant,
+    required,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
     defaultValue,
@@ -1196,6 +1219,7 @@ export const buildOverviewField = (
     loadItems,
     attachments,
     tableData,
+    loadTableData,
     bottomLine,
     hideIfEmpty,
     displayTitleAsAccordion,
@@ -1211,6 +1235,7 @@ export const buildOverviewField = (
     loadItems,
     attachments,
     tableData,
+    loadTableData,
     bottomLine,
     hideIfEmpty,
     displayTitleAsAccordion,

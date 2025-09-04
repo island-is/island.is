@@ -42,10 +42,39 @@ export const SocialInsuranceAdministrationIncomePlanConditionsApi =
     namespace: 'SocialInsuranceAdministration',
   })
 
-export const SocialInsuranceAdministrationQuestionnairesApi = defineTemplateApi(
-  {
-    action: 'getSelfAssessmentQuestionnaire',
-    externalDataId: 'socialInsuranceAdministrationQuestionnairesSelfAssessment',
+export const SocialInsuranceAdministrationMARPQuestionnairesApi =
+  defineTemplateApi({
+    action: 'getMARPSelfAssessmentQuestionnaire',
+    externalDataId:
+      'socialInsuranceAdministrationMARPQuestionnairesSelfAssessment',
     namespace: 'SocialInsuranceAdministration',
-  },
-)
+  })
+
+export const SocialInsuranceAdministrationEctsUnitsApi = defineTemplateApi({
+  action: 'getEctsUnits',
+  externalDataId: 'socialInsuranceAdministrationEctsUnits',
+  namespace: 'SocialInsuranceAdministration',
+})
+
+export const SocialInsuranceAdministrationResidenceInformationApi =
+  defineTemplateApi({
+    action: 'getResidenceInformation',
+    externalDataId: 'socialInsuranceAdministrationResidenceInformation',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
+export const SocialInsuranceAdministrationEducationLevelsApi =
+  defineTemplateApi({
+    action: 'getEducationLevels',
+    externalDataId: 'socialInsuranceAdministrationEducationLevels',
+    namespace: 'SocialInsuranceAdministration',
+    order: 4,
+  })
+
+export const SocialInsuranceAdministrationMARPApplicationTypeApi =
+  defineTemplateApi({
+    action: 'getMedicalAndRehabilitationApplicationType',
+    externalDataId: 'socialInsuranceAdministrationMARPApplicationType',
+    namespace: 'SocialInsuranceAdministration',
+    order: 3,
+  })

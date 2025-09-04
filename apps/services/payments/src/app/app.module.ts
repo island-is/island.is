@@ -7,8 +7,6 @@ import { AuditModule } from '@island.is/nest/audit'
 
 import { ProblemModule } from '@island.is/nest/problem'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
-import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
-import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { XRoadConfig } from '@island.is/nest/config'
 
 import { PaymentFlowModule } from './paymentFlow/paymentFlow.module'
@@ -32,13 +30,7 @@ import { environment } from '../environments'
     JwksModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        XRoadConfig,
-        FeatureFlagConfig,
-        ChargeFjsV2ClientConfig,
-        NationalRegistryV3ClientConfig,
-        CompanyRegistryConfig,
-      ],
+      load: [XRoadConfig, FeatureFlagConfig, ChargeFjsV2ClientConfig],
     }),
   ],
 })

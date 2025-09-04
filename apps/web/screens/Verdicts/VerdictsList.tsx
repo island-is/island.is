@@ -98,6 +98,70 @@ interface VerdictsListProps {
   caseTypes: WebVerdictCaseType[]
 }
 
+const normalizeLawReference = (input: string): string => {
+  const trimmed = input
+    .replace(/\./g, '') // remove dots
+    .replace(/\s+/g, ' ') // collapse multiple spaces
+    .toLowerCase()
+    .trim()
+
+  let year = ''
+  let lawNo = ''
+  let gr = ''
+  let mgr = ''
+
+  const parts = trimmed.split(' ')
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i]
+
+    if (part === 'mgr') {
+      // Previous part is the mgr number
+      if (i > 0 && /^\d+$/.test(parts[i - 1])) {
+        mgr = parts[i - 1]
+      }
+    }
+    if (part === 'gr') {
+      // Previous part is the gr number
+      if (i > 0 && /^\d+$/.test(parts[i - 1])) {
+        gr = parts[i - 1]
+      }
+    }
+    if (part === 'nr') {
+      // Next part is lawNo/year
+      if (i + 1 < parts.length && parts[i + 1].includes('/')) {
+        const lawParts = parts[i + 1].split('/')
+        if (lawParts.length === 2) {
+          lawNo = lawParts[0]
+          year = lawParts[1]
+        }
+      }
+    }
+    // As fallback: detect bare lawNo/year like "91/1991"
+    if (!lawNo && part.includes('/')) {
+      const lawParts = part.split('/')
+      if (
+        lawParts.length === 2 &&
+        /^\d+$/.test(lawParts[0]) &&
+        /^\d{4}$/.test(lawParts[1])
+      ) {
+        lawNo = lawParts[0]
+        year = lawParts[1]
+      }
+    }
+  }
+
+  if (!year || !lawNo) {
+    return input
+  }
+
+  let result = `${year}.${lawNo}`
+  if (gr) result += `.${gr}`
+  if (mgr) result += `.${mgr}`
+
+  return result
+}
+
 const extractCourtLevelFromState = (court: string | null | undefined) =>
   court || ALL_COURTS_TAG
 
@@ -181,7 +245,7 @@ const useVerdictListState = (props: VerdictsListProps) => {
   const convertQueryParamsToInput = useCallback(
     (queryParams: typeof queryState, page: number): WebVerdictsInput => {
       const keyword = queryParams[QueryParam.KEYWORD]
-      const laws = queryParams[QueryParam.LAWS]
+      const laws = normalizeLawReference(queryParams[QueryParam.LAWS])
       return {
         page,
         searchTerm: queryParams[QueryParam.SEARCH_TERM],
@@ -1295,7 +1359,7 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
           keywords,
           page: 1,
           courtLevel: extractCourtLevelFromState(court),
-          laws,
+          laws: laws?.map(normalizeLawReference),
           caseNumber,
           dateFrom,
           dateTo,

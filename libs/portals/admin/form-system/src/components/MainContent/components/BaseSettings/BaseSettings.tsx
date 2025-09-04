@@ -13,6 +13,7 @@ import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { UpdateFormResponse } from '@island.is/form-system/shared'
 import { convertToSlug } from '../../../../lib/utils/convertToSlug'
+import { Urls } from '../Urls/Urls'
 
 export const BaseSettings = () => {
   const {
@@ -26,7 +27,6 @@ export const BaseSettings = () => {
   const { form } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
-
   return (
     <Stack space={2}>
       <Row>
@@ -263,6 +263,50 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
+      <Row>
+        <Column>
+          <Checkbox
+            label={formatMessage(m.summaryScreen)}
+            checked={
+              form.hasSummaryScreen !== null &&
+              form.hasSummaryScreen !== undefined
+                ? form.hasSummaryScreen
+                : false
+            }
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_HAS_SUMMARY_SCREEN',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate,
+                },
+              })
+            }}
+          />
+        </Column>
+      </Row>
+      <Row>
+        <Column>
+          <Checkbox
+            label={formatMessage(m.payment)}
+            checked={
+              form.hasPayment !== null && form.hasPayment !== undefined
+                ? form.hasPayment
+                : false
+            }
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_HAS_PAYMENT',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate,
+                },
+              })
+            }}
+          />
+        </Column>
+      </Row>
+      <Urls />
     </Stack>
   )
 }

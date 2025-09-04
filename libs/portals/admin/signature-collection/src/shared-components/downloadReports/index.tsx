@@ -67,6 +67,7 @@ export const DownloadReports = ({
   // Update pdf document after correct data is fetched
   useEffect(() => {
     if (data?.signatureCollectionAreaSummaryReport?.id === pdfState.areaId) {
+      // @ts-expect-error - updateDocument should be called without arguments based on working examples
       updateDocument()
     }
   }, [data, pdfState, updateDocument])
@@ -92,7 +93,7 @@ export const DownloadReports = ({
             <Box marginLeft={5}>
               <Text variant="h4">{formatMessage(m.downloadReports)}</Text>
               <Text marginBottom={2}>
-                Texti sem útskýrir þessa aðgerð betur kemur hér.
+                {formatMessage(m.downloadReportsDescription)}
               </Text>
               <Button
                 variant="text"

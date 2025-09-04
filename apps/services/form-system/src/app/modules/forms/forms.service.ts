@@ -4,7 +4,7 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
-import { SectionTypes } from '@island.is/form-system/shared'
+import { SectionTypes, UrlMethods } from '@island.is/form-system/shared'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
@@ -46,7 +46,6 @@ import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/f
 import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { FormUrl } from '../formUrls/models/formUrl.model'
-import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
 import { FormStatus } from '@island.is/form-system/shared'
 import { Option } from '../../dataTypes/option.model'
 import { Op, UniqueConstraintError } from 'sequelize'
@@ -134,6 +133,7 @@ export class FormsService {
       'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
+      'hasSummaryScreen',
     ]
 
     const formResponseDto: FormResponseDto = {
@@ -402,7 +402,7 @@ export class FormsService {
 
   private async buildFormResponse(form: Form): Promise<FormResponseDto> {
     const response: FormResponseDto = {
-      form: this.setArrays(form),
+      form: await this.setArrays(form),
       fieldTypes: await this.getFieldTypes(form.organizationId),
       certificationTypes: await this.getCertificationTypes(form.organizationId),
       applicantTypes: await this.getApplicantTypes(),
@@ -525,7 +525,29 @@ export class FormsService {
     return organizationListTypes
   }
 
-  private setArrays(form: Form): FormDto {
+  private async isZendeskEnabled(
+    organizationId: string,
+    formUrls: FormUrl[],
+  ): Promise<boolean> {
+    const organizationUrls = await this.organizationUrlModel.findAll({
+      where: { organizationId: organizationId },
+    })
+
+    return formUrls.some((formUrl) =>
+      organizationUrls.some(
+        (orgUrl) =>
+          orgUrl.id === formUrl.organizationUrlId &&
+          orgUrl.method === UrlMethods.SEND_TO_ZENDESK,
+      ),
+    )
+  }
+
+  private async setArrays(form: Form): Promise<FormDto> {
+    const isZendesk = await this.isZendeskEnabled(
+      form.organizationId,
+      form.formUrls ?? [],
+    )
+
     const formKeys = [
       'id',
       'organizationId',
@@ -542,6 +564,7 @@ export class FormsService {
       'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
+      'hasSummaryScreen',
       'completedMessage',
       'dependencies',
     ]
@@ -557,6 +580,7 @@ export class FormsService {
         sections: [],
         screens: [],
         fields: [],
+        isZendeskEnabled: isZendesk,
       },
     ) as FormDto
 
@@ -583,20 +607,8 @@ export class FormsService {
       )
     })
 
-    form.formUrls?.map(async (formUrl) => {
-      const organizationUrl = await this.organizationUrlModel.findByPk(
-        formUrl.organizationUrlId,
-      )
-
-      formDto.urls?.push({
-        id: formUrl.id,
-        organizationUrlId: organizationUrl?.id,
-        url: organizationUrl?.url,
-        isXroad: organizationUrl?.isXroad,
-        isTest: organizationUrl?.isTest,
-        type: organizationUrl?.type,
-        method: organizationUrl?.method,
-      } as FormUrlDto)
+    form.formUrls?.map((formUrl) => {
+      formDto.urls?.push(formUrl.organizationUrlId)
     })
 
     const sectionKeys = [
@@ -686,12 +698,18 @@ export class FormsService {
         displayOrder: 1,
         name: { is: 'Hlutaðeigandi aðilar', en: 'Relevant parties' },
       } as Section,
+      {
+        formId: form.id,
+        sectionType: SectionTypes.SUMMARY,
+        displayOrder: 9998,
+        name: { is: 'Yfirlit', en: 'Summary' },
+      } as Section,
     ])
 
     const paymentSection = await this.sectionModel.create({
       formId: form.id,
       sectionType: SectionTypes.PAYMENT,
-      displayOrder: 3,
+      displayOrder: 9999,
       name: { is: 'Greiðsla', en: 'Payment' },
     } as Section)
 

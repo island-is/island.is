@@ -6,6 +6,7 @@ import {
   getApplicationAnswers as getDBApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
 import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import { getApplicationExternalData as getMARPApplicationExternalData } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
   Employment,
@@ -17,7 +18,7 @@ import { Application, ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
-  ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
+  ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
@@ -620,13 +621,43 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return await this.siaClientService.getIncomePlanConditions(auth)
   }
 
-  async getSelfAssessmentQuestionnaire(
+  async getMARPSelfAssessmentQuestionnaire(
     { auth }: TemplateApiModuleActionProps,
-    languages: ApiProtectedV1QuestionnairesSelfassessmentGetRequest = {},
+    languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest = {},
   ) {
-    return await this.siaClientService.getSelfAssessmentQuestionnaire(
+    return await this.siaClientService.getMARPSelfAssessmentQuestionnaire(
       auth,
       languages,
+    )
+  }
+
+  async getEctsUnits({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getEctsUnits(auth)
+  }
+
+  async getResidenceInformation({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getResidenceInformation(auth)
+  }
+
+  async getEducationLevels({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const { marpApplicationType } = getMARPApplicationExternalData(
+      application.externalData,
+    )
+
+    return await this.siaClientService.getEducationLevels(
+      auth,
+      marpApplicationType || '',
+    )
+  }
+
+  async getMedicalAndRehabilitationApplicationType({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getMedicalAndRehabilitationApplicationType(
+      auth,
     )
   }
 }

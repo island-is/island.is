@@ -69,6 +69,10 @@ export interface SubpoenaInfo {
   serviceDate?: Date
 }
 
+interface CreateDocumentResponse {
+  externalPoliceDocumentId: string
+}
+
 const getChapter = (category?: string): number | undefined => {
   if (!category) {
     return undefined
@@ -121,7 +125,7 @@ export class PoliceService {
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
     skjalasnid: z.optional(z.string()),
-    tegundSkjals: z.optional(this.policeCaseFileType),
+    tegundSkjals: this.policeCaseFileType.nullish(),
   })
   private readonly crimeSceneStructure = z.object({
     vettvangur: z.optional(z.string()),
@@ -611,6 +615,78 @@ export class PoliceService {
 
         return false
       })
+  }
+
+  async createDocument({
+    caseId,
+    defendantId,
+    defendantNationalId,
+    user,
+    documentName,
+    documentFiles,
+    documentDates,
+    fileTypeCode,
+  }: {
+    caseId: string
+    defendantId: string
+    defendantNationalId: string
+    user: User
+    documentName: string
+    documentFiles: { name: string; documentBase64: string }[]
+    documentDates: { code: string; value: Date }[]
+    fileTypeCode: string
+  }): Promise<CreateDocumentResponse> {
+    const { name: actor } = user
+
+    const createDocumentPath = `${this.xRoadPath}/CreateDocument`
+    try {
+      const res = await this.fetchPoliceCaseApi(createDocumentPath, {
+        method: 'POST',
+        headers: {
+          accept: '*/*',
+          'Content-Type': 'application/json',
+          'X-Road-Client': this.config.clientId,
+          'X-API-KEY': this.config.policeApiKey,
+        },
+        agent: this.agent,
+        body: JSON.stringify({
+          documentName: documentName,
+          documentFiles,
+          fileTypeCode,
+          supplements: [
+            { code: 'RVG_CASE_ID', value: caseId },
+            { code: 'RECEIVER_SSN', value: defendantNationalId },
+          ],
+          dates: documentDates,
+        }),
+      } as RequestInit)
+
+      if (res.ok) {
+        const policeResponse = await res.json()
+        return { externalPoliceDocumentId: policeResponse.id }
+      }
+
+      throw await res.text()
+    } catch (error) {
+      this.logger.error(
+        `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
+        {
+          error,
+        },
+      )
+
+      this.eventService.postErrorEvent(
+        'Failed to create external police document file',
+        {
+          caseId,
+          defendantId,
+          actor,
+        },
+        error,
+      )
+
+      throw error
+    }
   }
 
   async createSubpoena(

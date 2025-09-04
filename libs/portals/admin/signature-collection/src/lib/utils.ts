@@ -11,10 +11,15 @@ import { TagVariant } from '@island.is/island-ui/core'
 
 export const pageSize = 10
 
-export const allowedScopes: string[] = [
+export const allowedScopesAdminAndMunicipality: string[] = [
   AdminPortalScope.signatureCollectionManage,
   AdminPortalScope.signatureCollectionProcess,
   AdminPortalScope.signatureCollectionMunicipality,
+]
+
+export const allowedScopesAdmin: string[] = [
+  AdminPortalScope.signatureCollectionManage,
+  AdminPortalScope.signatureCollectionProcess,
 ]
 
 export const countryAreas = [
@@ -59,32 +64,36 @@ export enum CollectionStatus {
 }
 
 export const downloadFile = () => {
-  const name = 'meðmæli.xlsx'
-  const sheetData = [['Kennitala', 'Bls'], []]
+  const fileName = 'beraSaman.xlsx'
+  const sheetName = 'Bera saman'
+  const sheetData = [['Kennitala'], []]
 
-  const getFile = (name: string, output: string | undefined) => {
-    const uri =
-      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'
-    const encodedUri = encodeURI(`${uri}${output}`)
+  const getFile = (downloadName: string, output: string | undefined) => {
+    if (!output) return
     const link = document.createElement('a')
-    link.setAttribute('href', encodedUri)
-    link.setAttribute('download', name)
+    link.href =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' +
+      output
+    link.download = downloadName
     document.body.appendChild(link)
-
     link.click()
+    document.body.removeChild(link)
   }
 
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
+  // Set first column to "Text" format
+  worksheet.getColumn(1).numFmt = '@'
+
   const workbook: XLSX.WorkBook = {
-    Sheets: { [name]: worksheet },
-    SheetNames: [name],
+    Sheets: { [sheetName]: worksheet },
+    SheetNames: [sheetName],
   }
 
   const excelBuffer = XLSX.write(workbook, {
     bookType: 'xlsx',
     type: 'base64',
   })
-  getFile(name, excelBuffer)
+  getFile(fileName, excelBuffer)
 }
 
 // Bulk upload and compare
@@ -104,13 +113,13 @@ export const getFileData = async (newFile: File[]) => {
   const buffer = await newFile[0].arrayBuffer()
   const file = XLSX.read(buffer, { type: 'buffer' })
 
-  const data = [] as any
+  const data: Record<string, unknown>[] = []
   const sheets = file.SheetNames
 
   for (let i = 0; i < sheets.length; i++) {
     const temp = XLSX.utils.sheet_to_json(file.Sheets[file.SheetNames[i]])
     temp.forEach((res) => {
-      data.push(res)
+      data.push(res as Record<string, unknown>)
     })
   }
 

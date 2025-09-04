@@ -55,8 +55,7 @@
       "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "portals-admin:build",
-        "hmr": true,
-        "proxyConfig": "apps/portals/admin/proxy.config.json"
+        "hmr": true
       },
       "configurations": {
         "production": {

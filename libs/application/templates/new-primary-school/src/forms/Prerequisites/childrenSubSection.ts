@@ -7,7 +7,7 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import { getApplicationExternalData } from '../../lib/newPrimarySchoolUtils'
+import { getApplicationExternalData } from '../../utils/newPrimarySchoolUtils'
 
 export const childrenSubSection = buildSubSection({
   id: 'childrenSubSection',

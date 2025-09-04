@@ -53,6 +53,7 @@ import { CourtDocumentFolder, CourtService } from '../court'
 import { courtSubtypes } from '../court/court.service'
 import { Defendant, DefendantService } from '../defendant'
 import { EventService } from '../event'
+import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
@@ -60,6 +61,7 @@ import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User, UserService } from '../user'
+import { Verdict } from '../verdict/models/verdict.model'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
@@ -648,9 +650,10 @@ export class InternalCaseService {
 
     const mappedSubtypes = subtypeList.flatMap((key) => courtSubtypes[key])
     const indictmentIssuedByProsecutorAndReceivedByCourt =
-      theCase.eventLogs?.find(
-        (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
-      )?.created
+      EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_CONFIRMED,
+        theCase.eventLogs,
+      )
 
     return this.courtService
       .updateIndictmentCaseWithIndictmentInfo(
@@ -1088,7 +1091,6 @@ export class InternalCaseService {
             caseFile.key,
         )
         .map(async (caseFile) => {
-          // TODO: Tolerate failure, but log error
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
             caseFile,
@@ -1238,7 +1240,6 @@ export class InternalCaseService {
       theCase.caseFiles
         ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
         .map(async (caseFile) => {
-          // TODO: Tolerate failure, but log error
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
             caseFile,
@@ -1335,6 +1336,11 @@ export class InternalCaseService {
               model: Subpoena,
               as: 'subpoenas',
               order: [['created', 'DESC']],
+            },
+            {
+              model: Verdict,
+              as: 'verdict',
+              required: false,
             },
           ],
         },

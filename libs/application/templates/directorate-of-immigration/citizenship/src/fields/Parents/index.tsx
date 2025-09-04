@@ -149,6 +149,7 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
           const position = parents.indexOf(parent)
           return (
             <ParentRepeaterItem
+              key={`parentBox${index}`}
               index={index}
               field={field}
               application={application}

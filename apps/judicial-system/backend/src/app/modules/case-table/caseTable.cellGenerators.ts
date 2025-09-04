@@ -5,6 +5,7 @@ import {
   districtCourtAbbreviation,
   formatCaseType,
   formatDate,
+  formatNationalId,
   getAllReadableIndictmentSubtypes,
   getAppealResultTextByValue,
   getInitials,
@@ -45,6 +46,7 @@ import { EventLog } from '../event-log/models/eventLog.model'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
+import { Verdict } from '../verdict/models/verdict.model'
 import {
   CaseTableCellValue,
   StringGroupValue,
@@ -275,13 +277,11 @@ const generateIndictmentCaseStateTag = (
 
   const courtDate = getIndictmentCourtDate(c)
 
-  const allServed = () => {
-    return c.defendants?.every(
-      (d) =>
-        d.isAlternativeService ||
-        d.subpoenas?.some((s) => isSuccessfulServiceStatus(s.serviceStatus)),
-    )
-  }
+  const allServed = c.defendants?.every(
+    (d) =>
+      d.isAlternativeService ||
+      d.subpoenas?.some((s) => isSuccessfulServiceStatus(s.serviceStatus)),
+  )
 
   const generateReceivedIndictmentStateTag = (): CaseTableCell<TagValue> => {
     switch (indictmentDecision) {
@@ -295,7 +295,7 @@ const generateIndictmentCaseStateTag = (
         return generateCell({ color: 'blue', text: 'Endurúthlutun' }, 'F')
       default:
         return courtDate
-          ? allServed()
+          ? allServed
             ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
             : generateCell({ color: 'red', text: 'Óbirt' })
           : generateCell({ color: 'blueberry', text: 'Móttekið' }, 'C')
@@ -514,7 +514,7 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['nationalId', 'name'],
+      attributes: ['noNationalId', 'nationalId', 'name'],
       order: [['created', 'ASC']],
       separate: true,
     },
@@ -526,9 +526,13 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
 
     const strList = [
       c.defendants[0].name ?? '',
-      c.defendants.length > 1
-        ? `+ ${c.defendants.length - 1}`
-        : c.defendants[0].nationalId ?? '',
+      c.defendants.length === 1
+        ? c.defendants[0].noNationalId
+          ? c.defendants[0].nationalId
+            ? `fd. ${c.defendants[0].nationalId}`
+            : ''
+          : `kt. ${formatNationalId(c.defendants[0].nationalId)}`
+        : `+ ${c.defendants.length - 1}`,
     ]
 
     return generateCell({ strList }, strList.join(''))
@@ -704,7 +708,6 @@ const caseSentToCourtDate: CaseTableCellGenerator<StringValue> = {
     eventLogs: {
       model: EventLog,
       attributes: ['created', 'eventType'],
-      order: [['created', 'DESC']],
       where: {
         eventType: [
           EventType.CASE_SENT_TO_COURT,
@@ -715,9 +718,12 @@ const caseSentToCourtDate: CaseTableCellGenerator<StringValue> = {
     },
   },
   generate: (c: Case): CaseTableCell<StringValue> => {
-    const caseSentToCourtEvent = EventLog.caseSentToCourtEvent(c.eventLogs)
+    const caseSentToCourtDate = EventLog.getEventLogDateByEventType(
+      [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
+      c.eventLogs,
+    )
 
-    return generateDate(caseSentToCourtEvent?.created)
+    return generateDate(caseSentToCourtDate)
   },
 }
 
@@ -880,7 +886,6 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
         eventLogs: {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
-          order: [['created', 'DESC']],
           where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
           separate: true,
         },
@@ -893,7 +898,7 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
       return generateCell()
     }
 
-    const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
+    const dateOpened = DefendantEventLog.getEventLogDateByEventType(
       DefendantEventType.OPENED_BY_PRISON_ADMIN,
       c.defendants[0].eventLogs,
     )
@@ -911,7 +916,6 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
         eventLogs: {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
-          order: [['created', 'DESC']],
           where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
           separate: true,
         },
@@ -924,7 +928,7 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
       return generateCell({ color: 'red', text: 'Óþekkt' }, 'C') // This should never happen
     }
 
-    const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
+    const dateOpened = DefendantEventLog.getEventLogDateByEventType(
       DefendantEventType.OPENED_BY_PRISON_ADMIN,
       c.defendants[0].eventLogs,
     )
@@ -958,9 +962,14 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['serviceRequirement', 'verdictViewDate'],
       order: [['created', 'ASC']],
       separate: true,
+      includes: {
+        verdict: {
+          model: Verdict,
+          attributes: ['serviceRequirement', 'serviceDate'],
+        },
+      },
     },
   },
   generate: (c: Case): CaseTableCell<TagValue> => {
@@ -968,11 +977,12 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
       return generateCell()
     }
 
+    // TODO: fix this in the database so we can always fetch the service date
     const verdictInfo = c.defendants?.map<[boolean, Date | undefined]>((d) => [
       true,
-      d.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+      d.verdict?.serviceRequirement === ServiceRequirement.NOT_REQUIRED
         ? c.rulingDate
-        : d.verdictViewDate,
+        : d.verdict?.serviceDate,
     ])
     const [
       indictmentVerdictViewedByAll,
@@ -1018,7 +1028,6 @@ const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
         eventLogs: {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
-          order: [['created', 'DESC']],
           where: { eventType: DefendantEventType.SENT_TO_PRISON_ADMIN },
           separate: true,
         },
@@ -1032,7 +1041,7 @@ const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
     }
 
     const dateSent = c.defendants.reduce<Date | undefined>((firstSent, d) => {
-      const dateSent = DefendantEventLog.getDefendantEventLogTypeDate(
+      const dateSent = DefendantEventLog.getEventLogDateByEventType(
         DefendantEventType.SENT_TO_PRISON_ADMIN,
         d.eventLogs,
       )
@@ -1059,9 +1068,14 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['verdictAppealDate'],
       order: [['created', 'ASC']],
       separate: true,
+      includes: {
+        verdict: {
+          model: Verdict,
+          attributes: ['appealDate'],
+        },
+      },
     },
   },
   generate: (c: Case): CaseTableCell<TagPairValue> => {
@@ -1075,7 +1089,7 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
           : 'Una',
     }
 
-    const defendantAppealed = c.defendants?.some((d) => d.verdictAppealDate)
+    const defendantAppealed = c.defendants?.some((d) => d.verdict?.appealDate)
 
     const secondTag = defendantAppealed
       ? { color: 'red', text: 'Ákærði áfrýjar' }

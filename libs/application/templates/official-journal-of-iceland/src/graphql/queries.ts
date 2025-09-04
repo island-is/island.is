@@ -10,7 +10,7 @@ export const GET_PRICE_QUERY = gql`
 
 export const ADVERTS_QUERY = gql`
   query Adverts($input: OfficialJournalOfIcelandAdvertsInput!) {
-    officialJournalOfIcelandAdverts(input: $input) {
+    officialJournalOfIcelandAdvertsFull(input: $input) {
       adverts {
         id
         department {
@@ -408,6 +408,7 @@ export const GET_APPLICATION_CASE_QUERY = gql`
       communicationStatus
       categories
       html
+      expectedPublishDate
     }
   }
 `

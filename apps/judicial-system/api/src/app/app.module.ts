@@ -26,7 +26,6 @@ import {
   CaseTableModule,
   DefendantModule,
   DefenderModule,
-  defenderModuleConfig,
   EventLogModule,
   FeatureModule,
   featureModuleConfig,
@@ -35,8 +34,10 @@ import {
   IndictmentCountModule,
   InstitutionModule,
   PoliceModule,
+  StatisticsModule,
   SubpoenaModule,
   UserModule,
+  VerdictModule,
   VictimModule,
 } from './modules'
 
@@ -69,6 +70,7 @@ const autoSchemaFile = production
     UserModule,
     CaseModule,
     CaseListModule,
+    StatisticsModule,
     DefendantModule,
     DefenderModule,
     SubpoenaModule,
@@ -80,6 +82,7 @@ const autoSchemaFile = production
     PoliceModule,
     EventLogModule,
     VictimModule,
+    VerdictModule,
     CaseTableModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
@@ -90,7 +93,6 @@ const autoSchemaFile = production
         auditTrailModuleConfig,
         featureModuleConfig,
         authModuleConfig,
-        defenderModuleConfig,
         backendModuleConfig,
       ],
     }),

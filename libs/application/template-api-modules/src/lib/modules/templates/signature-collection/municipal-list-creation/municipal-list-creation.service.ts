@@ -13,9 +13,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/municipal-list-creation'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { isCompany } from 'kennitala'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { getCollectionTypeFromApplicationType } from '../shared/utils'
@@ -25,7 +23,6 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
-    private nationalRegistryClientService: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.MUNICIPAL_LIST_CREATION)
   }
@@ -52,57 +49,41 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       this.collectionType,
     )
 
-    const currentCollection = (
-      await this.signatureCollectionClientService.currentCollection(
-        CollectionType.LocalGovernmental,
-      )
-    )
-      .filter((collection) => collection.isActive)
-      .filter(
-        (collection) =>
-          collection.collectionType === this.collectionType &&
-          collection.areas.some((area) => area.id === candidate.area?.id),
-      )
+    try {
+      const currentCollection =
+        await this.signatureCollectionClientService.getLatestCollectionForType(
+          CollectionType.LocalGovernmental,
+        )
+      if (
+        !currentCollection.isActive ||
+        !currentCollection.areas.some(
+          (area) => area.id === candidate.area?.id && area.isActive,
+        )
+      ) {
+        // Will be caught and handled in catch block
+        throw new Error()
+      }
 
-    if (!currentCollection.length) {
+      // Candidates are stored on user national id never the actors so should be able to check just the auth national id
+      if (
+        currentCollection.candidates.some(
+          (candidate) =>
+            candidate.nationalId.replace('-', '') === auth.nationalId,
+        )
+      ) {
+        throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
+      }
+
+      return currentCollection
+    } catch (error) {
+      if (error instanceof TemplateApiError) {
+        throw error
+      }
       throw new TemplateApiError(
         errorMessages.currentCollectionNotMunicipal,
         405,
       )
     }
-
-    // Candidates are stored on user national id never the actors so should be able to check just the auth national id
-    if (
-      currentCollection.some((collection) =>
-        collection.candidates.some(
-          (candidate) =>
-            candidate.nationalId.replace('-', '') === auth.nationalId,
-        ),
-      )
-    ) {
-      throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
-    }
-
-    return currentCollection
-  }
-
-  async municipalIdentity({ auth }: TemplateApiModuleActionProps) {
-    const contactNationalId = isCompany(auth.nationalId)
-      ? auth.actor?.nationalId ?? auth.nationalId
-      : auth.nationalId
-
-    const identity = await this.nationalRegistryClientService.getIndividual(
-      contactNationalId,
-    )
-
-    if (!identity) {
-      throw new TemplateApiError(
-        coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
-        500,
-      )
-    }
-
-    return identity
   }
 
   async delegatedToCompany({ auth }: TemplateApiModuleActionProps) {
@@ -116,9 +97,8 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
-    const municipalCollection = (
-      application.externalData.municipalCollection.data as Array<Collection>
-    )[0]
+    const municipalCollection = application.externalData.municipalCollection
+      .data as Collection
 
     const candidateAreaId = getValueViaPath(
       application.externalData,
@@ -127,7 +107,9 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
     const input = {
       collectionType: this.collectionType,
-      collectionId: municipalCollection.id,
+      collectionId:
+        municipalCollection.areas.find((area) => area.id === candidateAreaId)
+          ?.collectionId ?? '',
       owner: {
         ...answers.applicant,
         nationalId: application?.applicantActors?.[0]

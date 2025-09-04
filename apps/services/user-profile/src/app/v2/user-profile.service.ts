@@ -37,7 +37,6 @@ import {
 import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
-import { IslykillService } from './islykill.service'
 import { ActorProfile } from './models/actor-profile.model'
 import { Emails } from './models/emails.model'
 import kennitala from 'kennitala'
@@ -54,7 +53,6 @@ export class UserProfileService {
     private readonly delegationPreference: typeof ActorProfile,
     @Inject(VerificationService)
     private readonly verificationService: VerificationService,
-    private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
     @Inject(UserProfileConfig.KEY)
     private config: ConfigType<typeof UserProfileConfig>,
@@ -254,7 +252,7 @@ export class UserProfileService {
         include: {
           model: Emails,
           as: 'emails',
-          required: true,
+          required: false,
           where: {
             primary: true,
           },
@@ -294,11 +292,12 @@ export class UserProfileService {
       const calculatedEmailStatus = isEmailDefined
         ? userProfile.email
           ? DataStatus.VERIFIED
-          : currentUserProfile?.emails?.[0].emailStatus ===
+          : currentUserProfile?.emails?.[0]?.emailStatus ===
             DataStatus.NOT_VERIFIED
           ? DataStatus.NOT_DEFINED
           : DataStatus.EMPTY
-        : (currentUserProfile?.emails?.[0].emailStatus as DataStatus)
+        : (currentUserProfile?.emails?.[0]?.emailStatus as DataStatus) ||
+          DataStatus.EMPTY
 
       await this.userProfileModel.upsert(
         {
@@ -316,7 +315,7 @@ export class UserProfileService {
               emailStatus: calculatedEmailStatus,
               emailVerified:
                 updateEmailVerified ??
-                currentUserProfile?.emails?.[0].emailStatus ===
+                currentUserProfile?.emails?.[0]?.emailStatus ===
                   DataStatus.VERIFIED,
               mobileStatus:
                 update.mobileStatus ??
@@ -353,10 +352,11 @@ export class UserProfileService {
           const email = await this.emailModel.findOne({
             where: {
               email: userProfile.email,
+              nationalId,
             },
+            transaction,
+            useMaster: true,
           })
-
-          await new Promise((resolve) => setTimeout(resolve, 2500))
 
           if (email) {
             await email.update(
@@ -383,20 +383,6 @@ export class UserProfileService {
             )
           }
         }
-      }
-
-      // Update islykill settings
-      if (
-        isEmailDefined ||
-        isMobilePhoneNumberDefined ||
-        isDefined(userProfile.emailNotifications)
-      ) {
-        await this.islykillService.upsertIslykillSettings({
-          nationalId,
-          phoneNumber: formattedPhoneNumber,
-          email: userProfile.email,
-          canNudge: userProfile.emailNotifications,
-        })
       }
     })
 
@@ -1307,6 +1293,7 @@ export class UserProfileService {
     mobilePhoneNumberVerified?: boolean
     shouldValidatePhoneNumber?: boolean
   }): boolean | null {
+    // If emailStatus is undefined, we can't consider the email verified
     const isEmailVerified = emailStatus === DataStatus.VERIFIED
     const isPhoneValid = shouldValidatePhoneNumber
       ? mobilePhoneNumber && mobilePhoneNumberVerified

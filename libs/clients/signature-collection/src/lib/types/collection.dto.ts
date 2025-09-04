@@ -1,4 +1,4 @@
-import { Area, mapArea } from './area.dto'
+import { Area } from './area.dto'
 import { MedmaelasofnunExtendedDTO } from '../../../gen/fetch'
 import { logger } from '@island.is/logging'
 import { Candidate, mapCandidate } from './candidate.dto'
@@ -116,6 +116,7 @@ const getStatus = ({
 
 export const mapCollection = (
   collection: MedmaelasofnunExtendedDTO,
+  participatingAreas: Area[],
 ): Collection => {
   const {
     id,
@@ -162,7 +163,7 @@ export const mapCollection = (
     candidates: candidates
       ? candidates.map((candidate) => mapCandidate(candidate, governmentalArea))
       : [],
-    areas: areas.map((area) => mapArea(area, id.toString())),
+    areas: participatingAreas,
     processed,
     status,
     collectionType,

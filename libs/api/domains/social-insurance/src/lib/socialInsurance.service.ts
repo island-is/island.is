@@ -3,8 +3,14 @@ import { handle404 } from '@island.is/clients/middlewares'
 import {
   IncomePlanStatus as IncomeStatus,
   SocialInsuranceAdministrationClientService,
-  TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebApiServicesCommonCountriesModelsCountryDto,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebExternalModelsServicePortalBaseCertificate,
+  TrWebExternalModelsServicePortalConfirmationOfIllHealth,
+  TrWebExternalModelsServicePortalConfirmationOfPendingResolution,
+  TrWebExternalModelsServicePortalConfirmedTreatment,
+  TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '@island.is/clients/social-insurance-administration'
 import {
   CmsElasticsearchService,
@@ -237,5 +243,47 @@ export class SocialInsuranceService {
     user: User,
   ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
     return await this.socialInsuranceApi.getRehabilitationPlan(user)
+  }
+
+  async getCertificateForSicknessAndRehabilitation(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalBaseCertificate> {
+    return await this.socialInsuranceApi.getCertificateForSicknessAndRehabilitation(
+      user,
+    )
+  }
+
+  async getConfirmedTreatment(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmedTreatment> {
+    return await this.socialInsuranceApi.getConfirmedTreatment(user)
+  }
+
+  async getConfirmationOfPendingResolution(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmationOfPendingResolution> {
+    return await this.socialInsuranceApi.getConfirmationOfPendingResolution(
+      user,
+    )
+  }
+
+  async getConfirmationOfIllHealth(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmationOfIllHealth> {
+    return await this.socialInsuranceApi.getConfirmationOfIllHealth(user)
+  }
+
+  async getCountries(
+    user: User,
+  ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
+    return await this.socialInsuranceApi.getCountries(user)
+  }
+
+  async getEducationalInstitutions(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto>
+  > {
+    return await this.socialInsuranceApi.getEducationalInstitutions(user)
   }
 }

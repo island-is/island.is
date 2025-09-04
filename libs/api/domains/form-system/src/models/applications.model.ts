@@ -57,6 +57,15 @@ export class Application {
   @Field(() => String, { nullable: true })
   status?: string
 
+  @Field(() => Boolean, { nullable: true })
+  stopProgressOnValidatingScreen?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  hasSummaryScreen?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  hasPayment?: boolean
+
   @Field(() => [ApplicationEventDto], { nullable: 'itemsAndList' })
   events?: ApplicationEventDto[]
 
