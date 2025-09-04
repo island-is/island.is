@@ -73,7 +73,7 @@ export const generateRawUploadData = (
     applicationType: answers.selectedEstate,
     caseNumber: externalData?.caseNumber ?? '',
     assets: expandAssetFrames(processedAssets),
-    claims: expandClaims(answers?.claims ?? []),
+    claims: expandClaims(answers.estate?.claims ?? []),
     bankAccounts: expandBankAccounts(answers.estate?.bankAccounts ?? []),
     debts: expandDebts(answers.debts ?? []),
     estateMembers: expandEstateMembers(processedEstateMembers),

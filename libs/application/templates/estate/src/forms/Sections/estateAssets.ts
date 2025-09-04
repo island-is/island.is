@@ -210,28 +210,11 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                id: 'claims',
-                component: 'TextFieldsRepeater',
+                id: 'estate.claims',
+                component: 'ClaimsRepeater',
               },
               {
-                fields: [
-                  {
-                    title: m.claimsPublisher,
-                    id: 'publisher',
-                  },
-                  {
-                    title: m.claimsAmount,
-                    id: 'value',
-                    currency: true,
-                  },
-                  {
-                    title: m.nationalId,
-                    id: 'nationalId',
-                    format: '######-####',
-                  },
-                ],
                 repeaterButtonText: m.claimsRepeaterButton,
-                repeaterHeaderText: m.claimsTitle,
               },
             ),
           ],

@@ -75,7 +75,15 @@ export const getFakeEstateInfo = (
       },
     ],
     otherAssets: [],
-    bankAccounts: [],
+    bankAccounts: [
+      {
+        assetNumber: '0159-26-000001',
+        description: 'Bankareikningur',
+        marketValue: '1500000',
+        share: 100,
+      },
+    ],
+    claims: [],
     estateMembers: [
       {
         name: 'Gervimaður Afríka',

@@ -238,6 +238,46 @@ export const estateSchema = z.object({
       )
       .array()
       .optional(),
+    claims: z
+      .object({
+        publisher: z.string(),
+        value: z.string(),
+        nationalId: z.string().optional(),
+        initial: z.boolean(),
+        enabled: z.boolean(),
+      })
+      .refine(
+        ({ enabled, publisher, value }) => {
+          return enabled && (publisher !== '' || value !== '')
+            ? isValidString(value)
+            : true
+        },
+        {
+          path: ['value'],
+        },
+      )
+      .refine(
+        ({ enabled, publisher, value }) => {
+          return enabled && (value !== '' || publisher !== '')
+            ? isValidString(publisher)
+            : true
+        },
+        {
+          path: ['publisher'],
+        },
+      )
+      .refine(
+        ({ enabled, nationalId }) => {
+          return enabled && nationalId && nationalId !== ''
+            ? kennitala.isValid(nationalId)
+            : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
+      .array()
+      .optional(),
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
     addressOfDeceased: z.string().optional(),
     caseNumber: z.string().min(1).optional(),
@@ -302,41 +342,6 @@ export const estateSchema = z.object({
     .optional(),
 
 
-  // is: Verðbréf og kröfur
-  claims: z
-    .object({
-      publisher: z.string(),
-      value: z.string(),
-      nationalId: z.string().optional(),
-    })
-    .refine(
-      ({ publisher, value }) => {
-        return publisher !== '' ? isValidString(value) : true
-      },
-      {
-        path: ['value'],
-      },
-    )
-    .refine(
-      ({ publisher, value }) => {
-        return value !== '' ? isValidString(publisher) : true
-      },
-      {
-        path: ['publisher'],
-      },
-    )
-    .refine(
-      ({ nationalId }) => {
-        return nationalId && nationalId !== ''
-          ? kennitala.isValid(nationalId)
-          : true
-      },
-      {
-        path: ['nationalId'],
-      },
-    )
-    .array()
-    .optional(),
 
   // is: Hlutabréf
   stocks: z

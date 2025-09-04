@@ -34,6 +34,17 @@ const bankAccountMapper = (element: EstateAsset & { exchangeRateOrInterest?: str
   }
 }
 
+const claimsMapper = (element: EstateAsset) => {
+  console.log('claimsMapper element', element)
+  return {
+    publisher: element.description || '',
+    value: element.marketValue || '',
+    nationalId: element.assetNumber || '',
+    initial: true,
+    enabled: true,
+  }
+}
+
 const inventoryMapper = (cashItems: EstateAsset[]) => {
   const descriptions = cashItems
     .map(item => item.description)
@@ -97,6 +108,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
   )
   const guns = estate.guns.map((el) => estateAssetMapper<EstateAsset>(el))
   const bankAccounts = estate.bankAccounts.map((el) => bankAccountMapper(el))
+  const claims = estate.claims.map((el) => claimsMapper(el))
   const inventory = inventoryMapper(estate.cash)
   const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
 
@@ -109,6 +121,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     vehicles,
     guns,
     bankAccounts,
+    claims,
     inventory,
   }
 }
