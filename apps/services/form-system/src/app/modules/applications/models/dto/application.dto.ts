@@ -5,7 +5,6 @@ import { Dependency } from '../../../../dataTypes/dependency.model'
 import { ApplicationEventDto } from './applicationEvent.dto'
 import { ValueDto } from './value.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
-import { FormApplicantTypeDto } from '../../../formApplicantTypes/models/dto/formApplicantType.dto'
 
 export class ApplicationDto {
   @ApiPropertyOptional()
@@ -64,7 +63,4 @@ export class ApplicationDto {
 
   @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
-
-  @ApiPropertyOptional({ type: [FormApplicantTypeDto] })
-  applicantTypes?: FormApplicantTypeDto[]
 }

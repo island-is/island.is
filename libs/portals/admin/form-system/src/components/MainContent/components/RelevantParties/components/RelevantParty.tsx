@@ -1,49 +1,34 @@
 import { useMutation } from '@apollo/client'
-import { FormSystemFormApplicant } from '@island.is/api/schema'
-import { UPDATE_APPLICANT } from '@island.is/form-system/graphql'
+import { FormSystemField, FormSystemFormApplicant } from '@island.is/api/schema'
+import { UPDATE_FIELD } from '@island.is/form-system/graphql'
 import { Box, GridColumn, GridRow, Input } from '@island.is/island-ui/core'
-import { ControlContext } from 'libs/portals/admin/form-system/src/context/ControlContext'
-import { Dispatch, SetStateAction, useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { m } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
+import { ControlContext } from '../../../../../context/ControlContext'
 
 interface Props {
   applicantType: FormSystemFormApplicant
-  relevantApplicant: FormSystemFormApplicant
-  setFormApplicantTypes: Dispatch<SetStateAction<FormSystemFormApplicant[]>>
+  relevantApplicant: FormSystemField
 }
 
-export const RelevantParty = ({
-  applicantType,
-  relevantApplicant,
-  setFormApplicantTypes,
-}: Props) => {
+export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
   const { formatMessage } = useIntl()
-  const { setFocus, focus, getTranslation } = useContext(ControlContext)
-  const [updateApplicant] = useMutation(UPDATE_APPLICANT)
+  const { setFocus, focus, getTranslation, controlDispatch, control } =
+    useContext(ControlContext)
+  const [updateField] = useMutation(UPDATE_FIELD)
 
-  const onBlurHandler = (
-    currentString: string,
-    applicant: FormSystemFormApplicant,
-  ) => {
-    if (currentString !== focus) {
-      try {
-        updateApplicant({
-          variables: {
-            input: {
-              id: applicant.id,
-              updateFormApplicantTypeDto: {
-                name: applicant.name,
-              },
-            },
-          },
-        })
-        setFocus('')
-      } catch (e) {
-        console.error('Error updating applicant', e)
-      }
+  const [currentApplicant, setCurrentApplicant] =
+    useState<FormSystemField>(relevantApplicant)
+
+  useEffect(() => {
+    const updated = (control.form.fields ?? []).find(
+      (f): f is FormSystemField => !!f && f.id === relevantApplicant.id,
+    )
+    if (updated) {
+      setCurrentApplicant(updated)
     }
-  }
+  }, [control.form.fields, relevantApplicant.id])
 
   return (
     <Box paddingLeft={4} paddingTop={2}>
@@ -51,71 +36,86 @@ export const RelevantParty = ({
         <GridColumn span="5/10">
           <Input
             label={applicantType.description?.is ?? ''}
-            name={relevantApplicant.applicantTypeId ?? ''}
+            name={currentApplicant.fieldSettings?.applicantType ?? ''}
             backgroundColor="blue"
-            value={relevantApplicant.name?.is ?? ''}
+            value={currentApplicant.name?.is ?? ''}
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => onBlurHandler(e.target.value, relevantApplicant)}
-            onChange={(e) =>
-              setFormApplicantTypes((prev) =>
-                prev.map((applicant) => {
-                  return applicant.applicantTypeId ===
-                    relevantApplicant.applicantTypeId
-                    ? {
-                        ...applicant,
-                        name: { ...applicant.name, is: e.target.value },
-                      }
-                    : applicant
-                }),
-              )
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_APPLICANT_NAME',
+                payload: {
+                  lang: 'is',
+                  newValue: e.target.value,
+                  id: currentApplicant.id,
+                },
+              })
+            }}
+            onBlur={async (e) =>
+              e.target.value !== focus &&
+              updateField({
+                variables: {
+                  input: {
+                    id: currentApplicant.id,
+                    updateFieldDto: {
+                      name: {
+                        is: e.target.value,
+                        en: currentApplicant.name?.en ?? undefined,
+                      },
+                    },
+                  },
+                },
+              })
             }
           />
         </GridColumn>
         <GridColumn span="5/10">
           <Input
             label={formatMessage(m.englishTranslation)}
-            name={'en-' + relevantApplicant.applicantTypeId}
+            name={'en-' + (currentApplicant.fieldSettings?.applicantType ?? '')}
             backgroundColor="blue"
-            value={relevantApplicant.name?.en ?? ''}
+            value={currentApplicant.name?.en ?? ''}
             onFocus={async (e) => {
-              if (
-                !relevantApplicant.name?.en &&
-                relevantApplicant.name?.is !== ''
-              ) {
+              if (!currentApplicant.name?.en && currentApplicant.name?.is) {
                 const translation = await getTranslation(
-                  relevantApplicant.name?.is ?? '',
+                  currentApplicant.name.is,
                 )
-                setFormApplicantTypes((prev) =>
-                  prev.map((applicant) => {
-                    return applicant.applicantTypeId ===
-                      relevantApplicant.applicantTypeId
-                      ? {
-                          ...applicant,
-                          name: {
-                            ...applicant.name,
-                            en: translation.translation,
-                          },
-                        }
-                      : applicant
-                  }),
-                )
+                controlDispatch({
+                  type: 'CHANGE_APPLICANT_NAME',
+                  payload: {
+                    lang: 'en',
+                    newValue: translation.translation,
+                    id: currentApplicant.id,
+                  },
+                })
               }
               setFocus(e.target.value)
             }}
             onChange={(e) =>
-              setFormApplicantTypes((prev) =>
-                prev.map((applicant) => {
-                  return applicant.applicantTypeId ===
-                    relevantApplicant.applicantTypeId
-                    ? {
-                        ...applicant,
-                        name: { ...applicant.name, en: e.target.value },
-                      }
-                    : applicant
-                }),
-              )
+              controlDispatch({
+                type: 'CHANGE_APPLICANT_NAME',
+                payload: {
+                  lang: 'en',
+                  newValue: e.target.value,
+                  id: currentApplicant.id,
+                },
+              })
             }
-            onBlur={(e) => onBlurHandler(e.target.value, relevantApplicant)}
+            onBlur={(e) =>
+              e.target.value !== focus &&
+              updateField({
+                variables: {
+                  input: {
+                    id: currentApplicant.id,
+                    updateFieldDto: {
+                      name: {
+                        ...currentApplicant.name,
+                        en: e.target.value,
+                      },
+                    },
+                  },
+                },
+              })
+            }
           />
         </GridColumn>
       </GridRow>

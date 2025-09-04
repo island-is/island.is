@@ -75,4 +75,7 @@ export class FieldSettingsInput {
 
   @Field(() => String, { nullable: true })
   zendeskCustomFieldId?: string
+
+  @Field(() => String, { nullable: true })
+  applicantType?: string
 }

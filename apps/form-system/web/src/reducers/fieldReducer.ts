@@ -54,6 +54,19 @@ export const fieldReducer = (
       const { fieldId, hasError } = action.payload
       return setError(state, fieldId, hasError)
     }
+    case 'SET_NAME': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 'name', id, value)
+    }
+    case 'SET_ADDRESS': {
+      const { address, postalCode, id } = action.payload
+      const value = {
+        address: address,
+        postalCode: postalCode,
+      }
+
+      return setMultipleFieldValues(state, id, value)
+    }
     default:
       return state
   }

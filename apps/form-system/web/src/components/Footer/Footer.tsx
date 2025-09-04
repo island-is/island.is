@@ -17,9 +17,9 @@ interface Props {
 
 export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
-  const { currentSection } = state
   const { formatMessage } = useIntl()
   const { trigger } = useFormContext()
+  const { currentSection } = state
 
   // Mutations
   const submitScreen = useMutation(SAVE_SCREEN)
@@ -56,7 +56,13 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
-  const isBackButton = state.currentSection.index <= 1 || isCompletedSection
+
+  const isBackButton =
+    (SectionTypes.PARTIES &&
+      state.currentScreen?.index !== undefined &&
+      state.currentScreen.index > 0) ||
+    isCompletedSection
+
   const handleIncrement = async () => {
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
@@ -119,7 +125,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               {continueButtonText}
             </Button>
           </Box>
-
           {!isBackButton && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button

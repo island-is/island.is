@@ -162,4 +162,9 @@ export class ValueType {
   @IsString()
   @ApiPropertyOptional({ type: String })
   paymentCode?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  delegationType?: string
 }

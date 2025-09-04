@@ -22,7 +22,7 @@ export const Email = ({ item, dispatch, lang = 'is' }: Props) => {
   return (
     <Stack space={2}>
       <Controller
-        name={item.id}
+        name={`${item.id}.email`}
         control={control}
         defaultValue={getValue(item, 'email') ?? ''}
         rules={{

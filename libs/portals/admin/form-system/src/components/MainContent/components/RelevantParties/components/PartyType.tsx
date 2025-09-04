@@ -1,23 +1,22 @@
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import { RelevantParty } from './RelevantParty'
-import { FormSystemFormApplicant } from '@island.is/api/schema'
-import { Dispatch, SetStateAction, useContext } from 'react'
+import { FormSystemField } from '@island.is/api/schema'
+import { useContext } from 'react'
 import { ControlContext } from 'libs/portals/admin/form-system/src/context/ControlContext'
+import { getFieldBySettings } from '../../../../../lib/utils/getField'
 
 interface Props {
   groupApplicantTypes: string[]
   label: string
-  formApplicants: FormSystemFormApplicant[]
+  formApplicantFields: FormSystemField[]
   handleCheckboxChange: (types: string[], checked: boolean) => void
-  setFormApplicantTypes: Dispatch<SetStateAction<FormSystemFormApplicant[]>>
 }
 
 export const PartyType = ({
   groupApplicantTypes,
   label,
-  formApplicants,
+  formApplicantFields,
   handleCheckboxChange,
-  setFormApplicantTypes,
 }: Props) => {
   const { applicantTypes } = useContext(ControlContext)
 
@@ -25,31 +24,29 @@ export const PartyType = ({
     return applicantTypes?.find((applicantType) => applicantType?.id === type)
   }
 
+  const isGroupChecked = groupApplicantTypes.some((type) =>
+    Boolean(getFieldBySettings('applicantType', type, formApplicantFields)),
+  )
+
   return (
     <>
       <Box paddingTop={4}>
         <Checkbox
           label={label}
-          checked={formApplicants.some(
-            (a) =>
-              typeof a.applicantTypeId === 'string' &&
-              groupApplicantTypes.includes(a.applicantTypeId),
-          )}
+          checked={isGroupChecked}
           onChange={(e) =>
             handleCheckboxChange(groupApplicantTypes, e.target.checked)
           }
         ></Checkbox>
       </Box>
-      {formApplicants?.some(
-        (a) =>
-          typeof a.applicantTypeId === 'string' &&
-          groupApplicantTypes.includes(a.applicantTypeId),
-      ) && (
+      {isGroupChecked && (
         <>
           {groupApplicantTypes.map((type) => {
             const applicantType = getApplicantType(type)
-            const relevantApplicant = formApplicants.find(
-              (a) => a.applicantTypeId === type,
+            const relevantApplicant = getFieldBySettings(
+              'applicantType',
+              type,
+              formApplicantFields,
             )
             if (!applicantType || !relevantApplicant) return null
             return (
@@ -57,7 +54,6 @@ export const PartyType = ({
                 key={type}
                 applicantType={applicantType}
                 relevantApplicant={relevantApplicant}
-                setFormApplicantTypes={setFormApplicantTypes}
               />
             )
           })}

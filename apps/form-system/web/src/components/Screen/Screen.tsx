@@ -9,7 +9,7 @@ import { Field } from './components/Field/Field'
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Applicants } from './components/Applicants/Applicants'
-import { FormSystemApplicant } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 
 export const Screen = () => {
   const { state } = useApplicationContext()
@@ -22,6 +22,8 @@ export const Screen = () => {
   const [externalDataAgreement, setExternalDataAgreement] = useState(
     state.sections?.[0].isCompleted ?? false,
   )
+
+  console.log('currentScreen', currentScreen)
 
   return (
     <Box
@@ -45,11 +47,7 @@ export const Screen = () => {
         )}
         {currentSectionType === SectionTypes.PARTIES && (
           <Applicants
-            applicantTypes={
-              (state.application.applicantTypes?.filter(
-                (item) => item !== null,
-              ) as FormSystemApplicant[]) ?? []
-            }
+            applicantField={currentScreen?.data?.fields?.[0] as FormSystemField}
           />
         )}
         {currentSectionType === SectionTypes.SUMMARY &&

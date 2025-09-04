@@ -45,6 +45,9 @@ export class FieldSettingsFactory {
       case FieldTypesEnum.HOMESTAY_OVERVIEW:
         keys = ['year', ...keys]
         return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.APPLICANT:
+        keys = ['applicantType', ...keys]
+        return this.pickSettings(fieldSettings, keys)
       default:
         return this.pickSettings(fieldSettings, keys)
     }

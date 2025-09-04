@@ -24,6 +24,7 @@ enum FieldTypes {
   TEXTBOX = 'Textabox',
   NUMBERBOX = 'Tölubox',
   RADIO_BUTTONS = 'Valhnappar',
+  APPLICANT = 'Umsækjandi',
 }
 
 export const getFieldTypeValue = (type: string) => {
