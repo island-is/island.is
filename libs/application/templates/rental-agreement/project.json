@@ -3,10 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/rental-agreement/src",
   "projectType": "library",
-  "tags": [
-    "scope:application-system",
-    "lib:application-system"
-  ],
+  "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
   "targets": {
     "lint": {
