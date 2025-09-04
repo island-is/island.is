@@ -95,7 +95,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         400,
       )
     }
-    const machineId = answers.machine.id || answers.pickMachine.id
+    const machineId = answers.machine?.id
     if (!machineId) {
       throw new Error('Machine has not been selected')
     }
@@ -173,7 +173,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       currentUserLocale,
     })
 
-    const machineId = answers.machine.id || answers.pickMachine.id
+    const machineId = answers.machine?.id
     if (!machineId) {
       throw new Error('Ekki er búið að velja vél')
     }

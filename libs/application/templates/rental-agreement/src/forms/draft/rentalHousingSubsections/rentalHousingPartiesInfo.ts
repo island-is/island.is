@@ -8,20 +8,20 @@ import {
   applicantTableFields,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
-import { landlordAndTenantDetails, partiesDetails } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
 
 export const RentalHousingPartiesInfo = buildSubSection({
   id: Routes.PARTIESINFORMATION,
-  title: partiesDetails.subSectionName,
+  title: m.partiesDetails.subSectionName,
   children: [
     buildMultiField({
       id: Routes.PARTIESINFORMATION,
-      title: partiesDetails.multiFieldTitle,
-      description: partiesDetails.multiFieldDescription,
+      title: m.partiesDetails.multiFieldTitle,
+      description: m.partiesDetails.multiFieldDescription,
       children: [
         buildTableRepeaterField({
           id: 'parties.landlordInfo.table',
-          title: partiesDetails.landlordTableTitle,
+          title: m.partiesDetails.landlordTableTitle,
           editField: true,
           marginTop: 1,
           maxRows: 10,
@@ -30,7 +30,7 @@ export const RentalHousingPartiesInfo = buildSubSection({
         }),
         buildTableRepeaterField({
           id: 'parties.landlordInfo.representativeTable',
-          title: landlordAndTenantDetails.representativeTableTitle,
+          title: m.landlordAndTenantDetails.representativeTableTitle,
           editField: true,
           marginTop: 6,
           maxRows: 10,
@@ -39,7 +39,7 @@ export const RentalHousingPartiesInfo = buildSubSection({
         }),
         buildTableRepeaterField({
           id: 'parties.tenantInfo.table',
-          title: partiesDetails.tenantTableTitle,
+          title: m.partiesDetails.tenantTableTitle,
           editField: true,
           maxRows: 10,
           fields: applicantTableFields,
