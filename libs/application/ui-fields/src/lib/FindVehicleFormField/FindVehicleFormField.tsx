@@ -184,7 +184,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
         }
       }
     }
-    setValue(`${field.id}.findVehicle`, true)
 
     setValue(
       `${field.id}.paymentRequiredForOwnerChange`,
@@ -198,6 +197,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.ownerNumber`, machineDetails.ownerNumber || '')
     setValue(`${field.id}.id`, machineDetails.id)
     setValue(`${field.id}.date`, new Date().toISOString())
+    setValue(`${field.id}.findVehicle`, true)
+    setValue(`${field.id}.isValid`, machineDisabled ? undefined : true)
 
     setValue('pickMachine.id', machineDetails.id)
     setValue('pickMachine.isValid', machineDisabled ? undefined : true)
