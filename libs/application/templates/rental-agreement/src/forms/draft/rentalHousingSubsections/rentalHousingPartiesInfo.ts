@@ -6,6 +6,7 @@ import {
 import {
   applicantTableConfig,
   applicantTableFields,
+  landLordInfoTableFields,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
 import * as m from '../../../lib/messages'
@@ -25,7 +26,7 @@ export const RentalHousingPartiesInfo = buildSubSection({
           editField: true,
           marginTop: 1,
           maxRows: 10,
-          fields: applicantTableFields,
+          fields: landLordInfoTableFields,
           table: applicantTableConfig,
         }),
         buildTableRepeaterField({
@@ -34,7 +35,7 @@ export const RentalHousingPartiesInfo = buildSubSection({
           editField: true,
           marginTop: 6,
           maxRows: 10,
-          fields: applicantTableFields,
+          fields: landLordInfoTableFields,
           table: applicantTableConfig,
         }),
         buildTableRepeaterField({
