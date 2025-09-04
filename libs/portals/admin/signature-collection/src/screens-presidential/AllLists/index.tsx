@@ -23,7 +23,6 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import {
-  CollectionStatus,
   FiltersOverview,
   countryAreas,
   getTagConfig,
@@ -33,7 +32,6 @@ import { format as formatNationalId } from 'kennitala'
 import EmptyState from '../../shared-components/emptyState'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
@@ -42,13 +40,10 @@ const Lists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { allLists, collectionStatus, collection } =
-    useLoaderData() as ListsLoaderReturn
+  const { allLists, collection } = useLoaderData() as ListsLoaderReturn
 
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
-  // hasInReview is used to check if any list is in review
-  const [hasInReview, setHasInReview] = useState(false)
   const [filters, setFilters] = useState<FiltersOverview>({
     area: [],
     candidate: [],
@@ -90,10 +85,6 @@ const Lists = () => {
     if (lists.length > 0) {
       const candidates = lists
         .map((list) => {
-          // mapping all lists to check if any are in review
-          if (!list.reviewed) {
-            setHasInReview(true)
-          }
           return list.candidate.name
         })
         .filter((value, index, self) => self.indexOf(value) === index)
@@ -146,6 +137,7 @@ const Lists = () => {
                   Actions.DownloadReports,
                   Actions.CreateCollection,
                   Actions.ReviewCandidates,
+                  Actions.CompleteCollectionProcessing,
                 ]}
               />
             }
@@ -313,13 +305,6 @@ const Lists = () => {
                 collectionId={collection?.id}
                 collectionType={collection?.collectionType}
               />
-              {!hasInReview &&
-                collectionStatus === CollectionStatus.InInitialReview && (
-                  <ActionCompleteCollectionProcessing
-                    collectionType={collection?.collectionType}
-                    collectionId={collection?.id}
-                  />
-                )}
             </Box>
           )}
         </GridColumn>
