@@ -26,6 +26,7 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  PoliceFileTypeCode,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
@@ -591,11 +592,11 @@ export class PoliceService {
           // Do not spam the logs with errors
           // Act as if the case was updated
           return true
-        } else {
-          this.logger.error(`Failed to update police case ${caseId}`, {
-            reason,
-          })
         }
+
+        this.logger.error(`Failed to update police case ${caseId}`, {
+          reason,
+        })
 
         this.eventService.postErrorEvent(
           'Failed to update police case',
@@ -729,7 +730,7 @@ export class PoliceService {
             courtCeremony: 'Þingfesting',
             lokeCaseNumber: policeCaseNumbers?.[0],
             courtCaseNumber: courtCaseNumber,
-            fileTypeCode: 'BRTNG',
+            fileTypeCode: PoliceFileTypeCode.SUBPOENA,
             rvgCaseId: theCase.id,
           }),
         } as RequestInit,

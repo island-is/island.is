@@ -18,6 +18,7 @@ import { m } from '../lib/messages'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 import { format as formatNationalId } from 'kennitala'
+import format from 'date-fns/format'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
@@ -57,7 +58,12 @@ export const Draft: Form = buildForm({
                   ) || []
                 return data?.map((list) => ({
                   value: list.id,
-                  label: list.title,
+                  label: `${list.candidate.name} (${
+                    list.candidate.ownerName
+                  } - ${format(
+                    new Date(list.candidate.ownerBirthDate),
+                    'dd.MM.yy',
+                  )})`,
                   disabled:
                     list.maxReached || new Date(list.endTime) < new Date(),
                   tag: list.maxReached
@@ -88,6 +94,31 @@ export const Draft: Form = buildForm({
           title: m.listName,
           description: m.listDescription,
           children: [
+            buildTextField({
+              id: 'municipality',
+              title: m.municipality,
+              width: 'full',
+              readOnly: true,
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.area?.name
+              },
+            }),
             buildTextField({
               id: 'candidateName',
               title: m.candidateName,
@@ -135,8 +166,8 @@ export const Draft: Form = buildForm({
               },
             }),
             buildTextField({
-              id: 'municipality',
-              title: m.municipality,
+              id: 'guarantorsName',
+              title: m.guarantorsName,
               width: 'half',
               readOnly: true,
               defaultValue: ({ answers, externalData }: Application) => {
@@ -146,17 +177,13 @@ export const Draft: Form = buildForm({
                     'getList.data',
                   ) || []
 
-                const initialQuery = getValueViaPath(
-                  answers,
-                  'initialQuery',
-                  '',
-                )
+                const name =
+                  lists.length === 1
+                    ? lists[0].candidate.ownerName
+                    : lists.find((list) => list.id === answers.listId)
+                        ?.candidate.ownerName
 
-                return lists.find((list) =>
-                  initialQuery
-                    ? list.candidate.id === initialQuery
-                    : list.id === answers.listId,
-                )?.area?.name
+                return name
               },
             }),
             buildSubmitField({

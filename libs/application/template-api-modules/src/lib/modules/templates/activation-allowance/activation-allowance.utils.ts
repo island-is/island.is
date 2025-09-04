@@ -1,4 +1,4 @@
-import { getValueViaPath, YES } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ApplicantAnswer,
   ContactAnswer,
@@ -14,7 +14,6 @@ import {
 } from '@island.is/application/templates/activation-allowance'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import {
-  ActivationGrantIncomeFormDTO,
   GaldurDomainModelsApplicantsApplicantProfileDTOsBankingPensionUnion,
   GaldurDomainModelsApplicantsApplicantProfileDTOsDrivingLicense,
   GaldurDomainModelsApplicantsApplicantProfileDTOsEducation,
@@ -22,6 +21,7 @@ import {
   GaldurDomainModelsApplicantsApplicantProfileDTOsLanguage,
   GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsActivationGrantSupportData,
+  GaldurDomainModelsIncomeActivationGrantIncomeFormDTO,
   GaldurDomainModelsRSKRSKIncomeListDTO,
   GaldurDomainModelsSelectItem,
   GaldurDomainModelsSettingsPostcodesPostcodeDTO,
@@ -343,6 +343,17 @@ export const getCVInfo = async (
       'base64',
     )
 
+    // s3Service on error only logs the error but doesn't throw so if we get undefined back there was an error
+    if (!content) {
+      throw new TemplateApiError(
+        {
+          title: errorMsgs.successErrorTitle,
+          summary: errorMsgs.cvS3Error,
+        },
+        500,
+      )
+    }
+
     const fileResponse: FileResponse = {
       fileName,
       fileType: mimeType,
@@ -351,7 +362,6 @@ export const getCVInfo = async (
     }
     return fileResponse
   } catch (e) {
-    // CV is optional and can be turned in later, so we'd rather return no cv then stop user during submit
     throw new TemplateApiError(
       {
         title: errorMsgs.successErrorTitle,
@@ -369,7 +379,7 @@ export const getStartingLocale = (externalData: ExternalData) => {
 export const getIncome = (
   answers: FormValue,
   externalData: ExternalData,
-): Array<ActivationGrantIncomeFormDTO> => {
+): Array<GaldurDomainModelsIncomeActivationGrantIncomeFormDTO> => {
   const incomeAnswers = getValueViaPath<IncomeAnswers>(answers, 'income') || []
   const incomeExternal =
     getValueViaPath<Array<GaldurDomainModelsRSKRSKIncomeListDTO>>(
@@ -378,8 +388,8 @@ export const getIncome = (
       [],
     ) || []
 
-  const incomePayload: Array<ActivationGrantIncomeFormDTO> = incomeAnswers.map(
-    (income, index) => {
+  const incomePayload: Array<GaldurDomainModelsIncomeActivationGrantIncomeFormDTO> =
+    incomeAnswers.map((income, index) => {
       const employerSSN = incomeExternal?.[index]?.employerSSN
       const year = incomeExternal?.[index]?.year
       const hasEnded = income.hasEmploymentEnded === YES
@@ -400,8 +410,8 @@ export const getIncome = (
         isFromEmployment:
           income.checkbox?.[0] ===
           IncomeCheckboxValues.INCOME_FROM_OTHER_THAN_JOB
-            ? true
-            : false,
+            ? false
+            : true,
         explanation: income.explanation,
         hasUnpaidVacation: income.hasLeaveDays === YES ? true : false,
         unpaidVacationDays: unpaidVacationDays,
@@ -413,8 +423,7 @@ export const getIncome = (
               unpaidVacationEnd: new Date(dates.dateTo),
             })) || [],
       }
-    },
-  )
+    })
   return incomePayload
 }
 
@@ -440,4 +449,19 @@ const getFileExtension = (fileName: string): string | undefined => {
   const parts = fileName.trim().split('.')
   if (parts.length < 2) return undefined // no extension found
   return parts.pop()?.toLowerCase()
+}
+
+export const getCanStartAt = (answers: FormValue): Date => {
+  const incomeAnswers = getValueViaPath<IncomeAnswers>(answers, 'income') || []
+  let canStartAtDate = new Date()
+
+  incomeAnswers.forEach((income) => {
+    if (income.hasEmploymentEnded === NO && income.endOfEmploymentDate) {
+      const endOfEmploymentDate = new Date(income.endOfEmploymentDate)
+      canStartAtDate = new Date(
+        Math.max(canStartAtDate.getTime(), endOfEmploymentDate.getTime()),
+      )
+    }
+  })
+  return canStartAtDate
 }

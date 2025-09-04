@@ -116,7 +116,7 @@ const ReviewCandidates = ({
             <T.Body>
               {allCandidates.map(
                 (candidate: SignatureCollectionCandidate, key) => (
-                  <T.Row>
+                  <T.Row key={candidate.id}>
                     <T.Data span={3}>{key + 1}</T.Data>
                     <T.Data span={3}>{candidate.name}</T.Data>
                     <T.Data span={3}>

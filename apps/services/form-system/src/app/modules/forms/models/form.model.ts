@@ -12,7 +12,6 @@ import {
 import { Section } from '../../sections/models/section.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { FormApplicantType } from '../../formApplicantTypes/models/formApplicantType.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 import { FormUrl } from '../../formUrls/models/formUrl.model'
@@ -152,9 +151,6 @@ export class Form extends Model<Form> {
 
   @HasMany(() => Section)
   sections!: Section[]
-
-  @HasMany(() => FormApplicantType)
-  formApplicantTypes?: FormApplicantType[]
 
   @HasMany(() => FormCertificationType)
   formCertificationTypes?: FormCertificationType[]

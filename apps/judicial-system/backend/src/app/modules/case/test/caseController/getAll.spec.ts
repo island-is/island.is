@@ -4,7 +4,7 @@ import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { Case } from '../../../repository'
+import { Case, CaseRepositoryService } from '../../../repository'
 import { caseListInclude } from '../../case.service'
 import { getCasesQueryFilter } from '../../filters/cases.filter'
 
@@ -19,13 +19,14 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('CaseController - Get all', () => {
   const user = { id: uuid() } as User
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, caseController } = await createTestingCaseModule()
+    const { caseRepositoryService, caseController } =
+      await createTestingCaseModule()
 
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -48,7 +49,7 @@ describe('CaseController - Get all', () => {
     beforeEach(async () => {
       const mockGetCasesQueryFilter = getCasesQueryFilter as jest.Mock
       mockGetCasesQueryFilter.mockReturnValueOnce(filter)
-      const mockFindAll = mockCaseModel.findAll as jest.Mock
+      const mockFindAll = mockCaseRepositoryService.findAll as jest.Mock
       mockFindAll.mockResolvedValueOnce(cases)
 
       then = await givenWhenThen()
@@ -56,7 +57,7 @@ describe('CaseController - Get all', () => {
 
     it('should return cases', () => {
       expect(getCasesQueryFilter).toHaveBeenCalledWith(user)
-      expect(mockCaseModel.findAll).toHaveBeenCalledWith({
+      expect(mockCaseRepositoryService.findAll).toHaveBeenCalledWith({
         include: caseListInclude,
         where: filter,
       })

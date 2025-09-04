@@ -30,7 +30,6 @@ import {
   ApplicantType,
   ApplicantTypes,
 } from '../../dataTypes/applicantTypes/applicantType.model'
-import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
 import {
@@ -41,7 +40,6 @@ import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { randomUUID } from 'crypto'
 import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
-import { FormApplicantTypeDto } from '../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
 import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
@@ -75,8 +73,6 @@ export class FormsService {
     private readonly organizationUrlModel: typeof OrganizationUrl,
     @InjectModel(FormCertificationType)
     private readonly formCertificationTypeModel: typeof FormCertificationType,
-    @InjectModel(FormApplicantType)
-    private readonly formApplicantTypeModel: typeof FormApplicantType,
     @InjectModel(FormUrl)
     private readonly formUrlModel: typeof FormUrl,
     private readonly sequelize: Sequelize,
@@ -186,7 +182,6 @@ export class FormsService {
     user: User,
     organizationNationalId: string,
   ): Promise<FormResponseDto> {
-    // const organizationNationalId = user.nationalId
     const organization = await this.organizationModel.findOne({
       where: { nationalId: organizationNationalId },
     })
@@ -357,10 +352,6 @@ export class FormsService {
         {
           model: FormCertificationType,
           as: 'formCertificationTypes',
-        },
-        {
-          model: FormApplicantType,
-          as: 'formApplicantTypes',
         },
         {
           model: FormUrl,
@@ -575,7 +566,6 @@ export class FormsService {
       ),
       {
         certificationTypes: [],
-        applicantTypes: [],
         urls: [],
         sections: [],
         screens: [],
@@ -594,16 +584,6 @@ export class FormsService {
             Array(certificationKeys.length).fill(null),
           ),
         ) as FormCertificationTypeDto,
-      )
-    })
-
-    const applicantKeys = ['id', 'applicantTypeId', 'name']
-    form.formApplicantTypes?.map((formApplicant) => {
-      formDto.applicantTypes?.push(
-        defaults(
-          pick(formApplicant, applicantKeys),
-          zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
-        ) as FormApplicantTypeDto,
       )
     })
 
@@ -701,15 +681,22 @@ export class FormsService {
       {
         formId: form.id,
         sectionType: SectionTypes.SUMMARY,
-        displayOrder: 9998,
+        displayOrder: 9911,
         name: { is: 'Yfirlit', en: 'Summary' },
+      } as Section,
+
+      {
+        formId: form.id,
+        sectionType: SectionTypes.COMPLETED,
+        displayOrder: 9931,
+        name: { is: 'Staðfesting', en: 'Confirmation' },
       } as Section,
     ])
 
     const paymentSection = await this.sectionModel.create({
       formId: form.id,
       sectionType: SectionTypes.PAYMENT,
-      displayOrder: 9999,
+      displayOrder: 9921,
       name: { is: 'Greiðsla', en: 'Payment' },
     } as Section)
 
@@ -762,7 +749,6 @@ export class FormsService {
     const fields: Field[] = []
     const listItems: ListItem[] = []
     const formCertificationTypes: FormCertificationType[] = []
-    const formApplicantTypes: FormApplicantType[] = []
     const formUrls: FormUrl[] = []
 
     for (const section of existingForm.sections) {
@@ -801,6 +787,25 @@ export class FormsService {
       }
     }
 
+    const hasCompleted = sections.some(
+      (s) => s.sectionType === SectionTypes.COMPLETED,
+    )
+    if (!hasCompleted) {
+      const maxOrder =
+        sections.length > 0
+          ? Math.max(...sections.map((s) => s.displayOrder ?? 0))
+          : 0
+      sections.push({
+        id: uuidV4(),
+        formId: newForm.id,
+        sectionType: SectionTypes.COMPLETED,
+        displayOrder: maxOrder + 1,
+        name: { is: 'Staðfesting', en: 'Confirmation' },
+        created: new Date(),
+        modified: new Date(),
+      } as Section)
+    }
+
     if (existingForm.formCertificationTypes) {
       for (const certificationType of existingForm.formCertificationTypes) {
         const newFormCertificationType = certificationType.toJSON()
@@ -809,17 +814,6 @@ export class FormsService {
         newFormCertificationType.created = new Date()
         newFormCertificationType.modified = new Date()
         formCertificationTypes.push(newFormCertificationType)
-      }
-    }
-
-    if (existingForm.formApplicantTypes) {
-      for (const applicantType of existingForm.formApplicantTypes) {
-        const newFormApplicantType = applicantType.toJSON()
-        newFormApplicantType.id = uuidV4()
-        newFormApplicantType.formId = newForm.id
-        newFormApplicantType.created = new Date()
-        newFormApplicantType.modified = new Date()
-        formApplicantTypes.push(newFormApplicantType)
       }
     }
 
@@ -841,9 +835,6 @@ export class FormsService {
       await this.fieldModel.bulkCreate(fields, { transaction })
       await this.listItemModel.bulkCreate(listItems, { transaction })
       await this.formCertificationTypeModel.bulkCreate(formCertificationTypes, {
-        transaction,
-      })
-      await this.formApplicantTypeModel.bulkCreate(formApplicantTypes, {
         transaction,
       })
       await this.formUrlModel.bulkCreate(formUrls, { transaction })
