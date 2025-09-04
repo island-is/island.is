@@ -310,12 +310,14 @@ export const serviceSetup = (services: {
         staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
         prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
       },
-      LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: {
-        dev: 'http://web.islandis.svc.cluster.local/payments/event-callback',
-        staging:
-          'http://web.islandis.svc.cluster.local/payments/event-callback',
-        prod: 'http://web.islandis.svc.cluster.local/payments/event-callback',
-      },
+      LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://web.${
+            ctx.featureDeploymentName
+              ? `feature-${ctx.featureDeploymentName}`
+              : 'islandis'
+          }.svc.cluster.local/payments/event-callback`,
+      ),
       LANDSPITALI_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: {
         dev: '[TEST] Minningarkort - Landspítali',
         staging: '[TEST] Minningarkort - Landspítali',
