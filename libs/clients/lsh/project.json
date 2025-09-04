@@ -37,9 +37,9 @@
     "codegen/backend-client-temp": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/lsh/src/lib/questionnaries-temp/fetch -i libs/clients/lsh/src/lib/questionnaries-temp/clientConfig.json"
+        "command": "yarn openapi-generator -o libs/clients/lsh/src/lib/questionnaires-temp/fetch -i libs/clients/lsh/src/lib/questionnaires-temp/clientConfig.json"
       },
-      "outputs": ["{projectRoot}/src/lib/questionnaries-temp/fetch"]
+      "outputs": ["{projectRoot}/src/lib/questionnaires-temp/fetch"]
     }
   }
 }

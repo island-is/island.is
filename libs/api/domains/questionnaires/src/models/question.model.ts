@@ -33,9 +33,6 @@ registerEnumType(AnswerOptionType, {
 @ObjectType('HealthQuestionnaireAnswerBase')
 abstract class HealthQuestionnaireAnswerBase {
   @Field()
-  __typename!: string
-
-  @Field()
   id!: string
 
   @Field()
@@ -52,9 +49,6 @@ abstract class HealthQuestionnaireAnswerBase {
 @ObjectType('HealthQuestionnaireAnswerThermometer')
 export class HealthQuestionnaireAnswerThermometer extends HealthQuestionnaireAnswerBase {
   @Field()
-  override __typename = 'HealthQuestionnaireAnswerThermometer'
-
-  @Field()
   maxLabel!: string
 
   @Field()
@@ -64,9 +58,6 @@ export class HealthQuestionnaireAnswerThermometer extends HealthQuestionnaireAns
 // Text input answer type
 @ObjectType('HealthQuestionnaireAnswerText')
 export class HealthQuestionnaireAnswerText extends HealthQuestionnaireAnswerBase {
-  @Field()
-  override __typename = 'HealthQuestionnaireAnswerText'
-
   @Field({ nullable: true })
   placeholder?: string
 
@@ -77,9 +68,6 @@ export class HealthQuestionnaireAnswerText extends HealthQuestionnaireAnswerBase
 // Number input answer type
 @ObjectType('HealthQuestionnaireAnswerNumber')
 export class HealthQuestionnaireAnswerNumber extends HealthQuestionnaireAnswerBase {
-  @Field()
-  override __typename = 'HealthQuestionnaireAnswerNumber'
-
   @Field({ nullable: true })
   placeholder?: string
 
@@ -93,9 +81,6 @@ export class HealthQuestionnaireAnswerNumber extends HealthQuestionnaireAnswerBa
 // Radio/Select answer type
 @ObjectType('HealthQuestionnaireAnswerRadio')
 export class HealthQuestionnaireAnswerRadio extends HealthQuestionnaireAnswerBase {
-  @Field()
-  override __typename = 'HealthQuestionnaireAnswerRadio'
-
   @Field(() => [String])
   options!: string[]
 }
@@ -103,9 +88,6 @@ export class HealthQuestionnaireAnswerRadio extends HealthQuestionnaireAnswerBas
 // Multicheck answer type
 @ObjectType('HealthQuestionnaireAnswerCheckbox')
 export class HealthQuestionnaireAnswerCheckbox extends HealthQuestionnaireAnswerBase {
-  @Field()
-  override __typename = 'HealthQuestionnaireAnswerCheckbox'
-
   @Field(() => [String])
   options!: string[]
 }
@@ -118,6 +100,8 @@ const HealthQuestionnaireAnswerUnion = createUnionType({
       HealthQuestionnaireAnswerThermometer,
       HealthQuestionnaireAnswerText,
       HealthQuestionnaireAnswerRadio,
+      HealthQuestionnaireAnswerCheckbox,
+      HealthQuestionnaireAnswerNumber,
     ] as const,
   resolveType: (value) => {
     switch (value.__typename) {
@@ -163,9 +147,6 @@ export class AnswerOption {
 // Main question type
 @ObjectType('Question')
 export class Question {
-  @Field()
-  __typename = 'Question'
-
   @Field()
   id!: string
 

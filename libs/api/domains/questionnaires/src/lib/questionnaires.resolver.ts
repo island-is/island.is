@@ -16,25 +16,37 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { QuestionnariesService } from './questionnaries.service'
-import { QuestionnariesList } from '../models/questionnaries.model'
+import { QuestionnairesService } from './questionnaires.service'
+import {
+  Questionnaire,
+  QuestionnairesList,
+} from '../models/questionnaires.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
-@Audit({ namespace: '@island.is/api/questionnaries' })
+@Audit({ namespace: '@island.is/api/questionnaires' })
 @Scopes(ApiScope.health)
-export class QuestionnariesResolver {
+export class QuestionnairesResolver {
   constructor(
-    private readonly questionnariesService: QuestionnariesService,
+    private readonly questionnairesService: QuestionnairesService,
     private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Query(() => QuestionnariesList, { name: 'questionnairesList' })
+  @Query(() => QuestionnairesList, { name: 'questionnairesList' })
   async getQuestionnaires(
     @CurrentUser() user: User,
     @Args('locale') locale: Locale,
   ) {
-    return this.questionnariesService.getQuestionnaires(user, locale)
+    return this.questionnairesService.getQuestionnaires(user, locale)
+  }
+
+  @Query(() => Questionnaire, { name: 'questionnairesDetail' })
+  async getQuestionnaire(
+    @CurrentUser() user: User,
+    @Args('locale') locale: Locale,
+    @Args('id') id: string,
+  ) {
+    return this.questionnairesService.getQuestionnaire(user, id)
   }
 }

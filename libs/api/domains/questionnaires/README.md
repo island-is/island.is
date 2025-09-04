@@ -70,7 +70,7 @@ query GetHealthQuestions($questionnaireId: String!) {
 
 ### Enums
 
-- `QuestionnariesStatusEnum`: answered, unanswered, expired
+- `QuestionnairesStatusEnum`: answered, unanswered, expired
 - `QuestionnaireQuestionDisplayType`: required, optional, hidden
 - `QuestionnaireAnswerOptionType`: text, radio, checkbox, select, thermometer
 
@@ -126,9 +126,9 @@ import {
   Question,
   HealthQuestionnaireAnswerUnion,
   HealthQuestionnaireAnswerThermometer,
-} from '@island.is/api/domains/questionnaries'
+} from '@island.is/api/domains/questionnaires'
 ```
 
 ## Running unit tests
 
-Run `nx test questionnaries` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test questionnaires` to execute the unit tests via [Jest](https://jestjs.io).

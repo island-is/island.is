@@ -5,7 +5,7 @@ A comprehensive, dynamic questionnaire system for Island.is with conditional vis
 ## Quick Start
 
 ```tsx
-import { GenericQuestionnaire } from '../components/Questionnaries'
+import { GenericQuestionnaire } from '../components/Questionnaires'
 import { completeLSHQuestionnaire } from './mockJsonLSH_complete_fixed'
 ;<GenericQuestionnaire
   questionnaire={completeLSHQuestionnaire}
