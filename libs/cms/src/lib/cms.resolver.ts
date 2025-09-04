@@ -155,8 +155,6 @@ import {
 } from './models/bloodDonationRestriction.model'
 import { GenericList } from './models/genericList.model'
 import { LastCallsForGrants } from './models/lastCallsForGrants.model'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject } from '@nestjs/common'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -938,15 +936,12 @@ export class LastCallsForGrantsResolver {
   constructor(
     private cmsElasticsearchService: CmsElasticsearchService,
     private cmsContentfulService: CmsContentfulService,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
   ) {}
 
   @ResolveField(() => GrantList)
   async resolvedGrantsList(
     @Parent() grantList: GrantCardsList,
   ): Promise<GrantList> {
-    this.logger.debug('bing bong')
     const { resolvedGrantsList: input, maxNumberOfCards } = grantList
     if (!input || input?.size === 0 || maxNumberOfCards === 0) {
       return { total: 0, items: [] }
