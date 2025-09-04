@@ -13,37 +13,37 @@ import {
   isDateMoreThanOneYearInFuture,
   rentalPeriodIsDefinite,
 } from '../../../utils/rentalPeriodUtils'
-import { rentalPeriod } from '../../../lib/messages'
 import addMonths from 'date-fns/addMonths'
+import * as m from '../../../lib/messages'
 
 export const RentalPeriodDetails = buildSubSection({
   id: Routes.RENTALPERIOD,
-  title: rentalPeriod.subSectionName,
+  title: m.rentalPeriod.subSectionName,
   children: [
     buildMultiField({
       id: Routes.RENTALPERIOD,
-      title: rentalPeriod.pageTitle,
-      description: rentalPeriod.pageDescription,
+      title: m.rentalPeriod.pageTitle,
+      description: m.rentalPeriod.pageDescription,
       children: [
         buildAlertMessageField({
           id: 'rentalPeriod.alertMessage',
-          title: rentalPeriod.alertMessageTitle,
-          message: rentalPeriod.alertMessage,
+          title: m.rentalPeriod.alertMessageTitle,
+          message: m.rentalPeriod.alertMessage,
           alertType: 'warning',
           condition: isDateMoreThanOneYearInFuture,
         }),
         buildDateField({
           id: 'rentalPeriod.startDate',
-          title: rentalPeriod.startDateTitle,
-          placeholder: rentalPeriod.startDatePlaceholder,
+          title: m.rentalPeriod.startDateTitle,
+          placeholder: m.rentalPeriod.startDatePlaceholder,
           required: true,
           clearOnChange: ['rentalPeriod.endDate'],
           minDate: new Date(2023, 0, 1),
         }),
         buildDateField({
           id: 'rentalPeriod.endDate',
-          title: rentalPeriod.endDateTitle,
-          placeholder: rentalPeriod.endDatePlaceholder,
+          title: m.rentalPeriod.endDateTitle,
+          placeholder: m.rentalPeriod.endDatePlaceholder,
           required: true,
           minDate: ({ answers }) => {
             const dateFrom =
@@ -57,7 +57,7 @@ export const RentalPeriodDetails = buildSubSection({
           options: [
             {
               value: YesOrNoEnum.YES,
-              label: rentalPeriod.rentalPeriodDefiniteLabel,
+              label: m.rentalPeriod.rentalPeriodDefiniteLabel,
             },
           ],
           clearOnChange: ['rentalPeriod.endDate'],
@@ -65,10 +65,10 @@ export const RentalPeriodDetails = buildSubSection({
         }),
         buildDescriptionField({
           id: 'rentalPeriod.termination',
-          title: rentalPeriod.terminationLabel,
+          title: m.rentalPeriod.terminationLabel,
           titleVariant: 'h3',
           space: 3,
-          description: rentalPeriod.terminationDescription,
+          description: m.rentalPeriod.terminationDescription,
         }),
       ],
     }),
