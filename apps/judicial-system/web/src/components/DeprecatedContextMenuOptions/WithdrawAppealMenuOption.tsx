@@ -90,7 +90,7 @@ const WithdrawAppealContextMenuModal: FC<WithdrawAppealModalProps> = (
       }}
       secondaryButton={{
         text: formatMessage(strings.withdrawAppealModalSecondaryButtonText),
-        onClick: onClose,
+        onClick: () => onClose(),
       }}
     />
   )
