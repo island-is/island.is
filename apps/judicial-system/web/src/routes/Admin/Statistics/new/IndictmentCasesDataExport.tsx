@@ -19,7 +19,7 @@ type IndictmentFilterType = {
 const indictmentFilterKeys = ['period'] as (keyof IndictmentFilterType)[]
 
 const IndictmentCasesDataExport = () => {
-  const toDate = Date.now()
+  const toDate = new Date()
   const fromDate = startOfYear(toDate)
   const [csvLoading, setCsvLoading] = useState<boolean>(false)
   const [filters, setFilters] = useState<IndictmentFilterType>({
