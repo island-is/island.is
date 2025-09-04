@@ -33,7 +33,7 @@ const TimeDurationField = () => {
       }
     }
     sdk.window.stopAutoResizer()
-    sdk.window.updateHeight(420)
+    sdk.window.updateHeight(540)
   }, [sdk.window, startDateIsSameAsEndDate])
 
   const updateTime = useCallback(
@@ -44,7 +44,7 @@ const TimeDurationField = () => {
           [field]: value,
         }
 
-        if (field === 'startTime') {
+        if (field === 'startTime' && updatedTime.endTime) {
           const sd = new Date(`2000-01-01T${value}`)
           const ed = new Date(`2000-01-01T${updatedTime.endTime ?? ''}`)
           if (sd >= ed) {
@@ -52,7 +52,7 @@ const TimeDurationField = () => {
           }
         }
 
-        if (field === 'endTime') {
+        if (field === 'endTime' && updatedTime.startTime) {
           const sd = new Date(`2000-01-01T${updatedTime.startTime ?? ''}`)
           const ed = new Date(`2000-01-01T${value}`)
           if (sd >= ed) {
@@ -137,18 +137,31 @@ const TimeDurationField = () => {
               <FormControl.Label>Start time</FormControl.Label>
               <TextInput
                 type="time"
-                value={time.endTime}
+                value={time.startTime}
                 style={{ width: '267px' }}
                 size="small"
-                name="end-time"
-                placeholder="End time"
+                name="start-time"
+                placeholder="Start time"
                 onChange={(ev) => {
-                  updateTime('endTime', ev.target.value)
+                  updateTime('startTime', ev.target.value)
                 }}
               />
             </Flex>
           </Flex>
-
+          <Flex flexDirection="column">
+            <FormControl.Label>End time</FormControl.Label>
+            <TextInput
+              type="time"
+              value={time.endTime}
+              style={{ width: '267px' }}
+              size="small"
+              name="end-time"
+              placeholder="End time"
+              onChange={(ev) => {
+                updateTime('endTime', ev.target.value)
+              }}
+            />
+          </Flex>
           <Flex gap="spacingS" flexDirection="column">
             <Flex flexDirection="column">
               <FormControl.Label>End date</FormControl.Label>
@@ -159,21 +172,6 @@ const TimeDurationField = () => {
                   updateTime('endDate', day.toISOString())
                 }}
                 style={{ width: '267px' }}
-              />
-            </Flex>
-            <Flex flexDirection="column">
-              <FormControl.Label>End time</FormControl.Label>
-
-              <TextInput
-                type="time"
-                value={time.endTime}
-                style={{ width: '267px' }}
-                size="small"
-                name="end-time"
-                placeholder="End time"
-                onChange={(ev) => {
-                  updateTime('endTime', ev.target.value)
-                }}
               />
             </Flex>
           </Flex>
