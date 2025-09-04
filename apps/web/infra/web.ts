@@ -31,7 +31,7 @@ export const serviceSetup = (services: {
         dev: ref(
           (ctx) =>
             `https://${
-              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}` : ''
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
             }beta.dev01.devland.is/greida`,
         ),
         staging: `https://beta.staging01.devland.is/greida`,

@@ -232,7 +232,10 @@ export class LandspitaliService {
     const response =
       await this.paymentsClient.paymentFlowControllerCreatePaymentUrl({
         createPaymentFlowInput: {
-          productTitle: 'Beinn styrkur - Landspítali',
+          productTitle:
+            locale === 'is'
+              ? 'Beinn styrkur - Landspítali'
+              : 'Direct Grant - Landspítali',
           availablePaymentMethods: [
             CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
           ],
