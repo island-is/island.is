@@ -28,10 +28,31 @@ export const housingFireProtections = defineMessages({
     defaultMessage: 'Reykskynjari',
     description: 'Smoke dectectors label',
   },
+  smokeDetectorsAlertTitle: {
+    id: 'ra.application:housingFireProtections.smokeDetectorsAlertTitle',
+    defaultMessage: 'Húsnæðið ætti að hafa fleiri reykskynjara',
+    description: 'Smoke detectors alert title',
+  },
+  smokeDetectorsAlertMessage: {
+    id: 'ra.application:housingFireProtections.smokeDetectorsAlertMessage',
+    defaultMessage:
+      'Húsnæðið er {propertySize}m2 og ætti að hafa að minnsta kosti {requiredSmokeDetectors} reykskynjara',
+    description: 'Smoke detectors alert message',
+  },
   fireExtinguisherLabel: {
     id: 'ra.application:housingFireProtections.fireExtinguisherLabel',
     defaultMessage: 'Slökkvitæki',
     description: 'Fire extinguisher label',
+  },
+  fireExtinguisherAlertTitle: {
+    id: 'ra.application:housingFireProtections.fireExtinguisherAlertTitle',
+    defaultMessage: 'Húsnæðið ætti að hafa slökkvitæki',
+    description: 'Fire extinguisher alert title',
+  },
+  fireExtinguisherAlertMessage: {
+    id: 'ra.application:housingFireProtections.fireExtinguisherAlertMessage',
+    defaultMessage: 'Húsnæðið ætti að hafa að minnsta kosti 1 slökkvitæki',
+    description: 'Fire extinguisher alert message',
   },
   exitsLabel: {
     id: 'ra.application:housingFireProtections.exitsLabel',
@@ -65,6 +86,11 @@ export const housingFireProtections = defineMessages({
   },
 
   // dataSchema
+  smokeDetectorNullError: {
+    id: 'ra.application:housingFireProtections.smokeDetectorNullError',
+    defaultMessage: 'Reykskynjara þarf að skrá',
+    description: 'Smoke detectors 0 error',
+  },
   smokeDetectorMinRequiredError: {
     id: 'ra.application:housingFireProtections.smokeDetectorMinRequiredError',
     defaultMessage: 'Reykskynjarar þurfa að vera a.m.k. 1 á hverja 80m2',
