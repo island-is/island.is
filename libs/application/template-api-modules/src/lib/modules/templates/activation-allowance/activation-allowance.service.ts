@@ -14,6 +14,7 @@ import {
   getAcademicInfo,
   getApplicantInfo,
   getBankInfo,
+  getCanStartAt,
   getContactInfo,
   getCVInfo,
   getIncome,
@@ -33,7 +34,7 @@ import {
 import { S3Service } from '@island.is/nest/aws'
 import { sharedModuleConfig } from '../../shared'
 import { ConfigType } from '@nestjs/config'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { CV_ID } from './constants'
 
 @Injectable()
@@ -129,11 +130,14 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
       application.id,
       this.config.templateApi.attachmentBucket,
     )
+    const canStartAt = getCanStartAt(answers)
+    const hasCV = getValueViaPath<string | undefined>(answers, 'cv.haveCV')
     const emptyApplicationOriginal =
       getValueViaPath<GaldurDomainModelsApplicationsActivationGrantActivationGrantDTO>(
         externalData,
         'activityGrantApplication.data.activationGrant',
       )
+
     const emptyApplication = { ...emptyApplicationOriginal }
     delete emptyApplication.supportData
 
@@ -230,13 +234,14 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
               contactName: contact?.name,
               contactPhoneNumber: contact?.phone,
               incomes: incomeInfo,
+              hasCV: hasCV === YES ? true : false,
             },
             personalInformation: {
               ...personalInfo,
             },
             otherInformation: {
               ...emptyApplication?.otherInformation,
-              canStartAt: new Date(),
+              canStartAt,
             },
             preferredJobs: {
               jobs: jobWishesPayload,
