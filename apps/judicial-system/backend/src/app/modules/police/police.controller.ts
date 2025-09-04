@@ -23,13 +23,13 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import {
-  Case,
   CaseExistsGuard,
   CaseNotCompletedGuard,
   CaseOriginalAncestorInterceptor,
   CaseReadGuard,
   CurrentCase,
 } from '../case'
+import { Case } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'

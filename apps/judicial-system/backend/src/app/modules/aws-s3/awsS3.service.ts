@@ -21,9 +21,13 @@ const formatGeneratedRequestCaseKey = (key: string) =>
   `${generatedRequestPrefix}${key}`
 const formatConfirmedIndictmentCaseKey = (key: string) =>
   key.replace(/\/([^/]*)$/, '/confirmed/$1')
+const formatS3StatisticsKey = (key: string) => `csv/${key}`
 const formatS3RequestCaseKey = (key: string) => `${requestPrefix}${key}`
 const formatS3IndictmentCaseKey = (key: string) => `${indictmentPrefix}${key}`
-const formatS3Key = (caseType: CaseType, key: string) => {
+const formatS3Key = (caseType: CaseType | 'statistics', key: string) => {
+  if (caseType === 'statistics') {
+    return formatS3StatisticsKey(key)
+  }
   if (isRequestCase(caseType)) {
     return formatS3RequestCaseKey(key)
   }
@@ -96,6 +100,7 @@ export class AwsS3Service {
   private async putObjectToS3(
     key: string,
     content: string | Buffer,
+    contentType?: string,
   ): Promise<string> {
     const Body =
       typeof content === 'string' ? Buffer.from(content, 'binary') : content
@@ -104,7 +109,7 @@ export class AwsS3Service {
         Bucket: this.config.bucket,
         Key: key,
         Body,
-        ContentType: 'application/pdf',
+        ContentType: contentType ?? 'application/pdf',
       })
       .promise()
       .then(() => key)
@@ -116,6 +121,10 @@ export class AwsS3Service {
     content: string | Buffer,
   ): Promise<string> {
     return this.putObjectToS3(formatS3Key(caseType, key), content)
+  }
+
+  uploadCsvToS3(key: string, content: string | Buffer): Promise<string> {
+    return this.putObjectToS3(`csv/${key}`, content, 'text/csv')
   }
 
   putGeneratedRequestCaseObject(
@@ -131,7 +140,7 @@ export class AwsS3Service {
   }
 
   getSignedUrl(
-    caseType: CaseType,
+    type: CaseType | 'statistics',
     key?: string,
     timeToLive?: number,
     useFreshSession = false,
@@ -149,7 +158,7 @@ export class AwsS3Service {
         'getObject',
         {
           Bucket: this.config.bucket,
-          Key: formatS3Key(caseType, key),
+          Key: formatS3Key(type, key),
           Expires: timeToLive ?? this.config.timeToLiveGet,
         },
         (err, url) => {

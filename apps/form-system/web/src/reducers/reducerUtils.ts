@@ -81,7 +81,10 @@ export const incrementWithScreens = (
   }
 
   // Submit current screen for INPUT sections
-  if (currentSectionData.sectionType === SectionTypes.INPUT) {
+  if (
+    currentSectionData.sectionType === SectionTypes.INPUT ||
+    currentSectionData.sectionType === SectionTypes.PARTIES
+  ) {
     submitScreen({
       variables: {
         input: {
@@ -237,6 +240,47 @@ export const decrementWithoutScreens = (
           }
         : undefined,
     errors: [],
+  }
+}
+
+export const setCurrentScreen = (
+  state: ApplicationState,
+  sectionIndex: number,
+  screenIndex: number,
+): ApplicationState => {
+  const sections = state.sections ?? []
+  if (sectionIndex < 0 || sectionIndex >= sections.length) {
+    return state
+  }
+  const currentSection = sections[sectionIndex] as FormSystemSection
+  const screens = currentSection.screens ?? []
+  let currentScreen: FormSystemScreen | undefined
+  if (
+    hasScreens(currentSection) &&
+    screenIndex >= 0 &&
+    screenIndex < screens.length
+  ) {
+    const candidate = screens[screenIndex] as
+      | FormSystemScreen
+      | null
+      | undefined
+    currentScreen =
+      candidate && candidate.isHidden !== true
+        ? (candidate as FormSystemScreen)
+        : undefined
+  } else {
+    currentScreen = undefined
+  }
+  return {
+    ...state,
+    currentSection: {
+      data: currentSection,
+      index: sectionIndex,
+    },
+    currentScreen:
+      currentScreen !== undefined
+        ? { data: currentScreen, index: screenIndex }
+        : undefined,
   }
 }
 

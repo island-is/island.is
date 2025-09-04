@@ -12,11 +12,10 @@ import { createTestingFileModule } from '../createTestingFileModule'
 
 import { nowFactory } from '../../../../factories'
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../case'
 import { CourtService } from '../../../court'
+import { Case, CaseFile } from '../../../repository'
 import { fileModuleConfig } from '../../file.config'
 import { DeliverResponse } from '../../models/deliver.response'
-import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: DeliverResponse
