@@ -710,11 +710,6 @@ export class PoliceService {
     policeDocumentId: string,
     user?: User,
   ): Promise<VerdictPoliceDocumentInfo> {
-    // TODO: not implemented in RLS XROAD api
-    const isDocumentStatusImplemented = false
-    if (!isDocumentStatusImplemented) {
-      return {}
-    }
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetDocumentStatus?id=${policeDocumentId}`,
     )
