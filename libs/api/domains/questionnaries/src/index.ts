@@ -1,1 +1,1 @@
-export * from './lib/questionnaries.module'
+export { QuestionnariesModule } from './lib/questionnaries.module'

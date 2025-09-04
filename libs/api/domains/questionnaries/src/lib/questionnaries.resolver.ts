@@ -17,6 +17,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { QuestionnariesService } from './questionnaries.service'
+import { QuestionnariesList } from '../models/questionnaries.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -28,4 +29,12 @@ export class QuestionnariesResolver {
     private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  @Query(() => QuestionnariesList, { name: 'questionnairesList' })
+  async getQuestionnaires(
+    @CurrentUser() user: User,
+    @Args('locale') locale: Locale,
+  ) {
+    return this.questionnariesService.getQuestionnaires(user, locale)
+  }
 }
