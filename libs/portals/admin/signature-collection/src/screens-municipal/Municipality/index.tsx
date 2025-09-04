@@ -140,13 +140,6 @@ export const Municipality = () => {
               municipalAreaId={municipalityLists[0]?.collectionId}
             />
           )}
-          <ActionCompleteCollectionProcessing
-            collectionType={collection?.collectionType}
-            collectionId={municipalityLists[0]?.area.collectionId ?? ''}
-            canProcess={
-              !!allLists.length && allLists.every((l) => l.reviewed === true)
-            }
-          />
         </GridColumn>
       </GridRow>
     </GridContainer>
