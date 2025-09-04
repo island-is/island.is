@@ -676,7 +676,6 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
-      "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
@@ -785,6 +784,7 @@
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
+      "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -1247,7 +1247,8 @@
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
       ],
-      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
+      "vmst-applications": ["libs/api/domains/vmst-applications/src/index.ts"]
     }
   }
 }
