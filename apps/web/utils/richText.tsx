@@ -19,13 +19,10 @@ import {
 } from '@island.is/island-ui/contentful'
 import {
   GridContainer,
-  InfoCard,
-  InfoCardGrid,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   AccordionSlice,
-  ActionCategoryCard,
   AircraftSearch,
   AlcoholLicencesList,
   BrokersList,
