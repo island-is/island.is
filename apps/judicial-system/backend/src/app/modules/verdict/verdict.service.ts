@@ -16,6 +16,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  isVerdictInfoChanged,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
@@ -237,5 +238,20 @@ export class VerdictService {
     await this.updateVerdict(verdict, createdDocument)
 
     return { delivered: true }
+  }
+
+  async getAndSyncVerdict(verdict: Verdict, user?: TUser) {
+    // check specifically a verdict that is delivered and service status hasn't been updated
+    if (verdict.externalPoliceDocumentId && !verdict.serviceStatus) {
+      const verdictInfo = await this.policeService.getVerdictDocumentStatus(
+        verdict.externalPoliceDocumentId,
+        user,
+      )
+
+      if (isVerdictInfoChanged(verdictInfo, verdict)) {
+        return this.update(verdict, verdictInfo)
+      }
+    }
+    return verdict
   }
 }
