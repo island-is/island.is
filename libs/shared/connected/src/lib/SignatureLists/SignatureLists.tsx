@@ -63,7 +63,7 @@ export const SignatureLists: FC<
               {t('title2', 'Forsetakosningar 2024 - Framlengt')}
             </Text>
             <Text variant="eyebrow">
-              {t('totalLists', 'Fjöldi lista: ') + openLists?.length}
+              {t('totalLists', 'Fjöldi lista: ') + (openLists?.length ?? 0)}
             </Text>
           </>
         )}
@@ -83,20 +83,29 @@ export const SignatureLists: FC<
             .sort((a, b) => a.name.localeCompare(b.name))
             // keep only areas with items
             .filter((area) =>
-              collection.candidates?.some(
+              collection?.candidates?.some(
                 (candidate) => candidate.areaId === area.id,
               ),
             )
             .map((area) => (
               <AccordionItem id="test" label={area.name} key={area.id}>
-                {collection.candidates
+                {collection?.candidates
                   ?.filter((candidate) => candidate.areaId === area.id)
                   .map((candidate) => (
                     <Box marginBottom={3} key={candidate.id}>
                       <ActionCard
                         heading={candidate.name}
                         eyebrow={area.name}
-                        text="Stofnandi söfnunar: TBD"
+                        text={
+                          t('candidateOwnerName', 'Stofnandi söfnunar: ') +
+                          candidate.ownerName +
+                          ' (' +
+                          format(
+                            new Date(candidate.ownerBirthDate),
+                            'dd.MM.yyyy',
+                          ) +
+                          ')'
+                        }
                         cta={
                           collection.isActive
                             ? {
@@ -150,18 +159,22 @@ export const SignatureLists: FC<
                     backgroundColor="white"
                     heading={list.title.split(' -')[0]}
                     text={list.area?.name}
-                    cta={{
-                      label: t('sign', 'Mæla með framboði'),
-                      variant: 'text',
-                      icon: 'open',
-                      iconType: 'outline',
-                      size: 'small',
-                      onClick: () =>
-                        window.open(
-                          `${window.location.origin}${list.slug}`,
-                          '_blank',
-                        ),
-                    }}
+                    cta={
+                      list.active
+                        ? {
+                            label: t('sign', 'Mæla með framboði'),
+                            variant: 'text',
+                            icon: 'open',
+                            iconType: 'outline',
+                            size: 'small',
+                            onClick: () =>
+                              window.open(
+                                `${window.location.origin}${list.slug}`,
+                                '_blank',
+                              ),
+                          }
+                        : undefined
+                    }
                   />
                 )
               })

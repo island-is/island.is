@@ -7,10 +7,9 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CivilClaimant, Defendant } from '../../defendant'
+import { Case, CivilClaimant, Defendant } from '../../repository'
 import { TransitionCaseDto } from '../dto/transitionCase.dto'
 import { UpdateCaseDto } from '../dto/updateCase.dto'
-import { Case } from '../models/case.model'
 
 const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'type',

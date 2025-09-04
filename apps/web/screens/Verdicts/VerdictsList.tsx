@@ -20,7 +20,6 @@ import {
   Filter,
   GridContainer,
   Hidden,
-  InfoCardGrid,
   Inline,
   Select,
   Stack,
@@ -65,6 +64,7 @@ import {
 import { DebouncedCheckbox } from './components/DebouncedCheckbox'
 import { DebouncedDatePicker } from './components/DebouncedDatePicker'
 import { DebouncedInput } from './components/DebouncedInput'
+import { InfoCardGrid } from './components/InfoCardGrid/InfoCardGrid'
 import { m } from './translations.strings'
 import * as styles from './VerdictsList.css'
 
@@ -1248,7 +1248,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 </Hidden>
               </Inline>
               <InfoCardGrid
-                variant="detailed"
+                variant="detailed-reveal"
                 columns={1}
                 cards={data.visibleVerdicts
                   .filter((verdict) => Boolean(verdict.id))
@@ -1278,8 +1278,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       id: verdict.id,
                       link: { href: `/domar/${verdict.id}`, label: '' },
                       title: verdict.caseNumber,
+                      subDescription: verdict.keywords.join(', '),
                       borderColor: 'blue200',
                       detailLines,
+                      revealMoreButtonProps: {
+                        revealLabel: formatMessage(m.listPage.revealMoreLabel),
+                        hideLabel: formatMessage(m.listPage.hideMoreLabel),
+                        revealedText: verdict.presentings,
+                      },
                     }
                   })}
               />

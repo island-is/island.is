@@ -26,7 +26,7 @@ import { AddressProps, PropertyUnit } from '../../shared'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
 import { PropertyTableRow } from './components/PropertyTableRow'
 import { PropertyTableUnits } from './components/PropertyTableUnits'
-import { registerProperty } from '../../lib/messages'
+import * as m from '../../lib/messages'
 
 const ERROR_ID = 'registerProperty'
 const EMPTY_OBJECT = {}
@@ -187,7 +187,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     onError: (error) => {
       console.error('Error fetching address', error)
       setAddressSearchError(
-        formatMessage(registerProperty.search.addressSearchError) ||
+        formatMessage(m.registerProperty.search.addressSearchError) ||
           'Failed to search addresses',
       )
       setPropertiesByAddressCode(undefined)
@@ -215,7 +215,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     onError: (error) => {
       console.error('Error fetching properties', error)
       setPropertyInfoError(
-        formatMessage(registerProperty.search.propertyInfoError) ||
+        formatMessage(m.registerProperty.search.propertyInfoError) ||
           'Failed to fetch properties',
       )
       setPropertiesByAddressCode(undefined)
@@ -263,7 +263,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     onError: (error) => {
       console.error('Error fetching properties by fasteignNr', error)
       setPropertyInfoError(
-        formatMessage(registerProperty.search.propertyInfoError) ||
+        formatMessage(m.registerProperty.search.propertyInfoError) ||
           'Failed to fetch properties',
       )
       setPropertiesByAddressCode(undefined)
@@ -368,38 +368,16 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     clearErrors(ERROR_ID)
   }
 
-  const handleUnitSizeChange = (unit: PropertyUnit, value: number) => {
+  const handleUnitChange = (
+    unit: PropertyUnit,
+    keyToUpdate: keyof PropertyUnit,
+    value: string,
+  ) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-    setUnitSizeChangedValue((prev) => {
-      const newValues = {
-        ...prev,
-        [unitKey]: value,
-      }
-      const updatedUnits = (storedValue?.units || []).map((u: PropertyUnit) => {
-        if (
-          u.propertyCode === unit.propertyCode &&
-          u.unitCode === unit.unitCode
-        ) {
-          return {
-            ...u,
-            changedSize: value || 0,
-          }
-        }
-        return u
-      })
-      setValue(id, {
-        ...getValues(id),
-        units: updatedUnits,
-      })
-      return newValues
-    })
-    clearErrors(ERROR_ID)
-  }
+    const parsed = Number(value)
+    const numberValue = Number.isFinite(parsed) ? parsed : 0
 
-  const handleUnitRoomsChange = (unit: PropertyUnit, value: string) => {
-    const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-    const numberValue = value ? Number(value) : 0
-    setNumOfRoomsValue((prev) => {
+    const updateFunc = (prev: Record<string, number>) => {
       const newValues = {
         ...prev,
         [unitKey]: numberValue,
@@ -411,7 +389,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         ) {
           return {
             ...u,
-            numOfRooms: numberValue,
+            [keyToUpdate]: numberValue,
           }
         }
         return u
@@ -421,7 +399,14 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         units: updatedUnits,
       })
       return newValues
-    })
+    }
+
+    if (keyToUpdate === 'changedSize') {
+      setUnitSizeChangedValue(updateFunc)
+    } else if (keyToUpdate === 'numOfRooms') {
+      setNumOfRoomsValue(updateFunc)
+    }
+
     clearErrors(ERROR_ID)
   }
 
@@ -479,7 +464,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
               <AsyncSearch
                 options={searchOptions}
                 placeholder={formatMessage(
-                  registerProperty.search.propertySearchPlaceholder,
+                  m.registerProperty.search.propertySearchPlaceholder,
                 )}
                 initialInputValue={selectedAddress ? selectedAddress.label : ''}
                 inputValue={
@@ -586,14 +571,16 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                                             )
                                           }
                                           onUnitSizeChange={(e) =>
-                                            handleUnitSizeChange(
+                                            handleUnitChange(
                                               unit,
-                                              Number(e.target.value),
+                                              'changedSize',
+                                              e.target.value,
                                             )
                                           }
                                           onUnitRoomsChange={(e) =>
-                                            handleUnitRoomsChange(
+                                            handleUnitChange(
                                               unit,
+                                              'numOfRooms',
                                               e.target.value,
                                             )
                                           }
@@ -632,7 +619,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
               type="error"
               message={errors?.registerProperty?.['searchresults.units']}
               title={formatMessage(
-                registerProperty.search.searchResultsErrorBannerTitle,
+                m.registerProperty.search.searchResultsErrorBannerTitle,
               )}
             />
           )}

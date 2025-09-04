@@ -9,7 +9,6 @@ import {
   YesOrNoEnum,
   buildFieldsRepeaterField,
 } from '@island.is/application/core'
-import { getOtherFeesPayeeOptions } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
 import {
   electricityCostPayedByTenant,
@@ -17,20 +16,21 @@ import {
   housingFundAmountPayedByTenant,
   otherFeesPayedByTenant,
 } from '../../../utils/rentalPeriodUtils'
-import { otherFees } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
+import { getOtherFeesPayeeOptions } from '../../../utils/options'
 
 export const RentalPeriodOtherFees = buildSubSection({
   id: Routes.OTHERFEES,
-  title: otherFees.subSectionName,
+  title: m.otherFees.subSectionName,
   children: [
     buildMultiField({
       id: Routes.OTHERFEES,
-      title: otherFees.pageTitle,
-      description: otherFees.pageDescription,
+      title: m.otherFees.pageTitle,
+      description: m.otherFees.pageDescription,
       children: [
         buildRadioField({
           id: 'otherFees.housingFund',
-          title: otherFees.housingFundTitle,
+          title: m.otherFees.housingFundTitle,
           clearOnChange: ['otherFees.housingFundAmount'],
           options: getOtherFeesPayeeOptions,
           width: 'half',
@@ -38,8 +38,8 @@ export const RentalPeriodOtherFees = buildSubSection({
         }),
         buildTextField({
           id: 'otherFees.housingFundAmount',
-          title: otherFees.housingFundAmountLabel,
-          placeholder: otherFees.housingFundAmountPlaceholder,
+          title: m.otherFees.housingFundAmountLabel,
+          placeholder: m.otherFees.housingFundAmountPlaceholder,
           variant: 'currency',
           maxLength: 13,
           condition: housingFundAmountPayedByTenant,
@@ -48,7 +48,7 @@ export const RentalPeriodOtherFees = buildSubSection({
         // Electricity cost fields
         buildRadioField({
           id: 'otherFees.electricityCost',
-          title: otherFees.electricityCostTitle,
+          title: m.otherFees.electricityCostTitle,
           clearOnChange: [
             'otherFees.electricityCostMeterNumber',
             'otherFees.electricityCostMeterStatus',
@@ -60,8 +60,8 @@ export const RentalPeriodOtherFees = buildSubSection({
         }),
         buildTextField({
           id: 'otherFees.electricityCostMeterNumber',
-          title: otherFees.electricityCostMeterNumberLabel,
-          placeholder: otherFees.electricityCostMeterNumberPlaceholder,
+          title: m.otherFees.electricityCostMeterNumberLabel,
+          placeholder: m.otherFees.electricityCostMeterNumberPlaceholder,
           width: 'half',
           maxLength: 20,
           condition: electricityCostPayedByTenant,
@@ -69,8 +69,8 @@ export const RentalPeriodOtherFees = buildSubSection({
         }),
         buildTextField({
           id: 'otherFees.electricityCostMeterStatus',
-          title: otherFees.electricityCostMeterStatusLabel,
-          placeholder: otherFees.electricityCostMeterStatusPlaceholder,
+          title: m.otherFees.electricityCostMeterStatusLabel,
+          placeholder: m.otherFees.electricityCostMeterStatusPlaceholder,
           width: 'half',
           maxLength: 10,
           condition: electricityCostPayedByTenant,
@@ -78,8 +78,8 @@ export const RentalPeriodOtherFees = buildSubSection({
         }),
         buildDateField({
           id: 'otherFees.electricityCostMeterStatusDate',
-          title: otherFees.electricityCostMeterStatusDateLabel,
-          placeholder: otherFees.electricityCostMeterStatusDatePlaceholder,
+          title: m.otherFees.electricityCostMeterStatusDateLabel,
+          placeholder: m.otherFees.electricityCostMeterStatusDatePlaceholder,
           width: 'half',
           condition: electricityCostPayedByTenant,
           minDate: new Date(2023, 0, 1),
@@ -88,7 +88,7 @@ export const RentalPeriodOtherFees = buildSubSection({
         // Heating cost fields
         buildRadioField({
           id: 'otherFees.heatingCost',
-          title: otherFees.heatingCostTitle,
+          title: m.otherFees.heatingCostTitle,
           clearOnChange: [
             'otherFees.heatingCostMeterNumber',
             'otherFees.heatingCostMeterStatus',
@@ -100,8 +100,8 @@ export const RentalPeriodOtherFees = buildSubSection({
         }),
         buildTextField({
           id: 'otherFees.heatingCostMeterNumber',
-          title: otherFees.heatingCostMeterNumberLabel,
-          placeholder: otherFees.heatingCostMeterNumberPlaceholder,
+          title: m.otherFees.heatingCostMeterNumberLabel,
+          placeholder: m.otherFees.heatingCostMeterNumberPlaceholder,
           width: 'half',
           maxLength: 20,
           condition: heatingCostPayedByTenant,
@@ -109,8 +109,8 @@ export const RentalPeriodOtherFees = buildSubSection({
         }),
         buildTextField({
           id: 'otherFees.heatingCostMeterStatus',
-          title: otherFees.heatingCostMeterStatusLabel,
-          placeholder: otherFees.heatingCostMeterStatusPlaceholder,
+          title: m.otherFees.heatingCostMeterStatusLabel,
+          placeholder: m.otherFees.heatingCostMeterStatusPlaceholder,
           width: 'half',
           maxLength: 10,
           condition: heatingCostPayedByTenant,
@@ -118,8 +118,8 @@ export const RentalPeriodOtherFees = buildSubSection({
         }),
         buildDateField({
           id: 'otherFees.heatingCostMeterStatusDate',
-          title: otherFees.heatingCostMeterStatusDateLabel,
-          placeholder: otherFees.heatingCostMeterStatusDatePlaceholder,
+          title: m.otherFees.heatingCostMeterStatusDateLabel,
+          placeholder: m.otherFees.heatingCostMeterStatusDatePlaceholder,
           width: 'half',
           condition: heatingCostPayedByTenant,
           minDate: new Date(2023, 0, 1),
@@ -128,7 +128,7 @@ export const RentalPeriodOtherFees = buildSubSection({
         // Other fees
         buildDescriptionField({
           id: 'otherFees.otherCostsTitle',
-          title: otherFees.otherCostsTitle,
+          title: m.otherFees.otherCostsTitle,
           titleVariant: 'h4',
           space: 6,
         }),
@@ -137,7 +137,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           options: [
             {
               value: YesOrNoEnum.YES,
-              label: otherFees.otherCostsLabel,
+              label: m.otherFees.otherCostsLabel,
             },
           ],
           spacing: 0,
@@ -152,13 +152,13 @@ export const RentalPeriodOtherFees = buildSubSection({
           fields: {
             description: {
               component: 'input',
-              label: otherFees.otherCostsDescriptionLabel,
+              label: m.otherFees.otherCostsDescriptionLabel,
               width: 'half',
               type: 'text',
             },
             amount: {
               component: 'input',
-              label: otherFees.otherCostsAmountLabel,
+              label: m.otherFees.otherCostsAmountLabel,
               width: 'half',
               type: 'number',
               currency: true,
