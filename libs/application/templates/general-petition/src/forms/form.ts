@@ -191,7 +191,9 @@ export const form: Form = buildForm({
                 const parsedPhoneNumber = parsePhoneNumberFromString(
                   getValueViaPath<string>(answers, 'phone') ?? '',
                 )
-                return formatPhoneNumber(parsedPhoneNumber?.nationalNumber.toString() || '')
+                return formatPhoneNumber(
+                  parsedPhoneNumber?.nationalNumber.toString() || '',
+                )
               },
             }),
             buildKeyValueField({
