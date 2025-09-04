@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
-import addDays from 'date-fns/addDays'
 import { useRouter } from 'next/router'
 
 import { EmbeddedVideo, Image } from '@island.is/island-ui/contentful'

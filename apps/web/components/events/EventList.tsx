@@ -10,7 +10,6 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import {
   EventLocation,
-  EventTime,
   LatestEventSliceCard,
   NewsCard,
 } from '@island.is/web/components'
@@ -24,7 +23,6 @@ import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
   formatEventLocation,
-  formatEventTime,
 } from '@island.is/web/utils/event'
 
 interface EventListProps {

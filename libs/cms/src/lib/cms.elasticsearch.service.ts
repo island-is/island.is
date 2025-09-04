@@ -63,7 +63,6 @@ import { BloodDonationRestrictionGenericTagList } from './models/bloodDonationRe
 import { sortAlpha } from '@island.is/shared/utils'
 import { GetBloodDonationRestrictionsInput } from './dto/getBloodDonationRestrictions.input'
 import addDays from 'date-fns/addDays'
-import min from 'date-fns/esm/fp/min/index.js'
 
 @Injectable()
 export class CmsElasticsearchService {
