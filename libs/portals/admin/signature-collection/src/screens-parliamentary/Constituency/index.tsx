@@ -73,12 +73,7 @@ export const Constituency = () => {
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
             buttonGroup={
-              <ActionDrawer
-                allowedActions={[
-                  Actions.DownloadReports,
-                  Actions.CreateCollection,
-                ]}
-              />
+              <ActionDrawer allowedActions={[Actions.CreateCollection]} />
             }
             marginBottom={4}
           />

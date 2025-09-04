@@ -17,9 +17,11 @@ import { m } from '../../lib/messages'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const ActionLockList = ({
+  isLocked,
   listId,
   collectionType,
 }: {
+  isLocked: boolean
   listId: string
   collectionType: SignatureCollectionCollectionType
 }) => {
@@ -34,13 +36,16 @@ const ActionLockList = ({
         input: {
           listId,
           collectionType,
+          setLocked: !isLocked,
         },
       },
       onCompleted: (response) => {
         if (response.signatureCollectionLockList.success) {
           setModalLockListIsOpen(false)
           revalidate()
-          toast.success(formatMessage(m.lockListSuccess))
+          toast.success(
+            formatMessage(isLocked ? m.unlockListSuccess : m.lockListSuccess),
+          )
         } else {
           const message =
             response.signatureCollectionLockList?.reasons?.[0] ??
@@ -60,20 +65,28 @@ const ActionLockList = ({
           <Box display="flex">
             <Tag>
               <Box display="flex" justifyContent="center">
-                <Icon icon="lockClosed" type="outline" color="blue600" />
+                {isLocked ? (
+                  <Icon icon="lockOpened" type="outline" color="blue600" />
+                ) : (
+                  <Icon icon="lockClosed" type="outline" color="blue600" />
+                )}
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">{formatMessage(m.lockList)}</Text>
+              <Text variant="h4">
+                {formatMessage(isLocked ? m.unlockList : m.lockList)}
+              </Text>
               <Text marginBottom={2}>
-                {formatMessage(m.lockListDescription)}
+                {formatMessage(
+                  isLocked ? m.unlockListDescription : m.lockListDescription,
+                )}
               </Text>
               <Button
                 variant="text"
                 size="small"
                 onClick={() => setModalLockListIsOpen(true)}
               >
-                {formatMessage(m.lockList)}
+                {formatMessage(isLocked ? m.unlockList : m.lockList)}
               </Button>
             </Box>
           </Box>
@@ -82,23 +95,27 @@ const ActionLockList = ({
       <Modal
         id="toggleLockList"
         isVisible={modalLockListIsOpen}
-        title={formatMessage(m.lockList)}
+        title={formatMessage(isLocked ? m.unlockList : m.lockList)}
         onClose={() => setModalLockListIsOpen(false)}
         label={''}
         closeButtonLabel={''}
       >
         <Box marginTop={5}>
-          <Text>{formatMessage(m.lockListDescription)}</Text>
+          <Text>
+            {formatMessage(
+              isLocked ? m.unlockListDescription : m.lockListDescription,
+            )}
+          </Text>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
               variant="ghost"
               onClick={() => lockList()}
               loading={loadingLockList}
-              icon="lockClosed"
-              colorScheme="destructive"
+              icon={isLocked ? 'lockOpened' : 'lockClosed'}
+              colorScheme={isLocked ? 'default' : 'destructive'}
             >
-              {formatMessage(m.lockList)}
+              {formatMessage(isLocked ? m.unlockList : m.lockList)}
             </Button>
           </Box>
         </Box>

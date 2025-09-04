@@ -21,6 +21,8 @@ import { CollectionStatus } from '@island.is/api/schema'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import FindSignature from '../../shared-components/findSignature'
+import ActionDrawer from '../../shared-components/actionDrawer'
+import { Actions } from '../../shared-components/actionDrawer/ListActions'
 
 const ParliamentaryRoot = () => {
   const { collection, collectionStatus, allLists } =
@@ -61,6 +63,9 @@ const ParliamentaryRoot = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
+            buttonGroup={
+              <ActionDrawer allowedActions={[Actions.DownloadReports]} />
+            }
             marginBottom={4}
           />
           <Divider />

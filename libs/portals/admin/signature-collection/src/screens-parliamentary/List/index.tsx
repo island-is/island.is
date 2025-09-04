@@ -82,7 +82,12 @@ const List = () => {
           <Divider />
           <Box marginTop={9} />
           <Signees list={list} />
-          <PaperSignees listId={list.id} collectionType={list.collectionType} />
+          {!list.reviewed && (
+            <PaperSignees
+              listId={list.id}
+              collectionType={list.collectionType}
+            />
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

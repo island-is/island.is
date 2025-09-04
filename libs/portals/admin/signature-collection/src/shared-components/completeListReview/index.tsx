@@ -75,7 +75,7 @@ const CompleteListReview = ({
                 {listStatus === ListStatus.Reviewed ? (
                   <Icon icon="reload" type="outline" color="blue600" />
                 ) : (
-                  <Icon icon="checkmark" type="outline" color="red600" />
+                  <Icon icon="checkmark" type="outline" color="blue600" />
                 )}
               </Box>
             </Tag>

@@ -7,6 +7,7 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
   icon: {
     icon: 'receipt',
   },
+
   description: m.signatureListsDescription,
   path: SignatureCollectionPaths.MunicipalRoot,
   children: [
