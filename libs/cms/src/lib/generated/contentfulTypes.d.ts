@@ -84,6 +84,15 @@ export interface IAlertBannerFields {
         | 'loftbru'
         | 'heilsa'
         | 'fjarmal/stada'
+        | 'heilsa/greidslur/greidsluyfirlit'
+        | 'heilsa/yfirlit'
+        | 'heilsa/hjalpartaeki-og-naering'
+        | 'heilsa/thjalfun/sjukrathjalfun'
+        | 'heilsa/tannlaeknar'
+        | 'heilsa/heilsugaesla'
+        | 'adgangsstyring/umbod'
+        | 'heilsa/bolusetningar'
+        | 'heilsa/liffaeragjof'
       )[]
     | undefined
 }
@@ -217,13 +226,14 @@ export interface IAppUri extends Entry<IAppUriFields> {
 
 export interface IArticleFields {
   /** Content status */
-  contentStatus:
+  contentStatus?:
     | 'Undefined'
     | 'Needs work'
     | 'In review'
     | 'Needs translation'
     | 'In translation'
     | 'Done'
+    | undefined
 
   /** Title */
   title: string
@@ -268,7 +278,7 @@ export interface IArticleFields {
   otherSubgroups?: IArticleSubgroup[] | undefined
 
   /** Organization */
-  organization?: IOrganization[] | undefined
+  organization: IOrganization[]
 
   /** Related organization */
   relatedOrganization?: IOrganization[] | undefined
@@ -493,7 +503,7 @@ export interface IBloodDonationRestrictionFields {
   /** Lykilorð */
   keywords?: string | undefined
 
-  /** Nánar um áhrif á blóðgjöf */
+  /** Undantekningar og athugasemdir */
   detailedText?: Document | undefined
 
   /** Flokkur */
@@ -813,6 +823,7 @@ export interface ICustomPageFields {
     | 'Verdicts'
     | 'OfficialJournalOfIcelandHelp'
     | 'BloodDonationRestrictions'
+    | 'Unknown'
     | undefined
 
   /** Alert Banner */
@@ -1095,6 +1106,15 @@ export interface IEventFields {
 
   /** og:image */
   featuredImage?: Asset | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+
+  /** Start date time */
+  startDateTime?: string | undefined
+
+  /** End date time */
+  endDateTime?: string | undefined
 }
 
 export interface IEvent extends Entry<IEventFields> {
@@ -1184,13 +1204,7 @@ export interface IFeaturedFields {
   attention?: boolean | undefined
 
   /** Link */
-  thing?:
-    | IAboutSubPage
-    | IArticle
-    | ILinkUrl
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
-    | undefined
+  thing?: IArticle | ILinkUrl | undefined
 }
 
 export interface IFeatured extends Entry<IFeaturedFields> {
@@ -1473,6 +1487,7 @@ export interface IFormFieldFields {
     | 'file'
     | 'nationalId (kennitala)'
     | 'information'
+    | 'date'
 
   /** Required */
   required?: boolean | undefined
@@ -1914,11 +1929,11 @@ export interface IGrantFields {
   /** How to apply? */
   grantHowToApply?: Document | undefined
 
-  /** Application hints */
-  grantApplicationHints?: Document | undefined
-
   /** Answering questions */
   grantAnsweringQuestions?: Document | undefined
+
+  /** Application hints */
+  grantApplicationHints?: Document | undefined
 
   /** Application url */
   granApplicationUrl?: ILinkUrl | undefined
@@ -2231,14 +2246,14 @@ export interface ILastCallsForGrantsFields {
   /** Title */
   title: string
 
-  /** Parent Organization */
-  parentOrganization: IOrganization
-
   /** Only show open for application */
   onlyShowOpenForApplication?: boolean | undefined
 
   /** Max number of cards */
   maxNumberOfCards?: number | undefined
+
+  /** Parent organization */
+  parentOrganization: IOrganization
 }
 
 /** List of organization grants nearing the end of their application period */
@@ -2416,34 +2431,6 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
     contentType: {
       sys: {
         id: 'lifeEventPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface ILifeEventPageListSliceFields {
-  /** Title */
-  title?: string | undefined
-
-  /** List */
-  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
-}
-
-/** !!DO NOT USE!! - This content type has been deprecated. Use Anchor Page List */
-
-export interface ILifeEventPageListSlice
-  extends Entry<ILifeEventPageListSliceFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'lifeEventPageListSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2967,7 +2954,7 @@ export interface INewsFields {
   /** Image text */
   imageText?: string | undefined
 
-  /** Full Width Image In Content */
+  /** Image size */
   fullWidthImageInContent?: boolean | undefined
 
   /** Content */
@@ -3061,6 +3048,9 @@ export interface INumberBulletSection
 }
 
 export interface IOneColumnTextFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
   /** Title */
   title: string
 
@@ -3075,9 +3065,6 @@ export interface IOneColumnTextFields {
 
   /** Show Title */
   showTitle?: boolean | undefined
-
-  /** Filter tags */
-  filterTags?: IGenericTag[] | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -3330,6 +3317,9 @@ export interface IOrganizationPageFields {
         | ISectionWithImage
         | IChartNumberBox
         | ILatestGenericListItems
+        | ILatestNewsSlice
+        | IFeaturedLinks
+        | IOrganizationParentSubpageList
       )[]
     | undefined
 
@@ -3348,6 +3338,8 @@ export interface IOrganizationPageFields {
         | ITimeline
         | ITwoColumnText
         | ILatestEventsSlice
+        | IOverviewLinks
+        | ISliceConnectedComponent
       )[]
     | undefined
 
@@ -3478,6 +3470,9 @@ export interface IOrganizationParentSubpageFields {
 
   /** Tiny Thumbnail Image */
   tinyThumbnailImage?: Asset | undefined
+
+  /** Short Description */
+  shortDescription?: string | undefined
 }
 
 /** Navigation page for content that belongs in multiple organization subpages */
@@ -3608,6 +3603,9 @@ export interface IOrganizationSubpageFields {
 
   /** Organization Parent Subpage */
   organizationParentSubpage?: IOrganizationParentSubpage | undefined
+
+  /** Short Description */
+  shortDescription?: string | undefined
 }
 
 export interface IOrganizationSubpage
@@ -4302,6 +4300,16 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'WHODAS/Calculator'
+    | 'Brennuleyfi/BurningPermitList'
+    | 'DigitalIcelandMailingListThumbnailCard'
+    | 'DigitalIcelandStatistics'
+    | 'Trufelog/Lifsskodunarfelog'
+    | 'Landspitali/MemorialCard'
+    | 'Landspitali/DirectGrants'
+    | 'Police/FineAndSpeedMeasurementCalculator'
+    | 'Landspitali/MemorialCardsAndGrants'
+    | 'Personuvernd/SearchInput'
     | undefined
 
   /** Localized JSON */
@@ -5354,6 +5362,7 @@ export type CONTENT_TYPE =
   | 'articleSubgroup'
   | 'auction'
   | 'bigBulletList'
+  | 'bloodDonationRestriction'
   | 'card'
   | 'cardSection'
   | 'chart'
@@ -5373,6 +5382,7 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'featuredArticles'
   | 'featuredEvents'
+  | 'featuredLinks'
   | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'
@@ -5393,11 +5403,11 @@ export type CONTENT_TYPE =
   | 'hnippTemplate'
   | 'iconBullet'
   | 'introLinkImage'
+  | 'lastCallsForGrants'
   | 'latestEventsSlice'
   | 'latestGenericListItems'
   | 'latestNewsSlice'
   | 'lifeEventPage'
-  | 'lifeEventPageListSlice'
   | 'link'
   | 'linkedPage'
   | 'linkGroup'

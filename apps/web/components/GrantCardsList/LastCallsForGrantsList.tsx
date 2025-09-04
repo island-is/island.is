@@ -22,7 +22,7 @@ const LastCallsForGrants = ({ slice }: SliceProps) => {
 
   const grantItems = [...(slice.resolvedGrantsList?.items ?? [])]
 
-
+  console.log(slice)
   return (
     <InfoCardGrid
       variant="simple"
