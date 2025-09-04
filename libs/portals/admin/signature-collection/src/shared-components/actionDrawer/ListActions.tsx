@@ -89,7 +89,7 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
             areaId={
               collection.collectionType ===
               SignatureCollectionCollectionType.LocalGovernmental
-                ? (list?.area?.collectionId ?? undefined)
+                ? list?.area?.collectionId ?? undefined
                 : undefined
             }
           />
