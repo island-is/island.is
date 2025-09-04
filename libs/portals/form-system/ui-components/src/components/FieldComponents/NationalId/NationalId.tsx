@@ -11,9 +11,12 @@ import { Dispatch } from 'react'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { useFormContext, Controller } from 'react-hook-form'
-import { GET_NAME_BY_NATIONALID } from '@island.is/form-system/graphql'
+import {
+  GET_COMPANY,
+  GET_NAME_BY_NATIONALID,
+} from '@island.is/form-system/graphql'
 import { useQuery } from '@apollo/client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 interface Props {
   item: FormSystemField
@@ -23,10 +26,26 @@ interface Props {
 
 const nationalIdRegex = /^\d{6}-\d{4}$/
 
+const isIndividualNationalId = (id: string) => {
+  // first two digits = 01 - 31
+  const day = parseInt(id.substring(0, 2), 10)
+  if (day < 1 || day > 31) return false
+  return true
+}
+
+const isCompanyNationalId = (id: string) => {
+  // first two digits = 41 - 71
+  const day = parseInt(id.substring(0, 2), 10)
+  if (day < 41 || day > 71) return false
+  return true
+}
+
+// companyData.companyRegistryCompany.name
+
 export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const { formatMessage } = useIntl()
   const { control } = useFormContext()
-  const name = getValue(item, 'name')
+  const [name, setName] = useState(getValue(item, 'name') ?? '')
   const nationalId = getValue(item, 'nationalId')
   const shouldQuery =
     nationalIdRegex.test(nationalId) && (name === '' || name === undefined)
@@ -37,17 +56,46 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const { data: nameData } = useQuery(GET_NAME_BY_NATIONALID, {
     variables: { input: queryId },
     fetchPolicy: 'cache-first',
-    skip: !shouldQuery,
+    skip: !shouldQuery || !isIndividualNationalId(queryId || ''),
+    onCompleted: (nameData) => {
+      if (nameData?.formSystemNameByNationalId?.fulltNafn && dispatch) {
+        dispatch({
+          type: 'SET_NAME',
+          payload: {
+            id: item.id,
+            value: nameData.formSystemNameByNationalId.fulltNafn,
+          },
+        })
+        setName(nameData.formSystemNameByNationalId.fulltNafn)
+      }
+    },
   })
-  const [fetchedName, setFetchedName] = useState<string>('')
+
+  const { data: companyData } = useQuery(GET_COMPANY, {
+    variables: { input: { nationalId: queryId } },
+    fetchPolicy: 'cache-first',
+    skip: !shouldQuery || !isCompanyNationalId(queryId || ''),
+    onCompleted: (companyData) => {
+      if (companyData?.companyRegistryCompany?.name && dispatch) {
+        dispatch({
+          type: 'SET_NAME',
+          payload: {
+            id: item.id,
+            value: companyData.companyRegistryCompany.name,
+          },
+        })
+        setName(companyData.companyRegistryCompany.name)
+      }
+    },
+  })
 
   useEffect(() => {
-    if (shouldQuery && nameData?.formSystemNameByNationalId?.fulltNafn) {
-      setFetchedName(nameData.formSystemNameByNationalId.fulltNafn)
-    } else if (!shouldQuery) {
-      setFetchedName('')
+    if (!shouldQuery) {
+      if (!nationalIdRegex.test(String(nationalId ?? ''))) {
+        setName('')
+      }
     }
-  }, [shouldQuery, nameData, dispatch, item.id])
+  }, [shouldQuery, nationalId])
 
   return (
     <Stack space={2}>
@@ -109,7 +157,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
             label={formatMessage(m.namePerson)}
             name="nafn"
             disabled
-            value={fetchedName}
+            value={name}
           />
         </Column>
       </Row>
