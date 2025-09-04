@@ -96,7 +96,8 @@ const Summary: FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    const url = await getFileUrl('23a1dedd-d2a6-4750-bd9b-420e685133c1')
+    const url = await getFileUrl('3ceb595b-db97-4e44-beee-70f3c74ed97f')
+    console.log(url)
     if (url) {
       setRulingUrl(url)
     }
@@ -270,12 +271,11 @@ const Summary: FC = () => {
             onChange: () => setHasReviewed(!hasReviewed),
           }}
         >
-          <div className={styles.ruling}>
-            <PdfViewer
-              file="/api/case/96678fdb-44bb-4718-9b6a-ad6d0d1ffc25/courtRecord"
-              showAllPages
-            />
-          </div>
+          {rulingUrl && (
+            <div className={styles.ruling}>
+              <PdfViewer file={rulingUrl} showAllPages />
+            </div>
+          )}
         </Modal>
       )}
     </PageLayout>

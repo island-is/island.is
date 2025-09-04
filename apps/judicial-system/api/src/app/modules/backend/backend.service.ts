@@ -421,12 +421,15 @@ export class BackendService extends DataSource<{ req: Request }> {
     caseId: string,
     id: string,
     mergedCaseId?: string,
+    ttl?: number,
   ): Promise<SignedUrl> {
     const mergedCaseInjection = mergedCaseId
       ? `/mergedCase/${mergedCaseId}`
       : ''
 
-    return this.get(`case/${caseId}${mergedCaseInjection}/file/${id}/url`)
+    return this.get(
+      `case/${caseId}${mergedCaseInjection}/file/${id}/url/${ttl}`,
+    )
   }
 
   deleteCaseFile(caseId: string, id: string): Promise<DeleteFileResponse> {

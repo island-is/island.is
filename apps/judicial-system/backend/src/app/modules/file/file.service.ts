@@ -464,10 +464,11 @@ export class FileService {
   async getCaseFileSignedUrl(
     theCase: Case,
     file: CaseFile,
+    ttl?: number,
   ): Promise<SignedUrl> {
     await this.verifyCaseFile(file, theCase)
 
-    return this.getCaseFileSignedUrlFromS3(theCase, file).then((url) => ({
+    return this.getCaseFileSignedUrlFromS3(theCase, file, ttl).then((url) => ({
       url,
     }))
   }
