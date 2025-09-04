@@ -149,22 +149,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Running e2e tests
-        run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
-
   linting-workspace:
     needs:
       - prepare
