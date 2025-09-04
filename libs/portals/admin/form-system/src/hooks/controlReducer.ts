@@ -1199,26 +1199,27 @@ export const controlReducer = (
         },
       }
     }
-    case 'REMOVE_DEPENDENCIES': {
-      const { activeId, update } = action.payload
-      const updatedDependencies = form.dependencies?.filter((dep) => dep?.parentProp !== activeId)
-        .map((dep) => ({
-          ...dep,
-          childProps: dep?.childProps?.filter((child) => child !== activeId),
-        }))
-        .filter((dep) => dep?.childProps && dep.childProps?.length > 0)
-
-      const updatedForm = {
-        ...form,
-        dependencies: updatedDependencies
-      }
-
-      update(updatedForm)
-
-      return {
-        ...state,
-        form: updatedForm,
-      }
+case 'REMOVE_DEPENDENCIES': {  
+      const { activeId, update } = action.payload  
+      const id = String(activeId)  
+      const source = (form.dependencies ?? []).filter(  
+        (dep) => dep !== null && dep !== undefined,  
+      ) as NonNullable<typeof form.dependencies>  
+  
+      const updatedDependencies = source  
+        .filter((dep) => dep.parentProp !== id)  
+        .map((dep) => ({  
+          ...dep,  
+          childProps: dep.childProps?.filter((child) => child !== id),  
+        }))  
+        .filter((dep) => (dep.childProps?.length ?? 0) > 0)  
+  
+      const updatedForm = {  
+        ...form,  
+        dependencies: updatedDependencies,  
+      }  
+      update(updatedForm)  
+      return { ...state, form: updatedForm }  
     }
     default:
       return state
