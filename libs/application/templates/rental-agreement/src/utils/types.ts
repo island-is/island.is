@@ -38,6 +38,27 @@ export interface ExternalData {
   }
 }
 
+export interface PropertyInfo {
+  categoryType: RentalHousingCategoryTypes
+  categoryClass: RentalHousingCategoryClass
+  categoryClassGroup: RentalHousingCategoryClassGroup
+}
+
+export interface OtherFees {
+  housingFund?: OtherFeesPayeeOptions
+  electricityCost?: OtherFeesPayeeOptions
+  heatingCost?: OtherFeesPayeeOptions
+  otherCosts?: string[]
+  otherCostItems?: CostField[]
+  electricityCostMeterStatusDate?: string
+  heatingCostMeterStatusDate?: string
+  housingFundAmount?: string
+  electricityCostMeterNumber?: string
+  electricityCostMeterStatus?: string
+  heatingCostMeterNumber?: string
+  heatingCostMeterStatus?: string
+}
+
 export interface ApplicationAnswers {
   registerProperty?: {
     categoryClass?: RentalHousingCategoryClass
@@ -84,18 +105,6 @@ export interface ApplicationAnswers {
     emergencyExits?: string
     fireBlanket?: string
   }
-  otherFees?: {
-    housingFund?: OtherFeesPayeeOptions
-    electricityCost?: OtherFeesPayeeOptions
-    heatingCost?: OtherFeesPayeeOptions
-    otherCostItems?: CostField[] | string
-    electricityCostMeterStatusDate?: string
-    heatingCostMeterStatusDate?: string
-    housingFundAmount?: string
-    electricityCostMeterNumber?: string
-    electricityCostMeterStatus?: string
-    heatingCostMeterNumber?: string
-    heatingCostMeterStatus?: string
-  }
+  otherFees?: OtherFees
   [key: string]: unknown
 }

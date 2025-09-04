@@ -3,10 +3,8 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { HomeApi } from '@island.is/clients/hms-rental-agreement'
 import { applicationAnswers } from '@island.is/application/templates/rental-agreement'
-import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { generateRentalAgreementEmail } from './rental-agreement-email'
 import { mapRentalApplicationData } from './utils/mapRentalApplicationData'
 import {
   fetchFinancialIndexationForMonths,
@@ -16,23 +14,12 @@ import {
 
 @Injectable()
 export class RentalAgreementService extends BaseTemplateApiService {
-  constructor(
-    private readonly homeApi: HomeApi,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {
+  constructor(private readonly homeApi: HomeApi) {
     super(ApplicationTypes.RENTAL_AGREEMENT)
   }
 
   private homeApiWithAuth(auth: Auth) {
     return this.homeApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  async sendApplicationSummary({ application }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService.sendEmail(
-      generateRentalAgreementEmail,
-      application,
-    )
-    return
   }
 
   async consumerIndex(): Promise<FinancialIndexationEntry[]> {

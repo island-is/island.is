@@ -8,13 +8,10 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { applicationAnswers } from '../../shared'
-import {
-  formatNationalId,
-  formatPhoneNumber,
-  getNextStepInReviewOptions,
-} from '../../utils/utils'
+import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
 import { NextStepInReviewOptions } from '../../utils/enums'
 import { application, inReview } from '../../lib/messages'
+import { getNextStepInReviewOptions } from '../../utils/options'
 
 export const ReviewInfoSection = buildSection({
   id: 'inReview',

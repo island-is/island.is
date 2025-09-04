@@ -1,8 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YesOrNoEnum } from '@island.is/application/core'
-import { PropertyUnit, RentalHousingCategoryClass } from '../shared'
-import { getRentalPropertySize } from '../utils/utils'
 import {
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
@@ -13,6 +11,8 @@ import { registerProperty } from './schemas/propertySearchSchema'
 import { otherFees } from './schemas/otherFeesSchema'
 import { securityDeposit } from './schemas/securityDepositSchema'
 import { rentalAmount } from './schemas/rentalAmountSchema'
+import { fireProtections } from './schemas/fireProtectionsSchema'
+import { RentalHousingCategoryClass } from '../shared/enums'
 
 import * as m from './messages'
 
@@ -132,11 +132,26 @@ const rentalPeriod = z
   })
   .superRefine((data, ctx) => {
     const { startDate, endDate, isDefinite } = data
-
-    // Parse dates and validate them properly
-    const start = startDate ? new Date(startDate) : null
-    const end = endDate ? new Date(endDate) : null
+    const start = startDate ? new Date(startDate) : ''
+    const end = endDate ? new Date(endDate) : ''
     const isDefiniteChecked = isDefinite?.includes(YesOrNoEnum.YES)
+
+    if (start) {
+      const oneYearFromNow = new Date()
+      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1)
+
+      if (
+        start instanceof Date &&
+        !isNaN(start.getTime()) &&
+        start.getTime() > oneYearFromNow.getTime()
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['startDate'],
+          params: m.rentalPeriod.errorStartDateTooFarInFuture,
+        })
+      }
+    }
 
     if (!isDefiniteChecked) {
       return
@@ -162,48 +177,6 @@ const rentalPeriod = z
         code: z.ZodIssueCode.custom,
         path: ['endDate'],
         params: m.rentalPeriod.errorEndDateBeforeStart,
-      })
-    }
-  })
-
-const fireProtections = z
-  .object({
-    smokeDetectors: z.string().optional(),
-    fireExtinguisher: z.string().optional(),
-    emergencyExits: z.string().optional(),
-    fireBlanket: z.string().optional(),
-    propertySize: z
-      .array(
-        z.object({
-          size: z.number().optional(),
-          changedSize: z.number().optional(),
-        }),
-      )
-      .optional(),
-  })
-  .superRefine((data, ctx) => {
-    const { smokeDetectors, fireExtinguisher } = data
-
-    const propertySize = getRentalPropertySize(
-      (data.propertySize as PropertyUnit[]) || [],
-    )
-    const numberOfSmokeDetectors = Number(smokeDetectors)
-    const requiredSmokeDetectors = Math.ceil(Number(propertySize) / 80)
-    if (smokeDetectors && numberOfSmokeDetectors < requiredSmokeDetectors) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.housingFireProtections.smokeDetectorMinRequiredError,
-        path: ['smokeDetectors'],
-      })
-    }
-
-    if (fireExtinguisher && Number(fireExtinguisher) < 1) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.housingFireProtections.fireExtinguisherNullError,
-        path: ['fireExtinguisher'],
       })
     }
   })

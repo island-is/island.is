@@ -102,28 +102,28 @@ export interface ConsumerIndexItem {
 }
 
 export interface RentalAmountSection {
-  rentalAmount: string | undefined
-  isIndexConnected: YesOrNoEnum | undefined
+  amount: string | undefined
+  isIndexConnected: Array<YesOrNoEnum> | undefined
   indexDate: string | undefined
   indexRate: string | undefined
-  paymentMethod: string | undefined
+  paymentMethodOptions: string | undefined
   paymentMethodOther: string | undefined
-  paymentDay: string | undefined
+  paymentDateOptions: string | undefined
   paymentDayOther: string | undefined
-  bankAccountNumber: string | undefined
-  nationalIdOfAccountOwner: string | undefined
+  paymentMethodBankAccountNumber: string | undefined
+  paymentMethodNationalId: string | undefined
   securityDepositRequired: YesOrNoEnum | undefined
 }
 
 export interface SecurityDepositSection {
-  securityDepositType: string | undefined
+  securityType: string | undefined
   bankGuaranteeInfo: string | undefined
   thirdPartyGuaranteeInfo: string | undefined
   insuranceCompanyInfo: string | undefined
   landlordsMutualFundInfo: string | undefined
   otherInfo: string | undefined
   securityDepositAmount: string | undefined
-  securityDepositAmountOther: string | undefined
+  securityAmountOther: string | undefined
   securityAmountCalculated: string | undefined
   securityAmountHiddenRentalAmount: string | undefined
 }

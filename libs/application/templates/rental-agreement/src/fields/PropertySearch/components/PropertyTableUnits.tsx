@@ -14,7 +14,7 @@ import {
   tableCellFastNum,
   noInputArrows,
 } from '../propertySearch.css'
-import { registerProperty } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
 
 const isValidInteger = (value: string): boolean => {
   return /^\d*$/.test(value)
@@ -62,15 +62,15 @@ export const PropertyTableUnits = ({
 
   const sizeInputError =
     unitInputErrorMessage ===
-      formatMessage(registerProperty.search.changedSizeTooLargeError) ||
+      formatMessage(m.registerProperty.search.changedSizeTooLargeError) ||
     unitInputErrorMessage ===
-      formatMessage(registerProperty.search.changedSizeTooSmallError)
+      formatMessage(m.registerProperty.search.changedSizeTooSmallError)
 
   const roomsInputError =
     unitInputErrorMessage ===
-      formatMessage(registerProperty.search.numOfRoomsMinimumError) ||
+      formatMessage(m.registerProperty.search.numOfRoomsMinimumError) ||
     unitInputErrorMessage ===
-      formatMessage(registerProperty.search.numOfRoomsMaximumError)
+      formatMessage(m.registerProperty.search.numOfRoomsMaximumError)
 
   return (
     <tr key={unitCode}>
