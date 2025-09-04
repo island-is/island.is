@@ -1,20 +1,32 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Icon,
+  Tag,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
 import { useProcessCollectionMutation } from './finishCollectionProcess.generated'
-import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import {
+  CollectionStatus,
+  SignatureCollection,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 
 const ActionCompleteCollectionProcessing = ({
-  collectionId,
-  canProcess,
-  collectionType,
+  collection,
+  areaId,
 }: {
-  collectionId: string
-  collectionType: SignatureCollectionCollectionType
-  canProcess?: boolean
+  collection: SignatureCollection
+  // areaId is used for LocalGovernmental collections, instead of collection.id
+  areaId?: string
 }) => {
   const { formatMessage } = useLocale()
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
@@ -26,7 +38,16 @@ const ActionCompleteCollectionProcessing = ({
   const completeProcessing = async () => {
     try {
       const res = await processCollectionMutation({
-        variables: { input: { collectionId, collectionType } },
+        variables: {
+          input: {
+            collectionId:
+              collection.collectionType ===
+              SignatureCollectionCollectionType.LocalGovernmental
+                ? areaId ?? ''
+                : collection.id,
+            collectionType: collection.collectionType,
+          },
+        },
       })
       if (res.data?.signatureCollectionAdminProcess.success) {
         toast.success(formatMessage(m.completeCollectionProcessing))
@@ -41,21 +62,34 @@ const ActionCompleteCollectionProcessing = ({
   }
 
   return (
-    <Box marginTop={10}>
-      <Box display="flex" justifyContent="center">
-        <Box>
-          <Button
-            icon="lockClosed"
-            iconType="outline"
-            colorScheme="destructive"
-            variant="text"
-            onClick={() => setModalSubmitReviewIsOpen(true)}
-            disabled={!canProcess}
-          >
-            {formatMessage(m.completeCollectionProcessing)}
-          </Button>
-        </Box>
-      </Box>
+    <Box>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Tag>
+              <Box display="flex" justifyContent="center">
+                <Icon icon="checkmark" type="outline" color="blue600" />
+              </Box>
+            </Tag>
+            <Box marginLeft={5}>
+              <Text variant="h4">
+                {formatMessage(m.completeCollectionProcessing)}
+              </Text>
+              <Text marginBottom={2}>
+                {formatMessage(m.completeCollectionProcessingDescription)}
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalSubmitReviewIsOpen(true)}
+                disabled={collection.status === CollectionStatus.Processed}
+              >
+                {formatMessage(m.completeCollectionProcessing)}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="reviewComplete"
         isVisible={modalSubmitReviewIsOpen}
@@ -66,13 +100,14 @@ const ActionCompleteCollectionProcessing = ({
       >
         <Box marginTop={5}>
           <Text>
-            {formatMessage(m.completeCollectionProcessingModalDescription)}
+            {formatMessage(m.completeCollectionProcessingDescription)}
           </Text>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
+              icon="checkmark"
               variant="ghost"
-              colorScheme="destructive"
+              colorScheme="default"
               onClick={() => completeProcessing()}
               loading={loading}
             >

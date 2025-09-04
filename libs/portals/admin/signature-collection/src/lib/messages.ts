@@ -234,8 +234,8 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu safnanna lokið',
     description: '',
   },
-  completeCollectionProcessingModalDescription: {
-    id: 'admin-portal.signature-collection:completeCollectionProcessingModalDescription#markdown',
+  completeCollectionProcessingDescription: {
+    id: 'admin-portal.signature-collection:completeCollectionProcessingDescription#markdown',
     defaultMessage:
       'Þegar búið er að fara yfir alla meðmælalista skal ýta á hnappinn.',
     description: '',

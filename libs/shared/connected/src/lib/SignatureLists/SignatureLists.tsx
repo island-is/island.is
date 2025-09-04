@@ -63,7 +63,7 @@ export const SignatureLists: FC<
               {t('title2', 'Forsetakosningar 2024 - Framlengt')}
             </Text>
             <Text variant="eyebrow">
-              {t('totalLists', 'Fjöldi lista: ') + openLists?.length}
+              {t('totalLists', 'Fjöldi lista: ') + (openLists?.length ?? 0)}
             </Text>
           </>
         )}
@@ -159,18 +159,22 @@ export const SignatureLists: FC<
                     backgroundColor="white"
                     heading={list.title.split(' -')[0]}
                     text={list.area?.name}
-                    cta={{
-                      label: t('sign', 'Mæla með framboði'),
-                      variant: 'text',
-                      icon: 'open',
-                      iconType: 'outline',
-                      size: 'small',
-                      onClick: () =>
-                        window.open(
-                          `${window.location.origin}${list.slug}`,
-                          '_blank',
-                        ),
-                    }}
+                    cta={
+                      list.active
+                        ? {
+                            label: t('sign', 'Mæla með framboði'),
+                            variant: 'text',
+                            icon: 'open',
+                            iconType: 'outline',
+                            size: 'small',
+                            onClick: () =>
+                              window.open(
+                                `${window.location.origin}${list.slug}`,
+                                '_blank',
+                              ),
+                          }
+                        : undefined
+                    }
                   />
                 )
               })
