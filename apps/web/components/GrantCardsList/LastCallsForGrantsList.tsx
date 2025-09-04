@@ -26,6 +26,7 @@ const LastCallsForGrants = ({ slice }: SliceProps) => {
   return (
     <InfoCardGrid
       variant="simple"
+      columns={1}
       cards={grantItems.map(grant => {
       return {
         id: grant.id,

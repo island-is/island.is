@@ -40,7 +40,7 @@ export const mapLastCallsForGrants = ({
         sys.locale === 'is-IS'
           ? 'is'
           : (sys.locale as ElasticsearchIndexLocale),
-      organizations: fields?.parentOrganization?.sys.id ? [fields.parentOrganization.sys.id] : undefined,
+      organizations: fields?.parentOrganization?.fields.slug ? [fields.parentOrganization.fields.slug] : undefined,
       size: fields.maxNumberOfCards,
       status: fields.onlyShowOpenForApplication ? GrantsAvailabilityStatus.OPEN : undefined
     },
