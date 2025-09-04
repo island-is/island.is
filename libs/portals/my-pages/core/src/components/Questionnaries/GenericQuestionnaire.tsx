@@ -89,7 +89,6 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
       [answer.questionId]: answer,
     }))
 
-    // Clear error for this question if it exists
     setErrors((prev) => {
       const { [answer.questionId]: _, ...newErrors } = prev
       return newErrors
@@ -171,95 +170,93 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   const canGoPrevious = currentStep > 0
 
   return (
-    <Box padding={4}>
-      <Stack space={6}>
-        {/* Header */}
+    <Stack space={6}>
+      {/* Header */}
+      <Box>
+        <Text variant="h2" marginBottom={2}>
+          {questionnaire.title}
+        </Text>
+        <Text variant="intro">
+          {questionnaire.description.split('\\n').map((line, index) => (
+            <React.Fragment key={index}>
+              <Text>{line}</Text>
+              {index < questionnaire.description.split('\\n').length - 1 && (
+                <br />
+              )}
+            </React.Fragment>
+          ))}
+        </Text>
+      </Box>
+
+      {/* Stepper (if enabled and multiple steps) */}
+      {/* TODO: Move to sidenav */}
+      {enableStepper && questionSteps.length > 1 && (
+        <Stepper
+          steps={steps}
+          currentStepIndex={currentStep}
+          onStepChange={handleStepChange}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          nextLabel={isLastStep ? 'Review' : 'Next'}
+          previousLabel="Back"
+          showProgress={true}
+          orientation="horizontal"
+          allowClickableSteps={false}
+        />
+      )}
+
+      {/* Questions */}
+      <Box style={{ minHeight: '400px' }}>
+        <Stack space={4}>
+          {currentQuestions.map((question) => (
+            <QuestionRenderer
+              key={question.id}
+              question={question}
+              answer={answers[question.id]}
+              onAnswerChange={handleAnswerChange}
+              error={errors[question.id]}
+            />
+          ))}
+        </Stack>
+      </Box>
+
+      {/* Navigation/Submit buttons */}
+      <Box display="flex" justifyContent="spaceBetween" alignItems="center">
         <Box>
-          <Text variant="h2" marginBottom={2}>
-            {questionnaire.title}
-          </Text>
-          <Text variant="intro">
-            {questionnaire.description.split('\\n').map((line, index) => (
-              <React.Fragment key={index}>
-                <Text>{line}</Text>
-                {index < questionnaire.description.split('\\n').length - 1 && (
-                  <br />
-                )}
-              </React.Fragment>
-            ))}
-          </Text>
+          {onCancel && (
+            <Button variant="ghost" onClick={onCancel}>
+              {cancelLabel}
+            </Button>
+          )}
         </Box>
 
-        {/* Stepper (if enabled and multiple steps) */}
-        {/* TODO: Move to sidenav */}
-        {enableStepper && questionSteps.length > 1 && (
-          <Stepper
-            steps={steps}
-            currentStepIndex={currentStep}
-            onStepChange={handleStepChange}
-            onNext={handleNext}
-            onPrevious={handlePrevious}
-            nextLabel={isLastStep ? 'Review' : 'Next'}
-            previousLabel="Back"
-            showProgress={true}
-            orientation="horizontal"
-            allowClickableSteps={false}
-          />
-        )}
-
-        {/* Questions */}
-        <Box style={{ minHeight: '400px' }}>
-          <Stack space={4}>
-            {currentQuestions.map((question) => (
-              <QuestionRenderer
-                key={question.id}
-                question={question}
-                answer={answers[question.id]}
-                onAnswerChange={handleAnswerChange}
-                error={errors[question.id]}
-              />
-            ))}
-          </Stack>
-        </Box>
-
-        {/* Navigation/Submit buttons */}
-        <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-          <Box>
-            {onCancel && (
-              <Button variant="ghost" onClick={onCancel}>
-                {cancelLabel}
-              </Button>
-            )}
-          </Box>
-
-          <Box display="flex" alignItems="center">
-            {enableStepper && questionSteps.length > 1 ? (
-              <>
-                {canGoPrevious && (
-                  <Box marginRight={2}>
-                    <Button variant="ghost" onClick={handlePrevious}>
-                      {formatMessage(m.lastQuestion)}
-                    </Button>
-                  </Box>
-                )}
-                {canGoNext ? (
-                  <Button variant="primary" onClick={handleNext}>
-                    {formatMessage(m.nextQuestion)}
+        <Box display="flex" alignItems="center">
+          {enableStepper && questionSteps.length > 1 ? (
+            <>
+              {canGoPrevious && (
+                <Box marginRight={2}>
+                  <Button variant="ghost" onClick={handlePrevious}>
+                    {formatMessage(m.lastQuestion)}
                   </Button>
-                ) : (
-                  <Button variant="primary" onClick={handleSubmit}>
-                    {submitLabel}
-                  </Button>
-                )}
-              </>
-            ) : (
-              <Button variant="primary" onClick={handleSubmit}>
-                {submitLabel}
-              </Button>
-            )}
-          </Box>
+                </Box>
+              )}
+              {canGoNext ? (
+                <Button variant="primary" onClick={handleNext}>
+                  {formatMessage(m.nextQuestion)}
+                </Button>
+              ) : (
+                <Button variant="primary" onClick={handleSubmit}>
+                  {submitLabel}
+                </Button>
+              )}
+            </>
+          ) : (
+            <Button variant="primary" onClick={handleSubmit}>
+              {submitLabel}
+            </Button>
+          )}
         </Box>
-      </Stack>
-    </Box>
+      </Box>
+    </Stack>
   )
 }
