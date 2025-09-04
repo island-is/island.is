@@ -21,6 +21,13 @@ export {
 } from './lib/verdict'
 
 export {
+  isSubpoenaInfoChanged,
+  isVerdictInfoChanged,
+  SubpoenaPoliceDocumentInfo,
+  VerdictPoliceDocumentInfo,
+} from './lib/policeDocument'
+
+export {
   InstitutionType,
   prosecutorsOfficeTypes,
   isProsecutorsOffice,

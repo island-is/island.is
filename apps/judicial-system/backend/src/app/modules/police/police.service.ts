@@ -22,14 +22,17 @@ import {
 } from '@island.is/shared/utils/server'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import type { User } from '@island.is/judicial-system/types'
+import type {
+  SubpoenaPoliceDocumentInfo,
+  User,
+  VerdictPoliceDocumentInfo,
+} from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
-  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -165,6 +168,7 @@ export class PoliceService {
     deliveredOnPaper: z.boolean().nullish(),
     deliveredToLawyer: z.boolean().nullish(),
     deliveredOnIslandis: z.boolean().nullish(),
+    defenderNationalId: z.string().nullish(),
   })
 
   constructor(
@@ -363,7 +367,7 @@ export class PoliceService {
   async getSubpoenaStatus(
     policeSubpoenaId: string,
     user?: User,
-  ): Promise<SubpoenaInfo> {
+  ): Promise<SubpoenaPoliceDocumentInfo> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetSubpoenaStatus?id=${policeSubpoenaId}`,
     )
@@ -702,8 +706,15 @@ export class PoliceService {
     }
   }
 
-  async getDocumentStatus(policeDocumentId: string, user?: User) {
+  async getVerdictDocumentStatus(
+    policeDocumentId: string,
+    user?: User,
+  ): Promise<VerdictPoliceDocumentInfo> {
     // TODO: not implemented in RLS XROAD api
+    const isDocumentStatusImplemented = false
+    if (!isDocumentStatusImplemented) {
+      return {}
+    }
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetDocumentStatus?id=${policeDocumentId}`,
     )
@@ -725,6 +736,7 @@ export class PoliceService {
             serviceDate: response.servedAt
               ? new Date(response.servedAt)
               : undefined,
+            defenderNationalId: response.defenderNationalId ?? undefined,
           }
         }
         const reason = await res.text()
