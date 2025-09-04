@@ -23,7 +23,6 @@ import CompareLists from '../../shared-components/compareLists'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import EmptyState from '../../shared-components/emptyState'
-import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
@@ -74,7 +73,12 @@ export const Municipality = () => {
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
             buttonGroup={
-              <ActionDrawer allowedActions={[Actions.CreateCollection]} />
+              <ActionDrawer
+                allowedActions={[
+                  Actions.CreateCollection,
+                  Actions.CompleteCollectionProcessing,
+                ]}
+              />
             }
             marginBottom={4}
           />
@@ -135,13 +139,6 @@ export const Municipality = () => {
               municipalAreaId={municipalityLists[0]?.collectionId}
             />
           )}
-          <ActionCompleteCollectionProcessing
-            collectionType={collection?.collectionType}
-            collectionId={municipalityLists[0]?.area.collectionId ?? ''}
-            canProcess={
-              !!allLists.length && allLists.every((l) => l.reviewed === true)
-            }
-          />
         </GridColumn>
       </GridRow>
     </GridContainer>
