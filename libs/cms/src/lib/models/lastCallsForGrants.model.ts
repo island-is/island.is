@@ -48,6 +48,7 @@ export const mapLastCallsForGrants = ({
         ? [fields.parentOrganization.fields.slug]
         : undefined,
       size: fields.maxNumberOfCards,
+      filterOutDateToPassed: true,
       status: fields.onlyShowOpenForApplication
         ? GrantsAvailabilityStatus.OPEN
         : undefined,

@@ -1,10 +1,11 @@
-import { InfoCardGrid } from '@island.is/island-ui/core'
-import { LastCallsForGrants as LastCallsForGrantsSchema } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks'
+import { useRouter } from 'next/router'
+
+import { ActionCard,Stack } from '@island.is/island-ui/core'
+import { Grant, LastCallsForGrants as LastCallsForGrantsSchema } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
 import { TranslationKeys } from './types'
-import { formatDate, getTranslationString } from './utils'
+import { getTranslationString, parseGrantStatus } from './utils'
 
 interface SliceProps {
   slice: LastCallsForGrantsSchema
@@ -12,7 +13,8 @@ interface SliceProps {
 
 const LastCallsForGrants = ({ slice }: SliceProps) => {
   const { activeLocale } = useI18n()
-  const { linkResolver } = useLinkResolver()
+  const router = useRouter()
+
 
   const getTranslation = (
     key: keyof TranslationKeys,
@@ -21,33 +23,27 @@ const LastCallsForGrants = ({ slice }: SliceProps) => {
 
   const grantItems = [...(slice.resolvedGrantsList?.items ?? [])]
 
-  console.log(slice)
+  const getStatus = (grant: Grant) => parseGrantStatus(grant, activeLocale, getTranslation)
+
   return (
-    <InfoCardGrid
-      variant="simple"
-      columns={1}
-      cards={grantItems.map((grant) => {
-        const date =
-          (grant.dateTo && formatDate(new Date(grant.dateTo), activeLocale)) ||
-          ''
-        return {
-          id: grant.id,
-          title: grant.name,
-          borderColor: 'blue400',
-          description: grant.description ?? '',
-          eyebrow: date,
-          link: {
+    <Stack space={1}>
+      {grantItems.map(grant => {
+        const status = getStatus(grant)
+        console.log(status)
+        return <ActionCard
+          heading={grant.name}
+          text={status}
+          cta={{
             label: getTranslation('seeMore'),
-            href: linkResolver(
-              'grantsplazagrant',
-              [grant?.applicationId ?? ''],
-              activeLocale,
-            ).href,
-          },
-        }
-      })}
-    />
-  )
+            size: 'small',
+            onClick: () => router.push(grant.applicationId ?? ''),
+            variant: 'text',
+            icon: 'open',
+            iconType: 'outline',
+          }}
+        />
+      }
+  )}</Stack>)
 }
 
 export default LastCallsForGrants

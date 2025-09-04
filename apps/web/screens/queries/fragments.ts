@@ -881,10 +881,7 @@ export const slices = gql`
         id
         name
         description
-        applicationUrl {
-          slug
-          type
-        }
+        applicationId
         dateFrom
         dateTo
         status
