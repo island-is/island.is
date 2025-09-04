@@ -159,18 +159,22 @@ export const SignatureLists: FC<
                     backgroundColor="white"
                     heading={list.title.split(' -')[0]}
                     text={list.area?.name}
-                    cta={list.active ? {
-                      label: t('sign', 'Mæla með framboði'),
-                      variant: 'text',
-                      icon: 'open',
-                      iconType: 'outline',
-                      size: 'small',
-                      onClick: () =>
-                        window.open(
-                          `${window.location.origin}${list.slug}`,
-                          '_blank',
-                        ),
-                    } : undefined}
+                    cta={
+                      list.active
+                        ? {
+                            label: t('sign', 'Mæla með framboði'),
+                            variant: 'text',
+                            icon: 'open',
+                            iconType: 'outline',
+                            size: 'small',
+                            onClick: () =>
+                              window.open(
+                                `${window.location.origin}${list.slug}`,
+                                '_blank',
+                              ),
+                          }
+                        : undefined
+                    }
                   />
                 )
               })
