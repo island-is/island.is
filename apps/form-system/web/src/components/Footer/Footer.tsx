@@ -62,7 +62,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const showBackButton =
     !isCompletedSection &&
     !(currentSectionType === SectionTypes.PARTIES &&
-      Number(state.currentScreen?.index) === 0)
+      Number(state.currentScreen?.index) === 0) &&
+    currentSectionType !== SectionTypes.PREMISES
 
   const handleIncrement = async () => {
     const isValid = await validate()
