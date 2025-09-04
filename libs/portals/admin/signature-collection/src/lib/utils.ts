@@ -66,23 +66,25 @@ export enum CollectionStatus {
 export const downloadFile = () => {
   const fileName = 'beraSaman.xlsx'
   const sheetName = 'Bera saman'
-  const sheetData = [['Kennitala'], []]
 
-  const getFile = (downloadName: string, output: string | undefined) => {
-    if (!output) return
-    const link = document.createElement('a')
-    link.href =
-      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' +
-      output
-    link.download = downloadName
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
+  const rowCount = 200
+  const sheetData = [
+    ['Kennitala'],
+    ...Array.from({ length: rowCount - 1 }, () => ['']),
+  ]
 
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
-  // Set first column to "Text" format
-  worksheet.getColumn(1).numFmt = '@'
+
+  // Apply Text format for all cells in column A
+  Object.keys(worksheet).forEach((cell) => {
+    if (cell[0] === 'A' && cell !== '!ref') {
+      worksheet[cell].t = 's'
+      worksheet[cell].z = '@'
+    }
+  })
+
+  // Set column width
+  worksheet['!cols'] = [{ wch: 20 }]
 
   const workbook: XLSX.WorkBook = {
     Sheets: { [sheetName]: worksheet },
@@ -93,7 +95,16 @@ export const downloadFile = () => {
     bookType: 'xlsx',
     type: 'base64',
   })
-  getFile(fileName, excelBuffer)
+
+  // Trigger download
+  const link = document.createElement('a')
+  link.href =
+    'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' +
+    excelBuffer
+  link.download = fileName
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
 
 // Bulk upload and compare
