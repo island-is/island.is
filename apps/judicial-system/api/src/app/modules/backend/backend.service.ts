@@ -514,6 +514,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  getVerdict(caseId: string, defendantId: string): Promise<Verdict> {
+    return this.get(`case/${caseId}/defendant/${defendantId}/verdict`)
+  }
+
   createCivilClaimant(
     caseId: string,
     createCivilClaimant: unknown,
