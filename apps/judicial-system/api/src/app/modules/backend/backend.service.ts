@@ -427,8 +427,10 @@ export class BackendService extends DataSource<{ req: Request }> {
       ? `/mergedCase/${mergedCaseId}`
       : ''
 
+    const ttlInjection = ttl ?? ''
+
     return this.get(
-      `case/${caseId}${mergedCaseInjection}/file/${id}/url/${ttl}`,
+      `case/${caseId}${mergedCaseInjection}/file/${id}/url/${ttlInjection}`,
     )
   }
 
