@@ -81,7 +81,10 @@ export const incrementWithScreens = (
   }
 
   // Submit current screen for INPUT sections
-  if (currentSectionData.sectionType === SectionTypes.INPUT) {
+  if (
+    currentSectionData.sectionType === SectionTypes.INPUT ||
+    currentSectionData.sectionType === SectionTypes.PARTIES
+  ) {
     submitScreen({
       variables: {
         input: {
