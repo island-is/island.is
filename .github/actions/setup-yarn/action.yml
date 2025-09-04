@@ -15,6 +15,10 @@ inputs:
     description: ''
     required: false
     default: 'eu-west-1'
+  SKIP_CACHE:
+    description: 'Skip cache restore'
+    required: false
+    default: 'false'
   working-directory:
     description: 'Directory to run the action in'
     required: false
@@ -84,6 +88,7 @@ runs:
     - name: Cache Dependencies
       uses: runs-on/cache@v4
       id: restore-cache
+      if: ${{ inputs.SKIP_CACHE != 'true' }}
       with:
         path: |
           ${{ steps.cache-paths.outputs.yarn-cache }}
