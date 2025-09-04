@@ -66,7 +66,7 @@ const Payments = () => {
     if (error) {
       toast.error(formatMessage(m.errorDefault))
     }
-  }, [error, formatMessage])
+  }, [error])
 
   useEffect(() => {
     if (loading) {
@@ -154,6 +154,11 @@ const Payments = () => {
             onFocus,
             placeholder: formatMessage(m.searchBy),
             colored: true,
+            onKeyDown: (ev) => {
+              if (ev.key === 'Enter') {
+                handleSearch()
+              }
+            },
           }}
           buttonProps={{
             type: 'button',
