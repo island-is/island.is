@@ -48,12 +48,10 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
     () => activeDocument?.id ?? '',
     [activeDocument?.id],
   )
-  const userEmail = useMemo(
-    () => profile?.email ?? userProfile?.email ?? '',
-    [profile?.email, userProfile?.email],
-  )
+  
   const userName = useMemo(() => profile?.name ?? '', [profile?.name])
-
+  const userEmail = profile?.email ?? userProfile?.email
+  
   const [getTicketQuery, { data, loading, refetch }] =
     useGetDocumentTicketLazyQuery({
       variables: {
