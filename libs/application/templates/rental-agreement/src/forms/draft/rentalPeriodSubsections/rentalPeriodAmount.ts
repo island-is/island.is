@@ -12,10 +12,6 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
-  getPaymentMethodOptions,
-  getRentalAmountPaymentDateOptions,
-} from '../../../utils/utils'
-import {
   Routes,
   RentalAmountPaymentDateOptions,
   RentalPaymentMethodOptions,
@@ -29,20 +25,24 @@ import {
   getConsumerIndexDateOptions,
   getIndexRateForConsumerIndexDate,
 } from '../../../utils/rentalPeriodUtils'
-import { rentalAmount } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
+import {
+  getPaymentMethodOptions,
+  getRentalAmountPaymentDateOptions,
+} from '../../../utils/options'
 
 export const RentalPeriodAmount = buildSubSection({
   id: Routes.RENTALAMOUNT,
-  title: rentalAmount.subSectionName,
+  title: m.rentalAmount.subSectionName,
   children: [
     buildMultiField({
       id: Routes.RENTALAMOUNT,
-      title: rentalAmount.pageTitle,
-      description: rentalAmount.pageDescription,
+      title: m.rentalAmount.pageTitle,
+      description: m.rentalAmount.pageDescription,
       children: [
         buildDescriptionField({
           id: 'rentalAmount.detailsTitle',
-          title: rentalAmount.infoTitle,
+          title: m.rentalAmount.infoTitle,
           titleVariant: 'h3',
           space: 1,
         }),
@@ -50,8 +50,8 @@ export const RentalPeriodAmount = buildSubSection({
         // Monthly rental amount and indexation
         buildTextField({
           id: 'rentalAmount.amount',
-          title: rentalAmount.inputLabel,
-          placeholder: rentalAmount.inputPlaceholder,
+          title: m.rentalAmount.inputLabel,
+          placeholder: m.rentalAmount.inputPlaceholder,
           variant: 'currency',
           maxLength: 15,
           required: true,
@@ -76,7 +76,7 @@ export const RentalPeriodAmount = buildSubSection({
           options: [
             {
               value: YesOrNoEnum.YES,
-              label: rentalAmount.priceIndexLabel,
+              label: m.rentalAmount.priceIndexLabel,
             },
           ],
           spacing: 0,
@@ -84,7 +84,7 @@ export const RentalPeriodAmount = buildSubSection({
         }),
         buildSelectField({
           id: 'rentalAmount.indexDate',
-          title: rentalAmount.indexDateLabel,
+          title: m.rentalAmount.indexDateLabel,
           options: (application: Application) => {
             return getConsumerIndexDateOptions(application)
           },
@@ -98,7 +98,7 @@ export const RentalPeriodAmount = buildSubSection({
         }),
         buildDisplayField({
           id: 'rentalAmount.indexRate',
-          label: rentalAmount.indexRateLabel,
+          label: m.rentalAmount.indexRateLabel,
           variant: 'text',
           value: (answers, externalData) => {
             const rate = getIndexRateForConsumerIndexDate(answers, externalData)
@@ -111,21 +111,21 @@ export const RentalPeriodAmount = buildSubSection({
         // Payment details
         buildDescriptionField({
           id: 'rentalAmount.paymentDateDetails',
-          title: rentalAmount.paymentDateTitle,
+          title: m.rentalAmount.paymentDateTitle,
           titleVariant: 'h4',
-          description: rentalAmount.paymentDateDescription,
+          description: m.rentalAmount.paymentDateDescription,
           space: 6,
         }),
         buildSelectField({
           id: 'rentalAmount.paymentDateOptions',
-          title: rentalAmount.paymentDateOptionsLabel,
+          title: m.rentalAmount.paymentDateOptionsLabel,
           options: getRentalAmountPaymentDateOptions(),
           defaultValue: RentalAmountPaymentDateOptions.FIRST_DAY,
         }),
         buildTextField({
           id: 'rentalAmount.paymentDateOther',
-          title: rentalAmount.paymentDateOtherOptionLabel,
-          placeholder: rentalAmount.paymentDateOtherOptionPlaceholder,
+          title: m.rentalAmount.paymentDateOtherOptionLabel,
+          placeholder: m.rentalAmount.paymentDateOtherOptionPlaceholder,
           maxLength: 100,
           condition: rentalPaymentDateIsOther,
         }),
@@ -133,33 +133,33 @@ export const RentalPeriodAmount = buildSubSection({
         // Payment method
         buildDescriptionField({
           id: 'rentalAmount.paymentMethodTitle',
-          title: rentalAmount.paymentMethodTitle,
+          title: m.rentalAmount.paymentMethodTitle,
           titleVariant: 'h4',
           space: 6,
         }),
         buildSelectField({
           id: 'rentalAmount.paymentMethodOptions',
-          title: rentalAmount.paymentMethodOptionsLabel,
+          title: m.rentalAmount.paymentMethodOptionsLabel,
           options: getPaymentMethodOptions(),
           defaultValue: RentalPaymentMethodOptions.BANK_TRANSFER,
         }),
         buildTextField({
           id: 'rentalAmount.paymentMethodNationalId',
-          title: rentalAmount.paymentMethodNationalIdLabel,
+          title: m.rentalAmount.paymentMethodNationalIdLabel,
           format: '######-####',
           width: 'half',
           condition: rentalPaymentMethodIsBankTransfer,
         }),
         buildTextField({
           id: 'rentalAmount.paymentMethodBankAccountNumber',
-          title: rentalAmount.paymentMethodBankAccountNumberLabel,
+          title: m.rentalAmount.paymentMethodBankAccountNumberLabel,
           format: '####-##-######',
           width: 'half',
           condition: rentalPaymentMethodIsBankTransfer,
         }),
         buildTextField({
           id: 'rentalAmount.paymentMethodOtherTextField',
-          title: rentalAmount.paymentMethodOtherTextFieldLabel,
+          title: m.rentalAmount.paymentMethodOtherTextFieldLabel,
           maxLength: 50,
           condition: rentalPaymentMethodIsOther,
         }),
@@ -167,7 +167,7 @@ export const RentalPeriodAmount = buildSubSection({
         // SecurityDeposit
         buildDescriptionField({
           id: 'rentalAmount.securityDepositTitle',
-          title: rentalAmount.securityDepositTitle,
+          title: m.rentalAmount.securityDepositTitle,
           titleVariant: 'h4',
           space: 6,
         }),
@@ -176,7 +176,7 @@ export const RentalPeriodAmount = buildSubSection({
           options: [
             {
               value: YesOrNoEnum.YES,
-              label: rentalAmount.securityDepositRequiredLabel,
+              label: m.rentalAmount.securityDepositRequiredLabel,
             },
           ],
         }),

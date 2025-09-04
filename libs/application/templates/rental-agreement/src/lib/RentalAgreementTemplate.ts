@@ -32,7 +32,6 @@ import { dataSchema } from './dataSchema'
 import { application } from './messages'
 
 enum TemplateApiActions {
-  sendApplicationSummary = 'sendApplicationSummary',
   submitApplicationToHmsRentalService = 'submitApplicationToHmsRentalService',
   consumerIndex = 'consumerIndex',
 }
@@ -96,9 +95,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.consumerIndex,
-          }),
-          onExit: defineTemplateApi({
-            action: TemplateApiActions.sendApplicationSummary,
           }),
           roles: [
             {

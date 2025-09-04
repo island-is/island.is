@@ -1000,7 +1000,7 @@ export type TableData = {
 export interface OverviewField extends BaseField {
   readonly type: FieldTypes.OVERVIEW
   component: FieldComponents.OVERVIEW
-  title?: FormText
+  title?: FormTextWithLocale
   titleVariant?: TitleVariants
   description?: FormText
   backId?:

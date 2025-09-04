@@ -8,7 +8,7 @@ import {
   tableCellNumOfRooms,
 } from '../propertySearch.css'
 import { useLocale } from '@island.is/localization'
-import { registerProperty } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
 
 export const PropertyTableHeader = () => {
   const { formatMessage } = useLocale()
@@ -25,14 +25,16 @@ export const PropertyTableHeader = () => {
             className: `${tableHeadingCell} ${tableCellFastNum}`,
           }}
         >
-          {formatMessage(registerProperty.search.searchResultHeaderPropertyId)}
+          {formatMessage(
+            m.registerProperty.search.searchResultHeaderPropertyId,
+          )}
         </T.HeadData>
         <T.HeadData
           box={{
             className: `${tableHeadingCell} ${tableCellMerking}`,
           }}
         >
-          {formatMessage(registerProperty.search.searchResultHeaderMarking)}
+          {formatMessage(m.registerProperty.search.searchResultHeaderMarking)}
         </T.HeadData>
         <T.HeadData
           box={{
@@ -40,7 +42,7 @@ export const PropertyTableHeader = () => {
           }}
         >
           {formatMessage(
-            registerProperty.search.searchResultHeaderPropertySize,
+            m.registerProperty.search.searchResultHeaderPropertySize,
           )}
         </T.HeadData>
         <T.HeadData
@@ -48,7 +50,9 @@ export const PropertyTableHeader = () => {
             className: `${tableHeadingCell} ${tableCellNumOfRooms}`,
           }}
         >
-          {formatMessage(registerProperty.search.searchResultsHeaderNumOfRooms)}
+          {formatMessage(
+            m.registerProperty.search.searchResultsHeaderNumOfRooms,
+          )}
         </T.HeadData>
       </T.Row>
     </T.Head>
