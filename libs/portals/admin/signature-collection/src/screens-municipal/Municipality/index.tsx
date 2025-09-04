@@ -23,7 +23,6 @@ import CompareLists from '../../shared-components/compareLists'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import EmptyState from '../../shared-components/emptyState'
-import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
