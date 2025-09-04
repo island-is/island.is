@@ -94,7 +94,7 @@ export const generateRawUploadData = (
       autonomous: trueOrHasYes(answers.applicant.autonomous ?? 'false'),
     },
     otherAssets: expandOtherAssets(answers.otherAssets ?? []),
-    stocks: expandStocks(answers.stocks ?? []),
+    stocks: expandStocks(answers.estate?.stocks ?? []),
     vehicles: expandAssetFrames(processedVehicles),
     estateWithoutAssetsInfo: {
       estateAssetsExist: trueOrHasYes(

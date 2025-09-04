@@ -278,6 +278,58 @@ export const estateSchema = z.object({
       )
       .array()
       .optional(),
+    stocks: z
+      .object({
+        organization: z.string(),
+        nationalId: z.string().optional(),
+        faceValue: z.string(),
+        rateOfExchange: z.string(),
+        value: z.string().optional(),
+        initial: z.boolean(),
+        enabled: z.boolean(),
+      })
+      .refine(
+        ({ enabled, organization, faceValue, rateOfExchange }) => {
+          return enabled && (organization !== '' || faceValue !== '' || rateOfExchange !== '')
+            ? isValidString(organization)
+            : true
+        },
+        {
+          path: ['organization'],
+        },
+      )
+      .refine(
+        ({ enabled, organization, faceValue, rateOfExchange }) => {
+          return enabled && (organization !== '' || rateOfExchange !== '')
+            ? isNumericalString(faceValue)
+            : true
+        },
+        {
+          path: ['faceValue'],
+        },
+      )
+      .refine(
+        ({ enabled, organization, faceValue, rateOfExchange }) => {
+          return enabled && (organization !== '' || faceValue !== '')
+            ? isNumericalString(rateOfExchange)
+            : true
+        },
+        {
+          path: ['rateOfExchange'],
+        },
+      )
+      .refine(
+        ({ enabled, nationalId }) => {
+          return enabled && nationalId && nationalId !== ''
+            ? kennitala.isValid(nationalId)
+            : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
+      .array()
+      .optional(),
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
     addressOfDeceased: z.string().optional(),
     caseNumber: z.string().min(1).optional(),

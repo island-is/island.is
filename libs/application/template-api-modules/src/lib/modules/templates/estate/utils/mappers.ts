@@ -45,6 +45,23 @@ const claimsMapper = (element: EstateAsset) => {
   }
 }
 
+const stocksMapper = (element: EstateAsset) => {
+  console.log('stocksMapper element', element)
+  const faceValue = element.marketValue || '0'
+  const rateOfExchange = '1' // Default rate since exchangeRateOrInterest doesn't exist on EstateAsset
+  const calculatedValue = (parseFloat(faceValue) * parseFloat(rateOfExchange)).toString()
+  
+  return {
+    organization: element.description || '',
+    nationalId: element.assetNumber || '',
+    faceValue: faceValue,
+    rateOfExchange: rateOfExchange,
+    value: calculatedValue,
+    initial: true,
+    enabled: true,
+  }
+}
+
 const inventoryMapper = (cashItems: EstateAsset[]) => {
   const descriptions = cashItems
     .map(item => item.description)
@@ -109,6 +126,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
   const guns = estate.guns.map((el) => estateAssetMapper<EstateAsset>(el))
   const bankAccounts = estate.bankAccounts.map((el) => bankAccountMapper(el))
   const claims = estate.claims.map((el) => claimsMapper(el))
+  const stocks = estate.stocks.map((el) => stocksMapper(el))
   const inventory = inventoryMapper(estate.cash)
   const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
 
@@ -122,6 +140,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     guns,
     bankAccounts,
     claims,
+    stocks,
     inventory,
   }
 }

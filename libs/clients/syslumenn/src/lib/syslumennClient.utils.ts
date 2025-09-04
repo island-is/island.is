@@ -573,6 +573,11 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_11)
           .map(assetMapper)
       : [],
+    stocks: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_7)
+          .map(assetMapper)
+      : [],
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)
       : [],

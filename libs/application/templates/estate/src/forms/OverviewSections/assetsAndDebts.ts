@@ -331,7 +331,7 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).stocks ?? []).map((stock) => {
+        ((answers as unknown as EstateSchema).estate?.stocks ?? []).map((stock) => {
           return {
             title: stock.organization,
             description: [
@@ -356,9 +356,9 @@ export const overviewAssetsAndDebts = [
     id: 'stocksTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
+      getSumFromAnswers<EstateSchema['estate']['stocks']>(answers, 'estate.stocks', 'value'),
     condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
+      !!getSumFromAnswers<EstateSchema['estate']['stocks']>(answers, 'estate.stocks', 'value'),
     titleVariant: 'h4',
   }),
   buildDividerField({}),

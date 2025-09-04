@@ -84,6 +84,7 @@ export const getFakeEstateInfo = (
       },
     ],
     claims: [],
+    stocks: [],
     estateMembers: [
       {
         name: 'Gervimaður Afríka',
