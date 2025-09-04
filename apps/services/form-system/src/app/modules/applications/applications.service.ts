@@ -36,6 +36,7 @@ import { FormCertificationType } from '../formCertificationTypes/models/formCert
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Option } from '../../dataTypes/option.model'
+import { FormStatus } from '@island.is/form-system/shared'
 
 @Injectable()
 export class ApplicationsService {
@@ -89,12 +90,14 @@ export class ApplicationsService {
 
     let newApplicationId = ''
 
+    const isTest = form.status !== FormStatus.PUBLISHED
+
     await this.sequelize.transaction(async (transaction) => {
       const newApplication: Application = await this.applicationModel.create(
         {
           formId: form.id,
           organizationId: form.organizationId,
-          isTest: createApplicationDto.isTest,
+          isTest: isTest,
           dependencies: form.dependencies,
           status: ApplicationStatus.IN_PROGRESS,
         } as Application,
@@ -235,8 +238,9 @@ export class ApplicationsService {
     }
 
     const applicationDto = await this.getApplication(id)
+    applicationDto.submittedAt = new Date()
 
-    const success = await this.serviceManager.send(applicationDto)
+    const success: boolean = await this.serviceManager.send(applicationDto)
 
     if (success) {
       application.status = ApplicationStatus.SUBMITTED

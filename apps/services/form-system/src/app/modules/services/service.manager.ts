@@ -27,24 +27,19 @@ export class ServiceManager {
       where: { formId: applicationDto.formId },
     })
 
-    const urls = await Promise.all(
-      formUrls.map(async (formUrl) => {
-        return this.organizationUrlModel.findByPk(formUrl.organizationUrlId)
-      }),
-    )
-
-    const submitUrls = urls.filter(
-      (url) =>
-        url?.type === UrlTypes.SUBMIT && url.isTest === applicationDto.isTest,
-    )
-
-    submitUrls.map(async (url) => {
-      if (url?.method === UrlMethods.SEND_NUDGE) {
-        return await this.nugdeService.sendNudge(applicationDto, url)
-      } else if (url?.method === UrlMethods.SEND_TO_ZENDESK) {
-        return await this.zendeskService.sendToZendesk(applicationDto, url)
-      }
+    const submitUrl = await this.organizationUrlModel.findOne({
+      where: {
+        id: formUrls.map((formUrl) => formUrl.organizationUrlId),
+        type: UrlTypes.SUBMIT,
+        isTest: applicationDto.isTest,
+      },
     })
+
+    if (submitUrl && submitUrl?.method === UrlMethods.SEND_NUDGE) {
+      return await this.nugdeService.sendNudge(applicationDto, submitUrl)
+    } else if (submitUrl && submitUrl?.method === UrlMethods.SEND_TO_ZENDESK) {
+      return await this.zendeskService.sendToZendesk(applicationDto, submitUrl)
+    }
 
     return false
   }

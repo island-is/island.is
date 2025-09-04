@@ -10,10 +10,10 @@ const DASHBOARD_TABS: TabType[] = [
     id: 'forms',
     label: 'Form',
   },
-  {
-    id: 'applications',
-    label: 'Umsóknir',
-  },
+  // {
+  //   id: 'applications',
+  //   label: 'Umsóknir',
+  // },
   {
     id: 'admin',
     label: 'Kerfisstjórnun',
