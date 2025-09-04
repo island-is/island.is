@@ -127,6 +127,7 @@ type ChangeActions =
     type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
     payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
   }
+  | {
       type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
