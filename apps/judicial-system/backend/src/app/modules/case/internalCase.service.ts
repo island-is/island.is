@@ -50,25 +50,33 @@ import {
 import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { courtSubtypes } from '../court/court.service'
-import { Defendant, DefendantService } from '../defendant'
+import { courtSubtypes } from '../court'
+import { DefendantService } from '../defendant'
 import { EventService } from '../event'
-import { EventLog } from '../event-log'
-import { CaseFile, FileService } from '../file'
-import { IndictmentCount, IndictmentCountService } from '../indictment-count'
-import { Offense } from '../indictment-count/models/offense.model'
-import { Institution } from '../institution'
+import { FileService } from '../file'
+import { IndictmentCountService } from '../indictment-count'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { User, UserService } from '../user'
-import { Verdict } from '../verdict/models/verdict.model'
+import {
+  Case,
+  CaseArchive,
+  CaseFile,
+  CaseRepositoryService,
+  CaseString,
+  DateLog,
+  Defendant,
+  EventLog,
+  IndictmentCount,
+  Institution,
+  Offense,
+  Subpoena,
+  User,
+  Verdict,
+} from '../repository'
+import { SubpoenaService } from '../subpoena'
+import { UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
-import { Case } from './models/case.model'
-import { CaseArchive } from './models/caseArchive.model'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
@@ -151,7 +159,7 @@ export class InternalCaseService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @InjectModel(CaseArchive)
     private readonly caseArchiveModel: typeof CaseArchive,
     @Inject(caseModuleConfig.KEY)
@@ -380,49 +388,57 @@ export class InternalCaseService {
     }
 
     return this.sequelize.transaction(async (transaction) => {
-      return this.caseModel
-        .create(
-          {
-            ...caseToCreate,
-            state: isRequestCase(caseToCreate.type)
-              ? CaseState.NEW
-              : CaseState.DRAFT,
-            origin: CaseOrigin.LOKE,
-            creatingProsecutorId: creator.id,
-            prosecutorId:
-              creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
-            courtId: isRequestCase(caseToCreate.type)
-              ? creator.institution?.defaultCourtId
-              : undefined,
-            prosecutorsOfficeId: creator.institution?.id,
-          },
-          { transaction },
-        )
-        .then((theCase) =>
-          this.defendantService.createForNewCase(
-            theCase.id,
-            {
-              nationalId: caseToCreate.accusedNationalId,
-              dateOfBirth: caseToCreate.accusedDOB,
-              name: caseToCreate.accusedName,
-              gender: caseToCreate.accusedGender,
-              address: (caseToCreate.accusedAddress || '').trim(),
-              citizenship: caseToCreate.citizenship,
-            },
+      const newCase = await this.caseRepositoryService.create(
+        {
+          ...caseToCreate,
+          state: isRequestCase(caseToCreate.type)
+            ? CaseState.NEW
+            : CaseState.DRAFT,
+          origin: CaseOrigin.LOKE,
+          creatingProsecutorId: creator.id,
+          prosecutorId:
+            creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
+          courtId: isRequestCase(caseToCreate.type)
+            ? creator.institution?.defaultCourtId
+            : undefined,
+          prosecutorsOfficeId: creator.institution?.id,
+        },
+        { transaction },
+      )
+
+      if (isIndictmentCase(newCase.type)) {
+        for (const policeCaseNumber of newCase.policeCaseNumbers) {
+          await this.indictmentCountService.createWithPoliceCaseNumber(
+            newCase.id,
+            policeCaseNumber,
             transaction,
-          ),
-        )
-        .then(
-          (defendant) =>
-            this.caseModel.findByPk(defendant.caseId, {
-              transaction,
-            }) as Promise<Case>,
-        )
+          )
+        }
+      }
+
+      await this.defendantService.createForNewCase(
+        newCase.id,
+        {
+          nationalId: caseToCreate.accusedNationalId,
+          dateOfBirth: caseToCreate.accusedDOB,
+          name: caseToCreate.accusedName,
+          gender: caseToCreate.accusedGender,
+          address: (caseToCreate.accusedAddress || '').trim(),
+          citizenship: caseToCreate.citizenship,
+        },
+        transaction,
+      )
+
+      const theCase = await this.caseRepositoryService.findById(newCase.id, {
+        transaction,
+      })
+
+      return theCase as Case
     })
   }
 
   async archive(): Promise<ArchiveResponse> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
         {
@@ -544,7 +560,7 @@ export class InternalCaseService {
         { transaction },
       )
 
-      await this.caseModel.update(
+      await this.caseRepositoryService.update(
         { ...clearedCaseProperties, isArchived: true },
         { where: { id: theCase.id }, transaction },
       )
@@ -559,13 +575,13 @@ export class InternalCaseService {
     const startOfDay = new Date(date.setHours(0, 0, 0, 0))
     const endOfDay = new Date(date.setHours(23, 59, 59, 999))
 
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: [
         {
           model: DateLog,
           as: 'dateLogs',
           where: {
-            date_type: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
+            dateType: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
             date: {
               [Op.gte]: startOfDay,
               [Op.lte]: endOfDay,
@@ -1271,7 +1287,7 @@ export class InternalCaseService {
     let originalAncestor: Case = theCase
 
     while (originalAncestor.parentCaseId) {
-      const parentCase = await this.caseModel.findByPk(
+      const parentCase = await this.caseRepositoryService.findById(
         originalAncestor.parentCaseId,
       )
 
@@ -1290,7 +1306,7 @@ export class InternalCaseService {
   // As this is only currently used by the digital mailbox API
   // we will only return indictment cases that have a court date
   async getAllDefendantIndictmentCases(nationalId: string): Promise<Case[]> {
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: [
         {
           model: Defendant,
@@ -1300,7 +1316,7 @@ export class InternalCaseService {
           model: DateLog,
           as: 'dateLogs',
           where: {
-            date_type: 'ARRAIGNMENT_DATE',
+            dateType: 'ARRAIGNMENT_DATE',
           },
           required: true,
         },
@@ -1326,7 +1342,7 @@ export class InternalCaseService {
     caseId: string,
     defendantNationalId: string,
   ): Promise<Case> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       include: [
         {
           model: Defendant,
@@ -1400,7 +1416,7 @@ export class InternalCaseService {
   }
 
   countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {
-    return this.caseModel.count({
+    return this.caseRepositoryService.count({
       include: [{ model: User, as: 'creatingProsecutor' }],
       where: {
         type: CaseType.INDICTMENT,

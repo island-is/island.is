@@ -1,10 +1,12 @@
-import { getValueViaPath, YES } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ApplicantAnswer,
   ContactAnswer,
   CVAnswers,
   DrivingLicensesAnswer,
   EducationAnswer,
+  errorMsgs,
+  IncomeAnswers,
   JobHistoryAnswer,
   JobWishesAnswer,
   LanguageAnswers,
@@ -19,12 +21,17 @@ import {
   GaldurDomainModelsApplicantsApplicantProfileDTOsLanguage,
   GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsActivationGrantSupportData,
+  GaldurDomainModelsIncomeActivationGrantIncomeFormDTO,
+  GaldurDomainModelsRSKRSKIncomeListDTO,
   GaldurDomainModelsSelectItem,
   GaldurDomainModelsSettingsPostcodesPostcodeDTO,
 } from '@island.is/clients/vmst-unemployment'
 import { FileResponse } from './types'
 import { S3Service } from '@island.is/nest/aws'
 import { Locale } from '@island.is/shared/types'
+import { IncomeCheckboxValues } from '@island.is/application/templates/activation-allowance'
+import { MONTH_LOOKUP } from './constants'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 export const parseDateSafe = (dateStr?: string): Date | undefined => {
   if (!dateStr) return undefined
@@ -336,6 +343,17 @@ export const getCVInfo = async (
       'base64',
     )
 
+    // s3Service on error only logs the error but doesn't throw so if we get undefined back there was an error
+    if (!content) {
+      throw new TemplateApiError(
+        {
+          title: errorMsgs.successErrorTitle,
+          summary: errorMsgs.cvS3Error,
+        },
+        500,
+      )
+    }
+
     const fileResponse: FileResponse = {
       fileName,
       fileType: mimeType,
@@ -344,13 +362,69 @@ export const getCVInfo = async (
     }
     return fileResponse
   } catch (e) {
-    // CV is optional and can be turned in later, so we'd rather return no cv then stop user during submit
-    return undefined
+    throw new TemplateApiError(
+      {
+        title: errorMsgs.successErrorTitle,
+        summary: errorMsgs.cvS3Error,
+      },
+      500,
+    )
   }
 }
 
 export const getStartingLocale = (externalData: ExternalData) => {
   return getValueViaPath<Locale>(externalData, 'startingLocale.data')
+}
+
+export const getIncome = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<GaldurDomainModelsIncomeActivationGrantIncomeFormDTO> => {
+  const incomeAnswers = getValueViaPath<IncomeAnswers>(answers, 'income') || []
+  const incomeExternal =
+    getValueViaPath<Array<GaldurDomainModelsRSKRSKIncomeListDTO>>(
+      externalData,
+      'activityGrantApplication.data.activationGrant.rskLatestIncomeList.incomeList',
+      [],
+    ) || []
+
+  const incomePayload: Array<GaldurDomainModelsIncomeActivationGrantIncomeFormDTO> =
+    incomeAnswers.map((income, index) => {
+      const employerSSN = incomeExternal?.[index]?.employerSSN
+      const year = incomeExternal?.[index]?.year
+      const hasEnded = income.hasEmploymentEnded === YES
+      const unpaidVacationDays = income.numberOfLeaveDays
+        ? parseInt(income.numberOfLeaveDays, 10)
+        : undefined
+      return {
+        employerName: income.employer,
+        employerSSN: employerSSN,
+        year: year,
+        month: MONTH_LOOKUP[income.month],
+        amount: income.salaryIncome,
+        hasEnded: hasEnded,
+        endDate:
+          !hasEnded && income.endOfEmploymentDate
+            ? new Date(income.endOfEmploymentDate)
+            : undefined,
+        isFromEmployment:
+          income.checkbox?.[0] ===
+          IncomeCheckboxValues.INCOME_FROM_OTHER_THAN_JOB
+            ? false
+            : true,
+        explanation: income.explanation,
+        hasUnpaidVacation: income.hasLeaveDays === YES ? true : false,
+        unpaidVacationDays: unpaidVacationDays,
+        unpaidVacations: !income.leaveDates
+          ? []
+          : income.leaveDates.map((dates) => ({
+              unpaidVacationDays: 0,
+              unpaidVacationStart: new Date(dates.dateFrom),
+              unpaidVacationEnd: new Date(dates.dateTo),
+            })) || [],
+      }
+    })
+  return incomePayload
 }
 
 const getMimeType = (fileType: string): string | undefined => {
@@ -375,4 +449,19 @@ const getFileExtension = (fileName: string): string | undefined => {
   const parts = fileName.trim().split('.')
   if (parts.length < 2) return undefined // no extension found
   return parts.pop()?.toLowerCase()
+}
+
+export const getCanStartAt = (answers: FormValue): Date => {
+  const incomeAnswers = getValueViaPath<IncomeAnswers>(answers, 'income') || []
+  let canStartAtDate = new Date()
+
+  incomeAnswers.forEach((income) => {
+    if (income.hasEmploymentEnded === NO && income.endOfEmploymentDate) {
+      const endOfEmploymentDate = new Date(income.endOfEmploymentDate)
+      canStartAtDate = new Date(
+        Math.max(canStartAtDate.getTime(), endOfEmploymentDate.getTime()),
+      )
+    }
+  })
+  return canStartAtDate
 }
