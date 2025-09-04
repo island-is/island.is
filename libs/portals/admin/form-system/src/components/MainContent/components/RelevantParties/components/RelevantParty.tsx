@@ -2,10 +2,10 @@ import { useMutation } from '@apollo/client'
 import { FormSystemField, FormSystemFormApplicant } from '@island.is/api/schema'
 import { UPDATE_FIELD } from '@island.is/form-system/graphql'
 import { Box, GridColumn, GridRow, Input } from '@island.is/island-ui/core'
-import { ControlContext } from 'libs/portals/admin/form-system/src/context/ControlContext'
 import { useContext, useEffect, useState } from 'react'
 import { m } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
+import { ControlContext } from '../../../../../context/ControlContext'
 
 interface Props {
   applicantType: FormSystemFormApplicant
