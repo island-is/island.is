@@ -241,8 +241,11 @@ export class VerdictService {
   }
 
   async getAndSyncVerdict(verdict: Verdict, user?: TUser) {
+    // RLS: Remove boolean var when the getVerdictDocumentStatus is supported by RLS
+    const isDocumentStatusImplemented = false
+
     // check specifically a verdict that is delivered and service status hasn't been updated
-    if (verdict.externalPoliceDocumentId && !verdict.serviceStatus) {
+    if (isDocumentStatusImplemented && verdict.externalPoliceDocumentId && !verdict.serviceStatus) {
       const verdictInfo = await this.policeService.getVerdictDocumentStatus(
         verdict.externalPoliceDocumentId,
         user,
