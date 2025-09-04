@@ -41,20 +41,16 @@ export const TextInput: React.FC<TextInputProps> = ({
   ) => {
     let newValue = e.target.value
 
-    // For number type, validate input
     if (type === 'number') {
-      // Allow empty value for clearing
       if (newValue === '') {
         onChange(newValue)
         return
       }
 
-      // Only allow numbers, decimal point, and minus sign
       if (!/^-?\d*\.?\d*$/.test(newValue)) {
-        return // Don't update if invalid
+        return
       }
 
-      // Check min/max bounds if specified
       const numValue = parseFloat(newValue)
       if (!isNaN(numValue)) {
         if (min !== undefined && numValue < min) {

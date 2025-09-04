@@ -75,6 +75,7 @@ const Questionnaires: React.FC = () => {
         labelClear={formatMessage(m.clearFilter)}
         labelOpen={formatMessage(m.openFilter)}
         onFilterClear={() => {
+          debouncedSetSearchQuery.cancel()
           setFilterValues(defaultFilterValues)
         }}
         filterInput={

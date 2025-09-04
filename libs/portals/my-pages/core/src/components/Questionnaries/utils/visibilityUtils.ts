@@ -16,15 +16,12 @@ export const evaluateVisibilityCondition = (
   }
 
   try {
-    // Clean up the condition string
     const cleanCondition = condition.trim()
 
-    // Handle isSelected() format with quotes: isSelected('value','@@@QuestionID')
     let isSelectedMatch = cleanCondition.match(
       /isSelected\('([^']+)',\s*'@@@([^']+)'\)/,
     )
 
-    // Also handle isSelected() format without quotes: isSelected('value',@@@QuestionID)
     if (!isSelectedMatch) {
       isSelectedMatch = cleanCondition.match(
         /isSelected\('([^']+)',\s*@@@([^)]+)\)/,
@@ -36,7 +33,6 @@ export const evaluateVisibilityCondition = (
       return checkIsSelected(expectedValue, questionId, answers)
     }
 
-    // Handle equality format like "'Já' == '@@@RadioGroup36824'"
     const equalityMatch = cleanCondition.match(/'([^']+)'\s*==\s*'@@@([^']+)'/)
     if (equalityMatch) {
       const [, expectedValue, questionId] = equalityMatch
@@ -51,9 +47,6 @@ export const evaluateVisibilityCondition = (
   }
 }
 
-/**
- * Checks if a specific value is selected for a question
- */
 const checkIsSelected = (
   expectedValue: string,
   questionId: string,
@@ -66,19 +59,16 @@ const checkIsSelected = (
   }
   const answerValue = answer.value
 
-  // Handle array values (multiple select)
   if (Array.isArray(answerValue)) {
     const result = answerValue.includes(expectedValue)
     return result
   }
 
-  // Handle string values (single select, text)
   if (typeof answerValue === 'string') {
     const result = answerValue === expectedValue
     return result
   }
 
-  // Handle number values
   if (typeof answerValue === 'number') {
     const result = answerValue.toString() === expectedValue
     return result
@@ -99,7 +89,6 @@ export const extractDependenciesFromCondition = (
 
   const dependencies: string[] = []
 
-  // Extract question IDs from @@@QuestionID pattern
   const questionIdMatches = condition.match(/@@@([^)'\s]+)/g)
   if (questionIdMatches) {
     questionIdMatches.forEach((match) => {
@@ -132,7 +121,6 @@ export const isQuestionVisible = (
     return result
   }
 
-  // Evaluate the visibility condition
   const result = evaluateVisibilityCondition(visibilityCondition, answers)
   return result
 }

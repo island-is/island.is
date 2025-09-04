@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { Box, Text, Stack, Button } from '@island.is/island-ui/core'
 import { QuestionRenderer } from '../Questionnaries/QuestionRenderer'
 import { Stepper, Step } from '../Questionnaries/Stepper'
@@ -48,19 +48,29 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   }, [questionnaire.questions, answers])
 
   // Split questions into steps if stepper is enabled
-  const questionSteps = enableStepper
-    ? visibleQuestions.reduce(
-        (steps: HealthQuestionnaireQuestion[][], question, index) => {
-          const stepIndex = Math.floor(index / questionsPerStep)
-          if (!steps[stepIndex]) {
-            steps[stepIndex] = []
-          }
-          steps[stepIndex].push(question)
-          return steps
-        },
-        [],
+  const questionSteps = useMemo(() => {
+    return enableStepper
+      ? visibleQuestions.reduce(
+          (steps: HealthQuestionnaireQuestion[][], question, index) => {
+            const stepIndex = Math.floor(index / questionsPerStep)
+            if (!steps[stepIndex]) {
+              steps[stepIndex] = []
+            }
+            steps[stepIndex].push(question)
+            return steps
+          },
+          [],
+        )
+      : [visibleQuestions]
+  }, [visibleQuestions, enableStepper, questionsPerStep])
+
+  useEffect(() => {
+    if (questionSteps.length > 0) {
+      setCurrentStep((prevStep) =>
+        Math.max(0, Math.min(prevStep, questionSteps.length - 1)),
       )
-    : [visibleQuestions]
+    }
+  }, [questionSteps.length])
 
   // Create stepper steps
   const steps: Step[] = questionSteps.map((_, index) => ({
@@ -73,35 +83,33 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     completed: false,
   }))
 
-  const handleAnswerChange = useCallback(
-    (answer: QuestionAnswer) => {
-      setAnswers((prev) => ({
-        ...prev,
-        [answer.questionId]: answer,
-      }))
+  const handleAnswerChange = useCallback((answer: QuestionAnswer) => {
+    setAnswers((prev) => ({
+      ...prev,
+      [answer.questionId]: answer,
+    }))
 
-      // Clear error for this question if it exists
-      setErrors((prev) => {
-        const { [answer.questionId]: _, ...newErrors } = prev
-        return newErrors
-      })
-    },
-    [errors],
-  )
+    // Clear error for this question if it exists
+    setErrors((prev) => {
+      const { [answer.questionId]: _, ...newErrors } = prev
+      return newErrors
+    })
+  }, [])
 
   const validateCurrentStep = (): boolean => {
-    const currentQuestions = questionSteps[currentStep]
+    const currentQuestions = questionSteps[currentStep] || []
     const newErrors: { [key: string]: string } = {}
     let isValid = true
 
     currentQuestions.forEach((question) => {
       if (question.display === 'required') {
         const answer = answers[question.id]
+
         if (
-          !answer ||
+          answer == null ||
+          answer.value == null ||
           (typeof answer.value === 'string' && !answer.value.trim()) ||
-          (Array.isArray(answer.value) && answer.value.length === 0) ||
-          answer.value === undefined
+          (Array.isArray(answer.value) && answer.value.length === 0)
         ) {
           newErrors[question.id] = formatMessage(m.requiredQuestion)
           isValid = false
@@ -132,7 +140,6 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   }
 
   const handleSubmit = () => {
-    // Validate all visible questions before submitting
     let allValid = true
     const allErrors: { [key: string]: string } = {}
 

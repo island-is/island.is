@@ -43,8 +43,9 @@ export const Stepper: React.FC<StepperProps> = ({
 }) => {
   const canGoNext = currentStepIndex < steps.length - 1
   const canGoPrevious = currentStepIndex > 0
-  const progress = ((currentStepIndex + 1) / steps.length) * 100
-
+  const progress = steps.length
+    ? (Math.min(currentStepIndex + 1, steps.length) / steps.length) * 100
+    : 0
   const handleStepClick = (stepIndex: number) => {
     if (allowClickableSteps && !steps[stepIndex].disabled) {
       onStepChange(stepIndex)
@@ -60,6 +61,17 @@ export const Stepper: React.FC<StepperProps> = ({
       <Box
         key={step.id}
         onClick={() => isClickable && handleStepClick(index)}
+        role={isClickable ? 'button' : undefined}
+        tabIndex={isClickable ? 0 : -1}
+        aria-current={isActive ? 'step' : undefined}
+        aria-disabled={step.disabled || undefined}
+        onKeyDown={(e) => {
+          if (!isClickable) return
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleStepClick(index)
+          }
+        }}
         style={{
           cursor: isClickable ? 'pointer' : 'default',
         }}
@@ -79,7 +91,8 @@ export const Stepper: React.FC<StepperProps> = ({
             opacity: step.disabled ? 0.5 : 1,
           }}
         >
-          {/* Step number/icon */}
+          {/* Step number/icon
+          TODO: fix with stylesheet when stepper is refactored */}
           <Box
             marginRight={2}
             style={{

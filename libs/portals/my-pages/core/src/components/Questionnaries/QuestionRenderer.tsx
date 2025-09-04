@@ -36,6 +36,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
     })
   }
 
+  // TODO: Fix with enum when graphql is ready
   const renderQuestionByType = () => {
     switch (question.__typename) {
       case 'HealthQuestionnaireAnswerText':
@@ -137,7 +138,8 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       case 'HealthQuestionnaireAnswerScale': {
         if (!question.answerOptions) return null
         const scaleOptions = question.answerOptions
-          .map((opt) => parseInt(opt.id))
+          .map((opt) => parseInt(opt.id, 10))
+          .filter((n) => isFinite(n))
           .sort((a, b) => a - b)
         const minScale = Math.min(...scaleOptions)
         const maxScale = Math.max(...scaleOptions)

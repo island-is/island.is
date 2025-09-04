@@ -37,11 +37,10 @@ export const Radio: React.FC<RadioProps> = ({
   direction = 'vertical',
 }) => {
   const radioButtons = options.map((option) => (
-    <Box width="full">
+    <Box width="full" key={option.value}>
       <RadioButton
         large={options.length <= 2}
         backgroundColor={options.length <= 2 ? 'blue' : 'white'}
-        key={option.value}
         id={`${id}-${option.value}`}
         name={id}
         label={option.label}

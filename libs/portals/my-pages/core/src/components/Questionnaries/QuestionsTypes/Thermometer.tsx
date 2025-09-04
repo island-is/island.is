@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from 'react'
+import React, { useRef, useState, useCallback, useEffect } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 
 export interface ThermometerProps {
@@ -36,8 +36,9 @@ export const Thermometer: React.FC<ThermometerProps> = ({
   const thermometerRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
 
-  const percentage = ((value - min) / (max - min)) * 100
-
+  const range = Math.max(0, max - min)
+  const percentage =
+    range === 0 ? 0 : Math.max(0, Math.min(100, ((value - min) / range) * 100))
   const calculateValueFromPosition = useCallback(
     (clientY: number) => {
       if (!thermometerRef.current) return value
@@ -48,7 +49,6 @@ export const Thermometer: React.FC<ThermometerProps> = ({
       const ratio = relativeY / height
       const rawValue = min + ratio * (max - min)
 
-      // Round to nearest step
       const steppedValue = Math.round(rawValue / step) * step
       return Math.max(min, Math.min(max, steppedValue))
     },
@@ -96,8 +96,7 @@ export const Thermometer: React.FC<ThermometerProps> = ({
     setIsDragging(false)
   }, [])
 
-  // Attach global mouse/touch events when dragging
-  React.useEffect(() => {
+  useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
@@ -120,6 +119,23 @@ export const Thermometer: React.FC<ThermometerProps> = ({
     handleTouchMove,
     handleTouchEnd,
   ])
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (disabled) return
+      let next = value
+      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') next = value + step
+      else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft')
+        next = value - step
+      else if (e.key === 'Home') next = min
+      else if (e.key === 'End') next = max
+      if (next !== value) {
+        onChange(Math.max(min, Math.min(max, next)))
+        e.preventDefault()
+      }
+    },
+    [disabled, value, step, min, max, onChange],
+  )
 
   return (
     <Box>
@@ -149,6 +165,14 @@ export const Thermometer: React.FC<ThermometerProps> = ({
         <Box>
           <Box
             ref={thermometerRef}
+            role="slider"
+            aria-labelledby={`${label}-label`}
+            aria-valuemin={min}
+            aria-valuemax={max}
+            aria-valuenow={value}
+            aria-disabled={disabled}
+            tabIndex={disabled ? -1 : 0}
+            onKeyDown={handleKeyDown}
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
             style={{

@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import LSHQuestionnaire from './LSH/LSHQuestionnaire'
 
 const QuestionnaireDetail: React.FC = () => {
-  const { id } = useParams<string>()
+  const { id } = useParams<{ id?: string }>()
 
   //TODO: fetch questionnaire data by ID
 

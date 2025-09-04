@@ -32,9 +32,11 @@ export const Scale: React.FC<ScaleProps> = ({
   showLabels = true,
 }) => {
   const generateScaleValues = () => {
+    const s = typeof step === 'number' && step > 0 ? step : 1
     const values = []
-    for (let i = min; i <= max; i += step) {
+    for (let i = min; i <= max; i += s) {
       values.push(i)
+      if (i === max) break
     }
     return values
   }
