@@ -8,7 +8,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -32,28 +31,26 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
+import { CivilClaimantService, DefendantService } from '../defendant'
+import { FileService, getDefenceUserCaseFileCategories } from '../file'
 import {
+  Case,
+  CaseFile,
+  CaseRepositoryService,
+  CaseString,
   CivilClaimant,
-  CivilClaimantService,
+  DateLog,
   Defendant,
   DefendantEventLog,
-  DefendantService,
-} from '../defendant'
-import { EventLog } from '../event-log'
-import {
-  CaseFile,
-  FileService,
-  getDefenceUserCaseFileCategories,
-} from '../file'
-import { IndictmentCount } from '../indictment-count'
-import { Offense } from '../indictment-count/models/offense.model'
-import { Institution } from '../institution'
-import { Subpoena } from '../subpoena'
-import { User } from '../user'
-import { Victim } from '../victim'
-import { Case } from './models/case.model'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
+  EventLog,
+  IndictmentCount,
+  Institution,
+  Offense,
+  Subpoena,
+  User,
+  Verdict,
+  Victim,
+} from '../repository'
 import { PdfService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
@@ -195,6 +192,11 @@ export const include: Includeable[] = [
         separate: true,
       },
       {
+        model: Verdict,
+        as: 'verdict',
+        required: false,
+      },
+      {
         model: DefendantEventLog,
         as: 'eventLogs',
         required: false,
@@ -210,11 +212,6 @@ export const include: Includeable[] = [
     required: false,
     order: [['created', 'ASC']],
     separate: true,
-  },
-  {
-    model: Victim,
-    as: 'victims',
-    required: false,
   },
   {
     model: IndictmentCount,
@@ -341,12 +338,12 @@ export class LimitedAccessCaseService {
     private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async findById(caseId: string): Promise<Case> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       attributes,
       include,
       where: {
@@ -368,7 +365,7 @@ export class LimitedAccessCaseService {
     update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
-    const [numberOfAffectedRows] = await this.caseModel.update(
+    const [numberOfAffectedRows] = await this.caseRepositoryService.update(
       { ...update },
       { where: { id: theCase.id } },
     )
@@ -471,7 +468,7 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
-    return this.caseModel
+    return this.caseRepositoryService
       .findOne({
         where: {
           defenderNationalId: normalizeAndFormatNationalId(nationalId),

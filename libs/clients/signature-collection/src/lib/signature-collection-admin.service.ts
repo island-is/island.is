@@ -75,16 +75,6 @@ export class SignatureCollectionAdminClientService
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(
-    auth: Auth,
-    collectionTypeFilter?: CollectionType,
-  ): Promise<Collection[]> {
-    return await this.sharedService.currentCollection(
-      this.getApiWithAuth(this.electionsApi, auth),
-      collectionTypeFilter,
-    )
-  }
-
   async getLatestCollectionForType(
     auth: Auth,
     collectionType: CollectionType,
@@ -506,13 +496,17 @@ export class SignatureCollectionAdminClientService
     }
   }
 
-  async lockList(auth: Auth, listId: string): Promise<Success> {
+  async lockList(
+    auth: Auth,
+    { listId, setLocked }: { listId: string; setLocked: boolean },
+  ): Promise<Success> {
     try {
       const res = await this.getApiWithAuth(
         this.adminApi,
         auth,
       ).adminMedmaelalistiIDLockListPatch({
         iD: parseInt(listId, 10),
+        shouldLock: setLocked,
       })
       return { success: res.listaLokad ?? false }
     } catch (error) {

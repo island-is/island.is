@@ -14,11 +14,6 @@ import { CandidateLookup } from './user.dto'
 import { Signature } from './signature.dto'
 
 export interface SignatureCollectionAdminClient {
-  currentCollection(
-    auth: Auth,
-    collectionTypeFilter?: CollectionType,
-  ): Promise<Collection[]>
-
   getLatestCollectionForType(
     auth: Auth,
     collectionType: CollectionType,
@@ -84,7 +79,10 @@ export interface SignatureCollectionAdminClient {
     nationalId: string,
   ): Promise<Signature[]>
 
-  lockList(auth: Auth, listId: string): Promise<Success>
+  lockList(
+    auth: Auth,
+    input: { listId: string; setLocked: boolean },
+  ): Promise<Success>
 
   uploadPaperSignature(
     auth: Auth,

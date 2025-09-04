@@ -62,6 +62,12 @@ export class FormDto {
   @ApiProperty()
   stopProgressOnValidatingScreen!: boolean
 
+  @ApiProperty()
+  hasSummaryScreen!: boolean
+
+  @ApiPropertyOptional()
+  isZendeskEnabled?: boolean
+
   @ApiPropertyOptional({ type: LanguageType })
   completedMessage?: LanguageType
 

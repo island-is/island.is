@@ -17,10 +17,7 @@ import { PropertyInfoSummary } from './PropertyInfoSummary'
 import { RentalInfoSummary } from './RentalInfoSummary'
 import { summaryWrap } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
-import {
-  hasAnyMatchingNationalId,
-  hasDuplicateApplicants,
-} from '../../utils/utils'
+import { hasDuplicateApplicants } from '../../utils/utils'
 
 export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -31,6 +28,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const {
     landlords,
+    landlordRepresentatives,
     tenants,
     smokeDetectors,
     fireExtinguisher,
@@ -42,21 +40,16 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     housingFundPayee,
   } = applicationAnswers(answers)
 
-  const tenantIds = (tenants ?? []).map(
-    (tenant) => tenant.nationalIdWithName.nationalId,
-  )
-
   const isFireProtectionsPresent =
     smokeDetectors && fireExtinguisher && emergencyExits
   const isConditionPresent = conditionDescription || (files && files.length > 0)
   const isOtherFeesPresent =
     electricityCostPayee && heatingCostPayee && housingFundPayee
-  const hasSameLandlordAndTenant = hasAnyMatchingNationalId(
-    tenantIds,
-    landlords,
-  )
-  const hasRepeatedLandlord = hasDuplicateApplicants(landlords)
-  const hasRepeatedTenant = hasDuplicateApplicants(tenants)
+  const hasRepeatedApplicants = hasDuplicateApplicants([
+    ...landlords,
+    ...tenants,
+    ...landlordRepresentatives,
+  ])
 
   const AlertMessageConditions = [
     {
@@ -75,24 +68,9 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       message: summary.alertMissingInfoOtherFees,
     },
     {
-      isFilled: !hasSameLandlordAndTenant,
-      route: Routes.LANDLORDINFORMATION,
-      message: summary.alertSameTenantAndLandlordLandlord,
-    },
-    {
-      isFilled: !hasRepeatedLandlord,
-      route: Routes.LANDLORDINFORMATION,
-      message: summary.alertRepeatedLandlord,
-    },
-    {
-      isFilled: !hasSameLandlordAndTenant,
-      route: Routes.TENANTINFORMATION,
-      message: summary.alertSameTenantAndLandlordTenant,
-    },
-    {
-      isFilled: !hasRepeatedTenant,
-      route: Routes.TENANTINFORMATION,
-      message: summary.alertRepeatedTenant,
+      isFilled: !hasRepeatedApplicants,
+      route: Routes.PARTIESINFORMATION,
+      message: summary.uniqueApplicantsError,
     },
   ]
 
@@ -114,16 +92,14 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         application={application}
         field={field}
         goToScreen={goToScreen}
-        landlordsRoute={Routes.LANDLORDINFORMATION}
-        tenantsRoute={Routes.TENANTINFORMATION}
+        partiesRoute={Routes.PARTIESINFORMATION}
         hasChangeButton={true}
       />
       <ApplicantsRepresentativesSummary
         application={application}
         field={field}
         goToScreen={goToScreen}
-        landlordsRoute={Routes.LANDLORDINFORMATION}
-        tenantsRoute={Routes.TENANTINFORMATION}
+        partiesRoute={Routes.PARTIESINFORMATION}
         hasChangeButton={true}
       />
       <RentalInfoSummary
@@ -139,7 +115,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         application={application}
         field={field}
         goToScreen={goToScreen}
-        categoryRoute={Routes.PROPERTYCATEGORY}
+        categoryRoute={Routes.PROPERTYINFORMATION}
         propertySearchRoute={Routes.PROPERTYSEARCH}
         propertyDescriptionRoute={Routes.SPECIALPROVISIONS}
         specialProvisionsRoute={Routes.SPECIALPROVISIONS}

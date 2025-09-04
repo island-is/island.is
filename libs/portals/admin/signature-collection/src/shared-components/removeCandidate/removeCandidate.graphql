@@ -1,8 +1,0 @@
-mutation signatureCollectionAdminRemoveCandidate(
-  $input: SignatureCollectionCandidateIdInput!
-) {
-  signatureCollectionAdminRemoveCandidate(input: $input) {
-    success
-    reasons
-  }
-}
