@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import jwksClient from 'jwks-rsa'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import getConfig from 'next/config'
+import getRawBody from 'raw-body'
 
 import type { PaymentCallbackPayload } from '@island.is/api/domains/landspitali'
 import { logger } from '@island.is/logging'
@@ -50,7 +51,7 @@ const getPublicKeyFromJwtHeader = (
   }
   client.getSigningKey(header.kid, (err, key) => {
     if (err || !key) return callback(err)
-    const signingKey = key?.getPublicKey()
+    const signingKey = key.getPublicKey()
     callback(null, signingKey)
   })
 }
@@ -98,6 +99,12 @@ const validateIncomingJwt = (token: string, rawBody: string) => {
   })
 }
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -116,15 +123,27 @@ export default async function handler(
     return res.status(401).json({ message: 'Unauthorized' })
   }
 
+  const rawBody = (await getRawBody(req)).toString('utf8')
+
   // This will throw an error if the JWT is invalid
   try {
-    await validateIncomingJwt(token, JSON.stringify(req.body))
+    await validateIncomingJwt(token, rawBody)
   } catch (error) {
-    logger.warn('Web payment callback JWT validation failed', { error })
+    logger.warn('Web payment callback JWT validation failed', {
+      error,
+      issuer,
+      audience,
+    })
+
     return res.status(401).json({ message: 'Unauthorized' })
   }
 
-  const payment = req.body as PaymentCallbackPayload
+  let payment: PaymentCallbackPayload
+  try {
+    payment = JSON.parse(rawBody) as PaymentCallbackPayload
+  } catch {
+    return res.status(400).json({ message: 'Invalid JSON body' })
+  }
 
   logger.info('Web payment callback received', { type: payment.type })
 
