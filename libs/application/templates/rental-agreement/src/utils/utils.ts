@@ -125,6 +125,28 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
   },
 }
 
+export const landLordInfoTableFields: Record<string, RepeaterItem> = {
+  nationalIdWithName: {
+    component: 'nationalIdWithName',
+    required: true,
+    searchCompanies: true,
+  },
+  phone: {
+    component: 'phone',
+    required: true,
+    label: m.landlordAndTenantDetails.phoneInputLabel,
+    enableCountrySelector: true,
+    width: 'half',
+  },
+  email: {
+    component: 'input',
+    required: true,
+    label: m.landlordAndTenantDetails.emailInputLabel,
+    type: 'email',
+    width: 'half',
+  },
+}
+
 export const applicantTableConfig = {
   format: {
     phone: (value: string) => value && formatPhoneNumber(value),

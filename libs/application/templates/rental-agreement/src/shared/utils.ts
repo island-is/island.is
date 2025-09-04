@@ -19,21 +19,32 @@ import {
 } from './types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
+const mapLandLordInfo = (landlord: ApplicantsInfo): ApplicantsInfo => {
+  return {
+    nationalIdWithName: landlord.nationalIdWithName,
+    phone: landlord.phone,
+    email: landlord.email,
+    address: '', // Intentionally blank as it is not used in the HMS Rental Agreement
+  }
+}
+
 const extractParticipants = (
   answers: Application['answers'],
 ): ParticipantsSection => ({
-  landlords:
+  landlords: (
     getValueViaPath<ApplicantsInfo[]>(
       answers,
       'parties.landlordInfo.table',
       [],
-    ) ?? [],
-  landlordRepresentatives:
+    ) ?? []
+  ).map(mapLandLordInfo),
+  landlordRepresentatives: (
     getValueViaPath<ApplicantsInfo[]>(
       answers,
       'parties.landlordInfo.representativeTable',
       [],
-    ) ?? [],
+    ) ?? []
+  ).map(mapLandLordInfo),
   tenants:
     getValueViaPath<ApplicantsInfo[]>(
       answers,
