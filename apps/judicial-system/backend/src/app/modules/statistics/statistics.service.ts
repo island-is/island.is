@@ -738,7 +738,7 @@ export class StatisticsService {
               header: 'Birtingartími fyrirkalls (dagar)',
             },
           ] as Column[],
-          key: `ákærur_from_${getDateString(
+          key: `akaerur_from_${getDateString(
             period?.fromDate,
           )}_to_${getDateString(period?.toDate)}_${user.nationalId}.csv`,
         }
