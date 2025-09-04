@@ -17,9 +17,7 @@ import {
   defaultRenderMarkObject,
   defaultRenderNodeObject,
 } from '@island.is/island-ui/contentful'
-import {
-  GridContainer,
-} from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   AccordionSlice,
