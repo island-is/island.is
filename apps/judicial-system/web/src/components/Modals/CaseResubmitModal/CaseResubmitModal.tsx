@@ -45,7 +45,11 @@ const CaseResubmitModal: FC<Props> = ({
       onClose={onClose}
       primaryButton={{
         text: formatMessage(strings.primaryButtonText),
-        onClick: () => explanation && onContinue(explanation),
+        onClick: () => {
+          if (explanation) {
+            onContinue(explanation)
+          }
+        },
         isLoading: isLoading,
         isDisabled: !explanation,
       }}
