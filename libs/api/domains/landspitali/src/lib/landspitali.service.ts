@@ -26,6 +26,7 @@ import {
   generateDirectGrantPaymentConfirmationEmailMessage,
   generateMemorialCardPaymentConfirmationEmailMessage,
 } from './utils'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 // eslint-disable-next-line local-rules/disallow-kennitalas
 const LANDSPITALI_NATIONAL_ID = '5003002130'
@@ -41,6 +42,7 @@ export class LandspitaliService {
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async sendDirectGrantPaymentConfirmationEmail(
@@ -106,6 +108,21 @@ export class LandspitaliService {
   async createMemorialCardPaymentUrl(
     input: CreateMemorialCardPaymentUrlInput,
   ): Promise<CreateMemorialCardPaymentUrlResponse> {
+    const skipsPaymentStep = await this.featureFlagService.getValue(
+      Features.landspitaliMemorialCardSkipsPaymentStep,
+      false,
+    )
+
+    if (skipsPaymentStep) {
+      await this.sendMemorialCardPaymentConfirmationEmail({
+        ...input,
+        validationSecret: this.config.webValidationSecret,
+      })
+      return {
+        url: '',
+      }
+    }
+
     const locale = input.locale !== 'en' ? 'is' : 'en'
     const { urls } =
       await this.paymentsClient.paymentFlowControllerCreatePaymentUrl({
@@ -196,6 +213,21 @@ export class LandspitaliService {
   async createDirectGrantPaymentUrl(
     input: CreateDirectGrantPaymentUrlInput,
   ): Promise<CreateDirectGrantPaymentUrlResponse> {
+    const skipsPaymentStep = await this.featureFlagService.getValue(
+      Features.landspitaliDirectGrantSkipsPaymentStep,
+      false,
+    )
+
+    if (skipsPaymentStep) {
+      await this.sendDirectGrantPaymentConfirmationEmail({
+        ...input,
+        validationSecret: this.config.webValidationSecret,
+      })
+      return {
+        url: '',
+      }
+    }
+
     const locale = input.locale !== 'en' ? 'is' : 'en'
     const response =
       await this.paymentsClient.paymentFlowControllerCreatePaymentUrl({
