@@ -31,7 +31,7 @@ export const serviceSetup = (services: {
         dev: ref(
           (ctx) =>
             `https://${
-              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}` : ''
             }beta.dev01.devland.is/greida`,
         ),
         staging: `https://beta.staging01.devland.is/greida`,
@@ -40,7 +40,9 @@ export const serviceSetup = (services: {
       LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
         (ctx) =>
           `http://web.${
-            ctx.featureDeploymentName || 'islandis'
+            ctx.featureDeploymentName
+              ? `feature-${ctx.featureDeploymentName}`
+              : 'islandis'
           }.svc.cluster.local/payments/event-callback`,
       ),
       REDIS_USE_SSL: 'true',
