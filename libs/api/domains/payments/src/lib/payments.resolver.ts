@@ -30,7 +30,7 @@ import { CardVerificationResponse } from './dto/cardVerificationCallback.respons
 import { GetJwksResponse } from './dto/getJwks.response'
 import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
 import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
-import { AdminPortalScope } from '../../../../../auth/scopes/src/lib/admin-portal.scope'
+import { AdminPortalScope } from '@island.is/auth/scopes';
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)

@@ -34,7 +34,7 @@ export class PaymentsService {
 
   getPaymentFlow(
     input: GetPaymentFlowInput,
-    includeEvents: boolean = false,
+    includeEvents = false,
   ): Promise<GetPaymentFlowResponse> {
     return this.paymentsApi.paymentFlowControllerGetPaymentFlow({
       id: input.id,
