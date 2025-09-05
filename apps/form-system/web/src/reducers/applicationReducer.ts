@@ -87,7 +87,7 @@ const getCurrentSectionAndScreen = (
     index: currentSectionIndex,
   }
 
-  if (currentSectionIndex < 2) {
+  if (currentSectionIndex < 1) {
     return {
       currentSection,
       currentScreen: undefined,

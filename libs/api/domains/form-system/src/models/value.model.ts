@@ -91,6 +91,15 @@ export class ValueDto {
   @Field(() => String, { nullable: true })
   id?: string
 
+  @Field(() => String, { nullable: true })
+  fieldId?: string
+
+  @Field(() => String, { nullable: true })
+  applicationId?: string
+
+  @Field(() => String, { nullable: true })
+  fieldType?: string
+
   @Field(() => Int, { nullable: true })
   order?: number
 
