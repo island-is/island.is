@@ -1,0 +1,79 @@
+query GetQuestionnaires {
+  questionnairesList {
+    questionnaires {
+      id
+      title
+      sentDate
+      status
+      description
+      organization
+    }
+  }
+}
+
+query GetQuestionnaire($id: String!) {
+  questionnairesDetail(id: $id) {
+    id
+    title
+    sentDate
+    status
+    description
+    organization
+    questions {
+      __typename
+      id
+      label
+      sublabel
+      display
+      answerOptions {
+        id
+        label
+        type
+        value {
+          extraQuestions {
+            __typename
+            ... on HealthQuestionnaireAnswerThermometer {
+              id
+              label
+              sublabel
+              display
+              maxLabel
+              minLabel
+            }
+            ... on HealthQuestionnaireAnswerText {
+              id
+              label
+              sublabel
+              display
+              placeholder
+              maxLength
+            }
+            ... on HealthQuestionnaireAnswerNumber {
+              id
+              label
+              sublabel
+              display
+              placeholder
+              min
+              max
+            }
+            ... on HealthQuestionnaireAnswerRadio {
+              id
+              label
+              sublabel
+              display
+              options
+            }
+            ... on HealthQuestionnaireAnswerCheckbox {
+              id
+              label
+              sublabel
+              display
+              options
+            }
+          }
+        }
+      }
+    }
+  }
+}
