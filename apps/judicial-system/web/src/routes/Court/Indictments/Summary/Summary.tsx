@@ -2,7 +2,13 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Accordion, Box, PdfViewer, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  Box,
+  PdfViewer,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -96,14 +102,24 @@ const Summary: FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    const url = await getFileUrl('3ceb595b-db97-4e44-beee-70f3c74ed97f')
-    console.log(url)
+    const rulings = workingCase.caseFiles?.filter((c) => c.type === 'RULING')
+    const showError = () => toast.error('Dómur fannst ekki')
+
+    if (!rulings) {
+      showError()
+      return
+    }
+
+    const rulingId = rulings[0].id
+
+    const url = await getFileUrl(rulingId)
+
     if (url) {
       setRulingUrl(url)
+      setModalVisible('CONFIRM_INDICTMENT')
+    } else {
+      showError()
     }
-    // TODO ELSE
-
-    setModalVisible('CONFIRM_INDICTMENT')
   }
 
   const handleCourtEndTimeChange = useCallback(
@@ -175,11 +191,7 @@ const Summary: FC = () => {
             </Box>
           )}
         </Box>
-        <Box
-          component="section"
-          marginBottom={1}
-          onClick={handleNextButtonClick}
-        >
+        <Box component="section" marginBottom={1}>
           <Text variant="h2" as="h2">
             {formatMessage(core.caseNumber, {
               caseNumber: workingCase.courtCaseNumber,
