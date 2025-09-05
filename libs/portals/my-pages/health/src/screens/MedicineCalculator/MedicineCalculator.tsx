@@ -1,53 +1,42 @@
 import {
-  Text,
+  RightsPortalDrug,
+  RightsPortalDrugCalculatorResponse,
+} from '@island.is/api/schema'
+import {
   Box,
+  Button,
+  FilterInput,
+  Hidden,
+  LoadingDots,
   Pagination,
   Table as T,
-  FilterInput,
-  Button,
-  LoadingDots,
-  Hidden,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { amountFormat, EmptyTable, m } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
+import { useEffect, useRef, useState } from 'react'
+import { useDebounce, useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
 import {
   CONTENT_GAP,
   CONTENT_GAP_LG,
   CONTENT_GAP_SM,
   SECTION_GAP,
 } from '../../utils/constants'
-import { amountFormat, m } from '@island.is/portals/my-pages/core'
-import { useEffect, useRef, useState } from 'react'
-import { useDebounce, useWindowSize } from 'react-use'
+import { exportDrugListFile } from '../../utils/FileBreakdown/filesStructure'
+import { RightsPortalCalculatorSelectedDrug } from '../../utils/types'
+import * as styles from '../Medicine/Medicine.css'
 import {
   useGetDrugCalculationMutation,
   useGetDrugsQuery,
 } from '../Medicine/Medicine.generated'
-import {
-  RightsPortalCalculatorRequestInput,
-  RightsPortalDrug,
-  RightsPortalDrugCalculatorResponse,
-} from '@island.is/api/schema'
-import * as styles from '../Medicine/Medicine.css'
-import { DrugRow } from './components/DrugRow/DrugRow'
 import { MedicinePaymentParticipationWrapper } from '../Medicine/wrapper/MedicinePaymentParticipationWrapper'
-import { HealthPaths } from '../../lib/paths'
-import { Problem } from '@island.is/react-spa/shared'
-import { EmptyTable } from '@island.is/portals/my-pages/core'
-import { exportDrugListFile } from '../../utils/FileBreakdown/filesStructure'
+import { DrugRow } from './components/DrugRow/DrugRow'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8
-
-export type DrugRowDrug = {
-  name?: string | null
-  strength?: string | null
-  totalPrice?: number | null
-  totalPaidIndividual?: number | null
-}
-
-export type RightsPortalCalculatorSelectedDrug =
-  RightsPortalCalculatorRequestInput & DrugRowDrug
 
 export const MedicineCalulator = () => {
   const { formatMessage } = useLocale()

@@ -40,8 +40,8 @@ export class AidOrNutrition {
   @Field({ nullable: true })
   available?: string
 
-  @Field({ nullable: true })
-  location?: string
+  @Field(() => [String], { nullable: true })
+  location?: string[]
 
   @Field({ nullable: true })
   explanation?: string
@@ -57,6 +57,9 @@ export class AidOrNutrition {
 
   @Field()
   expiring!: boolean
+
+  @Field({ nullable: true })
+  valid?: boolean
 
   @Field(() => AidOrNutritionRenewalStatus, { nullable: true })
   renewalStatus?: AidOrNutritionRenewalStatus
