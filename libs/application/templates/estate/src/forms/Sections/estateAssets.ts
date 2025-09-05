@@ -332,6 +332,11 @@ export const estateAssets = buildSection({
     buildSubSection({
       id: 'otherAssets',
       title: m.otherAssetsTitle,
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
       children: [
         buildMultiField({
           id: 'otherAssets',
@@ -347,24 +352,10 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                id: 'otherAssets',
+                id: 'estate.otherAssets',
                 component: 'OtherAssetsRepeater',
-                doesNotRequireAnswer: true,
               },
               {
-                fields: [
-                  {
-                    id: 'info',
-                    title: m.otherAssetsText,
-                    required: true,
-                  },
-                  {
-                    id: 'value',
-                    title: m.otherAssetsValue,
-                    required: true,
-                    currency: true,
-                  },
-                ],
                 repeaterButtonText: m.otherAssetRepeaterButton,
               },
             ),

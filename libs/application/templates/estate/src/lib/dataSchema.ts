@@ -290,7 +290,8 @@ export const estateSchema = z.object({
       })
       .refine(
         ({ enabled, organization, faceValue, rateOfExchange }) => {
-          return enabled && (organization !== '' || faceValue !== '' || rateOfExchange !== '')
+          return enabled &&
+            (organization !== '' || faceValue !== '' || rateOfExchange !== '')
             ? isValidString(organization)
             : true
         },
@@ -326,6 +327,31 @@ export const estateSchema = z.object({
         },
         {
           path: ['nationalId'],
+        },
+      )
+      .array()
+      .optional(),
+    otherAssets: z
+      .object({
+        description: z.string(),
+        value: z.string(),
+        initial: z.boolean(),
+        enabled: z.boolean(),
+      })
+      .refine(
+        ({ enabled, description }) => {
+          return enabled ? isValidString(description) : true
+        },
+        {
+          path: ['description'],
+        },
+      )
+      .refine(
+        ({ enabled, value }) => {
+          return enabled ? isNumericalString(value) : true
+        },
+        {
+          path: ['value'],
         },
       )
       .array()
@@ -392,8 +418,6 @@ export const estateSchema = z.object({
       },
     )
     .optional(),
-
-
 
   // is: Hlutabréf
   stocks: z
