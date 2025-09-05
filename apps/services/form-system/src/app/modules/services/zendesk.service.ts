@@ -37,7 +37,7 @@ export class ZendeskService {
     const zendeskUrl = `https://${tenantId}.zendesk.com`
     const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
 
-    const { name, email } = this.getNameAndEmail(applicationDto)
+    const { name, email } = this.getNameAndEmail()
     const body = this.constructBody(applicationDto)
     const subject = applicationDto.formName?.is ?? 'No subject'
     const data = JSON.stringify(applicationDto)
@@ -106,10 +106,10 @@ export class ZendeskService {
     }
   }
 
-  private addAttachmentToTicket(): boolean {
-    // TODO: implement file attachment logic
-    return true
-  }
+  // private addAttachmentToTicket(): boolean {
+  //   // TODO: implement file attachment logic
+  //   return true
+  // }
 
   private async uploadFile(
     data: string,
@@ -140,7 +140,7 @@ export class ZendeskService {
     }
   }
 
-  private getNameAndEmail(applicationDto: ApplicationDto): {
+  private getNameAndEmail(): {
     name: string
     email: string
   } {
@@ -161,7 +161,7 @@ export class ZendeskService {
     }</p>`
     body += '<br />'
     body += '<h3>Aðilar:</h3>'
-    applicationDto.sections?.[1]?.screens?.forEach((screen) => {})
+    // applicationDto.sections?.[1]?.screens?.forEach((screen) => {})
     body += '<h3>Gögn:</h3>'
     if (sections) {
       sections.forEach((section) => {
@@ -182,7 +182,7 @@ export class ZendeskService {
         })
       })
     }
-    console.log('constructed body\n', body)
+    // console.log('constructed body\n', body)
     return body
   }
 }
