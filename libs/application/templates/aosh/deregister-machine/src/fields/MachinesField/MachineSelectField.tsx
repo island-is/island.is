@@ -40,7 +40,7 @@ export const MachineSelectField: FC<
     currentMachine && currentMachine.regNumber ? currentMachine : null,
   )
   const [machineId, setMachineId] = useState<string>(
-    getValueViaPath(application.answers, 'machine.id', '') as string,
+    getValueViaPath<string>(application.answers, 'machine.id', '') || '',
   )
 
   const getMachineDetails = useLazyMachineDetails()

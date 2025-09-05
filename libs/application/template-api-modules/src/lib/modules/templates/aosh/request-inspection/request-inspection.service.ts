@@ -62,7 +62,7 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const answers = application.answers as unknown as RequestInspectionAnswers
+    const answers = application.answers as RequestInspectionAnswers
 
     if (auth.nationalId !== application.applicant) {
       throw new TemplateApiError(
