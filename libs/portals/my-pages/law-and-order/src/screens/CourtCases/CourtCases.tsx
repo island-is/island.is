@@ -28,6 +28,7 @@ const CourtCases = () => {
 
   useEffect(() => {
     refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang])
 
   return (
