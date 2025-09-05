@@ -28,7 +28,11 @@ export const MessageWithLink = ({ item, lang = 'is' }: Props) => {
       background="white"
       alignItems="center"
     >
-      <Box display="flex" flexDirection="column" style={{ flex: 1, minWidth: 0 }}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        style={{ flex: 1, minWidth: 0 }}
+      >
         <Box paddingBottom={1}>
           <Text variant="h4">{item?.name?.[lang as 'is' | 'en'] ?? ''}</Text>
         </Box>
