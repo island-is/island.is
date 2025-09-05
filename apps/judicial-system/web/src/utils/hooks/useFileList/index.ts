@@ -100,7 +100,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
     async (fileId: string): Promise<string | undefined> => {
       const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
       try {
-        const { data, error } = await query({
+        const { data } = await query({
           variables: {
             input: {
               id: fileId,
@@ -109,7 +109,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
             },
           },
         })
-        console.log(error, fileId, data)
+
         return limitedAccess
           ? (data as LimitedAccessGetSignedUrlQuery).limitedAccessGetSignedUrl
               ?.url
@@ -132,8 +132,8 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   // Handlers
   const onOpen = useCallback(
     async (fileId: string) => {
-      console.log(fileId)
       const url = await getFileUrl(fileId)
+
       if (url) openFile(url)
     },
     [getFileUrl, openFile],
