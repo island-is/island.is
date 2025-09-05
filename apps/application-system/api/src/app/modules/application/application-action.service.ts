@@ -205,6 +205,7 @@ export class ApplicationActionService {
       await this.historyService.saveStateTransition(
         application.id,
         newState,
+        auth,
         event,
       )
     } catch (e) {

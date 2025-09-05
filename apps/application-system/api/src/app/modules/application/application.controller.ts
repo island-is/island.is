@@ -437,6 +437,7 @@ export class ApplicationController {
     await this.historyService.saveStateTransition(
       updatedApplication.id,
       updatedApplication.state,
+      user,
     )
 
     // Trigger meta.onEntry for initial state on application creation
