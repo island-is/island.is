@@ -1199,6 +1199,10 @@ export const messages = defineMessages({
     defaultMessage: 'Tímabil',
     id: 'sp.health:period',
   },
+  choosePeriod: {
+    defaultMessage: 'Veldu tímabil',
+    id: 'sp.health:choose-period',
+  },
   periodStatus: {
     defaultMessage: 'Staða tímabils',
     id: 'sp.health:period-status',
@@ -1585,6 +1589,10 @@ export const messages = defineMessages({
     defaultMessage: 'Í gildi',
     id: 'sp.health:valid',
   },
+  invalid: {
+    defaultMessage: 'Ógild',
+    id: 'sp.health:invalid',
+  },
   validForRenewal: {
     defaultMessage: 'Endurnýja',
     id: 'sp.health:valid-for-renewal',
@@ -1685,5 +1693,202 @@ export const messages = defineMessages({
   renewEhicUrl: {
     id: 'sp.health:renew-ehic-url',
     defaultMessage: 'https://island.is/evropska-sjukratryggingakortid',
+  },
+  patientData: {
+    defaultMessage: 'Sjúkraskrá',
+    id: 'sp.health:patient-data',
+  },
+  myPatientData: {
+    defaultMessage: 'Mín sjúkraskrá',
+    id: 'sp.health:my-patient-data',
+  },
+  patientDataPermit: {
+    defaultMessage: 'Heimild til birtingar',
+    id: 'sp.health:patient-data-permit',
+  },
+  patientDataPermitTitle: {
+    defaultMessage: 'Heimild til birtingar sjúkraskrárupplýsinga milli landa',
+    id: 'sp.health:patient-data-permit-title',
+  },
+  patientDataPermitDescription: {
+    defaultMessage:
+      'Hér getur þú veitt heimild fyrir því að lykilheilsufarsupplýsingar þínar verða aðgengilegar heilbrigðisstarfsfólki í öðrum löndum innan Evrópska efnahagssvæðisins, í gegnum landstengigátt hjá Embætti landlæknis. ',
+    id: 'sp.health:patient-data-permit-description',
+  },
+  readAboutPermit: {
+    defaultMessage: 'Lesa um heimildina hér',
+    id: 'sp.health:read-about-permit',
+  },
+  addPermit: {
+    defaultMessage: 'Bæta við heimild',
+    id: 'sp.health:add-permit',
+  },
+  chooseDataToShare: {
+    defaultMessage: 'Veldu gögn sem þú vilt veita heimild til birtingar',
+    id: 'sp.health:choose-data-to-share',
+  },
+  permitApprovalDescription: {
+    id: 'sp.health:permit-approval-description',
+    defaultMessage:
+      '<link>Lykilheilsufarsupplýsingar</link> þínar verða aðgengilegar heilbrigðisstarfsfólki í öðrum löngum. Þú getur séð samantekt af þínum heilsufarsupplýsingum í sjúkraskránni.',
+  },
+  permitApproval: {
+    id: 'sp.health:permit-approval',
+    defaultMessage: 'Ég samþykki birtingu lykilheilsufarsupplýsinga minna.',
+  },
+  forward: {
+    defaultMessage: 'Áfram',
+    id: 'sp.health:forward',
+  },
+  goBack: {
+    defaultMessage: 'Til baka',
+    id: 'sp.health:go-back',
+  },
+  whatCountriesShouldPermitApply: {
+    defaultMessage:
+      'Hvaða land eða lönd viltu að geti fengið aðgang að þínum gögnum?',
+    id: 'sp.health:what-countries-should-permit-apply',
+  },
+  chooseAllCountries: {
+    defaultMessage: 'Velja öll löndin',
+    id: 'sp.health:choose-all-countries',
+  },
+  howLongShouldPermitApply: {
+    defaultMessage: 'Hversu lengi á heimildin að gilda?',
+    id: 'sp.health:how-long-should-permit-apply',
+  },
+  showExipredPermits: {
+    defaultMessage: 'Sýna óvirkar heimildir',
+    id: 'sp.health:show-expired-permits',
+  },
+  permit: {
+    defaultMessage: 'Heimild',
+    id: 'sp.health:permit',
+  },
+  permitValidFor: {
+    defaultMessage: 'Heimild gildir fyrir {country}.',
+    id: 'sp.health:permit-valid-for',
+  },
+  permitValidForShort: {
+    defaultMessage: 'Heimild gildir fyrir ',
+    id: 'sp.health:permit-valid-for-short',
+  },
+  validTime: {
+    defaultMessage: 'Gildistími',
+    id: 'sp.health:valid-time',
+  },
+  validToFrom: {
+    defaultMessage: 'Gildistími: {fromDate} til {toDate}',
+    id: 'sp.health:valid-to-from',
+  },
+  step: {
+    defaultMessage: 'Skref {first} af {second}',
+    id: 'sp.health:step',
+  },
+  downloadPDF: {
+    defaultMessage: 'Sækja PDF',
+    id: 'sp.health:download-pdf',
+  },
+  keyHealthInformation: {
+    id: 'sp.health:key-health-information',
+    defaultMessage: 'Lykilheilsufarsupplýsingar',
+  },
+  keyHealthInformationDescription: {
+    id: 'sp.health:key-health-information-description',
+    defaultMessage:
+      'Lykilheilsufarsupplýsingar eru samantekt sem veitir mikilvægar heilsufarsupplýsingar um einstakling. Það inniheldur eftirfarandi upplýsingar:',
+  },
+  keyHealthInformationList: {
+    id: 'sp.health:key-health-information-list#markdown',
+    defaultMessage:
+      '* Sjúkdómsgreininar\n* Ofnæmi og lífsógnandi sjúkdóma\n* Yfirlit yfir núverandi lyf\n* Ígræði, t.d. hjartagangráður og bjargráður\n* Bólusetningar\n* Nýlegar meðferðir\n* Meðgöngu',
+  },
+  errorTryAgain: {
+    id: 'sp.health:error-try-again',
+    defaultMessage:
+      'Ekki tókst að sækja gögn. Vinsamlegast reyndu aftur síðar.',
+  },
+  sixMonths: {
+    id: 'sp.health:six-months',
+    defaultMessage: '6 mán',
+  },
+  oneYear: {
+    id: 'sp.health:one-year',
+    defaultMessage: '1 ár',
+  },
+  twoYears: {
+    id: 'sp.health:two-years',
+    defaultMessage: '2 ár',
+  },
+  threeYears: {
+    id: 'sp.health:three-years',
+    defaultMessage: '3 ár',
+  },
+  expired: {
+    id: 'sp.health:expired',
+    defaultMessage: 'Útrunnin',
+  },
+  healthDirectorate: {
+    defaultMessage: 'Embætti landlæknis',
+    id: 'sp.health:health-directorate',
+  },
+  invalidatePermit: {
+    defaultMessage: 'Óvirkja heimild',
+    id: 'sp.health:invalidate-permit',
+  },
+  areYouSureAboutInvalidatingPermit: {
+    defaultMessage: 'Ertu viss um að þú viljir óvirkja heimild?',
+    id: 'sp.health:are-you-sure-about-invalidating-permit',
+  },
+  youAreAboutToInvalidateThisPermit: {
+    defaultMessage: 'Þú ert að fara gera eftirfarandi heimild óvirka:',
+    id: 'sp.health:you-are-about-to-invalidate-this-permit',
+  },
+  cancel: {
+    defaultMessage: 'Hætta við',
+    id: 'sp.health:cancel',
+  },
+  confirm: {
+    defaultMessage: 'Staðfesta',
+    id: 'sp.health:confirm',
+  },
+  permitCreated: {
+    defaultMessage: 'Heimild hefur verið bætt við',
+    id: 'sp.health:permit-created',
+  },
+  permitCreatedError: {
+    defaultMessage:
+      'Ekki tókst að bæta heimild við. Vinsamlegast reyndu aftur síðar.',
+    id: 'sp.health:permit-created-error',
+  },
+  permitInvalidated: {
+    defaultMessage: 'Heimild hefur verið óvirkjuð',
+    id: 'sp.health:permit-invalidated',
+  },
+  permitInvalidatedError: {
+    defaultMessage:
+      'Ekki tókst að óvirkja heimild. Vinsamlegast reyndu aftur síðar.',
+    id: 'sp.health:permit-invalidated-error',
+  },
+  countriesError: {
+    defaultMessage:
+      'Ekki tókst að sækja lönd. Vinsamlegast reyndu aftur síðar.',
+    id: 'sp.health:countries-error',
+  },
+  noPermits: {
+    defaultMessage: 'Engar heimildir',
+    id: 'sp.health:no-permits',
+  },
+  noPermitsRegistered: {
+    defaultMessage: 'Það eru engar skráðar heimildir.',
+    id: 'sp.health:no-permits-registered',
+  },
+  active: {
+    defaultMessage: 'Virk',
+    id: 'sp.health:active',
+  },
+  inactive: {
+    defaultMessage: 'Óvirk',
+    id: 'sp.health:inactive',
   },
 })

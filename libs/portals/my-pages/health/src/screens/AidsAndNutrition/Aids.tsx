@@ -47,17 +47,6 @@ const Aids = ({ data }: Props) => {
     return foldedValues
   }
 
-  const expiringIcon = (
-    <Tooltip
-      text={formatMessage(messages.timeRemainingOfRefund)}
-      placement="top"
-    >
-      <Box>
-        <Icon icon="time" type="outline" color="blue400" size="large" />
-      </Box>
-    </Tooltip>
-  )
-
   return (
     <Box>
       <Box marginTop={2}>
