@@ -63,6 +63,7 @@ import {
   RequestCaseStatistics,
   SubpoenaStatistics,
 } from '../statistics'
+import { CaseDataExportInput } from '../statistics/dto/caseDataExport.input'
 import {
   IndictmentStatisticsInput,
   RequestStatisticsInput,
@@ -298,7 +299,14 @@ export class BackendService extends DataSource<{ req: Request }> {
     query: SubpoenaStatisticsInput,
   ): Promise<SubpoenaStatistics> {
     const searchParams = this.serializeNestedObject(query)
-    return this.get(`cases/subpoenas/statistics?${searchParams.toString()}`)
+    return this.get(`cases/subpoenas/statistics?${searchParams}`)
+  }
+
+  getPreprocessedDataCsvSignedUrl(
+    query: CaseDataExportInput,
+  ): Promise<SignedUrl> {
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/statistics/export-csv?${searchParams}`)
   }
 
   getConnectedCases(id: string): Promise<Case[]> {

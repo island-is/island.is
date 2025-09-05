@@ -1,4 +1,10 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -6,8 +12,8 @@ import { PoliceFileTypeCode } from '@island.is/judicial-system/types'
 
 export class UpdatePoliceDocumentDeliveryDto {
   @IsNotEmpty()
-  @IsString()
-  @ApiProperty({ enum: PoliceFileTypeCode })
+  @IsEnum(PoliceFileTypeCode)
+  @ApiProperty({ enum: PoliceFileTypeCode, enumName: 'PoliceFileTypeCode' })
   readonly fileTypeCode!: PoliceFileTypeCode
 
   @IsOptional()

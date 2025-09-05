@@ -284,12 +284,9 @@ export class AppService {
       serviceDate: updatePoliceDocumentDelivery.servedAt,
       servedBy: updatePoliceDocumentDelivery.servedBy,
       comment: updatePoliceDocumentDelivery.comment,
-      serviceStatus: mapPoliceVerdictDeliveryStatus({
-        delivered: updatePoliceDocumentDelivery.delivered,
-        deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
-        deliveredOnPaper: updatePoliceDocumentDelivery.deliveredOnPaper,
-        deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
-      }),
+      serviceStatus: getPoliceDocumentDeliveryStatus(
+        updatePoliceDocumentDelivery,
+      ),
     }
     try {
       const res = await fetch(

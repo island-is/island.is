@@ -1,5 +1,7 @@
 import { DefaultEvents } from '@island.is/application/types'
 
+export const FIRST_GRADE_AGE = 6
+
 export enum Actions {
   SEND_APPLICATION = 'sendApplication',
 }
@@ -77,4 +79,9 @@ export enum SchoolType {
   PRIVATE_SCHOOL = 'privateSchool',
   INTERNATIONAL_SCHOOL = 'internationalSchool',
   NURSERY_SCHOOL = 'nurserySchool',
+}
+
+export enum CaseWorkerInputTypeEnum {
+  CaseManager = 'caseManager',
+  SupportManager = 'supportManager',
 }
