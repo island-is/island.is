@@ -886,6 +886,10 @@ export const slices = gql`
         dateTo
         status
         statusText
+        fund {
+          id
+          title
+        }
       }
     }
   }

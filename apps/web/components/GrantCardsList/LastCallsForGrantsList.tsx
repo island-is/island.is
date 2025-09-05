@@ -1,10 +1,10 @@
-import { useRouter } from 'next/router'
 
-import { ActionCard, Stack } from '@island.is/island-ui/core'
+import { Box, InfoCardGrid,Text } from '@island.is/island-ui/core'
 import {
   Grant,
   LastCallsForGrants as LastCallsForGrantsSchema,
 } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 
 import { TranslationKeys } from './types'
@@ -16,7 +16,7 @@ interface SliceProps {
 
 const LastCallsForGrants = ({ slice }: SliceProps) => {
   const { activeLocale } = useI18n()
-  const router = useRouter()
+  const {linkResolver} = useLinkResolver()
 
   const getTranslation = (
     key: keyof TranslationKeys,
@@ -29,26 +29,28 @@ const LastCallsForGrants = ({ slice }: SliceProps) => {
     parseGrantStatus(grant, activeLocale, getTranslation)
 
   return (
-    <Stack space={1}>
-      {grantItems.map((grant) => {
-        const status = getStatus(grant)
-        console.log(status)
-        return (
-          <ActionCard
-            heading={grant.name}
-            text={status}
-            cta={{
-              label: getTranslation('seeMore'),
-              size: 'small',
-              onClick: () => router.push(grant.applicationId ?? ''),
-              variant: 'text',
-              icon: 'open',
-              iconType: 'outline',
-            }}
-          />
-        )
-      })}
-    </Stack>
+    <Box>
+      <Text marginBottom={1} variant='h3'>{slice.title}</Text>
+    <InfoCardGrid
+      variant="detailed"
+      columns={2}
+      cardsBorder='blue200'
+      cards={grantItems.map(grant => ({
+        id: grant.id,
+        title: grant.name,
+        eyebrow: grant.fund?.title ?? "",
+        description: getStatus(grant) ?? "",
+        link: {
+          label: getTranslation('seeMore'),
+          href: linkResolver(
+            'grantsplazagrant',
+            [grant?.applicationId ?? ''],
+            activeLocale,
+          ).href,
+        },
+    }))}>
+    </InfoCardGrid>
+    </Box>
   )
 }
 
