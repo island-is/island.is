@@ -66,6 +66,7 @@ const Payments = () => {
     if (error) {
       toast.error(formatMessage(m.errorDefault))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error])
 
   useEffect(() => {
