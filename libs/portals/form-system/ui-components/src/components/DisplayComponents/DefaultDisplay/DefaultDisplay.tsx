@@ -1,5 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, Stack } from '@island.is/island-ui/core'
 
 const TEXTBOX_COMPONENT_MAP = {
   BANK_ACCOUNT: 'bankAccount',
@@ -35,10 +35,12 @@ export const DefaultDisplay = ({ item, lang = 'is' }: Props) => {
       justifyContent="spaceBetween"
       height="full"
     >
-      <Text as="p" fontWeight="semiBold">
-        {item.name?.[lang]}
-      </Text>
-      <Text fontWeight="light">{String(value ?? '')}</Text>
+      <Stack space={1}>
+        <Text as="p" fontWeight="semiBold">
+          {item.name?.[lang]}
+        </Text>
+        <Text fontWeight="light">{String(value ?? '')}</Text>
+      </Stack>
     </Box>
   )
 }
