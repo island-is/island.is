@@ -73,9 +73,9 @@ export const useGetLatestCollectionForType = (
 export const useGetOpenLists = (collection: SignatureCollection) => {
   const { data, loading: openListsLoading } = useQuery<Query>(GetOpenLists, {
     variables: {
-      input: { 
+      input: {
         collectionId: collection?.id,
-        collectionType: collection?.collectionType
+        collectionType: collection?.collectionType,
       },
     },
     skip: !collection || collection.isActive,

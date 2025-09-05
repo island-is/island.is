@@ -43,7 +43,7 @@ export const information = buildSection({
           title: m.listName,
           width: 'full',
           required: true,
-          maxLength: 80
+          maxLength: 80,
         }),
         buildDescriptionField({
           id: 'applicantHeader',
