@@ -7,13 +7,13 @@ import {
   ColorSchemeContext,
   Text,
 } from '@island.is/island-ui/core'
-import { useMemo, useRef, useState } from 'react'
 import { LinkResolver, SearchPaths } from '@island.is/portals/my-pages/core'
 import cn from 'classnames'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import * as styles from './SearchInput.css'
 
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
 
 interface Props {
@@ -41,6 +41,16 @@ export const SearchInput = ({
   const navigate = useNavigate()
 
   const ref = useRef<HTMLInputElement>(null)
+  const [searchParams] = useSearchParams()
+
+  const searchQuery = searchParams.get('query')
+
+  useEffect(() => {
+    if (searchQuery !== query) {
+      setQuery(searchQuery ?? '')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery])
 
   const searchResults: Array<AsyncSearchOption> = useMemo(() => {
     if (query && query.length > 1) {
@@ -140,16 +150,24 @@ export const SearchInput = ({
           openMenuOnFocus
           showDividerIfActive
           closeMenuOnSubmit
+          initialInputValue={query ?? ''}
           onSubmit={(_, option) => {
             if (option?.value) {
               navigate(option?.value)
+              setQuery(option?.value)
             } else if (query) {
               navigate(`${SearchPaths.Search}?query=${query}`)
+              setQuery(query)
             } else navigate(SearchPaths.Search)
           }}
           onInputValueChange={(value) => {
-            if (value && value !== query) {
+            if (value !== query) {
               setQuery(value)
+            }
+          }}
+          onChange={(value) => {
+            if (value?.value !== query) {
+              setQuery(value?.value)
             }
           }}
         />
