@@ -68,7 +68,7 @@ export class FieldSettingsInput {
   isLarge?: boolean
 
   @Field(() => Boolean, { nullable: true })
-  zendeskIsPublic?: boolean
+  zendeskIsPrivate?: boolean
 
   @Field(() => Boolean, { nullable: true })
   zendeskIsCustomField?: boolean

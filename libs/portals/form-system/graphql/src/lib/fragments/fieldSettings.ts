@@ -29,7 +29,7 @@ export const FieldSettingsFragment = gql`
     maxFiles
     timeInterval
     isLarge
-    zendeskIsPublic
+    zendeskIsPrivate
     zendeskIsCustomField
     zendeskCustomFieldId
     applicantType

@@ -53,12 +53,15 @@ import { User } from '@island.is/auth-nest-tools'
 import { jwtDecode } from 'jwt-decode'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 import { UrlTypes } from '@island.is/form-system/enums'
+import { Application } from '../applications/models/application.model'
 
 @Injectable()
 export class FormsService {
   constructor(
     @InjectModel(Form)
     private readonly formModel: typeof Form,
+    @InjectModel(Application)
+    private readonly applicationModel: typeof Application,
     @InjectModel(Section)
     private readonly sectionModel: typeof Section,
     @InjectModel(Screen)
@@ -321,7 +324,22 @@ export class FormsService {
       throw new NotFoundException(`Form with id '${id}' not found.`)
     }
 
-    form.destroy()
+    const hasApplications =
+      (await this.applicationModel.count({
+        where: { formId: id, isTest: false },
+      })) > 0
+
+    if (form.beenPublished && hasApplications) {
+      throw new Error(
+        `Form with id '${id}' cannot be deleted because it has been published and has applications.`,
+      )
+    }
+
+    try {
+      await form.destroy()
+    } catch (error) {
+      console.error(`Error deleting form with id '${id}':`, error)
+    }
   }
 
   private async findById(id: string): Promise<Form> {
