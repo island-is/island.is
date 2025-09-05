@@ -33,11 +33,6 @@ const SharedModuleConfig = z.object({
     userProfile: z.object({
       serviceBasePath: z.string(),
     }),
-    islykill: z.object({
-      cert: z.string(),
-      passphrase: z.string(),
-      basePath: z.string(),
-    }),
   }),
   contentful: z.object({
     accessToken: z.string(),
@@ -94,11 +89,6 @@ export const sharedModuleConfig = defineConfig({
           'SERVICE_USER_PROFILE_URL',
           'http://localhost:3366',
         ),
-      },
-      islykill: {
-        cert: env.required('ISLYKILL_CERT', ''),
-        passphrase: env.required('ISLYKILL_SERVICE_PASSPHRASE', ''),
-        basePath: env.required('ISLYKILL_SERVICE_BASEPATH', ''),
       },
     },
     contentful: {

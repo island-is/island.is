@@ -732,6 +732,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú ert ekki með skráðan bankareikning',
     description: 'No bank account error',
   },
+  invalidBankAccountError: {
+    id: 'application.system:core.fetch.data.invalidBankAccountError',
+    defaultMessage: 'Ógildur bankareikningur skráður',
+    description: 'Invalid bank account registered',
+  },
   invalidEmailOrPhone: {
     id: 'application.system:core.fetch.data.invalidEmailOrPhone',
     defaultMessage: 'Ekkert netfang né símanúmer skráð',

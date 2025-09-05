@@ -62,7 +62,7 @@ Creates a userprofile using `userProfileControllerCreate` and creates (`createIs
 
 Updates a userprofile using `userProfileControllerUpdate` and creates (`createIslykillSettings`) OR updates (`updateIslykillSettings`) the islyklar data depending on if the user has islyklar data or not.
 
-## `deleteIslykillValue`
+## `deleteEmailOrPhone`
 
 The user can post empty values to the email and telephone fields. If they choose to do so, we will mark the `DataStatus` as `EMPTY`. DataStatus explained in the next step.
 

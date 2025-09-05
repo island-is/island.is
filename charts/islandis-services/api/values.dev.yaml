@@ -60,7 +60,6 @@ env:
   ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-  ISLYKILL_CERT: '/etc/config/islyklar.p12'
   LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
   LOG_LEVEL: 'info'
   MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'
@@ -113,6 +112,7 @@ env:
   XROAD_FINANCES_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2'
   XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend'
   XROAD_FIREARM_LICENSE_PATH: 'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1'
+  XROAD_FJS_BANKINFO_PATH: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1'
   XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1'
   XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1'
   XROAD_HEALTH_DIRECTORATE_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir'
@@ -184,8 +184,6 @@ env:
   XROAD_WORK_ACCIDENT_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/slysaskraning-token'
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token'
   ZENDESK_CONTACT_FORM_SUBDOMAIN: 'stjanilofts'
-files:
-  - 'islyklar.p12'
 grantNamespaces:
   - 'nginx-ingress-external'
   - 'api-catalogue'
@@ -298,8 +296,6 @@ secrets:
   ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME: '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
   INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY'
-  ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
-  ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
   LICENSE_SERVICE_BARCODE_SECRET_KEY: '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY'
   MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
