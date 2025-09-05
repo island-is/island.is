@@ -104,6 +104,7 @@ export const Forms = () => {
               slug={f?.slug ?? ''}
               beenPublished={f?.beenPublished ?? false}
               setFormsState={setForms}
+              status={f?.status}
             />
           )
         })}

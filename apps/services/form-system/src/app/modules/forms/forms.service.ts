@@ -239,7 +239,7 @@ export class FormsService {
     return formResponse
   }
 
-  async publish(id: string, user: User): Promise<FormResponseDto> {
+  async publish(id: string, user: User): Promise<void> {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
@@ -280,7 +280,7 @@ export class FormsService {
       await form.save()
     }
 
-    return this.findAll(user, user.nationalId)
+    // return this.findAll(user, user.nationalId)
   }
 
   async update(

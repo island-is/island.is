@@ -12,12 +12,12 @@ import { Dispatch, SetStateAction, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TranslationTag } from '../../../TranslationTag/TranslationTag'
 import { FormSystemPaths } from '../../../../lib/paths'
-import { ApplicationTemplateStatus } from '../../../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { FormSystemForm } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
-import { DELETE_FORM } from '@island.is/form-system/graphql'
+import { DELETE_FORM, PUBLISH_FORM } from '@island.is/form-system/graphql'
+import { FormStatus } from '@island.is/form-system/enums'
 
 interface Props {
   id?: string | null
@@ -32,6 +32,7 @@ interface Props {
   slug?: string
   beenPublished?: boolean
   setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
+  status?: string
 }
 
 const PATH = `https://beta.dev01.devland.is/form`
@@ -55,11 +56,14 @@ export const TableRow = ({
   translated,
   setFormsState,
   slug,
+  status,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
   const deleteForm = useMutation(DELETE_FORM)
+  const [publishForm] = useMutation(PUBLISH_FORM)
+
   const goToForm = () => {
     navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
       state: {
@@ -93,10 +97,7 @@ export const TableRow = ({
           </Box>
         </Column>
         <Column span="2/12">
-          <ColumnText text={org ?? ''} />
-        </Column>
-        <Column span="1/12">
-          <ColumnText text={ApplicationTemplateStatus[state ? state : 0]} />
+          <ColumnText text={status ?? ''} />
         </Column>
         <Column span="1/12">
           <Box display="flex" justifyContent="center" alignItems="center">
@@ -136,6 +137,25 @@ export const TableRow = ({
                 },
                 {
                   title: 'Json',
+                },
+                {
+                  title: 'Gefa út',
+                  onClick: () => {
+                    publishForm({
+                      variables: {
+                        input: {
+                          id: id,
+                        },
+                      },
+                    })
+                    setFormsState((prevForms) =>
+                      prevForms.map((form) =>
+                        form.id === id
+                          ? { ...form, status: FormStatus.PUBLISHED }
+                          : form,
+                      ),
+                    )
+                  },
                 },
                 {
                   title: 'Skoða',

@@ -105,8 +105,7 @@ export class FormsController {
   }
 
   @ApiOperation({ summary: 'Publish form' })
-  @ApiOkResponse({
-    type: FormResponseDto,
+  @ApiNoContentResponse({
     description: 'Publish form',
   })
   @ApiParam({ name: 'id', type: String })
@@ -115,7 +114,7 @@ export class FormsController {
     @Param('id') id: string,
     @CurrentUser()
     user: User,
-  ): Promise<FormResponseDto> {
+  ): Promise<void> {
     return await this.formsService.publish(id, user)
   }
 
