@@ -123,23 +123,6 @@ export class LandspitaliService {
       }
     }
 
-    const catalog = await this.getCatalog()
-
-    if (
-      !catalog.item.some(
-        (item) => item.chargeItemCode === input.fundChargeItemCode,
-      )
-    ) {
-      this.logger.warn(
-        'Landspitali fund charge item code not found in catalog',
-        {
-          fundChargeItemCode: input.fundChargeItemCode,
-          catalog,
-        },
-      )
-      return { url: '' }
-    }
-
     const locale = input.locale !== 'en' ? 'is' : 'en'
     const { urls } =
       await this.paymentsClient.paymentFlowControllerCreatePaymentUrl({
@@ -243,23 +226,6 @@ export class LandspitaliService {
       return {
         url: '',
       }
-    }
-
-    const catalog = await this.getCatalog()
-
-    if (
-      !catalog.item.some(
-        (item) => item.chargeItemCode === input.grantChargeItemCode,
-      )
-    ) {
-      this.logger.warn(
-        'Landspitali grant charge item code not found in catalog',
-        {
-          grantChargeItemCode: input.grantChargeItemCode,
-          catalog,
-        },
-      )
-      return { url: '' }
     }
 
     const locale = input.locale !== 'en' ? 'is' : 'en'
