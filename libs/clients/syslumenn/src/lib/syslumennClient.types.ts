@@ -242,6 +242,10 @@ export type EstateAsset = {
   share: number
   enabled?: boolean
   marketValue?: string
+  // Additional fields for specific asset types
+  upphaed?: string // Face value for stocks
+  gengiVextir?: string // Exchange rate for stocks
+  exchangeRateOrInterest?: string // Interest/exchange rate for bank accounts
 }
 
 export type AvailableSettlements = {

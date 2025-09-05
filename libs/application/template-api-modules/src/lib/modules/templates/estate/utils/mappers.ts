@@ -48,12 +48,12 @@ const claimsMapper = (element: EstateAsset) => {
 }
 
 const stocksMapper = (
-  element: EstateAsset & { exchangeRateOrInterest?: string },
+  element: EstateAsset & { upphaed?: string; gengiVextir?: string },
 ) => {
   console.log('stocksMapper element', element)
-  const faceValue = element.marketValue || '0'
+  const faceValue = element.upphaed || element.marketValue || '0'
   const rateOfExchange =
-    element.exchangeRateOrInterest?.replace(',', '.') || '1'
+    element.gengiVextir?.replace(',', '.') || '1'
   const calculatedValue = (
     parseFloat(faceValue) * parseFloat(rateOfExchange)
   ).toString()

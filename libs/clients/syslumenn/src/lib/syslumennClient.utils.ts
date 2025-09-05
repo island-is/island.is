@@ -424,6 +424,22 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
   }
 }
 
+export const stocksAssetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
+  console.log('stocksAssetMapper assetRaw', assetRaw)
+  return {
+    description: assetRaw.lysing ?? '',
+    assetNumber: assetRaw.fastanumer ?? '',
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? parseShare(assetRaw.eignarhlutfall)
+        : 100,
+    marketValue: assetRaw.verdmaeti ?? '',
+    // Store stocks-specific fields that can be accessed by stocksMapper
+    ...(assetRaw.upphaed && { upphaed: assetRaw.upphaed }),
+    ...(assetRaw.gengiVextir && { gengiVextir: assetRaw.gengiVextir }),
+  }
+}
+
 export const bankAccountMapper = (assetRaw: EignirDanarbus): EstateAsset => {
   console.log('bankAccountMapper assetRaw', assetRaw)
   return {
@@ -576,7 +592,7 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
     stocks: syslaData.eignir
       ? syslaData.eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_7)
-          .map(assetMapper)
+          .map(stocksAssetMapper)
       : [],
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)

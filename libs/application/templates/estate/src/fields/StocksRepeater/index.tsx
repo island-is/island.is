@@ -60,10 +60,30 @@ export const StocksRepeater: FC<
   const updateStocksValue = (fieldIndex: string) => {
     const stockValues = getValues(fieldIndex)
     const faceValue = stockValues?.faceValue?.replace(/[^\d.]/g, '') || '0'
-    const rateOfExchange =
-      stockValues?.rateOfExchange?.replace(/[^\d.]/g, '') || '0'
+    const rateOfExchange = stockValues?.rateOfExchange || '0'
 
-    const total = parseFloat(faceValue) * parseFloat(rateOfExchange)
+    // Check if rateOfExchange contains invalid characters (anything other than numbers and dots)
+    const hasInvalidChars = /[^\d.]/.test(rateOfExchange)
+    
+    if (hasInvalidChars) {
+      // If invalid characters found, clear the value field
+      setValue(`${fieldIndex}.value`, '')
+      forceUpdate()
+      return
+    }
+
+    // Clean the rate of exchange for calculation
+    const cleanRateOfExchange = rateOfExchange.replace(/[^\d.]/g, '') || '0'
+    const parsedFaceValue = parseFloat(faceValue)
+    const parsedRateOfExchange = parseFloat(cleanRateOfExchange)
+
+    if (!parsedFaceValue || !parsedRateOfExchange) {
+      setValue(`${fieldIndex}.value`, '')
+      forceUpdate()
+      return
+    }
+
+    const total = parsedFaceValue * parsedRateOfExchange
     const totalString = total.toFixed(0)
 
     setValue(`${fieldIndex}.value`, totalString)
