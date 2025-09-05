@@ -2,14 +2,14 @@ export * from './lib/clients-payments.module'
 export * from './lib/payments-client.config'
 export {
   PaymentsApi,
-  GetPaymentFlowDTO,
-  VerificationStatusResponse,
-  VerificationCallbackInput,
+  type GetPaymentFlowDTO,
+  type VerificationStatusResponse,
+  type VerificationCallbackInput,
   CreatePaymentFlowInputAvailablePaymentMethodsEnum,
-  ChargeCardInput,
-  VerifyCardInput,
-  VerifyCardResponse,
-  ChargeCardResponse,
+  type ChargeCardInput,
+  type VerifyCardInput,
+  type VerifyCardResponse,
+  type ChargeCardResponse,
   Configuration as PaymentsApiConfiguration,
   GetPaymentFlowDTOPaymentStatusEnum,
 } from '../gen/fetch'
