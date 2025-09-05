@@ -58,7 +58,6 @@ export const DocumentProvidersDashboard = ({
 
       <GridRow>
         <SentFilesBarChart
-          title={formatMessage(m.statisticsBoxPublishedDocuments)}
           data={sentFilesData || []}
         />
 

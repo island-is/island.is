@@ -54,17 +54,17 @@ export const useGetProviderStatisticsBreakdownByProviderId = (
     }
   }, [error, loading, nationalId, fromDate, toDate, formatMessage])
 
-  const breakdown = data?.statisticsBreakdownByProviderId ?? null
+  const breakdown = data?.statisticsBreakdownByProviderId ?? { totalCount: 0, items: [] }
 
   // Prepare chart data if breakdown is available
-  let chartData: Array<DocumentProviderDashboardChartData> | undefined
-  if (breakdown) {
-    chartData = breakdown.items.map(
-      (
-        item: ProviderStatisticsBreakdown,
-      ): DocumentProviderDashboardChartData => ({
-        name:
-          item.year && item.month
+  const chartData: Array<DocumentProviderDashboardChartData>  | undefined =
+    breakdown.items.length
+      ? breakdown.items.map(
+          (
+            item: ProviderStatisticsBreakdown,
+          ): DocumentProviderDashboardChartData => ({
+            name:
+              item.year && item.month
             ? new Date(item.year, item.month - 1).toLocaleString('is', {
                 month: 'short',
               })
@@ -74,17 +74,12 @@ export const useGetProviderStatisticsBreakdownByProviderId = (
         opened: item.statistics?.opened ?? 0,
         failures: item.statistics?.failures ?? 0,
       }),
-    )
-
-    return {
-      breakdown,
-      chartData,
-      loading,
-    }
-  }
+    ): undefined
+  
 
   return {
     breakdown,
+    chartData,
     loading,
   }
 }
