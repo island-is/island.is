@@ -350,7 +350,12 @@ export class DelegationsIndexService {
       this.getWardDelegations(user),
     ]).then((d) => d.flat())
 
-    await this.saveToIndex(user.nationalId, delegations, user)
+    await this.saveToIndex(
+      user.nationalId,
+      delegations,
+      user,
+      Object.values(AuthDelegationType),
+    )
 
     // set next reindex to one week in the future
     await this.delegationIndexMetaModel.update(
@@ -369,13 +374,17 @@ export class DelegationsIndexService {
   /* Index incoming custom delegations */
   async indexCustomDelegations(nationalId: string, auth: Auth) {
     const delegations = await this.getCustomDelegations(nationalId, true)
-    await this.saveToIndex(nationalId, delegations, auth)
+    await this.saveToIndex(nationalId, delegations, auth, [
+      AuthDelegationType.Custom,
+    ])
   }
 
   /* Index incoming general mandate delegations */
   async indexGeneralMandateDelegations(nationalId: string, auth?: Auth) {
     const delegations = await this.getGeneralMandateDelegation(nationalId, true)
-    await this.saveToIndex(nationalId, delegations, auth)
+    await this.saveToIndex(nationalId, delegations, auth, [
+      AuthDelegationType.GeneralMandate,
+    ])
   }
 
   /* Index incoming personal representative delegations */
@@ -384,7 +393,9 @@ export class DelegationsIndexService {
       nationalId,
       true,
     )
-    await this.saveToIndex(nationalId, delegations, auth)
+    await this.saveToIndex(nationalId, delegations, auth, [
+      AuthDelegationType.PersonalRepresentative,
+    ])
   }
 
   /* Add item to index */
@@ -497,8 +508,14 @@ export class DelegationsIndexService {
     // Some entrypoints to indexing do not have a user auth object or have a 3rd party user
     // so we take the auth separately from the subject nationalId
     auth?: Auth,
+    typesToForceIndex?: AuthDelegationType[],
   ) {
-    const types = Array.from(new Set(delegations.map((d) => d.type)))
+    const types = Array.from(
+      new Set([
+        ...delegations.map((d) => d.type),
+        ...(typesToForceIndex ?? []),
+      ]),
+    )
 
     const currRecords = await this.delegationIndexModel.findAll({
       where: {
@@ -519,9 +536,11 @@ export class DelegationsIndexService {
       currRecords,
     })
 
-    const indexingPromises = await Promise.allSettled([
-      this.delegationIndexModel.bulkCreate(created),
-      updated.map((d) =>
+    const ops = [
+      ...(created.length
+        ? [this.delegationIndexModel.bulkCreate(created)]
+        : []),
+      ...updated.map((d) =>
         this.delegationIndexModel.update(d, {
           where: {
             fromNationalId: d.fromNationalId,
@@ -531,7 +550,7 @@ export class DelegationsIndexService {
           },
         }),
       ),
-      deleted.map((d) =>
+      ...deleted.map((d) =>
         this.delegationIndexModel.destroy({
           where: {
             fromNationalId: d.fromNationalId,
@@ -541,10 +560,12 @@ export class DelegationsIndexService {
           },
         }),
       ),
-    ])
+    ]
+
+    const indexingResults = await Promise.allSettled(ops)
 
     // log any errors
-    indexingPromises.forEach((p) => {
+    indexingResults.forEach((p) => {
       if (p.status === 'rejected') {
         console.error(p.reason)
       }

@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
-import { CaseFile } from '../models/file.model'
+import { CaseFile } from '../../repository'
 
 export const CurrentCaseFile = createParamDecorator(
   (data: unknown, context: ExecutionContext): CaseFile => {

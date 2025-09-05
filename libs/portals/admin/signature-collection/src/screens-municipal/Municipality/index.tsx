@@ -75,8 +75,8 @@ export const Municipality = () => {
             buttonGroup={
               <ActionDrawer
                 allowedActions={[
-                  Actions.DownloadReports,
                   Actions.CreateCollection,
+                  Actions.CompleteCollectionProcessing,
                 ]}
               />
             }
@@ -136,6 +136,7 @@ export const Municipality = () => {
             <CompareLists
               collectionId={collection?.id}
               collectionType={collection?.collectionType}
+              municipalAreaId={municipalityLists[0]?.collectionId}
             />
           )}
         </GridColumn>

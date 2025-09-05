@@ -14,8 +14,10 @@ import {
   getAcademicInfo,
   getApplicantInfo,
   getBankInfo,
+  getCanStartAt,
   getContactInfo,
   getCVInfo,
+  getIncome,
   getJobHistoryInfo,
   getJobWishesInfo,
   getLanguageInfo,
@@ -25,11 +27,14 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { errorMsgs } from '@island.is/application/templates/activation-allowance'
+import {
+  errorMsgs,
+  PaymentInformationAnswer,
+} from '@island.is/application/templates/activation-allowance'
 import { S3Service } from '@island.is/nest/aws'
 import { sharedModuleConfig } from '../../shared'
 import { ConfigType } from '@nestjs/config'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { CV_ID } from './constants'
 
 @Injectable()
@@ -52,6 +57,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
 
   async createApplication({
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<GaldurDomainModelsApplicationsActivationGrantApplicationsViewModelsActivationGrantViewModel> {
     try {
       const application =
@@ -67,7 +73,11 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
         throw new TemplateApiError(
           {
             title: errorMsgs.cannotApplyErrorTitle,
-            summary: errorMsgs.cannotApplyErrorSummary,
+            summary:
+              currentUserLocale === 'en'
+                ? application.userMessageEN || errorMsgs.cannotApplyErrorSummary
+                : application.userMessageIS ||
+                  errorMsgs.cannotApplyErrorSummary,
           },
           400,
         )
@@ -100,6 +110,10 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     application,
   }: TemplateApiModuleActionProps): Promise<void> {
     const { answers, externalData } = application
+    const bankAnswers = getValueViaPath<PaymentInformationAnswer>(
+      answers,
+      'paymentInformation',
+    )
     const personalInfo = getApplicantInfo(answers, externalData)
     const contact = getContactInfo(answers)
     const licenses = getLicenseInfo(answers)
@@ -109,17 +123,21 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     const languageSkillInfo = getLanguageInfo(answers, externalData)
     const education = getAcademicInfo(answers)
     const startingLocale = getStartingLocale(externalData)
+    const incomeInfo = getIncome(answers, externalData)
     const cvInfo = await getCVInfo(
       answers,
       this.s3Service,
       application.id,
       this.config.templateApi.attachmentBucket,
     )
+    const canStartAt = getCanStartAt(answers)
+    const hasCV = getValueViaPath<string | undefined>(answers, 'cv.haveCV')
     const emptyApplicationOriginal =
       getValueViaPath<GaldurDomainModelsApplicationsActivationGrantActivationGrantDTO>(
         externalData,
         'activityGrantApplication.data.activationGrant',
       )
+
     const emptyApplication = { ...emptyApplicationOriginal }
     delete emptyApplication.supportData
 
@@ -147,6 +165,41 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
       throw new Error('Missing required fields')
     }
 
+    let bankInfoValid = false
+    try {
+      bankInfoValid = await this.vmstUnemploymentClientService.validateBankInfo(
+        {
+          galdurApplicationApplicationsB2BQueriesValidateBankInformationQuery: {
+            applicantSSN: personalInfo?.ssn,
+            accountNumber: bankInfo?.accountNumber,
+            ledger: bankAnswers?.ledger,
+            bankNumber: bankAnswers?.bankNumber,
+          },
+        },
+      )
+    } catch (e) {
+      this.logger.warn(
+        '[VMST-ActivationAllowance]: Network call to validate bank info failed',
+      )
+      throw new TemplateApiError(
+        {
+          title: errorMsgs.successErrorTitle,
+          summary: errorMsgs.bankInfoNetworkFail,
+        },
+        500,
+      )
+    }
+
+    if (!bankInfoValid) {
+      throw new TemplateApiError(
+        {
+          title: errorMsgs.successErrorTitle,
+          summary: errorMsgs.bankInfoNotValid,
+        },
+        500,
+      )
+    }
+
     let cvResponse: GaldurDomainModelsAttachmentsAttachmentViewModel | undefined
     if (cvInfo) {
       cvResponse =
@@ -160,6 +213,9 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
             },
           },
         )
+      if (!cvResponse.success) {
+        throw new Error(cvResponse.errorMessage || 'creating attachment failed')
+      }
     }
 
     const payload: ActivationGrantCreateActivationGrantRequest = {
@@ -177,13 +233,15 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
               contactEmail: contact?.email,
               contactName: contact?.name,
               contactPhoneNumber: contact?.phone,
+              incomes: incomeInfo,
+              hasCV: hasCV === YES ? true : false,
             },
             personalInformation: {
               ...personalInfo,
             },
             otherInformation: {
               ...emptyApplication?.otherInformation,
-              canStartAt: new Date(),
+              canStartAt,
             },
             preferredJobs: {
               jobs: jobWishesPayload,

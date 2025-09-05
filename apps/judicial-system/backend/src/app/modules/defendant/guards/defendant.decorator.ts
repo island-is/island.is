@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
-import { Defendant } from '../models/defendant.model'
+import { Defendant } from '../../repository'
 
 export const CurrentDefendant = createParamDecorator(
   (data: unknown, context: ExecutionContext): Defendant => {

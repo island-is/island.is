@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
-import { Subpoena } from '../models/subpoena.model'
+import { Subpoena } from '../../repository'
 
 export const CurrentSubpoena = createParamDecorator(
   (data: unknown, context: ExecutionContext): Subpoena => {
