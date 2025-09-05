@@ -115,8 +115,8 @@ export class FieldSettings {
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean, default: true })
-  zendeskIsPublic = true
+  @ApiPropertyOptional({ type: Boolean })
+  zendeskIsPrivate?: boolean
 
   @IsOptional()
   @IsBoolean()

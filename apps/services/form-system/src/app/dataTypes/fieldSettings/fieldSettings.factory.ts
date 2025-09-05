@@ -10,7 +10,7 @@ export class FieldSettingsFactory {
       return undefined
     }
     let keys: string[] = [
-      'zendeskIsPublic',
+      'zendeskIsPrivate',
       'zendeskIsCustomField',
       'zendeskCustomFieldId',
     ]

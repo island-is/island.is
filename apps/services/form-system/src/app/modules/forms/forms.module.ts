@@ -11,11 +11,13 @@ import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.mode
 import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { FormUrl } from '../formUrls/models/formUrl.model'
+import { Application } from '../applications/models/application.model'
 
 @Module({
   imports: [
     SequelizeModule.forFeature([
       Form,
+      Application,
       FormCertificationType,
       FormUrl,
       Section,

@@ -24,13 +24,13 @@ export const ZendeskSettings = ({ fieldSettings }: Props) => {
       <GridRow marginTop={2} marginBottom={2}>
         <GridColumn span="5/10">
           <Checkbox
-            checked={fieldSettings?.zendeskIsPublic ?? false}
-            label="body"
+            checked={fieldSettings?.zendeskIsPrivate ?? false}
+            label="Private"
             onChange={(e) =>
               controlDispatch({
                 type: 'SET_ZENDESK_FIELD_SETTINGS',
                 payload: {
-                  property: 'zendeskIsPublic',
+                  property: 'zendeskIsPrivate',
                   value: e.target.checked,
                   update: updateActiveItem,
                 },
@@ -41,7 +41,7 @@ export const ZendeskSettings = ({ fieldSettings }: Props) => {
         <GridColumn span="5/10">
           <Checkbox
             checked={fieldSettings?.zendeskIsCustomField ?? false}
-            label="custom field"
+            label="Custom field"
             onChange={(e) => {
               controlDispatch({
                 type: 'SET_ZENDESK_FIELD_SETTINGS',

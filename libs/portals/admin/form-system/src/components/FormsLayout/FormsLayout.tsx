@@ -12,9 +12,9 @@ export const FormsLayout = () => {
       <FormsHeader />
       {location === 'forms' ? (
         <Forms />
-      ) : location === 'applications' ? (
-        <Applications />
-      ) : location === 'admin' ? (
+      ) : // ) : location === 'applications' ? (
+      //   <Applications />
+      location === 'admin' ? (
         <Admin />
       ) : null}
     </>

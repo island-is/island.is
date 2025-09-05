@@ -19,6 +19,16 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         prod: 'https://innskra.island.is',
       },
     })
+    .secrets({
+      FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX:
+        '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX',
+      FORM_SYSTEM_ZENDESK_TENANT_ID_PROD:
+        '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_PROD',
+      FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX:
+        '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX',
+      FORM_SYSTEM_ZENDESK_API_KEY_PROD:
+        '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_PROD',
+    })
     .ingress({
       primary: {
         host: {

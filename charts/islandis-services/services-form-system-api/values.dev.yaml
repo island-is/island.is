@@ -101,6 +101,10 @@ resources:
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
+  FORM_SYSTEM_ZENDESK_API_KEY_PROD: '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_PROD'
+  FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX'
+  FORM_SYSTEM_ZENDESK_TENANT_ID_PROD: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_PROD'
+  FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

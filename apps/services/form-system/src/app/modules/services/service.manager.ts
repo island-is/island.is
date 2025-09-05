@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { FormUrl } from '../formUrls/models/formUrl.model'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
-// import { ZendeskService } from './zendesk.service'
+import { ZendeskService } from './zendesk.service'
 import { NudgeService } from './nudge.service'
 import { UrlMethods, UrlTypes } from '@island.is/form-system/shared'
 import { ApplicationDto } from '../applications/models/dto/application.dto'
@@ -17,7 +17,7 @@ export class ServiceManager {
     private readonly formUrlModel: typeof FormUrl,
     @InjectModel(OrganizationUrl)
     private readonly organizationUrlModel: typeof OrganizationUrl,
-    // private readonly zendeskService: ZendeskService,
+    private readonly zendeskService: ZendeskService,
     private readonly nugdeService: NudgeService,
     private readonly validationService: ValidationService,
   ) {}
@@ -27,24 +27,23 @@ export class ServiceManager {
       where: { formId: applicationDto.formId },
     })
 
-    const urls = await Promise.all(
-      formUrls.map(async (formUrl) => {
-        return this.organizationUrlModel.findByPk(formUrl.organizationUrlId)
-      }),
-    )
+    if (formUrls.length === 0) {
+      return false
+    }
 
-    const submitUrls = urls.filter(
-      (url) =>
-        url?.type === UrlTypes.SUBMIT && url.isTest === applicationDto.isTest,
-    )
-
-    submitUrls.map(async (url) => {
-      if (url?.method === UrlMethods.SEND_NUDGE) {
-        return await this.nugdeService.sendNudge(applicationDto, url)
-      } else if (url?.method === UrlMethods.SEND_TO_ZENDESK) {
-        // return await this.zendeskService.sendToZendesk(applicationDto, url)
-      }
+    const submitUrl = await this.organizationUrlModel.findOne({
+      where: {
+        id: formUrls.map((formUrl) => formUrl.organizationUrlId),
+        type: UrlTypes.SUBMIT,
+        isTest: applicationDto.isTest,
+      },
     })
+
+    if (submitUrl && submitUrl?.method === UrlMethods.SEND_NUDGE) {
+      return await this.nugdeService.sendNudge(applicationDto, submitUrl)
+    } else if (submitUrl && submitUrl?.method === UrlMethods.SEND_TO_ZENDESK) {
+      return await this.zendeskService.sendToZendesk(applicationDto, submitUrl)
+    }
 
     return false
   }
