@@ -77,7 +77,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
     return () => {
       document.body.style.overflow = ''
     }
-  })
+  }, [])
 
   return (
     <FocusLock autoFocus={false}>
