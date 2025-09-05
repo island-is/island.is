@@ -352,9 +352,9 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit meðmæla',
     description: '',
   },
-  downloadReports: {
-    id: 'admin-portal.signature-collection:downloadReports',
-    defaultMessage: 'Sækja skýrslur',
+  downloadReport: {
+    id: 'admin-portal.signature-collection:downloadReport',
+    defaultMessage: 'Sækja skýrslu',
     description: '',
   },
   downloadReportsDescription: {

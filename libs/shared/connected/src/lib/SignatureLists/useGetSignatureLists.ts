@@ -14,6 +14,7 @@ export const GetLatestCollectionForType = gql`
       endTime
       startTime
       name
+      collectionType
       areas {
         id
         name
@@ -72,7 +73,10 @@ export const useGetLatestCollectionForType = (
 export const useGetOpenLists = (collection: SignatureCollection) => {
   const { data, loading: openListsLoading } = useQuery<Query>(GetOpenLists, {
     variables: {
-      input: { collectionId: collection?.id },
+      input: {
+        collectionId: collection?.id,
+        collectionType: collection?.collectionType,
+      },
     },
     skip: !collection || collection.isActive,
   })

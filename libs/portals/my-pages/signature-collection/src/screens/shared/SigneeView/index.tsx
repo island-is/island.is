@@ -73,7 +73,10 @@ const SigneeView = ({
                           currentCollection?.collectionType ===
                           SignatureCollectionCollectionType.Presidential
                             ? formatMessage(m.collectionTitle)
-                            : formatMessage(m.collectionTitleParliamentary)
+                            : currentCollection?.collectionType ===
+                              SignatureCollectionCollectionType.Parliamentary
+                            ? formatMessage(m.collectionTitleParliamentary)
+                            : formatMessage(m.collectionTitleMunicipal)
                         }
                         cta={
                           new Date(list.endTime) > new Date() &&

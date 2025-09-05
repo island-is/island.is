@@ -12,7 +12,7 @@ import {
 import { m } from '../../lib/messages'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
-import { useRevalidator } from 'react-router-dom'
+import { useParams, useRevalidator } from 'react-router-dom'
 import { useProcessCollectionMutation } from './finishCollectionProcess.generated'
 import {
   CollectionStatus,
@@ -22,14 +22,16 @@ import {
 
 const ActionCompleteCollectionProcessing = ({
   collection,
-  areaId,
 }: {
   collection: SignatureCollection
-  // areaId is used for LocalGovernmental collections, instead of collection.id
-  areaId?: string
 }) => {
   const { formatMessage } = useLocale()
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
+
+  // areaId is used for LocalGovernmental collections, instead of collection.id
+  const params = useParams()
+  const area = params.municipality ?? ''
+  const areaId = collection.areas.find((a) => a.name === area)?.collectionId
 
   const [processCollectionMutation, { loading }] =
     useProcessCollectionMutation()

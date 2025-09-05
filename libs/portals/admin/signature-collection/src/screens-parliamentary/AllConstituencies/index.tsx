@@ -64,10 +64,7 @@ const ParliamentaryRoot = () => {
             img={nationalRegistryLogo}
             buttonGroup={
               <ActionDrawer
-                allowedActions={[
-                  Actions.DownloadReports,
-                  Actions.CompleteCollectionProcessing,
-                ]}
+                allowedActions={[Actions.CompleteCollectionProcessing]}
               />
             }
             marginBottom={4}

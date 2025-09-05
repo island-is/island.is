@@ -54,7 +54,10 @@ const ViewList = () => {
               )}
             </Box>
           </Box>
-          <Signees collectionType={collectionType} />
+          <Signees
+            collectionType={collectionType}
+            totalSignees={listInfo?.numberOfSignatures ?? 0}
+          />
         </Stack>
       )}
     </Box>
