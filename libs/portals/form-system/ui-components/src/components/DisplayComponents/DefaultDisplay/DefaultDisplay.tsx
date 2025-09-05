@@ -13,6 +13,7 @@ const TEXTBOX_COMPONENT_MAP = {
   DATE_PICKER: 'date',
   DROPDOWN_LIST: 'listValue',
   RADIO_BUTTONS: 'listValue',
+  APPLICANT: '',
 } as const
 
 interface Props {

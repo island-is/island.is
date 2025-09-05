@@ -93,6 +93,13 @@ type DndActions =
       type: 'LIST_ITEM_OVER_LIST_ITEM'
       payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
     }
+  | {
+      type: 'REMOVE_DEPENDENCIES'
+      payload: {
+        activeId: UniqueIdentifier
+        update: (updatedForm: FormSystemForm) => void
+      }
+    }
 
 type ChangeActions =
   | {
@@ -118,6 +125,10 @@ type ChangeActions =
     }
   | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
+  | {
+      type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
   | {
       type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
@@ -1190,6 +1201,28 @@ export const controlReducer = (
           ),
         },
       }
+    }
+    case 'REMOVE_DEPENDENCIES': {
+      const { activeId, update } = action.payload
+      const id = String(activeId)
+      const source = (form.dependencies ?? []).filter(
+        (dep) => dep !== null && dep !== undefined,
+      ) as NonNullable<typeof form.dependencies>
+
+      const updatedDependencies = source
+        .filter((dep) => dep?.parentProp !== id)
+        .map((dep) => ({
+          ...dep,
+          childProps: dep?.childProps?.filter((child) => child !== id),
+        }))
+        .filter((dep) => (dep.childProps?.length ?? 0) > 0)
+
+      const updatedForm = {
+        ...form,
+        dependencies: updatedDependencies,
+      }
+      update(updatedForm)
+      return { ...state, form: updatedForm }
     }
     default:
       return state
