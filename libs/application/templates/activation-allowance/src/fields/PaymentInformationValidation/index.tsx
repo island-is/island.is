@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { FC, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { PaymentInformationAnswer } from '../../lib/dataSchema'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
@@ -8,6 +8,7 @@ import { GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsActivationGra
 import { useLocale } from '@island.is/localization'
 import { paymentErrors } from '../../lib/messages/paymentErrors'
 import { MessageDescriptor } from 'react-intl'
+import { useLazyIsBankInfoValid } from '../../hooks/useLazyIsBankInfoValid'
 
 export const PaymentInformationValidation: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -17,6 +18,18 @@ export const PaymentInformationValidation: FC<
   const [errors, setErrors] = useState<Array<MessageDescriptor>>([])
   const [invalidError, setInvalidError] = useState<boolean>()
   const { formatMessage } = useLocale()
+  const getIsValidBankInformation = useLazyIsBankInfoValid()
+  const getIsCompanyValidCallback = useCallback(
+    async (input: {
+      bankNumber: string | undefined
+      ledger: string | undefined
+      accountNumber: string | undefined
+    }) => {
+      const { data } = await getIsValidBankInformation(input)
+      return data
+    },
+    [getIsValidBankInformation],
+  )
 
   setBeforeSubmitCallback?.(async () => {
     setInvalidError(false)
@@ -56,6 +69,17 @@ export const PaymentInformationValidation: FC<
     }
     if (!bankNumberSupportData) {
       setErrors((prev) => [...prev, paymentErrors.invalidBankNumber])
+    }
+
+    try {
+      const isValid = await getIsCompanyValidCallback({
+        bankNumber: paymentInfo.bankNumber,
+        ledger: paymentInfo.ledger,
+        accountNumber: paymentInfo.accountNumber?.padStart(6, '0'),
+      })
+      if (isValid) return [true, null]
+    } catch (e) {
+      // Set some error ?
     }
 
     return [false, '']
