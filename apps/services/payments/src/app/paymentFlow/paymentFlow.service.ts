@@ -47,8 +47,6 @@ import { ChargeItem } from '../../utils/chargeUtils'
 import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 
-// TODO: remove this comment, the purpose of this comment is to force the payment service to be featured deployed
-
 interface PaymentFlowUpdateConfig {
   /**
    * Whether to use retry logic when notifying the onUpdateUrl
