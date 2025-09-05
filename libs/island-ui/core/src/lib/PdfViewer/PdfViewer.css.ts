@@ -23,9 +23,3 @@ export const linkWithoutDecorations = style({
 export const displayNone = style({
   display: 'none',
 })
-
-export const center = style({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-})
