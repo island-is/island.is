@@ -795,6 +795,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Umsókn hafnað',
     description: 'Application rejected',
   },
+  applicationDismissed: {
+    id: 'sia.application:applicationDismissed',
+    defaultMessage: 'Umsókn vísað frá',
+    description: 'Application dismissed',
+  },
   applicationApproved: {
     id: 'sia.application:applicationApproved',
     defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',

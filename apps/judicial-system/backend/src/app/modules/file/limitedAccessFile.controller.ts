@@ -28,7 +28,6 @@ import {
 
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import {
-  Case,
   CaseCompletedGuard,
   CaseReadGuard,
   CaseTypeGuard,
@@ -38,6 +37,7 @@ import {
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
 import { CivilClaimantExistsGuard } from '../defendant'
+import { Case, CaseFile } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -46,7 +46,6 @@ import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCa
 import { LimitedAccessViewCaseFileGuard } from './guards/limitedAccessViewCaseFile.guard'
 import { LimitedAccessWriteCaseFileGuard } from './guards/limitedAccessWriteCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
-import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { FileService } from './file.service'

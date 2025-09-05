@@ -5,30 +5,57 @@ import {
   buildTextField,
   buildHiddenInputWithWatchedValue,
   buildRadioField,
+  buildAlertMessageField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
-import { housingFireProtections } from '../../../lib/messages'
-import { getEmergencyExitOptions } from '../../../utils/utils'
+import * as m from '../../../lib/messages'
+import { getRentalPropertySize } from '../../../utils/utils'
+import { shouldShowSmokeDetectorsAlert } from '../../../utils/conditions'
+import { PropertyUnit } from '../../../shared/types'
+import { getYesNoOptions } from '../../../utils/options'
 
 export const RentalHousingFireProtections = buildSubSection({
   id: Routes.FIREPROTECTIONS,
-  title: housingFireProtections.subSectionName,
+  title: m.housingFireProtections.subSectionName,
   children: [
     buildMultiField({
       id: Routes.FIREPROTECTIONS,
-      title: housingFireProtections.pageTitle,
-      description: housingFireProtections.pageDescription,
+      title: m.housingFireProtections.pageTitle,
+      description: m.housingFireProtections.pageDescription,
       children: [
         buildDescriptionField({
           id: 'fireProtections.smokeDetectorsFireExtinguisherRequirements',
           description:
-            housingFireProtections.smokeDetectorsFireExtinguisherRequirements,
+            m.housingFireProtections.smokeDetectorsFireExtinguisherRequirements,
           space: 0,
+        }),
+        buildAlertMessageField({
+          id: 'fireProtections.smokeDetectorsRequirements',
+          condition: shouldShowSmokeDetectorsAlert,
+          title: m.housingFireProtections.smokeDetectorsAlertTitle,
+          message: (application) => {
+            const propertySize = getValueViaPath<Array<PropertyUnit>>(
+              application.answers,
+              'registerProperty.searchresults.units',
+            )
+
+            const size = getRentalPropertySize(propertySize ?? [])
+            const requiredSmokeDetectors = Math.ceil(Number(size) / 80)
+
+            return {
+              ...m.housingFireProtections.smokeDetectorsAlertMessage,
+              values: {
+                propertySize: size,
+                requiredSmokeDetectors,
+              },
+            }
+          },
+          alertType: 'warning',
         }),
         buildTextField({
           id: 'fireProtections.smokeDetectors',
-          title: housingFireProtections.smokeDetectorsLabel,
-          placeholder: '0',
+          title: m.housingFireProtections.smokeDetectorsLabel,
           width: 'half',
           maxLength: 1,
           format: '#',
@@ -37,18 +64,7 @@ export const RentalHousingFireProtections = buildSubSection({
         }),
         buildTextField({
           id: 'fireProtections.fireExtinguisher',
-          title: housingFireProtections.fireExtinguisherLabel,
-          placeholder: '0',
-          width: 'half',
-          maxLength: 1,
-          format: '#',
-          min: 0,
-          max: 9,
-        }),
-        buildTextField({
-          id: 'fireProtections.fireBlanket',
-          title: housingFireProtections.fireBlanketLabel,
-          placeholder: '0',
+          title: m.housingFireProtections.fireExtinguisherLabel,
           width: 'half',
           maxLength: 1,
           format: '#',
@@ -56,15 +72,28 @@ export const RentalHousingFireProtections = buildSubSection({
           max: 9,
         }),
         buildDescriptionField({
-          id: 'fireProtections.exitRequirements',
-          title: housingFireProtections.exitsLabel,
+          id: 'fireProtections.fireBlanketRequirements',
+          title: m.housingFireProtections.fireBlanketLabel,
           titleVariant: 'h3',
-          description: housingFireProtections.exitRequirements,
+          description: m.housingFireProtections.fireBlanketRequirements,
+          space: 4,
+        }),
+        buildRadioField({
+          id: 'fireProtections.fireBlanket',
+          options: getYesNoOptions(),
+          width: 'half',
+          space: 0,
+        }),
+        buildDescriptionField({
+          id: 'fireProtections.exitRequirements',
+          title: m.housingFireProtections.exitsLabel,
+          titleVariant: 'h3',
+          description: m.housingFireProtections.exitRequirements,
           space: 4,
         }),
         buildRadioField({
           id: 'fireProtections.emergencyExits',
-          options: getEmergencyExitOptions(),
+          options: getYesNoOptions(),
           width: 'half',
           space: 0,
         }),

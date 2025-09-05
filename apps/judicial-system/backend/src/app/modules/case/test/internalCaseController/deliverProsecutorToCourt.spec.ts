@@ -4,8 +4,8 @@ import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { Case } from '../../../case'
 import { CourtService } from '../../../court'
+import { Case } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 
