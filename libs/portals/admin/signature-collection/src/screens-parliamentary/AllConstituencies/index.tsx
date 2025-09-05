@@ -18,7 +18,6 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { CollectionStatus } from '@island.is/api/schema'
-import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import FindSignature from '../../shared-components/findSignature'
 import ActionDrawer from '../../shared-components/actionDrawer'
@@ -64,7 +63,12 @@ const ParliamentaryRoot = () => {
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
             buttonGroup={
-              <ActionDrawer allowedActions={[Actions.DownloadReports]} />
+              <ActionDrawer
+                allowedActions={[
+                  Actions.DownloadReports,
+                  Actions.CompleteCollectionProcessing,
+                ]}
+              />
             }
             marginBottom={4}
           />
@@ -115,13 +119,6 @@ const ParliamentaryRoot = () => {
             <CompareLists
               collectionId={collection?.id}
               collectionType={collection?.collectionType}
-            />
-            <ActionCompleteCollectionProcessing
-              collectionType={collection?.collectionType}
-              collectionId={collection?.id}
-              canProcess={
-                !!allLists.length && allLists.every((l) => l.reviewed === true)
-              }
             />
           </Box>
           {collectionStatus === CollectionStatus.Processed && (
