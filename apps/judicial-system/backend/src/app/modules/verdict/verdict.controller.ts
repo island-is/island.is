@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Inject,
   Param,
   Patch,
@@ -92,7 +93,7 @@ export class VerdictController {
     districtCourtAssistantRule,
     publicProsecutorStaffRule,
   )
-  @Patch('defendant/:defendantId/verdict')
+  @Get('defendant/:defendantId/verdict')
   @ApiOkResponse({
     type: Verdict,
     description: 'Gets verdict and fetched the current state from the police',

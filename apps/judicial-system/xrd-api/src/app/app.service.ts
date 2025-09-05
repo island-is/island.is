@@ -21,7 +21,6 @@ import {
   InformationForDefendant,
   LawyerRegistry,
   LawyerType,
-  mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
