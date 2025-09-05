@@ -1210,10 +1210,10 @@ export const controlReducer = (
       ) as NonNullable<typeof form.dependencies>
 
       const updatedDependencies = source
-        .filter((dep) => dep.parentProp !== id)
+        .filter((dep) => dep?.parentProp !== id)
         .map((dep) => ({
           ...dep,
-          childProps: dep.childProps?.filter((child) => child !== id),
+          childProps: dep?.childProps?.filter((child) => child !== id),
         }))
         .filter((dep) => (dep.childProps?.length ?? 0) > 0)
 
