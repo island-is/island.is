@@ -2129,7 +2129,7 @@ service-portal-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
