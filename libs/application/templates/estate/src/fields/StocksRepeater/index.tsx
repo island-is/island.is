@@ -1,5 +1,5 @@
-import { FC, useEffect, useCallback, useRef } from 'react'
-import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { FC, useEffect, useCallback, useState } from 'react'
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -8,11 +8,9 @@ import {
   GridColumn,
   GridRow,
   Button,
-  ProfileCard,
   Text,
 } from '@island.is/island-ui/core'
 
-import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue } from '../../types'
@@ -39,6 +37,7 @@ interface StocksRepeaterProps {
 export const StocksRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & StocksRepeaterProps>
 > = ({ application, field, errors }) => {
+  console.log('application', application)
   const { id } = field
   const repeaterButtonText = field?.props?.repeaterButtonText
   const error = (errors as ErrorValue)?.estate?.stocks
@@ -46,16 +45,10 @@ export const StocksRepeater: FC<
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors } = useFormContext()
+  const { control, clearErrors, setValue, getValues } = useFormContext()
   const estateData = getEstateDataFromApplication(application)
-  
-  // Watch all field values to calculate stock values dynamically
-  const watchedFields = useWatch({
-    control,
-    name: id,
-  })
-  
-  const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [, updateState] = useState<unknown>()
+  const forceUpdate = useCallback(() => updateState({}), [])
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.stocks) {
@@ -64,45 +57,23 @@ export const StocksRepeater: FC<
   }, [])
 
   // Calculate stock value from faceValue * rateOfExchange
-  const calculateStockValue = (faceValue: string, rateOfExchange: string): string => {
-    const face = parseFloat(faceValue?.replace(/[^0-9.-]/g, '') || '0')
-    const rate = parseFloat(rateOfExchange?.replace(/[^0-9.-]/g, '') || '0')
-    return (face * rate).toString()
+  const updateStocksValue = (fieldIndex: string) => {
+    const stockValues = getValues(fieldIndex)
+    const faceValue = stockValues?.faceValue?.replace(/[^\d.]/g, '') || '0'
+    const rateOfExchange =
+      stockValues?.rateOfExchange?.replace(/[^\d.]/g, '') || '0'
+
+    const total = parseFloat(faceValue) * parseFloat(rateOfExchange)
+    const totalString = total.toFixed(0)
+
+    setValue(`${fieldIndex}.value`, totalString)
+
+    if (total > 0) {
+      clearErrors(`${fieldIndex}.value`)
+    }
+
+    forceUpdate()
   }
-
-  // Debounced update function to prevent focus loss
-  const debouncedUpdateValues = useCallback(() => {
-    if (updateTimeoutRef.current) {
-      clearTimeout(updateTimeoutRef.current)
-    }
-    
-    updateTimeoutRef.current = setTimeout(() => {
-      if (watchedFields && Array.isArray(watchedFields)) {
-        watchedFields.forEach((stock: StockFormField, index: number) => {
-          if (stock && !stock.initial) {
-            const calculatedValue = calculateStockValue(stock.faceValue || '0', stock.rateOfExchange || '0')
-            if (calculatedValue !== stock.value) {
-              update(index, {
-                ...stock,
-                value: calculatedValue,
-              })
-            }
-          }
-        })
-      }
-    }, 300) // 300ms debounce
-  }, [watchedFields, update, calculateStockValue])
-
-  // Update stock values when faceValue or rateOfExchange changes
-  useEffect(() => {
-    debouncedUpdateValues()
-    
-    return () => {
-      if (updateTimeoutRef.current) {
-        clearTimeout(updateTimeoutRef.current)
-      }
-    }
-  }, [debouncedUpdateValues])
 
   const handleAddStock = () =>
     append({
@@ -119,77 +90,6 @@ export const StocksRepeater: FC<
 
   return (
     <Box marginTop={2}>
-      <GridRow>
-        {fields.reduce((acc, stock: StockFormField, index) => {
-          if (!stock.initial) {
-            return acc
-          }
-          return [
-            ...acc,
-            <GridColumn
-              key={stock.id}
-              span={['12/12', '12/12', '6/12']}
-              paddingBottom={3}
-            >
-              <ProfileCard
-                disabled={!stock.enabled}
-                title={
-                  stock.organization || formatMessage(m.stocksTitle)
-                }
-                key={stock.organization}
-                description={[
-                  `${formatMessage(m.stocksValue)}: ${
-                    watchedFields && watchedFields[index] 
-                      ? calculateStockValue(
-                          watchedFields[index].faceValue || '0',
-                          watchedFields[index].rateOfExchange || '0'
-                        )
-                      : stock.value || '0'
-                  } kr.`,
-                  `${formatMessage(m.stocksNationalId)}: ${
-                    stock.nationalId || ''
-                  }`,
-                  <Box marginTop={1} as="span">
-                    <Button
-                      variant="text"
-                      icon={stock.enabled ? 'remove' : 'add'}
-                      size="small"
-                      iconType="outline"
-                      onClick={() => {
-                        const updatedStock = {
-                          ...stock,
-                          enabled: !stock.enabled,
-                        }
-                        update(index, updatedStock)
-                        clearErrors(`${id}[${index}].value`)
-                      }}
-                    >
-                      {stock.enabled
-                        ? formatMessage(m.inheritanceDisableMember)
-                        : formatMessage(m.inheritanceEnableMember)}
-                    </Button>
-                  </Box>,
-                ]}
-              />
-              <Box marginTop={2}>
-                <InputController
-                  id={`${id}[${index}].value`}
-                  name={`${id}[${index}].value`}
-                  label={formatMessage(m.stocksValue)}
-                  disabled={!stock.enabled}
-                  backgroundColor="blue"
-                  placeholder="0 kr."
-                  defaultValue={stock.value}
-                  error={error && error[index]?.value}
-                  currency
-                  size="sm"
-                  required
-                />
-              </Box>
-            </GridColumn>,
-          ]
-        }, [] as JSX.Element[])}
-      </GridRow>
       {fields.map((field: StockFormField, index) => {
         const fieldIndex = `${id}[${index}]`
         const organizationField = `${fieldIndex}.organization`
@@ -202,12 +102,7 @@ export const StocksRepeater: FC<
         const fieldError = error && error[index] ? error[index] : null
 
         return (
-          <Box
-            position="relative"
-            key={field.id}
-            marginTop={2}
-            hidden={field.initial}
-          >
+          <Box position="relative" key={field.id} marginTop={2}>
             <Controller
               name={initialField}
               control={control}
@@ -217,18 +112,47 @@ export const StocksRepeater: FC<
             <Controller
               name={enabledField}
               control={control}
-              defaultValue={true}
+              defaultValue={field.enabled || true}
               render={() => <input type="hidden" />}
             />
-            <Text variant="h4">{formatMessage(m.stocksTitle)}</Text>
-            <Box position="absolute" className={styles.removeFieldButton}>
-              <Button
-                variant="ghost"
-                size="small"
-                circle
-                icon="remove"
-                onClick={handleRemoveStock.bind(null, index)}
-              />
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              marginBottom={2}
+            >
+              <Text variant="h4">{formatMessage(m.stocksTitle)}</Text>
+              <Box display="flex" alignItems="center" columnGap={2}>
+                {field.initial && (
+                  <Button
+                    variant="text"
+                    icon={field.enabled ? 'remove' : 'add'}
+                    size="small"
+                    iconType="outline"
+                    onClick={() => {
+                      const updatedStock = {
+                        ...field,
+                        enabled: !field.enabled,
+                      }
+                      update(index, updatedStock)
+                      clearErrors(`${id}[${index}].value`)
+                    }}
+                  >
+                    {field.enabled
+                      ? formatMessage(m.inheritanceDisableMember)
+                      : formatMessage(m.inheritanceEnableMember)}
+                  </Button>
+                )}
+                {!field.initial && (
+                  <Button
+                    variant="ghost"
+                    size="small"
+                    circle
+                    icon="remove"
+                    onClick={handleRemoveStock.bind(null, index)}
+                  />
+                )}
+              </Box>
             </Box>
             <GridRow>
               <GridColumn
@@ -244,6 +168,7 @@ export const StocksRepeater: FC<
                   defaultValue={field.organization}
                   error={fieldError?.organization}
                   size="sm"
+                  onChange={() => updateStocksValue(fieldIndex)}
                 />
               </GridColumn>
               <GridColumn
@@ -260,6 +185,9 @@ export const StocksRepeater: FC<
                   error={fieldError?.nationalId}
                   format="######-####"
                   size="sm"
+                  backgroundColor="blue"
+                  disabled={field.initial && !field.enabled}
+                  onChange={() => updateStocksValue(fieldIndex)}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -272,6 +200,9 @@ export const StocksRepeater: FC<
                   error={fieldError?.faceValue}
                   currency
                   size="sm"
+                  backgroundColor="blue"
+                  disabled={field.initial && !field.enabled}
+                  onChange={() => updateStocksValue(fieldIndex)}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -283,6 +214,9 @@ export const StocksRepeater: FC<
                   placeholder="0"
                   error={fieldError?.rateOfExchange}
                   size="sm"
+                  backgroundColor="blue"
+                  disabled={field.initial && !field.enabled}
+                  onChange={() => updateStocksValue(fieldIndex)}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -296,6 +230,7 @@ export const StocksRepeater: FC<
                   currency
                   size="sm"
                   backgroundColor="white"
+                  disabled={field.initial && !field.enabled}
                   readOnly
                 />
               </GridColumn>

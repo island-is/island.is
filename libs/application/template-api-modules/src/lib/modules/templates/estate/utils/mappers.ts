@@ -23,7 +23,9 @@ const estateAssetMapper = <T>(element: T) => {
   }
 }
 
-const bankAccountMapper = (element: EstateAsset & { exchangeRateOrInterest?: string }) => {
+const bankAccountMapper = (
+  element: EstateAsset & { exchangeRateOrInterest?: string },
+) => {
   console.log('bankAccountMapper element', element)
   return {
     accountNumber: element.assetNumber || '',
@@ -45,12 +47,17 @@ const claimsMapper = (element: EstateAsset) => {
   }
 }
 
-const stocksMapper = (element: EstateAsset) => {
+const stocksMapper = (
+  element: EstateAsset & { exchangeRateOrInterest?: string },
+) => {
   console.log('stocksMapper element', element)
   const faceValue = element.marketValue || '0'
-  const rateOfExchange = '1' // Default rate since exchangeRateOrInterest doesn't exist on EstateAsset
-  const calculatedValue = (parseFloat(faceValue) * parseFloat(rateOfExchange)).toString()
-  
+  const rateOfExchange =
+    element.exchangeRateOrInterest?.replace(',', '.') || '1'
+  const calculatedValue = (
+    parseFloat(faceValue) * parseFloat(rateOfExchange)
+  ).toString()
+
   return {
     organization: element.description || '',
     nationalId: element.assetNumber || '',
@@ -64,15 +71,14 @@ const stocksMapper = (element: EstateAsset) => {
 
 const inventoryMapper = (cashItems: EstateAsset[]) => {
   const descriptions = cashItems
-    .map(item => item.description)
-    .filter(desc => desc && desc.trim() !== '')
+    .map((item) => item.description)
+    .filter((desc) => desc && desc.trim() !== '')
     .join(', ')
-  
-  const totalValue = cashItems
-    .reduce((sum, item) => {
-      const value = parseFloat(item.marketValue || '0')
-      return sum + (isNaN(value) ? 0 : value)
-    }, 0)
+
+  const totalValue = cashItems.reduce((sum, item) => {
+    const value = parseFloat(item.marketValue || '0')
+    return sum + (isNaN(value) ? 0 : value)
+  }, 0)
 
   return {
     info: descriptions,

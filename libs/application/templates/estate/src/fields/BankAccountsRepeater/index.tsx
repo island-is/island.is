@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useCallback, useState } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -8,11 +8,9 @@ import {
   GridColumn,
   GridRow,
   Button,
-  ProfileCard,
   Text,
 } from '@island.is/island-ui/core'
 
-import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue } from '../../types'
@@ -22,6 +20,7 @@ interface BankAccountFormField {
   accountNumber?: string
   balance?: string
   exchangeRateOrInterest?: string
+  accountTotal?: string
   initial?: boolean
   enabled?: boolean
 }
@@ -44,110 +43,73 @@ export const BankAccountsRepeater: FC<
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors } = useFormContext()
+  const { control, clearErrors, setValue, getValues } = useFormContext()
   const estateData = getEstateDataFromApplication(application)
+  const [, updateState] = useState<unknown>()
+  const forceUpdate = useCallback(() => updateState({}), [])
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.bankAccounts) {
       replace(estateData.estate.bankAccounts)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Calculate bank account total from balance + exchangeRateOrInterest
+  const updateBankAccountValue = (fieldIndex: string) => {
+    const bankAccountValues = getValues(fieldIndex)
+    const balance = bankAccountValues?.balance?.replace(/[^\d.]/g, '') || '0'
+    const exchangeRateOrInterest =
+      bankAccountValues?.exchangeRateOrInterest?.replace(/[^\d.]/g, '') || '0'
+
+    const accountTotal =
+      parseFloat(balance) + parseFloat(exchangeRateOrInterest)
+    setValue(`${fieldIndex}.accountTotal`, accountTotal.toString())
+
+    if (accountTotal > 0) {
+      clearErrors(`${fieldIndex}.balance`)
+    }
+
+    forceUpdate()
+  }
 
   const handleAddBankAccount = () =>
     append({
       accountNumber: '',
       balance: '',
       exchangeRateOrInterest: '',
+      accountTotal: '',
       initial: false,
       enabled: true,
     })
 
   const handleRemoveBankAccount = (index: number) => remove(index)
 
+  // Calculate accountTotal for all fields when they are populated
+  useEffect(() => {
+    if (fields.length > 0) {
+      fields.forEach((_, index) => {
+        const fieldIndex = `${id}[${index}]`
+        updateBankAccountValue(fieldIndex)
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields.length, fields])
+
   return (
     <Box marginTop={2}>
-      <GridRow>
-        {fields.reduce((acc, bankAccount: BankAccountFormField, index) => {
-          if (!bankAccount.initial) {
-            return acc
-          }
-          return [
-            ...acc,
-            <GridColumn
-              key={bankAccount.id}
-              span={['12/12', '12/12', '6/12']}
-              paddingBottom={3}
-            >
-              <ProfileCard
-                disabled={!bankAccount.enabled}
-                title={
-                  bankAccount.accountNumber || formatMessage(m.bankAccount)
-                }
-                key={bankAccount.accountNumber}
-                description={[
-                  `${formatMessage(m.bankAccountBalance)}: ${
-                    bankAccount.balance || '0'
-                  } kr.`,
-                  `${formatMessage(m.bankAccountInterestRate)}: ${
-                    bankAccount.exchangeRateOrInterest || '0'
-                  }`,
-                  <Box marginTop={1} as="span">
-                    <Button
-                      variant="text"
-                      icon={bankAccount.enabled ? 'remove' : 'add'}
-                      size="small"
-                      iconType="outline"
-                      onClick={() => {
-                        const updatedBankAccount = {
-                          ...bankAccount,
-                          enabled: !bankAccount.enabled,
-                        }
-                        update(index, updatedBankAccount)
-                        clearErrors(`${id}[${index}].balance`)
-                      }}
-                    >
-                      {bankAccount.enabled
-                        ? formatMessage(m.inheritanceDisableMember)
-                        : formatMessage(m.inheritanceEnableMember)}
-                    </Button>
-                  </Box>,
-                ]}
-              />
-              <Box marginTop={2}>
-                <InputController
-                  id={`${id}[${index}].balance`}
-                  name={`${id}[${index}].balance`}
-                  label={formatMessage(m.bankAccountBalance)}
-                  disabled={!bankAccount.enabled}
-                  backgroundColor="blue"
-                  placeholder="0 kr."
-                  defaultValue={bankAccount.balance}
-                  error={error && error[index]?.balance}
-                  currency
-                  size="sm"
-                  required
-                />
-              </Box>
-            </GridColumn>,
-          ]
-        }, [] as JSX.Element[])}
-      </GridRow>
       {fields.map((field: BankAccountFormField, index) => {
         const fieldIndex = `${id}[${index}]`
         const accountNumberField = `${fieldIndex}.accountNumber`
         const balanceField = `${fieldIndex}.balance`
         const exchangeRateField = `${fieldIndex}.exchangeRateOrInterest`
+        const accountTotalField = `${fieldIndex}.accountTotal`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
         const fieldError = error && error[index] ? error[index] : null
 
         return (
-          <Box
-            position="relative"
-            key={field.id}
-            marginTop={2}
-            hidden={field.initial}
-          >
+          <Box position="relative" key={field.id} marginTop={2}>
             <Controller
               name={initialField}
               control={control}
@@ -157,18 +119,47 @@ export const BankAccountsRepeater: FC<
             <Controller
               name={enabledField}
               control={control}
-              defaultValue={true}
+              defaultValue={field.enabled || true}
               render={() => <input type="hidden" />}
             />
-            <Text variant="h4">{formatMessage(m.bankAccount)}</Text>
-            <Box position="absolute" className={styles.removeFieldButton}>
-              <Button
-                variant="ghost"
-                size="small"
-                circle
-                icon="remove"
-                onClick={handleRemoveBankAccount.bind(null, index)}
-              />
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              marginBottom={0}
+            >
+              <Text variant="h4">{formatMessage(m.bankAccount)}</Text>
+              <Box display="flex" alignItems="center" columnGap={2}>
+                {field.initial && (
+                  <Button
+                    variant="text"
+                    icon={field.enabled ? 'remove' : 'add'}
+                    size="small"
+                    iconType="outline"
+                    onClick={() => {
+                      const updatedBankAccount = {
+                        ...field,
+                        enabled: !field.enabled,
+                      }
+                      update(index, updatedBankAccount)
+                      clearErrors(`${id}[${index}].balance`)
+                    }}
+                  >
+                    {field.enabled
+                      ? formatMessage(m.inheritanceDisableMember)
+                      : formatMessage(m.inheritanceEnableMember)}
+                  </Button>
+                )}
+                {!field.initial && (
+                  <Button
+                    variant="ghost"
+                    size="small"
+                    circle
+                    icon="remove"
+                    onClick={handleRemoveBankAccount.bind(null, index)}
+                  />
+                )}
+              </Box>
             </Box>
             <GridRow>
               <GridColumn
@@ -184,6 +175,8 @@ export const BankAccountsRepeater: FC<
                   defaultValue={field.accountNumber}
                   error={fieldError?.accountNumber}
                   size="sm"
+                  disabled={field.initial && !field.enabled}
+                  onChange={() => updateBankAccountValue(fieldIndex)}
                 />
               </GridColumn>
               <GridColumn
@@ -200,6 +193,9 @@ export const BankAccountsRepeater: FC<
                   error={fieldError?.balance}
                   currency
                   size="sm"
+                  backgroundColor="blue"
+                  disabled={field.initial && !field.enabled}
+                  onChange={() => updateBankAccountValue(fieldIndex)}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -211,6 +207,24 @@ export const BankAccountsRepeater: FC<
                   placeholder="0"
                   error={fieldError?.exchangeRateOrInterest}
                   size="sm"
+                  backgroundColor="blue"
+                  disabled={field.initial && !field.enabled}
+                  onChange={() => updateBankAccountValue(fieldIndex)}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={accountTotalField}
+                  name={accountTotalField}
+                  label={formatMessage(m.total)}
+                  defaultValue={field.accountTotal}
+                  placeholder="0 kr."
+                  error={fieldError?.accountTotal}
+                  currency
+                  size="sm"
+                  backgroundColor="white"
+                  disabled={field.initial && !field.enabled}
+                  readOnly
                 />
               </GridColumn>
             </GridRow>
