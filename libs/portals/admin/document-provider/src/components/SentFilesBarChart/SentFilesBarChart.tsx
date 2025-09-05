@@ -11,10 +11,11 @@ import {
 } from 'recharts'
 import { SentFilesChartDataItem } from '../../lib/types'
 import { formatYAxis } from '../../lib/utils'
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   data: Array<SentFilesChartDataItem>
-  title: string
   valueIndex?: number
 }
 
@@ -24,6 +25,8 @@ const CAT_KEYS = ['cat1', 'cat2', 'cat3', 'cat4']
 export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
+  const { formatMessage } = useLocale()
+
   const TITLES =
     data && data.length > 0
       ? CAT_KEYS.map(
@@ -34,6 +37,7 @@ export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
       : CAT_KEYS
 
   return (
+    
     <GridColumn span={['12/12', '12/12', '6/12']}>
       <Box
         marginBottom={3}
@@ -44,7 +48,7 @@ export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
         alignItems={'center'}
       >
         <Text variant="h3" marginBottom={2} color="blue400">
-          Send skjöl
+          {formatMessage(m.statisticsBoxPublishedDocuments)}
         </Text>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={data} margin={{ left: 0 }}>
