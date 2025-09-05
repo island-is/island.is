@@ -120,7 +120,7 @@ const Signees = ({
                           box={{ background: bgColor }}
                           width="20%"
                         >
-                          {format(new Date(), 'dd.MM.yyyy')}
+                          {format(new Date(s.created), 'dd.MM.yyyy')}
                         </T.Data>
                         <T.Data
                           text={{ variant: textVariant }}
