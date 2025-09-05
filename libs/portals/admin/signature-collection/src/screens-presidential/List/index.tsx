@@ -71,7 +71,6 @@ export const List = () => {
                       Actions.LockList,
                       Actions.ReviewComplete,
                       Actions.ExtendDeadline,
-                      Actions.RemoveCandidate,
                     ]}
                     withManagers
                   />
@@ -95,10 +94,12 @@ export const List = () => {
                 </Box>
               )}
               <Signees list={list} />
-              <PaperSignees
-                listId={list.id}
-                collectionType={list.collectionType}
-              />
+              {!list.reviewed && (
+                <PaperSignees
+                  listId={list.id}
+                  collectionType={list.collectionType}
+                />
+              )}
             </Box>
           )}
         </GridColumn>

@@ -5,7 +5,7 @@ import path from 'node:path'
 import { getGithubToken } from './get-github-token-helper.mjs'
 
 // This creates circular problems!
-const IGNORED_FILES = ['tsconfig.base.json']
+const IGNORED_FILES = ['tsconfig.base.json', '.yarnrc.yml']
 const PRIVATE_KEY = 'DIRTYBOT_KEY'
 const APP_ID = 'DIRTYBOT_APP_ID'
 

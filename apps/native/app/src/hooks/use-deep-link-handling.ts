@@ -1,13 +1,17 @@
-import messaging, {
+import {
   FirebaseMessagingTypes,
+  getInitialNotification,
+  onNotificationOpenedApp,
 } from '@react-native-firebase/messaging'
-import { useCallback, useEffect, useRef, useState } from 'react'
 import { useURL } from 'expo-linking'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useMarkUserNotificationAsReadMutation } from '../graphql/types/schema'
 
 import { navigateToUniversalLink } from '../lib/deep-linking'
+import { app } from '../lib/firebase'
 import { useBrowser } from '../lib/use-browser'
 import { useAuthStore } from '../stores/auth-store'
+import { isString } from '../utils/is-string'
 
 // Expo-style notification hook wrapping firebase.
 function useLastNotificationResponse() {
@@ -15,16 +19,14 @@ function useLastNotificationResponse() {
     useState<FirebaseMessagingTypes.RemoteMessage | null>(null)
 
   useEffect(() => {
-    messaging()
-      .getInitialNotification()
-      .then((remoteMessage) => {
-        if (remoteMessage) {
-          setLastNotificationResponse(remoteMessage)
-        }
-      })
+    getInitialNotification(app.messaging()).then((remoteMessage) => {
+      if (remoteMessage) {
+        setLastNotificationResponse(remoteMessage)
+      }
+    })
 
     // Return the unsubscribe function as a useEffect destructor.
-    return messaging().onNotificationOpenedApp((remoteMessage) => {
+    return onNotificationOpenedApp(app.messaging(), (remoteMessage) => {
       setLastNotificationResponse(remoteMessage)
     })
   }, [])
@@ -48,12 +50,15 @@ export function useDeepLinkHandling() {
       if (!url || lastUrl.current === url || lockScreenActivatedAt) {
         return false
       }
+
       lastUrl.current = url
+
       if (url.startsWith('is.island.app') && url.includes('wallet/')) {
         return false
       }
 
       navigateToUniversalLink({ link: url, openBrowser })
+
       return true
     },
     [openBrowser, lastUrl, lockScreenActivatedAt],
@@ -65,7 +70,8 @@ export function useDeepLinkHandling() {
 
   useEffect(() => {
     const url = notification?.data?.clickActionUrl
-    const wasHandled = handleUrl(url)
+    const wasHandled = isString(url) ? handleUrl(url) : false
+
     if (wasHandled && notification?.data?.notificationId) {
       // Mark notification as read and seen
       void markUserNotificationAsRead({

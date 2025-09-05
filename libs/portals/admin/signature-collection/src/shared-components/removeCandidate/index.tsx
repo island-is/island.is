@@ -12,32 +12,32 @@ import {
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { m } from '../../lib/messages'
-import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
 import { useNavigate } from 'react-router-dom'
 import { SignatureCollectionList } from '@island.is/api/schema'
+import { useSignatureCollectionAdminRemoveListMutation } from './removeList.generated'
 
-const RemoveCandidate = ({ list }: { list: SignatureCollectionList }) => {
+const RemoveList = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const [modalRemoveCandidateIsOpen, setModalRemoveCandidateIsOpen] =
-    useState(false)
+  const [modalRemoveListIsOpen, setModalRemoveListIsOpen] = useState(false)
 
-  const [removeCandidate, { loading }] =
-    useSignatureCollectionAdminRemoveCandidateMutation({
+  const [removeList, { loading }] =
+    useSignatureCollectionAdminRemoveListMutation({
       variables: {
         input: {
-          candidateId: list?.candidate?.id,
+          listId: list.id,
+          collectionType: list.collectionType,
         },
       },
       onCompleted: (response) => {
-        if (response.signatureCollectionAdminRemoveCandidate?.success) {
-          setModalRemoveCandidateIsOpen(false)
+        if (response.signatureCollectionAdminRemoveList?.success) {
+          setModalRemoveListIsOpen(false)
           toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
           navigate(-1)
         } else {
           const message =
-            response.signatureCollectionAdminRemoveCandidate?.reasons?.[0] ??
+            response.signatureCollectionAdminRemoveList?.reasons?.[0] ??
             formatMessage(m.cancelCollectionModalToastError)
           toast.error(message)
         }
@@ -68,7 +68,7 @@ const RemoveCandidate = ({ list }: { list: SignatureCollectionList }) => {
                 variant="text"
                 size="small"
                 colorScheme="destructive"
-                onClick={() => setModalRemoveCandidateIsOpen(true)}
+                onClick={() => setModalRemoveListIsOpen(true)}
               >
                 {formatMessage(m.cancelCollectionButton)}
               </Button>
@@ -78,9 +78,9 @@ const RemoveCandidate = ({ list }: { list: SignatureCollectionList }) => {
       </GridRow>
       <Modal
         id="toggleLockList"
-        isVisible={modalRemoveCandidateIsOpen}
+        isVisible={modalRemoveListIsOpen}
         title={formatMessage(m.cancelCollectionButton)}
-        onClose={() => setModalRemoveCandidateIsOpen(false)}
+        onClose={() => setModalRemoveListIsOpen(false)}
         label={''}
         closeButtonLabel={''}
       >
@@ -90,7 +90,7 @@ const RemoveCandidate = ({ list }: { list: SignatureCollectionList }) => {
             <Button
               iconType="outline"
               variant="ghost"
-              onClick={() => removeCandidate()}
+              onClick={() => removeList()}
               icon="trash"
               colorScheme="destructive"
               loading={loading}
@@ -104,4 +104,4 @@ const RemoveCandidate = ({ list }: { list: SignatureCollectionList }) => {
   )
 }
 
-export default RemoveCandidate
+export default RemoveList

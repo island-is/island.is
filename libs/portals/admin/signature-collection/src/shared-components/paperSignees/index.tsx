@@ -83,13 +83,10 @@ export const PaperSignees = ({
         if (res.signatureCollectionAdminUploadPaperSignature?.success) {
           toast.success(formatMessage(m.paperSigneeSuccess))
         } else {
-          if (
-            res.signatureCollectionAdminUploadPaperSignature?.reasons?.includes(
-              'alreadySigned',
-            )
-          ) {
-            toast.error(formatMessage(m.paperSigneeErrorAlreadySigned))
-          }
+          const message =
+            res.signatureCollectionAdminUploadPaperSignature?.reasons?.[0] ??
+            formatMessage(m.paperSigneeError)
+          toast.error(message)
         }
         reset()
         revalidate()

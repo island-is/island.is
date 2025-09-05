@@ -11,9 +11,7 @@ import {
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../modules/case'
-import { DefendantEventLog } from '../modules/defendant'
-import { EventLog } from '../modules/event-log'
+import { Case, DefendantEventLog, EventLog } from '../modules/repository'
 import {
   addEmptyLines,
   addLargeHeading,

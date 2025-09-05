@@ -22,4 +22,5 @@ export const FieldTypesEnum = {
   TIME_INPUT: 'TIME_INPUT',
   FILE: 'FILE',
   PAYMENT: 'PAYMENT',
+  APPLICANT: 'APPLICANT',
 }
