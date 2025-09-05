@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useCallback, useState } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -8,7 +8,6 @@ import {
   GridColumn,
   GridRow,
   Button,
-  ProfileCard,
   Text,
 } from '@island.is/island-ui/core'
 
@@ -44,14 +43,29 @@ export const ClaimsRepeater: FC<
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors } = useFormContext()
+  const { control, clearErrors, setValue, getValues } = useFormContext()
   const estateData = getEstateDataFromApplication(application)
+  const [, updateState] = useState<unknown>()
+  const forceUpdate = useCallback(() => updateState({}), [])
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.claims) {
       replace(estateData.estate.claims)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Clear errors when claim value changes
+  const updateClaimValue = (fieldIndex: string) => {
+    const claimValues = getValues(fieldIndex)
+    const value = claimValues?.value?.replace(/[^\d.]/g, '') || '0'
+    
+    if (parseFloat(value) > 0) {
+      clearErrors(`${fieldIndex}.value`)
+    }
+
+    forceUpdate()
+  }
 
   const handleAddClaim = () =>
     append({
@@ -64,74 +78,19 @@ export const ClaimsRepeater: FC<
 
   const handleRemoveClaim = (index: number) => remove(index)
 
+  // Calculate claimTotal for all fields when they are populated
+  useEffect(() => {
+    if (fields.length > 0) {
+      fields.forEach((_, index) => {
+        const fieldIndex = `${id}[${index}]`
+        updateClaimValue(fieldIndex)
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields.length, fields])
+
   return (
     <Box marginTop={2}>
-      <GridRow>
-        {fields.reduce((acc, claim: ClaimFormField, index) => {
-          if (!claim.initial) {
-            return acc
-          }
-          return [
-            ...acc,
-            <GridColumn
-              key={claim.id}
-              span={['12/12', '12/12', '6/12']}
-              paddingBottom={3}
-            >
-              <ProfileCard
-                disabled={!claim.enabled}
-                title={
-                  claim.publisher || formatMessage(m.claimsTitle)
-                }
-                key={claim.publisher}
-                description={[
-                  `${formatMessage(m.claimsAmount)}: ${
-                    claim.value || '0'
-                  } kr.`,
-                  `${formatMessage(m.nationalId)}: ${
-                    claim.nationalId || ''
-                  }`,
-                  <Box marginTop={1} as="span">
-                    <Button
-                      variant="text"
-                      icon={claim.enabled ? 'remove' : 'add'}
-                      size="small"
-                      iconType="outline"
-                      onClick={() => {
-                        const updatedClaim = {
-                          ...claim,
-                          enabled: !claim.enabled,
-                        }
-                        update(index, updatedClaim)
-                        clearErrors(`${id}[${index}].value`)
-                      }}
-                    >
-                      {claim.enabled
-                        ? formatMessage(m.inheritanceDisableMember)
-                        : formatMessage(m.inheritanceEnableMember)}
-                    </Button>
-                  </Box>,
-                ]}
-              />
-              <Box marginTop={2}>
-                <InputController
-                  id={`${id}[${index}].value`}
-                  name={`${id}[${index}].value`}
-                  label={formatMessage(m.claimsAmount)}
-                  disabled={!claim.enabled}
-                  backgroundColor="blue"
-                  placeholder="0 kr."
-                  defaultValue={claim.value}
-                  error={error && error[index]?.value}
-                  currency
-                  size="sm"
-                  required
-                />
-              </Box>
-            </GridColumn>,
-          ]
-        }, [] as JSX.Element[])}
-      </GridRow>
       {fields.map((field: ClaimFormField, index) => {
         const fieldIndex = `${id}[${index}]`
         const publisherField = `${fieldIndex}.publisher`
@@ -146,7 +105,6 @@ export const ClaimsRepeater: FC<
             position="relative"
             key={field.id}
             marginTop={2}
-            hidden={field.initial}
           >
             <Controller
               name={initialField}
@@ -157,18 +115,47 @@ export const ClaimsRepeater: FC<
             <Controller
               name={enabledField}
               control={control}
-              defaultValue={true}
+              defaultValue={field.enabled || true}
               render={() => <input type="hidden" />}
             />
-            <Text variant="h4">{formatMessage(m.claimsTitle)}</Text>
-            <Box position="absolute" className={styles.removeFieldButton}>
-              <Button
-                variant="ghost"
-                size="small"
-                circle
-                icon="remove"
-                onClick={handleRemoveClaim.bind(null, index)}
-              />
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              marginBottom={0}
+            >
+              <Text variant="h4">{formatMessage(m.claimsTitle)}</Text>
+              <Box display="flex" alignItems="center" columnGap={2}>
+                {field.initial && (
+                  <Button
+                    variant="text"
+                    icon={field.enabled ? 'remove' : 'add'}
+                    size="small"
+                    iconType="outline"
+                    onClick={() => {
+                      const updatedClaim = {
+                        ...field,
+                        enabled: !field.enabled,
+                      }
+                      update(index, updatedClaim)
+                      clearErrors(`${id}[${index}].value`)
+                    }}
+                  >
+                    {field.enabled
+                      ? formatMessage(m.inheritanceDisableMember)
+                      : formatMessage(m.inheritanceEnableMember)}
+                  </Button>
+                )}
+                {!field.initial && (
+                  <Button
+                    variant="ghost"
+                    size="small"
+                    circle
+                    icon="remove"
+                    onClick={handleRemoveClaim.bind(null, index)}
+                  />
+                )}
+              </Box>
             </Box>
             <GridRow>
               <GridColumn
@@ -184,6 +171,8 @@ export const ClaimsRepeater: FC<
                   defaultValue={field.publisher}
                   error={fieldError?.publisher}
                   size="sm"
+                  disabled={field.initial && !field.enabled}
+                  onChange={() => updateClaimValue(fieldIndex)}
                 />
               </GridColumn>
               <GridColumn
@@ -200,6 +189,9 @@ export const ClaimsRepeater: FC<
                   error={fieldError?.value}
                   currency
                   size="sm"
+                  backgroundColor="blue"
+                  disabled={field.initial && !field.enabled}
+                  onChange={() => updateClaimValue(fieldIndex)}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -212,6 +204,9 @@ export const ClaimsRepeater: FC<
                   error={fieldError?.nationalId}
                   format="######-####"
                   size="sm"
+                  backgroundColor="blue"
+                  disabled={field.initial && !field.enabled}
+                  onChange={() => updateClaimValue(fieldIndex)}
                 />
               </GridColumn>
             </GridRow>
