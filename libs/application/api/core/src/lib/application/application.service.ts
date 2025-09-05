@@ -168,12 +168,14 @@ export class ApplicationService {
       }
     }
 
-    const applicantAccessConditions: WhereOptions = {
-      [Op.or]: [
-        { applicant: { [Op.eq]: applicantNationalId } },
-        { assignees: { [Op.contains]: [applicantNationalId] } },
-      ],
-    }
+    const applicantAccessConditions = applicantNationalId
+      ? {
+          [Op.or]: [
+            { applicant: { [Op.eq]: applicantNationalId } },
+            { assignees: { [Op.contains]: [applicantNationalId] } },
+          ],
+        }
+      : {}
 
     const searchCondition = searchStrValue
       ? {
@@ -192,16 +194,9 @@ export class ApplicationService {
         ...{ typeId: { [Op.in]: filteredInstitutionTypeIds } },
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
-          applicantNationalId ? applicantAccessConditions : {},
-
-          fromDate && toDate
-            ? {
-                [Op.and]: [
-                  { created: { [Op.gte]: fromDate } },
-                  { created: { [Op.lte]: toDate } },
-                ],
-              }
-            : {},
+          fromDate ? { created: { [Op.gte]: fromDate } } : {},
+          toDate ? { created: { [Op.lte]: toDate } } : {},
+          applicantAccessConditions,
           searchCondition,
         ],
         isListed: {
