@@ -145,7 +145,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
                   variant={invertButtonColors ? undefined : 'ghost'}
                   onClick={secondaryButton.onClick}
                   loading={secondaryButton.isLoading}
-                  disabled={loading}
+                  disabled={loading || !!secondaryButton.isDisabled}
                 >
                   {secondaryButton.text}
                 </Button>
@@ -155,8 +155,8 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
                   data-testid="modalPrimaryButton"
                   variant={invertButtonColors ? 'ghost' : undefined}
                   onClick={primaryButton.onClick}
-                  loading={primaryButton.isLoading}
-                  disabled={primaryButton.isDisabled}
+                  loading={loading || !!primaryButton.isLoading}
+                  disabled={loading || !!primaryButton.isDisabled}
                   colorScheme={primaryButton.colorScheme || 'default'}
                 >
                   {primaryButton.text}
