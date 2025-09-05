@@ -80,4 +80,14 @@ export const rentalPeriod = defineMessages({
       'Loka dagur samnings má ekki vera sami eða fyrir upphafsdag samnings',
     description: 'Error message when end date is before start date',
   },
+  alertMessageTitle: {
+    id: 'ra.application:rentalPeriodDetails.alertMessageTitle',
+    defaultMessage: 'Valin dagsetning er meira en ár fram í tímann',
+    description: 'Alert message title',
+  },
+  alertMessage: {
+    id: 'ra.application:rentalPeriodDetails.alertMessage',
+    defaultMessage: 'Vinsamlegast athugið hvort að þetta sé rétt dagsetning.',
+    description: 'Alert message',
+  },
 })

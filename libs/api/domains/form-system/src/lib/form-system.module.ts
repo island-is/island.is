@@ -14,8 +14,6 @@ import { ScreensService } from './screens/screens.service'
 import { ScreensResolver } from './screens/screens.resolver'
 import { SectionsService } from './sections/sections.service'
 import { SectionsResolver } from './sections/sections.resolver'
-import { ApplicantsResolver } from './applicants/applicants.resolver'
-import { ApplicantsService } from './applicants/applicants.service'
 import { LoggingModule } from '@island.is/logging'
 import { CertificationsResolver } from './certification/certification.resolver'
 import { CertificationsService } from './certification/certification.service'
@@ -28,6 +26,12 @@ import { OrganizationUrlsResolver } from './organizationUrls/organizationUrls.re
 import { OrganizationUrlsService } from './organizationUrls/organizationUrls.service'
 import { FormUrlsResolver } from './formUrls/formUrls.resolver'
 import { FormUrlsService } from './formUrls/formUrls.service'
+import { FormApplicantTypesResolver } from './formApplicantTypes/formApplicantTypes.resolver'
+import { FormApplicantTypesService } from './formApplicantTypes/formApplicantTypes.service'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
+import { CompanyRegistryResolver } from './company/companyRegistry.resolver'
+import { NationalRegistryResolver } from './nationalRegistry/nationalRegistry.resolver'
 
 @Module({
   providers: [
@@ -47,8 +51,6 @@ import { FormUrlsService } from './formUrls/formUrls.service'
     SectionsResolver,
     TranslationsResolver,
     TranslationsService,
-    ApplicantsResolver,
-    ApplicantsService,
     CertificationsResolver,
     CertificationsService,
     OrganizationPermissionsResolver,
@@ -57,9 +59,19 @@ import { FormUrlsService } from './formUrls/formUrls.service'
     OrganizationUrlsService,
     FormUrlsResolver,
     FormUrlsService,
+    FormApplicantTypesResolver,
+    FormApplicantTypesService,
     CmsModule,
+    NationalRegistryResolver,
+    CompanyRegistryResolver,
   ],
   exports: [],
-  imports: [FormSystemClientModule, LoggingModule],
+  imports: [
+    FormSystemClientModule,
+    LoggingModule,
+    CmsModule,
+    NationalRegistryV3ClientModule,
+    CompanyRegistryClientModule,
+  ],
 })
 export class FormSystemModule {}

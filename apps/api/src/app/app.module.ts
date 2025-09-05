@@ -219,7 +219,7 @@ import { VerdictsClientConfig } from '@island.is/clients/verdicts'
 import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
-import { BloodClientConfig } from '@island.is/clients/blood'
+import { LshClientConfig } from '@island.is/clients/lsh'
 import { HmsConfig } from '@island.is/clients/hms'
 import {
   VmstUnemploymentClientConfig,
@@ -400,7 +400,7 @@ const environment = getConfig
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
-        BloodClientConfig,
+        LshClientConfig,
         HuntingLicenseClientConfig,
         FeatureFlagConfig,
         HmsConfig,

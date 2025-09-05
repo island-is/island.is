@@ -12,14 +12,19 @@ export class FetchError extends Error {
   response: Response
   body?: unknown
   problem?: UnknownProblem
+  organizationSlug?: OrganizationSlugType
 
-  private constructor(response: Response) {
+  private constructor(
+    response: Response,
+    organizationSlug?: OrganizationSlugType,
+  ) {
     super(`Request failed with status code ${response.status}`)
     this.url = response.url
     this.status = response.status
     this.headers = response.headers
     this.statusText = response.statusText
     this.response = response
+    this.organizationSlug = organizationSlug
   }
 
   static async build(
@@ -27,7 +32,7 @@ export class FetchError extends Error {
     includeBody = false,
     organizationSlug?: OrganizationSlugType,
   ) {
-    const error = new FetchError(response)
+    const error = new FetchError(response, organizationSlug)
     const contentType = response.headers.get('content-type') || ''
     const isJson = contentType.startsWith('application/json')
     const isProblem = contentType.startsWith('application/problem+json')
@@ -40,12 +45,7 @@ export class FetchError extends Error {
         error.body = body
       }
 
-      if (organizationSlug && body.status >= 500) {
-        error.problem = {
-          ...body,
-          organizationSlug,
-        }
-      } else if (isProblem) {
+      if (isProblem) {
         error.problem = body
       }
     } else if (includeBody) {

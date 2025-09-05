@@ -3,8 +3,6 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
 
-// apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
-
 import com.android.build.OutputFile
 
 /**
@@ -13,13 +11,13 @@ import com.android.build.OutputFile
  */
 react {
     /* Folders */
-    //   The root of your project, i.e. where "package.json" lives. Default is '..'
-    // root = file("../")
-    //   The folder where the react-native NPM package is. Default is ../node_modules/react-native
+      //   The root of your project, i.e. where "package.json" lives. Default is '../..'
+    // root = file("../../")
+    //   The folder where the react-native NPM package is. Default is ../../node_modules/react-native
     reactNativeDir = file("../../../../../node_modules/react-native")
-    //   The folder where the react-native Codegen package is. Default is ../node_modules/@react-native/codegen
+    //   The folder where the react-native Codegen package is. Default is ../../node_modules/@react-native/codegen
     codegenDir = file("../../../../../node_modules/@react-native/codegen")
-    //   The cli.js file which is the React Native CLI entrypoint. Default is ../node_modules/react-native/cli.js
+    //   The cli.js file which is the React Native CLI entrypoint. Default is ../../node_modules/react-native/cli.js
     cliFile = file("../../../../../node_modules/react-native/cli.js")
 
     /* Variants */
@@ -50,10 +48,13 @@ react {
 
     /* Hermes Commands */
     //   The hermes compiler command to run. By default it is 'hermesc'
-    // hermesCommand = "$rootDir/my-custom-hermesc/bin/hermesc"
+    hermesCommand = file("../../../../../node_modules/react-native/sdks/hermesc/osx-bin/hermesc").absolutePath
     //
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]
+    
+    /* Autolinking */
+    autolinkLibrariesWithApp()
 }
 
 /**
@@ -103,7 +104,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode getMyVersionCode(143)
-        versionName "1.5.7"
+        versionName "1.5.8"
         manifestPlaceholders = [
             appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         ]
@@ -172,5 +173,3 @@ dependencies {
         implementation jscFlavor
     }
 }
-
-apply from: file("../../../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

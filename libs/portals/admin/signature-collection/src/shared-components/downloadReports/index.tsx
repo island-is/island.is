@@ -10,11 +10,12 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import {
   SignatureCollection,
-  SignatureCollectionAreaSummaryReport,
+  SignatureCollectionArea,
+  SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { usePDF } from '@react-pdf/renderer'
@@ -30,55 +31,42 @@ export const DownloadReports = ({
   const { formatMessage } = useLocale()
   const [modalDownloadReportsIsOpen, setModalDownloadReportsIsOpen] =
     useState(false)
-  const [pdfState, setPdfState] = useState({ areaId: '', pdfUrl: '' })
-
   const [runGetSummaryReport, { data }] = useLazyQuery(
     SignatureCollectionAreaSummaryReportDocument,
   )
+  const [instance, updateInstance] = usePDF({ document: undefined })
+  const lastOpenedRef = useRef<string | null>(null)
 
-  const [document, updateDocument] = usePDF({
-    document: data && (
-      <MyPdfDocument
-        report={
-          data?.signatureCollectionAreaSummaryReport as SignatureCollectionAreaSummaryReport
-        }
-      />
-    ),
-  })
-
-  const handleDownloadClick = (area: string) => {
-    // Fetch the report if it has not been fetched yet
-    if (area !== pdfState.areaId) {
-      runGetSummaryReport({
-        variables: {
-          input: {
-            areaId: area,
-            collectionId: collection?.id,
-          },
+  const handleDownloadClick = async (area: SignatureCollectionArea) => {
+    runGetSummaryReport({
+      variables: {
+        input: {
+          areaId: area.id,
+          collectionId:
+            collection.collectionType ===
+            SignatureCollectionCollectionType.LocalGovernmental
+              ? area.collectionId
+              : collection?.id,
         },
-      })
-      setPdfState({ ...pdfState, areaId: area })
-    } else {
-      // Open the document in a new tab if it has already been fetched
-      window.open(document?.url?.toString(), '_blank')
-    }
+      },
+      onCompleted: (res) => {
+        updateInstance(
+          <MyPdfDocument report={res.signatureCollectionAreaSummaryReport} />,
+        )
+      },
+    })
   }
 
-  // Update pdf document after correct data is fetched
   useEffect(() => {
-    if (data?.signatureCollectionAreaSummaryReport?.id === pdfState.areaId) {
-      // @ts-expect-error - updateDocument should be called without arguments based on working examples
-      updateDocument()
+    if (data?.signatureCollectionAreaSummaryReport && instance?.url) {
+      // Check if we already opened this report
+      if (lastOpenedRef.current !== instance.url) {
+        window.open(instance.url, '_blank')
+        // mark it as opened
+        lastOpenedRef.current = instance.url
+      }
     }
-  }, [data, pdfState, updateDocument])
-
-  // Open the document in a new tab when it has been generated
-  useEffect(() => {
-    if (document.url && document.url !== pdfState.pdfUrl) {
-      window.open(document.url, '_blank')
-      setPdfState({ ...pdfState, pdfUrl: document?.url ?? '' })
-    }
-  }, [document.url, pdfState])
+  }, [data?.signatureCollectionAreaSummaryReport, instance?.url])
 
   return (
     <Box>
@@ -130,7 +118,7 @@ export const DownloadReports = ({
                   variant: 'text',
                   icon: 'download',
                   iconType: 'outline',
-                  onClick: () => handleDownloadClick(area.id),
+                  onClick: () => handleDownloadClick(area),
                 }}
               />
             ))}

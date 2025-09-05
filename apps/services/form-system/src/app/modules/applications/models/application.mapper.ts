@@ -26,11 +26,12 @@ export class ApplicationMapper {
       slug: form.slug,
       formName: form.name,
       stopProgressOnValidatingScreen: form.stopProgressOnValidatingScreen,
+      hasPayment: form.hasPayment,
+      hasSummaryScreen: form.hasSummaryScreen,
       submittedAt: application.submittedAt,
       events: application.events,
       sections: [],
       certificationTypes: form.formCertificationTypes,
-      applicantTypes: form.formApplicantTypes,
     }
 
     form.sections?.map((section) => {
@@ -105,6 +106,8 @@ export class ApplicationMapper {
       slug: form?.slug,
       formName: form?.name,
       stopProgressOnValidatingScreen: form?.stopProgressOnValidatingScreen,
+      hasPayment: form?.hasPayment,
+      hasSummaryScreen: form?.hasSummaryScreen,
       submittedAt: application.submittedAt,
       events: application.events?.map((event) => {
         return {

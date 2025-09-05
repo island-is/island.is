@@ -19,6 +19,7 @@ export const GET_NEWS_QUERY = gql`
           width
           height
         }
+        imageText
         genericTags {
           id
           title
@@ -50,6 +51,7 @@ export const GET_NEWS_WITH_CONTENT_QUERY = gql`
           width
           height
         }
+        imageText
         genericTags {
           id
           title
@@ -86,6 +88,7 @@ export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
         width
         height
       }
+      imageText
       featuredImage {
         url
         title
