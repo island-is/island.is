@@ -212,9 +212,9 @@ const AppealToCourtOfAppeals = () => {
         <Modal
           title={formatMessage(strings.appealSentModalTitle)}
           text={formatMessage(strings.appealSentModalText)}
-          secondaryButtonText={formatMessage(core.closeModal)}
-          onSecondaryButtonClick={() => {
-            router.push(previousUrl)
+          secondaryButton={{
+            text: formatMessage(core.closeModal),
+            onClick: () => router.push(previousUrl),
           }}
         />
       )}

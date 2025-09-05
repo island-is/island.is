@@ -252,17 +252,23 @@ const AppealCase: FC = () => {
                 ? strings.notificationsFailedModalMessage
                 : strings.modalMessage,
             )}
-            primaryButtonText={formatMessage(strings.modalPrimaryButton)}
-            onPrimaryButtonClick={() => router.push(`${navigateTo}/${id}`)}
-            onSecondaryButtonClick={() => {
-              sendNotifications()
+            primaryButton={{
+              text: formatMessage(strings.modalPrimaryButton),
+              onClick: () => router.push(`${navigateTo}/${id}`),
             }}
-            secondaryButtonText={
+            secondaryButton={
               sendNotificationError
-                ? formatMessage(strings.notificationFailedModalSecondaryButton)
+                ? {
+                    text: formatMessage(
+                      strings.notificationFailedModalSecondaryButton,
+                    ),
+                    onClick: () => {
+                      sendNotifications()
+                    },
+                    isLoading: isSendingNotification,
+                  }
                 : undefined
             }
-            isSecondaryButtonLoading={isSendingNotification}
           />
         )}
       </AnimatePresence>

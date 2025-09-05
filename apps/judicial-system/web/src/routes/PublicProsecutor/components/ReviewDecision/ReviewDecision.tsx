@@ -128,11 +128,15 @@ export const ReviewDecision: FC<Props> = (props) => {
               reviewerDecision: indictmentReviewDecision,
             },
           )}
-          primaryButtonText={fm(strings.reviewModalPrimaryButtonText)}
-          secondaryButtonText={fm(strings.reviewModalSecondaryButtonText)}
+          primaryButton={{
+            text: fm(strings.reviewModalPrimaryButtonText),
+            onClick: handleReviewDecision,
+          }}
+          secondaryButton={{
+            text: fm(strings.reviewModalSecondaryButtonText),
+            onClick: () => setModalVisible(undefined),
+          }}
           onClose={() => setModalVisible(undefined)}
-          onPrimaryButtonClick={handleReviewDecision}
-          onSecondaryButtonClick={() => setModalVisible(undefined)}
         />
       )}
     </>

@@ -73,12 +73,16 @@ const RulingModifiedModal: FC<Props> = ({
     <Modal
       title={formatMessage(strings.title)}
       text={description}
-      primaryButtonText={formatMessage(strings.continue)}
-      onPrimaryButtonClick={handleContinue}
-      isPrimaryButtonDisabled={errorMessage !== ''}
-      isPrimaryButtonLoading={continueDisabled}
-      secondaryButtonText={formatMessage(strings.cancel)}
-      onSecondaryButtonClick={onCancel}
+      primaryButton={{
+        text: formatMessage(strings.continue),
+        onClick: handleContinue,
+        isLoading: continueDisabled,
+        isDisabled: errorMessage !== '',
+      }}
+      secondaryButton={{
+        text: formatMessage(strings.cancel),
+        onClick: onCancel,
+      }}
     >
       <Box marginBottom={5}>
         <Input

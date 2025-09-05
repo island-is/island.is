@@ -200,39 +200,42 @@ export const HearingArrangements = () => {
               courtDateHasChanged,
             },
           )}
-          isPrimaryButtonLoading={
-            isSendingNotification &&
-            modalButtonLoading === ModalButtonLoading.PRIMARY
-          }
-          isSecondaryButtonLoading={
-            isSendingNotification &&
-            modalButtonLoading === ModalButtonLoading.SECONDARY
-          }
-          onSecondaryButtonClick={() => {
-            setModalButtonLoading(ModalButtonLoading.SECONDARY)
+          primaryButton={{
+            text: formatMessage(m.modal.shared.primaryButtonText),
+            onClick: async () => {
+              setModalButtonLoading(ModalButtonLoading.PRIMARY)
 
-            sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
-            router.push(`${navigateTo}/${workingCase.id}`)
-          }}
-          onPrimaryButtonClick={async () => {
-            setModalButtonLoading(ModalButtonLoading.PRIMARY)
+              const notificationSent = await sendNotification(
+                workingCase.id,
+                NotificationType.COURT_DATE,
+              )
 
-            const notificationSent = await sendNotification(
-              workingCase.id,
-              NotificationType.COURT_DATE,
-            )
-
-            if (notificationSent) {
-              router.push(`${navigateTo}/${workingCase.id}`)
-            }
-          }}
-          primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}
-          secondaryButtonText={formatMessage(
-            m.modal.shared.secondaryButtonText,
-            {
-              courtDateHasChanged,
+              if (notificationSent) {
+                router.push(`${navigateTo}/${workingCase.id}`)
+              }
             },
-          )}
+            isLoading:
+              isSendingNotification &&
+              modalButtonLoading === ModalButtonLoading.PRIMARY,
+          }}
+          secondaryButton={{
+            text: formatMessage(m.modal.shared.secondaryButtonText, {
+              courtDateHasChanged,
+            }),
+            onClick: () => {
+              setModalButtonLoading(ModalButtonLoading.SECONDARY)
+
+              sendNotification(
+                workingCase.id,
+                NotificationType.COURT_DATE,
+                true,
+              )
+              router.push(`${navigateTo}/${workingCase.id}`)
+            },
+            isLoading:
+              isSendingNotification &&
+              modalButtonLoading === ModalButtonLoading.SECONDARY,
+          }}
           errorMessage={
             sendNotificationError
               ? formatMessage(errors.sendNotification)

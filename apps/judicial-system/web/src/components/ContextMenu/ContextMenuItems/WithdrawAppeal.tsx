@@ -52,12 +52,16 @@ export const useWithdrawAppeal = (onComplete: () => void) => {
     <Modal
       title="Afturkalla kæru"
       text="Ertu viss um að þú viljir afturkalla þessa kæru?"
-      primaryButtonText="Afturkalla"
-      primaryButtonColorScheme="destructive"
-      onPrimaryButtonClick={handlePrimaryButtonClick}
-      isPrimaryButtonLoading={isTransitioningCase}
-      secondaryButtonText="Hætta við"
-      onSecondaryButtonClick={handleSecondaryButtonClick}
+      primaryButton={{
+        text: 'Afturkalla',
+        onClick: handlePrimaryButtonClick,
+        colorScheme: 'destructive',
+        isLoading: isTransitioningCase,
+      }}
+      secondaryButton={{
+        text: 'Hætta við',
+        onClick: handleSecondaryButtonClick,
+      }}
     />
   )
 

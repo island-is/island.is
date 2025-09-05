@@ -35,8 +35,10 @@ const DraftConclusionModal: FC<Props> = ({
               setWorkingCase={setWorkingCase}
             />
           }
-          primaryButtonText={formatMessage(core.closeModal)}
-          onPrimaryButtonClick={() => setIsDraftingConclusion(false)}
+          primaryButton={{
+            text: formatMessage(core.closeModal),
+            onClick: () => setIsDraftingConclusion(false),
+          }}
         />
       )}
     </AnimatePresence>

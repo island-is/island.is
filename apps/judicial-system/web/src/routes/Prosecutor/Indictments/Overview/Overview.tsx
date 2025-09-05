@@ -343,25 +343,27 @@ const Overview: FC = () => {
             title={formatMessage(strings.caseSubmitModalTitle)}
             text={formatMessage(strings.caseSubmitModalText)}
             onClose={() => setModal('noModal')}
-            secondaryButtonText={formatMessage(
-              strings.caseSubmitSecondaryButtonText,
-            )}
-            onSecondaryButtonClick={() => setModal('noModal')}
-            onPrimaryButtonClick={handleConfirmIndictment}
-            primaryButtonText={formatMessage(
-              strings.caseSubmitPrimaryButtonText,
-            )}
-            isPrimaryButtonLoading={isTransitioningCase}
+            primaryButton={{
+              text: formatMessage(strings.caseSubmitPrimaryButtonText),
+              onClick: handleConfirmIndictment,
+              isLoading: isTransitioningCase,
+            }}
+            secondaryButton={{
+              text: formatMessage(strings.caseSubmitSecondaryButtonText),
+              onClick: () => setModal('noModal'),
+            }}
           />
         ) : modal === 'caseSentForConfirmationModal' ? (
           <Modal
             title={formatMessage(strings.indictmentSentForConfirmationTitle)}
             text={formatMessage(strings.indictmentSentForConfirmationText)}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
-            onPrimaryButtonClick={() => {
-              router.push(getStandardUserDashboardRoute(user))
+            primaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                router.push(getStandardUserDashboardRoute(user))
+              },
             }}
-            primaryButtonText={formatMessage(core.closeModal)}
           />
         ) : modal === 'caseDeniedModal' ? (
           <DenyIndictmentCaseModal
@@ -375,15 +377,17 @@ const Overview: FC = () => {
             title={formatMessage(strings.askForCancellationModalTitle)}
             text={formatMessage(strings.askForCancellationModalText)}
             onClose={() => setModal('noModal')}
-            secondaryButtonText={formatMessage(
-              strings.askForCancellationSecondaryButtonText,
-            )}
-            onSecondaryButtonClick={() => setModal('noModal')}
-            onPrimaryButtonClick={handleAskForCancellation}
-            primaryButtonText={formatMessage(
-              strings.askForCancellationPrimaryButtonText,
-            )}
-            isPrimaryButtonLoading={isTransitioningCase}
+            primaryButton={{
+              text: formatMessage(strings.askForCancellationPrimaryButtonText),
+              onClick: handleAskForCancellation,
+              isLoading: isTransitioningCase,
+            }}
+            secondaryButton={{
+              text: formatMessage(
+                strings.askForCancellationSecondaryButtonText,
+              ),
+              onClick: () => setModal('noModal'),
+            }}
           />
         ) : null}
       </AnimatePresence>
