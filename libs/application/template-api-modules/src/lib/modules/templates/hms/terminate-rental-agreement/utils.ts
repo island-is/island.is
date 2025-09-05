@@ -52,15 +52,22 @@ export const parseTerminateContract = (
       'unboundTermination.unboundTerminationReason',
     ) ?? ''
 
+  const boundTerminationDate =
+    getValueViaPath<Date>(
+      application.answers,
+      'boundTermination.boundTerminationDate',
+    ) ?? null
+  const unboundTerminationDate =
+    getValueViaPath<Date>(
+      application.answers,
+      'unboundTermination.unboundTerminationDate',
+    ) ?? null
+
   const obj = {
     contractId:
       getValueViaPath<string>(application.answers, 'rentalAgreement.answer') ??
       '',
-    terminateOn:
-      getValueViaPath<Date>(
-        application.answers,
-        'boundTermination.boundTerminationDate',
-      ) ?? new Date(),
+    terminateOn: (boundTerminationDate || unboundTerminationDate) ?? new Date(),
     reasonUseCode:
       (terminationReason as TerminationReason) ??
       TerminationReason.OWNERINBUILDING,
