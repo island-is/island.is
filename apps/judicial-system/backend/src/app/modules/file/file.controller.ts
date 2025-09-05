@@ -224,8 +224,9 @@ export class FileController {
     courtOfAppealsAssistantRule,
   )
   @Get([
+    'file/:fileId/url',
     'file/:fileId/url/:ttl',
-    'mergedCase/:mergedCaseId/file/:fileId/url/:ttl',
+    'mergedCase/:mergedCaseId/file/:fileId/url',
   ])
   @ApiOkResponse({
     type: SignedUrl,
@@ -236,7 +237,7 @@ export class FileController {
     @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
-    @Param('ttl') ttl: number,
+    @Param('ttl') ttl?: number,
   ): Promise<SignedUrl> {
     this.logger.debug(
       `Getting a signed url for file ${fileId} of case ${caseId}`,

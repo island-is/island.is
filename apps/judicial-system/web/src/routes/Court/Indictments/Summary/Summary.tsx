@@ -102,16 +102,18 @@ const Summary: FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    const rulings = workingCase.caseFiles?.filter((c) => c.type === 'RULING')
     const showError = () => toast.error('Dómur fannst ekki')
 
-    if (!rulings) {
+    const rulings = workingCase.caseFiles?.filter(
+      (c) => c.category === CaseFileCategory.RULING,
+    )
+
+    if (!rulings || rulings.length === 0) {
       showError()
       return
     }
 
     const rulingId = rulings[0].id
-
     const url = await getFileUrl(rulingId)
 
     if (url) {
