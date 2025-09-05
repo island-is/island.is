@@ -36,9 +36,8 @@ import { Helpdesk } from '../models/helpdesk.model'
 import { CreateHelpdeskDto } from '../dto/createHelpdesk.dto'
 import { UpdateHelpdeskDto } from '../dto/updateHelpdesk.dto'
 import { Provider } from '../models/provider.model'
-import { environment } from '../../../../environments'
 
-const namespace = `${environment.audit.defaultNamespace}/organisations`
+const namespace = '@island.is/documents/organisations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('organisations')
