@@ -25,7 +25,7 @@ export const FormsHeader = () => {
 
   const onTabChange = (tabId: string) => {
     const isValidLocation = (value: string): value is FormsLocationState => {
-      return ['forms', 'applications', 'admin'].includes(value)
+      return ['forms', 'admin'].includes(value)
     }
 
     if (isValidLocation(tabId)) {

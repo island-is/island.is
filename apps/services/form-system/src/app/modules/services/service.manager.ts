@@ -27,6 +27,10 @@ export class ServiceManager {
       where: { formId: applicationDto.formId },
     })
 
+    if (formUrls.length === 0) {
+      return false
+    }
+
     const submitUrl = await this.organizationUrlModel.findOne({
       where: {
         id: formUrls.map((formUrl) => formUrl.organizationUrlId),

@@ -336,7 +336,7 @@ export class FormsService {
     }
 
     try {
-      form.destroy()
+      await form.destroy()
     } catch (error) {
       console.error(`Error deleting form with id '${id}':`, error)
     }
