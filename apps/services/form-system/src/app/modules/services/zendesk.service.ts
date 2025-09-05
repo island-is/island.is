@@ -29,11 +29,18 @@ export class ZendeskService {
     applicationDto: ApplicationDto,
     url: OrganizationUrl,
   ): Promise<boolean> {
-    const username = `${process.env.ZENDESK_CONTACT_FORM_EMAIL}/token`
+    const contactEmail = process.env.ZENDESK_CONTACT_FORM_EMAIL
+    if (!contactEmail) {
+      throw new Error('ZENDESK_CONTACT_FORM_EMAIL is not set')
+    }
+    const username = `${contactEmail}/token`
     const tenantId =
       url.isTest === true ? this.SANDBOX_TENANT_ID : this.PROD_TENANT_ID
     const apiKey =
       url.isTest === true ? this.SANDBOX_API_KEY : this.PROD_API_KEY
+    if (!tenantId || !apiKey) {
+      throw new Error('Zendesk tenant id or API key not configured')
+    }
     const zendeskUrl = `https://${tenantId}.zendesk.com`
     const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
 
