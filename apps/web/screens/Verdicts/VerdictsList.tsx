@@ -1278,6 +1278,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       id: verdict.id,
                       link: { href: `/domar/${verdict.id}`, label: '' },
                       title: verdict.caseNumber,
+                      subDescription: verdict.keywords.join(', '),
                       borderColor: 'blue200',
                       detailLines,
                       revealMoreButtonProps: {

@@ -2,13 +2,7 @@ import archiver from 'archiver'
 import { Includeable, Op } from 'sequelize'
 import { Writable } from 'stream'
 
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -37,6 +31,7 @@ import { FileService, getDefenceUserCaseFileCategories } from '../file'
 import {
   Case,
   CaseFile,
+  CaseRepositoryService,
   CaseString,
   CivilClaimant,
   DateLog,
@@ -214,11 +209,6 @@ export const include: Includeable[] = [
     separate: true,
   },
   {
-    model: Victim,
-    as: 'victims',
-    required: false,
-  },
-  {
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
@@ -343,12 +333,12 @@ export class LimitedAccessCaseService {
     private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async findById(caseId: string): Promise<Case> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       attributes,
       include,
       where: {
@@ -370,21 +360,7 @@ export class LimitedAccessCaseService {
     update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
-    const [numberOfAffectedRows] = await this.caseModel.update(
-      { ...update },
-      { where: { id: theCase.id } },
-    )
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${theCase.id}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update case ${theCase.id}`,
-      )
-    }
+    await this.caseRepositoryService.update(theCase.id, update)
 
     const messages = []
 
@@ -473,7 +449,7 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
-    return this.caseModel
+    return this.caseRepositoryService
       .findOne({
         where: {
           defenderNationalId: normalizeAndFormatNationalId(nationalId),

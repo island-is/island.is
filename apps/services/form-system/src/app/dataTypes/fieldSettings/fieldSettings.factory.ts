@@ -10,7 +10,7 @@ export class FieldSettingsFactory {
       return undefined
     }
     let keys: string[] = [
-      'zendeskIsPublic',
+      'zendeskIsPrivate',
       'zendeskIsCustomField',
       'zendeskCustomFieldId',
     ]
@@ -44,6 +44,9 @@ export class FieldSettingsFactory {
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.HOMESTAY_OVERVIEW:
         keys = ['year', ...keys]
+        return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.APPLICANT:
+        keys = ['applicantType', ...keys]
         return this.pickSettings(fieldSettings, keys)
       default:
         return this.pickSettings(fieldSettings, keys)

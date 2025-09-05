@@ -50,7 +50,7 @@ import {
 import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { courtSubtypes } from '../court/court.service'
+import { courtSubtypes } from '../court'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
@@ -60,6 +60,7 @@ import {
   Case,
   CaseArchive,
   CaseFile,
+  CaseRepositoryService,
   CaseString,
   DateLog,
   Defendant,
@@ -158,11 +159,12 @@ export class InternalCaseService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(CaseArchive)
     private readonly caseArchiveModel: typeof CaseArchive,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
+    @Inject(forwardRef(() => CaseRepositoryService))
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(forwardRef(() => IntlService))
     private readonly intlService: IntlService,
     @Inject(forwardRef(() => EventService))
@@ -387,7 +389,7 @@ export class InternalCaseService {
     }
 
     return this.sequelize.transaction(async (transaction) => {
-      const newCase = await this.caseModel.create(
+      const newCase = await this.caseRepositoryService.create(
         {
           ...caseToCreate,
           state: isRequestCase(caseToCreate.type)
@@ -428,14 +430,16 @@ export class InternalCaseService {
         transaction,
       )
 
-      const theCase = await this.caseModel.findByPk(newCase.id, { transaction })
+      const theCase = await this.caseRepositoryService.findById(newCase.id, {
+        transaction,
+      })
 
       return theCase as Case
     })
   }
 
   async archive(): Promise<ArchiveResponse> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
         {
@@ -557,9 +561,10 @@ export class InternalCaseService {
         { transaction },
       )
 
-      await this.caseModel.update(
+      await this.caseRepositoryService.update(
+        theCase.id,
         { ...clearedCaseProperties, isArchived: true },
-        { where: { id: theCase.id }, transaction },
+        { transaction },
       )
     })
 
@@ -572,13 +577,13 @@ export class InternalCaseService {
     const startOfDay = new Date(date.setHours(0, 0, 0, 0))
     const endOfDay = new Date(date.setHours(23, 59, 59, 999))
 
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: [
         {
           model: DateLog,
           as: 'dateLogs',
           where: {
-            date_type: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
+            dateType: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
             date: {
               [Op.gte]: startOfDay,
               [Op.lte]: endOfDay,
@@ -1284,7 +1289,7 @@ export class InternalCaseService {
     let originalAncestor: Case = theCase
 
     while (originalAncestor.parentCaseId) {
-      const parentCase = await this.caseModel.findByPk(
+      const parentCase = await this.caseRepositoryService.findById(
         originalAncestor.parentCaseId,
       )
 
@@ -1303,7 +1308,7 @@ export class InternalCaseService {
   // As this is only currently used by the digital mailbox API
   // we will only return indictment cases that have a court date
   async getAllDefendantIndictmentCases(nationalId: string): Promise<Case[]> {
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: [
         {
           model: Defendant,
@@ -1313,7 +1318,7 @@ export class InternalCaseService {
           model: DateLog,
           as: 'dateLogs',
           where: {
-            date_type: 'ARRAIGNMENT_DATE',
+            dateType: 'ARRAIGNMENT_DATE',
           },
           required: true,
         },
@@ -1339,7 +1344,7 @@ export class InternalCaseService {
     caseId: string,
     defendantNationalId: string,
   ): Promise<Case> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       include: [
         {
           model: Defendant,
@@ -1413,7 +1418,7 @@ export class InternalCaseService {
   }
 
   countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {
-    return this.caseModel.count({
+    return this.caseRepositoryService.count({
       include: [{ model: User, as: 'creatingProsecutor' }],
       where: {
         type: CaseType.INDICTMENT,

@@ -35,12 +35,18 @@ type ActiveItemActions =
     }
 
 type ScreenActions =
-  | { type: 'ADD_SCREEN'; payload: { screen: FormSystemScreen } }
-  | { type: 'REMOVE_SCREEN'; payload: { id: string } }
+  | {
+      type: 'ADD_SCREEN'
+      payload: { screen: FormSystemScreen; isApplicant?: boolean }
+    }
+  | { type: 'REMOVE_SCREEN'; payload: { id: string; isApplicant?: boolean } }
 
 type FieldActions =
-  | { type: 'ADD_FIELD'; payload: { field: FormSystemField } }
-  | { type: 'REMOVE_FIELD'; payload: { id: string } }
+  | {
+      type: 'ADD_FIELD'
+      payload: { field: FormSystemField; isApplicant?: boolean }
+    }
+  | { type: 'REMOVE_FIELD'; payload: { id: string; isApplicant?: boolean } }
   | {
       type: 'CHANGE_FIELD_TYPE'
       payload: {
@@ -87,8 +93,19 @@ type DndActions =
       type: 'LIST_ITEM_OVER_LIST_ITEM'
       payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
     }
+  | {
+      type: 'REMOVE_DEPENDENCIES'
+      payload: {
+        activeId: UniqueIdentifier
+        update: (updatedForm: FormSystemForm) => void
+      }
+    }
 
 type ChangeActions =
+  | {
+      type: 'CHANGE_APPLICANT_NAME'
+      payload: { lang: 'en' | 'is'; newValue: string; id: string }
+    }
   | { type: 'CHANGE_NAME'; payload: { lang: 'en' | 'is'; newValue: string } }
   | {
       type: 'CHANGE_FORM_NAME'
@@ -108,6 +125,10 @@ type ChangeActions =
     }
   | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
+  | {
+      type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
   | {
       type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
@@ -184,7 +205,7 @@ type InputSettingsActions =
       type: 'SET_ZENDESK_FIELD_SETTINGS'
       payload: {
         property:
-          | 'zendeskIsPublic'
+          | 'zendeskIsPrivate'
           | 'zendeskIsCustomField'
           | 'zendeskCustomFieldId'
         value: boolean | string
@@ -295,6 +316,15 @@ export const controlReducer = (
 
     // Screens
     case 'ADD_SCREEN': {
+      if (action.payload.isApplicant) {
+        return {
+          ...state,
+          form: {
+            ...form,
+            screens: [...(screens || []), action.payload.screen],
+          },
+        }
+      }
       return {
         ...state,
         activeItem: {
@@ -311,6 +341,15 @@ export const controlReducer = (
       const newScreens = state.form.screens?.filter(
         (screen) => screen?.id !== action.payload.id,
       )
+      if (action.payload.isApplicant) {
+        return {
+          ...state,
+          form: {
+            ...form,
+            screens: newScreens,
+          },
+        }
+      }
       const currentItem = state.activeItem.data as FormSystemScreen
       const newActiveItem = state.form.sections?.find(
         (section) => section?.id === currentItem.sectionId,
@@ -330,6 +369,15 @@ export const controlReducer = (
 
     // Fields
     case 'ADD_FIELD': {
+      if (action.payload.isApplicant) {
+        return {
+          ...state,
+          form: {
+            ...form,
+            fields: [...(fields || []), action.payload.field],
+          },
+        }
+      }
       return {
         ...state,
         activeItem: {
@@ -346,6 +394,15 @@ export const controlReducer = (
       const newFields = state.form.fields?.filter(
         (field) => field?.id !== action.payload.id,
       )
+      if (action.payload.isApplicant) {
+        return {
+          ...state,
+          form: {
+            ...form,
+            fields: newFields,
+          },
+        }
+      }
       const currentItem = state.activeItem.data as FormSystemField
       const newActiveItem = state.form.screens?.find(
         (screen) => screen?.id === currentItem.screenId,
@@ -433,6 +490,31 @@ export const controlReducer = (
     }
 
     // Change
+    case 'CHANGE_APPLICANT_NAME': {
+      const { lang, newValue, id } = action.payload
+      const nextFields = (state.form.fields ?? [])
+        .filter((f): f is FormSystemField => !!f && typeof f.id === 'string')
+        .map((f) =>
+          f.id === id
+            ? {
+                ...f,
+                name: {
+                  ...(f.name ?? {}),
+                  [lang]: newValue,
+                },
+              }
+            : f,
+        )
+
+      return {
+        ...state,
+        form: {
+          ...state.form,
+          fields: nextFields,
+        },
+      }
+    }
+
     case 'CHANGE_NAME': {
       const { lang, newValue } = action.payload
       let newData
@@ -1119,6 +1201,28 @@ export const controlReducer = (
           ),
         },
       }
+    }
+    case 'REMOVE_DEPENDENCIES': {
+      const { activeId, update } = action.payload
+      const id = String(activeId)
+      const source = (form.dependencies ?? []).filter(
+        (dep) => dep !== null && dep !== undefined,
+      ) as NonNullable<typeof form.dependencies>
+
+      const updatedDependencies = source
+        .filter((dep) => dep?.parentProp !== id)
+        .map((dep) => ({
+          ...dep,
+          childProps: dep?.childProps?.filter((child) => child !== id),
+        }))
+        .filter((dep) => (dep.childProps?.length ?? 0) > 0)
+
+      const updatedForm = {
+        ...form,
+        dependencies: updatedDependencies,
+      }
+      update(updatedForm)
+      return { ...state, form: updatedForm }
     }
     default:
       return state

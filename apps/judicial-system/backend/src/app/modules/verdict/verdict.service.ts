@@ -24,6 +24,7 @@ import { FileService } from '../file'
 import { PoliceService } from '../police'
 import { Case, Defendant, Verdict } from '../repository'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
+import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { DeliverResponse } from './models/deliver.response'
 
@@ -59,6 +60,22 @@ export class VerdictService {
 
     if (!verdict) {
       throw new NotFoundException(`Verdict ${verdictId} does not exist`)
+    }
+
+    return verdict
+  }
+
+  async findByExternalPoliceDocumentId(
+    externalPoliceDocumentId: string,
+  ): Promise<Verdict> {
+    const verdict = await this.verdictModel.findOne({
+      where: { externalPoliceDocumentId },
+    })
+
+    if (!verdict) {
+      throw new NotFoundException(
+        `Verdict with police document id ${externalPoliceDocumentId} does not exist`,
+      )
     }
 
     return verdict
@@ -161,6 +178,97 @@ export class VerdictService {
     return updatedVerdict
   }
 
+  async updatePoliceDelivery(
+    verdict: Verdict,
+    update: PoliceUpdateVerdictDto,
+  ): Promise<Verdict> {
+    const updatedVerdict = await this.updateVerdict(verdict, update)
+    return updatedVerdict
+  }
+
+  private mapToPoliceSupplementCodes(
+    theCase: Case,
+    defendant: Defendant,
+  ): { code: string; value: string }[] {
+    const receiverSsn =
+      defendant.nationalId &&
+      normalizeAndFormatNationalId(defendant.nationalId)[0]
+    const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
+
+    return [
+      { code: 'RVG_CASE_ID', value: theCase.id },
+      ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
+      ...(theCase.courtCaseNumber
+        ? [
+            {
+              code: 'COURT_CASE_NUMBER',
+              value: theCase.courtCaseNumber,
+            },
+          ]
+        : []),
+      ...(policeNumbers.length
+        ? [
+            {
+              code: 'POLICE_CASE_NUMBERS',
+              value: policeNumbers.join(','),
+            },
+          ]
+        : []),
+      ...(theCase.ruling
+        ? [
+            {
+              code: 'RULING',
+              value: theCase.ruling,
+            },
+          ]
+        : []),
+      ...(theCase.court?.name
+        ? [
+            {
+              code: 'COURT_INSTITUTION',
+              value: theCase.court.name,
+            },
+          ]
+        : []),
+      ...(theCase.court?.address
+        ? [
+            {
+              code: 'COURT_ADDRESS',
+              value: theCase.court.address,
+            },
+          ]
+        : []),
+      ...(theCase.prosecutorsOffice?.name
+        ? [
+            {
+              code: 'PROSECUTOR_OFFICE',
+              value: theCase.prosecutorsOffice.name,
+            },
+          ]
+        : []),
+      ...(theCase.prosecutor?.nationalId
+        ? [
+            {
+              code: 'PROSECUTOR_SSN',
+              value: normalizeAndFormatNationalId(
+                theCase.prosecutor?.nationalId,
+              )[0],
+            },
+          ]
+        : []),
+      ...(defendant.defenderNationalId
+        ? [
+            {
+              code: 'DEFENDER_SSN',
+              value: normalizeAndFormatNationalId(
+                defendant.defenderNationalId,
+              )[0],
+            },
+          ]
+        : []),
+    ]
+  }
+
   async deliverVerdictToNationalCommissionersOffice(
     theCase: Case,
     defendant: Defendant,
@@ -183,17 +291,12 @@ export class VerdictService {
       verdictFile,
     )
 
-    const normalizedNationalId = normalizeAndFormatNationalId(
-      defendant.nationalId,
-    )[0]
     const documentName = `Dómur í máli ${theCase.courtCaseNumber}`
 
     // deliver the verdict by creating the document at the police
-    // TODO: Adjust the document in collaboration with RLS
     const createdDocument = await this.policeService.createDocument({
       caseId: theCase.id,
       defendantId: defendant.id,
-      defendantNationalId: normalizedNationalId,
       user,
       documentName,
       documentFiles: [
@@ -202,8 +305,14 @@ export class VerdictService {
           documentBase64: Base64.btoa(verdictPdf.toString('binary')),
         },
       ],
-      documentDates: [{ code: 'ORDER_BY_DATE', value: verdictFile.created }],
+      documentDates: [
+        { code: 'ORDER_BY_DATE', value: verdictFile.created },
+        ...(theCase.rulingDate
+          ? [{ code: 'RULING_DATE', value: theCase.rulingDate }]
+          : []),
+      ],
       fileTypeCode: 'BRTNG_DOMUR',
+      caseSupplements: this.mapToPoliceSupplementCodes(theCase, defendant),
     })
     if (!createdDocument) {
       return { delivered: false }
