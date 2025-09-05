@@ -57,9 +57,7 @@ export const DocumentProvidersDashboard = ({
       </Text>
 
       <GridRow>
-        <SentFilesBarChart
-          data={sentFilesData || []}
-        />
+        <SentFilesBarChart data={sentFilesData || []} />
 
         <OpenedFilesDonutChart
           valueIndex={0}

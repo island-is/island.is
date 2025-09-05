@@ -37,7 +37,6 @@ export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
       : CAT_KEYS
 
   return (
-    
     <GridColumn span={['12/12', '12/12', '6/12']}>
       <Box
         marginBottom={3}
