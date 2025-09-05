@@ -18,7 +18,6 @@ import { environment } from '../environments'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),

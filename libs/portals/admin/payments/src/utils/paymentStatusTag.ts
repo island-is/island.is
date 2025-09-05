@@ -28,7 +28,7 @@ export const getPaymentStatusTag = (
         variant: 'blue',
         message: formatMessage({
           id: 'admin-portal.payments:statusInvoicePending',
-          defaultMessage: 'Reikningur í vinnslu',
+          defaultMessage: 'Krafa gefin út, bíður greiðslu',
         }),
       }
     default:
