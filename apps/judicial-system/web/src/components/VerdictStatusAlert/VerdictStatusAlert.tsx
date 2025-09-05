@@ -59,6 +59,17 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
             : ''
         }`,
       ]
+    case VerdictServiceStatus.NOT_APPLICABLE:
+      return [
+        `Dómur birtur ${
+          verdict.serviceDate
+            ? ` - ${formatDate(verdict.serviceDate)} kl. ${formatDate(
+                verdict.serviceDate,
+                TIME_FORMAT,
+              )}`
+            : ''
+        }`,
+      ]
     default:
       return [
         `Dómur fór í birtingu ${
@@ -83,7 +94,12 @@ const VerdictStatusAlertMessage = ({
 }) => {
   const messages = verdict ? mapServiceStatusMessages(verdict, lawyer) : []
 
-  const isServed = verdict?.serviceDate && verdict?.serviceStatus
+  const isDeprecatedVerdict =
+    verdict?.serviceStatus === VerdictServiceStatus.NOT_APPLICABLE &&
+    !verdict.serviceDate
+  if (isDeprecatedVerdict) return null
+
+  const isServed = Boolean(verdict?.serviceDate && verdict?.serviceStatus)
   if (isServed) {
     return (
       <AlertMessage
@@ -120,7 +136,7 @@ const VerdictStatusAlertMessage = ({
         type="info"
         title="Dómur er í birtingarferli"
         message={`Dómur fór í birtingu ${formatDate(
-          verdict.created,
+          verdict.created, // TODO: replace this date with a correct delivery date
         )} kl. ${formatDate(verdict.created, TIME_FORMAT)}`}
       />
     )
