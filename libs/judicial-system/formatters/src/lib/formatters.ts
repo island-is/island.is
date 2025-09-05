@@ -1,6 +1,9 @@
 import { format, isValid, parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
 import _uniq from 'lodash/uniq'
 
 import {
@@ -13,6 +16,8 @@ import {
   Gender,
   IndictmentSubtype,
   IndictmentSubtypeMap,
+  InformationForDefendant,
+  informationForDefendantMap,
   isRestrictionCase,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
@@ -523,3 +528,21 @@ export const getServiceStatusText = (serviceStatus: ServiceStatus) => {
     ? 'Rann út á tíma'
     : 'Í birtingarferli' // This should never happen
 }
+
+export const getRulingInstructionItems = (
+  serviceInformationForDefendant: InformationForDefendant[],
+) =>
+  pipe(
+    serviceInformationForDefendant ?? [],
+    filterMap((information) => {
+      const value = informationForDefendantMap.get(information)
+      if (!value) {
+        return option.none
+      }
+      return option.some({
+        label: value.label,
+        value: value.description,
+        type: 'accordion',
+      })
+    }),
+  )

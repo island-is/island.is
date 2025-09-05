@@ -1,16 +1,14 @@
-import { option } from 'fp-ts'
-import { filterMap } from 'fp-ts/lib/Array'
-import { pipe } from 'fp-ts/lib/function'
-
 import { ApiProperty } from '@nestjs/swagger'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  getRulingInstructionItems,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
   getIndictmentAppealDeadlineDate,
   hasDatePassed,
-  informationForDefendantMap,
   ServiceRequirement,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
@@ -64,19 +62,8 @@ export class VerdictResponse {
       ? hasDatePassed(appealDeadline)
       : false
 
-    const rulingInstructionsItems = pipe(
+    const rulingInstructionsItems = getRulingInstructionItems(
       defendant?.verdict?.serviceInformationForDefendant ?? [],
-      filterMap((information) => {
-        const value = informationForDefendantMap.get(information)
-        if (!value) {
-          return option.none
-        }
-        return option.some({
-          label: value.label,
-          value: value.description,
-          type: 'accordion',
-        })
-      }),
     )
 
     return {
