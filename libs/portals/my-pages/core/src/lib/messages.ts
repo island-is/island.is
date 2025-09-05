@@ -1293,6 +1293,14 @@ export const m = defineMessages({
     id: 'service.portal:datepicker-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
+  datepickPeriodLabel: {
+    id: 'service.portal:datepicker-period-placeholder',
+    defaultMessage: 'Veldu tímabil',
+  },
+  datepickPeriod: {
+    id: 'service.portal:datepicker-period',
+    defaultMessage: 'Tímabil',
+  },
   pick: {
     id: 'service.portal:pick',
     defaultMessage: 'Velja',
