@@ -19,8 +19,9 @@ type IndictmentFilterType = {
 const indictmentFilterKeys = ['period'] as (keyof IndictmentFilterType)[]
 
 const IndictmentCasesDataExport = () => {
-  const toDate = Date.now()
+  const toDate = new Date()
   const fromDate = startOfYear(toDate)
+  const [csvLoading, setCsvLoading] = useState<boolean>(false)
   const [filters, setFilters] = useState<IndictmentFilterType>({
     period: { fromDate, toDate },
   })
@@ -29,14 +30,13 @@ const IndictmentCasesDataExport = () => {
     return { type: DataGroups.INDICTMENTS, period: filters.period }
   }, [filters])
 
-  const { loading: csvLoading, refetch: refetchPreprocessedData } =
-    useGetPreprocessedDataUrlQuery({
-      variables: {
-        input: queryVariables,
-      },
-      fetchPolicy: 'no-cache',
-      skip: true,
-    })
+  const { refetch: refetchPreprocessedData } = useGetPreprocessedDataUrlQuery({
+    variables: {
+      input: queryVariables,
+    },
+    fetchPolicy: 'no-cache',
+    skip: true,
+  })
 
   return (
     <StatisticPageLayout>
@@ -67,12 +67,22 @@ const IndictmentCasesDataExport = () => {
               iconType="outline"
               loading={csvLoading}
               onClick={async () => {
+                setCsvLoading(true)
                 const res = await refetchPreprocessedData({
                   input: queryVariables,
                 })
-                const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
-                if (url) {
-                  window.open(url, '_blank', 'noopener,noreferrer')
+                try {
+                  const url = res.data?.getPreprocessedDataCsvSignedUrl?.url
+                  if (url) {
+                    const link = document.createElement('a')
+                    link.href = url
+                    link.setAttribute('download', '')
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                  }
+                } finally {
+                  setCsvLoading(false)
                 }
               }}
             >

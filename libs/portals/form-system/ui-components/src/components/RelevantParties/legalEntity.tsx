@@ -1,4 +1,4 @@
-import { FormSystemApplicant } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { NationalIdField } from './components/nationalIdField'
 import { Input, Stack, Box, Text } from '@island.is/island-ui/core'
 import { m, webMessages } from '../../lib/messages'
@@ -9,7 +9,7 @@ import { User } from './types'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 
 interface Props {
-  applicantType: FormSystemApplicant
+  applicantType: FormSystemField
   user?: User
   lang: 'is' | 'en'
   id: string
