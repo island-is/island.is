@@ -72,7 +72,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
     .xroad(Base, Client, NationalRegistryB2C)
     .migrations()
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/health/check')
     .replicaCount({
       default: 2,
       max: 30,
