@@ -1,5 +1,4 @@
-
-import { Box, InfoCardGrid,Text } from '@island.is/island-ui/core'
+import { Box, InfoCardGrid, Text } from '@island.is/island-ui/core'
 import {
   Grant,
   LastCallsForGrants as LastCallsForGrantsSchema,
@@ -16,7 +15,7 @@ interface SliceProps {
 
 const LastCallsForGrants = ({ slice }: SliceProps) => {
   const { activeLocale } = useI18n()
-  const {linkResolver} = useLinkResolver()
+  const { linkResolver } = useLinkResolver()
 
   const getTranslation = (
     key: keyof TranslationKeys,
@@ -30,26 +29,28 @@ const LastCallsForGrants = ({ slice }: SliceProps) => {
 
   return (
     <Box>
-      <Text marginBottom={1} variant='h3'>{slice.title}</Text>
-    <InfoCardGrid
-      variant="detailed"
-      columns={2}
-      cardsBorder='blue200'
-      cards={grantItems.map(grant => ({
-        id: grant.id,
-        title: grant.name,
-        eyebrow: grant.fund?.title ?? "",
-        description: getStatus(grant) ?? "",
-        link: {
-          label: getTranslation('seeMore'),
-          href: linkResolver(
-            'grantsplazagrant',
-            [grant?.applicationId ?? ''],
-            activeLocale,
-          ).href,
-        },
-    }))}>
-    </InfoCardGrid>
+      <Text marginBottom={1} variant="h3">
+        {slice.title}
+      </Text>
+      <InfoCardGrid
+        variant="detailed"
+        columns={2}
+        cardsBorder="blue200"
+        cards={grantItems.map((grant) => ({
+          id: grant.id,
+          title: grant.name,
+          eyebrow: grant.fund?.title ?? '',
+          description: getStatus(grant) ?? '',
+          link: {
+            label: getTranslation('seeMore'),
+            href: linkResolver(
+              'grantsplazagrant',
+              [grant?.applicationId ?? ''],
+              activeLocale,
+            ).href,
+          },
+        }))}
+      ></InfoCardGrid>
     </Box>
   )
 }
