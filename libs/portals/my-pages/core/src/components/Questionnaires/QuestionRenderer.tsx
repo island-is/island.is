@@ -1,10 +1,10 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-import { TextInput } from '../Questionnaries/QuestionsTypes/TextInput'
-import { Radio } from '../Questionnaries/QuestionsTypes/Radio'
-import { Multiple } from '../Questionnaries/QuestionsTypes/Multiple'
-import { Scale } from '../Questionnaries/QuestionsTypes/Scale'
-import { Thermometer } from '../Questionnaries/QuestionsTypes/Thermometer'
+import { TextInput } from '../Questionnaires/QuestionsTypes/TextInput'
+import { Radio } from '../Questionnaires/QuestionsTypes/Radio'
+import { Multiple } from '../Questionnaires/QuestionsTypes/Multiple'
+import { Scale } from '../Questionnaires/QuestionsTypes/Scale'
+import { Thermometer } from '../Questionnaires/QuestionsTypes/Thermometer'
 import {
   HealthQuestionnaireQuestion,
   QuestionAnswer,
@@ -46,7 +46,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             label={question.label}
             placeholder={question.sublabel}
             value={typeof answer?.value === 'string' ? answer.value : ''}
-            onChange={(value) => handleValueChange(value)}
+            onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
             required={question.display === 'required'}
@@ -68,7 +68,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
                 ? answer.value.toString()
                 : ''
             }
-            onChange={(value) => handleValueChange(value)}
+            onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
             required={question.display === 'required'}
@@ -86,7 +86,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             label={question.label}
             placeholder={question.sublabel}
             value={typeof answer?.value === 'string' ? answer.value : ''}
-            onChange={(value) => handleValueChange(value)}
+            onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
             required={question.display === 'required'}
@@ -106,7 +106,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
               label: option.label,
             }))}
             value={typeof answer?.value === 'string' ? answer.value : ''}
-            onChange={(value) => {
+            onChange={(value: string) => {
               handleValueChange(value, {})
             }}
             disabled={disabled}
@@ -127,7 +127,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
               label: option.label,
             }))}
             value={Array.isArray(answer?.value) ? answer.value : []}
-            onChange={(values) => handleValueChange(values)}
+            onChange={(values: string[]) => handleValueChange(values)}
             disabled={disabled}
             error={error}
             required={question.display === 'required'}
@@ -151,7 +151,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             min={minScale}
             max={maxScale}
             value={typeof answer?.value === 'number' ? answer.value : undefined}
-            onChange={(value) => handleValueChange(value)}
+            onChange={(value: number) => handleValueChange(value)}
             disabled={disabled}
             error={error}
             required={question.display === 'required'}
@@ -170,7 +170,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             min={0}
             max={100}
             value={typeof answer?.value === 'number' ? answer.value : 50}
-            onChange={(value) => handleValueChange(value)}
+            onChange={(value: number) => handleValueChange(value)}
             disabled={disabled}
             error={error}
             required={question.display === 'required'}
