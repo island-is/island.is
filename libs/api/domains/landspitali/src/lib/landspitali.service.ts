@@ -123,6 +123,18 @@ export class LandspitaliService {
       }
     }
 
+    if (input.fundChargeItemCode === FEE_CHARGE_ITEM_CODE) {
+      this.logger.warn(
+        'Landspitali fund charge item code is fee charge item code',
+        {
+          fundChargeItemCode: input.fundChargeItemCode,
+        },
+      )
+      return {
+        url: '',
+      }
+    }
+
     const locale = input.locale !== 'en' ? 'is' : 'en'
     const { urls } =
       await this.paymentsClient.paymentFlowControllerCreatePaymentUrl({
@@ -223,6 +235,18 @@ export class LandspitaliService {
         ...input,
         validationSecret: this.config.webValidationSecret,
       })
+      return {
+        url: '',
+      }
+    }
+
+    if (input.grantChargeItemCode === FEE_CHARGE_ITEM_CODE) {
+      this.logger.warn(
+        'Landspitali grant charge item code is fee charge item code',
+        {
+          grantChargeItemCode: input.grantChargeItemCode,
+        },
+      )
       return {
         url: '',
       }
