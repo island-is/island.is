@@ -72,7 +72,7 @@ describe('LimitedAccessCaseController - Update', () => {
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
+    mockUpdate.mockResolvedValue(updatedCase)
     const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
     mockFindOne.mockResolvedValue(updatedCase)
 
@@ -102,10 +102,9 @@ describe('LimitedAccessCaseController - Update', () => {
     })
 
     it('should update the case', () => {
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-        { defendantStatementDate: date },
-        { where: { id: caseId } },
-      )
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
+        defendantStatementDate: date,
+      })
     })
 
     it('should queue messages', () => {

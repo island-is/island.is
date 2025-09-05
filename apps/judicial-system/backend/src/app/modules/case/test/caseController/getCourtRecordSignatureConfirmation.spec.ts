@@ -104,7 +104,7 @@ describe('CaseController - Get court record signature confirmation', () => {
           mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
         mockPutGeneratedObject.mockResolvedValueOnce(Promise.resolve())
         const mockUpdate = mockCaseRepositoryService.update as jest.Mock
-        mockUpdate.mockResolvedValueOnce([1, [theCase]])
+        mockUpdate.mockResolvedValueOnce(theCase)
         const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(theCase)
 
@@ -113,11 +113,12 @@ describe('CaseController - Get court record signature confirmation', () => {
 
       it('should return success after setting the court record signatory and signature date', () => {
         expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
           {
             courtRecordSignatoryId: userId,
             courtRecordSignatureDate: expect.any(Date),
           },
-          { where: { id: caseId }, transaction },
+          { transaction },
         )
         expect(then.result).toEqual({
           documentSigned: true,

@@ -72,6 +72,7 @@ import {
   CaseRepositoryService,
   CaseString,
   CivilClaimant,
+  CourtSession,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -231,6 +232,13 @@ export const include: Includeable[] = [
         separate: true,
       },
     ],
+    separate: true,
+  },
+  {
+    model: CourtSession,
+    as: 'courtSessions',
+    required: false,
+    order: [['created', 'ASC']],
     separate: true,
   },
   {
@@ -2065,22 +2073,9 @@ export class CaseService {
         await this.handleCaseStringUpdates(theCase, update, transaction)
 
         if (Object.keys(update).length > 0) {
-          const [numberOfAffectedRows] =
-            await this.caseRepositoryService.update(update, {
-              where: { id: theCase.id },
-              transaction,
-            })
-
-          if (numberOfAffectedRows > 1) {
-            // Tolerate failure, but log error
-            this.logger.error(
-              `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${theCase.id}`,
-            )
-          } else if (numberOfAffectedRows < 1) {
-            throw new InternalServerErrorException(
-              `Could not update case ${theCase.id}`,
-            )
-          }
+          await this.caseRepositoryService.update(theCase.id, update, {
+            transaction,
+          })
         }
 
         // Update police case numbers of case files if necessary

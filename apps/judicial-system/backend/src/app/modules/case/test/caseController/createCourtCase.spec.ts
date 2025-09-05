@@ -68,7 +68,7 @@ describe('CaseController - Create court case', () => {
     const mockCreateCourtCase = mockCourtService.createCourtCase as jest.Mock
     mockCreateCourtCase.mockResolvedValue(courtCaseNumber)
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
+    mockUpdate.mockResolvedValue({})
 
     givenWhenThen = async (caseId: string, user: TUser, theCase: Case) => {
       const then = {} as Then
@@ -131,8 +131,9 @@ describe('CaseController - Create court case', () => {
         undefined,
       )
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         { courtCaseNumber },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         include,
@@ -197,8 +198,9 @@ describe('CaseController - Create court case', () => {
         indictmentSubtypes,
       )
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         { courtCaseNumber },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         include,
@@ -237,8 +239,9 @@ describe('CaseController - Create court case', () => {
 
     it('should update the court case number', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         { state: CaseState.RECEIVED, courtCaseNumber },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })

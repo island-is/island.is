@@ -1,9 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { EventLogModule } from '../event-log/eventLog.module'
-import { InstitutionModule } from '../institution/institution.module'
 import { User } from '../repository'
+import { EventLogModule, InstitutionModule } from '..'
 import { UserController } from './user.controller'
 import { UserService } from './user.service'
 

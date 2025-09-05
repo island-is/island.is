@@ -41,6 +41,7 @@ import {
 import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
 import { CivilClaimant } from './civilClaimant.model'
+import { CourtSession } from './courtSession.model'
 import { DateLog } from './dateLog.model'
 import { Defendant } from './defendant.model'
 import { EventLog } from './eventLog.model'
@@ -757,6 +758,13 @@ export class Case extends Model {
   @HasMany(() => IndictmentCount, 'caseId')
   @ApiPropertyOptional({ type: () => IndictmentCount, isArray: true })
   indictmentCounts?: IndictmentCount[]
+
+  /**********
+   * The case's court sessions
+   **********/
+  @HasMany(() => CourtSession, 'caseId')
+  @ApiPropertyOptional({ type: () => CourtSession, isArray: true })
+  courtSessions?: CourtSession[]
 
   /**********
    * Indicates whether the prosecutor requests a drivers license suspension

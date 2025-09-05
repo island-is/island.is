@@ -253,10 +253,10 @@ export class PdfService {
 
       // No need to wait for this to finish
       this.caseRepositoryService
-        .update(
-          { indictmentHash: hash, indictmentHashAlgorithm: hashAlgorithm },
-          { where: { id: theCase.id } },
-        )
+        .update(theCase.id, {
+          indictmentHash: hash,
+          indictmentHashAlgorithm: hashAlgorithm,
+        })
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
