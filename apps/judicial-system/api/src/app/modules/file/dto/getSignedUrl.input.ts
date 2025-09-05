@@ -16,9 +16,4 @@ export class GetSignedUrlInput {
   @IsOptional()
   @Field(() => ID, { nullable: true })
   readonly mergedCaseId?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => Number, { nullable: true })
-  readonly ttl?: number
 }

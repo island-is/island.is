@@ -106,7 +106,6 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
               id: fileId,
               caseId: connectedCaseParentId ?? caseId,
               mergedCaseId: connectedCaseParentId && caseId,
-              // ttl: 1000 * 60,
             },
           },
         })

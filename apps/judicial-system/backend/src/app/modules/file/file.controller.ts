@@ -223,11 +223,7 @@ export class FileController {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
   )
-  @Get([
-    'file/:fileId/url',
-    'file/:fileId/url/:ttl',
-    'mergedCase/:mergedCaseId/file/:fileId/url',
-  ])
+  @Get(['file/:fileId/url', 'mergedCase/:mergedCaseId/file/:fileId/url'])
   @ApiOkResponse({
     type: SignedUrl,
     description: 'Gets a signed url for a case file',
@@ -237,15 +233,12 @@ export class FileController {
     @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
-    @Param('ttl') ttl?: number,
   ): Promise<SignedUrl> {
     this.logger.debug(
       `Getting a signed url for file ${fileId} of case ${caseId}`,
     )
 
-    const timeToLive = ttl ? Number(ttl) : undefined
-
-    return this.fileService.getCaseFileSignedUrl(theCase, caseFile, timeToLive)
+    return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseFileExistsGuard)
