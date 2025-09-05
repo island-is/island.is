@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { Box, Text, Stack, Button } from '@island.is/island-ui/core'
-import { QuestionRenderer } from '../Questionnaries/QuestionRenderer'
-import { Stepper, Step } from '../Questionnaries/Stepper'
+import { QuestionRenderer } from '../Questionnaires/QuestionRenderer'
+import { Stepper, Step } from '../Questionnaires/Stepper'
 import { isQuestionVisible } from './utils/visibilityUtils'
 
 import {
