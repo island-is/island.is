@@ -280,6 +280,26 @@ export class AppService {
     policeDocumentId: string,
     updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ) {
+    const getPoliceDocumentDeliveryStatus = ({
+      delivered,
+      deliveredOnPaper,
+      deliveredOnIslandis,
+      deliveredToLawyer,
+    }: UpdatePoliceDocumentDeliveryDto) => {
+      if (delivered) {
+        if (deliveredOnPaper) {
+          return ServiceStatus.IN_PERSON
+        }
+        if (deliveredOnIslandis) {
+          return ServiceStatus.ELECTRONICALLY
+        }
+        if (deliveredToLawyer) {
+          return ServiceStatus.DEFENDER
+        }
+      }
+      return ServiceStatus.FAILED
+    }
+
     const parsedPoliceUpdate = {
       serviceDate: updatePoliceDocumentDelivery.servedAt,
       servedBy: updatePoliceDocumentDelivery.servedBy,

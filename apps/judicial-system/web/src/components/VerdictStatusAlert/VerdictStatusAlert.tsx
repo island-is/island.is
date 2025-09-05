@@ -104,7 +104,7 @@ const VerdictStatusAlertMessage = ({
     return (
       <AlertMessage
         type="success"
-        title={`Birting tókst - ${defendant.name}`}
+        title={`Birting tókst - ${defendantName}`}
         message={
           <Box>
             {messages.map((msg) => (
@@ -122,7 +122,7 @@ const VerdictStatusAlertMessage = ({
     return (
       <AlertMessage
         type="info"
-        title={`Dómur sendur í Lögbirtingarblaðið - ${defendant.name}`}
+        title={`Dómur sendur í Lögbirtingarblaðið - ${defendantName}`}
         message={`Dómur sendur ${formatDate(
           verdict.legalPaperRequestDate,
         )} kl. ${formatDate(verdict.legalPaperRequestDate, TIME_FORMAT)}`}
