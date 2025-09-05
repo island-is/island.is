@@ -97,9 +97,6 @@ const AllMunicipalities = ({
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
             marginBottom={4}
-            buttonGroup={
-              <ActionDrawer allowedActions={[Actions.DownloadReports]} />
-            }
           />
           <Divider />
           <Box marginTop={9} />
@@ -138,8 +135,7 @@ const AllMunicipalities = ({
                 <ActionCard
                   key={area.id}
                   heading={area.name}
-                  eyebrow={formatMessage(m.municipality)}
-                  text={
+                  eyebrow={
                     formatMessage(m.totalListsPerMunicipality) +
                     allLists.filter((list) => list.area.id === area.id).length
                   }
