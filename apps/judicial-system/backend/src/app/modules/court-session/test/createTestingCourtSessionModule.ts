@@ -34,9 +34,10 @@ export const createTestingCourtSessionModule = async () => {
     })
     .compile()
 
-  const courtSessionRepositoryService = courtSessionModule.get<CourtSessionRepositoryService>(
-    CourtSessionRepositoryService,
-  )
+  const courtSessionRepositoryService =
+    courtSessionModule.get<CourtSessionRepositoryService>(
+      CourtSessionRepositoryService,
+    )
 
   const courtSessionController = courtSessionModule.get<CourtSessionController>(
     CourtSessionController,
