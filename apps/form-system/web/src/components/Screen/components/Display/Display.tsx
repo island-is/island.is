@@ -3,7 +3,7 @@ import {
   FieldTypesEnum,
   CheckBoxDisplay,
   FileUploadDisplay,
-  ApplicantDisplay
+  ApplicantDisplay,
 } from '@island.is/form-system/ui'
 import { FormSystemField } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'

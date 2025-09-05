@@ -43,10 +43,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       state.currentScreen?.index ===
         state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
 
-  const isCompletedSection =
-    currentSectionType === SectionTypes.COMPLETED
-  
-  
+  const isCompletedSection = currentSectionType === SectionTypes.COMPLETED
+
   const continueButtonText =
     state.currentSection.index === 0
       ? formatMessage(webMessages.externalDataConfirmation)
@@ -61,8 +59,10 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   const showBackButton =
     !isCompletedSection &&
-    !(currentSectionType === SectionTypes.PARTIES &&
-      Number(state.currentScreen?.index) === 0) &&
+    !(
+      currentSectionType === SectionTypes.PARTIES &&
+      Number(state.currentScreen?.index) === 0
+    ) &&
     currentSectionType !== SectionTypes.PREMISES
 
   const handleIncrement = async () => {
