@@ -62,7 +62,7 @@ export class DeregisterMachineTemplateService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const answers = application.answers as unknown as DeregisterMachineAnswers
+    const answers = application.answers as DeregisterMachineAnswers
 
     if (auth.nationalId !== application.applicant) {
       throw new TemplateApiError(
@@ -73,7 +73,7 @@ export class DeregisterMachineTemplateService extends BaseTemplateApiService {
         400,
       )
     }
-    const machineId = answers.machine.id || answers.pickMachine.id
+    const machineId = answers.machine?.id
     if (!machineId) {
       throw new Error('Machine has not been selected')
     }
