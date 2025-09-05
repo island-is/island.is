@@ -61,6 +61,7 @@ export const Applications = () => {
     }
   }, [createApplicationMutation, slug, navigate])
 
+
   const fetchApplications = useCallback(async () => {
     try {
       const app = await getApplications({
@@ -85,7 +86,7 @@ export const Applications = () => {
         setApplications(apps)
         setLoading(false)
       } else {
-        createApplication()
+       createApplication()
       }
     }
     fetchData()

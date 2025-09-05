@@ -68,11 +68,12 @@ export const IndividualApplicant = ({
         const home = removeTypename(
           data.formSystemHomeByNationalId.heimilisfang,
         )
+        console.log(home)
         dispatch({
           type: 'SET_ADDRESS',
           payload: {
             id: applicant.id,
-            address: home.husheiti,
+            address: home.husHeiti,
             postalCode: home.postnumer,
           },
         })
