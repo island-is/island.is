@@ -5,6 +5,7 @@ import {
   PropsWithChildren,
   ReactNode,
   useEffect,
+  useId,
 } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
@@ -68,6 +69,8 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
     },
   }
 
+  const footerCheckboxId = useId()
+
   useEffect(() => {
     document.body.style.overflow = 'hidden'
 
@@ -128,8 +131,8 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
           >
             {footerCheckbox && (
               <Checkbox
-                id="asd"
-                name="asd"
+                id={footerCheckboxId}
+                name={footerCheckboxId}
                 label={footerCheckbox.label}
                 onChange={footerCheckbox.onChange}
                 checked={footerCheckbox.checked}
