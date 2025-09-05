@@ -18,7 +18,7 @@ export class LoginRestrictionService {
   async getLoginRestriction(user: User): Promise<LoginRestriction> {
     const response = await this.meLoginRestrictionsApiWithAuth(
       user,
-    ).meLoginRestrictionsControllerFindAll()
+    ).meLoginRestrictionsControllerFindAllV1()
     return {
       restricted: response.data.length > 0,
       until: response.data[0]?.until,
@@ -31,7 +31,7 @@ export class LoginRestrictionService {
   ): Promise<LoginRestriction> {
     const response = await this.meLoginRestrictionsApiWithAuth(
       user,
-    ).meLoginRestrictionsControllerCreate({
+    ).meLoginRestrictionsControllerCreateV1({
       createLoginRestrictionDto: {
         until,
       },
@@ -47,7 +47,7 @@ export class LoginRestrictionService {
   async removeLoginRestriction(user: User): Promise<boolean> {
     await this.meLoginRestrictionsApiWithAuth(
       user,
-    ).meLoginRestrictionsControllerDelete()
+    ).meLoginRestrictionsControllerDeleteV1()
 
     // If the REST request fails it will throw and not reach this point.
     return true

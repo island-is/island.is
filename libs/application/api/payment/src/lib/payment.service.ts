@@ -399,7 +399,7 @@ export class PaymentService {
     const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
 
     const paymentFlowUrls =
-      await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
+      await this.paymentsApi.paymentFlowControllerCreatePaymentUrlV1({
         createPaymentFlowInput: {
           availablePaymentMethods: [
             CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,

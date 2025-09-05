@@ -6,7 +6,7 @@ import { ApiScope } from '../models/apiScope.model'
 import { ApiScopesInput } from '../dto/apiScopes.input'
 import {
   DomainsApi,
-  DomainsControllerFindScopesDirectionEnum,
+  DomainsControllerFindScopesV1DirectionEnum,
 } from '@island.is/clients/auth/delegation-api'
 
 @Injectable()
@@ -20,12 +20,12 @@ export class ApiScopeService {
   getApiScopes(user: User, input: ApiScopesInput): Promise<ApiScope[]> {
     this.checkDomain(input.domain)
 
-    return this.domainsApiWithAuth(user).domainsControllerFindScopes({
+    return this.domainsApiWithAuth(user).domainsControllerFindScopesV1({
       domainName: input.domain,
       lang: input.lang,
       // If we fix our openApi generation to support enumName to alias the enum type we can fix this.
       direction:
-        input.direction as unknown as DomainsControllerFindScopesDirectionEnum,
+        input.direction as unknown as DomainsControllerFindScopesV1DirectionEnum,
     })
   }
 
@@ -35,7 +35,7 @@ export class ApiScopeService {
   ): Promise<Array<typeof ScopeTreeNode>> {
     this.checkDomain(input.domain)
 
-    return this.domainsApiWithAuth(user).domainsControllerFindScopeTree({
+    return this.domainsApiWithAuth(user).domainsControllerFindScopeTreeV1({
       domainName: input.domain,
       lang: input.lang,
       direction: input.direction,

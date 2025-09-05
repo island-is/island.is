@@ -2,7 +2,10 @@ import { Provider } from '@nestjs/common'
 
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
-import { Configuration, NotificationsApi } from './generated/fetch'
+import {
+  NotificationsApi,
+  Configuration,
+} from '@island.is/clients/user-notification'
 
 import { DelegationApiUserSystemNotificationConfig } from './user-system-notification.config'
 

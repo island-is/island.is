@@ -327,7 +327,7 @@ export class DelegationsOutgoingService {
       ]
 
       // Notify toNationalId of the delegation update
-      await this.notificationsApi.notificationsControllerCreateHnippNotification(
+      await this.notificationsApi.notificationsControllerCreateHnippNotificationV1(
         {
           createHnippNotificationDto: {
             args,

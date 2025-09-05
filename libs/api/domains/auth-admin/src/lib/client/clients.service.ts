@@ -4,7 +4,7 @@ import groupBy from 'lodash/groupBy'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CreateClientType,
-  MeClientsControllerCreateRequest,
+  MeClientsControllerCreateV2Request,
   ClientSso,
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
@@ -32,7 +32,7 @@ export class ClientsService extends MultiEnvironmentService {
     const clientsSettledPromises = await Promise.allSettled(
       environments.map(async (environment) =>
         this.makeRequest(user, environment, (api) =>
-          api.meClientsControllerFindByTenantIdRaw({
+          api.meClientsControllerFindByTenantIdV2Raw({
             tenantId,
           }),
         ),
@@ -42,9 +42,9 @@ export class ClientsService extends MultiEnvironmentService {
     const clientsEnvironments = this.handleSettledPromises(
       clientsSettledPromises,
       {
-        mapper: (clients, index): ClientEnvironment[] =>
+        mapper: (clients: any[], index): ClientEnvironment[] =>
           clients.map(
-            (client): ClientEnvironment => ({
+            (client: any): ClientEnvironment => ({
               ...client,
               id: this.formatClientId(client.clientId, environments[index]),
               environment: environments[index],
@@ -81,7 +81,7 @@ export class ClientsService extends MultiEnvironmentService {
     const settledClientsPromises = await Promise.allSettled(
       environments.map(async (environment) =>
         this.makeRequest(user, environment, (api) =>
-          api.meClientsControllerFindByTenantIdAndClientIdRaw({
+          api.meClientsControllerFindByTenantIdAndClientIdV2Raw({
             tenantId,
             clientId,
             includeArchived,
@@ -120,12 +120,12 @@ export class ClientsService extends MultiEnvironmentService {
     const settledPromises = await Promise.allSettled(
       input.environments.map(async (environment) => {
         const tenant = await this.makeRequest(user, environment, (api) =>
-          api.meTenantsControllerFindByIdRaw({
+          api.meTenantsControllerFindByIdV2Raw({
             tenantId: input.tenantId,
           }),
         )
 
-        const applicationRequest: MeClientsControllerCreateRequest = {
+        const applicationRequest: MeClientsControllerCreateV2Request = {
           tenantId: input.tenantId,
           adminCreateClientDto: {
             clientId: input.clientId,
@@ -138,7 +138,7 @@ export class ClientsService extends MultiEnvironmentService {
         }
 
         return this.makeRequest(user, environment, (api) =>
-          api.meClientsControllerCreateRaw(applicationRequest),
+          api.meClientsControllerCreateV2Raw(applicationRequest),
         )
       }),
     )
@@ -168,7 +168,7 @@ export class ClientsService extends MultiEnvironmentService {
     const updated = await Promise.allSettled(
       environments.map(async (environment) =>
         this.makeRequest(user, environment, (api) =>
-          api.meClientsControllerUpdateRaw({
+          api.meClientsControllerUpdateV2Raw({
             tenantId,
             clientId,
             adminPatchClientDto,
@@ -192,7 +192,7 @@ export class ClientsService extends MultiEnvironmentService {
     { environment, clientId, tenantId }: ClientSecretInput,
   ): Promise<ClientSecret[]> {
     const secrets = await this.makeRequest(user, environment, (api) =>
-      api.meClientSecretsControllerFindAllRaw({
+      api.meClientSecretsControllerFindAllV2Raw({
         tenantId,
         clientId,
       }),
@@ -215,7 +215,7 @@ export class ClientsService extends MultiEnvironmentService {
       user,
       sourceEnvironment,
       (sourceApi) =>
-        sourceApi.meClientsControllerFindByTenantIdAndClientIdRaw({
+        sourceApi.meClientsControllerFindByTenantIdAndClientIdV2Raw({
           tenantId,
           clientId,
           includeArchived: false,
@@ -230,7 +230,7 @@ export class ClientsService extends MultiEnvironmentService {
       user,
       targetEnvironment,
       (targetApi) =>
-        targetApi.meClientsControllerCreateRaw({
+        targetApi.meClientsControllerCreateV2Raw({
           tenantId,
           adminCreateClientDto: {
             ...sourceInput,
@@ -240,8 +240,9 @@ export class ClientsService extends MultiEnvironmentService {
                 sourceInput.clientType as keyof typeof CreateClientType
               ],
             clientName:
-              sourceInput.displayName.find(({ locale }) => locale === 'is')
-                ?.value || sourceInput.clientId,
+              sourceInput.displayName?.find(
+                ({ locale }: any) => locale === 'is',
+              )?.value || sourceInput.clientId,
             //exclude the uris
             postLogoutRedirectUris: [],
             redirectUris: [],
@@ -257,9 +258,9 @@ export class ClientsService extends MultiEnvironmentService {
 
     return {
       ...created,
-      id: this.formatClientId(created.clientId, targetEnvironment),
+      id: this.formatClientId((created as any).clientId, targetEnvironment),
       environment: targetEnvironment,
-    }
+    } as ClientEnvironment
   }
 
   private formatClientId(clientId: string, environment: Environment) {
@@ -271,14 +272,14 @@ export class ClientsService extends MultiEnvironmentService {
     { environment, clientId, tenantId }: ClientAllowedScopeInput,
   ): Promise<ClientAllowedScope[]> {
     const apiScopes = await this.makeRequest(user, environment, (api) =>
-      api.meClientsScopesControllerFindAllRaw({
+      api.meClientsScopesControllerFindAllV2Raw({
         tenantId,
         clientId,
       }),
     )
 
     return (
-      apiScopes?.map(({ name, displayName, description, domainName }) => ({
+      apiScopes?.map(({ name, displayName, description, domainName }: any) => ({
         name,
         displayName,
         description,
@@ -293,7 +294,7 @@ export class ClientsService extends MultiEnvironmentService {
   ): Promise<ClientSecret> {
     if (revokeOldSecrets) {
       const secrets = await this.makeRequest(user, environment, (api) =>
-        api.meClientSecretsControllerFindAllRaw({
+        api.meClientSecretsControllerFindAllV2Raw({
           tenantId,
           clientId,
         }),
@@ -305,7 +306,7 @@ export class ClientsService extends MultiEnvironmentService {
         await Promise.allSettled(
           secrets.map((secret) =>
             this.makeRequest(user, environment, (api) =>
-              api.meClientSecretsControllerDeleteRaw({
+              api.meClientSecretsControllerDeleteV2Raw({
                 tenantId,
                 clientId,
                 secretId: secret.secretId,
@@ -317,7 +318,7 @@ export class ClientsService extends MultiEnvironmentService {
     }
 
     const newSecret = await this.makeRequest(user, environment, (api) =>
-      api.meClientSecretsControllerCreateRaw({
+      api.meClientSecretsControllerCreateV2Raw({
         tenantId,
         clientId,
       }),
@@ -344,7 +345,7 @@ export class ClientsService extends MultiEnvironmentService {
           user,
           target.environment,
           (api) =>
-            api.meClientsControllerDeleteRaw({
+            api.meClientsControllerDeleteV2Raw({
               tenantId: input.tenantId,
               clientId: input.clientId,
             }),
@@ -369,7 +370,7 @@ export class ClientsService extends MultiEnvironmentService {
     // We consider the first secret to be the active one and the rest as the old secrets to revoke
     const [_, ...oldSecrets] =
       (await this.makeRequest(user, environment, (api) =>
-        api.meClientSecretsControllerFindAllRaw({
+        api.meClientSecretsControllerFindAllV2Raw({
           tenantId,
           clientId,
         }),
@@ -380,7 +381,7 @@ export class ClientsService extends MultiEnvironmentService {
       await Promise.all(
         oldSecrets.map((secret) =>
           this.makeRequest(user, environment, (api) =>
-            api.meClientSecretsControllerDeleteRaw({
+            api.meClientSecretsControllerDeleteV2Raw({
               tenantId,
               clientId,
               secretId: secret.secretId,

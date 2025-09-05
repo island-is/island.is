@@ -180,7 +180,7 @@ export class UserProfileService {
   private async getClaimsFromUserProfile(auth: User): Promise<UserProfileDTO> {
     const userProfile = await this.userProfileApiWithAuth(
       auth,
-    ).meUserProfileControllerFindUserProfile()
+    ).meUserProfileControllerFindUserProfileV2()
     return {
       email: userProfile.isRestricted
         ? undefined

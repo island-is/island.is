@@ -26,7 +26,7 @@ export class ScopeService extends MultiEnvironmentService {
     const createdSettledPromises = await Promise.allSettled(
       input.environments.map(async (environment) => {
         return this.makeRequest(user, environment, (api) =>
-          api.meScopesControllerCreateRaw({
+          api.meScopesControllerCreateV2Raw({
             tenantId: input.tenantId,
             adminCreateScopeDto: {
               name: input.name,
@@ -74,7 +74,7 @@ export class ScopeService extends MultiEnvironmentService {
     const updatedSettledPromises = await Promise.allSettled(
       environments.map(async (environment) => {
         return this.makeRequest(user, environment, (api) =>
-          api.meScopesControllerUpdateRaw({
+          api.meScopesControllerUpdateV2Raw({
             tenantId,
             scopeName,
             adminPatchScopeDto,
@@ -107,7 +107,7 @@ export class ScopeService extends MultiEnvironmentService {
       user,
       sourceEnvironment,
       (sourceApi) =>
-        sourceApi.meScopesControllerFindByTenantIdAndScopeNameRaw({
+        sourceApi.meScopesControllerFindByTenantIdAndScopeNameV2Raw({
           tenantId: input.tenantId,
           scopeName: input.scopeName,
         }),
@@ -124,7 +124,7 @@ export class ScopeService extends MultiEnvironmentService {
       user,
       targetEnvironment,
       (targetApi) =>
-        targetApi.meScopesControllerCreateRaw({
+        targetApi.meScopesControllerCreateV2Raw({
           tenantId: input.tenantId,
           adminCreateScopeDto: sourceInput,
         }),
@@ -149,7 +149,7 @@ export class ScopeService extends MultiEnvironmentService {
     const scopesSettledPromises = await Promise.allSettled(
       environments.map((environment) =>
         this.makeRequest(user, environment, (api) =>
-          api.meScopesControllerFindAllByTenantIdRaw({
+          api.meScopesControllerFindAllByTenantIdV2Raw({
             tenantId,
           }),
         ),
@@ -196,7 +196,7 @@ export class ScopeService extends MultiEnvironmentService {
     const scopeSettledPromises = await Promise.allSettled(
       environments.map((environment) =>
         this.makeRequest(user, environment, (api) =>
-          api.meScopesControllerFindByTenantIdAndScopeNameRaw(input),
+          api.meScopesControllerFindByTenantIdAndScopeNameV2Raw(input),
         ),
       ),
     )

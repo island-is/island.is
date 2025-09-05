@@ -213,7 +213,7 @@ describe('ApplicationLifeCycleService', () => {
     }
 
     notificationApi = {
-      notificationsControllerCreateHnippNotification: jest.fn(),
+      notificationsControllerCreateHnippNotificationV1: jest.fn(),
     } as any
 
     const module = await Test.createTestingModule({
@@ -259,7 +259,7 @@ describe('ApplicationLifeCycleService', () => {
 
       const mockResponse = { id: '123' }
 
-      notificationApi.notificationsControllerCreateHnippNotification.mockResolvedValue(
+      notificationApi.notificationsControllerCreateHnippNotificationV1.mockResolvedValue(
         mockResponse,
       )
 
@@ -271,7 +271,7 @@ describe('ApplicationLifeCycleService', () => {
 
       // Assert
       expect(
-        notificationApi.notificationsControllerCreateHnippNotification,
+        notificationApi.notificationsControllerCreateHnippNotificationV1,
       ).toHaveBeenCalledWith({
         createHnippNotificationDto: mockNotification,
       })
@@ -292,7 +292,7 @@ describe('ApplicationLifeCycleService', () => {
       const mockApplicationId = 'test-id'
       const mockError = new Error('API Error')
 
-      notificationApi.notificationsControllerCreateHnippNotification.mockRejectedValue(
+      notificationApi.notificationsControllerCreateHnippNotificationV1.mockRejectedValue(
         mockError,
       )
 
