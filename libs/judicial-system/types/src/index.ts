@@ -6,6 +6,7 @@ export {
   SubpoenaType,
   DefendantPlea,
   ServiceStatus,
+  VerdictServiceStatus,
   PunishmentType,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
@@ -49,7 +50,12 @@ export { DateType, dateTypes } from './lib/dateLog'
 
 export { StringType, stringTypes } from './lib/caseString'
 
-export { CaseFileState, CaseFileCategory, HashAlgorithm } from './lib/file'
+export {
+  CaseFileState,
+  CaseFileCategory,
+  HashAlgorithm,
+  PoliceFileTypeCode,
+} from './lib/file'
 
 export {
   UserRole,
@@ -78,6 +84,8 @@ export {
   getAdminUserInstitutionUserRoles,
 } from './lib/user'
 export type { User, UserDescriptor, InstitutionUser } from './lib/user'
+
+export { DataGroups } from './lib/statistics'
 
 export {
   CaseOrigin,
@@ -156,6 +164,11 @@ export {
 } from './lib/lawyer'
 
 export { type CourtDocument } from './lib/courtDocument'
+
+export {
+  CourtSessionClosedLegalBasis,
+  CourtSessionRulingType,
+} from './lib/courtSession'
 
 export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'
 export { getCaseTableType, caseTables } from './lib/tables/caseTable'

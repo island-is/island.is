@@ -26,15 +26,14 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  PoliceFileTypeCode,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { Case } from '../case/models/case.model'
-import { DateLog } from '../case/models/dateLog.model'
-import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
+import { Case, DateLog, Defendant } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -593,11 +592,11 @@ export class PoliceService {
           // Do not spam the logs with errors
           // Act as if the case was updated
           return true
-        } else {
-          this.logger.error(`Failed to update police case ${caseId}`, {
-            reason,
-          })
         }
+
+        this.logger.error(`Failed to update police case ${caseId}`, {
+          reason,
+        })
 
         this.eventService.postErrorEvent(
           'Failed to update police case',
@@ -620,25 +619,26 @@ export class PoliceService {
   async createDocument({
     caseId,
     defendantId,
-    defendantNationalId,
     user,
     documentName,
     documentFiles,
     documentDates,
     fileTypeCode,
+    caseSupplements,
   }: {
     caseId: string
     defendantId: string
-    defendantNationalId: string
     user: User
     documentName: string
     documentFiles: { name: string; documentBase64: string }[]
     documentDates: { code: string; value: Date }[]
     fileTypeCode: string
-  }): Promise<CreateDocumentResponse> {
+    caseSupplements: { code: string; value: string }[]
+  }): Promise<CreateDocumentResponse | undefined> {
     const { name: actor } = user
 
     const createDocumentPath = `${this.xRoadPath}/CreateDocument`
+
     try {
       const res = await this.fetchPoliceCaseApi(createDocumentPath, {
         method: 'POST',
@@ -653,10 +653,7 @@ export class PoliceService {
           documentName: documentName,
           documentFiles,
           fileTypeCode,
-          supplements: [
-            { code: 'RVG_CASE_ID', value: caseId },
-            { code: 'RECEIVER_SSN', value: defendantNationalId },
-          ],
+          supplements: caseSupplements,
           dates: documentDates,
         }),
       } as RequestInit)
@@ -665,8 +662,6 @@ export class PoliceService {
         const policeResponse = await res.json()
         return { externalPoliceDocumentId: policeResponse.id }
       }
-
-      throw await res.text()
     } catch (error) {
       this.logger.error(
         `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
@@ -731,7 +726,7 @@ export class PoliceService {
             courtCeremony: 'Þingfesting',
             lokeCaseNumber: policeCaseNumbers?.[0],
             courtCaseNumber: courtCaseNumber,
-            fileTypeCode: 'BRTNG',
+            fileTypeCode: PoliceFileTypeCode.SUBPOENA,
             rvgCaseId: theCase.id,
           }),
         } as RequestInit,

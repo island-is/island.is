@@ -192,6 +192,95 @@
         "summary": "Get user by nationalId",
         "tags": ["Frigg"]
       }
+    },
+    "/municipalities/{municipalityId}/applications": {
+      "get": {
+        "operationId": "getApplications",
+        "parameters": [
+          {
+            "name": "municipalityId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": { "type": "string", "enum": ["registration"] }
+          },
+          {
+            "name": "since",
+            "required": false,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "To define the download segmentation value i.e. the maximum number of records to be contained in the response.",
+            "schema": { "default": 100, "type": "number", "minimum": 1 }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "The number of the first record to be supplied in the segmented response message.",
+            "schema": { "default": 0, "type": "number", "minimum": 0 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns list of applications",
+            "content": {
+              "application/json": { "schema": { "type": "object" } }
+            }
+          },
+          "default": {
+            "headers": {
+              "x-total-count": {
+                "description": "The total number of resources that are available to be returned",
+                "schema": { "type": "integer" }
+              }
+            },
+            "description": ""
+          }
+        },
+        "summary": "Returns a paginated list of applications",
+        "tags": ["Frigg"]
+      }
+    },
+    "/municipalities/{municipalityId}/applications/{applicationId}/pdf": {
+      "get": {
+        "operationId": "getApplicationPdf",
+        "parameters": [
+          {
+            "name": "municipalityId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "applicationId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns PDF for application",
+            "content": {
+              "application/pdf": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          }
+        },
+        "summary": "Returns a PDF for an application",
+        "tags": ["Frigg"]
+      }
     }
   },
   "info": {
@@ -448,13 +537,13 @@
         "properties": {
           "id": { "type": "string" },
           "address": { "type": "string" },
-          "municipality": { "type": "object", "nullable": true },
+          "municipality": { "type": "string", "nullable": true },
           "postCode": { "type": "string" },
-          "country": { "type": "object", "nullable": true },
-          "houseNumber": { "type": "object", "nullable": true },
-          "streetNumber": { "type": "object", "nullable": true },
-          "apartmentNumber": { "type": "object", "nullable": true },
-          "municipalityId": { "type": "object", "nullable": true }
+          "country": { "type": "string", "nullable": true },
+          "houseNumber": { "type": "number", "nullable": true },
+          "streetNumber": { "type": "number", "nullable": true },
+          "apartmentNumber": { "type": "number", "nullable": true },
+          "municipalityId": { "type": "string", "nullable": true }
         },
         "required": [
           "id",
@@ -474,8 +563,8 @@
           "id": { "type": "string" },
           "nationalId": { "type": "string", "nullable": true },
           "name": { "type": "string" },
-          "nameDative": { "type": "object" },
-          "slug": { "type": "object" },
+          "nameDative": { "type": "string", "nullable": true },
+          "slug": { "type": "string", "nullable": true },
           "type": {
             "type": "string",
             "enum": [
@@ -492,14 +581,13 @@
             "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
           },
           "managing": {
-            "default": [],
             "type": "array",
             "items": { "$ref": "#/components/schemas/OrganizationModel" }
           },
-          "unitId": { "type": "object" },
-          "email": { "type": "object" },
-          "phone": { "type": "object" },
-          "website": { "type": "object" }
+          "unitId": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "website": { "type": "string", "nullable": true }
         },
         "required": [
           "id",
@@ -517,37 +605,28 @@
           "website"
         ]
       },
-      "AllergyModel": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "title": { "type": "object" },
-          "type": { "type": "object" },
-          "code": { "type": "string" },
-          "foodAllergy": { "type": "boolean" }
-        },
-        "required": ["id", "title", "type", "code", "foodAllergy"]
-      },
       "HealthProfileModel": {
         "type": "object",
         "properties": {
           "id": { "type": "string" },
           "userId": { "type": "string" },
-          "allergies": {
+          "allergies": { "type": "array", "items": { "type": "string" } },
+          "foodAllergiesOrIntolerances": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/AllergyModel" }
+            "items": { "type": "string" }
           },
-          "epipen": { "type": "boolean" },
-          "medicalDiagnoses": { "type": "boolean" },
-          "medicationAssistance": { "type": "boolean" }
+          "usesEpipen": { "type": "boolean" },
+          "hasConfirmedMedicalDiagnoses": { "type": "boolean" },
+          "requestsMedicationAdministration": { "type": "boolean" }
         },
         "required": [
           "id",
           "userId",
           "allergies",
-          "epipen",
-          "medicalDiagnoses",
-          "medicationAssistance"
+          "foodAllergiesOrIntolerances",
+          "usesEpipen",
+          "hasConfirmedMedicalDiagnoses",
+          "requestsMedicationAdministration"
         ]
       },
       "CaseWorkerModel": {
@@ -560,134 +639,50 @@
           "type": {
             "type": "string",
             "enum": ["caseManager", "supportManager"]
-          },
-          "createdAt": { "format": "date-time", "type": "string" },
-          "updatedAt": { "format": "date-time", "type": "string" }
+          }
         },
-        "required": [
-          "id",
-          "name",
-          "email",
-          "phone",
-          "type",
-          "createdAt",
-          "updatedAt"
-        ]
+        "required": ["id", "name", "email", "phone", "type"]
       },
       "SocialProfileModel": {
         "type": "object",
         "properties": {
           "id": { "type": "string" },
           "userId": { "type": "string" },
-          "diagnoses": { "type": "boolean", "default": false },
-          "integratedServices": { "type": "boolean", "default": false },
+          "hasDiagnoses": { "type": "boolean", "default": false },
+          "hasIntegratedServices": { "type": "boolean", "default": false },
           "caseWorkers": {
             "nullable": true,
             "type": "array",
             "items": { "$ref": "#/components/schemas/CaseWorkerModel" }
           },
-          "previousSupport": { "type": "boolean", "default": false },
-          "createdAt": { "format": "date-time", "type": "string" },
-          "updatedAt": { "format": "date-time", "type": "string" }
+          "hasHadSupport": { "type": "boolean", "default": false }
         },
         "required": [
           "id",
           "userId",
-          "diagnoses",
-          "integratedServices",
+          "hasDiagnoses",
+          "hasIntegratedServices",
           "caseWorkers",
-          "previousSupport",
-          "createdAt",
-          "updatedAt"
+          "hasHadSupport"
         ]
       },
-      "AffiliationOrganizationModel": {
+      "LanguageProfileModel": {
         "type": "object",
         "properties": {
           "id": { "type": "string" },
-          "nationalId": { "type": "string", "nullable": true },
-          "name": { "type": "string" },
-          "type": {
-            "type": "string",
-            "enum": [
-              "childCare",
-              "municipality",
-              "national",
-              "privateOwner",
-              "school"
-            ]
-          }
-        },
-        "required": ["id", "nationalId", "name", "type"]
-      },
-      "AffiliationModel": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "role": {
-            "type": "string",
-            "enum": [
-              "member",
-              "guardian",
-              "parent",
-              "principal",
-              "relative",
-              "student",
-              "teacher"
-            ]
-          },
-          "classificationId": { "type": "string" },
-          "beginDate": { "format": "date-time", "type": "string" },
-          "endDate": {
-            "format": "date-time",
-            "type": "string",
-            "nullable": true
-          },
-          "organization": {
-            "nullable": true,
-            "allOf": [
-              { "$ref": "#/components/schemas/AffiliationOrganizationModel" }
-            ]
-          }
+          "userId": { "type": "string" },
+          "languageEnvironment": { "type": "string" },
+          "preferredLanguage": { "type": "string" },
+          "signLanguage": { "type": "boolean" },
+          "languages": { "type": "array", "items": { "type": "string" } }
         },
         "required": [
           "id",
-          "role",
-          "classificationId",
-          "beginDate",
-          "endDate",
-          "organization"
-        ]
-      },
-      "AgentModel": {
-        "type": "object",
-        "properties": {
-          "nationalId": { "type": "string" },
-          "type": {
-            "type": "string",
-            "enum": [
-              "guardian",
-              "relative",
-              "sibling",
-              "parent",
-              "emergencyContact"
-            ]
-          },
-          "relationTypeId": { "type": "object", "nullable": true },
-          "phone": { "type": "object" },
-          "email": { "type": "object" },
-          "domicile": {
-            "nullable": true,
-            "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
-          }
-        },
-        "required": [
-          "nationalId",
-          "type",
-          "relationTypeId",
-          "phone",
-          "email",
-          "domicile"
+          "userId",
+          "languageEnvironment",
+          "preferredLanguage",
+          "signLanguage",
+          "languages"
         ]
       },
       "UserModel": {
@@ -695,12 +690,16 @@
         "properties": {
           "id": { "type": "string" },
           "nationalId": { "type": "string" },
+          "nationalIdType": {
+            "type": "string",
+            "enum": ["unknown", "individual", "system"]
+          },
           "name": { "type": "string" },
           "nationality": { "type": "string", "nullable": true },
-          "preferredName": { "type": "object", "nullable": true },
+          "preferredName": { "type": "string", "nullable": true },
           "pronouns": { "type": "array", "items": { "type": "string" } },
           "gradeLevel": { "type": "string" },
-          "email": { "type": "object", "nullable": true },
+          "email": { "type": "string", "nullable": true },
           "domicile": {
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
@@ -717,25 +716,28 @@
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/SocialProfileModel" }]
           },
-          "primaryOrgId": { "type": "object" },
+          "languageProfile": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/LanguageProfileModel" }]
+          },
+          "primaryOrgId": { "type": "string", "nullable": true },
           "affiliations": {
             "nullable": true,
             "type": "array",
-            "items": { "$ref": "#/components/schemas/AffiliationModel" }
+            "items": { "type": "string" }
           },
           "agents": {
             "nullable": true,
             "type": "array",
-            "items": { "$ref": "#/components/schemas/AgentModel" }
+            "items": { "type": "string" }
           },
-          "spokenLanguages": { "type": "array", "items": { "type": "string" } },
-          "preferredLanguage": { "type": "string", "nullable": true },
-          "phone": { "type": "object" },
-          "mobile": { "type": "object" }
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true }
         },
         "required": [
           "id",
           "nationalId",
+          "nationalIdType",
           "name",
           "nationality",
           "preferredName",
@@ -746,11 +748,10 @@
           "residence",
           "healthProfile",
           "socialProfile",
+          "languageProfile",
           "primaryOrgId",
           "affiliations",
           "agents",
-          "spokenLanguages",
-          "preferredLanguage",
           "phone",
           "mobile"
         ]

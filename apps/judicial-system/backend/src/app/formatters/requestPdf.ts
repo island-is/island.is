@@ -16,7 +16,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { core, request as m } from '../messages'
-import { Case } from '../modules/case'
+import { Case } from '../modules/repository'
 import { formatLegalProvisions } from './formatters'
 import {
   addCoatOfArms,

@@ -7,6 +7,7 @@ import { SmsModule } from '@island.is/nova-sms'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
+import { Notification } from '../repository'
 import {
   CaseModule,
   CourtModule,
@@ -15,8 +16,7 @@ import {
   InstitutionModule,
   SubpoenaModule,
   UserModule,
-} from '../index'
-import { Notification } from './models/notification.model'
+} from '..'
 import { CaseNotificationService } from './services/caseNotification/caseNotification.service'
 import { CivilClaimantNotificationService } from './services/civilClaimantNotification/civilClaimantNotification.service'
 import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'

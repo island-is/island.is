@@ -31,6 +31,7 @@ export const BaseInput = () => {
   const defaultValue = fieldTypes?.find(
     (fieldType) => fieldType?.id === currentItem.fieldType,
   )
+  console.log(selectList)
   const defaultOption: Option<string> | undefined = defaultValue
     ? { value: defaultValue.id ?? '', label: defaultValue.name?.is ?? '' }
     : undefined
