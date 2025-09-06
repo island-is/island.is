@@ -2,15 +2,21 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApolloError } from '@apollo/client'
 
-import { ScopesGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
 
-import { GetPaymentFlowInput } from './dto/getPaymentFlow.input'
-import { GetPaymentFlowResponse } from './dto/getPaymentFlow.response'
+import {
+  GetPaymentFlowAdminInput,
+  GetPaymentFlowInput,
+} from './dto/getPaymentFlow.input'
+import {
+  GetPaymentFlowResponse,
+  PaymentFlowAdminResponse,
+} from './dto/getPaymentFlow.response'
 import { PaymentsService } from './payments.service'
 import { VerifyCardResponse } from './dto/verifyCard.response'
 import { VerifyCardInput } from './dto/verifyCard.input'
@@ -22,12 +28,27 @@ import { CreateInvoiceResponse } from './dto/createInvoice.response'
 import { CreateInvoiceInput } from './dto/createInvoice.input'
 import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
 import { GetJwksResponse } from './dto/getJwks.response'
+import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
+import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
-@UseGuards(ScopesGuard, FeatureFlagGuard)
+@UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
 @Resolver()
 export class PaymentsResolver {
   constructor(private readonly paymentsService: PaymentsService) {}
+
+  @Query(() => GetPaymentFlowsResponse, { name: 'paymentsGetFlows' })
+  async getPaymentFlows(
+    @Args('input', { type: () => GetPaymentFlowsInput })
+    input: GetPaymentFlowsInput,
+  ): Promise<GetPaymentFlowsResponse> {
+    try {
+      return this.paymentsService.getPaymentFlows(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
 
   @Query(() => GetPaymentFlowResponse, { name: 'paymentsGetFlow' })
   async getPaymentFlow(
@@ -39,6 +60,16 @@ export class PaymentsResolver {
     } catch (e) {
       throw new ApolloError(e.message)
     }
+  }
+
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.payments)
+  @Query(() => PaymentFlowAdminResponse, { name: 'paymentsGetFlowAdmin' })
+  async getPaymentFlowAdmin(
+    @Args('input', { type: () => GetPaymentFlowAdminInput })
+    input: GetPaymentFlowAdminInput,
+  ): Promise<PaymentFlowAdminResponse> {
+    return this.paymentsService.getPaymentFlow(input, true)
   }
 
   @Query(() => GetPaymentVerificationStatusResponse, {

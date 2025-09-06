@@ -12,4 +12,7 @@ export {
   ChargeCardResponse,
   Configuration as PaymentsApiConfiguration,
   GetPaymentFlowDTOPaymentStatusEnum,
+  PaymentFlowEventDTOTypeEnum,
+  PaymentFlowEventDTOReasonEnum,
+  GetPaymentFlowsPaginatedDTO,
 } from '../gen/fetch'
