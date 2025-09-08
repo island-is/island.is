@@ -79,23 +79,51 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
-      const files = await this.attachmentService.getFiles(application, [
-        'fileUpload',
-      ])
+      let files
+      let parsedApplication
+      try {
+        files = await this.attachmentService.getFiles(application, [
+          'fileUpload',
+        ])
+      } catch (e) {
+        this.logger.error('Failed to get files:', e.message)
+        throw e
+      }
 
       if (isCancellation(application)) {
-        const parsedApplication = parseCancelContract(application, files)
-        return await this.homeApi.contractCancelPost({
-          cancelContract: parsedApplication,
-        })
+        try {
+          parsedApplication = parseCancelContract(application, files)
+        } catch (e) {
+          this.logger.error('Failed to parse cancel contract:', e.message)
+          throw e
+        }
+        try {
+          return await this.homeApi.contractCancelPost({
+            cancelContract: parsedApplication,
+          })
+        } catch (e) {
+          this.logger.error('Failed to post cancel contract:', e.message)
+          throw e
+        }
       } else {
-        const parsedApplication = parseTerminateContract(application, files)
-        return await this.homeApi.contractTerminatePost({
-          terminateContract: parsedApplication,
-        })
+        try {
+          parsedApplication = parseTerminateContract(application, files)
+        } catch (e) {
+          this.logger.error('Failed to parse terminate contract:', e.message)
+          throw e
+        }
+        try {
+          return await this.homeApi.contractTerminatePost({
+            terminateContract: parsedApplication,
+          })
+        } catch (e) {
+          this.logger.error('Failed to post terminate contract:', e.message)
+          throw e
+        }
       }
     } catch (e) {
       this.logger.error('Failed to submit application:', e.message)
+      this.logger.error('Application submission failure cause:', e.cause)
       throw new TemplateApiError(e, 500)
     }
   }
