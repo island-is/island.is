@@ -23,7 +23,7 @@ export const rentalContractOptions = (application: Application) => {
     return {
       value: contract.contractId?.toString() ?? '',
       label: {
-        ...(contract.contractTypeUseCode === 'INDEFINITEAGREEMENT'
+        ...(contract.contractTypeUseCode === 'INDEFINETEAGREEMENT'
           ? m.chooseContractMessages.optionUnboundTerm
           : m.chooseContractMessages.optionFixedTerm),
         values: {
