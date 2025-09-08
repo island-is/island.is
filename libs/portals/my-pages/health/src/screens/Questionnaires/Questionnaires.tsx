@@ -1,7 +1,4 @@
-import { useLocale } from '@island.is/localization'
-import { ActionCard, IntroWrapper, m } from '@island.is/portals/my-pages/core'
-import React, { useMemo, useState } from 'react'
-import { messages } from '../../lib/messages'
+import { QuestionnairesStatusEnum } from '@island.is/api/schema'
 import {
   Box,
   Checkbox,
@@ -10,10 +7,20 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import debounce from 'lodash/debounce'
+import { useLocale } from '@island.is/localization'
+import {
+  ActionCard,
+  formatDate,
+  IntroWrapper,
+  m,
+} from '@island.is/portals/my-pages/core'
 import { debounceTime } from '@island.is/shared/constants'
-import { HealthPaths } from '../../lib/paths'
+import debounce from 'lodash/debounce'
+import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
+import { useGetQuestionnairesQuery } from './questionnaries.generated'
 
 const ITEMS_ON_PAGE = 10
 
@@ -32,11 +39,18 @@ type FilterValues = {
 }
 
 const Questionnaires: React.FC = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
 
+  const { data, loading, error } = useGetQuestionnairesQuery({
+    variables: {
+      locale: lang,
+    },
+  })
+
+  console.log(data)
   const toggleStatus = (
     status: any, // TODO: switch to enum from graphql
   ) => {
@@ -105,17 +119,17 @@ const Questionnaires: React.FC = () => {
               {
                 name: 'expired',
                 label: formatMessage(messages.expiredQuestionnaire),
-                status: 'expired', // TODO: switch to enum from graphql
+                status: QuestionnairesStatusEnum.expired,
               },
               {
                 name: 'unanswered',
                 label: formatMessage(messages.unAnsweredQuestionnaire),
-                status: 'unanswered', // TODO: switch to enum from graphql
+                status: QuestionnairesStatusEnum.notAnswered,
               },
               {
                 name: 'answered',
                 label: formatMessage(messages.answeredQuestionnaire),
-                status: 'answered', // TODO: switch to enum from graphql
+                status: QuestionnairesStatusEnum.answered,
               },
             ].map(({ name, label, status }) => (
               <Checkbox
@@ -133,32 +147,50 @@ const Questionnaires: React.FC = () => {
         </Box>
       </Filter>
       <Box marginTop={5}>
-        <ActionCard
-          heading="DT - Mat á vanlíðan"
-          text="Sent dags: 12.04.2012"
-          eyebrow="Landspítali"
-          tag={{ label: 'Ósvarað', outlined: false, variant: 'purple' }}
-          cta={{
-            url: undefined,
-            internalUrl: HealthPaths.HealthQuestionnairesDetail.replace(
-              ':id',
-              '1',
-            ),
-            label: formatMessage(messages.answer), //TODO: if status is unanswered the label should be "svara" else "sjá nánar"
-            variant: 'text',
-            size: undefined,
-            icon: 'arrowForward',
-            iconType: undefined,
-            onClick: () =>
-              navigate(
-                HealthPaths.HealthQuestionnairesDetail.replace(':id', '1'),
-              ),
-            disabled: undefined,
-            centered: undefined,
-            hide: undefined,
-            callback: undefined,
-          }}
-        />
+        <Stack space={3}>
+          {data?.questionnairesList?.questionnaires?.map((questionnaire) => (
+            <ActionCard
+              key={questionnaire.id}
+              heading={questionnaire.title}
+              text={`Sent dags: ${formatDate(questionnaire.sentDate)}`}
+              eyebrow={questionnaire.organization ?? undefined}
+              tag={{
+                label:
+                  questionnaire.status === QuestionnairesStatusEnum.answered
+                    ? formatMessage(messages.answeredQuestionnaire)
+                    : questionnaire.status ===
+                      QuestionnairesStatusEnum.notAnswered
+                    ? formatMessage(messages.unAnsweredQuestionnaire)
+                    : formatMessage(messages.expiredQuestionnaire),
+
+                outlined: false,
+                variant:
+                  questionnaire.status === QuestionnairesStatusEnum.answered
+                    ? 'blue'
+                    : questionnaire.status ===
+                      QuestionnairesStatusEnum.notAnswered
+                    ? 'purple'
+                    : 'red',
+              }}
+              cta={{
+                internalUrl: HealthPaths.HealthQuestionnairesDetail.replace(
+                  ':id',
+                  questionnaire.id,
+                ),
+                label: formatMessage(messages.answer), //TODO: if status is unanswered the label should be "svara" else "sjá nánar"
+                variant: 'text',
+                icon: 'arrowForward',
+                onClick: () =>
+                  navigate(
+                    HealthPaths.HealthQuestionnairesDetail.replace(
+                      ':id',
+                      questionnaire.id,
+                    ),
+                  ),
+              }}
+            />
+          ))}
+        </Stack>
       </Box>
     </IntroWrapper>
   )

@@ -21,8 +21,8 @@ export class Questionnaire {
   @Field()
   sentDate!: string
 
-  @Field(() => QuestionnairesStatusEnum)
-  status!: QuestionnairesStatusEnum
+  @Field(() => QuestionnairesStatusEnum, { nullable: true })
+  status?: QuestionnairesStatusEnum
 
   @Field({ nullable: true })
   description?: string

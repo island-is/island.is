@@ -1,31 +1,25 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { Inject, UseGuards } from '@nestjs/common'
-import type { Locale } from '@island.is/shared/types'
-import { Audit, AuditService } from '@island.is/nest/audit'
-import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
-  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
-import { QuestionnairesService } from './questionnaires.service'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
+import type { Locale } from '@island.is/shared/types'
+import { Inject, UseGuards } from '@nestjs/common'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import {
   Questionnaire,
   QuestionnairesList,
 } from '../models/questionnaires.model'
+import { QuestionnairesService } from './questionnaires.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/questionnaires' })
-@Scopes(ApiScope.health)
+//TODO: add scope
 export class QuestionnairesResolver {
   constructor(
     private readonly questionnairesService: QuestionnairesService,
@@ -33,20 +27,23 @@ export class QuestionnairesResolver {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Query(() => QuestionnairesList, { name: 'questionnairesList' })
+  @Query(() => QuestionnairesList, {
+    name: 'questionnairesList',
+    nullable: true,
+  })
   async getQuestionnaires(
     @CurrentUser() user: User,
-    @Args('locale') locale: Locale,
-  ) {
+    @Args('locale', { type: () => String }) locale: Locale = 'is',
+  ): Promise<QuestionnairesList | null> {
     return this.questionnairesService.getQuestionnaires(user, locale)
   }
 
-  @Query(() => Questionnaire, { name: 'questionnairesDetail' })
+  @Query(() => Questionnaire, { name: 'questionnairesDetail', nullable: true })
   async getQuestionnaire(
     @CurrentUser() user: User,
-    @Args('locale') locale: Locale,
+    @Args('locale', { type: () => String }) locale: Locale = 'is',
     @Args('id') id: string,
-  ) {
+  ): Promise<Questionnaire | null> {
     return this.questionnairesService.getQuestionnaire(user, id)
   }
 }

@@ -23,6 +23,7 @@ export enum AnswerOptionType {
   select = 'select',
   thermometer = 'thermometer',
   number = 'number',
+  scale = 'scale',
 }
 
 registerEnumType(AnswerOptionType, {
@@ -92,6 +93,28 @@ export class HealthQuestionnaireAnswerCheckbox extends HealthQuestionnaireAnswer
   options!: string[]
 }
 
+// Scale answer type
+@ObjectType('HealthQuestionnaireAnswerScale')
+export class HealthQuestionnaireAnswerScale extends HealthQuestionnaireAnswerBase {
+  @Field()
+  minLabel!: string
+
+  @Field()
+  maxLabel!: string
+
+  @Field()
+  minValue!: number
+
+  @Field()
+  maxValue!: number
+}
+
+// Label answer type (for display-only text)
+@ObjectType('HealthQuestionnaireAnswerLabel')
+export class HealthQuestionnaireAnswerLabel extends HealthQuestionnaireAnswerBase {
+  // No additional fields needed - just displays the text
+}
+
 // Union type for health questionnaire answers
 const HealthQuestionnaireAnswerUnion = createUnionType({
   name: 'HealthQuestionnaireAnswer',
@@ -102,6 +125,8 @@ const HealthQuestionnaireAnswerUnion = createUnionType({
       HealthQuestionnaireAnswerRadio,
       HealthQuestionnaireAnswerCheckbox,
       HealthQuestionnaireAnswerNumber,
+      HealthQuestionnaireAnswerScale,
+      HealthQuestionnaireAnswerLabel,
     ] as const,
   resolveType: (value) => {
     switch (value.__typename) {
@@ -115,6 +140,10 @@ const HealthQuestionnaireAnswerUnion = createUnionType({
         return HealthQuestionnaireAnswerNumber
       case 'HealthQuestionnaireAnswerCheckbox':
         return HealthQuestionnaireAnswerCheckbox
+      case 'HealthQuestionnaireAnswerScale':
+        return HealthQuestionnaireAnswerScale
+      case 'HealthQuestionnaireAnswerLabel':
+        return HealthQuestionnaireAnswerLabel
       default:
         return null
     }
@@ -140,8 +169,8 @@ export class AnswerOption {
   @Field()
   label!: string
 
-  @Field(() => AnswerOptionType)
-  type!: AnswerOptionType
+  @Field(() => HealthQuestionnaireAnswerUnion, { nullable: true })
+  type!: typeof HealthQuestionnaireAnswerUnion
 }
 
 // Main question type
@@ -159,8 +188,14 @@ export class Question {
   @Field(() => QuestionDisplayType)
   display!: QuestionDisplayType
 
-  @Field(() => [AnswerOption], { nullable: true })
-  answerOptions?: AnswerOption[]
+  @Field(() => AnswerOption)
+  answerOptions!: AnswerOption
+
+  @Field(() => [String], { nullable: true })
+  dependsOn?: string[]
+
+  @Field({ nullable: true })
+  visibilityCondition?: string
 }
 
 // Export the union type for use in resolvers

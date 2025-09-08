@@ -1715,4 +1715,13 @@ export const messages = defineMessages({
     defaultMessage: 'Svara',
     id: 'sp.health:answer',
   },
+  questionnaireNotFound: {
+    defaultMessage: 'Spurningalisti fannst ekki',
+    id: 'sp.health:questionnaire-not-found',
+  },
+  questionnaireNotFoundDetail: {
+    defaultMessage:
+      'Vinsamlegast athugaðu hvort slóðin sé rétt eða hafðu samband við þjónustuaðila.',
+    id: 'sp.health:questionnaire-not-found-detail',
+  },
 })

@@ -70,6 +70,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         {label}
       </Text>
       <Input
+        size="xs"
         id={id}
         name={id}
         placeholder={placeholder}

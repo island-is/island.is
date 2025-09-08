@@ -1,5 +1,12 @@
-query GetQuestionnaires {
-  questionnairesList {
+fragment HealthQuestionnaireAnswerBase on HealthQuestionnaireAnswerCheckbox {
+  id
+  label
+  sublabel
+  display
+}
+
+query GetQuestionnaires($locale: String!) {
+  questionnairesList(locale: $locale) {
     questionnaires {
       id
       title
@@ -11,8 +18,8 @@ query GetQuestionnaires {
   }
 }
 
-query GetQuestionnaire($id: String!) {
-  questionnairesDetail(id: $id) {
+query GetQuestionnaire($id: String!, $locale: String!) {
+  questionnairesDetail(id: $id, locale: $locale) {
     id
     title
     sentDate
@@ -25,10 +32,64 @@ query GetQuestionnaire($id: String!) {
       label
       sublabel
       display
+      dependsOn
+      visibilityCondition
       answerOptions {
+        __typename
         id
         label
-        type
+        type {
+          __typename
+          ... on HealthQuestionnaireAnswerRadio {
+            id
+            label
+            sublabel
+            display
+            options
+          }
+          ... on HealthQuestionnaireAnswerCheckbox {
+            id
+            label
+            sublabel
+            display
+            options
+          }
+          ... on HealthQuestionnaireAnswerThermometer {
+            id
+            label
+            sublabel
+            display
+            maxLabel
+            minLabel
+          }
+          ... on HealthQuestionnaireAnswerText {
+            id
+            label
+            sublabel
+            display
+            placeholder
+            maxLength
+          }
+          ... on HealthQuestionnaireAnswerNumber {
+            id
+            label
+            sublabel
+            display
+            placeholder
+            min
+            max
+          }
+          ... on HealthQuestionnaireAnswerScale {
+            id
+            label
+            sublabel
+            display
+            minLabel
+            maxLabel
+            minValue
+            maxValue
+          }
+        }
         value {
           extraQuestions {
             __typename
@@ -70,6 +131,16 @@ query GetQuestionnaire($id: String!) {
               sublabel
               display
               options
+            }
+            ... on HealthQuestionnaireAnswerScale {
+              id
+              label
+              sublabel
+              display
+              minLabel
+              maxLabel
+              minValue
+              maxValue
             }
           }
         }

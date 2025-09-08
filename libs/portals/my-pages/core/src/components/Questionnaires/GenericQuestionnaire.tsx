@@ -4,15 +4,47 @@ import { QuestionRenderer } from '../Questionnaires/QuestionRenderer'
 import { Stepper, Step } from '../Questionnaires/Stepper'
 import { isQuestionVisible } from './utils/visibilityUtils'
 
-import {
-  HealthQuestionnaire,
-  HealthQuestionnaireQuestion,
-  QuestionAnswer,
-} from '../../types/questionnaire'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { QuestionAnswer } from '../../types/questionnaire'
+import {
+  Question,
+  QuestionnaireQuestionDisplayType,
+} from '@island.is/api/schema'
+
+// Define the local types to match GraphQL response
+type AnswerOptionType = {
+  __typename: 'AnswerOption'
+  id: string
+  label: string
+  type?: unknown // The union type from GraphQL
+  value?: unknown
+}
+
+type QuestionType = {
+  __typename: 'Question'
+  id: string
+  label: string
+  sublabel?: string | null
+  display: QuestionnaireQuestionDisplayType
+  dependsOn?: Array<string> | null
+  visibilityCondition?: string | null
+  answerOptions?: AnswerOptionType | null
+}
+
+type QuestionnaireType = {
+  __typename?: 'Questionnaire'
+  id: string
+  title: string
+  sentDate: string
+  status?: unknown
+  description?: string | null
+  organization?: string | null
+  questions?: Array<QuestionType> | null
+}
+
 interface GenericQuestionnaireProps {
-  questionnaire: HealthQuestionnaire
+  questionnaire: QuestionnaireType
   onSubmit: (answers: { [key: string]: QuestionAnswer }) => void
   onCancel?: () => void
   enableStepper?: boolean
@@ -37,11 +69,11 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
 
   // Filter questions based on visibility conditions
   const visibleQuestions = useMemo(() => {
-    return questionnaire.questions.filter((question) =>
+    return questionnaire.questions?.filter((question: QuestionType) =>
       isQuestionVisible(
         question.id,
-        question.dependsOn,
-        question.visibilityCondition,
+        question.dependsOn ?? undefined,
+        question.visibilityCondition ?? undefined,
         answers,
       ),
     )
@@ -50,38 +82,40 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   // Split questions into steps if stepper is enabled
   const questionSteps = useMemo(() => {
     return enableStepper
-      ? visibleQuestions.reduce(
-          (steps: HealthQuestionnaireQuestion[][], question, index) => {
+      ? visibleQuestions?.reduce(
+          (steps: Question[][], question: QuestionType, index: number) => {
             const stepIndex = Math.floor(index / questionsPerStep)
             if (!steps[stepIndex]) {
               steps[stepIndex] = []
             }
-            steps[stepIndex].push(question)
+            steps[stepIndex].push(question as Question)
             return steps
           },
           [],
         )
-      : [visibleQuestions]
+      : [visibleQuestions as Question[]]
   }, [visibleQuestions, enableStepper, questionsPerStep])
 
   useEffect(() => {
-    if (questionSteps.length > 0) {
+    if (questionSteps && questionSteps.length > 0) {
       setCurrentStep((prevStep) =>
         Math.max(0, Math.min(prevStep, questionSteps.length - 1)),
       )
     }
-  }, [questionSteps.length])
+  }, [questionSteps])
 
   // Create stepper steps
-  const steps: Step[] = questionSteps.map((_, index) => ({
-    id: `step-${index}`,
-    title: `Step ${index + 1}`,
-    description: `Questions ${index * questionsPerStep + 1}-${Math.min(
-      (index + 1) * questionsPerStep,
-      visibleQuestions.length,
-    )}`,
-    completed: false,
-  }))
+  const steps: Step[] | undefined = questionSteps?.map(
+    (_: Question[], index: number) => ({
+      id: `step-${index}`,
+      title: `Step ${index + 1}`,
+      description: `Questions ${index * questionsPerStep + 1}-${Math.min(
+        (index + 1) * questionsPerStep,
+        visibleQuestions?.length ?? 0,
+      )}`,
+      completed: false,
+    }),
+  )
 
   const handleAnswerChange = useCallback((answer: QuestionAnswer) => {
     setAnswers((prev) => ({
@@ -96,11 +130,13 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   }, [])
 
   const validateCurrentStep = (): boolean => {
-    const currentQuestions = questionSteps[currentStep] || []
+    const currentQuestions = questionSteps
+      ? questionSteps[currentStep] || []
+      : []
     const newErrors: { [key: string]: string } = {}
     let isValid = true
 
-    currentQuestions.forEach((question) => {
+    currentQuestions.forEach((question: Question) => {
       if (question.display === 'required') {
         const answer = answers[question.id]
 
@@ -122,7 +158,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
 
   const handleNext = () => {
     if (validateCurrentStep()) {
-      if (currentStep < questionSteps.length - 1) {
+      if (questionSteps && currentStep < questionSteps.length - 1) {
         setCurrentStep((prev) => prev + 1)
       }
     }
@@ -142,7 +178,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     let allValid = true
     const allErrors: { [key: string]: string } = {}
 
-    visibleQuestions.forEach((question) => {
+    visibleQuestions?.forEach((question: QuestionType) => {
       if (question.display === 'required') {
         const answer = answers[question.id]
         if (
@@ -164,9 +200,9 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     }
   }
 
-  const currentQuestions = questionSteps[currentStep] || []
-  const isLastStep = currentStep === questionSteps.length - 1
-  const canGoNext = currentStep < questionSteps.length - 1
+  const currentQuestions = questionSteps?.[currentStep] || []
+  const isLastStep = currentStep === (questionSteps?.length || 1) - 1
+  const canGoNext = currentStep < (questionSteps?.length || 1) - 1
   const canGoPrevious = currentStep > 0
 
   return (
@@ -177,20 +213,23 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
           {questionnaire.title}
         </Text>
         <Text variant="intro">
-          {questionnaire.description.split('\\n').map((line, index) => (
-            <React.Fragment key={index}>
-              <Text>{line}</Text>
-              {index < questionnaire.description.split('\\n').length - 1 && (
-                <br />
-              )}
-            </React.Fragment>
-          ))}
+          {questionnaire.description
+            ?.split('\\n')
+            .map((line: string, index: number) => (
+              <React.Fragment key={index}>
+                <Text>{line}</Text>
+                {index <
+                  (questionnaire.description?.split('\\n').length ?? 0) - 1 && (
+                  <br />
+                )}
+              </React.Fragment>
+            ))}
         </Text>
       </Box>
 
       {/* Stepper (if enabled and multiple steps) */}
       {/* TODO: Move to sidenav */}
-      {enableStepper && questionSteps.length > 1 && (
+      {enableStepper && questionSteps && questionSteps.length > 1 && (
         <Stepper
           steps={steps}
           currentStepIndex={currentStep}
@@ -208,7 +247,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
       {/* Questions */}
       <Box style={{ minHeight: '400px' }}>
         <Stack space={4}>
-          {currentQuestions.map((question) => (
+          {currentQuestions.map((question: Question) => (
             <QuestionRenderer
               key={question.id}
               question={question}
@@ -231,7 +270,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
         </Box>
 
         <Box display="flex" alignItems="center">
-          {enableStepper && questionSteps.length > 1 ? (
+          {enableStepper && questionSteps && questionSteps.length > 1 ? (
             <>
               {canGoPrevious && (
                 <Box marginRight={2}>

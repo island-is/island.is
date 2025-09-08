@@ -17,7 +17,7 @@ export interface Step {
 }
 
 export interface StepperProps {
-  steps: Step[]
+  steps: Step[] | undefined
   currentStepIndex: number
   onStepChange: (stepIndex: number) => void
   onNext?: () => void
@@ -41,13 +41,13 @@ export const Stepper: React.FC<StepperProps> = ({
   orientation = 'horizontal',
   allowClickableSteps = false,
 }) => {
-  const canGoNext = currentStepIndex < steps.length - 1
+  const canGoNext = currentStepIndex < (steps?.length || 1) - 1
   const canGoPrevious = currentStepIndex > 0
-  const progress = steps.length
+  const progress = steps?.length
     ? (Math.min(currentStepIndex + 1, steps.length) / steps.length) * 100
     : 0
   const handleStepClick = (stepIndex: number) => {
-    if (allowClickableSteps && !steps[stepIndex].disabled) {
+    if (allowClickableSteps && steps && !steps[stepIndex].disabled) {
       onStepChange(stepIndex)
     }
   }
@@ -163,16 +163,16 @@ export const Stepper: React.FC<StepperProps> = ({
             />
           </Box>
           <Text variant="small" color="dark300" marginTop={1}>
-            Step {currentStepIndex + 1} of {steps.length}
+            Step {currentStepIndex + 1} of {steps?.length}
           </Text>
         </Box>
       )}
 
       {/* Steps display */}
       {orientation === 'horizontal' ? (
-        <Inline space={2}>{steps.map(renderStep)}</Inline>
+        <Inline space={2}>{steps?.map(renderStep)}</Inline>
       ) : (
-        <Stack space={2}>{steps.map(renderStep)}</Stack>
+        <Stack space={2}>{steps?.map(renderStep)}</Stack>
       )}
 
       {/* Navigation buttons */}
