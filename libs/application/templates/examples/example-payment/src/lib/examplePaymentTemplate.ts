@@ -13,13 +13,13 @@ import {
   VerifyPaymentApi,
   InstitutionNationalIds,
   BasicChargeItem,
+  PaymentCatalogApi,
 } from '@island.is/application/types'
 import { MockPaymentCatalogWithTwoItems } from '../dataProviders'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
-import { PaymentCatalogApi } from '@island.is/application/types'
 import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
