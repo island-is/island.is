@@ -40,6 +40,11 @@ import {
   TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebExternalModelsServicePortalDisabilityPensionCertificate,
   TrWebApiServicesCommonCountriesModelsLanguageDto,
+  TrWebApiServicesUseCaseDisabilityPensionModelsMaritalStatusDto,
+  TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto,
+  TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
+  TrWebApiServicesDomainProfessionsModelsProfessionDto,
+  TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
@@ -312,10 +317,40 @@ export class SocialInsuranceAdministrationClientService {
     )
   }
 
-  async getLanguages(user:User): Promise<Array<TrWebApiServicesCommonCountriesModelsLanguageDto>> {
+  async getLanguages(user: User): Promise<Array<TrWebApiServicesCommonCountriesModelsLanguageDto>> {
     const data = await this.generalApiWithAuth(user).apiProtectedV1GeneralLanguagesGet()
 
     return data.filter(language => language.code && language.nameIs && language.nameEn)
+  }
+
+  async getMaritalStatuses(user:User): Promise<Array<TrWebApiServicesUseCaseDisabilityPensionModelsMaritalStatusDto>> {
+    const data = await this.generalApiWithAuth(user).apiProtectedV1GeneralMaritalStatusesGet()
+
+    return data.filter(language => language.value && language.label)
+  }
+
+  async getHousingTypes(user:User): Promise<Array<TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto>> {
+    const data = await this.generalApiWithAuth(user).apiProtectedV1GeneralHousingTypesGet()
+
+    return data.filter(housingType => housingType.value && housingType.label)
+  }
+
+  async getEmploymentStatuses(user:User): Promise<Array<TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage>> {
+    const data = await this.generalApiWithAuth(user).apiProtectedV1GeneralEmploymentStatusGet()
+
+    return data.filter(employmentStatus => employmentStatus.employmentStatuses && employmentStatus.languageCode)
+  }
+
+  async getProfessions(user:User): Promise<Array<TrWebApiServicesDomainProfessionsModelsProfessionDto>> {
+    const data = await this.generalApiWithAuth(user).apiProtectedV1GeneralProfessionsGet()
+
+    return data.filter(profession => profession.description && profession.value)
+  }
+
+  async getProfessionActivities(user:User): Promise<Array<TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto>> {
+    const data = await this.generalApiWithAuth(user).apiProtectedV1GeneralProfessionsActivitiesGet()
+
+    return data.filter(professionActivity => professionActivity.description && professionActivity.value)
   }
 
   async getEducationalInstitutions(

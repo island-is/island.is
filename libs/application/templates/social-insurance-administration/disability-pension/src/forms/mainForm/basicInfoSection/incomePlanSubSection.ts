@@ -27,6 +27,8 @@ import {
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import { Application } from '@island.is/application/types'
 import { SectionRouteEnum } from '../../../types'
+import { SocialInsuranceGeneralCurrenciesQuery } from '../../../types/schema'
+import { siaGeneralCurrencies } from '../../../graphql/queries'
 
 export const incomePlanSubSection = buildSubSection({
   id: SectionRouteEnum.INCOME_PLAN,
@@ -69,6 +71,7 @@ export const incomePlanSubSection = buildSubSection({
           width: 'half',
           isSearchable: true,
           options: (application) => {
+            //TODO: GRAPHLQ?
             const categorizedIncomeTypes =
               getValueViaPath<Array<CategorizedIncomeTypes>>(
                 application.externalData,
@@ -107,6 +110,7 @@ export const incomePlanSubSection = buildSubSection({
             watchValues: 'incomeCategory',
           },
           options: (application, activeField) => {
+            //TODO: GRAPHLQ?
             const categorizedIncomeTypes =
               getValueViaPath<Array<CategorizedIncomeTypes>>(
                 application.externalData,
@@ -121,7 +125,7 @@ export const incomePlanSubSection = buildSubSection({
           },
         },
         currency: {
-          component: 'select',
+          component: 'selectAsync',
           label: socialInsuranceAdministrationMessage.incomePlan.currency,
           placeholder:
             socialInsuranceAdministrationMessage.incomePlan.selectCurrency,
@@ -142,13 +146,10 @@ export const incomePlanSubSection = buildSubSection({
             },
             watchValues: 'incomeType',
           },
-          options: (application, activeField) => {
-            const currencies =
-              getValueViaPath<Array<string>>(
-                application.externalData,
-                'socialInsuranceAdministrationCurrencies.data',
-                [],
-              ) ?? []
+          loadOptions: async ({apolloClient}, _, activeField) => {
+            const { data } = await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
+              query: siaGeneralCurrencies
+            })
 
             const hideISKCurrency =
               activeField?.incomeType === FOREIGN_BASIC_PENSION ||
@@ -160,7 +161,7 @@ export const incomePlanSubSection = buildSubSection({
                 ? ISK
                 : ''
 
-            return getCurrencies(currencies, hideISKCurrency)
+            return getCurrencies(data.socialInsuranceGeneral.currencies ?? [], hideISKCurrency)
           },
         },
         income: {

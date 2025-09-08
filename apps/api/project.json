@@ -81,7 +81,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["./scripts/run-xroad-proxy.sh", "yarn start api"],
+        "commands": ["yarn start api"],
         "parallel": true
       }
     },

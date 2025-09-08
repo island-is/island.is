@@ -6,7 +6,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { LanguageEnum, SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
 import { Language } from '../../../../types/interfaces'
 import { Locale } from '@island.is/shared/types'

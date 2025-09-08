@@ -18,7 +18,4 @@ export class Confirmation {
 
   @Field({ nullable: true })
   progress?: string
-
-  @Field(() => EstimatedDuration, { nullable: true })
-  estimatedDuration?: EstimatedDuration
 }

@@ -41,9 +41,21 @@ export const SocialInsuranceAdministrationCountriesApi = defineTemplateApi({
   namespace: 'SocialInsuranceAdministration',
 })
 
+export const SocialInsuranceAdministrationMaritalStatusesApi = defineTemplateApi({
+  action: 'getMaritalStatuses',
+  externalDataId: 'socialInsuranceAdministrationMaritalStatuses',
+  namespace: 'SocialInsuranceAdministration',
+})
+
 export const SocialInsuranceAdministrationLanguagesApi = defineTemplateApi({
   action: 'getLanguages',
   externalDataId: 'socialInsuranceAdministrationLanguages',
+  namespace: 'SocialInsuranceAdministration',
+})
+
+export const SocialInsuranceAdministrationEmploymentStatusesApi = defineTemplateApi({
+  action: 'getEmploymentStatuses',
+  externalDataId: 'socialInsuranceAdministrationEmploymentStatuses',
   namespace: 'SocialInsuranceAdministration',
 })
 

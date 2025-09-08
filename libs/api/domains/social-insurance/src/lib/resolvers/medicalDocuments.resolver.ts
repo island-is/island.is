@@ -45,6 +45,8 @@ export class MedicalDocumentsResolver {
   })
   async siaGetDisabilityPensionCertificate(@CurrentUser() user: User) {
     return this.service.getDisabilityPensionCertificate(user)
+  }
+
   @Query(() => ConfirmedTreatment, {
     name: 'socialInsuranceConfirmedTreatment',
   })

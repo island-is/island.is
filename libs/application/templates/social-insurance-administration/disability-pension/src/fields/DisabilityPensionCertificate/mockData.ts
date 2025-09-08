@@ -19,8 +19,6 @@ export const MOCK_CERTIFICATE: SiaDisabilityPensionCertificateQuery = {
       doctorNumber: '8888',
       name: 'Teitur Stefán Jónsson',
       residence: 'Heilsugæslan Kirkjusandi',
-      phoneNumber: '555-5024',
-      email: 'teitur@heilsugaeslan.is',
     },
     diagnoses: {
       mainDiagnoses: [

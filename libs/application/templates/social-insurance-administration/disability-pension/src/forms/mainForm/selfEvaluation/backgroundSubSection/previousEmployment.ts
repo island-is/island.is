@@ -1,4 +1,5 @@
 import {
+    buildAsyncSelectField,
   buildMultiField,
   buildRadioField,
   buildSelectField,
@@ -8,14 +9,18 @@ import {
   YES,
 } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { getYears } from '../../../../utils/dates'
+import { Locale } from '@island.is/shared/types'
 import {
   mockProfessionCategories,
   mockProfessionJobTitle,
 } from '../../../../utils/mockData'
+import { EmploymentStatus, EmploymentStatusResponse } from '../../../../types/interfaces'
+import { siaGeneralProfessionActivities, siaGeneralProfessions } from '../../../../graphql/queries'
+import { SocialInsuranceGeneralProfessionActivitiesQuery, SocialInsuranceGeneralProfessionsQuery } from '../../../../types/schema'
 
 export const previousEmploymentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT,
@@ -25,16 +30,20 @@ export const previousEmploymentField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
       title: disabilityPensionFormMessage.questions.previousEmploymentTitle,
       width: 'half',
-      options: [
-        {
-          value: YES,
-          label: socialInsuranceAdministrationMessage.shared.yes,
-        },
-        {
-          value: NO,
-          label: socialInsuranceAdministrationMessage.shared.no,
-        },
-      ],
+      options: (application: Application, _, locale: Locale) => {
+        const responses =
+          getValueViaPath<Array<EmploymentStatusResponse>>(
+            application.externalData,
+            'socialInsuranceAdministrationEmploymentStatuses.data',
+          ) ?? []
+
+        const localResponse = responses.find(r => r.languageCode === locale.toUpperCase())
+
+        return localResponse?.employmentStatuses.map(({ value, displayName }) => ({
+          value: value.toString(),
+          label: displayName ,
+        })) ?? []
+      },
     }),
 
     buildTitleField({
@@ -81,7 +90,7 @@ export const previousEmploymentField = buildMultiField({
         return hasPreviousEmployment === YES
       },
     }),
-    buildSelectField({
+    buildAsyncSelectField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.job`,
       title: disabilityPensionFormMessage.questions.profession,
       width: 'full',
@@ -93,12 +102,15 @@ export const previousEmploymentField = buildMultiField({
         )
         return hasPreviousEmployment === YES
       },
-      options: () => {
-        //TODO: Validate that the user is not selecting more than two years (calculate months as well)
-        return mockProfessionJobTitle.map((category) => ({
-          value: category.id.toString(),
-          label: category.title,
-        }))
+      loadOptions: async ({apolloClient })=> {
+        const { data } = await apolloClient.query<SocialInsuranceGeneralProfessionsQuery>({
+          query: siaGeneralProfessions
+        })
+
+        return data.socialInsuranceGeneral?.professions?.filter(p => p.value).map(({ value, description }) => ({
+          value,
+          label: description ?? '',
+        })) ?? []
       },
     }),
 
@@ -113,7 +125,7 @@ export const previousEmploymentField = buildMultiField({
         return hasPreviousEmployment === YES
       },
     }),
-    buildSelectField({
+    buildAsyncSelectField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.field`,
       title: disabilityPensionFormMessage.questions.profession,
       width: 'full',
@@ -125,12 +137,15 @@ export const previousEmploymentField = buildMultiField({
         )
         return hasPreviousEmployment === YES
       },
-      options: () => {
-        //TODO: Validate that the user is not selecting more than two years (calculate months as well)
-        return mockProfessionCategories.map((category) => ({
-          value: category.id.toString(),
-          label: category.title,
-        }))
+      loadOptions: async ({apolloClient })=> {
+        const { data } = await apolloClient.query<SocialInsuranceGeneralProfessionActivitiesQuery>({
+          query: siaGeneralProfessionActivities
+        })
+
+        return data.socialInsuranceGeneral?.professionActivities?.filter(p => p.value).map(({ value, description }) => ({
+          value,
+          label: description ?? '',
+        })) ?? []
       },
     }),
   ],

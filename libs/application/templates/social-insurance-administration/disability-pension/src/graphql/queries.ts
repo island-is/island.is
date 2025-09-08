@@ -8,8 +8,6 @@ export const siaDisabilityPensionCertificate = gql`
         name
         doctorNumber
         residence
-        email
-        phoneNumber
       }
       lastInspectionDate
       certificateDate
@@ -56,6 +54,49 @@ export const siaDisabilityPensionCertificate = gql`
       environmentalFactors {
         category
         keyNumber
+        description
+      }
+    }
+  }
+`
+
+
+export const siaGeneralCountries = gql`
+  query SocialInsuranceGeneralCountries {
+    socialInsuranceGeneral {
+      countries {
+       code
+       name
+      }
+    }
+  }
+`
+
+
+export const siaGeneralCurrencies = gql`
+  query SocialInsuranceGeneralCurrencies {
+    socialInsuranceGeneral {
+      currencies
+    }
+  }
+`
+
+export const siaGeneralProfessions = gql`
+  query SocialInsuranceGeneralProfessions {
+    socialInsuranceGeneral {
+      professions {
+        value
+        description
+      }
+    }
+  }
+`
+
+export const siaGeneralProfessionActivities = gql`
+  query SocialInsuranceGeneralProfessionActivities {
+    socialInsuranceGeneral {
+      professionActivities {
+        value
         description
       }
     }

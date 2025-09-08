@@ -3,6 +3,21 @@ export interface EducationLevels {
   description: string
 }
 
+export interface MaritalStatus {
+  value: number
+  label: string
+}
+
+export interface EmploymentStatusResponse {
+  languageCode: string
+  employmentStatuses: EmploymentStatus[]
+}
+
+export interface EmploymentStatus {
+  value: number
+  displayName: string
+}
+
 export interface Country {
   code: string
   name: string

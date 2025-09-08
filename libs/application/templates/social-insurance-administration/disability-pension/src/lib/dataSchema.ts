@@ -19,7 +19,6 @@ import {
   EmploymentImportanceEnum,
   EmploymentStatusEnum,
   IcelandicCapabilityEnum,
-  LanguageEnum,
   MaritalStatusEnum,
   ResidenceEnum,
 } from '../types/enums'

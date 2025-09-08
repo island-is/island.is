@@ -99,8 +99,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           </Label>
           <Text>
             {
-              data?.socialInsuranceDisabilityPensionCertificate?.doctor
-                ?.phoneNumber
+             '???'
             }
           </Text>
         </GridColumn>
@@ -111,7 +110,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate?.doctor?.email}
+            {'???'}
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>

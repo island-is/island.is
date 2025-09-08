@@ -261,6 +261,8 @@ export class SocialInsuranceService {
     const data =
       await this.socialInsuranceApi.getCertificateForDisabilityPension(user)
     return mapDisabilityPensionCertificate(data)
+  }
+
   async getConfirmedTreatment(
     user: User,
   ): Promise<TrWebExternalModelsServicePortalConfirmedTreatment> {
@@ -287,11 +289,37 @@ export class SocialInsuranceService {
     return await this.socialInsuranceApi.getCountries(user)
   }
 
+  async getCurrencies(
+    user: User,
+  ): Promise<Array<string>> {
+    return await this.socialInsuranceApi.getCurrencies(user)
+  }
+
   async getEducationalInstitutions(
     user: User,
   ): Promise<
     Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto>
   > {
     return await this.socialInsuranceApi.getEducationalInstitutions(user)
+  }
+
+  async getMaritalStatuses(user: User) {
+    return await this.socialInsuranceApi.getMaritalStatuses(user)
+  }
+
+  async getHousingTypes(user: User) {
+    return await this.socialInsuranceApi.getHousingTypes(user)
+  }
+
+  async getEmploymentStatuses(user: User) {
+    return await this.socialInsuranceApi.getEmploymentStatuses(user)
+  }
+
+  async getProfessions(user: User) {
+    return await this.socialInsuranceApi.getProfessions(user)
+  }
+
+  async getProfessionActivities(user: User) {
+    return await this.socialInsuranceApi.getProfessionActivities(user)
   }
 }

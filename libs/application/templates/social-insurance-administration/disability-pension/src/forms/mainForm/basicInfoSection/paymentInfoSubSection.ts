@@ -2,6 +2,7 @@ import {
   YES,
   YesOrNo,
   buildAlertMessageField,
+  buildAsyncSelectField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
@@ -28,6 +29,8 @@ import isEmpty from 'lodash/isEmpty'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
 import { accountNationality } from '../../../utils'
+import { siaGeneralCurrencies } from '../../../graphql/queries'
+import { SocialInsuranceGeneralCurrenciesQuery } from '../../../types/schema'
 
 export const paymentInfoSubSection = buildSubSection({
   id: SectionRouteEnum.PAYMENT_INFO,
@@ -113,20 +116,18 @@ export const paymentInfoSubSection = buildSubSection({
           condition: (formValue: FormValue) =>
             accountNationality(formValue) === BankAccountType.FOREIGN,
         }),
-        buildSelectField({
+        buildAsyncSelectField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.currency`,
           title: socialInsuranceAdministrationMessage.payment.currency,
           width: 'half',
           required: true,
           placeholder:
             socialInsuranceAdministrationMessage.payment.selectCurrency,
-          options: ({ externalData }: Application) => {
-            const currencies =
-              getValueViaPath<Array<string>>(
-                externalData,
-                'socialInsuranceAdministrationCurrencies.data',
-              ) ?? []
-            return getCurrencies(currencies)
+          loadOptions: async ({apolloClient}) => {
+            const { data } = await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
+              query: siaGeneralCurrencies
+            })
+            return getCurrencies(data.socialInsuranceGeneral.currencies ?? [])
           },
           defaultValue: (application: Application) => {
             const bankInfo = getValueViaPath<BankInfo>(

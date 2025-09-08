@@ -7,10 +7,11 @@ import {
   YesOrNoEnum,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { Application, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import { SectionRouteEnum } from '../../../../types'
 import { yesOrNoOptions } from '../../../../utils'
-import { Country } from '../../../../types/interfaces'
+import { SocialInsuranceGeneralCountriesQuery } from '../../../../types/schema'
+import { siaGeneralCountries } from '../../../../graphql/queries'
 
 const abroadPaymentsCondition = (formValue: FormValue) => {
   const hasAbroadPayments = getValueViaPath<YesOrNoEnum>(
@@ -50,7 +51,7 @@ export const abroadPaymentsSubSection = buildMultiField({
         disabilityPensionFormMessage.employmentParticipation.remove,
       fields: {
         country: {
-          component: 'select',
+          component: 'selectAsync',
           label: disabilityPensionFormMessage.employmentParticipation.country,
           placeholder:
             disabilityPensionFormMessage.employmentParticipation
@@ -58,17 +59,15 @@ export const abroadPaymentsSubSection = buildMultiField({
           width: 'half',
           displayInTable: true,
           isSearchable: true,
-          options: (application: Application) => {
-            const countries =
-              getValueViaPath<Array<Country>>(
-                application.externalData,
-                'socialInsuranceAdministrationCountries.data',
-              ) ?? []
+          loadOptions: async ({apolloClient })=> {
+            const { data } = await apolloClient.query<SocialInsuranceGeneralCountriesQuery>({
+              query: siaGeneralCountries
+            })
 
-            return countries.map(({ code, nameIcelandic }) => ({
+            return data.socialInsuranceGeneral?.countries?.filter(country => country.name).map(({ code, name }) => ({
               value: code,
-              label: nameIcelandic,
-            }))
+              label: name ?? '',
+            })) ?? []
           },
         },
         abroadNationalId: {

@@ -40,6 +40,8 @@ import {
   SocialInsuranceAdministrationLanguagesApi,
   SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationEmploymentStatusesApi,
+  SocialInsuranceAdministrationMaritalStatusesApi,
 } from '../dataProviders'
 import {
   Actions,
@@ -103,6 +105,8 @@ const template: ApplicationTemplate<
                 SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
                 SocialInsuranceAdministrationCountriesApi,
                 SocialInsuranceAdministrationLanguagesApi,
+                SocialInsuranceAdministrationEmploymentStatusesApi,
+                SocialInsuranceAdministrationMaritalStatusesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
               ],
