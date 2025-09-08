@@ -34,6 +34,9 @@ import {
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   TrWebExternalModelsServicePortalNationalRegistryAddress,
   TrWebExternalModelsServicePortalBaseCertificate,
+  TrWebExternalModelsServicePortalConfirmationOfIllHealth,
+  TrWebExternalModelsServicePortalConfirmationOfPendingResolution,
+  TrWebExternalModelsServicePortalConfirmedTreatment,
   TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebExternalModelsServicePortalDisabilityPensionCertificate,
 } from '../../gen/fetch'
@@ -269,6 +272,30 @@ export class SocialInsuranceAdministrationClientService {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsDisabilitypensioncertificateGet()
+
+  async getConfirmedTreatment(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmedTreatment> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsConfirmedtreatmentGet()
+  }
+
+  async getConfirmationOfPendingResolution(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmationOfPendingResolution> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsConfirmationofpendingresolutionGet()
+  }
+
+  async getConfirmationOfIllHealth(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmationOfIllHealth> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsConfirmationofillhealthGet()
+     
   }
 
   async getCountries(

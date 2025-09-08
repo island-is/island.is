@@ -270,7 +270,7 @@ api:
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -302,6 +302,9 @@ api:
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
     FORM_SYSTEM_API_BASE_PATH: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
+    HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
+    HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
+    HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
     HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK'
     HUNTING_LICENSE_PASS_TEMPLATE_ID: '1da72d52-a93a-4d0f-8463-1933a2bd210b'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
@@ -536,6 +539,7 @@ api:
     FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
     FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
     FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY: '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY'
+    HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
     HOUSING_BENEFIT_CALCULATOR_PASSWORD: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_PASSWORD'
     HOUSING_BENEFIT_CALCULATOR_USERNAME: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_USERNAME'
     HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET'
@@ -603,7 +607,7 @@ api:
     name: 'api'
 application-system-api:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -634,6 +638,9 @@ application-system-api:
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
     GRAPHQL_API_URL: 'http://api.islandis.svc.cluster.local'
+    HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
+    HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
+    HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
@@ -843,6 +850,7 @@ application-system-api:
     EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
     FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
     FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+    HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
@@ -874,7 +882,7 @@ application-system-api:
     name: 'application-system-api'
 application-system-api-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job'
     - 'worker'
   command:
@@ -1046,7 +1054,7 @@ application-system-form:
     privileged: false
 cms-importer-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -1397,7 +1405,7 @@ endorsement-system-api:
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -1632,7 +1640,7 @@ github-actions-cache:
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -2882,14 +2890,16 @@ services-form-system-api:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
+    FORM_SYSTEM_ZENDESK_API_KEY_PROD: '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_PROD'
+    FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX'
+    FORM_SYSTEM_ZENDESK_TENANT_ID_PROD: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_PROD'
+    FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 services-payments:
   enabled: true
   env:
-    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_payments'
@@ -2898,12 +2908,6 @@ services-payments:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: 'b464afdd-056b-406d-b650-6d41733cfeb7'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
-    NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5'
     PAYMENTS_WEB_URL: 'https://beta.dev01.devland.is/greida'
@@ -3001,7 +3005,6 @@ services-payments:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-payments/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
-    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-payments/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     PAYMENTS_GATEWAY_API_HEADER_KEY: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_KEY'
     PAYMENTS_GATEWAY_API_HEADER_VALUE: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_VALUE'
     PAYMENTS_GATEWAY_API_SECRET: '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET'
@@ -3087,7 +3090,7 @@ services-sessions:
     privileged: false
 services-sessions-cleanup:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -3149,7 +3152,7 @@ services-sessions-cleanup:
     privileged: false
 services-sessions-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
   command:
     - 'node'
@@ -3245,7 +3248,7 @@ services-sessions-worker:
     name: 'sessions-worker'
 services-university-gateway:
   args:
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -3373,7 +3376,7 @@ services-university-gateway:
     name: 'services-university-gateway'
 services-university-gateway-worker:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job'
     - 'worker'
   command:
@@ -3622,7 +3625,7 @@ skilavottord-ws:
 user-notification:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -3739,7 +3742,7 @@ user-notification:
 user-notification-birthday-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
     - '--isBirthdayWorker'
   command:
@@ -3840,7 +3843,7 @@ user-notification-birthday-worker:
 user-notification-cleanup-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -3934,7 +3937,7 @@ user-notification-cleanup-worker:
 user-notification-worker:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
     - '--job=worker'
   command:
     - 'node'
@@ -4129,7 +4132,7 @@ web:
 xroad-collector:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true

@@ -52,12 +52,19 @@ jobs:
           echo "LATEST_RELEASE=$LATEST_RELEASE" >> "$GITHUB_OUTPUT"
 
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
-
+      - name: Get token
+        id: get-token
+        shell: bash
+        env:
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
       - name: Create a PR
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: create_pr
         env:
-          GITHUB_TOKEN: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
           PR_BRANCH: cherry-picks/${{ github.head_ref }}
           TARGET_BRANCH: release/${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
           HEAD_REF: ${{ github.head_ref }}

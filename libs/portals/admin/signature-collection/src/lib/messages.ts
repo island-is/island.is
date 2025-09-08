@@ -234,8 +234,8 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu safnanna lokið',
     description: '',
   },
-  completeCollectionProcessingModalDescription: {
-    id: 'admin-portal.signature-collection:completeCollectionProcessingModalDescription#markdown',
+  completeCollectionProcessingDescription: {
+    id: 'admin-portal.signature-collection:completeCollectionProcessingDescription#markdown',
     defaultMessage:
       'Þegar búið er að fara yfir alla meðmælalista skal ýta á hnappinn.',
     description: '',
@@ -573,6 +573,11 @@ export const m = defineMessages({
     defaultMessage: 'Læsa söfnun',
     description: '',
   },
+  unlockList: {
+    id: 'admin-portal.signature-collection:unlockList',
+    defaultMessage: 'Aflæsa söfnun',
+    description: '',
+  },
   listOpen: {
     id: 'admin-portal.signature-collection:listOpened',
     defaultMessage: 'Söfnun í gangi',
@@ -589,9 +594,20 @@ export const m = defineMessages({
       'Ef framboð skilar inn framboði áður en framboðsfrestur rennur út er söfnuninni lokað hér.',
     description: '',
   },
+  unlockListDescription: {
+    id: 'admin-portal.signature-collection:unlockListDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vantar texta hér.',
+    description: '',
+  },
   lockListSuccess: {
     id: 'admin-portal.signature-collection:lockListSuccess',
     defaultMessage: 'Tókst að læsa söfnun',
+    description: '',
+  },
+  unlockListSuccess: {
+    id: 'admin-portal.signature-collection:unlockListSuccess',
+    defaultMessage: 'Tókst að aflæsa söfnun',
     description: '',
   },
   lockListError: {
@@ -634,7 +650,7 @@ export const m = defineMessages({
   },
   downloadTemplate: {
     id: 'admin-portal.signature-collection:downloadTemplate',
-    defaultMessage: 'Sækja sniðmat',
+    defaultMessage: 'Sækja sniðmát',
     description: '',
   },
   uploadButton: {
@@ -876,7 +892,7 @@ export const createCollectionErrorMessages = defineMessages({
   },
   residency: {
     id: 'admin-portal.signature-collection:residency',
-    defaultMessage: 'Eftirfarandi aðili er ekki með búsetu á Íslandi.',
+    defaultMessage: 'Eftirfarandi aðili er ekki með lögheimili á Íslandi.',
     description: '',
   },
   active: {

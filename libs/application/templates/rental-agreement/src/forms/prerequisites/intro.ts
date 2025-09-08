@@ -4,26 +4,24 @@ import {
   buildSection,
 } from '@island.is/application/core'
 
-import { prerequisites } from '../../lib/messages'
-
-const messages = prerequisites.intro
+import * as m from '../../lib/messages'
 
 export const intro = buildSection({
   id: 'prerequisitesIntro',
-  title: messages.subSectionTitle,
+  title: m.prerequisites.intro.subSectionTitle,
   children: [
     buildMultiField({
       id: 'prerequisitesIntroTitle',
-      title: messages.pageTitle,
+      title: m.prerequisites.intro.pageTitle,
       children: [
         buildDescriptionField({
           id: 'prerequisitesIntroText',
-          description: messages.text,
+          description: m.prerequisites.intro.text,
           marginBottom: 3,
         }),
         buildDescriptionField({
           id: 'prerequisitesIntroBullets',
-          description: messages.bullets,
+          description: m.prerequisites.intro.bullets,
         }),
       ],
     }),

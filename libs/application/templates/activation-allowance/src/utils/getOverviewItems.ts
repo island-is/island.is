@@ -23,6 +23,7 @@ import { isSamePlaceOfResidenceChecked } from './isSamePlaceOfResidenceChecked'
 import { contact } from '../lib/messages/contact'
 import { isContactDifferentFromApplicant } from './isContactDifferentFromApplicant'
 import {
+  GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsActivationGrantSupportData,
   GaldurDomainModelsEducationProgramDTO,
   GaldurDomainModelsSelectItem,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
@@ -31,6 +32,7 @@ import { Locale } from '@island.is/shared/types'
 import {
   CVAnswers,
   EducationAnswer,
+  IncomeAnswers,
   JobHistoryAnswer,
   LanguageAnswers,
 } from '../lib/dataSchema'
@@ -85,7 +87,10 @@ export const getPaymentOverviewItems = (
   const ledger =
     getValueViaPath<string>(answers, 'paymentInformation.ledger') ?? ''
   const accountNumber =
-    getValueViaPath<string>(answers, 'paymentInformation.accountNumber') ?? ''
+    getValueViaPath<string>(
+      answers,
+      'paymentInformation.accountNumber',
+    )?.padStart(6, '0') ?? ''
   const value = `${bankNumber}-${ledger}-${accountNumber}`
   return [
     {
@@ -298,20 +303,41 @@ export const getAcademicBackgroundOverviewItems = (
 
 export const getDrivingLicensesOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
   _userNationalId: string,
-  _locale: Locale,
+  locale: Locale,
 ): Array<KeyValueItem> => {
-  const drivingLicenseAnswers =
+  const supportData =
+    getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsActivationGrantSupportData>(
+      externalData,
+      'activityGrantApplication.data.activationGrant.supportData',
+    )
+  const drivingLicenseAnswers = (
     getValueViaPath<Array<string>>(
       answers,
       'drivingLicense.drivingLicenseType',
     ) || []
-  const heavyMachineryLicenseAnswers =
+  )
+    .map((license) => {
+      const licenseObj = supportData?.drivingLicenses?.find(
+        (l) => l.id === license,
+      )
+      return locale === 'en' ? licenseObj?.english : licenseObj?.name
+    })
+    .filter(Boolean)
+  const heavyMachineryLicenseAnswers = (
     getValueViaPath<Array<string>>(
       answers,
       'drivingLicense.heavyMachineryLicenses',
     ) || []
+  )
+    .map((license) => {
+      const licenseObj = supportData?.heavyMachineryLicenses?.find(
+        (l) => l.id === license,
+      )
+      return locale === 'en' ? licenseObj?.english : licenseObj?.name
+    })
+    .filter(Boolean)
 
   return [
     {
@@ -431,4 +457,46 @@ export const getCVText = (
       ],
     },
   ]
+}
+
+export const getIncomeOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const incomeAnswers = getValueViaPath<IncomeAnswers>(answers, 'income') || []
+  const valueTexts = incomeAnswers.map((income) => {
+    return [
+      {
+        ...overview.labels.employer,
+        values: {
+          value: income.employer,
+        },
+      },
+      {
+        ...overview.labels.paymentMonth,
+        values: {
+          value: income.month,
+        },
+      },
+      {
+        ...overview.labels.income,
+        values: {
+          value: income.salaryIncome,
+        },
+      },
+    ]
+  })
+
+  return (
+    valueTexts.map((val, index) => {
+      return {
+        width: 'full',
+        keyText: {
+          ...overview.labels.incomeHeading,
+          values: { value: index + 1 },
+        },
+        valueText: val,
+      } as KeyValueItem
+    }) || []
+  )
 }

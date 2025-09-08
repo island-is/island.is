@@ -11,7 +11,11 @@ import {
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
 
-const CancelCollection = ({ refetch }: { refetch: () => void }) => {
+const CancelCollection = ({
+  refetchIsOwner,
+}: {
+  refetchIsOwner: () => void
+}) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -25,9 +29,6 @@ const CancelCollection = ({ refetch }: { refetch: () => void }) => {
         input: {
           collectionId: currentCollection?.id ?? '',
           collectionType: currentCollection?.collectionType ?? '',
-        },
-        onCompleted: () => {
-          refetch()
         },
       },
     })
@@ -43,6 +44,7 @@ const CancelCollection = ({ refetch }: { refetch: () => void }) => {
       ) {
         toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
         setModalIsOpen(false)
+        refetchIsOwner()
       } else {
         toast.error(formatMessage(m.cancelCollectionModalToastError))
         setModalIsOpen(false)
@@ -51,7 +53,7 @@ const CancelCollection = ({ refetch }: { refetch: () => void }) => {
   }
 
   return (
-    <Box marginTop={7} display="flex" justifyContent="center">
+    <Box display="flex" justifyContent="center">
       <Modal
         id="cancelCollection"
         isVisible={modalIsOpen}

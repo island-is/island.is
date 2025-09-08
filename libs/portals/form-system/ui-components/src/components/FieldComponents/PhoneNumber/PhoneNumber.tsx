@@ -27,7 +27,7 @@ export const PhoneNumber = ({ item, dispatch, lang = 'is' }: Props) => {
     <Row>
       <Column>
         <Controller
-          name={item.id}
+          name={`${item.id}.phoneNumber`}
           control={control}
           defaultValue={getValue(item, 'phoneNumber') ?? ''}
           rules={{

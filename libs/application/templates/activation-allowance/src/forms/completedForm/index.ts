@@ -11,6 +11,8 @@ export const completedForm = buildForm({
       alertTitle: completed.general.alertTitle,
       alertMessage: completed.general.alertMessage,
       expandableIntro: completed.general.expandableIntro,
+      expandableDescription: '',
+      bottomButtonMessage: completed.general.bottomButtonMessage,
     }),
   ],
 })

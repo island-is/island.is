@@ -35,22 +35,20 @@ import {
   publicProsecutorStaffRule,
 } from '../../guards'
 import {
-  Case,
   CaseExistsGuard,
   CaseReadGuard,
   CaseTypeGuard,
   CurrentCase,
   PdfService,
 } from '../case'
-import { Defendant } from '../defendant'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
+import { Case, Defendant, Subpoena } from '../repository'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import {
   SubpoenaExistsGuard,
   SubpoenaExistsOptionalGuard,
 } from './guards/subpoenaExists.guard'
-import { Subpoena } from './models/subpoena.model'
 import { SubpoenaService } from './subpoena.service'
 
 @Controller('api/case/:caseId/defendant/:defendantId/subpoena')

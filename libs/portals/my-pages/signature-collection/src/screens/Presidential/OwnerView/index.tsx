@@ -14,25 +14,30 @@ import { Skeleton } from '../../../lib/skeletons'
 import SignedList from '../../shared/SignedList'
 import CancelCollection from './CancelCollection'
 import ShareLink from '../../shared/ShareLink'
+import Managers from '../../shared/Managers'
 
 const collectionType = SignatureCollectionCollectionType.Presidential
 
 const OwnerView = ({
+  refetchIsOwner,
   currentCollection,
 }: {
+  refetchIsOwner: () => void
   currentCollection: SignatureCollection
 }) => {
   useNamespaces('sp.signatureCollection')
   const navigate = useNavigate()
   const user = useUserInfo()
   const { formatMessage } = useLocale()
-  const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
-    useGetListsForOwner(collectionType, currentCollection?.id || '')
+  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
+    collectionType,
+    currentCollection?.id || '',
+  )
 
   return (
     <Box>
       {!loadingOwnerLists && !!currentCollection ? (
-        <Box>
+        <Stack space={6}>
           {listsForOwner?.length === 0 && currentCollection.isActive && (
             <Button
               icon="open"
@@ -48,9 +53,6 @@ const OwnerView = ({
             </Button>
           )}
           <Box marginTop={[0, 5]}>
-            <Text variant="h3" marginBottom={2}>
-              {formatMessage(m.collectionTitle)}
-            </Text>
             <ShareLink slug={listsForOwner?.[0]?.slug} />
 
             {/* Signed list */}
@@ -62,7 +64,7 @@ const OwnerView = ({
             )}
 
             {/* Candidate created lists */}
-            <Text marginTop={[5, 7]} marginBottom={2}>
+            <Text variant="h4" marginTop={[5, 7]} marginBottom={2}>
               {formatMessage(m.myListsDescription)}
             </Text>
             <Stack space={[3, 5]}>
@@ -79,7 +81,7 @@ const OwnerView = ({
                     }
                     text={formatMessage(m.collectionTitle)}
                     cta={
-                      new Date(list.endTime) > new Date()
+                      new Date(list.endTime) > new Date() && list.active
                         ? {
                             label: formatMessage(m.viewList),
                             variant: 'text',
@@ -102,6 +104,18 @@ const OwnerView = ({
                             variant: 'red',
                             outlined: true,
                           }
+                        : list.active
+                        ? {
+                            label: formatMessage(m.collectionActive),
+                            variant: 'blue',
+                            outlined: false,
+                          }
+                        : !list.active && !list.reviewed
+                        ? {
+                            label: formatMessage(m.collectionLocked),
+                            variant: 'purple',
+                            outlined: false,
+                          }
                         : undefined
                     }
                     progressMeter={{
@@ -117,9 +131,11 @@ const OwnerView = ({
           {listsForOwner?.length > 0 &&
             !user?.profile.actor &&
             currentCollection.isActive && (
-              <CancelCollection refetch={refetchListsForOwner} />
+              <CancelCollection refetchIsOwner={refetchIsOwner} />
             )}
-        </Box>
+
+          <Managers collectionType={collectionType} />
+        </Stack>
       ) : (
         <Skeleton />
       )}

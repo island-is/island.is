@@ -16,6 +16,7 @@ import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { ActivationAllowanceAnswersSchema } from './dataSchema'
 import {
+  application,
   application as applicationMessage,
   externalData,
   terms,
@@ -43,6 +44,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.ActivationAllowance.translation,
   dataSchema: ActivationAllowanceAnswersSchema,
   featureFlag: Features.ActivationAllowanceApplicationEnabled,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -178,6 +180,12 @@ const template: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
+          actionCard: {
+            tag: {
+              label: application.actionCardApplicationSent,
+              variant: 'mint',
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,

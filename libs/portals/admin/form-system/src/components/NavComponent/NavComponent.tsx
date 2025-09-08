@@ -6,7 +6,7 @@ import {
 } from '@island.is/api/schema'
 import { ItemType, NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { useSortable } from '@dnd-kit/sortable'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { ControlContext } from '../../context/ControlContext'
 import * as styles from './NavComponent.css'
 import cn from 'classnames'
@@ -51,15 +51,12 @@ export const NavComponent = ({
     return false
   }
 
-  const [editMode] = useState(false)
-
   const { setNodeRef, attributes, listeners, isDragging } = useSortable({
     id: data.id as UniqueIdentifier,
     data: {
       type: type,
       data,
     },
-    disabled: editMode,
   })
 
   if (isDragging) {
@@ -120,6 +117,7 @@ export const NavComponent = ({
             paddingLeft={2}
             overflow="hidden"
             display="flex"
+            minWidth={0}
             alignItems="center"
             justifyContent="center"
           >
@@ -151,7 +149,6 @@ export const NavComponent = ({
             display: 'flex',
             flexDirection: 'row',
           }}
-          overflow="hidden"
         >
           <Box
             id="1"
@@ -164,11 +161,14 @@ export const NavComponent = ({
             {/* {index} */}
           </Box>
           <Box
-            id="2"
+            data-testid="navcomponent-content"
             paddingLeft={1}
             display="flex"
             alignItems="center"
-            justifyContent="center"
+            flexGrow={1}
+            minWidth={0}
+            overflow="hidden"
+            justifyContent="flexStart"
           >
             <Text
               id={`formSystem.${type.toLowerCase()}.name`}
@@ -190,7 +190,7 @@ export const NavComponent = ({
             ) &&
               selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
-          {selectable && type === 'Field' && (
+          {selectable && (
             <Box className={cn(styles.selectableComponent)} marginLeft="auto">
               <Checkbox
                 checked={connected()}

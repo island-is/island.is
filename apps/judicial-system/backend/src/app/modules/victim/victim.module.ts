@@ -1,8 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { CaseModule } from '../case/case.module'
-import { Victim } from './models/victim.model'
+import { Victim } from '../repository'
+import { CaseModule } from '..'
 import { VictimController } from './victim.controller'
 import { VictimService } from './victim.service'
 

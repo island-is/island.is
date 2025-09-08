@@ -37,7 +37,7 @@ export class CompanyRegistryResolver {
       throw new BadRequestException('Invalid national id format')
     }
 
-    const actorCompanyId = user?.actor?.nationalId
+    const actorCompanyId = user?.nationalId
     const normalizedActorId = actorCompanyId?.replace(/\D/g, '')
     if (!normalizedActorId || normalizedActorId !== normalized) {
       throw new ForbiddenException('Not authorized to query this company')

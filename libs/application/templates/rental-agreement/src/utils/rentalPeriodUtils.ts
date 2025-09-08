@@ -1,6 +1,8 @@
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'
 import is from 'date-fns/locale/is'
+import startOfDay from 'date-fns/startOfDay'
+import addYears from 'date-fns/addYears'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import {
@@ -19,18 +21,18 @@ export const rentalAmountConnectedToIndex = (answers: FormValue) => {
 }
 
 export const rentalPaymentDateIsOther = (answers: FormValue) => {
-  const { paymentDay } = applicationAnswers(answers)
-  return paymentDay === RentalAmountPaymentDateOptions.OTHER
+  const { paymentDateOptions } = applicationAnswers(answers)
+  return paymentDateOptions === RentalAmountPaymentDateOptions.OTHER
 }
 
 export const rentalPaymentMethodIsBankTransfer = (answers: FormValue) => {
-  const { paymentMethod } = applicationAnswers(answers)
-  return paymentMethod === RentalPaymentMethodOptions.BANK_TRANSFER
+  const { paymentMethodOptions } = applicationAnswers(answers)
+  return paymentMethodOptions === RentalPaymentMethodOptions.BANK_TRANSFER
 }
 
 export const rentalPaymentMethodIsOther = (answers: FormValue) => {
-  const { paymentMethod } = applicationAnswers(answers)
-  return paymentMethod === RentalPaymentMethodOptions.OTHER
+  const { paymentMethodOptions } = applicationAnswers(answers)
+  return paymentMethodOptions === RentalPaymentMethodOptions.OTHER
 }
 
 export const rentalInsuranceRequired = (answers: FormValue) => {
@@ -42,6 +44,22 @@ export const rentalInsuranceRequired = (answers: FormValue) => {
 export const rentalPeriodIsDefinite = (answers: FormValue) => {
   const { isDefinite } = applicationAnswers(answers)
   return isDefinite?.includes(YesOrNoEnum.YES) || false
+}
+
+export const isDateMoreThanOneYearInFuture = (answers: FormValue) => {
+  const startDate = getValueViaPath<string>(answers, 'rentalPeriod.startDate')
+  if (!startDate) return false
+
+  const parsedDate = new Date(startDate)
+
+  if (!isFinite(parsedDate.getTime())) {
+    return false
+  }
+
+  const oneYearFromNow = startOfDay(addYears(new Date(), 1))
+  const selectedDay = startOfDay(parsedDate)
+
+  return selectedDay > oneYearFromNow
 }
 
 // Other fees utils
@@ -76,11 +94,11 @@ const checkSecurityDepositType = (
   typeToCheck: SecurityDepositTypeOptions,
 ): boolean => {
   const { securityDepositRequired } = applicationAnswers(answers)
-  const { securityDepositType } = applicationAnswers(answers)
+  const { securityType } = applicationAnswers(answers)
   return (
     Boolean(securityDepositRequired?.includes(YesOrNoEnum.YES)) &&
-    Boolean(securityDepositType) &&
-    securityDepositType === typeToCheck
+    Boolean(securityType) &&
+    securityType === typeToCheck
   )
 }
 
@@ -119,11 +137,11 @@ export const securityDepositIsLandlordsMutualFund = (
 
 export const securityDepositIsNotLandlordsMutualFund = (answers: FormValue) => {
   const securityDeposit = getValueViaPath<string[]>(answers, 'securityDeposit')
-  const { securityDepositType } = applicationAnswers(answers)
+  const { securityType } = applicationAnswers(answers)
   return (
     !securityDeposit ||
-    securityDepositType === undefined ||
-    securityDepositType !== SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND
+    securityType === undefined ||
+    securityType !== SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND
   )
 }
 
@@ -131,11 +149,11 @@ export const securityDepositIsLandlordsMutualFundOrOther = (
   answers: FormValue,
 ) => {
   const securityDeposit = getValueViaPath<string[]>(answers, 'securityDeposit')
-  const { securityDepositType } = applicationAnswers(answers)
+  const { securityType } = applicationAnswers(answers)
   const { securityDepositAmount } = applicationAnswers(answers)
   return (
     securityDeposit &&
-    (securityDepositType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
+    (securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
       securityDepositAmount === SecurityDepositAmountOptions.OTHER)
   )
 }
