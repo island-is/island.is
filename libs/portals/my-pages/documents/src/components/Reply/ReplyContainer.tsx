@@ -45,14 +45,13 @@ const ReplyContainer = () => {
 
   const { data: userProfile } = useUserProfile()
 
-
   const allRepliesData = data?.documentV2?.ticket?.comments ?? []
   const userEmail = userProfile?.email
   const hasEmail = isDefined(userEmail)
   const userName = profile?.name ?? ''
   const replies = replyState?.replies
   const repliesLength = replies?.comments?.length ?? 0
-  
+
   const { isMobile } = useIsMobile()
 
   const successfulSubmit = useCallback(() => {
