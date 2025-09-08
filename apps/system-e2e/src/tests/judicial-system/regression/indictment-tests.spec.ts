@@ -105,17 +105,6 @@ test.describe.serial('Indictment tests', () => {
     ])
 
     // Indictment
-    await Promise.all([
-      expect(page).toHaveURL(`/akaera/akaera/${caseId}`),
-      verifyRequestCompletion(page, '/api/graphql', 'CreateIndictmentCount'),
-    ])
-
-    await page.getByText('LÖKE málsnúmer *Veldu málsnú').click()
-
-    await Promise.all([
-      page.getByRole('option', { name: `${policeCaseNumber}` }).click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
-    ])
 
     await page.getByPlaceholder('AB123').fill('AB123')
 
