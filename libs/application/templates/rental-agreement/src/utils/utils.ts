@@ -144,3 +144,56 @@ export const toISK = (v: unknown): number => {
   const digits = String(v ?? '0').replace(/\D/g, '')
   return Number(digits || 0)
 }
+
+export const isFasteignaNr = (searchTerm: string): boolean => {
+  return /^(?:[fF]\d*|\d+)$/.test(searchTerm)
+}
+
+// Takes in a propertyId string, removes the f or F prefix and returns is as a number
+export const cleanupSearch = (searchTerm: string): number | null => {
+  if (!searchTerm) return 0
+  const cleanedTerm = searchTerm.replace(/^f|^F/, '')
+  const numberValue = parseInt(cleanedTerm, 10)
+  return isNaN(numberValue) ? null : numberValue
+}
+
+type StoredValueUnits = {
+  units?: PropertyUnit[]
+}
+
+type RestoreValueType = 'checked' | 'numOfRooms' | 'changedSize' | 'expanded'
+export const restoreValue = (
+  storedValue: StoredValueUnits,
+  valueType: RestoreValueType,
+) => {
+  if (!storedValue?.units) return {}
+  return storedValue.units.reduce(
+    (acc: Record<string, any>, unit: PropertyUnit) => {
+      if (valueType === 'expanded') {
+        if (unit.checked && unit.propertyCode) {
+          acc[unit.propertyCode] = true
+        }
+      } else if (valueType === 'checked') {
+        const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+        acc[unitKey] = unit.checked || false
+      } else if (valueType === 'numOfRooms') {
+        const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+        acc[unitKey] = unit.numOfRooms || 0
+      } else if (valueType === 'changedSize') {
+        const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+        acc[unitKey] = unit.changedSize || 0
+      }
+
+      return acc
+    },
+    {} as Record<string, any>,
+  )
+}
+
+export const isValidInteger = (value: string): boolean => {
+  return /^\d*$/.test(value)
+}
+
+export const isValidDecimal = (value: string): boolean => {
+  return /^\d*\.?\d*$/.test(value)
+}

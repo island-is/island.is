@@ -1,0 +1,108 @@
+import { Fragment } from 'react'
+import { PropertyTableRow } from './PropertyTableRow'
+import { PropertyTableUnits } from './PropertyTableUnits'
+import { HmsPropertyInfo } from '../../../types/schema'
+import { PropertyUnit } from '../../../shared/types'
+import { Table } from '@island.is/island-ui/core'
+
+type Props = {
+  propertiesByAddressCode: HmsPropertyInfo[]
+  tableExpanded: Record<string, boolean>
+  toggleExpand: (propertyId: number) => void
+  checkedUnits: Record<string, boolean>
+  numOfRoomsValue: Record<string, number>
+  unitSizeChangedValue: Record<string, number>
+  handleCheckboxChange: (unit: PropertyUnit, checked: boolean) => void
+  handleUnitChange: (
+    unit: PropertyUnit,
+    keyToUpdate: keyof PropertyUnit,
+    value: string,
+  ) => void
+  errors: any
+}
+
+export const PropertyTableBody = ({
+  propertiesByAddressCode,
+  tableExpanded,
+  toggleExpand,
+  checkedUnits,
+  numOfRoomsValue,
+  unitSizeChangedValue,
+  handleCheckboxChange,
+  handleUnitChange,
+  errors,
+}: Props) => {
+  if (!propertiesByAddressCode) return null
+
+  return (
+    <Table.Body>
+      {propertiesByAddressCode
+        .map((property) => {
+          // Apraisal units are array of objects of length 1, maybe it can be more in some cases.
+          // The objects have the attribute 'units' which is what we want to loop over for each fasteignanumer
+          const flatApraisalUnits = property.appraisalUnits?.flatMap(
+            (appraisalUnit) => appraisalUnit.units,
+          )
+
+          if (!flatApraisalUnits || flatApraisalUnits.length === 0) return null
+
+          return (
+            <Fragment key={property.propertyCode}>
+              <PropertyTableRow
+                appraisalUnits={property.appraisalUnits || []}
+                propertyCode={property.propertyCode || 0}
+                unitCode={property.unitCode || ''}
+                size={property.size || 0}
+                sizeUnit={property.sizeUnit || ''}
+                isTableExpanded={
+                  property.propertyCode != null
+                    ? tableExpanded[property.propertyCode] || false
+                    : false
+                }
+                toggleExpand={(e) => {
+                  e.preventDefault()
+                  toggleExpand(property.propertyCode || 0)
+                }}
+              />
+              {flatApraisalUnits.map((unit) => {
+                if (!unit) return null
+
+                const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+                return (
+                  <PropertyTableUnits
+                    key={unitKey}
+                    unitCode={unit.unitCode ?? ''}
+                    propertyUsageDescription={
+                      unit.propertyUsageDescription ?? ''
+                    }
+                    sizeUnit={unit.sizeUnit ?? ''}
+                    checkedUnits={checkedUnits[unitKey] || false}
+                    isTableExpanded={
+                      tableExpanded[unit.propertyCode ?? 0] || false
+                    }
+                    unitSizeValue={unitSizeChangedValue[unitKey] ?? unit.size}
+                    numOfRoomsValue={numOfRoomsValue[unitKey]}
+                    isUnitSizeDisabled={!checkedUnits[unitKey]}
+                    isNumOfRoomsDisabled={!checkedUnits[unitKey]}
+                    onCheckboxChange={(e) =>
+                      handleCheckboxChange(unit, e.currentTarget.checked)
+                    }
+                    onUnitSizeChange={(e) =>
+                      handleUnitChange(unit, 'changedSize', e.target.value)
+                    }
+                    onUnitRoomsChange={(e) =>
+                      handleUnitChange(unit, 'numOfRooms', e.target.value)
+                    }
+                    unitInputErrorMessage={
+                      errors?.registerProperty?.[`searchresults.units`]
+                    }
+                  />
+                )
+              })}
+            </Fragment>
+          )
+        })
+        .filter(Boolean)}
+    </Table.Body>
+  )
+}

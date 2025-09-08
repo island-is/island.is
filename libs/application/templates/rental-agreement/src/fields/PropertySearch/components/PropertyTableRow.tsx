@@ -1,5 +1,5 @@
 import { MouseEventHandler } from 'react'
-import { Table as T } from '@island.is/island-ui/core'
+import { Table } from '@island.is/island-ui/core'
 import { AppraisalUnit } from '@island.is/api/schema'
 import {
   tableCell,
@@ -32,8 +32,8 @@ export const PropertyTableRow = ({
   toggleExpand,
 }: PropertyTableRowProps) => {
   return (
-    <T.Row>
-      <T.Data
+    <Table.Row>
+      <Table.Data
         box={{
           className: `${tableCell} ${tableCellExpand}`,
         }}
@@ -47,33 +47,33 @@ export const PropertyTableRow = ({
             )}
           </button>
         )}
-      </T.Data>
-      <T.Data
+      </Table.Data>
+      <Table.Data
         box={{
           className: `${tableCell} ${tableCellFastNum}`,
         }}
       >
         {propertyCode}
-      </T.Data>
-      <T.Data
+      </Table.Data>
+      <Table.Data
         box={{
           className: `${tableCell} ${tableCellMerking}`,
         }}
       >
         {unitCode}
-      </T.Data>
-      <T.Data
+      </Table.Data>
+      <Table.Data
         box={{
           className: `${tableCell} ${tableCellSize}`,
         }}
       >
         {`${size} ${sizeUnit}`}
-      </T.Data>
-      <T.Data
+      </Table.Data>
+      <Table.Data
         box={{
           className: `${tableCell} ${tableCellNumOfRooms}`,
         }}
-      ></T.Data>
-    </T.Row>
+      ></Table.Data>
+    </Table.Row>
   )
 }
