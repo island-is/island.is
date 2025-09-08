@@ -1,7 +1,94 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsArray, IsEnum } from 'class-validator'
-import { PaymentMethod, PaymentStatus } from '../../../types'
+import {
+  IsArray,
+  IsEnum,
+  IsString,
+  IsDate,
+  IsObject,
+  IsOptional,
+} from 'class-validator'
+import {
+  PaymentMethod,
+  PaymentStatus,
+  PaymentFlowEventType,
+  PaymentFlowEventReason,
+} from '../../../types'
+import { PageInfoDto } from '@island.is/nest/pagination'
 
+export class PaymentFlowEventDTO {
+  @ApiProperty({
+    description: 'Unique identifier for the event',
+    type: String,
+    format: 'uuid',
+  })
+  @IsString()
+  id!: string
+
+  @ApiProperty({
+    description: 'ID of the payment flow this event belongs to',
+    type: String,
+    format: 'uuid',
+  })
+  @IsString()
+  paymentFlowId!: string
+
+  @ApiProperty({
+    description: 'Type of the event',
+    enum: PaymentFlowEventType,
+  })
+  @IsEnum(PaymentFlowEventType)
+  type!: PaymentFlowEventType
+
+  @ApiProperty({
+    description: 'Reason for the event',
+    enum: PaymentFlowEventReason,
+  })
+  @IsEnum(PaymentFlowEventReason)
+  reason!: PaymentFlowEventReason
+
+  @ApiProperty({
+    description: 'Payment method used',
+    type: String,
+  })
+  @IsString()
+  paymentMethod!: string
+
+  @ApiProperty({
+    description: 'When the event occurred',
+    type: Date,
+  })
+  @IsDate()
+  occurredAt!: Date
+
+  @ApiProperty({
+    description: 'Message describing the event',
+    type: String,
+  })
+  @IsString()
+  message!: string
+
+  @ApiPropertyOptional({
+    description: 'Additional metadata for the event',
+    type: Object,
+  })
+  @IsOptional()
+  @IsObject()
+  metadata?: object
+
+  @ApiProperty({
+    description: 'When the event was created',
+    type: Date,
+  })
+  @IsDate()
+  created!: Date
+
+  @ApiProperty({
+    description: 'When the event was last modified',
+    type: Date,
+  })
+  @IsDate()
+  modified!: Date
+}
 export class GetPaymentFlowDTO {
   @ApiProperty({
     description: 'Unique identifier for the payment flow',
@@ -94,6 +181,14 @@ export class GetPaymentFlowDTO {
   })
   redirectToReturnUrlOnSuccess?: boolean
 
+  @ApiPropertyOptional({
+    description: 'Events associated with the payment flow',
+    type: [PaymentFlowEventDTO],
+  })
+  @IsArray()
+  @IsOptional()
+  events?: PaymentFlowEventDTO[]
+
   @ApiProperty({
     description: 'Last updated at',
     type: Date,
@@ -102,4 +197,24 @@ export class GetPaymentFlowDTO {
 
   @ApiPropertyOptional()
   cancelUrl?: string
+}
+
+export class GetPaymentFlowsPaginatedDTO {
+  @ApiProperty({
+    description: 'List of payment flows',
+    type: [GetPaymentFlowDTO],
+  })
+  data!: GetPaymentFlowDTO[]
+
+  @ApiProperty({
+    description: 'Total count of payment flows',
+    type: Number,
+  })
+  totalCount!: number
+
+  @ApiProperty({
+    description: 'Pagination information',
+    type: PageInfoDto,
+  })
+  pageInfo!: PageInfoDto
 }
