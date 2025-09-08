@@ -11,13 +11,18 @@ import {
 import { HmsPropertyInfo } from '@island.is/api/schema'
 import { AddressProps, PropertyUnit } from '../../shared'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
-import * as m from '../../lib/messages'
-import { cleanupSearch, isFasteignaNr, restoreValue } from '../../utils/utils'
+import {
+  cleanupSearch,
+  isFasteignaNr,
+  restoreValueBoolean,
+  restoreValueNumber,
+} from '../../utils/utils'
 import { usePropertyCodeInfo } from './hooks/usePropertyCodeInfo'
 import { useAddressSearch } from './hooks/useAddressSearch'
 import { usePropertyInfo } from './hooks/usePropertyInfo'
 import { PropertySearchInput } from './components/PropertySearchInput'
 import { PropertyTableBody } from './components/PropertyTableBody'
+import * as m from '../../lib/messages'
 
 const ERROR_ID = 'registerProperty'
 
@@ -162,10 +167,10 @@ export const PropertySearch = ({ field, errors }: Props) => {
       }
     }
 
-    setTableExpanded(restoreValue(storedValue, 'expanded'))
-    setCheckedUnits(restoreValue(storedValue, 'checked'))
-    setNumOfRoomsValue(restoreValue(storedValue, 'numOfRooms'))
-    setUnitSizeChangedValue(restoreValue(storedValue, 'changedSize'))
+    setTableExpanded(restoreValueBoolean(storedValue, 'expanded'))
+    setCheckedUnits(restoreValueBoolean(storedValue, 'checked'))
+    setNumOfRoomsValue(restoreValueNumber(storedValue, 'numOfRooms'))
+    setUnitSizeChangedValue(restoreValueNumber(storedValue, 'changedSize'))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storedValue])
 

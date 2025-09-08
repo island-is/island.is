@@ -185,14 +185,14 @@ type StoredValueUnits = {
 
 type RestoreValueType = 'checked' | 'numOfRooms' | 'changedSize' | 'expanded'
 
-export const restoreValue = (
+export const restoreValueBoolean = (
   storedValue: StoredValueUnits,
   valueType: RestoreValueType,
 ) => {
   if (!storedValue?.units) return {}
   return storedValue.units.reduce(
-    (acc: Record<string, number | boolean>, unit: PropertyUnit) => {
-      const { propertyCode, unitCode, checked, numOfRooms, changedSize } = unit
+    (acc: Record<string, boolean>, unit: PropertyUnit) => {
+      const { propertyCode, unitCode, checked } = unit
 
       if (valueType === 'expanded') {
         if (checked && propertyCode) {
@@ -201,7 +201,24 @@ export const restoreValue = (
       } else if (valueType === 'checked') {
         const unitKey = `${propertyCode}_${unitCode}`
         acc[unitKey] = checked || false
-      } else if (valueType === 'numOfRooms') {
+      }
+
+      return acc
+    },
+    {} as Record<string, boolean>,
+  )
+}
+
+export const restoreValueNumber = (
+  storedValue: StoredValueUnits,
+  valueType: RestoreValueType,
+) => {
+  if (!storedValue?.units) return {}
+  return storedValue.units.reduce(
+    (acc: Record<string, number>, unit: PropertyUnit) => {
+      const { propertyCode, unitCode, numOfRooms, changedSize } = unit
+
+      if (valueType === 'numOfRooms') {
         const unitKey = `${propertyCode}_${unitCode}`
         acc[unitKey] = numOfRooms || 0
       } else if (valueType === 'changedSize') {
