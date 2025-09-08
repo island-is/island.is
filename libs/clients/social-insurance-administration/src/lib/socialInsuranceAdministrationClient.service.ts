@@ -39,6 +39,7 @@ import {
   TrWebExternalModelsServicePortalConfirmedTreatment,
   TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebExternalModelsServicePortalDisabilityPensionCertificate,
+  TrWebApiServicesCommonCountriesModelsLanguageDto,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
@@ -272,6 +273,7 @@ export class SocialInsuranceAdministrationClientService {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsDisabilitypensioncertificateGet()
+  }
 
   async getConfirmedTreatment(
     user: User,
@@ -295,7 +297,7 @@ export class SocialInsuranceAdministrationClientService {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsConfirmationofillhealthGet()
-     
+
   }
 
   async getCountries(
@@ -308,6 +310,12 @@ export class SocialInsuranceAdministrationClientService {
     return data.filter(
       (country) => country.code && country.nameIcelandic && country.name,
     )
+  }
+
+  async getLanguages(user:User): Promise<Array<TrWebApiServicesCommonCountriesModelsLanguageDto>> {
+    const data = await this.generalApiWithAuth(user).apiProtectedV1GeneralLanguagesGet()
+
+    return data.filter(language => language.code && language.nameIs && language.nameEn)
   }
 
   async getEducationalInstitutions(

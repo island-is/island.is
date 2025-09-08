@@ -691,6 +691,10 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return await this.siaClientService.getCountries(auth)
   }
 
+  async getLanguages({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getLanguages(auth)
+  }
+
   async getMedicalAndRehabilitationApplicationType({
     auth,
   }: TemplateApiModuleActionProps) {

@@ -37,6 +37,7 @@ import {
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationCountriesApi,
+  SocialInsuranceAdministrationLanguagesApi,
   SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
 } from '../dataProviders'
 import {
@@ -100,6 +101,7 @@ const template: ApplicationTemplate<
                 SocialInsuranceAdministrationEducationLevelsApi,
                 SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
                 SocialInsuranceAdministrationCountriesApi,
+                SocialInsuranceAdministrationLanguagesApi,
                 //SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
               ],

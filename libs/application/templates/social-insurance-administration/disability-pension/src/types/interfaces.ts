@@ -9,6 +9,12 @@ export interface Country {
   nameIcelandic: string
 }
 
+export interface Language {
+  code: string
+  nameEn: string
+  nameIs: string
+}
+
 export interface SelfAssessmentQuestionnaire {
   questionnaireName: string
   questionnaireCode: string
