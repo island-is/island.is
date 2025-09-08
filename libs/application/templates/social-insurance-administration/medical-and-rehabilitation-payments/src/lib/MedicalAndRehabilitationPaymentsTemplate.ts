@@ -233,11 +233,11 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: coreSIAStatesMessages.applicationApproved,
+                logMessage: coreHistoryMessages.applicationApproved,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreSIAStatesMessages.applicationRejected,
+                logMessage: coreHistoryMessages.applicationRejected,
               },
               {
                 onEvent: OAPEvents.DISMISS,
