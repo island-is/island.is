@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { Screen } from '../screens/models/screen.model'
 import { Organization } from '../organizations/models/organization.model'
 import { Section } from '../sections/models/section.model'
@@ -17,7 +16,6 @@ import { FormUrl } from '../formUrls/models/formUrl.model'
   imports: [
     SequelizeModule.forFeature([
       Form,
-      FormApplicantType,
       FormCertificationType,
       FormUrl,
       Section,

@@ -45,10 +45,43 @@ const personInfoSchema = z.object({
     }),
 })
 
+const landLordInfoSchema = z.object({
+  nationalIdWithName: z.object({
+    nationalId: z
+      .string()
+      .optional()
+      .refine((val) => (val ? kennitala.info(val).age >= 18 : false), {
+        params: m.landlordAndTenantDetails.nationalIdAgeError,
+      })
+      .refine((val) => (val ? kennitala.isValid(val) : false), {
+        params: m.landlordAndTenantDetails.nationalIdError,
+      }),
+    name: z
+      .string()
+      .optional()
+      .refine((name) => !!name && name.trim().length > 0),
+  }),
+  phone: z
+    .string()
+    .optional()
+    .refine((x) => !!x && x.trim().length > 0, {
+      params: m.landlordAndTenantDetails.phoneNumberEmptyError,
+    })
+    .refine((x) => x && isValidPhoneNumber(x), {
+      params: m.landlordAndTenantDetails.phoneNumberInvalidError,
+    }),
+  email: z
+    .string()
+    .optional()
+    .refine((val) => !!val && val.trim().length > 0 && isValidEmail(val), {
+      params: m.landlordAndTenantDetails.emailInvalidError,
+    }),
+})
+
 const landlordInfo = z
   .object({
-    table: z.array(personInfoSchema),
-    representativeTable: z.array(personInfoSchema),
+    table: z.array(landLordInfoSchema),
+    representativeTable: z.array(landLordInfoSchema),
   })
   .superRefine((data, ctx) => {
     const { table, representativeTable } = data

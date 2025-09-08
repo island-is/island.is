@@ -26,7 +26,7 @@ import { AddressProps, PropertyUnit } from '../../shared'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
 import { PropertyTableRow } from './components/PropertyTableRow'
 import { PropertyTableUnits } from './components/PropertyTableUnits'
-import { registerProperty } from '../../lib/messages'
+import * as m from '../../lib/messages'
 
 const ERROR_ID = 'registerProperty'
 const EMPTY_OBJECT = {}
@@ -187,7 +187,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     onError: (error) => {
       console.error('Error fetching address', error)
       setAddressSearchError(
-        formatMessage(registerProperty.search.addressSearchError) ||
+        formatMessage(m.registerProperty.search.addressSearchError) ||
           'Failed to search addresses',
       )
       setPropertiesByAddressCode(undefined)
@@ -215,7 +215,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     onError: (error) => {
       console.error('Error fetching properties', error)
       setPropertyInfoError(
-        formatMessage(registerProperty.search.propertyInfoError) ||
+        formatMessage(m.registerProperty.search.propertyInfoError) ||
           'Failed to fetch properties',
       )
       setPropertiesByAddressCode(undefined)
@@ -263,7 +263,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     onError: (error) => {
       console.error('Error fetching properties by fasteignNr', error)
       setPropertyInfoError(
-        formatMessage(registerProperty.search.propertyInfoError) ||
+        formatMessage(m.registerProperty.search.propertyInfoError) ||
           'Failed to fetch properties',
       )
       setPropertiesByAddressCode(undefined)
@@ -464,7 +464,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
               <AsyncSearch
                 options={searchOptions}
                 placeholder={formatMessage(
-                  registerProperty.search.propertySearchPlaceholder,
+                  m.registerProperty.search.propertySearchPlaceholder,
                 )}
                 initialInputValue={selectedAddress ? selectedAddress.label : ''}
                 inputValue={
@@ -619,7 +619,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
               type="error"
               message={errors?.registerProperty?.['searchresults.units']}
               title={formatMessage(
-                registerProperty.search.searchResultsErrorBannerTitle,
+                m.registerProperty.search.searchResultsErrorBannerTitle,
               )}
             />
           )}
