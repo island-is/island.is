@@ -6,7 +6,7 @@ import {
   AlertMessage,
   Box,
   LoadingDots,
-  Table as T,
+  Table,
 } from '@island.is/island-ui/core'
 import { HmsPropertyInfo } from '@island.is/api/schema'
 import { AddressProps, PropertyUnit } from '../../shared'
@@ -353,7 +353,7 @@ export const PropertySearch = ({ field, errors }: Props) => {
           ) : (
             propertiesByAddressCode &&
             propertiesByAddressCode.length > 0 && (
-              <T.Table id="searchresults.table">
+              <Table.Table id="searchresults.table">
                 <PropertyTableHeader />
                 <PropertyTableBody
                   propertiesByAddressCode={propertiesByAddressCode}
@@ -366,7 +366,7 @@ export const PropertySearch = ({ field, errors }: Props) => {
                   handleUnitChange={handleUnitChange}
                   errors={errors}
                 />
-              </T.Table>
+              </Table.Table>
             )
           )}
         </Box>
