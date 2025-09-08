@@ -239,7 +239,7 @@ export class FormsService {
     return formResponse
   }
 
-  async publish(id: string, user: User): Promise<void> {
+  async publish(id: string): Promise<void> {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {

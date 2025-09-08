@@ -1,4 +1,4 @@
-import { LanguageType } from '../../../../apps/services/form-system/src/app/dataTypes/languageType.model'
+import { LanguageType } from '../languageType.model'
 
 const valueTypeAttributeToLanguageType: Record<string, LanguageType> = {
   text: { is: 'Texti', en: 'Text' },
@@ -33,9 +33,9 @@ const valueTypeAttributeToLanguageType: Record<string, LanguageType> = {
 }
 
 // Helper function to get the LanguageType for a given ValueType attribute
-export function getLanguageTypeForValueTypeAttribute(
+export const getLanguageTypeForValueTypeAttribute = (
   attribute: string,
-): LanguageType {
+): LanguageType => {
   const result = valueTypeAttributeToLanguageType[attribute]
   return result ? result : { is: 'gildi', en: 'value' }
 }

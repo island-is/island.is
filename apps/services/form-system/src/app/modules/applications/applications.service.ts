@@ -574,7 +574,7 @@ export class ApplicationsService {
     return form
   }
 
-  private updateObjectValues<T extends Record<string, any>>(
+  private updateObjectValues<T extends Record<string, unknown>>(
     source: T,
     target: T,
   ): T {

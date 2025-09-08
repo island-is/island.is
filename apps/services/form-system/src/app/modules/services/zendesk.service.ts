@@ -5,15 +5,9 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import {
-  FieldTypesEnum,
-  getLanguageTypeForValueTypeAttribute,
-  SectionTypes,
-} from '@island.is/form-system/shared'
-import { FieldDto } from '../fields/models/dto/field.dto'
-import { ScreenDto } from '../screens/models/dto/screen.dto'
-import { ValueDto } from '../applications/models/dto/value.dto'
+import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
+import { getLanguageTypeForValueTypeAttribute } from '../../dataTypes/valueTypes/valueType.helper'
 
 @Injectable()
 export class ZendeskService {
@@ -221,7 +215,7 @@ export class ZendeskService {
     return body
   }
 
-  private getValue(val: any, fieldType: string): string {
+  private getValue(val: unknown, fieldType: string): string {
     if (fieldType === FieldTypesEnum.CHECKBOX) {
       if (val === true) {
         return 'Valið'
