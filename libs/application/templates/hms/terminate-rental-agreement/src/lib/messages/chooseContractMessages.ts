@@ -26,19 +26,19 @@ export const chooseContractMessages = defineMessages({
   option: {
     id: 'tra.application:chooseContract.option#markdown',
     defaultMessage:
-      'Leigusamningur **{contractId}** (*{contractType}*)\n\n {address}{apartmentNumber}',
+      'Leigusamningur **{contractId}** (*{contractType}*)\n\n {address}{apartmentNumber}. \n\nLeigjandi/Leigjendur: {renters}. \n\nLeigusali/Leigusala: {landlords}',
     description: 'Choose contract option',
   },
   optionFixedTerm: {
     id: 'tra.application:chooseContract.optionFixedTerm#markdown',
     defaultMessage:
-      'Leigusamningur **{contractId}** (*Tímabundin samningur*)\n\n {address}{apartmentNumber}',
+      'Leigusamningur **{contractId}** (*Tímabundin samningur*)\n\n {address}{apartmentNumber}. \n\nLeigjandi/Leigjendur: {renters}. \n\nLeigusali/Leigusala: {landlords}',
     description: 'Choose contract option fixed term',
   },
   optionUnboundTerm: {
     id: 'tra.application:chooseContract.optionUnboundTerm#markdown',
     defaultMessage:
-      'Leigusamningur **{contractId}** (*Ótímabundin samningur*)\n\n {address}{apartmentNumber}',
+      'Leigusamningur **{contractId}** (*Ótímabundin samningur*)\n\n {address}{apartmentNumber}. \n\nLeigjandi/Leigjendur: {renters}. \n\nLeigusali/Leigusala: {landlords}',
     description: 'Choose contract option unbound term',
   },
 })

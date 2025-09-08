@@ -13,21 +13,31 @@ export const rentalContractOptions = (application: Application) => {
     return []
   }
 
-  return contracts.map((contract) => ({
-    value: contract.contractId?.toString() ?? '',
-    label: {
-      ...(contract.contractTypeUseCode === 'INDEFINITEAGREEMENT'
-        ? m.chooseContractMessages.optionUnboundTerm
-        : m.chooseContractMessages.optionFixedTerm),
-      values: {
-        contractId: contract.contractId,
-        address: contract?.contractProperty?.[0]?.streetAndHouseNumber ?? '',
-        apartmentNumber: contract?.contractProperty?.[0]?.apartment
-          ? ` - Íbúð: ${contract.contractProperty?.[0].apartment}`
-          : '',
+  return contracts.map((contract) => {
+    const renters = contract.contractParty
+      ?.filter((party) => party.partyTypeUseCode === 'TENANT')
+      .map((party) => party.name)
+    const landlords = contract.contractParty
+      ?.filter((party) => party.partyTypeUseCode === 'OWNER')
+      .map((party) => party.name)
+    return {
+      value: contract.contractId?.toString() ?? '',
+      label: {
+        ...(contract.contractTypeUseCode === 'INDEFINETEAGREEMENT'
+          ? m.chooseContractMessages.optionUnboundTerm
+          : m.chooseContractMessages.optionFixedTerm),
+        values: {
+          contractId: contract.contractId,
+          address: contract?.contractProperty?.[0]?.streetAndHouseNumber ?? '',
+          apartmentNumber: contract?.contractProperty?.[0]?.apartment
+            ? ` - Íbúð: ${contract.contractProperty?.[0].apartment}`
+            : '',
+          renters: renters?.join(', '),
+          landlords: landlords?.join(', '),
+        },
       },
-    },
-  }))
+    }
+  })
 }
 
 // Copied from @island.is/clients/hms-rental-agreement
