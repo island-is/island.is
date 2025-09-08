@@ -175,17 +175,17 @@ export const routesTemplate = {
     is: '/s/[slug]/[subSlug]/[childSlug]',
     en: '/en/o/[slug]/[subSlug]/[childSlug]',
   },
-  grantsplaza: {
-    is: '/styrkjatorg',
-    en: '/en/grants-plaza',
+  grantsplazagrant: {
+    is: '/styrkjatorg/styrkur/[id]',
+    en: '/en/grants-plaza/grant/[id]',
   },
   grantsplazasearch: {
     is: '/styrkjatorg/styrkir',
     en: '/en/grants-plaza/grants',
   },
-  grantsplazagrant: {
-    is: '/styrkjatorg/styrkur/[id]',
-    en: '/en/grants-plaza/grant/[id]',
+  grantsplaza: {
+    is: '/styrkjatorg',
+    en: '/en/grants-plaza',
   },
   organizations: {
     is: '/s',
