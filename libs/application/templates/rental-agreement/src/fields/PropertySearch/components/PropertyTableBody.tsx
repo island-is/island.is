@@ -3,10 +3,10 @@ import { PropertyTableRow } from './PropertyTableRow'
 import { PropertyTableUnits } from './PropertyTableUnits'
 import { PropertyUnit } from '../../../shared/types'
 import { Table } from '@island.is/island-ui/core'
-import { HmsPropertyInfo } from '@island.is/api/schema'
+import { HmsPropertyInfo } from '../../../types/schema'
 
 type Props = {
-  propertiesByAddressCode: HmsPropertyInfo[] | undefined
+  propertiesByAddressCode: Array<HmsPropertyInfo> | undefined
   tableExpanded: Record<string, boolean>
   toggleExpand: (propertyId: number) => void
   checkedUnits: Record<string, boolean>

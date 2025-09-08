@@ -2,7 +2,7 @@ import { useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { ADDRESS_SEARCH_QUERY } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
-import { HmsPropertyInfo, HmsSearchInput, Query } from '@island.is/api/schema'
+import { HmsPropertyInfo, HmsSearchInput, Query } from '../../../types/schema'
 import { AddressProps } from '../../../shared/types'
 
 /**

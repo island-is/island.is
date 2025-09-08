@@ -6,7 +6,7 @@ import {
   HmsPropertyInfo,
   HmsPropertyInfoInput,
   Query,
-} from '@island.is/api/schema'
+} from '../../../types/schema'
 import { AddressProps } from '../../../shared/types'
 
 /**

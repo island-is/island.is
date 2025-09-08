@@ -1,6 +1,6 @@
 import { MouseEventHandler } from 'react'
 import { Table } from '@island.is/island-ui/core'
-import { AppraisalUnit } from '@island.is/api/schema'
+
 import {
   tableCell,
   tableCellExpand,
@@ -11,9 +11,10 @@ import {
 } from '../propertySearch.css'
 import IconCircleClose from '../../../assets/IconCircleClose'
 import IconCircleOpen from '../../../assets/IconCircleOpen'
+import { AppraisalUnit } from '../../../types/schema'
 
 interface PropertyTableRowProps {
-  appraisalUnits: AppraisalUnit[]
+  appraisalUnits: Array<AppraisalUnit>
   propertyCode?: number
   unitCode?: string
   size?: number

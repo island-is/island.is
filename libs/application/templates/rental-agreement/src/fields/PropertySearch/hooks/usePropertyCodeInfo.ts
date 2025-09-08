@@ -3,7 +3,7 @@ import {
   HmsPropertyCodeInfoInput,
   HmsPropertyInfo,
   Query,
-} from '@island.is/api/schema'
+} from '../../../types/schema'
 import { useLocale } from '@island.is/localization'
 import { PROPERTY_CODE_INFO_QUERY } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
