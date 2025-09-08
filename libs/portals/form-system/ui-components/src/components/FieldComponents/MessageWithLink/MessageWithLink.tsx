@@ -34,10 +34,10 @@ export const MessageWithLink = ({ item, lang = 'is' }: Props) => {
         style={{ flex: 1, minWidth: 0 }}
       >
         <Box paddingBottom={1}>
-          <Text variant="h4">{item?.name?.[lang as 'is' | 'en'] ?? ''}</Text>
+          <Text variant="h4">{item?.name?.[lang]}</Text>
         </Box>
         <Box overflow="hidden">
-          <Text>{item?.description?.[lang as 'is' | 'en'] ?? ''}</Text>
+          <Text>{item?.description?.[lang]}</Text>
         </Box>
       </Box>
       {item.fieldSettings?.hasLink && (
@@ -55,7 +55,7 @@ export const MessageWithLink = ({ item, lang = 'is' }: Props) => {
             icon="open"
             variant="ghost"
           >
-            {item?.fieldSettings?.buttonText?.[lang as 'is' | 'en'] ?? ''}
+            {item?.fieldSettings?.buttonText?.[lang]}
           </Button>
         </Box>
       )}

@@ -18,7 +18,7 @@ import {
 import { useQuery } from '@apollo/client'
 import { User } from './types'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
-import { Dispatch, useEffect, useState } from 'react'
+import { Dispatch, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Action } from '../../lib'
 import { getValue } from '../../lib/getValue'
