@@ -8,7 +8,6 @@ import {
   LoadingDots,
   Table,
 } from '@island.is/island-ui/core'
-import { HmsPropertyInfo } from '@island.is/api/schema'
 import { AddressProps, PropertyUnit } from '../../shared'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
 import {
@@ -23,6 +22,7 @@ import { usePropertyInfo } from './hooks/usePropertyInfo'
 import { PropertySearchInput } from './components/PropertySearchInput'
 import { PropertyTableBody } from './components/PropertyTableBody'
 import * as m from '../../lib/messages'
+import { HmsPropertyInfo } from '../../types/schema'
 
 const ERROR_ID = 'registerProperty'
 
@@ -47,7 +47,7 @@ export const PropertySearch = ({ field, errors }: Props) => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(
     storedValue?.value,
   )
-  const [searchOptions, setSearchOptions] = useState<AddressProps[]>([])
+  const [searchOptions, setSearchOptions] = useState<Array<AddressProps>>([])
   const [tableExpanded, setTableExpanded] = useState<Record<string, boolean>>(
     {},
   )
@@ -64,7 +64,7 @@ export const PropertySearch = ({ field, errors }: Props) => {
     AddressProps | undefined
   >(storedValue)
   const [propertiesByAddressCode, setPropertiesByAddressCode] = useState<
-    HmsPropertyInfo[] | undefined
+    Array<HmsPropertyInfo> | undefined
   >(storedValue?.propertiesByAddressCode || [])
 
   // Handle debounced search term changes
