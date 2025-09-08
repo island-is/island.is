@@ -191,7 +191,7 @@ export const restoreValue = (
 ) => {
   if (!storedValue?.units) return {}
   return storedValue.units.reduce(
-    (acc: Record<string, any>, unit: PropertyUnit) => {
+    (acc: Record<string, number | boolean>, unit: PropertyUnit) => {
       const { propertyCode, unitCode, checked, numOfRooms, changedSize } = unit
 
       if (valueType === 'expanded') {
@@ -211,7 +211,7 @@ export const restoreValue = (
 
       return acc
     },
-    {} as Record<string, any>,
+    {} as Record<string, number>,
   )
 }
 
