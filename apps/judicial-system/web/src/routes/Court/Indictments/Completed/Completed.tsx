@@ -39,6 +39,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
+import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -58,6 +59,7 @@ import * as styles from './Completed.css'
 
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
+
   const { formatMessage } = useIntl()
   const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -221,6 +223,21 @@ const Completed: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.defendants?.map(
+          (defendant) =>
+            features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) &&
+            defendant.verdict && (
+              <Box
+                key={`${defendant.id}${defendant.verdict.id}`}
+                marginBottom={2}
+              >
+                <VerdictStatusAlert
+                  defendant={defendant}
+                  verdict={defendant.verdict}
+                />
+              </Box>
+            ),
+        )}
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>

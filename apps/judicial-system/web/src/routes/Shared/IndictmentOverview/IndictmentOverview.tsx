@@ -177,7 +177,7 @@ const IndictmentOverview: FC = () => {
               <>
                 {features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) &&
                   defendant.verdict && (
-                    <Box marginBottom={2}>
+                    <Box key={`${defendant.id}${defendant.verdict.id}`} marginBottom={2}>
                       <VerdictStatusAlert
                         defendant={defendant}
                         verdict={defendant.verdict}
