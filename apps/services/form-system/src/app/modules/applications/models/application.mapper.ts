@@ -8,6 +8,7 @@ import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { ValueDto } from './dto/value.dto'
 import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
+import { SectionTypes } from '@island.is/form-system/shared'
 
 @Injectable()
 export class ApplicationMapper {
@@ -35,6 +36,13 @@ export class ApplicationMapper {
     }
 
     form.sections?.map((section) => {
+      if (
+        (!form.hasSummaryScreen &&
+          section.sectionType === SectionTypes.SUMMARY) ||
+        (!form.hasPayment && section.sectionType === SectionTypes.PAYMENT)
+      ) {
+        return
+      }
       applicationDto.sections?.push({
         id: section.id,
         name: section.name,
@@ -88,7 +96,6 @@ export class ApplicationMapper {
         }),
       } as SectionDto)
     })
-
     return applicationDto
   }
 

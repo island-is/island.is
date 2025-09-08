@@ -246,6 +246,10 @@ export class FormsService {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
 
+    if (form.status === FormStatus.PUBLISHED) {
+      return
+    }
+
     const existingPublishedForm = await this.formModel.findOne({
       where: {
         slug: form.slug,
@@ -263,14 +267,19 @@ export class FormsService {
     form.status = FormStatus.PUBLISHED
     form.beenPublished = true
 
-    if (form.derivedFrom) {
+    if (
+      form.status === FormStatus.PUBLISHED_BEING_CHANGED &&
+      form.derivedFrom
+    ) {
       const derivedFromForm = await this.formModel.findByPk(form.derivedFrom)
 
       if (!derivedFromForm) {
         throw new NotFoundException(`Form with id '${id}' not found`)
       }
 
-      derivedFromForm.status = FormStatus.UNPUBLISHED_BECAUSE_CHANGED
+      derivedFromForm.status = FormStatus.ARCHIVED
+
+      // TODO: When form is archived we should maybe delete applications that are in progress
 
       await this.sequelize.transaction(async (transaction) => {
         await form.save({ transaction })

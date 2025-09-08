@@ -64,6 +64,80 @@ export const TableRow = ({
   const deleteForm = useMutation(DELETE_FORM)
   const [publishForm] = useMutation(PUBLISH_FORM)
 
+  let dropdownItems = []
+
+  const copy = {
+    title: formatMessage(m.copy),
+  }
+
+  const json = {
+    title: 'Json',
+  }
+
+  const del = {
+    title: formatMessage(m.delete),
+    onClick: () => {
+      deleteForm[0]({
+        variables: {
+          input: {
+            id: id,
+          },
+        },
+      })
+      setFormsState((prevForms) => prevForms.filter((form) => form.id !== id))
+    },
+  }
+
+  const publish = {
+    title: 'Gefa út',
+    onClick: () => {
+      publishForm({
+        variables: {
+          input: {
+            id: id,
+          },
+        },
+      })
+      setFormsState((prevForms) =>
+        prevForms.map((form) =>
+          form.id === id ? { ...form, status: FormStatus.PUBLISHED } : form,
+        ),
+      )
+    },
+  }
+
+  const unPublish = {
+    title: 'Afturkalla útgáfu',
+  }
+
+  const test = {
+    title: 'Prófa',
+    onClick: () => {
+      if (slug) {
+        window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer')
+      } else {
+        window.alert(
+          formatMessage({
+            id: 'slugMissing',
+            defaultMessage: 'Það vantar slug',
+          }),
+        )
+      }
+    },
+  }
+
+  dropdownItems.push(copy)
+  dropdownItems.push(json)
+  dropdownItems.push(del)
+
+  if (status === FormStatus.PUBLISHED) {
+    dropdownItems.push(unPublish)
+  } else if (status !== FormStatus.PUBLISHED) {
+    dropdownItems.push(publish)
+  }
+
+  dropdownItems.push(test)
+
   const goToForm = () => {
     navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
       state: {
@@ -116,67 +190,7 @@ export const TableRow = ({
                   aria-label={`Aðgerðir`}
                 />
               }
-              items={[
-                {
-                  title: formatMessage(m.copy),
-                },
-                {
-                  title: formatMessage(m.delete),
-                  onClick: () => {
-                    deleteForm[0]({
-                      variables: {
-                        input: {
-                          id: id,
-                        },
-                      },
-                    })
-                    setFormsState((prevForms) =>
-                      prevForms.filter((form) => form.id !== id),
-                    )
-                  },
-                },
-                {
-                  title: 'Json',
-                },
-                {
-                  title: 'Gefa út',
-                  onClick: () => {
-                    publishForm({
-                      variables: {
-                        input: {
-                          id: id,
-                        },
-                      },
-                    })
-                    setFormsState((prevForms) =>
-                      prevForms.map((form) =>
-                        form.id === id
-                          ? { ...form, status: FormStatus.PUBLISHED }
-                          : form,
-                      ),
-                    )
-                  },
-                },
-                {
-                  title: 'Skoða',
-                  onClick: () => {
-                    if (slug) {
-                      window.open(
-                        `${PATH}/${slug}`,
-                        '_blank',
-                        'noopener,noreferrer',
-                      )
-                    } else {
-                      window.alert(
-                        formatMessage({
-                          id: 'slugMissing',
-                          defaultMessage: 'Það vantar slug',
-                        }),
-                      )
-                    }
-                  },
-                },
-              ]}
+              items={dropdownItems}
             />
           </Box>
         </Column>

@@ -19,6 +19,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.NATIONAL_ID]: DefaultDisplay,
   [FieldTypesEnum.PHONE_NUMBER]: DefaultDisplay,
   [FieldTypesEnum.TEXTBOX]: DefaultDisplay,
+  [FieldTypesEnum.NUMBERBOX]: DefaultDisplay,
   [FieldTypesEnum.TIME_INPUT]: DefaultDisplay,
   [FieldTypesEnum.DATE_PICKER]: DefaultDisplay,
   [FieldTypesEnum.DROPDOWN_LIST]: DefaultDisplay,
