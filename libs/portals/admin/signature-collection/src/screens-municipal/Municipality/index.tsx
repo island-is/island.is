@@ -77,6 +77,7 @@ export const Municipality = () => {
                 allowedActions={[
                   Actions.DownloadReports,
                   Actions.CreateCollection,
+                  Actions.CompleteCollectionProcessing,
                 ]}
               />
             }

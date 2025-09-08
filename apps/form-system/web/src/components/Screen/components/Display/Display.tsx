@@ -27,6 +27,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.PROPERTY_NUMBER]: DefaultDisplay,
   [FieldTypesEnum.RADIO_BUTTONS]: DefaultDisplay,
   [FieldTypesEnum.MESSAGE]: DefaultDisplay,
+  [FieldTypesEnum.APPLICANT]: DefaultDisplay,
 } as const
 
 export const Display = ({ field }: Props) => {

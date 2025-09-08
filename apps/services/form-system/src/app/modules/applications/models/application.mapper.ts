@@ -32,7 +32,6 @@ export class ApplicationMapper {
       events: application.events,
       sections: [],
       certificationTypes: form.formCertificationTypes,
-      applicantTypes: form.formApplicantTypes,
     }
 
     form.sections?.map((section) => {
