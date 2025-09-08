@@ -123,10 +123,6 @@ export enum Features {
 
   // Allow fake data
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
-
-  // Landspítali
-  landspitaliMemorialCardSkipsPaymentStep = 'landspitaliMemorialCardSkipsPaymentStep',
-  landspitaliDirectGrantSkipsPaymentStep = 'landspitaliDirectGrantSkipsPaymentStep',
 }
 
 export enum ServerSideFeature {
