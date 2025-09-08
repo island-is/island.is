@@ -3,6 +3,7 @@ import {
   FieldTypesEnum,
   CheckBoxDisplay,
   FileUploadDisplay,
+  ApplicantDisplay,
 } from '@island.is/form-system/ui'
 import { FormSystemField } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
@@ -27,7 +28,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.PROPERTY_NUMBER]: DefaultDisplay,
   [FieldTypesEnum.RADIO_BUTTONS]: DefaultDisplay,
   [FieldTypesEnum.MESSAGE]: DefaultDisplay,
-  [FieldTypesEnum.APPLICANT]: DefaultDisplay,
+  [FieldTypesEnum.APPLICANT]: ApplicantDisplay,
 } as const
 
 export const Display = ({ field }: Props) => {
