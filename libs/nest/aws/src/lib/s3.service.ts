@@ -43,21 +43,26 @@ export class S3Service {
   private readonly CREDENTIAL_REFRESH_INTERVAL = 50 * 60 * 1000 // 50 minutes
 
   getS3Client(): S3Client {
-    const now = Date.now()
+    // const now = Date.now()
 
-    // Create new client if none exists or credentials are stale
-    if (
-      !this.s3Client ||
-      now - this.lastCredentialTime > this.CREDENTIAL_REFRESH_INTERVAL
-    ) {
-      this.s3Client = new S3Client({
-        credentials: defaultProvider(),
-        maxAttempts: 3,
-      })
-      this.lastCredentialTime = now
-    }
+    // // Create new client if none exists or credentials are stale
+    // if (
+    //   !this.s3Client ||
+    //   now - this.lastCredentialTime > this.CREDENTIAL_REFRESH_INTERVAL
+    // ) {
+    //   this.s3Client = new S3Client({
+    //     credentials: defaultProvider(),
+    //     maxAttempts: 3,
+    //   })
+    //   this.lastCredentialTime = now
+    // }
 
-    return this.s3Client
+    // Newing up a new s3 client every time
+    // to see if this works to solve the issue when deployed
+    return new S3Client({
+      credentials: defaultProvider(),
+      maxAttempts: 3,
+    })
   }
 
   public async getClientRegion(): Promise<string> {
