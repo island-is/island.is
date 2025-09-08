@@ -117,6 +117,7 @@ export const InstitutionFilters = ({
           value={institutionTypeIds.find((opt) => opt.value === typeId) || null}
           isLoading={typesLoading}
           isClearable={true}
+          size="xs"
         />
       </Box>
       <Box
