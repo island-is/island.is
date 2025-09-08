@@ -7,7 +7,11 @@ import {
   UpdateOptions,
 } from 'sequelize'
 
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -55,7 +59,6 @@ interface CreateCaseOptions {
 }
 
 interface UpdateCaseOptions {
-  where: UpdateOptions['where']
   transaction?: Transaction
 }
 
@@ -75,7 +78,7 @@ export class CaseRepositoryService {
 
   async findById(id: string, options?: FindByIdOptions): Promise<Case | null> {
     try {
-      this.logger.debug(`Finding case by ID: ${id}`)
+      this.logger.debug(`Finding case by ID ${id}`)
 
       const findOptions: FindOptions = {}
 
@@ -129,9 +132,7 @@ export class CaseRepositoryService {
 
       const result = await this.caseModel.findOne(findOptions)
 
-      this.logger.debug(
-        `Case with conditions ${result ? 'found' : 'not found'}`,
-      )
+      this.logger.debug(`Case ${result ? 'found' : 'not found'}`)
 
       return result
     } catch (error) {
@@ -264,7 +265,7 @@ export class CaseRepositoryService {
     options?: CreateCaseOptions,
   ): Promise<Case> {
     try {
-      this.logger.debug('Creating case with data:', {
+      this.logger.debug('Creating a new case with data:', {
         data: Object.keys(data ?? {}),
       })
 
@@ -276,11 +277,11 @@ export class CaseRepositoryService {
 
       const result = await this.caseModel.create(data, createOptions)
 
-      this.logger.debug(`Case created with ID: ${result.id}`)
+      this.logger.debug(`Created a new case ${result.id}`)
 
       return result
     } catch (error) {
-      this.logger.error('Error creating case with data:', {
+      this.logger.error('Error creating a new case with data:', {
         data: Object.keys(data ?? {}),
         error,
       })
@@ -290,32 +291,48 @@ export class CaseRepositoryService {
   }
 
   async update(
+    caseId: string,
     data: UpdateCase,
-    options: UpdateCaseOptions,
-  ): Promise<[affectedCount: number]> {
+    options?: UpdateCaseOptions,
+  ): Promise<Case> {
     try {
-      this.logger.debug('Updating case with data and conditions:', {
+      this.logger.debug(`Updating case ${caseId} with data:`, {
         data: Object.keys(data ?? {}),
-        where: Object.keys(options?.where ?? {}),
       })
 
       const updateOptions: UpdateOptions = {
-        where: options.where,
+        where: { id: caseId },
       }
 
-      if (options.transaction) {
+      if (options?.transaction) {
         updateOptions.transaction = options.transaction
       }
 
-      const result = await this.caseModel.update(data, updateOptions)
+      const [numberOfAffectedRows, cases] = await this.caseModel.update(data, {
+        ...updateOptions,
+        returning: true,
+      })
 
-      this.logger.debug(`Updated ${result[0]} case(s)`)
+      if (numberOfAffectedRows < 1) {
+        throw new InternalServerErrorException(
+          `Could not update case ${caseId}`,
+        )
+      }
 
-      return result
+      if (numberOfAffectedRows > 1) {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId} with data:`,
+          { data: Object.keys(data ?? {}) },
+        )
+      }
+
+      this.logger.debug(`Updated case ${caseId}`)
+
+      return cases[0]
     } catch (error) {
-      this.logger.error('Error updating case with data and conditions:', {
+      this.logger.error(`Error updating case ${caseId} with data:`, {
         data: Object.keys(data ?? {}),
-        where: Object.keys(options?.where ?? {}),
         error,
       })
 

@@ -67,7 +67,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
     mockPutGeneratedObject.mockResolvedValue(uuid())
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
+    mockUpdate.mockResolvedValue({})
     const mockPostMessageToQueue =
       mockMessageService.sendMessagesToQueue as jest.Mock
     mockPostMessageToQueue.mockResolvedValue(undefined)
@@ -126,8 +126,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should return success', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         { rulingSignatureDate: date },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
       expect(mockAwsS3Service.putGeneratedRequestCaseObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
@@ -162,8 +163,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should set the ruling signature date', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         { rulingSignatureDate: date },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
       expect(mockAwsS3Service.putGeneratedRequestCaseObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
