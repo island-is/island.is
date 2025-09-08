@@ -31,23 +31,3 @@ export const GET_LANDSPITALI_CATALOG = gql`
     }
   }
 `
-
-export const SEND_LANDSPITALI_DIRECT_GRANT_PAYMENT_CONFIRMATION_EMAIL = gql`
-  mutation WebLandspitaliSendDirectGrantPaymentConfirmationEmail(
-    $input: WebLandspitaliDirectGrantPaymentConfirmationInput!
-  ) {
-    webLandspitaliSendDirectGrantPaymentConfirmationEmail(input: $input) {
-      success
-    }
-  }
-`
-
-export const SEND_LANDSPITALI_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL = gql`
-  mutation WebLandspitaliSendMemorialCardPaymentConfirmationEmail(
-    $input: WebLandspitaliMemorialCardPaymentConfirmationInput!
-  ) {
-    webLandspitaliSendMemorialCardPaymentConfirmationEmail(input: $input) {
-      success
-    }
-  }
-`

@@ -15,11 +15,6 @@ const {
   APP_VERSION,
   ENVIRONMENT,
   CONFIGCAT_SDK_KEY,
-  PAYMENTS_WEB_URL,
-  LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL,
-  WEB_PAYMENT_CONFIRMATION_SECRET,
-  REDIS_URL_NODE_01,
-  REDIS_USE_SSL,
 } = process.env
 
 /**
@@ -39,10 +34,6 @@ const nextConfig = {
       {
         source: '/opinbernyskopun/rss.xml',
         destination: '/api/rss/opinbernyskopun',
-      },
-      {
-        source: '/payments/event-callback',
-        destination: '/api/payments/event-callback',
       },
     ]
   },
@@ -194,12 +185,6 @@ const nextConfig = {
     // Requests made by the server are internal request made directly to the api hostname
     graphqlUrl: API_URL,
     graphqlEndpoint: graphqlPath,
-    paymentsWebUrl: PAYMENTS_WEB_URL,
-    landspitaliPaymentFlowEventCallbackUrl:
-      LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL,
-    paymentConfirmationSecret: WEB_PAYMENT_CONFIRMATION_SECRET,
-    redisUrl: REDIS_URL_NODE_01,
-    redisUseSsl: ENVIRONMENT === 'local' ? false : REDIS_USE_SSL === 'true',
   },
 
   publicRuntimeConfig: {

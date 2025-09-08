@@ -27,30 +27,9 @@ export const serviceSetup = (services: {
         prod: 'false',
       },
       ENVIRONMENT: ref((h) => h.env.type),
-      PAYMENTS_WEB_URL: {
-        dev: ref(
-          (ctx) =>
-            `https://${
-              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
-            }beta.dev01.devland.is/greida`,
-        ),
-        staging: `https://beta.staging01.devland.is/greida`,
-        prod: `https://island.is/greida`,
-      },
-      LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
-        (ctx) =>
-          `http://web.${
-            ctx.featureDeploymentName
-              ? `feature-${ctx.featureDeploymentName}`
-              : 'islandis'
-          }.svc.cluster.local/payments/event-callback`,
-      ),
-      REDIS_USE_SSL: 'true',
     })
     .secrets({
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
-      WEB_PAYMENT_CONFIRMATION_SECRET:
-        '/k8s/api/WEB_PAYMENT_CONFIRMATION_SECRET',
     })
     .ingress({
       primary: {
@@ -100,6 +79,5 @@ export const serviceSetup = (services: {
       'search-indexer',
       'services-payments',
     )
-    .redis()
   return web
 }

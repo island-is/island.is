@@ -90,22 +90,6 @@ yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/ex
 
 Currently, in this project, only the `Custom Page` and `Connected Component` content types utilizes the `Translation Namespace` content type for translations
 
-## Payment confirmation flow
-
-apps/web/pages/api/payments/event-callback.ts contains a route that gets called when a payment flow event update occurs.
-
-To test out this functionality locally you'll need the following environment variables:
-
-- `PAYMENTS_WEB_URL`: Base URL for the payments service
-- `WEB_PAYMENT_CONFIRMATION_SECRET`: Secret for payment confirmation validation
-- `LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL`: Callback URL for Landspitali payment events (Only if you are testing the "Landspítali" payment flow specifically, more environment variables might be added in the future if there'll be more login-less payments)
-
-### Redis Configuration for JTI Caching
-
-The application uses Redis to store JWT IDs (JTIs) to prevent replay attacks in payment callbacks. If you want to test things out locally you can run the shared redis-cluster and then set the following env variable:
-
-- `REDIS_URL_NODE_01`: localhost:7010
-
 ## Further Documentation
 
 [Subpages](./docs/subpages.md) - Information on Layouts and Components used when
