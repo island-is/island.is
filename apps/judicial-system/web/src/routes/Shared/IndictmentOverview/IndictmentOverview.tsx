@@ -172,18 +172,24 @@ const IndictmentOverview: FC = () => {
               : formatMessage(strings.inProgressTitle)}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
+          {workingCase.defendants?.map(
+            (defendant) =>
+              features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) &&
+              defendant.verdict && (
+                <Box
+                  key={`${defendant.id}${defendant.verdict.id}`}
+                  marginBottom={2}
+                >
+                  <VerdictStatusAlert
+                    defendant={defendant}
+                    verdict={defendant.verdict}
+                  />
+                </Box>
+              ),
+          )}
           {isDefenceUser(user) &&
             workingCase.defendants?.map((defendant) => (
               <>
-                {features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) &&
-                  defendant.verdict && (
-                    <Box key={`${defendant.id}${defendant.verdict.id}`} marginBottom={2}>
-                      <VerdictStatusAlert
-                        defendant={defendant}
-                        verdict={defendant.verdict}
-                      />
-                    </Box>
-                  )}
                 {defendant.alternativeServiceDescription && (
                   <AlternativeServiceAnnouncement
                     key={defendant.id}
