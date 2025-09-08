@@ -1,12 +1,19 @@
 import { useLazyQuery } from '@apollo/client'
-import { HmsPropertyCodeInfoInput, Query } from '@island.is/api/schema'
+import {
+  HmsPropertyCodeInfoInput,
+  HmsPropertyInfo,
+  Query,
+} from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { PROPERTY_CODE_INFO_QUERY } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
+import { AddressProps } from '../../../shared/types'
 
 export const usePropertyCodeInfo = (
-  setSearchOptions: (options: any[]) => void,
-  setPropertiesByAddressCode: (properties: any) => void,
+  setSearchOptions: (options: Array<AddressProps>) => void,
+  setPropertiesByAddressCode: (
+    properties: Array<HmsPropertyInfo> | undefined,
+  ) => void,
   setPropertyInfoError: (error: string | null) => void,
 ) => {
   const { formatMessage } = useLocale()

@@ -2,15 +2,18 @@ import { useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { ADDRESS_SEARCH_QUERY } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
-import { HmsSearchInput, Query } from '@island.is/api/schema'
+import { HmsPropertyInfo, HmsSearchInput, Query } from '@island.is/api/schema'
+import { AddressProps } from '../../../shared/types'
 
 /**
  * GraphQL query to fetch and format address search results.
  */
 export const useAddressSearch = (
-  setSearchOptions: (options: any[]) => void,
+  setSearchOptions: (options: Array<AddressProps>) => void,
   setAddressSearchError: (error: string | null) => void,
-  setPropertiesByAddressCode: (properties: any) => void,
+  setPropertiesByAddressCode: (
+    properties?: Array<HmsPropertyInfo> | undefined,
+  ) => void,
 ) => {
   const { formatMessage } = useLocale()
 

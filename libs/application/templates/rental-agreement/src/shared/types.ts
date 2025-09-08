@@ -1,5 +1,6 @@
 import { YesOrNoEnum } from '@island.is/application/core'
 import { NextStepInReviewOptions } from '../utils/enums'
+import { HmsPropertyInfo } from '@island.is/api/schema'
 
 export type Maybe<T> = T | null
 
@@ -46,17 +47,23 @@ export interface PropertyUnit {
 }
 
 export interface AddressProps {
-  label: string
-  value: string
-  address?: Maybe<Scalars['String']>
   addressCode?: Maybe<Scalars['Float']>
-  landCode?: Maybe<Scalars['Float']>
-  municipalityCode?: Maybe<Scalars['Float']>
+  address?: Maybe<Scalars['String']>
   municipalityName?: Maybe<Scalars['String']>
-  numOfConnectedProperties?: Maybe<Scalars['Float']>
+  municipalityCode?: Maybe<Scalars['Float']>
   postalCode?: Maybe<Scalars['Float']>
+  landCode?: Maybe<Scalars['Float']>
   streetName?: Maybe<Scalars['String']>
   streetNumber?: Maybe<Scalars['Float']>
+  label: string
+  value: string
+  numOfConnectedProperties?: Maybe<Scalars['Float']>
+  units?: PropertyUnit[]
+  checkedUnits?: Record<string, boolean>
+  numOfRooms?: Record<string, number>
+  changedValueOfUnitSize?: Record<string, number>
+  selectedPropertyCode?: Maybe<Scalars['Float']>
+  propertiesByAddressCode?: HmsPropertyInfo[]
 }
 
 export interface ParticipantsSection {

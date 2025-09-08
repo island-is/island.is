@@ -6,7 +6,7 @@ import { Table } from '@island.is/island-ui/core'
 import { HmsPropertyInfo } from '@island.is/api/schema'
 
 type Props = {
-  propertiesByAddressCode: HmsPropertyInfo[]
+  propertiesByAddressCode: HmsPropertyInfo[] | undefined
   tableExpanded: Record<string, boolean>
   toggleExpand: (propertyId: number) => void
   checkedUnits: Record<string, boolean>
@@ -80,8 +80,10 @@ export const PropertyTableBody = ({
                     isTableExpanded={
                       tableExpanded[unit.propertyCode ?? 0] || false
                     }
-                    unitSizeValue={unitSizeChangedValue[unitKey] ?? unit.size}
-                    numOfRoomsValue={numOfRoomsValue[unitKey]}
+                    unitSizeValue={
+                      unitSizeChangedValue[unitKey] ?? unit.size ?? 0
+                    }
+                    numOfRoomsValue={numOfRoomsValue[unitKey] ?? 0}
                     isUnitSizeDisabled={!checkedUnits[unitKey]}
                     isNumOfRoomsDisabled={!checkedUnits[unitKey]}
                     onCheckboxChange={(e) =>

@@ -2,17 +2,24 @@ import { useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { PROPERTY_INFO_QUERY } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
-import { HmsPropertyInfoInput, Query } from '@island.is/api/schema'
+import {
+  HmsPropertyInfo,
+  HmsPropertyInfoInput,
+  Query,
+} from '@island.is/api/schema'
+import { AddressProps } from '../../../shared/types'
 
 /**
  * GraphQL query to fetch and format property info results based on addressCode.
  */
 export const usePropertyInfo = (
   id: string,
-  storedValue: any,
-  setValue: (id: string, value: any) => void,
-  setPropertiesByAddressCode: (properties: any) => void,
-  setSelectedAddress: (address: any) => void,
+  storedValue: AddressProps,
+  setValue: (id: string, value: AddressProps) => void,
+  setPropertiesByAddressCode: (
+    properties: Array<HmsPropertyInfo> | undefined,
+  ) => void,
+  setSelectedAddress: (address: AddressProps | undefined) => void,
   setPropertyInfoError: (error: string | null) => void,
   checkedUnits: Record<string, boolean>,
   numOfRoomsValue: Record<string, number>,
@@ -39,6 +46,14 @@ export const usePropertyInfo = (
       }
 
       const propertyValues = data.hmsPropertyInfo?.propertyInfos?.[0]
+      if (!propertyValues) {
+        setSelectedAddress(undefined)
+        setValue(id, {
+          ...storedValue,
+          propertiesByAddressCode: data?.hmsPropertyInfo?.propertyInfos || [],
+        })
+        return
+      }
 
       const addressValues = {
         addressCode: propertyValues?.addressCode,

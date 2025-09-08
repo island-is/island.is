@@ -71,9 +71,7 @@ export const PropertySearchInput = ({
               m.registerProperty.search.propertySearchPlaceholder,
             )}
             initialInputValue={selectedAddress ? selectedAddress.label : ''}
-            inputValue={
-              searchTerm || (selectedAddress ? selectedAddress.label : '')
-            }
+            inputValue={searchTerm}
             closeMenuOnSubmit
             size="large"
             colored

@@ -30,7 +30,7 @@ export const PropertySearch = ({ field, errors }: Props) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue, getValues } = useFormContext()
   const { id } = field
-  const storedValue = getValues(id)
+  const storedValue: AddressProps = getValues(id)
 
   const [addressSearchError, setAddressSearchError] = useState<string | null>(
     null,
@@ -356,7 +356,7 @@ export const PropertySearch = ({ field, errors }: Props) => {
               <Table.Table id="searchresults.table">
                 <PropertyTableHeader />
                 <PropertyTableBody
-                  propertiesByAddressCode={propertiesByAddressCode}
+                  propertiesByAddressCode={propertiesByAddressCode || []}
                   tableExpanded={tableExpanded}
                   toggleExpand={toggleExpand}
                   checkedUnits={checkedUnits}
