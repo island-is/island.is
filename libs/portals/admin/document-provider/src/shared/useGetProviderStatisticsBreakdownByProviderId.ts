@@ -55,10 +55,13 @@ export const useGetProviderStatisticsBreakdownByProviderId = (
     }
   }, [error, loading, nationalId, fromDate, toDate, formatMessage])
 
-  const breakdown = data?.statisticsBreakdownByProviderId ?? { totalCount: 0, items: [] }
+  const breakdown = data?.statisticsBreakdownByProviderId ?? {
+    totalCount: 0,
+    items: [],
+  }
 
   // Prepare chart data if breakdown is available
-  const chartData: Array<DocumentProviderDashboardChartData>  | undefined =
+  const chartData: Array<DocumentProviderDashboardChartData> | undefined =
     breakdown.items.length
       ? breakdown.items.map(
           (
@@ -66,17 +69,17 @@ export const useGetProviderStatisticsBreakdownByProviderId = (
           ): DocumentProviderDashboardChartData => ({
             name:
               item.year && item.month
-            ? new Date(item.year, item.month - 1).toLocaleString('is', {
-                month: 'short',
-              })
-            : 'Unknown',
-        published: item.statistics?.published ?? 0,
-        winning: (item.statistics?.published ?? 0) * DELIVERY_PRICE,
-        opened: item.statistics?.opened ?? 0,
-        failures: item.statistics?.failures ?? 0,
-      }),
-    ): undefined
-  
+                ? new Date(item.year, item.month - 1).toLocaleString('is', {
+                    month: 'short',
+                  })
+                : 'Unknown',
+            published: item.statistics?.published ?? 0,
+            winning: (item.statistics?.published ?? 0) * DELIVERY_PRICE,
+            opened: item.statistics?.opened ?? 0,
+            failures: item.statistics?.failures ?? 0,
+          }),
+        )
+      : undefined
 
   return {
     breakdown,
