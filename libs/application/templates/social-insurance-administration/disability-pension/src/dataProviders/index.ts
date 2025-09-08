@@ -61,12 +61,12 @@ export const SocialInsuranceAdministrationSelfAssessmentQuestionsApi =
     namespace: 'SocialInsuranceAdministration',
   })
 
-/*export const SocialInsuranceAdministrationIsApplicantEligibleApi =
+export const SocialInsuranceAdministrationIsApplicantEligibleApi =
   defineTemplateApi({
     action: 'getIsEligible',
     externalDataId: 'socialInsuranceAdministrationIsApplicantEligible',
     namespace: 'SocialInsuranceAdministration',
-  })*/
+  })
 
 export const SocialInsuranceAdministrationIncomePlanConditionsApi =
   defineTemplateApi({

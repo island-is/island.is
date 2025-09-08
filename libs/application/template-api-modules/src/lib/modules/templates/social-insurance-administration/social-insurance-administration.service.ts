@@ -544,18 +544,27 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
-    if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
-      const { applicationType } = getOAPApplicationAnswers(application.answers)
+    switch(application.typeId) {
+      case ApplicationTypes.OLD_AGE_PENSION: {
+        const { applicationType } = getOAPApplicationAnswers(application.answers)
 
-      return await this.siaClientService.getIsEligible(
-        auth,
-        applicationType.toLowerCase(),
-      )
-    } else {
-      return await this.siaClientService.getIsEligible(
-        auth,
-        application.typeId.toLowerCase(),
-      )
+        return await this.siaClientService.getIsEligible(
+          auth,
+          applicationType.toLowerCase(),
+        )
+      }
+      case ApplicationTypes.DISABILITY_PENSION: {
+        return await this.siaClientService.getIsEligible(
+          auth,
+         'disabilitypension,'
+        )
+      }
+      default: {
+        return await this.siaClientService.getIsEligible(
+          auth,
+          application.typeId.toLowerCase(),
+        )
+      }
     }
   }
 

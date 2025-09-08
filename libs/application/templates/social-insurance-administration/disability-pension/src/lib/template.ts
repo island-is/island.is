@@ -39,6 +39,7 @@ import {
   SocialInsuranceAdministrationCountriesApi,
   SocialInsuranceAdministrationLanguagesApi,
   SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import {
   Actions,
@@ -102,7 +103,7 @@ const template: ApplicationTemplate<
                 SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
                 SocialInsuranceAdministrationCountriesApi,
                 SocialInsuranceAdministrationLanguagesApi,
-                //SocialInsuranceAdministrationIsApplicantEligibleApi,
+                SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
               ],
               delete: true,
@@ -110,9 +111,18 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
+          [DefaultEvents.SUBMIT]: [{
             target: States.DRAFT,
+            cond: (application) =>
+              getValueViaPath(
+                application?.application?.externalData,
+                'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
+              ) as boolean
           },
+          {
+            actions: 'setApproveExternalData',
+          },
+          ],
         },
       },
       [States.DRAFT]: {

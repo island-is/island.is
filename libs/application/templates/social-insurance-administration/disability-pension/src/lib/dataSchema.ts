@@ -143,12 +143,12 @@ export const dataSchema = z.object({
   }),
   backgroundInfoLanguage: z
     .object({
-      language: z.nativeEnum(LanguageEnum),
+      language: z.string(),
       other: z.string().optional(),
     })
     .refine(
       ({ language, other }) => {
-        if (language === LanguageEnum.OTHER) {
+        if (language === 'other') {
           return other && other.length > 0
         }
         return true
