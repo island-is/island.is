@@ -4,7 +4,7 @@ export class Items {
   @ApiProperty({ type: String })
   label?: string
 
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: String, description: 'html string' })
   value?: string
 
   @ApiProperty({ type: String, enum: ['email', 'tel'] })
