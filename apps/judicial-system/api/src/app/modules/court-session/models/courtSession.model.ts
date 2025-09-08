@@ -4,6 +4,7 @@ import {
   CourtSessionClosedLegalBasis,
   CourtSessionRulingType,
 } from '@island.is/judicial-system/types'
+
 import { User } from '../../user'
 
 registerEnumType(CourtSessionClosedLegalBasis, {

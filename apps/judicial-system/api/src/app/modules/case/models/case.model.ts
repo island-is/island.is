@@ -26,10 +26,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { CourtSession } from '../../court-session'
 import { CivilClaimant, Defendant } from '../../defendant'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
-import { CourtSession } from '../../court-session'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 import { Victim } from '../../victim'
