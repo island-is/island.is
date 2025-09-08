@@ -16,17 +16,7 @@ import {
   type MemorialCardPaymentFlowMetadata,
   PaymentType,
 } from './types'
-import { EmailService } from '@island.is/email-service'
-import {
-  DirectGrantPaymentConfirmationInput,
-  MemorialCardPaymentConfirmationInput,
-} from './dto/paymentConfirmation.input'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import {
-  generateDirectGrantPaymentConfirmationEmailMessage,
-  generateMemorialCardPaymentConfirmationEmailMessage,
-} from './utils'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 // eslint-disable-next-line local-rules/disallow-kennitalas
 const LANDSPITALI_NATIONAL_ID = '5003002130'
@@ -39,65 +29,9 @@ export class LandspitaliService {
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     @Inject(LandspitaliApiModuleConfig.KEY)
     private readonly config: ConfigType<typeof LandspitaliApiModuleConfig>,
-    private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
-
-  async sendDirectGrantPaymentConfirmationEmail(
-    input: DirectGrantPaymentConfirmationInput,
-  ): Promise<boolean> {
-    if (input.validationSecret !== this.config.webValidationSecret) {
-      this.logger.warn(
-        'Invalid web validation secret for direct grant payment confirmation email',
-      )
-      return false
-    }
-    try {
-      await this.emailService.sendEmail({
-        to: this.config.paymentConfirmationSendToEmail,
-        from: this.config.paymentConfirmationSendFromEmail,
-        subject: this.config.directGrantPaymentConfirmationSubject,
-        text: generateDirectGrantPaymentConfirmationEmailMessage(input),
-        replyTo: input.payerEmail,
-      })
-      return true
-    } catch (error) {
-      this.logger.error(
-        'Failed to send Landspítali direct grant payment confirmation email',
-        { message: error.message },
-      )
-      return false
-    }
-  }
-
-  async sendMemorialCardPaymentConfirmationEmail(
-    input: MemorialCardPaymentConfirmationInput,
-  ): Promise<boolean> {
-    if (input.validationSecret !== this.config.webValidationSecret) {
-      this.logger.warn(
-        'Invalid web validation secret for memorial card payment confirmation email',
-      )
-      return false
-    }
-    try {
-      await this.emailService.sendEmail({
-        to: this.config.paymentConfirmationSendToEmail,
-        from: this.config.paymentConfirmationSendFromEmail,
-        subject: this.config.memorialCardPaymentConfirmationSubject,
-        text: generateMemorialCardPaymentConfirmationEmailMessage(input),
-        replyTo: input.payerEmail,
-      })
-      return true
-    } catch (error) {
-      this.logger.error(
-        'Failed to send Landspítali memorial card payment confirmation email',
-        { message: error.message },
-      )
-      return false
-    }
-  }
 
   async getCatalog(): Promise<Catalog> {
     return this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
@@ -108,21 +42,6 @@ export class LandspitaliService {
   async createMemorialCardPaymentUrl(
     input: CreateMemorialCardPaymentUrlInput,
   ): Promise<CreateMemorialCardPaymentUrlResponse> {
-    const skipsPaymentStep = await this.featureFlagService.getValue(
-      Features.landspitaliMemorialCardSkipsPaymentStep,
-      false,
-    )
-
-    if (skipsPaymentStep) {
-      await this.sendMemorialCardPaymentConfirmationEmail({
-        ...input,
-        validationSecret: this.config.webValidationSecret,
-      })
-      return {
-        url: '',
-      }
-    }
-
     if (input.fundChargeItemCode === FEE_CHARGE_ITEM_CODE) {
       this.logger.warn(
         'Landspitali fund charge item code is fee charge item code',
@@ -225,21 +144,6 @@ export class LandspitaliService {
   async createDirectGrantPaymentUrl(
     input: CreateDirectGrantPaymentUrlInput,
   ): Promise<CreateDirectGrantPaymentUrlResponse> {
-    const skipsPaymentStep = await this.featureFlagService.getValue(
-      Features.landspitaliDirectGrantSkipsPaymentStep,
-      false,
-    )
-
-    if (skipsPaymentStep) {
-      await this.sendDirectGrantPaymentConfirmationEmail({
-        ...input,
-        validationSecret: this.config.webValidationSecret,
-      })
-      return {
-        url: '',
-      }
-    }
-
     if (input.grantChargeItemCode === FEE_CHARGE_ITEM_CODE) {
       this.logger.warn(
         'Landspitali grant charge item code is fee charge item code',

@@ -9,11 +9,6 @@ import { CreateMemorialCardPaymentUrlResponse } from './dto/createMemorialCardPa
 import { CreateDirectGrantPaymentUrlInput } from './dto/createDirectGrantPaymentUrl.input'
 import { CreateDirectGrantPaymentUrlResponse } from './dto/createDirectGrantPaymentUrl.response'
 import { Catalog } from './dto/catalog.response'
-import {
-  DirectGrantPaymentConfirmationInput,
-  MemorialCardPaymentConfirmationInput,
-} from './dto/paymentConfirmation.input'
-import { PaymentConfirmationEmailResponse } from './dto/paymentConfirmation.response'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -45,35 +40,5 @@ export class LandspitaliResolver {
   })
   async getCatalog(): Promise<Catalog> {
     return this.landspitaliService.getCatalog()
-  }
-
-  @Mutation(() => PaymentConfirmationEmailResponse, {
-    name: 'webLandspitaliSendDirectGrantPaymentConfirmationEmail',
-  })
-  async sendDirectGrantPaymentConfirmationEmail(
-    @Args('input') input: DirectGrantPaymentConfirmationInput,
-  ): Promise<PaymentConfirmationEmailResponse> {
-    const success =
-      await this.landspitaliService.sendDirectGrantPaymentConfirmationEmail(
-        input,
-      )
-    return {
-      success,
-    }
-  }
-
-  @Mutation(() => PaymentConfirmationEmailResponse, {
-    name: 'webLandspitaliSendMemorialCardPaymentConfirmationEmail',
-  })
-  async sendMemorialCardPaymentConfirmationEmail(
-    @Args('input') input: MemorialCardPaymentConfirmationInput,
-  ): Promise<PaymentConfirmationEmailResponse> {
-    const success =
-      await this.landspitaliService.sendMemorialCardPaymentConfirmationEmail(
-        input,
-      )
-    return {
-      success,
-    }
   }
 }
