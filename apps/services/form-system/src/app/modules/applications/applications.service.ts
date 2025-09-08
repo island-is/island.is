@@ -574,7 +574,8 @@ export class ApplicationsService {
     return form
   }
 
-  private updateObjectValues<T extends Record<string, unknown>>(
+  // eslint-disable-next-line
+  private updateObjectValues<T extends Record<string, any>>(
     source: T,
     target: T,
   ): T {

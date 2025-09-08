@@ -215,7 +215,8 @@ export class ZendeskService {
     return body
   }
 
-  private getValue(val: unknown, fieldType: string): string {
+  // eslint-disable-next-line
+  private getValue(val: any, fieldType: string): string {
     if (fieldType === FieldTypesEnum.CHECKBOX) {
       if (val === true) {
         return 'Valið'
