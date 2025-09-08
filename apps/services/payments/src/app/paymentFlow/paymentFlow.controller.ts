@@ -7,6 +7,9 @@ import {
   ParseUUIDPipe,
   UseGuards,
   Delete,
+  Query,
+  Headers,
+  BadRequestException,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
@@ -21,6 +24,8 @@ import {
 } from '@island.is/nest/feature-flags'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { GetPaymentFlowStatusDTO } from './dtos/getPaymentFlowStatus.dto'
+import { GetPaymentFlowsPaginatedDTO } from './dtos/getPaymentFlow.dto'
+import { GetPaymentFlowsInput } from './dtos/getPaymentFlows.input'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -32,6 +37,31 @@ import { GetPaymentFlowStatusDTO } from './dtos/getPaymentFlowStatus.dto'
 export class PaymentFlowController {
   constructor(private readonly paymentFlowService: PaymentFlowService) {}
 
+  @Get('/')
+  @Documentation({
+    description:
+      'Get payment flows and events by payer nationalId or paymentFlowId.',
+    response: { status: 200, type: GetPaymentFlowsPaginatedDTO },
+  })
+  getPaymentFlows(
+    @Query() input: GetPaymentFlowsInput,
+    @Headers('X-Query-National-Id') payerNationalId: string,
+  ): Promise<GetPaymentFlowsPaginatedDTO> {
+    if (!payerNationalId && !input.search) {
+      throw new BadRequestException(
+        'Either payerNationalId or search must be provided',
+      )
+    }
+
+    return this.paymentFlowService.searchPaymentFlows(
+      payerNationalId,
+      input.search,
+      input.limit,
+      input.after,
+      input.before,
+    ) as Promise<GetPaymentFlowsPaginatedDTO>
+  }
+
   @Get(':id')
   @Documentation({
     description: 'Retrieves payment flow information by ID.',
@@ -39,8 +69,9 @@ export class PaymentFlowController {
   })
   getPaymentFlow(
     @Param('id', new ParseUUIDPipe()) id: string,
+    @Query('includeEvents') includeEvents?: boolean,
   ): Promise<GetPaymentFlowDTO | null> {
-    return this.paymentFlowService.getPaymentFlow(id)
+    return this.paymentFlowService.getPaymentFlow(id, includeEvents)
   }
 
   @Get(':id/status')

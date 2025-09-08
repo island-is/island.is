@@ -1085,6 +1085,9 @@
       "@island.is/portals/admin/signature-collection": [
         "libs/portals/admin/signature-collection/src/index.ts"
       ],
+      "@island.is/portals/admin/payments": [
+        "libs/portals/admin/payments/src/index.ts"
+      ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/my-pages/air-discount": [
         "libs/portals/my-pages/air-discount/src/index.ts"

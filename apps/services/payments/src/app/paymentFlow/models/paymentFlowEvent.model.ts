@@ -63,10 +63,10 @@ export class PaymentFlowEvent extends Model<
 
   @ApiProperty()
   @Column({
-    type: DataType.ENUM('update', 'success', 'error', 'deleted'),
+    type: DataType.ENUM('create', 'update', 'success', 'error', 'deleted'),
     allowNull: false,
   })
-  type!: 'update' | 'success' | 'error' | 'deleted'
+  type!: 'create' | 'update' | 'success' | 'error' | 'deleted'
 
   @ApiProperty()
   @Column({
