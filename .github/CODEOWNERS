@@ -452,6 +452,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/aosh/transfer-of-machine-ownership                                            @island-is/origo
 /libs/application/templates/aosh/work-accident-notification                                               @island-is/origo
 /libs/application/templates/aosh/practical-exam                                                           @island-is/origo
+/libs/application/templates/aosh/request-for-inspection                                                   @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/aosh                                     @island-is/origo
 
 /libs/application/templates/healthcare-license-certificate/                                               @island-is/origo
