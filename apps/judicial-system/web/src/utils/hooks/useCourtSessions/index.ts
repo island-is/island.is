@@ -1,7 +1,9 @@
 import { useCallback } from 'react'
-import { useUpdateCourtSessionMutation } from './updateCourtSession.generated'
-import { UpdateCourtSessionInput } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { toast } from '@island.is/island-ui/core'
+import { UpdateCourtSessionInput } from '@island.is/judicial-system-web/src/graphql/schema'
+
+import { useUpdateCourtSessionMutation } from './updateCourtSession.generated'
 
 const useCourtSessions = () => {
   const [updateCourtSessionMutation] = useUpdateCourtSessionMutation()
