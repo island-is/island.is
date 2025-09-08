@@ -259,7 +259,7 @@ describe('InternalCaseController - Archive', () => {
       const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
       const mockUpdate = mockCaseRepositoryService.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
+      mockUpdate.mockResolvedValueOnce(theCase)
       const mockUuidFactory = uuidFactory as jest.Mock
       mockUuidFactory.mockReturnValueOnce(iv)
       const mockParse = CryptoJS.enc.Hex.parse as jest.Mock
@@ -365,6 +365,7 @@ describe('InternalCaseController - Archive', () => {
         { transaction },
       )
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         {
           description: '',
           demands: '',
@@ -396,7 +397,7 @@ describe('InternalCaseController - Archive', () => {
           indictmentReturnedExplanation: '',
           isArchived: true,
         },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
       expect(then.result).toEqual({ caseArchived: true })
     })

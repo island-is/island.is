@@ -7,13 +7,21 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseInterceptors,
 } from '@nestjs/common'
 import { Get } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiResponse } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiResponse,
+} from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { PoliceFileTypeCode } from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
@@ -21,6 +29,7 @@ import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
 import { Defender } from './models/defender.model'
 import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
+import { PoliceDocumentSupplements } from './models/policeDocumentSupplements.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import { EventInterceptor } from './app.interceptor'
 import { AppService } from './app.service'
@@ -94,6 +103,33 @@ export class AppController {
     return this.appService.updatePoliceDocumentDelivery(
       policeDocumentId,
       updatePoliceDocumentDelivery,
+    )
+  }
+
+  // called by the national commissioners office
+  @Get('getPoliceDocumentSupplements/:policeDocumentId')
+  @ApiQuery({
+    name: 'fileTypeCode',
+    required: true,
+    description: 'Relevant file type code for document id',
+    type: String,
+  })
+  @ApiResponse({ status: 400, description: 'Invalid input' })
+  @ApiResponse({
+    status: 502,
+    description: 'Failed to get document supplements',
+  })
+  async getDocumentSupplements(
+    @Param('policeDocumentId', new ParseUUIDPipe()) policeDocumentId: string,
+    @Query('fileTypeCode') fileTypeCode: PoliceFileTypeCode,
+  ): Promise<PoliceDocumentSupplements> {
+    this.logger.info(
+      `Get document supplements for ${policeDocumentId} with file type code ${fileTypeCode}`,
+    )
+
+    return this.appService.getPoliceDocumentSupplements(
+      fileTypeCode,
+      policeDocumentId,
     )
   }
 }
