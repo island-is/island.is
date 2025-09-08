@@ -49,7 +49,7 @@ export const Done: Form = buildForm({
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
-              url: '/minarsidur/min-gogn/listar/',
+              url: '/minarsidur/min-gogn/listar/sveitarstjornar-medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
               messageColor: 'blue600',

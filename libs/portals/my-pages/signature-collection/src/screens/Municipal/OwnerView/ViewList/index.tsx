@@ -34,7 +34,10 @@ const ViewList = () => {
             <ListActions listId={listInfo.id} />
             <Divider />
           </Box>
-          <Signees collectionType={collectionType} />
+          <Signees
+            collectionType={collectionType}
+            totalSignees={listInfo?.numberOfSignatures ?? 0}
+          />
         </Stack>
       )}
     </Box>

@@ -26,8 +26,6 @@ import EmptyState from '../../shared-components/emptyState'
 import StartAreaCollection from './startCollection'
 import { useStartCollectionMutation } from './startCollection/startCollection.generated'
 import sortBy from 'lodash/sortBy'
-import ActionDrawer from '../../shared-components/actionDrawer'
-import { Actions } from '../../shared-components/actionDrawer/ListActions'
 
 const AllMunicipalities = ({
   isProcurationHolder,
@@ -97,9 +95,6 @@ const AllMunicipalities = ({
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
             marginBottom={4}
-            buttonGroup={
-              <ActionDrawer allowedActions={[Actions.DownloadReports]} />
-            }
           />
           <Divider />
           <Box marginTop={9} />
@@ -138,8 +133,7 @@ const AllMunicipalities = ({
                 <ActionCard
                   key={area.id}
                   heading={area.name}
-                  eyebrow={formatMessage(m.municipality)}
-                  text={
+                  eyebrow={
                     formatMessage(m.totalListsPerMunicipality) +
                     allLists.filter((list) => list.area.id === area.id).length
                   }

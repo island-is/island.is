@@ -75,6 +75,7 @@ export const Municipality = () => {
             buttonGroup={
               <ActionDrawer
                 allowedActions={[
+                  Actions.DownloadReports,
                   Actions.CreateCollection,
                   Actions.CompleteCollectionProcessing,
                 ]}

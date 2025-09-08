@@ -1,9 +1,6 @@
 import { Button, Drawer, Stack, Text } from '@island.is/island-ui/core'
 import { useLoaderData } from 'react-router-dom'
-import {
-  SignatureCollectionCollectionType,
-  SignatureCollectionList,
-} from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import ActionExtendDeadline from '../extendDeadline'
 import ActionLockList from '../lockList'
 import CompleteListReview from '../completeListReview'
@@ -84,15 +81,7 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
           <ReviewCandidates candidates={collection.candidates} />
         )}
         {allowedActions?.includes(Actions.CompleteCollectionProcessing) && (
-          <CompleteCollectionProcessing
-            collection={collection}
-            areaId={
-              collection.collectionType ===
-              SignatureCollectionCollectionType.LocalGovernmental
-                ? list?.area?.collectionId ?? undefined
-                : undefined
-            }
-          />
+          <CompleteCollectionProcessing collection={collection} />
         )}
       </Stack>
     </Drawer>
