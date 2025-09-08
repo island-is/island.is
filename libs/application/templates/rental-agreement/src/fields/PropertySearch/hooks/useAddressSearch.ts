@@ -32,7 +32,8 @@ export const useAddressSearch = (
     onCompleted: (data) => {
       setAddressSearchError(null)
       if (data.hmsSearch) {
-        const searchOptions = data.hmsSearch.addresses.map((address) => ({
+        const addresses = data.hmsSearch?.addresses ?? []
+        const searchOptions = addresses.map((address) => ({
           ...address,
           label: `${address.address}, ${address.postalCode} ${address.municipalityName}`,
           value: `${address.addressCode}`,
