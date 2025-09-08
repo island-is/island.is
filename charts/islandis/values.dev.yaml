@@ -2009,8 +2009,9 @@ payment-flow-update-handler:
     PAYMENT_FLOW_UPDATE_HANDLER_API_URL: 'http://payment-flow-update-handler'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'services-payments'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -4128,12 +4129,8 @@ web:
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'dev'
-    LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: 'http://web.islandis.svc.cluster.local/payments/event-callback'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
-    PAYMENTS_WEB_URL: 'https://beta.dev01.devland.is/greida'
-    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-    REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.dev01.devland.is'
   grantNamespaces:
@@ -4142,7 +4139,6 @@ web:
     - 'application-system'
     - 'consultation-portal'
     - 'search-indexer'
-    - 'services-payments'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4192,7 +4188,6 @@ web:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
-    WEB_PAYMENT_CONFIRMATION_SECRET: '/k8s/api/WEB_PAYMENT_CONFIRMATION_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
