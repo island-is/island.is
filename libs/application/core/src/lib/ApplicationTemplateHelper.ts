@@ -22,6 +22,7 @@ import {
   TemplateApi,
   PendingAction,
 } from '@island.is/application/types'
+import { formatText } from './formUtils'
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -290,40 +291,53 @@ export class ApplicationTemplateHelper<
       const action = pendingAction(application, currentRole, nationalId)
       return {
         displayStatus: action.displayStatus,
-        content: action.content ? formatMessage(action.content) : undefined,
-        title: action.title ? formatMessage(action.title) : undefined,
-        button: action.button ? formatMessage(action.button) : undefined,
+        content: action.content
+          ? formatText(action.content, application, formatMessage)
+          : undefined,
+        title: action.title
+          ? formatText(action.title, application, formatMessage)
+          : undefined,
+        button: action.button
+          ? formatText(action.button, application, formatMessage)
+          : undefined,
       }
     }
     return {
       displayStatus: pendingAction.displayStatus,
       title: pendingAction.title
-        ? formatMessage(pendingAction.title)
+        ? formatText(pendingAction.title, application, formatMessage)
         : undefined,
       content: pendingAction.content
-        ? formatMessage(pendingAction.content)
+        ? formatText(pendingAction.content, application, formatMessage)
         : undefined,
       button: pendingAction.button
-        ? formatMessage(pendingAction.button)
+        ? formatText(pendingAction.button, application, formatMessage)
         : undefined,
     }
   }
 
   getHistoryLogs(
     stateKey: string = this.application.state,
-    event: Event<TEvents>,
+    exitEvent: Event<TEvents>,
+    exitEventSubject: string,
+    exitEventActor: string,
   ): StaticText | undefined {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
     const historyLogs = stateInfo?.actionCard?.historyLogs
+    let historyLog = null;
 
     if (Array.isArray(historyLogs)) {
-      return historyLogs?.find((historyLog) => historyLog.onEvent === event)
-        ?.logMessage
+      historyLog =  historyLogs?.find((historyLog) => historyLog.onEvent === exitEvent)
     } else {
-      return historyLogs?.onEvent === event
-        ? historyLogs?.logMessage
+      historyLog =  historyLogs?.onEvent === exitEvent
+        ? historyLogs
         : undefined
     }
+
+    if (typeof historyLog?.logMessage === 'function') {
+      return historyLog.log(historyLog.logMessage, exitEventSubject, exitEventActor)
+    }
+
   }
 }

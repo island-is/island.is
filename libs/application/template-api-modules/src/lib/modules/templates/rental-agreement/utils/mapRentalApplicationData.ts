@@ -32,7 +32,6 @@ export const mapRentalApplicationData = (
     landlords,
     landlordRepresentatives,
     tenants,
-    tenantRepresentatives,
     searchResults,
     units,
     categoryType,
@@ -95,10 +94,6 @@ export const mapRentalApplicationData = (
       ...mapPersonToArray(person),
       isRepresentative: false,
     })) || []),
-    ...(tenantRepresentatives?.map((person) => ({
-      ...mapPersonToArray(person),
-      isRepresentative: true,
-    })) || []),
   ]
 
   const propertyId = getPropertyId(units)
@@ -130,7 +125,7 @@ export const mapRentalApplicationData = (
       hasInspectionFiles: files && files.length > 0,
       indipendantInspector: inspectorName,
       fireProtections: {
-        fireBlanket: parseToNumber(fireBlanket || '0'),
+        fireBlanket: fireBlanket === YesOrNoEnum.YES ? 1 : 0,
         emergencyExits: parseToNumber(emergencyExits || '0'),
         smokeDetectors: parseToNumber(smokeDetectors || '0'),
         fireExtinguisher: parseToNumber(fireExtinguisher || '0'),

@@ -4,6 +4,7 @@ import { useApplicationContext } from '../../context/ApplicationProvider'
 import { SectionTypes } from '@island.is/form-system/ui'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Summary } from './components/Summary/Summary'
+import { Completed } from './components/Completed/Completed'
 import { Field } from './components/Field/Field'
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
@@ -54,6 +55,8 @@ export const Screen = () => {
         {currentSectionType === SectionTypes.SUMMARY &&
           !!state.application.hasSummaryScreen &&
           !currentSection?.data?.isHidden && <Summary state={state} />}
+
+        {currentSectionType === SectionTypes.COMPLETED && <Completed />}
         {currentScreen &&
           currentScreen?.data?.fields
             ?.filter(
