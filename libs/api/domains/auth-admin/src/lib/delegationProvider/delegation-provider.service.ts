@@ -16,7 +16,7 @@ export class DelegationProviderService extends MultiEnvironmentService {
     const delegationProvidersSettledPromises = await Promise.allSettled(
       environments.map(async (environment) =>
         this.makeRequest(user, environment, (api) =>
-          api.providersControllerGetDelegationProvidersRaw(),
+          api.providersControllerGetDelegationProvidersV2Raw(),
         ),
       ),
     )

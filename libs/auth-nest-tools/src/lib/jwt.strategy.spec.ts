@@ -33,6 +33,8 @@ describe('JwtStrategy#validate', () => {
         nationalId: '1234564321',
         scope: ['test-scope-2'],
       },
+      aud: 'audience',
+      iss: 'issuer',
     }
   })
 
@@ -91,6 +93,8 @@ describe('JwtStrategy#validate', () => {
           client_id: 'test-client-3',
         },
       },
+      aud: 'audience',
+      iss: 'issuer',
     }
     const request = {
       headers: {
@@ -122,6 +126,8 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
+      aud: 'audience',
+      iss: 'issuer',
     }
     const request = {
       headers: {
@@ -151,6 +157,8 @@ describe('JwtStrategy#validate', () => {
         nationalId: '1234564321',
         scope: ['test-scope-2'],
       },
+      aud: 'audience',
+      iss: 'issuer',
     }
 
     // Act
@@ -172,12 +180,16 @@ describe('JwtStrategy#validate', () => {
       scope: ['test-scope-1'],
       client_id: 'test-client',
       client_nationalId: '1234565555',
+      aud: 'audience',
+      iss: 'issuer',
     }
 
     const personPayload: JwtPayload = {
       scope: ['test-scope-1'],
       client_id: 'test-client',
       nationalId: '1234567890',
+      aud: 'audience',
+      iss: 'issuer',
     }
 
     // Act

@@ -15,7 +15,7 @@ export class TenantsService extends MultiEnvironmentService {
     const tenantsSettledPromises = await Promise.allSettled(
       environments.map((environment) =>
         this.makeRequest(user, environment, (api) =>
-          api.meTenantsControllerFindAllRaw(),
+          api.meTenantsControllerFindAllV2Raw(),
         ),
       ),
     )
@@ -23,8 +23,8 @@ export class TenantsService extends MultiEnvironmentService {
     const tenantsEnvironments: TenantEnvironment[] = this.handleSettledPromises(
       tenantsSettledPromises,
       {
-        mapper: (tenants, index) =>
-          tenants.map((tenant) => ({
+        mapper: (tenants: any[], index) =>
+          tenants.map((tenant: any) => ({
             name: tenant.name,
             displayName: tenant.displayName,
             environment: environments[index],
@@ -53,7 +53,7 @@ export class TenantsService extends MultiEnvironmentService {
     const tenantSettledPromises = await Promise.allSettled(
       environments.map((environment) =>
         this.makeRequest(user, environment, (api) =>
-          api.meTenantsControllerFindByIdRaw({
+          api.meTenantsControllerFindByIdV2Raw({
             tenantId: id,
           }),
         ),
@@ -63,7 +63,7 @@ export class TenantsService extends MultiEnvironmentService {
     const tenantEnvironments: TenantEnvironment[] = this.handleSettledPromises(
       tenantSettledPromises,
       {
-        mapper: (tenant, index): TenantEnvironment => ({
+        mapper: (tenant: any, index): TenantEnvironment => ({
           ...tenant,
           environment: environments[index],
         }),

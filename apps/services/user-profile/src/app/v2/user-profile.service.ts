@@ -12,7 +12,8 @@ import { Sequelize } from 'sequelize-typescript'
 
 import {
   DelegationsApi,
-  DelegationsControllerGetDelegationRecordsDirectionEnum,
+  DelegationsControllerGetDelegationRecordsV1DirectionEnum,
+  DelegationRecordDTO,
 } from '@island.is/clients/auth/delegation-api'
 import type { ConfigType } from '@island.is/nest/config'
 import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
@@ -683,10 +684,14 @@ export class UserProfileService {
 
     // Filter out duplicate delegations
     incomingDelegations.data = incomingDelegations.data.filter(
-      (delegation, index, self) =>
+      (
+        delegation: DelegationRecordDTO,
+        index: number,
+        self: DelegationRecordDTO[],
+      ) =>
         index ===
         self.findIndex(
-          (d) =>
+          (d: DelegationRecordDTO) =>
             d.fromNationalId === delegation.fromNationalId &&
             d.toNationalId === delegation.toNationalId,
         ),
@@ -695,7 +700,9 @@ export class UserProfileService {
     const emailPreferences = await this.delegationPreference.findAll({
       where: {
         toNationalId,
-        fromNationalId: incomingDelegations.data.map((d) => d.fromNationalId),
+        fromNationalId: incomingDelegations.data.map(
+          (d: DelegationRecordDTO) => d.fromNationalId,
+        ),
       },
       include: [
         {
@@ -707,7 +714,7 @@ export class UserProfileService {
     })
 
     const actorProfiles = await Promise.all(
-      incomingDelegations.data.map(async (delegation) => {
+      incomingDelegations.data.map(async (delegation: DelegationRecordDTO) => {
         const emailPreference = emailPreferences.find(
           (preference) =>
             preference.fromNationalId === delegation.fromNationalId,
@@ -751,7 +758,7 @@ export class UserProfileService {
     const incomingDelegation = await this.getIncomingDelegations(toNationalId)
 
     const delegation = incomingDelegation.data.find(
-      (d) => d.fromNationalId === fromNationalId,
+      (d: DelegationRecordDTO) => d.fromNationalId === fromNationalId,
     )
 
     if (!delegation) {
@@ -823,7 +830,7 @@ export class UserProfileService {
     // Verify delegation exists
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
     const delegationExists = incomingDelegations.data.some(
-      (d) => d.fromNationalId === fromNationalId,
+      (d: DelegationRecordDTO) => d.fromNationalId === fromNationalId,
     )
 
     if (!delegationExists) {
@@ -898,7 +905,7 @@ export class UserProfileService {
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
 
     const delegation = incomingDelegations.data.find(
-      (d) => d.fromNationalId === fromNationalId,
+      (d: DelegationRecordDTO) => d.fromNationalId === fromNationalId,
     )
 
     if (!delegation) {
@@ -949,7 +956,7 @@ export class UserProfileService {
 
     // Check if this delegation exists
     const delegation = incomingDelegations.data.find(
-      (d) => d.fromNationalId === fromNationalId,
+      (d: DelegationRecordDTO) => d.fromNationalId === fromNationalId,
     )
 
     if (!delegation) {
@@ -1193,7 +1200,7 @@ export class UserProfileService {
     // Verify the delegation exists
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
     const delegation = incomingDelegations.data.find(
-      (d) => d.fromNationalId === fromNationalId,
+      (d: DelegationRecordDTO) => d.fromNationalId === fromNationalId,
     )
 
     if (!delegation) {
@@ -1248,11 +1255,11 @@ export class UserProfileService {
   /* Private methods */
 
   private async getIncomingDelegations(nationalId: string) {
-    return this.delegationsApi.delegationsControllerGetDelegationRecords({
+    return this.delegationsApi.delegationsControllerGetDelegationRecordsV1({
       xQueryNationalId: nationalId,
       scope: DocumentsScope.main,
       direction:
-        DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
+        DelegationsControllerGetDelegationRecordsV1DirectionEnum.incoming,
     })
   }
 

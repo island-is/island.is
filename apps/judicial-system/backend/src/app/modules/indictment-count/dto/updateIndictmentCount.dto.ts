@@ -27,7 +27,15 @@ export class UpdateIndictmentCountDto {
 
   @IsOptional()
   @IsArray()
-  @ApiPropertyOptional({ type: [Number, Number], isArray: true })
+  @ApiPropertyOptional({ 
+    type: 'array',
+    items: {
+      type: 'array',
+      items: { type: 'number' },
+      minItems: 2,
+      maxItems: 2
+    }
+  })
   readonly lawsBroken?: [number, number][]
 
   @IsOptional()

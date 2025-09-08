@@ -62,10 +62,10 @@ export class NotificationDispatchService {
   ): Promise<string[]> {
     try {
       const deviceTokensResponse =
-        await this.userProfileApi.userTokenControllerFindUserDeviceToken({
+        await this.userProfileApi.userTokenControllerFindUserDeviceTokenV2({
           xParamNationalId: nationalId,
         })
-      const tokens = deviceTokensResponse.map((token) => token.deviceToken)
+      const tokens = deviceTokensResponse.map((token: any) => token.deviceToken)
 
       if (tokens.length === 0) {
         this.logger.info('No push-notification tokens found for user', {
@@ -175,7 +175,7 @@ export class NotificationDispatchService {
     messageId: string,
   ): Promise<void> {
     try {
-      await this.userProfileApi.userTokenControllerDeleteUserDeviceToken({
+      await this.userProfileApi.userTokenControllerDeleteUserDeviceTokenV2({
         xParamNationalId: nationalId,
         deviceToken: token,
       })

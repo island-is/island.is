@@ -20,7 +20,7 @@ export class CacheModule {
 
                 return {
                   store: configHasRedis
-                    ? redisInsStore(createRedisCluster(redis))
+                    ? redisInsStore(createRedisCluster(redis) as any)
                     : undefined,
                 }
               },

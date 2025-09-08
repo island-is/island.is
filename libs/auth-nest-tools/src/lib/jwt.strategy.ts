@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { PassportStrategy } from '@nestjs/passport'
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { Request } from 'express'
 import type { AuthConfig } from './auth.module'
 import { JwtPayload } from './jwt.payload'
@@ -18,8 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         ExtractJwt.fromAuthHeaderAsBearerToken(),
         ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
       ]),
-      audience: config.audience,
-      issuer: config.issuer,
       algorithms: ['RS256'],
       ignoreExpiration: false,
       passReqToCallback: true,
@@ -31,16 +29,43 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   private parseScopes(scopes: undefined | string | string[]): string[] {
-    if (scopes === undefined) {
-      return []
-    }
-    if (typeof scopes === 'string') {
-      return scopes.split(' ')
-    }
+    if (scopes === undefined) return []
+    if (typeof scopes === 'string') return scopes.split(' ')
     return scopes
   }
 
+  private validateAudience(tokenAud?: string | string[]): void {
+    if (!tokenAud) return // Skip validation if no audience in token
+
+    const expectedAudiences = Array.isArray(this.config.audience)
+      ? this.config.audience
+      : [this.config.audience]
+
+    const actualAudiences = Array.isArray(tokenAud) ? tokenAud : [tokenAud]
+
+    const match = actualAudiences.some((aud) => expectedAudiences.includes(aud))
+    if (!match) {
+      throw new UnauthorizedException('Invalid audience')
+    }
+  }
+
+  private validateIssuer(tokenIss?: string): void {
+    if (!tokenIss) return // Skip validation if no issuer in token
+
+    const expectedIssuers = Array.isArray(this.config.issuer)
+      ? this.config.issuer
+      : [this.config.issuer]
+
+    if (!expectedIssuers.includes(tokenIss)) {
+      throw new UnauthorizedException('Invalid issuer')
+    }
+  }
+
   async validate(request: Request, payload: JwtPayload): Promise<Auth> {
+    // ✅ Manual issuer & audience validation
+    this.validateAudience(payload.aud)
+    this.validateIssuer(payload.iss)
+
     const actor = payload.actor
 
     if (this.config.allowClientNationalId && payload.client_nationalId) {

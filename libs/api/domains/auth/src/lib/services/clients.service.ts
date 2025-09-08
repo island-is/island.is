@@ -17,7 +17,7 @@ export class ClientsService {
   }
 
   getClients(user: User, input: ClientsInput): Promise<ClientDto[]> {
-    return this.clientsApiWithAuth(user).clientsControllerFindAll({
+    return this.clientsApiWithAuth(user).clientsControllerFindAllV1({
       lang: input.lang,
       clientId: input.clientIds,
     })
