@@ -32,7 +32,6 @@ import {
   getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
   isFirstApplication,
-  SelfAssessmentCurrentEmploymentStatus,
   shouldShowCalculatedRemunerationDate,
   shouldShowIsStudyingFields,
   shouldShowPreviousRehabilitationOrTreatmentFields,
@@ -418,8 +417,8 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     unionInfo,
     comment,
     questionnaire,
-    currentEmploymentStatus,
-    currentEmploymentStatusAdditional,
+    currentEmploymentStatuses,
+    currentEmploymentStatusExplanation,
     lastEmploymentTitle,
     lastEmploymentYear,
     certificateForSicknessAndRehabilitationReferenceId,
@@ -511,12 +510,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     }),
     preQuestionnaire: {
       highestEducation: educationalLevel || '',
-      currentEmploymentStatus: currentEmploymentStatus?.[0], // TODO: Smári needs to change to an array
-      ...(currentEmploymentStatus?.includes(
-        SelfAssessmentCurrentEmploymentStatus.OTHER,
-      ) && {
-        currentEmploymentStatusExplanation: currentEmploymentStatusAdditional,
-      }),
+      employmentStatuses: currentEmploymentStatuses.map((status) => ({
+        employmentStatus: status,
+        explanation:
+          status === 'ANNAD' ? currentEmploymentStatusExplanation ?? '' : null,
+      })),
       ...(lastEmploymentTitle && { lastJobTitle: lastEmploymentTitle }),
       ...(lastEmploymentYear && { lastJobYear: +lastEmploymentYear }),
       disabilityReason: mainProblem || '',

@@ -7,11 +7,10 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
-import { SelfAssessmentCurrentEmploymentStatus } from '../../../utils/constants'
 import {
   getApplicationAnswers,
-  getSelfAssessmentCurrentEmploymentStatusOptions,
   getSelfAssessmentLastEmploymentYearOptions,
+  getApplicationExternalData,
 } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
@@ -25,23 +24,47 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
         medicalAndRehabilitationPaymentsFormMessage.selfAssessment.sectionTitle,
       children: [
         buildCheckboxField({
-          id: 'selfAssessment.currentEmploymentStatus',
+          id: 'selfAssessment.currentEmploymentStatuses',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .currentEmploymentStatusTitle,
           required: true,
-          options: getSelfAssessmentCurrentEmploymentStatusOptions(),
+          options: (application, _, locale) => {
+            const { employmentStatuses } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            const statuses =
+              employmentStatuses.find(
+                (status) => status.languageCode.toLowerCase() === locale,
+              )?.employmentStatuses ?? []
+
+            const options =
+              statuses?.map(({ value, displayName }) => ({
+                value: value,
+                label: displayName,
+              })) ?? []
+
+            const otherIndex = options.findIndex(
+              (option) => option.value === 'ANNAD',
+            )
+
+            if (otherIndex >= 0) {
+              options.push(options.splice(otherIndex, 1)[0])
+            }
+
+            return options
+          },
         }),
         buildTextField({
-          id: 'selfAssessment.currentEmploymentStatusAdditional',
+          id: 'selfAssessment.currentEmploymentStatusExplanation',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .furtherExplanation,
           condition: (answers) => {
-            const { currentEmploymentStatus } = getApplicationAnswers(answers)
-            return currentEmploymentStatus?.includes(
-              SelfAssessmentCurrentEmploymentStatus.OTHER,
-            )
+            const { currentEmploymentStatuses } = getApplicationAnswers(answers)
+
+            return currentEmploymentStatuses?.includes('ANNAD')
           },
         }),
         buildDescriptionField({
