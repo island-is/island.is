@@ -97,6 +97,7 @@ const VerdictStatusAlertMessage = ({
   const isDeprecatedVerdict =
     verdict?.serviceStatus === VerdictServiceStatus.NOT_APPLICABLE &&
     !verdict.serviceDate
+
   if (isDeprecatedVerdict) return null
 
   const isServed = Boolean(verdict?.serviceDate && verdict?.serviceStatus)
