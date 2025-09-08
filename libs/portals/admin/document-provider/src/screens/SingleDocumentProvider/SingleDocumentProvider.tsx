@@ -26,6 +26,7 @@ import {
   StatisticBoxList,
   StatisticsBoxData,
 } from '../../components/StatisticBoxList/StatisticBoxList'
+import { CategoryStatisticsSortBy } from '@island.is/api/schema'
 
 const SingleDocumentProvider = () => {
   const today = new Date()
@@ -75,7 +76,7 @@ const SingleDocumentProvider = () => {
       user.profile.nationalId,
       undefined,
       undefined,
-      'Date',
+      CategoryStatisticsSortBy.Date,
       true,
       1,
       6,

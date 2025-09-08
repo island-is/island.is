@@ -22,7 +22,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
   nationalId?: string,
   fromDate?: Date,
   toDate?: Date,
-  sortBy?: string,
+  sortBy?: CategoryStatisticsSortBy,
   desc = false,
   page = 1,
   pageSize = 10,
@@ -33,8 +33,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
       nationalId: nationalId ?? '',
       from: fromDate ? formatDateYYYYMMDD(fromDate) : undefined,
       to: toDate ? formatDateYYYYMMDD(toDate) : undefined,
-      sortBy:
-        (sortBy as CategoryStatisticsSortBy) ?? CategoryStatisticsSortBy.Date,
+      sortBy: (sortBy ?? CategoryStatisticsSortBy.Date),
       desc,
       page,
       pageSize,

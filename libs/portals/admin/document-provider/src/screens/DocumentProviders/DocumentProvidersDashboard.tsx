@@ -30,9 +30,9 @@ export const DocumentProvidersDashboard = ({
   )
   const opened = statistics?.statistics?.opened || 0
   const published = statistics?.statistics?.published || 0
-
-  const openedPercentage =
-    published > 0 ? Math.round((opened / published) * 100) : 0
+  const rawOpenedPct = published > 0 ? (opened / published) * 100 : 0
+  const openedPercentage = Math.min(100, Math.max(0, Math.round(rawOpenedPct)))
+  const unopenedPercentage = Math.max(0, 100 - openedPercentage)
 
   const openedFilesData = [
     {
@@ -42,7 +42,7 @@ export const DocumentProvidersDashboard = ({
     },
     {
       name: formatMessage(m.statisticsBoxUnopenedDocuments),
-      value: 100 - openedPercentage,
+      value: unopenedPercentage,
       color: '#d6b3ff',
     },
   ]

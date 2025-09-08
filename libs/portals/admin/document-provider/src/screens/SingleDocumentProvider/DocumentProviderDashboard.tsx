@@ -39,7 +39,7 @@ export const DocumentProviderDashboard = ({
       <Text marginBottom={2}>Hér er tölfræði síðustu 6 mánuða</Text>
 
       <GridRow>
-        <SentFilesBarChart title="Send skjöl" data={sentFilesData || []} />
+        <SentFilesBarChart data={sentFilesData || []} />
 
         <OpenedFilesDonutChart
           valueIndex={0}

@@ -44,6 +44,7 @@ export const useGetProviderStatisticsBreakdownByProviderId = (
         input: statisticsInput,
       },
       fetchPolicy: 'cache-and-network',
+      skip: !providerId || !nationalId,
     },
   )
 
