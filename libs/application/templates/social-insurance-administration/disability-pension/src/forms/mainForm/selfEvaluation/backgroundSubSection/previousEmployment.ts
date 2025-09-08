@@ -1,5 +1,5 @@
 import {
-    buildAsyncSelectField,
+  buildAsyncSelectField,
   buildMultiField,
   buildRadioField,
   buildSelectField,
@@ -18,9 +18,18 @@ import {
   mockProfessionCategories,
   mockProfessionJobTitle,
 } from '../../../../utils/mockData'
-import { EmploymentStatus, EmploymentStatusResponse } from '../../../../types/interfaces'
-import { siaGeneralProfessionActivities, siaGeneralProfessions } from '../../../../graphql/queries'
-import { SocialInsuranceGeneralProfessionActivitiesQuery, SocialInsuranceGeneralProfessionsQuery } from '../../../../types/schema'
+import {
+  EmploymentStatus,
+  EmploymentStatusResponse,
+} from '../../../../types/interfaces'
+import {
+  siaGeneralProfessionActivities,
+  siaGeneralProfessions,
+} from '../../../../graphql/queries'
+import {
+  SocialInsuranceGeneralProfessionActivitiesQuery,
+  SocialInsuranceGeneralProfessionsQuery,
+} from '../../../../types/schema'
 
 export const previousEmploymentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT,
@@ -37,12 +46,16 @@ export const previousEmploymentField = buildMultiField({
             'socialInsuranceAdministrationEmploymentStatuses.data',
           ) ?? []
 
-        const localResponse = responses.find(r => r.languageCode === locale.toUpperCase())
+        const localResponse = responses.find(
+          (r) => r.languageCode === locale.toUpperCase(),
+        )
 
-        return localResponse?.employmentStatuses.map(({ value, displayName }) => ({
-          value: value.toString(),
-          label: displayName ,
-        })) ?? []
+        return (
+          localResponse?.employmentStatuses.map(({ value, displayName }) => ({
+            value: value.toString(),
+            label: displayName,
+          })) ?? []
+        )
       },
     }),
 
@@ -102,15 +115,20 @@ export const previousEmploymentField = buildMultiField({
         )
         return hasPreviousEmployment === YES
       },
-      loadOptions: async ({apolloClient })=> {
-        const { data } = await apolloClient.query<SocialInsuranceGeneralProfessionsQuery>({
-          query: siaGeneralProfessions
-        })
+      loadOptions: async ({ apolloClient }) => {
+        const { data } =
+          await apolloClient.query<SocialInsuranceGeneralProfessionsQuery>({
+            query: siaGeneralProfessions,
+          })
 
-        return data.socialInsuranceGeneral?.professions?.filter(p => p.value).map(({ value, description }) => ({
-          value,
-          label: description ?? '',
-        })) ?? []
+        return (
+          data.socialInsuranceGeneral?.professions
+            ?.filter((p) => p.value)
+            .map(({ value, description }) => ({
+              value,
+              label: description ?? '',
+            })) ?? []
+        )
       },
     }),
 
@@ -137,15 +155,22 @@ export const previousEmploymentField = buildMultiField({
         )
         return hasPreviousEmployment === YES
       },
-      loadOptions: async ({apolloClient })=> {
-        const { data } = await apolloClient.query<SocialInsuranceGeneralProfessionActivitiesQuery>({
-          query: siaGeneralProfessionActivities
-        })
+      loadOptions: async ({ apolloClient }) => {
+        const { data } =
+          await apolloClient.query<SocialInsuranceGeneralProfessionActivitiesQuery>(
+            {
+              query: siaGeneralProfessionActivities,
+            },
+          )
 
-        return data.socialInsuranceGeneral?.professionActivities?.filter(p => p.value).map(({ value, description }) => ({
-          value,
-          label: description ?? '',
-        })) ?? []
+        return (
+          data.socialInsuranceGeneral?.professionActivities
+            ?.filter((p) => p.value)
+            .map(({ value, description }) => ({
+              value,
+              label: description ?? '',
+            })) ?? []
+        )
       },
     }),
   ],

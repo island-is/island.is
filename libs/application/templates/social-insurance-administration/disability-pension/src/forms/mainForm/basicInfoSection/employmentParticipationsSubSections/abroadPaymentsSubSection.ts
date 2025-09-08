@@ -59,15 +59,20 @@ export const abroadPaymentsSubSection = buildMultiField({
           width: 'half',
           displayInTable: true,
           isSearchable: true,
-          loadOptions: async ({apolloClient })=> {
-            const { data } = await apolloClient.query<SocialInsuranceGeneralCountriesQuery>({
-              query: siaGeneralCountries
-            })
+          loadOptions: async ({ apolloClient }) => {
+            const { data } =
+              await apolloClient.query<SocialInsuranceGeneralCountriesQuery>({
+                query: siaGeneralCountries,
+              })
 
-            return data.socialInsuranceGeneral?.countries?.filter(country => country.name).map(({ code, name }) => ({
-              value: code,
-              label: name ?? '',
-            })) ?? []
+            return (
+              data.socialInsuranceGeneral?.countries
+                ?.filter((country) => country.name)
+                .map(({ code, name }) => ({
+                  value: code,
+                  label: name ?? '',
+                })) ?? []
+            )
           },
         },
         abroadNationalId: {

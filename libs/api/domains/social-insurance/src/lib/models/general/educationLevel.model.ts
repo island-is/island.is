@@ -7,5 +7,4 @@ export class EducationLevel {
 
   @Field()
   description?: string
-
 }

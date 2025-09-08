@@ -123,10 +123,11 @@ export const paymentInfoSubSection = buildSubSection({
           required: true,
           placeholder:
             socialInsuranceAdministrationMessage.payment.selectCurrency,
-          loadOptions: async ({apolloClient}) => {
-            const { data } = await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
-              query: siaGeneralCurrencies
-            })
+          loadOptions: async ({ apolloClient }) => {
+            const { data } =
+              await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
+                query: siaGeneralCurrencies,
+              })
             return getCurrencies(data.socialInsuranceGeneral.currencies ?? [])
           },
           defaultValue: (application: Application) => {

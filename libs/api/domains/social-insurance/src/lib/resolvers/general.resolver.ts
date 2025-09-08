@@ -66,7 +66,9 @@ export class GeneralResolver {
     return this.service.getHousingTypes(user)
   }
 
-  @ResolveField('employmentStatuses', () => [EmploymentStatus], { nullable: true })
+  @ResolveField('employmentStatuses', () => [EmploymentStatus], {
+    nullable: true,
+  })
   resolveEmploymentStatuses(@CurrentUser() user: User) {
     return this.service.getEmploymentStatuses(user)
   }
@@ -76,7 +78,9 @@ export class GeneralResolver {
     return this.service.getProfessions(user)
   }
 
-  @ResolveField('professionActivities', () => [ProfessionActivity], { nullable: true })
+  @ResolveField('professionActivities', () => [ProfessionActivity], {
+    nullable: true,
+  })
   resolveProfessionActivities(@CurrentUser() user: User) {
     return this.service.getProfessionActivities(user)
   }

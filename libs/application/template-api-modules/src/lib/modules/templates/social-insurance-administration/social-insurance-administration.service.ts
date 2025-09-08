@@ -544,9 +544,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
-    switch(application.typeId) {
+    switch (application.typeId) {
       case ApplicationTypes.OLD_AGE_PENSION: {
-        const { applicationType } = getOAPApplicationAnswers(application.answers)
+        const { applicationType } = getOAPApplicationAnswers(
+          application.answers,
+        )
 
         return await this.siaClientService.getIsEligible(
           auth,
@@ -556,7 +558,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       case ApplicationTypes.DISABILITY_PENSION: {
         return await this.siaClientService.getIsEligible(
           auth,
-         'disabilitypension,'
+          'disabilitypension,',
         )
       }
       default: {

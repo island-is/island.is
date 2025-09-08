@@ -289,9 +289,7 @@ export class SocialInsuranceService {
     return await this.socialInsuranceApi.getCountries(user)
   }
 
-  async getCurrencies(
-    user: User,
-  ): Promise<Array<string>> {
+  async getCurrencies(user: User): Promise<Array<string>> {
     return await this.socialInsuranceApi.getCurrencies(user)
   }
 

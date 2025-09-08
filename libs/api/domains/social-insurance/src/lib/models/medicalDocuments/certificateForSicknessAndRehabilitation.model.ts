@@ -1,8 +1,8 @@
-import { ObjectType, Field, GraphQLISODateTime } from "@nestjs/graphql"
-import { Confirmation } from "./confirmation.model"
-import { Diagnosis } from "./diagnosis.model"
-import { Difficulty } from "./difficulty.model"
-import { Doctor } from "./doctor.model"
+import { ObjectType, Field, GraphQLISODateTime } from '@nestjs/graphql'
+import { Confirmation } from './confirmation.model'
+import { Diagnosis } from './diagnosis.model'
+import { Difficulty } from './difficulty.model'
+import { Doctor } from './doctor.model'
 
 @ObjectType(
   'SocialInsuranceMedicalDocumentsCertificateForSicknessAndRehabilitation',

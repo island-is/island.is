@@ -115,17 +115,18 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: [{
-            target: States.DRAFT,
-            cond: (application) =>
-              getValueViaPath(
-                application?.application?.externalData,
-                'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
-              ) as boolean
-          },
-          {
-            actions: 'setApproveExternalData',
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.DRAFT,
+              cond: (application) =>
+                getValueViaPath(
+                  application?.application?.externalData,
+                  'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
+                ) as boolean,
+            },
+            {
+              actions: 'setApproveExternalData',
+            },
           ],
         },
       },

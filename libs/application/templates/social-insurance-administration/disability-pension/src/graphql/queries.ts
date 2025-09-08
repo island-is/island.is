@@ -60,18 +60,16 @@ export const siaDisabilityPensionCertificate = gql`
   }
 `
 
-
 export const siaGeneralCountries = gql`
   query SocialInsuranceGeneralCountries {
     socialInsuranceGeneral {
       countries {
-       code
-       name
+        code
+        name
       }
     }
   }
 `
-
 
 export const siaGeneralCurrencies = gql`
   query SocialInsuranceGeneralCurrencies {

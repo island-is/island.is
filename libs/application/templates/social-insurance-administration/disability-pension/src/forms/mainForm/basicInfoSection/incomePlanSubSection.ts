@@ -146,10 +146,11 @@ export const incomePlanSubSection = buildSubSection({
             },
             watchValues: 'incomeType',
           },
-          loadOptions: async ({apolloClient}, _, activeField) => {
-            const { data } = await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
-              query: siaGeneralCurrencies
-            })
+          loadOptions: async ({ apolloClient }, _, activeField) => {
+            const { data } =
+              await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
+                query: siaGeneralCurrencies,
+              })
 
             const hideISKCurrency =
               activeField?.incomeType === FOREIGN_BASIC_PENSION ||
@@ -161,7 +162,10 @@ export const incomePlanSubSection = buildSubSection({
                 ? ISK
                 : ''
 
-            return getCurrencies(data.socialInsuranceGeneral.currencies ?? [], hideISKCurrency)
+            return getCurrencies(
+              data.socialInsuranceGeneral.currencies ?? [],
+              hideISKCurrency,
+            )
           },
         },
         income: {
