@@ -310,9 +310,7 @@ api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
-    LANDSPITALI_DIRECT_GRANT_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: '[TEST] Beinn styrkur - Landspítali'
-    LANDSPITALI_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: '[TEST] Minningarkort - Landspítali'
-    LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: 'http://web.islandis.svc.cluster.local/payments/event-callback'
+    LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: 'http://payment-flow-update-handler.payment-flow-update-handler.svc.cluster.local'
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     LOG_LEVEL: 'info'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'
@@ -549,7 +547,6 @@ api:
     INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
-    LANDSPITALI_PAYMENT_CONFIRMATION_SEND_TO_EMAIL: '/k8s/api/LANDSPITALI_PAYMENT_CONFIRMATION_SEND_TO_EMAIL'
     LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK: '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK'
     LICENSE_SERVICE_BARCODE_SECRET_KEY: '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY'
     MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
@@ -1669,6 +1666,68 @@ namespaces:
     - 'unicorn-app'
     - 'payments'
     - 'services-payments'
+    - 'payment-flow-update-handler'
+payment-flow-update-handler:
+  enabled: true
+  env:
+    LANDSPITALI_WEB_DIRECT_GRANT_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: '[TEST] Beinn styrkur - Landspítali'
+    LANDSPITALI_WEB_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: '[TEST] Minningarkort - Landspítali'
+    LANDSPITALI_WEB_PAYMENT_CONFIRMATION_SEND_FROM_EMAIL: 'development@island.is'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    PAYMENTS_WEB_URL: 'https://beta.staging01.devland.is/greida'
+    PAYMENT_FLOW_UPDATE_HANDLER_API_URL: 'http://payment-flow-update-handler'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/readiness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payment-flow-update-handler'
+  namespace: 'payment-flow-update-handler'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    LANDSPITALI_WEB_PAYMENT_CONFIRMATION_SEND_TO_EMAIL: '/k8s/api/LANDSPITALI_PAYMENT_CONFIRMATION_SEND_TO_EMAIL'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/payment-flow-update-handler'
+    create: true
+    name: 'payment-flow-update-handler'
 payments:
   enabled: true
   env:
