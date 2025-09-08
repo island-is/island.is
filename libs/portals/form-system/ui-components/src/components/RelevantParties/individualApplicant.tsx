@@ -6,6 +6,7 @@ import {
   Stack,
   Box,
   Text,
+  PhoneInput,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { m, webMessages } from '../../lib/messages'
@@ -17,11 +18,16 @@ import {
 import { useQuery } from '@apollo/client'
 import { User } from './types'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
-import { Dispatch, useEffect, useState } from 'react'
+import { Dispatch, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Action } from '../../lib'
 import { getValue } from '../../lib/getValue'
 import { removeTypename } from '@island.is/form-system/graphql'
+import { useFormContext, Controller } from 'react-hook-form'
+import { Locale } from '@island.is/shared/types'
+
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+const PHONE_REGEX = /^[0-9+\-() ]{7,20}$/
 
 interface Props {
   applicant: FormSystemField
@@ -36,10 +42,11 @@ export const IndividualApplicant = ({
   actor,
   dispatch,
 }: Props) => {
-  const { formatMessage } = useIntl()
+  const { locale, formatMessage } = useIntl()
   const { lang } = useLocale()
   const nationalId = actor !== '' ? actor : user?.nationalId ?? ''
   const shouldQuery = !!nationalId
+  const { control } = useFormContext()
   const { data: nameData, loading: nameLoading } = useQuery(
     GET_NAME_BY_NATIONALID,
     {
@@ -72,7 +79,7 @@ export const IndividualApplicant = ({
           type: 'SET_ADDRESS',
           payload: {
             id: applicant.id,
-            address: home.husheiti,
+            address: home.husHeiti,
             postalCode: home.postnumer,
           },
         })
@@ -80,30 +87,8 @@ export const IndividualApplicant = ({
     },
   )
 
-  const onChange = (field: string, value: string) => {
-    if (field === 'email') {
-      dispatch({ type: 'SET_EMAIL', payload: { id: applicant.id, value } })
-      setEmail(value)
-    } else if (field === 'phone') {
-      dispatch({
-        type: 'SET_PHONE_NUMBER',
-        payload: { id: applicant.id, value },
-      })
-      setPhoneNumber(value)
-    }
-  }
-
   const address = addressData?.formSystemHomeByNationalId?.heimilisfang
   const isLoading = shouldQuery && (nameLoading || addressLoading)
-
-  const [email, setEmail] = useState(
-    user?.emails?.find((email) => email.primary)?.email ??
-      user?.emails?.[0]?.email ??
-      getValue(applicant, 'email'),
-  )
-  const [phoneNumber, setPhoneNumber] = useState(
-    user?.mobilePhoneNumber ?? getValue(applicant, 'phoneNumber') ?? '',
-  )
 
   useEffect(() => {
     dispatch({
@@ -149,23 +134,85 @@ export const IndividualApplicant = ({
                 </Box>
               </GridColumn>
             </GridRow>
-            <Input
-              label={formatMessage(m.email)}
-              name="email"
-              placeholder={formatMessage(m.email)}
-              backgroundColor="blue"
-              required
-              value={email}
-              onChange={(e) => onChange('email', e.target.value)}
+            <Controller
+              name={`${applicant.id}.email`}
+              control={control}
+              defaultValue={getValue(applicant, 'email') ?? ''}
+              rules={{
+                required: {
+                  value: applicant?.isRequired ?? false,
+                  message: formatMessage(m.required),
+                },
+                pattern: {
+                  value: EMAIL_REGEX,
+                  message: formatMessage(m.invalidEmail),
+                },
+              }}
+              render={({ field, fieldState }) => (
+                <Input
+                  type="email"
+                  name={field.name}
+                  label={formatMessage(m.email)}
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e)
+                    if (dispatch) {
+                      dispatch({
+                        type: 'SET_EMAIL',
+                        payload: {
+                          id: applicant.id,
+                          value: e.target.value,
+                        },
+                      })
+                    }
+                  }}
+                  onBlur={field.onBlur}
+                  errorMessage={fieldState.error?.message}
+                  required={applicant?.isRequired ?? false}
+                  backgroundColor="blue"
+                />
+              )}
             />
-            <Input
-              label={formatMessage(m.phoneNumber)}
-              name="phone"
-              placeholder={formatMessage(m.phoneNumber)}
-              backgroundColor="blue"
-              required
-              value={phoneNumber}
-              onChange={(e) => onChange('phone', e.target.value)}
+            {/* Phone number field */}
+            <Controller
+              name={`${applicant.id}.phoneNumber`}
+              control={control}
+              defaultValue={getValue(applicant, 'phoneNumber') ?? ''}
+              rules={{
+                required: {
+                  value: applicant.isRequired ?? false,
+                  message: formatMessage(m.required),
+                },
+                pattern: {
+                  value: PHONE_REGEX,
+                  message: formatMessage(m.invalidPhoneNumber),
+                },
+              }}
+              render={({ field, fieldState }) => (
+                <PhoneInput
+                  label={formatMessage(m.phoneNumber)}
+                  placeholder={formatMessage(m.phoneNumber)}
+                  name={field.name}
+                  locale={locale as Locale}
+                  required={applicant.isRequired ?? false}
+                  backgroundColor="blue"
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e)
+                    if (dispatch) {
+                      dispatch({
+                        type: 'SET_PHONE_NUMBER',
+                        payload: {
+                          id: applicant.id,
+                          value: e.target.value,
+                        },
+                      })
+                    }
+                  }}
+                  onBlur={field.onBlur}
+                  errorMessage={fieldState.error?.message}
+                />
+              )}
             />
           </>
         )}
