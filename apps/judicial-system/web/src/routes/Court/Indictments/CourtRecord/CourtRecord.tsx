@@ -45,6 +45,7 @@ import {
   formatDateForServer,
   TUploadFile,
   useCase,
+  useCourtSessions,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './CourtRecord.css'
@@ -86,6 +87,7 @@ const CourtRecord: FC = () => {
   const [courtLocationErrorMessage, setCourtLocationErrorMessage] =
     useState<string>('')
   const [isClosedProceeding, setIsClosedProceeding] = useState<boolean>(false)
+  const { updateCourtSession } = useCourtSessions()
 
   const containerVariants = {
     hidden: {
@@ -208,14 +210,12 @@ const CourtRecord: FC = () => {
                           )
                         }
                         onBlur={(event) =>
-                          validateAndSendToServer(
-                            'courtLocation',
-                            event.target.value,
-                            ['empty'],
-                            workingCase,
-                            updateCase,
-                            setCourtLocationErrorMessage,
-                          )
+                          updateCourtSession({
+                            caseId: workingCase.id,
+                            courtSessionId:
+                              '681bfd78-896c-4683-afad-ff5d98d87362',
+                            location: event.target.value,
+                          })
                         }
                         errorMessage={courtLocationErrorMessage}
                         hasError={courtLocationErrorMessage !== ''}
