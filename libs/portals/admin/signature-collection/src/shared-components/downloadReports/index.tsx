@@ -22,6 +22,7 @@ import { usePDF } from '@react-pdf/renderer'
 import MyPdfDocument from './MyPdfDocument'
 import { SignatureCollectionAreaSummaryReportDocument } from './MyPdfDocument/areaSummary.generated'
 import { useLazyQuery } from '@apollo/client'
+import { useParams } from 'react-router-dom'
 
 export const DownloadReports = ({
   collection,
@@ -36,6 +37,17 @@ export const DownloadReports = ({
   )
   const [instance, updateInstance] = usePDF({ document: undefined })
   const lastOpenedRef = useRef<string | null>(null)
+
+  // area is used for LocalGovernmental and Parliamentary collections,
+  // to get the report for certain area
+  const params = useParams()
+  const collectionType = collection.collectionType
+  const area =
+    collectionType === SignatureCollectionCollectionType.LocalGovernmental
+      ? collection.areas.find((a) => a.name === params.municipality)
+      : collectionType === SignatureCollectionCollectionType.Parliamentary
+      ? collection.areas.find((a) => a.name === params.constituencyName)
+      : undefined
 
   const handleDownloadClick = async (area: SignatureCollectionArea) => {
     runGetSummaryReport({
@@ -79,7 +91,7 @@ export const DownloadReports = ({
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">{formatMessage(m.downloadReports)}</Text>
+              <Text variant="h4">{formatMessage(m.downloadReport)}</Text>
               <Text marginBottom={2}>
                 {formatMessage(m.downloadReportsDescription)}
               </Text>
@@ -88,7 +100,7 @@ export const DownloadReports = ({
                 size="small"
                 onClick={() => setModalDownloadReportsIsOpen(true)}
               >
-                {formatMessage(m.downloadReports)}
+                {formatMessage(m.downloadReport)}
               </Button>
             </Box>
           </Box>
@@ -97,7 +109,7 @@ export const DownloadReports = ({
       <Modal
         id="downloadReports"
         isVisible={modalDownloadReportsIsOpen}
-        title={formatMessage(m.downloadReports)}
+        title={formatMessage(m.downloadReport)}
         label={''}
         onClose={() => {
           setModalDownloadReportsIsOpen(false)
@@ -107,10 +119,10 @@ export const DownloadReports = ({
         <Text>{formatMessage(m.downloadReportsDescription)}</Text>
         <Box marginY={5}>
           <Stack space={3}>
-            {collection?.areas.map((area) => (
+            {(area ? [area] : collection?.areas || []).map((area) => (
               <ActionCard
                 key={area.id}
-                heading={formatMessage(area.name)}
+                heading={formatMessage(area.name ?? '')}
                 headingVariant="h4"
                 backgroundColor="blue"
                 cta={{
