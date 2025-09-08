@@ -96,7 +96,7 @@ export class VerdictController {
   @Get('defendant/:defendantId/verdict')
   @ApiOkResponse({
     type: Verdict,
-    description: 'Gets verdict and fetched the current state from the police',
+    description: 'Gets verdict and fetches the current state from the police',
   })
   async getVerdict(
     @Param('caseId') caseId: string,

@@ -719,6 +719,11 @@ export class PoliceService {
             await res.json()
           this.documentStructure.parse(response)
 
+          const servedAt =
+            response.servedAt && !Number.isNaN(Date.parse(response.servedAt))
+              ? new Date(response.servedAt)
+              : undefined
+
           return {
             serviceStatus: mapPoliceVerdictDeliveryStatus({
               delivered: response.delivered ?? false,
@@ -728,9 +733,7 @@ export class PoliceService {
             }),
             comment: response.comment ?? undefined,
             servedBy: response.servedBy ?? undefined,
-            serviceDate: response.servedAt
-              ? new Date(response.servedAt)
-              : undefined,
+            serviceDate: servedAt,
             defenderNationalId: response.defenderNationalId ?? undefined,
           }
         }
@@ -768,9 +771,13 @@ export class PoliceService {
         )
 
         throw new BadGatewayException({
-          ...reason,
           message: `Failed to get police document status ${policeDocumentId}`,
-          detail: reason.message,
+          detail:
+            reason instanceof Error
+              ? reason.message
+              : typeof reason === 'string'
+              ? reason
+              : JSON.stringify(reason),
         })
       })
   }
