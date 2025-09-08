@@ -112,6 +112,7 @@ export class VehiclesService {
       includeNextMainInspectionDate: input.includeNextMainInspectionDate,
       onlyMileageRegisterableVehicles:
         input.filterOnlyVehiclesUserCanRegisterMileage,
+      onlyMileageRequiredVehicles: input.filterOnlyVehiclesUserCanRegisterMileage,
       query: input.query,
     })
 
