@@ -1,9 +1,9 @@
 import { Fragment } from 'react'
 import { PropertyTableRow } from './PropertyTableRow'
 import { PropertyTableUnits } from './PropertyTableUnits'
-import { HmsPropertyInfo } from '../../../types/schema'
 import { PropertyUnit } from '../../../shared/types'
 import { Table } from '@island.is/island-ui/core'
+import { HmsPropertyInfo } from '@island.is/api/schema'
 
 type Props = {
   propertiesByAddressCode: HmsPropertyInfo[]

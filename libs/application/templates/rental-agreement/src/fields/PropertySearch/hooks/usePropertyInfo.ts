@@ -1,8 +1,8 @@
 import { useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { HmsPropertyInfoInput, Query } from '../../../types/schema'
 import { PROPERTY_INFO_QUERY } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
+import { HmsPropertyInfoInput, Query } from '@island.is/api/schema'
 
 /**
  * GraphQL query to fetch and format property info results based on addressCode.

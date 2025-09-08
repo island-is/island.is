@@ -1,8 +1,8 @@
 import { useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { HmsSearchInput, Query } from '../../../types/schema'
 import { ADDRESS_SEARCH_QUERY } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
+import { HmsSearchInput, Query } from '@island.is/api/schema'
 
 /**
  * GraphQL query to fetch and format address search results.

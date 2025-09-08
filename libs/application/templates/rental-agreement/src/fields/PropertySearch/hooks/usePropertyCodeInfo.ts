@@ -1,8 +1,7 @@
 import { useLazyQuery } from '@apollo/client'
-import { HmsPropertyCodeInfoInput } from '@island.is/api/schema'
+import { HmsPropertyCodeInfoInput, Query } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { PROPERTY_CODE_INFO_QUERY } from '../../../graphql/queries'
-import { Query } from '../../../types/schema'
 import * as m from '../../../lib/messages'
 
 export const usePropertyCodeInfo = (
