@@ -45,4 +45,5 @@ export const serviceSetup =
       .liveness('/liveness')
       .readiness('/readiness')
       .redis()
+      .grantNamespaces('services-payments')
   }
