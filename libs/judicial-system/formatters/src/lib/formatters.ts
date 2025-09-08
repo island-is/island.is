@@ -539,9 +539,10 @@ export const getRulingInstructionItems = (
       if (!value) {
         return option.none
       }
+
       return option.some({
         label: value.label,
-        value: value.description,
+        value: value.description.replace(/\n/g, ''),
         type: 'accordion',
       })
     }),
