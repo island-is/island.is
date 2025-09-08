@@ -29,6 +29,7 @@ import {
 import { CivilClaimant, Defendant } from '../../defendant'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
+import { CourtSession } from '../../court-session'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 import { Victim } from '../../victim'
@@ -502,4 +503,7 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly isRegisteredInPrisonSystem?: boolean
+
+  @Field(() => [CourtSession], { nullable: true })
+  readonly courtSessions?: CourtSession[]
 }

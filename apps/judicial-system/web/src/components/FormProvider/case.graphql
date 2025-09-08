@@ -440,5 +440,8 @@ query Case($input: CaseQueryInput!) {
       nationalId
       caseFileCategory
     }
+    courtSessions {
+      id
+    }
   }
 }
