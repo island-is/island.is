@@ -56,6 +56,11 @@ export const m = defineMessages({
     defaultMessage: 'Staða',
     description: 'State',
   },
+  individualName: {
+    id: 'portals-admin.form-system:individual-name',
+    defaultMessage: 'Nafn',
+    description: 'Name',
+  },
   name: {
     id: 'portals-admin.form-system:name',
     defaultMessage: 'Heiti',

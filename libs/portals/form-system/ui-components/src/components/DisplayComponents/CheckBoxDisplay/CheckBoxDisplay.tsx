@@ -1,5 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 
 interface Props {
   item: FormSystemField
@@ -8,12 +8,12 @@ interface Props {
 
 const ANSWER_MAP = {
   is: {
-    true: 'Já',
-    false: 'Nei',
+    true: 'Valið',
+    false: 'Ekki valið',
   },
   en: {
-    true: 'Yes',
-    false: 'No',
+    true: 'Checked',
+    false: 'Unchecked',
   },
 } as const
 
@@ -28,7 +28,7 @@ export const CheckBoxDisplay = ({ item, lang = 'is' }: Props) => {
       ? 'true'
       : rawValue === 'false'
       ? 'false'
-      : ''
+      : 'false'
 
   return (
     <Box
@@ -38,12 +38,14 @@ export const CheckBoxDisplay = ({ item, lang = 'is' }: Props) => {
       justifyContent="spaceBetween"
       height="full"
     >
-      <Text as="p" fontWeight="semiBold">
-        {item.name?.[lang]}
-      </Text>
-      <Text fontWeight="light">
-        {ANSWER_MAP[lang][value as 'true' | 'false'] ?? ''}
-      </Text>
+      <Stack space={1}>
+        <Text as="p" fontWeight="semiBold">
+          {item.name?.[lang]}
+        </Text>
+        <Text fontWeight="light">
+          {ANSWER_MAP[lang][value as 'true' | 'false'] ?? ''}
+        </Text>
+      </Stack>
     </Box>
   )
 }

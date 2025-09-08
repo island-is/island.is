@@ -46,7 +46,6 @@ const valueTranslations: Record<ApplicantKey, { is: string; en: string }> = {
 }
 
 export const ApplicantDisplay = ({ item }: Props) => {
-  // getValues returns an object with the requested keys (or undefined values)
   const rawValues = (getValues(item, applicantValues as unknown as string[]) ||
     {}) as Record<ApplicantKey, unknown>
   const { lang } = useLocale()
