@@ -328,7 +328,6 @@ export const PropertySearch = ({ field, errors }: Props) => {
         <PropertySearchInput
           searchOptions={searchOptions}
           id={id}
-          formatMessage={formatMessage}
           selectedAddress={selectedAddress}
           searchTerm={searchTerm}
           handleAddressSelectionChange={handleAddressSelectionChange}

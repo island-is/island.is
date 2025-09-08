@@ -8,7 +8,6 @@ import * as m from '../../../lib/messages'
 type Props = {
   searchOptions: AddressProps[]
   id: string
-  formatMessage: (id: string) => string
   selectedAddress: AddressProps | undefined
   searchTerm: string
   handleAddressSelectionChange: (selection: { value: string } | null) => void
