@@ -26,7 +26,8 @@ export class CourtSessionDocumentExistsGuard implements CanActivate {
     }
 
     const courtSessionDocument = courtSession.courtSessionDocuments?.find(
-      (courtSessionDocument) => courtSessionDocument.id === courtSessionDocumentId,
+      (courtSessionDocument) =>
+        courtSessionDocument.id === courtSessionDocumentId,
     )
 
     if (!courtSessionDocument) {
