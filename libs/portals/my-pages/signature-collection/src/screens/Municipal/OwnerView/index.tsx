@@ -31,7 +31,7 @@ const OwnerView = ({
   return (
     <Box>
       {!loadingOwnerLists ? (
-        <Stack space={6}>
+        <Stack space={8}>
           <SignedList
             currentCollection={currentCollection}
             collectionType={collectionType}
@@ -73,11 +73,19 @@ const OwnerView = ({
                         }
                       : undefined
                   }
-                  tag={{
-                    label: formatMessage(m.collectionIsActive),
-                    variant: 'blue',
-                    outlined: false,
-                  }}
+                  tag={
+                    list.active
+                      ? {
+                          label: formatMessage(m.collectionIsActive),
+                          variant: 'blue',
+                          outlined: false,
+                        }
+                      : {
+                          label: formatMessage(m.collectionClosed),
+                          variant: 'red',
+                          outlined: true,
+                        }
+                  }
                 />
               </Box>
             ))}
