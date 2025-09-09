@@ -8,7 +8,7 @@ import {
   Button,
   Icon,
 } from '@island.is/island-ui/core'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TranslationTag } from '../../../TranslationTag/TranslationTag'
 import { FormSystemPaths } from '../../../../lib/paths'
@@ -64,87 +64,81 @@ export const TableRow = ({
   const [deleteForm] = useMutation(DELETE_FORM)
   const [publishForm] = useMutation(PUBLISH_FORM)
 
-  let dropdownItems = []
+  const dropdownItems = useMemo(() => {
+    const copy = {
+      title: formatMessage(m.copy),
+    }
 
-  const copy = {
-    title: formatMessage(m.copy),
-  }
+    const json = {
+      title: 'Json',
+    }
 
-  const json = {
-    title: 'Json',
-  }
+    const del = {
+      title: formatMessage(m.delete),
+      onClick: async () => {
+        try {
+          await deleteForm({
+            variables: { input: { id } },
+          })
+          setFormsState((prevForms) =>
+            prevForms.filter((form) => form.id !== id),
+          )
+        } catch (error) {
+          console.error('Error deleting form:', error)
+        }
+      },
+    }
 
-  const del = {
-    title: formatMessage(m.delete),
-    onClick: async () => {
-      try {
-        await deleteForm({
-          variables: {
-            input: {
-              id: id,
-            },
-          },
-        })
-        setFormsState((prevForms) => prevForms.filter((form) => form.id !== id))
-      } catch (error) {
-        console.error('Error deleting form:', error)
-      }
-    },
-  }
+    const publish = {
+      title: formatMessage(m.publish),
+      onClick: async () => {
+        try {
+          await publishForm({
+            variables: { input: { id } },
+          })
+          setFormsState((prevForms) =>
+            prevForms.map((form) =>
+              form.id === id ? { ...form, status: FormStatus.PUBLISHED } : form,
+            ),
+          )
+        } catch (error) {
+          console.error('Error publishing form:', error)
+        }
+      },
+    }
 
-  const publish = {
-    title: formatMessage(m.publish),
-    onClick: async () => {
-      try {
-        await publishForm({
-          variables: {
-            input: {
-              id: id,
-            },
-          },
-        })
-        setFormsState((prevForms) =>
-          prevForms.map((form) =>
-            form.id === id ? { ...form, status: FormStatus.PUBLISHED } : form,
-          ),
-        )
-      } catch (error) {
-        console.error('Error publishing form:', error)
-      }
-    },
-  }
+    const unPublish = {
+      title: formatMessage(m.unpublish),
+    }
 
-  const unPublish = {
-    title: formatMessage(m.unpublish),
-  }
+    const test = {
+      title: formatMessage(m.tryOut),
+      onClick: () => {
+        if (slug) {
+          window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer')
+        } else {
+          window.alert(
+            formatMessage({
+              id: 'slugMissing',
+              defaultMessage: 'Það vantar slug',
+            }),
+          )
+        }
+      },
+    }
 
-  const test = {
-    title: formatMessage(m.tryOut),
-    onClick: () => {
-      if (slug) {
-        window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer')
-      } else {
-        window.alert(
-          formatMessage({
-            id: 'slugMissing',
-            defaultMessage: 'Það vantar slug',
-          }),
-        )
-      }
-    },
-  }
+    const items = [copy, json, del]
 
-  dropdownItems.push(copy)
-  dropdownItems.push(json)
-  dropdownItems.push(del)
+    if (status === FormStatus.PUBLISHED) {
+      items.push(unPublish)
+    } else {
+      items.push(publish)
+    }
 
-  if (status === FormStatus.PUBLISHED) {
-    dropdownItems.push(unPublish)
-  } else if (status !== FormStatus.PUBLISHED) {
-    dropdownItems.push(publish)
-  }
+    items.push(test)
 
-  dropdownItems.push(test)
+    return items
+  }, [id, slug, status, formatMessage, deleteForm, publishForm, setFormsState])
 
   const goToForm = () => {
     navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
