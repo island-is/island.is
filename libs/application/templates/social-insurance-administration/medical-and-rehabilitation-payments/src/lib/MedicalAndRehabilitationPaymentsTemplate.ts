@@ -53,6 +53,7 @@ import {
   SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationMARPQuestionnairesApi,
   SocialInsuranceAdministrationResidenceInformationApi,
+  SocialInsuranceAdministrationEmploymentStatusesApi,
 } from '../dataProviders'
 import {
   getApplicationAnswers,
@@ -135,6 +136,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationResidenceInformationApi,
                 SocialInsuranceAdministrationMARPApplicationTypeApi,
                 SocialInsuranceAdministrationEducationLevelsApi,
+                SocialInsuranceAdministrationEmploymentStatusesApi,
               ],
               delete: true,
             },

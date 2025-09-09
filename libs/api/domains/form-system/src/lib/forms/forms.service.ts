@@ -8,6 +8,7 @@ import {
   FormsApi,
   FormsControllerCreateRequest,
   FormsControllerDeleteRequest,
+  FormsControllerPublishRequest,
   FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
   FormsControllerUpdateFormRequest,
@@ -15,6 +16,7 @@ import {
 import {
   CreateFormInput,
   DeleteFormInput,
+  PublishFormInput,
   GetFormInput,
   GetFormsInput,
   UpdateFormInput,
@@ -55,6 +57,12 @@ export class FormsService {
   async deleteForm(auth: User, input: DeleteFormInput): Promise<void> {
     await this.formsApiWithAuth(auth).formsControllerDelete(
       input as FormsControllerDeleteRequest,
+    )
+  }
+
+  async publishForm(auth: User, input: PublishFormInput): Promise<void> {
+    await this.formsApiWithAuth(auth).formsControllerPublish(
+      input as FormsControllerPublishRequest,
     )
   }
 

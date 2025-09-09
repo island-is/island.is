@@ -61,6 +61,7 @@ export const applicantInfoSubSection = buildSubSection({
             socialInsuranceAdministrationMessage.info.applicantApartmentNumber,
           width: 'half',
           disabled: true,
+          doesNotRequireAnswer: true,
           defaultValue: (application: Application) => {
             const { apartmentNumber } = getApplicationExternalData(
               application.externalData,

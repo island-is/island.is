@@ -604,6 +604,21 @@ export const m = defineMessages({
     defaultMessage: 'Afrita',
     description: 'Copy',
   },
+  publish: {
+    id: 'portals-admin.form-system:publish',
+    defaultMessage: 'Gefa út',
+    description: 'Publish',
+  },
+  unpublish: {
+    id: 'portals-admin.form-system:unpublish',
+    defaultMessage: 'Afturkalla útgáfu',
+    description: 'Unpublish',
+  },
+  tryOut: {
+    id: 'portals-admin.form-system:try-out',
+    defaultMessage: 'Prófa',
+    description: 'Try out',
+  },
   getUrl: {
     id: 'portals-admin.form-system:get-url',
     defaultMessage: 'Sækja slóð',
