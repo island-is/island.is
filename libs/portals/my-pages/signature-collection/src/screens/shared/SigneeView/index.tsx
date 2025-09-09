@@ -76,8 +76,8 @@ const SigneeView = ({
                             ? formatMessage(m.collectionTitleParliamentary)
                             : `${formatMessage(
                                 m.collectionMunicipalListOwner,
-                              )}: ${list.candidate.ownerName} (${format(
-                                new Date(list.candidate.ownerBirthDate),
+                              )}: ${list.candidate?.ownerName ?? ''} (${format(
+                                new Date(list.candidate?.ownerBirthDate),
                                 'dd.MM.yyyy',
                               )})`
                         }

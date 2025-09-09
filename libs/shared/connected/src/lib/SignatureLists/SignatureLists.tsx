@@ -99,8 +99,8 @@ export const SignatureLists: FC<
                         text={`${t(
                           'candidateOwnerName',
                           'Stofnandi söfnunar: ',
-                        )}${candidate.ownerName} (${format(
-                          new Date(candidate.ownerBirthDate),
+                        )}${candidate?.ownerName ?? ''} (${format(
+                          new Date(candidate?.ownerBirthDate),
                           'dd.MM.yyyy',
                         )})`}
                         cta={

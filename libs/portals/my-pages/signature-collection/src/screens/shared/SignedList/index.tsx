@@ -76,9 +76,9 @@ const SignedList = ({
                         SignatureCollectionCollectionType.Parliamentary
                       ? formatMessage(m.collectionTitleParliamentary)
                       : `${formatMessage(m.collectionMunicipalListOwner)}: ${
-                          list.candidate.ownerName
+                          list.candidate?.ownerName ?? ''
                         } (${format(
-                          new Date(list.candidate.ownerBirthDate),
+                          new Date(list.candidate?.ownerBirthDate),
                           'dd.MM.yyyy',
                         )})`
                   }
