@@ -9,7 +9,7 @@ import { Form } from '@island.is/application/types'
 import { overviewFields } from '../../utils/overviewFields'
 
 export const InReviewForm: Form = buildForm({
-  id: 'MedicalAndRehabilitationInReview',
+  id: 'disabilityPensionInReview',
   logo: Logo,
   children: [
     buildSection({

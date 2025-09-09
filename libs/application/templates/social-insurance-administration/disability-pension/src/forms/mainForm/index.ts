@@ -9,7 +9,7 @@ import { selfEvaluationSection } from './selfEvaluation'
 import { conclusionSection } from './conclusion'
 
 export const MainForm = buildForm({
-  id: 'MainForm',
+  id: 'disabilityPensionMain',
   mode: FormModes.DRAFT,
   logo: Logo,
   renderLastScreenButton: true,

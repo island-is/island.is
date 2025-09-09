@@ -138,9 +138,29 @@ const template: ApplicationTemplate<
                 const response = getValueViaPath<Eligible>(
                   application?.application?.externalData,
                   'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
-                )
-                return !!response?.isEligible && response.isEligible
+                );
+                console.log(response)
+                //return !!response?.isEligible && response.isEligible*/
+                return true;
               }
+            },
+            {target: States.NOT_ELIGIBLE}
+          ],
+        },
+      },
+      [States.NOT_ELIGIBLE]: {
+        meta: {
+          name: States.NOT_ELIGIBLE,
+          status: FormModes.DRAFT,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/notEligible').then((module) =>
+                  Promise.resolve(module.NotEligible),
+                ),
+              read: 'all',
             },
           ],
         },

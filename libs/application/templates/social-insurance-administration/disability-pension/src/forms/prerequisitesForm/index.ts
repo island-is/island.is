@@ -37,7 +37,7 @@ import { disabilityPensionFormMessage } from '../../lib/messages'
 
 //TODO: Fix and correct providers per item <---------- !!!!!!!!
 export const Prerequisites = buildForm({
-  id: 'PrerequisitesDraft',
+  id: 'disabilityPensionPrerequisites',
   title: disabilityPensionFormMessage.shared.title,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,

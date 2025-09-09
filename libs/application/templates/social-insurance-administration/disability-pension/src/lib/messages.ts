@@ -711,6 +711,15 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       description: 'Where have you received payments from?',
     },
   }),
+  notEligible: defineMessages({
+    title: {
+      id: 'dp.application:not.eligible.title',
+      defaultMessage:
+        'Því miður átt þú ekki rétt á örorkulífeyri',
+      description:
+        'Unfortunately, you are not eligible for disability pension.',
+    },
+  }),
   selfEvaluation: defineMessages({
     backgroundTitle: {
       id: 'dp.application:selfEvaluation.backgroundTitle',
