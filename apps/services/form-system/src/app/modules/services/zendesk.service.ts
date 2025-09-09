@@ -5,6 +5,9 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
+import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
+import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
+import { getLanguageTypeForValueTypeAttribute } from '../../dataTypes/valueTypes/valueType.helper'
 
 @Injectable()
 export class ZendeskService {
@@ -44,7 +47,7 @@ export class ZendeskService {
     const zendeskUrl = `https://${tenantId}.zendesk.com`
     const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
 
-    const { name, email } = this.getNameAndEmail()
+    const { name, email } = this.getNameAndEmail(applicationDto)
     const body = this.constructBody(applicationDto)
     const subject = applicationDto.formName?.is ?? 'No subject'
     const data = JSON.stringify(applicationDto)
@@ -79,7 +82,7 @@ export class ZendeskService {
   ): Promise<boolean> {
     const serviceUrl = new URL(`${url}/api/v2/tickets.json`)
 
-    console.log('service url', serviceUrl.toString())
+    // console.log('service url', serviceUrl.toString())
 
     try {
       const response = await this.enhancedFetch(serviceUrl.toString(), {
@@ -147,41 +150,61 @@ export class ZendeskService {
     }
   }
 
-  private getNameAndEmail(): {
+  private getNameAndEmail(applicationDto: ApplicationDto): {
     name: string
     email: string
   } {
-    const name = 'Jóna Jóns'
-    const email = 'jona.jons@example.com'
+    const json = applicationDto?.sections?.find(
+      (section) => section.sectionType === SectionTypes.PARTIES,
+    )?.screens?.[0]?.fields?.[0].values?.[0].json as ValueType
+    const name = json.name ?? 'Nafn fannst ekki'
+    const email = json.email ?? 'Netfang fannst ekki'
     return { name, email }
   }
 
   private constructBody(applicationDto: ApplicationDto): string {
-    const sections = applicationDto.sections?.slice(2)
+    const sections = applicationDto.sections?.slice(1)
 
     let body = `<p><strong>Tegund:</strong> ${applicationDto.formName?.is}</p>`
-    body += `<p style='margin: 0'><strong>Innsend:</strong> ${applicationDto.submittedAt?.toLocaleString(
+    body += `<p style='margin:0'><strong>Innsend:</strong> ${applicationDto.submittedAt?.toLocaleString(
       'is-IS',
     )}</p>`
-    body += `<p style='margin: 0'><strong>Númer:</strong> ${
+    body += `<p style='margin:0'><strong>Númer:</strong> ${
       applicationDto.id ?? ''
     }</p>`
     body += '<br />'
-    body += '<h3>Aðilar:</h3>'
-    // applicationDto.sections?.[1]?.screens?.forEach((screen) => {})
-    body += '<h3>Gögn:</h3>'
     if (sections) {
       sections.forEach((section) => {
-        body += `<h4>${section.name.is}</h4>`
+        if (
+          section.sectionType === SectionTypes.SUMMARY ||
+          section.sectionType === SectionTypes.COMPLETED
+        ) {
+          return // Skips to the next iteration
+        }
+        body += `<h3>${section.name.is}</h3>`
         section?.screens?.forEach((screen) => {
-          body += `<h5>${screen.name.is}</h5>`
+          body += `<h4 style='padding-left:10px'>${screen.name.is}</h4>`
           screen.fields?.forEach((field) => {
-            body += `<p><strong>${field.name.is}</strong></p>`
+            body += `<h5 style='margin:0;padding-left:20px'>${field.name.is}${
+              field.isRequired ? '*' : ''
+            }</h5>`
             field.values?.forEach((value) => {
               if (value.json && typeof value.json === 'object') {
                 Object.entries(value.json).forEach(([key, val]) => {
-                  console.log('key:', key, 'value:', val)
-                  body += `<p style='text-indent: 40px'><strong>${key}:</strong> ${val}</p>`
+                  val = this.getValue(val, field.fieldType)
+                  if (value.json && Object.keys(value.json).length > 1) {
+                    const attribute = getLanguageTypeForValueTypeAttribute(key)
+                    if (
+                      field.fieldType === FieldTypesEnum.APPLICANT &&
+                      (key === 'delegationType' || key === 'isLoggedInUser')
+                    ) {
+                      return
+                    }
+                    body += `<h6 style='display:inline-block;padding-left:30px'>${attribute.is}:</h6> `
+                    body += `<p style='display:inline-block;margin:0'>${val}</p><br />`
+                  } else {
+                    body += `<p style='padding-left:30px;margin:0'>${val}</p>`
+                  }
                 })
               }
             })
@@ -189,7 +212,23 @@ export class ZendeskService {
         })
       })
     }
-    // console.log('constructed body\n', body)
     return body
+  }
+
+  // eslint-disable-next-line
+  private getValue(val: any, fieldType: string): string {
+    if (fieldType === FieldTypesEnum.CHECKBOX) {
+      if (val === true) {
+        return 'Valið'
+      } else {
+        return 'Ekki valið'
+      }
+    } else if (fieldType === FieldTypesEnum.BANK_ACCOUNT && val === '--') {
+      return ''
+    }
+    if (val === null) {
+      return ''
+    }
+    return val
   }
 }
