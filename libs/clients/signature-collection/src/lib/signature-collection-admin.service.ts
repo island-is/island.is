@@ -239,7 +239,7 @@ export class SignatureCollectionAdminClientService
       })
 
       return {
-        slug: getSlug(candidacy.id ?? '', votingType.kosningTegund),
+        slug: getSlug(candidacy.id ?? '', votingType.kosningTegund ?? ''),
         success: true,
       }
     } catch (error) {
