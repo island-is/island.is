@@ -1795,6 +1795,7 @@ namespaces:
 payment-flow-update-handler:
   enabled: true
   env:
+    CODE_OWNER: 'stefna'
     LANDSPITALI_WEB_DIRECT_GRANT_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: 'Beinn styrkur - Landspítali'
     LANDSPITALI_WEB_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: 'Minningarkort - Landspítali'
     LANDSPITALI_WEB_PAYMENT_CONFIRMATION_SEND_FROM_EMAIL: 'island@island.is'
@@ -1802,7 +1803,6 @@ payment-flow-update-handler:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PAYMENTS_WEB_URL: 'https://island.is/greida'
     PAYMENT_FLOW_UPDATE_HANDLER_API_URL: 'http://payment-flow-update-handler'
-    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'services-payments'
