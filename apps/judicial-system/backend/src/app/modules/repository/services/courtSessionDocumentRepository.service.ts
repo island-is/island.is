@@ -70,7 +70,7 @@ export class CourtSessionDocumentRepositoryService {
 
       // Find the document with the highest order value for this case
       const lastDocument = await this.courtSessionDocumentModel.findOne({
-        where: { caseId: caseId },
+        where: { caseId },
         order: [['order', 'DESC']],
         transaction: options?.transaction,
       })
@@ -111,7 +111,7 @@ export class CourtSessionDocumentRepositoryService {
       )
 
       const updateOptions: UpdateOptions = {
-        where: { id: courtSessionDocumentId, caseId },
+        where: { id: courtSessionDocumentId, caseId, courtSessionId },
       }
 
       if (options?.transaction) {
@@ -122,7 +122,7 @@ export class CourtSessionDocumentRepositoryService {
       if (data.order !== undefined) {
         // Get the current document to check its current order
         const currentDocument = await this.courtSessionDocumentModel.findOne({
-          where: { id: courtSessionDocumentId, caseId },
+          where: { id: courtSessionDocumentId, caseId, courtSessionId },
           transaction: options?.transaction,
         })
 
@@ -178,7 +178,6 @@ export class CourtSessionDocumentRepositoryService {
         }
       }
 
-      // Update the document with the new data
       const [numberOfAffectedRows, courtSessionDocuments] =
         await this.courtSessionDocumentModel.update(data, {
           ...updateOptions,
@@ -227,7 +226,7 @@ export class CourtSessionDocumentRepositoryService {
 
       // Get the document to find its order before deletion
       const documentToDelete = await this.courtSessionDocumentModel.findOne({
-        where: { id: courtSessionDocumentId, caseId },
+        where: { id: courtSessionDocumentId, caseId, courtSessionId },
         transaction: options?.transaction,
       })
 
@@ -241,7 +240,7 @@ export class CourtSessionDocumentRepositoryService {
 
       // Delete the document
       const numberOfDeletedRows = await this.courtSessionDocumentModel.destroy({
-        where: { id: courtSessionDocumentId, caseId },
+        where: { id: courtSessionDocumentId, caseId, courtSessionId },
         transaction: options?.transaction,
       })
 
