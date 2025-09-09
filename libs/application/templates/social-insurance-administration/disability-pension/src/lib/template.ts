@@ -140,11 +140,11 @@ const template: ApplicationTemplate<
             {
               target: States.DRAFT,
               cond: (application) => {
-                const response = getValueViaPath<Eligible>(
+                const eligible = getValueViaPath<Eligible>(
                   application?.application?.externalData,
-                  'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
+                  'socialInsuranceAdministrationIsApplicantEligible.data',
                 )
-                return !!response?.isEligible && response.isEligible
+                return !!eligible?.isEligible && eligible.isEligible
               },
             },
             {target: States.NOT_ELIGIBLE}
