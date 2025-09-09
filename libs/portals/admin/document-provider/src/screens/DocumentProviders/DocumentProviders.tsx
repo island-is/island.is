@@ -27,7 +27,6 @@ import startOfMonth from 'date-fns/startOfMonth'
 import subYears from 'date-fns/subYears'
 import { DocumentProviderPaths } from '../../lib/paths'
 
-
 const DocumentProviders = () => {
   const today = new Date()
 
