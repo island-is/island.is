@@ -51,4 +51,15 @@ export const serviceSetup =
       .readiness('/readiness')
       .grantNamespaces('services-payments')
       .codeOwner(CodeOwners.Stefna)
+      .ingress({
+        internal: {
+          host: {
+            dev: 'payment-flow-update-handler',
+            staging: 'payment-flow-update-handler',
+            prod: 'payment-flow-update-handler',
+          },
+          paths: ['/'],
+          public: false,
+        },
+      })
   }
