@@ -157,8 +157,8 @@ export class ZendeskService {
     const json = applicationDto?.sections?.find(
       (section) => section.sectionType === SectionTypes.PARTIES,
     )?.screens?.[0]?.fields?.[0].values?.[0].json as ValueType
-    const name = json.name ?? ''
-    const email = json.email ?? ''
+    const name = json.name ?? 'Nafn fannst ekki'
+    const email = json.email ?? 'Netfang fannst ekki'
     return { name, email }
   }
 

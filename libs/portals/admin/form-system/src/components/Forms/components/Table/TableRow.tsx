@@ -89,29 +89,33 @@ export const TableRow = ({
   }
 
   const publish = {
-    title: 'Gefa út',
-    onClick: () => {
-      publishForm({
-        variables: {
-          input: {
-            id: id,
+    title: formatMessage(m.publish),
+    onClick: async () => {
+      try {
+        await publishForm({
+          variables: {
+            input: {
+              id: id,
+            },
           },
-        },
-      })
-      setFormsState((prevForms) =>
-        prevForms.map((form) =>
-          form.id === id ? { ...form, status: FormStatus.PUBLISHED } : form,
-        ),
-      )
+        })
+        setFormsState((prevForms) =>
+          prevForms.map((form) =>
+            form.id === id ? { ...form, status: FormStatus.PUBLISHED } : form,
+          ),
+        )
+      } catch (error) {
+        console.error('Error publishing form:', error)
+      }
     },
   }
 
   const unPublish = {
-    title: 'Afturkalla útgáfu',
+    title: formatMessage(m.unpublish),
   }
 
   const test = {
-    title: 'Prófa',
+    title: formatMessage(m.tryOut),
     onClick: () => {
       if (slug) {
         window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer')

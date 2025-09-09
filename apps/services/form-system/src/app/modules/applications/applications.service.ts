@@ -171,7 +171,6 @@ export class ApplicationsService {
     if (!sections) {
       throw new NotFoundException(`Sections not found`)
     }
-    console.log('Submitting screen')
     const screenDto = sections
       .flatMap((section) => section.screens || [])
       .find((screen) => screen.id === screenId)
