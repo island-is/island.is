@@ -63,13 +63,10 @@ describe('InternalVerdictController - Update verdict', () => {
     })
 
     it('should update the verdict ', () => {
-      expect(mockVerdictModel.update).toHaveBeenCalledWith(
-        dto,
-        {
-          where: { id: verdictId },
-          returning: true,
-        },
-      )
+      expect(mockVerdictModel.update).toHaveBeenCalledWith(dto, {
+        where: { id: verdictId },
+        returning: true,
+      })
       expect(then.result).toBe(updatedVerdict)
     })
   })
