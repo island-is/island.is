@@ -35,6 +35,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { useCourtDocuments } from '@island.is/judicial-system-web/src/components/CourtDocuments/CourtDocuments'
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import { CourtSessionRulingType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSetErrorMessage,
@@ -47,7 +48,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './CourtRecord.css'
-import { CourtSessionRulingType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
   [
