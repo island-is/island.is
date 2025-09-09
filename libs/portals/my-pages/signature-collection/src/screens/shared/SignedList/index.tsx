@@ -9,16 +9,13 @@ import { useMutation } from '@apollo/client'
 import { unSignList } from '../../../hooks/graphql/mutations'
 import {
   Mutation,
-  SignatureCollection,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 
 const SignedList = ({
   collectionType,
-  currentCollection,
 }: {
   collectionType: SignatureCollectionCollectionType
-  currentCollection: SignatureCollection
 }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
@@ -72,13 +69,18 @@ const SignedList = ({
                   heading={list.title.split(' - ')[0]}
                   eyebrow={list.area?.name}
                   text={
-                    currentCollection?.collectionType ===
+                    collectionType ===
                     SignatureCollectionCollectionType.Presidential
                       ? formatMessage(m.collectionTitle)
-                      : currentCollection?.collectionType ===
-                        SignatureCollectionCollectionType.LocalGovernmental
-                      ? formatMessage(m.collectionTitleMunicipal)
-                      : formatMessage(m.collectionTitleParliamentary)
+                      : collectionType ===
+                        SignatureCollectionCollectionType.Parliamentary
+                      ? formatMessage(m.collectionTitleParliamentary)
+                      : `${formatMessage(m.collectionMunicipalListOwner)}: ${
+                          list.candidate?.ownerName ?? ''
+                        } (${format(
+                          new Date(list.candidate?.ownerBirthDate),
+                          'dd.MM.yyyy',
+                        )})`
                   }
                   cta={
                     list.canUnsign

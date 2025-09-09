@@ -83,6 +83,7 @@ export const PaperSignees = ({
         } else {
           toast.error(formatMessage(m.paperSigneeError))
         }
+        onClearForm()
       },
       onError: () => {
         toast.error(formatMessage(m.paperSigneeError))
