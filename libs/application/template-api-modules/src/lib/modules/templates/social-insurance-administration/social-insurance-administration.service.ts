@@ -574,6 +574,10 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return await this.siaClientService.getCurrencies(auth)
   }
 
+  async getResidenceTypes({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getResidenceTypes(auth)
+  }
+
   async getChildrenWithSameDomicile({ auth }: TemplateApiModuleActionProps) {
     const cohabitants = await this.nationalRegistryApi.getCohabitants(
       auth.nationalId,
@@ -712,5 +716,17 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return await this.siaClientService.getMedicalAndRehabilitationApplicationType(
       auth,
     )
+  }
+
+  async getEmploymentStatuses({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getEmploymentStatuses(auth)
+  }
+
+  async getProfessions({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getProfessions(auth)
+  }
+
+  async getProfessionActivities({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getProfessionActivities(auth)
   }
 }

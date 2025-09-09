@@ -379,6 +379,18 @@ export class SocialInsuranceAdministrationClientService {
     )
   }
 
+  async getResidenceTypes(
+    user: User,
+  ): Promise<Array<TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto>> {
+    const data = await this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralHousingTypesGet()
+
+    return data.filter(
+      (residenceType) => residenceType.value
+    )
+  }
+
   async getProfessionActivities(
     user: User,
   ): Promise<

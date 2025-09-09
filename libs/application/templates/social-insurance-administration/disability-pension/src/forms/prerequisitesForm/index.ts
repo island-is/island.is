@@ -27,6 +27,10 @@ import {
   SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
   SocialInsuranceAdministrationLanguagesApi,
   SocialInsuranceAdministrationMaritalStatusesApi,
+  SocialInsuranceAdministrationResidenceApi,
+  SocialInsuranceAdministrationEmploymentStatusesApi,
+  SocialInsuranceAdministrationProfessionsApi,
+  SocialInsuranceAdministrationProfessionActivitiesApi,
 } from '../../dataProviders'
 import { disabilityPensionFormMessage } from '../../lib/messages'
 
@@ -115,6 +119,18 @@ export const Prerequisites = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationResidenceApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationEmploymentStatusesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationProfessionsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationProfessionActivitiesApi,
             }),
           ],
           submitField: buildSubmitField({

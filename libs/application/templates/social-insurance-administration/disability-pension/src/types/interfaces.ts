@@ -8,6 +8,11 @@ export interface MaritalStatus {
   label: string
 }
 
+export interface Residence {
+  value: number
+  label: string
+}
+
 export interface EmploymentStatusResponse {
   languageCode: string
   employmentStatuses: EmploymentStatus[]

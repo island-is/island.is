@@ -61,6 +61,19 @@ export const SocialInsuranceAdministrationEmploymentStatusesApi =
     namespace: 'SocialInsuranceAdministration',
   })
 
+export const SocialInsuranceAdministrationProfessionsApi = defineTemplateApi({
+  action: 'getProfessions',
+  externalDataId: 'socialInsuranceAdministrationProfessions',
+  namespace: 'SocialInsuranceAdministration',
+})
+
+export const SocialInsuranceAdministrationProfessionActivitiesApi =
+  defineTemplateApi({
+    action: 'getProfessionActivities',
+    externalDataId: 'socialInsuranceAdministrationProfessionActivities',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
 export const SocialInsuranceAdministrationLatestIncomePlan = defineTemplateApi({
   action: 'getLatestIncomePlan',
   externalDataId: 'socialInsuranceAdministrationLatestIncomePlan',
@@ -79,6 +92,13 @@ export const SocialInsuranceAdministrationIsApplicantEligibleApi =
   defineTemplateApi({
     action: 'getIsEligible',
     externalDataId: 'socialInsuranceAdministrationIsApplicantEligible',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
+export const SocialInsuranceAdministrationResidenceApi =
+  defineTemplateApi({
+    action: 'getResidenceTypes',
+    externalDataId: 'socialInsuranceAdministrationResidence',
     namespace: 'SocialInsuranceAdministration',
   })
 

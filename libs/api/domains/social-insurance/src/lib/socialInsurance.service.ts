@@ -317,6 +317,10 @@ export class SocialInsuranceService {
     return await this.socialInsuranceApi.getProfessions(user)
   }
 
+  async getResidenceTypes(user: User) {
+    return await this.socialInsuranceApi.getResidenceTypes(user)
+  }
+
   async getProfessionActivities(user: User) {
     return await this.socialInsuranceApi.getProfessionActivities(user)
   }

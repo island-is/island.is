@@ -5,21 +5,14 @@ import {
   buildSelectField,
   buildTitleField,
   getValueViaPath,
-  NO,
   YES,
 } from '@island.is/application/core'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { getYears } from '../../../../utils/dates'
 import { Locale } from '@island.is/shared/types'
 import {
-  mockProfessionCategories,
-  mockProfessionJobTitle,
-} from '../../../../utils/mockData'
-import {
-  EmploymentStatus,
   EmploymentStatusResponse,
 } from '../../../../types/interfaces'
 import {
