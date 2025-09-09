@@ -1254,7 +1254,6 @@
         "libs/application/templates/name-of-application/src/index.ts"
       ],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
-      "vmst-applications": ["libs/api/domains/vmst-applications/src/index.ts"]
     }
   }
 }

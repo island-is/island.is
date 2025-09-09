@@ -1,8 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 
-@InputType('BankInformationInput')
-export class BankInformationInput {
+@InputType('VmstApplicationsBankInformationInput')
+export class VmstApplicationsBankInformationInput {
   @Field()
   @IsString()
   bankNumber!: string
