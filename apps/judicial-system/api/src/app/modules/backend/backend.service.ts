@@ -25,7 +25,11 @@ import {
 } from '../case'
 import { CaseListEntry } from '../case-list'
 import { CaseTableResponse, SearchCasesResponse } from '../case-table'
-import { CourtSessionResponse } from '../court-session'
+import {
+  CourtSessionDocumentResponse,
+  CourtSessionResponse,
+  DeleteResponse as DeleteCourtSessionDocumentResponse,
+} from '../court-session/'
 import {
   CivilClaimant,
   Defendant,
@@ -603,6 +607,39 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(
       `case/${caseId}/courtSession/${courtSessionId}`,
       updateCourtSession,
+    )
+  }
+
+  createCourtSessionDocument(
+    caseId: string,
+    courtSessionId: string,
+    createCourtSessionDocument: unknown,
+  ): Promise<CourtSessionDocumentResponse> {
+    return this.post(
+      `case/${caseId}/courtSession/${courtSessionId}/document`,
+      createCourtSessionDocument,
+    )
+  }
+
+  updateCourtSessionDocument(
+    caseId: string,
+    courtSessionId: string,
+    courtSessionDocumentId: string,
+    updateCourtSessionDocument: unknown,
+  ): Promise<CourtSessionDocumentResponse> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/document/${courtSessionDocumentId}`,
+      updateCourtSessionDocument,
+    )
+  }
+
+  deleteCourtSessionDocument(
+    caseId: string,
+    courtSessionId: string,
+    courtSessionDocumentId: string,
+  ): Promise<DeleteCourtSessionDocumentResponse> {
+    return this.delete(
+      `case/${caseId}/courtSession/${courtSessionId}/document/${courtSessionDocumentId}`,
     )
   }
 
