@@ -213,8 +213,7 @@ export const messages = defineMessages({
   },
   replyEmailTooltip: {
     id: 'sp.documents:reply-email-tooltip',
-    defaultMessage:
-      'Netfang sem er skráð undir Mínar stillingar. Hægt er að breyta um netfang <link>hér</link>',
+    defaultMessage: 'Netfang sem er skráð í Mínar stillingar. ',
   },
   emailMissing: {
     id: 'sp.documents:email-missing',

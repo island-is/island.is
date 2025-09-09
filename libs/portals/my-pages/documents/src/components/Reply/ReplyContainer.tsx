@@ -9,12 +9,9 @@ import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { dateFormat } from '@island.is/shared/constants'
 import { isDefined } from '@island.is/shared/utils'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ReplyState } from '../../lib/types'
-import {
-  useGetDocumentTicketLazyQuery,
-  useGetDocumentTicketQuery,
-} from '../../queries/Overview.generated'
+import { useGetDocumentTicketQuery } from '../../queries/Overview.generated'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { messages } from '../../utils/messages'
 import ReplyForm from './ReplyForm'
@@ -27,7 +24,7 @@ const ReplyContainer = () => {
   const { replyState, activeDocument, setReplyState } = useDocumentContext()
 
   const [sent, setSent] = useState<boolean>(false)
-  const [showAllReplies, setShowAllReplies] = useState(false)
+  const [showAllReplies, setShowAllReplies] = useState(true)
 
   const { data, loading, refetch } = useGetDocumentTicketQuery({
     skip: !activeDocument?.id,
@@ -46,13 +43,19 @@ const ReplyContainer = () => {
   const { data: userProfile } = useUserProfile()
 
   const allRepliesData = data?.documentV2?.ticket?.comments ?? []
-  const userEmail = userProfile?.email
+  const userEmail = userProfile?.email ?? profile?.email
   const hasEmail = isDefined(userEmail)
   const userName = profile?.name ?? ''
   const replies = replyState?.replies
   const repliesLength = replies?.comments?.length ?? 0
 
   const { isMobile } = useIsMobile()
+
+  useEffect(() => {
+    if (repliesLength > (isMobile ? 2 : 4)) {
+      setShowAllReplies(false)
+    }
+  }, [repliesLength, isMobile])
 
   const successfulSubmit = useCallback(() => {
     refetch?.()
@@ -110,8 +113,6 @@ const ReplyContainer = () => {
     changeReplyState({ replyOpen: false })
   }, [changeReplyState])
 
-  const { repliesLength, replies, userName, hasEmail, userEmail } =
-    derivedValues
   const hideReplies = isMobile && replyState?.replyOpen
   const lastReply = replies?.comments?.at?.(-1)
   const repliesComments =
