@@ -16,7 +16,9 @@ export class AppService {
   ) {}
 
   async handlePaymentFlowUpdate(body: PaymentCallbackPayload) {
-    if (body.details.reason !== 'payment_completed') {
+    if (
+      !(body.details.reason === 'payment_completed' && body.type === 'success')
+    ) {
       return
     }
 
