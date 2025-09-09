@@ -50,9 +50,6 @@ import { DataStatus } from './types/dataStatusTypes'
 import { ActorLocale } from './dto/actorLocale'
 import { Locale } from './types/localeTypes'
 
-//TEMP REMOVE
-const k = 8
-
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
 @Controller()
