@@ -4,6 +4,7 @@ import type { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
 import { data as lsh_list_1 } from '../mockdata/lsh_list_1_final'
 import { data as lsh_list_2 } from '../mockdata/lsh_list_2_transformed'
+import { data as EL_list_1 } from '../mockdata/el_list_1_transformed'
 import {
   Questionnaire,
   QuestionnairesList,
@@ -21,7 +22,7 @@ export class QuestionnairesService {
     id: string,
   ): Promise<Questionnaire | null> {
     // Implementation goes here
-    const data = [lsh_list_1, lsh_list_2].find((list) =>
+    const data = [lsh_list_1, lsh_list_2, EL_list_1].find((list) =>
       list.questionnaires?.some((q) => q.id === id),
     )?.questionnaires[0]
 
@@ -51,6 +52,7 @@ export class QuestionnairesService {
     // Implementation goes here
     const data = lsh_list_1
     const data2 = lsh_list_2
+    const data3 = EL_list_1
 
     if (!data) {
       return null
@@ -72,6 +74,14 @@ export class QuestionnairesService {
         sentDate: data2.questionnaires[0].sentDate || '',
         status: data2.questionnaires[0].status,
         organization: data2.questionnaires[0].organization || '',
+      },
+      {
+        id: data3.questionnaires[0].id || '',
+        title: data3.questionnaires[0].title || '',
+        description: data3.questionnaires[0].description || '',
+        sentDate: data3.questionnaires[0].sentDate || '',
+        status: data3.questionnaires[0].status,
+        organization: data3.questionnaires[0].organization || '',
       },
     ]
 

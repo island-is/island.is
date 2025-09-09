@@ -1,10 +1,16 @@
 <!-- Generated with AI -->
 
-# Questionnaire Transform Script
+# Questionnaire Transform Scripts
 
-This script transforms LSH questionnaire JSON files to the exact GraphQL model format used in the questionnaires service.
+This directory contains transform scripts for converting questionnaire JSON files to the exact GraphQL model format used in the questionnaires service.
 
-## Features
+## Scripts
+
+### 1. LSH Transform (`transform.ts`)
+
+Transforms LSH questionnaire JSON files to GraphQL models.
+
+#### Features
 
 - **Exact GraphQL Model Mapping**: Maps to the exact `Questionnaire` and `Question` models with proper TypeScript types
 - **Enum Usage**: Uses proper enum values from `QuestionDisplayType` and `QuestionnairesStatusEnum`
@@ -15,12 +21,11 @@ This script transforms LSH questionnaire JSON files to the exact GraphQL model f
   - `HealthQuestionnaireAnswerNumber` for NumBox
   - `HealthQuestionnaireAnswerScale` for Slider with min/max values
   - `HealthQuestionnaireAnswerThermometer` for Slider without values
+  - `HealthQuestionnaireAnswerLabel` for display-only text
 - **Dependency Detection**: Intelligent dependency detection for question chains
 - **TypeScript Output**: Generates ready-to-use TypeScript files with proper imports
 
-## Usage
-
-### Command Line
+#### Usage
 
 ```bash
 # Transform a JSON file to TypeScript
@@ -29,6 +34,47 @@ npx ts-node transform.ts <input-json-file> [output-ts-file]
 # Example: Transform lsh_list_1.json
 npx ts-node transform.ts lsh_list_1.json lsh_list_1_transformed.ts
 ```
+
+### 2. EL Transform (`el_transform.ts`)
+
+Transforms EL questionnaire JSON files (with triggers) to GraphQL models.
+
+#### Features
+
+- **EL JSON Format Support**: Handles the EL JSON structure with groups, items, and triggers
+- **Trigger Mapping**: Maps trigger dependencies (called `dependsOn` in previous LSH format) to GraphQL format
+- **Question Types**: Supports all EL question types:
+  - `bool` → `HealthQuestionnaireAnswerRadio` (Já/Nei options)
+  - `number` → `HealthQuestionnaireAnswerNumber` or `HealthQuestionnaireAnswerThermometer` (if displayClass="thermometer")
+  - `string` → `HealthQuestionnaireAnswerText`
+  - `text` → `HealthQuestionnaireAnswerLabel` (display-only)
+  - `list` → `HealthQuestionnaireAnswerCheckbox`
+  - `radio` → `HealthQuestionnaireAnswerRadio`
+- **Visibility Conditions**: Converts trigger objects to JSON string format for visibility conditions
+- **TypeScript Output**: Generates ready-to-use TypeScript files with proper imports
+
+#### Usage
+
+```bash
+# Transform an EL JSON file to TypeScript
+npx ts-node el_transform.ts <input-json-file> [output-ts-file]
+
+# Example: Transform el_list_1.json
+npx ts-node el_transform.ts el_list_1.json el_list_1_transformed.ts
+```
+
+#### EL Transform Results for `el_list_1.json`
+
+- ✅ **47 questions** transformed successfully
+- ✅ **2 questions** with trigger dependencies
+- ✅ **Question types generated**:
+  - Radio (bool): 40 questions
+  - Thermometer: 1 question
+  - Label (text): 2 questions
+  - Text (string): 2 questions
+  - Checkbox (list): 2 questions
+
+````
 
 ### Programmatic Usage
 
@@ -40,7 +86,7 @@ const transformedData = transformQuestionnaire(originalJsonData)
 
 // Transform JSON file
 transformJsonFile('./input.json', './output.ts')
-```
+````
 
 ## Input Format
 
