@@ -28,7 +28,6 @@ env:
   DB_USER: 'service_portal_api'
   EMAIL_REGION: 'eu-west-1'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-  ISLYKILL_CERT: '/etc/config/islyklar.p12'
   LOG_LEVEL: 'info'
   NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
   NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlunumsoknir/.default'
@@ -45,8 +44,6 @@ env:
   XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
   XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-files:
-  - 'islyklar.p12'
 grantNamespaces:
   - 'nginx-ingress-internal'
   - 'islandis'
@@ -61,7 +58,7 @@ healthCheck:
     timeoutSeconds: 3
   readiness:
     initialDelaySeconds: 3
-    path: '/readiness'
+    path: '/health/check'
     timeoutSeconds: 3
 hpa:
   scaling:
@@ -131,8 +128,6 @@ secrets:
   EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME'
   IDENTITY_SERVER_CLIENT_ID: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET'
-  ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
-  ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
   NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
   NOVA_URL: '/k8s/service-portal-api/NOVA_URL'

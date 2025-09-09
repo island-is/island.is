@@ -13,7 +13,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
 import {
-  useDeleteIslykillValue,
+  useDeleteEmailOrPhoneValue,
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
 
@@ -71,10 +71,10 @@ export const ProfileForm = ({
   const [emailDirty, setEmailDirty] = useState(true)
   const [internalLoading, setInternalLoading] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
+  const { deleteEmailOrPhoneValue, loading: deleteLoading } =
+    useDeleteEmailOrPhoneValue()
   const [showEmailForm, setShowEmailForm] = useState(false)
 
-  const { deleteIslykillValue, loading: deleteLoading } =
-    useDeleteIslykillValue()
   const userInfo = useUserInfo()
 
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
@@ -151,7 +151,7 @@ export const ProfileForm = ({
          * After asking the user to verify that they are updating their profile with empty fields.
          */
 
-        await deleteIslykillValue({
+        await deleteEmailOrPhoneValue({
           email: true,
           mobilePhoneNumber: true,
         }).then(() => closeAllModals())
