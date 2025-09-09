@@ -26,7 +26,7 @@ export class UpdateCourtSessionDocumentInput {
   @IsOptional()
   @IsInt()
   @IsPositive()
-  readonly order?: number
+  readonly documentOrder?: number
 
   @Field(() => String, { nullable: true })
   @IsOptional()

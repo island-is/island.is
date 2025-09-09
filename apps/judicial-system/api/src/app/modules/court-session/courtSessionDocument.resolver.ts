@@ -15,9 +15,9 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
-import { DeleteResponse } from '../indictment-count/models/delete.response'
 import { CourtSessionDocumentResponse } from './dto/courtSessionDocument.response'
 import { CreateCourtSessionDocumentInput } from './dto/createCourtSessionDocument.input'
+import { DeleteCourtSessionDocumentResponse } from './dto/deleteCourtSessionDocument.response'
 import { UpdateCourtSessionDocumentInput } from './dto/updateCourtSessionDocument.input'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -87,14 +87,14 @@ export class CourtSessionDocumentResolver {
     )
   }
 
-  @Mutation(() => DeleteResponse)
+  @Mutation(() => DeleteCourtSessionDocumentResponse)
   deleteCourtSessionDocument(
     @Args('input', { type: () => UpdateCourtSessionDocumentInput })
     input: UpdateCourtSessionDocumentInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
-  ): Promise<DeleteResponse> {
+  ): Promise<DeleteCourtSessionDocumentResponse> {
     const { caseId, courtSessionId, courtSessionDocumentId } = input
 
     this.logger.debug(

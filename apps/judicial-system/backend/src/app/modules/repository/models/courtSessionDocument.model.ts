@@ -58,7 +58,7 @@ export class CourtSessionDocument extends Model {
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   @ApiProperty({ type: Number })
-  order!: number
+  documentOrder!: number
 
   @Column({ type: DataType.STRING, allowNull: false })
   @ApiProperty({ type: String })

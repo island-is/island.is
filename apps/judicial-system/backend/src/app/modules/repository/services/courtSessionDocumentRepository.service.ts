@@ -40,7 +40,7 @@ interface DeleteCourtSessionDocumentOptions {
 }
 
 interface UpdateCourtSessionDocument {
-  order?: number
+  documentOrder?: number
   name?: string
 }
 
@@ -70,17 +70,17 @@ export class CourtSessionDocumentRepositoryService {
         createOptions.transaction = options.transaction
       }
 
-      // Find the document with the highest order value for this case
+      // Find the document with the highest document order value for this case
       const lastDocument = await this.courtSessionDocumentModel.findOne({
         where: { caseId },
-        order: [['order', 'DESC']],
+        order: [['documentOrder', 'DESC']],
         transaction: options?.transaction,
       })
 
-      const nextOrder = lastDocument ? lastDocument.order + 1 : 1
+      const nextOrder = lastDocument ? lastDocument.documentOrder + 1 : 1
 
       const courtSessionDocument = await this.courtSessionDocumentModel.create(
-        { ...data, caseId, courtSessionId, order: nextOrder },
+        { ...data, caseId, courtSessionId, documentOrder: nextOrder },
         createOptions,
       )
 
@@ -120,8 +120,8 @@ export class CourtSessionDocumentRepositoryService {
         updateOptions.transaction = options.transaction
       }
 
-      // If order is being updated, we need special handling
-      if (data.order !== undefined) {
+      // If the document order is being updated, we need special handling
+      if (data.documentOrder !== undefined) {
         // Get the current document to check its current order
         const currentDocument = await this.courtSessionDocumentModel.findOne({
           where: { id: courtSessionDocumentId, caseId, courtSessionId },
@@ -140,26 +140,26 @@ export class CourtSessionDocumentRepositoryService {
           transaction: options?.transaction,
         })
 
-        // Validate order bounds
-        if (data.order < 1 || data.order > totalDocuments) {
+        // Validate the document order bounds
+        if (data.documentOrder < 1 || data.documentOrder > totalDocuments) {
           throw new BadRequestException(
             `Order must be between 1 and ${totalDocuments}`,
           )
         }
 
-        const currentOrder = currentDocument.order
-        const newOrder = data.order
+        const currentOrder = currentDocument.documentOrder
+        const newOrder = data.documentOrder
 
-        // Only adjust other documents if the order is actually changing
+        // Only adjust other documents if the document order is actually changing
         if (currentOrder !== newOrder) {
           if (newOrder > currentOrder) {
             // Moving down: decrease order of documents between current and new position
             await this.courtSessionDocumentModel.update(
-              { order: literal('order - 1') },
+              { documentOrder: literal('documentOrder - 1') },
               {
                 where: {
                   caseId,
-                  order: { [Op.gt]: currentOrder, [Op.lte]: newOrder },
+                  documentOrder: { [Op.gt]: currentOrder, [Op.lte]: newOrder },
                 },
                 transaction: options?.transaction,
               },
@@ -167,11 +167,11 @@ export class CourtSessionDocumentRepositoryService {
           } else {
             // Moving up: increase order of documents between new and current position
             await this.courtSessionDocumentModel.update(
-              { order: literal('order + 1') },
+              { documentOrder: literal('documentOrder + 1') },
               {
                 where: {
                   caseId,
-                  order: { [Op.gte]: newOrder, [Op.lt]: currentOrder },
+                  documentOrder: { [Op.gte]: newOrder, [Op.lt]: currentOrder },
                 },
                 transaction: options?.transaction,
               },
@@ -238,7 +238,7 @@ export class CourtSessionDocumentRepositoryService {
         )
       }
 
-      const deletedOrder = documentToDelete.order
+      const deletedOrder = documentToDelete.documentOrder
 
       // Delete the document
       const numberOfDeletedRows = await this.courtSessionDocumentModel.destroy({
@@ -261,9 +261,9 @@ export class CourtSessionDocumentRepositoryService {
 
       // Adjust order of remaining documents that had higher order values
       await this.courtSessionDocumentModel.update(
-        { order: literal('order - 1') },
+        { documentOrder: literal('documentOrder - 1') },
         {
-          where: { caseId, order: { [Op.gt]: deletedOrder } },
+          where: { caseId, documentOrder: { [Op.gt]: deletedOrder } },
           transaction: options?.transaction,
         },
       )

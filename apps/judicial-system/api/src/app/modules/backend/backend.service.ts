@@ -7,13 +7,11 @@ import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
 import {
+  CaseTableType,
+  DateType,
   Lawyer,
   LawyerType,
   mapToLawyer,
-} from '@island.is/judicial-system/types'
-import {
-  CaseTableType,
-  DateType,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -28,8 +26,8 @@ import { CaseTableResponse, SearchCasesResponse } from '../case-table'
 import {
   CourtSessionDocumentResponse,
   CourtSessionResponse,
-  DeleteResponse as DeleteCourtSessionDocumentResponse,
-} from '../court-session/'
+  DeleteCourtSessionDocumentResponse,
+} from '../court-session'
 import {
   CivilClaimant,
   Defendant,
@@ -54,16 +52,14 @@ import {
 } from '../police'
 import { CaseStatistics } from '../statistics'
 import {
+  CaseDataExportInput,
   IndictmentCaseStatistics,
-  RequestCaseStatistics,
-  SubpoenaStatistics,
-} from '../statistics'
-import { CaseDataExportInput } from '../statistics/dto/caseDataExport.input'
-import {
   IndictmentStatisticsInput,
+  RequestCaseStatistics,
   RequestStatisticsInput,
+  SubpoenaStatistics,
   SubpoenaStatisticsInput,
-} from '../statistics/dto/caseStatistics.input'
+} from '../statistics'
 import { Subpoena } from '../subpoena'
 import { Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'

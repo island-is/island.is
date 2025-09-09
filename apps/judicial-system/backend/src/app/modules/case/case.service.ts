@@ -251,7 +251,7 @@ export const include: Includeable[] = [
         model: CourtSessionDocument,
         as: 'courtSessionDocuments',
         required: false,
-        order: [['order', 'ASC']],
+        order: [['documentOrder', 'ASC']],
         separate: true,
       },
     ],

@@ -7,7 +7,7 @@ export class UpdateCourtSessionDocumentDto {
   @IsInt()
   @IsPositive()
   @ApiPropertyOptional({ type: Number })
-  readonly order?: number
+  readonly documentOrder?: number
 
   @IsOptional()
   @IsString()

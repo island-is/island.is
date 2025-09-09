@@ -33,7 +33,7 @@ module.exports = {
             allowNull: false,
           },
           document_type: { type: Sequelize.STRING, allowNull: false },
-          order: { type: Sequelize.INTEGER, allowNull: false },
+          document_order: { type: Sequelize.INTEGER, allowNull: false },
           name: { type: Sequelize.STRING, allowNull: false },
           case_file_id: {
             type: Sequelize.UUID,

@@ -11,12 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
-import {
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -34,9 +29,9 @@ import {
   districtCourtRegistrarRule,
 } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
-import { DeleteResponse } from '../indictment-count/models/delete.response'
 import { CourtSessionDocument } from '../repository'
 import { CreateCourtSessionDocumentDto } from './dto/createCourtSessionDocument.dto'
+import { DeleteResponse } from './dto/delete.response'
 import { UpdateCourtSessionDocumentDto } from './dto/updateCourtSessionDocument.dto'
 import { CourtSessionDocumentExistsGuard } from './guards/courtSessionDocumentExists.guard'
 import { CourtSessionExistsGuard } from './guards/courtSessionExists.guard'
@@ -134,7 +129,7 @@ export class CourtSessionDocumentController {
     districtCourtAssistantRule,
   )
   @Delete(':courtSessionDocumentId')
-  @ApiNoContentResponse({
+  @ApiOkResponse({
     description: 'Deletes a court session document',
   })
   async delete(

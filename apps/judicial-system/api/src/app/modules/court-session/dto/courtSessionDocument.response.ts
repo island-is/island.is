@@ -27,7 +27,7 @@ export class CourtSessionDocumentResponse {
   readonly documentType!: CourtSessionDocumentType
 
   @Field(() => Int)
-  readonly order!: number
+  readonly documentOrder!: number
 
   @Field(() => String)
   readonly name!: string
