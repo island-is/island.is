@@ -15,7 +15,7 @@ import {
   SentFilesChartDataItem,
   SentFilesChartDataItemInfo,
 } from '../lib/types'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 
 export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
   nationalId?: string,

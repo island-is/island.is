@@ -6,7 +6,7 @@ import { GET_STATISTICS_BY_NATIONALID } from '../queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
 import { GetStatisticsByNationalIdReturnType } from '../lib/types'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 
 export const useGetStatisticsByNationalId = (
   nationalId?: string,

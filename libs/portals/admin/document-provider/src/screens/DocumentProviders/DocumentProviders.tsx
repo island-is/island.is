@@ -23,8 +23,10 @@ import {
   StatisticsBoxData,
 } from '../../components/StatisticBoxList/StatisticBoxList'
 import { TotalStatisticsSortBy } from '@island.is/api/schema'
-import { startOfMonth, subYears } from 'date-fns'
+import startOfMonth from 'date-fns/startOfMonth'
+import subYears from 'date-fns/subYears'
 import { DocumentProviderPaths } from '../../lib/paths'
+
 
 const DocumentProviders = () => {
   const today = new Date()

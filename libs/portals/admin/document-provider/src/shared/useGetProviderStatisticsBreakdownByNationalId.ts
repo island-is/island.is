@@ -14,7 +14,7 @@ import {
   ProviderStatisticsBreakdown,
 } from '../lib/types'
 import { DELIVERY_PRICE } from '../lib/constants'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 
 export const useGetProviderStatisticsBreakdownByNationalId = (
   nationalId?: string,
