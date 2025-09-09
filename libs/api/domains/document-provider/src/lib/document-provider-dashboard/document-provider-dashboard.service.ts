@@ -28,7 +28,7 @@ import {
   mapBreakdownItems,
   mapCategoryStatisticsItems,
   mapStatistics,
-} from '../utils/helpers'
+} from '../utils/mappers'
 
 @Injectable()
 export class DocumentProviderDashboardService {
