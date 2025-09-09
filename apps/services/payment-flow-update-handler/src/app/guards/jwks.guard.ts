@@ -18,8 +18,7 @@ export const JwksClientProvider = {
     return new JwksClient({
       jwksUri: `${issuer}/.well-known/jwks.json`,
       cache: true,
-      cacheMaxEntries: 5,
-      cacheMaxAge: 10 * 60 * 1000, // 10 minutes
+      rateLimit: true,
     })
   },
   inject: [AppConfig.KEY],
