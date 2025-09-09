@@ -169,7 +169,6 @@ const InstitutionOverview = () => {
           {formatMessage(m.applicationSystemApplications)}
         </Text>
         <Text fontWeight="light">
-          {' '}
           {formatMessage(m.applicationSystemApplicationsDescription)}
         </Text>
       </Box>
