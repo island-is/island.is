@@ -43,8 +43,8 @@ import {
   SocialInsuranceAdministrationEmploymentStatusesApi,
   SocialInsuranceAdministrationMaritalStatusesApi,
   SocialInsuranceAdministrationResidenceApi,
-  SocialInsuranceAdministrationProfessionActivitiesApi
-  SocialInsuranceAdministrationProfessionsApi,
+  SocialInsuranceAdministrationProfessionActivitiesApi,
+  SocialInsuranceAdministrationProfessionsApi
 } from '../dataProviders'
 import {
   Actions,
