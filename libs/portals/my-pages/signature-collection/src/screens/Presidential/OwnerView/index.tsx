@@ -2,13 +2,7 @@ import {
   SignatureCollection,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
-import {
-  ActionCard,
-  Box,
-  Button,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import format from 'date-fns/format'
