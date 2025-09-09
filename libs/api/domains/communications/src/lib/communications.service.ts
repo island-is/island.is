@@ -214,6 +214,12 @@ export class CommunicationsService {
       }) ?? [],
     )
 
+    let subject = `Island.is form: ${form.title}`
+
+    if (form.emailSubject?.trim()) {
+      subject = form.emailSubject.trim()
+    }
+
     const emailOptions = {
       from: {
         name: input.name,
@@ -224,7 +230,7 @@ export class CommunicationsService {
         address: input.email,
       },
       to: recipient,
-      subject: `Island.is form: ${form.title}`,
+      subject,
       text: input.message,
       attachments,
     }
