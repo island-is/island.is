@@ -486,7 +486,7 @@ export const m = defineMessages({
   },
   deleteCollection: {
     id: 'sp.signatureCollection:deleteCollection',
-    defaultMessage: 'Eyða frambooði',
+    defaultMessage: 'Eyða framboði',
     description: '',
   },
   deleteCollectionDescription: {
