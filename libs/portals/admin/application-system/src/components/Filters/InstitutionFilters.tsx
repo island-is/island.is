@@ -53,6 +53,8 @@ export const InstitutionFilters = ({
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
   const userInfo = useUserInfo()
+  const [showSearchNationalIdError, setShowSearchNationalIdError] =
+    useState(false)
 
   const { data: typeData, loading: typesLoading } =
     useGetInstitutionApplicationTypesQuery({
@@ -65,6 +67,9 @@ export const InstitutionFilters = ({
 
   useDebounce(
     () => {
+      setShowSearchNationalIdError(
+        nationalId.length > 0 && nationalId.length < 11,
+      )
       onSearchChange(nationalId)
     },
     debounceTime.search,
@@ -151,7 +156,7 @@ export const InstitutionFilters = ({
                 />
               ) : (
                 <FilterInput
-                  placeholder={formatMessage(m.searchPlaceholder)}
+                  placeholder={formatMessage(m.searchApplicantPlaceholder)}
                   name="admin-applications-nationalId"
                   value={
                     nationalId.length > 6
@@ -160,6 +165,12 @@ export const InstitutionFilters = ({
                   }
                   onChange={setNationalId}
                   backgroundColor="blue"
+                  maxLength={11}
+                  error={
+                    showSearchNationalIdError
+                      ? formatMessage(m.searchApplicantError)
+                      : undefined
+                  }
                 />
               )}
               <Box marginX={[0, 0, 2]} marginY={[2, 2, 0]}>
