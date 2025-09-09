@@ -110,10 +110,6 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     application,
   }: TemplateApiModuleActionProps): Promise<void> {
     const { answers, externalData } = application
-    const bankAnswers = getValueViaPath<PaymentInformationAnswer>(
-      answers,
-      'paymentInformation',
-    )
     const personalInfo = getApplicantInfo(answers, externalData)
     const contact = getContactInfo(answers)
     const licenses = getLicenseInfo(answers)
