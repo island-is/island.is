@@ -96,6 +96,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
       - name: Set id for matrix
         run: |
           node ./scripts/ci/docker/create-id.mjs
@@ -220,6 +222,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -258,6 +262,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps

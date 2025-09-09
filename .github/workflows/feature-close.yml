@@ -32,6 +32,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
 
       - name: Generate feature name
         id: git-feature-name

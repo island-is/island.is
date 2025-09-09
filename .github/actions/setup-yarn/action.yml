@@ -1,6 +1,9 @@
 name: 'Setup yarn'
 description: 'Yarn setup and install dependencies'
 inputs:
+  registry:
+    description: 'NPM registry to use'
+    required: true
   working-directory:
     description: 'Directory to run the action in'
     required: false
@@ -68,7 +71,7 @@ runs:
       shell: bash
       if: ${{ steps.restore-cache.outputs.cache-hit != 'true' }}
       env:
-        NPM_REGISTRY_SERVER_PROXY: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
+        NPM_REGISTRY_SERVER_PROXY: ${{ inputs.registry }}
       run: |
         node scripts/ci/prepare-yarn.mjs
         yarn install --immutable

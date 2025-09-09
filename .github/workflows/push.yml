@@ -162,6 +162,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
 
       - name: Install infra modules
         working-directory: infra
@@ -310,6 +312,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
 
       - name: Set id for matrix
         run: |
@@ -359,6 +363,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
 
       - name: Building Docker images
         continue-on-error: true
@@ -430,6 +436,8 @@ jobs:
           aws-region: eu-west-1
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
 
       - name: Docker build image
         working-directory: infra
@@ -503,6 +511,7 @@ jobs:
         uses: ./monorepo/.github/actions/setup-yarn
         with:
           working-directory: monorepo
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
 
       - name: Install infra modules
         id: install-infra-modules
