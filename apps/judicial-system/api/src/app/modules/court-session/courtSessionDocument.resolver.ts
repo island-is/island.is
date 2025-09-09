@@ -63,7 +63,12 @@ export class CourtSessionDocumentResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<CourtSessionDocumentResponse> {
-    const { caseId, courtSessionId, courtSessionDocumentId, ...updateCourtSessionDocument } = input
+    const {
+      caseId,
+      courtSessionId,
+      courtSessionDocumentId,
+      ...updateCourtSessionDocument
+    } = input
 
     this.logger.debug(
       `Updating court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}`,
