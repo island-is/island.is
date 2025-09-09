@@ -147,7 +147,7 @@ const template: ApplicationTemplate<
                 return !!response?.isEligible && response.isEligible
               },
             },
-            {target: States.NOT_ELIGIBLE}
+            { target: States.NOT_ELIGIBLE },
           ],
         },
       },
