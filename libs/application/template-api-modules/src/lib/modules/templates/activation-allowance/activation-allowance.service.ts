@@ -27,10 +27,7 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
-import {
-  errorMsgs,
-  PaymentInformationAnswer,
-} from '@island.is/application/templates/activation-allowance'
+import { errorMsgs } from '@island.is/application/templates/activation-allowance'
 import { S3Service } from '@island.is/nest/aws'
 import { sharedModuleConfig } from '../../shared'
 import { ConfigType } from '@nestjs/config'
