@@ -32,10 +32,7 @@ export class ZendeskService {
     applicationDto: ApplicationDto,
     url: OrganizationUrl,
   ): Promise<boolean> {
-    const contactEmail = process.env.ZENDESK_CONTACT_FORM_EMAIL
-    if (!contactEmail) {
-      throw new Error('ZENDESK_CONTACT_FORM_EMAIL is not set')
-    }
+    const contactEmail = 'stafraentisland@gmail.com'
     const username = `${contactEmail}/token`
     const tenantId =
       url.isTest === true ? this.SANDBOX_TENANT_ID : this.PROD_TENANT_ID
