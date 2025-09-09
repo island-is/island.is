@@ -16,6 +16,10 @@ export class AppService {
   ) {}
 
   async handlePaymentFlowUpdate(body: PaymentCallbackPayload) {
+    if (body.type !== 'success') {
+      return
+    }
+
     switch (body.paymentFlowMetadata?.landspitaliPaymentType) {
       case LandspitaliPaymentType.DirectGrant:
         await this.landspitaliService.sendDirectGrantPaymentConfirmationEmail(

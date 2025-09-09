@@ -6,6 +6,7 @@ import { JwksClientProvider } from './guards/jwks.guard'
 import { ConfigModule } from '@nestjs/config'
 import { AppConfig } from './app.config'
 import { EmailModule, emailModuleConfig } from '@island.is/email-service'
+import { LandspitaliService } from './landspitali.service'
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { EmailModule, emailModuleConfig } from '@island.is/email-service'
     EmailModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwksClientProvider],
+  providers: [AppService, JwksClientProvider, LandspitaliService],
 })
 export class AppModule {}

@@ -55,6 +55,9 @@ export class LandspitaliService {
         text: this.generateDirectGrantPaymentConfirmationEmailMessage(input),
         replyTo: input.payerEmail,
       })
+      this.logger.info(
+        'Sent Landspítali direct grant payment confirmation email',
+      )
     } catch (error) {
       this.logger.error(
         'Failed to send Landspítali direct grant payment confirmation email',
@@ -101,6 +104,9 @@ export class LandspitaliService {
         text: this.generateMemorialCardPaymentConfirmationEmailMessage(input),
         replyTo: input.payerEmail,
       })
+      this.logger.info(
+        'Sent Landspítali memorial card payment confirmation email',
+      )
     } catch (error) {
       this.logger.error(
         'Failed to send Landspítali memorial card payment confirmation email',
