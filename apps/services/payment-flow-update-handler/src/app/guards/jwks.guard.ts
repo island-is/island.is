@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common'
 import { JwksClient } from 'jwks-rsa'
 import jwt, { type SigningKeyCallback, type JwtHeader } from 'jsonwebtoken'
-import crypto from 'crypto'
 
 import type { ConfigType } from '@nestjs/config'
 import { AppConfig } from '../app.config'
@@ -24,10 +23,6 @@ export const JwksClientProvider = {
     })
   },
   inject: [AppConfig.KEY],
-}
-
-const computeSha256 = (body: string): string => {
-  return crypto.createHash('sha256').update(body).digest('hex')
 }
 
 const extractPublicKeyFromJwtHeader =
@@ -51,7 +46,7 @@ export class JwksGuard implements CanActivate {
     private readonly logger: Logger,
   ) {}
 
-  private validateIncomingJwt(token: string, rawBody: string) {
+  private validateIncomingJwt(token: string) {
     return new Promise((resolve, reject) => {
       jwt.verify(
         token,
@@ -68,28 +63,6 @@ export class JwksGuard implements CanActivate {
           }
 
           resolve(decoded)
-
-          // TODO: Implement replay attack and payload hash validation
-
-          // jtiCache
-          //   .isReplay(decoded.jti)
-          //   .then((isReplayAttack) => {
-          //     if (isReplayAttack) {
-          //       return reject(new Error('Replay attack detected'))
-          //     }
-
-          //     const actualHash = computeSha256(rawBody)
-          //     if (
-          //       !decoded.payload_hash ||
-          //       decoded.payload_hash !== actualHash
-          //     ) {
-          //       return reject(new Error('Payload hash mismatch'))
-          //     }
-          //     resolve(decoded)
-          //   })
-          //   .catch((error) => {
-          //     reject(error)
-          //   })
         },
       )
     })
@@ -108,10 +81,8 @@ export class JwksGuard implements CanActivate {
       return false
     }
 
-    const rawBody = request.rawBody.toString('utf8')
-
     try {
-      // await this.validateIncomingJwt(token, rawBody)
+      await this.validateIncomingJwt(token)
     } catch (error) {
       this.logger.warn('JWT validation error', {
         error,
