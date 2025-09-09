@@ -7,8 +7,14 @@ import {
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
-import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
+import {
+  getApplicationAnswers,
+  getMunicipalities,
+} from '../../../utils/newPrimarySchoolUtils'
+import {
+  FriggSchoolsByMunicipalityQuery,
+  OrganizationModelTypeEnum,
+} from '../../../types/schema'
 
 export const currentNurserySubSection = buildSubSection({
   id: 'currentNurserySubSection',
@@ -31,17 +37,7 @@ export const currentNurserySubSection = buildSubSection({
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'current-nursery-municipality',
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
-
-            return (
-              data?.friggSchoolsByMunicipality?.map(({ name }) => ({
-                value: name,
-                label: name,
-              })) ?? []
-            )
+            return getMunicipalities(apolloClient)
           },
         }),
         buildAsyncSelectField({
@@ -58,13 +54,19 @@ export const currentNurserySubSection = buildSubSection({
                 query: friggSchoolsByMunicipalityQuery,
               })
 
+            const municipalityCode = selectedValues?.[0]
+
             return (
               data?.friggSchoolsByMunicipality
-                ?.find(({ name }) => name === selectedValues?.[0])
-                ?.managing?.map((nursery) => ({
-                  value: nursery.id,
-                  label: nursery.name,
-                })) ?? []
+                ?.find(({ unitId }) => unitId === municipalityCode)
+                ?.managing?.filter(
+                  ({ type }) => type === OrganizationModelTypeEnum.ChildCare,
+                )
+                .map(({ id, name }) => ({
+                  value: id,
+                  label: name,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
           condition: (answers) => {

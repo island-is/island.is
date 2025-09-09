@@ -19,6 +19,7 @@ import {
   getApplicationExternalData,
   getCurrentSchoolName,
   getInternationalSchoolsIds,
+  getMunicipalities,
   getMunicipalityCodeBySchoolUnitId,
 } from '../../../utils/newPrimarySchoolUtils'
 import {
@@ -99,25 +100,7 @@ export const currentSchoolSubSection = buildSubSection({
             return applicantMunicipalityCode
           },
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
-
-            return (
-              data?.friggSchoolsByMunicipality
-                ?.filter(
-                  ({ type, managing }) =>
-                    type === OrganizationModelTypeEnum.Municipality &&
-                    managing &&
-                    managing.length > 0,
-                )
-                ?.map(({ name, unitId }) => ({
-                  value: unitId || '',
-                  label: name,
-                }))
-                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
-            )
+            return getMunicipalities(apolloClient)
           },
           condition: (_, externalData) => {
             const { primaryOrgId } = getApplicationExternalData(externalData)

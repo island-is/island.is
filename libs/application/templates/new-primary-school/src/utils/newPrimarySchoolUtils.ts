@@ -1,3 +1,4 @@
+import { ApolloClient } from '@apollo/client'
 import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
@@ -7,6 +8,7 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
+import { friggSchoolsByMunicipalityQuery } from '../graphql/queries'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
   Affiliation,
@@ -22,10 +24,14 @@ import {
   YesOrNoOrEmpty,
 } from '../types'
 import {
+  FriggSchoolsByMunicipalityQuery,
+  OrganizationModelTypeEnum,
+} from '../types/schema'
+import {
   AffiliationRole,
   ApplicationType,
-  FIRST_GRADE_AGE,
   CaseWorkerInputTypeEnum,
+  FIRST_GRADE_AGE,
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
@@ -668,4 +674,27 @@ export const getDefaultYESNOValue = (
   // If no child information is available (not registered in Frigg), return an empty string
   // else return YES or NO based on the boolean value comming from Frigg
   return value ? YES : value === false ? NO : ''
+}
+
+export const getMunicipalities = async (
+  apolloClient: ApolloClient<unknown>,
+): Promise<SelectOption[]> => {
+  const { data } = await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
+    query: friggSchoolsByMunicipalityQuery,
+  })
+
+  return (
+    data?.friggSchoolsByMunicipality
+      ?.filter(
+        ({ type, managing }) =>
+          type === OrganizationModelTypeEnum.Municipality &&
+          managing &&
+          managing.length > 0,
+      )
+      ?.map(({ name, unitId }) => ({
+        value: unitId || '',
+        label: name,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label)) ?? []
+  )
 }
