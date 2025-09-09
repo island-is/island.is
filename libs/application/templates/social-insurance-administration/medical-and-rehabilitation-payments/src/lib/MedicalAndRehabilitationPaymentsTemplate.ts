@@ -276,7 +276,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
           status: FormModes.APPROVED,
           actionCard: {
             pendingAction: {
-              title: coreSIAStatesMessages.applicationApproved,
+              title: statesMessages.applicationApproved,
               content: statesMessages.applicationApprovedDescription,
               displayStatus: 'success',
             },
@@ -300,7 +300,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
           status: FormModes.REJECTED,
           actionCard: {
             pendingAction: {
-              title: coreSIAStatesMessages.applicationRejected,
+              title: statesMessages.applicationRejected,
               content: statesMessages.applicationRejectedDescription,
               displayStatus: 'error',
             },
