@@ -1,10 +1,12 @@
+import { FormSystemField } from '@island.is/api/schema'
 import {
+  ApplicantDisplay,
+  CheckBoxDisplay,
   DefaultDisplay,
   FieldTypesEnum,
-  CheckBoxDisplay,
   FileUploadDisplay,
+  NationalIdDisplay,
 } from '@island.is/form-system/ui'
-import { FormSystemField } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
@@ -16,7 +18,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.BANK_ACCOUNT]: DefaultDisplay,
   [FieldTypesEnum.ISK_NUMBERBOX]: DefaultDisplay,
   [FieldTypesEnum.EMAIL]: DefaultDisplay,
-  [FieldTypesEnum.NATIONAL_ID]: DefaultDisplay,
+  [FieldTypesEnum.NATIONAL_ID]: NationalIdDisplay,
   [FieldTypesEnum.PHONE_NUMBER]: DefaultDisplay,
   [FieldTypesEnum.TEXTBOX]: DefaultDisplay,
   [FieldTypesEnum.TIME_INPUT]: DefaultDisplay,
@@ -27,6 +29,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.PROPERTY_NUMBER]: DefaultDisplay,
   [FieldTypesEnum.RADIO_BUTTONS]: DefaultDisplay,
   [FieldTypesEnum.MESSAGE]: DefaultDisplay,
+  [FieldTypesEnum.APPLICANT]: ApplicantDisplay,
 } as const
 
 export const Display = ({ field }: Props) => {

@@ -42,7 +42,7 @@ describe('LimitedAccessCaseController - Get by id', () => {
     mockToday.mockReturnValueOnce(openedNowDate)
     mockCaseRepositoryService = caseRepositoryService
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
+    mockUpdate.mockResolvedValue(updatedCase)
     const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
     mockFindOne.mockResolvedValue(updatedCase)
 
@@ -96,10 +96,9 @@ describe('LimitedAccessCaseController - Get by id', () => {
 
     it('should update openedByDefender and return case', () => {
       expect(then.result.openedByDefender).toBe(openedNowDate)
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-        { openedByDefender: openedNowDate },
-        { where: { id: caseId } },
-      )
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
+        openedByDefender: openedNowDate,
+      })
     })
   })
 })

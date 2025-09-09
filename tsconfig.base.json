@@ -736,6 +736,9 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
+      "@island.is/clients/fjs/bank-info": [
+        "libs/clients/fjs/bank-info/src/index.ts"
+      ],
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
       ],
@@ -774,7 +777,6 @@
       "@island.is/clients/intellectual-properties": [
         "libs/clients/intellectual-properties/src/index.ts"
       ],
-      "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
       ],
@@ -1075,6 +1077,9 @@
       ],
       "@island.is/portals/admin/ids-admin": [
         "libs/portals/admin/ids-admin/src/index.ts"
+      ],
+      "@island.is/portals/admin/payments": [
+        "libs/portals/admin/payments/src/index.ts"
       ],
       "@island.is/portals/admin/petition": [
         "libs/portals/admin/petition/src/index.ts"
