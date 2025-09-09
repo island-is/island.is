@@ -1,8 +1,8 @@
 import type { ApiClientCallback } from '@island.is/api/domains/payment'
 
-export enum LandspitaliPaymentType {
-  MemorialCard = 'MemorialCard',
-  DirectGrant = 'DirectGrant',
+export enum PaymentFlowType {
+  MemorialCard = 'LandspitaliMemorialCard',
+  DirectGrant = 'LandspitaliDirectGrant',
 }
 
 type WebLandspitaliCreateDirectGrantPaymentUrlInput = {
@@ -37,7 +37,7 @@ export type WebLandspitaliCreateMemorialCardPaymentUrlInput = {
 
 export type MemorialCardPaymentFlowMetadata =
   WebLandspitaliCreateMemorialCardPaymentUrlInput & {
-    landspitaliPaymentType: LandspitaliPaymentType.MemorialCard
+    paymentFlowType: PaymentFlowType.MemorialCard
   }
 
 export interface MemorialCardCallbackPayload
@@ -47,7 +47,7 @@ export interface MemorialCardCallbackPayload
 
 export type DirectGrantPaymentFlowMetadata =
   WebLandspitaliCreateDirectGrantPaymentUrlInput & {
-    landspitaliPaymentType: LandspitaliPaymentType.DirectGrant
+    paymentFlowType: PaymentFlowType.DirectGrant
   }
 
 export interface DirectGrantCallbackPayload

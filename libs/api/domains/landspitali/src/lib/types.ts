@@ -3,15 +3,15 @@ import type { CreateDirectGrantPaymentUrlInput } from './dto/createDirectGrantPa
 import type { CreateMemorialCardPaymentUrlInput } from './dto/createMemorialCardPaymentUrl.input'
 
 export enum PaymentType {
-  MemorialCard = 'MemorialCard',
-  DirectGrant = 'DirectGrant',
+  MemorialCard = 'LandspitaliMemorialCard',
+  DirectGrant = 'LandspitaliDirectGrant',
 }
 
 export type MemorialCardPaymentFlowMetadata = Omit<
   CreateMemorialCardPaymentUrlInput,
   'locale'
 > & {
-  landspitaliPaymentType: PaymentType.MemorialCard
+  paymentFlowType: PaymentType.MemorialCard
 }
 
 export interface MemorialCardCallbackPayload
@@ -23,7 +23,7 @@ export type DirectGrantPaymentFlowMetadata = Omit<
   CreateDirectGrantPaymentUrlInput,
   'locale'
 > & {
-  landspitaliPaymentType: PaymentType.DirectGrant
+  paymentFlowType: PaymentType.DirectGrant
 }
 
 export interface DirectGrantCallbackPayload

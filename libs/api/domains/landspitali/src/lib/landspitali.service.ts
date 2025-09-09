@@ -65,6 +65,10 @@ export class LandspitaliService {
           availablePaymentMethods: [
             CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
           ],
+          returnUrl:
+            locale === 'is'
+              ? 'https://island.is/s/landspitali'
+              : 'https://island.is/en/o/landspitali',
           charges: [
             {
               price: input.amountISK,
@@ -131,7 +135,7 @@ export class LandspitaliService {
           ],
           metadata: {
             ...input,
-            landspitaliPaymentType: PaymentType.MemorialCard,
+            paymentFlowType: PaymentType.MemorialCard,
           } as MemorialCardPaymentFlowMetadata,
         },
       })
@@ -181,6 +185,10 @@ export class LandspitaliService {
               quantity: 1,
             },
           ],
+          returnUrl:
+            locale === 'is'
+              ? 'https://island.is/s/landspitali'
+              : 'https://island.is/en/o/landspitali',
           payerNationalId:
             input.payerNationalId || this.config.paymentNationalIdFallback,
           organisationId: LANDSPITALI_NATIONAL_ID,
@@ -217,7 +225,7 @@ export class LandspitaliService {
           ],
           metadata: {
             ...input,
-            landspitaliPaymentType: PaymentType.DirectGrant,
+            paymentFlowType: PaymentType.DirectGrant,
           } as DirectGrantPaymentFlowMetadata,
         },
       })

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { LandspitaliService } from './landspitali.service'
-import { LandspitaliPaymentType, type PaymentCallbackPayload } from './types'
+import { PaymentFlowType, type PaymentCallbackPayload } from './types'
 
 @Injectable()
 export class AppService {
@@ -20,13 +20,13 @@ export class AppService {
       return
     }
 
-    switch (body.paymentFlowMetadata?.landspitaliPaymentType) {
-      case LandspitaliPaymentType.DirectGrant:
+    switch (body.paymentFlowMetadata?.paymentFlowType) {
+      case PaymentFlowType.DirectGrant:
         await this.landspitaliService.sendDirectGrantPaymentConfirmationEmail(
           body.paymentFlowMetadata,
         )
         break
-      case LandspitaliPaymentType.MemorialCard:
+      case PaymentFlowType.MemorialCard:
         await this.landspitaliService.sendMemorialCardPaymentConfirmationEmail(
           body.paymentFlowMetadata,
         )
