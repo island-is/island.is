@@ -1,32 +1,54 @@
 import type { ApiClientCallback } from '@island.is/api/domains/payment'
-import type {
-  WebLandspitaliCreateMemorialCardPaymentUrlInput,
-  WebLandspitaliCreateDirectGrantPaymentUrlInput,
-} from '@island.is/api/schema'
 
 export enum LandspitaliPaymentType {
   MemorialCard = 'MemorialCard',
   DirectGrant = 'DirectGrant',
 }
 
-export type MemorialCardPaymentFlowMetadata = Omit<
-  WebLandspitaliCreateMemorialCardPaymentUrlInput,
-  'locale'
-> & {
-  landspitaliPaymentType: LandspitaliPaymentType.MemorialCard
+type WebLandspitaliCreateDirectGrantPaymentUrlInput = {
+  amountISK: number
+  grantChargeItemCode: string
+  payerAddress: string
+  payerEmail: string
+  payerGrantExplanation: string
+  payerName: string
+  payerNationalId?: string
+  payerPlace: string
+  payerPostalCode: string
+  project: string
 }
+
+export type WebLandspitaliCreateMemorialCardPaymentUrlInput = {
+  amountISK: number
+  fundChargeItemCode: string
+  inMemoryOf: string
+  payerAddress: string
+  payerEmail: string
+  payerName: string
+  payerNationalId?: string
+  payerPlace: string
+  payerPostalCode: string
+  recipientAddress: string
+  recipientName: string
+  recipientPlace: string
+  recipientPostalCode: string
+  senderSignature: string
+}
+
+export type MemorialCardPaymentFlowMetadata =
+  WebLandspitaliCreateMemorialCardPaymentUrlInput & {
+    landspitaliPaymentType: LandspitaliPaymentType.MemorialCard
+  }
 
 export interface MemorialCardCallbackPayload
   extends Omit<ApiClientCallback, 'paymentFlowMetadata'> {
   paymentFlowMetadata: MemorialCardPaymentFlowMetadata
 }
 
-export type DirectGrantPaymentFlowMetadata = Omit<
-  WebLandspitaliCreateDirectGrantPaymentUrlInput,
-  'locale'
-> & {
-  landspitaliPaymentType: LandspitaliPaymentType.DirectGrant
-}
+export type DirectGrantPaymentFlowMetadata =
+  WebLandspitaliCreateDirectGrantPaymentUrlInput & {
+    landspitaliPaymentType: LandspitaliPaymentType.DirectGrant
+  }
 
 export interface DirectGrantCallbackPayload
   extends Omit<ApiClientCallback, 'paymentFlowMetadata'> {
