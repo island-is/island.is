@@ -95,12 +95,11 @@ export const SocialInsuranceAdministrationIsApplicantEligibleApi =
     namespace: 'SocialInsuranceAdministration',
   })
 
-export const SocialInsuranceAdministrationResidenceApi =
-  defineTemplateApi({
-    action: 'getResidenceTypes',
-    externalDataId: 'socialInsuranceAdministrationResidence',
-    namespace: 'SocialInsuranceAdministration',
-  })
+export const SocialInsuranceAdministrationResidenceApi = defineTemplateApi({
+  action: 'getResidenceTypes',
+  externalDataId: 'socialInsuranceAdministrationResidence',
+  namespace: 'SocialInsuranceAdministration',
+})
 
 export const SocialInsuranceAdministrationIncomePlanConditionsApi =
   defineTemplateApi({
