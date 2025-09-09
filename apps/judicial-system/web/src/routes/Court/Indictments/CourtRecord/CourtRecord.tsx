@@ -96,7 +96,6 @@ const CourtRecord: FC = () => {
     { id: string; name: string }[]
   >([])
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
-  const [isClosedProceeding, setIsClosedProceeding] = useState<boolean>(false)
   const { updateCourtSession } = useCourtSessions()
 
   const containerVariants = {
@@ -234,6 +233,7 @@ const CourtRecord: FC = () => {
                           }}
                           onBlur={(event) => {
                             const location = event.target.value
+
                             validateAndSetErrorMessage(
                               ['empty'],
                               location,
@@ -349,21 +349,26 @@ const CourtRecord: FC = () => {
                       data-testid="courtAttendees"
                       name="courtAttendees"
                       label="Mættir eru"
-                      value={workingCase.courtAttendees || ''}
+                      value={courtSession.attendees || ''}
                       placeholder="Skrifa hér..."
-                      onChange={(event) =>
-                        removeTabsValidateAndSet(
-                          'courtAttendees',
-                          event.target.value,
-                          [],
-                          setWorkingCase,
-                        )
-                      }
-                      onBlur={(event) =>
-                        updateCase(workingCase.id, {
-                          courtAttendees: event.target.value,
+                      onChange={(event) => {
+                        updateItem(courtSession.id, {
+                          attendees: event.target.value,
                         })
-                      }
+
+                        updateCourtSession({
+                          caseId: workingCase.id,
+                          courtSessionId: courtSession.id,
+                          attendees: event.target.value,
+                        })
+                      }}
+                      onBlur={(event) => {
+                        updateCourtSession({
+                          caseId: workingCase.id,
+                          courtSessionId: courtSession.id,
+                          attendees: event.target.value,
+                        })
+                      }}
                       textarea
                       rows={7}
                       autoExpand={{ on: true, maxHeight: 300 }}
