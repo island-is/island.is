@@ -242,6 +242,12 @@ export const include: Includeable[] = [
     order: [['created', 'ASC']],
     include: [
       {
+        model: User,
+        as: 'attestingWitness',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
         model: CourtSessionDocument,
         as: 'courtSessionDocuments',
         required: false,

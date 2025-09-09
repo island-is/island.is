@@ -86,7 +86,7 @@ export class CourtSession extends Model {
     values: Object.values(CourtSessionRulingType),
   })
   @ApiPropertyOptional({ type: String })
-  rulingType?: string
+  rulingType?: CourtSessionRulingType
 
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })

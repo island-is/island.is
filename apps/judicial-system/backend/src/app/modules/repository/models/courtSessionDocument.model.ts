@@ -10,6 +10,8 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { CourtSessionDocumentType } from '@island.is/judicial-system/types'
+
 import { Case } from './case.model'
 import { CaseFile } from './caseFile.model'
 import { CourtSession } from './courtSession.model'
@@ -46,9 +48,13 @@ export class CourtSessionDocument extends Model {
   @ApiProperty({ type: String })
   courtSessionId!: string
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CourtSessionDocumentType),
+  })
   @ApiProperty({ type: String })
-  documentType!: string
+  documentType!: CourtSessionDocumentType
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   @ApiProperty({ type: Number })

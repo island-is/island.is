@@ -2,10 +2,12 @@ import { IsOptional, IsString, IsUUID } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { CourtSessionDocumentType } from '@island.is/judicial-system/types'
+
 export class CreateCourtSessionDocumentDto {
   @IsString()
   @ApiProperty({ type: String })
-  readonly documentType!: string
+  readonly documentType!: CourtSessionDocumentType
 
   @IsString()
   @ApiProperty({ type: String })

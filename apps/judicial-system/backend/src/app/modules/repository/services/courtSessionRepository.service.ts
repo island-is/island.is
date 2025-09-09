@@ -9,6 +9,8 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { CourtSessionRulingType } from '@island.is/judicial-system/types'
+
 import { CourtSession } from '../models/courtSession.model'
 
 interface CreateCourtSessionOptions {
@@ -27,7 +29,7 @@ interface UpdateCourtSession {
   closedLegalProvisions?: string[]
   attendees?: string
   entries?: string
-  rulingType?: string
+  rulingType?: CourtSessionRulingType
   ruling?: string
   isAttestingWitness?: boolean
   attestingWitnessId?: string

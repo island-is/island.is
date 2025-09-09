@@ -16,6 +16,8 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { CourtSessionDocumentType } from '@island.is/judicial-system/types'
+
 import { CourtSessionDocument } from '../models/courtSessionDocument.model'
 
 interface CreateCourtSessionDocumentOptions {
@@ -23,7 +25,7 @@ interface CreateCourtSessionDocumentOptions {
 }
 
 interface CreateCourtSessionDocument {
-  documentType: string
+  documentType: CourtSessionDocumentType
   name: string
   caseFileId?: string
   generatedPdfUri?: string
