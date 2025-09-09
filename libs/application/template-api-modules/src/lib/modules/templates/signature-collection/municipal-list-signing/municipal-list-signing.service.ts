@@ -101,6 +101,10 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
     const isCandidateId =
       await this.signatureCollectionClientService.isCandidateId(ownerId, auth)
 
+    if (ownerId && !isCandidateId) {
+      throw new TemplateApiError(errorMessages.candidateNotFound, 400)
+    }
+
     // If initialQuery is not defined return all list for area
     const lists = await this.signatureCollectionClientService.getLists({
       nationalId: auth.nationalId,
@@ -109,6 +113,11 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
       onlyActive: true,
       collectionType: this.collectionType,
     })
+
+    if (isCandidateId && !lists.some((list) => list.candidate.id === ownerId)) {
+      throw new TemplateApiError(errorMessages.candidateListActive, 400)
+    }
+
     // If candidateId existed or if there is only one list, check if maxReached
     if (lists.length === 1) {
       const { maxReached } = lists[0]

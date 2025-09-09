@@ -61,6 +61,10 @@ export const GetSignedList = gql`
         min
         max
       }
+      candidate {
+        ownerName
+        ownerBirthDate
+      }
       endTime
       startTime
       isDigital
@@ -94,6 +98,10 @@ export const GetListsForUser = gql`
         name
         min
         max
+      }
+      candidate {
+        ownerName
+        ownerBirthDate
       }
       endTime
       startTime

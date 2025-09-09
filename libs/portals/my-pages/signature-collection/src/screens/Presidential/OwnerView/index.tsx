@@ -57,10 +57,7 @@ const OwnerView = ({
 
             {/* Signed list */}
             {!user?.profile.actor && (
-              <SignedList
-                currentCollection={currentCollection}
-                collectionType={collectionType}
-              />
+              <SignedList collectionType={collectionType} />
             )}
 
             {/* Candidate created lists */}

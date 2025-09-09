@@ -96,16 +96,13 @@ export const SignatureLists: FC<
                       <ActionCard
                         heading={candidate.name}
                         eyebrow={area.name}
-                        text={
-                          t('candidateOwnerName', 'Stofnandi söfnunar: ') +
-                          candidate.ownerName +
-                          ' (' +
-                          format(
-                            new Date(candidate.ownerBirthDate),
-                            'dd.MM.yyyy',
-                          ) +
-                          ')'
-                        }
+                        text={`${t(
+                          'candidateOwnerName',
+                          'Stofnandi söfnunar: ',
+                        )}${candidate?.ownerName ?? ''} (${format(
+                          new Date(candidate?.ownerBirthDate),
+                          'dd.MM.yyyy',
+                        )})`}
                         cta={
                           collection.isActive
                             ? {

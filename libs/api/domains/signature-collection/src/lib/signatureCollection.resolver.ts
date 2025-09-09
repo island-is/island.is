@@ -88,13 +88,13 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @Query(() => [SignatureCollectionListBase])
+  @Query(() => [SignatureCollectionList])
   @Audit()
   async signatureCollectionListsForUser(
     @CurrentSignee() signee: SignatureCollectionSignee,
     @Args('input') input: SignatureCollectionIdInput,
     @CurrentUser() user: User,
-  ): Promise<SignatureCollectionListBase[]> {
+  ): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.listsForUser(input, signee, user)
   }
 

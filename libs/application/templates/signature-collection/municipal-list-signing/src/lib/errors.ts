@@ -62,6 +62,18 @@ export const errorMessages = {
       description: '',
     },
   }),
+  candidateListActive: defineMessages({
+    title: {
+      id: 'mls.application:error.candidateListActive.title',
+      defaultMessage: 'Framboð er ekki með virka söfnun í þínu sveitarfélagi',
+      description: '',
+    },
+    summary: {
+      id: 'mls.application:error.active.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
+      description: '',
+    },
+  }),
   invalidSignature: defineMessages({
     title: {
       id: 'mls.application:error.invalidSignature.title',
@@ -85,6 +97,18 @@ export const errorMessages = {
       id: 'mls.application:error.singeeNotFound.summary',
       defaultMessage:
         'Hægt er að hafa samband við Þjóðskrá fyrir nánari upplýsingar.',
+      description: '',
+    },
+  }),
+  candidateNotFound: defineMessages({
+    title: {
+      id: 'mls.application:error.candidateNotFound.title',
+      defaultMessage: 'Framboð finnst ekki',
+      description: '',
+    },
+    summary: {
+      id: 'mls.application:error.candidateNotFound.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
       description: '',
     },
   }),

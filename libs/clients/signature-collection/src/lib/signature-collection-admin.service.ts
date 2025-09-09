@@ -508,7 +508,7 @@ export class SignatureCollectionAdminClientService
         iD: parseInt(listId, 10),
         shouldLock: setLocked,
       })
-      return { success: res.listaLokad === setLocked }
+      return { success: res.listaLokad ?? false }
     } catch (error) {
       return { success: false, reasons: error.body ? [error.body] : [] }
     }

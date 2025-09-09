@@ -55,7 +55,6 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
           CollectionType.LocalGovernmental,
         )
       if (
-        !currentCollection.isActive ||
         !currentCollection.areas.some(
           (area) => area.id === candidate.area?.id && area.isActive,
         )

@@ -67,7 +67,7 @@ export class SignatureCollectionList extends SignatureCollectionListBase {
 }
 
 @ObjectType()
-export class SignatureCollectionSignedList extends SignatureCollectionListBase {
+export class SignatureCollectionSignedList extends SignatureCollectionList {
   @Field(() => Date)
   signedDate!: Date
 
