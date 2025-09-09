@@ -1,14 +1,12 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import {
   AnimatePresence,
   LayoutGroup,
   motion,
   Reorder,
-  stagger,
   useDragControls,
 } from 'motion/react'
 import router from 'next/router'
-import { height } from 'pdfkit/js/page'
 import { uuid } from 'uuidv4'
 
 import {
@@ -24,7 +22,6 @@ import { theme } from '@island.is/island-ui/theme'
 import { INDICTMENTS_CASE_FILE_ROUTE } from '@island.is/judicial-system/consts'
 import {
   BlueBox,
-  CaseFile,
   CourtCaseInfo,
   DateTime,
   FormContentContainer,
@@ -39,7 +36,7 @@ import { useCourtDocuments } from '@island.is/judicial-system-web/src/components
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
   removeTabsValidateAndSet,
-  validateAndSendToServer,
+  validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
@@ -150,6 +147,21 @@ const CourtRecord: FC = () => {
     [workingCase.id],
   )
 
+  const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
+
+  const updateItem = (id: string, newData: any) => {
+    setWorkingCase((prev) => {
+      if (!prev.courtSessions) return prev
+
+      return {
+        ...prev,
+        courtSessions: prev.courtSessions?.map((item) =>
+          item.id === id ? { ...item, ...newData } : item,
+        ),
+      }
+    })
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -163,332 +175,343 @@ const CourtRecord: FC = () => {
         <PageTitle>Þingbók</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Accordion dividerOnTop={false}>
-          <AccordionItem id="courtRecordAccordionItem" label="Þinghald 1">
-            <LayoutGroup>
-              <Box className={styles.containerGrid}>
-                <LayoutGroup>
-                  <BlueBox>
-                    <div className={styles.grid}>
-                      <DateTime
-                        name="courtStartDate"
-                        datepickerLabel="Dagsetning þingfestingar"
-                        timeLabel="Þinghald hófst (kk:mm)"
-                        maxDate={new Date()}
-                        selectedDate={workingCase.courtStartDate}
-                        onChange={(date: Date | undefined, valid: boolean) => {
-                          if (date && valid) {
-                            setAndSendCaseToServer(
-                              [
-                                {
-                                  courtStartDate: formatDateForServer(date),
-                                  force: true,
-                                },
-                              ],
-                              workingCase,
-                              setWorkingCase,
+          {workingCase.courtSessions?.map((courtSession, index) => (
+            <AccordionItem
+              id="courtRecordAccordionItem"
+              label={`Þinghald ${index + 1}`}
+              startExpanded={workingCase.courtSessions?.length === index + 1}
+            >
+              <LayoutGroup>
+                <Box className={styles.containerGrid}>
+                  <LayoutGroup>
+                    <BlueBox>
+                      <div className={styles.grid}>
+                        <DateTime
+                          name="courtStartDate"
+                          datepickerLabel="Dagsetning þingfestingar"
+                          timeLabel="Þinghald hófst (kk:mm)"
+                          maxDate={new Date()}
+                          selectedDate={workingCase.courtStartDate}
+                          onChange={(
+                            date: Date | undefined,
+                            valid: boolean,
+                          ) => {
+                            if (date && valid) {
+                              setAndSendCaseToServer(
+                                [
+                                  {
+                                    courtStartDate: formatDateForServer(date),
+                                    force: true,
+                                  },
+                                ],
+                                workingCase,
+                                setWorkingCase,
+                              )
+                            }
+                          }}
+                          blueBox={false}
+                          required
+                        />
+                        <Input
+                          data-testid="courtLocation"
+                          name="courtLocation"
+                          tooltip='Sláðu inn staðsetningu dómþings í þágufalli með forskeyti sem hefst á litlum staf. Dæmi "í Héraðsdómi Reykjavíkur". Staðsetning mun birtast með þeim hætti í upphafi þingbókar.'
+                          label="Hvar var dómþing haldið?"
+                          value={courtSession.location || ''}
+                          placeholder='Staðsetning þinghalds, t.d. "í Héraðsdómi Reykjavíkur"'
+                          onChange={(event) => {
+                            setLocationErrorMessage('')
+                            updateItem(courtSession.id, {
+                              location: event.target.value,
+                            })
+                          }}
+                          onBlur={(event) => {
+                            const location = event.target.value
+                            validateAndSetErrorMessage(
+                              ['empty'],
+                              location,
+                              setLocationErrorMessage,
                             )
+
+                            updateCourtSession({
+                              caseId: workingCase.id,
+                              courtSessionId: courtSession.id,
+                              location,
+                            })
+                          }}
+                          errorMessage={locationErrorMessage}
+                          hasError={locationErrorMessage !== ''}
+                          autoComplete="off"
+                          required
+                        />
+                        <Checkbox
+                          name="isClosedProceeding"
+                          label="Þinghaldið er lokað"
+                          onChange={() =>
+                            setIsClosedProceeding(!isClosedProceeding)
                           }
-                        }}
-                        blueBox={false}
-                        required
-                      />
+                          checked={isClosedProceeding}
+                          filled
+                          large
+                        />
+                      </div>
+                      <AnimatePresence>
+                        {isClosedProceeding && (
+                          <>
+                            <motion.div
+                              variants={titleVariants}
+                              initial="hidden"
+                              animate="visible"
+                              exit="exit"
+                            >
+                              <SectionHeading
+                                title="Lagaákvæði sem lokun þinghalds byggir á"
+                                required
+                                marginBottom={0}
+                              />
+                            </motion.div>
+                            <motion.div
+                              variants={containerVariants}
+                              initial="hidden"
+                              animate="visible"
+                              exit="exit"
+                              className={styles.twoColGrid}
+                              key="grid"
+                            >
+                              {CLOSURE_GROUNDS.map(([label, tooltip]) => (
+                                <motion.div
+                                  variants={itemVariants}
+                                  initial="hidden"
+                                  animate="visible"
+                                  exit="exit"
+                                  key={label}
+                                >
+                                  <Checkbox
+                                    label={label}
+                                    tooltip={tooltip}
+                                    large
+                                    filled
+                                  />
+                                </motion.div>
+                              ))}
+                            </motion.div>
+                          </>
+                        )}
+                      </AnimatePresence>
+                    </BlueBox>
+                    <Input
+                      data-testid="courtAttendees"
+                      name="courtAttendees"
+                      label="Mættir eru"
+                      value={workingCase.courtAttendees || ''}
+                      placeholder="Skrifa hér..."
+                      onChange={(event) =>
+                        removeTabsValidateAndSet(
+                          'courtAttendees',
+                          event.target.value,
+                          [],
+                          setWorkingCase,
+                        )
+                      }
+                      onBlur={(event) =>
+                        updateCase(workingCase.id, {
+                          courtAttendees: event.target.value,
+                        })
+                      }
+                      textarea
+                      rows={7}
+                      autoExpand={{ on: true, maxHeight: 300 }}
+                    />
+                    <MultipleValueList
+                      onAddValue={(v) =>
+                        setReorderableItems((prev) => [
+                          ...prev,
+                          { id: uuid(), name: v },
+                        ])
+                      }
+                      inputLabel="Heiti dómskjals"
+                      inputPlaceholder="Skrá inn heiti á skjali hér"
+                      buttonText="Bæta við skjali"
+                      name="indictmentCourtDocuments"
+                      isDisabled={() => false}
+                    >
+                      <Box
+                        display="flex"
+                        rowGap={2}
+                        justifyContent="spaceBetween"
+                        className={styles.reorderGroup}
+                      >
+                        <Reorder.Group
+                          axis="y"
+                          values={reorderableItems}
+                          onReorder={setReorderableItems}
+                          className={styles.grid}
+                        >
+                          {reorderableItems.map((item) => {
+                            return (
+                              <Reorder.Item
+                                key={item.id}
+                                value={item}
+                                data-reorder-item
+                              >
+                                <EditableCaseFile
+                                  enableDrag
+                                  caseFile={{
+                                    id: item.id,
+                                    displayText: item.name,
+                                    canEdit: ['fileName'],
+                                  }}
+                                  backgroundColor="white"
+                                  onOpen={function (id: string): void {
+                                    throw new Error('Function not implemented.')
+                                  }}
+                                  onRename={function (
+                                    id: string,
+                                    name: string,
+                                    displayDate: string,
+                                  ): void {
+                                    throw new Error('Function not implemented.')
+                                  }}
+                                  onDelete={(file: TUploadFile) => {
+                                    setReorderableItems((prev) =>
+                                      prev.filter((i) => i.id !== file.id),
+                                    )
+                                  }}
+                                  onStartEditing={() => console.log('start')}
+                                  onStopEditing={() => console.log('stop')}
+                                />
+                              </Reorder.Item>
+                            )
+                          })}
+                        </Reorder.Group>
+                        <Box
+                          display="flex"
+                          flexDirection="column"
+                          justifyContent="spaceAround"
+                          rowGap={2}
+                        >
+                          {reorderableItems.map((item, index) => (
+                            <Box key={item.name}>
+                              <Tag variant="darkerBlue" outlined disabled>
+                                Þingmerkt nr. {index + 1}
+                              </Tag>
+                            </Box>
+                          ))}
+                        </Box>
+                      </Box>
+                    </MultipleValueList>
+                    <Box>
+                      <SectionHeading title="Bókanir" />
                       <Input
-                        data-testid="courtLocation"
-                        name="courtLocation"
-                        tooltip='Sláðu inn staðsetningu dómþings í þágufalli með forskeyti sem hefst á litlum staf. Dæmi "í Héraðsdómi Reykjavíkur". Staðsetning mun birtast með þeim hætti í upphafi þingbókar.'
-                        label="Hvar var dómþing haldið?"
-                        value={workingCase.courtLocation || ''}
-                        placeholder='Staðsetning þinghalds, t.d. "í Héraðsdómi Reykjavíkur"'
+                        data-testid="courtAttendees"
+                        name="courtAttendees"
+                        label="Afstaða varnaraðila, málflutningur og aðrar bókanir"
+                        value={workingCase.courtAttendees || ''}
+                        placeholder="Nánari útlistun á afstöðu varnaraðila, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
                         onChange={(event) =>
                           removeTabsValidateAndSet(
-                            'courtLocation',
+                            'courtAttendees',
                             event.target.value,
-                            ['empty'],
+                            [],
                             setWorkingCase,
-                            courtLocationErrorMessage,
-                            setCourtLocationErrorMessage,
                           )
                         }
                         onBlur={(event) =>
-                          updateCourtSession({
-                            caseId: workingCase.id,
-                            courtSessionId:
-                              '681bfd78-896c-4683-afad-ff5d98d87362',
-                            location: event.target.value,
+                          updateCase(workingCase.id, {
+                            courtAttendees: event.target.value,
                           })
                         }
-                        errorMessage={courtLocationErrorMessage}
-                        hasError={courtLocationErrorMessage !== ''}
-                        autoComplete="off"
+                        rows={15}
+                        autoExpand={{ on: true, maxHeight: 300 }}
+                        textarea
                         required
                       />
-                      <Checkbox
-                        name="isClosedProceeding"
-                        label="Þinghaldið er lokað"
-                        onChange={() =>
-                          setIsClosedProceeding(!isClosedProceeding)
-                        }
-                        checked={isClosedProceeding}
-                        filled
-                        large
-                      />
-                    </div>
-                    <AnimatePresence>
-                      {isClosedProceeding && (
-                        <>
-                          <motion.div
-                            variants={titleVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                          >
-                            <SectionHeading
-                              title="Lagaákvæði sem lokun þinghalds byggir á"
-                              required
-                              marginBottom={0}
-                            />
-                          </motion.div>
-                          <motion.div
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                            className={styles.twoColGrid}
-                            key="grid"
-                          >
-                            {CLOSURE_GROUNDS.map(([label, tooltip]) => (
-                              <motion.div
-                                variants={itemVariants}
-                                initial="hidden"
-                                animate="visible"
-                                exit="exit"
-                                key={label}
-                              >
-                                <Checkbox
-                                  label={label}
-                                  tooltip={tooltip}
-                                  large
-                                  filled
-                                />
-                              </motion.div>
-                            ))}
-                          </motion.div>
-                        </>
-                      )}
-                    </AnimatePresence>
-                  </BlueBox>
-                  <Input
-                    data-testid="courtAttendees"
-                    name="courtAttendees"
-                    label="Mættir eru"
-                    value={workingCase.courtAttendees || ''}
-                    placeholder="Skrifa hér..."
-                    onChange={(event) =>
-                      removeTabsValidateAndSet(
-                        'courtAttendees',
-                        event.target.value,
-                        [],
-                        setWorkingCase,
-                      )
-                    }
-                    onBlur={(event) =>
-                      updateCase(workingCase.id, {
-                        courtAttendees: event.target.value,
-                      })
-                    }
-                    textarea
-                    rows={7}
-                    autoExpand={{ on: true, maxHeight: 300 }}
-                  />
-                  <MultipleValueList
-                    onAddValue={(v) =>
-                      setReorderableItems((prev) => [
-                        ...prev,
-                        { id: uuid(), name: v },
-                      ])
-                    }
-                    inputLabel="Heiti dómskjals"
-                    inputPlaceholder="Skrá inn heiti á skjali hér"
-                    buttonText="Bæta við skjali"
-                    name="indictmentCourtDocuments"
-                    isDisabled={() => false}
-                  >
-                    <Box
-                      display="flex"
-                      rowGap={2}
-                      justifyContent="spaceBetween"
-                      className={styles.reorderGroup}
-                    >
-                      <Reorder.Group
-                        axis="y"
-                        values={reorderableItems}
-                        onReorder={setReorderableItems}
-                        className={styles.grid}
-                      >
-                        {reorderableItems.map((item) => {
-                          return (
-                            <Reorder.Item
-                              key={item.id}
-                              value={item}
-                              data-reorder-item
-                            >
-                              <EditableCaseFile
-                                enableDrag
-                                caseFile={{
-                                  id: item.id,
-                                  displayText: item.name,
-                                  canEdit: ['fileName'],
-                                }}
-                                backgroundColor="white"
-                                onOpen={function (id: string): void {
-                                  throw new Error('Function not implemented.')
-                                }}
-                                onRename={function (
-                                  id: string,
-                                  name: string,
-                                  displayDate: string,
-                                ): void {
-                                  throw new Error('Function not implemented.')
-                                }}
-                                onDelete={(file: TUploadFile) => {
-                                  setReorderableItems((prev) =>
-                                    prev.filter((i) => i.id !== file.id),
-                                  )
-                                }}
-                                onStartEditing={() => console.log('start')}
-                                onStopEditing={() => console.log('stop')}
-                              />
-                            </Reorder.Item>
-                          )
-                        })}
-                      </Reorder.Group>
-                      <Box
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="spaceAround"
-                        rowGap={2}
-                      >
-                        {reorderableItems.map((item, index) => (
-                          <Box key={item.name}>
-                            <Tag variant="darkerBlue" outlined disabled>
-                              Þingmerkt nr. {index + 1}
-                            </Tag>
-                          </Box>
-                        ))}
-                      </Box>
                     </Box>
-                  </MultipleValueList>
-                  <Box>
-                    <SectionHeading title="Bókanir" />
-                    <Input
-                      data-testid="courtAttendees"
-                      name="courtAttendees"
-                      label="Afstaða varnaraðila, málflutningur og aðrar bókanir"
-                      value={workingCase.courtAttendees || ''}
-                      placeholder="Nánari útlistun á afstöðu varnaraðila, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-                      onChange={(event) =>
-                        removeTabsValidateAndSet(
-                          'courtAttendees',
-                          event.target.value,
-                          [],
-                          setWorkingCase,
-                        )
-                      }
-                      onBlur={(event) =>
-                        updateCase(workingCase.id, {
-                          courtAttendees: event.target.value,
-                        })
-                      }
-                      rows={15}
-                      autoExpand={{ on: true, maxHeight: 300 }}
-                      textarea
-                      required
-                    />
-                  </Box>
-                  <Box>
-                    <SectionHeading
-                      title="Er kveðinn upp dómur eða úrskurður í þinghaldinu?"
-                      required
-                    />
-                    <BlueBox className={styles.grid}>
-                      <RadioButton
-                        name="result"
-                        label="Nei"
-                        backgroundColor="white"
-                        large
+                    <Box>
+                      <SectionHeading
+                        title="Er kveðinn upp dómur eða úrskurður í þinghaldinu?"
+                        required
                       />
-                      <RadioButton
-                        name="result"
-                        label="Dómur kveðinn upp"
-                        backgroundColor="white"
-                        large
+                      <BlueBox className={styles.grid}>
+                        <RadioButton
+                          name="result"
+                          label="Nei"
+                          backgroundColor="white"
+                          large
+                        />
+                        <RadioButton
+                          name="result"
+                          label="Dómur kveðinn upp"
+                          backgroundColor="white"
+                          large
+                        />
+                        <RadioButton
+                          name="result"
+                          label="Úrskurður kveðinn upp"
+                          backgroundColor="white"
+                          large
+                        />
+                      </BlueBox>
+                    </Box>
+                    <Box>
+                      <SectionHeading title="Dómsorð" />
+                      <Input
+                        data-testid="courtAttendees"
+                        name="courtAttendees"
+                        label="Dómsorð"
+                        value={workingCase.courtAttendees || ''}
+                        placeholder="Hvert er dómsorðið?"
+                        onChange={(event) =>
+                          removeTabsValidateAndSet(
+                            'courtAttendees',
+                            event.target.value,
+                            [],
+                            setWorkingCase,
+                          )
+                        }
+                        onBlur={(event) =>
+                          updateCase(workingCase.id, {
+                            courtAttendees: event.target.value,
+                          })
+                        }
+                        rows={15}
+                        autoExpand={{ on: true, maxHeight: 300 }}
+                        textarea
+                        required
                       />
-                      <RadioButton
-                        name="result"
-                        label="Úrskurður kveðinn upp"
-                        backgroundColor="white"
-                        large
+                    </Box>
+                    <Box>
+                      <SectionHeading title="Dómsorð" />
+                      <Input
+                        data-testid="courtAttendees"
+                        name="courtAttendees"
+                        label="Dómsorð"
+                        value={workingCase.courtAttendees || ''}
+                        placeholder="Hvert er dómsorðið?"
+                        onChange={(event) =>
+                          removeTabsValidateAndSet(
+                            'courtAttendees',
+                            event.target.value,
+                            [],
+                            setWorkingCase,
+                          )
+                        }
+                        onBlur={(event) =>
+                          updateCase(workingCase.id, {
+                            courtAttendees: event.target.value,
+                          })
+                        }
+                        rows={15}
+                        autoExpand={{ on: true, maxHeight: 300 }}
+                        textarea
+                        required
                       />
-                    </BlueBox>
-                  </Box>
-                  <Box>
-                    <SectionHeading title="Dómsorð" />
-                    <Input
-                      data-testid="courtAttendees"
-                      name="courtAttendees"
-                      label="Dómsorð"
-                      value={workingCase.courtAttendees || ''}
-                      placeholder="Hvert er dómsorðið?"
-                      onChange={(event) =>
-                        removeTabsValidateAndSet(
-                          'courtAttendees',
-                          event.target.value,
-                          [],
-                          setWorkingCase,
-                        )
-                      }
-                      onBlur={(event) =>
-                        updateCase(workingCase.id, {
-                          courtAttendees: event.target.value,
-                        })
-                      }
-                      rows={15}
-                      autoExpand={{ on: true, maxHeight: 300 }}
-                      textarea
-                      required
-                    />
-                  </Box>
-                  <Box>
-                    <SectionHeading title="Dómsorð" />
-                    <Input
-                      data-testid="courtAttendees"
-                      name="courtAttendees"
-                      label="Dómsorð"
-                      value={workingCase.courtAttendees || ''}
-                      placeholder="Hvert er dómsorðið?"
-                      onChange={(event) =>
-                        removeTabsValidateAndSet(
-                          'courtAttendees',
-                          event.target.value,
-                          [],
-                          setWorkingCase,
-                        )
-                      }
-                      onBlur={(event) =>
-                        updateCase(workingCase.id, {
-                          courtAttendees: event.target.value,
-                        })
-                      }
-                      rows={15}
-                      autoExpand={{ on: true, maxHeight: 300 }}
-                      textarea
-                      required
-                    />
-                  </Box>
-                </LayoutGroup>
-              </Box>
-            </LayoutGroup>
-          </AccordionItem>
+                    </Box>
+                  </LayoutGroup>
+                </Box>
+              </LayoutGroup>
+            </AccordionItem>
+          ))}
         </Accordion>
       </FormContentContainer>
     </PageLayout>
