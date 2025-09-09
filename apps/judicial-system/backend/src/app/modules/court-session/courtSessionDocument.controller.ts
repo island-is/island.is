@@ -34,6 +34,7 @@ import {
   districtCourtRegistrarRule,
 } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
+import { DeleteResponse } from '../indictment-count/models/delete.response'
 import { CourtSessionDocument } from '../repository'
 import { CreateCourtSessionDocumentDto } from './dto/createCourtSessionDocument.dto'
 import { UpdateCourtSessionDocumentDto } from './dto/updateCourtSessionDocument.dto'
@@ -140,18 +141,20 @@ export class CourtSessionDocumentController {
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
     @Param('courtSessionDocumentId') courtSessionDocumentId: string,
-  ): Promise<void> {
+  ): Promise<DeleteResponse> {
     this.logger.debug(
       `Deleting court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}`,
     )
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.courtSessionDocumentService.delete(
+    return this.sequelize.transaction(async (transaction) => {
+      const deleted = await this.courtSessionDocumentService.delete(
         caseId,
         courtSessionId,
         courtSessionDocumentId,
         transaction,
-      ),
-    )
+      )
+
+      return { deleted }
+    })
   }
 }

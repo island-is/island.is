@@ -54,12 +54,14 @@ export class CourtSessionDocumentService {
     courtSessionId: string,
     courtSessionDocumentId: string,
     transaction: Transaction,
-  ): Promise<void> {
-    return this.courtSessionDocumentRepositoryService.delete(
+  ): Promise<boolean> {
+    await this.courtSessionDocumentRepositoryService.delete(
       caseId,
       courtSessionId,
       courtSessionDocumentId,
       { transaction },
     )
+
+    return true
   }
 }
