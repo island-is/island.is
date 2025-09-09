@@ -95,6 +95,10 @@ export const GetListsForUser = gql`
         min
         max
       }
+      candidate {
+        ownerName
+        ownerBirthDate
+      }
       endTime
       startTime
       active
