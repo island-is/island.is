@@ -78,3 +78,10 @@ export const SocialInsuranceAdministrationMARPApplicationTypeApi =
     namespace: 'SocialInsuranceAdministration',
     order: 3,
   })
+
+export const SocialInsuranceAdministrationEmploymentStatusesApi =
+  defineTemplateApi({
+    action: 'getEmploymentStatuses',
+    externalDataId: 'socialInsuranceAdministrationEmploymentStatuses',
+    namespace: 'SocialInsuranceAdministration',
+  })

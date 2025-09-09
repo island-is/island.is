@@ -1971,6 +1971,123 @@
         }
       }
     },
+    "/api/protected/v1/General/employment-status": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Returns a list of employment status",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.General.EmploymentStatusesForLanguage"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.General.EmploymentStatusesForLanguage"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.General.EmploymentStatusesForLanguage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/IncomePlan": {
       "get": {
         "tags": ["IncomePlan"],
@@ -2667,7 +2784,7 @@
     "/api/protected/v1/MedicalDocuments/basecertificate": {
       "get": {
         "tags": ["MedicalDocuments"],
-        "summary": "Returns a base certificate (ísl. grunnvottorð) for the logged-in user if it exists, 404 otherwise.",
+        "summary": "Returns the latest base certificate (ísl. grunnvottorð) for the logged-in user if it exists, 404 otherwise.",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -2775,7 +2892,7 @@
     "/api/protected/v1/MedicalDocuments/rehabilitationplan": {
       "get": {
         "tags": ["MedicalDocuments"],
-        "summary": "Returns a rehabilitation plan (ísl. endurhæfingaráætlun) for the logged-in user if it exists, 404 otherwise.",
+        "summary": "Returns the latest rehabilitation plan (ísl. endurhæfingaráætlun) for the logged-in user if it exists, 404 otherwise.",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -2883,7 +3000,7 @@
     "/api/protected/v1/MedicalDocuments/disabilitypensioncertificate": {
       "get": {
         "tags": ["MedicalDocuments"],
-        "summary": "Returns a disability pension certificate (ísl. vottorð um örorku / samþætt sérfræðimat) for the logged-in user if it exists, 404 otherwise.",
+        "summary": "Returns the latest disability pension certificate (ísl. vottorð um örorku / samþætt sérfræðimat) for the logged-in user if it exists, 404 otherwise.",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -2991,7 +3108,7 @@
     "/api/protected/v1/MedicalDocuments/confirmedtreatment": {
       "get": {
         "tags": ["MedicalDocuments"],
-        "summary": "Returns confirmation of treatment (ísl. staðfesting á viðurkenndri meðferð) for the logged-in user if it exists, 404 otherwise.",
+        "summary": "Returns the latest confirmation of treatment (ísl. staðfesting á viðurkenndri meðferð) for the logged-in user if it exists, 404 otherwise.",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -3099,7 +3216,7 @@
     "/api/protected/v1/MedicalDocuments/confirmationofpendingresolution": {
       "get": {
         "tags": ["MedicalDocuments"],
-        "summary": "Returns confirmation of pending resolution (ísl. staðfesting á bið eftir úrræði) for the logged-in user if it exists, 404 otherwise.",
+        "summary": "Returns the latest confirmation of pending resolution (ísl. staðfesting á bið eftir úrræði) for the logged-in user if it exists, 404 otherwise.",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -3207,7 +3324,7 @@
     "/api/protected/v1/MedicalDocuments/confirmationofillhealth": {
       "get": {
         "tags": ["MedicalDocuments"],
-        "summary": "Returns confirmation of ill health (ísl. staðfesting á heilsubrest) for the logged-in user if it exists, 404 otherwise.",
+        "summary": "Returns the latest confirmation of ill health (ísl. staðfesting á heilsubrest) for the logged-in user if it exists, 404 otherwise.",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -4625,6 +4742,14 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Domain.Employers.Models.EmploymentStatusDto": {
+        "type": "object",
+        "properties": {
+          "displayName": { "type": "string", "nullable": true },
+          "value": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto": {
         "type": "object",
         "properties": {
@@ -5128,6 +5253,26 @@
           }
         },
         "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.General.EmploymentStatusesForLanguage": {
+        "type": "object",
+        "properties": {
+          "languageCode": {
+            "type": "string",
+            "description": "The language of the employment statuses, e.g. \"IS\", \"EN\", etc.",
+            "nullable": true
+          },
+          "employmentStatuses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Employers.Models.EmploymentStatusDto"
+            },
+            "description": "The employment statuses",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A data model for returning a list of employment statuses (ísl. stöður á atvinnumarkaði)\nfor a specific language (e.g. \"IS\", \"EN\", etc.)"
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.ExternalIncomeTypeDto": {
         "type": "object",
@@ -5679,8 +5824,8 @@
       "TrWeb.External.Models.ServicePortal.AbilityRating": {
         "type": "object",
         "properties": {
-          "type": { "type": "integer", "format": "int32" },
-          "score": { "type": "integer", "format": "int32" }
+          "type": { "type": "integer", "format": "int32", "nullable": true },
+          "score": { "type": "integer", "format": "int32", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -5808,7 +5953,8 @@
           },
           "requestedPeriod": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RequestedPeriod"
-          }
+          },
+          "typeAppliedFor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -5831,7 +5977,8 @@
           },
           "requestedPeriod": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RequestedPeriod"
-          }
+          },
+          "typeAppliedFor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -5865,7 +6012,8 @@
           },
           "estimatedDuration": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EstimatedDuration"
-          }
+          },
+          "typeAppliedFor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -5950,9 +6098,14 @@
           },
           "participationLimitationCause": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
-          "abilityChangePotential": { "type": "integer", "format": "int32" },
+          "abilityChangePotential": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "medicationAndSupports": { "type": "string", "nullable": true },
           "assessmentToolsUsed": { "type": "string", "nullable": true },
           "physicalAbilityRatings": {
@@ -6124,7 +6277,11 @@
         "type": "object",
         "properties": {
           "description": { "type": "string", "nullable": true },
-          "impactLevel": { "type": "integer", "format": "int32" }
+          "impactLevel": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -6260,7 +6417,8 @@
           "activityAndParticipationGoals": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.HealthGoals"
           },
-          "followupEvaluationExists": { "type": "boolean", "nullable": true }
+          "followupEvaluationExists": { "type": "boolean", "nullable": true },
+          "typeAppliedFor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },

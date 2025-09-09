@@ -7,10 +7,10 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
-import { SelfAssessmentCurrentEmploymentStatus } from '../../../utils/constants'
+import { CURRENT_EMPLOYMENT_STATUS_OTHER } from '../../../utils/constants'
 import {
   getApplicationAnswers,
-  getSelfAssessmentCurrentEmploymentStatusOptions,
+  getEmploymentStatuses,
   getSelfAssessmentLastEmploymentYearOptions,
 } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
@@ -25,22 +25,44 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
         medicalAndRehabilitationPaymentsFormMessage.selfAssessment.sectionTitle,
       children: [
         buildCheckboxField({
-          id: 'selfAssessment.currentEmploymentStatus',
+          id: 'selfAssessment.currentEmploymentStatuses',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .currentEmploymentStatusTitle,
           required: true,
-          options: getSelfAssessmentCurrentEmploymentStatusOptions(),
+          options: (application, _, locale) => {
+            const statuses = getEmploymentStatuses(
+              application.externalData,
+              locale,
+            )
+
+            const options =
+              statuses?.map(({ value, displayName }) => ({
+                value: value,
+                label: displayName,
+              })) ?? []
+
+            const otherIndex = options.findIndex(
+              (option) => option.value === CURRENT_EMPLOYMENT_STATUS_OTHER,
+            )
+
+            if (otherIndex >= 0) {
+              options.push(options.splice(otherIndex, 1)[0])
+            }
+
+            return options
+          },
         }),
         buildTextField({
-          id: 'selfAssessment.currentEmploymentStatusAdditional',
+          id: 'selfAssessment.currentEmploymentStatusExplanation',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .furtherExplanation,
           condition: (answers) => {
-            const { currentEmploymentStatus } = getApplicationAnswers(answers)
-            return currentEmploymentStatus?.includes(
-              SelfAssessmentCurrentEmploymentStatus.OTHER,
+            const { currentEmploymentStatuses } = getApplicationAnswers(answers)
+
+            return currentEmploymentStatuses?.includes(
+              CURRENT_EMPLOYMENT_STATUS_OTHER,
             )
           },
         }),
