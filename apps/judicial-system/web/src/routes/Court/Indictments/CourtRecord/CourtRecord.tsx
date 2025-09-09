@@ -20,6 +20,7 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { INDICTMENTS_CASE_FILE_ROUTE } from '@island.is/judicial-system/consts'
+import { CourtSessionClosedLegalBasis } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   CourtCaseInfo,
@@ -47,28 +48,41 @@ import {
 
 import * as styles from './CourtRecord.css'
 
-const CLOSURE_GROUNDS = [
+const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
   [
     'a-lið 10. gr. sml nr. 88/2008',
     'til hlífðar sakborningi, brotaþola, vandamanni þeirra, vitni eða öðrum sem málið varðar',
+    CourtSessionClosedLegalBasis._2008_88_10_A,
   ],
   [
     'b-lið 10. gr. sml nr. 88/2008',
     'vegna nauðsynjar sakbornings, brotaþola, vitnis eða annars sem málið varðar á því að halda leyndum atriðum varðandi hagsmuni í viðskiptum eða samsvarandi aðstöðu',
+    CourtSessionClosedLegalBasis._2008_88_10_B,
   ],
   [
     'c-lið 10. gr. sml nr. 88/2008',
     'vegna hagsmuna almennings eða öryggis ríkisins',
+    CourtSessionClosedLegalBasis._2008_88_10_C,
   ],
-  ['d-lið 10. gr. sml nr. 88/2008', 'af velsæmisástæðum'],
-  ['e-lið 10. gr. sml nr. 88/2008', 'til að halda uppi þingfriði'],
+  [
+    'd-lið 10. gr. sml nr. 88/2008',
+    'af velsæmisástæðum',
+    CourtSessionClosedLegalBasis._2008_88_10_D,
+  ],
+  [
+    'e-lið 10. gr. sml nr. 88/2008',
+    'til að halda uppi þingfriði',
+    CourtSessionClosedLegalBasis._2008_88_10_E,
+  ],
   [
     'f-lið 10. gr. sml nr. 88/2008',
     'meðan á rannsókn máls stendur og hætta þykir á sakarspjöllum ef þing væri háð fyrir opnum dyrum',
+    CourtSessionClosedLegalBasis._2008_88_10_F,
   ],
   [
     'g-lið 10. gr. sml nr. 88/2008',
     'meðan vitni gefur skýrslu án þess að það þurfi að skýra frá nafni sínu í heyranda hljóði, sbr. 8. mgr. 122. gr.',
+    CourtSessionClosedLegalBasis._2008_88_10_G,
   ],
 ]
 
@@ -176,6 +190,7 @@ const CourtRecord: FC = () => {
             <AccordionItem
               id="courtRecordAccordionItem"
               label={`Þinghald ${index + 1}`}
+              labelVariant="h3"
               startExpanded={workingCase.courtSessions?.length === index + 1}
             >
               <LayoutGroup>
@@ -239,16 +254,27 @@ const CourtRecord: FC = () => {
                         <Checkbox
                           name="isClosedProceeding"
                           label="Þinghaldið er lokað"
-                          onChange={() =>
-                            setIsClosedProceeding(!isClosedProceeding)
-                          }
-                          checked={isClosedProceeding}
+                          onChange={(evt) => {
+                            const update = {
+                              isClosed: evt.target.checked,
+                              closedLegalProvisions: [],
+                            }
+
+                            updateItem(courtSession.id, update)
+
+                            updateCourtSession({
+                              caseId: workingCase.id,
+                              courtSessionId: courtSession.id,
+                              ...update,
+                            })
+                          }}
+                          checked={Boolean(courtSession.isClosed)}
                           filled
                           large
                         />
                       </div>
                       <AnimatePresence>
-                        {isClosedProceeding && (
+                        {courtSession.isClosed && (
                           <>
                             <motion.div
                               variants={titleVariants}
@@ -258,8 +284,9 @@ const CourtRecord: FC = () => {
                             >
                               <SectionHeading
                                 title="Lagaákvæði sem lokun þinghalds byggir á"
-                                required
                                 marginBottom={0}
+                                variant="h4"
+                                required
                               />
                             </motion.div>
                             <motion.div
@@ -270,22 +297,49 @@ const CourtRecord: FC = () => {
                               className={styles.twoColGrid}
                               key="grid"
                             >
-                              {CLOSURE_GROUNDS.map(([label, tooltip]) => (
-                                <motion.div
-                                  variants={itemVariants}
-                                  initial="hidden"
-                                  animate="visible"
-                                  exit="exit"
-                                  key={label}
-                                >
-                                  <Checkbox
-                                    label={label}
-                                    tooltip={tooltip}
-                                    large
-                                    filled
-                                  />
-                                </motion.div>
-                              ))}
+                              {CLOSURE_GROUNDS.map(
+                                ([label, tooltip, legalProvision]) => (
+                                  <motion.div
+                                    variants={itemVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    exit="exit"
+                                    key={label}
+                                  >
+                                    <Checkbox
+                                      label={label}
+                                      tooltip={tooltip}
+                                      checked={courtSession.closedLegalProvisions?.includes(
+                                        legalProvision,
+                                      )}
+                                      onChange={(evt) => {
+                                        const initialValue =
+                                          courtSession.closedLegalProvisions ||
+                                          []
+
+                                        const closedLegalProvisions = evt.target
+                                          .checked
+                                          ? [...initialValue, legalProvision]
+                                          : initialValue.filter(
+                                              (v) => v !== legalProvision,
+                                            )
+
+                                        updateItem(courtSession.id, {
+                                          closedLegalProvisions,
+                                        })
+
+                                        updateCourtSession({
+                                          caseId: workingCase.id,
+                                          courtSessionId: courtSession.id,
+                                          closedLegalProvisions,
+                                        })
+                                      }}
+                                      large
+                                      filled
+                                    />
+                                  </motion.div>
+                                ),
+                              )}
                             </motion.div>
                           </>
                         )}

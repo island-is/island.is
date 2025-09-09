@@ -446,6 +446,7 @@ query Case($input: CaseQueryInput!) {
       startDate
       endDate
       isClosed
+      closedLegalProvisions
     }
   }
 }
