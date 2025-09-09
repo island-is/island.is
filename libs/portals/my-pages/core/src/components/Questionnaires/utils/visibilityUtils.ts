@@ -1,11 +1,18 @@
 import { QuestionAnswer } from '../../../types/questionnaire'
 
+interface VisibilityCondition {
+  questionId: string
+  operator: 'equals' | 'contains' | 'notEquals' | 'notContains'
+  value: string | string[]
+  visible?: boolean
+}
+
 /**
- * Evaluates LSH visibility conditions based on current answers
- * Supports formats like:
- * - "isSelected('Já',@@@RadioGroup36819)"
- * - "isSelected('Annað',@@@Checklist38491)"
- * - "'Já' == '@@@RadioGroup36824'"
+ * Evaluates visibility conditions based on current answers
+ *
+ * Unified format:
+ * - {"questionId":"RadioGroup36819","operator":"equals","value":"Já"}
+ * - {"questionId":"Checklist36819","operator":"contains","value":["Annan"]}
  */
 export const evaluateVisibilityCondition = (
   condition: string,
@@ -18,33 +25,106 @@ export const evaluateVisibilityCondition = (
   try {
     const cleanCondition = condition.trim()
 
-    let isSelectedMatch = cleanCondition.match(
-      /isSelected\('([^']+)',\s*'@@@([^']+)'\)/,
-    )
-
-    if (!isSelectedMatch) {
-      isSelectedMatch = cleanCondition.match(
-        /isSelected\('([^']+)',\s*@@@([^)]+)\)/,
-      )
-    }
-    if (isSelectedMatch) {
-      const [, expectedValue, questionId] = isSelectedMatch
-
-      return checkIsSelected(expectedValue, questionId, answers)
+    // Try to parse as JSON (both legacy EL format and new unified format)
+    if (cleanCondition.startsWith('{')) {
+      return evaluateJsonCondition(cleanCondition, answers)
     }
 
-    const equalityMatch = cleanCondition.match(/'([^']+)'\s*==\s*'@@@([^']+)'/)
-    if (equalityMatch) {
-      const [, expectedValue, questionId] = equalityMatch
-
-      return checkIsSelected(expectedValue, questionId, answers)
-    }
-
-    // If we can't parse the condition, default to visible
-    return true
+    // Handle legacy function format
+    return evaluateFunctionCondition(cleanCondition, answers)
   } catch (error) {
+    console.warn('Error evaluating visibility condition:', error)
     return true // Default to visible on error
   }
+}
+
+/**
+ * Evaluates JSON-based visibility conditions
+ */
+const evaluateJsonCondition = (
+  condition: string,
+  answers: { [key: string]: QuestionAnswer },
+): boolean => {
+  const parsed = JSON.parse(condition)
+
+  if (parsed.questionId && parsed.operator) {
+    const condition = parsed as VisibilityCondition
+    return evaluateUnifiedCondition(condition, answers)
+  }
+
+  // Unknown format, default to visible
+  return true
+}
+
+/**
+ * Evaluates the condition format
+ */
+const evaluateUnifiedCondition = (
+  condition: VisibilityCondition,
+  answers: { [key: string]: QuestionAnswer },
+): boolean => {
+  const { questionId, operator, value, visible = true } = condition
+
+  let isMatch = false
+
+  switch (operator) {
+    case 'equals':
+      isMatch = checkIsSelected(value as string, questionId, answers)
+      break
+    case 'notEquals':
+      isMatch = !checkIsSelected(value as string, questionId, answers)
+      break
+    case 'contains':
+      if (Array.isArray(value)) {
+        isMatch = value.some((val) => checkIsSelected(val, questionId, answers))
+      } else {
+        isMatch = checkIsSelected(value, questionId, answers)
+      }
+      break
+    case 'notContains':
+      if (Array.isArray(value)) {
+        isMatch = !value.some((val) =>
+          checkIsSelected(val, questionId, answers),
+        )
+      } else {
+        isMatch = !checkIsSelected(value, questionId, answers)
+      }
+      break
+    default:
+      return true
+  }
+
+  return visible ? isMatch : !isMatch
+}
+
+/**
+ * Evaluates legacy function-based visibility conditions
+ */
+const evaluateFunctionCondition = (
+  condition: string,
+  answers: { [key: string]: QuestionAnswer },
+): boolean => {
+  let isSelectedMatch = condition.match(
+    /isSelected\('([^']+)',\s*'@@@([^']+)'\)/,
+  )
+
+  if (!isSelectedMatch) {
+    isSelectedMatch = condition.match(/isSelected\('([^']+)',\s*@@@([^)]+)\)/)
+  }
+
+  if (isSelectedMatch) {
+    const [, expectedValue, questionId] = isSelectedMatch
+    return checkIsSelected(expectedValue, questionId, answers)
+  }
+
+  const equalityMatch = condition.match(/'([^']+)'\s*==\s*'@@@([^']+)'/)
+  if (equalityMatch) {
+    const [, expectedValue, questionId] = equalityMatch
+    return checkIsSelected(expectedValue, questionId, answers)
+  }
+
+  // If we can't parse the condition, default to visible
+  return true
 }
 
 const checkIsSelected = (
@@ -89,12 +169,21 @@ export const extractDependenciesFromCondition = (
 
   const dependencies: string[] = []
 
-  const questionIdMatches = condition.match(/@@@([^)'\s]+)/g)
-  if (questionIdMatches) {
-    questionIdMatches.forEach((match) => {
-      const questionId = match.replace('@@@', '')
-      dependencies.push(questionId)
-    })
+  try {
+    const cleanCondition = condition.trim()
+
+    // Try to parse as JSON
+    if (cleanCondition.startsWith('{')) {
+      const parsed = JSON.parse(cleanCondition)
+
+      if (parsed.questionId) {
+        dependencies.push(parsed.questionId)
+      }
+
+      return dependencies
+    }
+  } catch (error) {
+    console.warn('Error extracting dependencies from condition:', error)
   }
 
   return dependencies

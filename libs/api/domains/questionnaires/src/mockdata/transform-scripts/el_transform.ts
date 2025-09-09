@@ -3,12 +3,12 @@ import {
   QuestionDisplayType,
   Question,
   AnswerOption,
-} from '../models/question.model'
+} from '../../models/question.model'
 import {
   Questionnaire,
   QuestionnairesList,
   QuestionnairesStatusEnum,
-} from '../models/questionnaires.model'
+} from '../../models/questionnaires.model'
 
 // THIS SCRIPT IS FOR TRANSFORMING EL_LIST JSON FILES
 
@@ -222,13 +222,17 @@ const analyzeTriggers = (
       : []
 
     // This question depends on the trigger question
-    // Convert trigger object to string representation with mapped labels
-    const visibilityCondition = JSON.stringify({
-      triggerId: visibilityTrigger.triggerId,
+    // Convert to unified format
+    const condition = {
+      questionId: visibilityTrigger.triggerId,
+      operator: (containsLabels.length > 1 ? 'contains' : 'equals') as
+        | 'contains'
+        | 'equals',
+      value: containsLabels.length === 1 ? containsLabels[0] : containsLabels,
       visible: visibilityTrigger.visible,
-      contains: containsLabels,
-      type: visibilityTrigger.type,
-    })
+    }
+
+    const visibilityCondition = JSON.stringify(condition)
 
     return {
       dependsOn: [visibilityTrigger.triggerId],

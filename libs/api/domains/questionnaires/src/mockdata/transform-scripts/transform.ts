@@ -3,12 +3,12 @@ import {
   QuestionDisplayType,
   Question,
   AnswerOption,
-} from '../models/question.model'
+} from '../../models/question.model'
 import {
   Questionnaire,
   QuestionnairesList,
   QuestionnairesStatusEnum,
-} from '../models/questionnaires.model'
+} from '../../models/questionnaires.model'
 
 // THIS SCRIPT IS PARTIALLY GENERATED WITH AI
 
@@ -248,7 +248,13 @@ const createVisibilityCondition = (
   parentQuestion: OriginalQuestion,
   targetOption: OriginalOption,
 ): string => {
-  return `isSelected('${targetOption.Label}',@@@${parentQuestion.EntryID})`
+  // Use new unified format
+  const condition = {
+    questionId: parentQuestion.EntryID,
+    operator: 'equals' as const,
+    value: targetOption.Label,
+  }
+  return JSON.stringify(condition)
 }
 
 // Function to analyze dependencies based on patterns and original DependsOn data
@@ -268,9 +274,15 @@ const analyzeDependencies = (
       (dep) => dep && typeof dep === 'string',
     ) as string[]
     if (dependsOn.length > 0) {
+      // Use new unified format
+      const condition = {
+        questionId: dependsOn[0],
+        operator: 'equals' as const,
+        value: 'Já',
+      }
       return {
         dependsOn: dependsOn,
-        visibilityCondition: `isSelected('Já',@@@${dependsOn[0]})`,
+        visibilityCondition: JSON.stringify(condition),
       }
     }
   }
@@ -454,6 +466,16 @@ export const transformJsonFile = (
     console.error('Error during transformation:', error)
     throw error
   }
+}
+
+// Transform withou file reading/writing
+export const transformQuestionnaireData = (
+  jsonData: any,
+): QuestionnairesList => {
+  const data = JSON.parse(jsonData) as OriginalData
+
+  const transformedData = transformData(data)
+  return transformedData
 }
 
 // Generate TypeScript file content

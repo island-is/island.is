@@ -187,7 +187,8 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
           (Array.isArray(answer.value) && answer.value.length === 0) ||
           answer.value === undefined
         ) {
-          allErrors[question.id] = formatMessage(m.requiredQuestion)
+          allErrors[question.id] =
+            formatMessage(m.requiredQuestion) ?? 'This field is required'
           allValid = false
         }
       }

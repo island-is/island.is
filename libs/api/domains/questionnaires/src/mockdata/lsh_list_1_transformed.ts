@@ -8,7 +8,7 @@ export const data = {
       title: 'Heilsufarsupplýsingar vegna komu á Landspítala',
       description:
         'Með þessum spurningalistum viljum við auka virðingu fyrir tíma þínum og starfsfólks okkar, auka skilvirkni við undirbúning og minnka endurtekningar. Enginn þekkir betur þína sögu en þú sjálf/-ur.\\nVið biðjum þig vinsamlegast að svara eftir bestu getu og senda okkur listann til baka innan fjögurra daga.\\nSvörin vistast í sjúkraskrá þinni og eru meðhöndluð sem trúnaðarmál ',
-      sentDate: '2025-09-08T12:49:03.139Z',
+      sentDate: '2025-09-09T12:37:42.666Z',
       status: QuestionnairesStatusEnum.notAnswered,
       organization: 'Landspítali',
       questions: [
@@ -57,7 +57,7 @@ export const data = {
             id: 'Height_answer',
             label: 'Hæð',
             type: {
-              __typename: 'HealthQuestionnaireAnswerText' as const,
+              __typename: 'HealthQuestionnaireAnswerNumber' as const,
               id: 'Height_type',
               label: 'Hæð',
               display: QuestionDisplayType.optional,
@@ -72,7 +72,7 @@ export const data = {
             id: 'Weight_answer',
             label: 'Þyngd',
             type: {
-              __typename: 'HealthQuestionnaireAnswerText' as const,
+              __typename: 'HealthQuestionnaireAnswerNumber' as const,
               id: 'Weight_type',
               label: 'Þyngd',
               display: QuestionDisplayType.optional,
@@ -215,7 +215,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist38491'],
-          visibilityCondition: "isSelected('Já',@@@Checklist38491)",
+          visibilityCondition:
+            '{"questionId":"Checklist38491","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36818',
@@ -265,7 +266,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36819'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36819)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36819","operator":"equals","value":"Já"}',
         },
         {
           id: 'Checklist38488',
@@ -283,7 +285,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36819'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36819)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36819","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36941',
@@ -317,7 +320,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36941'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36941)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36941","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup49785',
@@ -375,7 +379,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup49786'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup49786)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup49786","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup49787',
@@ -413,7 +418,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup49787'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup49787)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup49787","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36836',
@@ -452,7 +458,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36836'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36836)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36836","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup38490',
@@ -486,7 +493,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup38490'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup38490)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup38490","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36837',
@@ -521,7 +529,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36837'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36837)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36837","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36842',
@@ -555,7 +564,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36842'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36842)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36842","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36844',
@@ -573,7 +583,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36842'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36842)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36842","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36845',
@@ -591,7 +602,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36842'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36842)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36842","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36846',
@@ -609,7 +621,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36845'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36845)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36845","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36847',
@@ -627,7 +640,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36845'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36845)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36845","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36848',
@@ -645,7 +659,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36845'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36845)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36845","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup47841',
@@ -719,7 +734,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36851'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36851)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36851","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36852',
@@ -753,7 +769,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36852'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36852)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36852","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36824',
@@ -787,7 +804,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36824'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36824)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36824","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36940',
@@ -808,7 +826,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36824'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36824)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36824","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup47842',
@@ -842,7 +861,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup47842'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup47842)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup47842","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36821',
@@ -876,7 +896,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36821'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36821)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36821","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36823',
@@ -894,7 +915,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36821'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36821)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36821","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36827',
@@ -912,7 +934,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36821'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36821)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36821","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36830',
@@ -932,7 +955,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36827'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36827)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36827","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup47832',
@@ -971,7 +995,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup47832'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup47832)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup47832","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup47834',
@@ -1005,7 +1030,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup47834'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup47834)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup47834","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36839',
@@ -1039,7 +1065,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36839'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36839)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36839","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36841',
@@ -1100,7 +1127,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39699'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39699)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39699","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36857',
@@ -1140,7 +1168,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36857'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36857)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36857","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup37717',
@@ -1187,7 +1216,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup37717'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup37717)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup37717","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36862',
@@ -1205,7 +1235,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36861'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36861)",
+          visibilityCondition:
+            '{"questionId":"Checklist36861","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36859',
@@ -1239,7 +1270,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36859'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36859)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36859","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text39609',
@@ -1257,7 +1289,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36860'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36860)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36860","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36863',
@@ -1299,7 +1332,7 @@ export const data = {
             id: 'Label49782_answer',
             label: 'Spurningar um sjúkdóma eftir líffærakerfum',
             type: {
-              __typename: 'HealthQuestionnaireAnswerText' as const,
+              __typename: 'HealthQuestionnaireAnswerLabel' as const,
               id: 'Label49782_type',
               label: 'Spurningar um sjúkdóma eftir líffærakerfum',
               display: QuestionDisplayType.optional,
@@ -1346,7 +1379,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39649'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39649)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39649","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36869',
@@ -1364,7 +1398,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist47837'],
-          visibilityCondition: "isSelected('Já',@@@Checklist47837)",
+          visibilityCondition:
+            '{"questionId":"Checklist47837","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup39651',
@@ -1408,7 +1443,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39651'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39651)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39651","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36875',
@@ -1426,7 +1462,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist47838'],
-          visibilityCondition: "isSelected('Já',@@@Checklist47838)",
+          visibilityCondition:
+            '{"questionId":"Checklist47838","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup39650',
@@ -1477,7 +1514,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39650'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39650)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39650","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36872',
@@ -1495,7 +1533,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36871'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36871)",
+          visibilityCondition:
+            '{"questionId":"Checklist36871","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup39652',
@@ -1541,7 +1580,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39652'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39652)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39652","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36878',
@@ -1559,7 +1599,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36877'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36877)",
+          visibilityCondition:
+            '{"questionId":"Checklist36877","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup39653',
@@ -1602,7 +1643,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39653'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39653)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39653","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36881',
@@ -1620,7 +1662,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36880'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36880)",
+          visibilityCondition:
+            '{"questionId":"Checklist36880","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup39654',
@@ -1661,7 +1704,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39654'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39654)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39654","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36884',
@@ -1679,7 +1723,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36883'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36883)",
+          visibilityCondition:
+            '{"questionId":"Checklist36883","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup39655',
@@ -1718,7 +1763,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39655'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39655)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39655","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36887',
@@ -1736,7 +1782,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36886'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36886)",
+          visibilityCondition:
+            '{"questionId":"Checklist36886","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup39688',
@@ -1781,7 +1828,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39688'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39688)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39688","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36890',
@@ -1799,7 +1847,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36889'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36889)",
+          visibilityCondition:
+            '{"questionId":"Checklist36889","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup39689',
@@ -1839,7 +1888,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39689'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39689)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39689","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36893',
@@ -1857,7 +1907,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36892'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36892)",
+          visibilityCondition:
+            '{"questionId":"Checklist36892","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup39690',
@@ -1896,7 +1947,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39690'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39690)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39690","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36896',
@@ -1914,7 +1966,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36895'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36895)",
+          visibilityCondition:
+            '{"questionId":"Checklist36895","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup39691',
@@ -1952,7 +2005,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39691'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39691)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39691","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36899',
@@ -1970,7 +2024,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36898'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36898)",
+          visibilityCondition:
+            '{"questionId":"Checklist36898","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup39692',
@@ -2009,7 +2064,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup39692'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup39692)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup39692","operator":"equals","value":"Já"}',
         },
         {
           id: 'Text36903',
@@ -2027,7 +2083,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36902'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36902)",
+          visibilityCondition:
+            '{"questionId":"Checklist36902","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup36934',
@@ -2061,7 +2118,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36934'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36934)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36934","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup37718',
@@ -2111,7 +2169,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36911'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36911)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36911","operator":"equals","value":"Já"}',
         },
         {
           id: 'Label49783',
@@ -2121,7 +2180,7 @@ export const data = {
             id: 'Label49783_answer',
             label: 'Spurningar um félagslegar aðstæður',
             type: {
-              __typename: 'HealthQuestionnaireAnswerText' as const,
+              __typename: 'HealthQuestionnaireAnswerLabel' as const,
               id: 'Label49783_type',
               label: 'Spurningar um félagslegar aðstæður',
               display: QuestionDisplayType.optional,
@@ -2160,7 +2219,8 @@ export const data = {
             },
           },
           dependsOn: ['RadioGroup36942'],
-          visibilityCondition: "isSelected('Já',@@@RadioGroup36942)",
+          visibilityCondition:
+            '{"questionId":"RadioGroup36942","operator":"equals","value":"Já"}',
         },
         {
           id: 'RadioGroup48703',
@@ -2232,7 +2292,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist36808'],
-          visibilityCondition: "isSelected('Já',@@@Checklist36808)",
+          visibilityCondition:
+            '{"questionId":"Checklist36808","operator":"equals","value":"Já"}',
         },
         {
           id: 'Checklist38586',
@@ -2272,7 +2333,8 @@ export const data = {
             },
           },
           dependsOn: ['Checklist38586'],
-          visibilityCondition: "isSelected('Já',@@@Checklist38586)",
+          visibilityCondition:
+            '{"questionId":"Checklist38586","operator":"equals","value":"Já"}',
         },
         {
           id: 'Checklist39697',

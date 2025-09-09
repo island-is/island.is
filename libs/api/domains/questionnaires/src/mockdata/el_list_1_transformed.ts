@@ -7,7 +7,7 @@ export const data = {
       id: '8f7e2a1d-4c9b-4e3f-9a2d-6b8c4f5e1a3d',
       title: 'DT - Mat á vanlíðan',
       description: '',
-      sentDate: '2025-09-08T20:33:10.241Z',
+      sentDate: '2025-09-09T12:37:21.272Z',
       status: QuestionnairesStatusEnum.notAnswered,
       organization: 'EL',
       questions: [
@@ -752,7 +752,7 @@ export const data = {
           },
           dependsOn: ['90'],
           visibilityCondition:
-            '{"triggerId":"90","visible":true,"contains":["Já"],"type":"list"}',
+            '{"questionId":"90","operator":"equals","value":"Já","visible":true}',
         },
         {
           id: '120',
@@ -771,7 +771,7 @@ export const data = {
           },
           dependsOn: ['100'],
           visibilityCondition:
-            '{"triggerId":"100","visible":true,"contains":["Annan"],"type":"list"}',
+            '{"questionId":"100","operator":"equals","value":"Annan","visible":true}',
         },
         {
           id: '0',

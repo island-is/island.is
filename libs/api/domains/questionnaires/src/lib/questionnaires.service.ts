@@ -2,13 +2,14 @@ import type { User } from '@island.is/auth-nest-tools'
 import { LshClientService } from '@island.is/clients/lsh'
 import type { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
-import { data as lsh_list_1 } from '../mockdata/lsh_list_1_final'
+import { data as lsh_list_1 } from '../mockdata/lsh_list_1_transformed'
 import { data as lsh_list_2 } from '../mockdata/lsh_list_2_transformed'
 import { data as EL_list_1 } from '../mockdata/el_list_1_transformed'
 import {
   Questionnaire,
   QuestionnairesList,
 } from '../models/questionnaires.model'
+import { transformQuestionnaireData } from '../mockdata/transform-scripts/transform'
 
 // Example URL for the LSH API (not used in this mock implementation)
 const url =

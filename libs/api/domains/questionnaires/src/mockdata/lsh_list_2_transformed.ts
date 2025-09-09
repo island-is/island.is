@@ -8,7 +8,7 @@ export const data = {
       title: 'EuroHeart - Iceland Heart Failure 2025',
       description:
         'Til að auðvelda okkur mat og eftirlit með sjúkdómi þínum, meðferð og hugsanlegum aukaverkunum, værum við þakklát ef þú gætir svarað eftirfarandi spurningalista. Engin svör eru rétt eða röng, svaraðu því sem þér finnst best eiga við um heilsu þína hverju sinni.',
-      sentDate: '2025-09-08T13:23:39.821Z',
+      sentDate: '2025-09-09T12:37:46.961Z',
       status: QuestionnairesStatusEnum.notAnswered,
       organization: 'Landspítali',
       questions: [
