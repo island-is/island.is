@@ -8,8 +8,6 @@ import {
 } from '../../hooks'
 import {
   EmptyState,
-  IntroWrapper,
-  THJODSKRA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import SigneeView from '../shared/SigneeView'
@@ -41,7 +39,7 @@ const SignatureCollectionPresidential = () => {
         <Box>
           {currentCollection?.collectionType ===
           SignatureCollectionCollectionType.Presidential ? (
-            isOwner.success ? (
+            isOwner?.success ? (
               <OwnerView
                 refetchIsOwner={refetchIsOwner}
                 currentCollection={currentCollection}
