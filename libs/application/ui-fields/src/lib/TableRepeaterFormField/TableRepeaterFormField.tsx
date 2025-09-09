@@ -137,7 +137,16 @@ export const TableRepeaterFormField: FC<Props> = ({
   }
 
   const handleNewItem = () => {
-    append({})
+    // Build an explicit empty row so RHF won't fall back to defaultValues (application.answers)
+    const empty: Record<string, any> = {}
+    items.forEach((it) => {
+      if (it.component === 'checkbox' || it.component === 'radio') {
+        empty[it.id] = []
+      } else {
+        empty[it.id] = ''
+      }
+    })
+    append(empty)
     setActiveIndex(fields.length)
     methods.clearErrors()
   }
