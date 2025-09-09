@@ -21,11 +21,11 @@ export const PaymentInformationValidation: FC<
   const getIsValidBankInformation = useLazyIsBankInfoValid()
   const getIsCompanyValidCallback = useCallback(
     async (input: {
-      bankNumber: string | undefined
-      ledger: string | undefined
-      accountNumber: string | undefined
+      bankNumber: string
+      ledger: string
+      accountNumber: string
     }) => {
-      const { data } = await getIsValidBankInformation(input)
+      const { data } = await getIsValidBankInformation({ input: input })
       return data
     },
     [getIsValidBankInformation],
@@ -60,10 +60,6 @@ export const PaymentInformationValidation: FC<
         (val) => val.bankNo === paymentInfo.bankNumber,
       ) || undefined
 
-    if (ledgerSupportData && bankNumberSupportData) {
-      return [true, null]
-    }
-
     if (!ledgerSupportData) {
       setErrors((prev) => [...prev, paymentErrors.invalidLedger])
     }
@@ -73,13 +69,15 @@ export const PaymentInformationValidation: FC<
 
     try {
       const isValid = await getIsCompanyValidCallback({
-        bankNumber: paymentInfo.bankNumber,
-        ledger: paymentInfo.ledger,
-        accountNumber: paymentInfo.accountNumber?.padStart(6, '0'),
+        bankNumber: paymentInfo.bankNumber || '',
+        ledger: paymentInfo.ledger || '',
+        accountNumber: paymentInfo.accountNumber?.padStart(6, '0') || '',
       })
-      if (isValid) return [true, null]
+
+      if (isValid.vmstApplicationsAccountNumbervalidation) return [true, null]
+      setErrors((prev) => [...prev, paymentErrors.invalidAccountNumber])
     } catch (e) {
-      // Set some error ?
+      setErrors((prev) => [...prev, paymentErrors.invalidAccountNumber])
     }
 
     return [false, '']

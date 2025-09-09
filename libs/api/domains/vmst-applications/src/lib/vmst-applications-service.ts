@@ -23,6 +23,7 @@ export class VMSTApplicationsService {
         ...input,
       },
     }
+
     return this.vmstUnemploymentService.validateBankInfo(payload)
   }
 }

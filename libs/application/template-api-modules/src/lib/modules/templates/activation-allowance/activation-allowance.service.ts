@@ -165,41 +165,6 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
       throw new Error('Missing required fields')
     }
 
-    let bankInfoValid = false
-    try {
-      bankInfoValid = await this.vmstUnemploymentClientService.validateBankInfo(
-        {
-          galdurApplicationApplicationsB2BQueriesValidateBankInformationQuery: {
-            applicantSSN: personalInfo?.ssn,
-            accountNumber: bankInfo?.accountNumber,
-            ledger: bankAnswers?.ledger,
-            bankNumber: bankAnswers?.bankNumber,
-          },
-        },
-      )
-    } catch (e) {
-      this.logger.warn(
-        '[VMST-ActivationAllowance]: Network call to validate bank info failed',
-      )
-      throw new TemplateApiError(
-        {
-          title: errorMsgs.successErrorTitle,
-          summary: errorMsgs.bankInfoNetworkFail,
-        },
-        500,
-      )
-    }
-
-    if (!bankInfoValid) {
-      throw new TemplateApiError(
-        {
-          title: errorMsgs.successErrorTitle,
-          summary: errorMsgs.bankInfoNotValid,
-        },
-        500,
-      )
-    }
-
     let cvResponse: GaldurDomainModelsAttachmentsAttachmentViewModel | undefined
     if (cvInfo) {
       cvResponse =
