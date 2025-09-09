@@ -12,9 +12,7 @@ import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { getYears } from '../../../../utils/dates'
 import { Locale } from '@island.is/shared/types'
-import {
-  EmploymentStatusResponse,
-} from '../../../../types/interfaces'
+import { EmploymentStatusResponse } from '../../../../types/interfaces'
 import {
   siaGeneralProfessionActivities,
   siaGeneralProfessions,

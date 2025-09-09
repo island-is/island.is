@@ -16,7 +16,7 @@ export const residenceField = buildMultiField({
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,
       title: disabilityPensionFormMessage.questions.residenceTitle,
-      options:  (application: Application) => {
+      options: (application: Application) => {
         const residenceTypes =
           getValueViaPath<Array<Residence>>(
             application.externalData,
