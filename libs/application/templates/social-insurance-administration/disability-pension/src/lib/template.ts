@@ -58,7 +58,7 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
-import { IncomePlanRow } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { Eligible, IncomePlanRow } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -83,6 +83,14 @@ const template: ApplicationTemplate<
           name: States.PREREQUISITES,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -91,7 +99,9 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.Prerequisites),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary' },
               ],
               write: 'all',
               read: 'all',
@@ -125,14 +135,13 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: [
             {
               target: States.DRAFT,
-              cond: (application) =>
-                getValueViaPath(
+              cond: (application) => {
+                const response = getValueViaPath<Eligible>(
                   application?.application?.externalData,
                   'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
-                ) as boolean,
-            },
-            {
-              actions: 'setApproveExternalData',
+                )
+                return !!response?.isEligible && response.isEligible
+              }
             },
           ],
         },
@@ -165,7 +174,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.MainForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                { event: DefaultEvents.SUBMIT, name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
               read: 'all',
@@ -182,7 +191,7 @@ const template: ApplicationTemplate<
       [States.APPROVED]: {
         meta: {
           name: States.APPROVED,
-          status: 'approved',
+          status: FormModes.APPROVED,
           actionCard: {
             pendingAction: {
               title: socialInsuranceAdministrationMessage.applicationApproved,

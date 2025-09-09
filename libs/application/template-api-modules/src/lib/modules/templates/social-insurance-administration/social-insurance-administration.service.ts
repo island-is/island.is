@@ -558,7 +558,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       case ApplicationTypes.DISABILITY_PENSION: {
         return await this.siaClientService.getIsEligible(
           auth,
-          'disabilitypension,',
+          'disabilitypension',
         )
       }
       default: {
@@ -704,6 +704,10 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getCountries({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getCountries(auth)
+  }
+
+  async getMaritalStatuses({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getMaritalStatuses(auth)
   }
 
   async getLanguages({ auth }: TemplateApiModuleActionProps) {

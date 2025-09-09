@@ -31,6 +31,7 @@ import {
   SocialInsuranceAdministrationEmploymentStatusesApi,
   SocialInsuranceAdministrationProfessionsApi,
   SocialInsuranceAdministrationProfessionActivitiesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../../dataProviders'
 import { disabilityPensionFormMessage } from '../../lib/messages'
 
@@ -43,7 +44,7 @@ export const Prerequisites = buildForm({
   logo: Logo,
   children: [
     buildSection({
-      id: 'conditions',
+      id: 'prerequisites',
       title: disabilityPensionFormMessage.prerequisites.title,
       tabTitle: disabilityPensionFormMessage.prerequisites.title,
       children: [
@@ -54,6 +55,19 @@ export const Prerequisites = buildForm({
             socialInsuranceAdministrationMessage.pre.externalDataDescription,
           checkboxLabel:
             disabilityPensionFormMessage.prerequisites.checkboxLabel,
+          submitField: buildSubmitField({
+            id: 'submit',
+            placement: 'footer',
+            title: socialInsuranceAdministrationMessage.pre.startApplication,
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: socialInsuranceAdministrationMessage.pre.startApplication,
+                type: 'primary',
+              },
+            ],
+          }),
           dataProviders: [
             buildDataProviderItem({
               title:
@@ -132,26 +146,12 @@ export const Prerequisites = buildForm({
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationProfessionActivitiesApi,
             }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+            }),
           ],
-          submitField: buildSubmitField({
-            id: 'submit',
-            placement: 'footer',
-            refetchApplicationAfterSubmit: true,
-            actions: [
-              {
-                event: DefaultEvents.SUBMIT,
-                name: coreMessages.buttonNext,
-                type: 'primary',
-              },
-            ],
-          }),
         }),
       ],
-    }),
-    buildSection({
-      id: 'PrerequisitesDraftExternalDataSection',
-      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
-      children: [],
     }),
   ],
 })
