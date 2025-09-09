@@ -317,8 +317,11 @@ export class VerdictService {
     if (!createdDocument) {
       return { delivered: false }
     }
+    console.log('HERE1')
     // update existing verdict with the external document id returned from the police
     await this.updateVerdict(verdict, createdDocument)
+
+    console.log('HERE2')
 
     return { delivered: true }
   }
