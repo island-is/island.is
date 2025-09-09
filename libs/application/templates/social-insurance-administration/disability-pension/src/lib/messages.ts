@@ -714,8 +714,7 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
   notEligible: defineMessages({
     title: {
       id: 'dp.application:not.eligible.title',
-      defaultMessage:
-        'Því miður átt þú ekki rétt á örorkulífeyri',
+      defaultMessage: 'Því miður átt þú ekki rétt á örorkulífeyri',
       description:
         'Unfortunately, you are not eligible for disability pension.',
     },

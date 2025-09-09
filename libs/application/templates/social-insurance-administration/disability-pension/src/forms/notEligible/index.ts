@@ -4,7 +4,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import {  Form, FormModes } from '@island.is/application/types'
+import { Form, FormModes } from '@island.is/application/types'
 import { disabilityPensionFormMessage } from '../../lib/messages'
 
 export const NotEligible: Form = buildForm({
@@ -18,8 +18,7 @@ export const NotEligible: Form = buildForm({
         buildDescriptionField({
           id: 'notEligible.description',
           title: disabilityPensionFormMessage.notEligible.title,
-          description: () =>
-            'TODO'
+          description: () => 'TODO',
         }),
       ],
     }),
