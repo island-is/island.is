@@ -1818,6 +1818,15 @@ payment-flow-update-handler:
         min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payment-flow-update-handler'
+  ingress:
+    internal-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'payment-flow-update-handler.internal.island.is'
+          paths:
+            - '/'
   namespace: 'payment-flow-update-handler'
   podDisruptionBudget:
     maxUnavailable: 1
