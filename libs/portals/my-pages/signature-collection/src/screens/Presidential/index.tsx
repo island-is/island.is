@@ -6,9 +6,7 @@ import {
   useGetListsForOwner,
   useIsOwner,
 } from '../../hooks'
-import {
-  EmptyState,
-} from '@island.is/portals/my-pages/core'
+import { EmptyState } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import SigneeView from '../shared/SigneeView'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
