@@ -31,7 +31,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(AdminPortalScope.formSystemAdmin)
+@Scopes(AdminPortalScope.formSystem)
 @ApiTags('organizations')
 @Controller({ path: 'organizations', version: ['1', VERSION_NEUTRAL] })
 export class OrganizationsController {

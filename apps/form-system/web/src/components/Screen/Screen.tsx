@@ -23,7 +23,7 @@ export const Screen = () => {
     state.sections?.[0].isCompleted ?? false,
   )
 
-  console.log('currentScreen', currentScreen)
+  // console.log('currentScreen', currentScreen)
 
   return (
     <Box

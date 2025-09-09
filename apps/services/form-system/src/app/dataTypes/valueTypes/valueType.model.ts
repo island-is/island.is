@@ -167,4 +167,9 @@ export class ValueType {
   @IsString()
   @ApiPropertyOptional({ type: String })
   delegationType?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isLoggedInUser?: boolean
 }

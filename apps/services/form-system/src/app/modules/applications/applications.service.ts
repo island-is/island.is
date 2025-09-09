@@ -62,6 +62,9 @@ export class ApplicationsService {
     createApplicationDto: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationDto> {
+    // TODO: Check if user is allowed to create application for this form
+    // TODO: Check if form is published
+
     const form: Form = await this.getForm(slug)
 
     if (!form) {
@@ -107,6 +110,10 @@ export class ApplicationsService {
         } as ApplicationEvent,
         { transaction },
       )
+
+      // TODO: finna út aðilana með því að skoða tókenið frá usernum.
+      // búa bara til aðila screens og fields fyrir þá aðila sem eru hlutaðeigandi þessarar umsóknar
+      // console.log('user:', JSON.stringify(user, null, 2))
 
       await Promise.all(
         form.sections.map((section) =>
@@ -164,7 +171,6 @@ export class ApplicationsService {
     if (!sections) {
       throw new NotFoundException(`Sections not found`)
     }
-
     const screenDto = sections
       .flatMap((section) => section.screens || [])
       .find((screen) => screen.id === screenId)
@@ -357,6 +363,8 @@ export class ApplicationsService {
     user: User,
     isTest: boolean,
   ): Promise<ApplicationResponseDto> {
+    // TODO: Check if form is published
+
     const form: Form = await this.getForm(slug)
 
     if (!form) {
@@ -395,6 +403,8 @@ export class ApplicationsService {
     formId: string,
     isTest: boolean,
   ): Promise<ApplicationDto[]> {
+    // TODO: Check if form is published
+
     const hasDelegation =
       Array.isArray(user.delegationType) && user.delegationType.length > 0
     const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
@@ -563,6 +573,18 @@ export class ApplicationsService {
     return form
   }
 
+  // eslint-disable-next-line
+  private updateObjectValues<T extends Record<string, any>>(
+    source: T,
+    target: T,
+  ): T {
+    const updated = { ...target } // copy to avoid mutating directly
+    ;(Object.keys(source) as (keyof T)[]).forEach((key) => {
+      updated[key] = source[key]
+    })
+    return updated
+  }
+
   async saveScreen(
     screenId: string,
     submitScreenDto: SubmitScreenDto,
@@ -590,8 +612,21 @@ export class ApplicationsService {
       for (const field of screenDto.fields) {
         if (field.values) {
           for (const value of field.values) {
+            const existingValue = await this.valueModel.findOne({
+              where: {
+                fieldId: field.id,
+                applicationId: applicationId,
+                id: value.id,
+              },
+            })
+
+            const updatedJson = this.updateObjectValues(
+              value.json || {},
+              existingValue?.json || {},
+            )
+
             await this.valueModel.update(
-              { ...(value as Partial<Value>) },
+              { json: updatedJson },
               {
                 where: {
                   fieldId: field.id,

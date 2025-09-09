@@ -32,11 +32,6 @@ export const TableHeader = () => {
         </Column>
         <Column span="2/12">
           <Text variant="medium" fontWeight="semiBold">
-            {formatMessage(m.organization)}
-          </Text>
-        </Column>
-        <Column span="1/12">
-          <Text variant="medium" fontWeight="semiBold">
             {formatMessage(m.state)}
           </Text>
         </Column>

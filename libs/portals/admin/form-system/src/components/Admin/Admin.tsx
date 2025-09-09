@@ -67,7 +67,7 @@ export const Admin = () => {
                 </Button>
               )}
             </Box>
-            <OrganizationSelect />
+            {isAdmin && <OrganizationSelect />}
           </Box>
         </Box>
       </GridRow>
