@@ -209,66 +209,66 @@ const getIncomeSections = (index: number) => {
           },
         }),
 
-        buildDescriptionField({
-          id: `income[${index}].leaveDescription`,
-          title: income.labels.leaveDescription,
-          titleVariant: 'h5',
-        }),
-        buildRadioField({
-          id: `income[${index}].hasLeaveDays`,
-          width: 'half',
-          options: [
-            { value: YES, label: application.yesLabel },
-            { value: NO, label: application.noLabel },
-          ],
-          clearOnChange: [
-            `income[${index}].numberOfLeaveDays`,
-            `income[${index}].leaveDates`,
-          ],
-          doesNotRequireAnswer: true,
-        }),
+        // buildDescriptionField({
+        //   id: `income[${index}].leaveDescription`,
+        //   title: income.labels.leaveDescription,
+        //   titleVariant: 'h5',
+        // }),
+        // buildRadioField({
+        //   id: `income[${index}].hasLeaveDays`,
+        //   width: 'half',
+        //   options: [
+        //     { value: YES, label: application.yesLabel },
+        //     { value: NO, label: application.noLabel },
+        //   ],
+        //   clearOnChange: [
+        //     `income[${index}].numberOfLeaveDays`,
+        //     `income[${index}].leaveDates`,
+        //   ],
+        //   doesNotRequireAnswer: true,
+        // }),
 
-        buildAlertMessageField({
-          id: `income[${index}].numberAndUsageOfLeaveDescription`,
-          alertType: 'info',
-          title: income.labels.numberAndUsageOfLeaveTitle,
-          message: income.labels.numberAndUsageOfLeaveDescription,
-          condition: (formValue: FormValue) => {
-            return hasLeaveDays(index, formValue)
-          },
-        }),
-        buildTextField({
-          id: `income[${index}].numberOfLeaveDays`,
-          title: income.labels.numberOfLeaveDays,
-          condition: (formValue: FormValue) => {
-            return hasLeaveDays(index, formValue)
-          },
-          variant: 'number',
-          min: 1,
-          max: 99,
-          doesNotRequireAnswer: true,
-        }),
-        buildFieldsRepeaterField({
-          id: `income[${index}].leaveDates`,
-          condition: (formValue: FormValue) => {
-            return hasLeaveDays(index, formValue)
-          },
-          fields: {
-            dateFrom: {
-              component: 'date',
-              label: income.labels.dateFrom,
-              width: 'half',
-            },
-            dateTo: {
-              component: 'date',
-              label: income.labels.dateTo,
-              width: 'half',
-            },
-          },
-          addItemButtonText: income.labels.addLine,
-          formTitleNumbering: 'none',
-          doesNotRequireAnswer: true,
-        }),
+        // buildAlertMessageField({
+        //   id: `income[${index}].numberAndUsageOfLeaveDescription`,
+        //   alertType: 'info',
+        //   title: income.labels.numberAndUsageOfLeaveTitle,
+        //   message: income.labels.numberAndUsageOfLeaveDescription,
+        //   condition: (formValue: FormValue) => {
+        //     return hasLeaveDays(index, formValue)
+        //   },
+        // }),
+        // buildTextField({
+        //   id: `income[${index}].numberOfLeaveDays`,
+        //   title: income.labels.numberOfLeaveDays,
+        //   condition: (formValue: FormValue) => {
+        //     return hasLeaveDays(index, formValue)
+        //   },
+        //   variant: 'number',
+        //   min: 1,
+        //   max: 99,
+        //   doesNotRequireAnswer: true,
+        // }),
+        // buildFieldsRepeaterField({
+        //   id: `income[${index}].leaveDates`,
+        //   condition: (formValue: FormValue) => {
+        //     return hasLeaveDays(index, formValue)
+        //   },
+        //   fields: {
+        //     dateFrom: {
+        //       component: 'date',
+        //       label: income.labels.dateFrom,
+        //       width: 'half',
+        //     },
+        //     dateTo: {
+        //       component: 'date',
+        //       label: income.labels.dateTo,
+        //       width: 'half',
+        //     },
+        //   },
+        //   addItemButtonText: income.labels.addLine,
+        //   formTitleNumbering: 'none',
+        //   doesNotRequireAnswer: true,
+        // }),
       ],
     }),
   ]
