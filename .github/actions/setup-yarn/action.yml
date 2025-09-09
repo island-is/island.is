@@ -67,6 +67,9 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       if: ${{ steps.restore-cache.outputs.cache-hit != 'true' }}
+      env:
+        NPM_REGISTRY_SERVER_PROXY: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
       run: |
+        node scripts/ci/prepare-yarn.mjs
         yarn install --immutable
         if [[ -n "$CYPRESS_CACHE_FOLDER" ]]; then yarn cypress install; fi
