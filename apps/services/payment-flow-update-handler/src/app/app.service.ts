@@ -4,7 +4,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { AppConfig } from './app.config'
 import { LandspitaliService } from './landspitali.service'
 import { LandspitaliPaymentType, type PaymentCallbackPayload } from './types'
 
@@ -13,7 +12,6 @@ export class AppService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    @Inject(AppConfig.KEY)
     private readonly landspitaliService: LandspitaliService,
   ) {}
 

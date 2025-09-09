@@ -30,6 +30,17 @@ const computeSha256 = (body: string): string => {
   return crypto.createHash('sha256').update(body).digest('hex')
 }
 
+const extractPublicKeyFromJwtHeader =
+  (jwksClient: JwksClient) =>
+  (header: JwtHeader, callback: SigningKeyCallback) => {
+    jwksClient.getSigningKey(header.kid, (error, key) => {
+      if (error || !key) {
+        return callback(error)
+      }
+      callback(null, key.getPublicKey())
+    })
+  }
+
 @Injectable()
 export class JwksGuard implements CanActivate {
   constructor(
@@ -40,23 +51,11 @@ export class JwksGuard implements CanActivate {
     private readonly logger: Logger,
   ) {}
 
-  private extractPublicKeyFromJwtHeader(
-    header: JwtHeader,
-    callback: SigningKeyCallback,
-  ) {
-    this.jwksClient.getSigningKey(header.kid, (error, key) => {
-      if (error || !key) {
-        return callback(error)
-      }
-      callback(null, key.getPublicKey())
-    })
-  }
-
   private validateIncomingJwt(token: string, rawBody: string) {
     return new Promise((resolve, reject) => {
       jwt.verify(
         token,
-        this.extractPublicKeyFromJwtHeader,
+        extractPublicKeyFromJwtHeader(this.jwksClient),
         {
           algorithms: ['RS256'],
           issuer: this.config.paymentsWebUrl,

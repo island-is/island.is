@@ -1,5 +1,5 @@
 import { CacheField } from '@island.is/nest/graphql'
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, Int } from '@nestjs/graphql'
 
 @ObjectType('WebLandspitaliCatalog')
 export class Catalog {
@@ -21,6 +21,6 @@ export class CatalogItem {
   @Field(() => String)
   chargeItemName!: string
 
-  @Field(() => Number)
+  @Field(() => Int)
   priceAmount!: number
 }
