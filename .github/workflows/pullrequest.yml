@@ -100,6 +100,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
+          # Useless comment
           registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
           skip-cache: ${{ env.SHOULD_SKIP_NPM_CACHE }}
 
