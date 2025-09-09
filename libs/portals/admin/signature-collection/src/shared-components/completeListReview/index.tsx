@@ -72,11 +72,13 @@ const CompleteListReview = ({
           <Box display="flex">
             <Tag>
               <Box display="flex" justifyContent="center">
-                {listStatus === ListStatus.Reviewed ? (
-                  <Icon icon="reload" type="outline" color="blue600" />
-                ) : (
-                  <Icon icon="checkmark" type="outline" color="blue600" />
-                )}
+                <Icon
+                  icon={
+                    listStatus === ListStatus.Reviewed ? 'reload' : 'checkmark'
+                  }
+                  type="outline"
+                  color="blue600"
+                />
               </Box>
             </Tag>
             <Box marginLeft={5}>

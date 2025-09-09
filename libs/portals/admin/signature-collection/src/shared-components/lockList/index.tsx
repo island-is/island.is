@@ -54,7 +54,11 @@ const ActionLockList = ({
         }
       },
       onError: () => {
-        toast.error(formatMessage(m.lockListError))
+        toast.error(
+          isLocked
+            ? formatMessage(m.unlockListError)
+            : formatMessage(m.lockListError),
+        )
       },
     })
 
@@ -65,11 +69,11 @@ const ActionLockList = ({
           <Box display="flex">
             <Tag>
               <Box display="flex" justifyContent="center">
-                {isLocked ? (
-                  <Icon icon="lockOpened" type="outline" color="blue600" />
-                ) : (
-                  <Icon icon="lockClosed" type="outline" color="blue600" />
-                )}
+                <Icon
+                  icon={isLocked ? 'lockOpened' : 'lockClosed'}
+                  type="outline"
+                  color="blue600"
+                />
               </Box>
             </Tag>
             <Box marginLeft={5}>

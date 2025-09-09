@@ -6,6 +6,7 @@ export const cancelCollectionMutation = gql`
   ) {
     signatureCollectionCancel(input: $input) {
       success
+      reasons
     }
   }
 `
@@ -45,6 +46,7 @@ export const updatePaperSignaturePageNumber = gql`
   ) {
     signatureCollectionUpdatePaperSignaturePageNumber(input: $input) {
       success
+      reasons
     }
   }
 `
