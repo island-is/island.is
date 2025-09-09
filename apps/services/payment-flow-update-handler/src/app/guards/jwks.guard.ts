@@ -57,11 +57,12 @@ export class JwksGuard implements CanActivate {
           audience: this.config.paymentFlowUpdateHandlerApiUrl,
         },
         (error, decoded) => {
-          if (error) return reject(error)
+          if (error) {
+            return reject(error)
+          }
           if (typeof decoded === 'string' || !decoded?.jti) {
             return reject(new Error('Missing jti'))
           }
-
           resolve(decoded)
         },
       )

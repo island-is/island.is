@@ -1,4 +1,9 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup =
   (): ServiceBuilder<'payment-flow-update-handler'> => {
@@ -44,6 +49,6 @@ export const serviceSetup =
       })
       .liveness('/liveness')
       .readiness('/readiness')
-      .redis()
       .grantNamespaces('services-payments')
+      .codeOwner(CodeOwners.Stefna)
   }
