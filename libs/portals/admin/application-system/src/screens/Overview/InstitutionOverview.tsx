@@ -179,7 +179,7 @@ const InstitutionOverview = () => {
         numberOfDocuments={numberOfItems}
         useAdvancedSearch={useAdvancedSearch}
       />
-      {isLoading && filters.nationalId?.length === 11 ? (
+      {isLoading ? (
         <SkeletonLoader
           height={60}
           repeat={10}

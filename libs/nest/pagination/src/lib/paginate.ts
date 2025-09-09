@@ -173,35 +173,21 @@ export async function paginate<T = any>({
   const totalCountQueryOptions = {
     where,
     ...queryArgs,
+    distinct: true,
+    col: Model.primaryKeyAttribute,
   }
 
   const cursorCountQueryOptions = {
     where: paginationWhere,
     ...queryArgs,
+    distinct: true,
+    col: Model.primaryKeyAttribute,
   }
 
   const [instances, totalCount, cursorCount] = await Promise.all([
     Model.findAll(paginationQueryOptions),
-    Model.count(totalCountQueryOptions).then(
-      // If the query does relation aggregations, then the count will be an array.
-      // Since we are only interested in the list length, not related elements, we
-      // can just take the length of the array.
-
-      (count: Array<unknown> | number) => {
-        if (Array.isArray(count)) {
-          return count.length
-        }
-        return count
-      },
-    ),
-    Model.count(cursorCountQueryOptions).then(
-      (count: Array<unknown> | number) => {
-        if (Array.isArray(count)) {
-          return count.length
-        }
-        return count
-      },
-    ),
+    Model.count(totalCountQueryOptions),
+    Model.count(cursorCountQueryOptions),
   ])
 
   if (before) {

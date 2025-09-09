@@ -9,7 +9,7 @@ import {
   YesOrNoEnum,
   buildFieldsRepeaterField,
 } from '@island.is/application/core'
-import { Routes } from '../../../utils/enums'
+import { OtherFeesPayeeOptions, Routes } from '../../../utils/enums'
 import {
   electricityCostPayedByTenant,
   heatingCostPayedByTenant,
@@ -33,6 +33,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           title: m.otherFees.housingFundTitle,
           clearOnChange: ['otherFees.housingFundAmount'],
           options: getOtherFeesPayeeOptions,
+          defaultValue: OtherFeesPayeeOptions.LANDLORD,
           width: 'half',
           space: 1,
         }),
@@ -55,6 +56,7 @@ export const RentalPeriodOtherFees = buildSubSection({
             'otherFees.electricityCostMeterStatusDate',
           ],
           options: getOtherFeesPayeeOptions,
+          defaultValue: OtherFeesPayeeOptions.LANDLORD,
           width: 'half',
           space: 6,
         }),
@@ -95,6 +97,7 @@ export const RentalPeriodOtherFees = buildSubSection({
             'otherFees.heatingCostMeterStatusDate',
           ],
           options: getOtherFeesPayeeOptions,
+          defaultValue: OtherFeesPayeeOptions.LANDLORD,
           width: 'half',
           space: 6,
         }),

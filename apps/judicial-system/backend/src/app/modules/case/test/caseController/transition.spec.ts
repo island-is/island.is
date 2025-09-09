@@ -86,7 +86,7 @@ describe('CaseController - Transition', () => {
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValue(date)
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
+    mockUpdate.mockResolvedValue({})
 
     givenWhenThen = async (
       caseId: string,
@@ -180,6 +180,7 @@ describe('CaseController - Transition', () => {
 
           it('should transition the case', () => {
             expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+              caseId,
               {
                 state: newState,
                 parentCaseId:
@@ -204,7 +205,7 @@ describe('CaseController - Transition', () => {
                 courtRecordSignatureDate:
                   transition === CaseTransition.REOPEN ? null : undefined,
               },
-              { where: { id: caseId }, transaction },
+              { transaction },
             )
 
             if (completedRequestCaseStates.includes(newState)) {
@@ -366,6 +367,7 @@ describe('CaseController - Transition', () => {
 
         it('should transition the case', () => {
           expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+            caseId,
             {
               state: newState,
               parentCaseId:
@@ -391,7 +393,7 @@ describe('CaseController - Transition', () => {
                   ? null
                   : undefined,
             },
-            { where: { id: caseId }, transaction },
+            { transaction },
           )
 
           if (completedIndictmentCaseStates.includes(newState)) {
@@ -649,6 +651,7 @@ describe('CaseController - Transition', () => {
 
           it('should transition the case', () => {
             expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+              caseId,
               {
                 appealState: newAppealState,
                 prosecutorPostponedAppealDate:
@@ -663,7 +666,7 @@ describe('CaseController - Transition', () => {
                     ? CaseAppealRulingDecision.DISCONTINUED
                     : undefined,
               },
-              { where: { id: caseId }, transaction },
+              { transaction },
             )
           })
 
