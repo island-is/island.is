@@ -443,6 +443,9 @@ query Case($input: CaseQueryInput!) {
     courtSessions {
       id
       location
+      startDate
+      endDate
+      isClosed
     }
   }
 }

@@ -28,11 +28,11 @@ export class CourtSession {
   @Field(() => String, { nullable: true })
   readonly location?: string
 
-  @Field(() => Date, { nullable: true })
-  readonly startDate?: Date
+  @Field(() => String, { nullable: true })
+  readonly startDate?: string
 
-  @Field(() => Date, { nullable: true })
-  readonly endDate?: Date
+  @Field(() => String, { nullable: true })
+  readonly endDate?: string
 
   @Field(() => Boolean, { nullable: true })
   readonly isClosed?: boolean

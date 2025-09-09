@@ -75,14 +75,13 @@ const CLOSURE_GROUNDS = [
 const CourtRecord: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { setAndSendCaseToServer, updateCase } = useCase()
+  const { updateCase } = useCase()
   const { handleAddDocument } = useCourtDocuments()
   const controls = useDragControls()
   const [reorderableItems, setReorderableItems] = useState<
     { id: string; name: string }[]
   >([])
-  const [courtLocationErrorMessage, setCourtLocationErrorMessage] =
-    useState<string>('')
+  const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [isClosedProceeding, setIsClosedProceeding] = useState<boolean>(false)
   const { updateCourtSession } = useCourtSessions()
 
@@ -147,8 +146,6 @@ const CourtRecord: FC = () => {
     [workingCase.id],
   )
 
-  const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
-
   const updateItem = (id: string, newData: any) => {
     setWorkingCase((prev) => {
       if (!prev.courtSessions) return prev
@@ -191,22 +188,17 @@ const CourtRecord: FC = () => {
                           datepickerLabel="Dagsetning þingfestingar"
                           timeLabel="Þinghald hófst (kk:mm)"
                           maxDate={new Date()}
-                          selectedDate={workingCase.courtStartDate}
+                          selectedDate={courtSession.startDate}
                           onChange={(
                             date: Date | undefined,
                             valid: boolean,
                           ) => {
                             if (date && valid) {
-                              setAndSendCaseToServer(
-                                [
-                                  {
-                                    courtStartDate: formatDateForServer(date),
-                                    force: true,
-                                  },
-                                ],
-                                workingCase,
-                                setWorkingCase,
-                              )
+                              updateCourtSession({
+                                caseId: workingCase.id,
+                                courtSessionId: courtSession.id,
+                                startDate: date,
+                              })
                             }
                           }}
                           blueBox={false}
