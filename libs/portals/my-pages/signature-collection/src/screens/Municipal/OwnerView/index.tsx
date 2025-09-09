@@ -32,10 +32,7 @@ const OwnerView = ({
     <Box>
       {!loadingOwnerLists ? (
         <Stack space={8}>
-          <SignedList
-            currentCollection={currentCollection}
-            collectionType={collectionType}
-          />
+          <SignedList collectionType={collectionType} />
           <Box>
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.myListsDescription)}
