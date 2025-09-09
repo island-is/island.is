@@ -19,7 +19,7 @@ interface UpdateCourtSessionOptions {
   transaction?: Transaction
 }
 
-export interface UpdateCourtSession {
+interface UpdateCourtSession {
   location?: string
   startDate?: Date
   endDate?: Date
@@ -43,13 +43,11 @@ export class CourtSessionRepositoryService {
   ) {}
 
   async create(
-    data: { caseId: string },
+    caseId: string,
     options?: CreateCourtSessionOptions,
   ): Promise<CourtSession> {
     try {
-      this.logger.debug('Creating a new court session with data:', {
-        data: Object.keys(data ?? {}),
-      })
+      this.logger.debug(`Creating a new court session for case ${caseId}`)
 
       const createOptions: CreateOptions = {}
 
@@ -58,18 +56,17 @@ export class CourtSessionRepositoryService {
       }
 
       const courtSession = await this.courtSessionModel.create(
-        data,
+        { caseId },
         createOptions,
       )
 
-      this.logger.debug(`Created a new court session ${courtSession.id}`)
+      this.logger.debug(
+        `Created a new court session ${courtSession.id} for case ${caseId}`,
+      )
 
       return courtSession
     } catch (error) {
-      this.logger.error('Error creating a new court session with data:', {
-        data: Object.keys(data ?? {}),
-        error,
-      })
+      this.logger.error(`Error creating a new court session for case ${caseId}`)
 
       throw error
     }
@@ -84,7 +81,7 @@ export class CourtSessionRepositoryService {
     try {
       this.logger.debug(
         `Updating court session ${courtSessionId} of case ${caseId} with data:`,
-        { data: Object.keys(data ?? {}) },
+        { data: Object.keys(data) },
       )
 
       const updateOptions: UpdateOptions = {
@@ -111,7 +108,7 @@ export class CourtSessionRepositoryService {
         // Tolerate failure, but log error
         this.logger.error(
           `Unexpected number of rows (${numberOfAffectedRows}) affected when updating court session ${courtSessionId} of case ${caseId} with data:`,
-          { data: Object.keys(data ?? {}) },
+          { data: Object.keys(data) },
         )
       }
 
@@ -123,7 +120,7 @@ export class CourtSessionRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error updating court session ${courtSessionId} of case ${caseId} with data:`,
-        { data: Object.keys(data ?? {}), error },
+        { data: Object.keys(data), error },
       )
 
       throw error
