@@ -29,7 +29,7 @@ const extractPublicKeyFromJwtHeader =
   (header: JwtHeader, callback: SigningKeyCallback) => {
     jwksClient.getSigningKey(header.kid, (error, key) => {
       if (error || !key) {
-        return callback(error)
+        return callback(error || new Error('No signing key found'))
       }
       callback(null, key.getPublicKey())
     })
