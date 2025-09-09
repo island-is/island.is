@@ -133,8 +133,7 @@ const AllMunicipalities = ({
                 <ActionCard
                   key={area.id}
                   heading={area.name}
-                  eyebrow={formatMessage(m.municipality)}
-                  text={
+                  eyebrow={
                     formatMessage(m.totalListsPerMunicipality) +
                     allLists.filter((list) => list.area.id === area.id).length
                   }

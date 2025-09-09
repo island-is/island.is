@@ -69,7 +69,7 @@ export const m = defineMessages({
   },
   nationalId: {
     id: 'admin-portal.application-system:nationalId',
-    defaultMessage: 'Kennitala',
+    defaultMessage: 'Kennitala umsækjanda',
   },
   applicantNationalId: {
     id: 'admin-portal.application-system:applicantNationalId',

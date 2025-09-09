@@ -17,10 +17,10 @@ interface Props {
 
 export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
-  const { currentSection } = state
   const { formatMessage } = useIntl()
   const { trigger } = useFormContext()
-
+  const { currentSection } = state
+  const currentSectionType = currentSection?.data?.sectionType
   // Mutations
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
@@ -43,8 +43,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       state.currentScreen?.index ===
         state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
 
-  const isCompletedSection =
-    state.currentSection.data.sectionType === SectionTypes.COMPLETED
+  const isCompletedSection = currentSectionType === SectionTypes.COMPLETED
+
   const continueButtonText =
     state.currentSection.index === 0
       ? formatMessage(webMessages.externalDataConfirmation)
@@ -56,7 +56,15 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
-  const isBackButton = state.currentSection.index <= 1 || isCompletedSection
+
+  const showBackButton =
+    !isCompletedSection &&
+    !(
+      currentSectionType === SectionTypes.PARTIES &&
+      Number(state.currentScreen?.index) === 0
+    ) &&
+    currentSectionType !== SectionTypes.PREMISES
+
   const handleIncrement = async () => {
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
@@ -119,8 +127,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               {continueButtonText}
             </Button>
           </Box>
-
-          {!isBackButton && (
+          {showBackButton && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button
                 icon="arrowBack"

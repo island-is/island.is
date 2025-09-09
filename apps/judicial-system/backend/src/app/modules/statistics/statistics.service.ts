@@ -162,6 +162,7 @@ export class StatisticsService {
 
     const cases = await this.caseRepositoryService.findAll({
       where,
+      order: [['created', 'ASC']],
       include: [
         {
           model: EventLog,
@@ -343,6 +344,7 @@ export class StatisticsService {
 
     const cases = await this.caseRepositoryService.findAll({
       where,
+      order: [['created', 'ASC']],
       include: [
         {
           model: EventLog,
@@ -357,14 +359,11 @@ export class StatisticsService {
 
     const filterOnSentToCourt = () => {
       if (sentToCourt) {
-        const sortedCase = cases.sort(
-          (a, b) => a.created.getTime() - b.created.getTime(),
-        )
-        if (!sortedCase.length) {
+        if (!cases.length) {
           return undefined
         }
 
-        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const start = sentToCourt.fromDate ?? cases[0]?.created
         const end = sentToCourt.toDate ?? new Date()
 
         return cases.filter(({ eventLogs }) =>
@@ -717,7 +716,7 @@ export class StatisticsService {
           ] as Column[],
           key: `krofur_from_${getDateString(
             period?.fromDate,
-          )}_to_${getDateString(period?.toDate)}_${user.nationalId}`,
+          )}_to_${getDateString(period?.toDate)}_${user.nationalId}.csv`,
         }
       }
       if (type === DataGroups.INDICTMENTS) {
@@ -739,9 +738,9 @@ export class StatisticsService {
               header: 'Birtingartími fyrirkalls (dagar)',
             },
           ] as Column[],
-          key: `ákærur_from_${getDateString(
+          key: `akaerur_from_${getDateString(
             period?.fromDate,
-          )}_to_${getDateString(period?.toDate)}_${user.nationalId}`,
+          )}_to_${getDateString(period?.toDate)}_${user.nationalId}.csv`,
         }
       }
 
