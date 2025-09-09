@@ -10,7 +10,7 @@ import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messag
 import { CURRENT_EMPLOYMENT_STATUS_OTHER } from '../../../utils/constants'
 import {
   getApplicationAnswers,
-  getApplicationExternalData,
+  getEmploymentStatuses,
   getSelfAssessmentLastEmploymentYearOptions,
 } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
@@ -31,14 +31,10 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
               .currentEmploymentStatusTitle,
           required: true,
           options: (application, _, locale) => {
-            const { employmentStatuses } = getApplicationExternalData(
+            const statuses = getEmploymentStatuses(
               application.externalData,
+              locale,
             )
-
-            const statuses =
-              employmentStatuses.find(
-                (status) => status.languageCode.toLowerCase() === locale,
-              )?.employmentStatuses ?? []
 
             const options =
               statuses?.map(({ value, displayName }) => ({

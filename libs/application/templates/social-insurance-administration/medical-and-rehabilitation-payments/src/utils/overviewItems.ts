@@ -23,6 +23,7 @@ import { CURRENT_EMPLOYMENT_STATUS_OTHER, NOT_APPLICABLE } from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getEmploymentStatuses,
   getSickPayEndDateLabel,
   getYesNoNotApplicableTranslation,
 } from './medicalAndRehabilitationPaymentsUtils'
@@ -483,12 +484,7 @@ export const selfAssessmentQuestionsTwoItems = (
     lastEmploymentYear,
   } = getApplicationAnswers(answers)
 
-  const { employmentStatuses } = getApplicationExternalData(externalData)
-
-  const employmentStatusesOptions =
-    employmentStatuses.find(
-      (status) => status.languageCode.toLowerCase() === locale,
-    )?.employmentStatuses ?? []
+  const employmentStatusesOptions = getEmploymentStatuses(externalData, locale)
 
   const statuses = currentEmploymentStatuses.map(
     (status) =>

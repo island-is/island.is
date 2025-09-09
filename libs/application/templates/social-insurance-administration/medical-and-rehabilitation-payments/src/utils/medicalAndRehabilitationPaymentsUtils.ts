@@ -512,3 +512,16 @@ export const getSelfAssessmentQuestionnaireQuestions = (
     )?.questions ?? []
   )
 }
+
+export const getEmploymentStatuses = (
+  externalData: ExternalData,
+  locale: Locale = 'is',
+) => {
+  const { employmentStatuses } = getApplicationExternalData(externalData)
+
+  return (
+    employmentStatuses.find(
+      (status) => status.languageCode.toLowerCase() === locale,
+    )?.employmentStatuses ?? []
+  )
+}
