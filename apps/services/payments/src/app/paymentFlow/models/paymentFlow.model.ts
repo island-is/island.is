@@ -16,6 +16,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { PaymentFlowEvent } from './paymentFlowEvent.model'
 import { PaymentFlowFjsChargeConfirmation } from './paymentFlowFjsChargeConfirmation.model'
 
 @Table({
@@ -134,9 +135,13 @@ export class PaymentFlow extends Model<
   })
   payerNationalId!: string
 
-  @ApiProperty({ type: [PaymentFlowCharge] }) // Link to the charges model
+  @ApiProperty({ type: [PaymentFlowCharge] })
   @HasMany(() => PaymentFlowCharge, 'paymentFlowId')
   charges!: PaymentFlowCharge[]
+
+  @ApiProperty({ type: [PaymentFlowEvent] })
+  @HasMany(() => PaymentFlowEvent, 'paymentFlowId')
+  events?: PaymentFlowEvent[]
 
   @HasOne(() => PaymentFlowFjsChargeConfirmation, 'paymentFlowId')
   fjsChargeConfirmation?: PaymentFlowFjsChargeConfirmation

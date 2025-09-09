@@ -87,7 +87,7 @@ describe('LimitedAccessCaseController - Transition', () => {
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
+    mockUpdate.mockResolvedValue({})
 
     givenWhenThen = async (
       state: CaseState,
@@ -137,13 +137,10 @@ describe('LimitedAccessCaseController - Transition', () => {
       })
 
       it('should transition the case', () => {
-        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-          {
-            appealState: CaseAppealState.APPEALED,
-            accusedPostponedAppealDate: date,
-          },
-          { where: { id: caseId } },
-        )
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
+          appealState: CaseAppealState.APPEALED,
+          accusedPostponedAppealDate: date,
+        })
       })
 
       it('should queue a notification message', () => {
@@ -204,13 +201,10 @@ describe('LimitedAccessCaseController - Transition', () => {
       })
 
       it('should transition the case', () => {
-        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-          {
-            appealState: CaseAppealState.WITHDRAWN,
-            appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
-          },
-          { where: { id: caseId } },
-        )
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
+          appealState: CaseAppealState.WITHDRAWN,
+          appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+        })
       })
 
       it('should queue a notification message', () => {

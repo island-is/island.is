@@ -128,6 +128,8 @@ libs/clients/rsk/relationships/                                                 
 /apps/payments                                                                                            @island-is/aranja
 /apps/services/payments                                                                                   @island-is/aranja
 /libs/clients/payments                                                                                    @island-is/aranja
+/libs/clients/fjs/bank-info/                                                                              @island-is/aranja
+
 /apps/native/app/                                                                                         @island-is/aranja-app
 codemagic.yaml                                                                                            @island-is/aranja-app
 /apps/web/public/.well-known/                                                                             @island-is/aranja-app
@@ -202,7 +204,6 @@ codemagic.yaml                                                                  
 /libs/clients/license-client/                                                                             @island-is/hugsmidjan @island-is/aranja
 /libs/clients/lsh/                                                                                        @island-is/hugsmidjan
 /libs/clients/intellectual-properties/                                                                    @island-is/hugsmidjan
-/libs/clients/islykill/                                                                                   @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                       @island-is/hugsmidjan
 /libs/clients/national-registry/v3-applications/                                                          @island-is/juni
 /libs/clients/district-commissioners-licenses/                                                            @island-is/hugsmidjan
@@ -453,6 +454,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/aosh/transfer-of-machine-ownership                                            @island-is/origo
 /libs/application/templates/aosh/work-accident-notification                                               @island-is/origo
 /libs/application/templates/aosh/practical-exam                                                           @island-is/origo
+/libs/application/templates/aosh/request-for-inspection                                                   @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/aosh                                     @island-is/origo
 
 /libs/application/templates/healthcare-license-certificate/                                               @island-is/origo
