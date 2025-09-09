@@ -16,7 +16,7 @@ export class CourtSessionService {
   ) {}
 
   async create(caseId: string): Promise<CourtSession> {
-    return this.courtSessionRepositoryService.create({ caseId })
+    return this.courtSessionRepositoryService.create(caseId)
   }
 
   async update(

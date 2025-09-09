@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -17,6 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
+import { CourtSessionDocument } from './courtSessionDocument.model'
 import { User } from './user.model'
 
 @Table({
@@ -106,4 +108,8 @@ export class CourtSession extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   closingEntries?: string
+
+  @HasMany(() => CourtSessionDocument, 'courtSessionId')
+  @ApiPropertyOptional({ type: () => [CourtSessionDocument] })
+  courtSessionDocuments?: CourtSessionDocument[]
 }

@@ -73,6 +73,7 @@ import {
   CaseString,
   CivilClaimant,
   CourtSession,
+  CourtSessionDocument,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -239,6 +240,15 @@ export const include: Includeable[] = [
     as: 'courtSessions',
     required: false,
     order: [['created', 'ASC']],
+    include: [
+      {
+        model: CourtSessionDocument,
+        as: 'courtSessionDocuments',
+        required: false,
+        order: [['order', 'ASC']],
+        separate: true,
+      },
+    ],
     separate: true,
   },
   {
