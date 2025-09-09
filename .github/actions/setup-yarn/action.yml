@@ -54,7 +54,6 @@ runs:
       if: ${{ env.RUNS_ON_BUCKET_NAME }}
       run: | 
         echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
-        echo bucket name set
 
     - name: Cache Dependencies
       uses: runs-on/cache@v4
