@@ -4,6 +4,10 @@ inputs:
   registry:
     description: 'NPM registry to use'
     required: true
+  skip-cache:
+    description: 'Skip cache restore and save'
+    required: false
+    default: 'false'
   working-directory:
     description: 'Directory to run the action in'
     required: false
@@ -57,6 +61,7 @@ runs:
     - name: Cache Dependencies
       uses: runs-on/cache@v4
       id: restore-cache
+      if: ${{ inputs.skip-cache != 'true' }}
       with:
         path: |
           ${{ steps.cache-paths.outputs.yarn-cache }}
