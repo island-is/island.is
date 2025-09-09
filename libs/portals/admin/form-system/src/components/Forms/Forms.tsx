@@ -86,7 +86,7 @@ export const Forms = () => {
                 {formatMessage(m.newForm)}
               </Button>
             </Box>
-            <OrganizationSelect />
+            {isAdmin && <OrganizationSelect />}
           </Box>
         </Box>
       </GridRow>
