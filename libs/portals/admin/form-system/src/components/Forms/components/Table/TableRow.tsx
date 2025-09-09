@@ -61,7 +61,7 @@ export const TableRow = ({
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
-  const deleteForm = useMutation(DELETE_FORM)
+  const [deleteForm] = useMutation(DELETE_FORM)
   const [publishForm] = useMutation(PUBLISH_FORM)
 
   let dropdownItems = []
@@ -76,15 +76,19 @@ export const TableRow = ({
 
   const del = {
     title: formatMessage(m.delete),
-    onClick: () => {
-      deleteForm[0]({
-        variables: {
-          input: {
-            id: id,
+    onClick: async () => {
+      try {
+        await deleteForm({
+          variables: {
+            input: {
+              id: id,
+            },
           },
-        },
-      })
-      setFormsState((prevForms) => prevForms.filter((form) => form.id !== id))
+        })
+        setFormsState((prevForms) => prevForms.filter((form) => form.id !== id))
+      } catch (error) {
+        console.error('Error deleting form:', error)
+      }
     },
   }
 
