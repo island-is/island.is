@@ -72,7 +72,7 @@ const List = () => {
                   Actions.LockList,
                   Actions.ReviewComplete,
                   Actions.ExtendDeadline,
-                  Actions.RemoveCandidate,
+                  Actions.RemoveList,
                 ]}
                 withManagers
               />
