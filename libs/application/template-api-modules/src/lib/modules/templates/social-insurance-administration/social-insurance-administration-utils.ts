@@ -29,15 +29,16 @@ import {
   getApplicationExternalData as getIPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
 import {
+  CURRENT_EMPLOYMENT_STATUS_OTHER,
   getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
   isFirstApplication,
   shouldShowCalculatedRemunerationDate,
-  shouldShowIsStudyingFields,
-  shouldShowPreviousRehabilitationOrTreatmentFields,
   shouldShowConfirmationOfIllHealth,
   shouldShowConfirmationOfPendingResolution,
   shouldShowConfirmedTreatment,
+  shouldShowIsStudyingFields,
+  shouldShowPreviousRehabilitationOrTreatmentFields,
   shouldShowRehabilitationPlan,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
@@ -513,7 +514,9 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       employmentStatuses: currentEmploymentStatuses.map((status) => ({
         employmentStatus: status,
         explanation:
-          status === 'ANNAD' ? currentEmploymentStatusExplanation ?? '' : null,
+          status === CURRENT_EMPLOYMENT_STATUS_OTHER
+            ? currentEmploymentStatusExplanation ?? ''
+            : null,
       })),
       ...(lastEmploymentTitle && { lastJobTitle: lastEmploymentTitle }),
       ...(lastEmploymentYear && { lastJobYear: +lastEmploymentYear }),

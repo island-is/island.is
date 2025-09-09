@@ -8,7 +8,10 @@ import {
 import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { NOT_APPLICABLE } from '../utils/constants'
+import {
+  CURRENT_EMPLOYMENT_STATUS_OTHER,
+  NOT_APPLICABLE,
+} from '../utils/constants'
 import { errorMessages } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
@@ -373,8 +376,9 @@ export const dataSchema = z.object({
     )
     .refine(
       ({ currentEmploymentStatuses, currentEmploymentStatusExplanation }) =>
-        currentEmploymentStatuses && currentEmploymentStatuses.includes('ANNAD')
-          ? !!currentEmploymentStatusExplanation
+        Array.isArray(currentEmploymentStatuses) &&
+        currentEmploymentStatuses.includes(CURRENT_EMPLOYMENT_STATUS_OTHER)
+          ? !!currentEmploymentStatusExplanation?.trim()
           : true,
       { path: ['currentEmploymentStatusExplanation'] },
     ),

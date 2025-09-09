@@ -7,10 +7,11 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+import { CURRENT_EMPLOYMENT_STATUS_OTHER } from '../../../utils/constants'
 import {
   getApplicationAnswers,
-  getSelfAssessmentLastEmploymentYearOptions,
   getApplicationExternalData,
+  getSelfAssessmentLastEmploymentYearOptions,
 } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
@@ -46,7 +47,7 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
               })) ?? []
 
             const otherIndex = options.findIndex(
-              (option) => option.value === 'ANNAD',
+              (option) => option.value === CURRENT_EMPLOYMENT_STATUS_OTHER,
             )
 
             if (otherIndex >= 0) {
@@ -64,7 +65,9 @@ export const selfAssessmentQuestionsTwoSubSection = buildSubSection({
           condition: (answers) => {
             const { currentEmploymentStatuses } = getApplicationAnswers(answers)
 
-            return currentEmploymentStatuses?.includes('ANNAD')
+            return currentEmploymentStatuses?.includes(
+              CURRENT_EMPLOYMENT_STATUS_OTHER,
+            )
           },
         }),
         buildDescriptionField({

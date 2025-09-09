@@ -19,7 +19,7 @@ import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import { isFirstApplication } from './conditionUtils'
-import { NOT_APPLICABLE } from './constants'
+import { CURRENT_EMPLOYMENT_STATUS_OTHER, NOT_APPLICABLE } from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -485,13 +485,14 @@ export const selfAssessmentQuestionsTwoItems = (
 
   const { employmentStatuses } = getApplicationExternalData(externalData)
 
-  const employmentStatusesOptions = employmentStatuses.find(
-    (status) => status.languageCode.toLowerCase() === locale,
-  )?.employmentStatuses
+  const employmentStatusesOptions =
+    employmentStatuses.find(
+      (status) => status.languageCode.toLowerCase() === locale,
+    )?.employmentStatuses ?? []
 
   const statuses = currentEmploymentStatuses.map(
     (status) =>
-      employmentStatusesOptions?.find((option) => option.value === status)
+      employmentStatusesOptions.find((option) => option.value === status)
         ?.displayName,
   )
 
@@ -506,7 +507,7 @@ export const selfAssessmentQuestionsTwoItems = (
   ]
 
   const previousRehabilitationOrTreatmentItems: Array<KeyValueItem> =
-    currentEmploymentStatuses?.includes('ANNAD')
+    currentEmploymentStatuses?.includes(CURRENT_EMPLOYMENT_STATUS_OTHER)
       ? [
           {
             width: 'full',
