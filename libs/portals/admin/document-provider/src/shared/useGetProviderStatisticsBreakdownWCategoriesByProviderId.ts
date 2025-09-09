@@ -15,7 +15,7 @@ import {
   SentFilesChartDataItem,
   SentFilesChartDataItemInfo,
 } from '../lib/types'
-import { formatDateYYYYMMDD } from '../lib/utils'
+import { format } from 'date-fns'
 
 export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
   providerId?: string,
@@ -31,8 +31,8 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
     {
       providerId: providerId ?? '',
       nationalId: nationalId ?? '',
-      from: fromDate ? formatDateYYYYMMDD(fromDate) : undefined,
-      to: toDate ? formatDateYYYYMMDD(toDate) : undefined,
+      from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+      to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
       sortBy: sortBy ?? CategoryStatisticsSortBy.Date,
       desc,
       page,

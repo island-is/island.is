@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 
 import { DocumentProviderDashboardClientConfig } from './documentProviderDashboardClient.config'
 import { DocumentProviderDashboardProvider } from './documentProviderDashboardClient.provider'
-import { DocumentProviderDashboardService } from './documentProviderDashboardClient.service'
+import { DocumentProviderDashboardClientService } from './documentProviderDashboardClient.service'
 
 @Module({
   imports: [
@@ -11,8 +11,8 @@ import { DocumentProviderDashboardService } from './documentProviderDashboardCli
   ],
   providers: [
     DocumentProviderDashboardProvider,
-    DocumentProviderDashboardService,
+    DocumentProviderDashboardClientService,
   ],
-  exports: [DocumentProviderDashboardService],
+  exports: [DocumentProviderDashboardClientService],
 })
 export class DocumentProviderDashboardClientModule {}

@@ -27,6 +27,7 @@ import {
   StatisticsBoxData,
 } from '../../components/StatisticBoxList/StatisticBoxList'
 import { CategoryStatisticsSortBy } from '@island.is/api/schema'
+import { DocumentProviderPaths } from '../../lib/paths'
 
 const SingleDocumentProvider = () => {
   const today = new Date()
@@ -137,7 +138,10 @@ const SingleDocumentProvider = () => {
           <Breadcrumbs
             items={[
               { title: 'Skjalaveitur' },
-              { title: user.profile.name, href: 'skjalaveitur/yfirlit' },
+              {
+                title: user.profile.name,
+                href: DocumentProviderPaths.DocumentProviderOverview,
+              },
               { title: statistics?.name ? String(statistics.name) : '' },
             ]}
           />

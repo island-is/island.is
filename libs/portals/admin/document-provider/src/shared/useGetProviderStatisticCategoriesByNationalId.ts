@@ -9,7 +9,7 @@ import {
   GetProviderStatisticCategoriesReturnType,
   ProviderStatisticCategory,
 } from '../lib/types'
-import { formatDateYYYYMMDD } from '../lib/utils'
+import { format } from 'date-fns'
 
 export const useGetProviderStatisticCategoriesByNationalId = (
   nationalId?: string,
@@ -18,8 +18,8 @@ export const useGetProviderStatisticCategoriesByNationalId = (
 ): GetProviderStatisticCategoriesReturnType => {
   const statisticsInput: ApiV1StatisticsNationalIdCategoriesGetRequest = {
     nationalId: (nationalId ?? '') as string,
-    from: fromDate ? formatDateYYYYMMDD(fromDate) : undefined,
-    to: toDate ? formatDateYYYYMMDD(toDate) : undefined,
+    from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+    to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
   }
 
   const { data, loading, error } = useQuery(

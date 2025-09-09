@@ -20,7 +20,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
-export class DocumentProviderDashboardService {
+export class DocumentProviderDashboardClientService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private api: StatisticsApi,

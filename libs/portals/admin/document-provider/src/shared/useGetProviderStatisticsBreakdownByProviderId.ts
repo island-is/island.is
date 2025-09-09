@@ -14,6 +14,7 @@ import {
   GetProviderStatisticsBreakdownReturnType,
 } from '../lib/types'
 import { DELIVERY_PRICE } from '../lib/constants'
+import { format } from 'date-fns'
 
 export const useGetProviderStatisticsBreakdownByProviderId = (
   providerId?: string,
@@ -29,8 +30,8 @@ export const useGetProviderStatisticsBreakdownByProviderId = (
     {
       providerId: providerId ?? '',
       nationalId: nationalId ?? '',
-      from: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),
-      to: !fromDate ? undefined : toDate?.toISOString().slice(0, 10),
+      from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+      to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
       sortBy: (sortBy as CategoryStatisticsSortBy) ?? 'Date',
       desc,
       page,

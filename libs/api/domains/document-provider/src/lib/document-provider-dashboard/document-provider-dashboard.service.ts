@@ -1,6 +1,6 @@
 import {
   ApiV1StatisticsNationalIdCategoriesGetRequest,
-  DocumentProviderDashboardService,
+  DocumentProviderDashboardClientService,
 } from '@island.is/clients/document-provider-dashboard'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
@@ -24,11 +24,16 @@ import {
   ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest,
   CategoryStatisticsSortBy,
 } from '../models/document-provider-dashboard/statisticsProvidersBreakdownWithCategories.input'
+import {
+  mapBreakdownItems,
+  mapCategoryStatisticsItems,
+  mapStatistics,
+} from '../utils/helpers'
 
 @Injectable()
-export class DocumentProviderDashboardServiceV1 {
+export class DocumentProviderDashboardService {
   constructor(
-    private documentDashboardService: DocumentProviderDashboardService,
+    private documentDashboardClientService: DocumentProviderDashboardClientService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -36,10 +41,12 @@ export class DocumentProviderDashboardServiceV1 {
     input: ApiV1StatisticsNationalIdProvidersGetRequest,
   ): Promise<ProviderStatisticsPaginationResponse | null> {
     const statisticProviders =
-      await this.documentDashboardService.getStatisticProvidersByNationalId({
-        ...input,
-        sortBy: input.sortBy as StatisticsSortBy | undefined,
-      })
+      await this.documentDashboardClientService.getStatisticProvidersByNationalId(
+        {
+          ...input,
+          sortBy: input.sortBy as StatisticsSortBy | undefined,
+        },
+      )
 
     if (!statisticProviders) {
       return null
@@ -58,12 +65,7 @@ export class DocumentProviderDashboardServiceV1 {
           providerId: item.providerId as string,
           name: item.name as string,
           statistics: item.statistics
-            ? {
-                published: item.statistics.published ?? 0,
-                notifications: item.statistics.notifications ?? 0,
-                opened: item.statistics.opened ?? 0,
-                failures: item.statistics.failures ?? 0,
-              }
+            ? mapStatistics(item.statistics)
             : undefined,
         })),
     }
@@ -73,7 +75,7 @@ export class DocumentProviderDashboardServiceV1 {
     input: ApiV1StatisticsNationalIdCategoriesGetRequest,
   ): Promise<Array<CategoryStatistics> | null> {
     const statisticCategories =
-      await this.documentDashboardService.getStatisticsCategories({
+      await this.documentDashboardClientService.getStatisticsCategories({
         ...input,
       })
 
@@ -93,7 +95,7 @@ export class DocumentProviderDashboardServiceV1 {
     input: ApiV1StatisticsNationalIdGetRequest,
   ): Promise<StatisticsOverview | null> {
     const statistics =
-      await this.documentDashboardService.getStatisticsByNationalId({
+      await this.documentDashboardClientService.getStatisticsByNationalId({
         ...input,
       })
 
@@ -104,12 +106,7 @@ export class DocumentProviderDashboardServiceV1 {
     return {
       ...statistics,
       statistics: statistics.statistics
-        ? {
-            published: statistics.statistics.published ?? 0,
-            notifications: statistics.statistics.notifications ?? 0,
-            opened: statistics.statistics.opened ?? 0,
-            failures: statistics.statistics.failures ?? 0,
-          }
+        ? mapStatistics(statistics.statistics)
         : undefined,
     }
   }
@@ -118,10 +115,12 @@ export class DocumentProviderDashboardServiceV1 {
     input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     const breakdown =
-      await this.documentDashboardService.getStatisticsBreakdownByProviderId({
-        ...input,
-        sortBy: input.sortBy as TotalStatisticsSortBy | undefined,
-      })
+      await this.documentDashboardClientService.getStatisticsBreakdownByProviderId(
+        {
+          ...input,
+          sortBy: input.sortBy as TotalStatisticsSortBy | undefined,
+        },
+      )
 
     if (!breakdown) {
       return null
@@ -130,23 +129,7 @@ export class DocumentProviderDashboardServiceV1 {
     return {
       ...breakdown,
       totalCount: breakdown.totalCount ?? 0,
-      items: (breakdown.items ?? []).map((item) => ({
-        year: item.year ?? 0,
-        month: item.month ?? 0,
-        statistics: item.statistics
-          ? {
-              published: item.statistics.published ?? 0,
-              notifications: item.statistics.notifications ?? 0,
-              opened: item.statistics.opened ?? 0,
-              failures: item.statistics.failures ?? 0,
-            }
-          : {
-              published: 0,
-              notifications: 0,
-              opened: 0,
-              failures: 0,
-            },
-      })),
+      items: mapBreakdownItems(breakdown.items ?? undefined),
     }
   }
 
@@ -154,7 +137,7 @@ export class DocumentProviderDashboardServiceV1 {
     input: ApiV1StatisticsNationalIdProvidersProviderIdGetRequest,
   ): Promise<DocumentProviderDashboardStatisticsOverview | null> {
     const statistic =
-      await this.documentDashboardService.getStatisticsByProviderId({
+      await this.documentDashboardClientService.getStatisticsByProviderId({
         ...input,
       })
 
@@ -164,19 +147,7 @@ export class DocumentProviderDashboardServiceV1 {
 
     return {
       name: statistic.providerName ?? '',
-      statistics: statistic.statistics
-        ? {
-            published: statistic.statistics.published ?? 0,
-            notifications: statistic.statistics.notifications ?? 0,
-            opened: statistic.statistics.opened ?? 0,
-            failures: statistic.statistics.failures ?? 0,
-          }
-        : {
-            published: 0,
-            notifications: 0,
-            opened: 0,
-            failures: 0,
-          },
+      statistics: mapStatistics(statistic.statistics),
     }
   }
 
@@ -184,10 +155,12 @@ export class DocumentProviderDashboardServiceV1 {
     input: ApiV1StatisticsNationalIdBreakdownGetRequest,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     const breakdown =
-      await this.documentDashboardService.getStatisticsBreakdownByNationalId({
-        ...input,
-        sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
-      })
+      await this.documentDashboardClientService.getStatisticsBreakdownByNationalId(
+        {
+          ...input,
+          sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
+        },
+      )
 
     if (!breakdown) {
       return null
@@ -196,23 +169,7 @@ export class DocumentProviderDashboardServiceV1 {
     return {
       ...breakdown,
       totalCount: breakdown.totalCount ?? 0,
-      items: (breakdown.items ?? []).map((item) => ({
-        year: item.year ?? 0,
-        month: item.month ?? 0,
-        statistics: item.statistics
-          ? {
-              published: item.statistics.published ?? 0,
-              notifications: item.statistics.notifications ?? 0,
-              opened: item.statistics.opened ?? 0,
-              failures: item.statistics.failures ?? 0,
-            }
-          : {
-              published: 0,
-              notifications: 0,
-              opened: 0,
-              failures: 0,
-            },
-      })),
+      items: mapBreakdownItems(breakdown.items ?? undefined),
     }
   }
 
@@ -220,7 +177,7 @@ export class DocumentProviderDashboardServiceV1 {
     input: ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest,
   ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     const breakdown =
-      await this.documentDashboardService.getStatisticsBreakdownWithCategoriesByNationalId(
+      await this.documentDashboardClientService.getStatisticsBreakdownWithCategoriesByNationalId(
         {
           ...input,
           sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
@@ -234,18 +191,7 @@ export class DocumentProviderDashboardServiceV1 {
     return {
       ...breakdown,
       totalCount: breakdown.totalCount ?? 0,
-      items: (breakdown.items ?? []).map((item) => ({
-        year: item.year ?? 0,
-        month: item.month ?? 0,
-        categoryStatistics: item.categoryStatistics
-          ? (item.categoryStatistics as Array<CategoryStatistics>).map(
-              (category) => ({
-                name: category.name ?? '',
-                published: category.published ?? 0,
-              }),
-            )
-          : [],
-      })),
+      items: mapCategoryStatisticsItems(breakdown.items ?? undefined),
     }
   }
 
@@ -253,7 +199,7 @@ export class DocumentProviderDashboardServiceV1 {
     input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest,
   ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     const breakdown =
-      await this.documentDashboardService.getStatisticsBreakdownWithCategoriesByProviderId(
+      await this.documentDashboardClientService.getStatisticsBreakdownWithCategoriesByProviderId(
         {
           ...input,
           sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
@@ -267,18 +213,7 @@ export class DocumentProviderDashboardServiceV1 {
     return {
       ...breakdown,
       totalCount: breakdown.totalCount ?? 0,
-      items: (breakdown.items ?? []).map((item) => ({
-        year: item.year,
-        month: item.month,
-        categoryStatistics: item.categoryStatistics
-          ? (item.categoryStatistics as Array<CategoryStatistics>).map(
-              (category) => ({
-                name: category.name ?? '',
-                published: category.published ?? 0,
-              }),
-            )
-          : [],
-      })),
+      items: mapCategoryStatisticsItems(breakdown.items ?? undefined),
     }
   }
 }

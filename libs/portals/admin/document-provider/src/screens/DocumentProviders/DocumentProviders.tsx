@@ -23,17 +23,18 @@ import {
   StatisticsBoxData,
 } from '../../components/StatisticBoxList/StatisticBoxList'
 import { TotalStatisticsSortBy } from '@island.is/api/schema'
+import { startOfMonth, subYears } from 'date-fns'
+import { DocumentProviderPaths } from '../../lib/paths'
 
 const DocumentProviders = () => {
   const today = new Date()
-  // Set toDate to the first day of the current month
-  const firstOfThisMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-  // Set fromDate to the first day of the same month, one year ago
-  const firstOfLastYearMonth = new Date(
-    today.getFullYear() - 1,
-    today.getMonth(),
-    1,
-  )
+
+  // first day of the current month
+  const firstOfThisMonth = startOfMonth(today)
+
+  // first day of the same month, one year ago
+  const firstOfLastYearMonth = startOfMonth(subYears(today, 1))
+
   const [fromDate, setFromDate] = useState<Date | undefined>(
     firstOfLastYearMonth,
   )
@@ -98,7 +99,10 @@ const DocumentProviders = () => {
           <Breadcrumbs
             items={[
               { title: formatMessage(m.documentProvidersTitle) },
-              { title: user.profile.name, href: 'skjalaveitur/yfirlit' },
+              {
+                title: user.profile.name,
+                href: DocumentProviderPaths.DocumentProviderOverview,
+              },
             ]}
           />
 

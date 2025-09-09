@@ -14,7 +14,7 @@ import {
   ProviderStatisticsBreakdown,
 } from '../lib/types'
 import { DELIVERY_PRICE } from '../lib/constants'
-import { formatDateYYYYMMDD } from '../lib/utils'
+import { format } from 'date-fns'
 
 export const useGetProviderStatisticsBreakdownByNationalId = (
   nationalId?: string,
@@ -27,8 +27,8 @@ export const useGetProviderStatisticsBreakdownByNationalId = (
 ): GetProviderStatisticsBreakdownReturnType => {
   const statisticsInput: ApiV1StatisticsNationalIdBreakdownGetRequest = {
     nationalId: nationalId ?? '',
-    from: fromDate ? formatDateYYYYMMDD(fromDate) : undefined,
-    to: toDate ? formatDateYYYYMMDD(toDate) : undefined,
+    from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+    to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
     sortBy: (sortBy as CategoryStatisticsSortBy) ?? 'Date',
     desc,
     page,

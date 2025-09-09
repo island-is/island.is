@@ -4,6 +4,7 @@ import { gql, useQuery } from '@apollo/client'
 import { ProviderStatistics, StatisticsInput } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
+import { format } from 'date-fns'
 
 export const getStatisticsTotal = gql`
   query GetStatisticsTotal($input: StatisticsInput!) {
@@ -27,8 +28,8 @@ export const useGetProviderStatistics = (
 ): GetProviderStatisticsReturnType => {
   const statisticsInput: StatisticsInput = {
     organisationId,
-    fromDate: !toDate ? undefined : fromDate?.toISOString().slice(0, 10),
-    toDate: !fromDate ? undefined : toDate?.toISOString().slice(0, 10),
+    fromDate: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+    toDate: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
   }
 
   const { data, loading, error } = useQuery(getStatisticsTotal, {

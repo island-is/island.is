@@ -6,6 +6,7 @@ import { GET_STATISTICS_OVERVIEW_BY_PROVIDERID } from '../queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
 import { GetStatisticsByNationalIdReturnType } from '../lib/types'
+import { format } from 'date-fns'
 
 export const useGetStatisticsOverviewByProviderId = (
   nationalId?: string,
@@ -21,8 +22,8 @@ export const useGetStatisticsOverviewByProviderId = (
     ? {
         nationalId,
         providerId,
-        from: fromDate ? fromDate.toISOString().slice(0, 10) : undefined,
-        to: toDate ? toDate.toISOString().slice(0, 10) : undefined,
+        from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+        to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
       }
     : undefined
 

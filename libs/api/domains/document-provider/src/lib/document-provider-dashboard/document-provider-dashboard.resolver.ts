@@ -15,7 +15,7 @@ import {
   FeatureFlagGuard,
   FeatureFlagService,
 } from '@island.is/nest/feature-flags'
-import { DocumentProviderDashboardServiceV1 } from './document-provider-dashboard.service'
+import { DocumentProviderDashboardService } from './document-provider-dashboard.service'
 import { ApiV1StatisticsNationalIdProvidersGetRequest } from '../models/document-provider-dashboard/statisticsNationalIdProviders.input'
 import { ProviderStatisticsPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsPaginationResponse.model'
 import { CategoryStatistics } from '../models/document-provider-dashboard/categoryStatistics.model'
@@ -35,9 +35,9 @@ const LOG_CATEGORY = 'document-provider-dashboard-resolver'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/document-provider-dashboard' })
-export class DocumentProviderDashboardResolverV1 {
+export class DocumentProviderDashboardResolver {
   constructor(
-    private documentProviderDashboardServiceV1: DocumentProviderDashboardServiceV1,
+    private documentProviderDashboardService: DocumentProviderDashboardService,
     private readonly auditService: AuditService,
     private readonly featureFlagService: FeatureFlagService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -63,7 +63,7 @@ export class DocumentProviderDashboardResolverV1 {
             nationalId: input.nationalId,
           },
         },
-        this.documentProviderDashboardServiceV1.getStatisticProvidersByNationalId(
+        this.documentProviderDashboardService.getStatisticProvidersByNationalId(
           { ...input },
         ),
       )
@@ -99,17 +99,25 @@ export class DocumentProviderDashboardResolverV1 {
             nationalId: input.nationalId,
           },
         },
-        this.documentProviderDashboardServiceV1.getStatisticsCategories({
+        this.documentProviderDashboardService.getStatisticsCategories({
           ...input,
         }),
       )
 
-      // Ensure categoryId is always a number and not undefined
       if (!data) {
         return null
       }
 
-      return data
+      // Ensure categoryId is always a number and not undefined
+      return Array.isArray(data)
+        ? data.map((item) => ({
+            ...item,
+            categoryId:
+              item.categoryId !== undefined
+                ? Number(item.categoryId)
+                : undefined,
+          }))
+        : data
     } catch (e) {
       this.logger.warn('Failed to getStatisticsCategories', {
         category: LOG_CATEGORY,
@@ -140,12 +148,11 @@ export class DocumentProviderDashboardResolverV1 {
             nationalId: input.nationalId,
           },
         },
-        this.documentProviderDashboardServiceV1.getStatisticsByNationalId({
+        this.documentProviderDashboardService.getStatisticsByNationalId({
           ...input,
         }),
       )
-
-      // Ensure categoryId is always a number and not undefined
+      // Check if data is null or undefined
       if (!data) {
         return null
       }
@@ -182,12 +189,11 @@ export class DocumentProviderDashboardResolverV1 {
             nationalId: input.nationalId,
           },
         },
-        this.documentProviderDashboardServiceV1.getStatisticsBreakdownByProviderId(
+        this.documentProviderDashboardService.getStatisticsBreakdownByProviderId(
           { ...input },
         ),
       )
 
-      // Ensure categoryId is always a number and not undefined
       if (!data) {
         return null
       }
@@ -225,12 +231,11 @@ export class DocumentProviderDashboardResolverV1 {
             providerId: input.providerId,
           },
         },
-        this.documentProviderDashboardServiceV1.getStatisticsByProviderId({
+        this.documentProviderDashboardService.getStatisticsByProviderId({
           ...input,
         }),
       )
 
-      // Ensure categoryId is always a number and not undefined
       if (!data) {
         return null
       }
@@ -267,12 +272,11 @@ export class DocumentProviderDashboardResolverV1 {
             nationalId: input.nationalId,
           },
         },
-        this.documentProviderDashboardServiceV1.getStatisticsBreakdownByNationalId(
+        this.documentProviderDashboardService.getStatisticsBreakdownByNationalId(
           { ...input },
         ),
       )
 
-      // Ensure categoryId is always a number and not undefined
       if (!data) {
         return null
       }
@@ -309,12 +313,11 @@ export class DocumentProviderDashboardResolverV1 {
             nationalId: input.nationalId,
           },
         },
-        this.documentProviderDashboardServiceV1.getStatisticsBreakdownWithCategoriesByNationalId(
+        this.documentProviderDashboardService.getStatisticsBreakdownWithCategoriesByNationalId(
           { ...input },
         ),
       )
 
-      // Ensure categoryId is always a number and not undefined
       if (!data) {
         return null
       }
@@ -355,12 +358,11 @@ export class DocumentProviderDashboardResolverV1 {
             providerId: input.providerId,
           },
         },
-        this.documentProviderDashboardServiceV1.getStatisticsBreakdownWithCategoriesByProviderId(
+        this.documentProviderDashboardService.getStatisticsBreakdownWithCategoriesByProviderId(
           { ...input },
         ),
       )
 
-      // Ensure categoryId is always a number and not undefined
       if (!data) {
         return null
       }

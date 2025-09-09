@@ -6,6 +6,7 @@ import { GET_STATISTIC_PROVIDERS_BY_NATIONALID } from '../queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
 import { GetProvidersByNationalIdReturnType } from '../lib/types'
+import { format } from 'date-fns'
 
 export const useGetProvidersByNationalId = (
   organisationId?: string,
@@ -14,8 +15,8 @@ export const useGetProvidersByNationalId = (
 ): GetProvidersByNationalIdReturnType => {
   const statisticsInput: ApiV1StatisticsNationalIdProvidersGetRequest = {
     nationalId: organisationId ?? '',
-    from: fromDate ? fromDate.toISOString().slice(0, 10) : undefined,
-    to: toDate ? toDate.toISOString().slice(0, 10) : undefined,
+    from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+    to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
   }
 
   const { data, loading, error } = useQuery(
