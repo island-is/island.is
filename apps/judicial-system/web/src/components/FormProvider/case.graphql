@@ -450,6 +450,8 @@ query Case($input: CaseQueryInput!) {
       attendees
       entries
       rulingType
+      ruling
+      closingEntries
     }
   }
 }

@@ -98,6 +98,7 @@ const CourtRecord: FC = () => {
   >([])
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
+  const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const { updateCourtSession } = useCourtSessions()
 
   const containerVariants = {
@@ -513,12 +514,14 @@ const CourtRecord: FC = () => {
                           onChange={() => {
                             updateItem(courtSession.id, {
                               rulingType: CourtSessionRulingType.NONE,
+                              ruling: '',
                             })
 
                             updateCourtSession({
                               caseId: workingCase.id,
                               courtSessionId: courtSession.id,
                               rulingType: CourtSessionRulingType.NONE,
+                              ruling: '',
                             })
                           }}
                           large
@@ -567,60 +570,86 @@ const CourtRecord: FC = () => {
                         />
                       </BlueBox>
                     </Box>
-                    <Box>
-                      <SectionHeading title="Dómsorð" />
-                      <Input
-                        data-testid="courtAttendees"
-                        name="courtAttendees"
-                        label="Dómsorð"
-                        value={workingCase.courtAttendees || ''}
-                        placeholder="Hvert er dómsorðið?"
-                        onChange={(event) =>
-                          removeTabsValidateAndSet(
-                            'courtAttendees',
-                            event.target.value,
-                            [],
-                            setWorkingCase,
-                          )
-                        }
-                        onBlur={(event) =>
-                          updateCase(workingCase.id, {
-                            courtAttendees: event.target.value,
-                          })
-                        }
-                        rows={15}
-                        autoExpand={{ on: true, maxHeight: 300 }}
-                        textarea
-                        required
-                      />
-                    </Box>
-                    <Box>
-                      <SectionHeading title="Dómsorð" />
-                      <Input
-                        data-testid="courtAttendees"
-                        name="courtAttendees"
-                        label="Dómsorð"
-                        value={workingCase.courtAttendees || ''}
-                        placeholder="Hvert er dómsorðið?"
-                        onChange={(event) =>
-                          removeTabsValidateAndSet(
-                            'courtAttendees',
-                            event.target.value,
-                            [],
-                            setWorkingCase,
-                          )
-                        }
-                        onBlur={(event) =>
-                          updateCase(workingCase.id, {
-                            courtAttendees: event.target.value,
-                          })
-                        }
-                        rows={15}
-                        autoExpand={{ on: true, maxHeight: 300 }}
-                        textarea
-                        required
-                      />
-                    </Box>
+                    {(courtSession.rulingType ===
+                      CourtSessionRulingType.JUDGEMENT ||
+                      courtSession.rulingType ===
+                        CourtSessionRulingType.ORDER) && (
+                      <>
+                        <Box>
+                          <SectionHeading
+                            title={
+                              courtSession.rulingType ===
+                              CourtSessionRulingType.JUDGEMENT
+                                ? 'Dómsorð'
+                                : 'Úrskurðarorð'
+                            }
+                          />
+                          <Input
+                            data-testid="ruling"
+                            name="ruling"
+                            label={
+                              courtSession.rulingType ===
+                              CourtSessionRulingType.JUDGEMENT
+                                ? 'Dómsorð'
+                                : 'Úrskurðarorð'
+                            }
+                            value={courtSession.ruling || ''}
+                            placeholder="Hvert er dómsorðið?"
+                            onChange={(event) => {
+                              setRulingErrorMessage('')
+
+                              updateItem(courtSession.id, {
+                                ruling: event.target.value,
+                              })
+                            }}
+                            onBlur={(event) => {
+                              validateAndSetErrorMessage(
+                                ['empty'],
+                                event.target.value,
+                                setRulingErrorMessage,
+                              )
+
+                              updateCourtSession({
+                                caseId: workingCase.id,
+                                courtSessionId: courtSession.id,
+                                ruling: event.target.value,
+                              })
+                            }}
+                            hasError={rulingErrorMessage !== ''}
+                            errorMessage={rulingErrorMessage}
+                            rows={15}
+                            autoExpand={{ on: true, maxHeight: 300 }}
+                            textarea
+                            required
+                          />
+                        </Box>
+                        <Box>
+                          <SectionHeading title="Bókanir í lok þinghalds" />
+                          <Input
+                            data-testid="closingEntries"
+                            name="closingEntries"
+                            label="Bókanir í kjölfar dómsuppsögu eða uppkvaðningu úrskurðar"
+                            value={courtSession.ruling || ''}
+                            placeholder="T.d. Dómfelldi er ekki viðstaddur dómsuppsögu og verður lögreglu falið að birta dóminn fyrir honum..."
+                            onChange={(event) => {
+                              updateItem(courtSession.id, {
+                                closingEntries: event.target.value,
+                              })
+                            }}
+                            onBlur={(event) => {
+                              updateCourtSession({
+                                caseId: workingCase.id,
+                                courtSessionId: courtSession.id,
+                                closingEntries: event.target.value,
+                              })
+                            }}
+                            rows={15}
+                            autoExpand={{ on: true, maxHeight: 300 }}
+                            textarea
+                          />
+                        </Box>
+                      </>
+                    )}
                   </LayoutGroup>
                 </Box>
               </LayoutGroup>
