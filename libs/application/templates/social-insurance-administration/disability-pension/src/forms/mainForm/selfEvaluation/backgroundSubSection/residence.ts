@@ -7,7 +7,7 @@ import {
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { ResidenceEnum, SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
-import { MaritalStatus, Residence } from '../../../../types/interfaces'
+import { Residence } from '../../../../types/interfaces'
 
 export const residenceField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_RESIDENCE,
