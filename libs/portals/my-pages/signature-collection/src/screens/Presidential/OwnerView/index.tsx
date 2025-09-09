@@ -2,7 +2,13 @@ import {
   SignatureCollection,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
-import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  Button,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import format from 'date-fns/format'
@@ -13,7 +19,6 @@ import { SignatureCollectionPaths } from '../../../lib/paths'
 import { Skeleton } from '../../../lib/skeletons'
 import SignedList from '../../shared/SignedList'
 import CancelCollection from './CancelCollection'
-import ShareLink from '../../shared/ShareLink'
 import Managers from '../../shared/Managers'
 
 const collectionType = SignatureCollectionCollectionType.Presidential
@@ -53,8 +58,6 @@ const OwnerView = ({
             </Button>
           )}
           <Box marginTop={[0, 5]}>
-            <ShareLink slug={listsForOwner?.[0]?.slug} />
-
             {/* Signed list */}
             {!user?.profile.actor && (
               <SignedList
