@@ -448,6 +448,8 @@ query Case($input: CaseQueryInput!) {
       isClosed
       closedLegalProvisions
       attendees
+      entries
+      rulingType
     }
   }
 }

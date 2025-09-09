@@ -47,6 +47,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './CourtRecord.css'
+import { CourtSessionRulingType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
   [
@@ -96,6 +97,7 @@ const CourtRecord: FC = () => {
     { id: string; name: string }[]
   >([])
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
+  const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const { updateCourtSession } = useCourtSessions()
 
   const containerVariants = {
@@ -308,6 +310,7 @@ const CourtRecord: FC = () => {
                                   >
                                     <Checkbox
                                       label={label}
+                                      name={label}
                                       tooltip={tooltip}
                                       checked={courtSession.closedLegalProvisions?.includes(
                                         legalProvision,
@@ -454,24 +457,39 @@ const CourtRecord: FC = () => {
                     <Box>
                       <SectionHeading title="Bókanir" />
                       <Input
-                        data-testid="courtAttendees"
-                        name="courtAttendees"
+                        data-testid="entries"
+                        name="entries"
                         label="Afstaða varnaraðila, málflutningur og aðrar bókanir"
-                        value={workingCase.courtAttendees || ''}
+                        value={courtSession.entries || ''}
                         placeholder="Nánari útlistun á afstöðu varnaraðila, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-                        onChange={(event) =>
-                          removeTabsValidateAndSet(
-                            'courtAttendees',
-                            event.target.value,
-                            [],
-                            setWorkingCase,
-                          )
-                        }
-                        onBlur={(event) =>
-                          updateCase(workingCase.id, {
-                            courtAttendees: event.target.value,
+                        onChange={(event) => {
+                          setEntriesErrorMessage('')
+
+                          updateItem(courtSession.id, {
+                            entries: event.target.value,
                           })
-                        }
+
+                          updateCourtSession({
+                            caseId: workingCase.id,
+                            courtSessionId: courtSession.id,
+                            entries: event.target.value,
+                          })
+                        }}
+                        onBlur={(event) => {
+                          validateAndSetErrorMessage(
+                            ['empty'],
+                            event.target.value,
+                            setEntriesErrorMessage,
+                          )
+
+                          updateCourtSession({
+                            caseId: workingCase.id,
+                            courtSessionId: courtSession.id,
+                            entries: event.target.value,
+                          })
+                        }}
+                        hasError={entriesErrorMessage !== ''}
+                        errorMessage={entriesErrorMessage}
                         rows={15}
                         autoExpand={{ on: true, maxHeight: 300 }}
                         textarea
@@ -485,21 +503,66 @@ const CourtRecord: FC = () => {
                       />
                       <BlueBox className={styles.grid}>
                         <RadioButton
-                          name="result"
+                          name="result_no"
                           label="Nei"
                           backgroundColor="white"
+                          checked={
+                            courtSession.rulingType ===
+                            CourtSessionRulingType.NONE
+                          }
+                          onChange={() => {
+                            updateItem(courtSession.id, {
+                              rulingType: CourtSessionRulingType.NONE,
+                            })
+
+                            updateCourtSession({
+                              caseId: workingCase.id,
+                              courtSessionId: courtSession.id,
+                              rulingType: CourtSessionRulingType.NONE,
+                            })
+                          }}
                           large
                         />
                         <RadioButton
-                          name="result"
+                          name="result_verdict"
                           label="Dómur kveðinn upp"
                           backgroundColor="white"
+                          checked={
+                            courtSession.rulingType ===
+                            CourtSessionRulingType.JUDGEMENT
+                          }
+                          onChange={() => {
+                            updateItem(courtSession.id, {
+                              rulingType: CourtSessionRulingType.JUDGEMENT,
+                            })
+
+                            updateCourtSession({
+                              caseId: workingCase.id,
+                              courtSessionId: courtSession.id,
+                              rulingType: CourtSessionRulingType.JUDGEMENT,
+                            })
+                          }}
                           large
                         />
                         <RadioButton
-                          name="result"
+                          name="result_ruling"
                           label="Úrskurður kveðinn upp"
                           backgroundColor="white"
+                          checked={
+                            courtSession.rulingType ===
+                            CourtSessionRulingType.ORDER
+                          }
+                          onChange={() => {
+                            updateItem(courtSession.id, {
+                              rulingType: CourtSessionRulingType.ORDER,
+                            })
+
+                            updateCourtSession({
+                              caseId: workingCase.id,
+                              courtSessionId: courtSession.id,
+                              rulingType: CourtSessionRulingType.ORDER,
+                            })
+                          }}
                           large
                         />
                       </BlueBox>
