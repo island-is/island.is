@@ -26,16 +26,10 @@ export const languageField = buildMultiField({
             'socialInsuranceAdministrationLanguages.data',
           ) ?? []
 
-        return [
-          ...languages.map(({ code, nameIs, nameEn }) => ({
+        return languages.map(({ code, nameIs, nameEn }) => ({
             value: code,
             label: locale === 'en' ? nameEn : nameIs,
-          })),
-          {
-            value: 'other',
-            label: locale === 'en' ? 'Other' : 'Annað',
-          },
-        ]
+          }))
       },
     }),
     buildTitleField({

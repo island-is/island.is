@@ -20,10 +20,10 @@ export const maritalStatusField = buildMultiField({
         const maritalStatuses =
           getValueViaPath<Array<MaritalStatus>>(
             application.externalData,
-            'socialInsuranceAdministrationMaritalStatuses',
+            'socialInsuranceAdministrationMaritalStatuses.data',
           ) ?? []
 
-        return maritalStatuses.map(({ value, label }) => ({
+        return maritalStatuses?.map(({ value, label }) => ({
           value: value.toString(),
           label,
         }))

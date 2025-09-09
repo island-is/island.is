@@ -20,8 +20,12 @@ export const residenceField = buildMultiField({
         const residenceTypes =
           getValueViaPath<Array<Residence>>(
             application.externalData,
-            'socialInsuranceAdministrationResidence',
+            'socialInsuranceAdministrationResidence.data',
           ) ?? []
+
+        if (!residenceTypes) {
+          return []
+        }
 
         return residenceTypes.map(({ value, label }) => ({
           value: value.toString(),
@@ -34,11 +38,12 @@ export const residenceField = buildMultiField({
       title: disabilityPensionFormMessage.questions.residenceOtherWhat,
       variant: 'textarea',
       condition: (formValue) => {
-        const residenceStatus = getValueViaPath<ResidenceEnum>(
+        const residenceStatus = getValueViaPath<string>(
           formValue,
           `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,
         )
-        return residenceStatus === ResidenceEnum.OTHER
+        //Todo: more explicit for the "other" option
+        return residenceStatus === "6"
       },
     }),
   ],

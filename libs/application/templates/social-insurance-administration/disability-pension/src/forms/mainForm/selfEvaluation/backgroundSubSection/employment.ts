@@ -22,7 +22,7 @@ export const employmentField = buildMultiField({
         const responses =
           getValueViaPath<Array<EmploymentStatusResponse>>(
             application.externalData,
-            'socialInsuranceAdministrationEmploymentStatuses',
+            'socialInsuranceAdministrationEmploymentStatuses.data',
           ) ?? []
 
         const types = responses.find(
@@ -33,16 +33,10 @@ export const employmentField = buildMultiField({
           return []
         }
 
-        return [
-          ...types.employmentStatuses.map(({ value, displayName }) => ({
+        return types.employmentStatuses.map(({ value, displayName }) => ({
             value: value.toString(),
             label: displayName,
-          })),
-          {
-            value: 'other',
-            label: disabilityPensionFormMessage.selfEvaluation.other,
-          },
-        ]
+          }))
       },
     }),
     buildTitleField({

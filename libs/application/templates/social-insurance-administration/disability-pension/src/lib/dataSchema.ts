@@ -17,10 +17,7 @@ import { z } from 'zod'
 import {
   ChildrenCountEnum,
   EmploymentImportanceEnum,
-  EmploymentStatusEnum,
   IcelandicCapabilityEnum,
-  MaritalStatusEnum,
-  ResidenceEnum,
 } from '../types/enums'
 import { disabilityPensionFormMessage } from './messages'
 
@@ -55,7 +52,7 @@ export const dataSchema = z.object({
     emailDisabled: true,
   }),
   applicantMaritalStatus: z.object({
-    status: z.nativeEnum(MaritalStatusEnum),
+    status: z.number(),
     spouseName: z.string().min(2).max(100).optional(),
     spouseNationalId: z.string().min(4).max(10).optional(),
   }),
@@ -117,16 +114,26 @@ export const dataSchema = z.object({
       },
     ),
   backgroundInfoMaritalStatus: z.object({
-    status: z.nativeEnum(MaritalStatusEnum),
+    status: z.preprocess((value) => {
+      if (typeof value === 'string' && value !== '') {
+        const number = Number.parseInt(value as string, 10)
+        return isNaN(number) ? undefined : number
+      }
+    }, z.number()),
   }),
   backgroundInfoResidence: z
     .object({
-      status: z.nativeEnum(ResidenceEnum),
+      status: z.preprocess((value) => {
+        if (typeof value === 'string' && value !== '') {
+          const number = Number.parseInt(value as string, 10)
+          return isNaN(number) ? undefined : number
+        }
+      }, z.number()),
       other: z.string().optional(),
     })
     .refine(
       ({ status, other }) => {
-        if (status === ResidenceEnum.OTHER) {
+        if (status === 6) {
           return other && other.length > 0
         }
         return true
@@ -159,7 +166,13 @@ export const dataSchema = z.object({
     ),
   backgroundInfoEmployment: z
     .object({
-      status: z.array(z.nativeEnum(EmploymentStatusEnum)).optional(),
+      status: z.array(
+        z.preprocess((value) => {
+          if (typeof value === 'string' && value !== '') {
+            const number = Number.parseInt(value as string, 10)
+            return isNaN(number) ? undefined : number
+          }
+        }, z.number())).optional(),
       other: z.string().optional(),
     })
     .refine(
