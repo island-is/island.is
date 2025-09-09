@@ -26,6 +26,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { CourtSessionDocumentType } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -74,7 +75,10 @@ export class CourtSessionDocumentController {
       this.courtSessionDocumentService.create(
         caseId,
         courtSessionId,
-        createCourtSessionDocumentDto,
+        {
+          ...createCourtSessionDocumentDto,
+          documentType: CourtSessionDocumentType.EXTERNAL_DOCUMENT,
+        },
         transaction,
       ),
     )
