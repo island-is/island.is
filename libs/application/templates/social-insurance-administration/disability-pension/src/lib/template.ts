@@ -44,7 +44,7 @@ import {
   SocialInsuranceAdministrationMaritalStatusesApi,
   SocialInsuranceAdministrationResidenceApi,
   SocialInsuranceAdministrationProfessionActivitiesApi,
-  SocialInsuranceAdministrationProfessionsApi
+  SocialInsuranceAdministrationProfessionsApi,
 } from '../dataProviders'
 import {
   Actions,
@@ -115,7 +115,6 @@ const template: ApplicationTemplate<
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
                 SocialInsuranceAdministrationResidenceApi,
-
               ],
               delete: true,
             },
