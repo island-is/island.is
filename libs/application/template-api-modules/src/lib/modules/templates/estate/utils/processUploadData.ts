@@ -9,7 +9,6 @@ import {
   expandClaims,
   expandDebts,
   expandEstateMembers,
-  expandMoneyAndDeposit,
   expandOtherAssets,
   expandStocks,
   trueOrHasYes,

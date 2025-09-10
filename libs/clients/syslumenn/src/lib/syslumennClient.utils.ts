@@ -624,7 +624,21 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
               a.tegundAngalgs === TegundAndlags.NUMBER_20 || // Kreditkort
               a.tegundAngalgs === TegundAndlags.NUMBER_21, // Yfirdrattur
           )
-          .map(debtsAssetMapper)
+          .map((a) => {
+            const debtTypeMap: Record<number, DebtTypes> = {
+              [TegundAndlags.NUMBER_13]: DebtTypes.Duties,
+              [TegundAndlags.NUMBER_14]: DebtTypes.OtherDebts,
+              [TegundAndlags.NUMBER_17]: DebtTypes.PropertyFees,
+              [TegundAndlags.NUMBER_18]: DebtTypes.InsuranceCompany,
+              [TegundAndlags.NUMBER_19]: DebtTypes.Loan,
+              [TegundAndlags.NUMBER_20]: DebtTypes.CreditCard,
+              [TegundAndlags.NUMBER_21]: DebtTypes.Overdraft,
+            }
+            return {
+              ...assetMapper(a),
+              debtType: debtTypeMap[a.tegundAngalgs ?? 0],
+            }
+          })
       : [],
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)

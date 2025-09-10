@@ -289,16 +289,16 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).estate?.claims ?? []).map(
-          (claim) => ({
+        ((answers as unknown as EstateSchema).estate?.claims ?? [])
+          .filter((claim) => claim.enabled)
+          .map((claim) => ({
             title: claim.publisher,
             description: [
               `${m.claimsAmount.defaultMessage}: ${formatCurrency(
                 claim.value ?? '0',
               )}`,
             ],
-          }),
-        ),
+          })),
     },
   ),
   buildDescriptionField({

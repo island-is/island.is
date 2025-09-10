@@ -67,16 +67,13 @@ export const DebtsRepeater: FC<
   const debtTypes = props.selections ?? []
 
   const handleAddRepeaterFields = () => {
-    const values = props.fields.map((field: object) => {
-      return Object.values(field)[1]
-    })
-    // All additional fields should be enabled by default
-    values.push('enabled')
-
+    const fieldIds = props.fields.map((f) => (f as any).id)
     const repeaterFields = Object.fromEntries(
-      values.map((elem) => [elem, elem === 'enabled' ? true : '']),
+      [...fieldIds, 'enabled'].map((key) => [
+        key,
+        key === 'enabled' ? true : '',
+      ]),
     )
-
     append(repeaterFields)
   }
 
