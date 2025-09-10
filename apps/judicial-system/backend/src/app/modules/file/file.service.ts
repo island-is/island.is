@@ -455,7 +455,6 @@ export class FileService {
       ) {
         await this.courtDocumentSservice.create(
           theCase.id,
-          undefined,
           {
             documentType: CourtDocumentType.UPLOADED_DOCUMENT,
             name: file.userGeneratedFilename ?? file.name,

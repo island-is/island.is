@@ -36,13 +36,17 @@ interface UpdateCourtDocumentOptions {
   transaction?: Transaction
 }
 
-interface DeleteCourtDocumentOptions {
-  transaction?: Transaction
-}
-
 interface UpdateCourtDocument {
   documentOrder?: number
   name?: string
+}
+
+interface FileCourtDocumentInCourtSessionOptions {
+  transaction?: Transaction
+}
+
+interface DeleteCourtDocumentOptions {
+  transaction?: Transaction
 }
 
 @Injectable()
@@ -85,7 +89,7 @@ export class CourtDocumentRepositoryService {
           : undefined
 
       if (courtSessionId) {
-        return this.createInSession(caseId, courtSessionId, data, options)
+        return this.createInCourtSession(caseId, courtSessionId, data, options)
       }
 
       const courtDocument = await this.courtDocumentModel.create(
@@ -108,7 +112,7 @@ export class CourtDocumentRepositoryService {
     }
   }
 
-  async createInSession(
+  async createInCourtSession(
     caseId: string,
     courtSessionId: string,
     data: CreateCourtDocument,
@@ -128,12 +132,24 @@ export class CourtDocumentRepositoryService {
 
       // Find the document with the highest document order value for this case
       const lastDocument = await this.courtDocumentModel.findOne({
-        where: { caseId },
+        where: { caseId, courtSessionId },
         order: [['documentOrder', 'DESC']],
         transaction: options?.transaction,
       })
 
       const nextOrder = lastDocument ? lastDocument.documentOrder + 1 : 1
+
+      // Iincrease order of documents after the current position
+      await this.courtDocumentModel.update(
+        { documentOrder: literal('documentOrder + 1') },
+        {
+          where: {
+            caseId,
+            documentOrder: { [Op.gte]: nextOrder },
+          },
+          transaction: options?.transaction,
+        },
+      )
 
       const courtDocument = await this.courtDocumentModel.create(
         { ...data, caseId, courtSessionId, documentOrder: nextOrder },
@@ -265,6 +281,76 @@ export class CourtDocumentRepositoryService {
       this.logger.error(
         `Error updating court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId} with data:`,
         { data: Object.keys(data), error },
+      )
+
+      throw error
+    }
+  }
+
+  async fileInCourtSession(
+    caseId: string,
+    courtDocumentId: string,
+    courtSessionId: string,
+    options?: FileCourtDocumentInCourtSessionOptions,
+  ): Promise<CourtDocument> {
+    try {
+      this.logger.debug(
+        `Filing court document ${courtDocumentId} in court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      // Find the document with the highest document order value for this case
+      const lastDocument = await this.courtDocumentModel.findOne({
+        where: { caseId, courtSessionId },
+        order: [['documentOrder', 'DESC']],
+        transaction: options?.transaction,
+      })
+
+      const nextOrder = lastDocument ? lastDocument.documentOrder + 1 : 1
+
+      // Iincrease order of documents after the current position
+      await this.courtDocumentModel.update(
+        { documentOrder: literal('documentOrder + 1') },
+        {
+          where: {
+            caseId,
+            documentOrder: { [Op.gte]: nextOrder },
+          },
+          transaction: options?.transaction,
+        },
+      )
+
+      const [numberOfAffectedRows, courtDocuments] =
+        await this.courtDocumentModel.update(
+          { documentOrder: nextOrder, courtSessionId },
+          {
+            where: { id: courtDocumentId, courtSessionId: null, caseId },
+            transaction: options?.transaction,
+            returning: true,
+          },
+        )
+
+      if (numberOfAffectedRows < 1) {
+        throw new InternalServerErrorException(
+          `Could not file court document ${courtDocumentId} in court session ${courtSessionId} of case ${caseId}`,
+        )
+      }
+
+      if (numberOfAffectedRows > 1) {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when filing court document ${courtDocumentId} in court session ${courtSessionId} of case ${caseId}`,
+        )
+      }
+
+      this.logger.debug(
+        `Updated court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      return courtDocuments[0]
+    } catch (error) {
+      this.logger.error(
+        `Error filing court document ${courtDocumentId} in court session ${courtSessionId} of case ${caseId}:`,
+        { error },
       )
 
       throw error

@@ -32,12 +32,14 @@ import { CaseExistsGuard, CaseWriteGuard } from '../case'
 import { CourtDocument } from '../repository'
 import { CreateCourtDocumentDto } from './dto/createCourtDocument.dto'
 import { DeleteCourtDocumentResponse } from './dto/deleteCourtDocument.response'
+import { FileCourtDocumentInCourtSessionDto } from './dto/fileCourtDocumentInCourtSession.dto'
 import { UpdateCourtDocumentDto } from './dto/updateCourtDocument.dto'
-import { CourtDocumentExistsGuard } from './guards/courtDocumentExists.guard'
 import { CourtSessionExistsGuard } from './guards/courtSessionExists.guard'
+import { FiledCourtDocumentExistsGuard } from './guards/filedCourtDocumentExists.guard'
+import { UnfiledCourtDocumentExistsGuard } from './guards/unfiledCourtDocumentExists.guard'
 import { CourtDocumentService } from './courtDocument.service'
 
-@Controller('api/case/:caseId/courtSession/:courtSessionId/courtDocument')
+@Controller('api/case/:caseId')
 @ApiTags('court-documents')
 @UseGuards(JwtAuthUserGuard, RolesGuard)
 export class CourtDocumentController {
@@ -53,7 +55,7 @@ export class CourtDocumentController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Post()
+  @Post('courtSession/:courtSessionId/courtDocument')
   @ApiCreatedResponse({
     type: CourtDocument,
     description: 'Creates a new court document',
@@ -68,7 +70,7 @@ export class CourtDocumentController {
     )
 
     return this.sequelize.transaction(async (transaction) =>
-      this.courtDocumentService.create(
+      this.courtDocumentService.createInCourtSession(
         caseId,
         courtSessionId,
         {
@@ -84,14 +86,14 @@ export class CourtDocumentController {
     CaseExistsGuard,
     CaseWriteGuard,
     CourtSessionExistsGuard,
-    CourtDocumentExistsGuard,
+    FiledCourtDocumentExistsGuard,
   )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Patch(':courtDocumentId')
+  @Patch('courtSession/:courtSessionId/courtDocument/:courtDocumentId')
   @ApiOkResponse({
     type: CourtDocument,
     description: 'Updates a court document',
@@ -100,7 +102,7 @@ export class CourtDocumentController {
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
     @Param('courtDocumentId') courtDocumentId: string,
-    @Body() updateCourtDocumentDto: UpdateCourtDocumentDto,
+    @Body() updateDto: UpdateCourtDocumentDto,
   ): Promise<CourtDocument> {
     this.logger.debug(
       `Updating court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
@@ -111,7 +113,37 @@ export class CourtDocumentController {
         caseId,
         courtSessionId,
         courtDocumentId,
-        updateCourtDocumentDto,
+        updateDto,
+        transaction,
+      ),
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, UnfiledCourtDocumentExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Patch('courtDocument/:courtDocumentId')
+  @ApiOkResponse({
+    type: CourtDocument,
+    description: 'Files a court document in a court session',
+  })
+  async fileInCourtSession(
+    @Param('caseId') caseId: string,
+    @Param('courtDocumentId') courtDocumentId: string,
+    @Body() fileDto: FileCourtDocumentInCourtSessionDto,
+  ): Promise<CourtDocument> {
+    this.logger.debug(
+      `Filing court document ${courtDocumentId} in court session ${fileDto.courtSessionId} of case ${caseId}`,
+    )
+
+    return this.sequelize.transaction(async (transaction) =>
+      this.courtDocumentService.fileInCourtSession(
+        caseId,
+        courtDocumentId,
+        fileDto,
         transaction,
       ),
     )
@@ -121,14 +153,14 @@ export class CourtDocumentController {
     CaseExistsGuard,
     CaseWriteGuard,
     CourtSessionExistsGuard,
-    CourtDocumentExistsGuard,
+    FiledCourtDocumentExistsGuard,
   )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Delete(':courtDocumentId')
+  @Delete('courtSession/:courtSessionId/courtDocument/:courtDocumentId')
   @ApiOkResponse({
     description: 'Deletes a court document',
   })

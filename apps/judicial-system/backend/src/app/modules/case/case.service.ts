@@ -2005,7 +2005,7 @@ export class CaseService {
     )
 
     // Start with the generated indictment PDF
-    await this.courtDocumentService.create(
+    await this.courtDocumentService.createInCourtSession(
       theCase.id,
       courtSession.id,
       {
@@ -2022,7 +2022,7 @@ export class CaseService {
     for (const caseFile of caseFiles.filter(
       (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
     ) ?? []) {
-      await this.courtDocumentService.create(
+      await this.courtDocumentService.createInCourtSession(
         theCase.id,
         courtSession.id,
         {
@@ -2038,7 +2038,7 @@ export class CaseService {
     for (const caseFile of caseFiles.filter(
       (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
     ) ?? []) {
-      await this.courtDocumentService.create(
+      await this.courtDocumentService.createInCourtSession(
         theCase.id,
         courtSession.id,
         {
@@ -2052,7 +2052,7 @@ export class CaseService {
 
     // Add all case files records
     for (const policeCaseNumber of theCase.policeCaseNumbers) {
-      await this.courtDocumentService.create(
+      await this.courtDocumentService.createInCourtSession(
         theCase.id,
         courtSession.id,
         {
@@ -2078,7 +2078,7 @@ export class CaseService {
           CaseFileCategory.CIVIL_CLAIM,
         ].includes(file.category),
     ) ?? []) {
-      await this.courtDocumentService.create(
+      await this.courtDocumentService.createInCourtSession(
         theCase.id,
         courtSession.id,
         {

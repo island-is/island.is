@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common'
 
 import { CourtDocument, CourtDocumentRepositoryService } from '../repository'
 import { CreateCourtDocument } from '../repository/services/courtDocumentRepository.service'
+import { FileCourtDocumentInCourtSessionDto } from './dto/fileCourtDocumentInCourtSession.dto'
 import { UpdateCourtDocumentDto } from './dto/updateCourtDocument.dto'
 
 @Injectable()
@@ -14,22 +15,26 @@ export class CourtDocumentService {
 
   async create(
     caseId: string,
-    courtSessionId: string | undefined,
     createDto: CreateCourtDocument,
     transaction: Transaction,
   ): Promise<CourtDocument> {
-    if (courtSessionId) {
-      return this.courtDocumentRepositoryService.createInSession(
-        caseId,
-        courtSessionId,
-        createDto,
-        { transaction },
-      )
-    }
-
     return this.courtDocumentRepositoryService.create(caseId, createDto, {
       transaction,
     })
+  }
+
+  async createInCourtSession(
+    caseId: string,
+    courtSessionId: string,
+    createDto: CreateCourtDocument,
+    transaction: Transaction,
+  ): Promise<CourtDocument> {
+    return this.courtDocumentRepositoryService.createInCourtSession(
+      caseId,
+      courtSessionId,
+      createDto,
+      { transaction },
+    )
   }
 
   async update(
@@ -44,6 +49,20 @@ export class CourtDocumentService {
       courtSessionId,
       courtDocumentId,
       updateDto,
+      { transaction },
+    )
+  }
+
+  async fileInCourtSession(
+    caseId: string,
+    courtDocumentId: string,
+    fileDto: FileCourtDocumentInCourtSessionDto,
+    transaction: Transaction,
+  ): Promise<CourtDocument> {
+    return this.courtDocumentRepositoryService.fileInCourtSession(
+      caseId,
+      courtDocumentId,
+      fileDto.courtSessionId,
       { transaction },
     )
   }

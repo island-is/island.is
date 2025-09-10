@@ -19,6 +19,7 @@ import { CourtDocumentResponse } from './dto/courtDocument.response'
 import { CreateCourtDocumentInput } from './dto/createCourtDocument.input'
 import { DeleteCourtDocumentInput } from './dto/deleteCourtDocument.input'
 import { DeleteCourtDocumentResponse } from './dto/deleteCourtDocument.response'
+import { FileCourtDocumentInCourtSessionInput } from './dto/fileCourtDocumentInCourtSession.input'
 import { UpdateCourtDocumentInput } from './dto/updateCourtDocument.input'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -79,6 +80,32 @@ export class CourtDocumentResolver {
         courtSessionId,
         courtDocumentId,
         updateCourtDocument,
+      ),
+      courtDocumentId,
+    )
+  }
+
+  @Mutation(() => CourtDocumentResponse)
+  fileCourtDocumentInCourtSession(
+    @Args('input', { type: () => FileCourtDocumentInCourtSessionInput })
+    input: FileCourtDocumentInCourtSessionInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<CourtDocumentResponse> {
+    const { caseId, courtSessionId, courtDocumentId } = input
+
+    this.logger.debug(
+      `Filing court document ${courtDocumentId} in court session ${courtSessionId} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.FILE_COURT_DOCUMENT,
+      backendService.fileCourtDocumentInCourtSession(
+        caseId,
+        courtSessionId,
+        courtDocumentId,
       ),
       courtDocumentId,
     )

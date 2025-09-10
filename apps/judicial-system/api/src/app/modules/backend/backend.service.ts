@@ -629,6 +629,16 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  fileCourtDocumentInCourtSession(
+    caseId: string,
+    courtSessionId: string,
+    courtDocumentId: string,
+  ): Promise<CourtDocumentResponse> {
+    return this.patch(`case/${caseId}/courtDocument/${courtDocumentId}`, {
+      courtSessionId,
+    })
+  }
+
   deleteCourtDocument(
     caseId: string,
     courtSessionId: string,

@@ -9,7 +9,7 @@ import {
 import { CourtSession } from '../../repository'
 
 @Injectable()
-export class CourtDocumentExistsGuard implements CanActivate {
+export class FiledCourtDocumentExistsGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
