@@ -17,6 +17,7 @@ import type { User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { CourtDocumentResponse } from './dto/courtDocument.response'
 import { CreateCourtDocumentInput } from './dto/createCourtDocument.input'
+import { DeleteCourtDocumentInput } from './dto/deleteCourtDocument.input'
 import { DeleteCourtDocumentResponse } from './dto/deleteCourtDocument.response'
 import { UpdateCourtDocumentInput } from './dto/updateCourtDocument.input'
 
@@ -85,7 +86,7 @@ export class CourtDocumentResolver {
 
   @Mutation(() => DeleteCourtDocumentResponse)
   deleteCourtDocument(
-    @Args('input', { type: () => UpdateCourtDocumentInput })
+    @Args('input', { type: () => DeleteCourtDocumentInput })
     input: UpdateCourtDocumentInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
