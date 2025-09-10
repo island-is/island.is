@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   Drawer,
   Icon,
   Tag,
@@ -28,10 +27,9 @@ const ListActions = ({ listId }: { listId: string }) => {
           </Button>
         }
       >
-        <Text variant="h2" color="backgroundBrand" marginY={3}>
+        <Text variant="h2" marginY={5}>
           {formatMessage(m.listActions)}
         </Text>
-        <Divider />
         <Box
           display={['block', 'block', 'flex']}
           justifyContent="spaceBetween"

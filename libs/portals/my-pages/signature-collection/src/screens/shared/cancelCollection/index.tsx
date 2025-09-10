@@ -5,17 +5,13 @@ import { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   SignatureCollectionCollectionType,
+  SignatureCollectionList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
-import { useGetCurrentCollection } from '../../../hooks'
 import { Modal } from '@island.is/portals/my-pages/core'
 
-const CancelCollection = ({ listId }: { listId: string }) => {
-  const { currentCollection } = useGetCurrentCollection(
-    SignatureCollectionCollectionType.LocalGovernmental,
-  )
-
+const CancelCollection = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
 
@@ -23,14 +19,31 @@ const CancelCollection = ({ listId }: { listId: string }) => {
     useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {
       variables: {
         input: {
-          collectionId: currentCollection?.id ?? '',
-          collectionType: currentCollection?.collectionType,
-          listIds: listId,
+          collectionType: list?.collectionType,
+          listIds: list.id,
+          collectionId:
+            list.collectionType ===
+            SignatureCollectionCollectionType.LocalGovernmental
+              ? list.area?.collectionId
+              : list.collectionId,
         },
       },
-      onCompleted: () => {
+      onCompleted: (res) => {
+        const { success } = (
+          res as unknown as {
+            signatureCollectionCancel: {
+              success?: boolean
+            }
+          }
+        ).signatureCollectionCancel
+
+        if (success) {
+          toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
+        } else {
+          toast.error(formatMessage(m.cancelCollectionModalToastError))
+        }
+
         setModalIsOpen(false)
-        toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
       },
       onError: () => {
         toast.error(formatMessage(m.cancelCollectionModalToastError))

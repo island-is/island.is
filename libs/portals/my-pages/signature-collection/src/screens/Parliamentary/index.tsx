@@ -24,7 +24,7 @@ const SignatureCollectionParliamentary = () => {
 
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection(collectionType)
-  const { isOwner, refetchIsOwner } = useIsOwner(collectionType)
+  const { isOwner } = useIsOwner(collectionType)
   const { listsForOwner } = useGetListsForOwner(
     collectionType,
     currentCollection?.id ?? '',
@@ -39,7 +39,6 @@ const SignatureCollectionParliamentary = () => {
       />
       {!loadingCurrentCollection && isOwner.success ? (
         <OwnerView
-          refetchIsOwner={refetchIsOwner}
           currentCollection={currentCollection}
           isListHolder={
             !userInfo?.profile?.delegationType ||

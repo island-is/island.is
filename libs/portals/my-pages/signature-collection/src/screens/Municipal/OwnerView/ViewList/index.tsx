@@ -31,7 +31,7 @@ const ViewList = () => {
                 ' - ' +
                 format(new Date(listInfo.endTime ?? new Date()), 'dd.MM.yyyy')}
             </Text>
-            <ListActions listId={listInfo.id} />
+            <ListActions list={listInfo} />
             <Divider />
           </Box>
           <Signees

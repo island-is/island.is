@@ -16,7 +16,7 @@ import {
 } from '@island.is/api/schema'
 import CancelCollection from '../../../../shared/cancelCollection'
 
-const collectionType = SignatureCollectionCollectionType.LocalGovernmental
+const collectionType = SignatureCollectionCollectionType.Presidential
 
 const ListActions = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
