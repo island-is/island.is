@@ -1,5 +1,4 @@
 import { MedmaeliBulkResponseDTO } from '../../../gen/fetch'
-import { ReasonKey } from '../signature-collection.types'
 
 export interface NationalIds {
   nationalId: string
