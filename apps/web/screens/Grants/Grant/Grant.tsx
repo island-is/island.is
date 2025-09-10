@@ -65,11 +65,6 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
       title: formatMessage(m.search.results),
       href: searchUrl,
     },
-    {
-      title: grant?.name ?? formatMessage(m.home.grant),
-      href: currentUrl,
-      isTag: true,
-    },
   ]
 
   const status = useMemo(
