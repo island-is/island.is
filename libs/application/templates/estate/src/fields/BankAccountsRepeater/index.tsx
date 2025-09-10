@@ -233,7 +233,7 @@ export const BankAccountsRepeater: FC<
           </Box>
         )
       })}
-      <Box marginTop={1}>
+      <Box marginTop={2}>
         <Button
           variant="text"
           icon="add"

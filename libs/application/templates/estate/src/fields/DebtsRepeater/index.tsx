@@ -7,13 +7,12 @@ import {
 } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridRow, Button, Input } from '@island.is/island-ui/core'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import { getErrorViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../DoubleColumnRow'
 import { getEstateDataFromApplication } from '../../lib/utils'
-import { EstateAsset } from '@island.is/clients/syslumenn'
 import { valueToNumber } from '../../lib/utils'
 
 type RepeaterProps = {
@@ -28,27 +27,16 @@ type RepeaterProps = {
   }
 }
 
-const debtTypeMapping: Record<number, string> = {
-  13: 'Duties',
-  14: 'OtherDebts',
-  17: 'PropertyFees',
-  18: 'InsuranceCompany',
-  19: 'Loan',
-  20: 'CreditCard',
-  21: 'Overdraft',
-}
-
 export const DebtsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & RepeaterProps>
 > = ({ application, field, errors }) => {
-  const { answers } = application
   const { id, props } = field
 
   const { fields, append, remove, replace, update } = useFieldArray<any>({
     name: id,
   })
 
-  const { setValue, getValues, clearErrors } = useFormContext()
+  const { setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
 
   const [total, setTotal] = useState(0)
@@ -210,7 +198,6 @@ export const DebtsRepeater: FC<
                         error={err}
                         size="sm"
                         disabled={!repeaterField.enabled}
-                        // readOnly={field.readOnly || repeaterField.initial}
                         onChange={() => {
                           if (shouldRecalculateTotal) {
                             calculateTotal()

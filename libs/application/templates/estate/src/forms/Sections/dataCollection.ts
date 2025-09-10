@@ -37,22 +37,22 @@ export const dataCollection = buildSection({
               : /* EINKASKIPTI */
                 m.providerSubtitleDivisionOfEstateByHeirs,
         }),
-        // buildDataProviderItem({
-        //   provider: NationalRegistryUserApi,
-        //   title: m.personalInfoProviderTitle,
-        //   subTitle: ({ answers }) =>
-        //     answers.selectedEstate === EstateTypes.estateWithoutAssets
-        //       ? /* EIGNALAUST DÁNARBU */
-        //         m.personalInfoProviderSubtitleEstateWithoutAssets
-        //       : answers.selectedEstate === EstateTypes.officialDivision
-        //       ? /* OPINBER SKIPTI */
-        //         m.personalInfoProviderSubtitleOfficialDivision
-        //       : answers.selectedEstate === EstateTypes.permitForUndividedEstate
-        //       ? /* SETA Í ÓSKIPTU BÚI */
-        //         m.personalInfoProviderSubtitleUndividedEstate
-        //       : /* EINKASKIPTI */
-        //         m.personalInfoProviderSubtitleDivisionOfEstateByHeirs,
-        // }),
+        buildDataProviderItem({
+          provider: NationalRegistryUserApi,
+          title: m.personalInfoProviderTitle,
+          subTitle: ({ answers }) =>
+            answers.selectedEstate === EstateTypes.estateWithoutAssets
+              ? /* EIGNALAUST DÁNARBU */
+                m.personalInfoProviderSubtitleEstateWithoutAssets
+              : answers.selectedEstate === EstateTypes.officialDivision
+              ? /* OPINBER SKIPTI */
+                m.personalInfoProviderSubtitleOfficialDivision
+              : answers.selectedEstate === EstateTypes.permitForUndividedEstate
+              ? /* SETA Í ÓSKIPTU BÚI */
+                m.personalInfoProviderSubtitleUndividedEstate
+              : /* EINKASKIPTI */
+                m.personalInfoProviderSubtitleDivisionOfEstateByHeirs,
+        }),
         buildDataProviderItem({
           provider: UserProfileApi,
           title: m.settingsInfoProviderTitle,
