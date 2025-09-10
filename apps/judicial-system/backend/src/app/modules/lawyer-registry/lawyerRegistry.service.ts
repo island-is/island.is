@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
-import type { Transaction, WhereOptions } from 'sequelize'
+import type { Transaction, WhereOptions } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
 import {

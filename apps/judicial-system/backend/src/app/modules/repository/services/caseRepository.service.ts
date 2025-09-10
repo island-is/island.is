@@ -5,7 +5,7 @@ import {
   FindOptions,
   Transaction,
   UpdateOptions,
-} from 'sequelize'
+} from 'sequelize/types'
 
 import {
   Inject,

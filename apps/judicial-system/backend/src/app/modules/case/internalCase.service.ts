@@ -1,7 +1,7 @@
 import CryptoJS from 'crypto-js'
 import format from 'date-fns/format'
 import { Base64 } from 'js-base64'
-import { Op } from 'sequelize'
+import { Op } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
 import {

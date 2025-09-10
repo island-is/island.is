@@ -1,4 +1,4 @@
-import { CreateOptions, Transaction, UpdateOptions } from 'sequelize'
+import { CreateOptions, Transaction, UpdateOptions } from 'sequelize/types'
 
 import {
   Inject,

@@ -1,4 +1,4 @@
-import { literal, Op } from 'sequelize'
+import { literal, Op } from 'sequelize/types'
 
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
 

@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize'
+import { Transaction } from 'sequelize/types'
 
 import { Injectable } from '@nestjs/common'
 

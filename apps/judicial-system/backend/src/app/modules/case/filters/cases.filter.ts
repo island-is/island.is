@@ -1,4 +1,4 @@
-import { Op, WhereOptions } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
 import { ForbiddenException } from '@nestjs/common'

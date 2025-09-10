@@ -1,4 +1,4 @@
-import { fn, Op } from 'sequelize'
+import { fn, Op } from 'sequelize/types'
 
 import {
   CaseAppealState,

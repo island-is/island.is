@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { Includeable, Op } from 'sequelize'
+import { Includeable, Op } from 'sequelize/types'
 import { Writable } from 'stream'
 
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'

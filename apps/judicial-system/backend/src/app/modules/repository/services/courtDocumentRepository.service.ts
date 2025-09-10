@@ -4,7 +4,7 @@ import {
   Op,
   Transaction,
   UpdateOptions,
-} from 'sequelize'
+} from 'sequelize/types'
 
 import {
   BadRequestException,

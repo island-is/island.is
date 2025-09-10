@@ -1,6 +1,5 @@
 import { Base64 } from 'js-base64'
-import { Includeable } from 'sequelize'
-import { Transaction } from 'sequelize/types'
+import { Includeable, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
 import {

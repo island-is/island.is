@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op } from 'sequelize/types'
 
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'

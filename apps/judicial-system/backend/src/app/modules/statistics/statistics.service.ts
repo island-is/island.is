@@ -4,7 +4,14 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
 import isWithinInterval from 'date-fns/isWithinInterval'
-import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
+import {
+  col,
+  fn,
+  Includeable,
+  literal,
+  Op,
+  WhereOptions,
+} from 'sequelize/types'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'

@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize'
+import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
 
 import { ServiceRequirement } from '@island.is/judicial-system/types'
