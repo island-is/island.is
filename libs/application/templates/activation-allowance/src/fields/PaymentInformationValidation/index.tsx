@@ -77,11 +77,7 @@ export const PaymentInformationValidation: FC<
         accountNumber: paymentInfo.accountNumber?.padStart(6, '0') || '',
       })
 
-<<<<<<< HEAD
-      if (isValid?.vmstApplicationsAccountNumbervalidation) return [true, null]
-=======
-      if (isValid.vmstApplicationsAccountNumberValidation) return [true, null]
->>>>>>> 3331ae0b71 (Fixing graphql typo)
+      if (isValid?.vmstApplicationsAccountNumberValidation) return [true, null]
       setErrors((prev) => [...prev, paymentErrors.invalidAccountNumber])
     } catch (e) {
       setErrors((prev) => [...prev, paymentErrors.invalidAccountNumber])
