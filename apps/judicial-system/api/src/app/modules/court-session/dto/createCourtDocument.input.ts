@@ -14,5 +14,6 @@ export class CreateCourtDocumentInput {
 
   @Field(() => String)
   @IsString()
+  @Field(() => String)
   readonly name!: string
 }

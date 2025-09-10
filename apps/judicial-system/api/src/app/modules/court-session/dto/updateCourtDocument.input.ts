@@ -31,5 +31,6 @@ export class UpdateCourtDocumentInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
+  @Field(() => String)
   readonly name?: string
 }

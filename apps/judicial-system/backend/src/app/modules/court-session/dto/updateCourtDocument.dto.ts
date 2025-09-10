@@ -1,4 +1,10 @@
-import { IsInt, IsOptional, IsPositive, IsString } from 'class-validator'
+import {
+  IsInt,
+  IsOptional,
+  IsPositive,
+  IsString,
+  MaxLength,
+} from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -11,6 +17,7 @@ export class UpdateCourtDocumentDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly name?: string
 }
