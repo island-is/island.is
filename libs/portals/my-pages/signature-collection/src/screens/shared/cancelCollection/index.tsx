@@ -4,6 +4,7 @@ import { m } from '../../../lib/messages'
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import {
+  SignatureCollectionCancelListsInput,
   SignatureCollectionCollectionType,
   SignatureCollectionList,
   SignatureCollectionSuccess,
@@ -15,41 +16,38 @@ const CancelCollection = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
 
-  const [cancelCollection, { loading }] =
-    useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {
-      variables: {
-        input: {
-          collectionType: list?.collectionType,
-          listIds: list.id,
-          collectionId:
-            list.collectionType ===
-            SignatureCollectionCollectionType.LocalGovernmental
-              ? list.area?.collectionId
-              : list.collectionId,
-        },
+  const [cancelCollection, { loading }] = useMutation<
+    { signatureCollectionCancel: SignatureCollectionSuccess },
+    {
+      input: SignatureCollectionCancelListsInput
+    }
+  >(cancelCollectionMutation, {
+    variables: {
+      input: {
+        collectionType: list?.collectionType,
+        listIds: [list.id],
+        collectionId:
+          list.collectionType ===
+          SignatureCollectionCollectionType.LocalGovernmental
+            ? list.area?.collectionId ?? ''
+            : list.collectionId ?? '',
       },
-      onCompleted: (res) => {
-        const { success } = (
-          res as unknown as {
-            signatureCollectionCancel: {
-              success?: boolean
-            }
-          }
-        ).signatureCollectionCancel
-
-        if (success) {
-          toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
-        } else {
-          toast.error(formatMessage(m.cancelCollectionModalToastError))
-        }
-
-        setModalIsOpen(false)
-      },
-      onError: () => {
+    },
+    onCompleted: ({ signatureCollectionCancel }) => {
+      const { success } = signatureCollectionCancel ?? {}
+      if (success) {
+        toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
+      } else {
         toast.error(formatMessage(m.cancelCollectionModalToastError))
-        setModalIsOpen(false)
-      },
-    })
+      }
+
+      setModalIsOpen(false)
+    },
+    onError: () => {
+      toast.error(formatMessage(m.cancelCollectionModalToastError))
+      setModalIsOpen(false)
+    },
+  })
 
   return (
     <Box display="flex">

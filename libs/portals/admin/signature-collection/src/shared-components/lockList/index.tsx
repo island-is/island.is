@@ -49,7 +49,7 @@ const ActionLockList = ({
         } else {
           const message =
             response.signatureCollectionLockList?.reasons?.[0] ??
-            formatMessage(m.lockListError)
+            formatMessage(isLocked ? m.unlockListError : m.lockListError)
           toast.error(message)
         }
       },
