@@ -23,12 +23,6 @@
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/rental-agreement/src/lib/messages/**/*.ts'"
       }
-    },
-    "codegen/frontend-client": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "graphql-codegen --config libs/application/templates/rental-agreement/codegen.yml"
-      }
     }
   }
 }

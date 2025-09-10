@@ -1,110 +1,88 @@
-import { useEffect, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { Query, HmsSearchInput } from '@island.is/api/schema'
-import { AsyncSearch, Box } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { useLazyQuery } from '@apollo/client'
-import { ADDRESS_SEARCH_QUERY } from '../../../graphql/queries'
+import { Controller } from 'react-hook-form'
+import { AsyncSearch } from '@island.is/island-ui/core'
 import { AddressProps } from '../../../shared'
-import { registerProperty } from '../../../lib/messages'
+import { useLocale } from '@island.is/localization'
+import { useCallback, useRef } from 'react'
+import * as m from '../../../lib/messages'
 
-interface PropertySearchInputProps {
+type Props = {
+  searchOptions: AddressProps[]
   id: string
+  selectedAddress: AddressProps | undefined
+  searchTerm: string
+  handleAddressSelectionChange: (selection: { value: string } | null) => void
+  setSearchTerm: (searchTerm: string) => void
+  onSearchTermChange: (searchTerm: string) => void
+  searchLoading: boolean
+  propertycodeLoading: boolean
 }
 
-export const PropertySearchInput: React.FC<PropertySearchInputProps> = ({
+const DEBOUNCE_TIME = 300 // 300ms debounce delay
+const MIN_SEARCH_LENGTH = 3 // Minimum characters required for search
+
+export const PropertySearchInput = ({
+  searchOptions,
   id,
-}) => {
+  selectedAddress,
+  searchTerm,
+  handleAddressSelectionChange,
+  setSearchTerm,
+  onSearchTermChange,
+  searchLoading,
+  propertycodeLoading,
+}: Props) => {
   const { formatMessage } = useLocale()
-  const { clearErrors, setValue, getValues } = useFormContext()
-  const storedValue = getValues(id)
-  const [searchTerm, setSearchTerm] = useState(storedValue?.value)
-  const [searchOptions, setSearchOptions] = useState<AddressProps[]>([])
-  const [selectedAddress, setSelectedAddress] = useState<
-    AddressProps | undefined
-  >(storedValue)
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  useEffect(() => {
-    if (searchTerm?.length) {
-      hmsSearch({
-        variables: {
-          input: {
-            partialStadfang: searchTerm,
-          },
-        },
-      })
-    } else {
-      setSearchOptions([])
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm])
-
-  /**
-   * GraphQL query to fetch and format address search results.
-   */
-  const [hmsSearch, { loading: searchLoading }] = useLazyQuery<
-    Query,
-    { input: HmsSearchInput }
-  >(ADDRESS_SEARCH_QUERY, {
-    onError: (error) => {
-      console.error('Error fetching address', error)
-    },
-    onCompleted: (data) => {
-      if (!data.hmsSearch) {
-        return
+  const debouncedSearchTermChange = useCallback(
+    (newValue: string) => {
+      // Clear existing timeout
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current)
       }
-      const searchOptions = data.hmsSearch.addresses.map((address) => ({
-        ...address,
-        label: `${address.address}, ${address.postalCode} ${address.municipalityName}`,
-        value: `${address.addressCode}`,
-      }))
-      setSearchOptions(searchOptions)
-    },
-  })
 
-  const handleAddressSelectionChange = (
-    selection: { value: string } | null,
-  ) => {
-    clearErrors(id)
-    const selectedValue = selection === null ? undefined : selection.value
-    const selectedOption = searchOptions.find(
-      (option) => option.value === selectedValue,
-    )
-    setSelectedAddress(selectedOption)
-    setValue(id, selection ? selection : undefined)
-  }
+      setSearchTerm(newValue)
+
+      // Only search if the string is long enough
+      if (newValue.length >= MIN_SEARCH_LENGTH) {
+        // Set new timeout for the actual search
+        debounceTimeoutRef.current = setTimeout(() => {
+          onSearchTermChange(newValue)
+        }, DEBOUNCE_TIME)
+      } else if (newValue.length === 0) {
+        // Clear search results when input is empty
+        onSearchTermChange(newValue)
+      }
+      // For strings 1-2 characters, do nothing (no search)
+    },
+    [setSearchTerm, onSearchTermChange],
+  )
 
   return (
-    <Box>
-      <Controller
-        name={`${id}`}
-        defaultValue=""
-        render={({ field: { onChange } }) => {
-          return (
-            <AsyncSearch
-              options={searchOptions}
-              placeholder={formatMessage(
-                registerProperty.search.propertySearchPlaceholder,
-              )}
-              initialInputValue={selectedAddress ? selectedAddress.label : ''}
-              inputValue={
-                searchTerm || (selectedAddress ? selectedAddress.label : '')
-              }
-              closeMenuOnSubmit
-              size="large"
-              colored
-              onChange={(selection) => {
-                handleAddressSelectionChange(selection)
-                onChange(selection ? selection : undefined)
-              }}
-              onInputValueChange={(newValue) => {
-                setSearchTerm(newValue)
-              }}
-              loading={searchLoading}
-            />
-          )
-        }}
-      />
-    </Box>
+    <Controller
+      name={`${id}`}
+      defaultValue={{}}
+      render={() => {
+        return (
+          <AsyncSearch
+            options={searchOptions}
+            placeholder={formatMessage(
+              m.registerProperty.search.propertySearchPlaceholder,
+            )}
+            initialInputValue={selectedAddress ? selectedAddress.label : ''}
+            inputValue={searchTerm}
+            closeMenuOnSubmit
+            openMenuOnFocus
+            size="large"
+            colored
+            onChange={(selection: { value: string } | null) => {
+              handleAddressSelectionChange(selection)
+            }}
+            onInputValueChange={debouncedSearchTermChange}
+            loading={searchLoading || propertycodeLoading}
+          />
+        )
+      }}
+    />
   )
 }

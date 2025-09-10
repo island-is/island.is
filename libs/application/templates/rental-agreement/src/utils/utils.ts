@@ -166,3 +166,76 @@ export const toISK = (v: unknown): number => {
   const digits = String(v ?? '0').replace(/\D/g, '')
   return Number(digits || 0)
 }
+
+export const isFasteignaNr = (searchTerm: string): boolean => {
+  return /^(?:[fF]\d*|\d+)$/.test(searchTerm)
+}
+
+// Takes in a propertyId string, removes the f or F prefix and returns is as a number
+export const cleanupSearch = (searchTerm: string): number | null => {
+  if (!searchTerm) return 0
+  const cleanedTerm = searchTerm.replace(/^f|^F/, '')
+  const numberValue = parseInt(cleanedTerm, 10)
+  return isNaN(numberValue) ? null : numberValue
+}
+
+type StoredValueUnits = {
+  units?: PropertyUnit[]
+}
+
+type RestoreValueType = 'checked' | 'numOfRooms' | 'changedSize' | 'expanded'
+
+export const restoreValueBoolean = (
+  storedValue: StoredValueUnits,
+  valueType: RestoreValueType,
+) => {
+  if (!storedValue?.units) return {}
+  return storedValue.units.reduce(
+    (acc: Record<string, boolean>, unit: PropertyUnit) => {
+      const { propertyCode, unitCode, checked } = unit
+
+      if (valueType === 'expanded') {
+        if (checked && propertyCode) {
+          acc[propertyCode] = true
+        }
+      } else if (valueType === 'checked') {
+        const unitKey = `${propertyCode}_${unitCode}`
+        acc[unitKey] = checked || false
+      }
+
+      return acc
+    },
+    {} as Record<string, boolean>,
+  )
+}
+
+export const restoreValueNumber = (
+  storedValue: StoredValueUnits,
+  valueType: RestoreValueType,
+) => {
+  if (!storedValue?.units) return {}
+  return storedValue.units.reduce(
+    (acc: Record<string, number>, unit: PropertyUnit) => {
+      const { propertyCode, unitCode, numOfRooms, changedSize } = unit
+
+      if (valueType === 'numOfRooms') {
+        const unitKey = `${propertyCode}_${unitCode}`
+        acc[unitKey] = numOfRooms || 0
+      } else if (valueType === 'changedSize') {
+        const unitKey = `${propertyCode}_${unitCode}`
+        acc[unitKey] = changedSize || 0
+      }
+
+      return acc
+    },
+    {} as Record<string, number>,
+  )
+}
+
+export const isValidInteger = (value: string): boolean => {
+  return /^\d*$/.test(value)
+}
+
+export const isValidDecimal = (value: string): boolean => {
+  return /^\d*\.?\d*$/.test(value)
+}
