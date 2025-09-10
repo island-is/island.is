@@ -39,20 +39,21 @@ export const currentNurserySubSection = buildSubSection({
                 query: friggSchoolsByMunicipalityQuery,
               })
 
-            return (
+            const options =
               data?.friggSchoolsByMunicipality
                 ?.filter(
-                  ({ type, managing }) =>
+                  ({ type, managing, unitId }) =>
                     type === OrganizationModelTypeEnum.Municipality &&
-                    managing &&
+                    Boolean(unitId) &&
+                    Array.isArray(managing) &&
                     managing.length > 0,
                 )
                 ?.map(({ name, unitId }) => ({
-                  value: unitId || '',
+                  value: unitId as string,
                   label: name,
-                }))
-                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
-            )
+                })) ?? []
+
+            return options.sort((a, b) => a.label.localeCompare(b.label))
           },
         }),
         buildAsyncSelectField({
