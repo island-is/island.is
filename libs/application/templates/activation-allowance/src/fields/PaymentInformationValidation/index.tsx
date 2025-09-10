@@ -70,6 +70,10 @@ export const PaymentInformationValidation: FC<
       setErrors((prev) => [...prev, paymentErrors.invalidBankNumber])
     }
 
+    if (!ledgerSupportData || !bankNumberSupportData) {
+      return [false, '']
+    }
+
     try {
       const isValid = await getIsCompanyValidCallback({
         bankNumber: paymentInfo.bankNumber || '',
