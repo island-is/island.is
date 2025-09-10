@@ -19,6 +19,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CourtDocumentType } from '@island.is/judicial-system/types'
 
 import { CourtDocument } from '../models/courtDocument.model'
+import { CourtSession } from '../models/courtSession.model'
 
 interface CreateCourtDocumentOptions {
   transaction?: Transaction
@@ -49,10 +50,65 @@ export class CourtDocumentRepositoryService {
   constructor(
     @InjectModel(CourtDocument)
     private readonly courtDocumentModel: typeof CourtDocument,
+    @InjectModel(CourtSession)
+    private readonly courtSessionModel: typeof CourtSession,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async create(
+    caseId: string,
+    data: CreateCourtDocument,
+    options?: CreateCourtDocumentOptions,
+  ): Promise<CourtDocument> {
+    try {
+      this.logger.debug(
+        `Creating a new court document of case ${caseId} with data:`,
+        { data: Object.keys(data) },
+      )
+
+      const createOptions: CreateOptions = {}
+
+      if (options?.transaction) {
+        createOptions.transaction = options.transaction
+      }
+
+      // Find the last court session for the case, if any
+      const lastCourtSession = await this.courtSessionModel.findOne({
+        where: { caseId },
+        order: [['created', 'DESC']],
+        transaction: options?.transaction,
+      })
+
+      const courtSessionId =
+        lastCourtSession && !lastCourtSession.endDate
+          ? lastCourtSession.id
+          : undefined
+
+      if (courtSessionId) {
+        return this.createInSession(caseId, courtSessionId, data, options)
+      }
+
+      const courtDocument = await this.courtDocumentModel.create(
+        { ...data, caseId },
+        createOptions,
+      )
+
+      this.logger.debug(
+        `Created a new court document ${courtDocument.id} of case ${caseId}`,
+      )
+
+      return courtDocument
+    } catch (error) {
+      this.logger.error(
+        `Error creating a new court document of case ${caseId} with data:`,
+        { data: Object.keys(data), error },
+      )
+
+      throw error
+    }
+  }
+
+  async createInSession(
     caseId: string,
     courtSessionId: string,
     data: CreateCourtDocument,

@@ -14,16 +14,22 @@ export class CourtDocumentService {
 
   async create(
     caseId: string,
-    courtSessionId: string,
+    courtSessionId: string | undefined,
     createDto: CreateCourtDocument,
     transaction: Transaction,
   ): Promise<CourtDocument> {
-    return this.courtDocumentRepositoryService.create(
-      caseId,
-      courtSessionId,
-      createDto,
-      { transaction },
-    )
+    if (courtSessionId) {
+      return this.courtDocumentRepositoryService.createInSession(
+        caseId,
+        courtSessionId,
+        createDto,
+        { transaction },
+      )
+    }
+
+    return this.courtDocumentRepositoryService.create(caseId, createDto, {
+      transaction,
+    })
   }
 
   async update(
