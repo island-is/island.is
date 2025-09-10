@@ -64,7 +64,6 @@ import {
   Employer as TrWebEmployer,
 } from '@island.is/clients/social-insurance-administration'
 import parse from 'date-fns/parse'
-import { capabilityImpairmentSubSection } from 'libs/application/templates/social-insurance-administration/disability-pension/src/forms/mainForm/selfEvaluation/capabilityImpairmentSubSection'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -565,7 +564,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
 
 export const transformApplicationToDisabilityPensionDTO = (
   application: Application,
-): MedicalAndRehabilitationPaymentsDTO => {
+): DisabilityPensionDto => {
   const {
     applicantPhonenumber,
     applicantEmail,
@@ -665,17 +664,19 @@ export const transformApplicationToDisabilityPensionDTO = (
       explanation: status === "ANNAD" && employmentStatusOther ? employmentStatusOther : ""
     })) ?? [],
     //todo: incomePlan: incomePlan,
-  /* TODO: foreignResidencies: livedAbroadList?.map(item => ({
-      countryName: item.country,
-      countryCode: item.
-      foreignNationalId: country.abroadNationalId,
-    })) ?? [],*/
+    /* TODO: foreignResidencies: livedAbroadList?.map(item => ({
+        countryName: item.country,
+        countryCode: item.
+        foreignNationalId: country.abroadNationalId,
+      })) ?? [],*/
     retroactivePayments: {
       year: disabilityRenumerationDateYear ?? -1,
       month: disabilityRenumerationDateMonth ?? -1,
     },
     comment: extraInfo ?? '',
-  }
+  };
+  return dpDto;
+}
 
 export const getIncomeTypes = (
   incomePlan: IncomePlanRow[],

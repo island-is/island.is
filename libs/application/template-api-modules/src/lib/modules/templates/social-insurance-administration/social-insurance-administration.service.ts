@@ -38,6 +38,7 @@ import {
   getApplicationType,
   transformApplicationToAdditionalSupportForTheElderlyDTO,
   transformApplicationToDeathBenefitsDTO,
+  transformApplicationToDisabilityPensionDTO,
   transformApplicationToHouseholdSupplementDTO,
   transformApplicationToIncomePlanDTO,
   transformApplicationToMedicalAndRehabilitationPaymentsDTO,
@@ -509,24 +510,18 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
 
     if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
-      const attachments = await this.getOAPAttachments(application)
-
-      const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
+      const disabilityPensionDTO = transformApplicationToDisabilityPensionDTO(
         application,
-        attachments,
       )
-
-      const applicationType = getApplicationType(application).toLowerCase()
 
       const response = await this.siaClientService.sendApplication(
         auth,
-        oldAgePensionDTO,
-        applicationType,
+        disabilityPensionDTO,
+        application.typeId.toLowerCase(),
       )
 
       return response
     }
-
   }
 
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
