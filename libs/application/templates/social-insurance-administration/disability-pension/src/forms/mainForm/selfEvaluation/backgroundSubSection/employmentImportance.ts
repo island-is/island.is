@@ -1,6 +1,6 @@
 import { buildMultiField, buildRadioField } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { EmploymentImportanceEnum, SectionRouteEnum } from '../../../../types'
+import {  SectionRouteEnum } from '../../../../types'
 
 export const employmentImportanceField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT_IMPORTANCE,
@@ -11,30 +11,30 @@ export const employmentImportanceField = buildMultiField({
       title: disabilityPensionFormMessage.questions.employmentImportanceTitle,
       options: [
         {
-          value: EmploymentImportanceEnum.NOT_IMPORTANT_AT_ALL,
+          value: "0",
           label:
             disabilityPensionFormMessage.questions
               .employmentImportanceNotImportantAtAll,
         },
         {
-          value: EmploymentImportanceEnum.NOT_IMPORTANT,
+          value: "1",
           label:
             disabilityPensionFormMessage.questions
               .employmentImportanceNotImportant,
         },
         {
-          value: EmploymentImportanceEnum.NEUTRAL,
+          value: "2",
           label:
             disabilityPensionFormMessage.questions.employmentImportanceNeutral,
         },
         {
-          value: EmploymentImportanceEnum.IMPORTANT,
+          value: "3",
           label:
             disabilityPensionFormMessage.questions
               .employmentImportanceImportant,
         },
         {
-          value: EmploymentImportanceEnum.VERY_IMPORTANT,
+          value: "4",
           label:
             disabilityPensionFormMessage.questions
               .employmentImportanceVeryImportant,

@@ -14,11 +14,6 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
-import {
-  ChildrenCountEnum,
-  EmploymentImportanceEnum,
-  IcelandicCapabilityEnum,
-} from '../types/enums'
 import { disabilityPensionFormMessage } from './messages'
 
 export const fileSchema = z.object({
@@ -58,8 +53,18 @@ export const dataSchema = z.object({
   }),
   disabilityAppliedBefore: z.enum([YES, NO]),
   disabilityPeriod: z.object({
-    year: z.string(),
-    month: z.string(),
+    year: z.preprocess((value) => {
+      if (typeof value === 'string' && value !== '') {
+        const number = Number.parseInt(value as string, 10)
+        return isNaN(number) ? undefined : number
+      }
+    }, z.number()),
+    month: z.preprocess((value) => {
+      if (typeof value === 'string' && value !== '') {
+        const number = Number.parseInt(value as string, 10)
+        return isNaN(number) ? undefined : number
+      }
+    }, z.number()),
   }),
   livedAbroad: livedAbroadSchema.refine(
     ({ list, hasLivedAbroad }) => {
@@ -144,10 +149,15 @@ export const dataSchema = z.object({
       },
     ),
   backgroundInfoChildren: z.object({
-    count: z.nativeEnum(ChildrenCountEnum),
+    count: z.string()
   }),
   backgroundInfoIcelandicCapability: z.object({
-    capability: z.nativeEnum(IcelandicCapabilityEnum),
+    capability: z.preprocess((value) => {
+        if (typeof value === 'string' && value !== '') {
+          const number = Number.parseInt(value as string, 10)
+          return isNaN(number) ? undefined : number
+        }
+      }, z.number()),
   }),
   backgroundInfoLanguage: z
     .object({
@@ -183,14 +193,19 @@ export const dataSchema = z.object({
   backgroundInfoPreviousEmployment: z
     .object({
       hasEmployment: z.enum([YES, NO]),
-      when: z.string().nullable().optional(),
+      when: z.preprocess((value) => {
+          if (typeof value === 'string' && value !== '') {
+            const number = Number.parseInt(value as string, 10)
+            return isNaN(number) ? undefined : number
+          }
+        }, z.number().nullable().optional()),
       job: z.string().nullable().optional(),
       field: z.string().nullable().optional(),
     })
     .refine(
       ({ hasEmployment, when }) => {
         if (hasEmployment === YES) {
-          return when && when.length > 0
+          return when && when > 0
         }
         return true
       },
@@ -246,7 +261,12 @@ export const dataSchema = z.object({
       },
     ),
   backgroundInfoEmploymentImportance: z.object({
-    importance: z.nativeEnum(EmploymentImportanceEnum),
+    importance: z.preprocess((value) => {
+      if (typeof value === 'string' && value !== '') {
+        const number = Number.parseInt(value as string, 10)
+        return isNaN(number) ? undefined : number
+      }
+    }, z.number().min(0).max(4)),
   }),
   backgroundInfoRehabilitationOrTherapy: z
     .object({
@@ -291,7 +311,7 @@ export const dataSchema = z.object({
   }),
   paymentInfo: z
     .object({
-      accountType: z.nativeEnum(BankAccountType),
+      bankAccountType: z.nativeEnum(BankAccountType),
       bank: z.string(),
       bankAddress: z.string(),
       bankName: z.string(),
@@ -308,8 +328,8 @@ export const dataSchema = z.object({
     })
     .partial()
     .refine(
-      ({ bank, accountType }) => {
-        if (accountType === BankAccountType.ICELANDIC) {
+      ({ bank, bankAccountType }) => {
+        if (bankAccountType === BankAccountType.ICELANDIC) {
           const bankAccount = formatBankInfo(bank ?? '')
           return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
         }
@@ -318,8 +338,8 @@ export const dataSchema = z.object({
       { params: errorMessages.bank, path: ['bank'] },
     )
     .refine(
-      ({ iban, accountType }) => {
-        if (accountType === BankAccountType.FOREIGN) {
+      ({ iban, bankAccountType }) => {
+        if (bankAccountType === BankAccountType.FOREIGN) {
           const formattedIBAN = iban?.replace(/[\s]+/g, '')
           return formattedIBAN ? validIBAN(formattedIBAN) : false
         }
@@ -328,8 +348,8 @@ export const dataSchema = z.object({
       { params: errorMessages.iban, path: ['iban'] },
     )
     .refine(
-      ({ swift, accountType }) => {
-        if (accountType === BankAccountType.FOREIGN) {
+      ({ swift, bankAccountType }) => {
+        if (bankAccountType === BankAccountType.FOREIGN) {
           const formattedSWIFT = swift?.replace(/[\s]+/g, '')
           return formattedSWIFT ? validSWIFT(formattedSWIFT) : false
         }
@@ -338,18 +358,18 @@ export const dataSchema = z.object({
       { params: errorMessages.swift, path: ['swift'] },
     )
     .refine(
-      ({ bankName, accountType }) =>
-        accountType === BankAccountType.FOREIGN ? !!bankName : true,
+      ({ bankName, bankAccountType }) =>
+        bankAccountType === BankAccountType.FOREIGN ? !!bankName : true,
       { path: ['bankName'] },
     )
     .refine(
-      ({ bankAddress, accountType }) =>
-        accountType === BankAccountType.FOREIGN ? !!bankAddress : true,
+      ({ bankAddress, bankAccountType }) =>
+        bankAccountType === BankAccountType.FOREIGN ? !!bankAddress : true,
       { path: ['bankAddress'] },
     )
     .refine(
-      ({ currency, accountType }) =>
-        accountType === BankAccountType.FOREIGN ? !!currency : true,
+      ({ currency, bankAccountType }) =>
+        bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
       { path: ['currency'] },
     )
     .refine(
@@ -494,6 +514,7 @@ export const dataSchema = z.object({
       .optional()
       .nullable(),
   }),
+  extraInfo: z.string().optional()
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

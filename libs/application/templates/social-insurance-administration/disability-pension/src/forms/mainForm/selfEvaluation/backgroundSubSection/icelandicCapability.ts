@@ -11,19 +11,19 @@ export const icelandicCapabilityField = buildMultiField({
       title: disabilityPensionFormMessage.questions.icelandicCapabilityTitle,
       options: [
         {
-          value: IcelandicCapabilityEnum.POOR,
+          value: "0",
           label: disabilityPensionFormMessage.questions.icelandicCapabilityPoor,
         },
         {
-          value: IcelandicCapabilityEnum.FAIR,
+          value: "1",
           label: disabilityPensionFormMessage.questions.icelandicCapabilityFair,
         },
         {
-          value: IcelandicCapabilityEnum.GOOD,
+          value: "2",
           label: disabilityPensionFormMessage.questions.icelandicCapabilityGood,
         },
         {
-          value: IcelandicCapabilityEnum.VERY_GOOD,
+          value: "3",
           label:
             disabilityPensionFormMessage.questions.icelandicCapabilityVeryGood,
         },

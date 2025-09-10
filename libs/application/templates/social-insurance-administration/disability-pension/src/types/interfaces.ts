@@ -1,11 +1,37 @@
+import { YesOrNo } from "@island.is/application/core"
+
 export interface EducationLevels {
   code: string
   description: string
 }
 
+export interface Country{
+  country: string
+  abroadNationalId: string
+}
+
 export interface MaritalStatus {
   value: number
   label: string
+}
+
+export interface PreviousEmployment {
+  hasEmployment: YesOrNo
+  when: number
+  job: string
+  field: string
+}
+
+export interface SelfAssessmentQuestionnaireAnswers {
+  answer: number
+  id: string
+}
+
+export interface LivedAbroad {
+  country: string
+  abroadNationalId?: string
+  periodStart: string
+  periodEnd: string
 }
 
 export interface Residence {

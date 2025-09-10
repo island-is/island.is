@@ -41,6 +41,7 @@ import {
   shouldShowConfirmedTreatment,
   shouldShowRehabilitationPlan,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
+import { getApplicationAnswers as getDPApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/disability-pension'
 import {
   ApplicationType,
   Employer,
@@ -56,12 +57,14 @@ import {
 import { Application } from '@island.is/application/types'
 import {
   ApplicationDTO,
+  DisabilityPensionDto,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   IncomeTypes,
   MedicalAndRehabilitationPaymentsDTO,
   Employer as TrWebEmployer,
 } from '@island.is/clients/social-insurance-administration'
 import parse from 'date-fns/parse'
+import { capabilityImpairmentSubSection } from 'libs/application/templates/social-insurance-administration/disability-pension/src/forms/mainForm/selfEvaluation/capabilityImpairmentSubSection'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -559,6 +562,120 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
 
   return marpDTO
 }
+
+export const transformApplicationToDisabilityPensionDTO = (
+  application: Application,
+): MedicalAndRehabilitationPaymentsDTO => {
+  const {
+    applicantPhonenumber,
+    applicantEmail,
+    paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
+    incomePlan,
+    isReceivingBenefitsFromAnotherCountry,
+    countries,
+    hasAppliedForDisabilityBefore,
+    disabilityRenumerationDateYear,
+    disabilityRenumerationDateMonth,
+    hasLivedAbroad,
+    livedAbroadList,
+    inPaidWork,
+    willContinueWorking,
+    maritalStatus,
+    residence,
+    residenceExtraComment,
+    children,
+    icelandicCapability,
+    language,
+    languageOther,
+    employmentStatus,
+    employmentStatusOther,
+    previousEmployment,
+    employmentCapability,
+    employmentImportance,
+    hasHadRehabilitationOrTherapy,
+    rehabilitationOrTherapyResults,
+    rehabilitationOrTherapyDescription,
+    biggestIssue,
+    educationLevel,
+    hadAssistanceForSelfEvaluation,
+    questionnaire,
+    extraInfo
+  } = getDPApplicationAnswers(application.answers)
+
+  const dpDto: DisabilityPensionDto = {
+    applicantInfo: {
+      email: applicantEmail,
+      phonenumber: applicantPhonenumber,
+    },
+    applicationId: application.id,
+    ...(!shouldNotUpdateBankAccount(undefined, paymentInfo) && {
+      domesticBankInfo: {
+        bank: formatBank(getBankIsk(paymentInfo)),
+      },
+    }),
+    taxInfo: {
+      personalAllowance: personalAllowance === YES,
+      personalAllowanceUsage:
+        personalAllowance === YES ? +personalAllowanceUsage : 0,
+      taxLevel: +taxLevel,
+    },
+    hasAppliedForDisabilityAtPensionFund: hasAppliedForDisabilityBefore === YES,
+    isInPaidEmployment: inPaidWork === YES,
+    plansToContinueParticipation: willContinueWorking === YES,
+    housingTypeId: residence ?? -1,
+    housingTypeAdditionalDescription: residenceExtraComment ?? '',
+    numberOfChildrenInHome: children ?? "",
+    languageProficiency: icelandicCapability ?? -1,
+    applicantNativeLanguage: language ?? "",
+    applicantNativeLanguageOther: languageOther,
+    hasBeenInPaidEmployment: previousEmployment?.hasEmployment ? previousEmployment.hasEmployment === YES : false,
+    lastProfession: previousEmployment?.job ?? "",
+    lastProfessionYear: previousEmployment?.when ?? -1,
+    lastProfessionDescription: "TODO - VANTAR",
+    lastActivityOfProfession: previousEmployment?.field ?? '',
+    lastActivityOfProfessionDescription: "TODO - VANTAR",
+    educationalLevel: educationLevel ?? "",
+    workCapacityAssessment: employmentCapability ?? -1,
+    importanceOfEmployment: employmentImportance ?? -1,
+    hasBeenInRehabilitationOrTreatment: hasHadRehabilitationOrTherapy === YES,
+    rehabilitationOrTreatment: rehabilitationOrTherapyDescription ?? "",
+    rehabilitationOrTreatmentOutcome: rehabilitationOrTherapyResults ?? "",
+    workIncapacityIssue: biggestIssue ?? "",
+    foreignPaymentDetails: {
+      receivesForeignPayments: isReceivingBenefitsFromAnotherCountry === YES,
+      foreignPaymentDetails: countries.map((country) => ({
+        countryName: country.name,
+        countryCode: country.code,
+        foreignNationalId: country.abroadNationalId,
+      })),
+    },
+    maritalStatusTypeId: maritalStatus ?? -1,
+    selfAssessment: {
+      hadAssistance: hadAssistanceForSelfEvaluation === YES,
+      answers: questionnaire.map(question => ({
+        questionId: question.id,
+        answer: question.answer.toString()
+      }))
+    },
+    employmentStatuses: employmentStatus?.map(status => ({
+      employmentStatus: status,
+      explanation: status === "ANNAD" && employmentStatusOther ? employmentStatusOther : ""
+    })) ?? [],
+    //todo: incomePlan: incomePlan,
+  /* TODO: foreignResidencies: livedAbroadList?.map(item => ({
+      countryName: item.country,
+      countryCode: item.
+      foreignNationalId: country.abroadNationalId,
+    })) ?? [],*/
+    retroactivePayments: {
+      year: disabilityRenumerationDateYear ?? -1,
+      month: disabilityRenumerationDateMonth ?? -1,
+    },
+    comment: extraInfo ?? '',
+  }
 
 export const getIncomeTypes = (
   incomePlan: IncomePlanRow[],

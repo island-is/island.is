@@ -122,7 +122,11 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                UserProfileApi,
+                UserProfileApi.configure({
+                  params: {
+                    validateEmail: true,
+                  },
+                }),
                 IdentityApi,
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
@@ -285,7 +289,7 @@ const template: ApplicationTemplate<
           actionCard: {
             pendingAction: {
               title: socialInsuranceAdministrationMessage.applicationApproved,
-              content: dpStatesMessages.applicationApproved,
+              content: statesMessages.applicationApproved,
               displayStatus: 'success',
             },
           },

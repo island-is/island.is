@@ -1,0 +1,216 @@
+import { getValueViaPath, YesOrNo } from '@island.is/application/core'
+import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  IncomePlanRow,
+  PaymentInfo,
+} from '@island.is/application/templates/social-insurance-administration-core/types'
+import { Application } from '@island.is/application/types'
+import { Country, LivedAbroad, PreviousEmployment, SelfAssessmentQuestionnaireAnswers } from '../types/interfaces'
+
+export const getApplicationAnswers = (answers: Application['answers']) => {
+  const applicantPhonenumber =
+    getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? ''
+
+  const applicantEmail =
+    getValueViaPath<string>(answers, 'applicantInfo.email') ?? ''
+
+  const paymentInfo = getValueViaPath<PaymentInfo>(answers, 'paymentInfo')
+
+  const personalAllowance = getValueViaPath<YesOrNo>(
+    answers,
+    'paymentInfo.personalAllowance',
+  )
+
+  const personalAllowanceUsage =
+    getValueViaPath<string>(answers, 'paymentInfo.personalAllowanceUsage') ?? ''
+
+  const taxLevel =
+    getValueViaPath<TaxLevelOptions>(answers, 'paymentInfo.taxLevel') ??
+    TaxLevelOptions.INCOME
+
+  const incomePlan =
+    getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
+
+  const isReceivingBenefitsFromAnotherCountry = getValueViaPath<YesOrNo>(
+    answers,
+    'abroadPayments.hasAbroadPayments',
+  )
+
+  const countries =
+    getValueViaPath<Country[]>(
+      answers,
+      'abroadPayments.list',
+    ) ?? []
+
+  const hasAppliedForDisabilityBefore =  getValueViaPath<YesOrNo>(
+    answers,
+    'disabilityAppliedBefore',
+  )
+
+  const disabilityRenumerationDateMonth = getValueViaPath<number>(
+    answers,
+    'disabilityPeriod.month',
+  )
+  const disabilityRenumerationDateYear = getValueViaPath<number>(
+    answers,
+    'disabilityPeriod.year',
+  )
+
+  const hasLivedAbroad =getValueViaPath<YesOrNo>(
+    answers,
+    'livedAbroad.hasLivedAbroad',
+  )
+  const livedAbroadList = getValueViaPath<LivedAbroad[]>(
+    answers,
+    'livedAbroad.list',
+  )
+
+  const inPaidWork = getValueViaPath<YesOrNo>(
+    answers,
+    'paidWork.inPaidWork',
+  )
+  const willContinueWorking = getValueViaPath<YesOrNo>(
+    answers,
+    'paidWork.continuedWork',
+  )
+
+  const maritalStatus = getValueViaPath<number>(
+    answers,
+    'backgroundInfoMaritalStatus.status',
+  )
+
+  const residence = getValueViaPath<number>(
+    answers,
+    'backgroundInfoResidence.status',
+  )
+
+  const residenceExtraComment = getValueViaPath<string>(
+    answers,
+    'backgroundInfoResidence.other',
+  )
+
+  const children = getValueViaPath<string>(
+    answers,
+    'backgroundInfoChildren.count',
+  )
+
+  const icelandicCapability = getValueViaPath<number>(
+    answers,
+    'backgroundInfoIcelandicCapability.capability',
+  )
+
+  const language = getValueViaPath<string>(
+    answers,
+    'backgroundInfoLanguage.language',
+  )
+
+  const languageOther = getValueViaPath<string>(
+    answers,
+    'backgroundInfoLanguage.other',
+  )
+
+  const employmentStatus = getValueViaPath<Array<string>>(
+    answers,
+    'backgroundInfoEmployment.status',
+  )
+
+  const employmentStatusOther = getValueViaPath<string>(
+    answers,
+    'backgroundInfoEmployment.other',
+  )
+
+  const previousEmployment = getValueViaPath<PreviousEmployment>(
+    answers,
+    'backgroundInfoPreviousEmployment',
+  )
+
+  const employmentCapability = getValueViaPath<number>(
+    answers,
+    'backgroundInfoEmploymentCapability.capability',
+  )
+
+  const employmentImportance = getValueViaPath<number>(
+    answers,
+    'backgroundInfoEmploymentImportance.importance',
+  )
+
+  const hasHadRehabilitationOrTherapy = getValueViaPath<YesOrNo>(
+    answers,
+    'backgroundInfoRehabilitationOrTherapy.rehabilitationOrTherapy',
+  )
+
+  const rehabilitationOrTherapyResults = getValueViaPath<string>(
+    answers,
+    'backgroundInfoRehabilitationOrTherapy.rehabilitationResults',
+  )
+
+  const rehabilitationOrTherapyDescription = getValueViaPath<string>(
+    answers,
+    'backgroundInfoRehabilitationOrTherapy.rehabilitationDescription',
+  )
+
+  const biggestIssue = getValueViaPath<string>(
+    answers,
+    'backgroundInfoBiggestIssue.text',
+  )
+
+  const educationLevel = getValueViaPath<string>(
+    answers,
+    'backgroundInfoEducationLevel.level',
+  )
+
+  const hadAssistanceForSelfEvaluation = getValueViaPath<YesOrNo>(
+    answers,
+    'selfEvaluation.assistance',
+  )
+
+  const questionnaire =
+    getValueViaPath<SelfAssessmentQuestionnaireAnswers[]>(
+      answers,
+      'capabilityImpairment.questionAnswers',
+    ) ?? []
+
+  const extraInfo = getValueViaPath<string>(
+    answers,
+    'extraInfo',
+  )
+
+  return {
+    extraInfo,
+    applicantPhonenumber,
+    applicantEmail,
+    paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
+    incomePlan,
+    isReceivingBenefitsFromAnotherCountry,
+    countries,
+    hasAppliedForDisabilityBefore,
+    disabilityRenumerationDateYear,
+    disabilityRenumerationDateMonth,
+    hasLivedAbroad,
+    livedAbroadList,
+    inPaidWork,
+    willContinueWorking,
+    maritalStatus,
+    residence,
+    residenceExtraComment,
+    children,
+    icelandicCapability,
+    language,
+    languageOther,
+    employmentStatus,
+    employmentStatusOther,
+    previousEmployment,
+    employmentCapability,
+    employmentImportance,
+    hasHadRehabilitationOrTherapy,
+    rehabilitationOrTherapyResults,
+    rehabilitationOrTherapyDescription,
+    biggestIssue,
+    educationLevel,
+    hadAssistanceForSelfEvaluation,
+    questionnaire
+  }
+}

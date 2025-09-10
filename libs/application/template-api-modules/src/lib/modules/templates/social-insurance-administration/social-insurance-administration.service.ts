@@ -507,6 +507,26 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
       return response
     }
+
+    if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
+      const attachments = await this.getOAPAttachments(application)
+
+      const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
+        application,
+        attachments,
+      )
+
+      const applicationType = getApplicationType(application).toLowerCase()
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        oldAgePensionDTO,
+        applicationType,
+      )
+
+      return response
+    }
+
   }
 
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
