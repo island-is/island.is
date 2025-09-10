@@ -1254,6 +1254,6 @@ export const statesMessages = defineMessages({
     defaultMessage:
       'Umsókn um sjúkra- og endurhæfingargreiðslur hefur verið hafnað',
     description:
-      'The application for medical and rehabiliation payments has been rejected',
+      'The application for medical and rehabilitation payments has been rejected',
   },
 })
