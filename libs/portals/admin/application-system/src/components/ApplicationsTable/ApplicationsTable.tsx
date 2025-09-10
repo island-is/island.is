@@ -94,7 +94,7 @@ export const ApplicationsTable = ({
               <T.HeadData>{formatMessage(m.application)}</T.HeadData>
             )}
             <T.HeadData>{formatMessage(m.applicant)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.nationalId)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.applicantNationalId)}</T.HeadData>
             {showAdminData &&
               applications[0]?.adminData?.map((x) => (
                 <T.HeadData key={x.key}>
@@ -102,7 +102,9 @@ export const ApplicationsTable = ({
                 </T.HeadData>
               ))}
             <T.HeadData>{formatMessage(m.dateModified)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
+            {!showAdminData && (
+              <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
+            )}
             <T.HeadData>{formatMessage(m.status)}</T.HeadData>
             <T.HeadData />
           </T.Row>
@@ -158,13 +160,15 @@ export const ApplicationsTable = ({
                       <T.Data text={{ color: cellText }}>
                         {format(new Date(application.modified), 'dd.MM.yyyy')}
                       </T.Data>
-                      <T.Data>
-                        <Box display="flex" alignItems="center">
-                          <Tooltip text={application.institution}>
-                            <img src={logo} alt="" className={styles.logo} />
-                          </Tooltip>
-                        </Box>
-                      </T.Data>
+                      {!showAdminData && (
+                        <T.Data>
+                          <Box display="flex" alignItems="center">
+                            <Tooltip text={application.institution}>
+                              <img src={logo} alt="" className={styles.logo} />
+                            </Tooltip>
+                          </Box>
+                        </T.Data>
+                      )}
                       <T.Data>
                         <Tag disabled variant={tag.variant} truncate>
                           {formatMessage(tag.label)}
