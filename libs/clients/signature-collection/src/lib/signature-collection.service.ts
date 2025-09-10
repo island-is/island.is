@@ -72,7 +72,7 @@ export class SignatureCollectionClientService {
       this.getApiWithAuth(this.electionsApi, auth),
     )
     if (!list.active) {
-      throw new Error('List is not active')
+      throw new Error('Listi er ekki virkur')
     }
     return list
   }
