@@ -6,6 +6,7 @@ import { SigningModule } from '@island.is/dokobit-signing'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
+import { CaseArchive, CaseString, DateLog } from '../repository'
 import {
   AwsS3Module,
   CourtModule,
@@ -15,15 +16,12 @@ import {
   FileModule,
   IndictmentCountModule,
   PoliceModule,
+  RepositoryModule,
   SubpoenaModule,
   UserModule,
+  VerdictModule,
   VictimModule,
-} from '../index'
-import { VerdictModule } from '../verdict/verdict.module'
-import { Case } from './models/case.model'
-import { CaseArchive } from './models/caseArchive.model'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
+} from '..'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 import { InternalCaseController } from './internalCase.controller'
@@ -37,6 +35,7 @@ import { PdfService } from './pdf.service'
     SigningModule,
     CmsTranslationsModule,
     MessageModule,
+    forwardRef(() => RepositoryModule),
     forwardRef(() => DefendantModule),
     forwardRef(() => SubpoenaModule),
     forwardRef(() => VerdictModule),
@@ -49,7 +48,7 @@ import { PdfService } from './pdf.service'
     forwardRef(() => PoliceModule),
     forwardRef(() => EventLogModule),
     forwardRef(() => VictimModule),
-    SequelizeModule.forFeature([Case, CaseArchive, DateLog, CaseString]),
+    SequelizeModule.forFeature([CaseArchive, DateLog, CaseString]),
   ],
   providers: [
     CaseService,

@@ -76,8 +76,17 @@ definitions:
       name: Increment build number
       script: |
         cd ios
-        LATEST_BUILD_NUMBER=$(app-store-connect get-latest-build-number "$APP_STORE_APPLE_ID")
-        agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
+        APP_STORE_BUILD=$(app-store-connect get-latest-build-number "$APP_STORE_APPLE_ID")
+        PROJECT_BUILD=$(agvtool what-version -terse | tail -n 1) # tail -n 1takes the last line from the output
+
+        if [ "$PROJECT_BUILD" -gt "$APP_STORE_BUILD" ]; then
+          echo "Using project build: $PROJECT_BUILD"
+          echo "This may be due to a hidden/failed build in App Store Connect"
+          # Keep current project build number (don't change it)
+        else
+          echo "Using App Store Connect build: $APP_STORE_BUILD"
+          agvtool new-version -all $(($APP_STORE_BUILD + 1))
+        fi
     - &build_ipa
       name: Build ipa for distribution
       script: |

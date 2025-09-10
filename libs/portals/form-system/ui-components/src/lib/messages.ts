@@ -56,6 +56,11 @@ export const m = defineMessages({
     defaultMessage: 'Staða',
     description: 'State',
   },
+  individualName: {
+    id: 'portals-admin.form-system:individual-name',
+    defaultMessage: 'Nafn',
+    description: 'Name',
+  },
   name: {
     id: 'portals-admin.form-system:name',
     defaultMessage: 'Heiti',
@@ -599,6 +604,21 @@ export const m = defineMessages({
     defaultMessage: 'Afrita',
     description: 'Copy',
   },
+  publish: {
+    id: 'portals-admin.form-system:publish',
+    defaultMessage: 'Gefa út',
+    description: 'Publish',
+  },
+  unpublish: {
+    id: 'portals-admin.form-system:unpublish',
+    defaultMessage: 'Afturkalla útgáfu',
+    description: 'Unpublish',
+  },
+  tryOut: {
+    id: 'portals-admin.form-system:try-out',
+    defaultMessage: 'Prófa',
+    description: 'Try out',
+  },
   getUrl: {
     id: 'portals-admin.form-system:get-url',
     defaultMessage: 'Sækja slóð',
@@ -891,5 +911,37 @@ export const webMessages = defineMessages({
     id: 'form-system:submit-application',
     defaultMessage: 'Senda inn umsókn',
     description: 'Submit application',
+  },
+  openMyPages: {
+    id: 'form-system:open-my-pages',
+    defaultMessage: 'Opna mínar síður',
+    description: 'Open my pages',
+  },
+  completedErrorTitle: {
+    id: 'form-system:submit-application-error-title',
+    defaultMessage: 'Ekki tókst að senda umsókn.',
+    description: 'The application could not be submitted.',
+  },
+  completedErrorDescription: {
+    id: 'form-system:submit-application-error-description',
+    defaultMessage: 'Villa hefur komið upp í samskiptum við Zendesk.',
+    description: 'An error has occurred in communication with Zendesk.',
+  },
+  completedSuccessTitle: {
+    id: 'form-system:submit-application-success-title',
+    defaultMessage: 'Umsókn þín er móttekin',
+    description: 'Your application has been received.',
+  },
+  completedSuccessDescription: {
+    id: 'form-system:submit-application-success-description',
+    defaultMessage: 'Umsókn þín hefur verið móttekin og er í vinnslu.',
+    description: 'Your application has been received and is being processed.',
+  },
+  LoremIpsum: {
+    id: 'form-system:lorem-ipsum',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
   },
 })

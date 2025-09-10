@@ -10,10 +10,10 @@ const DASHBOARD_TABS: TabType[] = [
     id: 'forms',
     label: 'Form',
   },
-  {
-    id: 'applications',
-    label: 'Umsóknir',
-  },
+  // {
+  //   id: 'applications',
+  //   label: 'Umsóknir',
+  // },
   {
     id: 'admin',
     label: 'Kerfisstjórnun',
@@ -25,7 +25,7 @@ export const FormsHeader = () => {
 
   const onTabChange = (tabId: string) => {
     const isValidLocation = (value: string): value is FormsLocationState => {
-      return ['forms', 'applications', 'admin'].includes(value)
+      return ['forms', 'admin'].includes(value)
     }
 
     if (isValidLocation(tabId)) {

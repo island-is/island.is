@@ -9,8 +9,8 @@ import { errorMessages as coreSIAErrorMessages } from '@island.is/application/te
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
+  CURRENT_EMPLOYMENT_STATUS_OTHER,
   NOT_APPLICABLE,
-  SelfAssessmentCurrentEmploymentStatus,
 } from '../utils/constants'
 import { errorMessages } from './messages'
 
@@ -258,7 +258,7 @@ export const dataSchema = z.object({
   unionSickPay: z
     .object({
       hasUtilizedUnionSickPayRights: z.string().optional().nullable(),
-      unionNationalId: z.string().optional().nullable(),
+      unionInfo: z.string().optional().nullable(),
       endDate: z.string().optional().nullable(),
       unionName: z.string().optional().nullable(),
     })
@@ -276,18 +276,18 @@ export const dataSchema = z.object({
       },
     )
     .refine(
-      ({ hasUtilizedUnionSickPayRights, unionNationalId, unionName }) => {
+      ({ hasUtilizedUnionSickPayRights, unionInfo, unionName }) => {
         // If the union name is set then we don't need to check the union
         if (unionName) {
           return true
         }
 
         return hasUtilizedUnionSickPayRights !== NOT_APPLICABLE
-          ? !!unionNationalId
+          ? !!unionInfo
           : true
       },
       {
-        path: ['unionNationalId'],
+        path: ['unionInfo'],
       },
     )
     .refine(
@@ -314,11 +314,8 @@ export const dataSchema = z.object({
     .object({
       hadAssistance: z.enum([YES, NO]).optional(),
       educationalLevel: z.string().optional(),
-      currentEmploymentStatus: z
-        .array(z.nativeEnum(SelfAssessmentCurrentEmploymentStatus))
-        .min(1)
-        .optional(),
-      currentEmploymentStatusAdditional: z.string().optional(),
+      currentEmploymentStatuses: z.array(z.string()).min(1).optional(),
+      currentEmploymentStatusExplanation: z.string().optional(),
       lastEmploymentTitle: z.string().optional(),
       lastEmploymentYear: z.string().optional().nullable(),
       mainProblem: z.string().min(1).optional(),
@@ -378,14 +375,12 @@ export const dataSchema = z.object({
       { path: ['previousRehabilitationSuccessfulFurtherExplanations'] },
     )
     .refine(
-      ({ currentEmploymentStatus, currentEmploymentStatusAdditional }) =>
-        currentEmploymentStatus &&
-        currentEmploymentStatus.includes(
-          SelfAssessmentCurrentEmploymentStatus.OTHER,
-        )
-          ? !!currentEmploymentStatusAdditional
+      ({ currentEmploymentStatuses, currentEmploymentStatusExplanation }) =>
+        Array.isArray(currentEmploymentStatuses) &&
+        currentEmploymentStatuses.includes(CURRENT_EMPLOYMENT_STATUS_OTHER)
+          ? !!currentEmploymentStatusExplanation?.trim()
           : true,
-      { path: ['currentEmploymentStatusAdditional'] },
+      { path: ['currentEmploymentStatusExplanation'] },
     ),
 })
 

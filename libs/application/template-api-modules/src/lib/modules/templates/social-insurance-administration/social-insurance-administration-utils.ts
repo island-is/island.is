@@ -29,16 +29,16 @@ import {
   getApplicationExternalData as getIPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
 import {
+  CURRENT_EMPLOYMENT_STATUS_OTHER,
   getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
   isFirstApplication,
-  SelfAssessmentCurrentEmploymentStatus,
   shouldShowCalculatedRemunerationDate,
-  shouldShowIsStudyingFields,
-  shouldShowPreviousRehabilitationOrTreatmentFields,
   shouldShowConfirmationOfIllHealth,
   shouldShowConfirmationOfPendingResolution,
   shouldShowConfirmedTreatment,
+  shouldShowIsStudyingFields,
+  shouldShowPreviousRehabilitationOrTreatmentFields,
   shouldShowRehabilitationPlan,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
@@ -415,11 +415,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
-    unionNationalId,
+    unionInfo,
     comment,
     questionnaire,
-    currentEmploymentStatus,
-    currentEmploymentStatusAdditional,
+    currentEmploymentStatuses,
+    currentEmploymentStatusExplanation,
     lastEmploymentTitle,
     lastEmploymentYear,
     certificateForSicknessAndRehabilitationReferenceId,
@@ -445,15 +445,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       email: applicantEmail,
       phonenumber: applicantPhonenumber,
     },
-    period: {
-      year: new Date().getFullYear(), //TODO: remove when backend is ready
-      month: new Date().getMonth(), //TODO: remove when backend is ready
-    },
     comment,
     applicationId: application.id,
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
       domesticBankInfo: {
-        bank: getBankIsk(paymentInfo),
+        bank: formatBank(getBankIsk(paymentInfo)),
       },
     }),
     taxInfo: {
@@ -502,7 +498,8 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
         ),
         ...((hasUtilizedUnionSickPayRights === YES ||
           hasUtilizedUnionSickPayRights === NO) && {
-          unionNationalId,
+          unionNationalId: unionInfo.split('::')[0],
+          unionName: unionInfo.split('::')[1],
           unionSickPayEndDate,
         }),
       },
@@ -514,12 +511,13 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     }),
     preQuestionnaire: {
       highestEducation: educationalLevel || '',
-      currentEmploymentStatus: currentEmploymentStatus?.[0], // TODO: Smári needs to change to an array
-      ...(currentEmploymentStatus?.includes(
-        SelfAssessmentCurrentEmploymentStatus.OTHER,
-      ) && {
-        currentEmploymentStatusExplanation: currentEmploymentStatusAdditional,
-      }),
+      employmentStatuses: currentEmploymentStatuses.map((status) => ({
+        employmentStatus: status,
+        explanation:
+          status === CURRENT_EMPLOYMENT_STATUS_OTHER
+            ? currentEmploymentStatusExplanation ?? ''
+            : null,
+      })),
       ...(lastEmploymentTitle && { lastJobTitle: lastEmploymentTitle }),
       ...(lastEmploymentYear && { lastJobYear: +lastEmploymentYear }),
       disabilityReason: mainProblem || '',
