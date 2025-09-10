@@ -762,11 +762,11 @@ const CourtRecord: FC = () => {
           <Button
             variant="ghost"
             onClick={async () => {
-              const courtSessionId = await createCourtSession({
+              const courtSession = await createCourtSession({
                 caseId: workingCase.id,
               })
 
-              if (!courtSessionId) {
+              if (!courtSession?.id) {
                 return
               }
 
@@ -775,8 +775,8 @@ const CourtRecord: FC = () => {
                 courtSessions: [
                   ...(prev.courtSessions ?? []),
                   {
-                    id: courtSessionId,
-                    created: new Date().toISOString(),
+                    id: courtSession.id,
+                    created: courtSession.created,
                   } as CourtSession,
                 ],
               }))

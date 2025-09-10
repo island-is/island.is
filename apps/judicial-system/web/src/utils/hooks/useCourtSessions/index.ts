@@ -26,7 +26,10 @@ const useCourtSessions = () => {
           throw new Error()
         }
 
-        return data.createCourtSession.id
+        return {
+          id: data.createCourtSession.id,
+          created: data.createCourtSession.created,
+        }
       } catch (error) {
         toast.error('Upp kom villa við að bæta við þinghaldi')
 
