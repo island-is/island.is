@@ -1,12 +1,40 @@
 import { useCallback } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
-import { UpdateCourtSessionInput } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CreateCourtSessionInput,
+  UpdateCourtSessionInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { useCreateCourtSessionMutation } from './createCourtSession.generated'
 import { useUpdateCourtSessionMutation } from './updateCourtSession.generated'
 
 const useCourtSessions = () => {
   const [updateCourtSessionMutation] = useUpdateCourtSessionMutation()
+  const [createCourtSessionMutation] = useCreateCourtSessionMutation()
+
+  const createCourtSession = useCallback(
+    async (createCourtSessionInput: CreateCourtSessionInput) => {
+      try {
+        const { data } = await createCourtSessionMutation({
+          variables: {
+            input: createCourtSessionInput,
+          },
+        })
+
+        if (!data || !data.createCourtSession) {
+          throw new Error()
+        }
+
+        return data.createCourtSession.id
+      } catch (error) {
+        toast.error('Upp kom villa við að bæta við þinghaldi')
+
+        return
+      }
+    },
+    [createCourtSessionMutation],
+  )
 
   const updateCourtSession = useCallback(
     async (updateCourtSession: UpdateCourtSessionInput) => {
@@ -24,10 +52,11 @@ const useCourtSessions = () => {
         return false
       }
     },
-    [],
+    [updateCourtSessionMutation],
   )
 
   return {
+    createCourtSession,
     updateCourtSession,
   }
 }

@@ -13,6 +13,7 @@ import {
   Accordion,
   AccordionItem,
   Box,
+  Button,
   Checkbox,
   Input,
   RadioButton,
@@ -37,6 +38,7 @@ import {
 import { useCourtDocuments } from '@island.is/judicial-system-web/src/components/CourtDocuments/CourtDocuments'
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
+  CourtSession,
   CourtSessionRulingType,
   User,
   UserRole,
@@ -106,7 +108,7 @@ const CourtRecord: FC = () => {
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
-  const { updateCourtSession } = useCourtSessions()
+  const { createCourtSession, updateCourtSession } = useCourtSessions()
 
   const { data: usersData, loading: usersLoading } =
     useSelectCourtOfficialsUsersQuery({
@@ -756,6 +758,34 @@ const CourtRecord: FC = () => {
             </AccordionItem>
           ))}
         </Accordion>
+        <Box display="flex" justifyContent="flexEnd" marginTop={5}>
+          <Button
+            variant="ghost"
+            onClick={async () => {
+              const courtSessionId = await createCourtSession({
+                caseId: workingCase.id,
+              })
+
+              if (!courtSessionId) {
+                return
+              }
+
+              setWorkingCase((prev) => ({
+                ...prev,
+                courtSessions: [
+                  ...(prev.courtSessions ?? []),
+                  {
+                    id: courtSessionId,
+                    created: new Date().toISOString(),
+                  } as CourtSession,
+                ],
+              }))
+            }}
+            icon="add"
+          >
+            Bæta við þinghaldi
+          </Button>
+        </Box>
       </FormContentContainer>
     </PageLayout>
   )
