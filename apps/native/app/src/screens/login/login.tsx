@@ -3,8 +3,6 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import {
   Alert,
   Image,
-  Linking,
-  NativeModules,
   SafeAreaView,
   TouchableOpacity,
   View,
@@ -17,7 +15,6 @@ import { useBrowser } from '../../lib/use-browser'
 import { useAuthStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { Button, dynamicColor, font, Illustration } from '../../ui'
-import { isAndroid } from '../../utils/devices'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
 
@@ -50,21 +47,6 @@ const LightButtonText = styled.Text`
   })}
 `
 
-function getChromeVersion(): Promise<number> {
-  return new Promise((resolve) => {
-    NativeModules.IslandModule.getAppVersion(
-      'com.android.chrome',
-      (version: string) => {
-        if (version) {
-          resolve(Number(version?.split('.')?.[0] || 0))
-        } else {
-          resolve(0)
-        }
-      },
-    )
-  })
-}
-
 export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
   const authStore = useAuthStore()
   const { openBrowser } = useBrowser()
@@ -72,35 +54,6 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
   const [isLoggingIn, setIsLoggingIn] = useState(false)
 
   const onLoginPress = async () => {
-    if (isAndroid) {
-      const chromeVersion = await getChromeVersion()
-      if (chromeVersion < 55) {
-        // Show dialog on how to update.
-        Alert.alert(
-          intl.formatMessage({ id: 'login.outdatedBrowserTitle' }),
-          intl.formatMessage({ id: 'login.outdatedBrowserMessage' }),
-          [
-            {
-              text: intl.formatMessage({
-                id: 'login.outdatedBrowserUpdateButton',
-              }),
-              style: 'default',
-              onPress() {
-                Linking.openURL('market://details?id=com.android.chrome')
-              },
-            },
-            {
-              style: 'cancel',
-              text: intl.formatMessage({
-                id: 'login.outdatedBrowserCancelButton',
-              }),
-            },
-          ],
-        )
-        return
-      }
-    }
-
     if (isLoggingIn) {
       return
     }
