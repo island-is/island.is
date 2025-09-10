@@ -340,6 +340,8 @@ codemagic.yaml                                                                  
 /libs/api/domains/umbodsmadur-skuldara/                                                                   @island-is/stefna
 /libs/api/domains/verdicts/                                                                               @island-is/stefna
 /libs/clients/verdicts/                                                                                   @island-is/stefna
+/libs/api/domains/landspitali/                                                                            @island-is/stefna
+/apps/services/payment-flow-update-handler/                                                               @island-is/stefna
 
 /libs/island-ui/                                                                                          @island-is/island-ui
 
