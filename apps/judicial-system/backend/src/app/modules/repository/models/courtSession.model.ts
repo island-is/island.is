@@ -111,5 +111,5 @@ export class CourtSession extends Model {
 
   @HasMany(() => CourtDocument, 'courtSessionId')
   @ApiPropertyOptional({ type: () => [CourtDocument] })
-  courtDocuments?: CourtDocument[]
+  filedDocuments?: CourtDocument[]
 }

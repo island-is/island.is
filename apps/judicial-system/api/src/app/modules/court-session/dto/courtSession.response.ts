@@ -70,5 +70,5 @@ export class CourtSessionResponse {
   readonly closingEntries?: string
 
   @Field(() => [CourtDocumentResponse], { nullable: true })
-  readonly courtDocuments?: CourtDocumentResponse[]
+  readonly filedDocuments?: CourtDocumentResponse[]
 }
