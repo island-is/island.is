@@ -26,6 +26,7 @@ import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import {
   buildDefaultTableHeader,
   buildDefaultTableRows,
+  buildEmptyRepeaterRow,
   handleCustomMappedValues,
   setObjectWithNestedKey,
 } from './utils'
@@ -137,7 +138,8 @@ export const TableRepeaterFormField: FC<Props> = ({
   }
 
   const handleNewItem = () => {
-    append({})
+    // Build an explicit empty row so RHF won't fall back to defaultValues (application.answers)
+    append(buildEmptyRepeaterRow(items))
     setActiveIndex(fields.length)
     methods.clearErrors()
   }
