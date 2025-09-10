@@ -27,10 +27,10 @@ export const serviceSetup =
         },
         PAYMENT_FLOW_UPDATE_HANDLER_API_URL: ref(
           (ctx) =>
-            `http://services-payment-flow-update-handler.${
+            `http://${serviceName}.${
               ctx.featureDeploymentName
                 ? `${ctx.featureDeploymentName}`
-                : 'services-payment-flow-update-handler'
+                : namespace
             }.svc.cluster.local`,
         ),
         LANDSPITALI_WEB_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: {
