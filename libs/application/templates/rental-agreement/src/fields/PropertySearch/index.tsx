@@ -43,9 +43,9 @@ export const PropertySearch = ({ field, errors }: Props) => {
   const [propertyInfoError, setPropertyInfoError] = useState<string | null>(
     null,
   )
-  const [searchTerm, setSearchTerm] = useState(storedValue?.value)
+  const [searchTerm, setSearchTerm] = useState(storedValue?.label ?? '')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(
-    storedValue?.value,
+    storedValue?.label ?? '',
   )
   const [searchOptions, setSearchOptions] = useState<Array<AddressProps>>([])
   const [tableExpanded, setTableExpanded] = useState<Record<string, boolean>>(
@@ -74,9 +74,10 @@ export const PropertySearch = ({ field, errors }: Props) => {
 
   useEffect(() => {
     const isInitialRender =
-      selectedAddress && debouncedSearchTerm === selectedAddress.value
+      !!selectedAddress &&
+      (debouncedSearchTerm === selectedAddress?.value ||
+        debouncedSearchTerm === selectedAddress?.label)
 
-    // Don't search for empty strings or strings shorter than 3 characters
     if (!debouncedSearchTerm?.length || debouncedSearchTerm.length < 3) {
       if (!isInitialRender) {
         setSearchOptions([])
