@@ -1,5 +1,5 @@
 import { UserBase } from './user.dto'
-import { FrambodBaseDTO } from '../../../gen/fetch'
+import { FrambodDTO } from '../../../gen/fetch'
 import { logger } from '@island.is/logging'
 
 export interface Candidate extends UserBase {
@@ -11,10 +11,11 @@ export interface Candidate extends UserBase {
   areaId?: string
   ownerName: string
   ownerBirthDate: Date | null
+  hasActiveLists: boolean
 }
 
 export const mapCandidate = (
-  candidate: FrambodBaseDTO,
+  candidate: FrambodDTO,
   areaId?: string,
 ): Candidate => {
   const { id: id, kennitala: nationalId } = candidate
@@ -36,5 +37,6 @@ export const mapCandidate = (
     areaId,
     ownerName: candidate.abyrgdaradili?.nafn ?? '',
     ownerBirthDate: candidate.abyrgdaradili?.faedingardagur ?? null,
+    hasActiveLists: candidate.opnirListar ?? false,
   }
 }

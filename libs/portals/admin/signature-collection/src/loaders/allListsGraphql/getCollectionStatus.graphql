@@ -23,6 +23,7 @@ query collection($input: SignatureCollectionBaseInput!) {
       email
       collectionId
       ownerName
+      hasActiveLists
     }
   }
 }

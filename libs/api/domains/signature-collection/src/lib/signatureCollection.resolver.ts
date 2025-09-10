@@ -60,7 +60,7 @@ export class SignatureCollectionResolver {
   @Query(() => SignatureCollection)
   async signatureCollectionLatestForType(
     @Args('input') input: SignatureCollectionBaseInput,
-  ) {
+  ): Promise<SignatureCollection> {
     return this.signatureCollectionService.getLatestCollectionForType(
       input.collectionType,
     )

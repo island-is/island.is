@@ -157,9 +157,9 @@ export class SignatureCollectionSharedClientService {
       const electionIds = elections
         .filter(
           (election) =>
-            getCollectionTypeFromNumber(election.kosningTegundNr) ===
+            getCollectionTypeFromNumber(election.kosningTegundNr ?? 0) ===
               CollectionType.LocalGovernmental ||
-            getCollectionTypeFromNumber(election.kosningTegundNr) ===
+            getCollectionTypeFromNumber(election.kosningTegundNr ?? 0) ===
               CollectionType.SpecialLocalGovernmental,
         )
         .map((election) => election.id)
@@ -176,7 +176,7 @@ export class SignatureCollectionSharedClientService {
       const eId = elections
         .filter(
           (election) =>
-            getCollectionTypeFromNumber(election.kosningTegundNr) ===
+            getCollectionTypeFromNumber(election.kosningTegundNr ?? 0) ===
             collectionType,
         )
         .map((election) => election.id)[0]
