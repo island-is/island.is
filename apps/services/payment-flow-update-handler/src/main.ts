@@ -5,3 +5,5 @@ bootstrap({
   appModule: AppModule,
   name: 'payment-flow-update-handler',
 })
+
+/* useless comment */
