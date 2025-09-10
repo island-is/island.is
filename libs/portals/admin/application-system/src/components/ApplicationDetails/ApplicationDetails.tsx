@@ -85,7 +85,7 @@ export const ApplicationDetails = ({
               {application.applicant}
             </ValueLine>
           </GridColumn>
-          {!!application.applicantActors.length && (
+          {!!application.applicantActors?.length && (
             <GridColumn span={['2/2', '2/2', '2/2']}>
               <Divider />
             </GridColumn>
