@@ -23,7 +23,13 @@ export class HistoryBuilder {
     const result = []
 
     for (const entry of history) {
-      const { entryTimestamp, stateKey, exitEvent, exitEventSubjectNationalId, exitEventActorNationalId } = entry
+      const {
+        entryTimestamp,
+        stateKey,
+        exitEvent,
+        exitEventSubjectNationalId,
+        exitEventActorNationalId,
+      } = entry
 
       if (!exitEvent) continue
 
@@ -31,7 +37,10 @@ export class HistoryBuilder {
 
       if (historyLog) {
         if (typeof historyLog.logMessage === 'function') {
-          const values = { subject: exitEventSubjectNationalId, action: exitEventActorNationalId }
+          const values = {
+            subject: exitEventSubjectNationalId,
+            action: exitEventActorNationalId,
+          }
           const messageId = historyLog.logMessage(values)
 
           result.push(
@@ -40,10 +49,16 @@ export class HistoryBuilder {
               messageId,
               formatMessage,
               values,
-            )
+            ),
           )
         } else {
-        result.push(new HistoryResponseDto(entryTimestamp, historyLog.logMessage, formatMessage))
+          result.push(
+            new HistoryResponseDto(
+              entryTimestamp,
+              historyLog.logMessage,
+              formatMessage,
+            ),
+          )
         }
       }
     }

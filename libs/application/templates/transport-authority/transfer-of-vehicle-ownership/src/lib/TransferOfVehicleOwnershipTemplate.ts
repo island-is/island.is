@@ -9,7 +9,8 @@ import {
   DefaultEvents,
   defineTemplateApi,
   PendingAction,
-  InstitutionNationalIds, StaticText,
+  InstitutionNationalIds,
+  StaticText,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -43,7 +44,7 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
-import {getHistoryLogApprovedWithSubjectAndActor} from "@island.is/application/core";
+import { getHistoryLogApprovedWithSubjectAndActor } from '@island.is/application/core'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)

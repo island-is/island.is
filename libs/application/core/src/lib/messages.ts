@@ -1091,7 +1091,8 @@ export const coreHistoryMessages = defineMessages({
   applicationApprovedByReviewerFallback: {
     id: 'application.system:core.history.ApprovedByReviewerFallback',
     defaultMessage: 'Samþykkt af samþykktaraðila',
-    description: 'History log approved by reviewer, fallback string when nationalId info missing',
+    description:
+      'History log approved by reviewer, fallback string when nationalId info missing',
   },
   applicationRejected: {
     id: 'application.system:core.history.applicationRejected',
