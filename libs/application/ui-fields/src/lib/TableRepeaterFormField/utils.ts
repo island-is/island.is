@@ -108,23 +108,28 @@ export const buildDefaultTableRows = (
     })
     .flat(2)
 
-  export const buildEmptyRepeaterRow = (
-    items: Array<RepeaterItem & { id: string }>,
-  ) => {
-    const empty: Record<string, unknown> = {}
-    items.forEach((it) => {
-      if (it.component === 'checkbox') {
-        empty[it.id] = []
-      } else if (it.component === 'nationalIdWithName') {
-        empty[it.id] = { nationalId: '', name: '' }
-      } else if (it.component === 'vehiclePermnoWithInfo') {
-        empty[it.id] = { permno: '', makeAndColor: '', numberOfAxles: 0, hasError: false }
-      } else {
-        empty[it.id] = ''
+export const buildEmptyRepeaterRow = (
+  items: Array<RepeaterItem & { id: string }>,
+) => {
+  const empty: Record<string, unknown> = {}
+  items.forEach((it) => {
+    if (it.component === 'checkbox') {
+      empty[it.id] = []
+    } else if (it.component === 'nationalIdWithName') {
+      empty[it.id] = { nationalId: '', name: '' }
+    } else if (it.component === 'vehiclePermnoWithInfo') {
+      empty[it.id] = {
+        permno: '',
+        makeAndColor: '',
+        numberOfAxles: 0,
+        hasError: false,
       }
-    })
-    return empty
-  }
+    } else {
+      empty[it.id] = ''
+    }
+  })
+  return empty
+}
 
 export const setObjectWithNestedKey = <T extends Record<string, unknown>>(
   obj: T,
