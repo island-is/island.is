@@ -1,4 +1,4 @@
-import { RepeaterItem } from '@island.is/application/types'
+import { RepeaterFields, RepeaterItem } from '@island.is/application/types'
 import { coreMessages } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 
@@ -113,22 +113,24 @@ export const buildEmptyRepeaterRow = (
 ) => {
   const empty: Record<string, unknown> = {}
   items.forEach((it) => {
-    if (it.component === 'checkbox') {
-      empty[it.id] = []
-    } else if (it.component === 'nationalIdWithName') {
-      empty[it.id] = { nationalId: '', name: '' }
-    } else if (it.component === 'vehiclePermnoWithInfo') {
-      empty[it.id] = {
-        permno: '',
-        makeAndColor: '',
-        numberOfAxles: 0,
-        hasError: false,
-      }
-    } else {
-      empty[it.id] = ''
-    }
+    empty[it.id] = getEmptyValueForRepeaterField(it)
   })
   return empty
+}
+
+export const getEmptyValueForRepeaterField = (item: RepeaterItem & { id: string }) => {
+  switch (item.component) {
+    case 'checkbox':
+      return []
+    case 'select':
+      return item?.isMulti ? [] : ''
+    case 'nationalIdWithName':
+      return { nationalId: '', name: '' }
+    case 'vehiclePermnoWithInfo':
+      return { permno: '', makeAndColor: '', numberOfAxles: 0, hasError: false }
+    default:
+      return ''
+  }
 }
 
 export const setObjectWithNestedKey = <T extends Record<string, unknown>>(
