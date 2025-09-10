@@ -1,5 +1,13 @@
 import React from 'react'
-import { Box, Button, Text, Inline, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Text,
+  Inline,
+  Stack,
+  FocusableBox,
+} from '@island.is/island-ui/core'
+import * as styles from './QuestionTypes.css'
 
 export interface ScaleProps {
   id: string
@@ -41,6 +49,7 @@ export const Scale: React.FC<ScaleProps> = ({
     return values
   }
 
+  console.log('sd')
   const scaleValues = generateScaleValues()
 
   return (
@@ -68,19 +77,30 @@ export const Scale: React.FC<ScaleProps> = ({
           </Box>
         )}
 
-        <Inline space={1}>
-          {scaleValues.map((scaleValue) => (
-            <Button
+        <Box className={styles.scaleContainer} display="flex" flexWrap="nowrap">
+          {scaleValues?.map((scaleValue) => (
+            <FocusableBox
+              className={styles.scaleButton}
+              style={{ height: '80px', width: '74px' }}
+              background={value === scaleValue ? 'blue400' : 'blue100'}
               key={scaleValue}
-              variant={value === scaleValue ? 'primary' : 'ghost'}
-              size="small"
+              borderColor={value === scaleValue ? 'blue400' : 'blue200'}
               onClick={() => onChange(scaleValue)}
               disabled={disabled}
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
             >
-              {scaleValue}
-            </Button>
+              <Text
+                color={value === scaleValue ? 'white' : 'dark400'}
+                fontWeight={value === scaleValue ? 'medium' : 'light'}
+                textAlign="center"
+              >
+                {scaleValue}
+              </Text>
+            </FocusableBox>
           ))}
-        </Inline>
+        </Box>
 
         {showLabels && (
           <Box display="flex" justifyContent="spaceBetween">

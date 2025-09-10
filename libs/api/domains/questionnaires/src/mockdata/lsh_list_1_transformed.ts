@@ -8,7 +8,7 @@ export const data = {
       title: 'Heilsufarsupplýsingar vegna komu á Landspítala',
       description:
         'Með þessum spurningalistum viljum við auka virðingu fyrir tíma þínum og starfsfólks okkar, auka skilvirkni við undirbúning og minnka endurtekningar. Enginn þekkir betur þína sögu en þú sjálf/-ur.\\nVið biðjum þig vinsamlegast að svara eftir bestu getu og senda okkur listann til baka innan fjögurra daga.\\nSvörin vistast í sjúkraskrá þinni og eru meðhöndluð sem trúnaðarmál ',
-      sentDate: '2025-09-09T12:37:42.666Z',
+      sentDate: '2025-09-09T14:34:15.534Z',
       status: QuestionnairesStatusEnum.notAnswered,
       organization: 'Landspítali',
       questions: [
@@ -60,6 +60,7 @@ export const data = {
               __typename: 'HealthQuestionnaireAnswerNumber' as const,
               id: 'Height_type',
               label: 'Hæð',
+              sublabel: 'cm',
               display: QuestionDisplayType.optional,
             },
           },
@@ -75,6 +76,7 @@ export const data = {
               __typename: 'HealthQuestionnaireAnswerNumber' as const,
               id: 'Weight_type',
               label: 'Þyngd',
+              sublabel: 'kg',
               display: QuestionDisplayType.optional,
             },
           },

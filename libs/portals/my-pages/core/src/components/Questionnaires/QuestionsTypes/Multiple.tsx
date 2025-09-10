@@ -88,7 +88,7 @@ export const Multiple: React.FC<MultipleProps> = ({
       {direction === 'horizontal' ? (
         <Inline space={2}>{checkboxes}</Inline>
       ) : (
-        <Box width="full">
+        <Box width="half">
           <Stack space={2}>{checkboxes}</Stack>
         </Box>
       )}

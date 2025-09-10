@@ -9,7 +9,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
-import { useGetQuestionnaireQuery } from './questionnaries.generated'
+import { useGetQuestionnaireQuery } from './questionnaires.generated'
 
 const QuestionnaireDetail: React.FC = () => {
   const { id } = useParams<{ id?: string }>()

@@ -107,7 +107,7 @@ const createAnswerType = (
   const baseProps = {
     id: `${originalQuestion.EntryID}_type`,
     label: originalQuestion.Question,
-    sublabel: originalQuestion.Description || undefined,
+    sublabel: originalQuestion.PostLabel || undefined,
     display: mapDisplayType(
       originalQuestion.Required,
       originalQuestion.Visible,
@@ -143,6 +143,20 @@ const createAnswerType = (
         max: originalQuestion.MaxValue || undefined,
       }
     case 'Number':
+      if (
+        originalQuestion.MinValue !== null &&
+        originalQuestion.MaxValue !== null
+      ) {
+        return {
+          __typename: 'HealthQuestionnaireAnswerScale',
+          ...baseProps,
+          placeholder: originalQuestion.Instructions || undefined,
+          minValue: originalQuestion.MinValue || 0,
+          maxValue: originalQuestion.MaxValue || 100,
+          minLabel: 'Min',
+          maxLabel: 'Max',
+        }
+      }
       return {
         __typename: 'HealthQuestionnaireAnswerNumber',
         ...baseProps,

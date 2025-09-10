@@ -20,7 +20,7 @@ import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { useGetQuestionnairesQuery } from './questionnaries.generated'
+import { useGetQuestionnairesQuery } from './questionnaires.generated'
 
 const ITEMS_ON_PAGE = 10
 

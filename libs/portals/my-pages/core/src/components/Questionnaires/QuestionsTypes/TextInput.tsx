@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, Text } from '@island.is/island-ui/core'
+import { Box, Input, Text } from '@island.is/island-ui/core'
 
 export interface TextInputProps {
   id: string
@@ -69,22 +69,25 @@ export const TextInput: React.FC<TextInputProps> = ({
       <Text variant="h5" marginBottom={2}>
         {label}
       </Text>
-      <Input
-        size="xs"
-        id={id}
-        name={id}
-        placeholder={placeholder}
-        value={value}
-        onChange={handleChange}
-        hasError={!!error}
-        errorMessage={error}
-        disabled={disabled}
-        required={required}
-        maxLength={maxLength}
-        textarea={multiline}
-        rows={multiline ? rows : undefined}
-        type={multiline ? undefined : type}
-      />
+      <Box width={type === 'number' ? 'half' : 'full'}>
+        <Input
+          size="xs"
+          backgroundColor="blue"
+          id={id}
+          name={id}
+          placeholder={placeholder}
+          value={value}
+          onChange={handleChange}
+          hasError={!!error}
+          errorMessage={error}
+          disabled={disabled}
+          required={required}
+          maxLength={maxLength}
+          textarea={multiline}
+          rows={multiline ? rows : undefined}
+          type={multiline ? undefined : type}
+        />
+      </Box>
     </>
   )
 }

@@ -8,7 +8,7 @@ export const data = {
       title: 'EuroHeart - Iceland Heart Failure 2025',
       description:
         'Til að auðvelda okkur mat og eftirlit með sjúkdómi þínum, meðferð og hugsanlegum aukaverkunum, værum við þakklát ef þú gætir svarað eftirfarandi spurningalista. Engin svör eru rétt eða röng, svaraðu því sem þér finnst best eiga við um heilsu þína hverju sinni.',
-      sentDate: '2025-09-09T12:37:46.961Z',
+      sentDate: '2025-09-10T09:59:39.020Z',
       status: QuestionnairesStatusEnum.notAnswered,
       organization: 'Landspítali',
       questions: [
@@ -372,12 +372,15 @@ export const data = {
             label:
               'Hvernig metur þú heilsu þína á bilinu 0-100 (100=Besta mögulega heilsa, 0=Versta mögulega heilsa)?',
             type: {
-              __typename: 'HealthQuestionnaireAnswerNumber' as const,
+              __typename: 'HealthQuestionnaireAnswerScale' as const,
               id: 'QUALITY_OF_LIFE_type',
               label:
                 'Hvernig metur þú heilsu þína á bilinu 0-100 (100=Besta mögulega heilsa, 0=Versta mögulega heilsa)?',
               display: QuestionDisplayType.optional,
-              max: 100,
+              minValue: 0,
+              maxValue: 100,
+              minLabel: 'Min',
+              maxLabel: 'Max',
             },
           },
         },
@@ -392,6 +395,7 @@ export const data = {
               __typename: 'HealthQuestionnaireAnswerNumber' as const,
               id: 'Number36920_type',
               label: 'Hver er hæð þín í cm?',
+              sublabel: 'cm',
               display: QuestionDisplayType.optional,
             },
           },
@@ -407,6 +411,7 @@ export const data = {
               __typename: 'HealthQuestionnaireAnswerNumber' as const,
               id: 'Number36921_type',
               label: 'Hver er þyngd þín í kg?',
+              sublabel: 'kg',
               display: QuestionDisplayType.optional,
             },
           },

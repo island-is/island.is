@@ -7,6 +7,7 @@ import { Thermometer } from '../Questionnaires/QuestionsTypes/Thermometer'
 import { QuestionAnswer } from '../../types/questionnaire'
 import { Question } from '@island.is/api/schema'
 import HtmlParser from 'react-html-parser'
+import { Scale } from './QuestionsTypes/Scale'
 
 interface QuestionRendererProps {
   question: Question
@@ -47,11 +48,12 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
           <TextInput
             id={question.id}
             label={question.label}
-            placeholder={textType?.placeholder || question.sublabel || ''}
-            value={typeof answer?.value === 'string' ? answer.value : ''}
+            placeholder={question.answerOptions.type.sublabel ?? undefined}
+            value={typeof answer?.value === 'string' ? answer.value : undefined}
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
+            multiline
             required={question.display === 'required'}
             maxLength={textType?.maxLength || undefined}
           />
@@ -68,7 +70,11 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
           <TextInput
             id={question.id}
             label={question.label}
-            placeholder={numberType?.placeholder || question.sublabel || ''}
+            placeholder={
+              numberType?.placeholder ||
+              question.answerOptions.type.sublabel ||
+              ''
+            }
             value={
               typeof answer?.value === 'string'
                 ? answer.value
@@ -137,26 +143,38 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
           />
         )
 
-      // case QuestionnaireAnswerOptionType.scale: {
-      //   if (!question.answerOptions) return null
+      case 'HealthQuestionnaireAnswerScale': {
+        if (
+          !question.answerOptions?.type ||
+          question.answerOptions.type.minValue == null ||
+          question.answerOptions.type.maxValue == null ||
+          question.answerOptions.type.minLabel == null ||
+          question.answerOptions.type.maxLabel == null
+        )
+          return null
 
-      //   return (
-      //     <Scale
-      //       id={question.id}
-      //       label={question.label}
-      //       min={question.answerOptions.}
-      //       max={maxScale}
-      //       value={typeof answer?.value === 'number' ? answer.value : undefined}
-      //       onChange={(value: number) => handleValueChange(value)}
-      //       disabled={disabled}
-      //       error={error}
-      //       required={question.display === 'required'}
-      //       minLabel={question.minLabel}
-      //       maxLabel={question.maxLabel}
-      //       showLabels={!!(question.minLabel || question.maxLabel)}
-      //     />
-      //   )
-      // }
+        return (
+          <Scale
+            id={question.id}
+            label={question.label}
+            min={question.answerOptions.type.minValue}
+            max={question.answerOptions.type.maxValue}
+            value={typeof answer?.value === 'number' ? answer.value : undefined}
+            onChange={(value: number) => handleValueChange(value)}
+            disabled={disabled}
+            error={error}
+            required={question.display === 'required'}
+            minLabel={question.answerOptions.type.minLabel}
+            maxLabel={question.answerOptions.type.maxLabel}
+            showLabels={
+              !!(
+                question.answerOptions.type.minLabel ||
+                question.answerOptions.type.maxLabel
+              )
+            }
+          />
+        )
+      }
 
       case 'HealthQuestionnaireAnswerThermometer':
         if (
@@ -185,7 +203,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       default:
         return (
           <Box marginY={4}>
-            <Text variant="h4">{HtmlParser(question.label)}</Text>
+            <Text variant="default">{HtmlParser(question.label)}</Text>
           </Box>
         )
     }
