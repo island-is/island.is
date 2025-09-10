@@ -3,7 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { ADDRESS_SEARCH_QUERY } from '../../../graphql/queries'
 import { AddressProps } from '../../../shared/types'
 import * as m from '../../../lib/messages'
-import { Query, HmsPropertyInfo, HmsSearchInput } from '../../../types/schema'
+import { HmsPropertyInfo, HmsSearchInput, Query } from '@island.is/api/schema'
 
 /**
  * GraphQL query to fetch and format address search results.

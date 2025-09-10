@@ -11,7 +11,7 @@ import {
 } from '../propertySearch.css'
 import IconCircleClose from '../../../assets/IconCircleClose'
 import IconCircleOpen from '../../../assets/IconCircleOpen'
-import { AppraisalUnit } from '../../../types/schema'
+import { AppraisalUnit } from '@island.is/api/schema'
 interface PropertyTableRowProps {
   appraisalUnits: Array<AppraisalUnit>
   propertyCode?: number

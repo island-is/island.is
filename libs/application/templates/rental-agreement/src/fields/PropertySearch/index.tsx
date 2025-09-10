@@ -22,7 +22,7 @@ import { usePropertyInfo } from './hooks/usePropertyInfo'
 import { PropertySearchInput } from './components/PropertySearchInput'
 import { PropertyTableBody } from './components/PropertyTableBody'
 import * as m from '../../lib/messages'
-import { HmsPropertyInfo } from '../../types/schema'
+import { HmsPropertyInfo } from '@island.is/api/schema'
 
 const ERROR_ID = 'registerProperty'
 

@@ -3,7 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { PROPERTY_CODE_INFO_QUERY } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
 import { AddressProps } from '../../../shared/types'
-import { HmsPropertyInfo } from '../../../types/schema'
+import { HmsPropertyInfo } from '@island.is/api/schema'
 
 export const usePropertyCodeInfo = (
   setSearchOptions: (options: Array<AddressProps>) => void,

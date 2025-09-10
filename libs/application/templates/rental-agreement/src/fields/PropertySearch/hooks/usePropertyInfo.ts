@@ -3,7 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { PROPERTY_INFO_QUERY } from '../../../graphql/queries'
 import { AddressProps } from '../../../shared/types'
 import * as m from '../../../lib/messages'
-import { HmsPropertyInfo } from '../../../types/schema'
+import { HmsPropertyInfo } from '@island.is/api/schema'
 
 /**
  * GraphQL query to fetch and format property info results based on addressCode.
