@@ -67,8 +67,10 @@ export const InstitutionFilters = ({
 
   useDebounce(
     () => {
-      const digits = nationalId.replace(/\D/g, '')
-      setShowSearchNationalIdError(digits.length > 0 && digits.length < 10)
+      const cleanNationalId = nationalId.replace('-', '')
+      setShowSearchNationalIdError(
+        cleanNationalId.length > 0 && cleanNationalId.length < 10,
+      )
       onSearchChange(nationalId)
     },
     debounceTime.search,
