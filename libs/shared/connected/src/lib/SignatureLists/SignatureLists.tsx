@@ -107,7 +107,7 @@ export const SignatureLists: FC<
                           ')'
                         }
                         cta={
-                          collection.isActive
+                          candidate.hasActiveLists
                             ? {
                                 label: t('sign', 'Mæla með framboði'),
                                 variant: 'text',
@@ -127,9 +127,9 @@ export const SignatureLists: FC<
                             : undefined
                         }
                         tag={
-                          !collection.isActive
+                          !candidate.hasActiveLists
                             ? {
-                                label: t('closed', 'Söfnuninni lokið'),
+                                label: t('closed', 'Söfnun lokið'),
                                 variant: 'red',
                               }
                             : undefined
