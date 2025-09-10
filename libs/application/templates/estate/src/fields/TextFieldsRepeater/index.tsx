@@ -22,7 +22,7 @@ const bankAccountsValueKeys = ['balance', 'exchangeRateOrInterest']
 
 export const TextFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & Props>
-> = ({ application, field, errors }) => {
+> = ({ field, errors }) => {
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
   const { id, props } = field
@@ -42,6 +42,7 @@ export const TextFieldsRepeater: FC<
     }
 
     const total = values.reduce(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (acc: number, current: any) =>
         Number(acc) + Number(current[props.sumField]),
       0,
@@ -60,6 +61,7 @@ export const TextFieldsRepeater: FC<
     })
 
     const repeaterFields = values.reduce(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (acc: Record<string, string>, elem: any) => {
         acc[elem] = ''
         return acc
@@ -124,7 +126,6 @@ export const TextFieldsRepeater: FC<
 
   return (
     <Box>
-      <div>TextFieldsRepeater</div>
       {/* All types of fields */}
       {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
@@ -270,7 +271,7 @@ export const TextFieldsRepeater: FC<
       )}
 
       {/* Add field button */}
-      <Box marginTop={1}>
+      <Box marginTop={2}>
         <Button
           variant="text"
           icon="add"

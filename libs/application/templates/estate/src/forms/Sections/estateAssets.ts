@@ -2,7 +2,6 @@ import {
   buildDescriptionField,
   buildSection,
   buildMultiField,
-  buildTextField,
   buildCustomField,
   buildSubSection,
   getValueViaPath,
@@ -221,47 +220,6 @@ export const estateAssets = buildSection({
         }),
       ],
     }),
-    // the old (current) version
-    // buildCustomField(
-    //   {
-    //     id: 'stocks',
-    //     title: m.stocksTitle,
-    //     component: 'TextFieldsRepeater',
-    //   },
-    //   {
-    //     fields: [
-    //       {
-    //         title: m.stocksOrganization,
-    //         id: 'organization',
-    //       },
-    //       {
-    //         title: m.stocksNationalId,
-    //         id: 'nationalId',
-    //         format: '######-####',
-    //       },
-    //       {
-    //         title: m.stocksFaceValue,
-    //         id: 'faceValue',
-    //         type: 'number',
-    //         currency: true,
-    //       },
-    //       {
-    //         title: m.stocksRateOfChange,
-    //         id: 'rateOfExchange',
-    //         type: 'number',
-    //       },
-    //       {
-    //         title: m.stocksValue,
-    //         id: 'value',
-    //         backgroundColor: 'white',
-    //         currency: true,
-    //         readOnly: true,
-    //       },
-    //     ],
-    //     repeaterButtonText: m.stocksRepeaterButton,
-    //     repeaterHeaderText: m.stocksTitle,
-    //   },
-    // ),
     buildSubSection({
       id: 'stocks',
       title: m.stocksTitle,

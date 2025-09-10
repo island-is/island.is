@@ -1,69 +1,13 @@
-import {
-  EstateAsset,
-  EstateInfo,
-  EstateMember,
-} from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 
 type InheritanceReportSchema = zinfer<typeof inheritanceReportSchema>
-type InheritanceData = InheritanceReportSchema['assets']
-
-const initialMapper = <T>(element: T) => {
-  return {
-    ...element,
-    initial: true,
-    enabled: true,
-    propertyValuation: '0',
-    share: '0',
-    deceasedShare: '0',
-    deceasedShareEnabled: [],
-    deceasedShareAmount: 0,
-  }
-}
-
-const bankAccountInitialMapper = <T>(element: T) => {
-  return {
-    ...initialMapper(element),
-    exchangeRateOrInterest: (element as any).exchangeRateOrInterest || '',
-  }
-}
 
 export const trueOrHasYes = (element: string | boolean): string => {
   const elementString = element.toString().toLowerCase()
   const value = elementString === 'yes' || elementString === 'true'
   return value.toString()
 }
-
-const estateMemberMapper = (element: EstateMember) => {
-  return {
-    ...element,
-    initial: true,
-    enabled: true,
-    heirsPercentage: '',
-    inheritance: '',
-    inheritanceTax: '',
-    taxableInheritance: '',
-    taxFreeInheritance: '',
-    phone: '',
-    email: '',
-    advocate: element.advocate
-      ? {
-          ...element.advocate,
-          phone: '',
-          email: '',
-        }
-      : undefined,
-    advocate2: element.advocate2
-      ? {
-          ...element.advocate2,
-          phone: '',
-          email: '',
-        }
-      : undefined,
-  }
-}
-
 
 // -----------------------------------------------------------------
 // ----------------------- EXPANDERS -------------------------------

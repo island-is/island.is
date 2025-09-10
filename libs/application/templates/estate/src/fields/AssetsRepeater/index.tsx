@@ -35,6 +35,7 @@ export const AssetsRepeater: FC<
     if (fields.length === 0 && estateData.estate?.[assetName]) {
       replace(estateData.estate[assetName])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleAddAsset = () =>
@@ -48,7 +49,6 @@ export const AssetsRepeater: FC<
 
   return (
     <Box marginTop={2}>
-      <div>AssetsRepeater</div>
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
           if (!asset.initial) {
@@ -193,7 +193,7 @@ export const AssetsRepeater: FC<
           </Box>
         )
       })}
-      <Box marginTop={1}>
+      <Box marginTop={2}>
         <Button
           variant="text"
           icon="add"

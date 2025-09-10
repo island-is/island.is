@@ -412,7 +412,6 @@ export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
 }
 
 export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
-  console.log('assetRaw', assetRaw)
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
@@ -425,7 +424,6 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
 }
 
 export const stocksAssetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
-  console.log('stocksAssetMapper assetRaw', assetRaw)
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
@@ -443,7 +441,6 @@ export const stocksAssetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
 export const debtsAssetMapper = (
   assetRaw: EignirDanarbus,
 ): EstateAsset & { tegundAngalgs?: number } => {
-  console.log('debtsAssetMapper assetRaw', assetRaw)
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
@@ -458,7 +455,6 @@ export const debtsAssetMapper = (
 }
 
 export const bankAccountMapper = (assetRaw: EignirDanarbus): EstateAsset => {
-  console.log('bankAccountMapper assetRaw', assetRaw)
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
@@ -554,11 +550,6 @@ export const mapEstateRegistrant = (
 
 // TODO: get updated types into the client
 export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
-  console.log(
-    'mapEstateInfo - testin g watch mosss asdasd asdde performance',
-    syslaData,
-  )
-
   return {
     assets: syslaData.eignir
       ? syslaData.eignir

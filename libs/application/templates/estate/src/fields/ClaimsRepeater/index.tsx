@@ -11,7 +11,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
-import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue } from '../../types'
