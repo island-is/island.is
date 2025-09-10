@@ -89,7 +89,7 @@ export class CourtDocumentRepositoryService {
       }
 
       const courtDocument = await this.courtDocumentModel.create(
-        { ...data, caseId },
+        { ...data, caseId, documentOrder: 0 },
         createOptions,
       )
 
@@ -297,21 +297,20 @@ export class CourtDocumentRepositoryService {
       const deletedOrder = documentToDelete.documentOrder
 
       // Delete the document
-      const numberOfDeletedRows = await this.courtDocumentModel.destroy({
-        where: { id: courtDocumentId, caseId, courtSessionId },
-        transaction: options?.transaction,
-      })
-
-      if (numberOfDeletedRows < 1) {
-        throw new InternalServerErrorException(
-          `Could not delete court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+      if (!documentToDelete.caseFileId || !documentToDelete.generatedPdfUri) {
+        await this.deleteFromDatabase(
+          courtDocumentId,
+          caseId,
+          courtSessionId,
+          options,
         )
-      }
-
-      if (numberOfDeletedRows > 1) {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Unexpected number of rows (${numberOfDeletedRows}) affected when deleting court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+      } else {
+        await this.courtDocumentModel.update(
+          { courtSessionId: null, documentOrder: -1 },
+          {
+            where: { id: courtDocumentId, caseId, courtSessionId },
+            transaction: options?.transaction,
+          },
         )
       }
 
@@ -334,6 +333,31 @@ export class CourtDocumentRepositoryService {
       )
 
       throw error
+    }
+  }
+
+  private async deleteFromDatabase(
+    courtDocumentId: string,
+    caseId: string,
+    courtSessionId: string,
+    options: DeleteCourtDocumentOptions | undefined,
+  ) {
+    const numberOfDeletedRows = await this.courtDocumentModel.destroy({
+      where: { id: courtDocumentId, caseId, courtSessionId },
+      transaction: options?.transaction,
+    })
+
+    if (numberOfDeletedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not delete court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+      )
+    }
+
+    if (numberOfDeletedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfDeletedRows}) affected when deleting court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+      )
     }
   }
 }
