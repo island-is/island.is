@@ -11,22 +11,21 @@ import {
 import { Application } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
-import { ApplicationType, SchoolType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import {
+  FriggSchoolsByMunicipalityQuery,
+  OrganizationModelTypeEnum,
+} from '../../../types/schema'
+import { isCurrentSchoolRegistered } from '../../../utils/conditionUtils'
+import { ApplicationType, SchoolType } from '../../../utils/constants'
 import {
   formatGrade,
   getApplicationAnswers,
   getApplicationExternalData,
   getCurrentSchoolName,
   getInternationalSchoolsIds,
-  getMunicipalities,
   getMunicipalityCodeBySchoolUnitId,
 } from '../../../utils/newPrimarySchoolUtils'
-import {
-  FriggSchoolsByMunicipalityQuery,
-  OrganizationModelTypeEnum,
-} from '../../../types/schema'
-import { isCurrentSchoolRegistered } from '../../../utils/conditionUtils'
 
 export const currentSchoolSubSection = buildSubSection({
   id: 'currentSchoolSubSection',
@@ -100,7 +99,25 @@ export const currentSchoolSubSection = buildSubSection({
             return applicantMunicipalityCode
           },
           loadOptions: async ({ apolloClient }) => {
-            return getMunicipalities(apolloClient)
+            const { data } =
+              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
+                query: friggSchoolsByMunicipalityQuery,
+              })
+
+            return (
+              data?.friggSchoolsByMunicipality
+                ?.filter(
+                  ({ type, managing }) =>
+                    type === OrganizationModelTypeEnum.Municipality &&
+                    managing &&
+                    managing.length > 0,
+                )
+                ?.map(({ name, unitId }) => ({
+                  value: unitId || '',
+                  label: name,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
+            )
           },
           condition: (_, externalData) => {
             const { primaryOrgId } = getApplicationExternalData(externalData)

@@ -1,4 +1,3 @@
-import { ApolloClient } from '@apollo/client'
 import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
@@ -8,7 +7,6 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
-import { friggSchoolsByMunicipalityQuery } from '../graphql/queries'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
   Affiliation,
@@ -23,7 +21,6 @@ import {
   SocialProfile,
   YesOrNoOrEmpty,
 } from '../types'
-import { FriggSchoolsByMunicipalityQuery } from '../types/schema'
 import {
   AffiliationRole,
   ApplicationType,
@@ -671,25 +668,4 @@ export const getDefaultYESNOValue = (
   // If no child information is available (not registered in Frigg), return an empty string
   // else return YES or NO based on the boolean value comming from Frigg
   return value ? YES : value === false ? NO : ''
-}
-
-export const getMunicipalities = async (
-  apolloClient: ApolloClient<unknown>,
-): Promise<SelectOption[]> => {
-  const { data } = await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-    query: friggSchoolsByMunicipalityQuery,
-  })
-
-  return (
-    data?.friggSchoolsByMunicipality
-      ?.filter(
-        ({ type, managing }) =>
-          type === 'Municipality' && managing && managing.length > 0,
-      )
-      ?.map(({ name, unitId }) => ({
-        value: unitId || '',
-        label: name,
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label)) ?? []
-  )
 }
