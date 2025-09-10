@@ -53,12 +53,15 @@ import { User } from '@island.is/auth-nest-tools'
 import { jwtDecode } from 'jwt-decode'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 import { UrlTypes } from '@island.is/form-system/enums'
+import { Application } from '../applications/models/application.model'
 
 @Injectable()
 export class FormsService {
   constructor(
     @InjectModel(Form)
     private readonly formModel: typeof Form,
+    @InjectModel(Application)
+    private readonly applicationModel: typeof Application,
     @InjectModel(Section)
     private readonly sectionModel: typeof Section,
     @InjectModel(Screen)
@@ -128,7 +131,7 @@ export class FormsService {
       'beenPublished',
       'status',
       'applicationDaysToRemove',
-      'stopProgressOnValidatingScreen',
+      'allowProceedOnValidationFail',
       'hasSummaryScreen',
     ]
 
@@ -236,11 +239,15 @@ export class FormsService {
     return formResponse
   }
 
-  async publish(id: string, user: User): Promise<FormResponseDto> {
+  async publish(id: string): Promise<void> {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    if (form.status === FormStatus.PUBLISHED) {
+      return
     }
 
     const existingPublishedForm = await this.formModel.findOne({
@@ -260,14 +267,19 @@ export class FormsService {
     form.status = FormStatus.PUBLISHED
     form.beenPublished = true
 
-    if (form.derivedFrom) {
+    if (
+      form.status === FormStatus.PUBLISHED_BEING_CHANGED &&
+      form.derivedFrom
+    ) {
       const derivedFromForm = await this.formModel.findByPk(form.derivedFrom)
 
       if (!derivedFromForm) {
         throw new NotFoundException(`Form with id '${id}' not found`)
       }
 
-      derivedFromForm.status = FormStatus.UNPUBLISHED_BECAUSE_CHANGED
+      derivedFromForm.status = FormStatus.ARCHIVED
+
+      // TODO: When form is archived we should maybe delete applications that are in progress
 
       await this.sequelize.transaction(async (transaction) => {
         await form.save({ transaction })
@@ -277,7 +289,7 @@ export class FormsService {
       await form.save()
     }
 
-    return this.findAll(user, user.nationalId)
+    // return this.findAll(user, user.nationalId)
   }
 
   async update(
@@ -321,7 +333,22 @@ export class FormsService {
       throw new NotFoundException(`Form with id '${id}' not found.`)
     }
 
-    form.destroy()
+    const hasApplications =
+      (await this.applicationModel.count({
+        where: { formId: id, isTest: false },
+      })) > 0
+
+    if (form.beenPublished && hasApplications) {
+      throw new Error(
+        `Form with id '${id}' cannot be deleted because it has been published and has applications.`,
+      )
+    }
+
+    try {
+      await form.destroy()
+    } catch (error) {
+      console.error(`Error deleting form with id '${id}':`, error)
+    }
   }
 
   private async findById(id: string): Promise<Form> {
@@ -554,7 +581,7 @@ export class FormsService {
       'beenPublished',
       'status',
       'applicationDaysToRemove',
-      'stopProgressOnValidatingScreen',
+      'allowProceedOnValidationFail',
       'hasSummaryScreen',
       'completedMessage',
       'dependencies',

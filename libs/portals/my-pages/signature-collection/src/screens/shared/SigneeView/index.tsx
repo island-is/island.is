@@ -10,6 +10,7 @@ import {
   SignatureCollection,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
+import format from 'date-fns/format'
 
 const SigneeView = ({
   currentCollection,
@@ -47,10 +48,7 @@ const SigneeView = ({
 
           <Box marginTop={[0, 5]}>
             {/* Signed list */}
-            <SignedList
-              currentCollection={currentCollection}
-              collectionType={collectionType}
-            />
+            <SignedList collectionType={collectionType} />
 
             {/* Other available lists */}
             <Box marginTop={[5, 10]}>
@@ -73,7 +71,15 @@ const SigneeView = ({
                           currentCollection?.collectionType ===
                           SignatureCollectionCollectionType.Presidential
                             ? formatMessage(m.collectionTitle)
-                            : formatMessage(m.collectionTitleParliamentary)
+                            : currentCollection?.collectionType ===
+                              SignatureCollectionCollectionType.Parliamentary
+                            ? formatMessage(m.collectionTitleParliamentary)
+                            : `${formatMessage(
+                                m.collectionMunicipalListOwner,
+                              )}: ${list.candidate?.ownerName ?? ''} (${format(
+                                new Date(list.candidate?.ownerBirthDate),
+                                'dd.MM.yyyy',
+                              )})`
                         }
                         cta={
                           new Date(list.endTime) > new Date() &&
