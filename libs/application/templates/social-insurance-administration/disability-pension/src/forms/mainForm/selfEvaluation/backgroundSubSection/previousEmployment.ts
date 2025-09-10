@@ -6,13 +6,12 @@ import {
   buildTitleField,
   getValueViaPath,
   YES,
+  YesOrNo,
 } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { getYears } from '../../../../utils/dates'
-import { Locale } from '@island.is/shared/types'
-import { EmploymentStatusResponse } from '../../../../types/interfaces'
 import {
   siaGeneralProfessionActivities,
   siaGeneralProfessions,
@@ -21,6 +20,7 @@ import {
   SocialInsuranceGeneralProfessionActivitiesQuery,
   SocialInsuranceGeneralProfessionsQuery,
 } from '../../../../types/schema'
+import { yesOrNoOptions } from '../../../../utils'
 
 export const previousEmploymentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT,
@@ -30,31 +30,13 @@ export const previousEmploymentField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
       title: disabilityPensionFormMessage.questions.previousEmploymentTitle,
       width: 'half',
-      options: (application: Application, _, locale: Locale) => {
-        const responses =
-          getValueViaPath<Array<EmploymentStatusResponse>>(
-            application.externalData,
-            'socialInsuranceAdministrationEmploymentStatuses.data',
-          ) ?? []
-
-        const localResponse = responses.find(
-          (r) => r.languageCode === locale.toUpperCase(),
-        )
-
-        return (
-          localResponse?.employmentStatuses.map(({ value, displayName }) => ({
-            value: value.toString(),
-            label: displayName,
-          })) ?? []
-        )
-      },
+      options: yesOrNoOptions,
     }),
-
     buildTitleField({
       title: disabilityPensionFormMessage.questions.previousEmploymentWhen,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<string>(
+        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
           formValue,
           `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
         )
@@ -67,7 +49,7 @@ export const previousEmploymentField = buildMultiField({
       width: 'half',
       placeholder: disabilityPensionFormMessage.shared.chooseYear,
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<string>(
+        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
           formValue,
           `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
         )
@@ -87,7 +69,7 @@ export const previousEmploymentField = buildMultiField({
       title: disabilityPensionFormMessage.questions.previousEmploymentJob,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<string>(
+        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
           formValue,
           `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
         )
@@ -100,7 +82,7 @@ export const previousEmploymentField = buildMultiField({
       width: 'full',
       placeholder: disabilityPensionFormMessage.questions.chooseProfession,
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<string>(
+        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
           formValue,
           `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
         )
@@ -113,11 +95,9 @@ export const previousEmploymentField = buildMultiField({
           })
 
         return (
-          data.socialInsuranceGeneral?.professions
-            ?.filter((p) => p.value)
-            .map(({ value, description }) => ({
+          data.socialInsuranceGeneral?.professions?.map(({ value, label }) => ({
               value,
-              label: description ?? '',
+              label,
             })) ?? []
         )
       },
@@ -155,11 +135,9 @@ export const previousEmploymentField = buildMultiField({
           )
 
         return (
-          data.socialInsuranceGeneral?.professionActivities
-            ?.filter((p) => p.value)
-            .map(({ value, description }) => ({
+          data.socialInsuranceGeneral?.professionActivities?.map(({ value, label }) => ({
               value,
-              label: description ?? '',
+              label,
             })) ?? []
         )
       },

@@ -4,9 +4,9 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { MaritalStatusEnum, SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
-import { MaritalStatus } from '../../../../types/interfaces'
+import { MaritalStatusDto } from '@island.is/clients/social-insurance-administration'
 
 export const maritalStatusField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_MARITAL_STATUS,
@@ -18,7 +18,7 @@ export const maritalStatusField = buildMultiField({
       title: disabilityPensionFormMessage.questions.maritalStatusTitle,
       options: (application: Application) => {
         const maritalStatuses =
-          getValueViaPath<Array<MaritalStatus>>(
+          getValueViaPath<Array<MaritalStatusDto>>(
             application.externalData,
             'socialInsuranceAdministrationMaritalStatuses.data',
           ) ?? []

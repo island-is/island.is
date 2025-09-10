@@ -15,8 +15,9 @@ import { Markdown } from '@island.is/shared/components'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { disabilityPensionFormMessage } from '../../lib/messages'
-
-import { MOCK_CERTIFICATE } from './mockData'
+import { useQuery } from '@apollo/client'
+import { siaDisabilityPensionCertificate } from '../../graphql/queries'
+import { SiaDisabilityPensionCertificateQuery } from '../../types/schema'
 
 export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   field,
@@ -25,18 +26,17 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
 
-  /* const { data, loading, error } =
+  const { data, loading, error } =
     useQuery<SiaDisabilityPensionCertificateQuery>(
       siaDisabilityPensionCertificate,
-    ) */
+    )
 
-  const data = MOCK_CERTIFICATE
 
   setBeforeSubmitCallback?.(async () => {
     // If data is still loading, prevent submission
-    /*if (loading) {
+    if (loading) {
       return [false, '']
-    }*/
+    }
 
     // In all other cases, allow submission
     return [true, null]

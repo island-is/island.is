@@ -15,7 +15,7 @@ export const childrenField = buildMultiField({
       marginBottom: 0,
     }),
     buildSelectField({
-      id: SectionRouteEnum.BACKGROUND_INFO_CHILDREN,
+      id: `${SectionRouteEnum.BACKGROUND_INFO_CHILDREN}.count`,
       title: disabilityPensionFormMessage.questions.numberOfChildren,
       marginTop: 0,
       options: [

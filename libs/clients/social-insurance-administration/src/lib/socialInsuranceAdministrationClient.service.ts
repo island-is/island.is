@@ -1,6 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import { Injectable } from '@nestjs/common'
+import {  Injectable } from '@nestjs/common'
 import {
   ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
@@ -15,7 +15,6 @@ import {
   PaymentPlanApi,
   PensionCalculatorApi,
   QuestionnairesApi,
-  TrWebApiServicesCommonCountriesModelsCountryDto,
   TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
   TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
@@ -39,17 +38,21 @@ import {
   TrWebExternalModelsServicePortalConfirmedTreatment,
   TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebExternalModelsServicePortalDisabilityPensionCertificate,
-  TrWebApiServicesCommonCountriesModelsLanguageDto,
   TrWebApiServicesUseCaseDisabilityPensionModelsMaritalStatusDto,
   TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto,
-  TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
-  TrWebApiServicesDomainProfessionsModelsProfessionDto,
-  TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
+import { EmploymentDto, mapEmploymentDto } from './dto/employment.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
 import { ApplicationTypeEnum } from './enums'
 import { mapApplicationEnumToType } from './mapper'
+import { mapProfessionDto, ProfessionDto } from './dto/profession.dto'
+import { mapProfessionActivityDto, ProfessionActivityDto } from './dto/professionActivity.dto'
+import { mapResidenceDto, ResidenceDto } from './dto/residence.dto'
+import { GenericLocaleInputDto } from './dto/genericLocale.dto.input'
+import { LanguageDto, mapLanguageDto } from './dto/language.dto'
+import { CountryDto, mapCountryDto } from './dto/country.dto'
+import { mapMaritalStatusDto, MaritalStatusDto } from './dto/maritalStatus.dto'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -306,104 +309,92 @@ export class SocialInsuranceAdministrationClientService {
 
   async getCountries(
     user: User,
-  ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
+    {locale}: GenericLocaleInputDto
+  ): Promise<Array<CountryDto> | null> {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralCountriesGet()
 
-    return data.filter(
-      (country) => country.code && country.nameIcelandic && country.name,
-    )
+    return data.map(d => mapCountryDto(d, locale)).filter((i): i is CountryDto => Boolean(i)) ?? null;
   }
 
   async getLanguages(
     user: User,
-  ): Promise<Array<TrWebApiServicesCommonCountriesModelsLanguageDto>> {
+    {locale}: GenericLocaleInputDto
+  ): Promise<Array<LanguageDto> | null> {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralLanguagesGet()
 
-    return data.filter(
-      (language) => language.code && language.nameIs && language.nameEn,
-    )
+    return data.map(d => mapLanguageDto(d, locale)).filter((i): i is LanguageDto => Boolean(i)) ?? null;
   }
 
   async getMaritalStatuses(
     user: User,
   ): Promise<
-    Array<TrWebApiServicesUseCaseDisabilityPensionModelsMaritalStatusDto>
+    Array<MaritalStatusDto>
   > {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralMaritalStatusesGet()
 
-    return data.filter((language) => language.value && language.label)
-  }
+    return data.map(d => mapMaritalStatusDto(d)).filter((i): i is MaritalStatusDto => Boolean(i)) ?? null;
 
-  async getHousingTypes(
-    user: User,
-  ): Promise<
-    Array<TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto>
-  > {
-    const data = await this.generalApiWithAuth(
-      user,
-    ).apiProtectedV1GeneralHousingTypesGet()
-
-    return data.filter((housingType) => housingType.value && housingType.label)
   }
 
   async getEmploymentStatuses(
     user: User,
+    { locale }: GenericLocaleInputDto
   ): Promise<
-    Array<TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage>
+    Array<EmploymentDto> | null
   > {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralEmploymentStatusGet()
 
-    return data.filter(
-      (employmentStatus) =>
-        employmentStatus.employmentStatuses && employmentStatus.languageCode,
-    )
+    const filteredData = data.find(d => d.languageCode === locale.toString().toUpperCase())
+
+    if (!filteredData) {
+      throw new Error('Locale not supplied in response')
+    }
+
+    return filteredData.employmentStatuses?.map(es => mapEmploymentDto(es)).filter((i): i is EmploymentDto => Boolean(i)) ?? null;
   }
 
   async getProfessions(
     user: User,
-  ): Promise<Array<TrWebApiServicesDomainProfessionsModelsProfessionDto>> {
+  ): Promise<Array<ProfessionDto> | null> {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralProfessionsGet()
 
-    return data.filter(
-      (profession) => profession.description && profession.value,
-    )
+    return data.map(d => mapProfessionDto(d)).filter((i): i is ProfessionDto => Boolean(i)) ?? null;
   }
 
   async getResidenceTypes(
     user: User,
   ): Promise<
-    Array<TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto>
+    Array<ResidenceDto> |null
   > {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralHousingTypesGet()
 
-    return data.filter((residenceType) => residenceType.value)
+    return data.map(d => mapResidenceDto(d)).filter((i): i is ResidenceDto => Boolean(i)) ?? null;
+
   }
 
   async getProfessionActivities(
     user: User,
   ): Promise<
-    Array<TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto>
+    Array<ProfessionActivityDto> | null
   > {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralProfessionsActivitiesGet()
 
-    return data.filter(
-      (professionActivity) =>
-        professionActivity.description && professionActivity.value,
-    )
+    return data.map(d => mapProfessionActivityDto(d)).filter((i): i is ProfessionActivityDto => Boolean(i)) ?? null;
+
   }
 
   async getEducationalInstitutions(

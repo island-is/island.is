@@ -33,7 +33,7 @@ const livedAbroadSchema = z.object({
     .array(
       z.object({
         country: z.string(),
-        abroadNationalId: z.string().min(4).optional(),
+        abroadNationalId: z.string().min(4).optional().or(z.literal('')),
         periodStart: z.string(),
         periodEnd: z.string(),
         period: z.string(),
@@ -143,7 +143,9 @@ export const dataSchema = z.object({
         params: disabilityPensionFormMessage.errors.emptyResidenceOtherText,
       },
     ),
-  backgroundInfoChildren: z.nativeEnum(ChildrenCountEnum),
+  backgroundInfoChildren: z.object({
+    count: z.nativeEnum(ChildrenCountEnum),
+  }),
   backgroundInfoIcelandicCapability: z.object({
     capability: z.nativeEnum(IcelandicCapabilityEnum),
   }),
@@ -166,13 +168,7 @@ export const dataSchema = z.object({
     ),
   backgroundInfoEmployment: z
     .object({
-      status: z.array(
-        z.preprocess((value) => {
-          if (typeof value === 'string' && value !== '') {
-            const number = Number.parseInt(value as string, 10)
-            return isNaN(number) ? undefined : number
-          }
-        }, z.number())).optional(),
+      status: z.array(z.string()),
       other: z.string().optional(),
     })
     .refine(

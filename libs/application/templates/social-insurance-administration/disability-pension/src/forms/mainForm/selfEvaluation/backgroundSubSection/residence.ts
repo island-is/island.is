@@ -5,9 +5,9 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { ResidenceEnum, SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
-import { Residence } from '../../../../types/interfaces'
+import { ResidenceDto } from '@island.is/clients/social-insurance-administration'
 
 export const residenceField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_RESIDENCE,
@@ -18,14 +18,10 @@ export const residenceField = buildMultiField({
       title: disabilityPensionFormMessage.questions.residenceTitle,
       options: (application: Application) => {
         const residenceTypes =
-          getValueViaPath<Array<Residence>>(
+          getValueViaPath<Array<ResidenceDto>>(
             application.externalData,
             'socialInsuranceAdministrationResidence.data',
           ) ?? []
-
-        if (!residenceTypes) {
-          return []
-        }
 
         return residenceTypes.map(({ value, label }) => ({
           value: value.toString(),

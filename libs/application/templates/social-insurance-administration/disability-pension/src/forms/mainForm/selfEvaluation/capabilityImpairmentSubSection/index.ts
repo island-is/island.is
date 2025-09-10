@@ -29,11 +29,16 @@ const buildQuestion = (index: number) => {
               'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
             ) ?? []
 
+
           const questions =
             selfAssessmentQuestionnaire.find(
               (questionnaire) =>
                 questionnaire.language.toLowerCase() === locale,
             )?.questions ?? []
+
+          console.log(questions)
+          console.log(index)
+
           return questions[index].questionTitle
         },
         options: (application, _, locale) => {

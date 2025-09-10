@@ -7,9 +7,8 @@ import {
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
-import { EmploymentStatusResponse } from '../../../../types/interfaces'
 import { Application } from '@island.is/application/types'
-import { Locale } from '@island.is/shared/types'
+import { EmploymentDto} from '@island.is/clients/social-insurance-administration'
 
 export const employmentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT,
@@ -17,26 +16,25 @@ export const employmentField = buildMultiField({
   children: [
     buildCheckboxField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
+      title: disabilityPensionFormMessage.questions.employmentStatusTitle,
       width: 'full',
-      options: (application: Application, _, locale: Locale) => {
-        const responses =
-          getValueViaPath<Array<EmploymentStatusResponse>>(
+      options: (application: Application) => {
+        const types =
+          getValueViaPath<Array<EmploymentDto>>(
             application.externalData,
             'socialInsuranceAdministrationEmploymentStatuses.data',
           ) ?? []
 
-        const types = responses.find(
-          (res) => res.languageCode === locale.toUpperCase(),
-        )
-
-        if (!types || !types.employmentStatuses) {
-          return []
-        }
-
-        return types.employmentStatuses.map(({ value, displayName }) => ({
-            value: value.toString(),
-            label: displayName,
-          }))
+        return [
+          ...types.filter(t => !t.needsFurtherInformation).map(({value, label}) => ({
+            value,
+            label,
+          })),
+          //"other" should be at the bottom
+        ...types.filter(t => t.needsFurtherInformation).map(({value, label}) => ({
+              value,
+              label,
+            }))]
       },
     }),
     buildTitleField({
@@ -44,11 +42,27 @@ export const employmentField = buildMultiField({
       titleVariant: 'h5',
       marginTop: 2,
       marginBottom: 0,
+      condition: (formValue) => {
+        const statuses = getValueViaPath<Array<string>>(
+          formValue,
+          `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
+        ) ?? []
+
+        return statuses.includes("ANNAD")
+      }
     }),
     buildTextField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.other`,
       variant: 'textarea',
       rows: 3,
+      condition: (formValue) => {
+        const statuses = getValueViaPath<Array<string>>(
+          formValue,
+          `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
+        ) ?? []
+
+        return statuses.includes("ANNAD")
+      }
     }),
   ],
 })

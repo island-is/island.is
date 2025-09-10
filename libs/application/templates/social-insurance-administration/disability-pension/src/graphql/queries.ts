@@ -70,7 +70,6 @@ export const siaGeneralCountries = gql`
     }
   }
 `
-
 export const siaGeneralCurrencies = gql`
   query SocialInsuranceGeneralCurrencies {
     socialInsuranceGeneral {
@@ -78,13 +77,13 @@ export const siaGeneralCurrencies = gql`
     }
   }
 `
-
 export const siaGeneralProfessions = gql`
   query SocialInsuranceGeneralProfessions {
     socialInsuranceGeneral {
       professions {
         value
-        description
+        label
+        needsFurtherInformation
       }
     }
   }
@@ -95,7 +94,8 @@ export const siaGeneralProfessionActivities = gql`
     socialInsuranceGeneral {
       professionActivities {
         value
-        description
+        label
+        needsFurtherInformation
       }
     }
   }

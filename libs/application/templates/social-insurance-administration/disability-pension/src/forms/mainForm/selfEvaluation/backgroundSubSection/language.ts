@@ -1,15 +1,12 @@
 import {
   buildMultiField,
   buildRadioField,
-  buildTextField,
-  buildTitleField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
-import { Language } from '../../../../types/interfaces'
-import { Locale } from '@island.is/shared/types'
+import { LanguageDto } from '@island.is/clients/social-insurance-administration'
 
 export const languageField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_LANGUAGE,
@@ -19,19 +16,20 @@ export const languageField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.language`,
       title: disabilityPensionFormMessage.questions.languageTitle,
       width: 'full',
-      options: (application: Application, _, locale: Locale) => {
+      options: (application: Application) => {
         const languages =
-          getValueViaPath<Array<Language>>(
+          getValueViaPath<Array<LanguageDto>>(
             application.externalData,
             'socialInsuranceAdministrationLanguages.data',
           ) ?? []
 
-        return languages.map(({ code, nameIs, nameEn }) => ({
-            value: code,
-            label: locale === 'en' ? nameEn : nameIs,
+        return languages.map(({ value, label }) => ({
+            value,
+            label,
           }))
       },
     }),
+    /*
     buildTitleField({
       title: disabilityPensionFormMessage.questions.languageOtherSpecify,
       titleVariant: 'h5',
@@ -56,5 +54,6 @@ export const languageField = buildMultiField({
       },
       variant: 'textarea',
     }),
+    */
   ],
 })

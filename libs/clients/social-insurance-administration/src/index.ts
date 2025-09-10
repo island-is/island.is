@@ -7,7 +7,7 @@ export {
   IncomeTypes,
   IncomePlanStatus,
 } from './lib/socialInsuranceAdministrationClient.type'
-export { ApplicationDTO } from './lib/dto/application.dto'
+export * from './lib/dto'
 export { MedicalAndRehabilitationPaymentsDTO } from './lib/dto/medicalAndRehabilitationPayments.dto'
 export * from '../gen/fetch'
 export * from './lib/enums'

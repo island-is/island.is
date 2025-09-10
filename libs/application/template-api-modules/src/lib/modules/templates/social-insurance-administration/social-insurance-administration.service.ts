@@ -702,16 +702,16 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
   }
 
-  async getCountries({ auth }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getCountries(auth)
+  async getCountries({ auth, currentUserLocale }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getCountries(auth, {locale: currentUserLocale})
   }
 
   async getMaritalStatuses({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getMaritalStatuses(auth)
   }
 
-  async getLanguages({ auth }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getLanguages(auth)
+  async getLanguages({ auth, currentUserLocale }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getLanguages(auth, {locale: currentUserLocale})
   }
 
   async getMedicalAndRehabilitationApplicationType({
@@ -722,8 +722,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     )
   }
 
-  async getEmploymentStatuses({ auth }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getEmploymentStatuses(auth)
+  async getEmploymentStatuses({ auth, currentUserLocale }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getEmploymentStatuses(auth, {locale: currentUserLocale})
   }
 
   async getProfessions({ auth }: TemplateApiModuleActionProps) {

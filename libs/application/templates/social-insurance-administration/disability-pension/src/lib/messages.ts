@@ -856,36 +856,6 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       defaultMessage: 'Hver er hjúskaparstaða þín?',
       description: 'What is your marital status?',
     },
-    maritalStatusSingle: {
-      id: 'dp.application:selfEvaluation.questions.maritalStatus.single',
-      defaultMessage: 'Einhleyp/ur',
-      description: 'Single',
-    },
-    maritalStatusInRelationship: {
-      id: 'dp.application:selfEvaluation.questions.maritalStatus.inRelationship',
-      defaultMessage: 'Í sambandi',
-      description: 'In relationship',
-    },
-    maritalStatusMarried: {
-      id: 'dp.application:selfEvaluation.questions.maritalStatus.married',
-      defaultMessage: 'Í hjónabandi/sambúð',
-      description: 'Married',
-    },
-    maritalStatusDivorced: {
-      id: 'dp.application:selfEvaluation.questions.maritalStatus.divorced',
-      defaultMessage: 'Fráskilin(n)',
-      description: 'Divorced',
-    },
-    maritalStatusWidowed: {
-      id: 'dp.application:selfEvaluation.questions.maritalStatus.widowed',
-      defaultMessage: 'Ekkja/Ekkill',
-      description: 'Widowed',
-    },
-    maritalStatusUnknown: {
-      id: 'dp.application:selfEvaluation.questions.maritalStatus.unknown',
-      defaultMessage: 'Óupplýst',
-      description: 'Unknown',
-    },
     residenceTitle: {
       id: 'dp.application:selfEvaluation.questions.residence.title',
       defaultMessage: 'Í hvernig húsnæði býrð þú?',

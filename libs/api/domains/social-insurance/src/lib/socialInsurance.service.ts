@@ -3,7 +3,6 @@ import { handle404 } from '@island.is/clients/middlewares'
 import {
   IncomePlanStatus as IncomeStatus,
   SocialInsuranceAdministrationClientService,
-  TrWebApiServicesCommonCountriesModelsCountryDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   TrWebExternalModelsServicePortalBaseCertificate,
@@ -35,6 +34,7 @@ import {
   groupPensionCalculationItems,
   mapPensionCalculationInput,
 } from './utils'
+import { Locale } from '@island.is/shared/types'
 import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate'
 import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertifiate'
 
@@ -285,8 +285,13 @@ export class SocialInsuranceService {
 
   async getCountries(
     user: User,
-  ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
-    return await this.socialInsuranceApi.getCountries(user)
+    locale: Locale,
+  ) {
+    const data = await this.socialInsuranceApi.getCountries(user, { locale }) ?? []
+    return data.map(data => ({
+      code: data.value,
+      name: data.label
+    }))
   }
 
   async getCurrencies(user: User): Promise<Array<string>> {
@@ -301,16 +306,16 @@ export class SocialInsuranceService {
     return await this.socialInsuranceApi.getEducationalInstitutions(user)
   }
 
+  async getLanguages(user: User, locale: Locale) {
+    return await this.socialInsuranceApi.getLanguages(user, {locale})
+  }
+
   async getMaritalStatuses(user: User) {
     return await this.socialInsuranceApi.getMaritalStatuses(user)
   }
 
-  async getHousingTypes(user: User) {
-    return await this.socialInsuranceApi.getHousingTypes(user)
-  }
-
-  async getEmploymentStatuses(user: User) {
-    return await this.socialInsuranceApi.getEmploymentStatuses(user)
+  async getEmploymentStatuses(user: User, locale: Locale) {
+    return await this.socialInsuranceApi.getEmploymentStatuses(user, { locale })
   }
 
   async getProfessions(user: User) {
