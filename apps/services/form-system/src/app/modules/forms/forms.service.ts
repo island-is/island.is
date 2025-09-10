@@ -131,7 +131,7 @@ export class FormsService {
       'beenPublished',
       'status',
       'applicationDaysToRemove',
-      'stopProgressOnValidatingScreen',
+      'allowProceedOnValidationFail',
       'hasSummaryScreen',
     ]
 
@@ -581,7 +581,7 @@ export class FormsService {
       'beenPublished',
       'status',
       'applicationDaysToRemove',
-      'stopProgressOnValidatingScreen',
+      'allowProceedOnValidationFail',
       'hasSummaryScreen',
       'completedMessage',
       'dependencies',

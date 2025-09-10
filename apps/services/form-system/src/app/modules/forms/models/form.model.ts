@@ -118,9 +118,9 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
-    defaultValue: true,
+    defaultValue: false,
   })
-  stopProgressOnValidatingScreen!: boolean
+  allowProceedOnValidationFail!: boolean
 
   @Column({
     type: DataType.BOOLEAN,

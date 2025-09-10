@@ -59,7 +59,7 @@ export class FormDto {
   status!: string
 
   @ApiProperty()
-  stopProgressOnValidatingScreen!: boolean
+  allowProceedOnValidationFail!: boolean
 
   @ApiProperty()
   hasSummaryScreen!: boolean

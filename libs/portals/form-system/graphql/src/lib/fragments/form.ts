@@ -28,7 +28,7 @@ export const FormFragment = gql`
     beenPublished
     applicationDaysToRemove
     derivedFrom
-    stopProgressOnValidatingScreen
+    allowProceedOnValidationFail
     hasSummaryScreen
     isZendeskEnabled
     completedMessage {

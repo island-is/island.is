@@ -76,7 +76,7 @@ export class Form {
   applicationDaysToRemove!: number
 
   @Field(() => Boolean)
-  stopProgressOnValidatingScreen!: boolean
+  allowProceedOnValidationFail!: boolean
 
   @Field(() => Boolean)
   hasSummaryScreen!: boolean

@@ -170,7 +170,7 @@ export class OrganizationsService {
       'modified',
       'isTranslated',
       'applicationDaysToRemove',
-      'stopProgressOnValidatingScreen',
+      'allowProceedOnValidationFail',
       'hasSummaryScreen',
       'hasPayment',
     ]

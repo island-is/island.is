@@ -44,7 +44,7 @@ export class ApplicationDto {
   status?: string
 
   @ApiPropertyOptional()
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
 
   @ApiPropertyOptional()
   hasSummaryScreen?: boolean

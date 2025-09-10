@@ -102,7 +102,7 @@ export class UpdateFormDtoInput {
   applicationDaysToRemove?: number
 
   @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
 
   @Field(() => Boolean, { nullable: true })
   hasSummaryScreen?: boolean
@@ -165,7 +165,7 @@ export class FormInput {
   derivedFrom?: number
 
   @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
 
   @Field(() => LanguageTypeInput, { nullable: true })
   completedMessage?: LanguageTypeInput
