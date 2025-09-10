@@ -12,6 +12,7 @@ import {
   FilterMultiChoice,
   Breadcrumbs,
   Divider,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -19,7 +20,7 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import { CollectionStatus, SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import {
@@ -40,7 +41,7 @@ const Lists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { allLists, collection } = useLoaderData() as ListsLoaderReturn
+  const { allLists, collectionStatus, collection } = useLoaderData() as ListsLoaderReturn
 
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
@@ -143,6 +144,24 @@ const Lists = () => {
             }
             marginBottom={4}
           />
+          {collectionStatus === CollectionStatus.Processed && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionProcessedTitle)}
+                message={formatMessage(m.collectionProcessedMessage)}
+              />
+            </Box>
+          )}
+          {collectionStatus === CollectionStatus.InReview && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionPresidentialReviewedTitle)}
+                message={formatMessage(m.collectionPresidentialReviewedMessage)}
+              />
+            </Box>
+          )}
           <Divider />
           <Box marginTop={9} />
           <GridRow marginBottom={5}>

@@ -12,6 +12,7 @@ import {
   Text,
   Breadcrumbs,
   Divider,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
@@ -23,12 +24,14 @@ import CompareLists from '../../shared-components/compareLists'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import EmptyState from '../../shared-components/emptyState'
+import { CollectionStatus } from '@island.is/api/schema'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+  const { collection, collectionStatus, allLists } =
+    useLoaderData() as ListsLoaderReturn
   const params = useParams()
 
   const municipality = params.municipality ?? ''
@@ -83,6 +86,24 @@ export const Municipality = () => {
             }
             marginBottom={4}
           />
+          {collectionStatus === CollectionStatus.Processed && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionProcessedTitle)}
+                message={formatMessage(m.collectionProcessedMessage)}
+              />
+            </Box>
+          )}
+          {collectionStatus === CollectionStatus.InReview && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionMunicipalReviewedTitle)}
+                message={formatMessage(m.collectionMunicipalReviewedMessage)}
+              />
+            </Box>
+          )}
           <Divider />
           <Box marginTop={9} />
           {municipalityLists.length === 0 ? (

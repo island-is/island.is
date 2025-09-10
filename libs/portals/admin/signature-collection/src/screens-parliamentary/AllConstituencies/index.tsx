@@ -69,6 +69,24 @@ const ParliamentaryRoot = () => {
             }
             marginBottom={4}
           />
+          {collectionStatus === CollectionStatus.Processed && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionProcessedTitle)}
+                message={formatMessage(m.collectionProcessedMessage)}
+              />
+            </Box>
+          )}
+          {collectionStatus === CollectionStatus.InReview && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionReviewedTitle)}
+                message={formatMessage(m.collectionReviewedMessage)}
+              />
+            </Box>
+          )}
           <Divider />
           <Box marginTop={9} />
           <Box>
@@ -118,24 +136,6 @@ const ParliamentaryRoot = () => {
               collectionType={collection?.collectionType}
             />
           </Box>
-          {collectionStatus === CollectionStatus.Processed && (
-            <Box marginTop={8}>
-              <AlertMessage
-                type="success"
-                title={formatMessage(m.collectionProcessedTitle)}
-                message={formatMessage(m.collectionProcessedMessage)}
-              />
-            </Box>
-          )}
-          {collectionStatus === CollectionStatus.InReview && (
-            <Box marginTop={8}>
-              <AlertMessage
-                type="success"
-                title={formatMessage(m.collectionReviewedTitle)}
-                message={formatMessage(m.collectionReviewedMessage)}
-              />
-            </Box>
-          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

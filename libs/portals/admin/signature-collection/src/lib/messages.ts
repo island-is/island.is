@@ -525,6 +525,28 @@ export const m = defineMessages({
     defaultMessage: 'Nú er hægt að framlengja stökum listum.',
     description: '',
   },
+  collectionMunicipalReviewedTitle: {
+    id: 'admin-portal.signature-collection:collectionMunicipalReviewedTitle',
+    defaultMessage: 'Meðmælasöfnun vegna framboðs til Sveitarstjórnarkosninga lokið',
+    description: '',
+  },
+  collectionMunicipalReviewedMessage: {
+    id: 'admin-portal.signature-collection:collectionMunicipalReviewedMessage',
+    defaultMessage:
+      'Nú hefur úrvinnslu verið lokið á öllum listum í sveitarfélaginu.',
+    description: '',
+  },
+  collectionPresidentialReviewedTitle: {
+    id: 'admin-portal.signature-collection:collectionPresidentialReviewedTitle',
+    defaultMessage: 'Meðmælasöfnun vegna framboðs til Forsetakosninga lokið',
+    description: '',
+  },
+  collectionPresidentialReviewedMessage: {
+    id: 'admin-portal.signature-collection:collectionPresidentialReviewedMessage',
+    defaultMessage:
+      'Nú hefur úrvinnslu verið lokið á öllum listum í öllum fjórðungum.',
+    description: '',
+  },
   listReviewedModalDescription: {
     id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
     defaultMessage:
