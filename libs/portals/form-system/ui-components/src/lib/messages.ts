@@ -145,10 +145,12 @@ export const m = defineMessages({
   summaryScreen: {
     id: 'portals-admin.form-system:summary-screen',
     defaultMessage: 'Yfirlit',
+    description: 'Summary',
   },
   payment: {
     id: 'portals-admin.form-system:payment',
     defaultMessage: 'Greiðsla',
+    description: 'Payment',
   },
   certifications: {
     id: 'portals-admin.form-system:certifications',
@@ -811,14 +813,16 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
     description: 'Please review the application before submitting it.',
   },
-})
-
-export const webMessages = defineMessages({
   externalDataTitle: {
     id: 'form-system:external-data-title',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
     description:
       'The following data will be retrieved electronically with your consent',
+  },
+  externalDataHeader: {
+    id: 'form-system:external-data-header',
+    defaultMessage: 'Gagnaöflun',
+    description: 'Data collection',
   },
   externalDataConfirmation: {
     id: 'form-system:externalData.confirm',
@@ -837,8 +841,8 @@ export const webMessages = defineMessages({
   },
   icelandicRegistryDescription: {
     id: 'form-system:icelandic-registry-description',
-    defaultMessage: 'Upplýsingar um þig, maka og börn.',
-    description: 'Information about you, your spouse and children',
+    defaultMessage: 'Upplýsingar um þig',
+    description: 'Information about you',
   },
   myPagesTitle: {
     id: 'form-system:my-pages-title',
@@ -857,11 +861,6 @@ export const webMessages = defineMessages({
     defaultMessage: 'Halda áfram',
     description: 'Continue',
   },
-  back: {
-    id: 'form-system:back',
-    defaultMessage: 'Til baka',
-    description: 'Back',
-  },
   postalCode: {
     id: 'form-system:postal-code',
     defaultMessage: 'Póstnúmer',
@@ -871,11 +870,6 @@ export const webMessages = defineMessages({
     id: 'form-system:full-name',
     defaultMessage: 'Fullt nafn',
     description: 'Full name',
-  },
-  edit: {
-    id: 'form-system:edit',
-    defaultMessage: 'Breyta',
-    description: 'Edit',
   },
   openApplication: {
     id: 'form-system:open-application',
