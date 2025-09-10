@@ -74,6 +74,7 @@ import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
 import { serviceSetup as formSystemWebSetup } from '../../../apps/form-system/web/infra/form-system-web'
+import { serviceSetup as paymentFlowUpdateHandlerSetup } from '../../../apps/services/payment-flow-update-handler/infra/payment-flow-update-handler'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -120,6 +121,8 @@ const universityGatewayWorker = universityGatewayWorkerSetup()
 const formSystemApi = formSystemApiSetup()
 const formSystemWeb = formSystemWebSetup()
 
+const paymentFlowUpdateHandlerService = paymentFlowUpdateHandlerSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -134,6 +137,7 @@ const api = apiSetup({
   userNotificationService,
   paymentsApi: paymentsService,
   formSystemService: formSystemApi,
+  paymentFlowUpdateHandlerService,
 })
 
 const adminPortal = adminPortalSetup()
@@ -218,6 +222,7 @@ export const Services: EnvironmentServices = {
     unicornApp,
     paymentsWebApp,
     paymentsService,
+    paymentFlowUpdateHandlerService,
   ],
   staging: [
     appSystemApi,
@@ -258,6 +263,7 @@ export const Services: EnvironmentServices = {
     unicornApp,
     paymentsWebApp,
     paymentsService,
+    paymentFlowUpdateHandlerService,
   ],
   dev: [
     appSystemApi,
@@ -304,6 +310,7 @@ export const Services: EnvironmentServices = {
     unicornApp,
     formSystemApi,
     formSystemWeb,
+    paymentFlowUpdateHandlerService,
   ],
 }
 
