@@ -4,7 +4,7 @@ import { VALIDATE_ACCOUNT_NUMBER } from '../graphql/queries'
 export const useLazyIsBankInfoValid = () => {
   return useLazyQuery<
     {
-      vmstApplicationsAccountNumbervalidation: boolean
+      vmstApplicationsAccountNumberValidation: boolean
     },
     {
       input: {

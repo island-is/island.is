@@ -2,6 +2,6 @@ import { gql } from '@apollo/client'
 
 export const VALIDATE_ACCOUNT_NUMBER = gql`
   query ValidateBankInformation($input: VmstApplicationsBankInformationInput!) {
-    vmstApplicationsAccountNumbervalidation(input: $input)
+    vmstApplicationsAccountNumberValidation(input: $input)
   }
 `
