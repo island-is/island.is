@@ -1,4 +1,4 @@
-import { Op } from 'sequelize/types'
+import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import type { User } from '@island.is/judicial-system/types'

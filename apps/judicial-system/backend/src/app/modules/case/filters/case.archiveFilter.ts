@@ -1,4 +1,4 @@
-import { literal, Op, WhereOptions } from 'sequelize/types'
+import { literal, Op, WhereOptions } from 'sequelize'
 
 import {
   CaseState,

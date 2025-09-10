@@ -1,4 +1,4 @@
-import { Includeable, Op, Transaction } from 'sequelize/types'
+import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {

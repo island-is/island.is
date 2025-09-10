@@ -53,7 +53,7 @@ export class CourtDocument extends Model {
     allowNull: false,
     values: Object.values(CourtDocumentType),
   })
-  @ApiProperty({ type: CourtDocumentType })
+  @ApiProperty({ enum: CourtDocumentType })
   documentType!: CourtDocumentType
 
   @Column({ type: DataType.INTEGER, allowNull: false })

@@ -1,4 +1,4 @@
-import { Op } from 'sequelize/types'
+import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import { NotFoundException } from '@nestjs/common'

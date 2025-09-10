@@ -1,4 +1,4 @@
-import { WhereOptions } from 'sequelize/types'
+import { WhereOptions } from 'sequelize'
 
 import {
   CaseTableType,

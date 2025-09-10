@@ -1,4 +1,4 @@
-import { fn, literal, Op, where } from 'sequelize/types'
+import { fn, literal, Op, where } from 'sequelize'
 
 import {
   CaseIndictmentRulingDecision,

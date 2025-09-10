@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { Transaction } from 'sequelize/types'
+import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {

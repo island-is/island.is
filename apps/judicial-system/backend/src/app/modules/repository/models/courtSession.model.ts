@@ -85,7 +85,7 @@ export class CourtSession extends Model {
     allowNull: true,
     values: Object.values(CourtSessionRulingType),
   })
-  @ApiPropertyOptional({ type: CourtSessionRulingType })
+  @ApiPropertyOptional({ enum: CourtSessionRulingType })
   rulingType?: CourtSessionRulingType
 
   @Column({ type: DataType.TEXT, allowNull: true })

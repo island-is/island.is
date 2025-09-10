@@ -7,8 +7,9 @@ import { CourtSessionController } from './courtSession.controller'
 import { CourtSessionService } from './courtSession.service'
 
 @Module({
-  imports: [forwardRef(() => CaseModule), RepositoryModule],
+  imports: [forwardRef(() => CaseModule), forwardRef(() => RepositoryModule)],
   controllers: [CourtSessionController, CourtDocumentController],
   providers: [CourtSessionService, CourtDocumentService],
+  exports: [CourtSessionService, CourtDocumentService],
 })
 export class CourtSessionModule {}

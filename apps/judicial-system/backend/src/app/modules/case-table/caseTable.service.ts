@@ -1,4 +1,4 @@
-import { Includeable, literal, Op } from 'sequelize/types'
+import { Includeable, literal, Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Injectable } from '@nestjs/common'
