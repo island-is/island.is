@@ -4,8 +4,6 @@ import {
   Alert,
   AlertButton,
   Image,
-  Linking,
-  NativeModules,
   Platform,
   SafeAreaView,
   TouchableOpacity,
