@@ -1,4 +1,4 @@
-import { RepeaterFields, RepeaterItem } from '@island.is/application/types'
+import { RepeaterItem } from '@island.is/application/types'
 import { coreMessages } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 
