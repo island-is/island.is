@@ -4,7 +4,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((transaction) =>
       queryInterface.createTable(
-        'court_session_document',
+        'court_document',
         {
           id: {
             type: Sequelize.UUID,
@@ -30,7 +30,7 @@ module.exports = {
           court_session_id: {
             type: Sequelize.UUID,
             references: { model: 'court_session', key: 'id' },
-            allowNull: false,
+            allowNull: true,
           },
           document_type: { type: Sequelize.STRING, allowNull: false },
           document_order: { type: Sequelize.INTEGER, allowNull: false },
@@ -49,7 +49,7 @@ module.exports = {
 
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((transaction) =>
-      queryInterface.dropTable('court_session_document', { transaction }),
+      queryInterface.dropTable('court_document', { transaction }),
     )
   },
 }

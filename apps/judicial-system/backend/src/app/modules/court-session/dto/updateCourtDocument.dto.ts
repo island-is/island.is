@@ -2,7 +2,7 @@ import { IsInt, IsOptional, IsPositive, IsString } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-export class UpdateCourtSessionDocumentDto {
+export class UpdateCourtDocumentDto {
   @IsOptional()
   @IsInt()
   @IsPositive()

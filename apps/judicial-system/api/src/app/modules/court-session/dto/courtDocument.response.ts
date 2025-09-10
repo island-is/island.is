@@ -1,13 +1,13 @@
 import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import { CourtSessionDocumentType } from '@island.is/judicial-system/types'
+import { CourtDocumentType } from '@island.is/judicial-system/types'
 
-registerEnumType(CourtSessionDocumentType, {
-  name: 'CourtSessionDocumentType',
+registerEnumType(CourtDocumentType, {
+  name: 'CourtDocumentType',
 })
 
 @ObjectType()
-export class CourtSessionDocumentResponse {
+export class CourtDocumentResponse {
   @Field(() => ID)
   readonly id!: string
 
@@ -23,8 +23,8 @@ export class CourtSessionDocumentResponse {
   @Field(() => ID)
   readonly courtSessionId!: string
 
-  @Field(() => CourtSessionDocumentType)
-  readonly documentType!: CourtSessionDocumentType
+  @Field(() => CourtDocumentType)
+  readonly documentType!: CourtDocumentType
 
   @Field(() => Int)
   readonly documentOrder!: number

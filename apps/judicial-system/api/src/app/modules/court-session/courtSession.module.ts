@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 
+import { CourtDocumentResolver } from './courtDocument.resolver'
 import { CourtSessionResolver } from './courtSession.resolver'
-import { CourtSessionDocumentResolver } from './courtSessionDocument.resolver'
 
 @Module({
-  providers: [CourtSessionResolver, CourtSessionDocumentResolver],
+  providers: [CourtSessionResolver, CourtDocumentResolver],
 })
 export class CourtSessionModule {}

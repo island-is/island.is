@@ -21,7 +21,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { CourtSessionDocumentType } from '@island.is/judicial-system/types'
+import { CourtDocumentType } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -29,20 +29,20 @@ import {
   districtCourtRegistrarRule,
 } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
-import { CourtSessionDocument } from '../repository'
-import { CreateCourtSessionDocumentDto } from './dto/createCourtSessionDocument.dto'
-import { DeleteResponse } from './dto/delete.response'
-import { UpdateCourtSessionDocumentDto } from './dto/updateCourtSessionDocument.dto'
-import { CourtSessionDocumentExistsGuard } from './guards/courtSessionDocumentExists.guard'
+import { CourtDocument } from '../repository'
+import { CreateCourtDocumentDto } from './dto/createCourtDocument.dto'
+import { DeleteCourtDocumentResponse } from './dto/deleteCourtDocument.response'
+import { UpdateCourtDocumentDto } from './dto/updateCourtDocument.dto'
+import { CourtDocumentExistsGuard } from './guards/courtDocumentExists.guard'
 import { CourtSessionExistsGuard } from './guards/courtSessionExists.guard'
-import { CourtSessionDocumentService } from './courtSessionDocument.service'
+import { CourtDocumentService } from './courtDocument.service'
 
-@Controller('api/case/:caseId/courtSession/:courtSessionId/document')
-@ApiTags('court-session-documents')
+@Controller('api/case/:caseId/courtSession/:courtSessionId/courtDocument')
+@ApiTags('court-documents')
 @UseGuards(JwtAuthUserGuard, RolesGuard)
-export class CourtSessionDocumentController {
+export class CourtDocumentController {
   constructor(
-    private readonly courtSessionDocumentService: CourtSessionDocumentService,
+    private readonly courtDocumentService: CourtDocumentService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -55,25 +55,25 @@ export class CourtSessionDocumentController {
   )
   @Post()
   @ApiCreatedResponse({
-    type: CourtSessionDocument,
-    description: 'Creates a new court session document',
+    type: CourtDocument,
+    description: 'Creates a new court document',
   })
   async create(
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
-    @Body() createCourtSessionDocumentDto: CreateCourtSessionDocumentDto,
-  ): Promise<CourtSessionDocument> {
+    @Body() createDto: CreateCourtDocumentDto,
+  ): Promise<CourtDocument> {
     this.logger.debug(
-      `Creating a new court session document for court session ${courtSessionId} of case ${caseId}`,
+      `Creating a new court document for court session ${courtSessionId} of case ${caseId}`,
     )
 
     return this.sequelize.transaction(async (transaction) =>
-      this.courtSessionDocumentService.create(
+      this.courtDocumentService.create(
         caseId,
         courtSessionId,
         {
-          ...createCourtSessionDocumentDto,
-          documentType: CourtSessionDocumentType.EXTERNAL_DOCUMENT,
+          ...createDto,
+          documentType: CourtDocumentType.EXTERNAL_DOCUMENT,
         },
         transaction,
       ),
@@ -84,34 +84,34 @@ export class CourtSessionDocumentController {
     CaseExistsGuard,
     CaseWriteGuard,
     CourtSessionExistsGuard,
-    CourtSessionDocumentExistsGuard,
+    CourtDocumentExistsGuard,
   )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Patch(':courtSessionDocumentId')
+  @Patch(':courtDocumentId')
   @ApiOkResponse({
-    type: CourtSessionDocument,
-    description: 'Updates a court session document',
+    type: CourtDocument,
+    description: 'Updates a court document',
   })
   async update(
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
-    @Param('courtSessionDocumentId') courtSessionDocumentId: string,
-    @Body() updateCourtSessionDocumentDto: UpdateCourtSessionDocumentDto,
-  ): Promise<CourtSessionDocument> {
+    @Param('courtDocumentId') courtDocumentId: string,
+    @Body() updateCourtDocumentDto: UpdateCourtDocumentDto,
+  ): Promise<CourtDocument> {
     this.logger.debug(
-      `Updating court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+      `Updating court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
     )
 
     return this.sequelize.transaction(async (transaction) =>
-      this.courtSessionDocumentService.update(
+      this.courtDocumentService.update(
         caseId,
         courtSessionId,
-        courtSessionDocumentId,
-        updateCourtSessionDocumentDto,
+        courtDocumentId,
+        updateCourtDocumentDto,
         transaction,
       ),
     )
@@ -121,31 +121,31 @@ export class CourtSessionDocumentController {
     CaseExistsGuard,
     CaseWriteGuard,
     CourtSessionExistsGuard,
-    CourtSessionDocumentExistsGuard,
+    CourtDocumentExistsGuard,
   )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Delete(':courtSessionDocumentId')
+  @Delete(':courtDocumentId')
   @ApiOkResponse({
-    description: 'Deletes a court session document',
+    description: 'Deletes a court document',
   })
   async delete(
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
-    @Param('courtSessionDocumentId') courtSessionDocumentId: string,
-  ): Promise<DeleteResponse> {
+    @Param('courtDocumentId') courtDocumentId: string,
+  ): Promise<DeleteCourtDocumentResponse> {
     this.logger.debug(
-      `Deleting court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+      `Deleting court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
     )
 
     return this.sequelize.transaction(async (transaction) => {
-      const deleted = await this.courtSessionDocumentService.delete(
+      const deleted = await this.courtDocumentService.delete(
         caseId,
         courtSessionId,
-        courtSessionDocumentId,
+        courtDocumentId,
         transaction,
       )
 

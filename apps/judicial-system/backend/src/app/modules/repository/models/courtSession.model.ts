@@ -18,7 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
-import { CourtSessionDocument } from './courtSessionDocument.model'
+import { CourtDocument } from './courtDocument.model'
 import { User } from './user.model'
 
 @Table({
@@ -109,7 +109,7 @@ export class CourtSession extends Model {
   @ApiPropertyOptional({ type: String })
   closingEntries?: string
 
-  @HasMany(() => CourtSessionDocument, 'courtSessionId')
-  @ApiPropertyOptional({ type: () => [CourtSessionDocument] })
-  courtSessionDocuments?: CourtSessionDocument[]
+  @HasMany(() => CourtDocument, 'courtSessionId')
+  @ApiPropertyOptional({ type: () => [CourtDocument] })
+  courtDocuments?: CourtDocument[]
 }

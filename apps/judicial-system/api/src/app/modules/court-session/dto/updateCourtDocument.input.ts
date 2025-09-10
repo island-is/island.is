@@ -9,7 +9,7 @@ import {
 import { Field, ID, InputType, Int } from '@nestjs/graphql'
 
 @InputType()
-export class UpdateCourtSessionDocumentInput {
+export class UpdateCourtDocumentInput {
   @Field(() => ID)
   @IsUUID()
   readonly caseId!: string
@@ -20,7 +20,7 @@ export class UpdateCourtSessionDocumentInput {
 
   @Field(() => ID)
   @IsUUID()
-  readonly courtSessionDocumentId!: string
+  readonly courtDocumentId!: string
 
   @Field(() => Int, { nullable: true })
   @IsOptional()

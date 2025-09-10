@@ -16,51 +16,51 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { CourtSessionDocumentType } from '@island.is/judicial-system/types'
+import { CourtDocumentType } from '@island.is/judicial-system/types'
 
-import { CourtSessionDocument } from '../models/courtSessionDocument.model'
+import { CourtDocument } from '../models/courtDocument.model'
 
-interface CreateCourtSessionDocumentOptions {
+interface CreateCourtDocumentOptions {
   transaction?: Transaction
 }
 
-interface CreateCourtSessionDocument {
-  documentType: CourtSessionDocumentType
+interface CreateCourtDocument {
+  documentType: CourtDocumentType
   name: string
   caseFileId?: string
   generatedPdfUri?: string
 }
 
-interface UpdateCourtSessionDocumentOptions {
+interface UpdateCourtDocumentOptions {
   transaction?: Transaction
 }
 
-interface DeleteCourtSessionDocumentOptions {
+interface DeleteCourtDocumentOptions {
   transaction?: Transaction
 }
 
-interface UpdateCourtSessionDocument {
+interface UpdateCourtDocument {
   documentOrder?: number
   name?: string
 }
 
 @Injectable()
-export class CourtSessionDocumentRepositoryService {
+export class CourtDocumentRepositoryService {
   constructor(
-    @InjectModel(CourtSessionDocument)
-    private readonly courtSessionDocumentModel: typeof CourtSessionDocument,
+    @InjectModel(CourtDocument)
+    private readonly courtDocumentModel: typeof CourtDocument,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async create(
     caseId: string,
     courtSessionId: string,
-    data: CreateCourtSessionDocument,
-    options?: CreateCourtSessionDocumentOptions,
-  ): Promise<CourtSessionDocument> {
+    data: CreateCourtDocument,
+    options?: CreateCourtDocumentOptions,
+  ): Promise<CourtDocument> {
     try {
       this.logger.debug(
-        `Creating a new court session document for court session ${courtSessionId} of case ${caseId} with data:`,
+        `Creating a new court document for court session ${courtSessionId} of case ${caseId} with data:`,
         { data: Object.keys(data) },
       )
 
@@ -71,7 +71,7 @@ export class CourtSessionDocumentRepositoryService {
       }
 
       // Find the document with the highest document order value for this case
-      const lastDocument = await this.courtSessionDocumentModel.findOne({
+      const lastDocument = await this.courtDocumentModel.findOne({
         where: { caseId },
         order: [['documentOrder', 'DESC']],
         transaction: options?.transaction,
@@ -79,19 +79,19 @@ export class CourtSessionDocumentRepositoryService {
 
       const nextOrder = lastDocument ? lastDocument.documentOrder + 1 : 1
 
-      const courtSessionDocument = await this.courtSessionDocumentModel.create(
+      const courtDocument = await this.courtDocumentModel.create(
         { ...data, caseId, courtSessionId, documentOrder: nextOrder },
         createOptions,
       )
 
       this.logger.debug(
-        `Created a new court session document ${courtSessionDocument.id} for court session ${courtSessionId} of case ${caseId}`,
+        `Created a new court document ${courtDocument.id} for court session ${courtSessionId} of case ${caseId}`,
       )
 
-      return courtSessionDocument
+      return courtDocument
     } catch (error) {
       this.logger.error(
-        `Error creating a new court session document for court session ${courtSessionId} of case ${caseId} with data:`,
+        `Error creating a new court document for court session ${courtSessionId} of case ${caseId} with data:`,
         { data: Object.keys(data), error },
       )
 
@@ -102,18 +102,18 @@ export class CourtSessionDocumentRepositoryService {
   async update(
     caseId: string,
     courtSessionId: string,
-    courtSessionDocumentId: string,
-    data: UpdateCourtSessionDocument,
-    options?: UpdateCourtSessionDocumentOptions,
-  ): Promise<CourtSessionDocument> {
+    courtDocumentId: string,
+    data: UpdateCourtDocument,
+    options?: UpdateCourtDocumentOptions,
+  ): Promise<CourtDocument> {
     try {
       this.logger.debug(
-        `Updating court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId} with data:`,
+        `Updating court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId} with data:`,
         { data: Object.keys(data) },
       )
 
       const updateOptions: UpdateOptions = {
-        where: { id: courtSessionDocumentId, caseId, courtSessionId },
+        where: { id: courtDocumentId, caseId, courtSessionId },
       }
 
       if (options?.transaction) {
@@ -123,19 +123,19 @@ export class CourtSessionDocumentRepositoryService {
       // If the document order is being updated, we need special handling
       if (data.documentOrder !== undefined) {
         // Get the current document to check its current order
-        const currentDocument = await this.courtSessionDocumentModel.findOne({
-          where: { id: courtSessionDocumentId, caseId, courtSessionId },
+        const currentDocument = await this.courtDocumentModel.findOne({
+          where: { id: courtDocumentId, caseId, courtSessionId },
           transaction: options?.transaction,
         })
 
         if (!currentDocument) {
           throw new InternalServerErrorException(
-            `Could not find court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+            `Could not find court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
           )
         }
 
         // Get the total count of documents for this case
-        const totalDocuments = await this.courtSessionDocumentModel.count({
+        const totalDocuments = await this.courtDocumentModel.count({
           where: { caseId },
           transaction: options?.transaction,
         })
@@ -154,7 +154,7 @@ export class CourtSessionDocumentRepositoryService {
         if (currentOrder !== newOrder) {
           if (newOrder > currentOrder) {
             // Moving down: decrease order of documents between current and new position
-            await this.courtSessionDocumentModel.update(
+            await this.courtDocumentModel.update(
               { documentOrder: literal('documentOrder - 1') },
               {
                 where: {
@@ -166,7 +166,7 @@ export class CourtSessionDocumentRepositoryService {
             )
           } else {
             // Moving up: increase order of documents between new and current position
-            await this.courtSessionDocumentModel.update(
+            await this.courtDocumentModel.update(
               { documentOrder: literal('documentOrder + 1') },
               {
                 where: {
@@ -180,34 +180,34 @@ export class CourtSessionDocumentRepositoryService {
         }
       }
 
-      const [numberOfAffectedRows, courtSessionDocuments] =
-        await this.courtSessionDocumentModel.update(data, {
+      const [numberOfAffectedRows, courtDocuments] =
+        await this.courtDocumentModel.update(data, {
           ...updateOptions,
           returning: true,
         })
 
       if (numberOfAffectedRows < 1) {
         throw new InternalServerErrorException(
-          `Could not update court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+          `Could not update court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
         )
       }
 
       if (numberOfAffectedRows > 1) {
         // Tolerate failure, but log error
         this.logger.error(
-          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId} with data:`,
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId} with data:`,
           { data: Object.keys(data) },
         )
       }
 
       this.logger.debug(
-        `Updated court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+        `Updated court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
       )
 
-      return courtSessionDocuments[0]
+      return courtDocuments[0]
     } catch (error) {
       this.logger.error(
-        `Error updating court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId} with data:`,
+        `Error updating court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId} with data:`,
         { data: Object.keys(data), error },
       )
 
@@ -218,49 +218,49 @@ export class CourtSessionDocumentRepositoryService {
   async delete(
     caseId: string,
     courtSessionId: string,
-    courtSessionDocumentId: string,
-    options?: DeleteCourtSessionDocumentOptions,
+    courtDocumentId: string,
+    options?: DeleteCourtDocumentOptions,
   ): Promise<void> {
     try {
       this.logger.debug(
-        `Deleting court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+        `Deleting court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
       )
 
       // Get the document to find its order before deletion
-      const documentToDelete = await this.courtSessionDocumentModel.findOne({
-        where: { id: courtSessionDocumentId, caseId, courtSessionId },
+      const documentToDelete = await this.courtDocumentModel.findOne({
+        where: { id: courtDocumentId, caseId, courtSessionId },
         transaction: options?.transaction,
       })
 
       if (!documentToDelete) {
         throw new InternalServerErrorException(
-          `Could not find court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+          `Could not find court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
         )
       }
 
       const deletedOrder = documentToDelete.documentOrder
 
       // Delete the document
-      const numberOfDeletedRows = await this.courtSessionDocumentModel.destroy({
-        where: { id: courtSessionDocumentId, caseId, courtSessionId },
+      const numberOfDeletedRows = await this.courtDocumentModel.destroy({
+        where: { id: courtDocumentId, caseId, courtSessionId },
         transaction: options?.transaction,
       })
 
       if (numberOfDeletedRows < 1) {
         throw new InternalServerErrorException(
-          `Could not delete court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+          `Could not delete court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
         )
       }
 
       if (numberOfDeletedRows > 1) {
         // Tolerate failure, but log error
         this.logger.error(
-          `Unexpected number of rows (${numberOfDeletedRows}) affected when deleting court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+          `Unexpected number of rows (${numberOfDeletedRows}) affected when deleting court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
         )
       }
 
       // Adjust order of remaining documents that had higher order values
-      await this.courtSessionDocumentModel.update(
+      await this.courtDocumentModel.update(
         { documentOrder: literal('documentOrder - 1') },
         {
           where: { caseId, documentOrder: { [Op.gt]: deletedOrder } },
@@ -269,11 +269,11 @@ export class CourtSessionDocumentRepositoryService {
       )
 
       this.logger.debug(
-        `Deleted court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId} and adjusted remaining document orders`,
+        `Deleted court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId} and adjusted remaining document orders`,
       )
     } catch (error) {
       this.logger.error(
-        `Error deleting court session document ${courtSessionDocumentId} for court session ${courtSessionId} of case ${caseId}:`,
+        `Error deleting court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}:`,
         { error },
       )
 

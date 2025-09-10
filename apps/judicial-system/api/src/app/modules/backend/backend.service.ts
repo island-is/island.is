@@ -24,9 +24,9 @@ import {
 import { CaseListEntry } from '../case-list'
 import { CaseTableResponse, SearchCasesResponse } from '../case-table'
 import {
-  CourtSessionDocumentResponse,
+  CourtDocumentResponse,
   CourtSessionResponse,
-  DeleteCourtSessionDocumentResponse,
+  DeleteCourtDocumentResponse,
 } from '../court-session'
 import {
   CivilClaimant,
@@ -606,36 +606,36 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
-  createCourtSessionDocument(
+  createCourtDocument(
     caseId: string,
     courtSessionId: string,
-    createCourtSessionDocument: unknown,
-  ): Promise<CourtSessionDocumentResponse> {
+    createCourtDocument: unknown,
+  ): Promise<CourtDocumentResponse> {
     return this.post(
-      `case/${caseId}/courtSession/${courtSessionId}/document`,
-      createCourtSessionDocument,
+      `case/${caseId}/courtSession/${courtSessionId}/courtDocument`,
+      createCourtDocument,
     )
   }
 
-  updateCourtSessionDocument(
+  updateCourtDocument(
     caseId: string,
     courtSessionId: string,
-    courtSessionDocumentId: string,
-    updateCourtSessionDocument: unknown,
-  ): Promise<CourtSessionDocumentResponse> {
+    courtDocumentId: string,
+    updateCourtDocument: unknown,
+  ): Promise<CourtDocumentResponse> {
     return this.patch(
-      `case/${caseId}/courtSession/${courtSessionId}/document/${courtSessionDocumentId}`,
-      updateCourtSessionDocument,
+      `case/${caseId}/courtSession/${courtSessionId}/courtDocument/${courtDocumentId}`,
+      updateCourtDocument,
     )
   }
 
-  deleteCourtSessionDocument(
+  deleteCourtDocument(
     caseId: string,
     courtSessionId: string,
-    courtSessionDocumentId: string,
-  ): Promise<DeleteCourtSessionDocumentResponse> {
+    courtDocumentId: string,
+  ): Promise<DeleteCourtDocumentResponse> {
     return this.delete(
-      `case/${caseId}/courtSession/${courtSessionId}/document/${courtSessionDocumentId}`,
+      `case/${caseId}/courtSession/${courtSessionId}/courtDocument/${courtDocumentId}`,
     )
   }
 
