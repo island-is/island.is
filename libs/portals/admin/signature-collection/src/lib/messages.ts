@@ -527,7 +527,8 @@ export const m = defineMessages({
   },
   collectionMunicipalReviewedTitle: {
     id: 'admin-portal.signature-collection:collectionMunicipalReviewedTitle',
-    defaultMessage: 'Meðmælasöfnun vegna framboðs til Sveitarstjórnarkosninga lokið',
+    defaultMessage:
+      'Meðmælasöfnun vegna framboðs til Sveitarstjórnarkosninga lokið',
     description: '',
   },
   collectionMunicipalReviewedMessage: {

@@ -20,7 +20,10 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { CollectionStatus, SignatureCollectionList } from '@island.is/api/schema'
+import {
+  CollectionStatus,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import {
@@ -41,7 +44,8 @@ const Lists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { allLists, collectionStatus, collection } = useLoaderData() as ListsLoaderReturn
+  const { allLists, collectionStatus, collection } =
+    useLoaderData() as ListsLoaderReturn
 
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
