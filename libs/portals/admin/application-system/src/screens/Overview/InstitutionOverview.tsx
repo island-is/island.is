@@ -164,9 +164,14 @@ const InstitutionOverview = () => {
           { title: formatMessage(m.applicationSystem) },
         ]}
       />
-      <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
-        {formatMessage(m.applicationSystemApplications)}
-      </Text>
+      <Box marginBottom={[3, 3, 6]} marginTop={3}>
+        <Text variant="h3" as="h1">
+          {formatMessage(m.applicationSystemApplications)}
+        </Text>
+        <Text fontWeight="light">
+          {formatMessage(m.applicationSystemApplicationsDescription)}
+        </Text>
+      </Box>
       <InstitutionFilters
         onTypeIdChange={handleTypeIdChange}
         onSearchStrChange={handleSearchStrChange}
