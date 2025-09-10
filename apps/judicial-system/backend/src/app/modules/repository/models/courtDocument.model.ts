@@ -44,13 +44,13 @@ export class CourtDocument extends Model {
   caseId!: string
 
   @ForeignKey(() => CourtSession)
-  @Column({ type: DataType.UUID, allowNull: false })
-  @ApiProperty({ type: String })
-  courtSessionId!: string
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  courtSessionId?: string
 
   @Column({
     type: DataType.ENUM,
-    allowNull: true,
+    allowNull: false,
     values: Object.values(CourtDocumentType),
   })
   @ApiProperty({ type: CourtDocumentType })
