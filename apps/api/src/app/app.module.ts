@@ -229,6 +229,10 @@ import {
 } from '@island.is/clients/vmst-unemployment'
 import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
+import {
+  LandspitaliModule,
+  LandspitaliApiModuleConfig,
+} from '@island.is/api/domains/landspitali'
 
 const environment = getConfig
 
@@ -366,6 +370,7 @@ const environment = getConfig
     SecondarySchoolApiModule,
     VmstUnemploymentClientModule,
     PracticalExamsModule,
+    LandspitaliModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -479,6 +484,7 @@ const environment = getConfig
         PaymentsApiModuleConfig,
         BankInfoClientConfig,
         VmstUnemploymentClientConfig,
+        LandspitaliApiModuleConfig,
       ],
     }),
   ],

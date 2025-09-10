@@ -420,14 +420,22 @@ export class SignatureCollectionClientService {
     },
     auth: User,
   ): Promise<Success> {
-    const { id, isActive } = await this.getLatestCollectionForType(
-      collectionType,
-    )
+    const collection = await this.getLatestCollectionForType(collectionType)
     const { ownedLists, candidate } = await this.getSignee(auth, collectionType)
     const { nationalId } = auth
     if (candidate?.nationalId !== nationalId || !candidate.id) {
       return { success: false, reasons: [ReasonKey.NotOwner] }
     }
+    const id =
+      collectionType === CollectionType.LocalGovernmental
+        ? collection.areas.find((area) => area.id === candidate.areaId)
+            ?.collectionId
+        : collection.id
+    const isActive =
+      collectionType === CollectionType.LocalGovernmental
+        ? collection.areas.find((area) => area.id === candidate.areaId)
+            ?.isActive
+        : collection.isActive
     // Lists can only be removed from current collection if it is open
     if (id !== collectionId || !isActive) {
       return { success: false, reasons: [ReasonKey.CollectionNotOpen] }

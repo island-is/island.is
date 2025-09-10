@@ -168,6 +168,7 @@ export const GetCurrentCollection = gql`
         nationalId
         collectionId
         name
+        hasActiveLists
       }
       isActive
     }
