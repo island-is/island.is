@@ -52,9 +52,9 @@ import {
   useCourtSessions,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import * as styles from './CourtRecord.css'
 import SelectCourtOfficials from '../../components/ReceptionAndAssignment/SelectCourtOfficials/SelectCourtOfficials'
 import { useSelectCourtOfficialsUsersQuery } from '../../components/ReceptionAndAssignment/SelectCourtOfficials/selectCourtOfficialsUsers.generated'
+import * as styles from './CourtRecord.css'
 
 const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
   [
