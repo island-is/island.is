@@ -1073,6 +1073,21 @@ export const coreHistoryMessages = defineMessages({
     defaultMessage: 'Umsókn samþykkt',
     description: 'History application accepted',
   },
+  applicationApprovedByReviewer: {
+    id: 'application.system:core.history.ApprovedByReviewerWithActor',
+    defaultMessage: 'Samþykkt af {subject}',
+    description: 'History log approved by reviewer',
+  },
+  applicationApprovedByReviewerWithActor: {
+    id: 'application.system:core.history.ApprovedByReviewerWithActor',
+    defaultMessage: 'Samþykkt af {actor} fyrir hönd {subject}',
+    description: 'History log approved by actor on behalf of reviewer',
+  },
+  applicationApprovedByReviewerFallback: {
+    id: 'application.system:core.history.ApprovedByReviewerFallback',
+    defaultMessage: 'Samþykkt af samþykktaraðila',
+    description: 'History log approved by reviewer, fallback string when nationalId info missing',
+  },
   applicationRejected: {
     id: 'application.system:core.history.applicationRejected',
     defaultMessage: 'Umsókn hafnað',

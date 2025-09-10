@@ -43,6 +43,7 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
+import {getHistoryLogApprovedWithSubjectAndActor} from "@island.is/application/core";
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -61,14 +62,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   return {
     name: applicationMessage.name,
     value: plate ? `- ${plate}` : '',
-  }
-}
-
-const formatHistoryLogWithSubjectAndActor = (logMessage: StaticText, subject: string, actor: string) =>  {
-  return {
-    name: logMessage,
-    actor: actor,
-    subject: subject,
   }
 }
 
@@ -231,7 +224,7 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: formatHistoryLogWithSubjectAndActor(logMessage =  applicationMessage.historyLogApprovedByReviewer),
+                logMessage: getHistoryLogApprovedWithSubjectAndActor,
               },
               {
                 onEvent: DefaultEvents.REJECT,

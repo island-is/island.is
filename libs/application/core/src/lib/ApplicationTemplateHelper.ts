@@ -21,6 +21,7 @@ import {
   RoleInState,
   TemplateApi,
   PendingAction,
+  HistoryEventMessage,
 } from '@island.is/application/types'
 import { formatText } from './formUtils'
 
@@ -316,27 +317,21 @@ export class ApplicationTemplateHelper<
     }
   }
 
-  getHistoryLogs(
+  getHistoryLog(
     stateKey: string = this.application.state,
     exitEvent: Event<TEvents>,
-    exitEventSubject: string,
-    exitEventActor: string,
-  ): StaticText | undefined {
+  ): HistoryEventMessage | undefined {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
     const historyLogs = stateInfo?.actionCard?.historyLogs
     let historyLog = null;
 
     if (Array.isArray(historyLogs)) {
-      historyLog =  historyLogs?.find((historyLog) => historyLog.onEvent === exitEvent)
+      return historyLogs?.find((historyLog) => historyLog.onEvent === exitEvent)
     } else {
-      historyLog =  historyLogs?.onEvent === exitEvent
+      return historyLogs?.onEvent === exitEvent
         ? historyLogs
         : undefined
-    }
-
-    if (typeof historyLog?.logMessage === 'function') {
-      return historyLog.log(historyLog.logMessage, exitEventSubject, exitEventActor)
     }
 
   }

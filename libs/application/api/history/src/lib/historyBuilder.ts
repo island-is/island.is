@@ -27,12 +27,24 @@ export class HistoryBuilder {
 
       if (!exitEvent) continue
 
-      const entryLog = templateHelper.getHistoryLogs(stateKey, exitEvent, exitEventSubjectNationalId, exitEventActorNationalId)
+      const historyLog = templateHelper.getHistoryLog(stateKey, exitEvent)
 
-      if (entryLog) {
-        result.push(
-          new HistoryResponseDto(entryTimestamp, entryLog, formatMessage),
-        )
+      if (historyLog) {
+        if (typeof historyLog.logMessage === 'function') {
+          let values = { subject: exitEventSubjectNationalId, action: exitEventActorNationalId }
+          const messageId = historyLog.logMessage(values)
+
+          result.push(
+            new HistoryResponseDto(
+              entryTimestamp,
+              messageId,
+              formatMessage,
+              values,
+            )
+          )
+        } else {
+        result.push(new HistoryResponseDto(entryTimestamp, historyLog.logMessage, formatMessage))
+        }
       }
     }
 
