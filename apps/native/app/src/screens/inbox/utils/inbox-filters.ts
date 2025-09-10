@@ -9,7 +9,7 @@ export type Filters = {
   dateTo?: Date
 }
 
-export const applyFilters = (filters?: Filters) => {
+export const normalizesFilters = (filters?: Filters) => {
   return {
     archived: filters?.archived ? true : undefined,
     bookmarked: filters?.bookmarked ? true : undefined,

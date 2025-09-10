@@ -55,7 +55,7 @@ import { testIDs } from '../../utils/test-ids'
 import { ActionBar } from './components/action-bar'
 import { PressableListItem } from './components/pressable-list-item'
 import { Toast, ToastVariant } from './components/toast'
-import { applyFilters } from './utils/inbox-filters'
+import { normalizesFilters } from './utils/inbox-filters'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -196,7 +196,7 @@ export const InboxScreen: NavigationFunctionComponent<InboxScreenProps> = ({
     dateTo,
   ])
 
-  const [filters, setFilters] = useState(applyFilters(incomingFilters))
+  const [filters, setFilters] = useState(normalizesFilters(incomingFilters))
   const [selectState, setSelectedState] = useState(false)
   const [selectedItems, setSelectedItems] = useState<string[]>([])
 
@@ -316,7 +316,7 @@ export const InboxScreen: NavigationFunctionComponent<InboxScreenProps> = ({
   }, componentId)
 
   useEffect(() => {
-    const appliedFilters = applyFilters(incomingFilters)
+    const appliedFilters = normalizesFilters(incomingFilters)
     // deep equal incoming filters
     if (
       JSON.stringify(appliedFilters) === JSON.stringify(filters) ||
