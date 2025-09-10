@@ -452,6 +452,7 @@ query Case($input: CaseQueryInput!) {
       rulingType
       ruling
       closingEntries
+      isAttestingWitness
     }
   }
 }

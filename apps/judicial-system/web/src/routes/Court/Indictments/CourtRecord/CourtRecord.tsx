@@ -16,6 +16,7 @@ import {
   Checkbox,
   Input,
   RadioButton,
+  Select,
   Tag,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -35,7 +36,11 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { useCourtDocuments } from '@island.is/judicial-system-web/src/components/CourtDocuments/CourtDocuments'
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
-import { CourtSessionRulingType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CourtSessionRulingType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSetErrorMessage,
@@ -48,6 +53,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './CourtRecord.css'
+import SelectCourtOfficials from '../../components/ReceptionAndAssignment/SelectCourtOfficials/SelectCourtOfficials'
+import { useSelectCourtOfficialsUsersQuery } from '../../components/ReceptionAndAssignment/SelectCourtOfficials/selectCourtOfficialsUsers.generated'
 
 const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
   [
@@ -100,6 +107,33 @@ const CourtRecord: FC = () => {
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const { updateCourtSession } = useCourtSessions()
+
+  const { data: usersData, loading: usersLoading } =
+    useSelectCourtOfficialsUsersQuery({
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
+
+  const judges = (usersData?.users ?? [])
+    .filter(
+      (user: User) =>
+        (user.role === UserRole.DISTRICT_COURT_JUDGE ||
+          user.role === UserRole.DISTRICT_COURT_ASSISTANT) &&
+        user.institution?.id === workingCase.court?.id,
+    )
+    .map((judge: User) => {
+      return { label: judge.name ?? '', value: judge.id, judge }
+    })
+
+  const registrars = (usersData?.users ?? [])
+    .filter(
+      (user: User) =>
+        user.role === UserRole.DISTRICT_COURT_REGISTRAR &&
+        user.institution?.id === workingCase.court?.id,
+    )
+    .map((registrar: User) => {
+      return { label: registrar.name ?? '', value: registrar.id, registrar }
+    })
 
   const containerVariants = {
     hidden: {
@@ -594,7 +628,12 @@ const CourtRecord: FC = () => {
                                 : 'Úrskurðarorð'
                             }
                             value={courtSession.ruling || ''}
-                            placeholder="Hvert er dómsorðið?"
+                            placeholder={`Hvert er ${
+                              courtSession.rulingType ===
+                              CourtSessionRulingType.JUDGEMENT
+                                ? 'dómsorðið'
+                                : 'úrskurðarorðið'
+                            }?`}
                             onChange={(event) => {
                               setRulingErrorMessage('')
 
@@ -650,6 +689,67 @@ const CourtRecord: FC = () => {
                         </Box>
                       </>
                     )}
+                    <Box>
+                      <SectionHeading title="Vottur" />
+                      <BlueBox className={styles.grid}>
+                        <Checkbox
+                          label="Skrá vott að þinghaldi"
+                          name="isAttestingWitness"
+                          checked={courtSession.isAttestingWitness || false}
+                          onChange={(evt) => {
+                            updateItem(courtSession.id, {
+                              isAttestingWitness: evt.target.checked,
+                              attenstingWitnessId: null,
+                            })
+
+                            updateCourtSession({
+                              caseId: workingCase.id,
+                              courtSessionId: courtSession.id,
+                              isAttestingWitness: evt.target.checked,
+                              attestingWitnessId: null,
+                            })
+                          }}
+                          large
+                          filled
+                        />
+                        <Select
+                          name="courtUsers"
+                          options={[...judges, ...registrars].sort((a, b) =>
+                            a.label.localeCompare(b.label),
+                          )}
+                          size="md"
+                          label="Veldu vott"
+                          placeholder="Veldu vott að þinghaldi"
+                          isDisabled={!courtSession.isAttestingWitness}
+                          required
+                        />
+                      </BlueBox>
+                    </Box>
+                    <Box>
+                      <SectionHeading title="Þinghaldi slitið" />
+                      <BlueBox>
+                        <DateTime
+                          name="courtEndTime"
+                          timeLabel="Þinghald hófst (kk:mm)"
+                          maxDate={new Date()}
+                          selectedDate={courtSession.startDate}
+                          onChange={(
+                            date: Date | undefined,
+                            valid: boolean,
+                          ) => {
+                            if (date && valid) {
+                              updateCourtSession({
+                                caseId: workingCase.id,
+                                courtSessionId: courtSession.id,
+                                startDate: date,
+                              })
+                            }
+                          }}
+                          blueBox={false}
+                          required
+                        />
+                      </BlueBox>
+                    </Box>
                   </LayoutGroup>
                 </Box>
               </LayoutGroup>
