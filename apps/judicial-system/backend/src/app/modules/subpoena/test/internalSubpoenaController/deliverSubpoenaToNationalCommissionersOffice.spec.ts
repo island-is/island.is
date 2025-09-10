@@ -67,7 +67,7 @@ describe('InternalSubpoenaController - Deliver subpoena to national commissioner
     })
 
     it('should call deliverSubpoenaToPolice', () => {
-      expect(mockPdfService.getSubpoenaPdf).toBeCalledWith(
+      expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
         theCase,
         defendant,
         subpoena,

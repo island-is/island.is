@@ -9,7 +9,7 @@ import {
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { ServiceStatus } from '@island.is/judicial-system/types'
+import { VerdictServiceStatus } from '@island.is/judicial-system/types'
 
 export class PoliceUpdateVerdictDto {
   @IsOptional()
@@ -19,9 +19,9 @@ export class PoliceUpdateVerdictDto {
   serviceDate?: Date | null
 
   @IsOptional()
-  @IsEnum(ServiceStatus)
-  @ApiPropertyOptional({ enum: ServiceStatus })
-  serviceStatus?: ServiceStatus
+  @IsEnum(VerdictServiceStatus)
+  @ApiPropertyOptional({ enum: VerdictServiceStatus })
+  serviceStatus?: VerdictServiceStatus
 
   @IsOptional()
   @IsString()

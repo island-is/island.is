@@ -19,6 +19,7 @@ import { CaseService } from '../../case'
 import { FileService } from '../../file'
 import { PoliceService } from '../../police'
 import { Verdict } from '../../repository'
+import { InternalVerdictController } from '../internalVerdict.controller'
 import { VerdictController } from '../verdict.controller'
 import { VerdictService } from '../verdict.service'
 
@@ -33,7 +34,7 @@ export const createTestingVerdictModule = async () => {
         load: [sharedAuthModuleConfig, auditTrailModuleConfig],
       }),
     ],
-    controllers: [VerdictController],
+    controllers: [VerdictController, InternalVerdictController],
     providers: [
       SharedAuthModule,
       CaseService,
@@ -69,8 +70,17 @@ export const createTestingVerdictModule = async () => {
     getModelToken(Verdict),
   )
 
+  const verdictService = verdictModule.get<VerdictService>(VerdictService)
+
+  const policeService = verdictModule.get<PoliceService>(PoliceService)
+
+  const fileService = verdictModule.get<FileService>(FileService)
+
   const verdictController =
     verdictModule.get<VerdictController>(VerdictController)
+
+  const internalVerdictController =
+    verdictModule.get<InternalVerdictController>(InternalVerdictController)
 
   const sequelize = verdictModule.get<Sequelize>(Sequelize)
 
@@ -78,6 +88,10 @@ export const createTestingVerdictModule = async () => {
 
   return {
     verdictController,
+    internalVerdictController,
+    verdictService,
+    policeService,
+    fileService,
     verdictModel,
     sequelize,
   }
