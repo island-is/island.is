@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Drawer,
-  Icon,
-  Tag,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Drawer, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import PdfReport from '../../../../shared/PdfReport'
 import { m } from '../../../../../lib/messages'
