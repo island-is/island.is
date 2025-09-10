@@ -18,6 +18,7 @@ import { disabilityPensionFormMessage } from '../../lib/messages'
 import { useQuery } from '@apollo/client'
 import { siaDisabilityPensionCertificate } from '../../graphql/queries'
 import { SiaDisabilityPensionCertificateQuery } from '../../types/schema'
+import format from 'date-fns/format'
 
 export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   field,
@@ -140,7 +141,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           <Text></Text>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
-              .dateOfWorkIncapacity ?? '-'}
+              .dateOfWorkIncapacity ? format(new Date(data.socialInsuranceDisabilityPensionCertificate.dateOfWorkIncapacity), 'yyyy-MM-dd') : '-'}
           </Text>
         </GridColumn>
         <GridColumn span="1/1">

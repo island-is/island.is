@@ -13,6 +13,7 @@ import {
   NationalRegistryUserApi,
   defineTemplateApi,
   IdentityApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
@@ -26,9 +27,10 @@ import {
   YES,
   coreHistoryMessages,
   getValueViaPath,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
-import { disabilityPensionFormMessage } from './messages'
+import { disabilityPensionFormMessage, statesMessages as dpStatesMessages } from './messages'
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
@@ -50,6 +52,7 @@ import {
   Actions,
   Events,
   INCOME,
+  OAPEvents,
   RatioType,
   Roles,
   States,
@@ -62,6 +65,8 @@ import {
   Eligible,
   IncomePlanRow,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -75,8 +80,14 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.DisabilityPension.translation,
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   allowMultipleApplicationsInDraft: false,
   requiredScopes: [ApiScope.socialInsuranceAdministration],
+  featureFlag: Features.disabilityPension,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -171,8 +182,7 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         exit: ['unsetIncomePlan'],
         meta: {
-          name: 'Main form',
-          progress: 0.8,
+          name: States.DRAFT,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
@@ -210,8 +220,62 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.APPROVED,
+            target: States.TRYGGINGASTOFNUN_SUBMITTED,
           },
+        },
+      },
+      [States.TRYGGINGASTOFNUN_SUBMITTED]: {
+        entry: ['assignOrganization'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: States.TRYGGINGASTOFNUN_SUBMITTED,
+          status: FormModes.IN_PROGRESS,
+          //todo: correct?
+          lifecycle: pruneAfterDays(365),
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.tryggingastofnunSubmittedTitle,
+              content: dpStatesMessages.applicationSubmittedDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: statesMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: statesMessages.applicationRejected,
+              },
+              {
+                onEvent: OAPEvents.DISMISS,
+                logMessage: statesMessages.applicationDismissed,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.InReviewForm),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.InReviewForm),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.APPROVED]: {
@@ -221,7 +285,7 @@ const template: ApplicationTemplate<
           actionCard: {
             pendingAction: {
               title: socialInsuranceAdministrationMessage.applicationApproved,
-              content: statesMessages.applicationApproved,
+              content: dpStatesMessages.applicationApproved,
               displayStatus: 'success',
             },
           },
@@ -232,6 +296,57 @@ const template: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/inReviewForm').then((module) =>
                   Promise.resolve(module.InReviewForm),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.REJECTED]: {
+        meta: {
+          name: States.REJECTED,
+          status: FormModes.REJECTED,
+          actionCard: {
+            pendingAction: {
+              title: socialInsuranceAdministrationMessage.applicationRejected,
+              content: dpStatesMessages.applicationRejectedDescription,
+              displayStatus: 'error',
+            },
+          },
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((val) =>
+                  Promise.resolve(val.InReviewForm),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.DISMISSED]: {
+        meta: {
+          name: States.DISMISSED,
+          status: FormModes.REJECTED,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: socialInsuranceAdministrationMessage.dismissedTag,
+            },
+            pendingAction: {
+              title: dpStatesMessages.applicationDismissed,
+              content: dpStatesMessages.applicationDismissedDescription,
+              displayStatus: 'error',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((val) =>
+                  Promise.resolve(val.InReviewForm),
                 ),
               read: 'all',
             },
@@ -303,6 +418,22 @@ const template: ApplicationTemplate<
 
         return context
       }),
+      assignOrganization: assign((context) => {
+        const { application } = context
+        const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN ?? ''
+
+        const assignees = application.assignees
+        if (TR_ID) {
+          if (Array.isArray(assignees) && !assignees.includes(TR_ID)) {
+            assignees.push(TR_ID)
+            set(application, 'assignees', assignees)
+          } else {
+            set(application, 'assignees', [TR_ID])
+          }
+        }
+
+        return context
+      }),
       clearAssignees: assign((context) => ({
         ...context,
         application: {
@@ -313,10 +444,19 @@ const template: ApplicationTemplate<
     },
   },
   mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
+    nationalId: string,
+    application: Application,
   ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+
+    const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN
+    if (nationalId === TR_ID) {
+      return Roles.ORGANIZATION_REVIEWER
+    }
+
+    return undefined
   },
 }
 
