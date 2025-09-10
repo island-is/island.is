@@ -15,7 +15,7 @@ export class VMSTApplicationsResolver {
   ) {}
 
   @Query(() => Boolean, {
-    name: 'vmstApplicationsAccountNumbervalidation',
+    name: 'vmstApplicationsAccountNumberValidation',
   })
   @Audit()
   async validateBankInformation(
