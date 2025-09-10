@@ -266,6 +266,7 @@ export const include: Includeable[] = [
       ['documentOrder', 'DESC'],
       ['created', 'ASC'],
     ],
+    where: { courtSessionId: null },
     separate: true,
   },
   {
@@ -1997,17 +1998,77 @@ export class CaseService {
       return
     }
 
+    // Create the first court session and then add court decuments to it
     const courtSession = await this.courtSessionService.create(
       theCase.id,
       transaction,
     )
 
-    for (const caseFile of theCase.caseFiles?.filter(
+    // Start with the generated indictment PDF
+    await this.courtDocumentService.create(
+      theCase.id,
+      courtSession.id,
+      {
+        documentType: CourtDocumentType.GENERATED_DOCUMENT,
+        name: 'Ákæra',
+        generatedPdfUri: `/api/case/${theCase.id}/indictment/Ákæra`,
+      },
+      transaction,
+    )
+
+    const caseFiles = theCase.caseFiles ?? []
+
+    // Add all criminal records
+    for (const caseFile of caseFiles.filter(
+      (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
+    ) ?? []) {
+      await this.courtDocumentService.create(
+        theCase.id,
+        courtSession.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        transaction,
+      )
+    }
+
+    // Add all cost breakdowns
+    for (const caseFile of caseFiles.filter(
+      (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
+    ) ?? []) {
+      await this.courtDocumentService.create(
+        theCase.id,
+        courtSession.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        transaction,
+      )
+    }
+
+    // Add all case files records
+    for (const policeCaseNumber of theCase.policeCaseNumbers) {
+      await this.courtDocumentService.create(
+        theCase.id,
+        courtSession.id,
+        {
+          documentType: CourtDocumentType.GENERATED_DOCUMENT,
+          name: `Skjalaskrá ${policeCaseNumber}`,
+          generatedPdfUri: `/api/case/${theCase.id}/caseFilesRecord/${policeCaseNumber}`,
+        },
+        transaction,
+      )
+    }
+
+    // Add all remaining case files
+    for (const caseFile of caseFiles?.filter(
       (file) =>
         file.category &&
         [
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
           CaseFileCategory.PROSECUTOR_CASE_FILE,
           CaseFileCategory.DEFENDANT_CASE_FILE,
