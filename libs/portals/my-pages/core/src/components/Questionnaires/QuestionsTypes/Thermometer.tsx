@@ -1,5 +1,6 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react'
+import React, { useRef, useCallback } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 
 export interface ThermometerProps {
   id: string
@@ -31,111 +32,91 @@ export const Thermometer: React.FC<ThermometerProps> = ({
   maxLabel,
   step = 1,
   showValue = false,
-  height = 200,
+  height = 500,
 }) => {
   const thermometerRef = useRef<HTMLDivElement>(null)
-  const [isDragging, setIsDragging] = useState(false)
 
-  const range = Math.max(0, max - min)
-  const percentage =
-    range === 0 ? 0 : Math.max(0, Math.min(100, ((value - min) / range) * 100))
-  const calculateValueFromPosition = useCallback(
-    (clientY: number) => {
-      if (!thermometerRef.current) return value
-
-      const rect = thermometerRef.current.getBoundingClientRect()
-      const y = clientY - rect.top
-      const relativeY = Math.max(0, Math.min(height, height - y)) // Invert Y axis so top is max
-      const ratio = relativeY / height
-      const rawValue = min + ratio * (max - min)
-
-      const steppedValue = Math.round(rawValue / step) * step
-      return Math.max(min, Math.min(max, steppedValue))
-    },
-    [value, height, min, max, step],
-  )
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (disabled) return
-    setIsDragging(true)
-    const newValue = calculateValueFromPosition(e.clientY)
-    onChange(newValue)
-  }
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!isDragging || disabled) return
-      const newValue = calculateValueFromPosition(e.clientY)
-      onChange(newValue)
-    },
-    [isDragging, disabled, calculateValueFromPosition, onChange],
-  )
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false)
-  }, [])
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (disabled) return
-    setIsDragging(true)
-    const newValue = calculateValueFromPosition(e.touches[0].clientY)
-    onChange(newValue)
-  }
-
-  const handleTouchMove = useCallback(
-    (e: TouchEvent) => {
-      if (!isDragging || disabled) return
-      e.preventDefault()
-      const newValue = calculateValueFromPosition(e.touches[0].clientY)
-      onChange(newValue)
-    },
-    [isDragging, disabled, calculateValueFromPosition, onChange],
-  )
-
-  const handleTouchEnd = useCallback(() => {
-    setIsDragging(false)
-  }, [])
-
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove)
-      document.addEventListener('mouseup', handleMouseUp)
-      document.addEventListener('touchmove', handleTouchMove, {
-        passive: false,
-      })
-      document.addEventListener('touchend', handleTouchEnd)
-
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove)
-        document.removeEventListener('mouseup', handleMouseUp)
-        document.removeEventListener('touchmove', handleTouchMove)
-        document.removeEventListener('touchend', handleTouchEnd)
-      }
+  // Calculate display values (show every 10th if range is large)
+  const getDisplayValues = () => {
+    const allValues = []
+    for (let i = min; i <= max; i += step) {
+      allValues.push(i)
     }
-  }, [
-    isDragging,
-    handleMouseMove,
-    handleMouseUp,
-    handleTouchMove,
-    handleTouchEnd,
-  ])
+
+    // If we have more than 20 values, show only every 10th
+    if (allValues.length > 20) {
+      return allValues.filter((val) => val % 10 === 0)
+    }
+    return allValues
+  }
+
+  const displayValues = getDisplayValues()
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (disabled) return
-      let next = value
-      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') next = value + step
-      else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft')
-        next = value - step
-      else if (e.key === 'Home') next = min
-      else if (e.key === 'End') next = max
-      if (next !== value) {
-        onChange(Math.max(min, Math.min(max, next)))
+
+      const currentIndex = displayValues.indexOf(value)
+      let nextIndex = currentIndex
+
+      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+        nextIndex = Math.min(displayValues.length - 1, currentIndex + 1)
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
+        nextIndex = Math.max(0, currentIndex - 1)
+      } else if (e.key === 'Home') {
+        nextIndex = 0
+      } else if (e.key === 'End') {
+        nextIndex = displayValues.length - 1
+      }
+
+      if (nextIndex !== currentIndex) {
+        onChange(displayValues[nextIndex])
         e.preventDefault()
       }
     },
-    [disabled, value, step, min, max, onChange],
+    [disabled, value, displayValues, onChange],
   )
+
+  // Generate clickable segments
+  const generateSegments = (): React.ReactNode[] => {
+    const segments: React.ReactNode[] = []
+    const segmentHeight = height / displayValues.length
+
+    // Reverse the display values so highest value appears at top
+    const reversedDisplayValues = [...displayValues].reverse()
+
+    reversedDisplayValues.forEach((segmentValue, index) => {
+      const isSelected = value === segmentValue
+
+      segments.push(
+        <Box
+          key={segmentValue}
+          onClick={() => !disabled && onChange(segmentValue)}
+          padding={3}
+          borderTopWidth={index === 0 ? undefined : 'standard'}
+          borderColor="blue200"
+          style={{
+            width: '100%',
+            height: `${segmentHeight}px`,
+            backgroundColor: isSelected
+              ? theme.color.blue400
+              : theme.color.blue100,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'background-color 0.2s ease',
+          }}
+        >
+          <Text variant="default" color={isSelected ? 'white' : 'dark400'}>
+            {segmentValue}
+          </Text>
+        </Box>,
+      )
+    })
+
+    return segments
+  }
 
   return (
     <Box>
@@ -153,16 +134,41 @@ export const Thermometer: React.FC<ThermometerProps> = ({
         </Box>
       )}
 
-      <Box display="flex" alignItems="center" justifyContent="center">
-        {/* Max label */}
-        <Box marginRight={2}>
-          <Text variant="small" color="dark300" textAlign="right">
-            {maxLabel || max}
-          </Text>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        style={{ position: 'relative' }}
+      >
+        {/* Labels */}
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="spaceBetween"
+          marginRight={2}
+          height="full"
+        >
+          {/* Max label */}
+          <Box>
+            <Text variant="small" color="blue400">
+              {maxLabel || 'Gifurleg vanlíðan'}
+            </Text>
+          </Box>
+          {/* Min label */}
+          <Box>
+            <Text variant="small" color="blue400">
+              {minLabel || 'Engin vanlíðan'}
+            </Text>
+          </Box>
         </Box>
 
-        {/* Thermometer visual */}
-        <Box>
+        {/* Thermometer container */}
+        <Box
+          padding={2}
+          borderRadius="lg"
+          borderColor="blue200"
+          border="standard"
+        >
           <Box
             ref={thermometerRef}
             role="slider"
@@ -173,69 +179,43 @@ export const Thermometer: React.FC<ThermometerProps> = ({
             aria-disabled={disabled}
             tabIndex={disabled ? -1 : 0}
             onKeyDown={handleKeyDown}
-            onMouseDown={handleMouseDown}
-            onTouchStart={handleTouchStart}
+            borderRadius="large"
+            border={'standard'}
+            borderColor="blue200"
             style={{
-              width: '24px',
-              height: `${height}px`,
-              backgroundColor: '#e6e6e6',
-              borderRadius: '12px',
-              position: 'relative',
-              border: error ? '2px solid red' : '1px solid #ccc',
+              width: '80px',
               cursor: disabled ? 'not-allowed' : 'pointer',
               opacity: disabled ? 0.5 : 1,
               userSelect: 'none',
+              overflow: 'hidden',
             }}
           >
-            {/* Fill */}
-            <Box
-              style={{
-                width: '100%',
-                height: `${percentage}%`,
-                backgroundColor: error ? '#ff4757' : '#0061ff',
-                borderRadius: '12px',
-                position: 'absolute',
-                bottom: 0,
-                transition: isDragging ? 'none' : 'height 0.2s ease',
-              }}
-            />
+            {/* Clickable segments */}
+            {generateSegments()}
 
-            {/* Bulb at bottom */}
-            <Box
-              style={{
-                width: '32px',
-                height: '32px',
-                backgroundColor: error ? '#ff4757' : '#0061ff',
-                borderRadius: '50%',
-                position: 'absolute',
-                bottom: '-4px',
-                left: '-4px',
-                border: '2px solid white',
-              }}
-            />
-
-            {/* Drag indicator at current level */}
-            <Box
-              style={{
-                width: '32px',
-                height: '4px',
-                backgroundColor: '#333',
-                position: 'absolute',
-                bottom: `${percentage}%`,
-                left: '-4px',
-                transform: 'translateY(50%)',
-                borderRadius: '2px',
-                opacity: isDragging ? 1 : 0.7,
-              }}
-            />
+            {/* Cyan indicator line for selected value */}
+            {/* {displayValues.includes(value) && (
+              <Box
+                style={{
+                  width: '70px',
+                  height: '4px',
+                  backgroundColor: '#40e0d0',
+                  position: 'absolute',
+                  bottom: `${
+                    (displayValues.indexOf(value) / displayValues.length) *
+                      height +
+                    height / displayValues.length / 2 -
+                    2
+                  }px`,
+                  left: '-5px',
+                  borderRadius: '2px',
+                  boxShadow: '0 2px 4px rgba(64, 224, 208, 0.4)',
+                  zIndex: 10,
+                  pointerEvents: 'none',
+                }}
+              />
+            )} */}
           </Box>
-        </Box>
-
-        {/* Min label */}
-        <Box marginLeft={2}>
-          <Text variant="small" color="dark300" textAlign="left">
-            {minLabel || min}
-          </Text>
         </Box>
       </Box>
 
