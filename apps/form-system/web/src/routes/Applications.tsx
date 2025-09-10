@@ -17,6 +17,7 @@ import {
   Page,
   Text,
 } from '@island.is/island-ui/core'
+import { useNamespaces } from '@island.is/localization'
 import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -25,6 +26,7 @@ interface Params {
 }
 
 export const Applications = () => {
+  useNamespaces('form.system')
   const { slug } = useParams() as Params
   const navigate = useNavigate()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
