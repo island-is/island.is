@@ -1,4 +1,12 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import {
   AnimatePresence,
   LayoutGroup,
@@ -38,8 +46,10 @@ import {
 import { useCourtDocuments } from '@island.is/judicial-system-web/src/components/CourtDocuments/CourtDocuments'
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
+  Case,
   CourtSession,
   CourtSessionRulingType,
+  UpdateCourtSessionInput,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -96,6 +106,31 @@ const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
   ],
 ]
 
+const useCourtSessionUpdater = (
+  workingCase: Case,
+  setWorkingCase: Dispatch<SetStateAction<Case>>,
+  updateFn: any,
+) => {
+  return (sessionId: string, updates: Partial<CourtSession>) => {
+    setWorkingCase((prev) => {
+      if (!prev.courtSessions) return prev
+
+      return {
+        ...prev,
+        courtSessions: prev.courtSessions?.map((item) =>
+          item.id === sessionId ? { ...item, ...updates } : item,
+        ),
+      }
+    })
+
+    updateFn({
+      caseId: workingCase.id,
+      courtSessionId: sessionId,
+      ...updates,
+    })
+  }
+}
+
 const CourtRecord: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -109,6 +144,11 @@ const CourtRecord: FC = () => {
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const { createCourtSession, updateCourtSession } = useCourtSessions()
+  const updateSession = useCourtSessionUpdater(
+    workingCase,
+    setWorkingCase,
+    updateCourtSession,
+  )
 
   const { data: usersData, loading: usersLoading } =
     useSelectCourtOfficialsUsersQuery({
@@ -261,10 +301,8 @@ const CourtRecord: FC = () => {
                             valid: boolean,
                           ) => {
                             if (date && valid) {
-                              updateCourtSession({
-                                caseId: workingCase.id,
-                                courtSessionId: courtSession.id,
-                                startDate: date,
+                              updateSession(courtSession.id, {
+                                startDate: formatDateForServer(date),
                               })
                             }
                           }}
@@ -293,11 +331,7 @@ const CourtRecord: FC = () => {
                               setLocationErrorMessage,
                             )
 
-                            updateCourtSession({
-                              caseId: workingCase.id,
-                              courtSessionId: courtSession.id,
-                              location,
-                            })
+                            updateSession(courtSession.id, { location })
                           }}
                           errorMessage={locationErrorMessage}
                           hasError={locationErrorMessage !== ''}
@@ -308,17 +342,9 @@ const CourtRecord: FC = () => {
                           name="isClosedProceeding"
                           label="Þinghaldið er lokað"
                           onChange={(evt) => {
-                            const update = {
+                            updateSession(courtSession.id, {
                               isClosed: evt.target.checked,
                               closedLegalProvisions: [],
-                            }
-
-                            updateItem(courtSession.id, update)
-
-                            updateCourtSession({
-                              caseId: workingCase.id,
-                              courtSessionId: courtSession.id,
-                              ...update,
                             })
                           }}
                           checked={Boolean(courtSession.isClosed)}
@@ -378,13 +404,7 @@ const CourtRecord: FC = () => {
                                               (v) => v !== legalProvision,
                                             )
 
-                                        updateItem(courtSession.id, {
-                                          closedLegalProvisions,
-                                        })
-
-                                        updateCourtSession({
-                                          caseId: workingCase.id,
-                                          courtSessionId: courtSession.id,
+                                        updateSession(courtSession.id, {
                                           closedLegalProvisions,
                                         })
                                       }}
@@ -409,17 +429,9 @@ const CourtRecord: FC = () => {
                         updateItem(courtSession.id, {
                           attendees: event.target.value,
                         })
-
-                        updateCourtSession({
-                          caseId: workingCase.id,
-                          courtSessionId: courtSession.id,
-                          attendees: event.target.value,
-                        })
                       }}
                       onBlur={(event) => {
-                        updateCourtSession({
-                          caseId: workingCase.id,
-                          courtSessionId: courtSession.id,
+                        updateSession(courtSession.id, {
                           attendees: event.target.value,
                         })
                       }}
