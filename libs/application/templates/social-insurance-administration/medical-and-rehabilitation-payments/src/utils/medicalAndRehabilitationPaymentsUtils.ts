@@ -10,22 +10,18 @@ import {
   IncomePlanRow,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { Application, ExternalData, Option } from '@island.is/application/types'
+import { Application, ExternalData } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
   Countries,
+  CurrentEmploymentStatusLang,
   EctsUnits,
   EducationLevels,
   SelfAssessmentQuestionnaire,
   SelfAssessmentQuestionnaireAnswers,
 } from '../types'
-import {
-  EligibleReasonCodes,
-  NOT_APPLICABLE,
-  NotApplicable,
-  SelfAssessmentCurrentEmploymentStatus,
-} from './constants'
+import { EligibleReasonCodes, NOT_APPLICABLE, NotApplicable } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber =
@@ -198,15 +194,15 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
       'selfAssessment.previousRehabilitationSuccessfulFurtherExplanations',
     )
 
-  const currentEmploymentStatus =
-    getValueViaPath<SelfAssessmentCurrentEmploymentStatus[]>(
+  const currentEmploymentStatuses =
+    getValueViaPath<string[]>(
       answers,
-      'selfAssessment.currentEmploymentStatus',
+      'selfAssessment.currentEmploymentStatuses',
     ) ?? []
 
-  const currentEmploymentStatusAdditional = getValueViaPath<string>(
+  const currentEmploymentStatusExplanation = getValueViaPath<string>(
     answers,
-    'selfAssessment.currentEmploymentStatusAdditional',
+    'selfAssessment.currentEmploymentStatusExplanation',
   )
 
   const lastEmploymentTitle = getValueViaPath<string>(
@@ -258,8 +254,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     previousRehabilitationOrTreatment,
     previousRehabilitationSuccessful,
     previousRehabilitationSuccessfulFurtherExplanations,
-    currentEmploymentStatus,
-    currentEmploymentStatusAdditional,
+    currentEmploymentStatuses,
+    currentEmploymentStatusExplanation,
     lastEmploymentTitle,
     lastEmploymentYear,
   }
@@ -372,6 +368,12 @@ export const getApplicationExternalData = (
       'socialInsuranceAdministrationEducationLevels.data',
     ) ?? []
 
+  const employmentStatuses =
+    getValueViaPath<CurrentEmploymentStatusLang[]>(
+      externalData,
+      'socialInsuranceAdministrationEmploymentStatuses.data',
+    ) ?? []
+
   const marpApplicationType = getValueViaPath<string>(
     externalData,
     'socialInsuranceAdministrationMARPApplicationType.data.applicationType',
@@ -409,6 +411,7 @@ export const getApplicationExternalData = (
     selfAssessmentQuestionnaire,
     ectsUnits,
     educationLevels,
+    employmentStatuses,
     marpApplicationType,
     marpConfirmationType,
     isEligible,
@@ -439,70 +442,6 @@ export const getSickPayEndDateLabel = (hasUtilizedSickPayRights?: YesOrNo) => {
   return hasUtilizedSickPayRights === YES
     ? medicalAndRehabilitationPaymentsFormMessage.shared.sickPayDidEndDate
     : medicalAndRehabilitationPaymentsFormMessage.shared.sickPayDoesEndDate
-}
-
-export const getSelfAssessmentCurrentEmploymentStatusOptions = () => {
-  const options: Option[] = [
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.NEVER_HAD_A_PAID_JOB,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment.neverOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.SELF_EMPLOYED,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .selfEmployedOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.FULL_TIME_WORKER,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .fullTimeOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.PART_TIME_WORKER,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .partTimeOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.CURRENTLY_STUDYING,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .studyingOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.JOB_SEARCH_REGISTERED,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .jobSearchRegisteredOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.JOB_SEARCH_NOT_REGISTERED,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .jobSearchNotRegisteredOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.VOLOUNTEER_OR_TEST_WORK,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .volunteerOrTestWorkOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.NO_PARTICIPATION,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .noParticipationOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.OTHER,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment.otherOption,
-    },
-  ]
-  return options
 }
 
 export const hasUtilizedRights = (
@@ -571,5 +510,18 @@ export const getSelfAssessmentQuestionnaireQuestions = (
     selfAssessmentQuestionnaire.find(
       (questionnaire) => questionnaire.language.toLowerCase() === locale,
     )?.questions ?? []
+  )
+}
+
+export const getEmploymentStatuses = (
+  externalData: ExternalData,
+  locale: Locale = 'is',
+) => {
+  const { employmentStatuses } = getApplicationExternalData(externalData)
+
+  return (
+    employmentStatuses.find(
+      (status) => status.languageCode.toLowerCase() === locale,
+    )?.employmentStatuses ?? []
   )
 }

@@ -14,6 +14,9 @@ export class SignatureCollectionCandidate {
   @Field()
   ownerName!: string
 
+  @Field(() => Boolean)
+  hasActiveLists!: boolean
+
   @Field(() => Date, { nullable: true })
   ownerBirthDate!: Date | null
 

@@ -40,6 +40,7 @@ import {
   TrWebExternalModelsServicePortalDisabilityPensionCertificate,
   TrWebApiServicesUseCaseDisabilityPensionModelsMaritalStatusDto,
   TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto,
+  TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { EmploymentDto, mapEmploymentDto } from './dto/employment.dto'
@@ -462,5 +463,15 @@ export class SocialInsuranceAdministrationClientService {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
+  }
+
+  async getEmploymentStatuses(
+    user: User,
+  ): Promise<
+    Array<TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEmploymentStatusGet()
   }
 }

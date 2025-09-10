@@ -747,5 +747,9 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getProfessionActivities({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getProfessionActivities(auth)
+
+  async getEmploymentStatuses({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getEmploymentStatuses(auth)
+
   }
 }

@@ -56,7 +56,6 @@ env:
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
   INSTITUTION_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
-  ISLYKILL_CERT: '/etc/config/islyklar.p12'
   LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
   LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
   LOG_LEVEL: 'info'
@@ -101,6 +100,7 @@ env:
   XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
   XROAD_FINANCES_V2_PATH: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2'
   XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
+  XROAD_FJS_BANKINFO_PATH: 'IS/GOV/5402697509/FJS-Public/TBRBankMgrService_v1'
   XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1'
   XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1'
   XROAD_HEALTH_DIRECTORATE_PATH: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/landlaeknir'
@@ -155,8 +155,6 @@ env:
   XROAD_VMST_MEMBER_CODE: '7005942039'
   XROAD_WORK_ACCIDENT_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token'
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
-files:
-  - 'islyklar.p12'
 grantNamespaces:
   - 'services-payments'
   - 'nginx-ingress-internal'
@@ -263,8 +261,6 @@ secrets:
   FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
   HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
-  ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
-  ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
   NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
   NOVA_URL: '/k8s/application-system-api/NOVA_URL'
