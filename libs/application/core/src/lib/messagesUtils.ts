@@ -1,5 +1,5 @@
 import { StaticText} from "@island.is/application/types";
-import { coreHistoryMessages } from "@island.is/application/core";
+import { coreHistoryMessages } from './messages';
 
 export const getHistoryLogApprovedWithSubjectAndActor = (
   values: Record<string, unknown>
