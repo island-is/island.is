@@ -56,6 +56,11 @@ export const m = defineMessages({
     defaultMessage: 'Staða',
     description: 'State',
   },
+  individualName: {
+    id: 'portals-admin.form-system:individual-name',
+    defaultMessage: 'Nafn',
+    description: 'Name',
+  },
   name: {
     id: 'portals-admin.form-system:name',
     defaultMessage: 'Heiti',
@@ -598,6 +603,21 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:copy',
     defaultMessage: 'Afrita',
     description: 'Copy',
+  },
+  publish: {
+    id: 'portals-admin.form-system:publish',
+    defaultMessage: 'Gefa út',
+    description: 'Publish',
+  },
+  unpublish: {
+    id: 'portals-admin.form-system:unpublish',
+    defaultMessage: 'Afturkalla útgáfu',
+    description: 'Unpublish',
+  },
+  tryOut: {
+    id: 'portals-admin.form-system:try-out',
+    defaultMessage: 'Prófa',
+    description: 'Try out',
   },
   getUrl: {
     id: 'portals-admin.form-system:get-url',

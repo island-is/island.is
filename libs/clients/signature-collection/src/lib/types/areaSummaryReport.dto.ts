@@ -19,8 +19,8 @@ export interface ListSummary {
 
 export const mapListSummary = (list: MedmaelalistiExtendedDTO): ListSummary => {
   return {
-    candidateName: list.frambodNafn,
-    listName: list.listiNafn,
+    candidateName: list.frambodNafn ?? '',
+    listName: list.listiNafn ?? '',
     partyBallotLetter: list.frambod?.listabokstafur || '',
     nrOfSignatures: list.fjoldiMedmaela || 0,
     nrOfDigitalSignatures: list.fjoldiMedmaelaRafraen || 0,
@@ -33,7 +33,7 @@ export const mapAreaSummaryReport = (
 ): AreaSummaryReport => {
   return {
     id: svaedi.id?.toString() || '',
-    name: svaedi.nafn,
+    name: svaedi.nafn ?? '',
     min: svaedi.fjoldi || 0,
     max: svaedi.fjoldiMax || 0,
     lists: svaedi.medmaelalistar?.map(mapListSummary) || [],

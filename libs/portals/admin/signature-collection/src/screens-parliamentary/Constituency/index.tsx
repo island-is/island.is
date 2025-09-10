@@ -73,7 +73,12 @@ export const Constituency = () => {
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
             buttonGroup={
-              <ActionDrawer allowedActions={[Actions.CreateCollection]} />
+              <ActionDrawer
+                allowedActions={[
+                  Actions.DownloadReports,
+                  Actions.CreateCollection,
+                ]}
+              />
             }
             marginBottom={4}
           />
@@ -89,7 +94,7 @@ export const Constituency = () => {
               <GridColumn span="12/12">
                 <Box marginBottom={3} display="flex" justifyContent="flexEnd">
                   <Text variant="eyebrow">
-                    {formatMessage(m.totalListResults) +
+                    {formatMessage(m.totalListsPerConstituency) +
                       ': ' +
                       constituencyLists.length}
                   </Text>

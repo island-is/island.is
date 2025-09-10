@@ -112,7 +112,7 @@ describe('CaseController - Update', () => {
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
+    mockUpdate.mockResolvedValue(theCase)
     const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
     mockFindOne.mockResolvedValue(theCase)
 
@@ -156,9 +156,9 @@ describe('CaseController - Update', () => {
 
     it('should update the case', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         caseToUpdate,
         {
-          where: { id: caseId },
           transaction,
         },
       )
@@ -181,11 +181,12 @@ describe('CaseController - Update', () => {
 
     it('should transition the case from SUBMITTED to RECEIVED', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         {
           courtCaseNumber: caseToUpdate.courtCaseNumber,
           state: CaseState.RECEIVED,
         },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -243,12 +244,13 @@ describe('CaseController - Update', () => {
 
     it('should update court case facts and court legal arguments', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         {
           caseResentExplanation: 'Endursending',
           courtCaseFacts: `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`,
           courtLegalArguments: `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`,
         },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -266,13 +268,14 @@ describe('CaseController - Update', () => {
 
     it('should update prosecutor demands and valid to date', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         expect.objectContaining({
           demands: 'Updated demands',
           prosecutorDemands: 'Updated demands',
           requestedValidToDate: caseToUpdate.requestedValidToDate,
           validToDate: caseToUpdate.requestedValidToDate,
         }),
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -295,12 +298,13 @@ describe('CaseController - Update', () => {
 
     it('should update prosecutor demands but not valid to date', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         expect.objectContaining({
           demands: 'Updated demands',
           prosecutorDemands: 'Updated demands',
           requestedValidToDate: caseToUpdate.requestedValidToDate,
         }),
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -573,8 +577,9 @@ describe('CaseController - Update', () => {
 
       it('should update the case', () => {
         expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
           { prosecutorStatementDate: date },
-          { where: { id: caseId }, transaction },
+          { transaction },
         )
       })
 
