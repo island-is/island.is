@@ -70,7 +70,7 @@ export const m = defineMessages({
   },
   collectionClosed: {
     id: 'sp.signatureCollection:collectionClosed',
-    defaultMessage: 'Söfnuninni lokið',
+    defaultMessage: 'Söfnun lokið',
     description: '',
   },
   collectionMaxReached: {
