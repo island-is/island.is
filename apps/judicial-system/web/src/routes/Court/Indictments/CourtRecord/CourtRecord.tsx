@@ -223,13 +223,13 @@ const CourtRecord: FC = () => {
       <FormContentContainer>
         <PageTitle>Þingbók</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Accordion dividerOnTop={false}>
+        <Accordion dividerOnTop={false} singleExpand>
           {workingCase.courtSessions?.map((courtSession, index) => (
             <AccordionItem
               id="courtRecordAccordionItem"
               label={`Þinghald ${index + 1}`}
               labelVariant="h3"
-              startExpanded={workingCase.courtSessions?.length === index + 1}
+              key={courtSession.id}
             >
               <LayoutGroup>
                 <Box className={styles.containerGrid}>
