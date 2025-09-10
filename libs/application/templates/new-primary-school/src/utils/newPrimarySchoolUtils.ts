@@ -23,10 +23,7 @@ import {
   SocialProfile,
   YesOrNoOrEmpty,
 } from '../types'
-import {
-  FriggSchoolsByMunicipalityQuery,
-  OrganizationModelTypeEnum,
-} from '../types/schema'
+import { FriggSchoolsByMunicipalityQuery } from '../types/schema'
 import {
   AffiliationRole,
   ApplicationType,
@@ -687,9 +684,7 @@ export const getMunicipalities = async (
     data?.friggSchoolsByMunicipality
       ?.filter(
         ({ type, managing }) =>
-          type === OrganizationModelTypeEnum.Municipality &&
-          managing &&
-          managing.length > 0,
+          type === 'Municipality' && managing && managing.length > 0,
       )
       ?.map(({ name, unitId }) => ({
         value: unitId || '',
