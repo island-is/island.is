@@ -4,6 +4,7 @@ import {
   GetListInput,
   CreateListInput,
   BulkUploadInput,
+  ReasonKey,
 } from './signature-collection.types'
 import { Collection, CollectionType } from './types/collection.dto'
 import { getSlug, List, ListStatus, mapListBase } from './types/list.dto'
@@ -239,7 +240,7 @@ export class SignatureCollectionAdminClientService
       })
 
       return {
-        slug: getSlug(candidacy.id ?? '', votingType.kosningTegund),
+        slug: getSlug(candidacy.id ?? '', votingType.kosningTegund ?? ''),
         success: true,
       }
     } catch (error) {
@@ -508,7 +509,7 @@ export class SignatureCollectionAdminClientService
         iD: parseInt(listId, 10),
         shouldLock: setLocked,
       })
-      return { success: res.listaLokad ?? false }
+      return { success: res.listaLokad === setLocked }
     } catch (error) {
       return { success: false, reasons: error.body ? [error.body] : [] }
     }
@@ -547,7 +548,10 @@ export class SignatureCollectionAdminClientService
         success,
         reasons: success
           ? []
-          : getReasonKeyForPaperSignatureUpload(signature, nationalId),
+          : (getReasonKeyForPaperSignatureUpload(
+              signature,
+              nationalId,
+            ) as ReasonKey[]),
       }
     } catch (error) {
       return {
