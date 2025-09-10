@@ -60,6 +60,7 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { CourtDocumentService, CourtSessionService } from '../court-session'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
@@ -455,6 +456,8 @@ export class CaseService {
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
     private readonly indictmentCountService: IndictmentCountService,
+    private readonly courtSessionService: CourtSessionService,
+    private readonly courtDocumentService: CourtDocumentService,
     private readonly subpoenaService: SubpoenaService,
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
@@ -1984,6 +1987,21 @@ export class CaseService {
     }
   }
 
+  private async handleCreateFirstCourtSession(
+    theCase: Case,
+    transaction: Transaction,
+  ) {
+    // Guard against unexpected existing court sessions
+    if (theCase.courtSessions && theCase.courtSessions.length > 0) {
+      return
+    }
+
+    const courtSession = await this.courtSessionService.create(
+      theCase.id,
+      transaction,
+    )
+  }
+
   private async handleEventLogUpdatesForIndictments(
     theCase: Case,
     updatedCase: Case,
@@ -2057,6 +2075,9 @@ export class CaseService {
     const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
 
+    const isReceivingIndictmentCase =
+      isReceivingCase && isIndictmentCase(theCase.type)
+
     const completingIndictmentCase =
       isIndictmentCase(theCase.type) && update.state === CaseState.COMPLETED
 
@@ -2115,17 +2136,9 @@ export class CaseService {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
         }
 
-        // Remove uploaded ruling files if an indictment case is completed without a ruling
-        if (completingIndictmentCaseWithoutRuling && theCase.caseFiles) {
-          await Promise.all(
-            theCase.caseFiles
-              .filter(
-                (caseFile) => caseFile.category === CaseFileCategory.RULING,
-              )
-              .map((caseFile) =>
-                this.fileService.deleteCaseFile(theCase, caseFile, transaction),
-              ),
-          )
+        // Handle first court session creation if receiving an indictment case
+        if (isReceivingIndictmentCase) {
+          await this.handleCreateFirstCourtSession(theCase, transaction)
         }
 
         // Create new subpoenas if scheduling a new arraignment date for an indictment case
@@ -2161,6 +2174,20 @@ export class CaseService {
             ),
           )
         }
+
+        // Remove uploaded ruling files if an indictment case is completed without a ruling
+        if (completingIndictmentCaseWithoutRuling && theCase.caseFiles) {
+          await Promise.all(
+            theCase.caseFiles
+              .filter(
+                (caseFile) => caseFile.category === CaseFileCategory.RULING,
+              )
+              .map((caseFile) =>
+                this.fileService.deleteCaseFile(theCase, caseFile, transaction),
+              ),
+          )
+        }
+
         const updatedCase = await this.findById(theCase.id, true, transaction)
 
         await this.handleEventLogUpdates(
