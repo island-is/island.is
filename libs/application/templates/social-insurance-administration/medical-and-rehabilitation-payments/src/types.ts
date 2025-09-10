@@ -40,3 +40,13 @@ export interface EducationLevels {
   code: string
   description: string
 }
+
+export interface CurrentEmploymentStatus {
+  displayName: string
+  value: string
+}
+
+export interface CurrentEmploymentStatusLang {
+  languageCode: string
+  employmentStatuses: CurrentEmploymentStatus[]
+}

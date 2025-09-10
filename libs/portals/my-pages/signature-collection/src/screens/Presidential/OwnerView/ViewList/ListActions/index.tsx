@@ -32,7 +32,6 @@ const ListActions = ({ listId }: { listId: string }) => {
           {formatMessage(m.listActions)}
         </Text>
         <Divider />
-        <Text marginY={6}>{formatMessage(m.listActionsDescription)}</Text>
         <Box
           display={['block', 'block', 'flex']}
           justifyContent="spaceBetween"

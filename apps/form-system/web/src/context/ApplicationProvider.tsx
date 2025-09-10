@@ -51,11 +51,11 @@ export const ApplicationProvider: React.FC<{
   const methods = useForm({ mode: 'onBlur' })
   const contextValue = useMemo(() => ({ state, dispatch }), [state])
 
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Application state changed:', state)
-    }
-  }, [state])
+  // useEffect(() => {
+  //   if (process.env.NODE_ENV === 'development') {
+  //     console.log('Application state changed:', state)
+  //   }
+  // }, [state])
 
   const [updateDependencies] = useMutation(UPDATE_APPLICATION_DEPENDENCIES)
 

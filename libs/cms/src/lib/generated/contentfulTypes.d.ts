@@ -1432,6 +1432,9 @@ export interface IFormFields {
 
   /** Recipient List */
   recipientList?: string[] | undefined
+
+  /** Email subject */
+  emailSubject?: string | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
