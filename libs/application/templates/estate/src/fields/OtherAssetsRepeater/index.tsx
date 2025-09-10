@@ -41,7 +41,7 @@ export const OtherAssetsRepeater: FC<
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors, setValue, getValues } = useFormContext()
+  const { control, clearErrors, getValues } = useFormContext()
   const estateData = getEstateDataFromApplication(application)
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])

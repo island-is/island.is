@@ -54,6 +54,7 @@ export const StocksRepeater: FC<
     if (fields.length === 0 && estateData.estate?.stocks) {
       replace(estateData.estate.stocks)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Calculate stock value from faceValue * rateOfExchange

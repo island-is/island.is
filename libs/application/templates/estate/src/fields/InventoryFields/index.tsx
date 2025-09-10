@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
