@@ -140,7 +140,6 @@ export const TableRepeaterFormField: FC<Props> = ({
     // Build an explicit empty row so RHF won't fall back to defaultValues (application.answers)
     const empty: Record<string, unknown> = {}
     items.forEach((it) => {
-      console.log('it', it)
       if (it.component === 'checkbox') {
         empty[it.id] = []
       } else if (it.component === 'nationalIdWithName') {
