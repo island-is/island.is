@@ -1794,7 +1794,7 @@ payment-flow-update-handler:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PAYMENTS_WEB_URL: 'https://island.is/greida'
-    PAYMENT_FLOW_UPDATE_HANDLER_API_URL: 'http://payment-flow-update-handler'
+    PAYMENT_FLOW_UPDATE_HANDLER_API_URL: 'http://payment-flow-update-handler.payment-flow-update-handler.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'services-payments'

@@ -1998,7 +1998,7 @@ payment-flow-update-handler:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PAYMENTS_WEB_URL: 'https://beta.dev01.devland.is/greida'
-    PAYMENT_FLOW_UPDATE_HANDLER_API_URL: 'http://payment-flow-update-handler'
+    PAYMENT_FLOW_UPDATE_HANDLER_API_URL: 'http://payment-flow-update-handler.payment-flow-update-handler.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'services-payments'

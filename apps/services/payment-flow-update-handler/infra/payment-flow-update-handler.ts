@@ -25,7 +25,12 @@ export const serviceSetup =
           prod: `https://island.is/greida`,
         },
         PAYMENT_FLOW_UPDATE_HANDLER_API_URL: ref(
-          (h) => `http://${h.svc(paymentFlowUpdateHandler)}`,
+          (ctx) =>
+            `http://payment-flow-update-handler.${
+              ctx.featureDeploymentName
+                ? `${ctx.featureDeploymentName}`
+                : 'payment-flow-update-handler'
+            }.svc.cluster.local`,
         ),
         LANDSPITALI_WEB_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: {
           dev: '[TEST] Minningarkort - Landspítali',
