@@ -34,7 +34,7 @@
           "buildTarget": "services-payment-flow-update-handler:build:development"
         },
         "production": {
-          "buildTarget": "services-payments:build:production"
+          "buildTarget": "services-payment-flow-update-handler:build:production"
         }
       }
     },
