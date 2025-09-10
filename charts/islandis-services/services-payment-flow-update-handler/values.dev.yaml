@@ -16,7 +16,7 @@ global:
     env:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
-name: 'payment-flow-update-handler'
+name: 'services-payment-flow-update-handler'
 enabled: true
 env:
   CODE_OWNER: 'stefna'
@@ -59,11 +59,9 @@ ingress:
       - host: 'payment-flow-update-handler.internal.dev01.devland.is'
         paths:
           - '/'
-namespace: 'payment-flow-update-handler'
+namespace: 'services-payment-flow-update-handler'
 podDisruptionBudget:
   maxUnavailable: 1
-podSecurityContext:
-  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -82,8 +80,3 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
-serviceAccount:
-  annotations:
-    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/payment-flow-update-handler'
-  create: true
-  name: 'payment-flow-update-handler'
