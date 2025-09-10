@@ -113,12 +113,12 @@ export const buildEmptyRepeaterRow = (
 ) => {
   const empty: Record<string, unknown> = {}
   items.forEach((it) => {
-    empty[it.id] = getEmptyValueForRepeaterField(it)
+    empty[it.id] = getEmptyValueForRepeaterItem(it)
   })
   return empty
 }
 
-export const getEmptyValueForRepeaterField = (item: RepeaterItem & { id: string }) => {
+export const getEmptyValueForRepeaterItem = (item: RepeaterItem) => {
   switch (item.component) {
     case 'checkbox':
       return []
