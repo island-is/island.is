@@ -1,6 +1,6 @@
 import { Tag } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { webMessages } from '../../../lib'
+import { m } from '../../../lib'
 
 export const ApplicationCardTag = () => {
   const { formatMessage } = useIntl()
@@ -8,7 +8,7 @@ export const ApplicationCardTag = () => {
 
   return (
     <Tag outlined={false} variant={variant} disabled>
-      {formatMessage(webMessages.tagsDraft)}
+      {formatMessage(m.tagsDraft)}
     </Tag>
   )
 }

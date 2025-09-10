@@ -1,12 +1,12 @@
-import { FormSystemField } from '@island.is/api/schema'
-import { NationalIdField } from './components/nationalIdField'
-import { Input, Stack, Box, Text } from '@island.is/island-ui/core'
-import { m, webMessages } from '../../lib/messages'
-import { useIntl } from 'react-intl'
-import { GET_COMPANY_BY_NATIONALID } from '@island.is/form-system/graphql'
 import { useQuery } from '@apollo/client'
-import { User } from './types'
+import { FormSystemField } from '@island.is/api/schema'
+import { GET_COMPANY_BY_NATIONALID } from '@island.is/form-system/graphql'
+import { Box, Input, Stack, Text } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
+import { m } from '../../lib/messages'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
+import { NationalIdField } from './components/nationalIdField'
+import { User } from './types'
 
 interface Props {
   applicantType: FormSystemField
@@ -55,9 +55,9 @@ export const LegalEntity = ({ applicantType, lang, user, id }: Props) => {
               }
             />
             <Input
-              label={formatMessage(webMessages.postalCode)}
+              label={formatMessage(m.postalCode)}
               name="postalCode"
-              placeholder={formatMessage(webMessages.postalCode)}
+              placeholder={formatMessage(m.postalCode)}
               backgroundColor="blue"
               defaultValue={
                 companyData?.formSystemCompanyByNationalId?.address?.postalCode

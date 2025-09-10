@@ -21,7 +21,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { Action } from '../../lib'
 import { getValue } from '../../lib/getValue'
-import { m, webMessages } from '../../lib/messages'
+import { m } from '../../lib/messages'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 import { NationalIdField } from './components/nationalIdField'
 import { User } from './types'
@@ -125,9 +125,9 @@ export const IndividualApplicant = ({
               <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
                 <Box marginTop={[2, 2, 0, 0]}>
                   <Input
-                    label={formatMessage(webMessages.postalCode)}
+                    label={formatMessage(m.postalCode)}
                     name="postalCode"
-                    placeholder={formatMessage(webMessages.postalCode)}
+                    placeholder={formatMessage(m.postalCode)}
                     disabled
                     value={address?.postnumer ?? ''}
                   />

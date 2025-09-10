@@ -1,16 +1,16 @@
+import { useQuery } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
-import { Input, Stack, Box, Text } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
-import { NationalIdField } from './components/nationalIdField'
 import {
-  GET_NAME_BY_NATIONALID,
   GET_ADDRESS_BY_NATIONALID,
   GET_COMPANY_BY_NATIONALID,
+  GET_NAME_BY_NATIONALID,
 } from '@island.is/form-system/graphql'
-import { m, webMessages } from '../../lib/messages'
-import { useQuery } from '@apollo/client'
-import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
+import { Box, Input, Stack, Text } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
 import { ApplicantTypesEnum } from '../../lib/enums'
+import { m } from '../../lib/messages'
+import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
+import { NationalIdField } from './components/nationalIdField'
 
 interface Props {
   applicantType: FormSystemField
@@ -82,10 +82,10 @@ export const Agent = ({ applicantType, lang, nationalId }: Props) => {
             />
 
             <Input
-              label={formatMessage(webMessages.postalCode)}
+              label={formatMessage(m.postalCode)}
               disabled
               name="postalCode"
-              placeholder={formatMessage(webMessages.postalCode)}
+              placeholder={formatMessage(m.postalCode)}
               backgroundColor="white"
               value={postalCode ?? ''}
             />

@@ -27,14 +27,20 @@ interface Props {
 const nationalIdRegex = /^\d{6}-\d{4}$/
 
 const isIndividualNationalId = (id: string) => {
+  // first two digits = 01 - 31
   const day = parseInt(id.substring(0, 2), 10)
-  return day >= 1 && day <= 31
+  if (day < 1 || day > 31) return false
+  return true
 }
 
 const isCompanyNationalId = (id: string) => {
+  // first two digits = 41 - 71
   const day = parseInt(id.substring(0, 2), 10)
-  return day >= 41 && day <= 71
+  if (day < 41 || day > 71) return false
+  return true
 }
+
+// companyData.companyRegistryCompany.name
 
 export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const { formatMessage } = useIntl()

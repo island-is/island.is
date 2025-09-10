@@ -6,6 +6,9 @@ const devConfig = {
   DD_LOGS_CLIENT_TOKEN: 'unknown',
   APP_VERSION: 'unknown',
   ENVIRONMENT: 'unknown',
+  userProfile: {
+    serviceBasePath: 'http://localhost:3366',
+  },
 }
 
 const prodConfig = {
