@@ -491,9 +491,21 @@ export const eligibleText = (externalData: ExternalData) => {
     case EligibleReasonCodes.BASE_CERT_OLDER_THAN_7YEARS:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertOlderThanSevenYearsDescription
-    case EligibleReasonCodes.BASE_CERT_OLDER_THAN_6MONTHS:
+    case EligibleReasonCodes.LATEST_MEDICAL_DOCUMENT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertOlderThanSixMonthsDescription
+    case EligibleReasonCodes.NO_LEGAL_DOMICILE_IN_ICELAND:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSixMonthsDescription
+    case EligibleReasonCodes.APPLICATION_ALREADY_HAS_PENDING_APPLICATION:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSixMonthsDescription
+    case EligibleReasonCodes.HAS_ACTIVE_PAYMENTS:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSixMonthsDescription
+    case EligibleReasonCodes.ERROR_PROCESSING_CLIENT:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSixMonthsDescription                            
     default:
       return undefined
   }
