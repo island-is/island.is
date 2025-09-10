@@ -54,7 +54,6 @@ export const MoneyAndDepositFields: FC<
 
   return (
     <Box>
-      <div>Money and deposit</div>
       <GridRow>
         <GridColumn span="12/12" paddingBottom={2}>
           <InputController
