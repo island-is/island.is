@@ -24,7 +24,7 @@ interface CreateCourtDocumentOptions {
   transaction?: Transaction
 }
 
-interface CreateCourtDocument {
+export interface CreateCourtDocument {
   documentType: CourtDocumentType
   name: string
   caseFileId?: string

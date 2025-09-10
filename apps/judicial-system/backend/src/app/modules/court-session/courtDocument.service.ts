@@ -2,10 +2,8 @@ import { Transaction } from 'sequelize/types'
 
 import { Injectable } from '@nestjs/common'
 
-import { CourtDocumentType } from '@island.is/judicial-system/types'
-
 import { CourtDocument, CourtDocumentRepositoryService } from '../repository'
-import { CreateCourtDocumentDto } from './dto/createCourtDocument.dto'
+import { CreateCourtDocument } from '../repository/services/courtDocumentRepository.service'
 import { UpdateCourtDocumentDto } from './dto/updateCourtDocument.dto'
 
 @Injectable()
@@ -17,9 +15,7 @@ export class CourtDocumentService {
   async create(
     caseId: string,
     courtSessionId: string,
-    createDto: CreateCourtDocumentDto & {
-      documentType: CourtDocumentType
-    },
+    createDto: CreateCourtDocument,
     transaction: Transaction,
   ): Promise<CourtDocument> {
     return this.courtDocumentRepositoryService.create(

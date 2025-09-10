@@ -37,6 +37,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  CourtDocumentType,
   DateType,
   dateTypes,
   defendantEventTypes,
@@ -2000,6 +2001,33 @@ export class CaseService {
       theCase.id,
       transaction,
     )
+
+    for (const caseFile of theCase.caseFiles?.filter(
+      (file) =>
+        file.category &&
+        [
+          CaseFileCategory.CRIMINAL_RECORD,
+          CaseFileCategory.COST_BREAKDOWN,
+          CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
+          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIM,
+        ].includes(file.category),
+    ) ?? []) {
+      await this.courtDocumentService.create(
+        theCase.id,
+        courtSession.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        transaction,
+      )
+    }
   }
 
   private async handleEventLogUpdatesForIndictments(
