@@ -41,12 +41,12 @@ export const errorMessages = {
   residency: defineMessages({
     title: {
       id: 'mls.application:error.residency.title',
-      defaultMessage: 'Ekki með búsetu á Íslandi',
+      defaultMessage: 'Ekki með lögheimili á Íslandi',
       description: '',
     },
     summary: {
       id: 'mls.application:error.residency.summary',
-      defaultMessage: 'Skilyrði um búsetu á Íslandi eru ekki uppfyllt',
+      defaultMessage: 'Skilyrði um lögheimili á Íslandi eru ekki uppfyllt',
       description: '',
     },
   }),
@@ -54,6 +54,18 @@ export const errorMessages = {
     title: {
       id: 'mls.application:error.active.title',
       defaultMessage: 'Engin söfnun meðmæla er virk',
+      description: '',
+    },
+    summary: {
+      id: 'mls.application:error.active.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
+      description: '',
+    },
+  }),
+  candidateListActive: defineMessages({
+    title: {
+      id: 'mls.application:error.candidateListActive.title',
+      defaultMessage: 'Framboð er ekki með virka söfnun í þínu sveitarfélagi',
       description: '',
     },
     summary: {
@@ -85,6 +97,18 @@ export const errorMessages = {
       id: 'mls.application:error.singeeNotFound.summary',
       defaultMessage:
         'Hægt er að hafa samband við Þjóðskrá fyrir nánari upplýsingar.',
+      description: '',
+    },
+  }),
+  candidateNotFound: defineMessages({
+    title: {
+      id: 'mls.application:error.candidateNotFound.title',
+      defaultMessage: 'Framboð finnst ekki',
+      description: '',
+    },
+    summary: {
+      id: 'mls.application:error.candidateNotFound.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
       description: '',
     },
   }),

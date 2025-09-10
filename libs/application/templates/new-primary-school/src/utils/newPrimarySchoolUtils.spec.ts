@@ -1,8 +1,12 @@
 import { ExternalData } from '@island.is/application/types'
+import * as kennitala from 'kennitala'
 import { uuid } from 'uuidv4'
 import { hasOtherGuardian, showPreferredLanguageFields } from './conditionUtils'
-import { LanguageEnvironmentOptions } from './constants'
-import { getMunicipalityCodeBySchoolUnitId } from './newPrimarySchoolUtils'
+import { ApplicationType, LanguageEnvironmentOptions } from './constants'
+import {
+  getApplicationType,
+  getMunicipalityCodeBySchoolUnitId,
+} from './newPrimarySchoolUtils'
 
 describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {
@@ -128,5 +132,40 @@ describe('getMunicipalityCodeBySchoolUnitId', () => {
   it('should return undefined for an unknown school unit id', () => {
     const schoolId = 'unknown-school-id'
     expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBeUndefined()
+  })
+})
+
+describe('getApplicationType', () => {
+  const currentDate = new Date()
+
+  it('should return NEW_PRIMARY_SCHOOL for child in 2. grade', () => {
+    const yearBorn = currentDate.getFullYear() - 7 //2. grade
+
+    const externalData = {
+      childInformation: {
+        data: {
+          nationalId: kennitala.generatePerson(new Date(yearBorn + '-12-31')),
+        },
+      },
+    } as unknown as ExternalData
+
+    expect(getApplicationType(externalData)).toBe(
+      ApplicationType.NEW_PRIMARY_SCHOOL,
+    )
+  })
+
+  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade', () => {
+    const yearBorn = currentDate.getFullYear() - 6 //1. grade
+    const externalData = {
+      childInformation: {
+        data: {
+          nationalId: kennitala.generatePerson(new Date(yearBorn + '-01-01')),
+        },
+      },
+    } as unknown as ExternalData
+
+    expect(getApplicationType(externalData)).toBe(
+      ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+    )
   })
 })

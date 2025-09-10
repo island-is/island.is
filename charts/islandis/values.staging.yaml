@@ -311,7 +311,6 @@ api:
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    ISLYKILL_CERT: '/etc/config/islyklar.p12'
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     LOG_LEVEL: 'info'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'
@@ -364,6 +363,7 @@ api:
     XROAD_FINANCES_V2_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
     XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
+    XROAD_FJS_BANKINFO_PATH: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1'
     XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1'
     XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1'
     XROAD_HEALTH_DIRECTORATE_PATH: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir'
@@ -435,8 +435,6 @@ api:
     XROAD_WORK_ACCIDENT_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token'
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
-  files:
-    - 'islyklar.p12'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'api-catalogue'
@@ -546,8 +544,6 @@ api:
     ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME: '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
     INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY'
-    ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
-    ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     LICENSE_SERVICE_BARCODE_SECRET_KEY: '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY'
     MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
@@ -643,7 +639,6 @@ application-system-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
     INSTITUTION_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
-    ISLYKILL_CERT: '/etc/config/islyklar.p12'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
     LOG_LEVEL: 'info'
@@ -688,6 +683,7 @@ application-system-api:
     XROAD_FINANCES_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
+    XROAD_FJS_BANKINFO_PATH: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1'
     XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1'
     XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1'
     XROAD_HEALTH_DIRECTORATE_PATH: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir'
@@ -742,8 +738,6 @@ application-system-api:
     XROAD_VMST_MEMBER_CODE: '7005942039'
     XROAD_WORK_ACCIDENT_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token'
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
-  files:
-    - 'islyklar.p12'
   grantNamespaces:
     - 'services-payments'
     - 'nginx-ingress-internal'
@@ -850,8 +844,6 @@ application-system-api:
     FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
     HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
-    ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
-    ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
     NOVA_URL: '/k8s/application-system-api/NOVA_URL'
@@ -2123,7 +2115,6 @@ service-portal-api:
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    ISLYKILL_CERT: '/etc/config/islyklar.p12'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
     NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlunumsoknir/.default'
@@ -2140,8 +2131,6 @@ service-portal-api:
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-  files:
-    - 'islyklar.p12'
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'islandis'
@@ -2156,7 +2145,7 @@ service-portal-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -2226,8 +2215,6 @@ service-portal-api:
     EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME'
     IDENTITY_SERVER_CLIENT_ID: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET'
-    ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
-    ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
     NOVA_URL: '/k8s/service-portal-api/NOVA_URL'
@@ -2257,7 +2244,7 @@ services-bff-portals-admin:
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     CODE_OWNER: 'core'
     IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/bff-stjornbord'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/signature-collection:municipality","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/signature-collection:municipality","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin","@admin.island.is/payments"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -2496,8 +2483,6 @@ services-documents:
 services-payments:
   enabled: true
   env:
-    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_payments'
@@ -2506,12 +2491,6 @@ services-payments:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
-    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5'
     PAYMENTS_WEB_URL: 'https://beta.staging01.devland.is/greida'
@@ -2609,7 +2588,6 @@ services-payments:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-payments/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
-    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-payments/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     PAYMENTS_GATEWAY_API_HEADER_KEY: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_KEY'
     PAYMENTS_GATEWAY_API_HEADER_VALUE: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_VALUE'
     PAYMENTS_GATEWAY_API_SECRET: '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET'

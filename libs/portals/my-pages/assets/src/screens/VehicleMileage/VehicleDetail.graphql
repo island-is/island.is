@@ -34,7 +34,7 @@ mutation PutVehicleMileage($input: PutVehicleMileageInput!) {
 
 query getCo2($input: VehiclesListInputV3!) {
   vehiclesListV3(input: $input) {
-    data {
+    vehicleList {
       vehicleId
       co2
     }

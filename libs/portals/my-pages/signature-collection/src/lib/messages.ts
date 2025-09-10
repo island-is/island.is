@@ -58,6 +58,16 @@ export const m = defineMessages({
     defaultMessage: 'Skoða nánar',
     description: '',
   },
+  collectionActive: {
+    id: 'sp.signatureCollection:collectionActive',
+    defaultMessage: 'Söfnun í gangi',
+    description: '',
+  },
+  collectionLocked: {
+    id: 'sp.signatureCollection:collectionLocked',
+    defaultMessage: 'Lista læst',
+    description: '',
+  },
   collectionClosed: {
     id: 'sp.signatureCollection:collectionClosed',
     defaultMessage: 'Söfnuninni lokið',
@@ -215,9 +225,9 @@ export const m = defineMessages({
     defaultMessage: 'Tímabil lista:',
     description: '',
   },
-  numberOfSigns: {
-    id: 'sp.signatureCollection:numberOfSigns',
-    defaultMessage: 'Fjöldi meðmæla:',
+  numberOfValidSigns: {
+    id: 'sp.signatureCollection:numberOfValidSigns',
+    defaultMessage: 'Fjöldi gildra meðmæla:',
     description: '',
   },
   coOwners: {
@@ -225,15 +235,25 @@ export const m = defineMessages({
     defaultMessage: 'Umsjónaraðilar:',
     description: '',
   },
+  pdfReport: {
+    id: 'sp.signatureCollection:pdfReport',
+    defaultMessage: 'Skýrsla',
+    description: '',
+  },
+  pdfReportDescription: {
+    id: 'sp.signatureCollection:pdfReportDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð kemur hér.',
+    description: '',
+  },
   downloadPdf: {
     id: 'sp.signatureCollection:downloadPdf',
-    defaultMessage: 'Sækja skýrslu',
+    defaultMessage: 'Hlaða niður skýrslu',
     description: '',
   },
   downloadPdfDescription: {
     id: 'sp.signatureCollection:downloadPdfDescription',
     defaultMessage:
-      '              Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
+      'Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
     description: '',
   },
   copyLink: {
@@ -411,6 +431,16 @@ export const m = defineMessages({
   },
 
   /* Municipal */
+  collectionTitleMunicipal: {
+    id: 'sp.signatureCollection:collectionTitleMunicipal',
+    defaultMessage: 'Sveitarstjórnarkosningar',
+    description: '',
+  },
+  collectionMunicipalListOwner: {
+    id: 'sp.signatureCollection:collectionMunicipalListOwner',
+    defaultMessage: 'Stofnandi söfnunar',
+    description: '',
+  },
   pageTitleMunicipal: {
     id: 'sp.signatureCollection:pageTitleMunicipal',
     defaultMessage: 'Meðmælasafnanir fyrir sveitarstjórnarkosningar',
@@ -433,7 +463,7 @@ export const m = defineMessages({
     description: '',
   },
   managersDescription: {
-    id: 'sp.signatureCollection:managersDescription',
+    id: 'sp.signatureCollection:managersDescription#markdown',
     defaultMessage:
       'Hægt er að bæta við umsjónaraðilum með því að veita þeim umboð hér. Umsjónaraðilar hafa sömu aðgangsheimildir og stofnandi söfnunar en geta ekki eytt söfnuninni.',
     description: '',
@@ -456,7 +486,7 @@ export const m = defineMessages({
   },
   deleteCollection: {
     id: 'sp.signatureCollection:deleteCollection',
-    defaultMessage: 'Eyða frambooði',
+    defaultMessage: 'Eyða framboði',
     description: '',
   },
   deleteCollectionDescription: {

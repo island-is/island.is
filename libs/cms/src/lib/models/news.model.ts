@@ -39,6 +39,9 @@ export class News {
   @CacheField(() => [GenericTag])
   genericTags: GenericTag[] = []
 
+  @Field({ nullable: true })
+  imageText?: string
+
   @Field(() => Boolean, { nullable: true })
   fullWidthImageInContent?: boolean
 
@@ -64,6 +67,7 @@ export const mapNews = ({ fields, sys }: INews): News => ({
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   genericTags: (fields.genericTags ?? []).map(mapGenericTag),
+  imageText: fields.imageText,
   fullWidthImageInContent: fields.fullWidthImageInContent ?? true,
   initialPublishDate: fields.initialPublishDate ?? '',
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,

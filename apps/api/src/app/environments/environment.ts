@@ -86,11 +86,6 @@ const prodConfig = () => ({
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
-  islykill: {
-    cert: process.env.ISLYKILL_CERT,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-  },
 })
 
 const devConfig = () => ({
@@ -193,11 +188,6 @@ const devConfig = () => ({
     callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
-  },
-  islykill: {
-    cert: process.env.ISLYKILL_CERT,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 })
 

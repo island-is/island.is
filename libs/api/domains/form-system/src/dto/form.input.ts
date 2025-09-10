@@ -30,6 +30,12 @@ export class DeleteFormInput {
   id?: string
 }
 
+@InputType('FormSystemPublishFormInput')
+export class PublishFormInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+}
+
 @InputType('FormSystemCreateFormInput')
 export class CreateFormInput {
   @Field(() => String, { nullable: true })
@@ -97,6 +103,9 @@ export class UpdateFormDtoInput {
 
   @Field(() => Boolean, { nullable: true })
   stopProgressOnValidatingScreen?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  hasSummaryScreen?: boolean
 
   @Field(() => LanguageTypeInput, { nullable: true })
   completedMessage?: LanguageTypeInput

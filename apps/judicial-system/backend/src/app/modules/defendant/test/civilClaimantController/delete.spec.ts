@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { CivilClaimant } from '../../models/civilClaimant.model'
+import { CivilClaimant } from '../../../repository'
 import { DeleteCivilClaimantResponse } from '../../models/deleteCivilClaimant.response'
 
 interface Then {

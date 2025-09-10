@@ -34,7 +34,11 @@ import {
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   TrWebExternalModelsServicePortalNationalRegistryAddress,
   TrWebExternalModelsServicePortalBaseCertificate,
+  TrWebExternalModelsServicePortalConfirmationOfIllHealth,
+  TrWebExternalModelsServicePortalConfirmationOfPendingResolution,
+  TrWebExternalModelsServicePortalConfirmedTreatment,
   TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
@@ -250,6 +254,30 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1MedicalDocumentsBasecertificateGet()
   }
 
+  async getConfirmedTreatment(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmedTreatment> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsConfirmedtreatmentGet()
+  }
+
+  async getConfirmationOfPendingResolution(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmationOfPendingResolution> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsConfirmationofpendingresolutionGet()
+  }
+
+  async getConfirmationOfIllHealth(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmationOfIllHealth> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsConfirmationofillhealthGet()
+  }
+
   async getCountries(
     user: User,
   ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
@@ -301,5 +329,15 @@ export class SocialInsuranceAdministrationClientService {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
+  }
+
+  async getEmploymentStatuses(
+    user: User,
+  ): Promise<
+    Array<TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEmploymentStatusGet()
   }
 }

@@ -29,13 +29,7 @@ const devConfig = {
     userProfile: {
       serviceBasePath: 'http://localhost:3366',
     },
-    islykill: {
-      cert: process.env.ISLYKILL_CERT,
-      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-    },
   },
-
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
@@ -67,11 +61,6 @@ const prodConfig = {
     },
     userProfile: {
       serviceBasePath: process.env.SERVICE_USER_PROFILE_URL,
-    },
-    islykill: {
-      cert: process.env.ISLYKILL_CERT,
-      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
     },
   },
   contentful: {

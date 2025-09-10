@@ -15,8 +15,8 @@ import {
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
+import { EventLog } from '../repository'
 import { CreateEventLogDto } from './dto/createEventLog.dto'
-import { EventLog } from './models/eventLog.model'
 
 const allowMultiple: EventType[] = [
   EventType.LOGIN,

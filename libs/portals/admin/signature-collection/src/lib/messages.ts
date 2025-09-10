@@ -143,7 +143,7 @@ export const m = defineMessages({
   },
   numberOfSignatures: {
     id: 'admin-portal.signature-collection:numberOfSignatures',
-    defaultMessage: 'Fjöldi undirskrifta',
+    defaultMessage: 'Fjöldi meðmæla',
     description: '',
   },
   parliamentaryCollectionTitle: {
@@ -234,8 +234,8 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu safnanna lokið',
     description: '',
   },
-  completeCollectionProcessingModalDescription: {
-    id: 'admin-portal.signature-collection:completeCollectionProcessingModalDescription#markdown',
+  completeCollectionProcessingDescription: {
+    id: 'admin-portal.signature-collection:completeCollectionProcessingDescription#markdown',
     defaultMessage:
       'Þegar búið er að fara yfir alla meðmælalista skal ýta á hnappinn.',
     description: '',
@@ -352,9 +352,9 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit meðmæla',
     description: '',
   },
-  downloadReports: {
-    id: 'admin-portal.signature-collection:downloadReports',
-    defaultMessage: 'Sækja skýrslur',
+  downloadReport: {
+    id: 'admin-portal.signature-collection:downloadReport',
+    defaultMessage: 'Sækja skýrslu',
     description: '',
   },
   downloadReportsDescription: {
@@ -573,6 +573,11 @@ export const m = defineMessages({
     defaultMessage: 'Læsa söfnun',
     description: '',
   },
+  unlockList: {
+    id: 'admin-portal.signature-collection:unlockList',
+    defaultMessage: 'Aflæsa söfnun',
+    description: '',
+  },
   listOpen: {
     id: 'admin-portal.signature-collection:listOpened',
     defaultMessage: 'Söfnun í gangi',
@@ -589,14 +594,30 @@ export const m = defineMessages({
       'Ef framboð skilar inn framboði áður en framboðsfrestur rennur út er söfnuninni lokað hér.',
     description: '',
   },
+  unlockListDescription: {
+    id: 'admin-portal.signature-collection:unlockListDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vantar texta hér.',
+    description: '',
+  },
   lockListSuccess: {
     id: 'admin-portal.signature-collection:lockListSuccess',
     defaultMessage: 'Tókst að læsa söfnun',
     description: '',
   },
+  unlockListSuccess: {
+    id: 'admin-portal.signature-collection:unlockListSuccess',
+    defaultMessage: 'Tókst að aflæsa söfnun',
+    description: '',
+  },
   lockListError: {
     id: 'admin-portal.signature-collection:lockListError',
     defaultMessage: 'Ekki tókst að læsa söfnun',
+    description: '',
+  },
+  unlockListError: {
+    id: 'admin-portal.signature-collection:unlockListError',
+    defaultMessage: 'Ekki tókst að aflæsa söfnun',
     description: '',
   },
   toggleReviewError: {
@@ -634,7 +655,7 @@ export const m = defineMessages({
   },
   downloadTemplate: {
     id: 'admin-portal.signature-collection:downloadTemplate',
-    defaultMessage: 'Sækja sniðmat',
+    defaultMessage: 'Sækja sniðmát',
     description: '',
   },
   uploadButton: {
@@ -655,7 +676,7 @@ export const m = defineMessages({
   },
   totalListResults: {
     id: 'admin-portal.signature-collection:totalListResults',
-    defaultMessage: 'Samtals fjöldi',
+    defaultMessage: 'Fjöldi gildra meðmæla',
     description: '',
   },
   totalListsPerConstituency: {
@@ -773,12 +794,12 @@ export const m = defineMessages({
   },
   removeCandidateFromListButton: {
     id: 'admin-portal.signature-collection:removeCandidateFromListButton',
-    defaultMessage: 'Já, loka lista',
+    defaultMessage: 'Já, eyða framboði',
     description: '',
   },
   removeCandidateFromList: {
     id: 'admin-portal.signature-collection:removeCandidateFromList',
-    defaultMessage: 'Loka lista',
+    defaultMessage: 'Eyða framboði',
     description: '',
   },
   paperSigneesHeader: {
@@ -876,7 +897,7 @@ export const createCollectionErrorMessages = defineMessages({
   },
   residency: {
     id: 'admin-portal.signature-collection:residency',
-    defaultMessage: 'Eftirfarandi aðili er ekki með búsetu á Íslandi.',
+    defaultMessage: 'Eftirfarandi aðili er ekki með lögheimili á Íslandi.',
     description: '',
   },
   active: {
