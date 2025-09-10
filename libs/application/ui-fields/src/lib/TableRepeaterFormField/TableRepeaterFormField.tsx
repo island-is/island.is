@@ -144,6 +144,13 @@ export const TableRepeaterFormField: FC<Props> = ({
         empty[it.id] = []
       } else if (it.component === 'nationalIdWithName') {
         empty[it.id] = { nationalId: '', name: '' }
+      } else if (it.component === 'vehiclePermnoWithInfo') {
+        empty[it.id] = {
+          permno: '',
+          makeAndColor: '',
+          numberOfAxles: 0,
+          hasError: false,
+        }
       } else {
         empty[it.id] = ''
       }
