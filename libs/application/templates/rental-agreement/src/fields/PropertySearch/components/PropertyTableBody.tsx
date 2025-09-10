@@ -38,13 +38,12 @@ export const PropertyTableBody = ({
     <Table.Body>
       {propertiesByAddressCode
         .map((property) => {
-          // Apraisal units are array of objects of length 1, maybe it can be more in some cases.
+          // Appraisal units are array of objects of length 1, maybe it can be more in some cases.
           // The objects have the attribute 'units' which is what we want to loop over for each fasteignanumer
-          const flatApraisalUnits = property.appraisalUnits?.flatMap(
-            (appraisalUnit) => appraisalUnit.units,
-          )
+          const flatAppraisalUnits =
+            property.appraisalUnits?.flatMap((au) => au.units ?? []) ?? []
 
-          if (!flatApraisalUnits || flatApraisalUnits.length === 0) return null
+          if (flatAppraisalUnits.length === 0) return null
 
           return (
             <Fragment key={property.propertyCode}>
@@ -64,7 +63,7 @@ export const PropertyTableBody = ({
                   toggleExpand(property.propertyCode || 0)
                 }}
               />
-              {flatApraisalUnits.map((unit) => {
+              {flatAppraisalUnits.map((unit) => {
                 if (!unit) return null
 
                 const unitKey = `${unit.propertyCode}_${unit.unitCode}`

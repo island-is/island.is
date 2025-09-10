@@ -72,6 +72,7 @@ export const PropertySearchInput = ({
             initialInputValue={selectedAddress ? selectedAddress.label : ''}
             inputValue={searchTerm}
             closeMenuOnSubmit
+            openMenuOnFocus
             size="large"
             colored
             onChange={(selection: { value: string } | null) => {
