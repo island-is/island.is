@@ -26,6 +26,7 @@ import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import {
   buildDefaultTableHeader,
   buildDefaultTableRows,
+  buildEmptyRepeaterRow,
   handleCustomMappedValues,
   setObjectWithNestedKey,
 } from './utils'
@@ -138,24 +139,7 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   const handleNewItem = () => {
     // Build an explicit empty row so RHF won't fall back to defaultValues (application.answers)
-    const empty: Record<string, unknown> = {}
-    items.forEach((it) => {
-      if (it.component === 'checkbox') {
-        empty[it.id] = []
-      } else if (it.component === 'nationalIdWithName') {
-        empty[it.id] = { nationalId: '', name: '' }
-      } else if (it.component === 'vehiclePermnoWithInfo') {
-        empty[it.id] = {
-          permno: '',
-          makeAndColor: '',
-          numberOfAxles: 0,
-          hasError: false,
-        }
-      } else {
-        empty[it.id] = ''
-      }
-    })
-    append(empty)
+    append(buildEmptyRepeaterRow(items))
     setActiveIndex(fields.length)
     methods.clearErrors()
   }
