@@ -51,7 +51,7 @@ const getRole = (userRole?: UserRole) => {
   }
 }
 
-export const createServiceCertificate = (
+export const createSubpoenaServiceCertificate = (
   theCase: Case,
   defendant: Defendant,
   subpoena: Subpoena,
