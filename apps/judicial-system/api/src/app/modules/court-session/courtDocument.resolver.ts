@@ -87,7 +87,7 @@ export class CourtDocumentResolver {
   @Mutation(() => DeleteCourtDocumentResponse)
   deleteCourtDocument(
     @Args('input', { type: () => DeleteCourtDocumentInput })
-    input: UpdateCourtDocumentInput,
+    input: DeleteCourtDocumentInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
