@@ -230,7 +230,7 @@ export class ZendeskService {
           if (field.fieldSettings?.zendeskIsCustomField === true) {
             let value = ''
             const json = field.values?.[0]?.json ?? {}
-            Object.entries(json).forEach(([key, val]) => {
+            Object.entries(json).forEach(([val]) => {
               val = this.formatValue(val, field.fieldType)
               value += `${val} `
             })
