@@ -4,7 +4,7 @@ import { useLazyQuery } from './useLazyQuery'
 export const useLazyIsBankInfoValid = () => {
   return useLazyQuery<
     {
-      vmstApplicationsAccountNumbervalidation: boolean
+      vmstApplicationsAccountNumberValidation: boolean
     },
     {
       input: {
