@@ -1,15 +1,15 @@
-import { Box, Button, GridColumn } from '@island.is/island-ui/core'
-import * as styles from './Footer.css'
-import { useApplicationContext } from '../../context/ApplicationProvider'
-import { useIntl } from 'react-intl'
-import { SectionTypes, webMessages } from '@island.is/form-system/ui'
+import { useMutation } from '@apollo/client'
 import {
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
   SUBMIT_SECTION,
 } from '@island.is/form-system/graphql'
-import { useMutation } from '@apollo/client'
+import { SectionTypes, m } from '@island.is/form-system/ui'
+import { Box, Button, GridColumn } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
+import { useApplicationContext } from '../../context/ApplicationProvider'
+import * as styles from './Footer.css'
 
 interface Props {
   externalDataAgreement: boolean
@@ -17,11 +17,11 @@ interface Props {
 
 export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
-  const { currentSection } = state
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useLocale()
   const { trigger } = useFormContext()
+  const { currentSection } = state
+  const currentSectionType = currentSection?.data?.sectionType
 
-  // Mutations
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
   const [submitApplication, { loading: submitLoading }] = useMutation(
@@ -33,30 +33,40 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   const validate = async () => trigger()
 
+  const lastScreenDisplayOrder = state.application.sections
+    ?.at(-1)
+    ?.screens?.at(-1)?.displayOrder
+
   const onSubmit =
-    (currentSection.data.sectionType === SectionTypes.SUMMARY &&
-      (state.application.hasPayment === false ||
-        state.application.hasPayment === undefined)) ||
-    currentSection.data.sectionType === SectionTypes.PAYMENT ||
+    currentSectionType === SectionTypes.PAYMENT ||
+    (currentSectionType === SectionTypes.SUMMARY &&
+      state.application.hasPayment !== true) ||
     (state.application.hasPayment === false &&
       state.application.hasSummaryScreen === false &&
-      state.currentScreen?.index ===
-        state.application.sections?.at(-1)?.screens?.at(-1)?.displayOrder)
+      state.currentScreen?.index === lastScreenDisplayOrder)
 
-  const isCompletedSection =
-    state.currentSection.data.sectionType === SectionTypes.COMPLETED
+  const isCompletedSection = currentSectionType === SectionTypes.COMPLETED
+
   const continueButtonText =
     state.currentSection.index === 0
-      ? formatMessage(webMessages.externalDataConfirmation)
+      ? formatMessage(m.externalDataConfirmation)
       : onSubmit
-      ? formatMessage(webMessages.submitApplication)
+      ? formatMessage(m.submitApplication)
       : isCompletedSection
-      ? formatMessage(webMessages.openMyPages)
-      : formatMessage(webMessages.continue)
+      ? formatMessage(m.openMyPages)
+      : formatMessage(m.continue)
 
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
-  const isBackButton = state.currentSection.index <= 1 || isCompletedSection
+
+  const showBackButton =
+    !isCompletedSection &&
+    !(
+      currentSectionType === SectionTypes.PARTIES &&
+      Number(state.currentScreen?.index) === 0
+    ) &&
+    currentSectionType !== SectionTypes.PREMISES
+
   const handleIncrement = async () => {
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
@@ -110,17 +120,18 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           paddingTop={[1, 4]}
         >
           <Box display="inlineFlex" padding={2} paddingRight="none">
-            <Button
-              icon="arrowForward"
-              onClick={handleIncrement}
-              disabled={!enableContinueButton || submitLoading}
-              loading={submitLoading}
-            >
-              {continueButtonText}
-            </Button>
+            {!isCompletedSection && (
+              <Button
+                icon="arrowForward"
+                onClick={handleIncrement}
+                disabled={!enableContinueButton || submitLoading}
+                loading={submitLoading}
+              >
+                {continueButtonText}
+              </Button>
+            )}
           </Box>
-
-          {!isBackButton && (
+          {showBackButton && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button
                 icon="arrowBack"
@@ -128,7 +139,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 onClick={handleDecrement}
                 disabled={submitLoading}
               >
-                {formatMessage(webMessages.back)}
+                {formatMessage(m.back)}
               </Button>
             </Box>
           )}

@@ -82,6 +82,9 @@ export class Value {
   @Field(() => String, { nullable: true })
   s3Url?: string
 
+  @Field(() => Boolean, { nullable: true })
+  isLoggedInUser?: boolean
+
   @Field(() => String, { nullable: true })
   paymentCode?: string
 }
@@ -90,6 +93,15 @@ export class Value {
 export class ValueDto {
   @Field(() => String, { nullable: true })
   id?: string
+
+  @Field(() => String, { nullable: true })
+  fieldId?: string
+
+  @Field(() => String, { nullable: true })
+  applicationId?: string
+
+  @Field(() => String, { nullable: true })
+  fieldType?: string
 
   @Field(() => Int, { nullable: true })
   order?: number

@@ -8,6 +8,7 @@ import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { ValueDto } from './dto/value.dto'
 import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
+import { SectionTypes } from '@island.is/form-system/shared'
 
 @Injectable()
 export class ApplicationMapper {
@@ -25,71 +26,83 @@ export class ApplicationMapper {
       modified: application.modified,
       slug: form.slug,
       formName: form.name,
-      stopProgressOnValidatingScreen: form.stopProgressOnValidatingScreen,
+      allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,
       hasSummaryScreen: form.hasSummaryScreen,
       submittedAt: application.submittedAt,
       events: application.events,
       sections: [],
       certificationTypes: form.formCertificationTypes,
-      applicantTypes: form.formApplicantTypes,
     }
 
-    form.sections?.map((section) => {
-      applicationDto.sections?.push({
-        id: section.id,
-        name: section.name,
-        sectionType: section.sectionType,
-        displayOrder: section.displayOrder,
-        waitingText: section.waitingText,
-        isHidden: this.isHidden(section.id, application.dependencies),
-        isCompleted: this.isCompleted(section.id, application.completed),
-        screens: section.screens?.map((screen) => {
-          return {
-            id: screen.id,
-            sectionId: screen.sectionId,
-            name: screen.name,
-            displayOrder: screen.displayOrder,
-            multiset: screen.multiset,
-            callRuleset: screen.callRuleset,
-            isHidden: this.isHidden(screen.id, application.dependencies),
-            isCompleted: this.isCompleted(screen.id, application.completed),
-            fields: screen.fields?.map((field) => {
-              return {
-                id: field.id,
-                screenId: field.screenId,
-                name: field.name,
-                displayOrder: field.displayOrder,
-                description: field.description,
-                isPartOfMultiset: field.isPartOfMultiset,
-                fieldType: field.fieldType,
-                isRequired: field.isRequired,
-                fieldSettings: field.fieldSettings,
-                isHidden: this.isHidden(field.id, application.dependencies),
-                list: field.list?.map((list) => {
-                  return {
-                    id: list.id,
-                    label: list.label,
-                    description: list.description,
-                    displayOrder: list.displayOrder,
-                    value: list.value,
-                    isSelected: list.isSelected,
-                  } as ListItemDto
-                }),
-                values: field.values?.map((value) => {
-                  return {
-                    id: value.id,
-                    order: value.order,
-                    json: value.json,
-                  } as ValueDto
-                }),
-              } as FieldDto
-            }),
-          } as ScreenDto
-        }),
-      } as SectionDto)
-    })
-
+    form.sections
+      ?.filter((section) => {
+        if (
+          !form.hasSummaryScreen &&
+          section.sectionType === SectionTypes.SUMMARY
+        ) {
+          return false
+        }
+        if (!form.hasPayment && section.sectionType === SectionTypes.PAYMENT) {
+          return false
+        }
+        return true
+      })
+      .map((section) => {
+        applicationDto.sections?.push({
+          id: section.id,
+          name: section.name,
+          sectionType: section.sectionType,
+          displayOrder: section.displayOrder,
+          waitingText: section.waitingText,
+          isHidden: this.isHidden(section.id, application.dependencies),
+          isCompleted: this.isCompleted(section.id, application.completed),
+          screens: section.screens?.map((screen) => {
+            return {
+              id: screen.id,
+              sectionId: screen.sectionId,
+              name: screen.name,
+              displayOrder: screen.displayOrder,
+              multiset: screen.multiset,
+              callRuleset: screen.callRuleset,
+              isHidden: this.isHidden(screen.id, application.dependencies),
+              isCompleted: this.isCompleted(screen.id, application.completed),
+              fields: screen.fields?.map((field) => {
+                return {
+                  id: field.id,
+                  screenId: field.screenId,
+                  name: field.name,
+                  displayOrder: field.displayOrder,
+                  description: field.description,
+                  isPartOfMultiset: field.isPartOfMultiset,
+                  fieldType: field.fieldType,
+                  isRequired: field.isRequired,
+                  fieldSettings: field.fieldSettings,
+                  isHidden: this.isHidden(field.id, application.dependencies),
+                  list: field.list?.map((list) => {
+                    return {
+                      id: list.id,
+                      label: list.label,
+                      description: list.description,
+                      displayOrder: list.displayOrder,
+                      value: list.value,
+                      isSelected: list.isSelected,
+                    } as ListItemDto
+                  }),
+                  values: field.values?.map((value) => {
+                    return {
+                      id: value.id,
+                      order: value.order,
+                      json: value.json,
+                    } as ValueDto
+                  }),
+                } as FieldDto
+              }),
+            } as ScreenDto
+          }),
+        } as SectionDto)
+      })
+    console.log('sections', JSON.stringify(applicationDto.sections, null, 2))
     return applicationDto
   }
 
@@ -106,7 +119,7 @@ export class ApplicationMapper {
       formId: form?.id,
       slug: form?.slug,
       formName: form?.name,
-      stopProgressOnValidatingScreen: form?.stopProgressOnValidatingScreen,
+      allowProceedOnValidationFail: form?.allowProceedOnValidationFail,
       hasPayment: form?.hasPayment,
       hasSummaryScreen: form?.hasSummaryScreen,
       submittedAt: application.submittedAt,

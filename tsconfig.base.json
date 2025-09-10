@@ -144,8 +144,8 @@
       "@island.is/api/domains/intellectual-properties": [
         "libs/api/domains/intellectual-properties/src/index.ts"
       ],
-      "@island.is/api/domains/islykill": [
-        "libs/api/domains/islykill/src/index.ts"
+      "@island.is/api/domains/landspitali": [
+        "libs/api/domains/landspitali/src/index.ts"
       ],
       "@island.is/api/domains/law-and-order": [
         "libs/api/domains/law-and-order/src/index.ts"
@@ -676,7 +676,6 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
-      "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
@@ -734,6 +733,9 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
+      "@island.is/clients/fjs/bank-info": [
+        "libs/clients/fjs/bank-info/src/index.ts"
+      ],
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
       ],
@@ -772,7 +774,6 @@
       "@island.is/clients/intellectual-properties": [
         "libs/clients/intellectual-properties/src/index.ts"
       ],
-      "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
       ],
@@ -785,6 +786,7 @@
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
+      "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -1072,6 +1074,9 @@
       ],
       "@island.is/portals/admin/ids-admin": [
         "libs/portals/admin/ids-admin/src/index.ts"
+      ],
+      "@island.is/portals/admin/payments": [
+        "libs/portals/admin/payments/src/index.ts"
       ],
       "@island.is/portals/admin/petition": [
         "libs/portals/admin/petition/src/index.ts"

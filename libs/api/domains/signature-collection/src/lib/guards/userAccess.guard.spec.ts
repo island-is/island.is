@@ -202,6 +202,7 @@ describe('UserAccessGuard', () => {
             nationalId: user.nationalId,
             ownerName: 'Test',
             ownerBirthDate: new Date(),
+            hasActiveLists: true,
           },
         })
       })

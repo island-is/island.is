@@ -113,7 +113,7 @@ export const Problem = ({
           return (
             <ThirdPartyServiceError
               organizationSlug={organizationSlug}
-              size={size ?? 'small'}
+              size={size ?? 'large'}
               dataTestId={dataTestId}
               expand={expand}
             />
