@@ -53,15 +53,15 @@ export const mapBulkResponse = (
 export const getReasonKeyForPaperSignatureUpload = (
   bulkResponse: MedmaeliBulkResponseDTO,
   nationalId: string,
-): ReasonKey[] => {
-  const listMapping: { [key in keyof MedmaeliBulkResponseDTO]?: ReasonKey } = {
-    notFound: ReasonKey.notFound,
-    undirAldri: ReasonKey.UnderAge,
-    ekkiIsRik: ReasonKey.NoCitizenship,
-    ekkiBuseta: ReasonKey.NotISResidency,
-    ekkiASvaedi: ReasonKey.NotInArea,
-    medMedmaeliALista: ReasonKey.AlreadySigned,
-    medMedmaeliAnnarListi: ReasonKey.noInvalidSignature,
+) => {
+  const listMapping: { [key in keyof MedmaeliBulkResponseDTO]?: string } = {
+    notFound: 'Kennitala fannst ekki',
+    undirAldri: 'Undir Aldri',
+    ekkiIsRik: 'Ekki með íslenskt ríkisfang',
+    ekkiBuseta: 'Ekki með íslenska búsetu',
+    ekkiASvaedi: 'Ekki á svæði',
+    medMedmaeliALista: 'Þegar meðmæli á þessum lista',
+    medMedmaeliAnnarListi: 'Þegar meðmæli á öðrum lista',
   }
 
   for (const [key, reason] of Object.entries(listMapping)) {
