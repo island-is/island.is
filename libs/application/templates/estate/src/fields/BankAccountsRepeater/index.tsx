@@ -1,4 +1,5 @@
 import { FC, useEffect, useCallback, useState } from 'react'
+import { MessageDescriptor } from 'react-intl'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -28,7 +29,7 @@ interface BankAccountFormField {
 interface BankAccountsRepeaterProps {
   field: {
     props: {
-      repeaterButtonText: string
+      repeaterButtonText: MessageDescriptor
     }
   }
 }

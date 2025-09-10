@@ -10,6 +10,16 @@ import { UploadData } from '../types'
 import { filterEmptyObjects } from './filters'
 import { info } from 'kennitala'
 
+const toNumber = (s?: string): number => {
+  if (!s) return 0
+  const normalized = s
+    .replace(/\./g, '')
+    .replace(',', '.')
+    .replace(/[^\d.-]/g, '')
+  const n = parseFloat(normalized)
+  return Number.isNaN(n) ? 0 : n
+}
+
 type EstateSchema = zinfer<typeof estateSchema>
 type EstateData = EstateSchema['estate']
 
@@ -47,17 +57,15 @@ const claimsMapper = (element: EstateAsset) => {
 const stocksMapper = (
   element: EstateAsset & { upphaed?: string; gengiVextir?: string },
 ) => {
-  const faceValue = element.upphaed || element.marketValue || '0'
-  const rateOfExchange = element.gengiVextir?.replace(',', '.') || '1'
-  const calculatedValue = (
-    parseFloat(faceValue) * parseFloat(rateOfExchange)
-  ).toString()
+  const faceValueNum = toNumber(element.upphaed ?? element.marketValue)
+  const rate = toNumber(element.gengiVextir) || 1
+  const calculatedValue = (faceValueNum * rate).toString()
 
   return {
     organization: element.description || '',
     nationalId: element.assetNumber || '',
-    faceValue: faceValue,
-    rateOfExchange: rateOfExchange,
+    faceValue: faceValueNum.toString(),
+    rateOfExchange: rate.toString(),
     value: calculatedValue,
     initial: true,
     enabled: true,
@@ -70,10 +78,10 @@ const inventoryMapper = (cashItems: EstateAsset[]) => {
     .filter((desc) => desc && desc.trim() !== '')
     .join(', ')
 
-  const totalValue = cashItems.reduce((sum, item) => {
-    const value = parseFloat(item.marketValue || '0')
-    return sum + (isNaN(value) ? 0 : value)
-  }, 0)
+  const totalValue = cashItems.reduce(
+    (sum, item) => sum + toNumber(item.marketValue),
+    0,
+  )
 
   return {
     info: descriptions,
@@ -87,10 +95,10 @@ const moneyAndDepositMapper = (elements: EstateAsset[]) => {
   }
 
   // Aggregate all money and deposit items
-  const totalValue = elements.reduce((sum, element) => {
-    const value = parseFloat(element.marketValue || '0')
-    return sum + value
-  }, 0)
+  const totalValue = elements.reduce(
+    (sum, element) => sum + toNumber(element.marketValue),
+    0,
+  )
 
   const descriptions = elements
     .map((element) => element.description)
@@ -331,15 +339,6 @@ export const expandStocks = (
   return expandedStocks
 }
 
-export const expandMoneyAndDeposit = (
-  moneyAndDeposit: UploadData['moneyAndDeposit'],
-): UploadData['moneyAndDeposit'] => {
-  return {
-    info: moneyAndDeposit.info ?? '',
-    value: moneyAndDeposit.value ?? '',
-  }
-}
-
 export const expandOtherAssets = (
   otherAssets: UploadData['otherAssets'],
 ): UploadData['otherAssets'] => {
@@ -347,7 +346,7 @@ export const expandOtherAssets = (
 
   otherAssets.filter(filterEmptyObjects).forEach((otherAsset) => {
     expandedOtherAssets.push({
-      info: otherAsset.info ?? '',
+      info: otherAsset.info ?? (otherAsset as any).description ?? '',
       value: otherAsset.value ?? '',
     })
   })

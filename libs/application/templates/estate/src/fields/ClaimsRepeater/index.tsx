@@ -42,7 +42,7 @@ export const ClaimsRepeater: FC<
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors, setValue, getValues } = useFormContext()
+  const { control, clearErrors, getValues } = useFormContext()
   const estateData = getEstateDataFromApplication(application)
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
@@ -57,9 +57,14 @@ export const ClaimsRepeater: FC<
   // Clear errors when claim value changes
   const updateClaimValue = (fieldIndex: string) => {
     const claimValues = getValues(fieldIndex)
-    const value = claimValues?.value?.replace(/[^\d.]/g, '') || '0'
-
-    if (parseFloat(value) > 0) {
+    const raw = String(claimValues?.value ?? '')
+    // "1.234.567,89 kr." -> "1234567.89"
+    const normalized = raw
+      .replace(/\./g, '')
+      .replace(',', '.')
+      .replace(/[^\d.]/g, '')
+    const numeric = Number.parseFloat(normalized)
+    if (Number.isFinite(numeric) && numeric > 0) {
       clearErrors(`${fieldIndex}.value`)
     }
 
@@ -104,14 +109,14 @@ export const ClaimsRepeater: FC<
             <Controller
               name={initialField}
               control={control}
-              defaultValue={field.initial || false}
-              render={() => <input type="hidden" />}
+              defaultValue={field.initial ?? false}
+              render={({ field: ctrl }) => <input type="hidden" {...ctrl} />}
             />
             <Controller
               name={enabledField}
               control={control}
-              defaultValue={field.enabled || true}
-              render={() => <input type="hidden" />}
+              defaultValue={field.enabled ?? true}
+              render={({ field: ctrl }) => <input type="hidden" {...ctrl} />}
             />
             <Box
               display="flex"
