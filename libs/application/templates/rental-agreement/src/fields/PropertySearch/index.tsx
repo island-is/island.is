@@ -368,7 +368,7 @@ export const PropertySearch = ({ field, errors }: Props) => {
                   unitSizeChangedValue={unitSizeChangedValue}
                   handleCheckboxChange={handleCheckboxChange}
                   handleUnitChange={handleUnitChange}
-                  errors={errors}
+                  errors={errors || {}}
                 />
               </Table.Table>
             )

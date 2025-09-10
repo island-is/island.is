@@ -18,7 +18,7 @@ type Props = {
     keyToUpdate: keyof PropertyUnit,
     value: string,
   ) => void
-  errors: any
+  errors: Record<string, Record<string, string>>
 }
 
 export const PropertyTableBody = ({
