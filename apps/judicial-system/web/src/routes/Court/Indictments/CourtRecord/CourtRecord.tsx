@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import {
   AnimatePresence,
   LayoutGroup,
@@ -211,6 +211,16 @@ const CourtRecord: FC = () => {
     })
   }
 
+  const [expandedIndex, setExpandedIndex] = useState<number>()
+
+  useEffect(() => {
+    setExpandedIndex(
+      workingCase.courtSessions?.length
+        ? workingCase.courtSessions.length - 1
+        : 0,
+    )
+  }, [workingCase.courtSessions?.length])
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -230,6 +240,10 @@ const CourtRecord: FC = () => {
               label={`Þinghald ${index + 1}`}
               labelVariant="h3"
               key={courtSession.id}
+              expanded={expandedIndex === index}
+              onToggle={() =>
+                setExpandedIndex(index === expandedIndex ? -1 : index)
+              }
             >
               <LayoutGroup>
                 <Box className={styles.containerGrid}>
@@ -750,6 +764,12 @@ const CourtRecord: FC = () => {
                           blueBox={false}
                           required
                         />
+                        <Button
+                          icon="checkmark"
+                          onClick={() => setExpandedIndex(undefined)}
+                        >
+                          Staðfesta þingbók
+                        </Button>
                       </BlueBox>
                     </Box>
                   </LayoutGroup>
