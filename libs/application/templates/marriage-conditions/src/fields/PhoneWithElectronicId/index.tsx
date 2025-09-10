@@ -81,10 +81,8 @@ export const PhoneWithElectronicId: FC<
         loading={loading}
         error={errors ? getErrorViaPath(errors, id) : undefined}
         onChange={(e) => setPhoneNumber(e.target.value)}
+        defaultValue=""
       />
-      <Box hidden={true}>
-        <InputController id={id} defaultValue={''} />
-      </Box>
     </Box>
   )
 }
