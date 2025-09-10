@@ -8,6 +8,7 @@ import {
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { getLanguageTypeForValueTypeAttribute } from '../../dataTypes/valueTypes/valueType.helper'
+import { CustomField } from './models/zendeskCustomField.dto'
 
 @Injectable()
 export class ZendeskService {
@@ -46,6 +47,7 @@ export class ZendeskService {
 
     const { name, email } = this.getNameAndEmail(applicationDto)
     const body = this.constructBody(applicationDto)
+    const customFields = this.getCustomFields(applicationDto)
     const subject = applicationDto.formName?.is ?? 'No subject'
     const data = JSON.stringify(applicationDto)
 
@@ -60,6 +62,7 @@ export class ZendeskService {
     return await this.createTicket(
       subject,
       body,
+      customFields,
       fileToken,
       zendeskUrl,
       credentials,
@@ -71,6 +74,7 @@ export class ZendeskService {
   private async createTicket(
     subject: string,
     body: string,
+    customFields: string,
     fileToken: string,
     url: string,
     credentials: string,
@@ -78,8 +82,6 @@ export class ZendeskService {
     email: string,
   ): Promise<boolean> {
     const serviceUrl = new URL(`${url}/api/v2/tickets.json`)
-
-    // console.log('service url', serviceUrl.toString())
 
     try {
       const response = await this.enhancedFetch(serviceUrl.toString(), {
@@ -95,6 +97,7 @@ export class ZendeskService {
               public: false,
               uploads: [fileToken],
             },
+            custom_fields: customFields,
             subject: subject,
             requester: {
               name,
@@ -160,7 +163,12 @@ export class ZendeskService {
   }
 
   private constructBody(applicationDto: ApplicationDto): string {
-    const sections = applicationDto.sections?.slice(1)
+    const sections = applicationDto.sections?.filter(
+      (section) =>
+        section.sectionType !== SectionTypes.PREMISES &&
+        section.sectionType !== SectionTypes.SUMMARY &&
+        section.sectionType !== SectionTypes.COMPLETED,
+    )
 
     let body = `<p><strong>Tegund:</strong> ${applicationDto.formName?.is}</p>`
     body += `<p style='margin:0'><strong>Innsend:</strong> ${applicationDto.submittedAt?.toLocaleString(
@@ -172,12 +180,6 @@ export class ZendeskService {
     body += '<br />'
     if (sections) {
       sections.forEach((section) => {
-        if (
-          section.sectionType === SectionTypes.SUMMARY ||
-          section.sectionType === SectionTypes.COMPLETED
-        ) {
-          return // Skips to the next iteration
-        }
         body += `<h3>${section.name.is}</h3>`
         section?.screens?.forEach((screen) => {
           body += `<h4 style='padding-left:10px'>${screen.name.is}</h4>`
@@ -188,7 +190,7 @@ export class ZendeskService {
             field.values?.forEach((value) => {
               if (value.json && typeof value.json === 'object') {
                 Object.entries(value.json).forEach(([key, val]) => {
-                  val = this.getValue(val, field.fieldType)
+                  val = this.formatValue(val, field.fieldType)
                   if (value.json && Object.keys(value.json).length > 1) {
                     const attribute = getLanguageTypeForValueTypeAttribute(key)
                     if (
@@ -209,11 +211,43 @@ export class ZendeskService {
         })
       })
     }
+    this.getCustomFields(applicationDto)
     return body
   }
 
+  private getCustomFields(applicationDto: ApplicationDto): string {
+    const CustomFields: CustomField[] = []
+    const sections = applicationDto.sections?.filter(
+      (section) =>
+        section.sectionType !== SectionTypes.PREMISES &&
+        section.sectionType !== SectionTypes.SUMMARY &&
+        section.sectionType !== SectionTypes.COMPLETED,
+    )
+
+    sections?.forEach((section) => {
+      section?.screens?.forEach((screen) => {
+        screen.fields?.forEach((field) => {
+          if (field.fieldSettings?.zendeskIsCustomField === true) {
+            let value = ''
+            const json = field.values?.[0]?.json ?? {}
+            Object.entries(json).forEach(([key, val]) => {
+              val = this.formatValue(val, field.fieldType)
+              value += `${val} `
+            })
+            CustomFields.push({
+              id: field.fieldSettings?.zendeskCustomFieldId ?? '',
+              value: field.values?.[0]?.json ? value : '',
+            })
+          }
+        })
+      })
+    })
+
+    return JSON.stringify(CustomFields)
+  }
+
   // eslint-disable-next-line
-  private getValue(val: any, fieldType: string): string {
+  private formatValue(val: any, fieldType: string): string {
     if (fieldType === FieldTypesEnum.CHECKBOX) {
       if (val === true) {
         return 'Valið'
