@@ -50,7 +50,6 @@ export const RealEstateRepeater: FC<
 
   return (
     <Box marginTop={2}>
-      <div>AdditionalRealEstate</div>
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
           const fieldError = error && error[index] ? error[index] : null
