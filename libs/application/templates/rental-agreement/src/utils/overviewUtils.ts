@@ -663,20 +663,24 @@ export const rentalPropertyOverview = (
       'registerProperty.searchresults.units',
     ) ?? []
 
-  const unitIdsAsString = units
-    ?.map((unit) => `F${unit.propertyCode}`)
-    .join(', ')
-
+  const uniqueUnitIds = new Set(units.map((unit) => unit.propertyCode))
+  const unitIdsAsString = [...uniqueUnitIds].join(', ')
+  const usageUnits = units.map(
+    (unit) => `${unit.propertyUsageDescription} - ${unit.unitCode}`,
+  )
   return [
     {
       width: 'full',
       keyText: searchResults?.label,
-      valueText: {
-        ...m.summary.rentalPropertyId,
-        values: {
-          propertyId: unitIdsAsString,
+      valueText: [
+        {
+          ...m.summary.rentalPropertyId,
+          values: {
+            propertyId: unitIdsAsString,
+          },
         },
-      },
+        ...usageUnits,
+      ],
     },
   ]
 }

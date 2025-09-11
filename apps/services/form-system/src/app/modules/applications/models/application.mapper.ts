@@ -102,7 +102,6 @@ export class ApplicationMapper {
           }),
         } as SectionDto)
       })
-    console.log('sections', JSON.stringify(applicationDto.sections, null, 2))
     return applicationDto
   }
 
