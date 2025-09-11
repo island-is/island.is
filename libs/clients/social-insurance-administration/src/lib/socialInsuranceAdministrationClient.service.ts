@@ -38,8 +38,6 @@ import {
   TrWebExternalModelsServicePortalConfirmedTreatment,
   TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebExternalModelsServicePortalDisabilityPensionCertificate,
-  TrWebApiServicesUseCaseDisabilityPensionModelsMaritalStatusDto,
-  TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto,
   TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
@@ -141,11 +139,13 @@ export class SocialInsuranceAdministrationClientService {
     user: User,
     applicationDTO: object,
     applicationType: string,
+    mode?: 'normal' | 'lightweight'
   ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
     return this.applicationWriteApiWithAuth(
       user,
     ).apiProtectedV1ApplicationApplicationTypePost({
       applicationType,
+      lightweightValidation: mode === 'lightweight',
       body: applicationDTO,
     })
   }
@@ -172,11 +172,13 @@ export class SocialInsuranceAdministrationClientService {
   async getIsEligible(
     user: User,
     applicationType: string,
+    mode?: 'normal' | 'lightweight'
   ): Promise<TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn> {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantApplicationTypeEligibleGet({
       applicationType,
+      lightweightValidation: mode === 'lightweight',
     })
   }
 
@@ -343,7 +345,7 @@ export class SocialInsuranceAdministrationClientService {
 
   }
 
-  async getEmploymentStatuses(
+  async getEmploymentStatusesWithLocale(
     user: User,
     { locale }: GenericLocaleInputDto
   ): Promise<

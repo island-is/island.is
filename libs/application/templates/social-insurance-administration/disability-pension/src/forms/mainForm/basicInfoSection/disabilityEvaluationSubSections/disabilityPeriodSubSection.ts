@@ -6,6 +6,7 @@ import {
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { getMonths, getYears } from '../../../../utils/dates'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const disabilityPeriodFields = buildMultiField({
   id: SectionRouteEnum.DISABILITY_PERIOD,
@@ -36,10 +37,10 @@ export const disabilityPeriodFields = buildMultiField({
       width: 'half',
       placeholder: disabilityPensionFormMessage.shared.chooseMonth,
       options: () => {
-        const months = getMonths()
-        return months.map((month) => ({
-          value: month.toString(),
-          label: month.toString(),
+        const months = MONTHS
+        return months.map((month, i) => ({
+          value: i.toString(),
+          label: month.label,
         }))
       },
     }),

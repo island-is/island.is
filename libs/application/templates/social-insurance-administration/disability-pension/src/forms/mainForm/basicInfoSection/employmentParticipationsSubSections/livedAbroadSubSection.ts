@@ -12,6 +12,7 @@ import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
 import { SectionRouteEnum } from '../../../../types'
 import { getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
+import { count } from 'rxjs'
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(
@@ -58,12 +59,11 @@ export const livedAbroadSubSection = buildMultiField({
           displayInTable: true,
           isSearchable: true,
           options: (application: Application) => {
-            const {countries} = getApplicationExternalData(application.externalData)
+            const { countries } = getApplicationExternalData(application.externalData)
             return (
-              countries.filter((country) => country.name)
-                .map(({ code, name }) => ({
-                  value: code,
-                  label: name ?? '',
+              countries.map(({ label, value }) => ({
+                  value,
+                  label,
                 })) ?? []
             )
           },

@@ -49,11 +49,6 @@ export interface EmploymentStatus {
   displayName: string
 }
 
-export interface Country {
-  code: string
-  name: string
-  nameIcelandic: string
-}
 
 export interface Language {
   code: string
@@ -72,6 +67,11 @@ export interface SelfAssessmentQuestionnaire {
   }>
   questions: SelfAssessmentQuestion[]
   language: string
+}
+
+export interface CountryValue {
+  label: string;
+  value: string;
 }
 
 export interface SelfAssessmentQuestion {

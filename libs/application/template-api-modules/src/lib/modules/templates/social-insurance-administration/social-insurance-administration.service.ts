@@ -574,6 +574,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         return await this.siaClientService.getIsEligible(
           auth,
           'disabilitypension',
+          //TODO: REMOVE WHEN PROD
+          'lightweight'
         )
       }
       default: {
@@ -737,8 +739,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     )
   }
 
-  async getEmploymentStatuses({ auth, currentUserLocale }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getEmploymentStatuses(auth, {locale: currentUserLocale})
+  async getEmploymentStatusesWithLocale({ auth, currentUserLocale }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getEmploymentStatusesWithLocale(auth, {locale: currentUserLocale})
   }
 
   async getProfessions({ auth }: TemplateApiModuleActionProps) {
@@ -747,9 +749,9 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getProfessionActivities({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getProfessionActivities(auth)
+  }
 
   async getEmploymentStatuses({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getEmploymentStatuses(auth)
-
   }
 }

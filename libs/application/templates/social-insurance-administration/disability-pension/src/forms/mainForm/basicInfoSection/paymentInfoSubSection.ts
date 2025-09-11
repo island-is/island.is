@@ -7,7 +7,6 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
   buildTextField,
   getValueViaPath,
@@ -48,16 +47,6 @@ export const paymentInfoSubSection = buildSubSection({
           alertType: 'info',
           title: disabilityPensionFormMessage.paymentInfo.noticeTitle,
           message: disabilityPensionFormMessage.paymentInfo.notice,
-        }),
-        buildBankAccountField({
-          id: 'paymentInfo.bank',
-          defaultValue: (application: Application) => {
-            const bankInfo = getValueViaPath<BankInfo>(
-              application.externalData,
-              'socialInsuranceAdministrationIncomePlanConditions.data',
-            )
-            return { ...bankInfo, bankNumber: bankInfo?.bank }
-          },
         }),
         buildRadioField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.accountType`,

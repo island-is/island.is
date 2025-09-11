@@ -8,7 +8,7 @@ import {
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application, NationalRegistryResidenceHistory } from '@island.is/application/types'
-import { Country, LivedAbroad, PreviousEmployment, SelfAssessmentQuestionnaireAnswers } from '../types/interfaces'
+import { Country, CountryValue, LivedAbroad, PreviousEmployment, SelfAssessmentQuestionnaireAnswers } from '../types/interfaces'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber =
@@ -289,10 +289,10 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIncomePlanConditions.data',
   ) as IncomePlanConditions
 
-  const countries = getValueViaPath<Country[]>(
+  const countries = getValueViaPath<CountryValue[]>(
     externalData,
     'socialInsuranceAdministrationCountries.data',
-  ) as Country[]
+  ) as CountryValue[]
 
   return {
     residenceHistory,

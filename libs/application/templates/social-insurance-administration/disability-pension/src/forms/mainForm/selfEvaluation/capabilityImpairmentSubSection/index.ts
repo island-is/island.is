@@ -12,16 +12,35 @@ import { SelfAssessmentQuestionnaire } from '../../../../types/interfaces'
 import { Application } from '@island.is/application/types'
 import { getQuestionnaire } from '../../../../utils/getQuestionnaire'
 
-export const MAX_QUESTIONS = 50
+export const MAX_QUESTIONS = 2
 
 const buildQuestion = (index: number) => {
   return buildMultiField({
     id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}]`,
     title: disabilityPensionFormMessage.capabilityImpairment.title,
     children: [
-      //check if works!
+      buildDescriptionField({
+        id: `selfAssessment.questionnaire[${index}].description`,
+        title: (application, locale) => {
+          const selfAssessmentQuestionnaire =
+            getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
+              application.externalData,
+              'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
+            ) ?? []
+
+          const questions =
+            selfAssessmentQuestionnaire.find(
+              (questionnaire) =>
+                questionnaire.language.toLowerCase() === locale,
+            )?.questions ?? []
+
+          return questions[index].explanationText
+        },
+        titleVariant: 'h4',
+      }),
       buildRadioField({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}].answer`,
+        marginTop: 0,
         title: (application, locale) => {
           const selfAssessmentQuestionnaire =
             getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
@@ -36,10 +55,7 @@ const buildQuestion = (index: number) => {
                 questionnaire.language.toLowerCase() === locale,
             )?.questions ?? []
 
-          console.log(questions)
-          console.log(index)
-
-          return questions[index].questionTitle
+          return questions[index].question
         },
         options: (application, _, locale) => {
           const selfAssessmentQuestionnaire =

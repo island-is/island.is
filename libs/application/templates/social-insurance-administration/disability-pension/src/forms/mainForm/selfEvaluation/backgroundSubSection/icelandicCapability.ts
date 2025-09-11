@@ -1,6 +1,6 @@
 import { buildMultiField, buildRadioField } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { IcelandicCapabilityEnum, SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types'
 
 export const icelandicCapabilityField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_ICELANDIC_CAPABILITY,

@@ -605,7 +605,7 @@ export const transformApplicationToDisabilityPensionDTO = (
     extraInfo
   } = getDPApplicationAnswers(application.answers)
 
-  const { bankInfo, countries, incomePlanConditions, categorizedIncomeTypes, residenceHistory } = getDPApplicationExternalData(
+  const { bankInfo, countries, incomePlanConditions, categorizedIncomeTypes } = getDPApplicationExternalData(
     application.externalData,
   )
 
@@ -667,15 +667,17 @@ export const transformApplicationToDisabilityPensionDTO = (
     workIncapacityIssue: biggestIssue ?? "",
     foreignPaymentDetails: {
       receivesForeignPayments: isReceivingBenefitsFromAnotherCountry === YES,
-      foreignPaymentDetails: abroadPaymentsList.map((country) => ({
-        countryName: country.name,
-        countryCode: country.code,
-        foreignNationalId: country.abroadNationalId,
-      })),
+      foreignPaymentDetails: abroadPaymentsList.map(({country, abroadNationalId}) => {
+        return ({
+          countryName: countries.find(item => item.value === country)?.label ?? '',
+          countryCode: country,
+          foreignNationalId: abroadNationalId ?? '',
+        })
+      }),
     },
     foreignResidencies: hasLivedAbroad === YES ?
       livedAbroadList?.map((abroadStay) => {
-        const countryName = countries.find(country => country.code === abroadStay.country)?.name;
+        const countryName = countries.find(item => item.value === abroadStay.country)?.label;
         return ({
           countryName: countryName ?? '',
           countryCode: abroadStay.country,

@@ -314,8 +314,8 @@ export class SocialInsuranceService {
     return await this.socialInsuranceApi.getMaritalStatuses(user)
   }
 
-  async getEmploymentStatuses(user: User, locale: Locale) {
-    return await this.socialInsuranceApi.getEmploymentStatuses(user, { locale })
+  async getEmploymentStatusesWithLocale(user: User, locale: Locale) {
+    return await this.socialInsuranceApi.getEmploymentStatusesWithLocale(user, { locale })
   }
 
   async getProfessions(user: User) {

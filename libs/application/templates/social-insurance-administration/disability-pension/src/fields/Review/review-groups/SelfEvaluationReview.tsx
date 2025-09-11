@@ -1,4 +1,4 @@
-import { coreMessages } from '@island.is/application/core'
+import { coreMessages, YES } from '@island.is/application/core'
 import { Application, Field, RecordObject } from '@island.is/application/types'
 import {
   Box,
@@ -9,8 +9,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
-import { getApplicationAnswers } from '../../../lib/getApplicationAnswers'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
+import { getApplicationAnswers } from '../../../utils'
 import { SectionRouteEnum } from '../../../types'
 
 interface SelfEvaluationReviewProps {
@@ -26,8 +26,9 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
+  /* TODO!!!
   type SelfEvaluationAnswers = {
-    assistance: string
+    hadAssistance: boolean
     biggestIssue: string
     children: string
     educationLevel: string
@@ -49,11 +50,24 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
     residence: string
   }
 
-  const { selfEvaluationBackgroundInfo, capabilityImpairment } =
-    getApplicationAnswers(application.answers) as {
-      selfEvaluationBackgroundInfo: SelfEvaluationAnswers
-      capabilityImpairment: unknown
-    }
+  const { hadAssistanceForSelfEvaluation, biggestIssue, children, educationLevel, employmentCapability, employmentImportance, employmentStatus, employmentStatusOther, icelandicCapability, language, maritalStatus, previousEmployment, hasHadRehabilitationOrTherapy, residence } = getApplicationAnswers(application.answers)
+
+  const selfEvaluationsAnswers: SelfEvaluationAnswers = {
+    hadAssistance: hadAssistanceForSelfEvaluation === YES,
+    biggestIssue,
+    children,
+    educationLevel,
+    employmentCapability,
+    employmentImportance,
+    employmentStatus,
+    employmentStatusOther,
+    icelandicCapability,
+    language,
+    maritalStatus,
+    previousEmployment,
+    hasHadRehabilitationOrTherapy,
+    residence,
+  }
 
   const hasSelfEvaluationAnswers = selfEvaluationBackgroundInfo
     ? Object.values(selfEvaluationBackgroundInfo).some((value) => {
@@ -76,7 +90,7 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
         return value !== undefined && value !== null && value !== ''
       })
     : false
-
+    */
   return (
     <Box marginBottom={3}>
       <Box marginTop={2} display="flex" justifyContent="spaceBetween">
@@ -97,14 +111,14 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
       <Text></Text>
       <Box marginTop={2}>
         <BulletList>
-          {hasSelfEvaluationAnswers && (
+          {/*hasSelfEvaluationAnswers &&*/ (
             <Bullet>
               {formatMessage(
                 disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
               )}
             </Bullet>
           )}
-          {hasCapabilityImpairment && (
+          {/*hasCapabilityImpairment && */(
             <Bullet>
               {formatMessage(
                 disabilityPensionFormMessage.capabilityImpairment.title,

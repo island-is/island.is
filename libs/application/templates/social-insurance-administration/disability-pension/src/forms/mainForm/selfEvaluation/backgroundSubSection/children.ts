@@ -4,7 +4,7 @@ import {
   buildTitleField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { ChildrenCountEnum, SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types'
 
 export const childrenField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_CHILDREN,

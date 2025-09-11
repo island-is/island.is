@@ -56,7 +56,7 @@ export const SocialInsuranceAdministrationLanguagesApi = defineTemplateApi({
 
 export const SocialInsuranceAdministrationEmploymentStatusesApi =
   defineTemplateApi({
-    action: 'getEmploymentStatuses',
+    action: 'getEmploymentStatusesWithLocale',
     externalDataId: 'socialInsuranceAdministrationEmploymentStatuses',
     namespace: 'SocialInsuranceAdministration',
   })

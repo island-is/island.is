@@ -78,7 +78,7 @@ export class GeneralResolver {
   })
   resolveEmploymentStatuses(@CurrentUser() user: User, @Args('locale', { type: () => String, nullable: true })
   locale: Locale = 'is',) {
-    return this.service.getEmploymentStatuses(user, locale)
+    return this.service.getEmploymentStatusesWithLocale(user, locale)
   }
 
   @ResolveField('professions', () => [GenericKeyValueStringObject], { nullable: true })

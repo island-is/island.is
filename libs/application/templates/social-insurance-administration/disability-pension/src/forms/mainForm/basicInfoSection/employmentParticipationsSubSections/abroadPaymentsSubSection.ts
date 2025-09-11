@@ -60,10 +60,9 @@ export const abroadPaymentsSubSection = buildMultiField({
           options: (application: Application) => {
             const {countries} = getApplicationExternalData(application.externalData)
             return (
-              countries.filter((country) => country.name)
-                .map(({ code, name }) => ({
-                  value: code,
-                  label: name ?? '',
+              countries.map(({ label, value }) => ({
+                  value,
+                  label
                 })) ?? []
             )
           },
