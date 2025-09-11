@@ -30,6 +30,7 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { INDICTMENTS_CASE_FILE_ROUTE } from '@island.is/judicial-system/consts'
+import { INDICTMENTS_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import { CourtSessionClosedLegalBasis } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -37,6 +38,7 @@ import {
   DateTime,
   FormContentContainer,
   FormContext,
+  FormFooter,
   MultipleValueList,
   PageHeader,
   PageLayout,
@@ -63,8 +65,8 @@ import {
   useCase,
   useCourtSessions,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { isIndictmentCourtRecordStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import SelectCourtOfficials from '../../components/ReceptionAndAssignment/SelectCourtOfficials/SelectCourtOfficials'
 import { useSelectCourtOfficialsUsersQuery } from '../../components/ReceptionAndAssignment/SelectCourtOfficials/selectCourtOfficialsUsers.generated'
 import * as styles from './CourtRecord.css'
 
@@ -238,7 +240,11 @@ const CourtRecord: FC = () => {
     [workingCase.id],
   )
 
-  const updateItem = (id: string, newData: any) => {
+  const stepIsValid = isIndictmentCourtRecordStepValid(
+    workingCase.courtSessions,
+  )
+
+  const updateItem = (id: string, newData: Partial<CourtSession>) => {
     setWorkingCase((prev) => {
       if (!prev.courtSessions) return prev
 
@@ -266,7 +272,7 @@ const CourtRecord: FC = () => {
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isValid={false}
+      isValid={stepIsValid}
       onNavigationTo={() => handleNavigationTo(INDICTMENTS_CASE_FILE_ROUTE)}
     >
       <PageHeader title="Þingbók - Réttarvörslugátt" />
@@ -667,7 +673,7 @@ const CourtRecord: FC = () => {
                             data-testid="closingEntries"
                             name="closingEntries"
                             label="Bókanir í kjölfar dómsuppsögu eða uppkvaðningu úrskurðar"
-                            value={courtSession.ruling || ''}
+                            value={courtSession.closingEntries || ''}
                             placeholder="T.d. Dómfelldi er ekki viðstaddur dómsuppsögu og verður lögreglu falið að birta dóminn fyrir honum..."
                             onChange={(event) => {
                               updateItem(courtSession.id, {
@@ -780,6 +786,13 @@ const CourtRecord: FC = () => {
             Bæta við þinghaldi
           </Button>
         </Box>
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={`${INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={!stepIsValid}
+          // onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
+        />
       </FormContentContainer>
     </PageLayout>
   )
