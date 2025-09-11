@@ -60,7 +60,7 @@ env:
   ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-  LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: 'http://payment-flow-update-handler.payment-flow-update-handler.svc.cluster.local'
+  LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: 'http://services-payment-flow-update-handler.services-payment-flow-update-handler.svc.cluster.local'
   LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   LOG_LEVEL: 'info'
   MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'

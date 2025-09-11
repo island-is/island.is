@@ -1,5 +1,5 @@
 {
-  "name": "payment-flow-update-handler",
+  "name": "services-payment-flow-update-handler",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/payment-flow-update-handler/src",
   "projectType": "application",
@@ -27,7 +27,15 @@
     "serve": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "payment-flow-update-handler:build"
+        "buildTarget": "services-payment-flow-update-handler:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "services-payment-flow-update-handler:build:development"
+        },
+        "production": {
+          "buildTarget": "services-payment-flow-update-handler:build:production"
+        }
       }
     },
     "lint": {
