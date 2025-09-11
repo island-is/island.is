@@ -1,4 +1,5 @@
 import { FC, useEffect, useCallback, useState } from 'react'
+import { MessageDescriptor } from 'react-intl'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -26,7 +27,7 @@ interface OtherAssetFormField {
 interface OtherAssetsRepeaterProps {
   field: {
     props: {
-      repeaterButtonText: string
+      repeaterButtonText: MessageDescriptor
     }
   }
 }
@@ -55,10 +56,14 @@ export const OtherAssetsRepeater: FC<
 
   // Clear errors when other asset value changes
   const updateOtherAssetValue = (fieldIndex: string) => {
-    const otherAssetValues = getValues(fieldIndex)
-    const value = otherAssetValues?.value?.replace(/[^\d.]/g, '') || '0'
+    const raw: string | undefined = getValues(`${fieldIndex}.value`)
+    const normalized = (raw ?? '')
+      .replace(/\./g, '')
+      .replace(',', '.')
+      .replace(/[^\d.-]/g, '')
+    const amount = parseFloat(normalized)
 
-    if (parseFloat(value) > 0) {
+    if (!isNaN(amount) && amount > 0) {
       clearErrors(`${fieldIndex}.value`)
     }
 

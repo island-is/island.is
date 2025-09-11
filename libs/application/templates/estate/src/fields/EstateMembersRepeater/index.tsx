@@ -182,6 +182,7 @@ export const EstateMembersRepeater: FC<
       // so now using "replace" instead, for the initial setup
       replace(estateData.estate.estateMembers)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
