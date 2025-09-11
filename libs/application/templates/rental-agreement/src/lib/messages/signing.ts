@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const signing = defineMessages({
-  sectionName: {
-    id: 'ra.application:signingForm.sectionName',
-    defaultMessage: 'Undirritunarferli',
-    description: 'Name of the signing section',
-  },
   pageTitle: {
     id: 'ra.application:signingForm.pageTitle',
     defaultMessage: 'Undirritunarferli hafið',
@@ -32,10 +27,5 @@ export const signing = defineMessages({
     defaultMessage:
       '- Allir aðilar samnings fá SMS og tölvupóst með hlekk til að undirrita samninginn rafrænt \n- Hægt er að fylgjast með framvindu undirritunar á Mínum síðum undir Mínar umsóknir \n- Samningur skráist sjálfkrafa í leiguskrá HMS að undirritun lokinni',
     description: 'Description for what comes next in the signing process',
-  },
-  backToReviewButton: {
-    id: 'ra.application:signingForm.backToReviewButton',
-    defaultMessage: 'Til baka í yfirlestur',
-    description: 'Button text for going back to review',
   },
 })

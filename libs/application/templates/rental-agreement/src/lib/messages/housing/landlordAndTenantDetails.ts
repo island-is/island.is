@@ -22,11 +22,6 @@ export const partiesDetails = defineMessages({
     defaultMessage: 'Leigusalar',
     description: 'Parties details page title',
   },
-  landlordTitle: {
-    id: 'ra.application:partiesDetails.landlordTitle',
-    defaultMessage: 'Leigusali',
-    description: 'Parties details table title',
-  },
 
   // DataSchema errors
   partiesEmptyTableError: {
@@ -34,13 +29,6 @@ export const partiesDetails = defineMessages({
     defaultMessage:
       'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn.',
     description: 'Parties details no parties in table',
-  },
-  uniqueApplicantsError: {
-    id: 'ra.application:partiesDetails.uniqueApplicantsError',
-    defaultMessage:
-      'Sami aðili má ekki vera skráður oftar en einu sinni á leigusamninginn.',
-
-    description: 'Applicant already exists on application error',
   },
   duplicateNationalIdError: {
     id: 'ra.application:partiesDetails.duplicateNationalIdError',
@@ -93,11 +81,6 @@ export const landlordAndTenantDetails = defineMessages({
     id: 'ra.application:landlordAndTenantDetails.addressInputLabel',
     defaultMessage: 'Heimilisfang',
     description: 'Address input label',
-  },
-  cancelButtonText: {
-    id: 'ra.application:landlordAndTenantDetails.cancelButtonText',
-    defaultMessage: 'Hætta við',
-    description: 'Cancel button text',
   },
 
   // Error messages

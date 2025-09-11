@@ -125,11 +125,6 @@ export const securityDeposit = defineMessages({
     defaultMessage: 'Skrifaðu hér í hvaða formi tryggingin er',
     description: 'security deposit other info placeholder',
   },
-  amountHeaderTitle: {
-    id: 'ra.application:securityDeposit.amountHeaderTitle',
-    defaultMessage: 'Upphæð tryggingar',
-    description: 'security deposit amount header title',
-  },
   amountRadioFieldTitle: {
     id: 'ra.application:securityDeposit.amountRadioFieldTitle',
     defaultMessage: 'Veldu upphæð',

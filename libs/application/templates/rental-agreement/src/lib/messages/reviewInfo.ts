@@ -100,11 +100,6 @@ export const inReview = {
       defaultMessage: 'Senda í undirritun',
       description: 'Text on the page submit button',
     },
-    editButtonText: {
-      id: 'ra.application:inReview.preSignatureInfo.editButtonText',
-      defaultMessage: 'Til baka í yfirlit',
-      description: 'Text on the page edit button',
-    },
 
     // dataSchema errors
     statementError: {
