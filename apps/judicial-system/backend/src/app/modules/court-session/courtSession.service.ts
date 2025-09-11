@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize/types'
+import { Transaction } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 
@@ -15,8 +15,11 @@ export class CourtSessionService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async create(caseId: string): Promise<CourtSession> {
-    return this.courtSessionRepositoryService.create({ caseId })
+  async create(
+    caseId: string,
+    transaction?: Transaction,
+  ): Promise<CourtSession> {
+    return this.courtSessionRepositoryService.create(caseId, { transaction })
   }
 
   async update(

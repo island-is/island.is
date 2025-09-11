@@ -1,6 +1,6 @@
 import { Base64 } from 'js-base64'
-import { Op, Sequelize } from 'sequelize'
-import { Transaction } from 'sequelize/types'
+import { Op, Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
 
 import {
@@ -25,6 +25,8 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
+  CaseState,
+  CourtDocumentType,
   EventType,
   isCompletedCase,
   isIndictmentCase,
@@ -35,6 +37,7 @@ import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
+import { CourtDocumentService } from '../court-session'
 import { PoliceDocumentType } from '../police'
 import { Case, CaseFile, EventLog } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
@@ -67,6 +70,7 @@ export class FileService {
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
     private readonly messageService: MessageService,
+    private readonly courtDocumentService: CourtDocumentService,
     private readonly internalCaseService: InternalCaseService,
     @Inject(fileModuleConfig.KEY)
     private readonly config: ConfigType<typeof fileModuleConfig>,
@@ -351,15 +355,12 @@ export class FileService {
 
     const fileName = createFile.key.slice(NAME_BEGINS_INDEX)
 
-    const file = await this.fileModel.create({
-      ...createFile,
-      state: CaseFileState.STORED_IN_RVG,
-      caseId: theCase.id,
-      name: fileName,
-      userGeneratedFilename:
-        createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
-      submittedBy: user.name,
-    })
+    const file = await this.createCaseFileInDatabase(
+      createFile,
+      theCase,
+      fileName,
+      user,
+    )
 
     if (
       theCase.appealCaseNumber &&
@@ -418,6 +419,53 @@ export class FileService {
     }
 
     return file
+  }
+
+  private async createCaseFileInDatabase(
+    createFile: CreateFile,
+    theCase: Case,
+    fileName: string,
+    user: User,
+  ): Promise<CaseFile> {
+    return this.sequelize.transaction(async (transaction) => {
+      const file = await this.fileModel.create(
+        {
+          ...createFile,
+          state: CaseFileState.STORED_IN_RVG,
+          caseId: theCase.id,
+          name: fileName,
+          userGeneratedFilename:
+            createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
+          submittedBy: user.name,
+        },
+        { transaction },
+      )
+
+      if (
+        isIndictmentCase(theCase.type) &&
+        theCase.state === CaseState.RECEIVED &&
+        file.category &&
+        [
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
+          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+        ].includes(file.category)
+      ) {
+        await this.courtDocumentService.create(
+          theCase.id,
+          {
+            documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+            name: file.userGeneratedFilename ?? file.name,
+            caseFileId: file.id,
+          },
+          transaction,
+        )
+      }
+
+      return file
+    })
   }
 
   private async verifyCaseFile(file: CaseFile, theCase: Case) {

@@ -29,7 +29,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  CourtDocument,
+  CourtDocument as TCourtDocument,
   CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
@@ -41,6 +41,7 @@ import {
 import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
 import { CivilClaimant } from './civilClaimant.model'
+import { CourtDocument } from './courtDocument.model'
 import { CourtSession } from './courtSession.model'
 import { DateLog } from './dateLog.model'
 import { Defendant } from './defendant.model'
@@ -452,7 +453,7 @@ export class Case extends Model {
    **********/
   @Column({ type: DataType.ARRAY(DataType.JSON), allowNull: true })
   @ApiPropertyOptional({ type: Object, isArray: true })
-  courtDocuments?: CourtDocument[]
+  courtDocuments?: TCourtDocument[]
 
   /**********
    * Bookings during court session
@@ -765,6 +766,13 @@ export class Case extends Model {
   @HasMany(() => CourtSession, 'caseId')
   @ApiPropertyOptional({ type: () => CourtSession, isArray: true })
   courtSessions?: CourtSession[]
+
+  /**********
+   * The case's unfiled court documents
+   **********/
+  @HasMany(() => CourtDocument, 'caseId')
+  @ApiPropertyOptional({ type: () => CourtDocument, isArray: true })
+  unfiledCourtDocuments?: CourtDocument[]
 
   /**********
    * Indicates whether the prosecutor requests a drivers license suspension

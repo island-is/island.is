@@ -26,6 +26,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import {
+  CourtDocumentResponse,
+  CourtSessionResponse,
+} from '../../court-session'
 import { CivilClaimant, Defendant } from '../../defendant'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
@@ -328,6 +332,12 @@ export class Case {
 
   @Field(() => [IndictmentCount], { nullable: true })
   readonly indictmentCounts?: IndictmentCount[]
+
+  @Field(() => [CourtSessionResponse], { nullable: true })
+  readonly courtSessions?: CourtSessionResponse[]
+
+  @Field(() => [CourtDocumentResponse], { nullable: true })
+  readonly unfiledCourtDocuments?: CourtDocumentResponse[]
 
   @Field(() => Boolean, { nullable: true })
   readonly requestDriversLicenseSuspension?: boolean

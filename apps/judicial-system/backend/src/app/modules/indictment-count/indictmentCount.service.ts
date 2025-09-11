@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize/types'
+import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {

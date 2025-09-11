@@ -15,3 +15,9 @@ export enum CourtSessionRulingType {
   JUDGMENT = 'JUDGMENT',
   ORDER = 'ORDER',
 }
+
+export enum CourtDocumentType {
+  UPLOADED_DOCUMENT = 'UPLOADED_DOCUMENT',
+  GENERATED_DOCUMENT = 'GENERATED_DOCUMENT',
+  EXTERNAL_DOCUMENT = 'EXTERNAL_DOCUMENT',
+}
