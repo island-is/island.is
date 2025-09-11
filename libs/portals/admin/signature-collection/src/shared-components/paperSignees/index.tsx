@@ -88,10 +88,8 @@ export const PaperSignees = ({
             formatMessage(m.paperSigneeError)
           toast.error(message)
         }
-        reset()
         revalidate()
-        setNationalIdTypo(false)
-        setName('')
+        onClearForm()
       },
       onError: () => {
         toast.error(formatMessage(m.paperSigneeError))
