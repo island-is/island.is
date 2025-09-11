@@ -236,7 +236,7 @@ export class ApplicationsService {
 
     if (success) {
       application.status = ApplicationStatus.SUBMITTED
-      application.submittedAt = new Date()
+      application.submittedAt = applicationDto.submittedAt
       await application.save()
     }
 
