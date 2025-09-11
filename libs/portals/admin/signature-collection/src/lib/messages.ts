@@ -516,7 +516,7 @@ export const m = defineMessages({
     description: '',
   },
   collectionProcessedMessage: {
-    id: 'admin-portal.signature-collection:collectionReviewedTitle',
+    id: 'admin-portal.signature-collection:collectionProcessedMessage',
     defaultMessage: 'Nú er hægt að framlengja stökum listum.',
     description: '',
   },
