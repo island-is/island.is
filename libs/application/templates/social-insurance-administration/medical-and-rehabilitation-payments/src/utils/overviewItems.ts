@@ -19,7 +19,7 @@ import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import { isFirstApplication } from './conditionUtils'
-import { CURRENT_EMPLOYMENT_STATUS_OTHER, NOT_APPLICABLE } from './constants'
+import { NOT_APPLICABLE, OTHER } from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -480,11 +480,17 @@ export const selfAssessmentQuestionsTwoItems = (
   const {
     currentEmploymentStatuses,
     currentEmploymentStatusExplanation,
-    lastEmploymentTitle,
-    lastEmploymentYear,
+    lastProfession,
+    lastProfessionDescription,
+    lastActivityOfProfession,
+    lastActivityOfProfessionDescription,
+    lastProfessionYear,
   } = getApplicationAnswers(answers)
 
   const employmentStatusesOptions = getEmploymentStatuses(externalData, locale)
+
+  const { professions, activitiesOfProfessions } =
+    getApplicationExternalData(externalData)
 
   const statuses = currentEmploymentStatuses.map(
     (status) =>
@@ -502,8 +508,8 @@ export const selfAssessmentQuestionsTwoItems = (
     },
   ]
 
-  const previousRehabilitationOrTreatmentItems: Array<KeyValueItem> =
-    currentEmploymentStatuses?.includes(CURRENT_EMPLOYMENT_STATUS_OTHER)
+  const currentEmploymentStatusItems: Array<KeyValueItem> =
+    currentEmploymentStatuses?.includes(OTHER)
       ? [
           {
             width: 'full',
@@ -517,27 +523,75 @@ export const selfAssessmentQuestionsTwoItems = (
 
   const baseItems2: Array<KeyValueItem> = [
     {
-      width: 'half',
+      width: 'full',
       keyText:
         medicalAndRehabilitationPaymentsFormMessage.overview
-          .selfAssessmentLastEmploymentTitle,
-      valueText: lastEmploymentTitle,
+          .selfAssessmentLastProfessionTitle,
+      valueText: professions.find(
+        (profession) => profession.value === lastProfession,
+      )?.description,
       hideIfEmpty: true,
     },
+  ]
+
+  const lastProfessionDescriptionItem: Array<KeyValueItem> =
+    lastProfession === OTHER
+      ? [
+          {
+            width: 'full',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+                .furtherExplanation,
+            valueText: lastProfessionDescription,
+          },
+        ]
+      : []
+
+  const baseItems3: Array<KeyValueItem> = [
     {
-      width: 'half',
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .lastActivityOfProfession,
+      valueText: activitiesOfProfessions.find(
+        (activity) => activity.value === lastActivityOfProfession,
+      )?.description,
+      hideIfEmpty: true,
+    },
+  ]
+
+  const lastActivityOfProfessionDescriptionItem: Array<KeyValueItem> =
+    lastActivityOfProfession === OTHER
+      ? [
+          {
+            width: 'full',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+                .furtherExplanation,
+            valueText: lastActivityOfProfessionDescription,
+          },
+        ]
+      : []
+
+  const baseItems4: Array<KeyValueItem> = [
+    {
+      width: 'full',
       keyText:
         medicalAndRehabilitationPaymentsFormMessage.overview
-          .selfAssessmentLastEmploymentYear,
-      valueText: lastEmploymentYear,
+          .selfAssessmentLastProfessionYear,
+      valueText: lastProfessionYear,
       hideIfEmpty: true,
     },
   ]
 
   return [
     ...baseItems,
-    ...previousRehabilitationOrTreatmentItems,
+    ...currentEmploymentStatusItems,
     ...baseItems2,
+    ...lastProfessionDescriptionItem,
+    ...baseItems3,
+    ...lastActivityOfProfessionDescriptionItem,
+    ...baseItems4,
   ]
 }
 

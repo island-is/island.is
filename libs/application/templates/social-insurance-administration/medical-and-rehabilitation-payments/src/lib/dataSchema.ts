@@ -8,10 +8,7 @@ import {
 import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import {
-  CURRENT_EMPLOYMENT_STATUS_OTHER,
-  NOT_APPLICABLE,
-} from '../utils/constants'
+import { NOT_APPLICABLE, OTHER } from '../utils/constants'
 import { errorMessages } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
@@ -316,8 +313,11 @@ export const dataSchema = z.object({
       educationalLevel: z.string().optional(),
       currentEmploymentStatuses: z.array(z.string()).min(1).optional(),
       currentEmploymentStatusExplanation: z.string().optional(),
-      lastEmploymentTitle: z.string().optional(),
-      lastEmploymentYear: z.string().optional().nullable(),
+      lastProfession: z.string().optional().nullable(),
+      lastProfessionDescription: z.string().optional(),
+      lastActivityOfProfession: z.string().optional().nullable(),
+      lastActivityOfProfessionDescription: z.string().optional(),
+      lastProfessionYear: z.string().optional().nullable(),
       mainProblem: z.string().min(1).optional(),
       hasPreviouslyReceivedRehabilitationOrTreatment: z
         .enum([YES, NO])
@@ -377,10 +377,24 @@ export const dataSchema = z.object({
     .refine(
       ({ currentEmploymentStatuses, currentEmploymentStatusExplanation }) =>
         Array.isArray(currentEmploymentStatuses) &&
-        currentEmploymentStatuses.includes(CURRENT_EMPLOYMENT_STATUS_OTHER)
+        currentEmploymentStatuses.includes(OTHER)
           ? !!currentEmploymentStatusExplanation?.trim()
           : true,
       { path: ['currentEmploymentStatusExplanation'] },
+    )
+    .refine(
+      ({ lastProfession, lastProfessionDescription }) =>
+        lastProfession && lastProfession === OTHER
+          ? !!lastProfessionDescription?.trim()
+          : true,
+      { path: ['lastProfessionDescription'] },
+    )
+    .refine(
+      ({ lastActivityOfProfession, lastActivityOfProfessionDescription }) =>
+        lastActivityOfProfession && lastActivityOfProfession === OTHER
+          ? !!lastActivityOfProfessionDescription?.trim()
+          : true,
+      { path: ['lastActivityOfProfessionDescription'] },
     ),
 })
 

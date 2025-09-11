@@ -29,10 +29,10 @@ import {
   getApplicationExternalData as getIPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
 import {
-  CURRENT_EMPLOYMENT_STATUS_OTHER,
   getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
   isFirstApplication,
+  OTHER,
   shouldShowCalculatedRemunerationDate,
   shouldShowConfirmationOfIllHealth,
   shouldShowConfirmationOfPendingResolution,
@@ -420,8 +420,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     questionnaire,
     currentEmploymentStatuses,
     currentEmploymentStatusExplanation,
-    lastEmploymentTitle,
-    lastEmploymentYear,
+    lastProfession,
+    lastProfessionDescription,
+    lastActivityOfProfession,
+    lastActivityOfProfessionDescription,
+    lastProfessionYear,
     certificateForSicknessAndRehabilitationReferenceId,
     rehabilitationPlanReferenceId,
     confirmedTreatmentReferenceId,
@@ -514,12 +517,19 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       employmentStatuses: currentEmploymentStatuses.map((status) => ({
         employmentStatus: status,
         explanation:
-          status === CURRENT_EMPLOYMENT_STATUS_OTHER
-            ? currentEmploymentStatusExplanation ?? ''
-            : null,
+          status === OTHER ? currentEmploymentStatusExplanation ?? '' : null,
       })),
-      ...(lastEmploymentTitle && { lastJobTitle: lastEmploymentTitle }),
-      ...(lastEmploymentYear && { lastJobYear: +lastEmploymentYear }),
+      ...(lastProfession && { lastProfession }),
+      ...(lastProfession === OTHER && {
+        lastProfessionDescription,
+      }),
+      ...(lastActivityOfProfession && {
+        lastActivityOfProfession,
+      }),
+      ...(lastActivityOfProfession === OTHER && {
+        lastActivityOfProfessionDescription,
+      }),
+      ...(lastProfessionYear && { lastProfessionYear: +lastProfessionYear }),
       disabilityReason: mainProblem || '',
       hasParticipatedInRehabilitationBefore:
         hasPreviouslyReceivedRehabilitationOrTreatment === YES,

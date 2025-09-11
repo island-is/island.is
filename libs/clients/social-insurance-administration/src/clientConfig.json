@@ -13,6 +13,12 @@
             "description": "The type of application (e.g. old age pension) to check for eligibility",
             "required": true,
             "schema": { "type": "string" }
+          },
+          {
+            "name": "lightweightValidation",
+            "in": "query",
+            "description": "Whether to skip non-essential validation steps. Used for debugging/testing purposes.",
+            "schema": { "type": "boolean", "default": false }
           }
         ],
         "responses": {
@@ -702,6 +708,12 @@
             "description": "The application type, e.g. \"oldagepension\"",
             "required": true,
             "schema": { "type": "string" }
+          },
+          {
+            "name": "lightweightValidation",
+            "in": "query",
+            "description": "Whether to skip non-essential validation steps. Used for debugging/testing purposes.",
+            "schema": { "type": "boolean", "default": false }
           }
         ],
         "requestBody": {
@@ -1268,6 +1280,240 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.DigitalMailbox.Models.Document"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/General/professions": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Returns a list of professions",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Professions.Models.ProfessionDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Professions.Models.ProfessionDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Professions.Models.ProfessionDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/General/professions/activities": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Returns a list of activities of professions",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Professions.Models.ActivityOfProfessionDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Professions.Models.ActivityOfProfessionDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Professions.Models.ActivityOfProfessionDto"
+                  }
                 }
               }
             }
@@ -1974,7 +2220,7 @@
     "/api/protected/v1/General/employment-status": {
       "get": {
         "tags": ["General"],
-        "summary": "Returns a list of employment status",
+        "summary": "Returns a list of employment statuses",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -2080,6 +2326,357 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.General.EmploymentStatusesForLanguage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/General/housing-types": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Returns a list of housing types",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DisabilityPension.Models.HousingTypesStatusDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DisabilityPension.Models.HousingTypesStatusDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DisabilityPension.Models.HousingTypesStatusDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/General/marital-statuses": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Returns a list of marital statuses",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DisabilityPension.Models.MaritalStatusDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DisabilityPension.Models.MaritalStatusDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DisabilityPension.Models.MaritalStatusDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/General/languages": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Returns a list of all available languages",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Countries.Models.LanguageDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Countries.Models.LanguageDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Countries.Models.LanguageDto"
                   }
                 }
               }
@@ -4694,6 +5291,15 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Common.Countries.Models.LanguageDto": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "nullable": true },
+          "nameIs": { "type": "string", "nullable": true },
+          "nameEn": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Api.Services.Domain.Applications.Models.ApplicationTypeDto": {
         "type": "object",
         "properties": {
@@ -4846,6 +5452,22 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Domain.Professions.Models.ActivityOfProfessionDto": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string", "nullable": true },
+          "value": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Domain.Professions.Models.ProfessionDto": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string", "nullable": true },
+          "value": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionDto": {
         "type": "object",
         "properties": {
@@ -4911,6 +5533,22 @@
             "nullable": true
           },
           "cohabitadedLongerThan1Year": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.UseCase.DisabilityPension.Models.HousingTypesStatusDto": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "integer", "format": "int32" },
+          "label": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.UseCase.DisabilityPension.Models.MaritalStatusDto": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "integer", "format": "int32" },
+          "label": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -5833,6 +6471,12 @@
         "type": "object",
         "properties": {
           "referenceId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
+          "serviceProviderRegistrationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "created": { "type": "string", "format": "date-time" },
           "individual": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Individual"
           },
@@ -5873,17 +6517,6 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.External.Models.ServicePortal.CaseManager": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string", "nullable": true },
-          "jobTitle": { "type": "string", "nullable": true },
-          "phoneNumber": { "type": "string", "nullable": true },
-          "email": { "type": "string", "nullable": true },
-          "workplace": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
       "TrWeb.External.Models.ServicePortal.ComprehensiveEvaluation": {
         "type": "object",
         "properties": {
@@ -5899,14 +6532,23 @@
             "format": "int32",
             "nullable": true
           },
+          "learningAndApplyingKnowledgeName": {
+            "type": "string",
+            "nullable": true
+          },
           "generalTasksAndDemands": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
+          "generalTasksAndDemandsName": { "type": "string", "nullable": true },
           "communicationAndRelationships": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "communicationAndRelationshipsName": {
+            "type": "string",
             "nullable": true
           },
           "mobility": {
@@ -5914,26 +6556,37 @@
             "format": "int32",
             "nullable": true
           },
+          "mobilityName": { "type": "string", "nullable": true },
           "selfCare": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
+          "selfCareName": { "type": "string", "nullable": true },
           "domesticLife": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
+          "domesticLifeName": { "type": "string", "nullable": true },
           "mainDailyLifeAreas": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
+          "mainDailyLifeAreasName": { "type": "string", "nullable": true },
           "leisureAndHobbies": {
             "type": "integer",
             "format": "int32",
             "nullable": true
-          }
+          },
+          "leisureAndHobbiesName": { "type": "string", "nullable": true },
+          "expression": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "expressionName": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -5941,6 +6594,16 @@
         "type": "object",
         "properties": {
           "referenceId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
+          "serviceProviderRegistrationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "individual": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Individual"
           },
@@ -5962,6 +6625,16 @@
         "type": "object",
         "properties": {
           "referenceId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
+          "serviceProviderRegistrationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "individual": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Individual"
           },
@@ -5986,32 +6659,30 @@
         "type": "object",
         "properties": {
           "referenceId": { "type": "string", "nullable": true },
-          "individual": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Individual"
+          "serviceProviderName": { "type": "string", "nullable": true },
+          "serviceProviderRegistrationNumber": {
+            "type": "string",
+            "nullable": true
           },
-          "caseManager": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.CaseManager"
-          },
-          "confirmationDate": {
+          "created": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "previousTreatment": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.PreviousTreatment"
+          "individual": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Individual"
           },
-          "treatmentPlan": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.TreatmentPlan"
+          "serviceProvider": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ServiceProvider"
           },
-          "treatmentType": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
-            },
-            "nullable": true
+          "requestedTreatment": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RequestedTreatment"
           },
-          "estimatedDuration": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EstimatedDuration"
+          "previousApplication": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.PreviousApplication"
+          },
+          "requestedPeriod": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RequestedPeriod"
           },
           "typeAppliedFor": { "type": "string", "nullable": true }
         },
@@ -6194,19 +6865,6 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.External.Models.ServicePortal.EstimatedDuration": {
-        "type": "object",
-        "properties": {
-          "start": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "end": { "type": "string", "format": "date-time", "nullable": true },
-          "months": { "type": "integer", "format": "int32", "nullable": true }
-        },
-        "additionalProperties": false
-      },
       "TrWeb.External.Models.ServicePortal.FirstEvaluation": {
         "type": "object",
         "properties": {
@@ -6359,23 +7017,16 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.External.Models.ServicePortal.PreviousTreatment": {
-        "type": "object",
-        "properties": {
-          "description": { "type": "string", "nullable": true },
-          "application": { "type": "string", "nullable": true },
-          "type": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
-          },
-          "other": { "type": "string", "nullable": true },
-          "content": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
       "TrWeb.External.Models.ServicePortal.RehabilitationPlan": {
         "type": "object",
         "properties": {
           "referenceId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
+          "serviceProviderRegistrationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "created": { "type": "string", "format": "date-time" },
           "person": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Person"
           },
@@ -6402,6 +7053,11 @@
           "plannedEndDate": {
             "type": "string",
             "format": "date-time",
+            "nullable": true
+          },
+          "totalRequestedMonths": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "rehabilitationFocusAndStrategy": {
@@ -6446,8 +7102,12 @@
       "TrWeb.External.Models.ServicePortal.RequestedTreatment": {
         "type": "object",
         "properties": {
-          "treatmentType": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
+          "treatmentTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
+            },
+            "nullable": true
           },
           "otherTreatmentDescription": { "type": "string", "nullable": true }
         },
@@ -6464,23 +7124,6 @@
           "phoneNumber": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true },
           "registrationNumber": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.External.Models.ServicePortal.TreatmentPlan": {
-        "type": "object",
-        "properties": {
-          "applicationType": { "type": "string", "nullable": true },
-          "treatmentType": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
-            },
-            "nullable": true
-          },
-          "explanation": { "type": "string", "nullable": true },
-          "discharge": { "type": "string", "nullable": true },
-          "plannedFollowup": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
