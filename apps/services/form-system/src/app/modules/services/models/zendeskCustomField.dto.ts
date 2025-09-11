@@ -1,4 +1,4 @@
 export type CustomField = {
-  id: string
-  value: string
+  id: number
+  value: string | number | boolean | null
 }

@@ -74,7 +74,7 @@ export class ZendeskService {
   private async createTicket(
     subject: string,
     body: string,
-    customFields: string,
+    customFields: CustomField[],
     fileToken: string,
     url: string,
     credentials: string,
@@ -215,8 +215,8 @@ export class ZendeskService {
     return body
   }
 
-  private getCustomFields(applicationDto: ApplicationDto): string {
-    const CustomFields: CustomField[] = []
+  private getCustomFields(applicationDto: ApplicationDto): CustomField[] {
+    const customFields: CustomField[] = []
     const sections = applicationDto.sections?.filter(
       (section) =>
         section.sectionType !== SectionTypes.PREMISES &&
@@ -230,12 +230,15 @@ export class ZendeskService {
           if (field.fieldSettings?.zendeskIsCustomField === true) {
             let value = ''
             const json = field.values?.[0]?.json ?? {}
-            Object.entries(json).forEach(([val]) => {
-              val = this.formatValue(val, field.fieldType)
-              value += `${val} `
-            })
-            CustomFields.push({
-              id: field.fieldSettings?.zendeskCustomFieldId ?? '',
+
+            const firstEntry = Object.entries(json)[0]
+            if (firstEntry) {
+              const [, rawVal] = firstEntry
+              value = this.formatValue(rawVal, field.fieldType)
+            }
+
+            customFields.push({
+              id: Number(field.fieldSettings?.zendeskCustomFieldId) ?? 0,
               value: field.values?.[0]?.json ? value : '',
             })
           }
@@ -243,7 +246,8 @@ export class ZendeskService {
       })
     })
 
-    return JSON.stringify(CustomFields)
+    console.log('customFields', customFields)
+    return customFields
   }
 
   // eslint-disable-next-line
