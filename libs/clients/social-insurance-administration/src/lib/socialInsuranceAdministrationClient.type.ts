@@ -188,8 +188,11 @@ export interface EmploymentStatus {
 export interface PreQuestionnaire {
   highestEducation: string
   employmentStatuses: EmploymentStatus[]
-  lastJobTitle?: string
-  lastJobYear?: number
+  lastProfession?: string
+  lastProfessionDescription?: string
+  lastActivityOfProfession?: string
+  lastActivityOfProfessionDescription?: string
+  lastProfessionYear?: number
   disabilityReason: string
   hasParticipatedInRehabilitationBefore: boolean
   rehabilitationDetails?: string

@@ -1,5 +1,6 @@
 import { Base64 } from 'js-base64'
-import { Sequelize, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,

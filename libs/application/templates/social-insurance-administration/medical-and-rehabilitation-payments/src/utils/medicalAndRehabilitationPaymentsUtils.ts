@@ -16,8 +16,8 @@ import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
   Countries,
   CurrentEmploymentStatusLang,
-  EctsUnits,
   EducationLevels,
+  LabeledValue,
   SelfAssessmentQuestionnaire,
   SelfAssessmentQuestionnaireAnswers,
 } from '../types'
@@ -205,14 +205,29 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'selfAssessment.currentEmploymentStatusExplanation',
   )
 
-  const lastEmploymentTitle = getValueViaPath<string>(
+  const lastProfession = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastEmploymentTitle',
+    'selfAssessment.lastProfession',
   )
 
-  const lastEmploymentYear = getValueViaPath<string>(
+  const lastProfessionDescription = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastEmploymentYear',
+    'selfAssessment.lastProfessionDescription',
+  )
+
+  const lastActivityOfProfession = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastActivityOfProfession',
+  )
+
+  const lastActivityOfProfessionDescription = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastActivityOfProfessionDescription',
+  )
+
+  const lastProfessionYear = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastProfessionYear',
   )
 
   return {
@@ -256,8 +271,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     previousRehabilitationSuccessfulFurtherExplanations,
     currentEmploymentStatuses,
     currentEmploymentStatusExplanation,
-    lastEmploymentTitle,
-    lastEmploymentYear,
+    lastProfession,
+    lastProfessionDescription,
+    lastActivityOfProfession,
+    lastActivityOfProfessionDescription,
+    lastProfessionYear,
   }
 }
 
@@ -357,7 +375,7 @@ export const getApplicationExternalData = (
     ) ?? []
 
   const ectsUnits =
-    getValueViaPath<EctsUnits[]>(
+    getValueViaPath<LabeledValue[]>(
       externalData,
       'socialInsuranceAdministrationEctsUnits.data',
     ) ?? []
@@ -389,6 +407,18 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIsApplicantEligible.data',
   )
 
+  const professions =
+    getValueViaPath<LabeledValue[]>(
+      externalData,
+      'socialInsuranceAdministrationProfessions.data',
+    ) ?? []
+
+  const activitiesOfProfessions =
+    getValueViaPath<LabeledValue[]>(
+      externalData,
+      'socialInsuranceAdministrationActivitiesOfProfessions.data',
+    ) ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -415,6 +445,8 @@ export const getApplicationExternalData = (
     marpApplicationType,
     marpConfirmationType,
     isEligible,
+    professions,
+    activitiesOfProfessions,
   }
 }
 
@@ -457,7 +489,7 @@ export const hasNotUtilizedRights = (
 }
 
 // Returns an array of year options from current year to 30 years in the past
-export const getSelfAssessmentLastEmploymentYearOptions = () => {
+export const getSelfAssessmentLastProfessionYearOptions = () => {
   const currentYear = new Date().getFullYear()
 
   return Array.from({ length: 31 }, (_, index) => {

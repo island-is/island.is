@@ -73,8 +73,8 @@ export class FieldSettings {
   @Field(() => Boolean, { nullable: true })
   zendeskIsCustomField?: boolean
 
-  @Field(() => String, { nullable: true })
-  zendeskCustomFieldId?: string
+  @Field(() => Number, { nullable: true })
+  zendeskCustomFieldId?: number
 
   @Field(() => String, { nullable: true })
   applicantType?: string

@@ -31,6 +31,9 @@ const CreateCollection = ({
 }: {
   collection: SignatureCollection
 }) => {
+  const { formatMessage } = useLocale()
+  const { revalidate } = useRevalidator()
+
   const { id, collectionType } = collection
 
   const params = useParams() as {
@@ -52,11 +55,7 @@ const CreateCollection = ({
       ? collection.areas.find((area) => area.name === areaName)
       : null
 
-  const { formatMessage } = useLocale()
-  const { revalidate } = useRevalidator()
-
   const { control } = useForm()
-
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState(false)
@@ -67,6 +66,7 @@ const CreateCollection = ({
 
   const [candidateLookup, { loading: loadingCandidate }] =
     useCandidateLookupLazyQuery()
+
   const [createCollection, { loading }] = useCreateCollectionMutation({
     variables: {
       input: {
@@ -94,14 +94,15 @@ const CreateCollection = ({
 
   const createNewCollection = async () => {
     try {
-      const createCollectionRes = await createCollection()
-      if (createCollectionRes.data?.signatureCollectionAdminCreate.success) {
+      const { data } = await createCollection()
+      const result = data?.signatureCollectionAdminCreate
+
+      if (result?.success) {
         toast.success(formatMessage(m.createCollectionSuccess))
         setModalIsOpen(false)
       } else {
         toast.error(
-          createCollectionRes.data?.signatureCollectionAdminCreate
-            .reasons?.[0] || formatMessage(m.createCollectionError),
+          result?.reasons?.[0] ?? formatMessage(m.createCollectionError),
         )
       }
     } catch (e) {

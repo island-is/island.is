@@ -1,5 +1,4 @@
-import { Op } from 'sequelize'
-import { Includeable, Transaction } from 'sequelize/types'
+import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -38,6 +37,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  CourtDocumentType,
   DateType,
   dateTypes,
   defendantEventTypes,
@@ -61,6 +61,7 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { CourtDocumentService, CourtSessionService } from '../court-session'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
@@ -72,6 +73,7 @@ import {
   CaseRepositoryService,
   CaseString,
   CivilClaimant,
+  CourtDocument,
   CourtSession,
   DateLog,
   Defendant,
@@ -239,6 +241,32 @@ export const include: Includeable[] = [
     as: 'courtSessions',
     required: false,
     order: [['created', 'ASC']],
+    include: [
+      {
+        model: User,
+        as: 'attestingWitness',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: CourtDocument,
+        as: 'filedDocuments',
+        required: false,
+        order: [['documentOrder', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  {
+    model: CourtDocument,
+    as: 'unfiledCourtDocuments',
+    required: false,
+    order: [
+      ['documentOrder', 'DESC'],
+      ['created', 'ASC'],
+    ],
+    where: { courtSessionId: null },
     separate: true,
   },
   {
@@ -430,6 +458,8 @@ export class CaseService {
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
     private readonly indictmentCountService: IndictmentCountService,
+    private readonly courtSessionService: CourtSessionService,
+    private readonly courtDocumentService: CourtDocumentService,
     private readonly subpoenaService: SubpoenaService,
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
@@ -1959,6 +1989,108 @@ export class CaseService {
     }
   }
 
+  private async handleCreateFirstCourtSession(
+    theCase: Case,
+    transaction: Transaction,
+  ) {
+    // Guard against unexpected existing court sessions
+    if (theCase.courtSessions && theCase.courtSessions.length > 0) {
+      return
+    }
+
+    // Create the first court session and then add court documents to it
+    const courtSession = await this.courtSessionService.create(
+      theCase.id,
+      transaction,
+    )
+
+    // Start with the generated indictment PDF
+    await this.courtDocumentService.createInCourtSession(
+      theCase.id,
+      courtSession.id,
+      {
+        documentType: CourtDocumentType.GENERATED_DOCUMENT,
+        name: 'Ákæra',
+        generatedPdfUri: `/api/case/${theCase.id}/indictment/Ákæra`,
+      },
+      transaction,
+    )
+
+    const caseFiles = theCase.caseFiles ?? []
+
+    // Add all criminal records
+    for (const caseFile of caseFiles.filter(
+      (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
+    ) ?? []) {
+      await this.courtDocumentService.createInCourtSession(
+        theCase.id,
+        courtSession.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        transaction,
+      )
+    }
+
+    // Add all cost breakdowns
+    for (const caseFile of caseFiles.filter(
+      (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
+    ) ?? []) {
+      await this.courtDocumentService.createInCourtSession(
+        theCase.id,
+        courtSession.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        transaction,
+      )
+    }
+
+    // Add all case files records
+    for (const policeCaseNumber of theCase.policeCaseNumbers) {
+      await this.courtDocumentService.createInCourtSession(
+        theCase.id,
+        courtSession.id,
+        {
+          documentType: CourtDocumentType.GENERATED_DOCUMENT,
+          name: `Skjalaskrá ${policeCaseNumber}`,
+          generatedPdfUri: `/api/case/${theCase.id}/caseFilesRecord/${policeCaseNumber}`,
+        },
+        transaction,
+      )
+    }
+
+    // Add all remaining case files
+    for (const caseFile of caseFiles?.filter(
+      (file) =>
+        file.category &&
+        [
+          CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
+          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIM,
+        ].includes(file.category),
+    ) ?? []) {
+      await this.courtDocumentService.createInCourtSession(
+        theCase.id,
+        courtSession.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        transaction,
+      )
+    }
+  }
+
   private async handleEventLogUpdatesForIndictments(
     theCase: Case,
     updatedCase: Case,
@@ -2032,6 +2164,9 @@ export class CaseService {
     const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
 
+    const isReceivingIndictmentCase =
+      isReceivingCase && isIndictmentCase(theCase.type)
+
     const completingIndictmentCase =
       isIndictmentCase(theCase.type) && update.state === CaseState.COMPLETED
 
@@ -2090,17 +2225,9 @@ export class CaseService {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
         }
 
-        // Remove uploaded ruling files if an indictment case is completed without a ruling
-        if (completingIndictmentCaseWithoutRuling && theCase.caseFiles) {
-          await Promise.all(
-            theCase.caseFiles
-              .filter(
-                (caseFile) => caseFile.category === CaseFileCategory.RULING,
-              )
-              .map((caseFile) =>
-                this.fileService.deleteCaseFile(theCase, caseFile, transaction),
-              ),
-          )
+        // Handle first court session creation if receiving an indictment case
+        if (isReceivingIndictmentCase) {
+          await this.handleCreateFirstCourtSession(theCase, transaction)
         }
 
         // Create new subpoenas if scheduling a new arraignment date for an indictment case
@@ -2136,6 +2263,20 @@ export class CaseService {
             ),
           )
         }
+
+        // Remove uploaded ruling files if an indictment case is completed without a ruling
+        if (completingIndictmentCaseWithoutRuling && theCase.caseFiles) {
+          await Promise.all(
+            theCase.caseFiles
+              .filter(
+                (caseFile) => caseFile.category === CaseFileCategory.RULING,
+              )
+              .map((caseFile) =>
+                this.fileService.deleteCaseFile(theCase, caseFile, transaction),
+              ),
+          )
+        }
+
         const updatedCase = await this.findById(theCase.id, true, transaction)
 
         await this.handleEventLogUpdates(

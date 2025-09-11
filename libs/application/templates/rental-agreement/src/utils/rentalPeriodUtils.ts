@@ -4,7 +4,11 @@ import is from 'date-fns/locale/is'
 import startOfDay from 'date-fns/startOfDay'
 import addYears from 'date-fns/addYears'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import {
   OtherFeesPayeeOptions,
   RentalAmountPaymentDateOptions,
@@ -210,8 +214,8 @@ export const getConsumerIndexDateOptions = (
 }
 
 export const getIndexRateForConsumerIndexDate = (
-  answers: Application['answers'],
-  externalData: Application['externalData'],
+  answers: FormValue,
+  externalData: ExternalData,
 ): string | undefined => {
   const { isIndexConnected, indexDate } = applicationAnswers(answers)
 
