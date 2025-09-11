@@ -56,6 +56,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   const prescriptionsRes = useGetDrugPrescriptionsQuery({
     variables: { locale: useLocale() },
   })
+
   const certificatesRes = useGetDrugCertificatesQuery()
 
   const drugCertificates = certificatesRes.data?.rightsPortalDrugCertificates
@@ -167,7 +168,13 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
           ) : null}
           {(showPrescriptionError || showDrugCertificateError) && (
             <Wrapper>
-              <Problem />
+              <Problem
+                error={
+                  showPrescriptionError
+                    ? prescriptionsRes.error
+                    : certificatesRes.error
+                }
+              />
             </Wrapper>
           )}
           {showNoDataError && (
