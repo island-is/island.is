@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize-typescript'
 
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -28,8 +29,8 @@ import {
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
 } from '../../guards'
-import { CaseExistsGuard, CaseWriteGuard } from '../case'
-import { CourtDocument } from '../repository'
+import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { Case, CourtDocument } from '../repository'
 import { CreateCourtDocumentDto } from './dto/createCourtDocument.dto'
 import { DeleteCourtDocumentResponse } from './dto/deleteCourtDocument.response'
 import { FileCourtDocumentInCourtSessionDto } from './dto/fileCourtDocumentInCourtSession.dto'
@@ -133,11 +134,20 @@ export class CourtDocumentController {
   async fileInCourtSession(
     @Param('caseId') caseId: string,
     @Param('courtDocumentId') courtDocumentId: string,
+    @CurrentCase() theCase: Case,
     @Body() fileDto: FileCourtDocumentInCourtSessionDto,
   ): Promise<CourtDocument> {
     this.logger.debug(
       `Filing court document ${courtDocumentId} in court session ${fileDto.courtSessionId} of case ${caseId}`,
     )
+
+    if (
+      !theCase.courtSessions?.some((cs) => cs.id === fileDto.courtSessionId)
+    ) {
+      throw new BadRequestException(
+        `Court session ${fileDto.courtSessionId} does not belong to case ${caseId}`,
+      )
+    }
 
     return this.sequelize.transaction(async (transaction) =>
       this.courtDocumentService.fileInCourtSession(
