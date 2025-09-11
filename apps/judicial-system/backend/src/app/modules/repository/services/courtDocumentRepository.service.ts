@@ -130,7 +130,7 @@ export class CourtDocumentRepositoryService {
         createOptions.transaction = options.transaction
       }
 
-      // Find the document with the highest document order value for this case
+      // Find the document with the highest document order value for this court session
       const lastDocument = await this.courtDocumentModel.findOne({
         where: { caseId, courtSessionId },
         order: [['documentOrder', 'DESC']],
@@ -194,11 +194,16 @@ export class CourtDocumentRepositoryService {
 
       // If the document order is being updated, we need special handling
       if (data.documentOrder !== undefined) {
-        // Get the current document to check its current order
-        const currentDocument = await this.courtDocumentModel.findOne({
-          where: { id: courtDocumentId, caseId, courtSessionId },
+        // Get the filed documents for the court session ordered by document order
+        const filedDocuments = await this.courtDocumentModel.findAll({
+          where: { caseId, courtSessionId },
+          order: [['documentOrder', 'ASC']],
           transaction: options?.transaction,
         })
+
+        const currentDocument = filedDocuments.find(
+          (d) => d.id === courtDocumentId,
+        )
 
         if (!currentDocument) {
           throw new InternalServerErrorException(
@@ -206,21 +211,19 @@ export class CourtDocumentRepositoryService {
           )
         }
 
-        // Get the total count of documents for this case
-        const totalDocuments = await this.courtDocumentModel.count({
-          where: { caseId },
-          transaction: options?.transaction,
-        })
+        const newOrder = data.documentOrder
+        const firstOrder = filedDocuments[0].documentOrder
+        const lastOrder =
+          filedDocuments[filedDocuments.length - 1].documentOrder
 
         // Validate the document order bounds
-        if (data.documentOrder < 1 || data.documentOrder > totalDocuments) {
+        if (newOrder < firstOrder || newOrder > lastOrder) {
           throw new BadRequestException(
-            `Order must be between 1 and ${totalDocuments}`,
+            `Order must be between ${firstOrder} and ${lastOrder}`,
           )
         }
 
         const currentOrder = currentDocument.documentOrder
-        const newOrder = data.documentOrder
 
         // Only adjust other documents if the document order is actually changing
         if (currentOrder !== newOrder) {
@@ -298,14 +301,39 @@ export class CourtDocumentRepositoryService {
         `Filing court document ${courtDocumentId} in court session ${courtSessionId} of case ${caseId}`,
       )
 
-      // Find the document with the highest document order value for this case
-      const lastDocument = await this.courtDocumentModel.findOne({
-        where: { caseId, courtSessionId },
-        order: [['documentOrder', 'DESC']],
+      // Get all court sessions and filed documents for the case
+      const courtSessions = await this.courtSessionModel.findAll({
+        where: { caseId },
+        include: [{ model: CourtDocument, as: 'filedDocuments' }],
+        order: [
+          ['created', 'ASC'],
+          ['filedDocuments', 'documentOrder', 'ASC'],
+        ],
         transaction: options?.transaction,
       })
 
-      const nextOrder = lastDocument ? lastDocument.documentOrder + 1 : 1
+      const alreadyFiled = courtSessions.some((c) =>
+        c.filedDocuments?.some((d) => d.id === courtDocumentId),
+      )
+
+      if (alreadyFiled) {
+        throw new BadRequestException(
+          `Court document ${courtDocumentId} of case ${caseId} is already filed in a court session`,
+        )
+      }
+
+      // Find the next document order value for this court session
+      let nextOrder = 1
+      for (const s of courtSessions) {
+        if (s.filedDocuments && s.filedDocuments.length > 0) {
+          nextOrder =
+            s.filedDocuments[s.filedDocuments.length - 1].documentOrder + 1
+        }
+
+        if (s.id === courtSessionId) {
+          break
+        }
+      }
 
       // Iincrease order of documents after the current position
       await this.courtDocumentModel.update(
@@ -321,9 +349,9 @@ export class CourtDocumentRepositoryService {
 
       const [numberOfAffectedRows, courtDocuments] =
         await this.courtDocumentModel.update(
-          { documentOrder: nextOrder, courtSessionId },
+          { courtSessionId, documentOrder: nextOrder },
           {
-            where: { id: courtDocumentId, courtSessionId: null, caseId },
+            where: { id: courtDocumentId, caseId },
             transaction: options?.transaction,
             returning: true,
           },
