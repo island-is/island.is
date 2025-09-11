@@ -12,12 +12,15 @@ import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import { Defendant } from '../../../defendant'
-import { Institution } from '../../../institution'
-import { Subpoena } from '../../../subpoena'
-import { User } from '../../../user'
-import { Case } from '../../models/case.model'
-import { DateLog } from '../../models/dateLog.model'
+import {
+  CaseRepositoryService,
+  DateLog,
+  Defendant,
+  Institution,
+  Subpoena,
+  User,
+  Verdict,
+} from '../../../repository'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
 
 interface Then {
@@ -29,13 +32,14 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('Indictment Case Exists For Defendant Guard', () => {
   const mockRequest = jest.fn()
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, internalCaseService } = await createTestingCaseModule()
+    const { caseRepositoryService, internalCaseService } =
+      await createTestingCaseModule()
 
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     givenWhenThen = async (): Promise<Then> => {
       const guard = new IndictmentCaseExistsForDefendantGuard(
@@ -64,14 +68,14 @@ describe('Indictment Case Exists For Defendant Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce(request)
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen()
     })
 
     it('should activate', () => {
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         include: [
           {
             model: Defendant,
@@ -81,6 +85,11 @@ describe('Indictment Case Exists For Defendant Guard', () => {
                 model: Subpoena,
                 as: 'subpoenas',
                 order: [['created', 'DESC']],
+              },
+              {
+                model: Verdict,
+                as: 'verdict',
+                required: false,
               },
             ],
           },
@@ -94,7 +103,13 @@ describe('Indictment Case Exists For Defendant Guard', () => {
           },
           { model: DateLog, as: 'dateLogs' },
         ],
-        attributes: ['courtCaseNumber', 'id'],
+        attributes: [
+          'courtCaseNumber',
+          'id',
+          'state',
+          'indictmentRulingDecision',
+          'rulingDate',
+        ],
         where: {
           type: CaseType.INDICTMENT,
           id: caseId,

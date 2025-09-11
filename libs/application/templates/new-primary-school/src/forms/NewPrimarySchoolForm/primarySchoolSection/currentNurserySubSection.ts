@@ -5,9 +5,9 @@ import {
   coreErrorMessages,
 } from '@island.is/application/core'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
-import { ApplicationType } from '../../../lib/constants'
+import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 
 export const currentNurserySubSection = buildSubSection({
@@ -61,7 +61,7 @@ export const currentNurserySubSection = buildSubSection({
             return (
               data?.friggSchoolsByMunicipality
                 ?.find(({ name }) => name === selectedValues?.[0])
-                ?.children?.map((nursery) => ({
+                ?.managing?.map((nursery) => ({
                   value: nursery.id,
                   label: nursery.name,
                 })) ?? []

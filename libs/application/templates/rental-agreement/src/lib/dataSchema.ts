@@ -1,13 +1,19 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YesOrNoEnum } from '@island.is/application/core'
-import { RentalHousingConditionInspector } from '../utils/enums'
-import { landlordInfo } from './schemas/landlordSchema'
-import { tenantInfo } from './schemas/tenantSchema'
+import {
+  RentalHousingCategoryClassGroup,
+  RentalHousingCategoryTypes,
+  RentalHousingConditionInspector,
+} from '../utils/enums'
+import { parties } from './schemas/landlordAndTenantSchema'
 import { registerProperty } from './schemas/propertySearchSchema'
 import { otherFees } from './schemas/otherFeesSchema'
 import { securityDeposit } from './schemas/securityDepositSchema'
 import { rentalAmount } from './schemas/rentalAmountSchema'
+import { fireProtections } from './schemas/fireProtectionsSchema'
+import { RentalHousingCategoryClass } from '../shared/enums'
+
 import * as m from './messages'
 
 const approveExternalData = z.boolean().refine((v) => v)
@@ -41,10 +47,12 @@ const specialProvisions = z
       .optional(),
   })
   .superRefine((data, ctx) => {
-    const anyUnitSizeChanged = data.propertySearchUnits?.some((unit) => {
+    const { propertySearchUnits, descriptionInput } = data
+
+    const anyUnitSizeChanged = propertySearchUnits?.some((unit) => {
       return (unit.changedSize && unit.changedSize !== unit.size) || false
     })
-    if (anyUnitSizeChanged && !data.descriptionInput) {
+    if (anyUnitSizeChanged && !descriptionInput) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -62,9 +70,11 @@ const condition = z
     resultsFiles: z.array(fileSchema),
   })
   .superRefine((data, ctx) => {
+    const { inspector, inspectorName, resultsDescription, resultsFiles } = data
+
     if (
-      data.inspector === RentalHousingConditionInspector.INDEPENDENT_PARTY &&
-      !data.inspectorName
+      inspector === RentalHousingConditionInspector.INDEPENDENT_PARTY &&
+      !inspectorName
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -74,12 +84,37 @@ const condition = z
       })
     }
 
-    if (!data.resultsDescription && !data.resultsFiles.length) {
+    if (!resultsDescription && !resultsFiles.length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
         params: m.housingCondition.inspectionResultsRequired,
         path: ['resultsFiles'],
+      })
+    }
+  })
+
+const propertyInfo = z
+  .object({
+    categoryType: z.nativeEnum(RentalHousingCategoryTypes),
+    categoryClass: z.nativeEnum(RentalHousingCategoryClass).optional(),
+    categoryClassGroup: z
+      .nativeEnum(RentalHousingCategoryClassGroup)
+      .optional()
+      .nullable(),
+  })
+  .superRefine((data, ctx) => {
+    const { categoryClass, categoryClassGroup } = data
+
+    if (
+      categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS &&
+      !categoryClassGroup
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.registerProperty.category.classGroupRequiredError,
+        path: ['categoryClassGroup'],
       })
     }
   })
@@ -96,13 +131,33 @@ const rentalPeriod = z
     isDefinite: z.string().array().optional(),
   })
   .superRefine((data, ctx) => {
-    const start = data.startDate ? new Date(data.startDate) : ''
-    const end = data.endDate ? new Date(data.endDate) : ''
-    const isDefiniteChecked = data.isDefinite?.includes(YesOrNoEnum.YES)
+    const { startDate, endDate, isDefinite } = data
+    const start = startDate ? new Date(startDate) : ''
+    const end = endDate ? new Date(endDate) : ''
+    const isDefiniteChecked = isDefinite?.includes(YesOrNoEnum.YES)
+
+    if (start) {
+      const oneYearFromNow = new Date()
+      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1)
+
+      if (
+        start instanceof Date &&
+        !isNaN(start.getTime()) &&
+        start.getTime() > oneYearFromNow.getTime()
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['startDate'],
+          params: m.rentalPeriod.errorStartDateTooFarInFuture,
+        })
+      }
+    }
+
     if (!isDefiniteChecked) {
       return
     }
-    if (!data.endDate || !data.endDate.trim().length) {
+
+    if (!endDate || !endDate.trim().length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['endDate'],
@@ -110,54 +165,18 @@ const rentalPeriod = z
       })
       return
     }
-    if (start >= end) {
+
+    if (
+      start &&
+      end &&
+      isFinite(start.getTime()) &&
+      isFinite(end.getTime()) &&
+      start.getTime() >= end.getTime()
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['endDate'],
         params: m.rentalPeriod.errorEndDateBeforeStart,
-      })
-    }
-  })
-
-const fireProtections = z
-  .object({
-    smokeDetectors: z.string().optional(),
-    fireExtinguisher: z.string().optional(),
-    emergencyExits: z.string().optional(),
-    fireBlanket: z.string().optional(),
-    propertySize: z.string().optional(),
-  })
-  .superRefine((data, ctx) => {
-    const propertySizeString = data.propertySize?.replace(',', '.') || ''
-    const numberOfSmokeDetectors = Number(data.smokeDetectors)
-    const requiredSmokeDetectors = Math.ceil(Number(propertySizeString) / 80)
-    if (
-      data.smokeDetectors &&
-      numberOfSmokeDetectors < requiredSmokeDetectors
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.housingFireProtections.smokeDetectorMinRequiredError,
-        path: ['smokeDetectors'],
-      })
-    }
-
-    if (data.fireExtinguisher && Number(data.fireExtinguisher) < 1) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.housingFireProtections.fireExtinguisherNullError,
-        path: ['fireExtinguisher'],
-      })
-    }
-
-    if (data.emergencyExits && Number(data.emergencyExits) < 1) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.housingFireProtections.emergencyExitNullError,
-        path: ['emergencyExits'],
       })
     }
   })
@@ -174,9 +193,9 @@ const preSignatureInfo = z.object({
 export const dataSchema = z.object({
   approveExternalData,
   applicant,
-  landlordInfo,
-  tenantInfo,
+  parties,
   registerProperty,
+  propertyInfo,
   rentalPeriod,
   rentalAmount,
   securityDeposit,

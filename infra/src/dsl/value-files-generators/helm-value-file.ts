@@ -20,7 +20,7 @@ export const getHelmValueFile = (
         return {
           ...acc,
           ...Object.assign({}, service, extras),
-          name: name
+          name: name,
         }
       }
 

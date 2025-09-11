@@ -97,11 +97,18 @@
     "docker-next": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
     },
-    "e2e": {
-      "executor": "@nx/playwright:playwright",
-      "outputs": ["{workspaceRoot}/dist/.playwright/apps/unicorn-app"],
+    "dev-init": {
+      "executor": "nx:run-commands",
       "options": {
-        "config": "apps/unicorn-app/playwright.config.ts"
+        "commands": [],
+        "parallel": true
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn start unicorn-app"],
+        "parallel": true
       }
     }
   }

@@ -15,12 +15,12 @@ export const registerProperty = {
     pageDescription: {
       id: 'ra.application:registerProperty.search.pageDescription',
       defaultMessage:
-        'Finndu eignina með heimilisfangi. Nánari upplýsingar er að finna í [fasteignaskrá HMS](https://leit.fasteignaskra.is/).',
+        'Finndu eignina með heimilisfangi eða fasteignanúmeri. Nánari upplýsingar er að finna í [fasteignaskrá HMS](https://leit.fasteignaskra.is/).',
       description: 'Register property page description',
     },
     propertySearchPlaceholder: {
       id: 'ra.application:registerProperty.search.propertySearchPlaceholder',
-      defaultMessage: 'Leitaðu að fasteign eftir heimilisfangi',
+      defaultMessage: 'Leitaðu eftir heimilisfangi eða fasteignanúmeri',
       description: 'Placeholder for property search',
     },
     searchResultHeaderPropertyId: {
@@ -84,6 +84,13 @@ export const registerProperty = {
       defaultMessage: 'Skrá þarf fjölda herbergja leigðra eininga',
       description:
         'Error message when number of rooms is less than one in search results',
+    },
+    numOfRoomsMaximumError: {
+      id: 'ra.application:registerProperty.search.numOfRoomsMaximumError',
+      defaultMessage:
+        'Heildarfjöldi herbergja leigðra eininga getur ekki verið fleiri en 20',
+      description:
+        'Error message when number of rooms is larger than max in search results',
     },
     changedSizeTooLargeError: {
       id: 'ra.application:registerProperty.search.changedSizeTooLargeError',

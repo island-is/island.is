@@ -16,8 +16,10 @@ export const adminPortalScopes = [
   AdminPortalScope.explicitAirDiscountScheme,
   AdminPortalScope.signatureCollectionManage,
   AdminPortalScope.signatureCollectionProcess,
+  AdminPortalScope.signatureCollectionMunicipality,
   AdminPortalScope.formSystem,
   AdminPortalScope.formSystemAdmin,
   AdminPortalScope.delegationSystem,
   AdminPortalScope.delegationSystemAdmin,
+  AdminPortalScope.payments,
 ]

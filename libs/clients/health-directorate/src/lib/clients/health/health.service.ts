@@ -4,18 +4,18 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  DispensationDto,
-  Locale,
-  PrescriptionsApi,
-  ReferralsApi,
-  WaitingListsApi,
-  PrescribedItemDto,
-  ReferralDto,
-  WaitingListEntryDto,
   DispensationHistoryDto,
+  DispensationHistoryItemDto,
+  Locale,
+  PrescribedItemDto,
+  PrescriptionRenewalRequestDto,
+  PrescriptionsApi,
+  ProductDocumentDto,
+  ReferralDto,
+  ReferralsApi,
+  WaitingListEntryDto,
+  WaitingListsApi,
 } from './gen/fetch'
-
-const LOG_CATEGORY = 'health-directorate-health-api'
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -47,7 +47,7 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     atcCode: string,
     locale: string,
-  ): Promise<Array<DispensationHistoryDto> | null> {
+  ): Promise<Array<DispensationHistoryItemDto> | null> {
     const dispensations = await this.prescriptionsApiWithAuth(auth)
       .mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1({
         atcCode,
@@ -56,10 +56,6 @@ export class HealthDirectorateHealthService {
       .catch(handle404)
 
     if (!dispensations) {
-      this.logger.debug(`No dispensations returned for atc code`, {
-        atcCode,
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
@@ -77,9 +73,6 @@ export class HealthDirectorateHealthService {
       .catch(handle404)
 
     if (!dispensations) {
-      this.logger.debug(`No grouped dispensations grouped returned`, {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
@@ -98,13 +91,42 @@ export class HealthDirectorateHealthService {
     })
 
     if (!prescriptions) {
-      this.logger.debug('No prescriptions returned', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
     return prescriptions
+  }
+
+  /* Endurnýjun lyfseðils */
+  public async postRenewalPrescription(
+    auth: Auth,
+    id: string,
+    input: PrescriptionRenewalRequestDto,
+  ) {
+    return await this.prescriptionsApiWithAuth(
+      auth,
+    ).mePrescriptionControllerRenewPrescriptionV1({
+      id,
+      prescriptionRenewalRequestDto: input,
+    })
+  }
+
+  /* Fylgiseðill */
+  public async getPrescriptionDocuments(
+    auth: Auth,
+    productId: string,
+  ): Promise<ProductDocumentDto[] | null> {
+    const pdf = await this.prescriptionsApiWithAuth(auth)
+      .mePrescriptionControllerGetPrescribedItemDocumentsV1({
+        productId: productId,
+      })
+      .catch(handle404)
+
+    if (!pdf) {
+      return null
+    }
+
+    return pdf
   }
 
   /* Tilvísanir */
@@ -117,9 +139,6 @@ export class HealthDirectorateHealthService {
       .catch(handle404)
 
     if (!referrals) {
-      this.logger.debug('No referrals returned', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
@@ -138,9 +157,6 @@ export class HealthDirectorateHealthService {
       .catch(handle404)
 
     if (!waitlists) {
-      this.logger.debug('No waitlists returned', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 

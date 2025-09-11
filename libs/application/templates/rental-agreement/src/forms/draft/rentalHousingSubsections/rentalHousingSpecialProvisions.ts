@@ -10,17 +10,17 @@ import {
 import { Application } from '@island.is/application/types'
 import { SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
-import { Unit } from '../../../utils/types'
-import { specialProvisions } from '../../../lib/messages'
+import { PropertyUnit } from '../../../shared'
+import * as m from '../../../lib/messages'
 
 export const RentalHousingSpecialProvisions = buildSubSection({
   id: Routes.SPECIALPROVISIONS,
-  title: specialProvisions.subsection.name,
+  title: m.specialProvisions.subsection.name,
   children: [
     buildMultiField({
       id: Routes.SPECIALPROVISIONS,
-      title: specialProvisions.subsection.pageTitle,
-      description: specialProvisions.subsection.pageDescription,
+      title: m.specialProvisions.subsection.pageTitle,
+      description: m.specialProvisions.subsection.pageDescription,
       children: [
         buildHiddenInputWithWatchedValue({
           id: 'specialProvisions.propertySearchUnits',
@@ -29,9 +29,9 @@ export const RentalHousingSpecialProvisions = buildSubSection({
         buildAlertMessageField({
           id: 'specialProvisions.descriptionInputAlert',
           alertType: 'warning',
-          message: specialProvisions.housingInfo.warningBanner,
+          message: m.specialProvisions.housingInfo.warningBanner,
           condition: (answers) => {
-            const units = getValueViaPath<Unit[]>(
+            const units = getValueViaPath<PropertyUnit[]>(
               answers,
               'registerProperty.searchresults.units',
               [],
@@ -45,20 +45,20 @@ export const RentalHousingSpecialProvisions = buildSubSection({
         }),
         buildDescriptionField({
           id: 'specialProvisions.descriptionTitle',
-          title: specialProvisions.housingInfo.title,
-          titleTooltip: specialProvisions.housingInfo.tooltip,
+          title: m.specialProvisions.housingInfo.title,
+          titleTooltip: m.specialProvisions.housingInfo.tooltip,
           titleVariant: 'h3',
         }),
         buildTextField({
           id: 'specialProvisions.descriptionInput',
-          title: specialProvisions.housingInfo.inputLabel,
+          title: m.specialProvisions.housingInfo.inputLabel,
           maxLength: SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH,
-          placeholder: specialProvisions.housingInfo.inputPlaceholder,
+          placeholder: m.specialProvisions.housingInfo.inputPlaceholder,
           variant: 'textarea',
           rows: 8,
           required: (application: Application) => {
             const answers = application.answers
-            const units = getValueViaPath<Unit[]>(
+            const units = getValueViaPath<PropertyUnit[]>(
               answers,
               'registerProperty.searchresults.units',
               [],
@@ -72,15 +72,15 @@ export const RentalHousingSpecialProvisions = buildSubSection({
         }),
         buildDescriptionField({
           id: 'specialProvisions.rulesTitle',
-          title: specialProvisions.housingRules.title,
-          titleTooltip: specialProvisions.housingRules.tooltip,
+          title: m.specialProvisions.housingRules.title,
+          titleTooltip: m.specialProvisions.housingRules.tooltip,
           titleVariant: 'h3',
           marginTop: 6,
         }),
         buildTextField({
           id: 'specialProvisions.rulesInput',
-          title: specialProvisions.housingRules.inputLabel,
-          placeholder: specialProvisions.housingRules.inputPlaceholder,
+          title: m.specialProvisions.housingRules.inputLabel,
+          placeholder: m.specialProvisions.housingRules.inputPlaceholder,
           variant: 'textarea',
           rows: 8,
         }),

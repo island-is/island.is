@@ -16,6 +16,9 @@ query GetUsersVehiclesV2($input: GetVehiclesListV2Input!) {
       totalPages
       totalRecords
     }
-    downloadServiceURL
+    downloadServiceUrls {
+      pdf
+      excel
+    }
   }
 }

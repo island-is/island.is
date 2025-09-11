@@ -1,6 +1,13 @@
-import { MembershipOrganizationType, MembershipRole } from './lib/constants'
+import { NO, YES } from '@island.is/application/core'
+import {
+  AffiliationOrganizationType,
+  AffiliationRole,
+  CaseWorkerInputTypeEnum,
+} from './utils/constants'
 
-export interface ContactsRow {
+export type YesOrNoOrEmpty = typeof YES | typeof NO | ''
+
+export interface RelativesRow {
   fullName: string
   phoneNumber: string
   nationalId: string
@@ -39,6 +46,11 @@ export type ChildInformation = {
   usePronounAndPreferredName?: string[]
 }
 
+export type SelectOption = {
+  label: string
+  value: string
+}
+
 export type Person = {
   nationalId: string
   fullName: string
@@ -50,56 +62,117 @@ export type Person = {
     postalCode: string
     city: string
   }
+  requiresInterpreter: string[]
+  preferredLanguage?: string
+  citizenshipCode?: string
 }
 
-export type SelectOption = {
-  label: string
-  value: string
-}
-
-export type Agent = {
+export type AgentModel = {
   id: string
   name: string
-  role: string
   email: string
   phone: string
   nationalId: string
+  type: AffiliationRole
+  preferredLanguage: string | null
+  requiresInterpreter: boolean
 }
 
-export type Membership = {
+export type Affiliation = {
   id: string
-  role: MembershipRole
+  role: AffiliationRole
+  classificationId: string
   beginDate: Date
   endDate: Date | null
-  organization?: MembershipOrganization
+  organization?: AffiliationOrganization
 }
 
-export type MembershipOrganization = {
+export type AffiliationOrganization = {
   id: string
-  nationalId: string
+  nationalId: string | null
   name: string
-  type: MembershipOrganizationType
+  type: AffiliationOrganizationType
 }
 
 export type AddressModel = {
   id: string
-  street: string
-  municipality?: string // Is set as object in MMS data
-  zip: string
-  country?: string // Is set as object in MMS data
+  address: string
+  municipality: string | null // Is set as object in MMS data
+  postCode: string
+  country: string | null // Is set as object in MMS data
+  houseNumber: string | null // Is set as object in MMS data
+  streetNumber: string | null // Is set as object in MMS data
+  apartmentNumber: string | null // Is set as object in MMS data
+  municipalityId: string | null // Is set as object in MMS data
+}
+
+export type SpecialNeedsModel = {
+  id: string
+  title: string // Is set as object in MMS data
+  group: string // Is set as object in MMS data
+  code: string
+}
+
+export type HealthProfileModel = {
+  id: string
+  userId: string
+  allergies: string[]
+  foodAllergiesOrIntolerances: string[]
+  specialNeeds: SpecialNeedsModel[]
+  createdAt: Date
+  updatedAt: Date
+  usesEpipen: boolean
+  hasConfirmedMedicalDiagnoses: boolean
+  requestsMedicationAdministration: boolean
+}
+
+export type CaseWorker = {
+  id: string
+  name: string
+  email: string
+  phone: string
+  type: CaseWorkerInputTypeEnum
+}
+
+export type SocialProfile = {
+  hasDiagnoses: boolean
+  hasIntegratedServices: boolean
+  caseWorkers: CaseWorker[] | null
+  hasHadSupport: boolean
+}
+
+export type LanguageProfile = {
+  languageEnvironment: string
+  signLanguage: boolean
+  preferredLanguage: string
+  languages: string[]
 }
 
 export type FriggChildInformation = {
   id: string
-  name: string
-  email: string
-  agents: Agent[]
-  pronouns: string[]
   nationalId: string
+  name: string
+  nationality: string | null
+  preferredName: string | null // Is set as object in MMS data
+  pronouns: string[]
   gradeLevel: string
-  memberships: Membership[]
-  primaryOrgId: string
-  preferredName: string | null
-  domicile: AddressModel
-  residence: AddressModel
+  email: string | null // Is set as object in MMS data
+  domicile: AddressModel | null
+  residence: AddressModel | null
+  healthProfile: HealthProfileModel | null
+  primaryOrgId: string // Is set as object in MMS data
+  affiliations: Affiliation[] | null
+  agents: AgentModel[] | null
+  preferredLanguage: string | null
+  phone: string // Is set as object in MMS data
+  mobile: string // Is set as object in MMS data
+  socialProfile: SocialProfile | null
+  languageProfile: LanguageProfile | null
+}
+
+export type CurrentSchool = {
+  name?: string
+  grade?: string
+  school?: string
+  municipality?: string
 }

@@ -24,8 +24,9 @@ test.describe.serial('Indictment tests', () => {
 
     const policeCaseNumber = randomPoliceCaseNumber()
 
-    // Case list
-    await page.goto('/krofur')
+    // Case list groups
+    await page.goto('/malalistar')
+    await expect(page).toHaveURL('/malalistar')
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
     await page.getByRole('menuitem', { name: 'Ákæra' }).click()
     await expect(page).toHaveURL('/akaera/ny')
@@ -38,7 +39,9 @@ test.describe.serial('Indictment tests', () => {
     await page.getByRole('option', { name: 'Umferðarlagabrot' }).click()
     await page.getByPlaceholder('Sláðu inn vettvang').click()
     await page.getByPlaceholder('Sláðu inn vettvang').fill('Reykjavík')
-    await page.locator('input[id=arrestDate]').fill(today)
+    await page
+      .locator(`input[id=crime-scene-date-${policeCaseNumber}]`)
+      .fill(today)
     await page.keyboard.press('Escape')
     await page
       .getByRole('checkbox', { name: 'Ákærði er ekki með íslenska kennitölu' })
@@ -102,17 +105,6 @@ test.describe.serial('Indictment tests', () => {
     ])
 
     // Indictment
-    await Promise.all([
-      expect(page).toHaveURL(`/akaera/akaera/${caseId}`),
-      verifyRequestCompletion(page, '/api/graphql', 'CreateIndictmentCount'),
-    ])
-
-    await page.getByText('LÖKE málsnúmer *Veldu málsnú').click()
-
-    await Promise.all([
-      page.getByRole('option', { name: `${policeCaseNumber}` }).click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
-    ])
 
     await page.getByPlaceholder('AB123').fill('AB123')
 
@@ -153,7 +145,8 @@ test.describe.serial('Indictment tests', () => {
     const page = prosecutorPage
 
     // Case list
-    await page.goto('/krofur')
+    await page.goto('/malalistar/sakamal-sem-bida-stadfestingar')
+    await expect(page).toHaveURL('/malalistar/sakamal-sem-bida-stadfestingar')
     await page.getByText(accusedName).click()
 
     // Indictment case
@@ -173,7 +166,8 @@ test.describe.serial('Indictment tests', () => {
     const nextWeek = getDaysFromNow(7)
 
     // Case list
-    await page.goto('/krofur')
+    await page.goto('/malalistar/sakamal-sem-bida-uthlutunar')
+    await expect(page).toHaveURL('/malalistar/sakamal-sem-bida-uthlutunar')
     await page.getByText(accusedName).click()
 
     // Indictment Overview
@@ -280,7 +274,13 @@ test.describe.serial('Indictment tests', () => {
     // Completed case overview
     await expect(page).toHaveURL(`domur/akaera/lokid/${caseId}`)
 
-    await page.getByText('Birta skal dómfellda dóminn').click()
+    await page
+      .locator('label')
+      .filter({ hasText: 'Birta skal dómfellda dóminn' })
+      .click()
+
+    await page.locator('label').filter({ hasText: 'Dómsorð' }).fill('Dómsorð')
+
     await page.getByTestId('continueButton').click()
     await page.getByTestId('modalPrimaryButton').click()
   })

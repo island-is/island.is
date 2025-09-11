@@ -30,10 +30,10 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { Case, CaseRepositoryService } from '../../../repository'
 import { caseModuleConfig } from '../../case.config'
 import { include } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
-import { Case } from '../../models/case.model'
 
 jest.mock('../../../../factories')
 
@@ -61,16 +61,21 @@ describe('CaseController - Transition', () => {
   let mockMessageService: MessageService
   let transaction: Transaction
   let mockConfig: ConfigType<typeof caseModuleConfig>
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, sequelize, caseConfig, caseModel, caseController } =
-      await createTestingCaseModule()
+    const {
+      messageService,
+      sequelize,
+      caseConfig,
+      caseRepositoryService,
+      caseController,
+    } = await createTestingCaseModule()
 
     mockMessageService = messageService
     mockConfig = caseConfig
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -80,8 +85,8 @@ describe('CaseController - Transition', () => {
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValue(date)
-    const mockUpdate = mockCaseModel.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
+    const mockUpdate = mockCaseRepositoryService.update as jest.Mock
+    mockUpdate.mockResolvedValue({})
 
     givenWhenThen = async (
       caseId: string,
@@ -167,14 +172,15 @@ describe('CaseController - Transition', () => {
           let then: Then
 
           beforeEach(async () => {
-            const mockFindOne = mockCaseModel.findOne as jest.Mock
+            const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
             mockFindOne.mockResolvedValueOnce(updatedCase)
 
             then = await givenWhenThen(caseId, theCase, { transition })
           })
 
           it('should transition the case', () => {
-            expect(mockCaseModel.update).toHaveBeenCalledWith(
+            expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+              caseId,
               {
                 state: newState,
                 parentCaseId:
@@ -199,7 +205,7 @@ describe('CaseController - Transition', () => {
                 courtRecordSignatureDate:
                   transition === CaseTransition.REOPEN ? null : undefined,
               },
-              { where: { id: caseId }, transaction },
+              { transaction },
             )
 
             if (completedRequestCaseStates.includes(newState)) {
@@ -280,12 +286,13 @@ describe('CaseController - Transition', () => {
             if (transition === CaseTransition.DELETE) {
               expect(then.result).toBe(theCase)
             } else {
-              expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+              expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
                 include,
                 where: {
                   id: caseId,
                   isArchived: false,
                 },
+                transaction,
               })
               expect(then.result).toBe(updatedCase)
             }
@@ -352,14 +359,15 @@ describe('CaseController - Transition', () => {
         let then: Then
 
         beforeEach(async () => {
-          const mockFindOne = mockCaseModel.findOne as jest.Mock
+          const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
           mockFindOne.mockResolvedValueOnce(updatedCase)
 
           then = await givenWhenThen(caseId, theCase, { transition })
         })
 
         it('should transition the case', () => {
-          expect(mockCaseModel.update).toHaveBeenCalledWith(
+          expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+            caseId,
             {
               state: newState,
               parentCaseId:
@@ -385,7 +393,7 @@ describe('CaseController - Transition', () => {
                   ? null
                   : undefined,
             },
-            { where: { id: caseId }, transaction },
+            { transaction },
           )
 
           if (completedIndictmentCaseStates.includes(newState)) {
@@ -552,12 +560,13 @@ describe('CaseController - Transition', () => {
           if (transition === CaseTransition.DELETE) {
             expect(then.result).toBe(theCase)
           } else {
-            expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+            expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
               include,
               where: {
                 id: caseId,
                 isArchived: false,
               },
+              transaction,
             })
             expect(then.result).toBe(updatedCase)
           }
@@ -632,7 +641,7 @@ describe('CaseController - Transition', () => {
           } as Case
 
           beforeEach(async () => {
-            const mockFindOne = mockCaseModel.findOne as jest.Mock
+            const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
             mockFindOne.mockResolvedValueOnce(updatedCase)
 
             await givenWhenThen(caseId, theCase, {
@@ -641,7 +650,8 @@ describe('CaseController - Transition', () => {
           })
 
           it('should transition the case', () => {
-            expect(mockCaseModel.update).toHaveBeenCalledWith(
+            expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+              caseId,
               {
                 appealState: newAppealState,
                 prosecutorPostponedAppealDate:
@@ -656,7 +666,7 @@ describe('CaseController - Transition', () => {
                     ? CaseAppealRulingDecision.DISCONTINUED
                     : undefined,
               },
-              { where: { id: caseId }, transaction },
+              { transaction },
             )
           })
 

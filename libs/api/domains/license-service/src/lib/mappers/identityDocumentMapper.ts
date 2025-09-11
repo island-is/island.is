@@ -101,12 +101,31 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
         ? `${document.type}${document.subType}${document.number}`
         : undefined
 
+    const mapLicenseType = (subType: string) => {
+      if (subType === 'D') {
+        return formatMessage(m.identityDocumentTravelLicense)
+      }
+      if (subType === 'I') {
+        return formatMessage(m.identityDocumentNotTravelLicense)
+      }
+
+      return formatMessage(m.identityDocument)
+    }
+
+    const licenseType = document.subType
+      ? mapLicenseType(document.subType)
+      : undefined
+
     const displayTag: GenericUserLicenseMetaTag | undefined = {
       text: isInvalid
         ? formatMessage(m.invalid)
         : isExpiring
         ? formatMessage(m.expiresWithin, {
             arg: formatMessage(m.sixMonths),
+          })
+        : document.expirationDate
+        ? formatMessage(m.validUntil, {
+            arg: formatDate(new Date(document.expirationDate)),
           })
         : formatMessage(m.valid),
       color: isInvalid || isExpiring ? 'red' : 'blue',
@@ -145,6 +164,13 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             },
           }
         : null,
+      licenseType
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.licenseType),
+            value: licenseType,
+          }
+        : null,
       document.issuingDate
         ? {
             type: GenericLicenseDataFieldType.Value,
@@ -167,6 +193,11 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             value: `${document.mrzLastName} ${document.mrzFirstName}`,
           }
         : null,
+      {
+        type: GenericLicenseDataFieldType.Value,
+        label: formatMessage(m.publisher),
+        value: 'Þjóðskrá',
+      },
     ].filter(isDefined)
 
     const alert: GenericUserLicenseAlert | undefined =

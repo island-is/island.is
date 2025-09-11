@@ -1,9 +1,11 @@
 import { CollectionProp, EntryProps, KeyValueMap } from 'contentful-management'
 import { CMAClient } from '@contentful/app-sdk'
+import sindresorhusSlugify from '@sindresorhus/slugify'
 
 import {
   CONTENTFUL_ENVIRONMENT,
   CONTENTFUL_SPACE,
+  CUSTOM_SLUGIFY_REPLACEMENTS,
   DEFAULT_LOCALE,
   DEV_WEB_BASE_URL,
 } from '../constants'
@@ -159,4 +161,10 @@ export const previewLinkHandler = {
 
     return `${DEV_WEB_BASE_URL}/s/${orgPageSlug}/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
+}
+
+export const slugify = (value: string) => {
+  return sindresorhusSlugify(value, {
+    customReplacements: CUSTOM_SLUGIFY_REPLACEMENTS,
+  })
 }

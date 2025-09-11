@@ -3,11 +3,13 @@ import {
   AlertMessageField,
   Application,
   AsyncSelectField,
+  DescriptionField,
   FieldComponents,
   FieldTypes,
   HiddenInputField,
   RepeaterItem,
   RepeaterOptionValue,
+  VehiclePermnoWithInfoField,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -28,6 +30,8 @@ import { useApolloClient } from '@apollo/client'
 import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
 import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageFormField'
 import * as styles from './TableRepeaterItem.css'
+import { VehiclePermnoWithInfoFormField } from '../VehiclePermnoWithInfoFormField/VehiclePermnoWithInfoFormField'
+import { DescriptionFormField } from '../DescriptionFormField/DescriptionFormField'
 
 interface ItemFieldProps {
   application: Application
@@ -102,6 +106,10 @@ export const Item = ({
     Component = HiddenInputFormField
   } else if (component === 'alertMessage') {
     Component = AlertMessageFormField
+  } else if (component === 'vehiclePermnoWithInfo') {
+    Component = VehiclePermnoWithInfoFormField
+  } else if (component === 'description') {
+    Component = DescriptionFormField
   } else {
     Component = componentMapper[component]
   }
@@ -274,6 +282,11 @@ export const Item = ({
     clearOnChangeVal = clearOnChange
   }
 
+  let suffixVal: string | string[] | undefined
+  if (component === 'input' && item.suffix) {
+    suffixVal = formatText(item.suffix, application, formatMessage)
+  }
+
   const setOnChangeFunc =
     setOnChange &&
     (async (optionValue: RepeaterOptionValue) => {
@@ -299,6 +312,7 @@ export const Item = ({
     selectAsyncProps = {
       id: id,
       title: label,
+      placeholder: placeholder,
       type: FieldTypes.ASYNC_SELECT,
       component: FieldComponents.ASYNC_SELECT,
       children: undefined,
@@ -319,6 +333,7 @@ export const Item = ({
       defaultValue: defaultVal,
       clearOnChange: clearOnChangeVal,
       setOnChange: setOnChangeFunc,
+      loadingError: item.loadingError,
     }
   }
 
@@ -357,6 +372,35 @@ export const Item = ({
     }
   }
 
+  let vehiclePermnoWithInfoProps: VehiclePermnoWithInfoField | undefined
+  if (component === 'vehiclePermnoWithInfo') {
+    vehiclePermnoWithInfoProps = {
+      id: id,
+      type: FieldTypes.VEHICLE_PERMNO_WITH_INFO,
+      component: FieldComponents.VEHICLE_PERMNO_WITH_INFO,
+      children: undefined,
+      required: item.required,
+      loadValidation: item.loadValidation,
+      permnoLabel: item.permnoLabel,
+      makeAndColorLabel: item.makeAndColorLabel,
+      errorTitle: item.errorTitle,
+      fallbackErrorMessage: item.fallbackErrorMessage,
+      validationFailedErrorMessage: item.validationFailedErrorMessage,
+    }
+  }
+
+  let descriptionProps: DescriptionField | undefined
+  if (component === 'description') {
+    descriptionProps = {
+      id: id,
+      type: FieldTypes.DESCRIPTION,
+      component: FieldComponents.DESCRIPTION,
+      children: undefined,
+      title: item.title,
+      titleVariant: item.titleVariant,
+    }
+  }
+
   if (
     typeof condition === 'function'
       ? condition && !condition(application, activeValues)
@@ -370,7 +414,9 @@ export const Item = ({
       span={['1/1', '1/1', '1/1', span]}
       position={component === 'hiddenInput' ? 'absolute' : 'relative'}
       className={
-        component === 'nationalIdWithName' ? styles.removePaddingTop : undefined
+        component === 'nationalIdWithName' || component === 'selectAsync'
+          ? styles.removePaddingTop
+          : undefined
       }
     >
       {component === 'radio' && label && (
@@ -403,9 +449,30 @@ export const Item = ({
           }}
         />
       )}
+      {component === 'vehiclePermnoWithInfo' && vehiclePermnoWithInfoProps && (
+        <VehiclePermnoWithInfoFormField
+          application={application}
+          field={{
+            ...vehiclePermnoWithInfoProps,
+          }}
+        />
+      )}
+      {component === 'description' && descriptionProps && (
+        <DescriptionFormField
+          application={application}
+          field={{
+            ...descriptionProps,
+          }}
+          showFieldName={true}
+        />
+      )}
       {!(component === 'selectAsync' && selectAsyncProps) &&
         !(component === 'hiddenInput' && hiddenInputProps) &&
-        !(component === 'alertMessage' && alertMessageProps) && (
+        !(component === 'alertMessage' && alertMessageProps) &&
+        !(
+          component === 'vehiclePermnoWithInfo' && vehiclePermnoWithInfoProps
+        ) &&
+        !(component === 'description' && descriptionProps) && (
           <Component
             id={id}
             name={id}
@@ -434,6 +501,7 @@ export const Item = ({
             {...(component === 'date'
               ? { maxDate: maxDateVal, minDate: minDateVal }
               : {})}
+            {...(component === 'input' ? { suffix: suffixVal } : {})}
           />
         )}
     </GridColumn>

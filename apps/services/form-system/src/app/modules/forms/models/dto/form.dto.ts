@@ -4,9 +4,7 @@ import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { Dependency } from '../../../../dataTypes/dependency.model'
-import { FormApplicantTypeDto } from '../../../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
-import { FormUrlDto } from '../../../formUrls/models/dto/formUrl.dto'
 
 export class FormDto {
   @ApiProperty()
@@ -61,7 +59,13 @@ export class FormDto {
   status!: string
 
   @ApiProperty()
-  stopProgressOnValidatingScreen!: boolean
+  allowProceedOnValidationFail!: boolean
+
+  @ApiProperty()
+  hasSummaryScreen!: boolean
+
+  @ApiPropertyOptional()
+  isZendeskEnabled?: boolean
 
   @ApiPropertyOptional({ type: LanguageType })
   completedMessage?: LanguageType
@@ -72,11 +76,8 @@ export class FormDto {
   @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
 
-  @ApiPropertyOptional({ type: [FormApplicantTypeDto] })
-  applicantTypes?: FormApplicantTypeDto[]
-
-  @ApiPropertyOptional({ type: [FormUrlDto] })
-  urls?: FormUrlDto[]
+  @ApiPropertyOptional({ type: [String] })
+  urls?: string[]
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]

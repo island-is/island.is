@@ -32,6 +32,7 @@ query NationalRegistryPerson($useFakeData: Boolean) {
         streetAddress
         postalCode
         city
+        apartment
       }
     }
   }

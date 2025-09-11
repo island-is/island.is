@@ -12,7 +12,6 @@ import {
 import { Section } from '../../sections/models/section.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { FormApplicantType } from '../../formApplicantTypes/models/formApplicantType.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 import { FormUrl } from '../../formUrls/models/formUrl.model'
@@ -58,6 +57,7 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.JSON,
     allowNull: true,
+    defaultValue: new LanguageType(),
   })
   organizationDisplayName?: LanguageType
 
@@ -97,7 +97,7 @@ export class Form extends Model<Form> {
 
   @Column({
     type: DataType.INTEGER,
-    defaultValue: 60,
+    defaultValue: 30,
   })
   applicationDaysToRemove!: number
 
@@ -118,9 +118,16 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
+  })
+  allowProceedOnValidationFail!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
     defaultValue: true,
   })
-  stopProgressOnValidatingScreen!: boolean
+  hasSummaryScreen!: boolean
 
   @Column({
     type: DataType.JSON,
@@ -135,11 +142,15 @@ export class Form extends Model<Form> {
   })
   dependencies?: Dependency[]
 
+  @Column({
+    type: DataType.JSONB,
+    allowNull: false,
+    defaultValue: [],
+  })
+  allowedDelegationTypes!: string[]
+
   @HasMany(() => Section)
   sections!: Section[]
-
-  @HasMany(() => FormApplicantType)
-  formApplicantTypes?: FormApplicantType[]
 
   @HasMany(() => FormCertificationType)
   formCertificationTypes?: FormCertificationType[]

@@ -817,6 +817,7 @@ export const slices = gql`
     namespace
     maxNumberOfCards
     sorting
+    alwaysDisplayResultsAsCards
     resolvedGrantsList {
       total
       items {
@@ -972,6 +973,7 @@ export const slices = gql`
       ...HtmlFields
     }
     linkTitle
+    linkHref
     link {
       type
       slug

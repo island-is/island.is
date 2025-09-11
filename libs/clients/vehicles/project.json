@@ -22,8 +22,6 @@
           "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Mitt-Svaedi-V1 > src/clientConfig.json",
           "iconv -f iso-8859-1 -t utf-8 src/clientConfig.json > src/clientConfigTmp.json && mv src/clientConfigTmp.json src/clientConfig.json",
           "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json > src/temp.json && mv src/temp.json src/clientConfig.json",
-          "jq '.paths.\"/VehicleReportPdf\".get.responses.\"200\".content.\"application/pdf\".schema.format = \"binary\"' src/clientConfig.json > src/temp.json && mv src/temp.json src/clientConfig.json",
-          "jq '.paths.\"/OwnershipReportPdf\".get.responses.\"200\".content.\"application/pdf\".schema.format = \"binary\"' src/clientConfig.json > src/temp.json && mv src/temp.json src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,

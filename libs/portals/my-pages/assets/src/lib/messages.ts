@@ -477,6 +477,30 @@ export const vehicleMessage = defineMessages({
     defaultMessage:
       'Fjárhæð bifreiðagjalds fer eftir eigin þyngd bifreiðar og losun koltvísýrings, svokallað CO2. Séu upplýsingar um CO2 ekki tiltækar í Ökutækjaskrá Samgöngustofu miðast bifreiðagjald eingöngu við eigin þyngd.',
   },
+  notRegistered: {
+    id: 'sp.vehicles:not-registered',
+    defaultMessage: 'Ekki skráð',
+  },
+  co2: {
+    id: 'sp.vehicles:co2',
+    defaultMessage: 'Útblástursgildi',
+  },
+  co2Label: {
+    id: 'sp.vehicles:co2-label',
+    defaultMessage: 'Útblástursgildi',
+  },
+  myCo2: {
+    id: 'sp.vehicles:my-co2',
+    defaultMessage: 'Minn útblástur',
+  },
+  mediumCo2: {
+    id: 'sp.vehicles:medium-co2',
+    defaultMessage: 'Meðalútblástur allra ökutækja',
+  },
+  mediumCo2Tooltip: {
+    id: 'sp.vehicles:medium-co2-tooltip',
+    defaultMessage: 'Meðalútblástur allra ökutækja í flokknum M1 í júní 2025',
+  },
   nedc: {
     id: 'sp.vehicles:nedc',
     defaultMessage: 'Útblástursgildi (NEDC)',
@@ -671,10 +695,6 @@ export const vehicleMessage = defineMessages({
   searchLimitExceededTitle: {
     id: 'sp.vehicles:search-limit-exceeded-title',
     defaultMessage: `Leitartilvik búin`,
-  },
-  co2: {
-    id: 'sp.vehicles:co2',
-    defaultMessage: `Co2`,
   },
   weightedWLTPCo2: {
     id: 'sp.vehicles:weighted-wltp-co2',

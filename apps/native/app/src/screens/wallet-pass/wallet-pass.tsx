@@ -112,7 +112,7 @@ const Spacer = styled.View`
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl) => ({
+    (_theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'walletPass.screenTitle' }),
@@ -235,7 +235,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const informationTopSpacing =
     (allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)) ||
-    ((!isConnected || res.error) && isBarcodeEnabled)
+    ((!isConnected || res.error) && allowLicenseBarcode)
       ? barcodeHeight + LICENSE_CARD_ROW_GAP + theme.spacing[4]
       : theme.spacing[2]
 
@@ -428,17 +428,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const renderButtons = () => {
     if (isIos) {
-      return (
-        <AddPassButton
-          style={{ height: 52 }}
-          addPassButtonStyle={
-            theme.isDark
-              ? PassKit.AddPassButtonStyle.blackOutline
-              : PassKit.AddPassButtonStyle.black
-          }
-          onPress={onAddPkPass}
-        />
-      )
+      return <AddPassButton style={{ height: 52 }} onPress={onAddPkPass} />
     }
 
     return (
@@ -494,7 +484,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               height: barcodeHeight,
             },
           })}
-          showBarcodeOfflineMessage={!isConnected && isBarcodeEnabled}
+          showBarcodeOfflineMessage={!isConnected}
+          allowLicenseBarcode={allowLicenseBarcode}
         />
       </LicenseCardWrapper>
       <Information

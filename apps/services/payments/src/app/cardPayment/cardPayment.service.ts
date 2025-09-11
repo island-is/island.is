@@ -32,8 +32,8 @@ import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import { environment } from '../../environments'
 import { PaymentTrackingData } from '../../types/cardPayment'
+import { paymentGatewayResponseCodes } from './cardPayment.constants'
 
 @Injectable()
 export class CardPaymentService {
@@ -84,6 +84,7 @@ export class CardPaymentService {
       verifyCardInput,
       paymentApiConfig: this.config.paymentGateway,
       md: md,
+      webOrigin: this.config.webOrigin,
     })
 
     const response = await fetch(
@@ -302,7 +303,12 @@ export class CardPaymentService {
     return data
   }
 
-  async refund(cardNumber: string, charge: ChargeResponse, amount: number) {
+  async refund(
+    paymentFlowId: string,
+    cardNumber: string,
+    charge: ChargeResponse,
+    amount: number,
+  ) {
     try {
       const requestOptions = generateRefundRequestOptions({
         amount,
@@ -322,7 +328,7 @@ export class CardPaymentService {
 
       if (!response.ok) {
         const responseBody = await response.text()
-        this.logger.error('Failed to refund payment', {
+        this.logger.error(`[${paymentFlowId}] Failed to refund payment`, {
           statusText: response.statusText,
           responseBody,
         })
@@ -332,7 +338,22 @@ export class CardPaymentService {
       const data = (await response.json()) as RefundResponse
 
       if (!data?.isSuccess) {
-        this.logger.error('Failed to charge card', {
+        if (
+          data.responseCode?.startsWith(
+            paymentGatewayResponseCodes.INVALID_3D_SECURE_DATA,
+          )
+        ) {
+          const cachedPaymentFlowStatus = (await this.cacheManager.get(
+            paymentFlowId,
+          )) as CachePaymentFlowStatus | undefined
+          if (cachedPaymentFlowStatus) {
+            // If there was an error with the 3D secure data, we need to remove the payment flow status
+            // to allow the client to retry the payment
+            await this.cacheManager.del(paymentFlowId)
+          }
+        }
+
+        this.logger.error(`[${paymentFlowId}] Failed to refund payment`, {
           responseCode: data?.responseCode,
           responseDescription: data?.responseDescription,
           correlationId: data?.correlationId,
@@ -342,7 +363,7 @@ export class CardPaymentService {
 
       return data
     } catch (e) {
-      this.logger.error('Failed to refund payment', e)
+      this.logger.error(`[${paymentFlowId}] Failed to refund payment`, e)
       throw e
     }
   }
@@ -353,19 +374,21 @@ export class CardPaymentService {
     chargeResponse,
     totalPrice,
     merchantReferenceData,
+    systemId,
   }: {
     paymentFlow: PaymentFlowAttributes
     charges: CatalogItemWithQuantity[]
     chargeResponse: ChargeResponse
     totalPrice: number
     merchantReferenceData: string
+    systemId: string
   }) {
     return generateCardChargeFJSPayload({
       paymentFlow,
       charges,
       chargeResponse,
       totalPrice,
-      systemId: environment.chargeFjs.systemId,
+      systemId,
       merchantReferenceData,
     })
   }

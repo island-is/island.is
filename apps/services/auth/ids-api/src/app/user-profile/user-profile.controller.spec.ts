@@ -13,7 +13,7 @@ import {
 } from '@island.is/clients/rsk/company-registry'
 import {
   UserProfileDto,
-  UserProfileLocaleEnum,
+  UserProfileDtoLocaleEnum,
   V2MeApi,
 } from '@island.is/clients/user-profile'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,7 +28,7 @@ import { TestApp } from '@island.is/testing/nest'
 import { setupWithAuth } from '../../../test/setup'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mocked<T extends (...args: any) => any>(value: T) {
+const mocked = <T extends (...args: any) => any>(value: T) => {
   return value as unknown as jest.Mock<ReturnType<T>, Parameters<T>>
 }
 
@@ -39,7 +39,7 @@ const mockNationalRegistry = (
   mocked(nationalRegistryApi.getIndividual).mockResolvedValue(data)
 }
 
-function createCompany(): CompanyExtendedInfo {
+const createCompany = (): CompanyExtendedInfo => {
   return {
     name: faker.company.companyName(),
     address: {
@@ -71,13 +71,13 @@ function createCompany(): CompanyExtendedInfo {
   } as CompanyExtendedInfo
 }
 
-function createUserProfile({ isRestricted = false }): UserProfileDto {
+const createUserProfile = ({ isRestricted = false }): UserProfileDto => {
   return {
     nationalId: faker.datatype.string(),
     email: faker.internet.email(),
     mobilePhoneNumber: faker.phone.phoneNumber(),
     locale: faker.random.arrayElement(
-      Object.values(UserProfileLocaleEnum) as UserProfileLocaleEnum[],
+      Object.values(UserProfileDtoLocaleEnum) as UserProfileDtoLocaleEnum[],
     ),
     mobilePhoneNumberVerified: faker.datatype.boolean(),
     emailVerified: faker.datatype.boolean(),

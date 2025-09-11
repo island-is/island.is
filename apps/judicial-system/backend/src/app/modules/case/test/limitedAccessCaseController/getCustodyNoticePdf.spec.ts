@@ -8,7 +8,7 @@ import { CaseState } from '@island.is/judicial-system/types'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { getCustodyNoticePdfAsBuffer } from '../../../../formatters'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 
 jest.mock('../../../../formatters/custodyNoticePdf')
 

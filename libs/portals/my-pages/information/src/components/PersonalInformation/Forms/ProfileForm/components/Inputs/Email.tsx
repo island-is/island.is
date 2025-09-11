@@ -8,12 +8,13 @@ import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifyEmail,
   useUpdateOrCreateUserProfile,
-  useDeleteIslykillValue,
+  useDeleteEmailOrPhoneValue,
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 import { ContactNotVerified } from '../ContactNotVerified'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 interface Props {
   buttonText: string
@@ -41,6 +42,9 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   emailVerified = false,
 }) => {
   useNamespaces('sp.settings')
+  const userInfo = useUserInfo()
+  const isActor = !!userInfo?.profile?.actor?.nationalId
+
   const methods = useForm<UseFormProps>()
   const {
     handleSubmit,
@@ -49,12 +53,18 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
     setValue,
     formState: { errors },
   } = methods
+
   const { updateOrCreateUserProfile, loading: saveLoading } =
     useUpdateOrCreateUserProfile()
-  const { deleteIslykillValue, loading: deleteLoading } =
-    useDeleteIslykillValue()
+  const { deleteEmailOrPhoneValue, loading: deleteLoading } =
+    useDeleteEmailOrPhoneValue()
   const { formatMessage } = useLocale()
-  const { createEmailVerification, createLoading } = useVerifyEmail()
+  const {
+    createEmailVerification,
+    createMeEmailVerification,
+    loading: createLoading,
+    meLoading: meCreateLoading,
+  } = useVerifyEmail()
   const { refetch, loading: fetchLoading } = useUserProfile()
   const [emailInternal, setEmailInternal] = useState(email)
   const [emailToVerify, setEmailToVerify] = useState(email)
@@ -66,6 +76,10 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   const [verificationValid, setVerificationValid] = useState(emailVerified)
 
   const [resendBlock, setResendBlock] = useState(false)
+
+  useEffect(() => {
+    setVerificationValid(emailVerified)
+  }, [emailVerified])
 
   const [formErrors, setErrors] = useState<FormErrors>({
     email: undefined,
@@ -87,6 +101,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
       setValue('email', email, { shouldValidate: true })
     }
     checkSetPristineInput()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email])
 
   useEffect(() => {
@@ -98,6 +113,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
     } else {
       emailDirty(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [emailInternal, email])
 
   const handleSendEmailVerification = async (data: { email?: string }) => {
@@ -109,13 +125,22 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
 
     try {
       const emailValue = data.email ?? ''
-
+      let response
       setResendBlock(true)
-      const response = await createEmailVerification({
-        email: emailValue,
-      })
+      if (!isActor) {
+        response = await createEmailVerification({
+          email: emailValue,
+        })
+      } else {
+        response = await createMeEmailVerification({
+          email: emailValue,
+        })
+      }
 
-      if (response.data?.createEmailVerification?.created) {
+      if (
+        response.data?.createEmailVerification?.created ||
+        response.data?.createMeEmailVerification?.created
+      ) {
         setEmailVerifyCreated(true)
         setEmailToVerify(emailValue)
         setVerificationValid(false)
@@ -168,7 +193,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
     })
 
     try {
-      await deleteIslykillValue({
+      await deleteEmailOrPhoneValue({
         email: true,
       })
       await refetch()
@@ -239,44 +264,51 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
               flexDirection="column"
               paddingTop={2}
             >
-              {!createLoading && !deleteLoading && !fetchLoading && (
-                <>
-                  {emailVerifyCreated ? (
-                    <FormButton
-                      disabled={verificationValid || disabled || resendBlock}
-                      onClick={
-                        emailInternal
-                          ? () =>
-                              handleSendEmailVerification({
-                                email: getValues().email ?? '',
+              {!createLoading &&
+                !meCreateLoading &&
+                !deleteLoading &&
+                !fetchLoading && (
+                  // eslint-disable-next-line react/jsx-no-useless-fragment
+                  <>
+                    {emailVerifyCreated ? (
+                      <FormButton
+                        disabled={verificationValid || disabled || resendBlock}
+                        onClick={
+                          emailInternal
+                            ? () =>
+                                handleSendEmailVerification({
+                                  email: getValues().email ?? '',
+                                })
+                            : () => saveEmptyChange()
+                        }
+                      >
+                        {emailInternal
+                          ? emailInternal === emailToVerify
+                            ? formatMessage({
+                                id: 'sp.settings:resend',
+                                defaultMessage: 'Endursenda',
                               })
-                          : () => saveEmptyChange()
-                      }
-                    >
-                      {emailInternal
-                        ? emailInternal === emailToVerify
-                          ? formatMessage({
-                              id: 'sp.settings:resend',
-                              defaultMessage: 'Endursenda',
-                            })
-                          : buttonText
-                        : formatMessage(msg.saveEmptyChange)}
-                    </FormButton>
-                  ) : (
-                    <FormButton
-                      submit
-                      disabled={verificationValid || disabled || inputPristine}
-                    >
-                      {emailInternal
-                        ? buttonText
-                        : formatMessage(msg.saveEmptyChange)}
-                    </FormButton>
-                  )}
-                </>
-              )}
-              {(createLoading || deleteLoading || fetchLoading) && (
-                <LoadingDots />
-              )}
+                            : buttonText
+                          : formatMessage(msg.saveEmptyChange)}
+                      </FormButton>
+                    ) : (
+                      <FormButton
+                        submit
+                        disabled={
+                          verificationValid || disabled || inputPristine
+                        }
+                      >
+                        {emailInternal
+                          ? buttonText
+                          : formatMessage(msg.saveEmptyChange)}
+                      </FormButton>
+                    )}
+                  </>
+                )}
+              {(createLoading ||
+                meCreateLoading ||
+                deleteLoading ||
+                fetchLoading) && <LoadingDots />}
             </Box>
           </Box>
         </form>

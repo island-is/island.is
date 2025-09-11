@@ -42,6 +42,7 @@ import {
   statesMessages as coreSIAStatesMessages,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { CodeOwners } from '@island.is/shared/constants'
+import { Features } from '@island.is/feature-flags'
 
 const PensionSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -56,6 +57,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
     ApplicationConfigurations.PensionSupplement.translation,
   dataSchema,
   allowMultipleApplicationsInDraft: false,
+  featureFlag: Features.pensionSupplementEnabled,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

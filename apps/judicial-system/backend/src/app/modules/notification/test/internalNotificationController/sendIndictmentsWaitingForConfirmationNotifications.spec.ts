@@ -1,5 +1,7 @@
 import { uuid } from 'uuidv4'
 
+import { ConfigType } from '@nestjs/config'
+
 import { EmailService } from '@island.is/email-service'
 
 import { InstitutionNotificationType } from '@island.is/judicial-system/types'
@@ -12,6 +14,7 @@ import {
 import { InternalCaseService } from '../../../case'
 import { UserService } from '../../../user'
 import { DeliverResponse } from '../../models/deliver.response'
+import { notificationModuleConfig } from '../../notification.config'
 
 interface Then {
   result: DeliverResponse
@@ -26,6 +29,8 @@ describe('InternalNotificationController - Send indictments waiting for confirma
     'prosecutor2',
   ])
 
+  let mockConfig: ConfigType<typeof notificationModuleConfig>
+
   const prosecutorsOfficeId = uuid()
   let mockUserService: UserService
   let mockInternalCaseService: InternalCaseService
@@ -38,8 +43,10 @@ describe('InternalNotificationController - Send indictments waiting for confirma
       internalCaseService,
       emailService,
       internalNotificationController,
+      notificationConfig,
     } = await createTestingNotificationModule()
 
+    mockConfig = notificationConfig
     mockUserService = userService
     mockInternalCaseService = internalCaseService
     mockEmailService = emailService
@@ -133,14 +140,14 @@ describe('InternalNotificationController - Send indictments waiting for confirma
         expect.objectContaining({
           to: [{ name: prosecutor1.name, address: prosecutor1.email }],
           subject: 'Ákærur bíða staðfestingar',
-          html: 'Í Réttarvörslugátt bíða 2 ákærur staðfestingar.<br /><br />Hægt er að nálgast yfirlit og staðfesta ákærur í <a href="https://rettarvorslugatt.island.is">Réttarvörslugátt</a>.',
+          html: `Í Réttarvörslugátt bíða 2 ákærur staðfestingar.<br /><br />Hægt er að nálgast yfirlit og staðfesta ákærur í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutor2.name, address: prosecutor2.email }],
           subject: 'Ákærur bíða staðfestingar',
-          html: 'Í Réttarvörslugátt bíða 2 ákærur staðfestingar.<br /><br />Hægt er að nálgast yfirlit og staðfesta ákærur í <a href="https://rettarvorslugatt.island.is">Réttarvörslugátt</a>.',
+          html: `Í Réttarvörslugátt bíða 2 ákærur staðfestingar.<br /><br />Hægt er að nálgast yfirlit og staðfesta ákærur í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })

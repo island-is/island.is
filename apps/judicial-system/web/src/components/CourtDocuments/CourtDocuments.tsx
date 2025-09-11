@@ -7,6 +7,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { CourtDocument } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
+import { IconButton } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
   UserRole,
@@ -14,7 +15,6 @@ import {
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import IconButton from '../IconButton/IconButton'
 import MultipleValueList from '../MultipleValueList/MultipleValueList'
 import {
   ClearIndicator,

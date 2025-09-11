@@ -12,7 +12,11 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { sanitize } from '@island.is/judicial-system/formatters'
-import type { User, UserRole } from '@island.is/judicial-system/types'
+import type {
+  User,
+  UserDescriptor,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
@@ -24,7 +28,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
-import { RobotLog } from './models/robotLog.model'
+import { RobotLog } from '../repository'
 import { courtModuleConfig } from './court.config'
 
 export enum CourtDocumentFolder {
@@ -377,7 +381,7 @@ export class CourtService {
   }
 
   async createEmail(
-    user: User,
+    user: UserDescriptor,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,

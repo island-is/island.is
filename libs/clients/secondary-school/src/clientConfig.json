@@ -345,7 +345,7 @@
         }
       }
     },
-    "/v1/students/{nationalId}/elementarygrades": {
+    "/v1/students/{nationalId}/elementary-grades": {
       "get": {
         "tags": ["Students"],
         "summary": "[GET] Fetch list of grades by national Id.",
@@ -356,22 +356,6 @@
             "description": "(required) National Id of the students being fetched for.",
             "required": true,
             "schema": { "type": "string" }
-          },
-          {
-            "name": "rowOffset",
-            "in": "query",
-            "description": "(optional) Offset for pagination. Row where to start fetching from.",
-            "schema": { "type": "integer", "format": "int32", "default": 0 }
-          },
-          {
-            "name": "fetchSize",
-            "in": "query",
-            "description": "(optional) Fetch size for pagination. How many rows to fetch.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100000
-            }
           }
         ],
         "responses": {
@@ -525,97 +509,15 @@
             "description": "Other information",
             "nullable": true
           },
-          "applicationChoices": {
+          "schoolChoices": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationChoicesBaseDto"
-            },
+            "items": { "$ref": "#/components/schemas/SchoolChoiceBaseDto" },
             "description": "List of schools being applied to",
             "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Base properties for creating an application"
-      },
-      "ApplicationChoiceStatus": {
-        "enum": [
-          "NewApplication",
-          "Processing",
-          "AcceptedWaiting",
-          "Accepted",
-          "AcceptedInOtherSchool",
-          "Rejected"
-        ],
-        "type": "string",
-        "description": "Enum for describing Application Status"
-      },
-      "ApplicationChoicesBaseDto": {
-        "type": "object",
-        "properties": {
-          "priority": {
-            "type": "integer",
-            "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
-            "format": "int32"
-          },
-          "schoolId": {
-            "type": "string",
-            "description": "Id of school being applied to",
-            "format": "uuid"
-          },
-          "programmeChoice": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ProgrammeChoiceDto" },
-            "description": "Programme choice",
-            "nullable": true
-          },
-          "thirdLanguage": {
-            "type": "string",
-            "description": "Third language chosen by the applicant\r\ne.g. en = English \r\nFollows the ISO 639-1 standard\r\nhttps://en.wikipedia.org/wiki/List_of_ISO_639_language_codes",
-            "nullable": true
-          },
-          "northernLanguage": {
-            "type": "string",
-            "description": "Northern langauge chosen by the applicant\r\ne.g. da = Danish \r\nFollows the ISO 639-1 standard\r\nhttps://en.wikipedia.org/wiki/List_of_ISO_639_language_codes",
-            "nullable": true
-          },
-          "requestDormitory": {
-            "type": "boolean",
-            "description": "Is the student requesting dormitory."
-          }
-        },
-        "additionalProperties": false
-      },
-      "ApplicationChoicesReturnDto": {
-        "type": "object",
-        "properties": {
-          "priority": {
-            "type": "integer",
-            "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
-            "format": "int32"
-          },
-          "school": { "$ref": "#/components/schemas/SchoolSimpleDto" },
-          "programmeChoices": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProgrammeChoiceReturnDto"
-            },
-            "description": "Programme choice",
-            "nullable": true
-          },
-          "thirdLanguage": { "$ref": "#/components/schemas/LanguageDto" },
-          "northernLanguage": { "$ref": "#/components/schemas/LanguageDto" },
-          "requestDormitory": {
-            "type": "boolean",
-            "description": "Is the student requesting dormitory."
-          },
-          "rank": {
-            "type": "integer",
-            "description": "The ranking of the application choice",
-            "format": "int32"
-          },
-          "status": { "$ref": "#/components/schemas/ApplicationChoiceStatus" }
-        },
-        "additionalProperties": false
       },
       "ApplicationIdReturnDto": {
         "type": "object",
@@ -653,11 +555,9 @@
           },
           "status": { "$ref": "#/components/schemas/ApplicationStatus" },
           "speakingLanguage": { "$ref": "#/components/schemas/LanguageDto" },
-          "applicationChoices": {
+          "schoolChoices": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationChoicesReturnDto"
-            },
+            "items": { "$ref": "#/components/schemas/SchoolChoiceReturnDto" },
             "description": "List of schools being applied to",
             "nullable": true
           },
@@ -669,6 +569,15 @@
             "items": { "$ref": "#/components/schemas/AttachmentReturnDto" },
             "description": "List of attachments",
             "nullable": true
+          },
+          "grades": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/GradeDto" },
+            "description": "Grades of the applicant",
+            "nullable": true
+          },
+          "elementarySchool": {
+            "$ref": "#/components/schemas/ElementarySchoolDto"
           },
           "islandIsApplicationId": {
             "type": "string",
@@ -735,7 +644,7 @@
         "additionalProperties": false
       },
       "ApplicationStatus": {
-        "enum": ["NewApplication", "Accepted", "AcceptedWaiting", "Rejected"],
+        "enum": ["NewApplication", "Processed"],
         "type": "string",
         "description": "Enum for describing Application Status"
       },
@@ -785,6 +694,14 @@
           "RegisteredWithLabourInstitute"
         ],
         "type": "string"
+      },
+      "ElementarySchoolDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
       },
       "GradeDto": {
         "type": "object",
@@ -883,7 +800,7 @@
       "ProgrammeChoiceDto": {
         "type": "object",
         "properties": {
-          "applicationChoiceId": {
+          "schoolChoiceId": {
             "type": "string",
             "description": "Reference to the application choice",
             "format": "uuid"
@@ -914,6 +831,11 @@
             "description": "Title of the programme",
             "nullable": true
           },
+          "code": {
+            "type": "string",
+            "description": "Code for the programme",
+            "nullable": true
+          },
           "priority": {
             "type": "integer",
             "description": "Priority of the programme\r\n1 highest priority, 2 second highest priority, etc.",
@@ -927,6 +849,11 @@
             "type": "integer",
             "description": "The ranking of the programme choice",
             "format": "int32"
+          },
+          "weightedAverage": {
+            "type": "number",
+            "description": "Calculated weighted average for the programme",
+            "format": "double"
           },
           "status": { "$ref": "#/components/schemas/ProgrammeChoiceStatus" }
         },
@@ -951,6 +878,7 @@
           "code": { "type": "string", "nullable": true },
           "titleEnglish": { "type": "string", "nullable": true },
           "description": { "type": "string", "nullable": true },
+          "subSchool": { "type": "string", "nullable": true },
           "registryEndDate": {
             "type": "string",
             "format": "date-time",
@@ -960,6 +888,101 @@
           "schoolId": { "type": "string", "format": "uuid", "nullable": true }
         },
         "additionalProperties": false
+      },
+      "SchoolChoiceBaseDto": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "integer",
+            "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
+            "format": "int32"
+          },
+          "schoolId": {
+            "type": "string",
+            "description": "Id of school being applied to",
+            "format": "uuid"
+          },
+          "semesterId": {
+            "type": "string",
+            "description": "Id of semester being applied to",
+            "format": "uuid"
+          },
+          "programmeChoices": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ProgrammeChoiceDto" },
+            "description": "Programme choices",
+            "nullable": true
+          },
+          "thirdLanguage": {
+            "type": "string",
+            "description": "Third language chosen by the applicant\r\ne.g. en = English \r\nFollows the ISO 639-1 standard\r\nhttps://en.wikipedia.org/wiki/List_of_ISO_639_language_codes",
+            "nullable": true
+          },
+          "northernLanguage": {
+            "type": "string",
+            "description": "Northern langauge chosen by the applicant\r\ne.g. da = Danish \r\nFollows the ISO 639-1 standard\r\nhttps://en.wikipedia.org/wiki/List_of_ISO_639_language_codes",
+            "nullable": true
+          },
+          "requestDormitory": {
+            "type": "boolean",
+            "description": "Is the student requesting dormitory."
+          }
+        },
+        "additionalProperties": false
+      },
+      "SchoolChoiceReturnDto": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "integer",
+            "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
+            "format": "int32"
+          },
+          "school": { "$ref": "#/components/schemas/SchoolSimpleDto" },
+          "semesterId": {
+            "type": "string",
+            "description": "Id of semester being applied to",
+            "format": "uuid"
+          },
+          "programmeChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgrammeChoiceReturnDto"
+            },
+            "description": "Programme choice",
+            "nullable": true
+          },
+          "thirdLanguage": { "$ref": "#/components/schemas/LanguageDto" },
+          "northernLanguage": { "$ref": "#/components/schemas/LanguageDto" },
+          "requestDormitory": {
+            "type": "boolean",
+            "description": "Is the student requesting dormitory."
+          },
+          "rank": {
+            "type": "integer",
+            "description": "The ranking of the application choice",
+            "format": "int32"
+          },
+          "weightedAverage": {
+            "type": "number",
+            "description": "Calculated weighted average for the school",
+            "format": "double"
+          },
+          "status": { "$ref": "#/components/schemas/SchoolChoiceStatus" }
+        },
+        "additionalProperties": false
+      },
+      "SchoolChoiceStatus": {
+        "enum": [
+          "NewApplication",
+          "Processing",
+          "AcceptedWaiting",
+          "Accepted",
+          "AcceptedInOtherSchool",
+          "Rejected"
+        ],
+        "type": "string",
+        "description": "Enum for describing Application Status"
       },
       "SchoolDto": {
         "type": "object",

@@ -48,6 +48,8 @@ export const mapPrescriptionRenewalBlockedReason = (
       return PrescribedItemRenewalBlockedReasonEnum.NotFullyDispensed
     case PrescribedItemDtoRenewalBlockedReasonEnum.IsRegiment:
       return PrescribedItemRenewalBlockedReasonEnum.IsRegiment
+    case PrescribedItemDtoRenewalBlockedReasonEnum.NoMedCard:
+      return PrescribedItemRenewalBlockedReasonEnum.NoMedCard
     default:
       return PrescribedItemRenewalBlockedReasonEnum.PendingRequest
   }

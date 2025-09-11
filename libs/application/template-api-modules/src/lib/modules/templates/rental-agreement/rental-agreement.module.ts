@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common'
-import { SharedTemplateAPIModule } from '../../shared'
+
+import { HmsRentalAgreementClientModule } from '@island.is/clients/hms-rental-agreement'
 
 import { RentalAgreementService } from './rental-agreement.service'
 
 @Module({
-  imports: [SharedTemplateAPIModule],
+  imports: [HmsRentalAgreementClientModule],
   providers: [RentalAgreementService],
   exports: [RentalAgreementService],
 })

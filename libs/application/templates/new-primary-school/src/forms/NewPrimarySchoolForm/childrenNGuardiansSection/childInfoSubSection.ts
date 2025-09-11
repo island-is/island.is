@@ -9,13 +9,14 @@ import {
   YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { OptionsType } from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getGenderMessage,
-} from '../../../lib/newPrimarySchoolUtils'
+  getSelectedChild,
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const childInfoSubSection = buildSubSection({
   id: 'childInfoSubSection',
@@ -33,8 +34,8 @@ export const childInfoSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.fullName,
           disabled: true,
           defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData)
-              .childInformation.name,
+            getSelectedChild(application.answers, application.externalData)
+              ?.fullName,
         }),
         buildTextField({
           id: 'childInfo.nationalId',
@@ -43,8 +44,8 @@ export const childInfoSubSection = buildSubSection({
           format: '######-####',
           disabled: true,
           defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData)
-              .childInformation.nationalId,
+            getSelectedChild(application.answers, application.externalData)
+              ?.nationalId,
         }),
         buildTextField({
           id: 'childInfo.address.streetAddress',
@@ -79,7 +80,8 @@ export const childInfoSubSection = buildSubSection({
             title: newPrimarySchoolMessages.shared.gender,
           },
           {
-            value: (application: Application) => getGenderMessage(application),
+            value: (application: Application) =>
+              getGenderMessage(application.answers, application.externalData),
           },
         ),
         buildCheckboxField({
@@ -91,15 +93,25 @@ export const childInfoSubSection = buildSubSection({
               label:
                 newPrimarySchoolMessages.childrenNGuardians
                   .usePronounAndPreferredName,
+              tooltip:
+                newPrimarySchoolMessages.childrenNGuardians
+                  .preferredNameTooltip,
             },
           ],
+          defaultValue: (application: Application) => {
+            const { childInformation } = getApplicationExternalData(
+              application.externalData,
+            )
+            return (childInformation?.pronouns?.length ?? 0) > 0 ||
+              !!childInformation?.preferredName
+              ? [YES]
+              : []
+          },
         }),
         buildTextField({
           id: 'childInfo.preferredName',
           title:
             newPrimarySchoolMessages.childrenNGuardians.childInfoPreferredName,
-          tooltip:
-            newPrimarySchoolMessages.childrenNGuardians.preferredNameTooltip,
           condition: (answers) => {
             const { childInfo } = getApplicationAnswers(answers)
 
@@ -107,7 +119,7 @@ export const childInfoSubSection = buildSubSection({
           },
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
-              .childInformation.preferredName ?? undefined,
+              .childInformation?.preferredName ?? undefined,
         }),
         buildCustomField(
           {
@@ -122,7 +134,7 @@ export const childInfoSubSection = buildSubSection({
             component: 'FriggOptionsAsyncSelectField',
             defaultValue: (application: Application) =>
               getApplicationExternalData(application.externalData)
-                .childInformation.pronouns,
+                .childInformation?.pronouns,
           },
           {
             optionsType: OptionsType.PRONOUN,
@@ -153,6 +165,11 @@ export const childInfoSubSection = buildSubSection({
               value: NO,
             },
           ],
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData)
+              .childInformation?.residence?.address
+              ? YES
+              : '',
         }),
         buildTextField({
           id: 'childInfo.placeOfResidence.streetAddress',
@@ -166,6 +183,9 @@ export const childInfoSubSection = buildSubSection({
 
             return childInfo?.differentPlaceOfResidence === YES
           },
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData)
+              .childInformation?.residence?.address ?? undefined,
         }),
         buildTextField({
           id: 'childInfo.placeOfResidence.postalCode',
@@ -178,6 +198,9 @@ export const childInfoSubSection = buildSubSection({
 
             return childInfo?.differentPlaceOfResidence === YES
           },
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData)
+              .childInformation?.residence?.postCode ?? undefined,
         }),
       ],
     }),

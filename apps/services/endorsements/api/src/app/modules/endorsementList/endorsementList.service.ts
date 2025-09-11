@@ -32,6 +32,7 @@ import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl
 import * as path from 'path'
 import * as nationalId from 'kennitala'
 import format from 'date-fns/format'
+import { PassThrough } from 'stream'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -545,8 +546,10 @@ export class EndorsementListService {
     const footerY = doc.page.height - 60
     doc.image(footerImagePath, 60, footerY, { width: 120 })
 
+    const stream = new PassThrough()
+    doc.pipe(stream)
     doc.end()
-    return await getStream.buffer(doc)
+    return await getStream.buffer(stream)
   }
 
   async emailPDF(
@@ -734,7 +737,7 @@ export class EndorsementListService {
       endorsementList.owner,
     )
     this.logger.info(
-      `sending new list ${endorsementList.id} to skra@skra.is from ${environment.email.sender}`,
+      `sending new list ${endorsementList.id} to urtok@skra.is from ${environment.email.sender}`,
     )
     try {
       await this.emailService.sendEmail({
@@ -745,8 +748,8 @@ export class EndorsementListService {
         to: [
           {
             // message can be sent to any email so recipient name is unknown
-            name: 'skra@skra.is',
-            address: 'skra@skra.is',
+            name: 'urtok@skra.is',
+            address: 'urtok@skra.is',
           },
         ],
         subject: `Nýr undirskriftalisti  hefur verið stofnaður`,

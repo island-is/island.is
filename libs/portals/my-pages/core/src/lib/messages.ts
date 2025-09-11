@@ -871,7 +871,7 @@ export const m = defineMessages({
   },
   searchPlaceholder: {
     id: 'service.portal:search-placeholder',
-    defaultMessage: 'Sláðu inn leitarorð',
+    defaultMessage: 'Skrifaðu leitarorð',
   },
   searchByNationalId: {
     id: 'service.portal:search-by-national-id',
@@ -1224,10 +1224,6 @@ export const m = defineMessages({
   closeFinanceDetail: {
     id: 'service.portal:close-finance-detail',
     defaultMessage: 'Loka sundurliðun',
-  },
-  islykill: {
-    id: 'service.portal:islykill',
-    defaultMessage: 'Íslykill',
   },
   saveInfo: {
     id: 'service.portal:saveInfo',
@@ -1673,6 +1669,14 @@ export const m = defineMessages({
     id: 'service.portal:remove-from-storage',
     defaultMessage: 'Flytja í pósthólf',
   },
+  reply: {
+    id: 'service.portal:reply',
+    defaultMessage: 'Svara',
+  },
+  replyDocument: {
+    id: 'service.portal:reply-document',
+    defaultMessage: 'Svara pósti',
+  },
   goToArg: {
     id: 'service.portal:go-to-arg',
     defaultMessage: 'Fara til {arg}',
@@ -1922,16 +1926,16 @@ export const m = defineMessages({
     defaultMessage: 'Lesa meira um {arg}',
   },
   acknowledgeTitle: {
-    id: 'sp.service.portal:acknowledge-title',
+    id: 'service.portal:acknowledge-title',
     defaultMessage: 'Staðfesting á móttöku',
   },
   acknowledgeText: {
-    id: 'sp.service.portal:acknowledge-text',
+    id: 'service.portal:acknowledge-text',
     defaultMessage:
       'Þú ert að opna erindi frá {arg}. Veljir þú að opna erindið fá viðeigandi aðilar senda staðfestingu á möttöku. Veljir þú að opna ekki erindið munu viðeigandi aðilar leita annarra leiða til að afhenda þér það, t.d. með aðstoð lögreglu.',
   },
   acknowledgementCompleted: {
-    id: 'sp.service.portal:acknowledgement-completed',
+    id: 'service.portal:acknowledgement-completed',
     defaultMessage: 'Staðfesting á móttöku tókst',
   },
   submit: {
@@ -1941,6 +1945,30 @@ export const m = defineMessages({
   sortBy: {
     id: 'service.portal:sort-by',
     defaultMessage: 'Raða eftir',
+  },
+  bloodtype: {
+    id: 'service.portal:bloodtype',
+    defaultMessage: 'Blóðflokkur',
+  },
+  sjukratryggingar: {
+    id: 'service.portal:sjukratryggingar',
+    defaultMessage: 'Sjúkratryggingar',
+  },
+  expand: {
+    id: 'service.portal:expand',
+    defaultMessage: 'Útvíkka',
+  },
+  collapse: {
+    id: 'service.portal:collapse',
+    defaultMessage: 'Fella saman',
+  },
+  copy: {
+    id: 'service.portal:copy',
+    defaultMessage: 'Afrita',
+  },
+  copied: {
+    id: 'service.portal:copied',
+    defaultMessage: 'Afritað!',
   },
 })
 
@@ -2044,6 +2072,34 @@ export const searchTagsMessages = defineMessages({
   healthShorter: {
     id: 'sp.search.tags:health-shorter',
     defaultMessage: 'Sjúkra',
+  },
+  healthReferrals: {
+    id: 'sp.search.tags:health-referrals',
+    defaultMessage: 'Vísanir',
+  },
+  healthWaiting: {
+    id: 'sp.search.tags:health-waitlist',
+    defaultMessage: 'Bíða',
+  },
+  healthInsuranceCard: {
+    id: 'sp.search.tags:health-insurance-card',
+    defaultMessage: 'Sjúkrakort',
+  },
+  healthInsuranceEhicCard: {
+    id: 'sp.search.tags:health-insurance-ehic-card',
+    defaultMessage: 'Sjúkratrygging',
+  },
+  healthInsuranceEhicCardLong: {
+    id: 'sp.search.tags:health-insurance-ehic-card',
+    defaultMessage: 'Evrópska sjúkratryggingakortið',
+  },
+  healthPaymentParticipation: {
+    id: 'sp.search.tags:health-payment-participation',
+    defaultMessage: 'Greiðsluþátttaka',
+  },
+  healthPaymentOverview: {
+    id: 'sp.search.tags:health-payment-overview',
+    defaultMessage: 'Greiðsluyfirlit',
   },
   licensesAlternative: {
     id: 'sp.search.tags:licenses-alternative',

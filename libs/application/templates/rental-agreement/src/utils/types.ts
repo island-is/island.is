@@ -1,38 +1,25 @@
 import { UploadFile } from '@island.is/island-ui/core'
 import { YesOrNoEnum } from '@island.is/application/core'
-import { Unit as OriginalUnit } from '@island.is/api/schema'
 import {
   DefaultEvents,
   FormValue,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
+import { RentalHousingCategoryClass, CostField, AddressProps } from '../shared'
 import {
   OtherFeesPayeeOptions,
-  RentalHousingCategoryClass,
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
   RentalPaymentMethodOptions,
   SecurityDepositTypeOptions,
 } from './enums'
-import { AddressProps } from '../fields/PropertySearch'
 
-export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.EDIT }
+export type Events = {
+  type: DefaultEvents.SUBMIT | DefaultEvents.EDIT | DefaultEvents.APPROVE
+}
 
 export type StatusProvider = 'failure' | 'success'
-
-export type CostField = {
-  description: string
-  amount?: number
-  hasError?: boolean
-}
-
-export type ApplicantsInfo = {
-  nationalIdWithName: { name: string; nationalId: string }
-  email: string
-  phone: string
-  isRepresentative: string[]
-}
 
 export type SelectOption = {
   value: string
@@ -51,10 +38,25 @@ export interface ExternalData {
   }
 }
 
-export interface Unit extends OriginalUnit {
-  checked?: boolean
-  changedSize?: number
-  numOfRooms?: number
+export interface PropertyInfo {
+  categoryType: RentalHousingCategoryTypes
+  categoryClass: RentalHousingCategoryClass
+  categoryClassGroup: RentalHousingCategoryClassGroup
+}
+
+export interface OtherFees {
+  housingFund?: OtherFeesPayeeOptions
+  electricityCost?: OtherFeesPayeeOptions
+  heatingCost?: OtherFeesPayeeOptions
+  otherCosts?: string[]
+  otherCostItems?: CostField[]
+  electricityCostMeterStatusDate?: string
+  heatingCostMeterStatusDate?: string
+  housingFundAmount?: string
+  electricityCostMeterNumber?: string
+  electricityCostMeterStatus?: string
+  heatingCostMeterNumber?: string
+  heatingCostMeterStatus?: string
 }
 
 export interface ApplicationAnswers {
@@ -75,7 +77,7 @@ export interface ApplicationAnswers {
     paymentMethodAccountNumber?: string
     paymentMethodOtherTextField?: string
     indexConnected?: YesOrNoEnum
-    indexTypes?: string
+    indexRate?: string
   }
   rentalPeriod?: {
     startDate?: string
@@ -103,18 +105,6 @@ export interface ApplicationAnswers {
     emergencyExits?: string
     fireBlanket?: string
   }
-  otherFees?: {
-    housingFund?: OtherFeesPayeeOptions
-    electricityCost?: OtherFeesPayeeOptions
-    heatingCost?: OtherFeesPayeeOptions
-    otherCostItems?: CostField[] | string
-    electricityCostMeterStatusDate?: string
-    heatingCostMeterStatusDate?: string
-    housingFundAmount?: string
-    electricityCostMeterNumber?: string
-    electricityCostMeterStatus?: string
-    heatingCostMeterNumber?: string
-    heatingCostMeterStatus?: string
-  }
+  otherFees?: OtherFees
   [key: string]: unknown
 }

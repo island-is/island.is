@@ -7,4 +7,9 @@ export enum SignatureCollectionPaths {
   ParliamentaryRoot = '/althingiskosningar',
   ParliamentaryConstituency = '/althingiskosningar/:constituencyName',
   ParliamentaryConstituencyList = '/althingiskosningar/:constituencyName/:listId',
+
+  // Municipal
+  MunicipalRoot = '/sveitastjornarkosningar',
+  SingleMunicipality = '/sveitastjornarkosningar/:municipality',
+  MunicipalList = '/sveitastjornarkosningar/:municipality/:listId',
 }

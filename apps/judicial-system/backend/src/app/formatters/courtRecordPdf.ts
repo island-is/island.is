@@ -19,7 +19,7 @@ import {
 
 import { nowFactory } from '../factories'
 import { courtRecord } from '../messages'
-import { Case } from '../modules/case'
+import { Case } from '../modules/repository'
 import {
   addCoatOfArms,
   addEmptyLines,
@@ -317,7 +317,7 @@ const constructInvestigationCourtRecordPdf = (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  const isCaseCompletedWithRuling = theCase.isCompletedWithoutRuling !== true
+  const isCaseCompletedWithRuling = !theCase.isCompletedWithoutRuling
 
   const title = formatMessage(courtRecord.title)
 

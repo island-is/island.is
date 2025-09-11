@@ -12,17 +12,31 @@ import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useBulkCompareMutation } from './compareLists.generated'
 import { format as formatNationalId } from 'kennitala'
-import { SignatureCollectionSignature } from '@island.is/api/schema'
+import {
+  SignatureCollectionCollectionType,
+  SignatureCollectionSignature,
+} from '@island.is/api/schema'
 import { Skeleton } from './skeleton'
 import { useUnsignAdminMutation } from './removeSignatureFromList.generated'
 import { m } from '../../lib/messages'
-import { createFileList, getFileData } from '../../lib/utils'
+import { createFileList, downloadFile, getFileData } from '../../lib/utils'
 
-const CompareLists = ({ collectionId }: { collectionId: string }) => {
+const { Table, Row, Head, HeadData, Body, Data } = T
+
+const CompareLists = ({
+  collectionId,
+  collectionType,
+  municipalAreaId,
+}: {
+  collectionId: string
+  collectionType: SignatureCollectionCollectionType
+  municipalAreaId?: string
+}) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
-  const [uploadResults, setUploadResults] = useState<Array<any>>()
+  const [uploadResults, setUploadResults] =
+    useState<Array<SignatureCollectionSignature>>()
   const [compareMutation, { loading }] = useBulkCompareMutation()
   const [unSignMutation] = useUnsignAdminMutation()
 
@@ -31,7 +45,11 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
       const res = await compareMutation({
         variables: {
           input: {
-            collectionId,
+            collectionId:
+              collectionType ===
+              SignatureCollectionCollectionType.LocalGovernmental
+                ? municipalAreaId ?? ''
+                : collectionId,
             nationalIds: nationalIds,
           },
         },
@@ -53,6 +71,7 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
         variables: {
           input: {
             signatureId,
+            collectionType,
           },
         },
       })
@@ -64,6 +83,11 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
             return result.id !== signatureId
           }),
         )
+      } else if (
+        Array.isArray(res.data?.signatureCollectionAdminUnsign.reasons) &&
+        res.data.signatureCollectionAdminUnsign.reasons.length > 0
+      ) {
+        toast.error(res.data.signatureCollectionAdminUnsign.reasons[0])
       }
     } catch (e) {
       toast.error(e.message)
@@ -72,17 +96,18 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
 
   const onChange = async (newFile: File[]) => {
     setFileList(createFileList(newFile, fileList))
-    let data = await getFileData(newFile)
+    const data = await getFileData(newFile)
 
-    data = data.map((d: { Kennitala: any }) => {
-      return String(d.Kennitala).replace('-', '')
+    const nationalIds = data.map((d: Record<string, unknown>) => {
+      const kennitala = d.Kennitala
+      return String(kennitala).replace('-', '')
     })
 
-    compareLists(data)
+    compareLists(nationalIds)
   }
 
   return (
-    <Box marginTop={10}>
+    <Box marginTop={7}>
       <Box
         background="blue100"
         borderRadius="large"
@@ -91,7 +116,7 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
         alignItems="center"
         padding={3}
       >
-        <Text marginBottom={[2, 0, 0]} variant="medium">
+        <Text marginBottom={[2, 0, 0]} variant="medium" color="blue600">
           {formatMessage(m.compareListsDescription)}
         </Text>
         <Button
@@ -117,6 +142,15 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
         label={''}
       >
         <Text>{formatMessage(m.compareListsModalDescription)}</Text>
+        <Box display="flex" justifyContent="flexEnd" paddingTop={3}>
+          <Button
+            variant="utility"
+            icon="document"
+            onClick={() => downloadFile()}
+          >
+            {formatMessage(m.downloadTemplate)}
+          </Button>
+        </Box>
         <Box paddingTop={5} paddingBottom={5}>
           <InputFileUploadDeprecated
             fileList={fileList}
@@ -136,55 +170,49 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
               </Text>
               <Text marginBottom={5}>
                 {formatMessage(
-                  uploadResults && uploadResults?.length > 0
+                  loading || (uploadResults?.length ?? 0) > 0
                     ? m.compareListsResultsDescription
                     : m.compareListsNoResultsDescription,
                 )}
               </Text>
               {uploadResults && uploadResults?.length > 0 && (
-                <T.Table>
-                  <T.Head>
-                    <T.Row>
-                      <T.HeadData>
-                        {formatMessage(m.signeeNationalId)}
-                      </T.HeadData>
-                      <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
-                      <T.HeadData>{formatMessage(m.singleList)}</T.HeadData>
-                      <T.HeadData></T.HeadData>
-                    </T.Row>
-                  </T.Head>
-                  <T.Body>
+                <Table>
+                  <Head>
+                    <Row>
+                      <HeadData>{formatMessage(m.signeeNationalId)}</HeadData>
+                      <HeadData>{formatMessage(m.signeeName)}</HeadData>
+                      <HeadData>{formatMessage(m.singleList)}</HeadData>
+                      <HeadData></HeadData>
+                    </Row>
+                  </Head>
+                  <Body>
                     {!loading ? (
                       uploadResults?.map(
-                        (result: SignatureCollectionSignature) => {
-                          return (
-                            <T.Row key={result.id}>
-                              <T.Data style={{ minWidth: '140px' }}>
-                                {formatNationalId(result.signee.nationalId)}
-                              </T.Data>
-                              <T.Data style={{ minWidth: '250px' }}>
-                                {result.signee.name}
-                              </T.Data>
-                              <T.Data>{result.listTitle}</T.Data>
-                              <T.Data style={{ minWidth: '160px' }}>
-                                <Button
-                                  variant="utility"
-                                  onClick={() => {
-                                    unSignFromList(result.id)
-                                  }}
-                                >
-                                  {formatMessage(m.unsignFromList)}
-                                </Button>
-                              </T.Data>
-                            </T.Row>
-                          )
-                        },
+                        (result: SignatureCollectionSignature) => (
+                          <Row key={result.id}>
+                            <Data style={{ minWidth: '140px' }}>
+                              {formatNationalId(result.signee.nationalId)}
+                            </Data>
+                            <Data style={{ minWidth: '250px' }}>
+                              {result.signee.name}
+                            </Data>
+                            <Data>{result.listTitle}</Data>
+                            <Data style={{ minWidth: '160px' }}>
+                              <Button
+                                variant="utility"
+                                onClick={() => unSignFromList(result.id)}
+                              >
+                                {formatMessage(m.unsignFromList)}
+                              </Button>
+                            </Data>
+                          </Row>
+                        ),
                       )
                     ) : (
                       <Skeleton />
                     )}
-                  </T.Body>
-                </T.Table>
+                  </Body>
+                </Table>
               )}
             </Box>
           )}

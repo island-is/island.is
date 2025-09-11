@@ -1,71 +1,125 @@
 {
-  "swagger": "2.0",
-  "info": { "version": "v1", "title": "IslandIs.Skjalabirting" },
-  "host": "test-skjalabirting-island-is.azurewebsites.net",
-  "schemes": ["https"],
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Skjalabirting API V1",
+    "version": "v1"
+  },
   "paths": {
-    "/api/mail/v1/customers/{kennitala}/messages/categories": {
-      "get": {
+    "/api/mail/v1/customers/{kennitala}/messages/{messageId}/comments": {
+      "post": {
         "tags": ["Customers"],
-        "operationId": "Customers_Categories",
-        "consumes": [],
-        "produces": ["application/json", "text/json"],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCommentCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCommentCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCommentCommand"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/CategoriesResponse" }
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponse"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/mail/v1/customers/{kennitala}/messages/types": {
+    "/": {
       "get": {
         "tags": ["Customers"],
-        "operationId": "Customers_MessageTypes",
-        "consumes": [],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "kennitala",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/MessageTypesResponse" }
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/mail/v1/customers/{kennitala}/messages/senders": {
+    "/healthy": {
       "get": {
         "tags": ["Customers"],
-        "operationId": "Customers_Senders",
-        "consumes": [],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "kennitala",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/SendersResponse" }
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
           }
         }
       }
@@ -74,111 +128,248 @@
       "get": {
         "tags": ["Customers"],
         "operationId": "Customers_ListDocuments",
-        "consumes": [],
-        "produces": ["application/json", "text/json"],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "senderKennitala",
             "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "dateFrom",
             "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "date-time"
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
           },
           {
             "name": "dateTo",
             "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "date-time"
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
           },
           {
             "name": "categoryId",
             "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "typeId",
             "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "subjectContains",
             "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "archived",
             "in": "query",
-            "required": false,
-            "type": "boolean"
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           },
           {
             "name": "sortBy",
             "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "Date",
-              "Category",
-              "Type",
-              "Sender",
-              "Subject",
-              "Publication"
-            ]
+            "schema": {
+              "$ref": "#/components/schemas/CustomersListDocumentsSortByEnum"
+            }
           },
           {
             "name": "order",
             "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": ["Ascending", "Descending"]
+            "schema": {
+              "$ref": "#/components/schemas/CustomersListDocumentsOrderEnum"
+            }
           },
           {
             "name": "opened",
             "in": "query",
-            "required": false,
-            "type": "boolean"
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "name": "page",
             "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
           },
           {
             "name": "pageSize",
             "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
           },
           {
             "name": "bookmarked",
             "in": "query",
-            "required": false,
-            "type": "boolean"
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/MessagesListView" }
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageListView"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageListView"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageListView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mail/v1/customers/{kennitala}/messages/types": {
+      "get": {
+        "tags": ["Customers"],
+        "operationId": "Customers_MessageTypes",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageTypeList"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageTypeList"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageTypeList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mail/v1/customers/{kennitala}/messages/categories": {
+      "get": {
+        "tags": ["Customers"],
+        "operationId": "Customers_Categories",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageCategoryList"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageCategoryList"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageCategoryList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mail/v1/customers/{kennitala}/messages/senders": {
+      "get": {
+        "tags": ["Customers"],
+        "operationId": "Customers_Senders",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SenderResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SenderResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SenderResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -187,286 +378,332 @@
       "post": {
         "tags": ["Customers"],
         "operationId": "Customers_Archive",
-        "consumes": [],
-        "produces": [],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "messageId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
-        "responses": { "204": { "description": "No Content" } }
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
       }
     },
     "/api/mail/v1/customers/{kennitala}/messages/{messageId}/unarchive": {
       "post": {
         "tags": ["Customers"],
         "operationId": "Customers_Unarchive",
-        "consumes": [],
-        "produces": [],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "messageId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
-        "responses": { "204": { "description": "No Content" } }
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
       }
     },
     "/api/mail/v1/customers/{kennitala}/messages/{messageId}/bookmark": {
       "post": {
         "tags": ["Customers"],
         "operationId": "Customers_Bookmark",
-        "consumes": [],
-        "produces": [],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "messageId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
-        "responses": { "204": { "description": "No Content" } }
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
       }
     },
     "/api/mail/v1/customers/{kennitala}/messages/{messageId}/unbookmark": {
       "post": {
         "tags": ["Customers"],
         "operationId": "Customers_Unbookmark",
-        "consumes": [],
-        "produces": [],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "messageId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
-        "responses": { "204": { "description": "No Content" } }
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
       }
     },
     "/api/mail/v1/customers/{kennitala}/messages/batcharchive": {
       "post": {
         "tags": ["Customers"],
         "operationId": "Customers_BatchArchive",
-        "consumes": [
-          "application/json",
-          "text/json",
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "batchRequest",
-            "in": "body",
-            "required": true,
-            "schema": { "$ref": "#/definitions/BatchRequest" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
-        "responses": { "204": { "description": "No Content" } }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
       }
     },
     "/api/mail/v1/customers/{kennitala}/messages/batchbookmark": {
       "post": {
         "tags": ["Customers"],
         "operationId": "Customers_BatchBookmark",
-        "consumes": [
-          "application/json",
-          "text/json",
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "batchRequest",
-            "in": "body",
-            "required": true,
-            "schema": { "$ref": "#/definitions/BatchRequest" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
-        "responses": { "204": { "description": "No Content" } }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
       }
     },
     "/api/mail/v1/customers/{kennitala}/messages/batchread": {
       "post": {
         "tags": ["Customers"],
         "operationId": "Customers_BatchReadDocuments",
-        "consumes": [
-          "application/json",
-          "text/json",
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "request",
-            "in": "body",
-            "required": true,
-            "schema": { "$ref": "#/definitions/BatchReadRequest" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
-        "responses": { "204": { "description": "No Content" } }
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Request"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Request"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
       }
     },
     "/api/mail/v1/customers/{kennitala}/messages/readall": {
       "post": {
         "tags": ["Customers"],
         "operationId": "Customers_ReadAllDocuments",
-        "consumes": [],
-        "produces": [],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
-        "responses": { "204": { "description": "No Content" } }
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
       }
     },
     "/api/mail/v1/customers/{kennitala}/messages/{messageId}": {
       "get": {
         "tags": ["Customers"],
         "operationId": "Customers_Document",
-        "consumes": [],
-        "produces": ["application/json", "text/json"],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "messageId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           },
           {
             "name": "authenticationType",
             "in": "query",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "includeDocument",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "locale",
             "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/DocumentDTO" }
-          }
-        }
-      }
-    },
-    "/api/mail/v1/customers/{kennitala}/paper": {
-      "get": {
-        "tags": ["Customers"],
-        "operationId": "Customers_WantsPaperMail",
-        "consumes": [],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "kennitala",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": { "$ref": "#/definitions/PaperMailDTO" }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Customers"],
-        "operationId": "Customers_UpdatePaperMailPreference",
-        "consumes": [
-          "application/json",
-          "text/json",
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": ["application/json", "text/json"],
-        "parameters": [
-          {
-            "name": "kennitala",
-            "in": "path",
-            "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
           },
           {
-            "name": "paperMail",
-            "in": "body",
-            "required": true,
-            "schema": { "$ref": "#/definitions/PaperMailDTO" }
+            "name": "includeDocument",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/PaperMailDTO" }
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDTO"
+                }
+              }
+            }
           }
         }
       }
@@ -475,117 +712,143 @@
       "get": {
         "tags": ["Customers"],
         "operationId": "Customers_GetDocumentPage",
-        "consumes": [],
-        "produces": ["application/json", "text/json"],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "messageId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           },
           {
             "name": "senderKennitala",
             "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "dateFrom",
             "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "date-time"
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
           },
           {
             "name": "dateTo",
             "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "date-time"
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
           },
           {
             "name": "categoryId",
             "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "typeId",
             "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "subjectContains",
             "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "archived",
             "in": "query",
-            "required": false,
-            "type": "boolean"
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           },
           {
             "name": "sortBy",
             "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "Date",
-              "Category",
-              "Type",
-              "Sender",
-              "Subject",
-              "Publication"
-            ]
+            "schema": {
+              "$ref": "#/components/schemas/CustomersListDocumentsSortByEnum"
+            }
           },
           {
             "name": "order",
             "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": ["Ascending", "Descending"]
+            "schema": {
+              "$ref": "#/components/schemas/CustomersListDocumentsOrderEnum"
+            }
           },
           {
             "name": "opened",
             "in": "query",
-            "required": false,
-            "type": "boolean"
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "name": "page",
             "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
           },
           {
             "name": "pageSize",
             "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
           },
           {
             "name": "bookmarked",
             "in": "query",
-            "required": false,
-            "type": "boolean"
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "$ref": "#/definitions/MessagePageDTO" }
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessagePageResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessagePageResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessagePageResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -594,165 +857,546 @@
       "get": {
         "tags": ["Customers"],
         "operationId": "Customers_GetUnreadCount",
-        "consumes": [],
-        "produces": ["application/json", "text/json"],
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { "format": "int32", "type": "integer" }
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mail/v1/customers/{kennitala}/paper": {
+      "get": {
+        "tags": ["Customers"],
+        "operationId": "Customers_WantsPaperMail",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaperMailDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaperMailDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaperMailDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Customers"],
+        "operationId": "Customers_UpdatePaperMailPreference",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaperMail"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaperMail"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaperMail"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaperMailDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaperMailDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaperMailDTO"
+                }
+              }
+            }
           }
         }
       }
     }
   },
-  "definitions": {
-    "CategoriesResponse": {
-      "type": "object",
-      "properties": {
-        "categories": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/CategoryDTO" }
-        }
-      }
-    },
-    "CategoryDTO": {
-      "type": "object",
-      "properties": { "id": { "type": "string" }, "name": { "type": "string" } }
-    },
-    "MessageTypesResponse": {
-      "type": "object",
-      "properties": {
-        "types": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/MessageTypeDTO" }
-        }
-      }
-    },
-    "MessageTypeDTO": {
-      "type": "object",
-      "properties": { "id": { "type": "string" }, "name": { "type": "string" } }
-    },
-    "SendersResponse": {
-      "type": "object",
-      "properties": {
-        "senders": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/SenderDTO" }
-        }
-      }
-    },
-    "SenderDTO": {
-      "type": "object",
-      "properties": {
-        "kennitala": { "type": "string" },
-        "name": { "type": "string" }
-      }
-    },
-    "MessagesListView": {
-      "type": "object",
-      "properties": {
-        "messages": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/DocumentInfoDTO" }
-        },
-        "unreadCount": { "format": "int32", "type": "integer" },
-        "totalCount": { "format": "int32", "type": "integer" }
-      }
-    },
-    "DocumentInfoDTO": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "documentDate": { "format": "date-time", "type": "string" },
-        "publicationDate": { "format": "date-time", "type": "string" },
-        "senderKennitala": { "type": "string" },
-        "senderName": { "type": "string" },
-        "subject": { "type": "string" },
-        "categoryId": { "type": "string" },
-        "opened": { "type": "boolean" },
-        "withdrawn": { "type": "boolean" },
-        "withdrawnReason": { "type": "string" },
-        "minumumAuthenticationType": { "type": "string" },
-        "bookmarked": { "type": "boolean" },
-        "fileType": { "type": "string" },
-        "urgent": { "type": "boolean" }
-      }
-    },
-    "BatchRequest": {
-      "type": "object",
-      "properties": {
-        "ids": {
-          "type": "array",
-          "items": {
-            "format": "uuid",
-            "type": "string",
-            "example": "00000000-0000-0000-0000-000000000000"
+  "components": {
+    "schemas": {
+      "AddCommentCommand": {
+        "required": ["body"],
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "requesterEmail": {
+            "type": "string"
+          },
+          "requesterName": {
+            "type": "string"
           }
         },
-        "status": { "type": "boolean" }
-      }
-    },
-    "BatchReadRequest": {
-      "type": "object",
-      "properties": {
-        "ids": {
-          "type": "array",
-          "items": {
-            "format": "uuid",
-            "type": "string",
-            "example": "00000000-0000-0000-0000-000000000000"
+        "additionalProperties": false
+      },
+      "BatchRequest": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "status": {
+            "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "CommentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "body": {
+            "type": "string",
+            "nullable": true
+          },
+          "authorId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "author": {
+            "type": "string",
+            "nullable": true
+          },
+          "isAgent": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CommentResponse": {
+        "type": "object",
+        "properties": {
+          "ticketId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reqeusterEmail": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomersListDocumentsOrderEnum": {
+        "enum": ["Ascending", "Descending"],
+        "type": "string"
+      },
+      "CustomersListDocumentsSortByEnum": {
+        "enum": [
+          "Date",
+          "Category",
+          "Type",
+          "Sender",
+          "Publication",
+          "Subject"
+        ],
+        "type": "string"
+      },
+      "DocumentDTO": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string"
+          },
+          "fileType": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "htmlContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "publicationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bookmarked": {
+            "type": "boolean"
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "senderName": {
+            "type": "string"
+          },
+          "senderKennitala": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "urgent": {
+            "type": "boolean"
+          },
+          "replyable": {
+            "type": "boolean"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageAction"
+            }
+          },
+          "ticket": {
+            "$ref": "#/components/schemas/TicketDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentInfoDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publicationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "senderKennitala": {
+            "type": "string"
+          },
+          "senderName": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "opened": {
+            "type": "boolean"
+          },
+          "withdrawn": {
+            "type": "boolean"
+          },
+          "withdrawnReason": {
+            "type": "string"
+          },
+          "minimumAuthenticationType": {
+            "type": "string"
+          },
+          "bookmarked": {
+            "type": "boolean"
+          },
+          "fileType": {
+            "type": "string"
+          },
+          "urgent": {
+            "type": "boolean"
+          },
+          "replyable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MessageAction": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MessageCategoryDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MessageCategoryList": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageCategoryDTO"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MessageListView": {
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentInfoDTO"
+            }
+          },
+          "unreadCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MessagePageResponse": {
+        "type": "object",
+        "properties": {
+          "messagePage": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MessageTypeDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MessageTypeList": {
+        "type": "object",
+        "properties": {
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageTypeDTO"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaperMail": {
+        "type": "object",
+        "properties": {
+          "wantsPaper": {
+            "type": "boolean"
+          },
+          "kennitala": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaperMailDTO": {
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "type": "string"
+          },
+          "wantsPaper": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Request": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SenderDTO": {
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SenderResponse": {
+        "type": "object",
+        "properties": {
+          "senders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SenderDTO"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "TicketDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "authorId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentDto"
+            }
+          }
+        },
+        "additionalProperties": false
       }
-    },
-    "DocumentDTO": {
-      "type": "object",
-      "properties": {
-        "fileName": { "type": "string" },
-        "fileType": { "type": "string" },
-        "content": { "type": "string" },
-        "htmlContent": { "type": "string" },
-        "url": { "type": "string" },
-        "publicationDate": { "format": "date-time", "type": "string" },
-        "bookmarked": { "type": "boolean" },
-        "archived": { "type": "boolean" },
-        "senderName": { "type": "string" },
-        "senderKennitala": { "type": "string" },
-        "subject": { "type": "string" },
-        "categoryId": { "format": "int32", "type": "integer" },
-        "urgent": { "type": "boolean" },
-        "actions": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/MessageAction" }
-        }
-      }
-    },
-    "MessageAction": {
-      "type": "object",
-      "properties": {
-        "type": { "type": "string" },
-        "title": { "type": "string" },
-        "data": { "type": "string" }
-      }
-    },
-    "PaperMailDTO": {
-      "type": "object",
-      "properties": {
-        "kennitala": { "type": "string" },
-        "wantsPaper": { "type": "boolean" }
-      }
-    },
-    "MessagePageDTO": {
-      "type": "object",
-      "properties": { "messagePage": { "format": "int32", "type": "integer" } }
     }
   }
 }

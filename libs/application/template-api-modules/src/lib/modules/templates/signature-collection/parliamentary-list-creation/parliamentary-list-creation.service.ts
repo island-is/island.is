@@ -18,6 +18,7 @@ import { isCompany } from 'kennitala'
 import { coreErrorMessages } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { getCollectionTypeFromApplicationType } from '../shared/utils'
 @Injectable()
 export class ParliamentaryListCreationService extends BaseTemplateApiService {
   constructor(
@@ -28,10 +29,13 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
   ) {
     super(ApplicationTypes.PARLIAMENTARY_LIST_CREATION)
   }
-
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.PARLIAMENTARY_LIST_CREATION,
+  )
   async candidate({ auth }: TemplateApiModuleActionProps) {
     const candidate = await this.signatureCollectionClientService.getSignee(
       auth,
+      this.collectionType,
     )
 
     if (!candidate.hasPartyBallotLetter) {
@@ -42,9 +46,11 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
   }
 
   async parliamentaryCollection({ auth }: TemplateApiModuleActionProps) {
-    const currentCollection =
-      await this.signatureCollectionClientService.currentCollection()
-    if (currentCollection.collectionType !== CollectionType.Parliamentary) {
+    const latestCollection =
+      await this.signatureCollectionClientService.getLatestCollectionForType(
+        this.collectionType,
+      )
+    if (latestCollection.collectionType !== CollectionType.Parliamentary) {
       throw new TemplateApiError(
         errorMessages.currentCollectionNotParliamentary,
         405,
@@ -53,14 +59,14 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     // Candidates are stored on user national id never the actors so should be able to check just the auth national id
 
     if (
-      currentCollection.candidates.some(
+      latestCollection.candidates.some(
         (c) => c.nationalId.replace('-', '') === auth.nationalId,
       )
     ) {
       throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
     }
 
-    return currentCollection
+    return latestCollection
   }
 
   async parliamentaryIdentity({ auth }: TemplateApiModuleActionProps) {
@@ -97,6 +103,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
       .parliamentaryCollection.data as Collection
 
     const input = {
+      collectionType: this.collectionType,
       owner: {
         ...answers.applicant,
         nationalId: application?.applicantActors?.[0]

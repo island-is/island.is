@@ -210,8 +210,13 @@ const CaseFile: FC<CaseFileProps> = (props) => {
       return
     }
 
-    // Prevents text selection when dragging
-    evt.preventDefault()
+    const target = evt.target as HTMLElement
+    const tag = target.tagName.toLowerCase()
+
+    if (tag !== 'input') {
+      // Prevents text selection when dragging
+      evt.preventDefault()
+    }
 
     setIsDragging(true)
     controls.start(evt)

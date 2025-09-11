@@ -6,19 +6,29 @@ import { useState } from 'react'
 import { useGetCurrentCollection } from '../../../../hooks'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../../hooks/graphql/mutations'
-import { SignatureCollectionSuccess } from '@island.is/api/schema'
+import {
+  SignatureCollectionCollectionType,
+  SignatureCollectionSuccess,
+} from '@island.is/api/schema'
 
-const CancelCollection = () => {
+const CancelCollection = ({
+  refetchIsOwner,
+}: {
+  refetchIsOwner: () => void
+}) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const { currentCollection } = useGetCurrentCollection()
+  const { currentCollection } = useGetCurrentCollection(
+    SignatureCollectionCollectionType.Presidential,
+  )
 
   const [cancelCollection, { loading }] =
     useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {
       variables: {
         input: {
           collectionId: currentCollection?.id ?? '',
+          collectionType: currentCollection?.collectionType ?? '',
         },
       },
     })
@@ -34,6 +44,7 @@ const CancelCollection = () => {
       ) {
         toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
         setModalIsOpen(false)
+        refetchIsOwner()
       } else {
         toast.error(formatMessage(m.cancelCollectionModalToastError))
         setModalIsOpen(false)
@@ -42,7 +53,7 @@ const CancelCollection = () => {
   }
 
   return (
-    <Box marginTop={7} display="flex" justifyContent="center">
+    <Box display="flex" justifyContent="center">
       <Modal
         id="cancelCollection"
         isVisible={modalIsOpen}

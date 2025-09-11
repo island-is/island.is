@@ -1,14 +1,7 @@
 import { Base64 } from 'js-base64'
-import {
-  col,
-  fn,
-  Includeable,
-  literal,
-  Op,
-  Sequelize,
-  WhereOptions,
-} from 'sequelize'
+import { Includeable } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   forwardRef,
@@ -22,6 +15,7 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { getServiceStatusText } from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -34,27 +28,20 @@ import {
   isSuccessfulServiceStatus,
   ServiceStatus,
   SubpoenaNotificationType,
+  SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseService } from '../case/internalCase.service'
-import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { DefendantService } from '../defendant/defendant.service'
-import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { Institution } from '../institution'
 import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
-import { User } from '../user'
+import { Case, Defendant, Institution, Subpoena, User } from '../repository'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
-import { Subpoena } from './models/subpoena.model'
-import {
-  ServiceStatusStatistics,
-  SubpoenaStatistics,
-} from './models/subpoenaStatistics.response'
 
 export const include: Includeable[] = [
   {
@@ -128,6 +115,7 @@ export class SubpoenaService {
     transaction: Transaction,
     arraignmentDate?: Date,
     location?: string,
+    subpoenaType?: SubpoenaType,
   ): Promise<Subpoena> {
     return this.subpoenaModel.create(
       {
@@ -135,6 +123,7 @@ export class SubpoenaService {
         caseId,
         arraignmentDate,
         location,
+        type: subpoenaType,
       },
       { transaction },
     )
@@ -237,15 +226,6 @@ export class SubpoenaService {
           requestedDefenderNationalId ||
           requestedDefenderName)
       ) {
-        // If there is a change in the defender choice after the judge has confirmed the choice,
-        // we need to set the isDefenderChoiceConfirmed to false
-        const resetDefenderChoiceConfirmed =
-          subpoena.defendant?.isDefenderChoiceConfirmed &&
-          ((defenderChoice &&
-            subpoena.defendant?.defenderChoice !== defenderChoice) ||
-            (defenderNationalId &&
-              subpoena.defendant?.defenderNationalId !== defenderNationalId))
-
         // Færa message handling í defendant service
         await this.defendantService.updateRestricted(
           subpoena.case,
@@ -260,7 +240,6 @@ export class SubpoenaService {
             requestedDefenderNationalId,
             requestedDefenderName,
           },
-          resetDefenderChoiceConfirmed ? false : undefined,
           transaction,
         )
       }
@@ -278,7 +257,7 @@ export class SubpoenaService {
         'SUBPOENA_SERVICE_STATUS',
         subpoena.case,
         false,
-        { Staða: Subpoena.serviceStatusText(update.serviceStatus) },
+        { Staða: getServiceStatusText(update.serviceStatus) },
       )
     }
 
@@ -320,7 +299,7 @@ export class SubpoenaService {
     })
   }
 
-  async deliverSubpoenaToPolice(
+  async deliverSubpoenaToNationalCommissionersOffice(
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
@@ -493,14 +472,14 @@ export class SubpoenaService {
       })
   }
 
-  async deliverSubpoenaRevocationToPolice(
+  async deliverSubpoenaRevocationToNationalCommissionersOffice(
     theCase: Case,
     subpoena: Subpoena,
     user: TUser,
   ): Promise<DeliverResponse> {
     if (!subpoena.policeSubpoenaId) {
       this.logger.warn(
-        `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the police`,
+        `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the national commissioners office`,
       )
       return { delivered: true }
     }
@@ -545,87 +524,5 @@ export class SubpoenaService {
     }
 
     return this.update(subpoena, subpoenaInfo)
-  }
-
-  async getStatistics(
-    from?: Date,
-    to?: Date,
-    institutionId?: string,
-  ): Promise<SubpoenaStatistics> {
-    const where: WhereOptions = {
-      policeSubpoenaId: {
-        [Op.ne]: null,
-      },
-    }
-
-    if (from || to) {
-      where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
-      }
-      if (to) {
-        where.created[Op.lte] = to
-      }
-    }
-
-    const include: Includeable[] = []
-
-    if (institutionId) {
-      include.push({
-        model: Case,
-        required: true,
-        attributes: [],
-        where: {
-          [Op.or]: [
-            { courtId: institutionId },
-            { prosecutorsOfficeId: institutionId },
-          ],
-        },
-      })
-    }
-
-    const count = await this.subpoenaModel.count({
-      where,
-      include,
-    })
-
-    const grouped = (await this.subpoenaModel.findAll({
-      where,
-      include,
-      attributes: [
-        'serviceStatus',
-        [fn('COUNT', col('Subpoena.id')), 'count'],
-        [
-          literal(
-            'AVG(EXTRACT(EPOCH FROM "Subpoena"."service_date" - "Subpoena"."created") * 1000)',
-          ),
-          'averageServiceTimeMs',
-        ],
-      ],
-      group: ['serviceStatus'],
-      raw: true,
-    })) as unknown as {
-      serviceStatus: ServiceStatus | null
-      count: string
-      averageServiceTimeMs: string | null
-    }[]
-
-    const serviceStatusStatistics: ServiceStatusStatistics[] = grouped.map(
-      (row) => ({
-        serviceStatus: row.serviceStatus,
-        count: Number(row.count),
-        averageServiceTimeMs: Math.round(Number(row.averageServiceTimeMs) || 0),
-        averageServiceTimeDays:
-          Math.round(Number(row.averageServiceTimeMs) / 1000 / 60 / 60 / 24) ||
-          0,
-      }),
-    )
-
-    const stats: SubpoenaStatistics = {
-      count,
-      serviceStatusStatistics,
-    }
-
-    return stats
   }
 }

@@ -46,6 +46,7 @@ const Handle = styled.View`
 `
 
 const IconsWrapper = styled.View`
+  margin-left: auto;
   flex-direction: row;
   align-items: center;
   gap: ${({ theme }) => theme.spacing[1]}px;

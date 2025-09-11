@@ -26,7 +26,10 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useI18n } from '@island.is/web/i18n'
 import { StandaloneLayout } from '@island.is/web/layouts/organization/standalone'
 import type { Screen, ScreenContext } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
+import {
+  CustomNextError,
+  CustomNextRedirect,
+} from '@island.is/web/units/errors'
 
 import {
   GET_NAMESPACE_QUERY,
@@ -261,6 +264,10 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
       404,
       'Subpage belonging to an organization parent subpage was not found',
     )
+  }
+
+  if (!subpageSlug) {
+    throw new CustomNextRedirect(encodeURI(subpageLink.href))
   }
 
   const tableOfContentHeadings = getOrganizationParentSubpage.childLinks.map(

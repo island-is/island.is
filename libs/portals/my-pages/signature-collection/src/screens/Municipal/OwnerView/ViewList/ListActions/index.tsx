@@ -1,9 +1,22 @@
-import { Box, Button, Divider, Drawer, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  Icon,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import PdfReport from '../../../../shared/PdfReport'
 import { m } from '../../../../../lib/messages'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import CancelCollection from '../../../../shared/cancelCollection'
 
-const ListActions = () => {
+const collectionType = SignatureCollectionCollectionType.LocalGovernmental
+
+const ListActions = ({ listId }: { listId: string }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -24,27 +37,26 @@ const ListActions = () => {
         <Text marginTop={6} marginBottom={8}>
           {formatMessage(m.listActionsDescription)}
         </Text>
-        <Box display="flex" justifyContent="spaceBetween" marginBottom={10}>
-          <Box>
-            <Text variant="h4">{formatMessage(m.downloadPdf)}</Text>
-            <Text>{formatMessage(m.downloadPdfDescription)}</Text>
+
+        <Stack space={8}>
+          <Box display="flex">
+            <Box marginTop={1}>
+              <Tag>
+                <Box display="flex" justifyContent="center">
+                  <Icon icon="document" type="outline" color="blue600" />
+                </Box>
+              </Tag>
+            </Box>
+            <Box marginLeft={5}>
+              <Text variant="h4">{formatMessage(m.pdfReport)}</Text>
+              <Text marginBottom={2}>
+                {formatMessage(m.pdfReportDescription)}
+              </Text>
+              <PdfReport listId={listId} collectionType={collectionType} />
+            </Box>
           </Box>
-          <PdfReport listId="1" />
-        </Box>
-        <Box display="flex" justifyContent="spaceBetween">
-          <Box>
-            <Text variant="h4">{formatMessage(m.deleteCollection)}</Text>
-            <Text>{formatMessage(m.deleteCollectionDescription)}</Text>
-          </Box>
-          <Button
-            iconType="outline"
-            variant="ghost"
-            icon="trash"
-            colorScheme="destructive"
-          >
-            {formatMessage(m.deleteCollection)}
-          </Button>
-        </Box>
+          <CancelCollection listId={listId} />
+        </Stack>
       </Drawer>
     </Box>
   )

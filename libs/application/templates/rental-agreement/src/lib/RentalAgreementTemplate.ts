@@ -1,6 +1,7 @@
 import set from 'lodash/set'
 import { assign } from 'xstate'
 import {
+  DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -18,6 +19,7 @@ import {
   ApplicationConfigurations,
   ApplicationRole,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Events } from '../utils/types'
 import { States, Roles } from '../utils/enums'
@@ -30,7 +32,8 @@ import { dataSchema } from './dataSchema'
 import { application } from './messages'
 
 enum TemplateApiActions {
-  sendApplicationSummary = 'sendApplicationSummary',
+  submitApplicationToHmsRentalService = 'submitApplicationToHmsRentalService',
+  consumerIndex = 'consumerIndex',
 }
 
 const RentalAgreementTemplate: ApplicationTemplate<
@@ -89,9 +92,9 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.DRAFT,
           status: 'draft',
-          lifecycle: pruneAfterDays(30),
-          onExit: defineTemplateApi({
-            action: TemplateApiActions.sendApplicationSummary,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.consumerIndex,
           }),
           roles: [
             {
@@ -126,7 +129,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.INREVIEW,
           status: 'inprogress',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: pruneAfterDays(10),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -163,10 +166,15 @@ const RentalAgreementTemplate: ApplicationTemplate<
         },
       },
       [States.SIGNING]: {
+        entry: 'assignToInstitution',
+        exit: 'clearAssignees',
         meta: {
           name: States.SIGNING,
-          status: 'completed',
-          lifecycle: pruneAfterDays(30),
+          status: 'inprogress',
+          lifecycle: pruneAfterDays(10),
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.submitApplicationToHmsRentalService,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -178,15 +186,48 @@ const RentalAgreementTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
             },
+            {
+              id: Roles.INSTITUTION,
+              write: 'all',
+              read: 'all',
+              delete: true,
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: application.approve,
+                  type: 'primary',
+                },
+              ],
+            },
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.SIGNING,
+          [DefaultEvents.APPROVE]: {
+            target: States.COMPLETED,
           },
-          [DefaultEvents.EDIT]: {
-            target: States.INREVIEW,
-          },
+        },
+      },
+      [States.COMPLETED]: {
+        meta: {
+          name: States.COMPLETED,
+          status: 'completed',
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/completed').then((module) =>
+                  Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.INSTITUTION,
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+          ],
         },
       },
     },
@@ -203,6 +244,15 @@ const RentalAgreementTemplate: ApplicationTemplate<
 
         return context
       }),
+      assignToInstitution: assign((context) => {
+        const { application } = context
+
+        set(application, 'assignees', [
+          InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+        ])
+
+        return context
+      }),
       clearAssignees: assign((context) => {
         const { application } = context
         set(application, 'assignees', [])
@@ -215,6 +265,11 @@ const RentalAgreementTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     const { applicant, assignees } = application
+
+    if (id === InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN) {
+      return Roles.INSTITUTION
+    }
+
     if (id === applicant) {
       return Roles.APPLICANT
     }

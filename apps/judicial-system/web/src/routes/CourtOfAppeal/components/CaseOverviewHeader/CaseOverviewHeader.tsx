@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -13,16 +13,73 @@ import {
   CaseTitleInfoAndTags,
   FormContext,
   MarkdownWrapper,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
   CaseState,
-  EventLog,
-  EventType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
+
+const AppealResultAccessed = () => {
+  const { formatMessage } = useIntl()
+  const { workingCase } = useContext(FormContext)
+
+  if (!workingCase.appealRulingDecision) {
+    return null
+  }
+
+  if (
+    !workingCase.defenceAppealResultAccessDate &&
+    !workingCase.prosecutionAppealResultAccessDate &&
+    !workingCase.prisonStaffAppealResultAccessDate
+  ) {
+    return null
+  }
+
+  const AppealResultAccessedByRole = ({
+    role,
+    date,
+  }: {
+    role: UserRole
+    date: string
+  }) => (
+    <Box marginBottom={2}>
+      <AlertMessage
+        message={formatMessage(strings.appealResultOpenedBy, {
+          userRole: role as UserRole,
+          when: formatDate(date, 'PPPp'),
+        })}
+        type="info"
+      />
+    </Box>
+  )
+
+  return (
+    <Box marginTop={8}>
+      {workingCase.defenceAppealResultAccessDate && (
+        <AppealResultAccessedByRole
+          role={UserRole.DEFENDER}
+          date={workingCase.defenceAppealResultAccessDate}
+        />
+      )}
+      {workingCase.prosecutionAppealResultAccessDate && (
+        <AppealResultAccessedByRole
+          role={UserRole.PROSECUTOR}
+          date={workingCase.prosecutionAppealResultAccessDate}
+        />
+      )}
+      {workingCase.prisonStaffAppealResultAccessDate && (
+        <AppealResultAccessedByRole
+          role={UserRole.PRISON_SYSTEM_STAFF}
+          date={workingCase.prisonStaffAppealResultAccessDate}
+        />
+      )}
+    </Box>
+  )
+}
 
 interface Props {
   alerts?: { message: string }[]
@@ -30,35 +87,11 @@ interface Props {
 
 const CaseOverviewHeader: FC<Props> = (props) => {
   const { alerts } = props
+  const { user } = useContext(UserContext)
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
   const router = useRouter()
-
-  const filteredEvents = workingCase?.eventLogs
-    ?.filter(
-      (e) =>
-        e.eventType === EventType.APPEAL_RESULT_ACCESSED &&
-        [
-          UserRole.DEFENDER,
-          UserRole.PROSECUTOR,
-          UserRole.PRISON_SYSTEM_STAFF,
-        ].includes(e.userRole as UserRole),
-    )
-    .reduce((acc, event) => {
-      const userRole = event.userRole as UserRole
-      const existingEventIndex = acc.findIndex((e) => e.userRole === userRole)
-
-      if (existingEventIndex === -1) {
-        acc.push(event)
-      } else if (
-        (event.created ?? '') < (acc[existingEventIndex].created ?? '')
-      ) {
-        acc[existingEventIndex] = event
-      }
-
-      return acc
-    }, [] as EventLog[])
 
   const wasAppealedAfterDeadline =
     workingCase.appealedDate &&
@@ -72,7 +105,7 @@ const CaseOverviewHeader: FC<Props> = (props) => {
           <Button
             variant="text"
             preTextIcon="arrowBack"
-            onClick={() => router.push(constants.COURT_OF_APPEAL_CASES_ROUTE)}
+            onClick={() => router.push(getStandardUserDashboardRoute(user))}
           >
             {formatMessage(core.back)}
           </Button>
@@ -86,23 +119,7 @@ const CaseOverviewHeader: FC<Props> = (props) => {
           />
         </Box>
       )}
-      {workingCase.appealRulingDecision &&
-        filteredEvents &&
-        filteredEvents.length > 0 && (
-          <Box marginBottom={2} marginTop={8}>
-            {filteredEvents?.map((event, index) => (
-              <Box marginBottom={2} key={`event${index}`}>
-                <AlertMessage
-                  message={formatMessage(strings.appealResultOpenedBy, {
-                    userRole: event.userRole as UserRole,
-                    when: formatDate(event.created, 'PPPp'),
-                  })}
-                  type="info"
-                />
-              </Box>
-            ))}
-          </Box>
-        )}
+      <AppealResultAccessed />
       {alerts?.map((alert) => (
         <Box key={alert.message} marginBottom={2}>
           <AlertMessage

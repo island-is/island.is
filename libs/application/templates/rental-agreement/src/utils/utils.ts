@@ -2,26 +2,12 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
-import { Application, StateLifeCycle } from '@island.is/application/types'
-import { ApplicantsInfo, CostField } from './types'
-import {
-  UserRole,
-  RentalAmountIndexTypes,
-  RentalHousingCategoryClass,
-  RentalHousingCategoryClassGroup,
-  RentalHousingCategoryTypes,
-  RentalHousingConditionInspector,
-  RentalAmountPaymentDateOptions,
-  OtherFeesPayeeOptions,
-  SecurityDepositTypeOptions,
-  SecurityDepositAmountOptions,
-  RentalPaymentMethodOptions,
-  NextStepInReviewOptions,
-} from './enums'
+import { EMAIL_REGEX } from '@island.is/application/core'
+import { RepeaterItem, StateLifeCycle } from '@island.is/application/types'
+import { ApplicantsInfo, PropertyUnit } from '../shared'
+
 import * as m from '../lib/messages'
 
-export const IS_REPRESENTATIVE = 'isRepresentative'
 export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
 export const minChangedUnitSize = 3
 export const maxChangedUnitSize = 500
@@ -56,12 +42,14 @@ export const isValidMeterNumber = (value: string) => {
 }
 
 export const isValidMeterStatus = (value: string) => {
-  const meterStatusRegex = /^[0-9]{1,10}(,[0-9])?$/
+  const meterStatusRegex = /^[0-9]{1,10}(\.[0-9])?$/
   return meterStatusRegex.test(value)
 }
 
-export const hasInvalidCostItems = (items: CostField[]) =>
-  items.some((i) => i.hasError)
+export const isValidPhoneNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone && phone.isValid()
+}
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -76,26 +64,20 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const filterRepresentativesFromApplicants = <T extends ApplicantsInfo>(
-  applicants?: T[],
-): T[] => {
-  return (
-    applicants?.filter(
-      (applicant) =>
-        !applicant.isRepresentative || applicant.isRepresentative.length === 0,
-    ) ?? []
-  )
+export const hasDuplicateApplicants = (
+  applicants: ApplicantsInfo[] = [],
+): boolean => {
+  const seen = new Set<string>()
+
+  for (const applicant of applicants) {
+    if (seen.has(applicant.nationalIdWithName.nationalId)) {
+      return true
+    }
+    seen.add(applicant.nationalIdWithName.nationalId)
+  }
+
+  return false
 }
-
-export const isCostItemValid = (item: CostField) =>
-  ((item.description ?? '').trim() !== '' && item.amount !== undefined) ||
-  ((item.description ?? '').trim() === '' && item.amount === undefined)
-
-export const isEmptyCostItem = (item: CostField) =>
-  (item.description ?? '').trim() === '' && item.amount === undefined
-
-export const filterEmptyCostItems = (items: CostField[]) =>
-  items.filter((item) => !isEmptyCostItem(item)) ?? []
 
 export const formatCurrency = (answer: string) =>
   answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
@@ -105,242 +87,155 @@ export const parseCurrency = (value: string): number | undefined => {
   return numeric ? Number(numeric) : undefined
 }
 
-export const extractApplicationAnswers = (answers: Application['answers']) => {
-  return {
-    landlords: getValueViaPath<ApplicantsInfo[]>(answers, 'landlordInfo.table'),
-    tenants: getValueViaPath<ApplicantsInfo[]>(answers, 'tenantInfo.table'),
-    propertyTypeOptions: getValueViaPath<RentalHousingCategoryTypes>(
-      answers,
-      'registerProperty.categoryType',
-    ),
-    propertyClassOptions: getValueViaPath<RentalHousingCategoryClass>(
-      answers,
-      'registerProperty.categoryClass',
-    ),
-    inspectorOptions: getValueViaPath<RentalHousingConditionInspector>(
-      answers,
-      'condition.inspector',
-    ),
-    rentalAmountIndexTypesOptions: getValueViaPath<RentalAmountIndexTypes>(
-      answers,
-      'rentalAmount.indexTypes',
-    ),
-    rentalAmountPaymentDateOptions:
-      getValueViaPath<RentalAmountPaymentDateOptions>(
-        answers,
-        'rentalAmount.paymentDateOptions',
-      ),
-    otherFeesHousingFund: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.housingFund',
-    ),
-    otherFeesElectricityCost: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.electricityCost',
-    ),
-    otherFeesHeatingCost: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.heatingCost',
-    ),
-    nextStepInReviewOptions: getValueViaPath<NextStepInReviewOptions>(
-      answers,
-      'reviewInfo.applicationReview.nextStepOptions',
-    ),
-  }
+export const getRentalPropertySize = (units: PropertyUnit[]) =>
+  units.reduce(
+    (total, unit) =>
+      total +
+      (unit.changedSize && unit.changedSize !== 0
+        ? unit.changedSize
+        : unit.size || 0),
+    0,
+  )
+
+export const applicantTableFields: Record<string, RepeaterItem> = {
+  nationalIdWithName: {
+    component: 'nationalIdWithName',
+    required: true,
+    searchCompanies: true,
+  },
+  phone: {
+    component: 'phone',
+    required: true,
+    label: m.landlordAndTenantDetails.phoneInputLabel,
+    enableCountrySelector: true,
+    width: 'half',
+  },
+  email: {
+    component: 'input',
+    required: true,
+    label: m.landlordAndTenantDetails.emailInputLabel,
+    type: 'email',
+    width: 'half',
+  },
+  address: {
+    component: 'input',
+    required: true,
+    label: m.landlordAndTenantDetails.addressInputLabel,
+    maxLength: 100,
+  },
 }
 
-export const getPropertyTypeOptions = () => [
-  {
-    value: RentalHousingCategoryTypes.ENTIRE_HOME,
-    label: m.registerProperty.category.typeSelectLabelEntireHome,
+export const landLordInfoTableFields: Record<string, RepeaterItem> = {
+  nationalIdWithName: {
+    component: 'nationalIdWithName',
+    required: true,
+    searchCompanies: true,
   },
-  {
-    value: RentalHousingCategoryTypes.ROOM,
-    label: m.registerProperty.category.typeSelectLabelRoom,
+  phone: {
+    component: 'phone',
+    required: true,
+    label: m.landlordAndTenantDetails.phoneInputLabel,
+    enableCountrySelector: true,
+    width: 'half',
   },
-  {
-    value: RentalHousingCategoryTypes.COMMERCIAL,
-    label: m.registerProperty.category.typeSelectLabelCommercial,
+  email: {
+    component: 'input',
+    required: true,
+    label: m.landlordAndTenantDetails.emailInputLabel,
+    type: 'email',
+    width: 'half',
   },
-]
+}
 
-export const getPropertyClassOptions = () => [
-  {
-    value: RentalHousingCategoryClass.SPECIAL_GROUPS,
-    label: m.registerProperty.category.classSelectLabelIsSpecialGroups,
+export const applicantTableConfig = {
+  format: {
+    phone: (value: string) => value && formatPhoneNumber(value),
+    nationalId: (value: string) => value && formatNationalId(value),
   },
-  {
-    value: RentalHousingCategoryClass.GENERAL_MARKET,
-    label: m.registerProperty.category.classSelectLabelNotSpecialGroups,
-  },
-]
+  header: [
+    m.landlordAndTenantDetails.nameInputLabel,
+    m.landlordAndTenantDetails.phoneInputLabel,
+    m.landlordAndTenantDetails.nationalIdHeaderLabel,
+    m.landlordAndTenantDetails.emailInputLabel,
+  ],
+  rows: ['name', 'phone', 'nationalId', 'email'],
+}
 
-export const getPropertyClassGroupOptions = () => [
-  {
-    value: RentalHousingCategoryClassGroup.STUDENT_HOUSING,
-    label: m.registerProperty.category.classGroupSelectLabelStudentHousing,
-  },
-  {
-    value: RentalHousingCategoryClassGroup.SENIOR_CITIZEN_HOUSING,
-    label:
-      m.registerProperty.category.classGroupSelectLabelSeniorCitizenHousing,
-  },
-  {
-    value: RentalHousingCategoryClassGroup.COMMUNE,
-    label: m.registerProperty.category.classGroupSelectLabelCommune,
-  },
-  {
-    value: RentalHousingCategoryClassGroup.HALFWAY_HOUSE,
-    label: m.registerProperty.category.classGroupSelectLabelHalfwayHouse,
-  },
-  {
-    value: RentalHousingCategoryClassGroup.INCOME_BASED_HOUSING,
-    label: m.registerProperty.category.classGroupSelectLabelIncomeBasedHousing,
-  },
-]
+export const toISK = (v: unknown): number => {
+  if (typeof v === 'number') return v
+  const digits = String(v ?? '0').replace(/\D/g, '')
+  return Number(digits || 0)
+}
 
-export const getInspectorOptions = () => [
-  {
-    value: RentalHousingConditionInspector.CONTRACT_PARTIES,
-    label: m.housingCondition.inspectorOptionContractParties,
-  },
-  {
-    value: RentalHousingConditionInspector.INDEPENDENT_PARTY,
-    label: m.housingCondition.inspectorOptionIndependentParty,
-  },
-]
+export const isFasteignaNr = (searchTerm: string): boolean => {
+  return /^(?:[fF]\d*|\d+)$/.test(searchTerm)
+}
 
-export const getRentalAmountIndexTypes = () => [
-  {
-    value: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-    label: m.rentalAmount.indexOptionConsumerPriceIndex,
-  },
-  {
-    value: RentalAmountIndexTypes.CONSTRUCTION_COST_INDEX,
-    label: m.rentalAmount.indexOptionConstructionCostIndex,
-  },
-  {
-    value: RentalAmountIndexTypes.WAGE_INDEX,
-    label: m.rentalAmount.indexOptionWageIndex,
-  },
-]
+// Takes in a propertyId string, removes the f or F prefix and returns is as a number
+export const cleanupSearch = (searchTerm: string): number | null => {
+  if (!searchTerm) return 0
+  const cleanedTerm = searchTerm.replace(/^f|^F/, '')
+  const numberValue = parseInt(cleanedTerm, 10)
+  return isNaN(numberValue) ? null : numberValue
+}
 
-export const getRentalAmountPaymentDateOptions = () => [
-  {
-    value: RentalAmountPaymentDateOptions.FIRST_DAY,
-    label: m.rentalAmount.paymentDateOptionFirstDay,
-  },
-  {
-    value: RentalAmountPaymentDateOptions.LAST_DAY,
-    label: m.rentalAmount.paymentDateOptionLastDay,
-  },
-  {
-    value: RentalAmountPaymentDateOptions.OTHER,
-    label: m.rentalAmount.paymentDateOptionOther,
-  },
-]
+type StoredValueUnits = {
+  units?: PropertyUnit[]
+}
 
-export const getSecurityDepositTypeOptions = () => [
-  {
-    label: m.securityDeposit.typeSelectionBankGuaranteeTitle,
-    value: SecurityDepositTypeOptions.BANK_GUARANTEE,
-  },
-  {
-    label: m.securityDeposit.typeSelectionCapitalTitle,
-    value: SecurityDepositTypeOptions.CAPITAL,
-  },
-  {
-    label: m.securityDeposit.typeSelectionThirdPartyGuaranteeTitle,
-    value: SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE,
-  },
-  {
-    label: m.securityDeposit.typeSelectionInsuranceCompanyTitle,
-    value: SecurityDepositTypeOptions.INSURANCE_COMPANY,
-  },
-  {
-    label: m.securityDeposit.typeSelectionMutualFundTitle,
-    value: SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND,
-  },
-  {
-    label: m.securityDeposit.typeSelectionOtherTitle,
-    value: SecurityDepositTypeOptions.OTHER,
-  },
-]
+type RestoreValueType = 'checked' | 'numOfRooms' | 'changedSize' | 'expanded'
 
-export const getSecurityAmountOptions = () => [
-  {
-    label: m.securityDeposit.amountSelection1Month,
-    value: SecurityDepositAmountOptions.ONE_MONTH,
-  },
-  {
-    label: m.securityDeposit.amountSelection2Month,
-    value: SecurityDepositAmountOptions.TWO_MONTHS,
-  },
-  {
-    label: m.securityDeposit.amountSelection3Month,
-    value: SecurityDepositAmountOptions.THREE_MONTHS,
-  },
-  {
-    label: m.securityDeposit.amountSelectionOther,
-    value: SecurityDepositAmountOptions.OTHER,
-  },
-]
+export const restoreValueBoolean = (
+  storedValue: StoredValueUnits,
+  valueType: RestoreValueType,
+) => {
+  if (!storedValue?.units) return {}
+  return storedValue.units.reduce(
+    (acc: Record<string, boolean>, unit: PropertyUnit) => {
+      const { propertyCode, unitCode, checked } = unit
 
-export const getOtherFeesPayeeOptions = () => [
-  {
-    value: OtherFeesPayeeOptions.LANDLORD,
-    label: m.otherFees.paidByLandlordLabel,
-  },
-  {
-    value: OtherFeesPayeeOptions.TENANT,
-    label: m.otherFees.paidByTenantLabel,
-  },
-]
+      if (valueType === 'expanded') {
+        if (checked && propertyCode) {
+          acc[propertyCode] = true
+        }
+      } else if (valueType === 'checked') {
+        const unitKey = `${propertyCode}_${unitCode}`
+        acc[unitKey] = checked || false
+      }
 
-export const getOtherFeesHousingFundPayeeOptions = () => [
-  {
-    value: OtherFeesPayeeOptions.LANDLORD_OR_NOT_APPLICABLE,
-    label: m.otherFees.housingFundPayedByLandlordLabel,
-  },
-  {
-    value: OtherFeesPayeeOptions.TENANT,
-    label: m.otherFees.paidByTenantLabel,
-  },
-]
+      return acc
+    },
+    {} as Record<string, boolean>,
+  )
+}
 
-export const getPaymentMethodOptions = () => [
-  {
-    value: RentalPaymentMethodOptions.BANK_TRANSFER,
-    label: m.rentalAmount.paymentMethodBankTransferLabel,
-  },
-  {
-    value: RentalPaymentMethodOptions.PAYMENT_SLIP,
-    label: m.rentalAmount.paymentMethodPaymentSlipLabel,
-  },
-  {
-    value: RentalPaymentMethodOptions.OTHER,
-    label: m.rentalAmount.paymentMethodOtherLabel,
-  },
-]
+export const restoreValueNumber = (
+  storedValue: StoredValueUnits,
+  valueType: RestoreValueType,
+) => {
+  if (!storedValue?.units) return {}
+  return storedValue.units.reduce(
+    (acc: Record<string, number>, unit: PropertyUnit) => {
+      const { propertyCode, unitCode, numOfRooms, changedSize } = unit
 
-export const getNextStepInReviewOptions = () => [
-  {
-    value: NextStepInReviewOptions.GO_TO_SIGNING,
-    label: m.inReview.reviewInfo.nextStepToSigningButtonText,
-  },
-  {
-    value: NextStepInReviewOptions.EDIT_APPLICATION,
-    label: m.inReview.reviewInfo.nextStepToEditButtonText,
-  },
-]
+      if (valueType === 'numOfRooms') {
+        const unitKey = `${propertyCode}_${unitCode}`
+        acc[unitKey] = numOfRooms || 0
+      } else if (valueType === 'changedSize') {
+        const unitKey = `${propertyCode}_${unitCode}`
+        acc[unitKey] = changedSize || 0
+      }
 
-export const getUserRoleOptions = [
-  {
-    label: m.userRole.landlordOptionLabel,
-    value: UserRole.LANDLORD,
-  },
-  {
-    label: m.userRole.tenantOptionLabel,
-    value: UserRole.TENANT,
-  },
-]
+      return acc
+    },
+    {} as Record<string, number>,
+  )
+}
+
+export const isValidInteger = (value: string): boolean => {
+  return /^\d*$/.test(value)
+}
+
+export const isValidDecimal = (value: string): boolean => {
+  return /^\d*\.?\d*$/.test(value)
+}

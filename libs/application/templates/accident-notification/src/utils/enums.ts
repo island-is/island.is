@@ -17,7 +17,7 @@ export enum OnBehalf {
 }
 
 export enum Roles {
-  PROCURER = 'procurer',
+  DELEGATE = 'delegate', // Any type of auth delegation (umboð)
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }

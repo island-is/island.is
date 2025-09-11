@@ -28,7 +28,7 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
-import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
+import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import {
   GetVehiclesForUserInput,
   GetVehiclesListV2Input,
@@ -40,12 +40,12 @@ import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import { VehicleSearchCustomDto } from '../vehicles.type'
 import { operatorStatusMapper } from '../utils/operatorStatusMapper'
 import { VehiclesListInputV3 } from '../dto/vehiclesListInputV3'
-import { VehiclesCurrentListResponse } from '../models/v3/currentVehicleListResponse.model'
 import { isDefined } from '@island.is/shared/utils'
 import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
 import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
 import { UpdateResponseError } from '../dto/updateResponseError.dto'
+import { VehiclePagedList } from '../models/v3/vehiclePagedList.model'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -105,11 +105,15 @@ export class VehiclesService {
   async getVehiclesListV3(
     auth: User,
     input: VehiclesListInputV3,
-  ): Promise<VehiclesCurrentListResponse | null> {
+  ): Promise<VehiclePagedList | null> {
     const res = await this.vehicleClientService.getVehicles(auth, {
       pageSize: input.pageSize,
       page: input.page,
+      includeNextMainInspectionDate: input.includeNextMainInspectionDate,
       onlyMileageRegisterableVehicles:
+        input.filterOnlyVehiclesUserCanRegisterMileage,
+      //TODO: remove when upload ready
+      onlyMileageRequiredVehicles:
         input.filterOnlyVehiclesUserCanRegisterMileage,
       query: input.query,
     })
@@ -123,7 +127,7 @@ export class VehiclesService {
       pageNumber: res.pageNumber,
       totalPages: res.totalPages,
       totalRecords: res.totalRecords,
-      data: res.vehicles.map((v) => ({
+      vehicleList: res.vehicles.map((v) => ({
         ...v,
         nextInspection: v.nextInspection
           ? v.nextInspection.toISOString()
@@ -152,6 +156,7 @@ export class VehiclesService {
       requestedPersidno: auth.nationalId,
       showDeregistered: input.showDeregeristered,
       showHistory: input.showHistory,
+
       page: input.page,
       pageSize: input.pageSize,
       type: input.type,
@@ -175,20 +180,6 @@ export class VehiclesService {
       showDeregistered: showDeregistered,
       showHistory: showHistory,
     })
-  }
-
-  async getExcelVehiclesForUser(auth: User): Promise<VehiclesExcel> {
-    const res = await this.getVehiclesWithAuth(auth).ownershipReportDataGet({
-      ssn: auth.nationalId,
-    })
-
-    return {
-      persidno: res.persidno ?? undefined,
-      name: res.name ?? undefined,
-      vehicles: res.vehicles?.map((item) =>
-        basicVehicleInformationMapper(item),
-      ),
-    }
   }
 
   async getPublicVehicleSearch(search: string) {

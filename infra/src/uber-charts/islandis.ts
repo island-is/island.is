@@ -45,6 +45,7 @@ import {
   userNotificationCleanUpWorkerSetup,
   userNotificationServiceSetup,
   userNotificationWorkerSetup,
+  userNotificationBirthdayWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
@@ -72,6 +73,8 @@ import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
+import { serviceSetup as formSystemWebSetup } from '../../../apps/form-system/web/infra/form-system-web'
+import { serviceSetup as paymentFlowUpdateHandlerSetup } from '../../../apps/services/payment-flow-update-handler/infra/payment-flow-update-handler'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -116,6 +119,9 @@ const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
 const formSystemApi = formSystemApiSetup()
+const formSystemWeb = formSystemWebSetup()
+
+const paymentFlowUpdateHandlerService = paymentFlowUpdateHandlerSetup()
 
 const api = apiSetup({
   appSystemApi,
@@ -131,6 +137,7 @@ const api = apiSetup({
   userNotificationService,
   paymentsApi: paymentsService,
   formSystemService: formSystemApi,
+  paymentFlowUpdateHandlerService,
 })
 
 const adminPortal = adminPortalSetup()
@@ -163,6 +170,9 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 })
 const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
+
+const userNotificationBirthdayWorkerService =
+  userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
 
 const unicornApp = unicornAppSetup()
 
@@ -197,6 +207,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
     sessionsService,
@@ -211,6 +222,7 @@ export const Services: EnvironmentServices = {
     unicornApp,
     paymentsWebApp,
     paymentsService,
+    paymentFlowUpdateHandlerService,
   ],
   staging: [
     appSystemApi,
@@ -238,6 +250,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
     sessionsService,
@@ -250,6 +263,7 @@ export const Services: EnvironmentServices = {
     unicornApp,
     paymentsWebApp,
     paymentsService,
+    paymentFlowUpdateHandlerService,
   ],
   dev: [
     appSystemApi,
@@ -277,6 +291,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
@@ -294,6 +309,8 @@ export const Services: EnvironmentServices = {
     bffServicePortalService,
     unicornApp,
     formSystemApi,
+    formSystemWeb,
+    paymentFlowUpdateHandlerService,
   ],
 }
 
@@ -305,6 +322,7 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
   userNotificationCleanupWorkerService,
+  userNotificationBirthdayWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,

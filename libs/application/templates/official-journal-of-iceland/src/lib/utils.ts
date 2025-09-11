@@ -57,6 +57,13 @@ const getNextWorkday = (date: Date) => {
   return nextDay
 }
 
+export const isDateNotBeforeToday = (dateStr: string) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // start of the day
+  const date = new Date(dateStr)
+  return date >= today
+}
+
 const addWorkDays = (date: Date, days: number) => {
   let result = new Date(date)
   while (days > 0) {
@@ -130,12 +137,9 @@ export enum TitlePrefix {
 export const getAddition = (
   titlePrefix: TitlePrefix,
   index: number,
-  roman = true,
 ): z.infer<typeof additionSchema>[number] => ({
   id: uuid(),
-  title: roman
-    ? `${titlePrefix} ${convertNumberToRoman(index)}`
-    : `${titlePrefix} ${index}`,
+  title: `${titlePrefix} ${index}`,
   content: '',
   type: 'html',
 })
@@ -170,7 +174,10 @@ export const getFastTrack = (date?: Date) => {
   const diffDays = diff / (1000 * 3600 * 24)
   let fastTrack = false
 
-  if (diffDays <= FAST_TRACK_DAYS) {
+  // 10 days AFTER registration date. FAST_TRACK_DAYS + 1.
+  const fastTrackCutOff = FAST_TRACK_DAYS + 1
+
+  if (diffDays <= fastTrackCutOff) {
     fastTrack = true
   }
   return {

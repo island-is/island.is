@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Accordion, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isAcceptingCaseDecision,
   isCompletedCase,
@@ -29,7 +30,6 @@ import {
 import {
   CaseDecision,
   CaseTransition,
-  NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -63,14 +63,13 @@ const Confirmation: FC = () => {
   )
   const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 
-  const isCorrectingRuling = workingCase.notifications?.some(
-    (notification) => notification.type === NotificationType.RULING,
-  )
+  const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
+  const isRulingSigned = Boolean(workingCase.rulingSignatureDate)
   const isAssignedJudge = user && workingCase.judge?.id === user.id
   const isAssignedRegistrar = user && workingCase.registrar?.id === user.id
-  const hideNextButton =
-    (!isCorrectingRuling && !isAssignedJudge) ||
-    (isCorrectingRuling && !isAssignedJudge && !isAssignedRegistrar)
+  const hideNextButton = isCorrectingRuling
+    ? !isAssignedJudge && !isAssignedRegistrar
+    : !isAssignedJudge
 
   const completeCase = async () => {
     if (isCompletedCase(workingCase.state)) {
@@ -92,32 +91,40 @@ const Confirmation: FC = () => {
     router.push(`${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`)
   }
 
-  const handleCompleteModification = async () => {
+  const completeCaseWith = async (
+    action: 'signature' | 'noSignature' | 'askIfSignature',
+  ) => {
     const caseCompleted = await completeCase()
 
-    if (caseCompleted) {
-      setModalVisible(
-        isAssignedJudge
-          ? 'judgeRequestRulingSignatureModal'
-          : 'registrarRequestRulingSignatureModal',
-      )
+    if (!caseCompleted) {
+      return
     }
-  }
 
-  const completeCaseWithSignature = async () => {
-    const caseCompleted = await completeCase()
-
-    if (caseCompleted) {
-      requestRulingSignature()
+    switch (action) {
+      case 'signature':
+        requestRulingSignature()
+        break
+      case 'noSignature':
+        continueToSignedVerdictOverview()
+        break
+      case 'askIfSignature':
+        setModalVisible(
+          isAssignedJudge
+            ? 'judgeRequestRulingSignatureModal'
+            : 'registrarRequestRulingSignatureModal',
+        )
+        break
     }
   }
 
   const handleNextButtonClick = async () => {
     if (isCorrectingRuling) {
       setModalVisible('rulingModifiedModal')
-    } else {
-      completeCaseWithSignature()
+
+      return
     }
+
+    completeCaseWith('signature')
   }
 
   return (
@@ -164,7 +171,7 @@ const Confirmation: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={constants.CASES_ROUTE}
+          nextUrl={getStandardUserDashboardRoute(user)}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING
               ? strings.continueButtonTextAccepting
@@ -203,7 +210,19 @@ const Confirmation: FC = () => {
       {modalVisible === 'rulingModifiedModal' && (
         <RulingModifiedModal
           onCancel={() => setModalVisible('none')}
-          onContinue={handleCompleteModification}
+          onContinue={() =>
+            completeCaseWith(
+              !isRulingSigned
+                ? // The previous ruling was not signed, so we need a signature from the assigned judge
+                  isAssignedJudge
+                  ? // Since the assigned judge is mmodifying the ruling, we immediately ask for the signature
+                    'signature'
+                  : // Since the assigned judge is not mmodifying the ruling, we simply continue to the signed verdict overview
+                    'noSignature'
+                : // The previous ruling was signed, so we ask if a new signature is needed
+                  'askIfSignature',
+            )
+          }
         />
       )}
       {modalVisible === 'judgeRequestRulingSignatureModal' && (

@@ -1,19 +1,12 @@
 import { z } from 'zod'
 import { YesOrNoEnum } from '@island.is/application/core'
 import {
-  hasInvalidCostItems,
   isValidMeterNumber,
   isValidMeterStatus,
+  parseCurrency,
 } from '../../utils/utils'
 import { OtherFeesPayeeOptions } from '../../utils/enums'
-import { CostField } from '../../utils/types'
 import * as m from '../messages'
-
-const otherCostItemsSchema = z.object({
-  description: z.string().optional(),
-  amount: z.number().optional(),
-  hasError: z.boolean().optional(),
-})
 
 export const otherFees = z
   .object({
@@ -28,24 +21,44 @@ export const otherFees = z
     heatingCostMeterStatus: z.string().optional(),
     heatingCostMeterStatusDate: z.string().optional(),
     otherCosts: z.array(z.string()).optional(),
-    otherCostItems: z.union([
-      z.string(),
-      z.array(otherCostItemsSchema).optional(),
-    ]), // String so that it clears on OtherCosts change (clearOnChange)
+    otherCostItems: z
+      .array(
+        z.object({
+          description: z.string().optional(),
+          amount: z.string().optional(),
+        }),
+      )
+      .optional()
+      .nullable(),
     otherCostsDescription: z.string().optional(),
     otherCostsAmount: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    const tenantPaysHousingFund =
-      data.housingFund === OtherFeesPayeeOptions.TENANT
-    const tenantPaysElectricityCost =
-      data.electricityCost === OtherFeesPayeeOptions.TENANT
-    const tenantPaysHeatingCost =
-      data.heatingCost === OtherFeesPayeeOptions.TENANT
-    const hasOtherCosts = data.otherCosts?.includes(YesOrNoEnum.YES)
+    const {
+      housingFund,
+      housingFundAmount,
+      electricityCost,
+      electricityCostMeterNumber,
+      electricityCostMeterStatus,
+      electricityCostMeterStatusDate,
+      heatingCost,
+      heatingCostMeterNumber,
+      heatingCostMeterStatus,
+      heatingCostMeterStatusDate,
+      otherCosts,
+      otherCostItems,
+    } = data
 
-    if (data.housingFund && tenantPaysHousingFund) {
-      if (!data.housingFundAmount) {
+    const tenantPaysHousingFund = housingFund === OtherFeesPayeeOptions.TENANT
+    const tenantPaysElectricityCost =
+      electricityCost === OtherFeesPayeeOptions.TENANT
+    const tenantPaysHeatingCost = heatingCost === OtherFeesPayeeOptions.TENANT
+    const hasOtherCosts = otherCosts?.includes(YesOrNoEnum.YES)
+
+    // Housing fund
+    if (housingFund && tenantPaysHousingFund) {
+      const numericAmount = parseCurrency(housingFundAmount ?? '')
+      if (!housingFundAmount) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
@@ -53,11 +66,28 @@ export const otherFees = z
           path: ['housingFundAmount'],
         })
       }
+
+      if (numericAmount !== undefined && numericAmount < 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorHousingFundTooLow,
+          path: ['housingFundAmount'],
+        })
+      }
+      if (numericAmount !== undefined && numericAmount > 999999) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorHousingFundTooHigh,
+          path: ['housingFundAmount'],
+        })
+      }
     }
 
-    //
-    if (data.electricityCost && tenantPaysElectricityCost) {
-      if (!data.electricityCostMeterNumber) {
+    // Electricity cost
+    if (electricityCost && tenantPaysElectricityCost) {
+      if (!electricityCostMeterNumber) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
@@ -66,8 +96,8 @@ export const otherFees = z
         })
       }
       if (
-        data.electricityCostMeterNumber &&
-        !isValidMeterNumber(data.electricityCostMeterNumber)
+        electricityCostMeterNumber &&
+        !isValidMeterNumber(electricityCostMeterNumber)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -76,7 +106,7 @@ export const otherFees = z
           path: ['electricityCostMeterNumber'],
         })
       }
-      if (!data.electricityCostMeterStatus) {
+      if (!electricityCostMeterStatus) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
@@ -85,8 +115,8 @@ export const otherFees = z
         })
       }
       if (
-        data.electricityCostMeterStatus &&
-        !isValidMeterStatus(data.electricityCostMeterStatus)
+        electricityCostMeterStatus &&
+        !isValidMeterStatus(electricityCostMeterStatus)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -95,7 +125,7 @@ export const otherFees = z
           path: ['electricityCostMeterStatus'],
         })
       }
-      if (!data.electricityCostMeterStatusDate) {
+      if (!electricityCostMeterStatusDate) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
@@ -105,8 +135,9 @@ export const otherFees = z
       }
     }
 
-    if (data.heatingCost && tenantPaysHeatingCost) {
-      if (!data.heatingCostMeterNumber) {
+    // Heating cost
+    if (heatingCost && tenantPaysHeatingCost) {
+      if (!heatingCostMeterNumber) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
@@ -115,8 +146,8 @@ export const otherFees = z
         })
       }
       if (
-        data.heatingCostMeterNumber &&
-        !isValidMeterNumber(data.heatingCostMeterNumber)
+        heatingCostMeterNumber &&
+        !isValidMeterNumber(heatingCostMeterNumber)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -125,7 +156,7 @@ export const otherFees = z
           path: ['heatingCostMeterNumber'],
         })
       }
-      if (!data.heatingCostMeterStatus) {
+      if (!heatingCostMeterStatus) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
@@ -134,8 +165,8 @@ export const otherFees = z
         })
       }
       if (
-        data.heatingCostMeterStatus &&
-        !isValidMeterStatus(data.heatingCostMeterStatus)
+        heatingCostMeterStatus &&
+        !isValidMeterStatus(heatingCostMeterStatus)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -144,7 +175,7 @@ export const otherFees = z
           path: ['heatingCostMeterStatus'],
         })
       }
-      if (!data.heatingCostMeterStatusDate) {
+      if (!heatingCostMeterStatusDate) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
@@ -154,16 +185,50 @@ export const otherFees = z
       }
     }
 
+    // Other costs
     if (hasOtherCosts) {
-      if (
-        data.otherCostItems &&
-        hasInvalidCostItems(data.otherCostItems as CostField[])
-      ) {
+      if (!otherCostItems || otherCostItems.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
           params: m.otherFees.errorOtherCost,
           path: ['otherCostItems'],
+        })
+      } else {
+        // Validate each item in the otherCostItems array
+        otherCostItems.forEach((item, index) => {
+          if (!item.description || item.description.trim() === '') {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Custom error message',
+              params: m.otherFees.errorOtherCostDescription,
+              path: ['otherCostItems', index, 'description'],
+            })
+          }
+          if (
+            item.amount === undefined ||
+            item.amount === null ||
+            Number(item.amount) <= 0
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Custom error message',
+              params: m.otherFees.errorOtherCostAmount,
+              path: ['otherCostItems', index, 'amount'],
+            })
+          }
+          if (
+            item.amount !== undefined &&
+            item.amount !== null &&
+            Number(item.amount) > 100000
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Custom error message',
+              params: m.otherFees.errorOtherCostAmountTooHigh,
+              path: ['otherCostItems', index, 'amount'],
+            })
+          }
         })
       }
     }

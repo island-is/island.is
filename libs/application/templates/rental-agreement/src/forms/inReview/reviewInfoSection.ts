@@ -7,14 +7,11 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import {
-  formatNationalId,
-  formatPhoneNumber,
-  extractApplicationAnswers,
-  getNextStepInReviewOptions,
-} from '../../utils/utils'
+import { applicationAnswers } from '../../shared'
+import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
 import { NextStepInReviewOptions } from '../../utils/enums'
 import { application, inReview } from '../../lib/messages'
+import { getNextStepInReviewOptions } from '../../utils/options'
 
 export const ReviewInfoSection = buildSection({
   id: 'inReview',
@@ -35,22 +32,11 @@ export const ReviewInfoSection = buildSection({
             inReview.preSignatureInfo.tableHeaderEmail,
           ],
           rows: (application) => {
-            const { landlords, tenants } = extractApplicationAnswers(
+            const { landlords, tenants } = applicationAnswers(
               application.answers,
             )
 
-            const filterLandlords = landlords?.filter(
-              (landlord) => landlord.isRepresentative?.length === 0,
-            )
-
-            const filterTenants = tenants?.filter(
-              (tenant) => tenant.isRepresentative?.length === 0,
-            )
-
-            const signees = [
-              ...(filterLandlords ?? []),
-              ...(filterTenants ?? []),
-            ]
+            const signees = [...(landlords ?? []), ...(tenants ?? [])]
 
             return signees.map((person) => [
               person.nationalIdWithName.name ?? '',
@@ -86,8 +72,7 @@ export const ReviewInfoSection = buildSection({
             },
           ],
           condition: (answers) => {
-            const { nextStepInReviewOptions } =
-              extractApplicationAnswers(answers)
+            const { nextStepInReviewOptions } = applicationAnswers(answers)
             return (
               nextStepInReviewOptions ===
               NextStepInReviewOptions.EDIT_APPLICATION

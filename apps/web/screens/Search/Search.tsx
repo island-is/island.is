@@ -51,6 +51,7 @@ import {
   Manual,
   News,
   OrganizationPage,
+  OrganizationParentSubpage,
   OrganizationSubpage,
   ProjectPage,
   QueryGetNamespaceArgs,
@@ -97,6 +98,7 @@ const ALL_TYPES: `${SearchableContentTypes}`[] = [
   'webProjectPage',
   'webManual',
   'webManualChapterItem',
+  'webOrganizationParentSubpage',
 ]
 
 type SearchQueryFilters = {
@@ -131,7 +133,8 @@ export type SearchEntryType = Article &
   LinkItem &
   ProjectPage &
   Manual &
-  ManualChapterItem
+  ManualChapterItem &
+  OrganizationParentSubpage
 
 const connectedTypes: Partial<
   Record<
@@ -145,6 +148,7 @@ const connectedTypes: Partial<
     'WebOrganizationSubpage',
     'webOrganizationPage',
     'WebProjectPage',
+    'WebOrganizationParentSubpage',
   ],
   webNews: ['WebNews'],
   webQNA: ['WebQna'],
@@ -215,6 +219,11 @@ const Search: Screen<CategoryProps> = ({
         )?.count ?? 0
 
       total +=
+        (countResults?.typesCount ?? []).find(
+          (x) => x.key === 'webOrganizationParentSubpage',
+        )?.count ?? 0
+
+      total +=
         (countResults?.typesCount ?? []).find((x) => x.key === 'webProjectPage')
           ?.count ?? 0
 
@@ -243,6 +252,11 @@ const Search: Screen<CategoryProps> = ({
         break
       case 'ManualChapterItem':
         labels.push(item.manualChapter.title)
+        break
+      case 'OrganizationParentSubpage':
+        if (item.organizationPageTitle) {
+          labels.push(item.organizationPageTitle)
+        }
         break
       default:
         break
@@ -325,9 +339,9 @@ const Search: Screen<CategoryProps> = ({
     ]
   }, [countResults.typesCount, getArticleCount, tagTitles])
 
-  const getItemLink = (item: SearchEntryType) => {
+  const getItemLink = (item: SearchEntryType): string => {
     if (item.__typename === 'AnchorPage') {
-      return linkResolver(extractAnchorPageLinkType(item), [item.slug])
+      return linkResolver(extractAnchorPageLinkType(item), [item.slug]).href
     }
 
     if (item.__typename === 'ManualChapterItem') {
@@ -335,16 +349,20 @@ const Search: Screen<CategoryProps> = ({
         item.manual.slug,
         item.manualChapter.slug,
         item.id,
-      ])
+      ]).href
     }
 
     if (item.__typename === 'OrganizationSubpage' && item.url.length === 3) {
-      return linkResolver('organizationparentsubpagechild', item.url)
+      return linkResolver('organizationparentsubpagechild', item.url).href
+    }
+
+    if (item.__typename === 'OrganizationParentSubpage') {
+      return (item.href as string) ?? ''
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict
-    return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
+    return linkResolver(item.__typename, item.url ?? item.slug?.split('/')).href
   }
 
   const getItemImages = (item: SearchEntryType) => {
@@ -575,6 +593,7 @@ const Search: Screen<CategoryProps> = ({
                 quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
                 activeLocale={activeLocale}
                 initialInputValue={q}
+                organization={state.query.organization?.[0]}
               />
               <Box width="full">
                 <Inline
@@ -765,6 +784,7 @@ const Search: Screen<CategoryProps> = ({
                       thumbnail,
                       labels,
                       parentTitle,
+                      link: linkHref,
                       ...rest
                     },
                     index,
@@ -788,6 +808,7 @@ const Search: Screen<CategoryProps> = ({
                         image={thumbnail ? thumbnail : image}
                         subTitle={parentTitle}
                         highlightedResults={true}
+                        link={{ href: linkHref }}
                         {...rest}
                       />
                     )

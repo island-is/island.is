@@ -5,7 +5,7 @@ const tableCellFontSize = '16px'
 
 export const input = style({
   width: '100%',
-  padding: '10px 12px',
+  padding: '10px',
   fontSize: '14px',
   textAlign: 'right',
   border: '1px solid #CCDFFF',
@@ -19,17 +19,19 @@ export const inputError = style({
 
 export const sizeInput = style({
   marginRight: '4px',
-  paddingRight: '0',
-  appearance: 'none',
-  MozAppearance: 'textfield',
-  WebkitAppearance: 'none',
 })
 
-export const roomsInput = style({
-  paddingRight: '0',
-  appearance: 'none',
+export const noInputArrows = style({
+  appearance: 'textfield',
   MozAppearance: 'textfield',
-  WebkitAppearance: 'none',
+  selectors: {
+    '&::-webkit-outer-spin-button': {
+      appearance: 'none',
+    },
+    '&::-webkit-inner-spin-button': {
+      appearance: 'none',
+    },
+  },
 })
 
 export const tableHeadingCell = style({

@@ -43,9 +43,10 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
     checkboxProvider: {
       id: 'sia.application:prerequisites.checkbox.provider',
-      defaultMessage: 'Ég samþykki gagnaöflun í umsóknarferlinu',
+      defaultMessage:
+        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
       description:
-        'I agree to the collection of data as a part of the application process',
+        'I understand that the above information will be collected during the application process',
     },
     skraInformationTitle: {
       id: 'sia.application:prerequisites.national.registry.title',
@@ -158,6 +159,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       id: 'sia.application:info.applicant.address',
       defaultMessage: 'Póstfang',
       description: 'Postal address',
+    },
+    applicantApartmentNumber: {
+      id: 'sia.application:info.applicant.apartment.number',
+      defaultMessage: 'Íbúðarnúmer',
+      description: 'Apartment number',
     },
     applicantPostalcode: {
       id: 'sia.application:info.applicant.postalcode',
@@ -788,6 +794,11 @@ export const statesMessages = defineMessages({
     id: 'sia.application:applicationRejected',
     defaultMessage: 'Umsókn hafnað',
     description: 'Application rejected',
+  },
+  applicationDismissed: {
+    id: 'sia.application:applicationDismissed',
+    defaultMessage: 'Umsókn vísað frá',
+    description: 'Application dismissed',
   },
   applicationApproved: {
     id: 'sia.application:applicationApproved',

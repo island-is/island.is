@@ -17,8 +17,7 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { type Case } from '../case'
-import { DateLog } from '../case/models/dateLog.model'
+import { type Case, DateLog } from '../repository'
 import { eventModuleConfig } from './event.config'
 
 const errorEmojis = [
@@ -171,6 +170,37 @@ export class EventService {
         `Failed to post event ${event} for case ${theCase.id}`,
         { error },
       )
+    }
+  }
+
+  async postDailyLawyerRegistryResetEvent(count: number) {
+    const title = ':arrows_counterclockwise: Lögmannaskrá'
+    const message = `Lögmannaskrá uppfærð. Alls ${count} lögmenn á skrá.`
+
+    try {
+      if (!this.config.url) {
+        return
+      }
+
+      await fetch(`${this.config.url}`, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({
+          blocks: [
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `*${title}*\n${message}`,
+              },
+            },
+          ],
+        }),
+      })
+    } catch (error) {
+      this.logger.error(`Failed to reset lawyer registry`, {
+        error,
+      })
     }
   }
 

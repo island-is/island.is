@@ -94,6 +94,7 @@ const DocumentsFilter = ({
         labelClearAll={formatMessage(m.clearAllFilters)}
         labelOpen={formatMessage(m.openFilter)}
         labelClose={formatMessage(m.closeFilter)}
+        mobileWrap={false}
         filterInput={
           <Input
             placeholder={formatMessage(m.searchPlaceholder)}

@@ -15,12 +15,22 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { LawyersService } from '@island.is/judicial-system/lawyers'
-import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
+import { getRulingInstructionItems } from '@island.is/judicial-system/formatters'
+import {
+  DefenderChoice,
+  InformationForDefendant,
+  LawyerRegistry,
+  LawyerType,
+  PoliceFileTypeCode,
+  ServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
+import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
+import { Groups } from './models/componentDefinitions/groups.model'
+import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import appModuleConfig from './app.config'
 
@@ -30,7 +40,6 @@ export class AppService {
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
-    private readonly lawyersService: LawyersService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
@@ -92,6 +101,36 @@ export class AppService {
     )
   }
 
+  async getLitigators(): Promise<LawyerRegistry[]> {
+    try {
+      const res = await fetch(
+        `${this.config.backend.url}/api/lawyer-registry?lawyerType=${LawyerType.LITIGATORS}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+        },
+      )
+      if (res.ok) {
+        const lawyers = await res.json()
+
+        return lawyers.map((lawyer: LawyerRegistry) => ({
+          nationalId: lawyer.nationalId,
+          name: lawyer.name,
+          practice: lawyer.practice,
+        }))
+      }
+
+      throw new BadRequestException()
+    } catch (error) {
+      this.logger.error('Failed to retrieve litigator lawyers', error)
+
+      throw new BadRequestException('Failed to retrieve litigator lawyers')
+    }
+  }
+
   private async updateSubpoenaInfo(
     policeSubpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
@@ -117,17 +156,27 @@ export class AppService {
 
     if (updateSubpoena.defenderNationalId) {
       try {
-        const chosenLawyer = await this.lawyersService.getLawyer(
-          updateSubpoena.defenderNationalId,
+        const res = await fetch(
+          `${this.config.backend.url}/api/lawyer-registry/${updateSubpoena.defenderNationalId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              authorization: `Bearer ${this.config.backend.accessToken}`,
+            },
+          },
         )
 
-        defenderInfo = {
-          defenderName: chosenLawyer.Name,
-          defenderEmail: chosenLawyer.Email,
-          defenderPhoneNumber: chosenLawyer.Phone,
+        if (res.ok) {
+          const chosenLawyer = await res.json()
+
+          defenderInfo = {
+            defenderName: chosenLawyer.name,
+            defenderEmail: chosenLawyer.email,
+            defenderPhoneNumber: chosenLawyer.phoneNumber,
+          }
         }
       } catch (reason) {
-        // TODO: Reconsider throwing - what happens if registry is down?
         this.logger.error(
           `Failed to retrieve lawyer with national id ${updateSubpoena.defenderNationalId}`,
           reason,
@@ -203,6 +252,161 @@ export class AppService {
         ...reason,
         message: 'Failed to update subpoena',
       })
+    }
+  }
+
+  async updatePoliceDocumentDelivery(
+    policeDocumentId: string,
+    updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
+  ): Promise<PoliceDocumentDelivery> {
+    switch (updatePoliceDocumentDelivery.fileTypeCode) {
+      case PoliceFileTypeCode.VERDICT:
+        return await this.auditTrailService.audit(
+          'digital-mailbox-api',
+          AuditedAction.UPDATE_VERDICT,
+          this.updateVerdictDelivery(
+            policeDocumentId,
+            updatePoliceDocumentDelivery,
+          ),
+          policeDocumentId,
+        )
+    }
+
+    throw new BadRequestException('Police file type code not supported')
+  }
+
+  private async updateVerdictDelivery(
+    policeDocumentId: string,
+    updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
+  ) {
+    const getPoliceDocumentDeliveryStatus = ({
+      delivered,
+      deliveredOnPaper,
+      deliveredOnIslandis,
+      deliveredToLawyer,
+    }: UpdatePoliceDocumentDeliveryDto) => {
+      if (delivered) {
+        if (deliveredOnPaper) {
+          return ServiceStatus.IN_PERSON
+        }
+        if (deliveredOnIslandis) {
+          return ServiceStatus.ELECTRONICALLY
+        }
+        if (deliveredToLawyer) {
+          return ServiceStatus.DEFENDER
+        }
+      }
+      return ServiceStatus.FAILED
+    }
+
+    const parsedPoliceUpdate = {
+      serviceDate: updatePoliceDocumentDelivery.servedAt,
+      servedBy: updatePoliceDocumentDelivery.servedBy,
+      comment: updatePoliceDocumentDelivery.comment,
+      serviceStatus: getPoliceDocumentDeliveryStatus(
+        updatePoliceDocumentDelivery,
+      ),
+    }
+    try {
+      const res = await fetch(
+        `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+          body: JSON.stringify(parsedPoliceUpdate),
+        },
+      )
+      // TODO: When we update the verdict appeal decision, call verdict-appeal endpoint to validate and update the appeal decision specifically
+      // once service date has been recorded for the verdict
+
+      const response = await res.json()
+
+      if (res.ok) {
+        return {
+          policeDocumentId: response.externalPoliceDocumentId,
+        } as PoliceDocumentDelivery
+      }
+
+      if (res.status < 500) {
+        throw new BadRequestException(response?.detail)
+      }
+
+      throw response
+    } catch (reason) {
+      if (reason instanceof BadRequestException) {
+        throw reason
+      }
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to update document delivery ${policeDocumentId} information for file type code ${updatePoliceDocumentDelivery.fileTypeCode}`,
+      })
+    }
+  }
+
+  async getPoliceDocumentSupplements(
+    fileTypeCode: PoliceFileTypeCode,
+    policeDocumentId: string,
+  ) {
+    switch (fileTypeCode) {
+      case PoliceFileTypeCode.VERDICT:
+        return await this.auditTrailService.audit(
+          'digital-mailbox-api',
+          AuditedAction.GET_VERDICT_SUPPLEMENTS,
+          this.getVerdictSupplements(policeDocumentId),
+          policeDocumentId,
+        )
+    }
+
+    throw new BadRequestException('Police file type code not supported')
+  }
+
+  private async getVerdictSupplements(policeDocumentId: string) {
+    try {
+      const res = await fetch(
+        `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+        },
+      )
+      if (res.ok) {
+        const verdictSupplements = (await res.json()) as {
+          serviceInformationForDefendant: InformationForDefendant[]
+        }
+        const { serviceInformationForDefendant } = verdictSupplements
+
+        if (
+          serviceInformationForDefendant?.length === 0 ||
+          !serviceInformationForDefendant
+        ) {
+          return { groups: [] }
+        }
+
+        return {
+          groups: [
+            {
+              label: 'Mikilvægar upplýsingar til dómfellda',
+              items: getRulingInstructionItems(serviceInformationForDefendant),
+            } as Groups,
+          ],
+        }
+      }
+
+      throw new BadRequestException()
+    } catch (error) {
+      this.logger.error(
+        `Failed to retrieve verdict supplements for police document id ${policeDocumentId}`,
+        error,
+      )
+
+      throw new BadRequestException('Failed to retrieve verdict supplements')
     }
   }
 }

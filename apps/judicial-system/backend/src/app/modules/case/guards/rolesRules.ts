@@ -7,10 +7,9 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CivilClaimant, Defendant } from '../../defendant'
+import { Case, CivilClaimant, Defendant } from '../../repository'
 import { TransitionCaseDto } from '../dto/transitionCase.dto'
 import { UpdateCaseDto } from '../dto/updateCase.dto'
-import { Case } from '../models/case.model'
 
 const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'type',
@@ -197,6 +196,27 @@ export const defenderUpdateRule: RolesRule = {
   role: UserRole.DEFENDER,
   type: RulesType.FIELD,
   dtoFields: limitedAccessFields,
+}
+
+// Allows prison admin to update a specific set of fields
+export const prisonSystemAdminUpdateRule: RolesRule = {
+  role: UserRole.PRISON_SYSTEM_STAFF,
+  type: RulesType.FIELD,
+  dtoFields: [
+    'isRegisteredInPrisonSystem',
+    'caseModifiedExplanation',
+    'isolationToDate',
+    'validToDate',
+  ],
+  canActivate(request) {
+    const user: User = request.user?.currentUser
+    // Deny if something is missing or if the user is not a prison admin
+    if (!user || !isPrisonAdminUser(user)) {
+      return false
+    }
+
+    return true
+  },
 }
 
 // Allows prosecutors to transition cases

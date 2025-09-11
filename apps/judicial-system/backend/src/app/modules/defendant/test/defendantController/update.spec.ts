@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
@@ -11,9 +12,8 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case } from '../../../case'
+import { Case, Defendant } from '../../../repository'
 import { UpdateDefendantDto } from '../../dto/updateDefendant.dto'
-import { Defendant } from '../../models/defendant.model'
 
 interface Then {
   result: Defendant
@@ -38,15 +38,22 @@ describe('DefendantController - Update', () => {
   } as Defendant
 
   let mockMessageService: MessageService
+  let transaction: Transaction
   let mockDefendantModel: typeof Defendant
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, defendantModel, defendantController } =
+    const { messageService, sequelize, defendantModel, defendantController } =
       await createTestingDefendantModule()
 
     mockMessageService = messageService
     mockDefendantModel = defendantModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockUpdate = mockDefendantModel.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
@@ -197,6 +204,15 @@ describe('DefendantController - Update', () => {
               type: MessageType.DEFENDANT_NOTIFICATION,
               caseId,
               body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
+              elementId: defendantId,
+            },
+            {
+              type: MessageType.DEFENDANT_NOTIFICATION,
+              caseId,
+              user,
+              body: {
+                type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
+              },
               elementId: defendantId,
             },
           ])

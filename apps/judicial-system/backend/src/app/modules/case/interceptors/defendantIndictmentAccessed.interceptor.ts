@@ -12,21 +12,20 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { DefendantEventLog, DefendantService } from '../../defendant'
-import { Case } from '../models/case.model'
+import { DefendantService } from '../../defendant'
+import { Case, DefendantEventLog } from '../../repository'
 
 const hasValidOpenByPrisonAdminEvent = (
   defendantEventLogs: DefendantEventLog[],
 ) => {
-  const sentToPrisonAdminDate = DefendantEventLog.getDefendantEventLogTypeDate(
+  const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
     DefendantEventType.SENT_TO_PRISON_ADMIN,
     defendantEventLogs,
   )
-  const openedByPrisonAdminDate =
-    DefendantEventLog.getDefendantEventLogTypeDate(
-      DefendantEventType.OPENED_BY_PRISON_ADMIN,
-      defendantEventLogs,
-    )
+  const openedByPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.OPENED_BY_PRISON_ADMIN,
+    defendantEventLogs,
+  )
   return (
     sentToPrisonAdminDate &&
     openedByPrisonAdminDate &&

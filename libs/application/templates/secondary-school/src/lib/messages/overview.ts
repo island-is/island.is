@@ -165,10 +165,41 @@ export const overview = {
       defaultMessage: 'Hætta við breytingar',
       description: 'Abort changes button',
     },
+    withdrawn: {
+      id: 'ss.application:overview.buttons.withdrawn',
+      defaultMessage: 'Afturkalla rýni',
+      description: 'Withdrawn application button',
+    },
     received: {
       id: 'ss.application:overview.buttons.received',
       defaultMessage: 'Móttekin',
       description: 'Received application button',
+    },
+    dismissed: {
+      id: 'ss.application:overview.buttons.dismissed',
+      defaultMessage: 'Vísað frá',
+      description: 'Dismissed application button',
+    },
+  }),
+  applicationDataHasBeenPruned: defineMessages({
+    submitted: {
+      id: 'ss.application:overview.applicationDataHasBeenPruned.submitted',
+      defaultMessage:
+        'Umsókn er innsend. Ef það þarf að breyta umsókn þarf að eyða þessari og gera nýja.',
+      description:
+        'Overview message if application data had been pruned, and application is in submitted state',
+    },
+    inReview: {
+      id: 'ss.application:overview.applicationDataHasBeenPruned.inReview',
+      defaultMessage: 'Umsókn er í vinnslu hjá stofnun.',
+      description:
+        'Overview message if application data had been pruned, and application is in in review state',
+    },
+    completed: {
+      id: 'ss.application:overview.applicationDataHasBeenPruned.completed',
+      defaultMessage: 'Umsókn er afgreidd.',
+      description:
+        'Overview message if application data had been pruned, and application is in completed state',
     },
   }),
 }

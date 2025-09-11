@@ -1,6 +1,6 @@
 import { FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import { AnimatePresence } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
@@ -12,10 +12,11 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
+  isPrisonAdminUser,
   isPrisonSystemUser,
   isProsecutionUser,
   isRestrictionCase,
@@ -112,7 +113,7 @@ const getNextButtonText = (
     ? formatMessage(m.sections.caseExtension.buttonLabel, {
         caseType: workingCase.type,
       })
-    : capitalize(formatMessage(strings.nextButtonReopenText))
+    : 'Leiðrétta þingbók eða úrskurð'
 
 export const getExtensionInfoText = (
   formatMessage: IntlShape['formatMessage'],
@@ -250,7 +251,9 @@ export const SignedVerdictOverview: FC = () => {
    */
   const canModifyCaseDates = useCallback(() => {
     return (
-      (isProsecutionUser(user) || isDistrictCourtUser(user)) &&
+      (isProsecutionUser(user) ||
+        isDistrictCourtUser(user) ||
+        isPrisonAdminUser(user)) &&
       isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])
@@ -445,13 +448,7 @@ export const SignedVerdictOverview: FC = () => {
               <Button
                 variant="text"
                 preTextIcon="arrowBack"
-                onClick={() =>
-                  router.push(
-                    isPrisonSystemUser(user)
-                      ? constants.PRISON_CASES_ROUTE
-                      : constants.CASES_ROUTE,
-                  )
-                }
+                onClick={() => router.push(getStandardUserDashboardRoute(user))}
               >
                 {formatMessage(core.back)}
               </Button>
@@ -637,7 +634,7 @@ export const SignedVerdictOverview: FC = () => {
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
-            previousUrl={constants.CASES_ROUTE}
+            previousUrl={getStandardUserDashboardRoute(user)}
             hideNextButton={shouldHideNextButton(workingCase, user)}
             nextButtonText={getNextButtonText(formatMessage, workingCase, user)}
             onNextButtonClick={() => handleNextButtonClick()}
@@ -653,15 +650,22 @@ export const SignedVerdictOverview: FC = () => {
             onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
           />
         )}
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {isModifyingDates && (
-            <ModifyDatesModal
-              workingCase={workingCase}
-              onSubmit={onModifyDatesSubmit}
-              isSendingNotification={isSendingNotification}
-              isUpdatingCase={isUpdatingCase}
-              setIsModifyingDates={setIsModifyingDates}
-            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              key="modify-dates-modal"
+            >
+              <ModifyDatesModal
+                workingCase={workingCase}
+                onSubmit={onModifyDatesSubmit}
+                isSendingNotification={isSendingNotification}
+                isUpdatingCase={isUpdatingCase}
+                closeModal={() => setIsModifyingDates(false)}
+              />
+            </motion.div>
           )}
         </AnimatePresence>
         {requestCourtRecordSignatureResponse && (

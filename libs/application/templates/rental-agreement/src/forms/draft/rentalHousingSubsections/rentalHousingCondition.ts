@@ -6,31 +6,29 @@ import {
   buildTextField,
   buildFileUploadField,
 } from '@island.is/application/core'
-import {
-  extractApplicationAnswers,
-  getInspectorOptions,
-} from '../../../utils/utils'
+import { applicationAnswers } from '../../../shared'
 import { Routes, RentalHousingConditionInspector } from '../../../utils/enums'
-import { housingCondition } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
+import { getInspectorOptions } from '../../../utils/options'
 
 export const RentalHousingCondition = buildSubSection({
   id: Routes.CONDITION,
-  title: housingCondition.subSectionName,
+  title: m.housingCondition.subSectionName,
   children: [
     buildMultiField({
       id: Routes.CONDITION,
-      title: housingCondition.pageTitle,
-      description: housingCondition.pageDescription,
+      title: m.housingCondition.pageTitle,
+      description: m.housingCondition.pageDescription,
       children: [
         buildDescriptionField({
           id: 'condition.inspectorTitle',
-          title: housingCondition.inspectorTitle,
+          title: m.housingCondition.inspectorTitle,
           titleVariant: 'h3',
           space: 1,
         }),
         buildRadioField({
           id: 'condition.inspector',
-          description: housingCondition.inspectorDescription,
+          description: m.housingCondition.inspectorDescription,
           options: getInspectorOptions(),
           clearOnChange: ['condition.inspectorName'],
           defaultValue: RentalHousingConditionInspector.CONTRACT_PARTIES,
@@ -38,39 +36,37 @@ export const RentalHousingCondition = buildSubSection({
         }),
         buildTextField({
           id: 'condition.inspectorName',
-          title: housingCondition.independentInspectorNameLabel,
-          placeholder: housingCondition.independentInspectorNamePlaceholder,
+          title: m.housingCondition.independentInspectorNameLabel,
+          placeholder: m.housingCondition.independentInspectorNamePlaceholder,
           condition: (answers) => {
-            const { inspectorOptions } = extractApplicationAnswers(answers)
+            const { inspector } = applicationAnswers(answers)
             return (
-              inspectorOptions ===
-              RentalHousingConditionInspector.INDEPENDENT_PARTY
+              inspector === RentalHousingConditionInspector.INDEPENDENT_PARTY
             )
           },
           required: true,
         }),
         buildDescriptionField({
           id: 'condition.resultsTitle',
-          title: housingCondition.inspectionResultsTitle,
+          title: m.housingCondition.inspectionResultsTitle,
           titleVariant: 'h3',
           space: 6,
         }),
         buildTextField({
           id: 'condition.resultsDescription',
-          title: housingCondition.inspectionResultsInputLabel,
-          description: housingCondition.inspectionResultsDescription,
-          placeholder: housingCondition.inspectionResultsInputPlaceholder,
+          title: m.housingCondition.inspectionResultsInputLabel,
+          description: m.housingCondition.inspectionResultsDescription,
+          placeholder: m.housingCondition.inspectionResultsInputPlaceholder,
           variant: 'textarea',
           rows: 8,
         }),
         buildFileUploadField({
           id: 'condition.resultsFiles',
-          title: housingCondition.fileUploadTitle,
-          uploadHeader: housingCondition.fileUploadTitle,
-          uploadDescription: housingCondition.fileUploadDescription,
+          title: m.housingCondition.fileUploadTitle,
+          uploadHeader: m.housingCondition.fileUploadTitle,
+          uploadDescription: m.housingCondition.fileUploadDescription,
           uploadAccept: '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
           uploadMultiple: true,
-          forImageUpload: true,
         }),
       ],
     }),

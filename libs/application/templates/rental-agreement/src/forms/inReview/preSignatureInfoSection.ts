@@ -8,54 +8,41 @@ import {
   YesOrNoEnum,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import {
-  formatNationalId,
-  formatPhoneNumber,
-  extractApplicationAnswers,
-} from '../../utils/utils'
-import { inReview } from '../../lib/messages'
+import { applicationAnswers } from '../../shared'
+import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
+import * as m from '../../lib/messages'
 
 export const PreSignatureInfoSection = buildSection({
   id: 'preSignatureInfo',
-  title: inReview.preSignatureInfo.sectionName,
+  title: m.inReview.preSignatureInfo.sectionName,
   children: [
     buildMultiField({
       id: 'preSignatureInfo',
-      title: inReview.preSignatureInfo.sectionName,
-      description: inReview.preSignatureInfo.pageDescription,
+      title: m.inReview.preSignatureInfo.sectionName,
+      description: m.inReview.preSignatureInfo.pageDescription,
       children: [
         buildDescriptionField({
           id: 'preSignatureInfo.info',
-          title: inReview.preSignatureInfo.infoHeading,
-          description: inReview.preSignatureInfo.infoBullets,
+          title: m.inReview.preSignatureInfo.infoHeading,
+          description: m.inReview.preSignatureInfo.infoBullets,
           titleVariant: 'h3',
           space: 0,
         }),
         buildStaticTableField({
-          title: inReview.preSignatureInfo.tableTitle,
+          title: m.inReview.preSignatureInfo.tableTitle,
           marginTop: 6,
           header: [
-            inReview.preSignatureInfo.tableHeaderName,
-            inReview.preSignatureInfo.tableHeaderId,
-            inReview.preSignatureInfo.tableHeaderPhone,
-            inReview.preSignatureInfo.tableHeaderEmail,
+            m.inReview.preSignatureInfo.tableHeaderName,
+            m.inReview.preSignatureInfo.tableHeaderId,
+            m.inReview.preSignatureInfo.tableHeaderPhone,
+            m.inReview.preSignatureInfo.tableHeaderEmail,
           ],
           rows: (application) => {
-            const { landlords, tenants } = extractApplicationAnswers(
+            const { landlords, tenants } = applicationAnswers(
               application.answers,
             )
 
-            const filterLandlords = landlords?.filter(
-              (landlord) => landlord.isRepresentative?.length === 0,
-            )
-            const filterTenants = tenants?.filter(
-              (tenant) => tenant.isRepresentative?.length === 0,
-            )
-
-            const signees = [
-              ...(filterLandlords ?? []),
-              ...(filterTenants ?? []),
-            ]
+            const signees = [...(landlords ?? []), ...(tenants ?? [])]
 
             return signees.map((person) => [
               person.nationalIdWithName.name ?? '',
@@ -72,7 +59,7 @@ export const PreSignatureInfoSection = buildSection({
           options: [
             {
               value: YesOrNoEnum.YES,
-              label: inReview.preSignatureInfo.statementLabel,
+              label: m.inReview.preSignatureInfo.statementLabel,
             },
           ],
           large: true,
@@ -84,7 +71,7 @@ export const PreSignatureInfoSection = buildSection({
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: inReview.preSignatureInfo.submitButtonText,
+              name: m.inReview.preSignatureInfo.submitButtonText,
               type: 'sign',
             },
           ],

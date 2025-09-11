@@ -2,6 +2,10 @@ name: 'Cancel workflow if label is not present'
 description: 'Checks if label is present on pull-request'
 
 inputs:
+  working-directory:
+    required: false
+    default: '.'
+    description: 'Working directory'
   label:
     required: false
     default: 'deploy-feature'
@@ -36,5 +40,5 @@ runs:
       with:
         github-token: ${{ inputs.token }}
         script: |
-          const { default: main } = await import('${{github.workspace}}/.github/actions/check-label/main.mjs')
+          const { default: main } = await import('${{github.workspace}}/${{inputs.working-directory}}/.github/actions/check-label/main.mjs')
           return await main({ github, context, core })

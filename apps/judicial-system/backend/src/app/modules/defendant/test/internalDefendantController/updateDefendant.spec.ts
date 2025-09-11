@@ -2,9 +2,8 @@ import { uuid } from 'uuidv4'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case } from '../../../case'
+import { Case, Defendant } from '../../../repository'
 import { InternalUpdateDefendantDto } from '../../dto/internalUpdateDefendant.dto'
-import { Defendant } from '../../models/defendant.model'
 
 interface Then {
   result: Defendant
@@ -68,7 +67,7 @@ describe('InternalDefendantController - Update defendant', () => {
     })
     it('should update the defendant', async () => {
       expect(mockDefendantModel.update).toHaveBeenCalledWith(
-        { ...update, isDefenderChoiceConfirmed: false },
+        { ...update },
         { where: { id: defendantId, caseId }, returning: true },
       )
       expect(then.result).toEqual(updatedDefendant)

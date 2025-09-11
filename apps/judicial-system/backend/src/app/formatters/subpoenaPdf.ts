@@ -15,9 +15,7 @@ import { SubpoenaType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories/date.factory'
 import { subpoena as strings } from '../messages'
-import { Case } from '../modules/case'
-import { Defendant } from '../modules/defendant'
-import { Subpoena } from '../modules/subpoena'
+import { Case, Defendant, Subpoena } from '../modules/repository'
 import {
   addConfirmation,
   addEmptyLines,
@@ -72,7 +70,7 @@ export const createSubpoena = (
 
   arraignmentDate = arraignmentDate ?? subpoena?.arraignmentDate
   location = location ?? subpoena?.location
-  subpoenaType = subpoenaType ?? defendant.subpoenaType
+  subpoenaType = subpoenaType ?? subpoena?.type
 
   if (theCase.court?.name) {
     addNormalText(

@@ -10,6 +10,10 @@ export default async function main({ github, context, core }) {
 
   const label = process.env.LABEL
 
+  if (Number.isNaN(prNumber)) {
+    process.exit(0)
+  }
+
   console.log(`Checking PR #${prNumber} for label: ${label}`)
 
   try {
@@ -38,5 +42,5 @@ export default async function main({ github, context, core }) {
     return 1
   }
 
-  return 0
+  process.exit(0)
 }

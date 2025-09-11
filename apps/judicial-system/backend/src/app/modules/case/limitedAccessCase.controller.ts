@@ -39,7 +39,7 @@ import {
 import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import { EventService } from '../event'
-import { User } from '../user'
+import { Case, User } from '../repository'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
@@ -56,12 +56,12 @@ import {
   defenderTransitionRule,
   defenderUpdateRule,
   prisonSystemAdminRulingPdfRule,
+  prisonSystemAdminUpdateRule,
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { DefendantIndictmentAccessedInterceptor } from './interceptors/defendantIndictmentAccessed.interceptor'
 import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
-import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
 import {
   LimitedAccessCaseService,
@@ -120,11 +120,15 @@ export class LimitedAccessCaseController {
     JwtAuthUserGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
     CaseCompletedGuard,
   )
-  @RolesRules(defenderUpdateRule)
+  @RolesRules(prisonSystemAdminUpdateRule, defenderUpdateRule)
   @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/limitedAccess')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
