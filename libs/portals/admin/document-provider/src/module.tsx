@@ -39,6 +39,11 @@ export const documentProviderModule: PortalModule = {
         path: DocumentProviderPaths.DocumentProviderDocumentProvidersSingle,
         element: <SingleDocumentProvider />,
       },
+      {
+        name: m.Settings,
+        path: DocumentProviderPaths.DocumentProviderSettings,
+        element: <CategoriesAndTypesScreen />,
+      },
     ]
   },
 }

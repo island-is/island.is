@@ -36,6 +36,11 @@ export const getDocumentProviderNavigationItems = (
       href: '#',
       items: dynamicChildren,
     },
+    {
+      title: m.Settings.defaultMessage,
+      href: DocumentProviderPaths.DocumentProviderSettings,
+      items: [],
+    },
   ]
 
   const navigation: NavigationProps = {
@@ -45,6 +50,7 @@ export const getDocumentProviderNavigationItems = (
     items: markActive(items),
   }
 
+  console.log('Final Navigation items:', navigation)
   return navigation
 }
 
