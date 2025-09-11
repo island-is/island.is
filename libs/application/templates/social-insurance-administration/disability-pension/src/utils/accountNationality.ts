@@ -7,7 +7,7 @@ export const accountNationality = (
 ): BankAccountType | null => {
   const bankAccountType = getValueViaPath<BankAccountType>(
     applicationAnswers,
-    'paymentInfo.accountType',
+    'paymentInfo.bankAccountType',
     undefined,
   )
 

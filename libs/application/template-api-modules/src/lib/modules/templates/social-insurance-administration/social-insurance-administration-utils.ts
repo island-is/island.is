@@ -656,9 +656,9 @@ export const transformApplicationToDisabilityPensionDTO = (
     },
     hasAppliedForDisabilityAtPensionFund: hasAppliedForDisabilityBefore === YES,
     isInPaidEmployment: inPaidWork === YES,
-    plansToContinueParticipation: willContinueWorking === YES,
+    plansToContinueParticipation: inPaidWork ? willContinueWorking === YES : undefined,
     housingTypeId: residence ?? -1,
-    housingTypeAdditionalDescription: residenceExtraComment ?? '',
+    housingTypeAdditionalDescription: residenceExtraComment,
     numberOfChildrenInHome: children ?? '',
     languageProficiency: icelandicCapability ?? -1,
     applicantNativeLanguage: language ?? '',
@@ -666,18 +666,18 @@ export const transformApplicationToDisabilityPensionDTO = (
     hasBeenInPaidEmployment: previousEmployment?.hasEmployment
       ? previousEmployment.hasEmployment === YES
       : false,
-    lastProfession: previousEmployment?.job ?? '',
-    lastProfessionYear: previousEmployment?.when ?? -1,
-    lastProfessionDescription: 'TODO - VANTAR',
-    lastActivityOfProfession: previousEmployment?.field ?? '',
-    lastActivityOfProfessionDescription: 'TODO - VANTAR',
+    lastProfession: previousEmployment?.job,
+    lastProfessionYear: previousEmployment?.when,
+    lastProfessionDescription: undefined,
+    lastActivityOfProfession: previousEmployment?.field,
+    lastActivityOfProfessionDescription: undefined,
     educationalLevel: educationLevel ?? '',
     workCapacityAssessment: employmentCapability ?? -1,
     importanceOfEmployment: employmentImportance ?? -1,
     hasBeenInRehabilitationOrTreatment: hasHadRehabilitationOrTherapy === YES,
-    rehabilitationOrTreatment: rehabilitationOrTherapyDescription ?? '',
-    rehabilitationOrTreatmentOutcome: rehabilitationOrTherapyResults ?? '',
-    workIncapacityIssue: biggestIssue ?? '',
+    rehabilitationOrTreatment: rehabilitationOrTherapyDescription,
+    rehabilitationOrTreatmentOutcome: rehabilitationOrTherapyResults,
+    workIncapacityIssue: biggestIssue,
     foreignPaymentDetails: {
       receivesForeignPayments: isReceivingBenefitsFromAnotherCountry === YES,
       foreignPaymentDetails: abroadPaymentsList.map(
@@ -726,7 +726,7 @@ export const transformApplicationToDisabilityPensionDTO = (
       year: disabilityRenumerationDateYear ?? -1,
       month: disabilityRenumerationDateMonth ?? -1,
     },
-    comment: extraInfo ?? '',
+    comment: extraInfo
   }
   return dpDto
 }

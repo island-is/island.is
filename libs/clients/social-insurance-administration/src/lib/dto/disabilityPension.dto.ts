@@ -12,28 +12,28 @@ export interface DisabilityPensionDto {
   taxInfo: TaxInfo
   hasAppliedForDisabilityAtPensionFund: boolean
   isInPaidEmployment: boolean
-  plansToContinueParticipation: boolean
-  housingTypeAdditionalDescription: string
+  plansToContinueParticipation?: boolean
+  housingTypeAdditionalDescription?: string
   numberOfChildrenInHome: string
   languageProficiency: number
   applicantNativeLanguage: string
   applicantNativeLanguageOther?: string
   hasBeenInPaidEmployment: boolean
-  lastProfession: string
-  lastProfessionYear: number
-  lastProfessionDescription: string
-  lastActivityOfProfession: string
-  lastActivityOfProfessionDescription: string
+  lastProfession?: string
+  lastProfessionYear?: number
+  lastProfessionDescription?: string
+  lastActivityOfProfession?: string
+  lastActivityOfProfessionDescription?: string
   educationalLevel: string
   workCapacityAssessment: number
   importanceOfEmployment: number
   hasBeenInRehabilitationOrTreatment: boolean
-  rehabilitationOrTreatment: string
-  rehabilitationOrTreatmentOutcome: string
-  workIncapacityIssue: string
+  rehabilitationOrTreatment?: string
+  rehabilitationOrTreatmentOutcome?: string
+  workIncapacityIssue?: string
   foreignPaymentDetails: {
     receivesForeignPayments: boolean
-    foreignPaymentDetails: Array<{
+    foreignPaymentDetails?: Array<{
       countryName: string
       countryCode: string
       foreignNationalId?: string
@@ -44,10 +44,10 @@ export interface DisabilityPensionDto {
   selfAssessment: SelfAssessment
   employmentStatuses: Array<{
     employmentStatus: string
-    explanation: string
+    explanation?: string
   }>
   incomePlan: IncomePlanInfo
-  foreignResidencies: Array<{
+  foreignResidencies?: Array<{
     countryName: string
     countryCode: string
     foreignNationalId: string
@@ -57,7 +57,7 @@ export interface DisabilityPensionDto {
   retroactivePayments: Period
   applicantInfo: ApplicantInfo
   period?: Period
-  comment: string
+  comment?: string
   applicationId: string
   domesticBankInfo?: DomesticBankInfo
   foreignBankInfo?: ForeignBankInfo

@@ -8,7 +8,6 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  formatBankInfo,
   validIBAN,
   validSWIFT,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
@@ -327,15 +326,8 @@ export const dataSchema = z.object({
       ]),
     })
     .partial()
-    .refine(
-      ({ bank, bankAccountType }) => {
-        if (bankAccountType === BankAccountType.ICELANDIC) {
-          const bankAccount = formatBankInfo(bank ?? '')
-          return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
-        }
-        return true
-      },
-      { params: errorMessages.bank, path: ['bank'] },
+    .refine(({ bankAccountType }) => bankAccountType !== undefined,
+      { params: errorMessages.bankAccountType, path: ['bankAccountType'] }
     )
     .refine(
       ({ iban, bankAccountType }) => {
@@ -360,7 +352,7 @@ export const dataSchema = z.object({
     .refine(
       ({ bankName, bankAccountType }) =>
         bankAccountType === BankAccountType.FOREIGN ? !!bankName : true,
-      { path: ['bankName'] },
+       { path: ['bankName'] },
     )
     .refine(
       ({ bankAddress, bankAccountType }) =>
@@ -370,8 +362,11 @@ export const dataSchema = z.object({
     .refine(
       ({ currency, bankAccountType }) =>
         bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
-      { path: ['currency'] },
+       {  path: ['currency'] },
     )
+    .refine(
+      ({ personalAllowance  }) => personalAllowance !== undefined,
+      { params: errorMessages.personalAllowanceUse, path: ['personalAllowance'] })
     .refine(
       ({ personalAllowance, personalAllowanceUsage }) => {
         if (personalAllowance === YES) {

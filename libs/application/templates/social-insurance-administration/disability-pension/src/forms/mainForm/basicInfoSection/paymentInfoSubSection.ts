@@ -28,7 +28,7 @@ import { Application, FormValue } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
-import { accountNationality } from '../../../utils'
+import { accountNationality, getApplicationExternalData } from '../../../utils'
 import { siaGeneralCurrencies } from '../../../graphql/queries'
 import { SocialInsuranceGeneralCurrenciesQuery } from '../../../types/schema'
 
@@ -49,7 +49,7 @@ export const paymentInfoSubSection = buildSubSection({
           message: disabilityPensionFormMessage.paymentInfo.notice,
         }),
         buildRadioField({
-          id: `${SectionRouteEnum.PAYMENT_INFO}.accountType`,
+          id: `${SectionRouteEnum.PAYMENT_INFO}.bankAccountType`,
           title: disabilityPensionFormMessage.paymentInfo.accountType,
           width: 'full',
           largeButtons: false,
@@ -90,11 +90,7 @@ export const paymentInfoSubSection = buildSubSection({
           placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
           required: true,
           defaultValue: (application: Application) => {
-            const bankInfo = getValueViaPath<BankInfo>(
-              application.externalData,
-              'socialInsuranceAdministrationApplicant.data.bankAccount',
-            )
-
+           const {bankInfo} = getApplicationExternalData(application.externalData)
             return friendlyFormatIBAN(bankInfo?.iban)
           },
           condition: (formValue: FormValue) =>
@@ -107,10 +103,7 @@ export const paymentInfoSubSection = buildSubSection({
           width: 'half',
           required: true,
           defaultValue: (application: Application) => {
-            const bankInfo = getValueViaPath<BankInfo>(
-              application.externalData,
-              'socialInsuranceAdministrationApplicant.data.bankAccount',
-            )
+           const {bankInfo} = getApplicationExternalData(application.externalData)
             return friendlyFormatSWIFT(bankInfo?.swift)
           },
           condition: (formValue: FormValue) =>
@@ -131,10 +124,7 @@ export const paymentInfoSubSection = buildSubSection({
             return getCurrencies(data.socialInsuranceGeneral.currencies ?? [])
           },
           defaultValue: (application: Application) => {
-            const bankInfo = getValueViaPath<BankInfo>(
-              application.externalData,
-              'socialInsuranceAdministrationApplicant.data.bankAccount',
-            )
+           const { bankInfo } = getApplicationExternalData(application.externalData)
             return !isEmpty(bankInfo) ? bankInfo.currency : ''
           },
           condition: (formValue: FormValue) =>
@@ -146,10 +136,7 @@ export const paymentInfoSubSection = buildSubSection({
           width: 'half',
           required: true,
           defaultValue: (application: Application) => {
-            const bankInfo = getValueViaPath<BankInfo>(
-              application.externalData,
-              'socialInsuranceAdministrationApplicant.data.bankAccount',
-            )
+           const { bankInfo } = getApplicationExternalData(application.externalData)
             return bankInfo?.foreignBankName ? bankInfo.foreignBankName : ''
           },
           condition: (formValue: FormValue) =>
@@ -161,10 +148,7 @@ export const paymentInfoSubSection = buildSubSection({
           width: 'half',
           required: true,
           defaultValue: (application: Application) => {
-            const bankInfo = getValueViaPath<BankInfo>(
-              application.externalData,
-              'socialInsuranceAdministrationApplicant.data.bankAccount',
-            )
+           const { bankInfo } = getApplicationExternalData(application.externalData)
             return bankInfo?.foreignBankAddress
               ? bankInfo.foreignBankAddress
               : ''
@@ -173,7 +157,7 @@ export const paymentInfoSubSection = buildSubSection({
             accountNationality(formValue) === BankAccountType.FOREIGN,
         }),
         buildRadioField({
-          id: `${SectionRouteEnum.PAYMENT_INFO}.usePersonalAllowance`,
+          id: `${SectionRouteEnum.PAYMENT_INFO}.personalAllowance`,
           title: disabilityPensionFormMessage.paymentInfo.personalAllowance,
           width: 'half',
           options: getYesNoOptions(),
@@ -190,7 +174,7 @@ export const paymentInfoSubSection = buildSubSection({
           condition: (formValue: FormValue) => {
             const personalAllowance = getValueViaPath<YesOrNo>(
               formValue,
-              `${SectionRouteEnum.PAYMENT_INFO}.usePersonalAllowance`,
+              `${SectionRouteEnum.PAYMENT_INFO}.personalAllowance`,
             )
             return personalAllowance === YES
           },

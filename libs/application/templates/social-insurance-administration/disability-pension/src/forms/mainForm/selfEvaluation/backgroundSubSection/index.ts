@@ -19,7 +19,7 @@ export const backgroundInfoSubSection = buildSubSection({
   id: SectionRouteEnum.BACKGROUND_INFO,
   title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
   children: [
-    /*assistanceField,
+    assistanceField,
     maritalStatusField,
     residenceField,
     childrenField,
@@ -30,7 +30,7 @@ export const backgroundInfoSubSection = buildSubSection({
     educationLevelField,
     employmentCapabilityField,
     employmentImportanceField,
-    rehabilitationOrTherapyField,*/
+    rehabilitationOrTherapyField,
     biggestIssueField,
   ],
 })
