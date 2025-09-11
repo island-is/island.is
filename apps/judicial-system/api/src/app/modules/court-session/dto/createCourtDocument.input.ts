@@ -1,18 +1,18 @@
-import { IsString, IsUUID } from 'class-validator'
+import { Allow, IsString } from 'class-validator'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class CreateCourtDocumentInput {
+  @Allow()
   @Field(() => ID)
-  @IsUUID()
   readonly caseId!: string
 
+  @Allow()
   @Field(() => ID)
-  @IsUUID()
   readonly courtSessionId!: string
 
-  @Field(() => String)
+  @Allow()
   @IsString()
   @Field(() => String)
   readonly name!: string

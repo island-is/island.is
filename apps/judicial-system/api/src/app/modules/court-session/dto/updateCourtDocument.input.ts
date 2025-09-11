@@ -1,33 +1,29 @@
-import {
-  IsInt,
-  IsOptional,
-  IsPositive,
-  IsString,
-  IsUUID,
-} from 'class-validator'
+import { Allow, IsInt, IsOptional, IsPositive, IsString } from 'class-validator'
 
 import { Field, ID, InputType, Int } from '@nestjs/graphql'
 
 @InputType()
 export class UpdateCourtDocumentInput {
+  @Allow()
   @Field(() => ID)
-  @IsUUID()
   readonly caseId!: string
 
+  @Allow()
   @Field(() => ID)
-  @IsUUID()
   readonly courtSessionId!: string
 
+  @Allow()
   @Field(() => ID)
-  @IsUUID()
   readonly courtDocumentId!: string
 
+  @Allow()
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
   @IsPositive()
   readonly documentOrder?: number
 
+  @Allow()
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
