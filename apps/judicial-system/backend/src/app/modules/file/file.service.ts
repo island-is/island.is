@@ -70,7 +70,7 @@ export class FileService {
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
     private readonly messageService: MessageService,
-    private readonly courtDocumentSservice: CourtDocumentService,
+    private readonly courtDocumentService: CourtDocumentService,
     private readonly internalCaseService: InternalCaseService,
     @Inject(fileModuleConfig.KEY)
     private readonly config: ConfigType<typeof fileModuleConfig>,
@@ -453,7 +453,7 @@ export class FileService {
           CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
         ].includes(file.category)
       ) {
-        await this.courtDocumentSservice.create(
+        await this.courtDocumentService.create(
           theCase.id,
           {
             documentType: CourtDocumentType.UPLOADED_DOCUMENT,
