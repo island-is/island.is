@@ -265,7 +265,8 @@ const Summary: FC = () => {
       {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
           title="Viltu ljúka máli?"
-          text="Dómurinn verður sendur í rafræna birtingu á island.is. Vinsamlegast rýnið skjal fyrir staðfestingu."
+          text={`Vinsamlegast rýnið skjal fyrir staðfestingu.            
+Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. Ef birta þarf dóminn verður hann sendur í rafræna birtingu í stafrænt pósthólf dómfellda á island.is.`}
           primaryButton={{
             text: 'Staðfesta',
             onClick: async () => await handleModalPrimaryButtonClick(),
