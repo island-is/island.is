@@ -77,6 +77,12 @@
         "cwd": "infra"
       }
     },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/form-system/web/src/{app,components,routes,lib}/**/*.{js,ts,tsx}'"
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
