@@ -167,6 +167,7 @@ export interface EmployeeSickPay {
 export interface UnionSickPay {
   hasUtilizedUnionSickPayRights: number | null
   unionNationalId?: string
+  unionName?: string
   unionSickPayEndDate?: string
 }
 
@@ -179,10 +180,14 @@ export interface SelfAssessment {
   answers: Answer[]
 }
 
+export interface EmploymentStatus {
+  employmentStatus: string
+  explanation: string | null
+}
+
 export interface PreQuestionnaire {
   highestEducation: string
-  currentEmploymentStatus: string // TODO: Smári needs to change to an array
-  currentEmploymentStatusExplanation?: string
+  employmentStatuses: EmploymentStatus[]
   lastJobTitle?: string
   lastJobYear?: number
   disabilityReason: string

@@ -125,13 +125,15 @@ const AllMunicipalities = ({
               <StartAreaCollection areaId={collection.areas[0]?.id} />
             )}
           <Stack space={3}>
-            {sortBy(collection.areas, 'name').map((area) => {
+            {sortBy(collection.areas, [
+              (area) => !area.isActive, // active first
+              'name', // then alphabetically
+            ]).map((area) => {
               return (
                 <ActionCard
                   key={area.id}
                   heading={area.name}
-                  eyebrow={formatMessage(m.municipality)}
-                  text={
+                  eyebrow={
                     formatMessage(m.totalListsPerMunicipality) +
                     allLists.filter((list) => list.area.id === area.id).length
                   }

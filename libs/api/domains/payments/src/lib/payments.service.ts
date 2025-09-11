@@ -1,13 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { verify } from 'jsonwebtoken'
 import { ConfigType } from '@nestjs/config'
+import * as kennitala from 'kennitala'
 
 import { GetPaymentFlowInput } from './dto/getPaymentFlow.input'
+import { GetPaymentFlowResponse } from './dto/getPaymentFlow.response'
 import {
   PaymentsApi,
-  GetPaymentFlowDTO,
   VerificationStatusResponse,
   VerificationCallbackInput,
+  GetPaymentFlowDTOPaymentStatusEnum,
 } from '@island.is/clients/payments'
 
 import { VerifyCardInput } from './dto/verifyCard.input'
@@ -19,17 +21,25 @@ import { PaymentsApiModuleConfig } from './payments.config'
 import { CreateInvoiceInput } from './dto/createInvoice.input'
 import { CreateInvoiceResponse } from './dto/createInvoice.response'
 import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
+import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
+import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
 
 @Injectable()
 export class PaymentsService {
   constructor(
-    private readonly paymentsApi: PaymentsApi,
     @Inject(PaymentsApiModuleConfig.KEY)
     private readonly config: ConfigType<typeof PaymentsApiModuleConfig>,
+    private readonly paymentsApi: PaymentsApi,
   ) {}
 
-  getPaymentFlow(input: GetPaymentFlowInput): Promise<GetPaymentFlowDTO> {
-    return this.paymentsApi.paymentFlowControllerGetPaymentFlow(input)
+  getPaymentFlow(
+    input: GetPaymentFlowInput,
+    includeEvents = false,
+  ): Promise<GetPaymentFlowResponse> {
+    return this.paymentsApi.paymentFlowControllerGetPaymentFlow({
+      id: input.id,
+      includeEvents,
+    })
   }
 
   getVerificationStatus(
@@ -108,5 +118,30 @@ export class PaymentsService {
 
   async getJwks() {
     return this.paymentsApi.jwksControllerServeJwks()
+  }
+
+  async getPaymentFlows(
+    input: GetPaymentFlowsInput,
+  ): Promise<GetPaymentFlowsResponse> {
+    const xQueryNationalId =
+      input.search && kennitala.isValid(input.search)
+        ? kennitala.sanitize(input.search)
+        : ''
+    const response =
+      await this.paymentsApi.paymentFlowControllerGetPaymentFlows({
+        after: input.after,
+        before: input.before,
+        xQueryNationalId,
+        search: xQueryNationalId ? '' : input.search,
+      })
+
+    return {
+      ...response,
+      data: response.data.map((flow) => ({
+        ...flow,
+        paymentStatus:
+          flow.paymentStatus as unknown as GetPaymentFlowDTOPaymentStatusEnum,
+      })),
+    }
   }
 }

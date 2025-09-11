@@ -11,6 +11,7 @@ import { useGetListsForOwner } from '../../../hooks'
 import { useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
 import SignedList from '../../shared/SignedList'
+import { Skeleton } from '../../../lib/skeletons'
 
 const OwnerView = ({
   currentCollection,
@@ -29,12 +30,9 @@ const OwnerView = ({
 
   return (
     <Box>
-      {!loadingOwnerLists && (
-        <Stack space={6}>
-          <SignedList
-            currentCollection={currentCollection}
-            collectionType={collectionType}
-          />
+      {!loadingOwnerLists ? (
+        <Stack space={8}>
+          <SignedList collectionType={collectionType} />
           <Box>
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.myListsDescription)}
@@ -72,17 +70,27 @@ const OwnerView = ({
                         }
                       : undefined
                   }
-                  tag={{
-                    label: formatMessage(m.collectionIsActive),
-                    variant: 'blue',
-                    outlined: false,
-                  }}
+                  tag={
+                    list.active
+                      ? {
+                          label: formatMessage(m.collectionIsActive),
+                          variant: 'blue',
+                          outlined: false,
+                        }
+                      : {
+                          label: formatMessage(m.collectionClosed),
+                          variant: 'red',
+                          outlined: true,
+                        }
+                  }
                 />
               </Box>
             ))}
           </Box>
           <Managers collectionType={collectionType} />
         </Stack>
+      ) : (
+        <Skeleton />
       )}
     </Box>
   )

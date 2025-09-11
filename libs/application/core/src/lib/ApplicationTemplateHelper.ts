@@ -22,6 +22,7 @@ import {
   TemplateApi,
   PendingAction,
 } from '@island.is/application/types'
+import { formatText } from './formUtils'
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -290,21 +291,27 @@ export class ApplicationTemplateHelper<
       const action = pendingAction(application, currentRole, nationalId)
       return {
         displayStatus: action.displayStatus,
-        content: action.content ? formatMessage(action.content) : undefined,
-        title: action.title ? formatMessage(action.title) : undefined,
-        button: action.button ? formatMessage(action.button) : undefined,
+        content: action.content
+          ? formatText(action.content, application, formatMessage)
+          : undefined,
+        title: action.title
+          ? formatText(action.title, application, formatMessage)
+          : undefined,
+        button: action.button
+          ? formatText(action.button, application, formatMessage)
+          : undefined,
       }
     }
     return {
       displayStatus: pendingAction.displayStatus,
       title: pendingAction.title
-        ? formatMessage(pendingAction.title)
+        ? formatText(pendingAction.title, application, formatMessage)
         : undefined,
       content: pendingAction.content
-        ? formatMessage(pendingAction.content)
+        ? formatText(pendingAction.content, application, formatMessage)
         : undefined,
       button: pendingAction.button
-        ? formatMessage(pendingAction.button)
+        ? formatText(pendingAction.button, application, formatMessage)
         : undefined,
     }
   }

@@ -43,21 +43,6 @@ const VehicleBulkMileage = () => {
   const [vehicleListQuery, { data, loading, error }] =
     useVehiclesListLazyQuery()
 
-  useEffect(() => {
-    vehicleListQuery({
-      variables: {
-        input: {
-          page,
-          pageSize: 10,
-          query: undefined,
-          includeNextMainInspectionDate: false,
-          filterOnlyVehiclesUserCanRegisterMileage: true,
-        },
-      },
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const debouncedQuery = useMemo(() => {
     return debounce(() => {
       vehicleListQuery({
@@ -67,11 +52,12 @@ const VehicleBulkMileage = () => {
             pageSize: 10,
             query: search ?? undefined,
             filterOnlyVehiclesUserCanRegisterMileage: true,
+            includeNextMainInspectionDate: false,
           },
         },
       }).then((res) => {
         const vehicles: Array<VehicleType> =
-          res.data?.vehiclesListV3?.data
+          res.data?.vehiclesListV3?.vehicleList
             ?.map((v) => {
               if (!v.make) {
                 return null

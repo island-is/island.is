@@ -20,6 +20,7 @@ import { FormsService } from './forms.service'
 import {
   CreateFormInput,
   DeleteFormInput,
+  PublishFormInput,
   GetFormInput,
   GetFormsInput,
   UpdateFormInput,
@@ -59,6 +60,17 @@ export class FormsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.formsService.deleteForm(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'publishFormSystemForm',
+    nullable: true,
+  })
+  async publishForm(
+    @Args('input', { type: () => PublishFormInput }) input: PublishFormInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.formsService.publishForm(user, input)
   }
 
   @Query(() => FormResponse, {

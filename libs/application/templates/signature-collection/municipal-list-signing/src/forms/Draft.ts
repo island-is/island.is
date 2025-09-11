@@ -12,13 +12,13 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryIndividual,
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 import { format as formatNationalId } from 'kennitala'
+import format from 'date-fns/format'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
@@ -29,13 +29,16 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: 'selectCandidateSection',
-      condition: (_, externalData) => {
+      condition: (answers, externalData) => {
         const lists =
           getValueViaPath<SignatureCollectionList[]>(
             externalData,
             'getList.data',
           ) || []
-        return lists.length > 1
+
+        const initialQuery = getValueViaPath(answers, 'initialQuery')
+
+        return lists.length > 0 && !initialQuery
       },
       children: [
         buildMultiField({
@@ -45,7 +48,6 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
-              backgroundColor: 'white',
               defaultValue: '',
               required: true,
               options: ({ externalData }) => {
@@ -56,7 +58,12 @@ export const Draft: Form = buildForm({
                   ) || []
                 return data?.map((list) => ({
                   value: list.id,
-                  label: list.title,
+                  label: `${list.candidate.name} (${
+                    list.candidate.ownerName
+                  } - ${format(
+                    new Date(list.candidate.ownerBirthDate),
+                    'dd.MM.yy',
+                  )})`,
                   disabled:
                     list.maxReached || new Date(list.endTime) < new Date(),
                   tag: list.maxReached
@@ -88,6 +95,31 @@ export const Draft: Form = buildForm({
           description: m.listDescription,
           children: [
             buildTextField({
+              id: 'municipality',
+              title: m.municipality,
+              width: 'full',
+              readOnly: true,
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.area?.name
+              },
+            }),
+            buildTextField({
               id: 'candidateName',
               title: m.candidateName,
               width: 'full',
@@ -99,10 +131,17 @@ export const Draft: Form = buildForm({
                     'getList.data',
                   ) || []
 
-                return lists.length === 1
-                  ? lists[0].candidate.name
-                  : lists.find((list) => list.id === answers.listId)?.candidate
-                      .name
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.candidate?.name
               },
             }),
             buildTextField({
@@ -127,17 +166,24 @@ export const Draft: Form = buildForm({
               },
             }),
             buildTextField({
-              id: 'municipality',
-              title: m.municipality,
+              id: 'guarantorsName',
+              title: m.guarantorsName,
               width: 'half',
               readOnly: true,
-              defaultValue: ({ externalData }: Application) => {
-                const municipality =
-                  getValueViaPath<NationalRegistryIndividual>(
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
                     externalData,
-                    'nationalRegistry.data',
-                  )?.address?.locality
-                return municipality
+                    'getList.data',
+                  ) || []
+
+                const name =
+                  lists.length === 1
+                    ? lists[0].candidate.ownerName
+                    : lists.find((list) => list.id === answers.listId)
+                        ?.candidate.ownerName
+
+                return name
               },
             }),
             buildSubmitField({
