@@ -207,8 +207,10 @@ export const BankAccountsRepeater: FC<
                   name={exchangeRateField}
                   label={formatMessage(m.bankAccountInterestRate)}
                   defaultValue={field.exchangeRateOrInterest}
-                  placeholder="0"
+                  placeholder="0 kr."
+                  required
                   error={fieldError?.exchangeRateOrInterest}
+                  currency
                   size="sm"
                   backgroundColor="blue"
                   disabled={field.initial && !field.enabled}

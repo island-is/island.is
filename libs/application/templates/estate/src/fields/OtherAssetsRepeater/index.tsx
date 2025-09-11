@@ -101,13 +101,13 @@ export const OtherAssetsRepeater: FC<
             <Controller
               name={initialField}
               control={control}
-              defaultValue={field.initial || false}
+              defaultValue={field.initial ?? false}
               render={() => <input type="hidden" />}
             />
             <Controller
               name={enabledField}
               control={control}
-              defaultValue={field.enabled || true}
+              defaultValue={field.enabled ?? true}
               render={() => <input type="hidden" />}
             />
             <Box

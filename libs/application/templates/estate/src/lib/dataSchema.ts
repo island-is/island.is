@@ -207,33 +207,31 @@ export const estateSchema = z.object({
         enabled: z.boolean(),
       })
       .refine(
-        ({ accountNumber, balance, exchangeRateOrInterest }) => {
-          return accountNumber !== '' || exchangeRateOrInterest !== ''
-            ? isValidString(balance)
-            : true
+        ({ enabled, accountNumber, balance, exchangeRateOrInterest }) => {
+          if (!enabled) return true
+
+          const errors: string[] = []
+          if (!accountNumber || accountNumber === '')
+            errors.push('accountNumber')
+          if (!isValidString(balance)) errors.push('balance')
+          if (!isValidString(exchangeRateOrInterest))
+            errors.push('exchangeRateOrInterest')
+
+          return errors.length === 0
         },
-        {
-          path: ['balance'],
-        },
-      )
-      .refine(
-        ({ accountNumber, balance, exchangeRateOrInterest }) => {
-          return balance !== '' || exchangeRateOrInterest !== ''
-            ? accountNumber !== ''
-            : true
-        },
-        {
-          path: ['accountNumber'],
-        },
-      )
-      .refine(
-        ({ accountNumber, balance, exchangeRateOrInterest }) => {
-          return accountNumber !== '' || balance !== ''
-            ? isValidString(exchangeRateOrInterest)
-            : true
-        },
-        {
-          path: ['exchangeRateOrInterest'],
+        ({ enabled, accountNumber, balance, exchangeRateOrInterest }) => {
+          if (!enabled) return { message: 'Valid' }
+
+          const errors: string[] = []
+          if (!accountNumber || accountNumber === '')
+            errors.push('accountNumber')
+          if (!isValidString(balance)) errors.push('balance')
+          if (!isValidString(exchangeRateOrInterest))
+            errors.push('exchangeRateOrInterest')
+
+          return {
+            path: errors.length === 1 ? [errors[0]] : ['accountNumber'],
+          }
         },
       )
       .array()

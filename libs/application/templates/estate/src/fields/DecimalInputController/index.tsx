@@ -8,12 +8,11 @@ interface DecimalInputControllerProps {
   label: string
   defaultValue?: string
   placeholder?: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  error?: any
+  error?: string | undefined
   size?: 'xs' | 'sm' | 'md'
   backgroundColor?: 'blue' | 'white'
   disabled?: boolean
-  onChange?: () => void
+  onChange?: (value: string) => void
   required?: boolean
   maxDecimals?: number
 }
@@ -117,7 +116,7 @@ export const DecimalInputController: React.FC<DecimalInputControllerProps> = ({
             const normalizedValue = normalizeDecimalInput(inputValue)
             field.onChange(normalizedValue)
             if (onChange) {
-              onChange()
+              onChange(normalizedValue)
             }
           }}
         />
