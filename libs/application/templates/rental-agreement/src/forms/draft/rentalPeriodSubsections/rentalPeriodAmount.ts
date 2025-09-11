@@ -91,7 +91,6 @@ export const RentalPeriodAmount = buildSubSection({
           },
           defaultValue: (application: Application) => {
             const options = getConsumerIndexDateOptions(application)
-            console.log('options', options)
             return options.length > 1
               ? options[1].value
               : options[0].value ?? undefined
