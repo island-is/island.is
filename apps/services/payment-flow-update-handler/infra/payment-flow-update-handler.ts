@@ -5,14 +5,15 @@ import {
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup =
-  (): ServiceBuilder<'payment-flow-update-handler'> => {
-    const paymentFlowUpdateHandler = service('payment-flow-update-handler')
+const namespace = 'services-payment-flow-update-handler'
+const serviceName = namespace
+const imageName = namespace
 
-    return paymentFlowUpdateHandler
-      .image('services-payment-flow-update-handler')
-      .namespace('payment-flow-update-handler')
-      .serviceAccount('payment-flow-update-handler')
+export const serviceSetup =
+  (): ServiceBuilder<'services-payment-flow-update-handler'> =>
+    service(serviceName)
+      .image(imageName)
+      .namespace(namespace)
       .env({
         PAYMENTS_WEB_URL: {
           dev: ref(
@@ -26,10 +27,10 @@ export const serviceSetup =
         },
         PAYMENT_FLOW_UPDATE_HANDLER_API_URL: ref(
           (ctx) =>
-            `http://payment-flow-update-handler.${
+            `http://${serviceName}.${
               ctx.featureDeploymentName
                 ? `${ctx.featureDeploymentName}`
-                : 'payment-flow-update-handler'
+                : namespace
             }.svc.cluster.local`,
         ),
         LANDSPITALI_WEB_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: {
@@ -59,12 +60,11 @@ export const serviceSetup =
       .ingress({
         internal: {
           host: {
-            dev: 'payment-flow-update-handler',
-            staging: 'payment-flow-update-handler',
-            prod: 'payment-flow-update-handler',
+            dev: serviceName,
+            staging: serviceName,
+            prod: serviceName,
           },
           paths: ['/'],
           public: false,
         },
       })
-  }
