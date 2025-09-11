@@ -95,7 +95,7 @@ const Signees = ({
           <Box marginTop={3}>
             <Box display="flex" justifyContent="flexEnd">
               <Text variant="eyebrow" marginBottom={2}>
-                {formatMessage(m.numberOfValidSigns) + ' ' + totalSignees}
+                {`${formatMessage(m.numberOfValidSigns)} ${totalSignees}`}
               </Text>
             </Box>
             <T.Table>
@@ -165,7 +165,6 @@ const Signees = ({
                   })}
               </T.Body>
             </T.Table>
-
             <Box marginTop={3}>
               <Pagination
                 totalItems={signees.length}

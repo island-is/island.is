@@ -117,7 +117,7 @@ const Signees = ({ list }: { list: SignatureCollectionList }) => {
                 )
               : signees?.length > 0 && (
                   <Text variant="eyebrow" textAlign="right">
-                    {formatMessage(m.totalListResults)}:{' '}
+                    {formatMessage(m.totalValidSignatures)}:{' '}
                     {list.numberOfSignatures}
                   </Text>
                 )}

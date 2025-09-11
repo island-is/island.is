@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Drawer,
-  Icon,
-  Tag,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Drawer, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import PdfReport from '../../../../shared/PdfReport'
 import { m } from '../../../../../lib/messages'
@@ -28,10 +20,9 @@ const ListActions = ({ listId }: { listId: string }) => {
           </Button>
         }
       >
-        <Text variant="h2" color="backgroundBrand" marginY={3}>
+        <Text variant="h2" marginY={5}>
           {formatMessage(m.listActions)}
         </Text>
-        <Divider />
         <Box
           display={['block', 'block', 'flex']}
           justifyContent="spaceBetween"

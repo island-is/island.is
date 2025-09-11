@@ -156,13 +156,19 @@ export const Draft: Form = buildForm({
                     'getList.data',
                   ) || []
 
-                const nationalId =
-                  lists.length === 1
-                    ? lists[0].candidate.nationalId
-                    : lists.find((list) => list.id === answers.listId)
-                        ?.candidate.nationalId
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
 
-                return nationalId ? formatNationalId(nationalId) : undefined
+                const nationalId = lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.candidate?.nationalId
+
+                return nationalId ? formatNationalId(nationalId) : ''
               },
             }),
             buildTextField({
@@ -177,13 +183,17 @@ export const Draft: Form = buildForm({
                     'getList.data',
                   ) || []
 
-                const name =
-                  lists.length === 1
-                    ? lists[0].candidate.ownerName
-                    : lists.find((list) => list.id === answers.listId)
-                        ?.candidate.ownerName
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
 
-                return name
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.candidate?.ownerName
               },
             }),
             buildSubmitField({

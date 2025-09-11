@@ -56,7 +56,10 @@ const ActionCompleteCollectionProcessing = ({
         setModalSubmitReviewIsOpen(false)
         revalidate()
       } else {
-        toast.error(formatMessage(m.toggleCollectionProcessError))
+        toast.error(
+          res?.data?.signatureCollectionAdminProcess.reasons?.[0] ??
+            formatMessage(m.toggleCollectionProcessError),
+        )
       }
     } catch (e) {
       toast.error(e.message)

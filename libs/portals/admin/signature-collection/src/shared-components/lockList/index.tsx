@@ -32,32 +32,26 @@ const ActionLockList = ({
 
   const [lockList, { loading: loadingLockList }] =
     useSignatureCollectionLockListMutation({
-      variables: {
-        input: {
-          listId,
-          collectionType,
-          setLocked: !isLocked,
-        },
-      },
+      variables: { input: { listId, collectionType, setLocked: !isLocked } },
       onCompleted: (response) => {
-        if (response.signatureCollectionLockList.success) {
+        const result = response.signatureCollectionLockList
+
+        if (result?.success) {
           setModalLockListIsOpen(false)
           revalidate()
           toast.success(
             formatMessage(isLocked ? m.unlockListSuccess : m.lockListSuccess),
           )
         } else {
-          const message =
-            response.signatureCollectionLockList?.reasons?.[0] ??
-            formatMessage(m.lockListError)
-          toast.error(message)
+          toast.error(
+            result?.reasons?.[0] ??
+              formatMessage(isLocked ? m.unlockListError : m.lockListError),
+          )
         }
       },
       onError: () => {
         toast.error(
-          isLocked
-            ? formatMessage(m.unlockListError)
-            : formatMessage(m.lockListError),
+          formatMessage(isLocked ? m.unlockListError : m.lockListError),
         )
       },
     })

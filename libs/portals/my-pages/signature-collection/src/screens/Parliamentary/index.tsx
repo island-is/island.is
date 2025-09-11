@@ -15,44 +15,46 @@ import {
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 
+const collectionType = SignatureCollectionCollectionType.Parliamentary
+
 const SignatureCollectionParliamentary = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const userInfo = useUserInfo()
-
-  const collectionType = SignatureCollectionCollectionType.Parliamentary
-
+  const user = useUserInfo()
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection(collectionType)
-  const { isOwner, refetchIsOwner } = useIsOwner(collectionType)
-  const { listsForOwner } = useGetListsForOwner(
+  const { isOwner, loadingIsOwner } = useIsOwner(collectionType)
+  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
     collectionType,
     currentCollection?.id ?? '',
   )
 
+  const isLoading =
+    loadingCurrentCollection || loadingIsOwner || loadingOwnerLists
+
   return (
     <Box>
-      <Intro
-        title={formatMessage(m.pageTitleParliamentary)}
-        intro={formatMessage(m.pageIntro)}
-        slug={listsForOwner?.[0]?.slug}
-      />
-      {!loadingCurrentCollection && isOwner.success ? (
-        <OwnerView
-          refetchIsOwner={refetchIsOwner}
-          currentCollection={currentCollection}
-          isListHolder={
-            !userInfo?.profile?.delegationType ||
-            userInfo?.profile?.delegationType?.includes(
-              AuthDelegationType.ProcurationHolder,
-            )
-          }
-        />
-      ) : (
-        <SigneeView
-          currentCollection={currentCollection}
-          collectionType={collectionType}
-        />
+      {!isLoading && (
+        <>
+          <Intro
+            title={formatMessage(m.pageTitleParliamentary)}
+            intro={formatMessage(m.pageIntro)}
+            slug={listsForOwner?.[0]?.slug}
+          />
+          {isOwner.success ? (
+            <OwnerView
+              currentCollection={currentCollection}
+              isListHolder={
+                !user?.profile?.delegationType ||
+                user?.profile?.delegationType?.includes(
+                  AuthDelegationType.ProcurationHolder,
+                )
+              }
+            />
+          ) : (
+            <SigneeView currentCollection={currentCollection} />
+          )}
+        </>
       )}
     </Box>
   )

@@ -1,7 +1,6 @@
 import {
   ActionCard,
   Box,
-  FilterInput,
   GridColumn,
   GridContainer,
   GridRow,
@@ -12,6 +11,7 @@ import {
   FilterMultiChoice,
   Breadcrumbs,
   Divider,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -19,7 +19,10 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  CollectionStatus,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import {
@@ -35,12 +38,14 @@ import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
+import FindSignature from '../../shared-components/findSignature'
 
 const Lists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { allLists, collection } = useLoaderData() as ListsLoaderReturn
+  const { allLists, collectionStatus, collection } =
+    useLoaderData() as ListsLoaderReturn
 
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
@@ -143,75 +148,85 @@ const Lists = () => {
             }
             marginBottom={4}
           />
+          {collectionStatus === CollectionStatus.Processed && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionProcessedTitle)}
+                message={formatMessage(m.collectionProcessedMessage)}
+              />
+            </Box>
+          )}
+          {collectionStatus === CollectionStatus.InReview && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionPresidentialReviewedTitle)}
+                message={formatMessage(m.collectionPresidentialReviewedMessage)}
+              />
+            </Box>
+          )}
           <Divider />
           <Box marginTop={9} />
-          {lists?.length > 0 && (
-            <GridRow marginBottom={5}>
-              <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
-                <FilterInput
-                  name="input"
-                  placeholder={formatMessage(m.searchInAllListsPlaceholder)}
-                  value={filters.input}
-                  onChange={(value) => setFilters({ ...filters, input: value })}
-                  backgroundColor="blue"
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  marginTop={[2, 2, 2, 0]}
+          <GridRow marginBottom={5}>
+            <GridColumn span={'12/12'}>
+              <FindSignature collectionId={collection.id} />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                marginTop={[2, 2, 2, 0]}
+              >
+                <Filter
+                  labelClear=""
+                  labelClose=""
+                  labelResult=""
+                  labelOpen={formatMessage(m.filterCandidates)}
+                  labelClearAll={formatMessage(m.clearAllFilters)}
+                  resultCount={lists.length}
+                  variant="popover"
+                  onFilterClear={() => {
+                    setFilters({
+                      area: [],
+                      candidate: [],
+                      input: '',
+                    })
+                  }}
                 >
-                  <Filter
-                    labelClear=""
-                    labelClose=""
-                    labelResult=""
-                    labelOpen={formatMessage(m.filter)}
-                    labelClearAll={formatMessage(m.clearAllFilters)}
-                    resultCount={lists.length}
-                    variant="popover"
-                    onFilterClear={() => {
+                  <FilterMultiChoice
+                    labelClear={formatMessage(m.clearFilter)}
+                    categories={[
+                      {
+                        id: 'area',
+                        label: formatMessage(m.countryArea),
+                        selected: filters.area,
+                        filters: countryAreas,
+                      },
+                      {
+                        id: 'candidate',
+                        label: formatMessage(m.candidate),
+                        selected: filters.candidate,
+                        filters: candidates,
+                      },
+                    ]}
+                    onChange={(event) =>
                       setFilters({
-                        area: [],
-                        candidate: [],
-                        input: '',
+                        ...filters,
+                        [event.categoryId]: event.selected,
                       })
-                    }}
-                  >
-                    <FilterMultiChoice
-                      labelClear={formatMessage(m.clearFilter)}
-                      categories={[
-                        {
-                          id: 'area',
-                          label: formatMessage(m.countryArea),
-                          selected: filters.area,
-                          filters: countryAreas,
-                        },
-                        {
-                          id: 'candidate',
-                          label: formatMessage(m.candidate),
-                          selected: filters.candidate,
-                          filters: candidates,
-                        },
-                      ]}
-                      onChange={(event) =>
-                        setFilters({
-                          ...filters,
-                          [event.categoryId]: event.selected,
-                        })
-                      }
-                      onClear={(categoryId) =>
-                        setFilters({
-                          ...filters,
-                          [categoryId]: [],
-                        })
-                      }
-                    />
-                  </Filter>
-                </Box>
-              </GridColumn>
-            </GridRow>
-          )}
+                    }
+                    onClear={(categoryId) =>
+                      setFilters({
+                        ...filters,
+                        [categoryId]: [],
+                      })
+                    }
+                  />
+                </Filter>
+              </Box>
+            </GridColumn>
+          </GridRow>
           {lists?.length > 0 ? (
             <Box>
               <Box marginBottom={2} display="flex" justifyContent="flexEnd">
@@ -225,7 +240,7 @@ const Lists = () => {
                     )
                   : allLists.length > 0 && (
                       <Text variant="eyebrow">
-                        {formatMessage(m.totalListResults)}: {allLists.length}
+                        {formatMessage(m.totalCandidates)}: {candidates.length}
                       </Text>
                     )}
               </Box>
@@ -236,13 +251,11 @@ const Lists = () => {
                     return (
                       <ActionCard
                         key={list.id}
-                        eyebrow={
-                          formatMessage(m.listEndTime) +
-                          ': ' +
-                          format(new Date(list.endTime), 'dd.MM.yyyy')
-                        }
+                        eyebrow={`${formatMessage(m.listEndTime)}: ${format(
+                          new Date(list.endTime),
+                          'dd.MM.yyyy',
+                        )}`}
                         heading={list.title}
-                        text={formatMessage(m.collectionTitle)}
                         progressMeter={{
                           currentProgress: list.numberOfSignatures ?? 0,
                           maxProgress: list.area.min,
@@ -300,12 +313,10 @@ const Lists = () => {
             </Box>
           )}
           {lists?.length > 0 && (
-            <Box>
-              <CompareLists
-                collectionId={collection?.id}
-                collectionType={collection?.collectionType}
-              />
-            </Box>
+            <CompareLists
+              collectionId={collection?.id}
+              collectionType={collection?.collectionType}
+            />
           )}
         </GridColumn>
       </GridRow>

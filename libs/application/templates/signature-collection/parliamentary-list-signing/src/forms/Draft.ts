@@ -24,14 +24,15 @@ export const Draft: Form = buildForm({
     buildSection({
       id: 'selectCandidateSection',
       title: m.selectCandidate,
-      condition: (_, externalData) => {
+      condition: (answers, externalData) => {
         const lists =
           getValueViaPath<SignatureCollectionList[]>(
             externalData,
             'getList.data',
           ) || []
+        const initialQuery = getValueViaPath(answers, 'initialQuery')
 
-        return lists.length > 0
+        return lists.length > 0 && !initialQuery
       },
       children: [
         buildMultiField({

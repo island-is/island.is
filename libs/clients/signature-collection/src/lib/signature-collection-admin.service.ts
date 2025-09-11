@@ -120,13 +120,20 @@ export class SignatureCollectionAdminClientService
   }
 
   async processCollection(collectionId: string, auth: Auth): Promise<Success> {
-    const collection = await this.getApiWithAuth(
-      this.adminApi,
-      auth,
-    ).adminMedmaelasofnunIDToggleSofnunPatch({
-      iD: parseInt(collectionId),
-    })
-    return { success: !!collection }
+    try {
+      const collection = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelasofnunIDToggleSofnunPatch({
+        iD: parseInt(collectionId),
+      })
+      return { success: !!collection }
+    } catch (error) {
+      return {
+        success: false,
+        reasons: error.body ? [error.body] : [],
+      }
+    }
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {

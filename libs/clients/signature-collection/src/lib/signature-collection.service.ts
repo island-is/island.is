@@ -72,7 +72,7 @@ export class SignatureCollectionClientService {
       this.getApiWithAuth(this.electionsApi, auth),
     )
     if (!list.active) {
-      throw new Error('List is not active')
+      throw new Error('Listi er ekki virkur')
     }
     return list
   }
@@ -420,14 +420,24 @@ export class SignatureCollectionClientService {
     },
     auth: User,
   ): Promise<Success> {
-    const { id, isActive } = await this.getLatestCollectionForType(
-      collectionType,
-    )
+    const collection = await this.getLatestCollectionForType(collectionType)
     const { ownedLists, candidate } = await this.getSignee(auth, collectionType)
     const { nationalId } = auth
     if (candidate?.nationalId !== nationalId || !candidate.id) {
       return { success: false, reasons: [ReasonKey.NotOwner] }
     }
+
+    const id =
+      collectionType === CollectionType.LocalGovernmental
+        ? candidate.collectionId
+        : collection.id
+    const isActive =
+      collectionType === CollectionType.LocalGovernmental
+        ? collection.areas.find(
+            (area) => area.collectionId === candidate.collectionId,
+          )?.isActive
+        : collection.isActive
+
     // Lists can only be removed from current collection if it is open
     if (id !== collectionId || !isActive) {
       return { success: false, reasons: [ReasonKey.CollectionNotOpen] }
@@ -437,6 +447,7 @@ export class SignatureCollectionClientService {
       await this.getApiWithAuth(this.candidateApi, auth).frambodIDDelete({
         iD: parseInt(candidate.id),
       })
+
       return { success: true }
     }
     if (!listIds || listIds.length === 0) {

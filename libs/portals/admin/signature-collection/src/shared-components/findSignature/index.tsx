@@ -30,7 +30,7 @@ const FindSignature = ({ collectionId }: { collectionId: string }) => {
   return (
     <Box>
       <GridContainer>
-        <GridRow marginBottom={6}>
+        <GridRow marginBottom={5}>
           <GridColumn span={['12/12', '12/12', '7/12', '7/12']}>
             <FilterInput
               name="searchSignee"

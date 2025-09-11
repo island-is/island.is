@@ -34,7 +34,7 @@ const PdfDocument = ({
               <View style={styles.dividerLine} />
             </View>
 
-            <Text style={styles.header}>Flokkur:</Text>
+            <Text style={styles.header}>Framboð:</Text>
             <Text style={styles.text}>{report.candidateName}</Text>
 
             <Text style={styles.header}>Dagsetning:</Text>

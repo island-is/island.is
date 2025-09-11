@@ -40,24 +40,20 @@ const CompareLists = ({
   const [compareMutation, { loading }] = useBulkCompareMutation()
   const [unSignMutation] = useUnsignAdminMutation()
 
-  const compareLists = async (nationalIds: Array<string>) => {
+  const compareLists = async (nationalIds: string[]) => {
     try {
-      const res = await compareMutation({
-        variables: {
-          input: {
-            collectionId:
-              collectionType ===
-              SignatureCollectionCollectionType.LocalGovernmental
-                ? municipalAreaId ?? ''
-                : collectionId,
-            nationalIds: nationalIds,
-          },
-        },
+      const inputCollectionId =
+        collectionType === SignatureCollectionCollectionType.LocalGovernmental
+          ? municipalAreaId ?? ''
+          : collectionId
+
+      const { data } = await compareMutation({
+        variables: { input: { collectionId: inputCollectionId, nationalIds } },
       })
 
-      if (res.data) {
+      if (data) {
         setUploadResults(
-          res.data?.signatureCollectionAdminBulkCompareSignaturesAllLists,
+          data.signatureCollectionAdminBulkCompareSignaturesAllLists,
         )
       }
     } catch (e) {
@@ -67,27 +63,17 @@ const CompareLists = ({
 
   const unSignFromList = async (signatureId: string) => {
     try {
-      const res = await unSignMutation({
-        variables: {
-          input: {
-            signatureId,
-            collectionType,
-          },
-        },
+      const { data } = await unSignMutation({
+        variables: { input: { signatureId, collectionType } },
       })
 
-      if (res.data?.signatureCollectionAdminUnsign.success) {
+      const unsignResult = data?.signatureCollectionAdminUnsign
+
+      if (unsignResult?.success) {
         toast.success(formatMessage(m.unsignFromListSuccess))
-        setUploadResults(
-          uploadResults?.filter((result: SignatureCollectionSignature) => {
-            return result.id !== signatureId
-          }),
-        )
-      } else if (
-        Array.isArray(res.data?.signatureCollectionAdminUnsign.reasons) &&
-        res.data.signatureCollectionAdminUnsign.reasons.length > 0
-      ) {
-        toast.error(res.data.signatureCollectionAdminUnsign.reasons[0])
+        setUploadResults(uploadResults?.filter((r) => r.id !== signatureId))
+      } else if (unsignResult?.reasons?.length) {
+        toast.error(unsignResult.reasons[0])
       }
     } catch (e) {
       toast.error(e.message)
@@ -97,7 +83,6 @@ const CompareLists = ({
   const onChange = async (newFile: File[]) => {
     setFileList(createFileList(newFile, fileList))
     const data = await getFileData(newFile)
-
     const nationalIds = data.map((d: Record<string, unknown>) => {
       const kennitala = d.Kennitala
       return String(kennitala).replace('-', '')
@@ -199,7 +184,9 @@ const CompareLists = ({
                             <Data>{result.listTitle}</Data>
                             <Data style={{ minWidth: '160px' }}>
                               <Button
-                                variant="utility"
+                                variant="text"
+                                size="small"
+                                colorScheme="destructive"
                                 onClick={() => unSignFromList(result.id)}
                               >
                                 {formatMessage(m.unsignFromList)}

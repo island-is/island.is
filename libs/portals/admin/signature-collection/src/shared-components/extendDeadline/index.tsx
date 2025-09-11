@@ -20,10 +20,11 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 
 const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
+  const { revalidate } = useRevalidator()
+
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)
   const [endDate, setEndDate] = useState(list?.endTime)
   const [extendDeadlineMutation, { loading }] = useExtendDeadlineMutation()
-  const { revalidate } = useRevalidator()
 
   useEffect(() => {
     setEndDate(endDate)
@@ -31,7 +32,7 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
 
   const extendDeadline = async (newEndDate: string) => {
     try {
-      const res = await extendDeadlineMutation({
+      const { data } = await extendDeadlineMutation({
         variables: {
           input: {
             listId: list.id,
@@ -40,14 +41,16 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
           },
         },
       })
-      if (res.data?.signatureCollectionAdminExtendDeadline.success) {
+
+      const res = data?.signatureCollectionAdminExtendDeadline
+
+      if (res?.success) {
         toast.success(formatMessage(m.updateListEndTimeSuccess))
         revalidate()
       } else {
-        const message =
-          res.data?.signatureCollectionAdminExtendDeadline?.reasons?.[0] ??
-          formatMessage(m.updateListEndTimeError)
-        toast.error(message)
+        toast.error(
+          res?.reasons?.[0] ?? formatMessage(m.updateListEndTimeError),
+        )
       }
     } catch (e) {
       toast.error(e.message)

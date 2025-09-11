@@ -31,20 +31,21 @@ const RemoveList = ({ list }: { list: SignatureCollectionList }) => {
         },
       },
       onCompleted: (response) => {
-        if (response.signatureCollectionAdminRemoveList?.success) {
+        const result = response.signatureCollectionAdminRemoveList
+
+        if (result?.success) {
           setModalRemoveListIsOpen(false)
           toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
           navigate(-1)
         } else {
-          const message =
-            response.signatureCollectionAdminRemoveList?.reasons?.[0] ??
-            formatMessage(m.cancelCollectionModalToastError)
-          toast.error(message)
+          toast.error(
+            result?.reasons?.[0] ??
+              formatMessage(m.cancelCollectionModalToastError),
+          )
         }
       },
-      onError: () => {
-        toast.error(formatMessage(m.cancelCollectionModalToastError))
-      },
+      onError: () =>
+        toast.error(formatMessage(m.cancelCollectionModalToastError)),
     })
 
   return (
