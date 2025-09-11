@@ -83,9 +83,9 @@ export class LandspitaliService {
               quantity: 1,
             },
           ],
+          organisationId: LANDSPITALI_NATIONAL_ID,
           payerNationalId:
             input.payerNationalId || this.config.paymentNationalIdFallback,
-          organisationId: LANDSPITALI_NATIONAL_ID,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
           extraData: [
             {
