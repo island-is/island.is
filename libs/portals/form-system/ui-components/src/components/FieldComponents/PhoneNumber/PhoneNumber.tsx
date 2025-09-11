@@ -1,15 +1,15 @@
 import { FormSystemField } from '@island.is/api/schema'
 import {
-  GridRow as Row,
   GridColumn as Column,
   PhoneInput,
+  GridRow as Row,
 } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
+import { Locale } from '@island.is/shared/types'
 import { Dispatch } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import { useIntl } from 'react-intl'
 import { Action, m } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
-import { Locale } from '@island.is/shared/types'
-import { useFormContext, Controller } from 'react-hook-form'
 
 interface Props {
   item: FormSystemField
@@ -27,6 +27,7 @@ export const PhoneNumber = ({ item, dispatch, lang = 'is' }: Props) => {
     <Row>
       <Column>
         <Controller
+          key={item.id}
           name={`${item.id}.phoneNumber`}
           control={control}
           defaultValue={getValue(item, 'phoneNumber') ?? ''}
