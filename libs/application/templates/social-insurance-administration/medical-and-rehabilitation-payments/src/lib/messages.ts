@@ -183,9 +183,9 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     applicantAgeOutOfRangeDescription: {
       id: 'marp.application:not.eligible.applicant.age.out.of.range.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki á aldrinum 18-67 ára.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki á aldri sem heimilar umsókn um sjúkra- og endurhæfingargreiðslur.\n\nEf þú ert yngri en 18 ára, þá þarftu að bíða þar til þú nærð þeim aldri til að geta sótt um.\n\nEf þú hefur náð 67 ára aldri, þá beinir Tryggingastofnun þér að sækja um lífeyrir, en umsókn um ellilífeyrir finnur þú inni á heimsíðu tr.is.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* You are not aged 18-67.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n* You are not of the age allowing an application for medical and rehabilitation payments.\n\nIf you are younger than 18, please wait until you are eligible to apply.\n\nIf you have reached the age of 67, the Social Insurance Administration directs you to apply for a pension. An application for old-age pension can be found on tr.is.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
     baseCertNotFoundDescription: {
       id: 'marp.application:not.eligible.base.cert.not.found.description#markdown',
@@ -208,12 +208,26 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation (issued within the last 7 years).\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
     },
-    baseCertOlderThanSixMonthsDescription: {
-      id: 'marp.application:not.eligible.base.cert.older.than.six.months.description#markdown',
+    latestMedicalDocumentNotFoundDescription: {
+      id: 'marp.application:not.eligible.latest.medical.doc.not.found.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Þú er ekki með gilt grunnvottorð (má vera mest 6 mánaða gamalt).\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n\nÞú ert ekki með gilda staðfestingu eða endurhæfingaráætlun.\n\nTil að geta sótt um sjúkra- og endurhæfingargreiðslur þarft þú til viðbótar við vottorð, eitt af eftirfarandi skjölum:\n*Staðfestingu á viðurkenndri meðferð\n*Staðfestingu á að heilsubrestur kemur í veg fyrir endurhæfingu eða viðurkennda meðferð\n*Staðfestingu á bið eftir viðurkenndri meðferð eða endurhæfingu\n*Endurhæfingaaráætlun - fyrir þá sem eru byrjaðir í endurhæfingu\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation (issued within the last  6 months).\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n\nYou do not have a valid confirmation or rehabilitation plan.\n\nTo be eligible for medical and rehabilitation payments you must, as well as having a valid certificate, have been issued on of the following documents:\n*Confirmation of treatment\n*Confirmation of ill health that prevents rehabilitation or treatment.\n*Confirmation of pending resolution\n*Rehabilitation plan - for those who have started rehabilitation\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
+    noLegalDomicileinIcelandDescription: {
+      id: 'marp.application:not.eligible.no.legal.domicile.in.iceland.description#markdown',
+      // defaultMessage:
+      //   'Ástæðan fyrir því er eftirfarandi:\n* Þú átt nú þegar umsókn um sjúkra- og endurhæfingargreiðslur sem er í matsferli.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      // description:
+      //   'The reason for this is the following:\n* You already have an application for medical and rehabilitation payments in process.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
+    hasActivePaymentsDescription: {
+      id: 'marp.application:not.eligible.has.active.payments.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú átt nú þegar umsókn um sjúkra- og endurhæfingargreiðslur sem er í matsferli.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'The reason for this is the following:\n* You already have an application for medical and rehabilitation payments in process.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
   }),
 
