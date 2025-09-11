@@ -60,13 +60,10 @@ export const estateAssets = buildSection({
               titleVariant: 'h3',
               marginBottom: 2,
             }),
-            buildCustomField(
-              {
-                id: 'estate.inventory',
-                component: 'InventoryFields',
-              },
-              {},
-            ),
+            buildCustomField({
+              id: 'estate.inventory',
+              component: 'InventoryFields',
+            }),
           ],
         }),
       ],
