@@ -144,6 +144,9 @@
       "@island.is/api/domains/intellectual-properties": [
         "libs/api/domains/intellectual-properties/src/index.ts"
       ],
+      "@island.is/api/domains/landspitali": [
+        "libs/api/domains/landspitali/src/index.ts"
+      ],
       "@island.is/api/domains/law-and-order": [
         "libs/api/domains/law-and-order/src/index.ts"
       ],
@@ -673,7 +676,6 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
-      "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
@@ -784,6 +786,7 @@
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
+      "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -1072,6 +1075,9 @@
       "@island.is/portals/admin/ids-admin": [
         "libs/portals/admin/ids-admin/src/index.ts"
       ],
+      "@island.is/portals/admin/payments": [
+        "libs/portals/admin/payments/src/index.ts"
+      ],
       "@island.is/portals/admin/petition": [
         "libs/portals/admin/petition/src/index.ts"
       ],
@@ -1083,9 +1089,6 @@
       ],
       "@island.is/portals/admin/signature-collection": [
         "libs/portals/admin/signature-collection/src/index.ts"
-      ],
-      "@island.is/portals/admin/payments": [
-        "libs/portals/admin/payments/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/my-pages/air-discount": [

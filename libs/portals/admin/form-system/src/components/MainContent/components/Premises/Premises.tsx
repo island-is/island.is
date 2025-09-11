@@ -1,19 +1,19 @@
-import { Stack, Checkbox, Box, Text } from '@island.is/island-ui/core'
-import { useContext, useState } from 'react'
-import { ControlContext } from '../../../../context/ControlContext'
+import { useMutation } from '@apollo/client'
 import {
   FormSystemFormCertificationType,
-  Maybe,
   FormSystemFormCertificationTypeDto,
+  Maybe,
 } from '@island.is/api/schema'
-import { useIntl } from 'react-intl'
-import { useMutation } from '@apollo/client'
 import {
   CREATE_CERTIFICATION,
   DELETE_CERTIFICATION,
 } from '@island.is/form-system/graphql'
-import { removeTypename } from '../../../../lib/utils/removeTypename'
 import { m } from '@island.is/form-system/ui'
+import { Box, Checkbox, Stack, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { useContext, useState } from 'react'
+import { ControlContext } from '../../../../context/ControlContext'
+import { removeTypename } from '../../../../lib/utils/removeTypename'
 
 export const Premises = () => {
   const {
@@ -92,7 +92,7 @@ export const Premises = () => {
       }
     }
   }
-  const { formatMessage } = useIntl()
+  const { formatMessage, lang } = useLocale()
 
   const isChecked = (
     certificationTypeId?: Maybe<string> | undefined,
@@ -115,9 +115,9 @@ export const Premises = () => {
           return (
             <Checkbox
               key={i}
-              label={d?.name?.is}
+              label={d?.name?.[lang] ?? ''}
               name={d?.name?.is ?? ''}
-              subLabel={d?.description?.is}
+              subLabel={d?.description?.[lang]}
               rightContent={d?.description?.is}
               value={d?.id ?? ''}
               large

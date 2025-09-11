@@ -29,6 +29,7 @@ export const GetLatestCollectionForType = gql`
         areaId
         ownerName
         ownerBirthDate
+        hasActiveLists
       }
       isActive
     }
