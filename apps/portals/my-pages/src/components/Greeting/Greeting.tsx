@@ -78,7 +78,7 @@ const Greeting = () => {
         </GridColumn>
         <GridColumn span={'6/12'}>
           <Hidden below="lg">
-            <Box display="flex" justifyContent="center">
+            <Box display="flex" justifyContent="flexEnd">
               <img
                 src={
                   'https://images.ctfassets.net/8k0h54kbe6bj/FkLayBlYHDlSq15d4qjbp/1bc08bc72413a20e746917b082ffeaeb/Skraut.svg'
