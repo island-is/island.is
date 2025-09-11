@@ -411,7 +411,7 @@ export class CourtDocumentRepositoryService {
       const deletedOrder = documentToDelete.documentOrder
 
       // Delete the document
-      if (!documentToDelete.caseFileId || !documentToDelete.generatedPdfUri) {
+      if (!documentToDelete.caseFileId && !documentToDelete.generatedPdfUri) {
         await this.deleteFromDatabase(
           courtDocumentId,
           caseId,
