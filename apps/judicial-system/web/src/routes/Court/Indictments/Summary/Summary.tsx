@@ -56,7 +56,9 @@ const Summary: FC = () => {
   } = useContext(FormContext)
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
     useCase()
-  const [modalVisible, setModalVisible] = useState<'CONFIRM_INDICTMENT'>()
+  const [modalVisible, setModalVisible] = useState<
+    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING'
+  >()
   const [rulingUrl, setRulingUrl] = useState<string>()
   const [hasReviewed, setHasReviewed] = useState<boolean>(false)
   const { user } = useContext(UserContext)
@@ -101,7 +103,7 @@ const Summary: FC = () => {
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
   }
 
-  const handleNextButtonClick = async () => {
+  const handleRuling = async () => {
     const showError = () => toast.error('Dómur fannst ekki')
 
     const rulings = workingCase.caseFiles?.filter(
@@ -118,9 +120,20 @@ const Summary: FC = () => {
 
     if (url) {
       setRulingUrl(url)
-      setModalVisible('CONFIRM_INDICTMENT')
+      setModalVisible('CONFIRM_RULING')
     } else {
       showError()
+    }
+  }
+
+  const handleNextButtonClick = async () => {
+    if (
+      workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.RULING
+    ) {
+      await handleRuling()
+    } else {
+      setModalVisible('CONFIRM_INDICTMENT')
     }
   }
 
@@ -262,7 +275,7 @@ const Summary: FC = () => {
           }
         />
       </FormContentContainer>
-      {modalVisible === 'CONFIRM_INDICTMENT' && (
+      {modalVisible === 'CONFIRM_RULING' && (
         <Modal
           title="Staðfesting dóm"
           text={`Vinsamlegast rýnið skjal fyrir staðfestingu.            
@@ -292,6 +305,21 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
             </div>
           )}
         </Modal>
+      )}
+      {modalVisible === 'CONFIRM_INDICTMENT' && (
+        <Modal
+          title={formatMessage(strings.completeCaseModalTitle)}
+          text={formatMessage(strings.completeCaseModalBody)}
+          primaryButton={{
+            text: formatMessage(strings.completeCaseModalPrimaryButton),
+            onClick: async () => await handleModalPrimaryButtonClick(),
+            isLoading: isTransitioningCase,
+          }}
+          secondaryButton={{
+            text: formatMessage(strings.completeCaseModalSecondaryButton),
+            onClick: () => setModalVisible(undefined),
+          }}
+        />
       )}
     </PageLayout>
   )
