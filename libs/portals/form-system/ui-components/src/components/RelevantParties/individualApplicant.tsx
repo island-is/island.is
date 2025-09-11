@@ -1,30 +1,30 @@
+import { useQuery } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
 import {
+  GET_ADDRESS_BY_NATIONALID,
+  GET_NAME_BY_NATIONALID,
+  removeTypename,
+} from '@island.is/form-system/graphql'
+import {
+  Box,
   GridColumn,
   GridRow,
   Input,
-  Stack,
-  Box,
-  Text,
   PhoneInput,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
-import { m, webMessages } from '../../lib/messages'
-import { NationalIdField } from './components/nationalIdField'
-import {
-  GET_NAME_BY_NATIONALID,
-  GET_ADDRESS_BY_NATIONALID,
-} from '@island.is/form-system/graphql'
-import { useQuery } from '@apollo/client'
-import { User } from './types'
-import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
-import { Dispatch, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
+import { Dispatch, useEffect } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import { useIntl } from 'react-intl'
 import { Action } from '../../lib'
 import { getValue } from '../../lib/getValue'
-import { removeTypename } from '@island.is/form-system/graphql'
-import { useFormContext, Controller } from 'react-hook-form'
-import { Locale } from '@island.is/shared/types'
+import { m } from '../../lib/messages'
+import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
+import { NationalIdField } from './components/nationalIdField'
+import { User } from './types'
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 const PHONE_REGEX = /^[0-9+\-() ]{7,20}$/
@@ -125,9 +125,9 @@ export const IndividualApplicant = ({
               <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
                 <Box marginTop={[2, 2, 0, 0]}>
                   <Input
-                    label={formatMessage(webMessages.postalCode)}
+                    label={formatMessage(m.postalCode)}
                     name="postalCode"
-                    placeholder={formatMessage(webMessages.postalCode)}
+                    placeholder={formatMessage(m.postalCode)}
                     disabled
                     value={address?.postnumer ?? ''}
                   />

@@ -38,6 +38,7 @@ import {
   TrWebExternalModelsServicePortalConfirmationOfPendingResolution,
   TrWebExternalModelsServicePortalConfirmedTreatment,
   TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
@@ -328,5 +329,15 @@ export class SocialInsuranceAdministrationClientService {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
+  }
+
+  async getEmploymentStatuses(
+    user: User,
+  ): Promise<
+    Array<TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEmploymentStatusGet()
   }
 }
