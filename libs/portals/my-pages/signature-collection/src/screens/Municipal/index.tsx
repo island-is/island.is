@@ -12,36 +12,38 @@ import Intro from '../shared/Intro'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/react-spa/bff'
 
+const collectionType = SignatureCollectionCollectionType.LocalGovernmental
+
 const SignatureCollectionMunicipal = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-
-  const collectionType = SignatureCollectionCollectionType.LocalGovernmental
-
   const user = useUserInfo()
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection(collectionType)
-  const { isOwner } = useIsOwner(collectionType)
-  const { listsForOwner } = useGetListsForOwner(collectionType, '')
+  const { isOwner, loadingIsOwner } = useIsOwner(collectionType)
+  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
+    collectionType,
+    '',
+  )
+
+  const isLoading =
+    loadingCurrentCollection || loadingIsOwner || loadingOwnerLists
 
   return (
     <Box>
-      <Intro
-        title={formatMessage(m.pageTitleMunicipal)}
-        intro={formatMessage(m.pageIntro)}
-        slug={listsForOwner?.[0]?.slug}
-      />
-
-      {!loadingCurrentCollection && (isOwner.success || user.profile.actor) ? (
-        <OwnerView
-          currentCollection={currentCollection}
-          collectionType={collectionType}
-        />
-      ) : (
-        <SigneeView
-          currentCollection={currentCollection}
-          collectionType={collectionType}
-        />
+      {!isLoading && (
+        <>
+          <Intro
+            title={formatMessage(m.pageTitleMunicipal)}
+            intro={formatMessage(m.pageIntro)}
+            slug={listsForOwner?.[0]?.slug}
+          />
+          {isOwner.success || user.profile.actor ? (
+            <OwnerView currentCollection={currentCollection} />
+          ) : (
+            <SigneeView currentCollection={currentCollection} />
+          )}
+        </>
       )}
     </Box>
   )

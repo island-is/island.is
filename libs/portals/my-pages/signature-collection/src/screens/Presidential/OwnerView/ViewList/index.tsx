@@ -26,14 +26,18 @@ const ViewList = () => {
           <Box>
             <Text variant="h5">{formatMessage(m.listPeriod)}</Text>
             <Text>
-              {format(new Date(listInfo.startTime), 'dd.MM.yyyy') +
-                ' - ' +
-                format(new Date(listInfo.endTime), 'dd.MM.yyyy')}
+              {`${format(
+                new Date(listInfo.startTime),
+                'dd.MM.yyyy',
+              )} - ${format(new Date(listInfo.endTime), 'dd.MM.yyyy')}`}
             </Text>
             <ListActions listId={listInfo.id} />
             <Divider />
           </Box>
-          <Signees collectionType={collectionType} />
+          <Signees
+            collectionType={collectionType}
+            totalSignees={listInfo?.numberOfSignatures ?? 0}
+          />
         </Stack>
       )}
     </Box>

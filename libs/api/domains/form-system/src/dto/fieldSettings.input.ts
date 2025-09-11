@@ -68,13 +68,13 @@ export class FieldSettingsInput {
   isLarge?: boolean
 
   @Field(() => Boolean, { nullable: true })
-  zendeskIsPublic?: boolean
+  zendeskIsPrivate?: boolean
 
   @Field(() => Boolean, { nullable: true })
   zendeskIsCustomField?: boolean
 
-  @Field(() => String, { nullable: true })
-  zendeskCustomFieldId?: string
+  @Field(() => Number, { nullable: true })
+  zendeskCustomFieldId?: number
 
   @Field(() => String, { nullable: true })
   applicantType?: string

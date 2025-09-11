@@ -70,6 +70,60 @@
         }
       }
     },
+    "/": {
+      "get": {
+        "tags": ["Customers"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/healthy": {
+      "get": {
+        "tags": ["Customers"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/mail/v1/customers/{kennitala}/messages": {
       "get": {
         "tags": ["Customers"],
@@ -617,7 +671,8 @@
             "name": "locale",
             "in": "query",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "is"
             }
           },
           {
@@ -996,6 +1051,9 @@
           "author": {
             "type": "string",
             "nullable": true
+          },
+          "isAgent": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1241,11 +1299,11 @@
       "PaperMail": {
         "type": "object",
         "properties": {
-          "kennitala": {
-            "type": "string"
-          },
           "wantsPaper": {
             "type": "boolean"
+          },
+          "kennitala": {
+            "type": "string"
           }
         },
         "additionalProperties": false

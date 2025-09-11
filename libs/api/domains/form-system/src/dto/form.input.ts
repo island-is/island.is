@@ -30,6 +30,12 @@ export class DeleteFormInput {
   id?: string
 }
 
+@InputType('FormSystemPublishFormInput')
+export class PublishFormInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+}
+
 @InputType('FormSystemCreateFormInput')
 export class CreateFormInput {
   @Field(() => String, { nullable: true })
@@ -96,7 +102,7 @@ export class UpdateFormDtoInput {
   applicationDaysToRemove?: number
 
   @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
 
   @Field(() => Boolean, { nullable: true })
   hasSummaryScreen?: boolean
@@ -159,7 +165,7 @@ export class FormInput {
   derivedFrom?: number
 
   @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
 
   @Field(() => LanguageTypeInput, { nullable: true })
   completedMessage?: LanguageTypeInput

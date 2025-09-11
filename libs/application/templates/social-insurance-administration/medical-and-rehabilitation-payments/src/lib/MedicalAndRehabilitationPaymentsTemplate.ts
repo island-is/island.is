@@ -1,8 +1,8 @@
 import {
   coreHistoryMessages,
-  pruneAfterDays,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
   YES,
 } from '@island.is/application/core'
 import {
@@ -43,15 +43,18 @@ import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import {
+  SocialInsuranceAdministrationActivitiesOfProfessionsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationEctsUnitsApi,
   SocialInsuranceAdministrationEducationLevelsApi,
+  SocialInsuranceAdministrationEmploymentStatusesApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationMARPQuestionnairesApi,
+  SocialInsuranceAdministrationProfessionsApi,
   SocialInsuranceAdministrationResidenceInformationApi,
 } from '../dataProviders'
 import {
@@ -135,6 +138,9 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationResidenceInformationApi,
                 SocialInsuranceAdministrationMARPApplicationTypeApi,
                 SocialInsuranceAdministrationEducationLevelsApi,
+                SocialInsuranceAdministrationEmploymentStatusesApi,
+                SocialInsuranceAdministrationProfessionsApi,
+                SocialInsuranceAdministrationActivitiesOfProfessionsApi,
               ],
               delete: true,
             },
