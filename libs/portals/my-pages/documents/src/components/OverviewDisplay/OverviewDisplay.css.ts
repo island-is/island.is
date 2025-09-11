@@ -1,6 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
-import { SERVICE_PORTAL_HEADER_HEIGHT_SM as hheight } from '@island.is/portals/my-pages/constants'
 import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 export const modalBase = style({
@@ -42,7 +41,7 @@ export const modalHeader = style({
 })
 
 export const modalHeaderScrollingUp = style({
-  top: hheight - 1,
+  top: 0,
 })
 
 export const docWrap = style({
@@ -54,10 +53,11 @@ export const docWrap = style({
   }),
 })
 
-export const modalContent = style({
+export const mobileHeaderContainer = style({
   paddingBottom: theme.spacing[2],
   ...themeUtils.responsiveStyle({
     md: {
+      height: 'inherit',
       padding: '1.5rem 1rem',
     },
   }),

@@ -40,6 +40,6 @@ export interface ReplyState {
   replyable?: boolean
   replyOpen?: boolean
   replies?: Reply
-  reply?: PostReply
+  sentReply?: PostReply
   closedForMoreReplies?: boolean
 }
