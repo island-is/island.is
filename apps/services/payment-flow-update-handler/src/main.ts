@@ -3,5 +3,5 @@ import { AppModule } from './app/app.module'
 
 bootstrap({
   appModule: AppModule,
-  name: 'payment-flow-update-handler',
+  name: 'services-payment-flow-update-handler',
 })
