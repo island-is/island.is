@@ -124,7 +124,7 @@ export class FieldSettings {
   zendeskIsCustomField?: boolean
 
   @IsOptional()
-  @IsString()
+  @IsNumber()
   @ApiPropertyOptional({ type: Number })
   zendeskCustomFieldId?: number
 
