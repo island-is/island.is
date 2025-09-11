@@ -6,7 +6,7 @@ import { AuditConfig, AuditModule } from '@island.is/nest/audit'
 import { environment } from '../environments'
 import { DocumentProviderModule } from './modules/document-provider/document-provider.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule } from '@island.is/nest/config'
 
 @Module({
   imports: [

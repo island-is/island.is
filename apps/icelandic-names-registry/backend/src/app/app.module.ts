@@ -7,7 +7,7 @@ import { IcelandicNameModule } from './modules/icelandic-name/icelandic-name.mod
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 import { environment } from '../environments'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule } from '@island.is/nest/config'
 @Module({
   imports: [
     AuthModule.register(environment.auth),
