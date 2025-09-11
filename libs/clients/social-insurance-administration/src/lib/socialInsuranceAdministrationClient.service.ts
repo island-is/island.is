@@ -28,7 +28,6 @@ import {
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
-  TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
   TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto,
   TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto,
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
@@ -73,7 +72,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly generalApi: GeneralApi,
     private readonly medicalDocumentsApi: MedicalDocumentsApi,
     private readonly questionnairesApi: QuestionnairesApi,
-  ) {}
+  ) { }
 
   private applicationApiWithAuth = (user: User) =>
     this.applicationApi.withMiddleware(new AuthMiddleware(user as Auth))
@@ -494,21 +493,5 @@ export class SocialInsuranceAdministrationClientService {
     return this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralEmploymentStatusGet()
-  }
-
-  async getProfessions(
-    user: User,
-  ): Promise<Array<TrWebApiServicesDomainProfessionsModelsProfessionDto>> {
-    return this.generalApiWithAuth(user).apiProtectedV1GeneralProfessionsGet()
-  }
-
-  async getActivitiesOfProfessions(
-    user: User,
-  ): Promise<
-    Array<TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto>
-  > {
-    return this.generalApiWithAuth(
-      user,
-    ).apiProtectedV1GeneralProfessionsActivitiesGet()
   }
 }
