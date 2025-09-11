@@ -66,11 +66,11 @@ export class UploadProcessor {
             destinationBucket,
             destinationKey,
           )
-          withLoggingContext({ applicationId: applicationId }, () => {
-            this.logger.info(
-              `Successfully copied file: ${sourceKey} to ${destinationKey} on attempt ${attempt}/${maxRetries}`,
-            )
-          })
+        withLoggingContext({ applicationId: applicationId }, () => {
+          this.logger.info(
+            `Successfully copied file: ${sourceKey} to ${destinationKey} on attempt ${attempt}/${maxRetries}`,
+          )
+        })
         return {
           attachmentKey: sourceKey,
           resultUrl,
