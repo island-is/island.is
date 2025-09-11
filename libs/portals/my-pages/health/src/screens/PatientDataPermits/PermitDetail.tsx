@@ -127,19 +127,26 @@ const PermitDetail: React.FC = () => {
               loading={loading}
             />
             <InfoLine
-              label={formatMessage(messages.validTime) ?? ''}
+              label={formatMessage(messages.validTime)}
               content={
+                permit?.validFrom &&
+                permit?.validTo &&
                 formatDate(permit?.validFrom.toString()) +
-                ' - ' +
-                formatDate(permit?.validTo.toString())
+                  ' - ' +
+                  formatDate(permit?.validTo.toString())
               }
               loading={loading}
             />
             <InfoLine
-              label={formatMessage(messages.permitValidForShort) ?? ''}
+              label={formatMessage(messages.validForCountries)}
               content={permit?.countries
                 .flatMap((country) => country.name)
                 .join(', ')}
+              loading={loading}
+            />
+            <InfoLine
+              label={formatMessage(messages.patientDataShared)}
+              content={formatMessage(messages.patientDataSharedDescription)} // TODO: Fetch from service ???
               loading={loading}
             />
           </InfoLineStack>

@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Input,
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
@@ -35,6 +36,8 @@ const SecondStep: FC<SecondStepProps> = ({
     Omit<HealthDirectoratePatientDataApprovalCountry, 'id'>[]
   >([])
   const [selectAll, setSelectAll] = useState<boolean>(false)
+
+  const [searchTerm, setSearchTerm] = useState<string>('')
 
   const { data, error, loading } =
     useHealthDirectoratePatientDataPermitCountriesQuery({
@@ -70,46 +73,68 @@ const SecondStep: FC<SecondStepProps> = ({
         <Problem
           noBorder={false}
           title={formatMessage(messages.countriesError)}
-        ></Problem>
+        />
       )}
 
       {countries.length > 0 && (
         <>
-          <Box>
-            <Checkbox
-              label={formatMessage(messages.chooseAllCountries)}
-              checked={selectAll}
-              onChange={() => {
-                setSelectAll(!selectAll)
-                if (!selectAll) {
-                  setSelectedCountries(countries)
-                } else {
-                  setSelectedCountries([])
-                }
-              }}
-            />
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            alignItems="center"
+          >
+            <Box>
+              <Input
+                name="countrySearch"
+                placeholder={formatMessage(messages.filterByCountry)}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                icon={{ type: 'outline', name: 'search' }}
+                size="xs"
+                backgroundColor="blue"
+              />
+            </Box>
+            <Box>
+              <Checkbox
+                label={formatMessage(messages.chooseAllCountries)}
+                checked={selectAll}
+                onChange={() => {
+                  setSelectAll(!selectAll)
+                  if (!selectAll) {
+                    setSelectedCountries(countries)
+                  } else {
+                    setSelectedCountries([])
+                  }
+                }}
+              />
+            </Box>
           </Box>
           <Box marginTop={3} className={styles.countryCheckboxContainer}>
-            {countries.map((country, index) => (
-              <Box key={index} paddingRight={[0, 0, 3]} paddingBottom={3}>
-                <Checkbox
-                  large
-                  backgroundColor="blue"
-                  value={country.code}
-                  checked={selectedCountries.includes(country)}
-                  onChange={() => {
-                    if (selectedCountries.includes(country)) {
-                      setSelectedCountries(
-                        selectedCountries.filter((c) => c !== country),
-                      )
-                    } else {
-                      setSelectedCountries([...selectedCountries, country])
-                    }
-                  }}
-                  label={country.name}
-                />
-              </Box>
-            ))}
+            {countries
+              .filter((country) =>
+                country.name.toLowerCase().includes(searchTerm.toLowerCase()),
+              )
+              .map((country, index) => (
+                <Box key={index}>
+                  <Checkbox
+                    large
+                    backgroundColor="blue"
+                    value={country.code}
+                    checked={selectedCountries.includes(country)}
+                    onChange={() => {
+                      if (selectedCountries.includes(country)) {
+                        setSelectedCountries(
+                          selectedCountries.filter((c) => c !== country),
+                        )
+                      } else {
+                        setSelectedCountries([...selectedCountries, country])
+                      }
+                    }}
+                    label={country.name}
+                  />
+                </Box>
+              ))}
           </Box>
           <Box
             display="flex"

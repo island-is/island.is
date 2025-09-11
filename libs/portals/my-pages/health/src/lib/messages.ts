@@ -1730,7 +1730,7 @@ export const messages = defineMessages({
   permitApprovalDescription: {
     id: 'sp.health:permit-approval-description',
     defaultMessage:
-      '<link>Lykilheilsufarsupplýsingar</link> þínar verða aðgengilegar heilbrigðisstarfsfólki í öðrum löngum. Þú getur séð samantekt af þínum heilsufarsupplýsingum í sjúkraskránni.',
+      'Heimildin leyfir birtingu upplýsinga úr sjúkraskrá þinni til heilbrigðisstofnunar í öðru Evrópulandi, í þeim tilgangi að tryggja örugga og samfellda heilbrigðisþjónustu. <link>Lykilheilsufarsupplýsingar</link> fela í sér almennar persónuupplýsingar, sjúkdómsgreiningar, meðferðir, lyfjameðferð, ofnæmi og aðrar nauðsynlegar upplýsingar samkvæmt lögum nr. 55/2009 og EU reglugerð nr. 2025/327.Upplýsingarnarnar eru viðkvæmar og verða meðhöndlaðar í samræmi við lög um persónuvernd og trúnað. Hægt er að afturkalla samþykki hvenær sem er, nema í bráðatilvikum þar sem þú ert ófær um að veita samþykki.',
   },
   permitApproval: {
     id: 'sp.health:permit-approval',
@@ -1758,7 +1758,7 @@ export const messages = defineMessages({
     id: 'sp.health:how-long-should-permit-apply',
   },
   showExipredPermits: {
-    defaultMessage: 'Sýna óvirkar heimildir',
+    defaultMessage: 'Sýna óvirkar',
     id: 'sp.health:show-expired-permits',
   },
   permit: {
@@ -1782,7 +1782,7 @@ export const messages = defineMessages({
     id: 'sp.health:valid-to-from',
   },
   step: {
-    defaultMessage: 'Skref {first} af {second}',
+    defaultMessage: '{first} af {second}',
     id: 'sp.health:step',
   },
   downloadPDF: {
@@ -1890,5 +1890,30 @@ export const messages = defineMessages({
   inactive: {
     defaultMessage: 'Óvirk',
     id: 'sp.health:inactive',
+  },
+  filterByCountry: {
+    defaultMessage: 'Sía eftir landi',
+    id: 'sp.health:filter-by-country',
+  },
+  singlePermit: {
+    defaultMessage: '1 heimild',
+    id: 'sp.health:single-permit',
+  },
+  numberOfPermits: {
+    defaultMessage: '{number} heimildir',
+    id: 'sp.health:number-of-permits',
+  },
+  validForCountries: {
+    defaultMessage: 'Gildir í eftirfarandi löndum',
+    id: 'sp.health:valid-for-countries',
+  },
+  patientDataShared: {
+    defaultMessage: 'Sjúkraskrárupplýsingar til birtingar',
+    id: 'sp.health:patient-data-shared',
+  },
+  patientDataSharedDescription: {
+    defaultMessage:
+      'Sjúkdómsgreiningar, ofnæmi og lífsógnandi sjúkdómar, yfirlit yfir núverandi lyf, ígræði, t.d. hjartagangráður og bjargráður, bólusetningar, nýlegar meðferðir og meðganga.',
+    id: 'sp.health:patient-data-shared-description',
   },
 })

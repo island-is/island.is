@@ -4,10 +4,11 @@ import {
   Button,
   Stack,
   ToggleSwitchButton,
+  Text,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ActionCard,
   ActionCardLoader,
   formatDate,
   IntroWrapper,
@@ -18,6 +19,7 @@ import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetPatientDataPermitsQuery } from './PatientDataPermits.generated'
+import * as styles from './Permits.css'
 
 const PatientDataPermits: React.FC = () => {
   useNamespaces('sp.health')
@@ -74,8 +76,16 @@ const PatientDataPermits: React.FC = () => {
       )}
       {!error && !loading && dataLength > 0 && (
         <Box>
-          <Box justifyContent="flexEnd" display="flex">
+          <Box justifyContent="spaceBetween" alignItems="center" display="flex">
+            <Text variant="medium">
+              {filteredData?.length === 1
+                ? formatMessage(messages.singlePermit)
+                : formatMessage(messages.numberOfPermits, {
+                    number: filteredData?.length,
+                  })}
+            </Text>
             <ToggleSwitchButton
+              className={styles.toggleButton}
               label={formatMessage(messages.showExipredPermits)}
               onChange={() => setShowExpiredPermits(!showExipredPermits)}
               checked={showExipredPermits}
@@ -85,21 +95,13 @@ const PatientDataPermits: React.FC = () => {
             {filteredData?.map((permit) => (
               <ActionCard
                 heading={formatMessage(messages.permit)}
-                text={formatMessage(messages.permitValidFor, {
-                  country: permit.countries
-                    .flatMap((country) => country.name)
-                    .join(', '),
+                text={permit.countries
+                  .flatMap((country) => country.name)
+                  .join(', ')}
+                date={formatMessage(messages.validToFrom, {
+                  fromDate: formatDate(permit.validFrom),
+                  toDate: formatDate(permit.validTo),
                 })}
-                subText={
-                  permit.status === HealthDirectoratePermitStatus.active
-                    ? formatMessage(messages.medicineValidTo) +
-                      ' ' +
-                      formatDate(permit.validTo)
-                    : formatMessage(messages.validToFrom, {
-                        fromDate: formatDate(permit.validFrom),
-                        toDate: formatDate(permit.validTo),
-                      })
-                }
                 tag={
                   permit.status === HealthDirectoratePermitStatus.active
                     ? {
