@@ -2,6 +2,7 @@ import {
   AlertMessage,
   Box,
   Button,
+  Divider,
   GridColumn,
   GridRow,
   Icon,
@@ -84,39 +85,51 @@ export const ApplicationDetails = ({
               {application.applicant}
             </ValueLine>
           </GridColumn>
-          {application.adminData?.map((item) => (
-            <GridColumn span={['2/2', '2/2', '1/2']} key={item.key}>
-              <ValueLine title={formatMessage(item.label)}>
-                {item.values?.join(', ') ?? ''}
+          {!!application.applicantActors?.length && (
+            <GridColumn span={['2/2', '2/2', '2/2']}>
+              <Divider />
+            </GridColumn>
+          )}
+          {application.applicantActors?.map((actor, index) => (
+            <GridColumn span={['2/2', '2/2', '1/2']} key={actor}>
+              <ValueLine
+                title={`${formatMessage(m.procurer)} ${
+                  application.applicantActors.length > 1 ? index + 1 : ''
+                }`}
+              >
+                {actor}
               </ValueLine>
             </GridColumn>
           ))}
         </GridRow>
       </Box>
-      {application.applicantActors.length > 0 &&
-        application.applicantActors.map((actor) => (
-          <Box key={actor}>
-            <Box
-              display="flex"
-              alignItems="center"
-              marginBottom={[2, 2, 3]}
-              marginTop={[5, 5, 6]}
-            >
-              <Icon icon="person" color="purple600" type="outline" />
-              <Box paddingLeft={2} />
-              <Text variant="h3">{formatMessage(m.procurer)}</Text>
-            </Box>
-            <Box padding={4} background="purple100" borderRadius="large">
-              <GridRow rowGap={3}>
-                <GridColumn span={['2/2', '2/2', '1/2']}>
-                  <ValueLine title={formatMessage(m.nationalId)}>
-                    {actor}
+
+      {!!application.adminData?.length && (
+        <Box>
+          <Box
+            display="flex"
+            alignItems="center"
+            marginBottom={[2, 2, 3]}
+            marginTop={[5, 5, 6]}
+          >
+            <Icon icon="document" color="purple600" type="outline" />
+            <Box paddingLeft={2} />
+            <Text variant="h3">{formatMessage(m.otherData)}</Text>
+          </Box>
+          <Box padding={4} background="purple100" borderRadius="large">
+            <GridRow rowGap={3}>
+              {application.adminData?.map((item) => (
+                <GridColumn span={['2/2', '2/2', '1/2']} key={item.key}>
+                  <ValueLine title={formatMessage(item.label)}>
+                    {item.values?.join(', ') ?? ''}
                   </ValueLine>
                 </GridColumn>
-              </GridRow>
-            </Box>
+              ))}
+            </GridRow>
           </Box>
-        ))}
+        </Box>
+      )}
+
       {application.pruned && (
         <Box marginTop={[2, 2, 3]}>
           <AlertMessage
@@ -125,6 +138,7 @@ export const ApplicationDetails = ({
           />
         </Box>
       )}
+
       <Box
         display="flex"
         justifyContent="spaceBetween"
@@ -172,6 +186,7 @@ export const ApplicationDetails = ({
           </Box>
         </Box>
       </Box>
+
       {application && (
         <ApplicationCard
           shouldShowCardButtons={shouldShowCardButtons}

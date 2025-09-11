@@ -3,9 +3,9 @@ import { uuid } from 'uuidv4'
 
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
-import { Case, Defendant, Verdict } from '../../repository'
-import { UpdateVerdictDto } from '../dto/updateVerdict.dto'
-import { createTestingVerdictModule } from './creatingTestingVerdictModule'
+import { Case, Defendant, Verdict } from '../../../repository'
+import { UpdateVerdictDto } from '../../dto/updateVerdict.dto'
+import { createTestingVerdictModule } from '../creatingTestingVerdictModule'
 
 interface Then {
   result: Verdict
@@ -82,6 +82,7 @@ describe('VerdictController - Update', () => {
 
     it('should update the verdict ', () => {
       expect(mockVerdictModel.update).toHaveBeenCalledWith(
+        // since service requirement is not applicable, the serviceDate will be set to same as the ruling date
         { ...verdictUpdate, serviceDate: new Date(2020, 1, 1) },
         {
           where: { id: verdictId },
