@@ -283,14 +283,12 @@ export class SocialInsuranceService {
     return await this.socialInsuranceApi.getConfirmationOfIllHealth(user)
   }
 
-  async getCountries(
-    user: User,
-    locale: Locale,
-  ) {
-    const data = await this.socialInsuranceApi.getCountries(user, { locale }) ?? []
-    return data.map(data => ({
+  async getCountries(user: User, locale: Locale) {
+    const data =
+      (await this.socialInsuranceApi.getCountries(user, { locale })) ?? []
+    return data.map((data) => ({
       code: data.value,
-      name: data.label
+      name: data.label,
     }))
   }
 
@@ -307,7 +305,7 @@ export class SocialInsuranceService {
   }
 
   async getLanguages(user: User, locale: Locale) {
-    return await this.socialInsuranceApi.getLanguages(user, {locale})
+    return await this.socialInsuranceApi.getLanguages(user, { locale })
   }
 
   async getMaritalStatuses(user: User) {
@@ -315,7 +313,9 @@ export class SocialInsuranceService {
   }
 
   async getEmploymentStatusesWithLocale(user: User, locale: Locale) {
-    return await this.socialInsuranceApi.getEmploymentStatusesWithLocale(user, { locale })
+    return await this.socialInsuranceApi.getEmploymentStatusesWithLocale(user, {
+      locale,
+    })
   }
 
   async getProfessions(user: User) {

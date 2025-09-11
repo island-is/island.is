@@ -1,48 +1,53 @@
-import { ApplicantInfo, DomesticBankInfo, ForeignBankInfo, IncomePlanInfo, Period, SelfAssessment, TaxInfo } from "../socialInsuranceAdministrationClient.type"
+import {
+  ApplicantInfo,
+  DomesticBankInfo,
+  ForeignBankInfo,
+  IncomePlanInfo,
+  Period,
+  SelfAssessment,
+  TaxInfo,
+} from '../socialInsuranceAdministrationClient.type'
 
 export interface DisabilityPensionDto {
   taxInfo: TaxInfo
-  hasAppliedForDisabilityAtPensionFund: boolean,
-  isInPaidEmployment: boolean,
-  plansToContinueParticipation: boolean,
+  hasAppliedForDisabilityAtPensionFund: boolean
+  isInPaidEmployment: boolean
+  plansToContinueParticipation: boolean
   housingTypeAdditionalDescription: string
   numberOfChildrenInHome: string
   languageProficiency: number
   applicantNativeLanguage: string
   applicantNativeLanguageOther?: string
-  hasBeenInPaidEmployment:boolean
-  lastProfession: string,
+  hasBeenInPaidEmployment: boolean
+  lastProfession: string
   lastProfessionYear: number
-  lastProfessionDescription: string,
-  lastActivityOfProfession: string,
-  lastActivityOfProfessionDescription: string,
-  educationalLevel: string,
-  workCapacityAssessment: number,
-  importanceOfEmployment: number,
-  hasBeenInRehabilitationOrTreatment: boolean,
-  rehabilitationOrTreatment: string,
-  rehabilitationOrTreatmentOutcome: string,
-  workIncapacityIssue: string,
+  lastProfessionDescription: string
+  lastActivityOfProfession: string
+  lastActivityOfProfessionDescription: string
+  educationalLevel: string
+  workCapacityAssessment: number
+  importanceOfEmployment: number
+  hasBeenInRehabilitationOrTreatment: boolean
+  rehabilitationOrTreatment: string
+  rehabilitationOrTreatmentOutcome: string
+  workIncapacityIssue: string
   foreignPaymentDetails: {
-    receivesForeignPayments: boolean,
+    receivesForeignPayments: boolean
     foreignPaymentDetails: Array<{
-        countryName: string
-        countryCode: string
-        foreignNationalId?: string
-      }>
-  },
-  housingTypeId: number,
-  maritalStatusTypeId: number,
+      countryName: string
+      countryCode: string
+      foreignNationalId?: string
+    }>
+  }
+  housingTypeId: number
+  maritalStatusTypeId: number
   selfAssessment: SelfAssessment
-  employmentStatuses: Array<
-    {
-      employmentStatus: string,
-      explanation: string
-    }
-  >,
-incomePlan: IncomePlanInfo
-foreignResidencies: Array<
-  {
+  employmentStatuses: Array<{
+    employmentStatus: string
+    explanation: string
+  }>
+  incomePlan: IncomePlanInfo
+  foreignResidencies: Array<{
     countryName: string
     countryCode: string
     foreignNationalId: string
@@ -52,11 +57,11 @@ foreignResidencies: Array<
   retroactivePayments: Period
   applicantInfo: ApplicantInfo
   period?: Period
-  comment: string,
-  applicationId: string,
+  comment: string
+  applicationId: string
   domesticBankInfo?: DomesticBankInfo
   foreignBankInfo?: ForeignBankInfo
-/*uploads?: Array<
+  /*uploads?: Array<
     {
       name: string,
       type: string,

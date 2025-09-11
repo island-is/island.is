@@ -1,10 +1,12 @@
-import { TrWebApiServicesDomainEmployersModelsEmploymentStatusDto } from "../..";
-import { GenericKeyValueDto } from "./genericKeyValue.dto";
+import { TrWebApiServicesDomainEmployersModelsEmploymentStatusDto } from '../..'
+import { GenericKeyValueDto } from './genericKeyValue.dto'
 
 export interface EmploymentDto extends GenericKeyValueDto {}
 
-export const mapEmploymentDto = ({ displayName, value }: TrWebApiServicesDomainEmployersModelsEmploymentStatusDto): EmploymentDto | null => {
-
+export const mapEmploymentDto = ({
+  displayName,
+  value,
+}: TrWebApiServicesDomainEmployersModelsEmploymentStatusDto): EmploymentDto | null => {
   if (!displayName || !value) {
     return null
   }
@@ -12,6 +14,6 @@ export const mapEmploymentDto = ({ displayName, value }: TrWebApiServicesDomainE
   return {
     label: displayName,
     value: value,
-    needsFurtherInformation: value === 'ANNAD'
-  };
-};
+    needsFurtherInformation: value === 'ANNAD',
+  }
+}

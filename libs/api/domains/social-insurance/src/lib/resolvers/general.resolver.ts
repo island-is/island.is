@@ -38,7 +38,8 @@ export class GeneralResolver {
   @ResolveField('countries', () => [Country], { nullable: true })
   resolveCountries(
     @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true }) locale: Locale = 'is',
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
   ) {
     return this.service.getCountries(user, locale)
   }
@@ -57,18 +58,27 @@ export class GeneralResolver {
     return this.service.getCurrencies(user)
   }
 
-  @ResolveField('languages', () => [GenericKeyValueNumberObject], { nullable: true })
-  resolveLanguages(@CurrentUser() user: User, @Args('locale', { type: () => String, nullable: true })
-  locale: Locale = 'is') {
+  @ResolveField('languages', () => [GenericKeyValueNumberObject], {
+    nullable: true,
+  })
+  resolveLanguages(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ) {
     return this.service.getLanguages(user, locale)
   }
 
-  @ResolveField('maritalStatuses', () => [GenericKeyValueNumberObject], { nullable: true })
+  @ResolveField('maritalStatuses', () => [GenericKeyValueNumberObject], {
+    nullable: true,
+  })
   resolveMaritalStatuses(@CurrentUser() user: User) {
     return this.service.getMaritalStatuses(user)
   }
 
-  @ResolveField('residenceTypes', () => [GenericKeyValueNumberObject], { nullable: true })
+  @ResolveField('residenceTypes', () => [GenericKeyValueNumberObject], {
+    nullable: true,
+  })
   resolveResidenceTypes(@CurrentUser() user: User) {
     return this.service.getResidenceTypes(user)
   }
@@ -76,12 +86,17 @@ export class GeneralResolver {
   @ResolveField('employmentStatuses', () => [GenericKeyValueStringObject], {
     nullable: true,
   })
-  resolveEmploymentStatuses(@CurrentUser() user: User, @Args('locale', { type: () => String, nullable: true })
-  locale: Locale = 'is',) {
+  resolveEmploymentStatuses(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ) {
     return this.service.getEmploymentStatusesWithLocale(user, locale)
   }
 
-  @ResolveField('professions', () => [GenericKeyValueStringObject], { nullable: true })
+  @ResolveField('professions', () => [GenericKeyValueStringObject], {
+    nullable: true,
+  })
   resolveProfessions(@CurrentUser() user: User) {
     return this.service.getProfessions(user)
   }

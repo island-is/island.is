@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('SocialInsuranceGeneralGenericKeyValueNumberObject')
-export class GenericKeyValueNumberObject{
+export class GenericKeyValueNumberObject {
   @Field(() => Int)
   value!: number
 
@@ -9,5 +9,5 @@ export class GenericKeyValueNumberObject{
   label!: string
 
   @Field({ nullable: true })
-  needsFurtherInformation?: boolean;
+  needsFurtherInformation?: boolean
 }

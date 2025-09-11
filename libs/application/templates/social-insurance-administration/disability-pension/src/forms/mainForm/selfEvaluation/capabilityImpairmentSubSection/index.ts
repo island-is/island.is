@@ -48,7 +48,6 @@ const buildQuestion = (index: number) => {
               'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
             ) ?? []
 
-
           const questions =
             selfAssessmentQuestionnaire.find(
               (questionnaire) =>

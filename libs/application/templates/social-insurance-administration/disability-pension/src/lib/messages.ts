@@ -1351,7 +1351,6 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
   }),
 }
 
-
 export const statesMessages = defineMessages({
   applicationSubmittedDescription: {
     id: 'dp.application:applicationSubmittedDescription',
@@ -1361,10 +1360,8 @@ export const statesMessages = defineMessages({
   },
   applicationApprovedDescription: {
     id: 'dp.application:applicationApprovedDescription',
-    defaultMessage:
-      'Umsókn vegna örorkulífeyris hefur verið samþykkt',
-    description:
-      'The application for disability pension has been approved',
+    defaultMessage: 'Umsókn vegna örorkulífeyris hefur verið samþykkt',
+    description: 'The application for disability pension has been approved',
   },
   applicationDismissed: {
     id: 'dp.application:application.dismissed',
@@ -1375,16 +1372,12 @@ export const statesMessages = defineMessages({
   },
   applicationDismissedDescription: {
     id: 'dp.application:application.dismissed.description',
-    defaultMessage:
-      'Umsókn þinni um örorkulífeyri hefur verið vísað frá',
-    description:
-      'Your application for disability pension has been dismissed',
+    defaultMessage: 'Umsókn þinni um örorkulífeyri hefur verið vísað frá',
+    description: 'Your application for disability pension has been dismissed',
   },
   applicationRejectedDescription: {
     id: 'dp.application:applicationRejectedDescription',
-    defaultMessage:
-      'Umsókn um örorkulífeyri hefur verið synjað',
-    description:
-      'The application for disability pension has been rejected',
+    defaultMessage: 'Umsókn um örorkulífeyri hefur verið synjað',
+    description: 'The application for disability pension has been rejected',
   },
 })

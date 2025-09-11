@@ -24,9 +24,9 @@ export const languageField = buildMultiField({
           ) ?? []
 
         return languages.map(({ value, label }) => ({
-            value,
-            label,
-          }))
+          value,
+          label,
+        }))
       },
     }),
     /*

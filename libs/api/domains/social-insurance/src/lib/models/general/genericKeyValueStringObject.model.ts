@@ -9,5 +9,5 @@ export class GenericKeyValueStringObject {
   label!: string
 
   @Field({ nullable: true })
-  needsFurtherInformation?: boolean;
+  needsFurtherInformation?: boolean
 }

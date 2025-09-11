@@ -39,7 +39,7 @@ export const residenceField = buildMultiField({
           `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,
         )
         //Todo: more explicit for the "other" option
-        return residenceStatus === "6"
+        return residenceStatus === '6'
       },
     }),
   ],

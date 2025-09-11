@@ -1,12 +1,15 @@
-import { TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto } from "../..";
-import { GenericKeyValueDto } from "./genericKeyValue.dto";
+import { TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto } from '../..'
+import { GenericKeyValueDto } from './genericKeyValue.dto'
 
-export interface ResidenceDto extends Pick<GenericKeyValueDto, 'label' | 'needsFurtherInformation'> {
-  value: number;
+export interface ResidenceDto
+  extends Pick<GenericKeyValueDto, 'label' | 'needsFurtherInformation'> {
+  value: number
 }
 
-export const mapResidenceDto = ({ label, value }: TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto): ResidenceDto | null => {
-
+export const mapResidenceDto = ({
+  label,
+  value,
+}: TrWebApiServicesUseCaseDisabilityPensionModelsHousingTypesStatusDto): ResidenceDto | null => {
   if (!label || !value) {
     return null
   }
@@ -14,6 +17,6 @@ export const mapResidenceDto = ({ label, value }: TrWebApiServicesUseCaseDisabil
   return {
     label,
     value,
-    needsFurtherInformation: value === 6
-  };
-};
+    needsFurtherInformation: value === 6,
+  }
+}

@@ -1,6 +1,5 @@
-
 export interface GenericKeyValueDto {
-  label: string;
-  value: string;
-  needsFurtherInformation?: boolean;
+  label: string
+  value: string
+  needsFurtherInformation?: boolean
 }

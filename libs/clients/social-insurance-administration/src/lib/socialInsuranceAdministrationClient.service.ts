@@ -1,6 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import {  Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
@@ -46,7 +46,10 @@ import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
 import { ApplicationTypeEnum } from './enums'
 import { mapApplicationEnumToType } from './mapper'
 import { mapProfessionDto, ProfessionDto } from './dto/profession.dto'
-import { mapProfessionActivityDto, ProfessionActivityDto } from './dto/professionActivity.dto'
+import {
+  mapProfessionActivityDto,
+  ProfessionActivityDto,
+} from './dto/professionActivity.dto'
 import { mapResidenceDto, ResidenceDto } from './dto/residence.dto'
 import { GenericLocaleInputDto } from './dto/genericLocale.dto.input'
 import { LanguageDto, mapLanguageDto } from './dto/language.dto'
@@ -139,7 +142,7 @@ export class SocialInsuranceAdministrationClientService {
     user: User,
     applicationDTO: object,
     applicationType: string,
-    mode?: 'normal' | 'lightweight'
+    mode?: 'normal' | 'lightweight',
   ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
     return this.applicationWriteApiWithAuth(
       user,
@@ -172,7 +175,7 @@ export class SocialInsuranceAdministrationClientService {
   async getIsEligible(
     user: User,
     applicationType: string,
-    mode?: 'normal' | 'lightweight'
+    mode?: 'normal' | 'lightweight',
   ): Promise<TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn> {
     return this.applicantApiWithAuth(
       user,
@@ -312,92 +315,105 @@ export class SocialInsuranceAdministrationClientService {
 
   async getCountries(
     user: User,
-    {locale}: GenericLocaleInputDto
+    { locale }: GenericLocaleInputDto,
   ): Promise<Array<CountryDto> | null> {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralCountriesGet()
 
-    return data.map(d => mapCountryDto(d, locale)).filter((i): i is CountryDto => Boolean(i)) ?? null;
+    return (
+      data
+        .map((d) => mapCountryDto(d, locale))
+        .filter((i): i is CountryDto => Boolean(i)) ?? null
+    )
   }
 
   async getLanguages(
     user: User,
-    {locale}: GenericLocaleInputDto
+    { locale }: GenericLocaleInputDto,
   ): Promise<Array<LanguageDto> | null> {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralLanguagesGet()
 
-    return data.map(d => mapLanguageDto(d, locale)).filter((i): i is LanguageDto => Boolean(i)) ?? null;
+    return (
+      data
+        .map((d) => mapLanguageDto(d, locale))
+        .filter((i): i is LanguageDto => Boolean(i)) ?? null
+    )
   }
 
-  async getMaritalStatuses(
-    user: User,
-  ): Promise<
-    Array<MaritalStatusDto>
-  > {
+  async getMaritalStatuses(user: User): Promise<Array<MaritalStatusDto>> {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralMaritalStatusesGet()
 
-    return data.map(d => mapMaritalStatusDto(d)).filter((i): i is MaritalStatusDto => Boolean(i)) ?? null;
-
+    return (
+      data
+        .map((d) => mapMaritalStatusDto(d))
+        .filter((i): i is MaritalStatusDto => Boolean(i)) ?? null
+    )
   }
 
   async getEmploymentStatusesWithLocale(
     user: User,
-    { locale }: GenericLocaleInputDto
-  ): Promise<
-    Array<EmploymentDto> | null
-  > {
+    { locale }: GenericLocaleInputDto,
+  ): Promise<Array<EmploymentDto> | null> {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralEmploymentStatusGet()
 
-    const filteredData = data.find(d => d.languageCode === locale.toString().toUpperCase())
+    const filteredData = data.find(
+      (d) => d.languageCode === locale.toString().toUpperCase(),
+    )
 
     if (!filteredData) {
       throw new Error('Locale not supplied in response')
     }
 
-    return filteredData.employmentStatuses?.map(es => mapEmploymentDto(es)).filter((i): i is EmploymentDto => Boolean(i)) ?? null;
+    return (
+      filteredData.employmentStatuses
+        ?.map((es) => mapEmploymentDto(es))
+        .filter((i): i is EmploymentDto => Boolean(i)) ?? null
+    )
   }
 
-  async getProfessions(
-    user: User,
-  ): Promise<Array<ProfessionDto> | null> {
+  async getProfessions(user: User): Promise<Array<ProfessionDto> | null> {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralProfessionsGet()
 
-    return data.map(d => mapProfessionDto(d)).filter((i): i is ProfessionDto => Boolean(i)) ?? null;
+    return (
+      data
+        .map((d) => mapProfessionDto(d))
+        .filter((i): i is ProfessionDto => Boolean(i)) ?? null
+    )
   }
 
-  async getResidenceTypes(
-    user: User,
-  ): Promise<
-    Array<ResidenceDto> |null
-  > {
+  async getResidenceTypes(user: User): Promise<Array<ResidenceDto> | null> {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralHousingTypesGet()
 
-    return data.map(d => mapResidenceDto(d)).filter((i): i is ResidenceDto => Boolean(i)) ?? null;
-
+    return (
+      data
+        .map((d) => mapResidenceDto(d))
+        .filter((i): i is ResidenceDto => Boolean(i)) ?? null
+    )
   }
 
   async getProfessionActivities(
     user: User,
-  ): Promise<
-    Array<ProfessionActivityDto> | null
-  > {
+  ): Promise<Array<ProfessionActivityDto> | null> {
     const data = await this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralProfessionsActivitiesGet()
 
-    return data.map(d => mapProfessionActivityDto(d)).filter((i): i is ProfessionActivityDto => Boolean(i)) ?? null;
-
+    return (
+      data
+        .map((d) => mapProfessionActivityDto(d))
+        .filter((i): i is ProfessionActivityDto => Boolean(i)) ?? null
+    )
   }
 
   async getEducationalInstitutions(

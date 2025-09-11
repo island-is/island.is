@@ -111,20 +111,20 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
       <Text></Text>
       <Box marginTop={2}>
         <BulletList>
-          {/*hasSelfEvaluationAnswers &&*/ (
-            <Bullet>
+          {
+            /*hasSelfEvaluationAnswers &&*/ <Bullet>
               {formatMessage(
                 disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
               )}
             </Bullet>
-          )}
-          {/*hasCapabilityImpairment && */(
-            <Bullet>
+          }
+          {
+            /*hasCapabilityImpairment && */ <Bullet>
               {formatMessage(
                 disabilityPensionFormMessage.capabilityImpairment.title,
               )}
             </Bullet>
-          )}
+          }
         </BulletList>
       </Box>
     </Box>
