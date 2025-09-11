@@ -99,10 +99,9 @@ const ParliamentaryRoot = () => {
                 return (
                   <ActionCard
                     key={area.id}
-                    eyebrow={
-                      formatMessage(m.totalListsPerConstituency) +
+                    eyebrow={`${formatMessage(m.totalListsPerConstituency)}: ${
                       areaLists.length
-                    }
+                    }`}
                     heading={area.name}
                     cta={{
                       label: formatMessage(m.viewConstituency),
@@ -131,10 +130,12 @@ const ParliamentaryRoot = () => {
                 )
               })}
             </Stack>
-            <CompareLists
-              collectionId={collection?.id}
-              collectionType={collection?.collectionType}
-            />
+            {allLists?.length > 0 && (
+              <CompareLists
+                collectionId={collection?.id}
+                collectionType={collection?.collectionType}
+              />
+            )}
           </Box>
         </GridColumn>
       </GridRow>

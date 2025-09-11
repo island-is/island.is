@@ -118,11 +118,11 @@ export const Municipality = () => {
                 <FindSignature
                   collectionId={municipalityLists[0].area.collectionId ?? ''}
                 />
-                <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
-                  <Text variant="eyebrow">
-                    {formatMessage(m.totalListResults) +
-                      ': ' +
-                      municipalityLists.length}
+                <Box display="flex" justifyContent="flexEnd">
+                  <Text variant="eyebrow" marginBottom={3}>
+                    {`${formatMessage(m.totalListsPerMunicipality)}: ${
+                      municipalityLists.length
+                    }`}
                   </Text>
                 </Box>
                 <Stack space={3}>
@@ -131,11 +131,9 @@ export const Municipality = () => {
                       key={list.id}
                       eyebrow={municipality}
                       heading={list.candidate.name}
-                      text={
-                        formatMessage(m.numberOfSignatures) +
-                        ': ' +
+                      text={`${formatMessage(m.totalValidSignatures)}: ${
                         list.numberOfSignatures
-                      }
+                      }`}
                       cta={{
                         label: formatMessage(m.viewList),
                         variant: 'text',
@@ -158,7 +156,7 @@ export const Municipality = () => {
               </GridColumn>
             </GridRow>
           )}
-          {municipalityLists.length > 0 && (
+          {municipalityLists?.length > 0 && (
             <CompareLists
               collectionId={collection?.id}
               collectionType={collection?.collectionType}

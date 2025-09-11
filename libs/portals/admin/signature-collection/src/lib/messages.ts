@@ -34,11 +34,6 @@ export const m = defineMessages({
       'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið. Hægt er að leita að listum og sía eftir landsfjórðungi og frambjóðanda.',
     description: '',
   },
-  searchInAllListsPlaceholder: {
-    id: 'admin-portal.signature-collection:searchInAllListsPlaceholder',
-    defaultMessage: 'Leita eftir nafni, kennitölu eða svæði',
-    description: '',
-  },
   filterCandidates: {
     id: 'admin-portal.signature-collection:filterCandidates',
     defaultMessage: 'Sía frambjóðendur',
@@ -144,11 +139,6 @@ export const m = defineMessages({
     id: 'admin-portal.signature-collection:municipalCollectionIntro',
     defaultMessage:
       'Hér er yfirlit yfir öll sveitarfélög á landinu. Hægt er að skoða öll þau sveitarfélög sem opnað hafa fyrir rafræna söfnun meðmæla.',
-    description: '',
-  },
-  numberOfSignatures: {
-    id: 'admin-portal.signature-collection:numberOfSignatures',
-    defaultMessage: 'Fjöldi meðmæla',
     description: '',
   },
   parliamentaryCollectionTitle: {
@@ -702,39 +692,29 @@ export const m = defineMessages({
       'Engar niðurstöður komu upp úr skjalinu sem hlaðið var upp.',
     description: '',
   },
-  totalListResults: {
-    id: 'admin-portal.signature-collection:totalListResults',
+  totalValidSignatures: {
+    id: 'admin-portal.signature-collection:totalValidSignatures',
     defaultMessage: 'Fjöldi gildra meðmæla',
     description: '',
   },
   totalListsPerConstituency: {
     id: 'admin-portal.signature-collection:totalListsPerConstituency',
-    defaultMessage: 'Fjöldi lista: ',
+    defaultMessage: 'Fjöldi lista',
     description: '',
   },
   totalMunicipalities: {
     id: 'admin-portal.signature-collection:totalMunicipalities',
-    defaultMessage: 'Fjöldi sveitarfélaga: ',
+    defaultMessage: 'Fjöldi sveitarfélaga',
     description: '',
   },
   totalListsPerMunicipality: {
     id: 'admin-portal.signature-collection:totalListsPerMunicipality',
-    defaultMessage: 'Fjöldi lista: ',
+    defaultMessage: 'Fjöldi lista',
     description: '',
   },
   totalCandidates: {
     id: 'admin-portal.signature-collection:totalCandidates',
     defaultMessage: 'Fjöldi frambjóðenda',
-    description: '',
-  },
-  nationalIdsSuccess: {
-    id: 'admin-portal.signature-collection:nationalIdsSuccess',
-    defaultMessage: 'Kennitölur sem tókst að hlaða upp',
-    description: '',
-  },
-  nationalIdsError: {
-    id: 'admin-portal.signature-collection:nationalIdsError',
-    defaultMessage: 'Kennitölur sem mistókst að hlaða upp',
     description: '',
   },
   startCollection: {

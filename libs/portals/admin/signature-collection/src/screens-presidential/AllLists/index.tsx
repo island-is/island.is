@@ -251,13 +251,11 @@ const Lists = () => {
                     return (
                       <ActionCard
                         key={list.id}
-                        eyebrow={
-                          formatMessage(m.listEndTime) +
-                          ': ' +
-                          format(new Date(list.endTime), 'dd.MM.yyyy')
-                        }
+                        eyebrow={`${formatMessage(m.listEndTime)}: ${format(
+                          new Date(list.endTime),
+                          'dd.MM.yyyy',
+                        )}`}
                         heading={list.title}
-                        text={formatMessage(m.collectionTitle)}
                         progressMeter={{
                           currentProgress: list.numberOfSignatures ?? 0,
                           maxProgress: list.area.min,
@@ -315,12 +313,10 @@ const Lists = () => {
             </Box>
           )}
           {lists?.length > 0 && (
-            <Box>
-              <CompareLists
-                collectionId={collection?.id}
-                collectionType={collection?.collectionType}
-              />
-            </Box>
+            <CompareLists
+              collectionId={collection?.id}
+              collectionType={collection?.collectionType}
+            />
           )}
         </GridColumn>
       </GridRow>
