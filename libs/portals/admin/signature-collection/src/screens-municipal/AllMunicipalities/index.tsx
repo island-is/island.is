@@ -100,13 +100,12 @@ const AllMunicipalities = ({
           <Box marginTop={9} />
           {collection.areas.length > 0 ? (
             <Box>
-              <FindSignature collectionId={collection.id} />
               {collection.areas.length > 1 && (
                 <Box display="flex" justifyContent="flexEnd">
                   <Text marginBottom={2} variant="eyebrow">
-                    {formatMessage(m.totalListResults) +
-                      ': ' +
-                      collection.areas.length}
+                    {`${formatMessage(m.totalMunicipalities)}: ${
+                      collection.areas.length
+                    }`}
                   </Text>
                 </Box>
               )}

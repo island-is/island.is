@@ -25,6 +25,7 @@ import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import EmptyState from '../../shared-components/emptyState'
 import { CollectionStatus } from '@island.is/api/schema'
+import FindSignature from '../../shared-components/findSignature'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
@@ -114,6 +115,9 @@ export const Municipality = () => {
           ) : (
             <GridRow>
               <GridColumn span="12/12">
+                <FindSignature
+                  collectionId={municipalityLists[0].area.collectionId ?? ''}
+                />
                 <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
                   <Text variant="eyebrow">
                     {formatMessage(m.totalListResults) +

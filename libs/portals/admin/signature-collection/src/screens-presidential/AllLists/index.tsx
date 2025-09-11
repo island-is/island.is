@@ -1,7 +1,6 @@
 import {
   ActionCard,
   Box,
-  FilterInput,
   GridColumn,
   GridContainer,
   GridRow,
@@ -20,7 +19,10 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { CollectionStatus, SignatureCollectionList } from '@island.is/api/schema'
+import {
+  CollectionStatus,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import {
@@ -36,12 +38,14 @@ import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
+import FindSignature from '../../shared-components/findSignature'
 
 const Lists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { allLists, collectionStatus, collection } = useLoaderData() as ListsLoaderReturn
+  const { allLists, collectionStatus, collection } =
+    useLoaderData() as ListsLoaderReturn
 
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
@@ -165,14 +169,8 @@ const Lists = () => {
           <Divider />
           <Box marginTop={9} />
           <GridRow marginBottom={5}>
-            <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
-              <FilterInput
-                name="input"
-                placeholder={formatMessage(m.searchInAllListsPlaceholder)}
-                value={filters.input}
-                onChange={(value) => setFilters({ ...filters, input: value })}
-                backgroundColor="blue"
-              />
+            <GridColumn span={'12/12'}>
+              <FindSignature collectionId={collection.id} />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <Box
@@ -184,7 +182,7 @@ const Lists = () => {
                   labelClear=""
                   labelClose=""
                   labelResult=""
-                  labelOpen={formatMessage(m.filter)}
+                  labelOpen={formatMessage(m.filterCandidates)}
                   labelClearAll={formatMessage(m.clearAllFilters)}
                   resultCount={lists.length}
                   variant="popover"
@@ -242,7 +240,7 @@ const Lists = () => {
                     )
                   : allLists.length > 0 && (
                       <Text variant="eyebrow">
-                        {formatMessage(m.totalListResults)}: {allLists.length}
+                        {formatMessage(m.totalCandidates)}: {candidates.length}
                       </Text>
                     )}
               </Box>

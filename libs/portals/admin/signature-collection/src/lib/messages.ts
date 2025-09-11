@@ -39,6 +39,11 @@ export const m = defineMessages({
     defaultMessage: 'Leita eftir nafni, kennitölu eða svæði',
     description: '',
   },
+  filterCandidates: {
+    id: 'admin-portal.signature-collection:filterCandidates',
+    defaultMessage: 'Sía frambjóðendur',
+    description: '',
+  },
   filter: {
     id: 'admin-portal.signature-collection:filter',
     defaultMessage: 'Sía',
@@ -527,7 +532,8 @@ export const m = defineMessages({
   },
   collectionMunicipalReviewedTitle: {
     id: 'admin-portal.signature-collection:collectionMunicipalReviewedTitle',
-    defaultMessage: 'Meðmælasöfnun vegna framboðs til Sveitarstjórnarkosninga lokið',
+    defaultMessage:
+      'Meðmælasöfnun vegna framboðs til Sveitarstjórnarkosninga lokið',
     description: '',
   },
   collectionMunicipalReviewedMessage: {
@@ -706,9 +712,19 @@ export const m = defineMessages({
     defaultMessage: 'Fjöldi lista: ',
     description: '',
   },
+  totalMunicipalities: {
+    id: 'admin-portal.signature-collection:totalMunicipalities',
+    defaultMessage: 'Fjöldi sveitarfélaga: ',
+    description: '',
+  },
   totalListsPerMunicipality: {
     id: 'admin-portal.signature-collection:totalListsPerMunicipality',
     defaultMessage: 'Fjöldi lista: ',
+    description: '',
+  },
+  totalCandidates: {
+    id: 'admin-portal.signature-collection:totalCandidates',
+    defaultMessage: 'Fjöldi frambjóðenda',
     description: '',
   },
   nationalIdsSuccess: {
