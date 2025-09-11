@@ -20,8 +20,8 @@ export class CourtDocumentResponse {
   @Field(() => ID)
   readonly caseId!: string
 
-  @Field(() => ID)
-  readonly courtSessionId!: string
+  @Field(() => ID, { nullable: true })
+  readonly courtSessionId?: string
 
   @Field(() => CourtDocumentType)
   readonly documentType!: CourtDocumentType

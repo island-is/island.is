@@ -13,7 +13,7 @@ export class UnfiledCourtDocumentExistsGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const theCase: Case = request.theCase
+    const theCase: Case = request.case
 
     if (!theCase) {
       throw new BadRequestException('Missing case')
