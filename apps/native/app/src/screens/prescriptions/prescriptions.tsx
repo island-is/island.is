@@ -20,15 +20,7 @@ const Host = styled(SafeAreaView)`
   margin-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
 
-const Prescriptions = styled.View`
-  margin-top: ${({ theme }) => theme.spacing[3]}px;
-`
-
-const Tabs = styled.View`
-  margin-top: ${({ theme }) => theme.spacing[3]}px;
-`
-
-const ErrorWrapper = styled.View`
+const Wrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
@@ -37,7 +29,7 @@ const Top = styled(Typography)`
 `
 
 const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks((theme, intl) => ({
+  createNavigationOptionHooks((_, intl) => ({
     topBar: {
       title: {
         text: intl.formatMessage({
@@ -95,14 +87,21 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
     setRefetching(true)
 
     try {
-      await prescriptionsRes.refetch()
-      await certificatesRes.refetch()
+      await Promise.all([prescriptionsRes.refetch(), certificatesRes.refetch()])
     } catch (e) {
       // noop
     } finally {
       setRefetching(false)
     }
   }, [prescriptionsRes, certificatesRes])
+
+  const renderSkeletons = useCallback(
+    () =>
+      Array.from({ length: 5 }).map((_, index) => (
+        <GeneralCardSkeleton height={90} key={index} />
+      )),
+    [],
+  )
 
   return (
     <View style={{ flex: 1 }}>
@@ -122,7 +121,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
             />
           </Top>
 
-          <Tabs>
+          <Wrapper>
             <TabButtons
               buttons={[
                 {
@@ -139,51 +138,42 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
               selectedTab={selectedTab}
               setSelectedTab={setSelectedTab}
             />
-          </Tabs>
+          </Wrapper>
           {!showPrescriptions &&
           (drugCertificates?.length || certificatesRes.loading) ? (
-            <Prescriptions>
+            <Wrapper>
               {certificatesRes.loading && !certificatesRes.data
-                ? Array.from({ length: 5 }).map((_, index) => (
-                    <GeneralCardSkeleton height={90} key={index} />
-                  ))
+                ? renderSkeletons()
                 : drugCertificates?.map((certificate, index) => (
                     <CertificateCard
                       key={`${certificate?.id}-${index}`}
                       certificate={certificate}
                     />
                   ))}
-            </Prescriptions>
+            </Wrapper>
           ) : null}
           {showPrescriptions &&
           (prescriptions?.length || prescriptionsRes.loading) ? (
-            <Prescriptions>
+            <Wrapper>
               {prescriptionsRes.loading && !prescriptionsRes.data
-                ? Array.from({ length: 5 }).map((_, index) => (
-                    <GeneralCardSkeleton height={90} key={index} />
-                  ))
+                ? renderSkeletons()
                 : prescriptions?.map((prescription, index) => (
                     <PrescriptionCard
                       key={`${prescription?.id}-${index}`}
                       prescription={prescription}
                     />
                   ))}
-            </Prescriptions>
+            </Wrapper>
           ) : null}
-          {showPrescriptionError && (
-            <ErrorWrapper>
+          {(showPrescriptionError || showDrugCertificateError) && (
+            <Wrapper>
               <Problem />
-            </ErrorWrapper>
-          )}
-          {showDrugCertificateError && (
-            <ErrorWrapper>
-              <Problem />
-            </ErrorWrapper>
+            </Wrapper>
           )}
           {showNoDataError && (
-            <ErrorWrapper>
+            <Wrapper>
               <Problem type="no_data" />
-            </ErrorWrapper>
+            </Wrapper>
           )}
         </Host>
       </ScrollView>

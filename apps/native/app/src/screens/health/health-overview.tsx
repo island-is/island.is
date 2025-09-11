@@ -96,7 +96,7 @@ const showErrorComponent = (error: ApolloError) => {
 }
 
 const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks((theme, intl) => ({
+  createNavigationOptionHooks((_, intl) => ({
     topBar: {
       title: {
         text: intl.formatMessage({ id: 'health.overview.screenTitle' }),

@@ -1,27 +1,23 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { Badge, ExpandableCard, Typography, dynamicColor } from '../../../ui'
 import chevronDown from '../../../assets/icons/chevron-down.png'
 import clockIcon from '../../../assets/icons/clock.png'
 import { RightsPortalDrugCertificate } from '../../../graphql/types/schema'
+import { Badge, ExpandableCard, Typography } from '../../../ui'
 
 const TableRow = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
   padding-bottom: ${({ theme }) => theme.spacing[2]}px;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade300,
-  }))};
+  border-bottom-color: ${({ theme }) => theme.color.blue200};
   border-bottom-width: 1px;
 `
 const RowItem = styled.View`
-  margin-right: ${({ theme }) => theme.spacing[1]}px;
-  margin-left: ${({ theme }) => theme.spacing[1]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[1]}px;
   width: 40%;
   flex: 1;
 `
@@ -30,11 +26,11 @@ const TableHeader = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
-export function CertificateCard({
-  certificate,
-}: {
+type CertificateCardProps = {
   certificate: RightsPortalDrugCertificate
-}) {
+}
+
+export function CertificateCard({ certificate }: CertificateCardProps) {
   const intl = useIntl()
   const theme = useTheme()
   const [open, setOpen] = useState(false)
@@ -93,6 +89,10 @@ export function CertificateCard({
     },
   ]
 
+  const onPress = useCallback(() => {
+    setOpen((isOpen) => !isOpen)
+  }, [])
+
   return (
     <ExpandableCard
       title={
@@ -131,9 +131,7 @@ export function CertificateCard({
           />
         ) : undefined
       }
-      onPress={() => {
-        setOpen((isOpen) => !isOpen)
-      }}
+      onPress={onPress}
       open={open}
     >
       <View style={{ width: '100%', padding: theme.spacing[2] }}>
