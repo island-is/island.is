@@ -20,6 +20,10 @@ export class ZendeskService {
   private readonly SANDBOX_API_KEY =
     process.env.FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX
   private readonly PROD_API_KEY = process.env.FORM_SYSTEM_ZENDESK_API_KEY_PROD
+
+  private readonly CHECKBOX_TRUE = 'Valið'
+  private readonly CHECKBOX_FALSE = 'Ekki valið'
+
   constructor() {
     this.enhancedFetch = createEnhancedFetch({
       name: 'form-system-zendesk',
@@ -184,6 +188,9 @@ export class ZendeskService {
         section?.screens?.forEach((screen) => {
           body += `<h4 style='padding-left:10px'>${screen.name.is}</h4>`
           screen.fields?.forEach((field) => {
+            if (field.fieldSettings?.zendeskIsPrivate === true) {
+              return
+            }
             body += `<h5 style='margin:0;padding-left:20px'>${field.name.is}${
               field.isRequired ? '*' : ''
             }</h5>`
@@ -211,7 +218,6 @@ export class ZendeskService {
         })
       })
     }
-    this.getCustomFields(applicationDto)
     return body
   }
 
@@ -228,6 +234,9 @@ export class ZendeskService {
       section?.screens?.forEach((screen) => {
         screen.fields?.forEach((field) => {
           if (field.fieldSettings?.zendeskIsCustomField === true) {
+            const customFieldId =
+              Number(field.fieldSettings?.zendeskCustomFieldId) ?? 0
+
             let value = ''
             const json = field.values?.[0]?.json ?? {}
 
@@ -237,10 +246,28 @@ export class ZendeskService {
               value = this.formatValue(rawVal, field.fieldType)
             }
 
-            customFields.push({
-              id: Number(field.fieldSettings?.zendeskCustomFieldId) ?? 0,
-              value: field.values?.[0]?.json ? value : '',
-            })
+            // if field is a checkbox and value is false, do not include it in custom fields
+            if (field.fieldType === FieldTypesEnum.CHECKBOX) {
+              if (value === this.CHECKBOX_FALSE) {
+                return
+              }
+              value = field.name.is
+            }
+
+            // iterate through customFields and check if id already exists.
+            // if it does, append the value to the existing field, separated by a comma
+            // if it doesn't, add a new field
+            const existingField = customFields.find(
+              (f) => f.id === customFieldId,
+            )
+            if (existingField) {
+              existingField.value += `, ${value}`
+            } else {
+              customFields.push({
+                id: customFieldId,
+                value: value,
+              })
+            }
           }
         })
       })
@@ -254,9 +281,9 @@ export class ZendeskService {
   private formatValue(val: any, fieldType: string): string {
     if (fieldType === FieldTypesEnum.CHECKBOX) {
       if (val === true) {
-        return 'Valið'
+        return this.CHECKBOX_TRUE
       } else {
-        return 'Ekki valið'
+        return this.CHECKBOX_FALSE
       }
     } else if (fieldType === FieldTypesEnum.BANK_ACCOUNT && val === '--') {
       return ''
