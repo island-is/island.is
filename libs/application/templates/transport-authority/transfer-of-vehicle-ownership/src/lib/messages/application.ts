@@ -35,12 +35,6 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is done',
   },
-  //todo delete from contentful
-  historyLogApprovedByReviewer: {
-    id: 'ta.tvo.application:historyLogApprovedByReviewer',
-    defaultMessage: 'Samþykkt af {actor} fyrir hönd {subject}',
-    description: 'History log approved by reviewer',
-  },
   historyLogSentApplication: {
     id: 'ta.tvo.application:historyLogSentApplication',
     defaultMessage: 'Umsókn send á Samgöngustofu',
