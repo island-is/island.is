@@ -143,7 +143,11 @@ const Signees = ({ list }: { list: SignatureCollectionList }) => {
                   .slice(pageSize * (page - 1), pageSize * page)
                   .map((s) => {
                     const textVariant = 'medium'
-                    const bgColor = s.isDigital ? 'white' : 'blueberry100'
+                    const bgColor = !s.valid
+                      ? 'red100'
+                      : s.isDigital
+                      ? 'white'
+                      : 'blueberry100'
                     return (
                       <Row key={s.id}>
                         <Data

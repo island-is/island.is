@@ -38,7 +38,7 @@ const SignatureCollectionMunicipal = () => {
             intro={formatMessage(m.pageIntro)}
             slug={listsForOwner?.[0]?.slug}
           />
-          {isOwner.success || user.profile.actor ? (
+          {isOwner?.success || user?.profile.actor ? (
             <OwnerView currentCollection={currentCollection} />
           ) : (
             <SigneeView currentCollection={currentCollection} />

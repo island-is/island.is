@@ -32,7 +32,7 @@ const OwnerView = ({
     <Box>
       {!loadingOwnerLists && !loadingSignedLists ? (
         <Stack space={8}>
-          <SignedLists signedLists={signedLists} />
+          <SignedLists signedLists={signedLists ?? []} />
           <Box>
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.myListsDescription)}

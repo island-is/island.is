@@ -36,7 +36,7 @@ const OwnerView = ({
     <Box>
       {!loadingOwnerLists && !loadingSignedLists && !!currentCollection ? (
         <Stack space={8}>
-          <SignedLists signedLists={signedLists} />
+          <SignedLists signedLists={signedLists ?? []} />
           <Box>
             <Box
               display="flex"
