@@ -273,7 +273,6 @@ export class ZendeskService {
       })
     })
 
-    console.log('customFields', customFields)
     return customFields
   }
 
