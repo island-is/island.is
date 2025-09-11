@@ -23,27 +23,18 @@ export const InventoryFields: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const valueFieldId = `${id}.value`
 
   useEffect(() => {
-    // Only pre-populate once if fields are empty
-    if (
-      !hasInitialized &&
-      estateData.estate &&
-      (estateData.estate as any).inventory
-    ) {
-      const currentInfo = getValues(infoFieldId)
-      const currentValue = getValues(valueFieldId)
+    if (hasInitialized) return
 
-      // Only set values if fields are currently empty
-      if (!currentInfo && !currentValue) {
-        const { info, value } = (estateData.estate as any).inventory
-        if (info) {
-          setValue(infoFieldId, info)
-        }
-        if (value) {
-          setValue(valueFieldId, value)
-        }
-      }
-      setHasInitialized(true)
+    const prefill = estateData?.estate?.inventory as any | undefined
+    const currentInfo = getValues(infoFieldId)
+    const currentValue = getValues(valueFieldId)
+
+    if (prefill) {
+      if (!currentInfo && prefill.info) setValue(infoFieldId, prefill.info)
+      if (!currentValue && prefill.value) setValue(valueFieldId, prefill.value)
     }
+
+    setHasInitialized(true)
   }, [
     estateData,
     setValue,

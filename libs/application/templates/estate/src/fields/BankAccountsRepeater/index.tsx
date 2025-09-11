@@ -1,4 +1,4 @@
-import { FC, useEffect, useCallback, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
@@ -46,8 +46,6 @@ export const BankAccountsRepeater: FC<
   })
   const { control, clearErrors, setValue, getValues } = useFormContext()
   const estateData = getEstateDataFromApplication(application)
-  const [, updateState] = useState<unknown>()
-  const forceUpdate = useCallback(() => updateState({}), [])
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.bankAccounts) {
@@ -59,9 +57,13 @@ export const BankAccountsRepeater: FC<
   // Calculate bank account total from balance + exchangeRateOrInterest
   const updateBankAccountValue = (fieldIndex: string) => {
     const bankAccountValues = getValues(fieldIndex)
-    const balance = bankAccountValues?.balance?.replace(/[^\d.]/g, '') || '0'
+    const balance =
+      bankAccountValues?.balance?.replace(',', '.').replace(/[^\d.]/g, '') ||
+      '0'
     const exchangeRateOrInterest =
-      bankAccountValues?.exchangeRateOrInterest?.replace(/[^\d.]/g, '') || '0'
+      bankAccountValues?.exchangeRateOrInterest
+        ?.replace(',', '.')
+        .replace(/[^\d.]/g, '') || '0'
 
     const accountTotal =
       parseFloat(balance) + parseFloat(exchangeRateOrInterest)
@@ -70,8 +72,6 @@ export const BankAccountsRepeater: FC<
     if (accountTotal > 0) {
       clearErrors(`${fieldIndex}.balance`)
     }
-
-    forceUpdate()
   }
 
   const handleAddBankAccount = () =>

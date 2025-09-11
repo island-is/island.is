@@ -80,11 +80,11 @@ export const overviewAssetsAndDebts = [
     id: 'overviewInventory',
     title: m.inventoryTextField,
     description: ({ answers }) =>
-      getValueViaPath(answers, 'estate.inventory.info'),
+      getValueViaPath<string>(answers, 'estate.inventory.info'),
     titleVariant: 'h4',
     space: 'gutter',
     condition: (answers) =>
-      getValueViaPath(answers, 'estate.inventory.info') !== '',
+      !!getValueViaPath<string>(answers, 'estate.inventory.info')?.trim(),
   }),
   buildDescriptionField({
     id: 'overviewInventoryValue',
@@ -94,7 +94,9 @@ export const overviewAssetsAndDebts = [
       return formatCurrency(value ?? '0')
     },
     condition: (answers) =>
-      getValueViaPath(answers, 'estate.inventory.value') !== '',
+      !!getValueViaPath<string>(answers, 'estate.inventory.value')
+        ?.toString()
+        .trim(),
     titleVariant: 'h4',
     marginBottom: 'gutter',
     space: 'gutter',
@@ -105,7 +107,9 @@ export const overviewAssetsAndDebts = [
     marginTop: [3],
     marginBottom: [3],
     condition: (answers) =>
-      getValueViaPath(answers, 'estate.inventory.value') === '',
+      !getValueViaPath<string>(answers, 'estate.inventory.value')
+        ?.toString()
+        .trim(),
   }),
   buildDividerField({}),
   buildDescriptionField({
@@ -256,10 +260,8 @@ export const overviewAssetsAndDebts = [
   }),
   buildDividerField({
     condition: (answers) =>
-      getValueViaPath(answers, 'selectedEstate') ===
-      EstateTypes.estateWithoutAssets
-        ? false
-        : true,
+      getValueViaPath(answers, 'selectedEstate') !==
+      EstateTypes.estateWithoutAssets,
   }),
   buildDescriptionField({
     id: 'overviewClaimsInfoTitle',
@@ -301,17 +303,15 @@ export const overviewAssetsAndDebts = [
     id: 'claimsTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers<EstateSchema['estate']['claims']>(
+      getSumFromAnswers<NonNullable<EstateSchema['estate']['claims']>[number]>(
         answers,
         'estate.claims',
         'value',
       ),
     condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['estate']['claims']>(
-        answers,
-        'estate.claims',
-        'value',
-      ),
+      !!getSumFromAnswers<
+        NonNullable<EstateSchema['estate']['claims']>[number]
+      >(answers, 'estate.claims', 'value'),
     titleVariant: 'h4',
   }),
   buildDividerField({
@@ -373,17 +373,15 @@ export const overviewAssetsAndDebts = [
     id: 'stocksTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers<EstateSchema['estate']['stocks']>(
+      getSumFromAnswers<NonNullable<EstateSchema['estate']['stocks']>[number]>(
         answers,
         'estate.stocks',
         'value',
       ),
     condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['estate']['stocks']>(
-        answers,
-        'estate.stocks',
-        'value',
-      ),
+      !!getSumFromAnswers<
+        NonNullable<EstateSchema['estate']['stocks']>[number]
+      >(answers, 'estate.stocks', 'value'),
     titleVariant: 'h4',
   }),
   buildDividerField({}),
@@ -419,17 +417,13 @@ export const overviewAssetsAndDebts = [
     id: 'otherAssetsTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers<EstateSchema['estate']['otherAssets']>(
-        answers,
-        'estate.otherAssets',
-        'value',
-      ),
+      getSumFromAnswers<
+        NonNullable<EstateSchema['estate']['otherAssets']>[number]
+      >(answers, 'estate.otherAssets', 'value'),
     condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['estate']['otherAssets']>(
-        answers,
-        'estate.otherAssets',
-        'value',
-      ),
+      !!getSumFromAnswers<
+        NonNullable<EstateSchema['estate']['otherAssets']>[number]
+      >(answers, 'estate.otherAssets', 'value'),
     titleVariant: 'h4',
   }),
   buildDividerField({}),
@@ -447,7 +441,7 @@ export const overviewAssetsAndDebts = [
     titleVariant: 'h4',
     space: 'gutter',
     condition: (answers) =>
-      getValueViaPath<string>(answers, 'estate.moneyAndDeposit.info') !== '',
+      !!getValueViaPath<string>(answers, 'estate.moneyAndDeposit.info')?.trim(),
   }),
   buildDescriptionField({
     id: 'overviewMoneyAndDepositValue',
@@ -462,7 +456,9 @@ export const overviewAssetsAndDebts = [
     marginBottom: 'gutter',
     space: 'gutter',
     condition: (answers) =>
-      getValueViaPath<string>(answers, 'estate.moneyAndDeposit.value') !== '',
+      !!getValueViaPath<string>(answers, 'estate.moneyAndDeposit.value')
+        ?.toString()
+        .trim(),
   }),
   buildDescriptionField({
     id: 'moneyAndDepositNotFilledOut',
@@ -470,9 +466,9 @@ export const overviewAssetsAndDebts = [
     marginTop: [3],
     marginBottom: [3],
     condition: (answers) => {
-      return (
-        getValueViaPath<string>(answers, 'estate.moneyAndDeposit.value') === ''
-      )
+      return !getValueViaPath<string>(answers, 'estate.moneyAndDeposit.value')
+        ?.toString()
+        .trim()
     },
   }),
   buildDividerField({}),
@@ -490,8 +486,9 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).debts?.data ?? []).map(
-          (debt) => ({
+        ((answers as unknown as EstateSchema).debts?.data ?? [])
+          .filter((debt) => debt.enabled !== false)
+          .map((debt) => ({
             title: debt.creditorName,
             description: [
               debt.nationalId &&
@@ -505,17 +502,28 @@ export const overviewAssetsAndDebts = [
                 debt.balance ?? '0',
               )}`,
             ],
-          }),
-        ),
+          })),
     },
   ),
   buildDescriptionField({
     id: 'debtsTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers(answers, 'debts.data', 'balance'),
+      getSumFromAnswers(
+        answers,
+        'debts.data',
+        'balance',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (debt: any) => debt.enabled !== false,
+      ),
     condition: (answers) =>
-      !!getSumFromAnswers(answers, 'debts.data', 'balance'),
+      !!getSumFromAnswers(
+        answers,
+        'debts.data',
+        'balance',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (debt: any) => debt.enabled !== false,
+      ),
     titleVariant: 'h4',
   }),
   buildDividerField({}),

@@ -228,15 +228,18 @@ export const expandAssetFrames = (
 ): UploadData['assets'] => {
   const expandedAssetFrames: UploadData['assets'] = []
 
-  assetFrames.filter(filterEmptyObjects).forEach((assetFrame) => {
-    expandedAssetFrames.push({
-      assetNumber: assetFrame.assetNumber ?? '',
-      description: assetFrame.description ?? '',
-      enabled: assetFrame.enabled ?? true,
-      marketValue: assetFrame.marketValue ?? '',
-      share: assetFrame.share ?? '',
+  assetFrames
+    .filter(filterEmptyObjects)
+    .filter((assetFrame: any) => assetFrame.enabled !== false)
+    .forEach((assetFrame) => {
+      expandedAssetFrames.push({
+        assetNumber: assetFrame.assetNumber ?? '',
+        description: assetFrame.description ?? '',
+        enabled: assetFrame.enabled ?? true,
+        marketValue: assetFrame.marketValue ?? '',
+        share: assetFrame.share ?? '',
+      })
     })
-  })
 
   return expandedAssetFrames
 }
@@ -246,13 +249,16 @@ export const expandClaims = (
 ): UploadData['claims'] => {
   const expandedClaims: UploadData['claims'] = []
 
-  claims.filter(filterEmptyObjects).forEach((claim) => {
-    expandedClaims.push({
-      publisher: claim?.publisher ?? '',
-      value: claim?.value ?? '',
-      nationalId: claim?.nationalId ?? '',
+  claims
+    .filter(filterEmptyObjects)
+    .filter((claim: any) => claim.enabled !== false)
+    .forEach((claim) => {
+      expandedClaims.push({
+        publisher: claim?.publisher ?? '',
+        value: claim?.value ?? '',
+        nationalId: claim?.nationalId ?? '',
+      })
     })
-  })
   return expandedClaims
 }
 
@@ -261,27 +267,30 @@ export const expandEstateMembers = (
 ): UploadData['estateMembers'] => {
   const expandedMembers: UploadData['estateMembers'] = []
 
-  members.filter(filterEmptyObjects).forEach((member) => {
-    expandedMembers.push({
-      ...member,
-      dateOfBirth: member.dateOfBirth ?? '',
-      enabled: member.enabled ?? true,
-      email: member.email ?? '',
-      // TODO: investigate better why nationalId and SSN is required
-      nationalId: member.nationalId ?? '',
-      ssn: member.ssn ?? '',
-      phone: member.phone ?? '',
-      relation: member.relation ?? '',
-      relationWithApplicant: member.relationWithApplicant ?? '',
-      advocate: {
-        address: member.advocate?.address ?? '',
-        email: member.advocate?.email ?? '',
-        name: member.advocate?.name ?? '',
-        nationalId: member.advocate?.nationalId ?? '',
-        phone: member.advocate?.phone ?? '',
-      },
+  members
+    .filter(filterEmptyObjects)
+    .filter((member: any) => member.enabled !== false)
+    .forEach((member) => {
+      expandedMembers.push({
+        ...member,
+        dateOfBirth: member.dateOfBirth ?? '',
+        enabled: member.enabled ?? true,
+        email: member.email ?? '',
+        // TODO: investigate better why nationalId and SSN is required
+        nationalId: member.nationalId ?? '',
+        ssn: member.ssn ?? '',
+        phone: member.phone ?? '',
+        relation: member.relation ?? '',
+        relationWithApplicant: member.relationWithApplicant ?? '',
+        advocate: {
+          address: member.advocate?.address ?? '',
+          email: member.advocate?.email ?? '',
+          name: member.advocate?.name ?? '',
+          nationalId: member.advocate?.nationalId ?? '',
+          phone: member.advocate?.phone ?? '',
+        },
+      })
     })
-  })
   return expandedMembers
 }
 
@@ -290,14 +299,17 @@ export const expandBankAccounts = (
 ): UploadData['bankAccounts'] => {
   const expandedBankAccounts: UploadData['bankAccounts'] = []
 
-  bankAccounts.filter(filterEmptyObjects).forEach((bankAccount) => {
-    expandedBankAccounts.push({
-      accountNumber: bankAccount.accountNumber ?? '',
-      balance: bankAccount.balance ?? '',
-      exchangeRateOrInterest: bankAccount.exchangeRateOrInterest ?? '',
-      accountTotal: bankAccount.accountTotal ?? '',
+  bankAccounts
+    .filter(filterEmptyObjects)
+    .filter((bankAccount: any) => bankAccount.enabled !== false)
+    .forEach((bankAccount) => {
+      expandedBankAccounts.push({
+        accountNumber: bankAccount.accountNumber ?? '',
+        balance: bankAccount.balance ?? '',
+        exchangeRateOrInterest: bankAccount.exchangeRateOrInterest ?? '',
+        accountTotal: bankAccount.accountTotal ?? '',
+      })
     })
-  })
 
   return expandedBankAccounts
 }
@@ -307,15 +319,18 @@ export const expandDebts = (
 ): UploadData['debts'] => {
   const expandedDebts: UploadData['debts'] = []
 
-  debts.filter(filterEmptyObjects).forEach((debt) => {
-    expandedDebts.push({
-      balance: debt.balance ?? '',
-      creditorName: debt.creditorName ?? '',
-      loanIdentity: debt.loanIdentity ?? '',
-      nationalId: debt.nationalId ?? '',
-      ssn: debt.ssn ?? '',
+  debts
+    .filter(filterEmptyObjects)
+    .filter((debt: any) => debt.enabled !== false)
+    .forEach((debt) => {
+      expandedDebts.push({
+        balance: debt.balance ?? '',
+        creditorName: debt.creditorName ?? '',
+        loanIdentity: debt.loanIdentity ?? '',
+        nationalId: debt.nationalId ?? '',
+        ssn: debt.ssn ?? '',
+      })
     })
-  })
 
   return expandedDebts
 }
@@ -325,16 +340,19 @@ export const expandStocks = (
 ): UploadData['stocks'] => {
   const expandedStocks: UploadData['stocks'] = []
 
-  stocks.filter(filterEmptyObjects).forEach((stock) => {
-    expandedStocks.push({
-      faceValue: stock.faceValue ?? '',
-      nationalId: stock.nationalId ?? '',
-      organization: stock.organization ?? '',
-      rateOfExchange: stock.rateOfExchange ?? '',
-      ssn: stock.ssn ?? '',
-      value: stock.value ?? '',
+  stocks
+    .filter(filterEmptyObjects)
+    .filter((stock: any) => stock.enabled !== false)
+    .forEach((stock) => {
+      expandedStocks.push({
+        faceValue: stock.faceValue ?? '',
+        nationalId: stock.nationalId ?? '',
+        organization: stock.organization ?? '',
+        rateOfExchange: stock.rateOfExchange ?? '',
+        ssn: stock.ssn ?? '',
+        value: stock.value ?? '',
+      })
     })
-  })
 
   return expandedStocks
 }
@@ -344,12 +362,15 @@ export const expandOtherAssets = (
 ): UploadData['otherAssets'] => {
   const expandedOtherAssets: UploadData['otherAssets'] = []
 
-  otherAssets.filter(filterEmptyObjects).forEach((otherAsset) => {
-    expandedOtherAssets.push({
-      info: otherAsset.info ?? (otherAsset as any).description ?? '',
-      value: otherAsset.value ?? '',
+  otherAssets
+    .filter(filterEmptyObjects)
+    .filter((otherAsset: any) => otherAsset.enabled !== false)
+    .forEach((otherAsset) => {
+      expandedOtherAssets.push({
+        info: otherAsset.info ?? (otherAsset as any).description ?? '',
+        value: otherAsset.value ?? '',
+      })
     })
-  })
 
   return expandedOtherAssets
 }

@@ -1,4 +1,4 @@
-import { FC, useEffect, useCallback, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -44,8 +44,6 @@ export const ClaimsRepeater: FC<
   })
   const { control, clearErrors, getValues } = useFormContext()
   const estateData = getEstateDataFromApplication(application)
-  const [, updateState] = useState<unknown>()
-  const forceUpdate = useCallback(() => updateState({}), [])
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.claims) {
@@ -64,11 +62,10 @@ export const ClaimsRepeater: FC<
       .replace(',', '.')
       .replace(/[^\d.]/g, '')
     const numeric = Number.parseFloat(normalized)
+
     if (Number.isFinite(numeric) && numeric > 0) {
       clearErrors(`${fieldIndex}.value`)
     }
-
-    forceUpdate()
   }
 
   const handleAddClaim = () =>
