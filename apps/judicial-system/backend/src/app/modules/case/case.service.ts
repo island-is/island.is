@@ -1998,7 +1998,7 @@ export class CaseService {
       return
     }
 
-    // Create the first court session and then add court decuments to it
+    // Create the first court session and then add court documents to it
     const courtSession = await this.courtSessionService.create(
       theCase.id,
       transaction,
