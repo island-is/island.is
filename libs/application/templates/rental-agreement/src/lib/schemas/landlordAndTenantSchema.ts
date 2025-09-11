@@ -182,11 +182,6 @@ export const parties = z
     const landlordTable = landlordInfo.table || []
     const tenantTable = tenantInfo.table || []
 
-    // Create arrays of national IDs from landlord and tenant tables
-    const landlordNationalIds = landlordTable
-      .map((rep) => rep.nationalIdWithName?.nationalId)
-      .filter((id) => !!id) as string[]
-
     const tenantNationalIds = tenantTable
       .map((tenant) => tenant.nationalIdWithName?.nationalId)
       .filter((id) => !!id) as string[]
