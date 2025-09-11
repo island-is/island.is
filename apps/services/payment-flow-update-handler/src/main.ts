@@ -4,4 +4,5 @@ import { AppModule } from './app/app.module'
 bootstrap({
   appModule: AppModule,
   name: 'services-payment-flow-update-handler',
+  healthCheck: true,
 })
