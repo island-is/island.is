@@ -21,6 +21,7 @@ export const TextInput = ({ item, dispatch }: Props) => {
 
   return (
     <Controller
+      key={item.id}
       name={item.id}
       control={control}
       defaultValue={getValue(item, 'text') ?? ''}
