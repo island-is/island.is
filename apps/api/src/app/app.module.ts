@@ -81,6 +81,7 @@ import {
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { PracticalExamsModule } from '@island.is/api/domains/practical-exams'
 import { SeminarsModule } from '@island.is/api/domains/seminars-ver'
+import { VmstApplicationsModule } from '@island.is/api/domains/vmst-applications'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
@@ -370,6 +371,7 @@ const environment = getConfig
     SecondarySchoolApiModule,
     VmstUnemploymentClientModule,
     PracticalExamsModule,
+    VmstApplicationsModule,
     LandspitaliModule,
     ConfigModule.forRoot({
       isGlobal: true,

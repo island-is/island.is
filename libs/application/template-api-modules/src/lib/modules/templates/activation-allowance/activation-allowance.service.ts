@@ -27,10 +27,7 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
-import {
-  errorMsgs,
-  PaymentInformationAnswer,
-} from '@island.is/application/templates/activation-allowance'
+import { errorMsgs } from '@island.is/application/templates/activation-allowance'
 import { S3Service } from '@island.is/nest/aws'
 import { sharedModuleConfig } from '../../shared'
 import { ConfigType } from '@nestjs/config'
@@ -110,10 +107,6 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     application,
   }: TemplateApiModuleActionProps): Promise<void> {
     const { answers, externalData } = application
-    const bankAnswers = getValueViaPath<PaymentInformationAnswer>(
-      answers,
-      'paymentInformation',
-    )
     const personalInfo = getApplicantInfo(answers, externalData)
     const contact = getContactInfo(answers)
     const licenses = getLicenseInfo(answers)
@@ -163,41 +156,6 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
 
     if (hasError) {
       throw new Error('Missing required fields')
-    }
-
-    let bankInfoValid = false
-    try {
-      bankInfoValid = await this.vmstUnemploymentClientService.validateBankInfo(
-        {
-          galdurApplicationApplicationsB2BQueriesValidateBankInformationQuery: {
-            applicantSSN: personalInfo?.ssn,
-            accountNumber: bankInfo?.accountNumber,
-            ledger: bankAnswers?.ledger,
-            bankNumber: bankAnswers?.bankNumber,
-          },
-        },
-      )
-    } catch (e) {
-      this.logger.warn(
-        '[VMST-ActivationAllowance]: Network call to validate bank info failed',
-      )
-      throw new TemplateApiError(
-        {
-          title: errorMsgs.successErrorTitle,
-          summary: errorMsgs.bankInfoNetworkFail,
-        },
-        500,
-      )
-    }
-
-    if (!bankInfoValid) {
-      throw new TemplateApiError(
-        {
-          title: errorMsgs.successErrorTitle,
-          summary: errorMsgs.bankInfoNotValid,
-        },
-        500,
-      )
     }
 
     let cvResponse: GaldurDomainModelsAttachmentsAttachmentViewModel | undefined
