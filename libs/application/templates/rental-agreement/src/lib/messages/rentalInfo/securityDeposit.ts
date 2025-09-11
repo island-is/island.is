@@ -1,16 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const securityDeposit = defineMessages({
-  subSectionName: {
-    id: 'ra.application:securityDeposit.subSectionName',
-    defaultMessage: 'Trygging',
-    description: 'security deposit sub section name',
-  },
-  pageTitle: {
-    id: 'ra.application:securityDeposit.pageTitle',
-    defaultMessage: 'Trygging',
-    description: 'security deposit page title',
-  },
   pageDescription: {
     id: 'ra.application:securityDeposit.pageDescription',
     defaultMessage:

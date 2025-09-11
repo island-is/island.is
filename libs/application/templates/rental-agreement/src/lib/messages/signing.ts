@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const signing = defineMessages({
+  sectionName: {
+    id: 'ra.application:signingForm.sectionName',
+    defaultMessage: 'Undirritunarferli',
+    description: 'Name of the signing section',
+  },
   pageTitle: {
     id: 'ra.application:signingForm.pageTitle',
     defaultMessage: 'Undirritunarferli hafið',

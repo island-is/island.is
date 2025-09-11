@@ -57,31 +57,6 @@ export const landlordAndTenantDetails = defineMessages({
     defaultMessage: 'Umboðsaðilar leigusala (ef við á)',
     description: 'Representative table title',
   },
-  nationalIdHeaderLabel: {
-    id: 'ra.application:landlordAndTenantDetails.nationalIdHeaderLabel',
-    defaultMessage: 'Kennitala',
-    description: 'National id header label',
-  },
-  nameInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.nameLabel',
-    defaultMessage: 'Fullt nafn',
-    description: 'Name input label',
-  },
-  emailInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.emailLabel',
-    defaultMessage: 'Netfang',
-    description: 'Email input label',
-  },
-  phoneInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.phoneLabel',
-    defaultMessage: 'Símanúmer',
-    description: 'Phone input label',
-  },
-  addressInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.addressInputLabel',
-    defaultMessage: 'Heimilisfang',
-    description: 'Address input label',
-  },
 
   // Error messages
   nationalIdError: {

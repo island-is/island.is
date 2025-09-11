@@ -138,11 +138,6 @@ export const rentalAmount = defineMessages({
   },
 
   // Payment insurance
-  securityDepositTitle: {
-    id: 'ra.application:rentalAmount.securityDepositTitle',
-    defaultMessage: 'Trygging',
-    description: 'Rental amount payment insurance title',
-  },
   securityDepositRequiredLabel: {
     id: 'ra.application:rentalAmount.securityDepositRequiredLabel',
     defaultMessage: 'Tryggingar er krafist við upphaf leigutíma',

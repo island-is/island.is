@@ -58,16 +58,28 @@ export const summary = defineMessages({
     description: 'Value if rental period is indefinite',
   },
 
+  // Rental amount
+  rentalAmountTitle: {
+    id: 'ra.application:summary.rentalAmountTitle',
+    defaultMessage: 'Leiga',
+    description: 'Rental amount title',
+  },
+  rentalAmountValue: {
+    id: 'ra.application:summary.rentalAmountValue',
+    defaultMessage: 'Upphæð leigu',
+    description: 'Rental amount value',
+  },
+  rentalAmountIndexedLabel: {
+    id: 'ra.application:summary.rentalAmountIndexedLabel',
+    defaultMessage: 'Leiga fylgir vísitölu',
+    description: 'Rental amount indexed label',
+  },
+
   // Rental amount & security deposit
   rentalAmountLabel: {
     id: 'ra.application:summary.rentalAmountLabel',
     defaultMessage: 'Leiguupphæð',
     description: 'Rental amount label',
-  },
-  securityDepositLabel: {
-    id: 'ra.application:summary.securityDepositLabel',
-    defaultMessage: 'Trygging',
-    description: 'Security deposit label',
   },
   securityTypeLabel: {
     id: 'ra.application:summary.securityTypeLabel',
@@ -120,6 +132,11 @@ export const summary = defineMessages({
   },
 
   // Other costs
+  otherCostsHeader: {
+    id: 'ra.application:summary.otherCostsHeader',
+    defaultMessage: 'Önnur gjöld',
+    description: 'Other costs header',
+  },
   electricityCostLabel: {
     id: 'ra.application:summary.electricityCostLabel',
     defaultMessage: 'Rafmagnskostnaður',
@@ -165,8 +182,28 @@ export const summary = defineMessages({
     defaultMessage: 'Annar kostnaður',
     description: 'Other costs amount label',
   },
+  houseFundAmountLabel: {
+    id: 'ra.application:summary.houseFundAmountLabel',
+    defaultMessage: 'Upphæð hússjóðs',
+    description: 'House fund amount label',
+  },
+  paymentDateOptionsLabel: {
+    id: 'ra.application:summary.paymentDateOptionsLabel',
+    defaultMessage: 'Gjalddagi leigu',
+    description: 'Payment date options label',
+  },
+  paymentMethodTypeLabel: {
+    id: 'ra.application:summary.paymentMethodTypeLabel',
+    defaultMessage: 'Greiðslufyrirkomulag',
+    description: 'Payment method type label',
+  },
 
   // Property information
+  propertyInfoHeader: {
+    id: 'ra.application:summary.propertyInfoHeader',
+    defaultMessage: 'Húsnæðið',
+    description: 'Property information header',
+  },
   propertyTypeLabel: {
     id: 'ra.application:summary.propertyTypeLabel',
     defaultMessage: 'Tegund húsnæðis',

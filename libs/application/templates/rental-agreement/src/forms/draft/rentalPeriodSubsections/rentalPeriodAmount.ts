@@ -167,7 +167,7 @@ export const RentalPeriodAmount = buildSubSection({
         // SecurityDeposit
         buildDescriptionField({
           id: 'rentalAmount.securityDepositTitle',
-          title: m.rentalAmount.securityDepositTitle,
+          title: m.misc.securityDeposit,
           titleVariant: 'h4',
           space: 6,
         }),
