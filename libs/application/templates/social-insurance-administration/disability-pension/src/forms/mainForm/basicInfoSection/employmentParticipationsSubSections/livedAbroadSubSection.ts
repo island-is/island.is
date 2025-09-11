@@ -11,17 +11,13 @@ import { Application, FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
 import { SectionRouteEnum } from '../../../../types'
-import { yesOrNoOptions } from '../../../../utils'
-import { Country } from '../../../../types/interfaces'
-import { SocialInsuranceGeneralCountriesQuery } from '../../../../types/schema'
-import { siaGeneralCountries } from '../../../../graphql/queries'
+import { getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(
     formValue,
     `${SectionRouteEnum.LIVED_ABROAD}.hasLivedAbroad`,
   )
-
   return livedAbroad === YES
 }
 
@@ -53,7 +49,7 @@ export const livedAbroadSubSection = buildMultiField({
       fields: {
         //TODO: FROM SMÁRI
         country: {
-          component: 'selectAsync',
+          component: 'select',
           label: disabilityPensionFormMessage.employmentParticipation.country,
           placeholder:
             disabilityPensionFormMessage.employmentParticipation
@@ -61,15 +57,10 @@ export const livedAbroadSubSection = buildMultiField({
           width: 'half',
           displayInTable: true,
           isSearchable: true,
-          loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<SocialInsuranceGeneralCountriesQuery>({
-                query: siaGeneralCountries,
-              })
-
+          options: (application: Application) => {
+            const {countries} = getApplicationExternalData(application.externalData)
             return (
-              data.socialInsuranceGeneral?.countries
-                ?.filter((country) => country.name)
+              countries.filter((country) => country.name)
                 .map(({ code, name }) => ({
                   value: code,
                   label: name ?? '',

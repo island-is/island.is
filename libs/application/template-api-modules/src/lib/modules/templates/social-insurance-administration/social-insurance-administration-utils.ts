@@ -41,7 +41,7 @@ import {
   shouldShowPreviousRehabilitationOrTreatmentFields,
   shouldShowRehabilitationPlan,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
-import { getApplicationAnswers as getDPApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/disability-pension'
+import { getApplicationAnswers as getDPApplicationAnswers, getApplicationExternalData as getDPApplicationExternalData } from '@island.is/application/templates/social-insurance-administration/disability-pension'
 import {
   ApplicationType,
   Employer,
@@ -575,7 +575,7 @@ export const transformApplicationToDisabilityPensionDTO = (
     taxLevel,
     incomePlan,
     isReceivingBenefitsFromAnotherCountry,
-    countries,
+    countries: abroadPaymentsList,
     hasAppliedForDisabilityBefore,
     disabilityRenumerationDateYear,
     disabilityRenumerationDateMonth,
@@ -605,17 +605,38 @@ export const transformApplicationToDisabilityPensionDTO = (
     extraInfo
   } = getDPApplicationAnswers(application.answers)
 
+  const { bankInfo, countries, incomePlanConditions, categorizedIncomeTypes, residenceHistory } = getDPApplicationExternalData(
+    application.externalData,
+  )
+
   const dpDto: DisabilityPensionDto = {
     applicantInfo: {
       email: applicantEmail,
       phonenumber: applicantPhonenumber,
     },
     applicationId: application.id,
-    ...(!shouldNotUpdateBankAccount(undefined, paymentInfo) && {
-      domesticBankInfo: {
-        bank: formatBank(getBankIsk(paymentInfo)),
-      },
+    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
+      ...(paymentInfo && (paymentInfo.bankAccountType === undefined ||
+        paymentInfo.bankAccountType === BankAccountType.ICELANDIC) && paymentInfo.bank && {
+        domesticBankInfo: {
+          bank: formatBank(paymentInfo.bank),
+        },
+      }),
+      ...(paymentInfo && paymentInfo.bankAccountType === BankAccountType.FOREIGN && paymentInfo.iban && paymentInfo.swift && paymentInfo.bankName && paymentInfo.bankAddress && paymentInfo.currency && {
+        foreignBankInfo: {
+          iban: paymentInfo.iban.replace(/[\s]+/g, ''),
+          swift: paymentInfo.swift.replace(/[\s]+/g, ''),
+          foreignBankName: paymentInfo.bankName,
+          foreignBankAddress: paymentInfo.bankAddress,
+          foreignCurrency: paymentInfo.currency,
+        },
+      }),
     }),
+    incomePlan: {
+      incomeYear: incomePlanConditions?.incomePlanYear ?? new Date().getFullYear(),
+      distributeIncomeByMonth: shouldDistributeIncomeByMonth(incomePlan),
+      incomeTypes: getIncomeTypes(incomePlan, categorizedIncomeTypes),
+    },
     taxInfo: {
       personalAllowance: personalAllowance === YES,
       personalAllowanceUsage:
@@ -646,12 +667,24 @@ export const transformApplicationToDisabilityPensionDTO = (
     workIncapacityIssue: biggestIssue ?? "",
     foreignPaymentDetails: {
       receivesForeignPayments: isReceivingBenefitsFromAnotherCountry === YES,
-      foreignPaymentDetails: countries.map((country) => ({
+      foreignPaymentDetails: abroadPaymentsList.map((country) => ({
         countryName: country.name,
         countryCode: country.code,
         foreignNationalId: country.abroadNationalId,
       })),
     },
+    foreignResidencies: hasLivedAbroad === YES ?
+      livedAbroadList?.map((abroadStay) => {
+        const countryName = countries.find(country => country.code === abroadStay.country)?.name;
+        return ({
+          countryName: countryName ?? '',
+          countryCode: abroadStay.country,
+          foreignNationalId: abroadStay.abroadNationalId ?? '',
+          dateFrom: abroadStay.periodStart,
+          dateTo: abroadStay.periodEnd,
+        })
+      }) ?? []
+     : [],
     maritalStatusTypeId: maritalStatus ?? -1,
     selfAssessment: {
       hadAssistance: hadAssistanceForSelfEvaluation === YES,
@@ -664,12 +697,6 @@ export const transformApplicationToDisabilityPensionDTO = (
       employmentStatus: status,
       explanation: status === "ANNAD" && employmentStatusOther ? employmentStatusOther : ""
     })) ?? [],
-    //todo: incomePlan: incomePlan,
-    /* TODO: foreignResidencies: livedAbroadList?.map(item => ({
-        countryName: item.country,
-        countryCode: item.
-        foreignNationalId: country.abroadNationalId,
-      })) ?? [],*/
     retroactivePayments: {
       year: disabilityRenumerationDateYear ?? -1,
       month: disabilityRenumerationDateMonth ?? -1,

@@ -1,10 +1,13 @@
 import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
+  BankInfo,
+  CategorizedIncomeTypes,
+  IncomePlanConditions,
   IncomePlanRow,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { Application } from '@island.is/application/types'
+import { Application, NationalRegistryResidenceHistory } from '@island.is/application/types'
 import { Country, LivedAbroad, PreviousEmployment, SelfAssessmentQuestionnaireAnswers } from '../types/interfaces'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -212,5 +215,100 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     educationLevel,
     hadAssistanceForSelfEvaluation,
     questionnaire
+  }
+}
+
+export const getApplicationExternalData = (
+  externalData: Application['externalData'],
+) => {
+  const residenceHistory = getValueViaPath(
+    externalData,
+    'nationalRegistryResidenceHistory.data',
+    [],
+  ) as NationalRegistryResidenceHistory[]
+
+  const applicantName = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.fullName',
+  ) as string
+
+  const applicantNationalId = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.nationalId',
+  ) as string
+
+  const applicantAddress = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.streetAddress',
+  ) as string
+
+  const applicantPostalCode = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.postalCode',
+  ) as string
+
+  const applicantLocality = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.locality',
+  ) as string
+
+  const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
+
+  const hasSpouse = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data',
+  ) as object
+
+  const bankInfo = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationApplicant.data.bankAccount',
+  ) as BankInfo
+
+  const userProfileEmail = getValueViaPath(
+    externalData,
+    'userProfile.data.email',
+  ) as string
+
+  const userProfilePhoneNumber = getValueViaPath(
+    externalData,
+    'userProfile.data.mobilePhoneNumber',
+  ) as string
+
+  const isEligible = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
+  ) as boolean
+
+  const categorizedIncomeTypes = getValueViaPath<Array<CategorizedIncomeTypes>>(
+    externalData,
+    'socialInsuranceAdministrationCategorizedIncomeTypes.data',
+  ) as CategorizedIncomeTypes[]
+
+  const incomePlanConditions = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationIncomePlanConditions.data',
+  ) as IncomePlanConditions
+
+  const countries = getValueViaPath<Country[]>(
+    externalData,
+    'socialInsuranceAdministrationCountries.data',
+  ) as Country[]
+
+  return {
+    residenceHistory,
+    applicantName,
+    applicantNationalId,
+    applicantAddress,
+    applicantPostalCode,
+    applicantLocality,
+    applicantMunicipality,
+    hasSpouse,
+    bankInfo,
+    userProfileEmail,
+    userProfilePhoneNumber,
+    isEligible,
+    countries,
+    categorizedIncomeTypes,
+    incomePlanConditions,
   }
 }

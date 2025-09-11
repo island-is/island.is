@@ -54,12 +54,12 @@ foreignResidencies: Array<
   period?: Period
   comment: string,
   applicationId: string,
-  domesticBankInfo: DomesticBankInfo
-  foreignBankInfo: ForeignBankInfo
-  uploads: Array<
+  domesticBankInfo?: DomesticBankInfo
+  foreignBankInfo?: ForeignBankInfo
+/*uploads?: Array<
     {
       name: string,
       type: string,
       file: string
-    }>
+      }>*/
 }
