@@ -1079,32 +1079,32 @@ export const coreHistoryMessages = defineMessages({
     description: 'History application accepted',
   },
   applicationApprovedByReviewer: {
-    id: 'application.system:core.history.ApprovedByReviewerWithActor',
+    id: 'application.system:core.history.applicationApprovedByReviewer',
     defaultMessage: 'Samþykkt af {subject}',
     description: 'History log approved by reviewer',
   },
   applicationApprovedByReviewerWithActor: {
-    id: 'application.system:core.history.ApprovedByReviewerWithActor',
+    id: 'application.system:core.history.applicationApprovedByReviewerWithActor',
     defaultMessage: 'Samþykkt af {actor} fyrir hönd {subject}',
     description: 'History log approved by actor on behalf of reviewer',
   },
   applicationApprovedByReviewerFallback: {
-    id: 'application.system:core.history.ApprovedByReviewerFallback',
+    id: 'application.system:core.history.applicationApprovedByReviewerFallback',
     defaultMessage: 'Samþykkt af samþykktaraðila',
     description: 'History log approved by reviewer, fallback string when nationalId info missing',
   },
   applicationRejectedByReviewer: {
-    id: 'application.system:core.history.RejectedByReviewerWithActor',
+    id: 'application.system:core.history.applicationRejectedByReviewer',
     defaultMessage: 'Hafnað af {subject}',
     description: 'History log Rejected by reviewer',
   },
   applicationRejectedByReviewerWithActor: {
-    id: 'application.system:core.history.RejectedByReviewerWithActor',
+    id: 'application.system:core.history.applicationRejectedByReviewerWithActor',
     defaultMessage: 'Hafnað af {actor} fyrir hönd {subject}',
     description: 'History log Rejected by actor on behalf of reviewer',
   },
   applicationRejectedByReviewerFallback: {
-    id: 'application.system:core.history.RejectedByReviewerFallback',
+    id: 'application.system:core.history.applicationRejectedByReviewerFallback',
     defaultMessage: 'Hafnað af samþykktaraðila',
     description: 'History log Rejected by reviewer, fallback string when nationalId info missing',
   },

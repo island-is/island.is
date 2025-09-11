@@ -86,7 +86,7 @@ export type PendingAction = {
 
 export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
   onEvent: Event<T> | string
-  logMessage: StaticText | ((values: Record<string, any>) => StaticText)
+  logMessage: StaticText | ((values: {subject?: string, actor?: string}) => StaticText)
 }
 
 export interface ApplicationStateMeta<

@@ -31,13 +31,13 @@ export class HistoryBuilder {
 
       if (historyLog) {
         if (typeof historyLog.logMessage === 'function') {
-          const values = { subject: exitEventSubjectNationalId, action: exitEventActorNationalId }
-          const messageId = historyLog.logMessage(values)
+          const values = { subject: exitEventSubjectNationalId, actor: exitEventActorNationalId }
+          const message = historyLog.logMessage(values)
 
           result.push(
             new HistoryResponseDto(
               entryTimestamp,
-              messageId,
+              message,
               formatMessage,
               values,
             )
