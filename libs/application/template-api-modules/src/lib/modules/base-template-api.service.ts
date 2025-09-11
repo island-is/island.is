@@ -38,8 +38,6 @@ export class BaseTemplateApiService {
       }
     }
 
-    console.log('Action not found:', action.action)
-
     return {
       success: false,
       error: new TemplateApiError(
