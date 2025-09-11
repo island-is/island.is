@@ -17,6 +17,8 @@ import {
   corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
+  getHistoryLogRejectedWithSubjectAndActor,
+  getHistoryLogApprovedWithSubjectAndActor,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
@@ -43,7 +45,6 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
-import {getHistoryLogApprovedWithSubjectAndActor} from "@island.is/application/core";
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -228,7 +229,7 @@ const template: ApplicationTemplate<
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: getHistoryLogRejectedWithSubjectAndActor,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,

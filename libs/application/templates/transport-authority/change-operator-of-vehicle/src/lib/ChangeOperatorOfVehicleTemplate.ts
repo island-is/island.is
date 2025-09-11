@@ -17,6 +17,8 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  getHistoryLogApprovedWithSubjectAndActor,
+  getHistoryLogRejectedWithSubjectAndActor,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
@@ -221,11 +223,11 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: applicationMessage.historyLogApprovedByReviewer,
+                logMessage: getHistoryLogApprovedWithSubjectAndActor,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: getHistoryLogRejectedWithSubjectAndActor,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,

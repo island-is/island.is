@@ -14,3 +14,15 @@ export const getHistoryLogApprovedWithSubjectAndActor = (
     : coreHistoryMessages.applicationApprovedByReviewerWithActor;
 };
 
+export const getHistoryLogRejectedWithSubjectAndActor = (
+  values: Record<string, unknown>
+): StaticText => {
+  const { subject, actor } = values as { subject: string; actor: string };
+
+  //use fallback for older historylogs where nationalId info is missing
+  if (!subject) return  coreHistoryMessages.applicationRejectedByReviewerFallback
+
+  return subject === actor
+    ? coreHistoryMessages.applicationRejectedByReviewer
+    : coreHistoryMessages.applicationRejectedByReviewerWithActor;
+};
