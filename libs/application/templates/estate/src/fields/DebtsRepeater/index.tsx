@@ -164,7 +164,11 @@ export const DebtsRepeater: FC<
                             ? formatMessage(field.title as any) || ''
                             : ''
                         }
-                        placeholder={field.placeholder}
+                        placeholder={
+                          field.placeholder
+                            ? formatMessage(field.placeholder as any) || ''
+                            : ''
+                        }
                         options={debtTypes.map((type) => ({
                           label: type.label
                             ? formatMessage(type.label as any) || type.value

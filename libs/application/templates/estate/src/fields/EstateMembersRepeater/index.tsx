@@ -423,7 +423,7 @@ export const EstateMembersRepeater: FC<
       }, [] as JSX.Element[])}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
         return (
-          <Box>
+          <Box key={member.id}>
             {!member.initial && (
               <AdditionalEstateMember
                 application={application}
