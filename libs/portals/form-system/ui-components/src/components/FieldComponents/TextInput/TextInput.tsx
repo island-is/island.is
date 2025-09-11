@@ -1,10 +1,11 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Input } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
-import { getValue } from '../../../lib/getValue'
-import { Action } from '../../../lib'
-import { useFormContext, Controller } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
+import { Action } from '../../../lib'
+import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
 
 interface Props {
@@ -16,6 +17,7 @@ export const TextInput = ({ item, dispatch }: Props) => {
   const { fieldSettings } = item
   const { control } = useFormContext()
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
 
   return (
     <Controller
@@ -30,7 +32,7 @@ export const TextInput = ({ item, dispatch }: Props) => {
       }}
       render={({ field, fieldState }) => (
         <Input
-          label={item?.name?.is ?? ''}
+          label={item?.name?.[lang] ?? ''}
           name={field.name}
           textarea={fieldSettings?.isLarge ?? false}
           required={item.isRequired ?? false}
@@ -49,9 +51,8 @@ export const TextInput = ({ item, dispatch }: Props) => {
             }
           }}
           onBlur={(e) => {
-            // Check for null or empty and trigger validation
             if (e.target.value === null || e.target.value === '') {
-              field.onChange('') // Ensure value is empty string for validation
+              field.onChange('')
             }
             field.onBlur()
           }}

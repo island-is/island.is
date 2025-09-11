@@ -105,18 +105,13 @@ export class FormsController {
   }
 
   @ApiOperation({ summary: 'Publish form' })
-  @ApiOkResponse({
-    type: FormResponseDto,
+  @ApiNoContentResponse({
     description: 'Publish form',
   })
   @ApiParam({ name: 'id', type: String })
   @Put('publish/:id')
-  async publish(
-    @Param('id') id: string,
-    @CurrentUser()
-    user: User,
-  ): Promise<FormResponseDto> {
-    return await this.formsService.publish(id, user)
+  async publish(@Param('id') id: string): Promise<void> {
+    return await this.formsService.publish(id)
   }
 
   @ApiOperation({ summary: 'Delete form' })

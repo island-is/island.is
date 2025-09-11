@@ -1,49 +1,41 @@
-import { FC, Fragment, useEffect, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { useLazyQuery } from '@apollo/client'
+import { useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import {
   AlertMessage,
-  AsyncSearch,
   Box,
   LoadingDots,
-  Table as T,
+  Table,
 } from '@island.is/island-ui/core'
-import {
-  ADDRESS_SEARCH_QUERY,
-  PROPERTY_CODE_INFO_QUERY,
-  PROPERTY_INFO_QUERY,
-} from '../../graphql/queries'
-import {
-  HmsSearchInput,
-  Query,
-  HmsPropertyInfo,
-  HmsPropertyInfoInput,
-  HmsPropertyCodeInfoInput,
-} from '@island.is/api/schema'
 import { AddressProps, PropertyUnit } from '../../shared'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
-import { PropertyTableRow } from './components/PropertyTableRow'
-import { PropertyTableUnits } from './components/PropertyTableUnits'
+import {
+  cleanupSearch,
+  isFasteignaNr,
+  restoreValueBoolean,
+  restoreValueNumber,
+} from '../../utils/utils'
+import { usePropertyCodeInfo } from './hooks/usePropertyCodeInfo'
+import { useAddressSearch } from './hooks/useAddressSearch'
+import { usePropertyInfo } from './hooks/usePropertyInfo'
+import { PropertySearchInput } from './components/PropertySearchInput'
+import { PropertyTableBody } from './components/PropertyTableBody'
 import * as m from '../../lib/messages'
+import { HmsPropertyInfo } from '@island.is/api/schema'
 
 const ERROR_ID = 'registerProperty'
-const EMPTY_OBJECT = {}
 
 interface Props extends FieldBaseProps {
   field: CustomField
   errors?: Record<string, Record<string, string>>
 }
 
-export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
-  field,
-  errors,
-}) => {
+export const PropertySearch = ({ field, errors }: Props) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue, getValues } = useFormContext()
   const { id } = field
-  const storedValue = getValues(id)
+  const storedValue: AddressProps = getValues(id)
 
   const [addressSearchError, setAddressSearchError] = useState<string | null>(
     null,
@@ -51,8 +43,11 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const [propertyInfoError, setPropertyInfoError] = useState<string | null>(
     null,
   )
-  const [searchTerm, setSearchTerm] = useState(storedValue?.value)
-  const [searchOptions, setSearchOptions] = useState<AddressProps[]>([])
+  const [searchTerm, setSearchTerm] = useState(storedValue?.label ?? '')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(
+    storedValue?.label ?? '',
+  )
+  const [searchOptions, setSearchOptions] = useState<Array<AddressProps>>([])
   const [tableExpanded, setTableExpanded] = useState<Record<string, boolean>>(
     {},
   )
@@ -62,53 +57,58 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const [unitSizeChangedValue, setUnitSizeChangedValue] = useState<
     Record<string, number>
   >(storedValue?.changedValueOfUnitSize || {})
-
   const [numOfRoomsValue, setNumOfRoomsValue] = useState<
     Record<string, number>
   >(storedValue?.numOfRooms || {})
-
   const [selectedAddress, setSelectedAddress] = useState<
     AddressProps | undefined
   >(storedValue)
   const [propertiesByAddressCode, setPropertiesByAddressCode] = useState<
-    HmsPropertyInfo[] | undefined
+    Array<HmsPropertyInfo> | undefined
   >(storedValue?.propertiesByAddressCode || [])
 
-  const cleanupSearch = (searchTerm: string): number | null => {
-    if (!searchTerm) return 0
-    const cleanedTerm = searchTerm.replace(/^f|^F/, '')
-    const numberValue = parseInt(cleanedTerm, 10)
-    return isNaN(numberValue) ? null : numberValue
+  // Handle debounced search term changes
+  const handleDebouncedSearchTermChange = (newSearchTerm: string) => {
+    setDebouncedSearchTerm(newSearchTerm)
   }
 
   useEffect(() => {
     const isInitialRender =
-      selectedAddress && searchTerm === selectedAddress.value
+      !!selectedAddress &&
+      (debouncedSearchTerm === selectedAddress?.value ||
+        debouncedSearchTerm === selectedAddress?.label)
 
-    const isFasteignaNr = /^(?:[fF]\d*|\d+)$/.test(searchTerm || '')
-
-    if (!!searchTerm?.length && !isInitialRender && isFasteignaNr) {
-      const searchedPropertyCode = cleanupSearch(searchTerm)
-      if (
-        searchedPropertyCode &&
-        searchedPropertyCode.toString().length === 7
-      ) {
-        setValue(id, {
-          ...storedValue,
-          selectedPropertyCode: searchedPropertyCode,
-        })
-        setPropertiesByAddressCode(undefined)
-        hmsPropertyCodeInfo({
-          variables: {
-            input: {
-              fasteignNr: searchedPropertyCode,
-            },
-          },
-        })
-      } else {
+    if (!debouncedSearchTerm?.length || debouncedSearchTerm.length < 3) {
+      if (!isInitialRender) {
         setSearchOptions([])
       }
-    } else if (searchTerm?.length && !isInitialRender) {
+      return
+    }
+
+    const cleanedPropertyCode = cleanupSearch(debouncedSearchTerm)
+
+    if (
+      !isInitialRender &&
+      isFasteignaNr(debouncedSearchTerm) &&
+      cleanedPropertyCode?.toString().length === 7
+    ) {
+      setValue(id, {
+        ...storedValue,
+        selectedPropertyCode: cleanedPropertyCode,
+      })
+      setPropertiesByAddressCode(undefined)
+      hmsPropertyCodeInfo({
+        variables: {
+          input: {
+            fasteignNr: cleanedPropertyCode,
+          },
+        },
+      })
+      setSearchOptions([])
+      return
+    }
+
+    if (!isInitialRender) {
       setValue(id, {
         ...storedValue,
         selectedPropertyCode: undefined,
@@ -116,15 +116,18 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       hmsSearch({
         variables: {
           input: {
-            partialStadfang: searchTerm,
+            partialStadfang: debouncedSearchTerm,
           },
         },
       })
-    } else {
       setSearchOptions([])
+      return
     }
+
+    setSearchOptions([])
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm])
+  }, [debouncedSearchTerm])
 
   useEffect(() => {
     if (!storedValue) return
@@ -165,10 +168,10 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       }
     }
 
-    setTableExpanded(restoreTableExpanded(storedValue))
-    setCheckedUnits(restoreCheckedUnits(storedValue))
-    setNumOfRoomsValue(restoreRoomsValue(storedValue))
-    setUnitSizeChangedValue(restoreSizeValue(storedValue))
+    setTableExpanded(restoreValueBoolean(storedValue, 'expanded'))
+    setCheckedUnits(restoreValueBoolean(storedValue, 'checked'))
+    setNumOfRoomsValue(restoreValueNumber(storedValue, 'numOfRooms'))
+    setUnitSizeChangedValue(restoreValueNumber(storedValue, 'changedSize'))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storedValue])
 
@@ -177,160 +180,27 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  /**
-   * GraphQL query to fetch and format address search results.
-   */
-  const [hmsSearch, { loading: searchLoading }] = useLazyQuery<
-    Query,
-    { input: HmsSearchInput }
-  >(ADDRESS_SEARCH_QUERY, {
-    onError: (error) => {
-      console.error('Error fetching address', error)
-      setAddressSearchError(
-        formatMessage(m.registerProperty.search.addressSearchError) ||
-          'Failed to search addresses',
-      )
-      setPropertiesByAddressCode(undefined)
-    },
-    onCompleted: (data) => {
-      setAddressSearchError(null)
-      if (data.hmsSearch) {
-        const searchOptions = data.hmsSearch.addresses.map((address) => ({
-          ...address,
-          label: `${address.address}, ${address.postalCode} ${address.municipalityName}`,
-          value: `${address.addressCode}`,
-        }))
-        setSearchOptions(searchOptions)
-      }
-    },
-  })
-
-  /**
-   * GraphQL query to fetch and format property info results based on addressCode.
-   */
-  const [hmsPropertyInfo, { loading: propertiesLoading }] = useLazyQuery<
-    Query,
-    { input: HmsPropertyInfoInput }
-  >(PROPERTY_INFO_QUERY, {
-    onError: (error) => {
-      console.error('Error fetching properties', error)
-      setPropertyInfoError(
-        formatMessage(m.registerProperty.search.propertyInfoError) ||
-          'Failed to fetch properties',
-      )
-      setPropertiesByAddressCode(undefined)
-    },
-    onCompleted: (data) => {
-      setPropertyInfoError(null)
-      if (data.hmsPropertyInfo) {
-        setPropertiesByAddressCode(data.hmsPropertyInfo.propertyInfos)
-      }
-
-      const propertyValues = data.hmsPropertyInfo?.propertyInfos?.[0]
-
-      const addressValues = {
-        addressCode: propertyValues?.addressCode,
-        address: propertyValues?.address,
-        municipalityName: propertyValues?.municipalityName,
-        municipalityCode: propertyValues?.municipalityCode,
-        postalCode: propertyValues?.postalCode,
-        landCode: propertyValues?.landCode,
-        streetName: undefined,
-        streetNumber: undefined,
-        label: `${propertyValues?.address}, ${propertyValues?.postalCode} ${propertyValues?.municipalityName}`,
-        value: `${propertyValues?.addressCode}`,
-      }
-
-      setSelectedAddress(addressValues)
-
-      setValue(id, {
-        ...storedValue,
-        ...addressValues,
-        units: [],
-        checkedUnits: checkedUnits,
-        numOfRooms: numOfRoomsValue,
-        changedValueOfUnitSize: unitSizeChangedValue,
-        selectedPropertyCode: storedValue?.selectedPropertyCode,
-        propertiesByAddressCode: data?.hmsPropertyInfo?.propertyInfos || [],
-      })
-    },
-  })
-
-  const [hmsPropertyCodeInfo, { loading: propertycodeLoading }] = useLazyQuery<
-    Query,
-    { input: HmsPropertyCodeInfoInput }
-  >(PROPERTY_CODE_INFO_QUERY, {
-    onError: (error) => {
-      console.error('Error fetching properties by fasteignNr', error)
-      setPropertyInfoError(
-        formatMessage(m.registerProperty.search.propertyInfoError) ||
-          'Failed to fetch properties',
-      )
-      setPropertiesByAddressCode(undefined)
-    },
-    onCompleted: (data) => {
-      if (data.hmsPropertyCodeInfo) {
-        const propertyInfo = data.hmsPropertyCodeInfo.address
-        const searchOptions = {
-          ...propertyInfo,
-          label: propertyInfo?.address || '',
-          value: propertyInfo?.addressCode?.toString() || '',
-        }
-        setSearchOptions([searchOptions])
-      }
-    },
-  })
-
-  interface StoredValueUnits {
-    units?: PropertyUnit[]
-  }
-
-  const restoreTableExpanded = (storedValue: StoredValueUnits) => {
-    if (!storedValue?.units) return {}
-    return storedValue.units.reduce(
-      (acc: Record<string, boolean>, unit: PropertyUnit) => {
-        if (unit.checked && unit.propertyCode) {
-          acc[unit.propertyCode] = true
-        }
-        return acc
-      },
-      {} as Record<string, boolean>,
-    )
-  }
-
-  const restoreCheckedUnits = (storedValue: StoredValueUnits) => {
-    if (!storedValue?.units) return {}
-    return storedValue.units.reduce(
-      (acc: Record<string, boolean>, unit: PropertyUnit) => {
-        const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-        acc[unitKey] = unit.checked || false
-        return acc
-      },
-      {} as Record<string, boolean>,
-    )
-  }
-  const restoreRoomsValue = (storedValue: StoredValueUnits) => {
-    if (!storedValue?.units) return {}
-    return storedValue.units.reduce(
-      (acc: Record<string, number>, unit: PropertyUnit) => {
-        const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-        acc[unitKey] = unit.numOfRooms || 0
-        return acc
-      },
-      {} as Record<string, number>,
-    )
-  }
-  const restoreSizeValue = (storedValue: StoredValueUnits) => {
-    if (!storedValue?.units) return {}
-    return storedValue.units.reduce(
-      (acc: Record<string, number>, unit: PropertyUnit) => {
-        const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-        acc[unitKey] = unit.changedSize || 0
-        return acc
-      },
-      {} as Record<string, number>,
-    )
-  }
+  const { hmsPropertyCodeInfo, propertycodeLoading } = usePropertyCodeInfo(
+    setSearchOptions,
+    setPropertiesByAddressCode,
+    setPropertyInfoError,
+  )
+  const { hmsSearch, searchLoading } = useAddressSearch(
+    setSearchOptions,
+    setAddressSearchError,
+    setPropertiesByAddressCode,
+  )
+  const { hmsPropertyInfo, propertiesLoading } = usePropertyInfo(
+    id,
+    storedValue,
+    setValue,
+    setPropertiesByAddressCode,
+    setSelectedAddress,
+    setPropertyInfoError,
+    checkedUnits,
+    numOfRoomsValue,
+    unitSizeChangedValue,
+  )
 
   const toggleExpand = (propertyId: number) => {
     setTableExpanded((prev) => ({
@@ -456,33 +326,16 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   return (
     <>
       <Box>
-        <Controller
-          name={`${id}`}
-          defaultValue={EMPTY_OBJECT}
-          render={() => {
-            return (
-              <AsyncSearch
-                options={searchOptions}
-                placeholder={formatMessage(
-                  m.registerProperty.search.propertySearchPlaceholder,
-                )}
-                initialInputValue={selectedAddress ? selectedAddress.label : ''}
-                inputValue={
-                  searchTerm || (selectedAddress ? selectedAddress.label : '')
-                }
-                closeMenuOnSubmit
-                size="large"
-                colored
-                onChange={(selection: { value: string } | null) => {
-                  handleAddressSelectionChange(selection)
-                }}
-                onInputValueChange={(newValue: string) => {
-                  setSearchTerm(newValue)
-                }}
-                loading={searchLoading || propertycodeLoading}
-              />
-            )
-          }}
+        <PropertySearchInput
+          searchOptions={searchOptions}
+          id={id}
+          selectedAddress={selectedAddress}
+          searchTerm={searchTerm}
+          handleAddressSelectionChange={handleAddressSelectionChange}
+          setSearchTerm={setSearchTerm}
+          onSearchTermChange={handleDebouncedSearchTermChange}
+          searchLoading={searchLoading}
+          propertycodeLoading={propertycodeLoading}
         />
         {!propertySearchLoading && addressSearchError && (
           <Box marginTop={4}>
@@ -505,103 +358,20 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
           ) : (
             propertiesByAddressCode &&
             propertiesByAddressCode.length > 0 && (
-              <T.Table id="searchresults.table">
+              <Table.Table id="searchresults.table">
                 <PropertyTableHeader />
-                <T.Body>
-                  {propertiesByAddressCode.map((property) => {
-                    return (
-                      <Fragment key={property.propertyCode}>
-                        <PropertyTableRow
-                          appraisalUnits={property.appraisalUnits || []}
-                          propertyCode={property.propertyCode || 0}
-                          unitCode={property.unitCode || ''}
-                          size={property.size || 0}
-                          sizeUnit={property.sizeUnit || ''}
-                          isTableExpanded={
-                            property.propertyCode != null
-                              ? tableExpanded[property.propertyCode] || false
-                              : false
-                          }
-                          toggleExpand={(e) => {
-                            e.preventDefault()
-                            toggleExpand(property.propertyCode || 0)
-                          }}
-                        />
-                        {property.appraisalUnits &&
-                          property.appraisalUnits.length > 0 && (
-                            <>
-                              {property.appraisalUnits.map((appraisalUnit) => {
-                                return (
-                                  <Fragment key={appraisalUnit.unitCode}>
-                                    {appraisalUnit.units?.map((unit) => {
-                                      const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-                                      return (
-                                        <PropertyTableUnits
-                                          key={unitKey}
-                                          unitCode={unit.unitCode ?? ''}
-                                          propertyUsageDescription={
-                                            unit.propertyUsageDescription ?? ''
-                                          }
-                                          sizeUnit={unit.sizeUnit ?? ''}
-                                          checkedUnits={
-                                            checkedUnits[unitKey] || false
-                                          }
-                                          isTableExpanded={
-                                            tableExpanded[
-                                              unit.propertyCode ?? 0
-                                            ] || false
-                                          }
-                                          unitSizeValue={
-                                            unitSizeChangedValue[unitKey] ??
-                                            unit.size
-                                          }
-                                          numOfRoomsValue={
-                                            numOfRoomsValue[unitKey]
-                                          }
-                                          isUnitSizeDisabled={
-                                            !checkedUnits[unitKey]
-                                          }
-                                          isNumOfRoomsDisabled={
-                                            !checkedUnits[unitKey]
-                                          }
-                                          onCheckboxChange={(e) =>
-                                            handleCheckboxChange(
-                                              unit,
-                                              e.currentTarget.checked,
-                                            )
-                                          }
-                                          onUnitSizeChange={(e) =>
-                                            handleUnitChange(
-                                              unit,
-                                              'changedSize',
-                                              e.target.value,
-                                            )
-                                          }
-                                          onUnitRoomsChange={(e) =>
-                                            handleUnitChange(
-                                              unit,
-                                              'numOfRooms',
-                                              e.target.value,
-                                            )
-                                          }
-                                          unitInputErrorMessage={
-                                            errors?.registerProperty?.[
-                                              `searchresults.units`
-                                            ]
-                                          }
-                                        />
-                                      )
-                                    })}
-                                  </Fragment>
-                                )
-                              })}
-                            </>
-                          )}
-                      </Fragment>
-                    )
-                  })}
-                </T.Body>
-              </T.Table>
+                <PropertyTableBody
+                  propertiesByAddressCode={propertiesByAddressCode || []}
+                  tableExpanded={tableExpanded}
+                  toggleExpand={toggleExpand}
+                  checkedUnits={checkedUnits}
+                  numOfRoomsValue={numOfRoomsValue}
+                  unitSizeChangedValue={unitSizeChangedValue}
+                  handleCheckboxChange={handleCheckboxChange}
+                  handleUnitChange={handleUnitChange}
+                  errors={errors || {}}
+                />
+              </Table.Table>
             )
           )}
         </Box>

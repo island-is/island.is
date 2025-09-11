@@ -15,7 +15,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifySms,
   useUpdateOrCreateUserProfile,
-  useDeleteIslykillValue,
+  useDeleteEmailOrPhoneValue,
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
@@ -64,8 +64,8 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   } = methods
   const { updateOrCreateUserProfile, loading: saveLoading } =
     useUpdateOrCreateUserProfile()
-  const { deleteIslykillValue, loading: deleteLoading } =
-    useDeleteIslykillValue()
+  const { deleteEmailOrPhoneValue, loading: deleteLoading } =
+    useDeleteEmailOrPhoneValue()
   const { formatMessage } = useLocale()
   const {
     createSmsVerification,
@@ -190,7 +190,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
     })
 
     try {
-      await deleteIslykillValue({
+      await deleteEmailOrPhoneValue({
         mobilePhoneNumber: true,
       })
       await refetch()

@@ -1,20 +1,20 @@
+import { FormSystemField } from '@island.is/api/schema'
 import {
-  Stack,
-  GridRow as Row,
-  GridColumn as Column,
   Box,
-  Input,
-  Text,
-  Checkbox,
   Button,
+  Checkbox,
+  GridColumn as Column,
+  Input,
+  GridRow as Row,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { Dispatch, useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
-import { FormSystemField } from '@island.is/api/schema'
-import { m, webMessages } from '../../../lib/messages'
-import { getValue } from '../../../lib/getValue'
 import { Action, PropertyNumberType } from '../../../lib'
-import { useFormContext, Controller } from 'react-hook-form'
+import { getValue } from '../../../lib/getValue'
+import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
@@ -79,7 +79,7 @@ export const PropertyNumber = ({ item, dispatch }: Props) => {
 
   return (
     <Box background="white" padding={2} borderRadius="large">
-      <Text variant="h4">{formatMessage(webMessages.yourProperties)}</Text>
+      <Text variant="h4">{formatMessage(m.yourProperties)}</Text>
       <Box paddingTop={2} paddingBottom={hasCustomPropertyNumber ? 4 : 0}>
         <Stack space={2}>
           {properties.map((property) => (
@@ -235,7 +235,7 @@ export const PropertyNumber = ({ item, dispatch }: Props) => {
                     <Input
                       type="text"
                       name="customPostalCode"
-                      label={formatMessage(webMessages.postalCode)}
+                      label={formatMessage(m.postalCode)}
                       backgroundColor="blue"
                       disabled
                       value={field.value}

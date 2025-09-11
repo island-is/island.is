@@ -3,13 +3,13 @@ import { getModelToken } from '@nestjs/sequelize'
 
 import { TestApp } from '@island.is/testing/nest'
 
-import { EmailVerification } from '../src/app/user-profile/emailVerification.model'
-import { SmsVerification } from '../src/app/user-profile/smsVerification.model'
-import { UserProfile } from '../src/app/user-profile/userProfile.model'
-import { UserDeviceTokens } from '../src/app/user-profile/userDeviceTokens.model'
+import { EmailVerification } from '../src/app/user-profile/models/emailVerification.model'
+import { SmsVerification } from '../src/app/user-profile/models/smsVerification.model'
+import { UserProfile } from '../src/app/user-profile/models/userProfile.model'
+import { UserDeviceTokens } from '../src/app/user-profile/models/userDeviceTokens.model'
 import { DataStatus } from '../src/app/user-profile/types/dataStatusTypes'
-import { ActorProfile } from '../src/app/v2/models/actor-profile.model'
-import { Emails } from '../src/app/v2/models/emails.model'
+import { ActorProfile } from '../src/app/user-profile/models/actor-profile.model'
+import { Emails } from '../src/app/user-profile/models/emails.model'
 import { uuid } from 'uuidv4'
 
 export class FixtureFactory {
