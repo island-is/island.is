@@ -46,11 +46,6 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
 
   const baseUrl = linkResolver('grantsplaza', [], locale).href
   const searchUrl = linkResolver('grantsplazasearch', [], locale).href
-  const currentUrl = linkResolver(
-    'grantsplazagrant',
-    [grant?.applicationId ?? ''],
-    locale,
-  ).href
 
   const breadcrumbItems = [
     {
