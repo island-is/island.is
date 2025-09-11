@@ -115,7 +115,7 @@ const SingleDocumentProvider = () => {
     }
   }, [breakdown?.totalCount, pageSize])
 
-  if (loading && loadingSentFiles && loadingBreakdown && loadingProviders) {
+  if (loading || loadingSentFiles || loadingBreakdown || loadingProviders) {
     return <DocumentProvidersLoading />
   }
 

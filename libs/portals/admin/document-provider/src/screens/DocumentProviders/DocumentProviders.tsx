@@ -77,7 +77,7 @@ const DocumentProviders = () => {
     },
   ]
 
-  if (loading && loadingSentFiles && loadingStatistics) {
+  if (loading || loadingSentFiles || loadingStatistics) {
     return <DocumentProvidersLoading />
   }
 
