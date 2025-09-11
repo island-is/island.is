@@ -264,7 +264,7 @@ const Summary: FC = () => {
       </FormContentContainer>
       {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
-          title="Viltu ljúka máli?"
+          title="Staðfesting dóm"
           text={`Vinsamlegast rýnið skjal fyrir staðfestingu.            
 Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. Ef birta þarf dóminn verður hann sendur í rafræna birtingu í stafrænt pósthólf dómfellda á island.is.`}
           primaryButton={{
