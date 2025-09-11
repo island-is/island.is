@@ -30,7 +30,10 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
-import { disabilityPensionFormMessage, statesMessages as dpStatesMessages } from './messages'
+import {
+  disabilityPensionFormMessage,
+  statesMessages as dpStatesMessages,
+} from './messages'
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,

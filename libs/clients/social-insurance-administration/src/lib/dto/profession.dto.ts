@@ -1,10 +1,12 @@
-import { TrWebApiServicesDomainProfessionsModelsProfessionDto } from "../..";
-import { GenericKeyValueDto } from "./genericKeyValue.dto";
+import { TrWebApiServicesDomainProfessionsModelsProfessionDto } from '../..'
+import { GenericKeyValueDto } from './genericKeyValue.dto'
 
 export interface ProfessionDto extends GenericKeyValueDto {}
 
-export const mapProfessionDto = ({ description, value }: TrWebApiServicesDomainProfessionsModelsProfessionDto): ProfessionDto | null => {
-
+export const mapProfessionDto = ({
+  description,
+  value,
+}: TrWebApiServicesDomainProfessionsModelsProfessionDto): ProfessionDto | null => {
   if (!description || !value) {
     return null
   }
@@ -12,6 +14,6 @@ export const mapProfessionDto = ({ description, value }: TrWebApiServicesDomainP
   return {
     label: description,
     value: value,
-    needsFurtherInformation: value === 'ANNAD'
-  };
-};
+    needsFurtherInformation: value === 'ANNAD',
+  }
+}

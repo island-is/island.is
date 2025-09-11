@@ -7,8 +7,17 @@ import {
   IncomePlanRow,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { Application, NationalRegistryResidenceHistory } from '@island.is/application/types'
-import { Country, CountryValue, LivedAbroad, PreviousEmployment, SelfAssessmentQuestionnaireAnswers } from '../types/interfaces'
+import {
+  Application,
+  NationalRegistryResidenceHistory,
+} from '@island.is/application/types'
+import {
+  Country,
+  CountryValue,
+  LivedAbroad,
+  PreviousEmployment,
+  SelfAssessmentQuestionnaireAnswers,
+} from '../types/interfaces'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber =
@@ -40,12 +49,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   )
 
   const countries =
-    getValueViaPath<Country[]>(
-      answers,
-      'abroadPayments.list',
-    ) ?? []
+    getValueViaPath<Country[]>(answers, 'abroadPayments.list') ?? []
 
-  const hasAppliedForDisabilityBefore =  getValueViaPath<YesOrNo>(
+  const hasAppliedForDisabilityBefore = getValueViaPath<YesOrNo>(
     answers,
     'disabilityAppliedBefore',
   )
@@ -59,7 +65,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'disabilityPeriod.year',
   )
 
-  const hasLivedAbroad =getValueViaPath<YesOrNo>(
+  const hasLivedAbroad = getValueViaPath<YesOrNo>(
     answers,
     'livedAbroad.hasLivedAbroad',
   )
@@ -68,10 +74,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'livedAbroad.list',
   )
 
-  const inPaidWork = getValueViaPath<YesOrNo>(
-    answers,
-    'paidWork.inPaidWork',
-  )
+  const inPaidWork = getValueViaPath<YesOrNo>(answers, 'paidWork.inPaidWork')
   const willContinueWorking = getValueViaPath<YesOrNo>(
     answers,
     'paidWork.continuedWork',
@@ -173,10 +176,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
       'capabilityImpairment.questionAnswers',
     ) ?? []
 
-  const extraInfo = getValueViaPath<string>(
-    answers,
-    'extraInfo',
-  )
+  const extraInfo = getValueViaPath<string>(answers, 'extraInfo')
 
   return {
     extraInfo,
@@ -214,7 +214,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     biggestIssue,
     educationLevel,
     hadAssistanceForSelfEvaluation,
-    questionnaire
+    questionnaire,
   }
 }
 

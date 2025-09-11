@@ -58,12 +58,14 @@ export const abroadPaymentsSubSection = buildMultiField({
           displayInTable: true,
           isSearchable: true,
           options: (application: Application) => {
-            const {countries} = getApplicationExternalData(application.externalData)
+            const { countries } = getApplicationExternalData(
+              application.externalData,
+            )
             return (
               countries.map(({ label, value }) => ({
-                  value,
-                  label
-                })) ?? []
+                value,
+                label,
+              })) ?? []
             )
           },
         },

@@ -8,7 +8,7 @@ import {
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
-import { EmploymentDto} from '@island.is/clients/social-insurance-administration'
+import { EmploymentDto } from '@island.is/clients/social-insurance-administration'
 
 export const employmentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT,
@@ -26,15 +26,20 @@ export const employmentField = buildMultiField({
           ) ?? []
 
         return [
-          ...types.filter(t => !t.needsFurtherInformation).map(({value, label}) => ({
-            value,
-            label,
-          })),
-          //"other" should be at the bottom
-        ...types.filter(t => t.needsFurtherInformation).map(({value, label}) => ({
+          ...types
+            .filter((t) => !t.needsFurtherInformation)
+            .map(({ value, label }) => ({
               value,
               label,
-            }))]
+            })),
+          //"other" should be at the bottom
+          ...types
+            .filter((t) => t.needsFurtherInformation)
+            .map(({ value, label }) => ({
+              value,
+              label,
+            })),
+        ]
       },
     }),
     buildTitleField({
@@ -43,26 +48,28 @@ export const employmentField = buildMultiField({
       marginTop: 2,
       marginBottom: 0,
       condition: (formValue) => {
-        const statuses = getValueViaPath<Array<string>>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
-        ) ?? []
+        const statuses =
+          getValueViaPath<Array<string>>(
+            formValue,
+            `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
+          ) ?? []
 
-        return statuses.includes("ANNAD")
-      }
+        return statuses.includes('ANNAD')
+      },
     }),
     buildTextField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.other`,
       variant: 'textarea',
       rows: 3,
       condition: (formValue) => {
-        const statuses = getValueViaPath<Array<string>>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
-        ) ?? []
+        const statuses =
+          getValueViaPath<Array<string>>(
+            formValue,
+            `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
+          ) ?? []
 
-        return statuses.includes("ANNAD")
-      }
+        return statuses.includes('ANNAD')
+      },
     }),
   ],
 })

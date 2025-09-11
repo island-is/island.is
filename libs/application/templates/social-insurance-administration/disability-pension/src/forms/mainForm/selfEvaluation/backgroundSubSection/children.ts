@@ -20,31 +20,31 @@ export const childrenField = buildMultiField({
       marginTop: 0,
       options: [
         {
-          value: "Engin",
+          value: 'Engin',
           label: disabilityPensionFormMessage.questions.childrenCountZero,
         },
         {
-          value: "1",
+          value: '1',
           label: disabilityPensionFormMessage.questions.childrenCountOne,
         },
         {
-          value: "2",
+          value: '2',
           label: disabilityPensionFormMessage.questions.childrenCountTwo,
         },
         {
-          value: "3",
+          value: '3',
           label: disabilityPensionFormMessage.questions.childrenCountThree,
         },
         {
-          value: "4",
+          value: '4',
           label: disabilityPensionFormMessage.questions.childrenCountFour,
         },
         {
-          value: "5",
+          value: '5',
           label: disabilityPensionFormMessage.questions.childrenCountFive,
         },
         {
-          value: "6+",
+          value: '6+',
           label: disabilityPensionFormMessage.questions.childrenCountSixOrMore,
         },
       ],

@@ -41,7 +41,10 @@ import {
   shouldShowPreviousRehabilitationOrTreatmentFields,
   shouldShowRehabilitationPlan,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
-import { getApplicationAnswers as getDPApplicationAnswers, getApplicationExternalData as getDPApplicationExternalData } from '@island.is/application/templates/social-insurance-administration/disability-pension'
+import {
+  getApplicationAnswers as getDPApplicationAnswers,
+  getApplicationExternalData as getDPApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/disability-pension'
 import {
   ApplicationType,
   Employer,
@@ -602,12 +605,11 @@ export const transformApplicationToDisabilityPensionDTO = (
     educationLevel,
     hadAssistanceForSelfEvaluation,
     questionnaire,
-    extraInfo
+    extraInfo,
   } = getDPApplicationAnswers(application.answers)
 
-  const { bankInfo, countries, incomePlanConditions, categorizedIncomeTypes } = getDPApplicationExternalData(
-    application.externalData,
-  )
+  const { bankInfo, countries, incomePlanConditions, categorizedIncomeTypes } =
+    getDPApplicationExternalData(application.externalData)
 
   const dpDto: DisabilityPensionDto = {
     applicantInfo: {
@@ -616,24 +618,33 @@ export const transformApplicationToDisabilityPensionDTO = (
     },
     applicationId: application.id,
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
-      ...(paymentInfo && (paymentInfo.bankAccountType === undefined ||
-        paymentInfo.bankAccountType === BankAccountType.ICELANDIC) && paymentInfo.bank && {
-        domesticBankInfo: {
-          bank: formatBank(paymentInfo.bank),
-        },
-      }),
-      ...(paymentInfo && paymentInfo.bankAccountType === BankAccountType.FOREIGN && paymentInfo.iban && paymentInfo.swift && paymentInfo.bankName && paymentInfo.bankAddress && paymentInfo.currency && {
-        foreignBankInfo: {
-          iban: paymentInfo.iban.replace(/[\s]+/g, ''),
-          swift: paymentInfo.swift.replace(/[\s]+/g, ''),
-          foreignBankName: paymentInfo.bankName,
-          foreignBankAddress: paymentInfo.bankAddress,
-          foreignCurrency: paymentInfo.currency,
-        },
-      }),
+      ...(paymentInfo &&
+        (paymentInfo.bankAccountType === undefined ||
+          paymentInfo.bankAccountType === BankAccountType.ICELANDIC) &&
+        paymentInfo.bank && {
+          domesticBankInfo: {
+            bank: formatBank(paymentInfo.bank),
+          },
+        }),
+      ...(paymentInfo &&
+        paymentInfo.bankAccountType === BankAccountType.FOREIGN &&
+        paymentInfo.iban &&
+        paymentInfo.swift &&
+        paymentInfo.bankName &&
+        paymentInfo.bankAddress &&
+        paymentInfo.currency && {
+          foreignBankInfo: {
+            iban: paymentInfo.iban.replace(/[\s]+/g, ''),
+            swift: paymentInfo.swift.replace(/[\s]+/g, ''),
+            foreignBankName: paymentInfo.bankName,
+            foreignBankAddress: paymentInfo.bankAddress,
+            foreignCurrency: paymentInfo.currency,
+          },
+        }),
     }),
     incomePlan: {
-      incomeYear: incomePlanConditions?.incomePlanYear ?? new Date().getFullYear(),
+      incomeYear:
+        incomePlanConditions?.incomePlanYear ?? new Date().getFullYear(),
       distributeIncomeByMonth: shouldDistributeIncomeByMonth(incomePlan),
       incomeTypes: getIncomeTypes(incomePlan, categorizedIncomeTypes),
     },
@@ -648,64 +659,76 @@ export const transformApplicationToDisabilityPensionDTO = (
     plansToContinueParticipation: willContinueWorking === YES,
     housingTypeId: residence ?? -1,
     housingTypeAdditionalDescription: residenceExtraComment ?? '',
-    numberOfChildrenInHome: children ?? "",
+    numberOfChildrenInHome: children ?? '',
     languageProficiency: icelandicCapability ?? -1,
-    applicantNativeLanguage: language ?? "",
+    applicantNativeLanguage: language ?? '',
     applicantNativeLanguageOther: languageOther,
-    hasBeenInPaidEmployment: previousEmployment?.hasEmployment ? previousEmployment.hasEmployment === YES : false,
-    lastProfession: previousEmployment?.job ?? "",
+    hasBeenInPaidEmployment: previousEmployment?.hasEmployment
+      ? previousEmployment.hasEmployment === YES
+      : false,
+    lastProfession: previousEmployment?.job ?? '',
     lastProfessionYear: previousEmployment?.when ?? -1,
-    lastProfessionDescription: "TODO - VANTAR",
+    lastProfessionDescription: 'TODO - VANTAR',
     lastActivityOfProfession: previousEmployment?.field ?? '',
-    lastActivityOfProfessionDescription: "TODO - VANTAR",
-    educationalLevel: educationLevel ?? "",
+    lastActivityOfProfessionDescription: 'TODO - VANTAR',
+    educationalLevel: educationLevel ?? '',
     workCapacityAssessment: employmentCapability ?? -1,
     importanceOfEmployment: employmentImportance ?? -1,
     hasBeenInRehabilitationOrTreatment: hasHadRehabilitationOrTherapy === YES,
-    rehabilitationOrTreatment: rehabilitationOrTherapyDescription ?? "",
-    rehabilitationOrTreatmentOutcome: rehabilitationOrTherapyResults ?? "",
-    workIncapacityIssue: biggestIssue ?? "",
+    rehabilitationOrTreatment: rehabilitationOrTherapyDescription ?? '',
+    rehabilitationOrTreatmentOutcome: rehabilitationOrTherapyResults ?? '',
+    workIncapacityIssue: biggestIssue ?? '',
     foreignPaymentDetails: {
       receivesForeignPayments: isReceivingBenefitsFromAnotherCountry === YES,
-      foreignPaymentDetails: abroadPaymentsList.map(({country, abroadNationalId}) => {
-        return ({
-          countryName: countries.find(item => item.value === country)?.label ?? '',
-          countryCode: country,
-          foreignNationalId: abroadNationalId ?? '',
-        })
-      }),
+      foreignPaymentDetails: abroadPaymentsList.map(
+        ({ country, abroadNationalId }) => {
+          return {
+            countryName:
+              countries.find((item) => item.value === country)?.label ?? '',
+            countryCode: country,
+            foreignNationalId: abroadNationalId ?? '',
+          }
+        },
+      ),
     },
-    foreignResidencies: hasLivedAbroad === YES ?
-      livedAbroadList?.map((abroadStay) => {
-        const countryName = countries.find(item => item.value === abroadStay.country)?.label;
-        return ({
-          countryName: countryName ?? '',
-          countryCode: abroadStay.country,
-          foreignNationalId: abroadStay.abroadNationalId ?? '',
-          dateFrom: abroadStay.periodStart,
-          dateTo: abroadStay.periodEnd,
-        })
-      }) ?? []
-     : [],
+    foreignResidencies:
+      hasLivedAbroad === YES
+        ? livedAbroadList?.map((abroadStay) => {
+            const countryName = countries.find(
+              (item) => item.value === abroadStay.country,
+            )?.label
+            return {
+              countryName: countryName ?? '',
+              countryCode: abroadStay.country,
+              foreignNationalId: abroadStay.abroadNationalId ?? '',
+              dateFrom: abroadStay.periodStart,
+              dateTo: abroadStay.periodEnd,
+            }
+          }) ?? []
+        : [],
     maritalStatusTypeId: maritalStatus ?? -1,
     selfAssessment: {
       hadAssistance: hadAssistanceForSelfEvaluation === YES,
-      answers: questionnaire.map(question => ({
+      answers: questionnaire.map((question) => ({
         questionId: question.id,
-        answer: question.answer.toString()
-      }))
+        answer: question.answer.toString(),
+      })),
     },
-    employmentStatuses: employmentStatus?.map(status => ({
-      employmentStatus: status,
-      explanation: status === "ANNAD" && employmentStatusOther ? employmentStatusOther : ""
-    })) ?? [],
+    employmentStatuses:
+      employmentStatus?.map((status) => ({
+        employmentStatus: status,
+        explanation:
+          status === 'ANNAD' && employmentStatusOther
+            ? employmentStatusOther
+            : '',
+      })) ?? [],
     retroactivePayments: {
       year: disabilityRenumerationDateYear ?? -1,
       month: disabilityRenumerationDateMonth ?? -1,
     },
     comment: extraInfo ?? '',
-  };
-  return dpDto;
+  }
+  return dpDto
 }
 
 export const getIncomeTypes = (

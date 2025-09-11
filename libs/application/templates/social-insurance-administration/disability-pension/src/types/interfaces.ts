@@ -1,11 +1,11 @@
-import { YesOrNo } from "@island.is/application/core"
+import { YesOrNo } from '@island.is/application/core'
 
 export interface EducationLevels {
   code: string
   description: string
 }
 
-export interface Country{
+export interface Country {
   country: string
   abroadNationalId: string
 }
@@ -49,7 +49,6 @@ export interface EmploymentStatus {
   displayName: string
 }
 
-
 export interface Language {
   code: string
   nameEn: string
@@ -70,8 +69,8 @@ export interface SelfAssessmentQuestionnaire {
 }
 
 export interface CountryValue {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 export interface SelfAssessmentQuestion {

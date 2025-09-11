@@ -149,15 +149,15 @@ export const dataSchema = z.object({
       },
     ),
   backgroundInfoChildren: z.object({
-    count: z.string()
+    count: z.string(),
   }),
   backgroundInfoIcelandicCapability: z.object({
     capability: z.preprocess((value) => {
-        if (typeof value === 'string' && value !== '') {
-          const number = Number.parseInt(value as string, 10)
-          return isNaN(number) ? undefined : number
-        }
-      }, z.number()),
+      if (typeof value === 'string' && value !== '') {
+        const number = Number.parseInt(value as string, 10)
+        return isNaN(number) ? undefined : number
+      }
+    }, z.number()),
   }),
   backgroundInfoLanguage: z
     .object({
@@ -194,11 +194,11 @@ export const dataSchema = z.object({
     .object({
       hasEmployment: z.enum([YES, NO]),
       when: z.preprocess((value) => {
-          if (typeof value === 'string' && value !== '') {
-            const number = Number.parseInt(value as string, 10)
-            return isNaN(number) ? undefined : number
-          }
-        }, z.number().nullable().optional()),
+        if (typeof value === 'string' && value !== '') {
+          const number = Number.parseInt(value as string, 10)
+          return isNaN(number) ? undefined : number
+        }
+      }, z.number().nullable().optional()),
       job: z.string().nullable().optional(),
       field: z.string().nullable().optional(),
     })
@@ -514,7 +514,7 @@ export const dataSchema = z.object({
       .optional()
       .nullable(),
   }),
-  extraInfo: z.string().optional()
+  extraInfo: z.string().optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

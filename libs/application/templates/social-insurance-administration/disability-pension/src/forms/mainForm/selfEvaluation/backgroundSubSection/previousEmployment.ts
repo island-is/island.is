@@ -96,9 +96,9 @@ export const previousEmploymentField = buildMultiField({
 
         return (
           data.socialInsuranceGeneral?.professions?.map(({ value, label }) => ({
-              value,
-              label,
-            })) ?? []
+            value,
+            label,
+          })) ?? []
         )
       },
     }),
@@ -135,10 +135,12 @@ export const previousEmploymentField = buildMultiField({
           )
 
         return (
-          data.socialInsuranceGeneral?.professionActivities?.map(({ value, label }) => ({
+          data.socialInsuranceGeneral?.professionActivities?.map(
+            ({ value, label }) => ({
               value,
               label,
-            })) ?? []
+            }),
+          ) ?? []
         )
       },
     }),

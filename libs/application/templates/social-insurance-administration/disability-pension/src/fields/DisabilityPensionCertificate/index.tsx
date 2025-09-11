@@ -32,7 +32,6 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
       siaDisabilityPensionCertificate,
     )
 
-
   setBeforeSubmitCallback?.(async () => {
     // If data is still loading, prevent submission
     if (loading) {
@@ -141,7 +140,14 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           <Text></Text>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
-              .dateOfWorkIncapacity ? format(new Date(data.socialInsuranceDisabilityPensionCertificate.dateOfWorkIncapacity), 'yyyy-MM-dd') : '-'}
+              .dateOfWorkIncapacity
+              ? format(
+                  new Date(
+                    data.socialInsuranceDisabilityPensionCertificate.dateOfWorkIncapacity,
+                  ),
+                  'yyyy-MM-dd',
+                )
+              : '-'}
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
