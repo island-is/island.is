@@ -19,7 +19,7 @@ const CancelCollection = ({ list }: { list: SignatureCollectionList }) => {
   const navigate = useNavigate()
   const { refetchIsOwner } = useIsOwner(list.collectionType)
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  
+
   const [cancelCollection, { loading }] = useMutation<
     { signatureCollectionCancel: SignatureCollectionSuccess },
     {
