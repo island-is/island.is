@@ -141,7 +141,7 @@ export class CourtDocumentRepositoryService {
 
       // Iincrease order of documents after the current position
       await this.courtDocumentModel.update(
-        { documentOrder: literal('documentOrder + 1') },
+        { documentOrder: literal('document_order + 1') },
         {
           where: {
             caseId,
@@ -230,7 +230,7 @@ export class CourtDocumentRepositoryService {
           if (newOrder > currentOrder) {
             // Moving down: decrease order of documents between current and new position
             await this.courtDocumentModel.update(
-              { documentOrder: literal('documentOrder - 1') },
+              { documentOrder: literal('document_order - 1') },
               {
                 where: {
                   caseId,
@@ -242,7 +242,7 @@ export class CourtDocumentRepositoryService {
           } else {
             // Moving up: increase order of documents between new and current position
             await this.courtDocumentModel.update(
-              { documentOrder: literal('documentOrder + 1') },
+              { documentOrder: literal('document_order + 1') },
               {
                 where: {
                   caseId,
@@ -337,7 +337,7 @@ export class CourtDocumentRepositoryService {
 
       // Iincrease order of documents after the current position
       await this.courtDocumentModel.update(
-        { documentOrder: literal('documentOrder + 1') },
+        { documentOrder: literal('document_order + 1') },
         {
           where: {
             caseId,
@@ -430,7 +430,7 @@ export class CourtDocumentRepositoryService {
 
       // Adjust order of remaining documents that had higher order values
       await this.courtDocumentModel.update(
-        { documentOrder: literal('documentOrder - 1') },
+        { documentOrder: literal('document_order - 1') },
         {
           where: { caseId, documentOrder: { [Op.gt]: deletedOrder } },
           transaction: options?.transaction,
