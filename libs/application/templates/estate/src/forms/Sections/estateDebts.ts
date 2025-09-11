@@ -52,7 +52,7 @@ export const estateDebts = buildSection({
               {
                 title: m.debtsCreditorType,
                 id: 'debtType',
-                placeholder: 'Veldu tegund skuldar',
+                placeholder: m.debtsCreditorType,
               },
               {
                 title: m.debtsNationalId,

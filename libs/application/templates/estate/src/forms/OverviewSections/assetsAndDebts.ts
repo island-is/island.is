@@ -245,17 +245,13 @@ export const overviewAssetsAndDebts = [
     id: 'bankAccountsTotal',
     title: m.total,
     description: ({ answers }) =>
-      getSumFromAnswers<EstateSchema['estate']['bankAccounts']>(
-        answers,
-        'estate.bankAccounts',
-        'accountTotal',
-      ),
+      getSumFromAnswers<
+        NonNullable<EstateSchema['estate']['bankAccounts']>[number]
+      >(answers, 'estate.bankAccounts', 'accountTotal'),
     condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['estate']['bankAccounts']>(
-        answers,
-        'estate.bankAccounts',
-        'accountTotal',
-      ),
+      !!getSumFromAnswers<
+        NonNullable<EstateSchema['estate']['bankAccounts']>[number]
+      >(answers, 'estate.bankAccounts', 'accountTotal'),
     titleVariant: 'h4',
   }),
   buildDividerField({
@@ -354,9 +350,10 @@ export const overviewAssetsAndDebts = [
             return {
               title: stock.organization,
               description: [
-                `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
-                  stock.nationalId ?? '',
-                )}`,
+                stock.nationalId &&
+                  `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
+                    stock.nationalId ?? '',
+                  )}`,
                 `${m.stocksFaceValue.defaultMessage}: ${customCurrencyFormat(
                   stock.faceValue ?? '0',
                 )}`,

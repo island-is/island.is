@@ -133,7 +133,7 @@ export const StocksRepeater: FC<
             <Controller
               name={enabledField}
               control={control}
-              defaultValue={field.enabled || true}
+              defaultValue={field.enabled ?? true}
               render={() => <input type="hidden" />}
             />
             <Box

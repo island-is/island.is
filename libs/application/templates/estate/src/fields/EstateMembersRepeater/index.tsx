@@ -166,6 +166,7 @@ export const EstateMembersRepeater: FC<
     if (!missingHeirsForUndividedEstate) {
       clearErrors(missingHeirUndividedEstateValidation)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,
@@ -203,7 +204,7 @@ export const EstateMembersRepeater: FC<
         }
         return [
           ...acc,
-          <Box marginTop={index > 0 ? 7 : 0} key={index}>
+          <Box marginTop={index > 0 ? 7 : 0} key={member.id}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Text
                 color={member.enabled ? 'currentColor' : 'dark300'}
