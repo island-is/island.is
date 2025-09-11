@@ -56,6 +56,7 @@ describe('CourtSessionController - Create', () => {
     it('should create a court session', () => {
       expect(mockCourtSessionRepositoryService.create).toHaveBeenCalledWith(
         caseId,
+        { transaction: undefined },
       )
       expect(then.result).toBe(createdCourtSession)
     })
