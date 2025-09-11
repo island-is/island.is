@@ -37,7 +37,10 @@ export class HistoryBuilder {
 
       if (historyLog) {
         if (typeof historyLog.logMessage === 'function') {
-          const values = { subject: exitEventSubjectNationalId, actor: exitEventActorNationalId }
+          const values = {
+            subject: exitEventSubjectNationalId,
+            actor: exitEventActorNationalId,
+          }
           const message = historyLog.logMessage(values)
 
           result.push(

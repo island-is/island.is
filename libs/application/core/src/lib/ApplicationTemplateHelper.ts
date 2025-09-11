@@ -328,10 +328,7 @@ export class ApplicationTemplateHelper<
     if (Array.isArray(historyLogs)) {
       return historyLogs?.find((historyLog) => historyLog.onEvent === exitEvent)
     } else {
-      return historyLogs?.onEvent === exitEvent
-        ? historyLogs
-        : undefined
+      return historyLogs?.onEvent === exitEvent ? historyLogs : undefined
     }
-
   }
 }
