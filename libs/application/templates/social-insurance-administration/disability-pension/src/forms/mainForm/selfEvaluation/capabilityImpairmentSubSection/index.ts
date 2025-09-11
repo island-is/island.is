@@ -20,7 +20,7 @@ const buildQuestion = (index: number) => {
     title: disabilityPensionFormMessage.capabilityImpairment.title,
     children: [
       buildDescriptionField({
-        id: `selfAssessment.questionnaire[${index}].description`,
+        id:  `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}].description`,
         title: (application, locale) => {
           const selfAssessmentQuestionnaire =
             getValueViaPath<Array<SelfAssessmentQuestionnaire>>(

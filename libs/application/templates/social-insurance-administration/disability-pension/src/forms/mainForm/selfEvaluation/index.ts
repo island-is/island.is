@@ -8,6 +8,6 @@ export const selfEvaluationSection = buildSection({
   id: SectionRouteEnum.SELF_EVALUATION,
   title: disabilityPensionFormMessage.selfEvaluation.title,
   children: [
-    //backgroundInfoSubSection,
+    backgroundInfoSubSection,
     capabilityImpairmentSubSection],
 })

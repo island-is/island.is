@@ -509,10 +509,13 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       return response
     }
 
+    console.log(application.typeId)
     if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
       const disabilityPensionDTO = transformApplicationToDisabilityPensionDTO(
         application,
       )
+
+      console.log(disabilityPensionDTO)
 
       const response = await this.siaClientService.sendApplication(
         auth,

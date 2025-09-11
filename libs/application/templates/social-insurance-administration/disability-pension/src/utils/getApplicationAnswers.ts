@@ -15,7 +15,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? ''
 
   const applicantEmail =
-    getValueViaPath<string>(answers, 'applicantInfo.email') ?? ''
+    getValueViaPath<string>(answers, 'applicant.email') ?? ''
 
   const paymentInfo = getValueViaPath<PaymentInfo>(answers, 'paymentInfo')
 
