@@ -9,5 +9,6 @@ export const selfEvaluationSection = buildSection({
   title: disabilityPensionFormMessage.selfEvaluation.title,
   children: [
     backgroundInfoSubSection,
-    capabilityImpairmentSubSection],
+    capabilityImpairmentSubSection
+  ],
 })
