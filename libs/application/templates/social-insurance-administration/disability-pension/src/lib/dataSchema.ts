@@ -47,8 +47,8 @@ export const dataSchema = z.object({
   }),
   applicantMaritalStatus: z.object({
     status: z.number(),
-    spouseName:  z.string().min(2).max(100).optional().or(z.literal('')),
-    spouseNationalId:  z.string().min(4).max(10).optional().or(z.literal('')),
+    spouseName: z.string().min(2).max(100).optional().or(z.literal('')),
+    spouseNationalId: z.string().min(4).max(10).optional().or(z.literal('')),
   }),
   disabilityAppliedBefore: z.enum([YES, NO]),
   disabilityPeriod: z.object({
@@ -100,7 +100,7 @@ export const dataSchema = z.object({
         .array(
           z.object({
             country: z.string(),
-            abroadNationalId:  z.string().min(4).optional().or(z.literal('')),
+            abroadNationalId: z.string().min(4).optional().or(z.literal('')),
           }),
         )
         .optional(),
@@ -326,9 +326,10 @@ export const dataSchema = z.object({
       ]),
     })
     .partial()
-    .refine(({ bankAccountType }) => bankAccountType !== undefined,
-      { params: errorMessages.bankAccountType, path: ['bankAccountType'] }
-    )
+    .refine(({ bankAccountType }) => bankAccountType !== undefined, {
+      params: errorMessages.bankAccountType,
+      path: ['bankAccountType'],
+    })
     .refine(
       ({ iban, bankAccountType }) => {
         if (bankAccountType === BankAccountType.FOREIGN) {
@@ -352,7 +353,7 @@ export const dataSchema = z.object({
     .refine(
       ({ bankName, bankAccountType }) =>
         bankAccountType === BankAccountType.FOREIGN ? !!bankName : true,
-       { path: ['bankName'] },
+      { path: ['bankName'] },
     )
     .refine(
       ({ bankAddress, bankAccountType }) =>
@@ -362,11 +363,12 @@ export const dataSchema = z.object({
     .refine(
       ({ currency, bankAccountType }) =>
         bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
-       {  path: ['currency'] },
+      { path: ['currency'] },
     )
-    .refine(
-      ({ personalAllowance  }) => personalAllowance !== undefined,
-      { params: errorMessages.personalAllowanceUse, path: ['personalAllowance'] })
+    .refine(({ personalAllowance }) => personalAllowance !== undefined, {
+      params: errorMessages.personalAllowanceUse,
+      path: ['personalAllowance'],
+    })
     .refine(
       ({ personalAllowance, personalAllowanceUsage }) => {
         if (personalAllowance === YES) {
@@ -495,14 +497,14 @@ export const dataSchema = z.object({
   }),
   questionAnswer: z.object({
     id: z.string(),
-    answer:z.string()
+    answer: z.string(),
   }),
   capabilityImpairment: z.object({
     questionAnswers: z
       .array(
         z.object({
           id: z.string(),
-          answer:z.string()
+          answer: z.string(),
         }),
       )
       .optional()

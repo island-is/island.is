@@ -90,7 +90,9 @@ export const paymentInfoSubSection = buildSubSection({
           placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
           required: true,
           defaultValue: (application: Application) => {
-           const {bankInfo} = getApplicationExternalData(application.externalData)
+            const { bankInfo } = getApplicationExternalData(
+              application.externalData,
+            )
             return friendlyFormatIBAN(bankInfo?.iban)
           },
           condition: (formValue: FormValue) =>
@@ -103,7 +105,9 @@ export const paymentInfoSubSection = buildSubSection({
           width: 'half',
           required: true,
           defaultValue: (application: Application) => {
-           const {bankInfo} = getApplicationExternalData(application.externalData)
+            const { bankInfo } = getApplicationExternalData(
+              application.externalData,
+            )
             return friendlyFormatSWIFT(bankInfo?.swift)
           },
           condition: (formValue: FormValue) =>
@@ -124,7 +128,9 @@ export const paymentInfoSubSection = buildSubSection({
             return getCurrencies(data.socialInsuranceGeneral.currencies ?? [])
           },
           defaultValue: (application: Application) => {
-           const { bankInfo } = getApplicationExternalData(application.externalData)
+            const { bankInfo } = getApplicationExternalData(
+              application.externalData,
+            )
             return !isEmpty(bankInfo) ? bankInfo.currency : ''
           },
           condition: (formValue: FormValue) =>
@@ -136,7 +142,9 @@ export const paymentInfoSubSection = buildSubSection({
           width: 'half',
           required: true,
           defaultValue: (application: Application) => {
-           const { bankInfo } = getApplicationExternalData(application.externalData)
+            const { bankInfo } = getApplicationExternalData(
+              application.externalData,
+            )
             return bankInfo?.foreignBankName ? bankInfo.foreignBankName : ''
           },
           condition: (formValue: FormValue) =>
@@ -148,7 +156,9 @@ export const paymentInfoSubSection = buildSubSection({
           width: 'half',
           required: true,
           defaultValue: (application: Application) => {
-           const { bankInfo } = getApplicationExternalData(application.externalData)
+            const { bankInfo } = getApplicationExternalData(
+              application.externalData,
+            )
             return bankInfo?.foreignBankAddress
               ? bankInfo.foreignBankAddress
               : ''

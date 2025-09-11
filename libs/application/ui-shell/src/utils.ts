@@ -106,8 +106,8 @@ export const extractAnswersToSubmitFromScreen = (
     // We always submit the whole array for the repeater answers
     const repeaterId = baseId.split('[')[0] ?? ''
     //trim trailing dots
-    if (repeaterId.slice(-1) === '.')  {
-      return pick(data, [repeaterId.substring(0, repeaterId.length-1)])
+    if (repeaterId.slice(-1) === '.') {
+      return pick(data, [repeaterId.substring(0, repeaterId.length - 1)])
     }
 
     return pick(data, [repeaterId])

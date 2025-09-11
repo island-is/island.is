@@ -72,7 +72,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly generalApi: GeneralApi,
     private readonly medicalDocumentsApi: MedicalDocumentsApi,
     private readonly questionnairesApi: QuestionnairesApi,
-  ) { }
+  ) {}
 
   private applicationApiWithAuth = (user: User) =>
     this.applicationApi.withMiddleware(new AuthMiddleware(user as Auth))

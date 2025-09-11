@@ -510,9 +510,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
 
     if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
-      const disabilityPensionDTO = transformApplicationToDisabilityPensionDTO(
-        application,
-      )
+      const disabilityPensionDTO =
+        transformApplicationToDisabilityPensionDTO(application)
 
       const response = await this.siaClientService.sendApplication(
         auth,
@@ -575,7 +574,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
           auth,
           'disabilitypension',
           //TODO: REMOVE WHEN PROD
-          'lightweight'
+          'lightweight',
         )
       }
       default: {
@@ -719,16 +718,26 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
   }
 
-  async getCountries({ auth, currentUserLocale }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getCountries(auth, {locale: currentUserLocale})
+  async getCountries({
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getCountries(auth, {
+      locale: currentUserLocale,
+    })
   }
 
   async getMaritalStatuses({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getMaritalStatuses(auth)
   }
 
-  async getLanguages({ auth, currentUserLocale }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getLanguages(auth, {locale: currentUserLocale})
+  async getLanguages({
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getLanguages(auth, {
+      locale: currentUserLocale,
+    })
   }
 
   async getMedicalAndRehabilitationApplicationType({
@@ -739,8 +748,13 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     )
   }
 
-  async getEmploymentStatusesWithLocale({ auth, currentUserLocale }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getEmploymentStatusesWithLocale(auth, {locale: currentUserLocale})
+  async getEmploymentStatusesWithLocale({
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getEmploymentStatusesWithLocale(auth, {
+      locale: currentUserLocale,
+    })
   }
 
   async getProfessions({ auth }: TemplateApiModuleActionProps) {
