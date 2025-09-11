@@ -1,18 +1,18 @@
+import { FormSystemField } from '@island.is/api/schema'
 import {
-  InputFileUploadDeprecated,
-  UploadFileDeprecated,
   fileToObjectDeprecated,
   FileUploadStatus,
-  UploadFile,
   InputFileUpload,
+  InputFileUploadDeprecated,
+  UploadFile,
+  UploadFileDeprecated,
 } from '@island.is/island-ui/core'
 import { Dispatch, useCallback, useState } from 'react'
-import { uuid } from 'uuidv4'
-import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
-import { fileTypes } from '../../../lib/fileTypes'
-import { m, webMessages } from '../../../lib/messages'
+import { uuid } from 'uuidv4'
 import { Action } from '../../../lib'
+import { fileTypes } from '../../../lib/fileTypes'
+import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
@@ -94,11 +94,11 @@ export const FileUpload = ({ item, hasError }: Props) => {
       name={`fileUpload-${item.id}`}
       files={files}
       accept={types}
-      title={formatMessage(webMessages.uploadBoxTitle)}
-      description={formatMessage(webMessages.uploadBoxDescription, {
+      title={formatMessage(m.uploadBoxTitle)}
+      description={formatMessage(m.uploadBoxDescription, {
         fileEndings: types.join(', '),
       })}
-      buttonLabel={formatMessage(webMessages.uploadBoxButtonLabel)}
+      buttonLabel={formatMessage(m.uploadBoxButtonLabel)}
       onChange={onChange}
       onRemove={onRemove}
       onRetry={onRetry}

@@ -19,7 +19,7 @@ export const ApplicationFragment = gql`
       ...Section
     }
     status
-    stopProgressOnValidatingScreen
+    allowProceedOnValidationFail
     hasPayment
     hasSummaryScreen
     certificationTypes {
