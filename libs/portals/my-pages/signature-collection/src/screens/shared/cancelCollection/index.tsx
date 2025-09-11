@@ -11,9 +11,14 @@ import {
 } from '@island.is/api/schema'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
 import { Modal } from '@island.is/portals/my-pages/core'
+import { useNavigate } from 'react-router-dom'
+import { useIsOwner } from '../../../hooks'
 
 const CancelCollection = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
+  const { refetchIsOwner } = useIsOwner(list.collectionType)
+
   const [modalIsOpen, setModalIsOpen] = useState(false)
 
   const [cancelCollection, { loading }] = useMutation<
@@ -40,8 +45,9 @@ const CancelCollection = ({ list }: { list: SignatureCollectionList }) => {
       } else {
         toast.error(formatMessage(m.cancelCollectionModalToastError))
       }
-
       setModalIsOpen(false)
+      refetchIsOwner()
+      navigate(-1)
     },
     onError: () => {
       toast.error(formatMessage(m.cancelCollectionModalToastError))
