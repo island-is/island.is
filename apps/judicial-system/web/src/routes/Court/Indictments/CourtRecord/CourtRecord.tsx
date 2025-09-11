@@ -531,12 +531,6 @@ const CourtRecord: FC = () => {
                           updateItem(courtSession.id, {
                             entries: event.target.value,
                           })
-
-                          updateCourtSession({
-                            caseId: workingCase.id,
-                            courtSessionId: courtSession.id,
-                            entries: event.target.value,
-                          })
                         }}
                         onBlur={(event) => {
                           validateAndSetErrorMessage(
@@ -545,9 +539,7 @@ const CourtRecord: FC = () => {
                             setEntriesErrorMessage,
                           )
 
-                          updateCourtSession({
-                            caseId: workingCase.id,
-                            courtSessionId: courtSession.id,
+                          updateSession(courtSession.id, {
                             entries: event.target.value,
                           })
                         }}
@@ -574,14 +566,7 @@ const CourtRecord: FC = () => {
                             CourtSessionRulingType.NONE
                           }
                           onChange={() => {
-                            updateItem(courtSession.id, {
-                              rulingType: CourtSessionRulingType.NONE,
-                              ruling: '',
-                            })
-
-                            updateCourtSession({
-                              caseId: workingCase.id,
-                              courtSessionId: courtSession.id,
+                            updateSession(courtSession.id, {
                               rulingType: CourtSessionRulingType.NONE,
                               ruling: '',
                             })
@@ -597,13 +582,7 @@ const CourtRecord: FC = () => {
                             CourtSessionRulingType.JUDGEMENT
                           }
                           onChange={() => {
-                            updateItem(courtSession.id, {
-                              rulingType: CourtSessionRulingType.JUDGEMENT,
-                            })
-
-                            updateCourtSession({
-                              caseId: workingCase.id,
-                              courtSessionId: courtSession.id,
+                            updateSession(courtSession.id, {
                               rulingType: CourtSessionRulingType.JUDGEMENT,
                             })
                           }}
@@ -618,13 +597,7 @@ const CourtRecord: FC = () => {
                             CourtSessionRulingType.ORDER
                           }
                           onChange={() => {
-                            updateItem(courtSession.id, {
-                              rulingType: CourtSessionRulingType.ORDER,
-                            })
-
-                            updateCourtSession({
-                              caseId: workingCase.id,
-                              courtSessionId: courtSession.id,
+                            updateSession(courtSession.id, {
                               rulingType: CourtSessionRulingType.ORDER,
                             })
                           }}
@@ -676,9 +649,7 @@ const CourtRecord: FC = () => {
                                 setRulingErrorMessage,
                               )
 
-                              updateCourtSession({
-                                caseId: workingCase.id,
-                                courtSessionId: courtSession.id,
+                              updateSession(courtSession.id, {
                                 ruling: event.target.value,
                               })
                             }}
@@ -704,9 +675,7 @@ const CourtRecord: FC = () => {
                               })
                             }}
                             onBlur={(event) => {
-                              updateCourtSession({
-                                caseId: workingCase.id,
-                                courtSessionId: courtSession.id,
+                              updateSession(courtSession.id, {
                                 closingEntries: event.target.value,
                               })
                             }}
@@ -725,16 +694,9 @@ const CourtRecord: FC = () => {
                           name="isAttestingWitness"
                           checked={courtSession.isAttestingWitness || false}
                           onChange={(evt) => {
-                            updateItem(courtSession.id, {
+                            updateSession(courtSession.id, {
                               isAttestingWitness: evt.target.checked,
-                              attenstingWitnessId: null,
-                            })
-
-                            updateCourtSession({
-                              caseId: workingCase.id,
-                              courtSessionId: courtSession.id,
-                              isAttestingWitness: evt.target.checked,
-                              attestingWitnessId: null,
+                              attestingWitnessId: undefined,
                             })
                           }}
                           large
