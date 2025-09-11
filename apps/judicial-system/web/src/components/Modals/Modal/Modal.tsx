@@ -131,6 +131,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
           >
             {footerCheckbox && (
               <Checkbox
+                data-testid="footerCheckbox"
                 id={footerCheckboxId}
                 name={footerCheckboxId}
                 label={footerCheckbox.label}
