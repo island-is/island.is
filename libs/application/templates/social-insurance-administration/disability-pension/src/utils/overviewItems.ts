@@ -188,9 +188,6 @@ export const selfEvaluationItems = (
           answers,
           `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers`,
         )
-
-        console.log(backgroundData)
-        console.log(impairmentData)
         return ' :D '
       },
     },
