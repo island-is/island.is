@@ -65,9 +65,9 @@ const PatientDataPermits: React.FC = () => {
         <Problem
           type="no_data"
           noBorder={false}
-          title={formatMessage(messages.noPermits)}
+          title={formatMessage(messages.noPermit)}
           message={formatMessage(messages.noPermitsRegistered)}
-          imgSrc="./assets/images/coffee.svg"
+          imgSrc="./assets/images/empty_flower.svg"
         />
       )}
       {loading && <ActionCardLoader repeat={3} />}

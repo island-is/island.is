@@ -78,7 +78,8 @@ const ThirdStep: FC<ThirdStepProps> = ({
         display="flex"
         justifyContent="spaceBetween"
         marginTop={[0, 0, 3]}
-        flexWrap="wrap"
+        flexWrap="nowrap"
+        columnGap={2}
       >
         <Box className={styles.forwardButton} marginBottom={[1, 1, 0]}>
           <Button

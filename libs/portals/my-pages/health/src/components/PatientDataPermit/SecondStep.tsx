@@ -10,12 +10,15 @@ import {
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import React, { Dispatch, FC, SetStateAction, useState } from 'react'
+import { Problem } from '@island.is/react-spa/shared'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import * as styles from './PatientDataPermit.css'
 import { useHealthDirectoratePatientDataPermitCountriesQuery } from './SecondStep.generated'
-import { Problem } from '@island.is/react-spa/shared'
+
 interface SecondStepProps {
   onClick: () => void
   goBack: () => void
@@ -46,6 +49,8 @@ const SecondStep: FC<SecondStepProps> = ({
       },
     })
 
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
   const countries = data?.healthDirectoratePatientDataPermitCountries.data || []
 
   return (
@@ -83,8 +88,10 @@ const SecondStep: FC<SecondStepProps> = ({
             flexDirection="row"
             justifyContent="spaceBetween"
             alignItems="center"
+            flexWrap={['wrap', 'wrap', 'nowrap']}
+            rowGap={2}
           >
-            <Box>
+            <Box width={isMobile ? 'full' : undefined}>
               <Input
                 name="countrySearch"
                 placeholder={formatMessage(messages.filterByCountry)}
@@ -95,7 +102,7 @@ const SecondStep: FC<SecondStepProps> = ({
                 backgroundColor="blue"
               />
             </Box>
-            <Box>
+            <Box marginLeft={[0, 0, 2]}>
               <Checkbox
                 label={formatMessage(messages.chooseAllCountries)}
                 checked={selectAll}
@@ -110,7 +117,7 @@ const SecondStep: FC<SecondStepProps> = ({
               />
             </Box>
           </Box>
-          <Box marginTop={3} className={styles.countryCheckboxContainer}>
+          <Box marginY={3} className={styles.countryCheckboxContainer}>
             {countries
               .filter((country) =>
                 country.name.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -140,7 +147,8 @@ const SecondStep: FC<SecondStepProps> = ({
             display="flex"
             justifyContent="spaceBetween"
             marginTop={[0, 0, 3]}
-            flexWrap="wrap"
+            flexWrap="nowrap"
+            columnGap={2}
           >
             <Box className={styles.forwardButton} marginBottom={[1, 1, 0]}>
               <Button

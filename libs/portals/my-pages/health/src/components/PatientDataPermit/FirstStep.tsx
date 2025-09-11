@@ -1,4 +1,10 @@
-import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Checkbox,
+  FocusableBox,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { messages } from '../../lib/messages'
@@ -37,7 +43,12 @@ const FirstStep: React.FC<FirstStepProps> = ({ onClick }) => {
           })}
         </Text>
       </Box>
-      <Box>
+      <FocusableBox
+        onClick={() => setAccepted(!accepted)}
+        role="checkbox"
+        aria-checked={accepted}
+        style={{ width: 'fit-content' }}
+      >
         <Checkbox
           backgroundColor="blue"
           checked={accepted}
@@ -45,7 +56,7 @@ const FirstStep: React.FC<FirstStepProps> = ({ onClick }) => {
           large
           label={formatMessage(messages.permitApproval)}
         ></Checkbox>
-      </Box>
+      </FocusableBox>
       <Box display="flex" justifyContent="flexEnd" marginTop={3}>
         <Box className={styles.forwardButton}>
           <Button fluid size="small" disabled={!accepted} onClick={onClick}>

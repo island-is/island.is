@@ -1750,7 +1750,7 @@ export const messages = defineMessages({
     id: 'sp.health:what-countries-should-permit-apply',
   },
   chooseAllCountries: {
-    defaultMessage: 'Velja öll löndin',
+    defaultMessage: 'Velja öll löndin á listanum',
     id: 'sp.health:choose-all-countries',
   },
   howLongShouldPermitApply: {
@@ -1875,12 +1875,12 @@ export const messages = defineMessages({
       'Ekki tókst að sækja lönd. Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:countries-error',
   },
-  noPermits: {
-    defaultMessage: 'Engar heimildir',
-    id: 'sp.health:no-permits',
+  noPermit: {
+    defaultMessage: 'Engin heimild',
+    id: 'sp.health:no-permit',
   },
   noPermitsRegistered: {
-    defaultMessage: 'Það eru engar skráðar heimildir.',
+    defaultMessage: 'Þú ert ekki með neinar heimildir',
     id: 'sp.health:no-permits-registered',
   },
   active: {
