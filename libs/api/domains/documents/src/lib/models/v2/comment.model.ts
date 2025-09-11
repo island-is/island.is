@@ -16,4 +16,7 @@ export class DocumentComment {
 
   @Field(() => String, { nullable: true })
   author?: string | null
+
+  @Field(() => Boolean, { nullable: true })
+  isZendeskAgent?: boolean | null
 }
