@@ -48,8 +48,8 @@ export const dataSchema = z.object({
   }),
   applicantMaritalStatus: z.object({
     status: z.number(),
-    spouseName: z.string().min(2).max(100).optional(),
-    spouseNationalId: z.string().min(4).max(10).optional(),
+    spouseName:  z.string().min(2).max(100).optional().or(z.literal('')),
+    spouseNationalId:  z.string().min(4).max(10).optional().or(z.literal('')),
   }),
   disabilityAppliedBefore: z.enum([YES, NO]),
   disabilityPeriod: z.object({
@@ -101,7 +101,7 @@ export const dataSchema = z.object({
         .array(
           z.object({
             country: z.string(),
-            abroadNationalId: z.string().min(4).optional(),
+            abroadNationalId:  z.string().min(4).optional().or(z.literal('')),
           }),
         )
         .optional(),
@@ -498,17 +498,16 @@ export const dataSchema = z.object({
   selfEvaluation: z.object({
     assistance: z.enum([YES, NO]),
   }),
+  questionAnswer: z.object({
+    id: z.string(),
+    answer:z.string()
+  }),
   capabilityImpairment: z.object({
     questionAnswers: z
       .array(
         z.object({
           id: z.string(),
-          answer: z.preprocess((value) => {
-            if (typeof value === 'string' && value !== '') {
-              const number = Number.parseInt(value as string, 10)
-              return isNaN(number) ? undefined : number
-            }
-          }, z.number().min(0)),
+          answer:z.string()
         }),
       )
       .optional()

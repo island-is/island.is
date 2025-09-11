@@ -24,13 +24,13 @@ export const backgroundInfoSubSection = buildSubSection({
     residenceField,
     childrenField,
     icelandicCapabilityField,
-    languageField,*/
+    languageField,
     employmentField,
     previousEmploymentField,
     educationLevelField,
     employmentCapabilityField,
     employmentImportanceField,
-    rehabilitationOrTherapyField,
+    rehabilitationOrTherapyField,*/
     biggestIssueField,
   ],
 })

@@ -12,11 +12,11 @@ import { SelfAssessmentQuestionnaire } from '../../../../types/interfaces'
 import { Application } from '@island.is/application/types'
 import { getQuestionnaire } from '../../../../utils/getQuestionnaire'
 
-export const MAX_QUESTIONS = 2
+export const MAX_QUESTIONS = 5
 
 const buildQuestion = (index: number) => {
   return buildMultiField({
-    id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}]`,
+    id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}]`,
     title: disabilityPensionFormMessage.capabilityImpairment.title,
     children: [
       buildDescriptionField({
@@ -39,7 +39,7 @@ const buildQuestion = (index: number) => {
         titleVariant: 'h4',
       }),
       buildRadioField({
-        id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}].answer`,
+        id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}].answer`,
         marginTop: 0,
         title: (application, locale) => {
           const selfAssessmentQuestionnaire =
@@ -79,7 +79,7 @@ const buildQuestion = (index: number) => {
         required: true,
       }),
       buildHiddenInput({
-        id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}].id`,
+        id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}].id`,
         defaultValue: (application: Application) => {
           const selfAssessmentQuestionnaire =
             getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
@@ -97,9 +97,9 @@ const buildQuestion = (index: number) => {
       }),
     ],
     condition: (_, externalData) => {
-      const questions = getQuestionnaire(externalData)
-      return index < questions.length
-    },
+         const questions = getQuestionnaire(externalData)
+         return (index < questions.length && index < MAX_QUESTIONS)
+       },
   })
 }
 
