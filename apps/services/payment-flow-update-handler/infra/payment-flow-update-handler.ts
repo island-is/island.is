@@ -54,7 +54,7 @@ export const serviceSetup =
           '/k8s/api/LANDSPITALI_PAYMENT_CONFIRMATION_SEND_TO_EMAIL',
       })
       .liveness('/liveness')
-      .readiness('/readiness')
+      .readiness('/health/check')
       .grantNamespaces('services-payments')
       .codeOwner(CodeOwners.Stefna)
       .ingress({
