@@ -70,9 +70,9 @@ export const getForm = ({
                   ).estates.map((estate) => {
                     return {
                       value: estate.caseNumber,
-                      // TODO: (only showing caseNumber while wip)
-                      label: estate.caseNumber + ' ' + estate.nameOfDeceased,
-                      // label: estate.nameOfDeceased,
+                      label: estate.nameOfDeceased,
+                      // see the case number in the label for ease of use when testing
+                      // label: estate.caseNumber + ' ' + estate.nameOfDeceased,
                     }
                   })
                 },
