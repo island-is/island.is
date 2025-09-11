@@ -600,6 +600,7 @@ export const getApplicationType = (
     return ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
+  // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
   if (!childInformation?.primaryOrgId) {
     return yearOfBirth === firstGradeYear
       ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
