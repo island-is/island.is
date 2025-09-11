@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { View, Image } from 'react-native'
+import { Image, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { ExpandableCard, Typography, dynamicColor } from '../../../ui'
-import checkmarkIcon from '../../../ui/assets/icons/check.png'
 import chevronDown from '../../../assets/icons/chevron-down.png'
 import clockIcon from '../../../assets/icons/clock.png'
 import { HealthDirectoratePrescription } from '../../../graphql/types/schema'
+import { ExpandableCard, Typography } from '../../../ui'
+import checkmarkIcon from '../../../ui/assets/icons/check.png'
 import { capitalizeEveryWord } from '../../../utils/capitalize'
 
 const TableRow = styled.View`
@@ -15,15 +15,11 @@ const TableRow = styled.View`
   flex-wrap: wrap;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
   padding-bottom: ${({ theme }) => theme.spacing[2]}px;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade300,
-  }))};
+  border-bottom-color: ${({ theme }) => theme.color.blue200};
   border-bottom-width: 1px;
 `
 const RowItem = styled.View`
-  margin-right: ${({ theme }) => theme.spacing[1]}px;
-  margin-left: ${({ theme }) => theme.spacing[1]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[1]}px;
   width: 40%;
   flex: 1;
 `
@@ -36,8 +32,7 @@ const DispensationRowItem = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  margin-right: ${({ theme }) => theme.spacing[1]}px;
-  margin-left: ${({ theme }) => theme.spacing[1]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const DispensationCheckmark = styled.View`
@@ -45,11 +40,11 @@ const DispensationCheckmark = styled.View`
   padding-right: ${({ theme }) => theme.spacing[2]}px;
 `
 
-export function PrescriptionCard({
-  prescription,
-}: {
+type PrescriptionCardProps = {
   prescription: HealthDirectoratePrescription
-}) {
+}
+
+export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
   const intl = useIntl()
   const theme = useTheme()
   const [open, setOpen] = useState(false)
@@ -106,6 +101,10 @@ export function PrescriptionCard({
     },
   ]
 
+  const onPress = useCallback(() => {
+    setOpen((isOpen) => !isOpen)
+  }, [])
+
   return (
     <ExpandableCard
       title={
@@ -129,9 +128,7 @@ export function PrescriptionCard({
         prescription.name ? capitalizeEveryWord(prescription.name) : undefined
       }
       icon={chevronDown}
-      onPress={() => {
-        setOpen((isOpen) => !isOpen)
-      }}
+      onPress={onPress}
       open={open}
     >
       <View style={{ width: '100%', padding: theme.spacing[2] }}>
@@ -163,7 +160,7 @@ export function PrescriptionCard({
                 </RowItem>
               </TableRow>
             ))}
-          {prescriptionDataIssuedBy.length ? (
+          {prescriptionDataIssuedBy.length && (
             <>
               <TableHeader style={{ marginTop: theme.spacing[3] }}>
                 <Typography variant="eyebrow">
@@ -193,8 +190,8 @@ export function PrescriptionCard({
                   </TableRow>
                 ))}
             </>
-          ) : null}
-          {prescription?.dispensations?.length ? (
+          )}
+          {prescription?.dispensations?.length && (
             <>
               <TableHeader style={{ marginTop: theme.spacing[3] }}>
                 <Typography variant="eyebrow">
@@ -240,7 +237,7 @@ export function PrescriptionCard({
                 </TableRow>
               ))}
             </>
-          ) : null}
+          )}
         </View>
       </View>
     </ExpandableCard>
