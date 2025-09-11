@@ -324,7 +324,6 @@ export class ApplicationTemplateHelper<
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
     const historyLogs = stateInfo?.actionCard?.historyLogs
-    const historyLog = null;
 
     if (Array.isArray(historyLogs)) {
       return historyLogs?.find((historyLog) => historyLog.onEvent === exitEvent)

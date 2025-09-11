@@ -19,12 +19,14 @@ export class HistoryResponseDto {
   constructor(timeStamp: Date, log: StaticText, formatMessage: FormatMessage, values?: Record<string, any> ) {
     this.date = timeStamp
     if (log) {
-      if (isObject(values))
+      if (values)
         {
         this.log = formatMessage(log, values)
       } else {
-        this.log = log ? formatMessage(log) : undefined
+        this.log = formatMessage(log)
       }
+    } else {
+      this.log = undefined
     }
   }
 }

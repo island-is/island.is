@@ -9,7 +9,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   PendingAction,
-  InstitutionNationalIds, StaticText,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
