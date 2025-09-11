@@ -29,9 +29,10 @@ const ViewList = () => {
           <Box>
             <Text variant="h4">{formatMessage(m.listPeriod)}</Text>
             <Text>
-              {format(new Date(listInfo.startTime), 'dd.MM.yyyy') +
-                ' - ' +
-                format(new Date(listInfo.endTime), 'dd.MM.yyyy')}
+              {`${format(
+                new Date(listInfo.startTime),
+                'dd.MM.yyyy',
+              )} - ${format(new Date(listInfo.endTime), 'dd.MM.yyyy')}`}
             </Text>
             <ListActions list={listInfo} />
             <Divider />

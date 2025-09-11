@@ -8,9 +8,9 @@ import {
   SignatureCollectionCollectionType,
   SignatureCollectionList,
 } from '@island.is/api/schema'
-import { useGetListsForOwner } from '../../../hooks'
+import { useGetListsForOwner, useGetSignedList } from '../../../hooks'
 import { SignatureCollection } from '@island.is/api/schema'
-import SignedList from '../../shared/SignedList'
+import SignedLists from '../../shared/SignedLists'
 import Managers from '../../shared/Managers'
 import { Skeleton } from '../../../lib/skeletons'
 
@@ -30,21 +30,20 @@ const OwnerView = ({
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
     useGetListsForOwner(collectionType, currentCollection?.id || '')
+  const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
 
   return (
     <Box>
-      {!loadingOwnerLists && !!currentCollection ? (
+      {!loadingOwnerLists && !loadingSignedLists && !!currentCollection ? (
         <Stack space={8}>
-          <SignedList collectionType={collectionType} />
+          <SignedLists signedLists={signedLists} />
           <Box>
             <Box
               display="flex"
               justifyContent="spaceBetween"
               alignItems="baseline"
             >
-              <Text variant="h4">
-                {formatMessage(m.myListsDescription) + ' '}
-              </Text>
+              <Text variant="h4">{formatMessage(m.myListsDescription)}</Text>
               {isListHolder &&
                 !loadingOwnerLists &&
                 listsForOwner?.length < currentCollection?.areas.length && (

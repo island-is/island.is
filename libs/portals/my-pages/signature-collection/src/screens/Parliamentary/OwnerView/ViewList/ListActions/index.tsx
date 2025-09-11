@@ -10,13 +10,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import PdfReport from '../../../../shared/PdfReport'
 import { m } from '../../../../../lib/messages'
-import {
-  SignatureCollectionCollectionType,
-  SignatureCollectionList,
-} from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import CancelCollection from '../../../../shared/cancelCollection'
-
-const collectionType = SignatureCollectionCollectionType.Presidential
 
 const ListActions = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
@@ -49,7 +44,10 @@ const ListActions = ({ list }: { list: SignatureCollectionList }) => {
               <Text marginBottom={2}>
                 {formatMessage(m.pdfReportDescription)}
               </Text>
-              <PdfReport listId={list.id} collectionType={collectionType} />
+              <PdfReport
+                listId={list.id}
+                collectionType={list.collectionType}
+              />
             </Box>
           </Box>
           <CancelCollection list={list} />
