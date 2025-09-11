@@ -69,6 +69,24 @@ const ParliamentaryRoot = () => {
             }
             marginBottom={4}
           />
+          {collectionStatus === CollectionStatus.Processed && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionProcessedTitle)}
+                message={formatMessage(m.collectionProcessedMessage)}
+              />
+            </Box>
+          )}
+          {collectionStatus === CollectionStatus.InReview && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionReviewedTitle)}
+                message={formatMessage(m.collectionReviewedMessage)}
+              />
+            </Box>
+          )}
           <Divider />
           <Box marginTop={9} />
           <Box>
@@ -81,10 +99,9 @@ const ParliamentaryRoot = () => {
                 return (
                   <ActionCard
                     key={area.id}
-                    eyebrow={
-                      formatMessage(m.totalListsPerConstituency) +
+                    eyebrow={`${formatMessage(m.totalListsPerConstituency)}: ${
                       areaLists.length
-                    }
+                    }`}
                     heading={area.name}
                     cta={{
                       label: formatMessage(m.viewConstituency),
@@ -100,8 +117,8 @@ const ParliamentaryRoot = () => {
                       },
                     }}
                     tag={
-                      areaLists.length > 0 &&
-                      areaLists.every((l) => l.reviewed === true)
+                      (areaLists.length === 0 && !collection.isActive) ||
+                      areaLists.every((l) => l.reviewed)
                         ? {
                             label: formatMessage(m.confirmListReviewed),
                             variant: 'mint',
@@ -113,29 +130,13 @@ const ParliamentaryRoot = () => {
                 )
               })}
             </Stack>
-            <CompareLists
-              collectionId={collection?.id}
-              collectionType={collection?.collectionType}
-            />
+            {allLists?.length > 0 && (
+              <CompareLists
+                collectionId={collection?.id}
+                collectionType={collection?.collectionType}
+              />
+            )}
           </Box>
-          {collectionStatus === CollectionStatus.Processed && (
-            <Box marginTop={8}>
-              <AlertMessage
-                type="success"
-                title={formatMessage(m.collectionProcessedTitle)}
-                message={formatMessage(m.collectionProcessedMessage)}
-              />
-            </Box>
-          )}
-          {collectionStatus === CollectionStatus.InReview && (
-            <Box marginTop={8}>
-              <AlertMessage
-                type="success"
-                title={formatMessage(m.collectionReviewedTitle)}
-                message={formatMessage(m.collectionReviewedMessage)}
-              />
-            </Box>
-          )}
         </GridColumn>
       </GridRow>
     </GridContainer>
