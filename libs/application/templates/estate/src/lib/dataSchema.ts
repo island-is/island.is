@@ -402,6 +402,17 @@ export const estateSchema = z.object({
           path: ['creditorName'],
         },
       )
+      .refine(
+        ({ enabled, nationalId }) => {
+          return enabled && nationalId && nationalId !== ''
+            ? kennitala.isValid(nationalId)
+            : true
+        },
+        {
+          params: m.errorNationalIdIncorrect,
+          path: ['nationalId'],
+        },
+      )
       .array()
       .optional(),
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
