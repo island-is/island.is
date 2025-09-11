@@ -278,7 +278,7 @@ interface EstateCommon {
   moneyAndDeposit: EstateAsset[]
   guns: EstateAsset[]
   otherAssets: EstateAsset[]
-  otherDebts?: any[]
+  otherDebts?: Array<EstateAsset & { debtType: DebtTypes }>
   estateMembers: EstateMember[]
   caseNumber: string
   districtCommissionerHasWill: boolean
