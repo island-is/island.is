@@ -1,6 +1,5 @@
 import {
   Box,
-  ColorSchemeContext,
   GridColumn,
   GridContainer,
   GridRow,
@@ -8,12 +7,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { m } from '@island.is/portals/my-pages/core'
-import * as styles from './Greeting.css'
-import { SearchInput } from '../SearchInput/SearchInput'
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useEffect, useState } from 'react'
+import { SearchInput } from '../SearchInput/SearchInput'
+import * as styles from './Greeting.css'
 
 const Greeting = () => {
   const { formatMessage } = useLocale()

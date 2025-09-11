@@ -23,7 +23,9 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import UploadFiles, {
+  FileWithPreviewURL,
+} from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
   Case,
   CaseFileCategory,
@@ -117,7 +119,7 @@ const AddFiles: FC = () => {
   const { handleUpload } = useS3Upload(workingCase.id)
   const { sendNotification } = useCase()
 
-  const addFiles = (files: File[]) => {
+  const addFiles = (files: FileWithPreviewURL[]) => {
     const { selectedCaseRepresentative } = fileRepresentative
 
     addUploadFiles(
@@ -205,6 +207,7 @@ const AddFiles: FC = () => {
     }
     return !isEmpty(fileRepresentative) && !!submissionDate
   }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -271,6 +274,7 @@ const AddFiles: FC = () => {
           )}
           onClose={() => setVisibleModal(undefined)}
           onSecondaryButtonClick={() => setVisibleModal(undefined)}
+          isPrimaryButtonDisabled={!allFilesDoneOrError}
           onPrimaryButtonClick={async () => {
             await handleNextButtonClick()
           }}

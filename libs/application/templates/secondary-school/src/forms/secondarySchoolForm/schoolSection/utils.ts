@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/types'
 import {
   checkIsFreshman,
+  getSchoolsData,
   getTranslatedProgram,
   LANGUAGE_CODE_DANISH,
   Program,
@@ -29,10 +30,7 @@ const getSchoolInfo = (
   externalData: ExternalData,
   activeField?: Record<string, string>,
 ): SecondarySchool | undefined => {
-  const schoolOptions = getValueViaPath<SecondarySchool[]>(
-    externalData,
-    'schools.data',
-  )
+  const schoolOptions = getSchoolsData(externalData)
   const schoolId =
     activeField && getValueViaPath<string>(activeField, 'school.id')
   return schoolOptions?.find((x) => x.id === schoolId)
@@ -64,10 +62,7 @@ export const getRowsLimitCount = (
   answers: FormValue,
   externalData: ExternalData,
 ): { min: number; max: number } => {
-  const schools = getValueViaPath<SecondarySchool[]>(
-    externalData,
-    'schools.data',
-  )
+  const schools = getSchoolsData(externalData)
 
   const isFreshman = checkIsFreshman(answers)
 
@@ -111,10 +106,7 @@ export const getRowsLimitCount = (
 export const getSchoolOptions = (
   application: Application,
 ): RepeaterOption[] => {
-  const schoolOptions = getValueViaPath<SecondarySchool[]>(
-    application.externalData,
-    'schools.data',
-  )
+  const schoolOptions = getSchoolsData(application.externalData)
   const isFreshman = checkIsFreshman(application.answers)
 
   return (schoolOptions || [])
@@ -162,10 +154,7 @@ export const setOnChangeSchool = (
   application: Application,
   index: number,
 ) => {
-  const schoolOptions = getValueViaPath<SecondarySchool[]>(
-    application.externalData,
-    'schools.data',
-  )
+  const schoolOptions = getSchoolsData(application.externalData)
   const selectedSchool = schoolOptions?.find(
     (x) => x.id === getStringFromOptionValue(optionValue),
   )
@@ -173,6 +162,10 @@ export const setOnChangeSchool = (
     {
       key: `selection[${index}].school.name`,
       value: selectedSchool?.name,
+    },
+    {
+      key: `selection[${index}].secondProgram.require`,
+      value: checkIsFreshman(application.answers),
     },
     { key: `selection[${index}].requestDormitory`, value: [] }, // clear answer
   ]

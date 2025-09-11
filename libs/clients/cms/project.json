@@ -3,10 +3,12 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/cms/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "implicitDependencies": [],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["libs/clients/cms/**/*.{ts,tsx,js,jsx}"]
       }
@@ -33,7 +35,5 @@
         "command": "graphql-codegen --config libs/clients/cms/fetch-schema.yaml"
       }
     }
-  },
-  "implicitDependencies": [],
-  "tags": ["lib:client", "scope:client"]
+  }
 }

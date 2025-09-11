@@ -8,6 +8,8 @@ import {
   PensionCalculatorApi,
   DeathBenefitsApi,
   TestApi,
+  MedicalDocumentsApi,
+  QuestionnairesApi,
 } from '../../gen/fetch'
 
 export type Scope =
@@ -20,6 +22,7 @@ export type Scope =
   | '@tr.is/almennt:read'
   | '@tr.is/fylgiskjol:write'
   | '@tr.is/danarbaetur:read'
+  | '@tr.is/sjukraogendurhaefingargreidslur:read'
 
 export type Api =
   | typeof ApplicationApi
@@ -32,6 +35,8 @@ export type Api =
   | typeof PensionCalculatorApi
   | typeof DeathBenefitsApi
   | typeof TestApi
+  | typeof MedicalDocumentsApi
+  | typeof QuestionnairesApi
 
 export class ApplicationWriteApi extends ApplicationApi {}
 
@@ -136,3 +141,58 @@ export enum DocumentTypeEnum {
 }
 
 export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'
+
+export interface ForeignPayment {
+  countryName: string
+  countryCode: string
+  foreignNationalId: string
+}
+
+export interface Occupation {
+  isSelfEmployed?: boolean
+  isStudying: boolean
+  educationalInstitution?: string
+  isPartTimeEmployed: boolean
+  calculatedRemunerationDate?: string
+  currentSemesterEcts?: string
+  receivesForeignPayments?: boolean
+  foreignPayments?: ForeignPayment[]
+}
+
+export interface EmployeeSickPay {
+  hasUtilizedEmployeeSickPayRights: number | null
+  employeeSickPayEndDate?: string
+}
+
+export interface UnionSickPay {
+  hasUtilizedUnionSickPayRights: number | null
+  unionNationalId?: string
+  unionName?: string
+  unionSickPayEndDate?: string
+}
+
+export interface Answer {
+  questionId: string
+  answer: string | null
+}
+export interface SelfAssessment {
+  hadAssistance: boolean
+  answers: Answer[]
+}
+
+export interface EmploymentStatus {
+  employmentStatus: string
+  explanation: string | null
+}
+
+export interface PreQuestionnaire {
+  highestEducation: string
+  employmentStatuses: EmploymentStatus[]
+  lastJobTitle?: string
+  lastJobYear?: number
+  disabilityReason: string
+  hasParticipatedInRehabilitationBefore: boolean
+  rehabilitationDetails?: string
+  previousRehabilitationSuccessful?: boolean
+  additionalRehabilitationInformation?: string
+}

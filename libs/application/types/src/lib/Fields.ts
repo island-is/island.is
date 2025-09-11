@@ -23,7 +23,7 @@ import { FormatInputValueFunction } from 'react-number-format'
 import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
-import { BffUser, Locale } from '@island.is/shared/types'
+import { Locale } from '@island.is/shared/types'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((application: Application) => T)
@@ -60,6 +60,12 @@ export type AsyncSelectContext = {
   selectedValues?: string[]
 }
 
+export type VehiclePermnoWithInfoContext = {
+  application: Application
+  apolloClient: ApolloClient<object>
+  permno: string
+}
+
 export type TagVariant =
   | 'blue'
   | 'darkerBlue'
@@ -83,6 +89,8 @@ export type RepeaterFields =
   | 'selectAsync'
   | 'hiddenInput'
   | 'alertMessage'
+  | 'vehiclePermnoWithInfo'
+  | 'description'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -98,9 +106,21 @@ type MaybeWithApplicationAndActiveField<T> =
   | T
   | ((application: Application, activeField?: Record<string, string>) => T)
 
+type MaybeWithApplicationAndActiveFieldAndIndex<T> =
+  | T
+  | ((
+      application: Application,
+      activeField?: Record<string, string>,
+      index?: number,
+    ) => T)
+
 type MaybeWithIndex<T> = T | ((index: number) => T)
 
-type MaybeWithAnswersAndExternalData<T> =
+type MaybeWithIndexAndApplication<T> =
+  | T
+  | ((index: number, application: Application) => T)
+
+export type MaybeWithAnswersAndExternalData<T> =
   | T
   | ((formValue: FormValue, externalData: ExternalData) => T)
 
@@ -138,7 +158,7 @@ export type RepeaterItem = {
   readonly?: MaybeWithApplicationAndActiveField<boolean>
   disabled?: MaybeWithApplicationAndActiveField<boolean>
   isClearable?: MaybeWithApplicationAndActiveField<boolean>
-  defaultValue?: MaybeWithApplicationAndActiveField<unknown>
+  defaultValue?: MaybeWithApplicationAndActiveFieldAndIndex<unknown>
   updateValueObj?: {
     valueModifier: (
       application: Application,
@@ -172,7 +192,8 @@ export type RepeaterItem = {
       rows?: number
       maxLength?: number
       currency?: boolean
-      suffix?: string
+      thousandSeparator?: boolean
+      suffix?: FormText
     }
   | {
       component: 'phone'
@@ -222,6 +243,7 @@ export type RepeaterItem = {
         setValueAtIndex?: (key: string, value: any) => void,
       ): Promise<Option[]>
       updateOnSelect?: MaybeWithIndex<string[]>
+      loadingError?: FormText
     }
   | { component: 'hiddenInput' }
   | {
@@ -231,6 +253,22 @@ export type RepeaterItem = {
       alertType?: AlertType
       marginBottom?: BoxProps['marginBottom']
       marginTop?: BoxProps['marginTop']
+    }
+  | {
+      component: 'vehiclePermnoWithInfo'
+      loadValidation?: (c: VehiclePermnoWithInfoContext) => Promise<{
+        errorMessages?: FormText[]
+      }>
+      permnoLabel?: FormText
+      makeAndColorLabel?: FormText
+      errorTitle?: FormText
+      fallbackErrorMessage?: FormText
+      validationFailedErrorMessage?: FormText
+    }
+  | {
+      component: 'description'
+      title: StaticText
+      titleVariant?: TitleVariants
     }
 )
 
@@ -280,6 +318,7 @@ export interface BaseField extends FormItem {
     | { key: string; value: any }[]
     | ((
         optionValue: RepeaterOptionValue,
+        application: Application,
       ) => Promise<{ key: string; value: any }[]>)
 
   // TODO use something like this for non-schema validation?
@@ -288,6 +327,7 @@ export interface BaseField extends FormItem {
 
 export interface InputField extends BaseField {
   required?: MaybeWithApplication<boolean>
+  readOnly?: MaybeWithAnswersAndExternalData<boolean>
 }
 
 export enum FieldTypes {
@@ -333,6 +373,7 @@ export enum FieldTypes {
   TITLE = 'TITLE',
   OVERVIEW = 'OVERVIEW',
   COPY_LINK = 'COPY_LINK',
+  VEHICLE_PERMNO_WITH_INFO = 'VEHICLE_PERMNO_WITH_INFO',
 }
 
 export enum FieldComponents {
@@ -375,6 +416,7 @@ export enum FieldComponents {
   TITLE = 'TitleFormField',
   OVERVIEW = 'OverviewFormField',
   COPY_LINK = 'CopyLinkFormField',
+  VEHICLE_PERMNO_WITH_INFO = 'VehiclePermnoWithInfoFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -392,14 +434,13 @@ export interface DateField extends InputField {
   readonly type: FieldTypes.DATE
   placeholder?: FormText
   component: FieldComponents.DATE
-  maxDate?: MaybeWithApplicationAndField<Date>
-  minDate?: MaybeWithApplicationAndField<Date>
+  maxDate?: MaybeWithApplicationAndField<Date | undefined>
+  minDate?: MaybeWithApplicationAndField<Date | undefined>
   minYear?: number
   maxYear?: number
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
-  readOnly?: boolean
   tempDisabled?: (application: Application) => boolean
 }
 
@@ -411,6 +452,7 @@ export interface DescriptionField extends BaseField {
   titleTooltip?: FormText
   space?: BoxProps['paddingTop']
   titleVariant?: TitleVariants
+  showFieldName?: boolean
 }
 
 export interface RadioField extends InputField {
@@ -463,7 +505,6 @@ export interface TextField extends InputField {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
   disabled?: boolean
-  readOnly?: boolean
   rightAlign?: boolean
   minLength?: number
   maxLength?: number
@@ -475,7 +516,8 @@ export interface TextField extends InputField {
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
-  suffix?: string
+  thousandSeparator?: boolean
+  suffix?: FormText
   rows?: number
   tooltip?: FormText
   onChange?: (...event: any[]) => void
@@ -485,7 +527,6 @@ export interface PhoneField extends InputField {
   readonly type: FieldTypes.PHONE
   component: FieldComponents.PHONE
   disabled?: boolean
-  readOnly?: boolean
   rightAlign?: boolean
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
@@ -515,6 +556,10 @@ export interface FileUploadField extends BaseField {
    * Defaults to 100MB
    */
   readonly totalMaxSize?: number
+  /**
+   * Defaults to no limit
+   */
+  readonly maxFileCount?: number
   readonly forImageUpload?: boolean
 }
 
@@ -743,7 +788,14 @@ export type TableRepeaterField = BaseField & {
      * if not provided it will be auto generated from the fields
      */
     rows?: string[]
-    format?: Record<string, (value: string) => string | StaticText>
+    format?: Record<
+      string,
+      (
+        value: string,
+        index: number,
+        application?: Application,
+      ) => string | StaticText
+    >
   }
   initActiveFieldIfEmpty?: boolean
 }
@@ -752,12 +804,16 @@ export type FieldsRepeaterField = BaseField & {
   readonly type: FieldTypes.FIELDS_REPEATER
   component: FieldComponents.FIELDS_REPEATER
   titleVariant?: TitleVariants
-  formTitle?: MaybeWithIndex<StaticText>
+  formTitle?: MaybeWithIndexAndApplication<StaticText>
   formTitleVariant?: TitleVariants
   formTitleNumbering?: 'prefix' | 'suffix' | 'none'
   removeItemButtonText?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
+  hideRemoveButton?: boolean
+  hideAddButton?: boolean
+  displayTitleAsAccordion?: boolean
+  itemCondition?: MaybeWithIndexAndApplication<boolean>
   fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
@@ -779,7 +835,7 @@ export interface AccordionField extends BaseField {
     | ((application: Application) => Array<AccordionItem>)
   titleVariant?: TitleVariants
 }
-export interface BankAccountField extends BaseField {
+export interface BankAccountField extends InputField {
   readonly type: FieldTypes.BANK_ACCOUNT
   component: FieldComponents.BANK_ACCOUNT
   titleVariant?: TitleVariants
@@ -916,15 +972,17 @@ export interface DisplayField extends BaseField {
   halfWidthOwnline?: boolean
   variant?: TextFieldVariant
   label?: MessageDescriptor | string
-  value: (answers: FormValue) => string
+  value: (answers: FormValue, externalData: ExternalData) => string
 }
 
 export type KeyValueItem = {
   width?: 'full' | 'half' | 'snug'
-  keyText?: FormText
+  keyText?: FormText | FormTextArray
+  inlineKeyText?: boolean
   valueText?: FormText | FormTextArray
   boldValueText?: boolean
   lineAboveKeyText?: boolean
+  hideIfEmpty?: boolean
 }
 
 export type AttachmentItem = {
@@ -942,21 +1000,39 @@ export type TableData = {
 export interface OverviewField extends BaseField {
   readonly type: FieldTypes.OVERVIEW
   component: FieldComponents.OVERVIEW
-  title: FormText
+  title?: FormTextWithLocale
   titleVariant?: TitleVariants
   description?: FormText
-  backId?: string | ((answers: FormValue) => string | undefined)
+  backId?:
+    | string
+    | ((answers: FormValue, externalData: ExternalData) => string | undefined)
   bottomLine?: boolean
   items?: (
     answers: FormValue,
     externalData: ExternalData,
     userNationalId: string,
+    locale: Locale,
   ) => Array<KeyValueItem>
+  loadItems?: (
+    answers: FormValue,
+    externalData: ExternalData,
+    userNationalId: string,
+    apolloClient: ApolloClient<object>,
+    locale: Locale,
+  ) => Promise<KeyValueItem[]>
   attachments?: (
     answers: FormValue,
     externalData: ExternalData,
   ) => Array<AttachmentItem>
   tableData?: (answers: FormValue, externalData: ExternalData) => TableData
+  loadTableData?: (
+    answers: FormValue,
+    externalData: ExternalData,
+    apolloClient: ApolloClient<object>,
+    locale: Locale,
+  ) => Promise<TableData>
+  hideIfEmpty?: boolean
+  displayTitleAsAccordion?: boolean
 }
 
 export interface CopyLinkField extends BaseField {
@@ -966,6 +1042,19 @@ export interface CopyLinkField extends BaseField {
   link: FormText
   buttonTitle?: FormText
   semiBoldLink?: boolean
+}
+
+export interface VehiclePermnoWithInfoField extends InputField {
+  readonly type: FieldTypes.VEHICLE_PERMNO_WITH_INFO
+  component: FieldComponents.VEHICLE_PERMNO_WITH_INFO
+  loadValidation?: (c: VehiclePermnoWithInfoContext) => Promise<{
+    errorMessages?: FormText[]
+  }>
+  permnoLabel?: FormText
+  makeAndColorLabel?: FormText
+  errorTitle?: FormText
+  fallbackErrorMessage?: FormText
+  validationFailedErrorMessage?: FormText
 }
 
 export type Field =
@@ -1010,3 +1099,4 @@ export type Field =
   | TitleField
   | OverviewField
   | CopyLinkField
+  | VehiclePermnoWithInfoField

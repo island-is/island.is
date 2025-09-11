@@ -10,14 +10,23 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { PaymentFlowEvent } from './paymentFlowEvent.model'
+import { PaymentFlowFjsChargeConfirmation } from './paymentFlowFjsChargeConfirmation.model'
 
 @Table({
   tableName: 'payment_flow_charge',
+  indexes: [
+    {
+      name: 'payment_flow_charge_payment_flow_id_idx',
+      fields: ['payment_flow_id'],
+    },
+  ],
 })
 export class PaymentFlowCharge extends Model<
   InferAttributes<PaymentFlowCharge>,
@@ -126,9 +135,16 @@ export class PaymentFlow extends Model<
   })
   payerNationalId!: string
 
-  @ApiProperty({ type: [PaymentFlowCharge] }) // Link to the charges model
+  @ApiProperty({ type: [PaymentFlowCharge] })
   @HasMany(() => PaymentFlowCharge, 'paymentFlowId')
   charges!: PaymentFlowCharge[]
+
+  @ApiProperty({ type: [PaymentFlowEvent] })
+  @HasMany(() => PaymentFlowEvent, 'paymentFlowId')
+  events?: PaymentFlowEvent[]
+
+  @HasOne(() => PaymentFlowFjsChargeConfirmation, 'paymentFlowId')
+  fjsChargeConfirmation?: PaymentFlowFjsChargeConfirmation
 
   @ApiProperty({ type: [String] })
   @Column({
@@ -168,6 +184,14 @@ export class PaymentFlow extends Model<
     field: 'return_url',
   })
   returnUrl?: string
+
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'cancel_url',
+  })
+  cancelUrl?: string
 
   @ApiPropertyOptional()
   @Column({
@@ -220,3 +244,4 @@ export class PaymentFlow extends Model<
 }
 
 export type PaymentFlowAttributes = InferAttributes<PaymentFlow>
+export type PaymentFlowChargeAttributes = InferAttributes<PaymentFlowCharge>

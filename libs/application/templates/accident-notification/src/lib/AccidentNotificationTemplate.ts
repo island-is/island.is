@@ -20,7 +20,6 @@ import { assign } from 'xstate'
 import { ApiActions } from '../shared'
 import { AccidentNotificationSchema } from './dataSchema'
 import { application } from './messages'
-import { AuthDelegationType } from '@island.is/shared/types'
 import { IdentityApi, NationalRegistryUserApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
@@ -35,6 +34,8 @@ import {
   assignStatePendingAction,
   reviewStatePendingAction,
 } from '../utils/actionCardPendingAction'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { ApiScope } from '@island.is/auth/scopes'
 
 // The applicant is the applicant of the application, can be someone in power of attorney or the representative for the company
 // The assignee is the person who is assigned to review the application can be the injured person or the representative for the company
@@ -57,9 +58,25 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       type: AuthDelegationType.ProcurationHolder,
     },
     {
+      type: AuthDelegationType.LegalGuardian,
+    },
+    {
       type: AuthDelegationType.Custom,
     },
+    {
+      type: AuthDelegationType.PersonalRepresentative,
+    },
+    {
+      type: AuthDelegationType.LegalGuardianMinor,
+    },
+    {
+      type: AuthDelegationType.LegalRepresentative,
+    },
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
   ],
+  requiredScopes: [ApiScope.icelandHealth],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -92,7 +109,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               delete: true,
             },
             {
-              id: Roles.PROCURER,
+              id: Roles.DELEGATE,
               formLoader: () =>
                 import('../forms/PrerequisitesProcureForm').then((val) =>
                   Promise.resolve(val.PrerequisitesProcureForm),
@@ -141,7 +158,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               delete: true,
             },
             {
-              id: Roles.PROCURER,
+              id: Roles.DELEGATE,
               formLoader: () =>
                 import('../forms/AccidentNotificationForm/index').then((val) =>
                   Promise.resolve(val.AccidentNotificationForm),
@@ -380,7 +397,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
     const { applicant, applicantActors, assignees } = application
 
     if (id === applicant) {
-      if (applicantActors.length) return Roles.PROCURER
+      if (applicantActors.length) return Roles.DELEGATE
       if (assignees.includes(id)) return Roles.ASSIGNEE
       return Roles.APPLICANT
     }

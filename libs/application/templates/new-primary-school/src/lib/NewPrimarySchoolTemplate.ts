@@ -22,9 +22,11 @@ import {
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
+import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import { ChildrenApi } from '../dataProviders'
+import { hasForeignLanguages } from '../utils/conditionUtils'
 import {
   ApiModuleActions,
   Events,
@@ -32,14 +34,14 @@ import {
   Roles,
   SchoolType,
   States,
-} from './constants'
-import { dataSchema } from './dataSchema'
-import { newPrimarySchoolMessages } from './messages'
+} from '../utils/constants'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
-  hasForeignLanguages,
-} from './newPrimarySchoolUtils'
+  getApplicationType,
+} from '../utils/newPrimarySchoolUtils'
+import { dataSchema } from './dataSchema'
+import { newPrimarySchoolMessages } from './messages'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -69,11 +71,19 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               },
             ],
           },
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.getChildInformation,
-            externalDataId: 'childInformation',
-            throwOnError: true,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.getChildInformation,
+              externalDataId: 'childInformation',
+              throwOnError: true,
+              order: 0,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.getCitizenship,
+              externalDataId: 'citizenship',
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -99,6 +109,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: ['setApplicationType'],
         exit: [
           'clearApplicationIfReasonForApplication',
           'clearPlaceOfResidence',
@@ -178,6 +189,17 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      setApplicationType: assign((context) => {
+        const { application } = context
+
+        set(
+          application.answers,
+          'applicationType',
+          getApplicationType(application.externalData),
+        )
+
+        return context
+      }),
       // Clear answers depending on what is selected as reason for application
       clearApplicationIfReasonForApplication: assign((context) => {
         const { application } = context
@@ -219,7 +241,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (!hasForeignLanguages(application.answers)) {
           unset(application.answers, 'languages.selectedLanguages')
           unset(application.answers, 'languages.preferredLanguage')
-          unset(application.answers, 'languages.guardianRequiresInterpreter')
         }
         return context
       }),
@@ -231,17 +252,17 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (!hasFoodAllergiesOrIntolerances?.includes(YES)) {
           unset(
             application.answers,
-            'allergiesAndIntolerances.foodAllergiesOrIntolerances',
+            'healthProtection.foodAllergiesOrIntolerances',
           )
         }
         if (!hasOtherAllergies?.includes(YES)) {
-          unset(application.answers, 'allergiesAndIntolerances.otherAllergies')
+          unset(application.answers, 'healthProtection.otherAllergies')
         }
         if (
           !hasFoodAllergiesOrIntolerances?.includes(YES) &&
           !hasOtherAllergies?.includes(YES)
         ) {
-          unset(application.answers, 'allergiesAndIntolerances.usesEpiPen')
+          unset(application.answers, 'healthProtection.usesEpiPen')
         }
         return context
       }),

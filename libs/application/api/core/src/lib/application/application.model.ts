@@ -114,6 +114,22 @@ export class Application extends Model {
   isListed!: boolean
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  userDeleted!: boolean
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiPropertyOptional()
+  userDeletedAt?: Date
+
+  @Column({
     type: DataType.DATE,
     allowNull: true,
     defaultValue: null,
@@ -128,6 +144,22 @@ export class Application extends Model {
   })
   @ApiProperty()
   pruned!: boolean
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiPropertyOptional()
+  postPruneAt?: Date
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  postPruned!: boolean
 
   @Column({
     type: DataType.ARRAY(DataType.STRING),

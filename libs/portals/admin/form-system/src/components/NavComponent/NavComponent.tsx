@@ -6,12 +6,11 @@ import {
 } from '@island.is/api/schema'
 import { ItemType, NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { useSortable } from '@dnd-kit/sortable'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { ControlContext } from '../../context/ControlContext'
 import * as styles from './NavComponent.css'
 import cn from 'classnames'
-import { Box, Checkbox } from '@island.is/island-ui/core'
-import { truncateName } from '../../lib/utils/truncateText'
+import { Box, Checkbox, Text } from '@island.is/island-ui/core'
 import { NavButtons } from './components/NavButtons'
 import { SectionTypes } from '@island.is/form-system/enums'
 
@@ -40,6 +39,8 @@ export const NavComponent = ({
       ? activeListItem?.id ?? ''
       : activeItem?.data?.id ?? ''
 
+  const selectingIsOff = selectStatus === NavbarSelectStatus.OFF
+
   const connected = () => {
     const hasDependency = form.dependencies?.find((dep) => {
       return dep?.parentProp === activeGuid
@@ -50,15 +51,12 @@ export const NavComponent = ({
     return false
   }
 
-  const [editMode] = useState(false)
-
   const { setNodeRef, attributes, listeners, isDragging } = useSortable({
     id: data.id as UniqueIdentifier,
     data: {
       type: type,
       data,
     },
-    disabled: editMode,
   })
 
   if (isDragging) {
@@ -117,26 +115,33 @@ export const NavComponent = ({
           </Box>
           <Box
             paddingLeft={2}
-            style={{
-              fontWeight: 'bold',
-            }}
             overflow="hidden"
+            display="flex"
+            minWidth={0}
+            alignItems="center"
+            justifyContent="center"
           >
-            {truncateName(data?.name?.is ?? '', active, type)}
-          </Box>
-          {focusComponent && (
-            <Box
-              style={{
-                marginLeft: 'auto',
-                verticalAlign: 'middle',
-              }}
+            <Text
+              id={`formSystem.${type.toLowerCase()}.name`}
+              variant="medium"
+              truncate={true}
+              fontWeight="semiBold"
             >
-              {!(
-                type === 'Section' &&
-                (data as FormSystemSection).sectionType !== SectionTypes.INPUT
-              ) && <NavButtons />}
-            </Box>
-          )}
+              {data?.name?.is}
+            </Text>
+          </Box>
+          <Box
+            style={{
+              marginLeft: 'auto',
+              verticalAlign: 'middle',
+            }}
+          >
+            {!(
+              type === 'Section' &&
+              (data as FormSystemSection).sectionType !== SectionTypes.INPUT
+            ) &&
+              selectingIsOff && <NavButtons id={data.id} type={type} />}
+          </Box>
         </Box>
       ) : (
         <Box
@@ -144,7 +149,6 @@ export const NavComponent = ({
             display: 'flex',
             flexDirection: 'row',
           }}
-          overflow="hidden"
         >
           <Box
             id="1"
@@ -156,8 +160,35 @@ export const NavComponent = ({
           >
             {/* {index} */}
           </Box>
-          <Box id="2" paddingLeft={1}>
-            {truncateName(data?.name?.is ?? '', active, type)}
+          <Box
+            data-testid="navcomponent-content"
+            paddingLeft={1}
+            display="flex"
+            alignItems="center"
+            flexGrow={1}
+            minWidth={0}
+            overflow="hidden"
+            justifyContent="flexStart"
+          >
+            <Text
+              id={`formSystem.${type.toLowerCase()}.name`}
+              variant="medium"
+              truncate={true}
+            >
+              {data?.name?.is}
+            </Text>
+          </Box>
+          <Box
+            style={{
+              marginLeft: 'auto',
+              verticalAlign: 'middle',
+            }}
+          >
+            {!(
+              type === 'Section' &&
+              (data as FormSystemSection).sectionType !== SectionTypes.INPUT
+            ) &&
+              selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
           {selectable && (
             <Box className={cn(styles.selectableComponent)} marginLeft="auto">

@@ -9,14 +9,13 @@ import { useMutation } from '@apollo/client'
 import { unSignList } from '../../../hooks/graphql/mutations'
 import {
   Mutation,
-  SignatureCollection,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 
 const SignedList = ({
-  currentCollection,
+  collectionType,
 }: {
-  currentCollection: SignatureCollection
+  collectionType: SignatureCollectionCollectionType
 }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
@@ -27,7 +26,7 @@ const SignedList = ({
 
   // SignedList is typically singular, although it may consist of multiple entries, which in that case will all be invalid
   const { signedLists, loadingSignedLists, refetchSignedLists } =
-    useGetSignedList()
+    useGetSignedList(collectionType)
 
   const [unSign, { loading }] = useMutation<{
     signatureCollectionUnsign: Mutation['signatureCollectionUnsign']
@@ -35,6 +34,7 @@ const SignedList = ({
     variables: {
       input: {
         listId: listIdToUnsign,
+        collectionType,
       },
     },
   })
@@ -69,10 +69,18 @@ const SignedList = ({
                   heading={list.title.split(' - ')[0]}
                   eyebrow={list.area?.name}
                   text={
-                    currentCollection.collectionType ===
+                    collectionType ===
                     SignatureCollectionCollectionType.Presidential
                       ? formatMessage(m.collectionTitle)
-                      : formatMessage(m.collectionTitleParliamentary)
+                      : collectionType ===
+                        SignatureCollectionCollectionType.Parliamentary
+                      ? formatMessage(m.collectionTitleParliamentary)
+                      : `${formatMessage(m.collectionMunicipalListOwner)}: ${
+                          list.candidate?.ownerName ?? ''
+                        } (${format(
+                          new Date(list.candidate?.ownerBirthDate),
+                          'dd.MM.yyyy',
+                        )})`
                   }
                   cta={
                     list.canUnsign

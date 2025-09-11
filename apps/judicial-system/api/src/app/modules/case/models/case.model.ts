@@ -27,7 +27,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CivilClaimant, Defendant } from '../../defendant'
-import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
@@ -399,9 +398,6 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly appealRulingModifiedHistory?: string
 
-  @Field(() => [EventLog], { nullable: true })
-  readonly eventLogs?: EventLog[]
-
   @Field(() => String, { nullable: true })
   readonly appealValidToDate?: string
 
@@ -477,6 +473,24 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly caseSentToCourtDate?: string
 
+  @Field(() => String, { nullable: true })
+  readonly indictmentReviewedDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentSentToPublicProsecutorDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly defenceAppealResultAccessDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly prosecutionAppealResultAccessDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly prisonStaffAppealResultAccessDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly requestCompletedDate?: string
+
   @Field(() => [Victim], { nullable: true })
   readonly victims?: Victim[]
 
@@ -485,4 +499,7 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isRegisteredInPrisonSystem?: boolean
 }

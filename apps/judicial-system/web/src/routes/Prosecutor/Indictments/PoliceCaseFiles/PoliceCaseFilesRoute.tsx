@@ -45,6 +45,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -84,6 +85,9 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
   } = useUploadFiles(caseFiles)
   const { handleUpload, handleUploadFromPolice, handleRetry, handleRemove } =
     useS3Upload(caseId)
+  const { onOpenFile } = useFileList({
+    caseId,
+  })
   const {
     data: policeData,
     loading: policeDataLoading,
@@ -282,6 +286,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
             updateUploadFile,
           )
         }
+        onOpenFile={(file) => onOpenFile(file)}
         onRemove={(file) => handleRemove(file, removeFileCB)}
         onRetry={(file) => handleRetry(file, updateUploadFile)}
         errorMessage={errorMessage}

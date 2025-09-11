@@ -16,6 +16,8 @@ export {
   formatPrisonCourtDateEmailNotification,
   formatPrisonRevokedEmailNotification,
   formatProsecutorCourtDateEmailNotification,
+  formatArraignmentDateEmailNotification,
+  formatCourtCalendarInvitation,
   formatProsecutorReadyForCourtEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
   formatDefenderCourtDateLinkEmailNotification,
@@ -37,4 +39,5 @@ export { createConfirmedPdf } from './confirmedPdf'
 export { createSubpoena } from './subpoenaPdf'
 export { createServiceCertificate } from './serviceCertificatePdf'
 export { createRulingSentToPrisonAdminPdf } from './rulingSentToPrisonAdminPdf'
+export { createFineSentToPrisonAdminPdf } from './fineSentToPrisonAdminPdf'
 export { getCaseFileHash } from './getCaseFileHash'

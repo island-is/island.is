@@ -26,15 +26,14 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  PoliceFileTypeCode,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { Case } from '../case/models/case.model'
-import { DateLog } from '../case/models/dateLog.model'
-import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
+import { Case, DateLog, Defendant } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -67,6 +66,10 @@ export interface SubpoenaInfo {
   servedBy?: string
   defenderNationalId?: string
   serviceDate?: Date
+}
+
+interface CreateDocumentResponse {
+  externalPoliceDocumentId: string
 }
 
 const getChapter = (category?: string): number | undefined => {
@@ -121,7 +124,7 @@ export class PoliceService {
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
     skjalasnid: z.optional(z.string()),
-    tegundSkjals: z.optional(this.policeCaseFileType),
+    tegundSkjals: this.policeCaseFileType.nullish(),
   })
   private readonly crimeSceneStructure = z.object({
     vettvangur: z.optional(z.string()),
@@ -470,7 +473,7 @@ export class PoliceService {
               )
 
               if (!foundCase) {
-                cases.push({ policeCaseNumber, place, date })
+                cases.push({ policeCaseNumber, place, date, licencePlate })
               } else if (date && (!foundCase.date || date > foundCase.date)) {
                 foundCase.place = place
                 foundCase.date = date
@@ -589,11 +592,11 @@ export class PoliceService {
           // Do not spam the logs with errors
           // Act as if the case was updated
           return true
-        } else {
-          this.logger.error(`Failed to update police case ${caseId}`, {
-            reason,
-          })
         }
+
+        this.logger.error(`Failed to update police case ${caseId}`, {
+          reason,
+        })
 
         this.eventService.postErrorEvent(
           'Failed to update police case',
@@ -611,6 +614,74 @@ export class PoliceService {
 
         return false
       })
+  }
+
+  async createDocument({
+    caseId,
+    defendantId,
+    user,
+    documentName,
+    documentFiles,
+    documentDates,
+    fileTypeCode,
+    caseSupplements,
+  }: {
+    caseId: string
+    defendantId: string
+    user: User
+    documentName: string
+    documentFiles: { name: string; documentBase64: string }[]
+    documentDates: { code: string; value: Date }[]
+    fileTypeCode: string
+    caseSupplements: { code: string; value: string }[]
+  }): Promise<CreateDocumentResponse | undefined> {
+    const { name: actor } = user
+
+    const createDocumentPath = `${this.xRoadPath}/CreateDocument`
+
+    try {
+      const res = await this.fetchPoliceCaseApi(createDocumentPath, {
+        method: 'POST',
+        headers: {
+          accept: '*/*',
+          'Content-Type': 'application/json',
+          'X-Road-Client': this.config.clientId,
+          'X-API-KEY': this.config.policeApiKey,
+        },
+        agent: this.agent,
+        body: JSON.stringify({
+          documentName: documentName,
+          documentFiles,
+          fileTypeCode,
+          supplements: caseSupplements,
+          dates: documentDates,
+        }),
+      } as RequestInit)
+
+      if (res.ok) {
+        const policeResponse = await res.json()
+        return { externalPoliceDocumentId: policeResponse.id }
+      }
+    } catch (error) {
+      this.logger.error(
+        `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
+        {
+          error,
+        },
+      )
+
+      this.eventService.postErrorEvent(
+        'Failed to create external police document file',
+        {
+          caseId,
+          defendantId,
+          actor,
+        },
+        error,
+      )
+
+      throw error
+    }
   }
 
   async createSubpoena(
@@ -655,7 +726,7 @@ export class PoliceService {
             courtCeremony: 'Þingfesting',
             lokeCaseNumber: policeCaseNumbers?.[0],
             courtCaseNumber: courtCaseNumber,
-            fileTypeCode: 'BRTNG',
+            fileTypeCode: PoliceFileTypeCode.SUBPOENA,
             rvgCaseId: theCase.id,
           }),
         } as RequestInit,

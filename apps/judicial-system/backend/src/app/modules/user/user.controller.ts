@@ -24,13 +24,25 @@ import {
 } from '@island.is/judicial-system/auth'
 import { type User as TUser } from '@island.is/judicial-system/types'
 
-import { adminRule, localAdminRule } from '../../guards'
+import {
+  adminRule,
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+  localAdminRule,
+  prosecutorRepresentativeRule,
+  prosecutorRule,
+  publicProsecutorStaffRule,
+} from '../../guards'
+import { User } from '../repository'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { CreateUserValidator } from './interceptors/createUser.validator'
 import { UpdateUserValidator } from './interceptors/updateUser.validator'
 import { UserInterceptor } from './interceptors/user.interceptor'
-import { User } from './user.model'
 import { UserService } from './user.service'
 
 @Controller('api')
@@ -66,7 +78,20 @@ export class UserController {
     return this.userService.update(userId, userToUpdate)
   }
 
-  @UseGuards(JwtAuthUserGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @RolesRules(
+    localAdminRule,
+    adminRule,
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
+  )
   @UseInterceptors(UserInterceptor)
   @Get('users')
   @ApiOkResponse({
@@ -80,7 +105,8 @@ export class UserController {
     return this.userService.getAll(user)
   }
 
-  @UseGuards(JwtAuthUserGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @RolesRules(localAdminRule, adminRule)
   @Get('user/:userId')
   @ApiOkResponse({
     type: User,

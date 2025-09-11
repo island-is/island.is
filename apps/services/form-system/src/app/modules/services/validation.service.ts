@@ -41,7 +41,7 @@ export class ValidationService {
         return new FieldValidation()
       case FieldTypesEnum.HOMESTAY_NUMBER:
         return new FieldValidation()
-      case FieldTypesEnum.CANDITATE:
+      case FieldTypesEnum.CANDIDATE:
         return new FieldValidation()
       case FieldTypesEnum.DATE_PICKER:
         return new FieldValidation()

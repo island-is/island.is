@@ -4,7 +4,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
@@ -12,6 +11,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   SubpoenaType,
@@ -21,6 +21,7 @@ import {
 import {
   Confirmation,
   createCaseFilesRecord,
+  createFineSentToPrisonAdminPdf,
   createIndictment,
   createRulingSentToPrisonAdminPdf,
   createServiceCertificate,
@@ -32,10 +33,14 @@ import {
   getRulingPdfAsBuffer,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { Defendant } from '../defendant'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { UserService } from '../user'
-import { Case } from './models/case.model'
+import {
+  Case,
+  CaseRepositoryService,
+  Defendant,
+  EventLog,
+  Subpoena,
+} from '../repository'
+import { SubpoenaService } from '../subpoena'
 
 @Injectable()
 export class PdfService {
@@ -44,10 +49,9 @@ export class PdfService {
   constructor(
     private readonly awsS3Service: AwsS3Service,
     private readonly intlService: IntlService,
-    private readonly userService: UserService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -217,8 +221,9 @@ export class PdfService {
         }
       }
 
-      const confirmationEvent = theCase.eventLogs?.find(
-        (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+      const confirmationEvent = EventLog.getEventLogByEventType(
+        EventType.INDICTMENT_CONFIRMED,
+        theCase.eventLogs,
       )
 
       if (
@@ -247,11 +252,11 @@ export class PdfService {
       const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
-      this.caseModel
-        .update(
-          { indictmentHash: hash, indictmentHashAlgorithm: hashAlgorithm },
-          { where: { id: theCase.id } },
-        )
+      this.caseRepositoryService
+        .update(theCase.id, {
+          indictmentHash: hash,
+          indictmentHashAlgorithm: hashAlgorithm,
+        })
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
@@ -366,6 +371,12 @@ export class PdfService {
   }
 
   async getRulingSentToPrisonAdminPdf(theCase: Case): Promise<Buffer> {
-    return await createRulingSentToPrisonAdminPdf(theCase)
+    if (
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+    ) {
+      return await createFineSentToPrisonAdminPdf(theCase)
+    } else {
+      return await createRulingSentToPrisonAdminPdf(theCase)
+    }
   }
 }

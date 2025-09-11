@@ -2,14 +2,13 @@ import { setup } from '../../../../test/setup'
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
-import { EmailVerification } from '../emailVerification.model'
-import { SmsVerification } from '../smsVerification.model'
+import { EmailVerification } from '../models/emailVerification.model'
+import { SmsVerification } from '../models/smsVerification.model'
 import { SmsService } from '@island.is/nova-sms'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { SMS_VERIFICATION_MAX_TRIES } from '../verification.service'
 import { DataStatus } from '../types/dataStatusTypes'
-import { formatPhoneNumber } from '../../utils/format-phone-number'
 
 jest.useFakeTimers()
 

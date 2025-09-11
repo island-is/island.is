@@ -20,7 +20,6 @@ import {
   Filter,
   GridContainer,
   Hidden,
-  InfoCardGrid,
   Inline,
   Select,
   Stack,
@@ -65,6 +64,7 @@ import {
 import { DebouncedCheckbox } from './components/DebouncedCheckbox'
 import { DebouncedDatePicker } from './components/DebouncedDatePicker'
 import { DebouncedInput } from './components/DebouncedInput'
+import { InfoCardGrid } from './components/InfoCardGrid/InfoCardGrid'
 import { m } from './translations.strings'
 import * as styles from './VerdictsList.css'
 
@@ -96,6 +96,70 @@ interface VerdictsListProps {
   keywords: WebVerdictKeyword[]
   caseCategories: WebVerdictCaseCategory[]
   caseTypes: WebVerdictCaseType[]
+}
+
+const normalizeLawReference = (input: string): string => {
+  const trimmed = input
+    .replace(/\./g, '') // remove dots
+    .replace(/\s+/g, ' ') // collapse multiple spaces
+    .toLowerCase()
+    .trim()
+
+  let year = ''
+  let lawNo = ''
+  let gr = ''
+  let mgr = ''
+
+  const parts = trimmed.split(' ')
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i]
+
+    if (part === 'mgr') {
+      // Previous part is the mgr number
+      if (i > 0 && /^\d+$/.test(parts[i - 1])) {
+        mgr = parts[i - 1]
+      }
+    }
+    if (part === 'gr') {
+      // Previous part is the gr number
+      if (i > 0 && /^\d+$/.test(parts[i - 1])) {
+        gr = parts[i - 1]
+      }
+    }
+    if (part === 'nr') {
+      // Next part is lawNo/year
+      if (i + 1 < parts.length && parts[i + 1].includes('/')) {
+        const lawParts = parts[i + 1].split('/')
+        if (lawParts.length === 2) {
+          lawNo = lawParts[0]
+          year = lawParts[1]
+        }
+      }
+    }
+    // As fallback: detect bare lawNo/year like "91/1991"
+    if (!lawNo && part.includes('/')) {
+      const lawParts = part.split('/')
+      if (
+        lawParts.length === 2 &&
+        /^\d+$/.test(lawParts[0]) &&
+        /^\d{4}$/.test(lawParts[1])
+      ) {
+        lawNo = lawParts[0]
+        year = lawParts[1]
+      }
+    }
+  }
+
+  if (!year || !lawNo) {
+    return input
+  }
+
+  let result = `${year}.${lawNo}`
+  if (gr) result += `.${gr}`
+  if (mgr) result += `.${mgr}`
+
+  return result
 }
 
 const extractCourtLevelFromState = (court: string | null | undefined) =>
@@ -181,7 +245,7 @@ const useVerdictListState = (props: VerdictsListProps) => {
   const convertQueryParamsToInput = useCallback(
     (queryParams: typeof queryState, page: number): WebVerdictsInput => {
       const keyword = queryParams[QueryParam.KEYWORD]
-      const laws = queryParams[QueryParam.LAWS]
+      const laws = normalizeLawReference(queryParams[QueryParam.LAWS])
       return {
         page,
         searchTerm: queryParams[QueryParam.SEARCH_TERM],
@@ -780,10 +844,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         label: formatMessage(m.listPage.showSupremeCourt),
         value: 'Hæstiréttur',
       },
-      {
-        label: formatMessage(m.listPage.showRetrialCourt),
-        value: 'Endurupptökudómur',
-      },
     ]
   }, [formatMessage])
   const districtCourtTags = useMemo(() => {
@@ -1188,7 +1248,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 </Hidden>
               </Inline>
               <InfoCardGrid
-                variant="detailed"
+                variant="detailed-reveal"
                 columns={1}
                 cards={data.visibleVerdicts
                   .filter((verdict) => Boolean(verdict.id))
@@ -1218,8 +1278,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       id: verdict.id,
                       link: { href: `/domar/${verdict.id}`, label: '' },
                       title: verdict.caseNumber,
+                      subDescription: verdict.keywords.join(', '),
                       borderColor: 'blue200',
                       detailLines,
+                      revealMoreButtonProps: {
+                        revealLabel: formatMessage(m.listPage.revealMoreLabel),
+                        hideLabel: formatMessage(m.listPage.hideMoreLabel),
+                        revealedText: verdict.presentings,
+                      },
                     }
                   })}
               />
@@ -1299,7 +1365,7 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
           keywords,
           page: 1,
           courtLevel: extractCourtLevelFromState(court),
-          laws,
+          laws: laws?.map(normalizeLawReference),
           caseNumber,
           dateFrom,
           dateTo,

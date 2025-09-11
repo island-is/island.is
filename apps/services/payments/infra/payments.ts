@@ -4,13 +4,7 @@ import {
   json,
   ref,
 } from '../../../../infra/src/dsl/dsl'
-import {
-  Base,
-  Client,
-  ChargeFjsV2,
-  RskCompanyInfo,
-  NationalRegistryB2C,
-} from '../../../../infra/src/dsl/xroad'
+import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
 
 const namespace = 'services-payments'
 const serviceName = namespace
@@ -52,12 +46,11 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET',
-      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
-        '/k8s/services-payments/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       PAYMENTS_TOKEN_SIGNING_SECRET:
         '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_SECRET',
       PAYMENTS_TOKEN_SIGNING_ALGORITHM:
@@ -72,6 +65,16 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL',
       PAYMENTS_GATEWAY_SYSTEM_CALLING:
         '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING',
+      PAYMENTS_JWT_SIGNING_KEY_ID:
+        '/k8s/services-payments/PAYMENTS_JWT_SIGNING_KEY_ID',
+      PAYMENTS_JWT_SIGNING_PRIVATE_KEY:
+        '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PRIVATE_KEY',
+      PAYMENTS_JWT_SIGNING_PUBLIC_KEY:
+        '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PUBLIC_KEY',
+      PAYMENTS_PREVIOUS_KEY_ID:
+        '/k8s/services-payments/PAYMENTS_PREVIOUS_KEY_ID',
+      PAYMENTS_PREVIOUS_PUBLIC_KEY:
+        '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY',
     })
     .ingress({
       primary: {
@@ -107,7 +110,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         public: false,
       },
     })
-    .xroad(Base, Client, ChargeFjsV2, RskCompanyInfo, NationalRegistryB2C)
+    .xroad(Base, Client, ChargeFjsV2)
     .readiness('/liveness')
     .liveness('/liveness')
     .grantNamespaces('application-system', 'nginx-ingress-internal', 'islandis')

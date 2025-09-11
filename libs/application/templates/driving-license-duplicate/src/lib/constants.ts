@@ -18,7 +18,7 @@ export enum Roles {
   ACTOR = 'actor',
 }
 
-export const IGNORE = 'IgnoreQualityPhotoAndSignature'
+export const IGNORE = 'IgnoreQualityPhoto'
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
@@ -26,11 +26,10 @@ export enum ApiActions {
 }
 
 export type DrivingLicenseDuplicateFakeData = {
-  useFakeData: YesOrNo | 'IgnoreQualityPhotoAndSignature'
+  useFakeData: YesOrNo | 'IgnoreQualityPhoto'
   currentLicense: 'none' | 'B-full' | 'B-temp'
   licenseIssuedDate?: string
   hasQualityPhoto: YesOrNo
-  hasQualitySignature: YesOrNo
 }
 
 export enum Delivery {

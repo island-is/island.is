@@ -3,6 +3,7 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
+  CollectionType,
   List,
   ReasonKey,
   SignatureCollectionClientService,
@@ -10,6 +11,7 @@ import {
 import { TemplateApiError } from '@island.is/nest/problem'
 import { errorMessages } from '@island.is/application/templates/signature-collection/parliamentary-list-signing'
 import { ProviderErrorReason } from '@island.is/shared/problem'
+import { getCollectionTypeFromApplicationType } from '../shared/utils'
 
 @Injectable()
 export class ParliamentaryListSigningService extends BaseTemplateApiService {
@@ -18,7 +20,9 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
   ) {
     super(ApplicationTypes.PARLIAMENTARY_LIST_SIGNING)
   }
-
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.PARLIAMENTARY_LIST_SIGNING,
+  )
   async signList({ auth, application }: TemplateApiModuleActionProps) {
     const listId = application.answers.listId
       ? (application.answers.listId as string)
@@ -26,6 +30,7 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
 
     const signature = await this.signatureCollectionClientService.signList(
       listId,
+      this.collectionType,
       auth,
     )
     if (signature) {
@@ -38,7 +43,10 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
   async canSign({ auth }: TemplateApiModuleActionProps) {
     let signee
     try {
-      signee = await this.signatureCollectionClientService.getSignee(auth)
+      signee = await this.signatureCollectionClientService.getSignee(
+        auth,
+        this.collectionType,
+      )
     } catch (e) {
       throw new TemplateApiError(errorMessages.singeeNotFound, 404)
     }
@@ -78,7 +86,9 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
   async getList({ auth, application }: TemplateApiModuleActionProps) {
     // Returns the list user is trying to sign, in the apporiate area
     const areaId = (
-      application.externalData.canSign.data as { area: { id: string } }
+      application.externalData.canSign.data as {
+        area: { id: string }
+      }
     ).area?.id
 
     if (!areaId) {
@@ -96,6 +106,7 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
       candidateId: isCandidateId ? ownerId : undefined,
       areaId,
       onlyActive: true,
+      collectionType: CollectionType.Parliamentary,
     })
     // If candidateId existed or if there is only one list, check if maxReached
     if (lists.length === 1) {

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { Institution } from '../repository'
 import { InstitutionController } from './institution.controller'
-import { Institution } from './institution.model'
 import { InstitutionService } from './institution.service'
 
 @Module({

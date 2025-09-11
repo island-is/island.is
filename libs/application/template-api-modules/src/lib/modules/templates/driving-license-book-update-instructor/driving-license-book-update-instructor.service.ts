@@ -17,12 +17,10 @@ export class DrivingLicenseBookUpdateInstructorService extends BaseTemplateApiSe
   }
 
   async getCurrentInstructor({ auth }: TemplateApiModuleActionProps) {
-    const overview =
-      await this.drivingLicenseBookClientApiFactory.getMostRecentStudentBook(
-        auth,
-      )
+    const activeBook =
+      await this.drivingLicenseBookClientApiFactory.getActiveStudentBook(auth)
 
-    if (!overview?.active) {
+    if (!activeBook) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.drivingLicenseBookActiveBookNotFound,
@@ -32,8 +30,8 @@ export class DrivingLicenseBookUpdateInstructorService extends BaseTemplateApiSe
       )
     }
 
-    const teacherNationalId = overview.book?.teacherNationalId
-    const teacherName = overview.book?.teacherName
+    const teacherNationalId = activeBook.teacherSsn
+    const teacherName = activeBook.teacherName
 
     return teacherNationalId
       ? {

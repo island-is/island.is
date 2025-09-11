@@ -2,12 +2,12 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   applicationTitle: {
-    id: 'ep.application:string',
+    id: 'ep.application:applicationTitle',
     defaultMessage: 'Umsókn um greiðslu',
     description: 'Title of the application',
   },
   doneTitle: {
-    id: 'ep.application:string',
+    id: 'ep.application:doneTitle',
     defaultMessage: 'Umsókn móttekin',
     description: 'Application was received',
   },

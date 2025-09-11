@@ -195,6 +195,7 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:document-providers-single-institution-phonenumber-label',
     defaultMessage: 'Símanúmer',
   },
+
   SingleProviderInstitutionPhonenumberPlaceholder: {
     id: 'portals-admin.document-provider:document-providers-single-institution-phonenumber-placeholder',
     defaultMessage: 'Símanúmer',
@@ -223,6 +224,14 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:document-providers-single-institution-address-error',
     defaultMessage: 'Heimilisfang er skilyrt',
   },
+  SingleProviderInstitutionZendeskIdLabel: {
+    id: 'portals-admin.document-provider:document-providers-single-institution-zendeskid-label',
+    defaultMessage: 'Zendesk ID',
+  },
+  SingleProviderInstitutionZendeskIdPlaceholder: {
+    id: 'portals-admin.document-provider:document-providers-single-institution-zendeskid-placeholder',
+    defaultMessage: 'Zendesk ID',
+  },
   SingleProviderUpdateInformationError: {
     id: 'portals-admin.document-provider:document-providers-single-update-information-error',
     defaultMessage: 'Ekki tókst að uppfæra upplýsingar',
@@ -231,7 +240,6 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:document-providers-single-update-information-success',
     defaultMessage: 'Upplýsingar uppfærðar!',
   },
-
   //DocumentProvidersSingleResponsibleContact
   SingleProviderResponsibleContactHeading: {
     id: 'portals-admin.document-provider:document-providers-single-responsible-contact-heading',

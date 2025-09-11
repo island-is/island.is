@@ -514,16 +514,80 @@
         }
       }
     },
-    "/api/imagecontroller/v5/{SSN}/fromnationalregistry": {
+    "/api/imagecontroller/v5/fromnationalregistrybybiometricid/{biometricId}": {
       "get": {
         "tags": ["Image"],
         "summary": "Get for all images from thjodskra",
         "parameters": [
           {
-            "name": "SSN",
+            "name": "biometricId",
             "in": "path",
-            "description": "Person social serial number",
+            "description": "BiometricId from specific image",
             "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageFromThjodskraDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageFromThjodskraDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageFromThjodskraDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/fromnationalregistry": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Get for all images from thjodskra",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
             "schema": { "type": "string" }
           },
           {
@@ -561,20 +625,97 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
           }
         }
       }
     },
-    "/api/imagecontroller/v5/{SSN}/hasqualityscannedphoto": {
+    "/api/imagecontroller/v5/fromnationalregistry/withagerestriction": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Get for all images from thjodskra",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/hasqualityscannedphoto": {
       "get": {
         "tags": ["Image"],
         "summary": "Check if person has quality marked scanned photo",
         "parameters": [
           {
-            "name": "SSN",
-            "in": "path",
-            "description": "Person social security number",
-            "required": true,
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
             "schema": { "type": "string" }
           },
           {
@@ -610,16 +751,15 @@
         }
       }
     },
-    "/api/imagecontroller/v5/{SSN}/hasqualityscannedsignature": {
+    "/api/imagecontroller/v5/hasqualityscannedsignature": {
       "get": {
         "tags": ["Image"],
         "summary": "Check if person has quality marked scanned photo",
         "parameters": [
           {
-            "name": "SSN",
-            "in": "path",
-            "description": "Person social security number",
-            "required": true,
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
             "schema": { "type": "string" }
           },
           {
@@ -661,9 +801,14 @@
         "summary": "Get quality marked scanned photo for person",
         "parameters": [
           {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": { "type": "string" }
+          },
+          {
             "name": "SSN",
             "in": "path",
-            "description": "Person id number",
             "required": true,
             "schema": { "type": "string" }
           },
@@ -705,9 +850,14 @@
         "summary": "Get quality marked scanned signature for person",
         "parameters": [
           {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": { "type": "string" }
+          },
+          {
             "name": "SSN",
             "in": "path",
-            "description": "Person social security number",
             "required": true,
             "schema": { "type": "string" }
           },
@@ -3691,6 +3841,11 @@
             "description": "Content document type",
             "nullable": true
           },
+          "contentSpecification": {
+            "type": "string",
+            "description": "Content specification",
+            "nullable": true
+          },
           "created": {
             "type": "string",
             "description": "Created",
@@ -4030,6 +4185,16 @@
           "pickUpLicense": {
             "type": "boolean",
             "description": "Is person going to pick up license at district",
+            "nullable": true
+          },
+          "imageBiometricsId": {
+            "type": "string",
+            "description": "If person chooses image from þjóðskrá, then this is\r\na placeholder for that biometric id",
+            "nullable": true
+          },
+          "signatureBiometricsId": {
+            "type": "string",
+            "description": "If person chooses signature from þjóðskrá, then this is\r\na placeholder for that biometric id",
             "nullable": true
           }
         },

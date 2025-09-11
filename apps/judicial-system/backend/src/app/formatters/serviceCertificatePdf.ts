@@ -18,9 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { serviceCertificate as strings } from '../messages'
-import { Case } from '../modules/case'
-import { Defendant } from '../modules/defendant'
-import { Subpoena } from '../modules/subpoena'
+import { Case, Defendant, Subpoena } from '../modules/repository'
 import {
   addEmptyLines,
   addLargeHeading,
@@ -191,7 +189,7 @@ export const createServiceCertificate = (
   addEmptyLines(doc)
 
   addNormalText(doc, 'Tegund fyrirkalls: ', 'Times-Bold', true)
-  addNormalText(doc, getSubpoenaType(defendant.subpoenaType), 'Times-Roman')
+  addNormalText(doc, getSubpoenaType(subpoena.type), 'Times-Roman')
 
   addEmptyLines(doc, 3)
 

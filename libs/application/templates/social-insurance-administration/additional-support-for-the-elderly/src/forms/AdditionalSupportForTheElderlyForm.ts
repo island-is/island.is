@@ -2,6 +2,7 @@ import {
   buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
+  buildDescriptionField,
   buildForm,
   buildHiddenInputWithWatchedValue,
   buildMultiField,
@@ -36,6 +37,7 @@ import {
   getApplicationExternalData,
   getAvailableMonths,
   getAvailableYears,
+  hasNoCohabitants,
 } from '../lib/additionalSupportForTheElderlyUtils'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 
@@ -197,6 +199,46 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'higherPayments',
+      title:
+        additionalSupportForTheElderyFormMessage.info.higherPaymentsCohabTitle,
+      children: [
+        buildMultiField({
+          id: 'higherPayments',
+          title: (application: Application) => {
+            return hasNoCohabitants(application)
+              ? additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsTitle
+              : additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsCohabTitle
+          },
+          description: (application: Application) => {
+            return hasNoCohabitants(application)
+              ? additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsDescription
+              : additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsCohabDescription
+          },
+          children: [
+            buildRadioField({
+              id: 'higherPayments.question',
+              options: getYesNoOptions(),
+              width: 'half',
+              condition: (_, externalData) => {
+                return hasNoCohabitants({ externalData } as Application)
+              },
+            }),
+            buildDescriptionField({
+              id: 'higherPayments.text',
+              condition: (_, externalData) => {
+                return !hasNoCohabitants({ externalData } as Application)
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
       id: 'additionalInformation',
       title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
@@ -223,16 +265,23 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'asfteInstructions',
-          title: additionalSupportForTheElderyFormMessage.info.instructionsShortTitle,
+          title:
+            additionalSupportForTheElderyFormMessage.info
+              .instructionsShortTitle,
           children: [
             buildCheckboxField({
               id: 'infoCheckbox',
-              title: additionalSupportForTheElderyFormMessage.info.instructionsTitle,
-              description: additionalSupportForTheElderyFormMessage.info.instructionsDescription,
+              title:
+                additionalSupportForTheElderyFormMessage.info.instructionsTitle,
+              description:
+                additionalSupportForTheElderyFormMessage.info
+                  .instructionsDescription,
               required: true,
               options: [
                 {
-                  label: additionalSupportForTheElderyFormMessage.info.instructionsCheckbox,
+                  label:
+                    additionalSupportForTheElderyFormMessage.info
+                      .instructionsCheckbox,
                   value: YES,
                 },
               ],
@@ -301,7 +350,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         additionalSupportForTheElderyFormMessage.conclusionScreen.bulletList,
       expandableIntro:
         additionalSupportForTheElderyFormMessage.conclusionScreen.nextStepsText,
-      bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
+      bottomButtonLink: 'https://island.is/umsoknir/tekjuaaetlun',
       bottomButtonLabel:
         socialInsuranceAdministrationMessage.conclusionScreen
           .incomePlanCardLabel,

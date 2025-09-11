@@ -6,18 +6,36 @@ import {
 
 import { Application } from '../../types'
 
+const status = [
+  'draft',
+  'inprogress',
+  'completed',
+  'rejected',
+  'approved',
+  'notstarted',
+] as ApplicationStatus[]
+
+const names = [
+  'Umsókn um fæðingarorlof',
+  'Umsókn um atvinnuleyfi',
+  'Umsókn um vegabréf',
+  'Umsókn um bílpróf',
+  'Umsókn um veiðikort',
+]
+
 export const application = factory<Application>({
   id: () => faker.datatype.uuid(),
   created: () => faker.date.past().toISOString(),
   modified: () => faker.date.past().toISOString(),
   applicant: () => faker.random.alphaNumeric(10),
+  name: () => faker.random.arrayElement(names),
   assignees: [],
   applicantActors: [],
   state: 'draft',
-  typeId: 'ExampleForm',
+  typeId: 'ExampleCommonActions',
   answers: [],
   externalData: {},
-  status: ApplicationStatus.IN_PROGRESS,
+  status: () => faker.random.arrayElement(status),
 })
 
 export const externalData = factory<DataProviderResult>({

@@ -1,4 +1,11 @@
-import { Body, Controller, Param, Post, ParseUUIDPipe } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  ParseUUIDPipe,
+  BadRequestException,
+} from '@nestjs/common'
 import { ApiClientCallback, Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
 import { ApplicationService } from '@island.is/application/api/core'
@@ -69,31 +76,40 @@ export class PaymentCallbackController {
     @Body() callback: ApiClientCallback,
   ): Promise<void> {
     if (callback.type === 'success') {
-      if (callback.details?.eventMetadata?.charge?.receptionId) {
-        await this.paymentService.fulfillPayment(
-          callback.paymentFlowMetadata.paymentId,
-          callback.details?.eventMetadata?.charge?.receptionId ?? '',
-          callback.paymentFlowMetadata.applicationId,
+      if (!callback.paymentFlowMetadata.paymentId) {
+        throw new BadRequestException('No paymentId found in success callback')
+      }
+      if (!callback.paymentFlowMetadata.applicationId) {
+        throw new BadRequestException(
+          'No applicationId found in success callback',
         )
-
-        const application = await this.applicationService.findOneById(
-          callback.paymentFlowMetadata.applicationId,
+      }
+      if (!callback.details?.eventMetadata?.charge?.receptionId) {
+        throw new BadRequestException(
+          'No receptionId found in success callback',
         )
-        if (application) {
-          const oneMonthFromNow = addMonths(new Date(), 1)
-          //Applications payment states are default to be pruned in 24 hours.
-          //If the application is paid, we want to hold on to it for longer in case we get locked in an error state.
+      }
+      await this.paymentService.fulfillPayment(
+        callback.paymentFlowMetadata.paymentId,
+        callback.details?.eventMetadata?.charge?.receptionId ?? '',
+        callback.paymentFlowMetadata.applicationId,
+      )
 
-          await this.applicationService.update(
-            callback.paymentFlowMetadata.applicationId,
-            {
-              ...application,
-              pruneAt: oneMonthFromNow,
-            },
-          )
-        }
-      } else {
-        throw new Error('No receptionId found in success callback')
+      const application = await this.applicationService.findOneById(
+        callback.paymentFlowMetadata.applicationId,
+      )
+      if (application) {
+        const oneMonthFromNow = addMonths(new Date(), 1)
+        //Applications payment states are default to be pruned in 24 hours.
+        //If the application is paid, we want to hold on to it for longer in case we get locked in an error state.
+
+        await this.applicationService.update(
+          callback.paymentFlowMetadata.applicationId,
+          {
+            ...application,
+            pruneAt: oneMonthFromNow,
+          },
+        )
       }
     }
   }

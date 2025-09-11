@@ -39,6 +39,7 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
+import { LegalGazetteClientConfig } from '@island.is/clients/legal-gazette'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
@@ -65,7 +66,11 @@ import { UserNotificationClientConfig } from '@island.is/clients/user-notificati
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import { BankInfoClientConfig } from '@island.is/clients/fjs/bank-info'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
+import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
+import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
+import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 
 @Module({
   imports: [
@@ -108,6 +113,7 @@ import { PaymentsApiClientConfig } from '@island.is/clients/payments'
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        LegalGazetteClientConfig,
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
@@ -130,7 +136,11 @@ import { PaymentsApiClientConfig } from '@island.is/clients/payments'
         NationalRegistryV3ClientConfig,
         SeminarsClientConfig,
         SecondarySchoolClientConfig,
+        BankInfoClientConfig,
         PaymentsApiClientConfig,
+        VmstUnemploymentClientConfig,
+        HmsRentalAgreementClientConfig,
+        ExemptionForTransportationClientConfig,
       ],
     }),
   ],

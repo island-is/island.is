@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { error } from './messages'
 import { MessageDescriptor } from 'react-intl'
 import { YesOrNoEnum, EMAIL_REGEX } from '@island.is/application/core'
-import { TitlePrefix } from './utils'
+import { TitlePrefix, isDateNotBeforeToday } from './utils'
 
 const isValidEmail = (value?: string) =>
   value ? EMAIL_REGEX.test(value) : false
@@ -176,9 +176,17 @@ export const publishingValidationSchema = z.object({
     .string()
     .optional()
     .refine((value) => value && value.length > 0, {
-      // TODO: Add date validation
       params: error.missingRequestedDate,
-    }),
+    })
+    .refine(
+      (value) => {
+        if (!value) return true
+        return isDateNotBeforeToday(value)
+      },
+      {
+        params: error.dateBeforeToday,
+      },
+    ),
   categories: z
     .array(baseEntitySchema)
     .optional()

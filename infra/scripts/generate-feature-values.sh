@@ -10,7 +10,7 @@ GIT_ROOT="$(git rev-parse --show-toplevel)"
 INFRA_ROOT="${GIT_ROOT}/infra"
 FEATURE_DIR="${GIT_ROOT}/charts/features/deployments"
 ECR_REPO="${DOCKER_REGISTRY}/helm-config"
-mkdir -p "$FEATURE_DIR/$FEATURE_NAME/$IMAGE"
+mkdir -p "$FEATURE_DIR/$FEATURE_NAME"
 
 cd "$INFRA_ROOT"
 
@@ -30,4 +30,12 @@ yarn feature-env \
   --feature "$FEATURE_NAME" \
   --images "$IMAGE" \
   --dockertag "$DOCKER_TAG" \
+  --writeDest "${FEATURE_DIR}/${FEATURE_NAME}"
+
+yarn feature-env \
+  cleanup \
+  --feature "$FEATURE_NAME" \
+  --images "$IMAGE" \
+  --chart islandis \
+  --cleanupImage "${ECR_REPO}:${DOCKER_TAG}" \
   --writeDest "${FEATURE_DIR}/${FEATURE_NAME}"

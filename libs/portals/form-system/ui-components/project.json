@@ -3,6 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/form-system/ui-components/src",
   "projectType": "library",
+  "tags": ["lib:form-system", "scope:form-system"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
@@ -21,6 +22,5 @@
         }
       }
     }
-  },
-  "tags": ["lib:form-system", "scope:form-system"]
+  }
 }

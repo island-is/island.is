@@ -31,9 +31,8 @@ export class XroadConf<I extends XroadSectionConfig> implements XroadConfig {
   }
 }
 
-export type XRoadEnvs<
-  T extends XroadSectionConfig
-> = T extends XroadSectionConfig ? keyof T['env'] : never
+export type XRoadEnvs<T extends XroadSectionConfig> =
+  T extends XroadSectionConfig ? keyof T['env'] : never
 
 export const Base = new XroadConf({
   env: {
@@ -91,8 +90,18 @@ export const JudicialSystem = new XroadConf({
       staging: '5309672079',
       prod: '5309672079',
     },
+    XROAD_DMR_MEMBER_CODE: {
+      dev: '10014',
+      staging: '5804170510',
+      prod: '5804170510',
+    },
     XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1',
     XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1',
+    XROAD_DMR_CRIMINAL_RECORD_API_PATH: {
+      dev: '/DMR-Protected/sakaskra-dev',
+      staging: '/DMR-Protected/sakaskra-dev',
+      prod: '/DMR-Protected/sakaskra',
+    },
   },
   secrets: {
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
@@ -171,6 +180,16 @@ export const RskProcuring = new XroadConf({
   },
 })
 
+export const RskCarRentalRate = new XroadConf({
+  env: {
+    XROAD_RSK_RENTAL_RATE_PATH: {
+      dev: 'IS-DEV/GOV/10006/Skatturinn/rentaldayrate-v1',
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/rentaldayrate-v1',
+      prod: 'IS/GOV/5402696029/Skatturinn/rentaldayrate-v1',
+    },
+  },
+})
+
 export const Payment = new XroadConf({
   env: {
     XROAD_PAYMENT_PROVIDER_ID: {
@@ -179,11 +198,9 @@ export const Payment = new XroadConf({
       prod: 'IS/GOV/5402697509/FJS-Public',
     },
     XROAD_PAYMENT_BASE_CALLBACK_URL: {
-      dev:
-        'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/',
+      dev: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/',
       staging: 'XROAD:',
-      prod:
-        'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/',
+      prod: 'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/',
     },
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/',
   },
@@ -208,14 +225,27 @@ export const Finance = new XroadConf({
     XROAD_HMS_LOANS_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
-      prod:
-        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1',
     },
     XROAD_HMS_HOUSING_BENEFITS_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/husbot-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1',
-      prod:
-        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/husbot-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/husbot-v1',
+    },
+  },
+})
+
+export const FireCompensation = new XroadConf({
+  env: {
+    XROAD_HMS_APPLICATION_SYSTEM_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/formbuilder-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/formbuilder-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/formbuilder-v1',
+    },
+    XROAD_HMS_APPLICATION_SYSTEM_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
     },
   },
 })
@@ -225,13 +255,42 @@ export const Properties = new XroadConf({
     XROAD_PROPERTIES_SERVICE_V2_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1',
-      prod:
-        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1',
     },
   },
   secrets: {
     XROAD_PROPERTIES_CLIENT_SECRET:
       '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+  },
+})
+
+export const PropertySearch = new XroadConf({
+  env: {
+    XROAD_HMS_PROPERTY_SEARCH_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/fasteignir-v2-beta',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/fasteignir-v2-beta',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v2',
+    },
+    XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
+    },
+  },
+})
+
+export const RentalService = new XroadConf({
+  env: {
+    XROAD_HMS_RENTAL_SERVICE_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Leigusamningar-v1',
+    },
+    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
+    },
   },
 })
 
@@ -274,6 +333,17 @@ export const WorkMachines = new XroadConf({
       staging:
         'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
       prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
+    },
+  },
+})
+
+export const PracticalExams = new XroadConf({
+  env: {
+    XROAD_PRACTICAL_EXAMS_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/verkleg-prof-token',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token',
     },
   },
 })
@@ -415,8 +485,8 @@ export const NationalRegistry = new XroadConf({
   env: {
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
-      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
-      prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
     },
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
       dev: json([
@@ -430,7 +500,7 @@ export const NationalRegistry = new XroadConf({
       ]),
     },
     // Deprecated:
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1',
     XROAD_TJODSKRA_MEMBER_CODE: {
       prod: '6503760649',
       dev: '10001',
@@ -447,12 +517,10 @@ export const NationalRegistryB2C = new XroadConf({
       prod: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
-      dev:
-        'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      dev: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       staging:
         'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
-      prod:
-        'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
       dev: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
@@ -486,12 +554,10 @@ export const NationalRegistryAuthB2C = new XroadConf({
       prod: '8271bbc2-d8de-480f-8540-ea43fc40b7ae',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
-      dev:
-        'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      dev: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       staging:
         'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
-      prod:
-        'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
       dev: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
@@ -667,8 +733,7 @@ export const VehiclesMileage = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
       staging:
         'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
-      prod:
-        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
     },
   },
 })
@@ -731,15 +796,13 @@ export const TransportAuthority = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
       staging:
         'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
-      prod:
-        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
     },
     XROAD_VEHICLE_PLATE_RENEWAL_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
       staging:
         'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
-      prod:
-        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
     },
     XROAD_VEHICLE_PRINTING_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
@@ -750,6 +813,11 @@ export const TransportAuthority = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
       staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Okuritar-V1',
+    },
+    XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Leyfur-V1',
     },
   },
 })
@@ -889,12 +957,10 @@ export const UniversityGatewayReykjavikUniversity = new XroadConf({
 export const JudicialSystemServicePortal = new XroadConf({
   env: {
     XROAD_JUDICIAL_SYSTEM_SP_PATH: {
-      dev:
-        'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
       staging:
         'IS-TEST/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
-      prod:
-        'IS/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      prod: 'IS/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api',
     },
   },
 })
@@ -939,12 +1005,22 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
   },
 })
 
+export const LegalGazette = new XroadConf({
+  env: {
+    XROAD_LEGAL_GAZETTE_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/legal-gazette-api',
+      prod: 'IS/GOV/5804170510/DMR-Protected/legal-gazette-api',
+    },
+  },
+})
+
 export const Frigg = new XroadConf({
   env: {
     XROAD_MMS_FRIGG_PATH: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api',
-      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-api',
-      prod: 'IS/GOV/10066/MMS-Protected/frigg-form-api',
+      staging: 'IS-TEST/GOV/6601241280/MMS-Protected/frigg-form-api',
+      prod: 'IS/GOV/6601241280/MMS-Protected/frigg-form-api',
     },
   },
 })
@@ -989,5 +1065,32 @@ export const SecondarySchool = new XroadConf({
       staging: 'IS-TEST/GOV/10066/MMS-Protected/umsoknagatt',
       prod: 'IS/GOV/6601241280/MMS-Protected/umsoknagatt',
     },
+  },
+})
+
+export const LSH = new XroadConf({
+  env: {
+    XROAD_LSH_PATH: {
+      dev: 'IS-DEV/GOV/10022/Landspitali-Protected/external-patient-api-v1',
+      staging:
+        'IS-TEST/GOV/10022/Landspitali-Protected/external-patient-api-v1',
+      prod: 'IS/GOV/5003002130/Landspitali-Protected/external-patient-api-v1',
+    },
+  },
+})
+
+export const VMSTUnemployment = new XroadConf({
+  env: {
+    VMST_UNEMPLOYMENT_XROAD_PATH: {
+      dev: 'IS-DEV/GOV/10003/VMST-Protected/XRoadDev-v1',
+      staging: 'IS-TEST/GOV/7005942039/VMST-Protected/XRoadDev-v1',
+      prod: 'IS/GOV/7005942039/VMST-Protected/vmst-umsoknir-v1',
+    },
+  },
+  secrets: {
+    XROAD_VMST_UNEMPLOYMENT_USERNAME:
+      '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME',
+    XROAD_VMST_UNEMPLOYMENT_PASSWORD:
+      '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD',
   },
 })

@@ -1,6 +1,9 @@
 import { format, isValid, parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
 import _uniq from 'lodash/uniq'
 
 import {
@@ -13,7 +16,10 @@ import {
   Gender,
   IndictmentSubtype,
   IndictmentSubtypeMap,
+  InformationForDefendant,
+  informationForDefendantMap,
   isRestrictionCase,
+  ServiceStatus,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -68,13 +74,13 @@ export const formatNationalId = (nationalId?: string | null): string => {
     return ''
   }
 
-  const regex = new RegExp(/^\d{10}$/)
+  const regex = /^\d{10}$/
 
   if (regex.test(nationalId)) {
     return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
-  } else {
-    return nationalId
   }
+
+  return nationalId
 }
 
 export const normalizeAndFormatNationalId = (
@@ -100,12 +106,13 @@ export const formatPhoneNumber = (phoneNumber?: string | null) => {
     return
   }
 
-  const value = phoneNumber.replace('-', '')
+  const regex = /^\d{7}$/
 
-  const splitAt = (index: number) => (x: string) =>
-    [x.slice(0, index), x.slice(index)]
-  if (value.length > 3) return splitAt(3)(value).join('-')
-  return value
+  if (regex.test(phoneNumber)) {
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`
+  }
+
+  return phoneNumber
 }
 
 export const laws = {
@@ -467,6 +474,18 @@ export const readableIndictmentSubtypes = (
   return _uniq(returnValue)
 }
 
+export const getAllReadableIndictmentSubtypes = (
+  subtypeMap: IndictmentSubtypeMap,
+): string[] => {
+  if (!subtypeMap) {
+    return []
+  }
+
+  const allSubtypes = Object.values(subtypeMap).flat()
+
+  return _uniq(allSubtypes.map((subtype) => indictmentSubtypes[subtype]))
+}
+
 export const sanitize = (str: string) => {
   return str.replace(/"/g, '')
 }
@@ -495,3 +514,36 @@ export const applyDativeCaseToCourtName = (courtName: string) => {
   }
   return courtName
 }
+
+export const getServiceStatusText = (serviceStatus: ServiceStatus) => {
+  return serviceStatus === ServiceStatus.DEFENDER
+    ? 'Birt fyrir verjanda'
+    : serviceStatus === ServiceStatus.ELECTRONICALLY
+    ? 'Birt rafrænt'
+    : serviceStatus === ServiceStatus.IN_PERSON
+    ? 'Birt persónulega'
+    : serviceStatus === ServiceStatus.FAILED
+    ? 'Árangurslaus birting'
+    : serviceStatus === ServiceStatus.EXPIRED
+    ? 'Rann út á tíma'
+    : 'Í birtingarferli' // This should never happen
+}
+
+export const getRulingInstructionItems = (
+  serviceInformationForDefendant: InformationForDefendant[],
+) =>
+  pipe(
+    serviceInformationForDefendant ?? [],
+    filterMap((information) => {
+      const value = informationForDefendantMap.get(information)
+      if (!value) {
+        return option.none
+      }
+
+      return option.some({
+        label: value.label,
+        value: value.description.replace(/\n/g, ''),
+        type: 'accordion',
+      })
+    }),
+  )

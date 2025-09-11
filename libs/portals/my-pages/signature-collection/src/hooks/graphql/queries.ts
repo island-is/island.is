@@ -51,8 +51,8 @@ export const GetListSignatures = gql`
 `
 
 export const GetSignedList = gql`
-  query signedList {
-    signatureCollectionSignedList {
+  query signedList($input: SignatureCollectionBaseInput!) {
+    signatureCollectionSignedList(input: $input) {
       id
       title
       area {
@@ -60,6 +60,10 @@ export const GetSignedList = gql`
         name
         min
         max
+      }
+      candidate {
+        ownerName
+        ownerBirthDate
       }
       endTime
       startTime
@@ -77,8 +81,8 @@ export const GetSignedList = gql`
 `
 
 export const GetIsOwner = gql`
-  query isOwner {
-    signatureCollectionIsOwner {
+  query isOwner($input: SignatureCollectionBaseInput!) {
+    signatureCollectionIsOwner(input: $input) {
       success
     }
   }
@@ -94,6 +98,10 @@ export const GetListsForUser = gql`
         name
         min
         max
+      }
+      candidate {
+        ownerName
+        ownerBirthDate
       }
       endTime
       startTime
@@ -130,6 +138,7 @@ export const GetListsForOwner = gql`
         name
       }
       active
+      reviewed
       collectionId
       slug
       numberOfSignatures
@@ -139,21 +148,27 @@ export const GetListsForOwner = gql`
 `
 
 export const GetCurrentCollection = gql`
-  query currentCollection {
-    signatureCollectionCurrent {
+  query collectionLatestForType($input: SignatureCollectionBaseInput!) {
+    signatureCollectionLatestForType(input: $input) {
       id
       endTime
       startTime
-      name
-      isActive
       collectionType
-      status
+      name
       areas {
         id
         name
         min
         max
       }
+      candidates {
+        id
+        nationalId
+        collectionId
+        name
+        hasActiveLists
+      }
+      isActive
     }
   }
 `
@@ -165,8 +180,8 @@ export const GetCanSign = gql`
 `
 
 export const GetCollectors = gql`
-  query SignatureCollectionCollectors {
-    signatureCollectionCollectors {
+  query SignatureCollectionCollectors($input: SignatureCollectionBaseInput!) {
+    signatureCollectionCollectors(input: $input) {
       nationalId
       name
     }

@@ -1,27 +1,29 @@
+import { useMutation } from '@apollo/client'
 import { DndContext, DragOverlay, UniqueIdentifier } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
-import { useContext, useMemo } from 'react'
-import { createPortal } from 'react-dom'
-import { Box, Button } from '@island.is/island-ui/core'
-import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 import {
-  FormSystemScreen,
   FormSystemField,
+  FormSystemScreen,
   FormSystemSection,
   Maybe,
 } from '@island.is/api/schema'
-import { ControlContext, IControlContext } from '../../context/ControlContext'
-import { ItemType } from '../../lib/utils/interfaces'
-import { removeTypename } from '../../lib/utils/removeTypename'
-import { useIntl } from 'react-intl'
-import { NavComponent } from '../NavComponent/NavComponent'
+import { SectionTypes } from '@island.is/form-system/enums'
 import {
   CREATE_SECTION,
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
-import { useMutation } from '@apollo/client'
-import { m, SectionTypes } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { Box, Button } from '@island.is/island-ui/core'
+import { Fragment, useContext, useMemo } from 'react'
+import { createPortal } from 'react-dom'
+import { useIntl } from 'react-intl'
+import { ControlContext, IControlContext } from '../../context/ControlContext'
+import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
+import { ItemType } from '../../lib/utils/interfaces'
+import { removeTypename } from '../../lib/utils/removeTypename'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
+import { NavComponent } from '../NavComponent/NavComponent'
+import * as styles from './Navbar.css'
 
 export const Navbar = () => {
   const { control, controlDispatch, inSettings } = useContext(
@@ -30,6 +32,9 @@ export const Navbar = () => {
   const { formatMessage } = useIntl()
   const { activeItem, form } = control
   const { sections, screens, fields } = form
+  const parties = sections?.find((s) => s?.sectionType === SectionTypes.PARTIES)
+  const payment = sections?.find((s) => s?.sectionType === SectionTypes.PAYMENT)
+  const { hasPayment } = form
 
   const sectionIds = useMemo(
     () =>
@@ -143,7 +148,14 @@ export const Navbar = () => {
   const renderNonInputSections = () => {
     return sections
       ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)
-      .filter((s) => s.sectionType !== SectionTypes.INPUT)
+      .filter(
+        (s) =>
+          s.sectionType !== SectionTypes.INPUT &&
+          s.sectionType !== SectionTypes.PARTIES &&
+          s.sectionType !== SectionTypes.SUMMARY &&
+          s.sectionType !== SectionTypes.PAYMENT &&
+          s.sectionType !== SectionTypes.COMPLETED,
+      )
       .map((s) => (
         <Box key={s.id}>
           <NavComponent
@@ -234,40 +246,63 @@ export const Navbar = () => {
 
   const renderDnDView = () => (
     <div>
-      <DndContext
-        sensors={sensors}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onDragOver={onDragOver}
-      >
-        <SortableContext items={sectionIds ?? []}>
-          {renderInputSections()}
-        </SortableContext>
-
-        {createPortal(
-          <DragOverlay
-            dropAnimation={{
-              duration: 500,
-              easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-            }}
-          >
-            {activeItem && (
-              <NavComponent
-                type={activeItem.type}
-                data={
-                  activeItem.data as
-                    | FormSystemScreen
-                    | FormSystemSection
-                    | FormSystemField
-                }
-                active
-                focusComponent={focusComponent}
-              />
-            )}
-          </DragOverlay>,
-          document.body,
+      <Box className={styles.minimalScrollbar}>
+        {parties && (
+          <>
+            <NavComponent
+              type="Section"
+              data={parties}
+              active={activeItem.data?.id === parties.id}
+              focusComponent={focusComponent}
+            />
+          </>
         )}
-      </DndContext>
+        <DndContext
+          sensors={sensors}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          onDragOver={onDragOver}
+        >
+          <SortableContext items={sectionIds ?? []}>
+            {renderInputSections()}
+          </SortableContext>
+
+          {createPortal(
+            <DragOverlay
+              dropAnimation={{
+                duration: 500,
+                easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+              }}
+            >
+              {activeItem && (
+                <NavComponent
+                  type={activeItem.type}
+                  data={
+                    activeItem.data as
+                      | FormSystemScreen
+                      | FormSystemSection
+                      | FormSystemField
+                  }
+                  active
+                  focusComponent={focusComponent}
+                />
+              )}
+            </DragOverlay>,
+            document.body,
+          )}
+        </DndContext>
+        {payment && hasPayment && (
+          <Fragment>
+            <NavComponent
+              type="Section"
+              data={payment}
+              active={activeItem.data?.id === payment.id}
+              focusComponent={focusComponent}
+            />
+            {renderScreensForSection(payment as FormSystemSection)}
+          </Fragment>
+        )}
+      </Box>
       <Box display="flex" justifyContent="center" paddingTop={3}>
         <Button variant="ghost" size="small" onClick={addSection}>
           {formatMessage(m.addSection)}

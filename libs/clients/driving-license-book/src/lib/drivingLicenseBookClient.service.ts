@@ -1,7 +1,7 @@
 import {
+  BookOverview,
   Configuration,
   DrivingLicenseBookApi,
-  TeacherDetailsGetResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -376,10 +376,7 @@ export class DrivingLicenseBookClientApiFactory {
     }
   }
 
-  async updateActiveStudentBookInstructor(
-    user: User,
-    newTeacherSsn: string,
-  ): Promise<{ success: boolean }> {
+  async getActiveStudentBook(user: User): Promise<BookOverview | undefined> {
     const api = await this.create()
 
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
@@ -387,25 +384,48 @@ export class DrivingLicenseBookClientApiFactory {
       showInactiveBooks: false,
     })
 
-    const activeBook = data?.books?.reduce(
-      (a, b) =>
-        new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
-      {},
-    )
+    const activeBook = data?.books
+      ?.filter((item) => item.status !== 9)
+      ?.reduce(
+        (a, b) =>
+          new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
+        {},
+      )
 
     if (!activeBook?.id || !activeBook?.createdOn) {
+      return undefined
+    }
+
+    return activeBook
+  }
+
+  async updateActiveStudentBookInstructor(
+    user: User,
+    newTeacherSsn: string,
+  ): Promise<{ success: boolean }> {
+    const api = await this.create()
+
+    const activeBook = await this.getActiveStudentBook(user)
+    if (!activeBook) {
       throw new NotFoundException(
         `Active book for national id ${user.nationalId} not found`,
       )
     }
 
-    const hasPracticeDriving = await this.hasPracticeDriving(activeBook.id)
+    const { data } = await api.apiStudentGetStudentOverviewSsnGet({
+      ssn: user.nationalId,
+      showInactiveBooks: false,
+    })
+
+    const hasPracticeDriving = await this.hasPracticeDriving(
+      activeBook.id || '',
+    )
 
     try {
       await api.apiStudentUpdateLicenseBookIdPut({
-        id: activeBook.id,
+        id: activeBook.id || '',
         digitalBookUpdateRequestBody: {
-          createdOn: activeBook.createdOn,
+          createdOn: activeBook.createdOn || '',
           teacherSsn: newTeacherSsn,
           schoolSsn: activeBook.schoolSsn,
           studentEmail: data?.email,

@@ -8,7 +8,11 @@ import {
   DataUploadResponse,
   CertificateInfoResponse,
 } from '@island.is/clients/syslumenn'
-import { coreErrorMessages, getValueViaPath, YES } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,

@@ -8,8 +8,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
-import { Case } from '../modules/case'
-import { Defendant } from '../modules/defendant'
+import { Case, Defendant } from '../modules/repository'
 import { Alignment, LineLink, PageLink, PdfDocument } from './pdf'
 
 export const formatDefendant = (defendant: Defendant) => {
@@ -224,7 +223,7 @@ export const createCaseFilesRecord = async (
       const nameChunks = pageReference.name.match(/.{1,40}(?=\s|$)/g)
 
       for (const chunk of nameChunks ?? []) {
-        pdfDocument.addText(chunk, textFontSize, {
+        pdfDocument.addText(chunk.trimStart(), textFontSize, {
           newLine: true,
           pageLink: pageReference.pageLink,
           position: { x: pageReferenceIndent },

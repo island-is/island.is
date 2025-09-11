@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
@@ -87,6 +87,7 @@ export const environmentStore = create<EnvironmentStore>(
                 apiUrl: `https://${branch.host}${branch.path}`,
               })),
               environments.local,
+              environments.mock,
             ]
             set({ loading: false, fetchedAt: Date.now(), result })
             return result

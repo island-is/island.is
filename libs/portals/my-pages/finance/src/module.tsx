@@ -13,14 +13,14 @@ import FinanceTransactionsVehicleMileage from './screens/FinanceTransactionsVehi
 
 const FinanceStatus = lazy(() => import('./screens/FinanceStatus'))
 const FinanceBills = lazy(() => import('./screens/FinanceBills'))
-const FinanceTransactionsCategories = lazy(
-  () => import('./screens/FinanceTransactions'),
+const FinanceTransactionsCategories = lazy(() =>
+  import('./screens/FinanceTransactions'),
 )
-const FinanceTransactionPeriods = lazy(
-  () => import('./screens/FinanceTransactionPeriods'),
+const FinanceTransactionPeriods = lazy(() =>
+  import('./screens/FinanceTransactionPeriods'),
 )
-const FinanceEmployeeClaims = lazy(
-  () => import('./screens/FinanceEmployeeClaims'),
+const FinanceEmployeeClaims = lazy(() =>
+  import('./screens/FinanceEmployeeClaims'),
 )
 const FinanceLocalTax = lazy(() => import('./screens/FinanceLocalTax'))
 const FinanceSchedule = lazy(() => import('./screens/FinanceSchedule'))

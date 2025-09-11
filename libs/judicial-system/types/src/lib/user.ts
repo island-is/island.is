@@ -37,8 +37,12 @@ export interface User {
   latestLogin?: string
   loginCount?: number
 }
+export interface UserDescriptor {
+  name?: string
+  institution?: { name?: string }
+}
 
-interface InstitutionUser {
+export interface InstitutionUser {
   id?: string | null
   role?: string | null
   institution?: {
@@ -59,6 +63,26 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       prosecutionsRolesStrings.includes(user.role) &&
+      user.institution?.type &&
+      prosecutionOfficeTypes.includes(user.institution.type),
+  )
+}
+
+export const isProsecutorUser = (user?: InstitutionUser): boolean => {
+  return Boolean(
+    user?.role &&
+      user.role === UserRole.PROSECUTOR &&
+      user.institution?.type &&
+      prosecutionOfficeTypes.includes(user.institution.type),
+  )
+}
+
+export const isProsecutorRepresentativeUser = (
+  user?: InstitutionUser,
+): boolean => {
+  return Boolean(
+    user?.role &&
+      user.role === UserRole.PROSECUTOR_REPRESENTATIVE &&
       user.institution?.type &&
       prosecutionOfficeTypes.includes(user.institution.type),
   )
@@ -244,3 +268,11 @@ export const getAdminUserInstitutionUserRoles = (
 
   return institutionUserRoles[institutionType]
 }
+
+export const getContactInformation = (user: {
+  name: string
+  email: string
+}) => ({
+  name: user.name,
+  email: user.email,
+})

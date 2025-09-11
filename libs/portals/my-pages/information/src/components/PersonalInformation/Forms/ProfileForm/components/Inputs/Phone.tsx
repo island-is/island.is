@@ -15,7 +15,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifySms,
   useUpdateOrCreateUserProfile,
-  useDeleteIslykillValue,
+  useDeleteEmailOrPhoneValue,
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
@@ -23,6 +23,7 @@ import { parseFullNumber } from '@island.is/portals/my-pages/core'
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 import { ContactNotVerified } from '../ContactNotVerified'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 interface Props {
   buttonText: string
@@ -49,6 +50,9 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   telDirty,
   telVerified = false,
 }) => {
+  const userInfo = useUserInfo()
+  const isActor = !!userInfo?.profile?.actor?.nationalId
+
   useNamespaces('sp.settings')
   const methods = useForm<UseFormProps>()
   const {
@@ -60,10 +64,15 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   } = methods
   const { updateOrCreateUserProfile, loading: saveLoading } =
     useUpdateOrCreateUserProfile()
-  const { deleteIslykillValue, loading: deleteLoading } =
-    useDeleteIslykillValue()
+  const { deleteEmailOrPhoneValue, loading: deleteLoading } =
+    useDeleteEmailOrPhoneValue()
   const { formatMessage } = useLocale()
-  const { createSmsVerification, createLoading } = useVerifySms()
+  const {
+    createSmsVerification,
+    createMeSmsVerification,
+    createLoading,
+    createMeLoading,
+  } = useVerifySms()
   const { refetch, loading: fetchLoading } = useUserProfile()
   const [telInternal, setTelInternal] = useState(mobile)
   const [telToVerify, setTelToVerify] = useState(mobile)
@@ -115,11 +124,21 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
 
       setResendBlock(true)
 
-      const response = await createSmsVerification({
-        mobilePhoneNumber: telValue,
-      })
+      let response
+      if (!isActor) {
+        response = await createSmsVerification({
+          mobilePhoneNumber: telValue,
+        })
+      } else {
+        response = await createMeSmsVerification({
+          mobilePhoneNumber: telValue,
+        })
+      }
 
-      if (response.data?.createSmsVerification?.created) {
+      if (
+        response.data?.createSmsVerification?.created ||
+        response.data?.createMeSmsVerification?.created
+      ) {
         setTelVerifyCreated(true)
         setTelToVerify(telValue)
         setVerificationValid(false)
@@ -171,7 +190,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
     })
 
     try {
-      await deleteIslykillValue({
+      await deleteEmailOrPhoneValue({
         mobilePhoneNumber: true,
       })
       await refetch()
@@ -267,44 +286,50 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
               flexDirection="column"
               paddingTop={2}
             >
-              {!createLoading && !deleteLoading && !fetchLoading && (
-                <>
-                  {telVerifyCreated ? (
-                    <FormButton
-                      disabled={verificationValid || disabled || resendBlock}
-                      onClick={
-                        telInternal
-                          ? () =>
-                              handleSendTelVerification({
-                                tel: getValues().tel,
+              {!createLoading &&
+                !createMeLoading &&
+                !deleteLoading &&
+                !fetchLoading && (
+                  <>
+                    {telVerifyCreated ? (
+                      <FormButton
+                        disabled={verificationValid || disabled || resendBlock}
+                        onClick={
+                          telInternal
+                            ? () =>
+                                handleSendTelVerification({
+                                  tel: getValues().tel,
+                                })
+                            : () => saveEmptyChange()
+                        }
+                      >
+                        {telInternal
+                          ? telInternal === telToVerify
+                            ? formatMessage({
+                                id: 'sp.settings:resend',
+                                defaultMessage: 'Endursenda',
                               })
-                          : () => saveEmptyChange()
-                      }
-                    >
-                      {telInternal
-                        ? telInternal === telToVerify
-                          ? formatMessage({
-                              id: 'sp.settings:resend',
-                              defaultMessage: 'Endursenda',
-                            })
-                          : buttonText
-                        : formatMessage(msg.saveEmptyChange)}
-                    </FormButton>
-                  ) : (
-                    <FormButton
-                      submit
-                      disabled={verificationValid || disabled || inputPristine}
-                    >
-                      {telInternal
-                        ? buttonText
-                        : formatMessage(msg.saveEmptyChange)}
-                    </FormButton>
-                  )}
-                </>
-              )}
-              {(createLoading || deleteLoading || fetchLoading) && (
-                <LoadingDots />
-              )}
+                            : buttonText
+                          : formatMessage(msg.saveEmptyChange)}
+                      </FormButton>
+                    ) : (
+                      <FormButton
+                        submit
+                        disabled={
+                          verificationValid || disabled || inputPristine
+                        }
+                      >
+                        {telInternal
+                          ? buttonText
+                          : formatMessage(msg.saveEmptyChange)}
+                      </FormButton>
+                    )}
+                  </>
+                )}
+              {(createLoading ||
+                createMeLoading ||
+                deleteLoading ||
+                fetchLoading) && <LoadingDots />}
             </Box>
           </Box>
         </form>

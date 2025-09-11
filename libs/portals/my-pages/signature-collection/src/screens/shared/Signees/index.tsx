@@ -4,13 +4,18 @@ import {
   Table as T,
   Pagination,
   FilterInput,
-  Icon,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
+import {
+  SignatureCollectionSignature as Signature,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 import sortBy from 'lodash/sortBy'
 import EditPage from './EditPage'
 import { SkeletonTable } from '../../../lib/skeletons'
@@ -19,7 +24,13 @@ import { m } from '../../../lib/messages'
 import { PaperSignees } from './PaperSignees'
 import { formatNationalId } from '@island.is/portals/core'
 
-const Signees = () => {
+const Signees = ({
+  collectionType,
+  totalSignees,
+}: {
+  collectionType: SignatureCollectionCollectionType
+  totalSignees: number
+}) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { id } = useParams<{ id: string }>()
@@ -27,6 +38,7 @@ const Signees = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const { listSignees, loadingSignees, refetchListSignees } = useGetListSignees(
     id ?? '',
+    collectionType,
   )
   const [signees, setSignees] = useState(listSignees)
 
@@ -45,9 +57,7 @@ const Signees = () => {
 
   // list search
   useEffect(() => {
-    let filteredSignees: Signature[] = listSignees
-
-    filteredSignees = filteredSignees.filter((s) => {
+    const filtered = listSignees.filter((s) => {
       return (
         s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         formatNationalId(s.signee.nationalId).includes(searchTerm) ||
@@ -56,28 +66,38 @@ const Signees = () => {
     })
 
     setPage(1)
-    setSignees(filteredSignees)
-  }, [searchTerm, listSignees])
+    setSignees(filtered)
+
+    // eslint-disable-next-line
+  }, [searchTerm])
 
   return (
     <Box>
-      <Text variant="h4" marginBottom={1}>
+      <Text variant="h4" marginBottom={2}>
         {formatMessage(m.signeesHeader)}
       </Text>
-      <Box display="flex" justifyContent="spaceBetween">
-        <Box width="half">
-          <FilterInput
-            name="searchSignee"
-            value={searchTerm}
-            onChange={(v) => setSearchTerm(v)}
-            placeholder={formatMessage(m.searchInListPlaceholder)}
-            backgroundColor="white"
-          />
-        </Box>
-      </Box>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
+            <FilterInput
+              name="searchSignee"
+              value={searchTerm}
+              onChange={(v) => setSearchTerm(v)}
+              placeholder={formatMessage(m.searchInListPlaceholder)}
+              backgroundColor="blue"
+            />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+
       {!loadingSignees ? (
         signees.length > 0 ? (
           <Box marginTop={3}>
+            <Box display="flex" justifyContent="flexEnd">
+              <Text variant="eyebrow" marginBottom={2}>
+                {formatMessage(m.numberOfValidSigns) + ' ' + totalSignees}
+              </Text>
+            </Box>
             <T.Table>
               <T.Head>
                 <T.Row>
@@ -91,28 +111,42 @@ const Signees = () => {
                 {signees
                   .slice(pageSize * (page - 1), pageSize * page)
                   .map((s: Signature) => {
+                    const textVariant = 'medium'
+                    const bgColor = s.isDigital ? 'white' : 'blueberry100'
                     return (
                       <T.Row key={s.id}>
-                        <T.Data text={{ variant: 'medium' }} width="20%">
-                          {format(new Date(), 'dd.MM.yyyy')}
+                        <T.Data
+                          text={{ variant: textVariant }}
+                          box={{ background: bgColor }}
+                          width="20%"
+                        >
+                          {format(new Date(s.created), 'dd.MM.yyyy')}
                         </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
+                        <T.Data
+                          text={{ variant: textVariant }}
+                          box={{
+                            background: bgColor,
+                          }}
+                        >
                           {s.signee.name}
                         </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
+                        <T.Data
+                          text={{ variant: textVariant }}
+                          box={{
+                            background: bgColor,
+                          }}
+                        >
                           {formatNationalId(s.signee.nationalId)}
                         </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
+                        <T.Data
+                          text={{ variant: textVariant }}
+                          box={{
+                            background: bgColor,
+                          }}
+                        >
                           {!s.isDigital && (
                             <Box display="flex">
                               <Text>{s.pageNumber}</Text>
-                              <Box marginLeft={1}>
-                                <Icon
-                                  icon="document"
-                                  type="outline"
-                                  color="blue400"
-                                />
-                              </Box>
                               <EditPage
                                 page={s.pageNumber ?? 0}
                                 name={s.signee.name}
@@ -121,6 +155,7 @@ const Signees = () => {
                                 )}
                                 signatureId={s.id}
                                 refetchSignees={refetchListSignees}
+                                collectionType={collectionType}
                               />
                             </Box>
                           )}
@@ -162,7 +197,11 @@ const Signees = () => {
       ) : (
         <SkeletonTable />
       )}
-      <PaperSignees listId={id ?? ''} refetchSignees={refetchListSignees} />
+      <PaperSignees
+        listId={id ?? ''}
+        refetchSignees={refetchListSignees}
+        collectionType={collectionType}
+      />
     </Box>
   )
 }

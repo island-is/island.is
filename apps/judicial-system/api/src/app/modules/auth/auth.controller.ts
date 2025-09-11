@@ -29,15 +29,14 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   ACCESS_TOKEN_COOKIE_NAME,
-  CASES_ROUTE,
   CODE_VERIFIER_COOKIE_NAME,
-  COURT_OF_APPEAL_CASES_ROUTE,
   CSRF_COOKIE_NAME,
-  DEFENDER_CASES_ROUTE,
   EXPIRES_IN_MILLISECONDS,
+  getUserDashboardRoute,
+  IDS_ACCESS_TOKEN_NAME,
   IDS_ID_TOKEN_NAME,
-  PRISON_CASES_ROUTE,
-  USERS_ROUTE,
+  IDS_REFRESH_TOKEN_NAME,
+  REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
 } from '@island.is/judicial-system/consts'
 import {
   EventType,
@@ -68,7 +67,8 @@ export class AuthController {
     name: REDIRECT_COOKIE_NAME,
     options: {
       ...this.defaultCookieOptions,
-      sameSite: 'none',
+      sameSite: 'none', // this only works when the secure attribute is set to true
+      secure: true,
     },
   }
 
@@ -95,11 +95,22 @@ export class AuthController {
     options: this.defaultCookieOptions,
   }
 
+  // TEMP: To begin with we will store the two tokens in the session cookie as we do with other tokens.
+  // In the future based on usage, we might consider storing it not in the session cookie
+  private readonly accessToken: Cookie = {
+    name: IDS_ACCESS_TOKEN_NAME,
+    options: this.defaultCookieOptions,
+  }
+
+  private readonly refreshToken: Cookie = {
+    name: IDS_REFRESH_TOKEN_NAME,
+    options: this.defaultCookieOptions,
+  }
+
   constructor(
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
-
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     @Inject(authModuleConfig.KEY)
@@ -122,12 +133,12 @@ export class AuthController {
       if (this.config.allowAuthBypass && nationalId) {
         this.logger.debug(`Logging in using development mode`)
 
-        await this.redirectAuthenticatedUser(
+        await this.redirectAuthenticatedUser({
           nationalId,
           res,
           userId,
-          redirectRoute,
-        )
+          requestedRedirectRoute: redirectRoute,
+        })
 
         return
       }
@@ -200,7 +211,6 @@ export class AuthController {
       const { userId, redirectRoute } =
         req.cookies[this.redirectCookie.name] ?? {}
       const codeVerifier = req.cookies[this.codeVerifierCookie.name]
-
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
       const verifiedUserToken = await this.authService.verifyIdsToken(
         idsTokens.id_token,
@@ -209,14 +219,16 @@ export class AuthController {
       if (verifiedUserToken) {
         this.logger.debug('Token verification successful')
 
-        await this.redirectAuthenticatedUser(
-          verifiedUserToken.nationalId,
+        await this.redirectAuthenticatedUser({
+          nationalId: verifiedUserToken.nationalId,
           res,
           userId,
-          redirectRoute,
-          idsTokens.id_token,
-          new Entropy({ bits: 128 }).string(),
-        )
+          requestedRedirectRoute: redirectRoute,
+          idToken: idsTokens.id_token,
+          csrfToken: new Entropy({ bits: 128 }).string(),
+          accessToken: idsTokens.access_token,
+          refreshToken: idsTokens.refresh_token,
+        })
 
         return
       }
@@ -235,6 +247,59 @@ export class AuthController {
     res.redirect('/?villa=innskraning-ogild')
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('token-refresh')
+  async tokenRefresh(@Res() res: Response, @Req() req: Request) {
+    try {
+      this.logger.debug('Handling token expiry')
+
+      const accessToken = req.cookies[this.idToken.name]
+
+      if (!this.authService.isTokenExpired(accessToken)) {
+        this.logger.debug('Token is valid')
+
+        res.status(200).send()
+
+        return
+      }
+
+      const refreshToken = req.cookies[this.refreshToken.name]
+      const idsTokens = await this.authService.refreshToken(refreshToken)
+      const verifiedUserToken = await this.authService.verifyIdsToken(
+        idsTokens.id_token,
+      )
+
+      if (!verifiedUserToken) {
+        throw new Error('Invalid id token')
+      }
+
+      const newAccessToken = idsTokens.access_token
+      const newRefreshToken = idsTokens.refresh_token
+
+      if (newAccessToken && newRefreshToken) {
+        res.cookie(this.accessToken.name, newAccessToken, {
+          ...this.accessToken.options,
+        })
+        res.cookie(this.refreshToken.name, newRefreshToken, {
+          ...this.refreshToken.options,
+          maxAge: EXPIRES_IN_MILLISECONDS,
+        })
+      }
+
+      this.logger.debug('Token refresh successful')
+
+      res.status(200).send()
+    } catch (error) {
+      this.logger.error('Handling token expiry failed:', { error })
+
+      this.clearCookies(res)
+
+      res.redirect('/?villa=innskraning-villa')
+
+      return
+    }
+  }
+
   @Get('callback')
   deprecatedAuth(@Res() res: Response) {
     this.logger.debug(
@@ -247,10 +312,18 @@ export class AuthController {
   }
 
   @Get('logout')
-  logout(@Res() res: Response, @Req() req: Request) {
+  async logout(@Res() res: Response, @Req() req: Request) {
     this.logger.debug('Received logout request')
 
     const idToken = req.cookies[this.idToken.name]
+    const refreshToken = req.cookies[this.refreshToken.name]
+
+    try {
+      await this.authService.revokeRefreshToken(refreshToken)
+    } catch (error) {
+      // Tolerate failure but log error
+      this.logger.error('Failed to revoke refresh token:', { error })
+    }
 
     this.clearCookies(res)
 
@@ -347,14 +420,25 @@ export class AuthController {
     cookies.forEach((cookie) => clearCookie(cookie))
   }
 
-  private async redirectAuthenticatedUser(
-    nationalId: string,
-    res: Response,
-    userId?: string,
-    requestedRedirectRoute?: string,
-    idToken?: string,
-    csrfToken?: string,
-  ) {
+  private async redirectAuthenticatedUser({
+    nationalId,
+    res,
+    userId,
+    requestedRedirectRoute,
+    idToken,
+    csrfToken,
+    accessToken,
+    refreshToken,
+  }: {
+    nationalId: string
+    res: Response
+    userId?: string
+    requestedRedirectRoute?: string
+    idToken?: string
+    csrfToken?: string
+    accessToken?: string
+    refreshToken?: string
+  }) {
     const eligibleUsers = await this.authService.findEligibleUsersByNationalId(
       nationalId,
     )
@@ -364,18 +448,25 @@ export class AuthController {
 
       this.clearCookies(res)
 
+      this.authService.createEventLog({
+        eventType: csrfToken
+          ? EventType.LOGIN_UNAUTHORIZED
+          : EventType.LOGIN_BYPASS_UNAUTHORIZED,
+        nationalId,
+      })
+
       res.redirect('/?villa=innskraning-ekki-notandi')
 
       return
     }
 
     const currentUser =
-      eligibleUsers.length === 1
-        ? eligibleUsers[0]
-        : userId
-        ? // attempt to find the user with the given userId
-          eligibleUsers.find((user) => user.id === userId)
-        : undefined
+      eligibleUsers.length > 1
+        ? userId
+          ? // attempt to find the user with the given userId
+            eligibleUsers.find((user) => user.id === userId)
+          : undefined
+        : eligibleUsers[0]
 
     // Use the redirect route if:
     // - no user id accompanied the redirect route or
@@ -387,6 +478,14 @@ export class AuthController {
       res.cookie(this.idToken.name, idToken, {
         ...this.idToken.options,
         maxAge: EXPIRES_IN_MILLISECONDS,
+      })
+      // expires in 5 minutes, can't be overridden
+      res.cookie(this.accessToken.name, accessToken, {
+        ...this.accessToken.options,
+      })
+      res.cookie(this.refreshToken.name, refreshToken, {
+        ...this.refreshToken.options,
+        maxAge: REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
       })
     } else {
       this.clearCookies(res, [this.idToken])
@@ -446,20 +545,20 @@ export class AuthController {
     currentUser: User,
     requestedRedirectRoute?: string,
   ) {
-    const getRedirectRoute = (
-      defaultRoute: string,
-      allowedPrefixes: string[],
-    ) => {
-      return requestedRedirectRoute &&
+    const getRedirectRoute = (allowedPrefixes: string[]) => {
+      const isValidRequestedRedirectRoute =
+        requestedRedirectRoute &&
         allowedPrefixes.some((prefix) =>
           requestedRedirectRoute.startsWith(prefix),
         )
+
+      return isValidRequestedRedirectRoute
         ? requestedRedirectRoute
-        : defaultRoute
+        : getUserDashboardRoute(currentUser)
     }
 
     if (isProsecutionUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
+      return getRedirectRoute([
         '/beinir',
         '/krafa',
         '/kaera',
@@ -469,42 +568,27 @@ export class AuthController {
     }
 
     if (isPublicProsecutionOfficeUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/rikissaksoknari',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/rikissaksoknari'])
     }
 
     if (isDistrictCourtUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/domur',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/domur'])
     }
 
     if (isCourtOfAppealsUser(currentUser)) {
-      return getRedirectRoute(COURT_OF_APPEAL_CASES_ROUTE, ['/landsrettur'])
+      return getRedirectRoute(['/landsrettur'])
     }
 
     if (isPrisonSystemUser(currentUser)) {
-      return getRedirectRoute(PRISON_CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/fangelsi',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/fangelsi'])
     }
 
     if (isDefenceUser(currentUser)) {
-      return getRedirectRoute(DEFENDER_CASES_ROUTE, [
-        '/krafa/yfirlit',
-        '/verjandi',
-      ])
+      return getRedirectRoute(['/krafa/yfirlit', '/verjandi'])
     }
 
     if (isAdminUser(currentUser)) {
-      return getRedirectRoute(USERS_ROUTE, ['/notendur'])
+      return getRedirectRoute(['/notendur'])
     }
 
     return '/'

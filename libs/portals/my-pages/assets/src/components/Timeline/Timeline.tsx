@@ -3,7 +3,6 @@ import cn from 'classnames'
 import * as styles from './Timeline.css'
 import {
   Box,
-  BoxProps,
   Column,
   Columns,
   Stack,

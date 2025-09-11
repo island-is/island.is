@@ -13,12 +13,15 @@
       }
     },
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/user-notification",
         "main": "apps/services/user-notification/src/main.ts",
         "tsConfig": "apps/services/user-notification/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           "apps/services/user-notification/src/assets",
           {
@@ -47,7 +50,6 @@
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
           "fileReplacements": [
             {
               "replace": "apps/services/user-notification/src/environments/environment.ts",
@@ -75,6 +77,13 @@
       "options": {
         "buildTarget": "services-user-notification:build",
         "args": ["--job", "cleanup"]
+      }
+    },
+    "birthday": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-user-notification:build",
+        "args": ["--job", "worker", "--isBirthdayWorker"]
       }
     },
     "lint": {
@@ -144,8 +153,8 @@
         "parallel": true
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

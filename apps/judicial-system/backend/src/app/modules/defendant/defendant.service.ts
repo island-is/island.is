@@ -1,12 +1,13 @@
 import { literal, Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,18 +29,17 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case/models/case.model'
 import { CourtService } from '../court'
+import { Case, Defendant, DefendantEventLog } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
-import { Defendant } from './models/defendant.model'
-import { DefendantEventLog } from './models/defendantEventLog.model'
 import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()
 export class DefendantService {
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     @InjectModel(DefendantEventLog)
     private readonly defendantEventLogModel: typeof DefendantEventLog,
@@ -164,10 +164,21 @@ export class DefendantService {
       ) {
         // Defender was just confirmed by judge
         if (!oldDefendant.isDefenderChoiceConfirmed) {
+          // send general defender assignment email
           messages.push({
             type: MessageType.DEFENDANT_NOTIFICATION,
             caseId: theCase.id,
             body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
+            elementId: updatedDefendant.id,
+          })
+          // send a notification to follow-up on scheduled court date
+          messages.push({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId: theCase.id,
+            user,
+            body: {
+              type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
+            },
             elementId: updatedDefendant.id,
           })
         }
@@ -249,7 +260,7 @@ export class DefendantService {
     return defendants[0]
   }
 
-  async updateRequestCaseDefendant(
+  private async updateRequestCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
@@ -271,41 +282,46 @@ export class DefendantService {
     return updatedDefendant
   }
 
-  async createDefendantEvent({
-    caseId,
-    defendantId,
-    eventType,
-  }: {
-    caseId: string
-    defendantId: string
-    eventType: DefendantEventType
-  }): Promise<void> {
-    await this.defendantEventLogModel.create({
-      caseId,
-      defendantId,
-      eventType,
-    })
+  async createDefendantEvent(
+    event: {
+      caseId: string
+      defendantId: string
+      eventType: DefendantEventType
+    },
+    transaction?: Transaction,
+  ): Promise<void> {
+    await this.defendantEventLogModel.create(event, { transaction })
   }
 
-  async updateIndictmentCaseDefendant(
+  private async updateIndictmentCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
     user: User,
   ): Promise<Defendant> {
-    const updatedDefendant = await this.updateDatabaseDefendant(
-      theCase.id,
-      defendant.id,
-      update,
-    )
+    const updatedDefendant = await this.sequelize.transaction(
+      async (transaction) => {
+        const updatedDefendant = await this.updateDatabaseDefendant(
+          theCase.id,
+          defendant.id,
+          update,
+          transaction,
+        )
 
-    if (update.isSentToPrisonAdmin) {
-      this.createDefendantEvent({
-        caseId: theCase.id,
-        defendantId: defendant.id,
-        eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-      })
-    }
+        if (update.isSentToPrisonAdmin) {
+          await this.createDefendantEvent(
+            {
+              caseId: theCase.id,
+              defendantId: defendant.id,
+              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+            },
+            transaction,
+          )
+        }
+
+        return updatedDefendant
+      },
+    )
 
     await this.sendIndictmentCaseUpdateDefendantMessages(
       theCase,
@@ -339,19 +355,31 @@ export class DefendantService {
     theCase: Case,
     defendant: Defendant,
     update: InternalUpdateDefendantDto,
-    isDefenderChoiceConfirmed = false,
     transaction?: Transaction,
   ): Promise<Defendant> {
     // The reason we have a separate dto for this is because requests that end here
-    // are initiated by outside API's which should not be able to edit other fields
-    // Defendant updated originating from the judicial system should use the UpdateDefendantDto
+    // are initiated by outside API's which should not be able to edit other fields directly
+    // Defendant updates originating from the judicial system should use the UpdateDefendantDto
     // and go through the update method above using the defendantId.
-    // This is also why we may set the isDefenderChoiceConfirmed to false here - the judge needs to confirm all changes.
+
+    // If there is a change in the defender choice after the judge has confirmed the choice,
+    // we need to set the isDefenderChoiceConfirmed to false
+    const resetDefenderChoiceConfirmed =
+      defendant?.isDefenderChoiceConfirmed &&
+      ((update.defenderChoice &&
+        defendant?.defenderChoice !== update.defenderChoice) ||
+        (update.defenderNationalId &&
+          defendant?.defenderNationalId !== update.defenderNationalId))
 
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
-      { ...update, isDefenderChoiceConfirmed },
+      {
+        ...update,
+        ...(resetDefenderChoiceConfirmed && {
+          isDefenderChoiceConfirmed: false,
+        }),
+      },
       transaction,
     )
 
