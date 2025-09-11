@@ -74,6 +74,8 @@ const CreateCollection = ({
         collectionId:
           collectionType === SignatureCollectionCollectionType.Presidential
             ? id
+            : collectionType === SignatureCollectionCollectionType.Parliamentary
+            ? collection?.id
             : currentArea?.collectionId || '',
         collectionName: collectionName || undefined,
         owner: {
@@ -177,6 +179,7 @@ const CreateCollection = ({
           setCollectionName('')
           setCanCreate(true)
         }}
+        scrollType="inside"
         hideOnClickOutside={false}
         closeButtonLabel={''}
         label={''}

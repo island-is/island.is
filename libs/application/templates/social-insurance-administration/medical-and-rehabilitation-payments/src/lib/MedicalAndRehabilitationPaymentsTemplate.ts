@@ -1,5 +1,6 @@
 import {
   coreHistoryMessages,
+  pruneAfterDays,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   YES,
@@ -9,6 +10,7 @@ import {
   defaultIncomeTypes,
   Events,
   INCOME,
+  OAPEvents,
   RatioType,
   Roles,
   States,
@@ -28,6 +30,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   FormModes,
+  InstitutionNationalIds,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
   UserProfileApi,
@@ -48,7 +51,9 @@ import {
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationMARPApplicationTypeApi,
-  SocialInsuranceAdministrationQuestionnairesApi,
+  SocialInsuranceAdministrationMARPQuestionnairesApi,
+  SocialInsuranceAdministrationResidenceInformationApi,
+  SocialInsuranceAdministrationEmploymentStatusesApi,
 } from '../dataProviders'
 import {
   getApplicationAnswers,
@@ -89,6 +94,14 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
           name: States.PREREQUISITES,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -118,10 +131,12 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationCategorizedIncomeTypesApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
-                SocialInsuranceAdministrationQuestionnairesApi,
+                SocialInsuranceAdministrationMARPQuestionnairesApi,
                 SocialInsuranceAdministrationEctsUnitsApi,
+                SocialInsuranceAdministrationResidenceInformationApi,
                 SocialInsuranceAdministrationMARPApplicationTypeApi,
                 SocialInsuranceAdministrationEducationLevelsApi,
+                SocialInsuranceAdministrationEmploymentStatusesApi,
               ],
               delete: true,
             },
@@ -200,8 +215,61 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.APPROVED,
+            target: States.TRYGGINGASTOFNUN_SUBMITTED,
           },
+        },
+      },
+      [States.TRYGGINGASTOFNUN_SUBMITTED]: {
+        entry: ['assignOrganization'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: States.TRYGGINGASTOFNUN_SUBMITTED,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: pruneAfterDays(365),
+          actionCard: {
+            pendingAction: {
+              title: coreSIAStatesMessages.tryggingastofnunSubmittedTitle,
+              content: statesMessages.applicationSubmittedDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreSIAStatesMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreSIAStatesMessages.applicationRejected,
+              },
+              {
+                onEvent: OAPEvents.DISMISS,
+                logMessage: coreSIAStatesMessages.applicationDismissed,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.APPROVED]: {
@@ -222,6 +290,57 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/InReview').then((module) =>
                   Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.REJECTED]: {
+        meta: {
+          name: States.REJECTED,
+          status: FormModes.REJECTED,
+          actionCard: {
+            pendingAction: {
+              title: coreSIAStatesMessages.applicationRejected,
+              content: statesMessages.applicationRejectedDescription,
+              displayStatus: 'error',
+            },
+          },
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.DISMISSED]: {
+        meta: {
+          name: States.DISMISSED,
+          status: FormModes.REJECTED,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreSIAStatesMessages.dismissedTag,
+            },
+            pendingAction: {
+              title: statesMessages.applicationDismissed,
+              content: statesMessages.applicationDismissedDescription,
+              displayStatus: 'error',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
               read: 'all',
             },
@@ -293,6 +412,22 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
 
         return context
       }),
+      assignOrganization: assign((context) => {
+        const { application } = context
+        const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN ?? ''
+
+        const assignees = application.assignees
+        if (TR_ID) {
+          if (Array.isArray(assignees) && !assignees.includes(TR_ID)) {
+            assignees.push(TR_ID)
+            set(application, 'assignees', assignees)
+          } else {
+            set(application, 'assignees', [TR_ID])
+          }
+        }
+
+        return context
+      }),
       clearAssignees: assign((context) => ({
         ...context,
         application: {
@@ -303,10 +438,19 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
+    nationalId: string,
+    application: Application,
   ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+
+    const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN
+    if (nationalId === TR_ID) {
+      return Roles.ORGANIZATION_REVIEWER
+    }
+
+    return undefined
   },
 }
 

@@ -57,21 +57,10 @@ export class SignatureCollectionResolver {
   }
 
   @BypassAuth()
-  @Query(() => [SignatureCollection])
-  async signatureCollectionCurrent(
-    @Args('input')
-    input: SignatureCollectionBaseInput,
-  ): Promise<SignatureCollection[]> {
-    return this.signatureCollectionService.currentCollection(
-      input.collectionType,
-    )
-  }
-
-  @BypassAuth()
   @Query(() => SignatureCollection)
   async signatureCollectionLatestForType(
     @Args('input') input: SignatureCollectionBaseInput,
-  ) {
+  ): Promise<SignatureCollection> {
     return this.signatureCollectionService.getLatestCollectionForType(
       input.collectionType,
     )
@@ -99,13 +88,13 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @Query(() => [SignatureCollectionListBase])
+  @Query(() => [SignatureCollectionList])
   @Audit()
   async signatureCollectionListsForUser(
     @CurrentSignee() signee: SignatureCollectionSignee,
     @Args('input') input: SignatureCollectionIdInput,
     @CurrentUser() user: User,
-  ): Promise<SignatureCollectionListBase[]> {
+  ): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.listsForUser(input, signee, user)
   }
 

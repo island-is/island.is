@@ -45,25 +45,74 @@ export interface PropertyUnit {
   numOfRooms?: number
 }
 
-export interface AddressProps {
-  label: string
-  value: string
+type Unit = {
+  __typename?: 'Unit'
   address?: Maybe<Scalars['String']>
   addressCode?: Maybe<Scalars['Float']>
+  appraisalUnitCode?: Maybe<Scalars['Float']>
+  fireInsuranceValuation?: Maybe<Scalars['Float']>
+  propertyCode?: Maybe<Scalars['Float']>
+  propertyUsageDescription?: Maybe<Scalars['String']>
+  propertyValue?: Maybe<Scalars['Float']>
+  size?: Maybe<Scalars['Float']>
+  sizeUnit?: Maybe<Scalars['String']>
+  unitCode?: Maybe<Scalars['String']>
+}
+
+type AppraisalUnit = {
+  __typename?: 'AppraisalUnit'
+  address?: Maybe<Scalars['String']>
+  addressCode?: Maybe<Scalars['Float']>
+  propertyCode?: Maybe<Scalars['Float']>
+  propertyLandValue?: Maybe<Scalars['Float']>
+  propertyUsageDescription?: Maybe<Scalars['String']>
+  propertyValue?: Maybe<Scalars['Float']>
+  unitCode?: Maybe<Scalars['String']>
+  units?: Maybe<Array<Unit>>
+}
+
+type HmsPropertyInfo = {
+  __typename?: 'HmsPropertyInfo'
+  address?: Maybe<Scalars['String']>
+  addressCode?: Maybe<Scalars['Float']>
+  appraisalUnits?: Maybe<Array<AppraisalUnit>>
   landCode?: Maybe<Scalars['Float']>
   municipalityCode?: Maybe<Scalars['Float']>
   municipalityName?: Maybe<Scalars['String']>
-  numOfConnectedProperties?: Maybe<Scalars['Float']>
   postalCode?: Maybe<Scalars['Float']>
+  propertyCode?: Maybe<Scalars['Float']>
+  propertyLandValue?: Maybe<Scalars['Float']>
+  propertyUsageDescription?: Maybe<Scalars['String']>
+  propertyValue?: Maybe<Scalars['Float']>
+  size?: Maybe<Scalars['Float']>
+  sizeUnit?: Maybe<Scalars['String']>
+  unitCode?: Maybe<Scalars['String']>
+}
+
+export interface AddressProps {
+  addressCode?: Maybe<Scalars['Float']>
+  address?: Maybe<Scalars['String']>
+  municipalityName?: Maybe<Scalars['String']>
+  municipalityCode?: Maybe<Scalars['Float']>
+  postalCode?: Maybe<Scalars['Float']>
+  landCode?: Maybe<Scalars['Float']>
   streetName?: Maybe<Scalars['String']>
   streetNumber?: Maybe<Scalars['Float']>
+  label: string
+  value: string
+  numOfConnectedProperties?: Maybe<Scalars['Float']>
+  units?: PropertyUnit[]
+  checkedUnits?: Record<string, boolean>
+  numOfRooms?: Record<string, number>
+  changedValueOfUnitSize?: Record<string, number>
+  selectedPropertyCode?: Maybe<Scalars['Float']>
+  propertiesByAddressCode?: Array<HmsPropertyInfo>
 }
 
 export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
   landlordRepresentatives: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
-  tenantRepresentatives: ApplicantsInfo[]
 }
 
 export interface PropertySection {
@@ -103,28 +152,28 @@ export interface ConsumerIndexItem {
 }
 
 export interface RentalAmountSection {
-  rentalAmount: string | undefined
-  isIndexConnected: YesOrNoEnum | undefined
+  amount: string | undefined
+  isIndexConnected: Array<YesOrNoEnum> | undefined
   indexDate: string | undefined
   indexRate: string | undefined
-  paymentMethod: string | undefined
+  paymentMethodOptions: string | undefined
   paymentMethodOther: string | undefined
-  paymentDay: string | undefined
+  paymentDateOptions: string | undefined
   paymentDayOther: string | undefined
-  bankAccountNumber: string | undefined
-  nationalIdOfAccountOwner: string | undefined
+  paymentMethodBankAccountNumber: string | undefined
+  paymentMethodNationalId: string | undefined
   securityDepositRequired: YesOrNoEnum | undefined
 }
 
 export interface SecurityDepositSection {
-  securityDepositType: string | undefined
+  securityType: string | undefined
   bankGuaranteeInfo: string | undefined
   thirdPartyGuaranteeInfo: string | undefined
   insuranceCompanyInfo: string | undefined
   landlordsMutualFundInfo: string | undefined
   otherInfo: string | undefined
   securityDepositAmount: string | undefined
-  securityDepositAmountOther: string | undefined
+  securityAmountOther: string | undefined
   securityAmountCalculated: string | undefined
   securityAmountHiddenRentalAmount: string | undefined
 }

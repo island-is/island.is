@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import { EventType } from '@island.is/judicial-system/types'
 

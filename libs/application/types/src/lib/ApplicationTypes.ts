@@ -89,6 +89,7 @@ export enum ApplicationTypes {
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
   UNEMPLOYMENT_BENEFITS = 'UnemploymentBenefits',
+  ACTIVATION_ALLOWANCE = 'ActivationAllowance',
   CAR_RENTAL_FEE_CATEGORY = 'CarRentalFeeCategory',
   MEDICAL_AND_REHABILITATION_PAYMENTS = 'MedicalAndRehabilitationPayments',
   FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
@@ -426,7 +427,7 @@ export const ApplicationConfigurations = {
     translation: ['ip.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
-    slug: 'nyr-grunnskoli',
+    slug: 'grunnskoli',
     translation: ['nps.application', 'uiForms.application'],
   },
   [ApplicationTypes.MACHINE_REGISTRATION]: {
@@ -460,6 +461,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.UNEMPLOYMENT_BENEFITS]: {
     slug: 'atvinnuleysisbaetur',
     translation: 'vmst.ub.application',
+  },
+  [ApplicationTypes.ACTIVATION_ALLOWANCE]: {
+    slug: 'virknistyrkur',
+    translation: ['aa.application'],
   },
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
     slug: 'bilaleigu-gjaldflokkur',

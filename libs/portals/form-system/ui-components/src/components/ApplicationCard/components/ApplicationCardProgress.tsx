@@ -1,3 +1,6 @@
+import { FormSystemApplication } from '@island.is/api/schema'
+import { coreMessages } from '@island.is/application/core'
+import { ApplicationStatus } from '@island.is/form-system/enums'
 import {
   Box,
   Button,
@@ -5,11 +8,8 @@ import {
   ProgressMeter,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib'
 import * as styles from '../ApplicationCard.css'
-import { coreMessages } from '@island.is/application/core'
-import { FormSystemApplication } from '@island.is/api/schema'
-import { ApplicationStatus } from '@island.is/form-system/enums'
-import { webMessages } from '../../../lib'
 
 interface Props {
   application: FormSystemApplication
@@ -25,12 +25,13 @@ const DraftProgressMeter = ({
 }: Props) => {
   const { status } = application
   const { formatMessage } = useLocale()
-
   if (status !== ApplicationStatus.IN_PROGRESS) return null
 
   const draftFinishedSteps =
-    application.sections?.filter((s) => s && s.isCompleted).length ?? 0
-  const draftTotalSteps = application.sections?.length ?? 0
+    application.sections?.filter((s) =>
+      application.completed?.includes(s?.id ?? ''),
+    ).length ?? 0
+  const draftTotalSteps = (application.sections?.length ?? 1) - 1
 
   return (
     <Box
@@ -56,7 +57,7 @@ const DraftProgressMeter = ({
       {shouldShowCardButtons && (
         <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
           <Button variant="ghost" onClick={onOpenApplication} size="small">
-            {formatMessage(webMessages.open)}
+            {formatMessage(m.openApplication)}
           </Button>
         </Box>
       )}
@@ -73,7 +74,6 @@ const DefaultProgressMeter = ({
   const { formatMessage } = useLocale()
 
   if (status === undefined) return null
-
   return (
     <Box
       width="full"
@@ -90,7 +90,7 @@ const DefaultProgressMeter = ({
       {shouldShowCardButtons && (
         <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
           <Button variant="ghost" onClick={onOpenApplication} size="small">
-            {formatMessage(webMessages.open)}
+            {formatMessage(m.openApplication)}
           </Button>
         </Box>
       )}

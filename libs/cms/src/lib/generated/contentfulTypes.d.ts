@@ -1432,6 +1432,9 @@ export interface IFormFields {
 
   /** Recipient List */
   recipientList?: string[] | undefined
+
+  /** Email subject */
+  emailSubject?: string | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
@@ -1665,6 +1668,9 @@ export interface IGenericListFields {
 
   /** Item Type */
   itemType?: 'Non-clickable' | 'Clickable' | undefined
+
+  /** Alphabetically Order Filter Tags */
+  alphabeticallyOrderFilterTags?: boolean | undefined
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
@@ -1990,7 +1996,7 @@ export interface IGrantCardsListFields {
   /** Funds */
   grantCardListFunds?: IFund[] | undefined
 
-  /** Max number of cards */
+  /** Max number of results */
   grantCardsListMaxNumberOfCards?: number | undefined
 
   /** Sorting */
@@ -1998,6 +2004,9 @@ export interface IGrantCardsListFields {
     | 'Alphabetical'
     | 'Most recently updated first'
     | undefined
+
+  /** Always display results as cards */
+  grantCardsAlwaysDisplayResultsAsCards?: boolean | undefined
 }
 
 export interface IGrantCardsList extends Entry<IGrantCardsListFields> {
@@ -2924,6 +2933,9 @@ export interface INewsFields {
 
   /** Featured image */
   image: Asset
+
+  /** Image text */
+  imageText?: string | undefined
 
   /** Full Width Image In Content */
   fullWidthImageInContent?: boolean | undefined

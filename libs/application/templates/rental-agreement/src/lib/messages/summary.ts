@@ -45,6 +45,16 @@ export const summary = defineMessages({
     defaultMessage: 'Fasteignanúmer: ',
     description: 'Property id prefix',
   },
+  rentalPropertyId: {
+    id: 'ra.application:summary.rentalPropertyId',
+    defaultMessage: 'Fasteignanúmer: {propertyId}',
+    description: 'Property id prefix',
+  },
+  nationalIdPrefix: {
+    id: 'ra.application:summary.nationalIdPrefix',
+    defaultMessage: 'Kennitala: {nationalId}',
+    description: 'National id prefix',
+  },
 
   // Rental period
   rentalPeriodStartDateLabel: {
@@ -252,10 +262,25 @@ export const summary = defineMessages({
     defaultMessage: 'Sérákvæði eða húsreglur',
     description: 'Special conditions label',
   },
+  propertyConditionTitle: {
+    id: 'ra.application:summary.propertyConditionTitle',
+    defaultMessage: 'Ástand húsnæðis',
+    description: 'Property condition title',
+  },
   propertyConditionInspectorLabel: {
     id: 'ra.application:summary.propertyConditionInspectorLabel',
     defaultMessage: 'Ástandsskoðun',
     description: 'Property condition inspector label',
+  },
+  propertyConditionInspectorValueIndependentParty: {
+    id: 'ra.application:summary.propertyConditionInspectorValueIndependentParty',
+    defaultMessage: 'Framkvæmd af {inspectorName}',
+    description: 'Property condition inspector value independent party',
+  },
+  propertyConditionInspectorValueSelfPerformed: {
+    id: 'ra.application:summary.propertyConditionInspectorValueSelfPerformed',
+    defaultMessage: 'Framkvæmd af samningsaðilum',
+    description: 'Property condition inspector value self performed',
   },
   propertyConditionInspectorValuePrefix: {
     id: 'ra.application:summary.propertyConditionInspectorValuePrefix',
@@ -267,6 +292,7 @@ export const summary = defineMessages({
     defaultMessage: 'samningsaðilum',
     description: 'Property condition inspector value contract parties',
   },
+
   propertyConditionDescriptionLabel: {
     id: 'ra.application:summary.propertyConditionDescriptionLabel',
     defaultMessage: 'Ástandsúttekt',
@@ -329,6 +355,11 @@ export const summary = defineMessages({
     defaultMessage: 'Umboðsaðili leigusala',
     description: 'Delegator label',
   },
+  landlordsRepresentativeLabelPlural: {
+    id: 'ra.application:summary.landlordsRepresentativeLabelPlural',
+    defaultMessage: 'Umboðsaðilar leigusala',
+    description: 'Delegator label',
+  },
   nationalIdLabel: {
     id: 'ra.application:summary.nationalIdLabel',
     defaultMessage: 'Kennitala: ',
@@ -343,6 +374,28 @@ export const summary = defineMessages({
     id: 'ra.application:summary.emailLabel',
     defaultMessage: 'Netfang',
     description: 'Email label',
+  },
+  fireProtectionsTitle: {
+    id: 'ra.application:summary.fireProtectionsTitle',
+    defaultMessage: 'Brunavarnir',
+    description: 'Fire protections title',
+  },
+
+  // Rental amount
+  rentalAmountTitle: {
+    id: 'ra.application:summary.rentalAmountTitle',
+    defaultMessage: 'Leiga',
+    description: 'Rental amount title',
+  },
+  rentalAmountValue: {
+    id: 'ra.application:summary.rentalAmountValue',
+    defaultMessage: 'Upphæð leigu',
+    description: 'Rental amount value',
+  },
+  rentalAmountIndexedLabel: {
+    id: 'ra.application:summary.rentalAmountIndexedLabel',
+    defaultMessage: 'Leiga fylgir vísitölu',
+    description: 'Rental amount indexed label',
   },
 
   // Share link
@@ -385,28 +438,10 @@ export const summary = defineMessages({
     defaultMessage: 'Önnur gjöld',
     description: 'Missing information alert other fees',
   },
-  alertSameTenantAndLandlordLandlord: {
-    id: 'ra.application:summary.alertSameTenantAndLandlordLandlord',
+  uniqueApplicantsError: {
+    id: 'ra.application:tenantDetails.uniqueApplicantsError',
     defaultMessage:
-      'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi (Leigusali)',
-    description: 'Same tenant and landlord alert message (landlord)',
-  },
-  alertSameTenantAndLandlordTenant: {
-    id: 'ra.application:summary.alertSameTenantAndLandlordTenant',
-    defaultMessage:
-      'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi (Leigjandi)',
-    description: 'Same tenant and landlord alert message (tenant)',
-  },
-  alertRepeatedLandlord: {
-    id: 'ra.application:summary.alertRepeatedLandlord',
-    defaultMessage:
-      'Sami aðili getur ekki verið skráður mörgum sinnum sem leigusali.',
-    description: 'Duplicate landlord alert message',
-  },
-  alertRepeatedTenant: {
-    id: 'ra.application:summary.alertRepeatedTenant',
-    defaultMessage:
-      'Sami aðili getur ekki verið skráður mörgum sinnum sem leigjandi.',
-    description: 'Duplicate tenant alert message',
+      'Sami aðili má ekki vera skráður oftar en einu sinni á leigusamning.',
+    description: 'Applicant already exists on application error',
   },
 })

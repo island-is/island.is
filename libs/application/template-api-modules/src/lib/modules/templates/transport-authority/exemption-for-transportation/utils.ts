@@ -61,9 +61,9 @@ export const getAllFreightForConvoy = (
   if (!freightPairingAnswers) return []
 
   return freightPairingAnswers.flatMap((pairing) => {
-    if (!pairing?.items) return []
+    if (!pairing?.convoyIdList?.includes(convoyId)) return []
 
-    const item = pairing.items.find((x) => x?.convoyId === convoyId)
+    const item = pairing?.items?.find((x) => x?.convoyId === convoyId)
     if (!item) return []
 
     const exemptionFor = item.exemptionFor || []
@@ -76,9 +76,9 @@ export const getAllFreightForConvoy = (
     return [
       {
         freightId: pairing.freightId,
-        height: item.height,
-        width: item.width,
-        totalLength: item.totalLength,
+        height: item.height || '',
+        width: item.width || '',
+        totalLength: item.totalLength || '',
         exemptionFor: filteredExemptionFor,
       },
     ]
@@ -245,7 +245,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
         // Freight pairing
         cargoAssignments: getAllFreightForConvoy(
           freightPairingAnswers || [],
-          item.convoyId,
+          item.convoyId ?? '',
         ).map((item) => ({
           cargoCode: item.freightId,
           height: Number(item.height),

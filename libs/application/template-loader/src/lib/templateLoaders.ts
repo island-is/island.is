@@ -235,6 +235,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/secondary-school'),
   [ApplicationTypes.UNEMPLOYMENT_BENEFITS]: () =>
     import('@island.is/application/templates/unemployment-benefits'),
+  [ApplicationTypes.ACTIVATION_ALLOWANCE]: () =>
+    import('@island.is/application/templates/activation-allowance'),
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: () =>
     import('@island.is/application/templates/car-rental-fee-category'),
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: () =>

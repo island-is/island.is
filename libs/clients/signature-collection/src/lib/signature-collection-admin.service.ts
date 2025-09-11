@@ -4,6 +4,7 @@ import {
   GetListInput,
   CreateListInput,
   BulkUploadInput,
+  ReasonKey,
 } from './signature-collection.types'
 import { Collection, CollectionType } from './types/collection.dto'
 import { getSlug, List, ListStatus, mapListBase } from './types/list.dto'
@@ -73,16 +74,6 @@ export class SignatureCollectionAdminClientService
 
   protected getApiWithAuth<T extends Api>(api: T, auth: Auth) {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
-  }
-
-  async currentCollection(
-    auth: Auth,
-    collectionTypeFilter?: CollectionType,
-  ): Promise<Collection[]> {
-    return await this.sharedService.currentCollection(
-      this.getApiWithAuth(this.electionsApi, auth),
-      collectionTypeFilter,
-    )
   }
 
   async getLatestCollectionForType(
@@ -249,7 +240,7 @@ export class SignatureCollectionAdminClientService
       })
 
       return {
-        slug: getSlug(candidacy.id ?? '', votingType.kosningTegund),
+        slug: getSlug(candidacy.id ?? '', votingType.kosningTegund ?? ''),
         success: true,
       }
     } catch (error) {
@@ -506,15 +497,19 @@ export class SignatureCollectionAdminClientService
     }
   }
 
-  async lockList(auth: Auth, listId: string): Promise<Success> {
+  async lockList(
+    auth: Auth,
+    { listId, setLocked }: { listId: string; setLocked: boolean },
+  ): Promise<Success> {
     try {
       const res = await this.getApiWithAuth(
         this.adminApi,
         auth,
       ).adminMedmaelalistiIDLockListPatch({
         iD: parseInt(listId, 10),
+        shouldLock: setLocked,
       })
-      return { success: res.listaLokad ?? false }
+      return { success: res.listaLokad === setLocked }
     } catch (error) {
       return { success: false, reasons: error.body ? [error.body] : [] }
     }
@@ -553,7 +548,10 @@ export class SignatureCollectionAdminClientService
         success,
         reasons: success
           ? []
-          : getReasonKeyForPaperSignatureUpload(signature, nationalId),
+          : (getReasonKeyForPaperSignatureUpload(
+              signature,
+              nationalId,
+            ) as ReasonKey[]),
       }
     } catch (error) {
       return {

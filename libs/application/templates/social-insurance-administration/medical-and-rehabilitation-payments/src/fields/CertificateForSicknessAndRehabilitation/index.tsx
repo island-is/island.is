@@ -51,8 +51,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation.managedBy,
+              medicalAndRehabilitationPaymentsFormMessage.shared.managedBy,
             )}
           </Text>
         </GridColumn>
@@ -84,8 +83,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation.managedByLocation,
+              medicalAndRehabilitationPaymentsFormMessage.shared.location,
             )}
           </Label>
           <Text>
@@ -105,8 +103,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation.information,
+              medicalAndRehabilitationPaymentsFormMessage.shared.information,
             )}
           </Text>
         </GridColumn>
@@ -181,7 +178,10 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
           </Label>
           <Markdown>
             {data?.socialInsuranceCertificateForSicknessAndRehabilitation?.diagnoses?.icd
-              ?.map((value, index) => `${index + 1}. ` + value)
+              ?.map(
+                (value, index) =>
+                  `${index + 1}. ${value.code} ${value.displayValue}`,
+              )
               ?.join('\n\n') ?? ''}
           </Markdown>
         </GridColumn>
@@ -199,7 +199,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
               </Label>
               <Markdown>
                 {data.socialInsuranceCertificateForSicknessAndRehabilitation.diagnoses.others
-                  .map((value) => '* ' + value)
+                  .map((value) => `* ${value.code} ${value.displayValue}`)
                   ?.join('\n\n') ?? ''}
               </Markdown>
             </GridColumn>
@@ -268,10 +268,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {/* Need to update when Smári returns a display value */}
             {
               data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.physicalDifficulty?.value
+                ?.physicalDifficulty?.displayValue
             }
           </Text>
         </GridColumn>
@@ -323,10 +322,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {/* Need to update when Smári returns a display value */}
             {
               data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.mentalDifficulty?.value
+                ?.mentalDifficulty?.displayValue
             }
           </Text>
         </GridColumn>
@@ -380,10 +378,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {/* Need to update when Smári returns a display value */}
             {
               data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.activityParticipationDifficulty?.value
+                ?.activityParticipationDifficulty?.displayValue
             }
           </Text>
         </GridColumn>
@@ -436,86 +433,6 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
     </Stack>
   )
 
-  const applicationForMedicalAndRehabilitationPayments = () => (
-    <Stack space={3}>
-      <GridRow rowGap={3}>
-        <GridColumn span="1/1">
-          <Text variant="h3">
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation.application,
-            )}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/3']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .applicationStartOfTreatment,
-            )}
-          </Label>
-          <Text>
-            {data?.socialInsuranceCertificateForSicknessAndRehabilitation
-              ?.confirmation?.estimatedDuration?.start
-              ? format(
-                  new Date(
-                    data.socialInsuranceCertificateForSicknessAndRehabilitation.confirmation.estimatedDuration.start,
-                  ),
-                  'dd.MM.yyyy',
-                )
-              : '-'}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/3']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .applicationEstimatedEndOfTreatment,
-            )}
-          </Label>
-          <Text>
-            {data?.socialInsuranceCertificateForSicknessAndRehabilitation
-              ?.confirmation?.estimatedDuration?.start
-              ? format(
-                  new Date(
-                    data.socialInsuranceCertificateForSicknessAndRehabilitation.confirmation.estimatedDuration.start,
-                  ),
-                  'dd.MM.yyyy',
-                )
-              : formatMessage(
-                  medicalAndRehabilitationPaymentsFormMessage
-                    .certificateForSicknessAndRehabilitation
-                    .applicationEstimatedTimeUnclear,
-                )}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/3']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .applicationEstimatedTime,
-            )}
-          </Label>
-          <Text>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .applicationEstimatedTimeMonths,
-              {
-                months:
-                  data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                    ?.confirmation?.estimatedDuration?.months,
-              },
-            )}
-          </Text>
-        </GridColumn>
-      </GridRow>
-    </Stack>
-  )
-
   if (loading) {
     return (
       <SkeletonLoader repeat={2} space={2} height={150} borderRadius="large" />
@@ -547,8 +464,6 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
       {activityAndParticipationImpairment()}
       <Divider />
       {mainImpairment()}
-      <Divider />
-      {applicationForMedicalAndRehabilitationPayments()}
       <input
         type="hidden"
         value={

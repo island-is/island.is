@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import { Op } from 'sequelize'
 import { Application } from './models/application.model'
 import { ApplicationDto } from './models/dto/application.dto'
 import { Form } from '../forms/models/form.model'
@@ -22,7 +23,6 @@ import {
   ApplicationStatus,
   ApplicationEvents,
   FieldTypesEnum,
-  ApplicantTypesEnum,
 } from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
@@ -30,20 +30,17 @@ import { ApplicationEvent } from './models/applicationEvent.model'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { User } from '@island.is/auth-nest-tools'
-import { Applicant } from '../applicants/models/applicant.model'
-import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Option } from '../../dataTypes/option.model'
+import { FormStatus } from '@island.is/form-system/shared'
 
 @Injectable()
 export class ApplicationsService {
   constructor(
     @InjectModel(Application)
     private readonly applicationModel: typeof Application,
-    @InjectModel(Applicant)
-    private readonly applicantModel: typeof Applicant,
     @InjectModel(Value)
     private readonly valueModel: typeof Value,
     @InjectModel(Form)
@@ -65,6 +62,9 @@ export class ApplicationsService {
     createApplicationDto: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationDto> {
+    // TODO: Check if user is allowed to create application for this form
+    // TODO: Check if form is published
+
     const form: Form = await this.getForm(slug)
 
     if (!form) {
@@ -89,25 +89,17 @@ export class ApplicationsService {
 
     let newApplicationId = ''
 
+    const isTest = form.status !== FormStatus.PUBLISHED
+
     await this.sequelize.transaction(async (transaction) => {
       const newApplication: Application = await this.applicationModel.create(
         {
           formId: form.id,
           organizationId: form.organizationId,
-          isTest: createApplicationDto.isTest,
+          isTest: isTest,
           dependencies: form.dependencies,
           status: ApplicationStatus.IN_PROGRESS,
         } as Application,
-        { transaction },
-      )
-
-      await this.applicantModel.create(
-        {
-          nationalId: user.nationalId,
-          applicationId: newApplication.id,
-          applicantTypeId: ApplicantTypesEnum.INDIVIDUAL,
-          lastLogin: new Date(),
-        } as Applicant,
         { transaction },
       )
 
@@ -118,6 +110,10 @@ export class ApplicationsService {
         } as ApplicationEvent,
         { transaction },
       )
+
+      // TODO: finna út aðilana með því að skoða tókenið frá usernum.
+      // búa bara til aðila screens og fields fyrir þá aðila sem eru hlutaðeigandi þessarar umsóknar
+      // console.log('user:', JSON.stringify(user, null, 2))
 
       await Promise.all(
         form.sections.map((section) =>
@@ -175,7 +171,6 @@ export class ApplicationsService {
     if (!sections) {
       throw new NotFoundException(`Sections not found`)
     }
-
     const screenDto = sections
       .flatMap((section) => section.screens || [])
       .find((screen) => screen.id === screenId)
@@ -234,12 +229,10 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    application.submittedAt = new Date()
-    await application.save()
-
     const applicationDto = await this.getApplication(id)
+    applicationDto.submittedAt = new Date()
 
-    const success = await this.serviceManager.send(applicationDto)
+    const success: boolean = await this.serviceManager.send(applicationDto)
 
     if (success) {
       application.status = ApplicationStatus.SUBMITTED
@@ -370,6 +363,8 @@ export class ApplicationsService {
     user: User,
     isTest: boolean,
   ): Promise<ApplicationResponseDto> {
+    // TODO: Check if form is published
+
     const form: Form = await this.getForm(slug)
 
     if (!form) {
@@ -398,7 +393,6 @@ export class ApplicationsService {
       form.id,
       isTest,
     )
-
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     return responseDto
@@ -409,66 +403,47 @@ export class ApplicationsService {
     formId: string,
     isTest: boolean,
   ): Promise<ApplicationDto[]> {
-    const delegationType = user.delegationType
-    const nationalId = delegationType ? user.actor?.nationalId : user.nationalId
-    const delegatorNationalId = delegationType ? user.nationalId : null
+    // TODO: Check if form is published
 
-    // 1. Find all applicants by nationalId
-    const applicants = await this.applicantModel.findAll({
-      where: { nationalId },
-      attributes: ['applicationId', 'nationalId'],
+    const hasDelegation =
+      Array.isArray(user.delegationType) && user.delegationType.length > 0
+    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
+    const delegatorNationalId = hasDelegation ? user.nationalId : null
+
+    const applications = await this.applicationModel.findAll({
+      where: {
+        formId,
+        status: { [Op.ne]: ApplicationStatus.PRUNED },
+        isTest,
+      },
+      include: [{ model: Value, as: 'values' }],
     })
 
-    let applicationIds = applicants.map((a) => a.applicationId)
+    const applicationDtos: ApplicationDto[] = []
 
-    if (delegatorNationalId) {
-      // If delegatorNationalId is present, find applicants for delegatorNationalId as well
-      const delegatorApplicants = await this.applicantModel.findAll({
-        where: { nationalId: delegatorNationalId },
-        attributes: ['applicationId', 'nationalId'],
-      })
-      const delegatorApplicationIds = delegatorApplicants.map(
-        (a) => a.applicationId,
+    for (const application of applications) {
+      const loggedInUser = application.values?.find(
+        (value) =>
+          value.fieldType === FieldTypesEnum.APPLICANT &&
+          value.json?.nationalId === nationalId,
       )
-      // Only include applications that have both applicants (intersection)
-      applicationIds = applicationIds.filter((id) =>
-        delegatorApplicationIds.includes(id),
-      )
-    } else {
-      // If no delegator, exclude applications that have more than one applicant
-      // Find all applicants for these applicationIds
-      const allApplicants = await this.applicantModel.findAll({
-        where: { applicationId: applicationIds },
-        attributes: ['applicationId'],
-      })
-      // Count applicants per applicationId
-      const counts = allApplicants.reduce((acc, a) => {
-        acc[a.applicationId] = (acc[a.applicationId] || 0) + 1
-        return acc
-      }, {} as Record<string, number>)
-      // Only keep applications with a single applicant
-      applicationIds = applicationIds.filter((id) => counts[id] === 1)
+
+      const delegator = delegatorNationalId
+        ? application.values?.find(
+            (value) =>
+              value.fieldType === FieldTypesEnum.APPLICANT &&
+              value.json?.nationalId === delegatorNationalId,
+          )
+        : null
+
+      if (
+        loggedInUser &&
+        (!delegatorNationalId || (delegatorNationalId && delegator))
+      ) {
+        const applicationDto = await this.getApplication(application.id)
+        applicationDtos.push(applicationDto)
+      }
     }
-
-    // 2. Find all applications that match the formId and filtered applicationIds
-    const applications = applicationIds.length
-      ? await this.applicationModel.findAll({
-          where: {
-            formId,
-            id: applicationIds,
-            status: ApplicationStatus.IN_PROGRESS,
-            isTest: isTest,
-          },
-        })
-      : []
-
-    // 3. Map the applications to ApplicationDto
-    const applicationDtos = await Promise.all(
-      applications.map(async (application) => {
-        return this.getApplication(application.id)
-      }),
-    )
-
     return applicationDtos
   }
 
@@ -507,10 +482,6 @@ export class ApplicationsService {
               ],
             },
           ],
-        },
-        {
-          model: FormApplicantType,
-          as: 'formApplicantTypes',
         },
         {
           model: FormCertificationType,
@@ -602,6 +573,18 @@ export class ApplicationsService {
     return form
   }
 
+  // eslint-disable-next-line
+  private updateObjectValues<T extends Record<string, any>>(
+    source: T,
+    target: T,
+  ): T {
+    const updated = { ...target } // copy to avoid mutating directly
+    ;(Object.keys(source) as (keyof T)[]).forEach((key) => {
+      updated[key] = source[key]
+    })
+    return updated
+  }
+
   async saveScreen(
     screenId: string,
     submitScreenDto: SubmitScreenDto,
@@ -629,8 +612,21 @@ export class ApplicationsService {
       for (const field of screenDto.fields) {
         if (field.values) {
           for (const value of field.values) {
+            const existingValue = await this.valueModel.findOne({
+              where: {
+                fieldId: field.id,
+                applicationId: applicationId,
+                id: value.id,
+              },
+            })
+
+            const updatedJson = this.updateObjectValues(
+              value.json || {},
+              existingValue?.json || {},
+            )
+
             await this.valueModel.update(
-              { ...(value as Partial<Value>) },
+              { json: updatedJson },
               {
                 where: {
                   fieldId: field.id,
@@ -667,5 +663,55 @@ export class ApplicationsService {
       throw new NotFoundException(`Screen with id '${screenId}' not found`)
     }
     return screenResult as unknown as ScreenDto
+  }
+
+  async submitSection(applicationId: string, sectionId: string): Promise<void> {
+    const application = await this.applicationModel.findByPk(applicationId)
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    const section = await this.sectionModel.findByPk(sectionId, {
+      include: [
+        {
+          model: Screen,
+          as: 'screens',
+          include: [
+            {
+              model: Field,
+              as: 'fields',
+              include: [this.valueModel],
+            },
+          ],
+        },
+      ],
+    })
+
+    if (!section) {
+      throw new NotFoundException(`Section with id '${sectionId}' not found`)
+    }
+
+    // Mark the section as completed
+    if (!application.completed?.includes(section.id)) {
+      application.completed = [...(application.completed ?? []), section.id]
+    }
+    await application.save()
+  }
+
+  async deleteApplication(id: string): Promise<void> {
+    const application = await this.applicationModel.findByPk(id)
+
+    if (!application) {
+      throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    await this.valueModel.destroy({
+      where: { applicationId: id },
+    })
+
+    await application.destroy()
   }
 }

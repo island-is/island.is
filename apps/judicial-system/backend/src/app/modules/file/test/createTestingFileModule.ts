@@ -18,12 +18,12 @@ import { MessageService } from '@island.is/judicial-system/message'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
+import { CaseFile } from '../../repository'
 import { fileModuleConfig } from '../file.config'
 import { FileController } from '../file.controller'
 import { FileService } from '../file.service'
 import { InternalFileController } from '../internalFile.controller'
 import { LimitedAccessFileController } from '../limitedAccessFile.controller'
-import { CaseFile } from '../models/file.model'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../aws-s3/awsS3.service.ts')

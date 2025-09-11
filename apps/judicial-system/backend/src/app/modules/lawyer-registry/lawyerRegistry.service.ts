@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
 import type { Transaction, WhereOptions } from 'sequelize'
-import { Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadGatewayException,
@@ -17,8 +17,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LawyerFull, LawyerType } from '@island.is/judicial-system/types'
 
+import { LawyerRegistry } from '../repository'
 import { lawyerRegistryConfig } from './lawyerRegistry.config'
-import { LawyerRegistry } from './lawyerRegistry.model'
 
 type Lawyer = {
   name: string
@@ -115,7 +115,6 @@ export class LawyerRegistryService {
 
       await this.lawyerRegistryModel.destroy({ where: {}, transaction })
       await this.populateLawyerRegistry(formattedLawyers, transaction)
-      await transaction.commit()
 
       return lawyers
     })

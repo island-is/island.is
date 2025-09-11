@@ -160,6 +160,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Póstfang',
       description: 'Postal address',
     },
+    applicantApartmentNumber: {
+      id: 'sia.application:info.applicant.apartment.number',
+      defaultMessage: 'Íbúðarnúmer',
+      description: 'Apartment number',
+    },
     applicantPostalcode: {
       id: 'sia.application:info.applicant.postalcode',
       defaultMessage: 'Póstnúmer',
@@ -789,6 +794,11 @@ export const statesMessages = defineMessages({
     id: 'sia.application:applicationRejected',
     defaultMessage: 'Umsókn hafnað',
     description: 'Application rejected',
+  },
+  applicationDismissed: {
+    id: 'sia.application:applicationDismissed',
+    defaultMessage: 'Umsókn vísað frá',
+    description: 'Application dismissed',
   },
   applicationApproved: {
     id: 'sia.application:applicationApproved',

@@ -19,6 +19,9 @@ class IndictmentCaseData {
   hasBeenServed?: boolean
 
   @ApiProperty({ type: Boolean })
+  hasRuling?: boolean
+
+  @ApiProperty({ type: Boolean })
   hasRulingBeenServed?: boolean
 
   @ApiProperty({ type: [Groups] })
@@ -43,16 +46,21 @@ export class CaseResponse {
     )
     const subpoenaCreatedDate = subpoenaDateLog?.created?.toString() ?? '' //TODO: Change to created from subpoena db entry?
     const subpoenas = defendant.subpoenas ?? []
+    const verdict = defendant.verdict
 
     return {
       caseId: internalCase.id,
       data: {
         caseNumber: `${t.caseNumber} ${internalCase.courtCaseNumber}`,
+        // TODO: Rename to hasSubpoenaBeenServed?
         hasBeenServed:
           subpoenas.length > 0
             ? isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
             : false,
-        hasRulingBeenServed: false, // TODO: Implement logic to determine if the ruling has been served
+        hasRuling: Boolean(verdict),
+        hasRulingBeenServed: verdict?.serviceStatus
+          ? isSuccessfulServiceStatus(verdict.serviceStatus)
+          : false,
         groups: [
           {
             label: t.defendant,

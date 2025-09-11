@@ -9,19 +9,21 @@ import { UserRole } from '@island.is/judicial-system/types'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { uuidFactory } from '../../../../factories'
-import { Defendant, DefendantService } from '../../../defendant'
-import { CaseFile, FileService } from '../../../file'
+import { DefendantService } from '../../../defendant'
+import { FileService } from '../../../file'
+import { IndictmentCountService } from '../../../indictment-count'
 import {
+  CaseArchive,
+  CaseFile,
+  CaseRepositoryService,
+  CaseString,
+  Defendant,
   IndictmentCount,
-  IndictmentCountService,
-} from '../../../indictment-count'
-import { Offense } from '../../../indictment-count/models/offense.model'
+  Offense,
+} from '../../../repository'
 import { caseModuleConfig } from '../../case.config'
 import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
-import { Case } from '../../models/case.model'
-import { CaseArchive } from '../../models/caseArchive.model'
-import { CaseString } from '../../models/caseString.model'
 
 jest.mock('crypto-js')
 jest.mock('../../../../factories')
@@ -38,7 +40,7 @@ describe('InternalCaseController - Archive', () => {
   let mockDefendantService: DefendantService
   let mockIndictmentCountService: IndictmentCountService
   let mockCaseStringModel: typeof CaseString
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let mockCaseArchiveModel: typeof CaseArchive
   let mockCaseConfig: ConfigType<typeof caseModuleConfig>
   let transaction: Transaction
@@ -51,7 +53,7 @@ describe('InternalCaseController - Archive', () => {
       indictmentCountService,
       sequelize,
       caseStringModel,
-      caseModel,
+      caseRepositoryService,
       caseArchiveModel,
       caseConfig,
       internalCaseController,
@@ -61,7 +63,7 @@ describe('InternalCaseController - Archive', () => {
     mockDefendantService = defendantService
     mockIndictmentCountService = indictmentCountService
     mockCaseStringModel = caseStringModel
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
     mockCaseArchiveModel = caseArchiveModel
     mockCaseConfig = caseConfig
 
@@ -254,10 +256,10 @@ describe('InternalCaseController - Archive', () => {
     beforeEach(async () => {
       const mockUpdateCaseString = mockCaseStringModel.update as jest.Mock
       mockUpdateCaseString.mockResolvedValueOnce([1])
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
-      const mockUpdate = mockCaseModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
+      const mockUpdate = mockCaseRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(theCase)
       const mockUuidFactory = uuidFactory as jest.Mock
       mockUuidFactory.mockReturnValueOnce(iv)
       const mockParse = CryptoJS.enc.Hex.parse as jest.Mock
@@ -269,7 +271,7 @@ describe('InternalCaseController - Archive', () => {
     })
 
     it('should lookup a case', () => {
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         include: [
           { model: Defendant, as: 'defendants' },
           {
@@ -362,7 +364,8 @@ describe('InternalCaseController - Archive', () => {
         },
         { transaction },
       )
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         {
           description: '',
           demands: '',
@@ -394,7 +397,7 @@ describe('InternalCaseController - Archive', () => {
           indictmentReturnedExplanation: '',
           isArchived: true,
         },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
       expect(then.result).toEqual({ caseArchived: true })
     })
@@ -404,7 +407,7 @@ describe('InternalCaseController - Archive', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(null)
 
       then = await givenWhenThen()

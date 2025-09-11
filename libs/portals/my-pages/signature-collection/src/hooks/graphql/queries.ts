@@ -61,6 +61,10 @@ export const GetSignedList = gql`
         min
         max
       }
+      candidate {
+        ownerName
+        ownerBirthDate
+      }
       endTime
       startTime
       isDigital
@@ -94,6 +98,10 @@ export const GetListsForUser = gql`
         name
         min
         max
+      }
+      candidate {
+        ownerName
+        ownerBirthDate
       }
       endTime
       startTime
@@ -130,6 +138,7 @@ export const GetListsForOwner = gql`
         name
       }
       active
+      reviewed
       collectionId
       slug
       numberOfSignatures
@@ -157,6 +166,7 @@ export const GetCurrentCollection = gql`
         nationalId
         collectionId
         name
+        hasActiveLists
       }
       isActive
     }

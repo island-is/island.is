@@ -266,13 +266,19 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
         return stripResult(res)
       })
+
       return res
     } catch (reason) {
-      // Error responses from the court service are a bit tricky.
       // Check for authentication token expiration.
+      // Error responses from the court service are a bit tricky.
+      // When a token expires, the court service responds with 400 bad request
+      // and a specific error message. The 400 response is too generic
+      // to be useful, so we need to check the error message for more details.
       if (
-        reason.message ===
-        `authenticationToken is expired - ${currentAuthenticationToken}`
+        reason.message &&
+        reason.message.includes(
+          `authenticationToken is expired - ${currentAuthenticationToken}`,
+        )
       ) {
         this.logger.info('Authentication token expired, attempting relogin', {
           reason,

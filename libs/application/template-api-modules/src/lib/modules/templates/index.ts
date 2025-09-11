@@ -1,5 +1,7 @@
 import { UnemploymentBenefitsModule } from './unemployment-benefits/unemployment-benefits.module'
 import { UnemploymentBenefitsService } from './unemployment-benefits/unemployment-benefits.service'
+import { ActivationAllowanceModule } from './activation-allowance/activation-allowance.module'
+import { ActivationAllowanceService } from './activation-allowance/activation-allowance.service'
 import { CarRentalFeeCategoryModule } from './car-rental-fee-category/car-rental-fee-category.module'
 import { CarRentalFeeCategoryService } from './car-rental-fee-category/car-rental-fee-category.service'
 import { TerminateRentalAgreementModule } from './hms/terminate-rental-agreement/terminate-rental-agreement.module'
@@ -258,6 +260,7 @@ export const modules = [
   LegalGazetteTemplateModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
+  ActivationAllowanceModule,
   TerminateRentalAgreementModule,
   FireCompensationAppraisalModule,
   ExemptionForTransportationModule,
@@ -347,6 +350,7 @@ export const services = [
   LegalGazetteTemplateService,
   ExampleAuthDelegationService,
   RentalAgreementService,
+  ActivationAllowanceService,
   TerminateRentalAgreementService,
   FireCompensationAppraisalService,
   ExemptionForTransportationService,

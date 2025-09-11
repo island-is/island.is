@@ -50,3 +50,4 @@ export type OrganizationSlugType =
   | 'rannis'
   | 'vinnumalastofnun'
   | 'landspitali'
+  | 'vinnumalastofnun'

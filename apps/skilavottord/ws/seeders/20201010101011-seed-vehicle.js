@@ -1,21 +1,46 @@
 'use strict'
 
+const generateNumber = (index) => {
+  if (index < 10) {
+    return '00' + index.toString()
+  } else if (index < 100) {
+    return '0' + index.toString()
+  }
+  return index
+}
+
+const generateVehicles = () => {
+  const cars = []
+  for (let index = 0; index < 666; index++) {
+    cars.push({
+      vehicle_id: 'AA' + generateNumber(index),
+      owner_national_id: '3333333333',
+      vehicle_type: 'Audi 80',
+      vehicle_color: 'red',
+      newreg_date: '2020-09-08 04:05:06',
+      created_at: '2020-09-08 04:05:06',
+      updated_at: '2020-09-08 04:05:06',
+    })
+  }
+  return cars
+}
+
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
     return queryInterface.bulkInsert(
       'vehicle',
       [
         {
-          vehicle_id: 'jfk-433',
+          vehicle_id: 'LT579',
           owner_national_id: '3333333333',
-          vehicle_type: 'Volvo c40',
-          vehicle_color: 'white',
+          vehicle_type: 'Audi 80',
+          vehicle_color: 'red',
           newreg_date: '2020-09-08 04:05:06',
           created_at: '2020-09-08 04:05:06',
           updated_at: '2020-09-08 04:05:06',
         },
         {
-          vehicle_id: 'ftm-522',
+          vehicle_id: 'FT522',
           owner_national_id: '1111111111',
           vehicle_type: 'Ford focus',
           vehicle_color: 'blue',
@@ -24,7 +49,7 @@ module.exports = {
           updated_at: '2020-09-08 04:05:06',
         },
         {
-          vehicle_id: 'mhs-583',
+          vehicle_id: 'MHS83',
           owner_national_id: '1111111111',
           vehicle_type: 'Tesla m3',
           vehicle_color: 'Red',
@@ -51,7 +76,7 @@ module.exports = {
           updated_at: '2020-10-08 04:05:06',
         },
         {
-          vehicle_id: 'aes-135',
+          vehicle_id: 'AE135',
           owner_national_id: '2222222222',
           vehicle_type: 'wv id-3',
           vehicle_color: 'white',
@@ -59,12 +84,13 @@ module.exports = {
           created_at: '2020-09-08 04:05:06',
           updated_at: '2020-09-08 04:05:06',
         },
+        ...generateVehicles(),
       ],
       {},
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.bulkDelete('vehicle', null, {})
   },
 }

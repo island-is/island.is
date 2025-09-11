@@ -2,7 +2,12 @@ import {
   formatTextWithLocale,
   shouldShowFormItem,
 } from '@island.is/application/core'
-import { AlertMessage, Box, Text, Button } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  getTextStyles,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC, useState } from 'react'
 import { Markdown } from '@island.is/shared/components'
@@ -10,10 +15,13 @@ import { AlertMessageField, FieldBaseProps } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { useFormContext } from 'react-hook-form'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import cn from 'classnames'
 
 interface Props extends FieldBaseProps {
   field: AlertMessageField
 }
+
+const divWithSmallText = cn(getTextStyles({ variant: 'small' }))
 
 export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
   application,
@@ -64,7 +72,7 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
             <Box>
               <Box component="span" display="block">
                 {field.message != null ? (
-                  <Text variant="small">
+                  <Box component="div" className={divWithSmallText}>
                     <Markdown>
                       {formatTextWithLocale(
                         field.message,
@@ -79,7 +87,7 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
                         formatMessage,
                       )}
                     </Markdown>
-                  </Text>
+                  </Box>
                 ) : null}
               </Box>
               {field.links && (

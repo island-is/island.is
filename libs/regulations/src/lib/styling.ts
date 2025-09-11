@@ -93,7 +93,6 @@ export const regulationContentStyling = (wrapper: string) => {
 
   styleRegulation(
     `
-    li,
     li > p,
     li > ul,
     li > ol,
@@ -106,6 +105,11 @@ export const regulationContentStyling = (wrapper: string) => {
       '@media': { print: { marginBottom: '.5em' } },
     },
   )
+
+  styleRegulation('li', {
+    marginBottom: '0.5em',
+    '@media': { print: { marginBottom: '.5em' } },
+  })
 
   styleRegulation(
     `
@@ -178,11 +182,14 @@ export const regulationContentStyling = (wrapper: string) => {
   })
 
   styleRegulation('table', {
-    width: '100%',
     borderCollapse: 'separate',
     borderSpacing: 0,
 
-    '@media': { print: { marginBottom: '1em' } },
+    '@media': { print: { marginBottom: '1em', width: '100%' } },
+  })
+
+  styleRegulation('table:not([width])', {
+    width: '100%',
   })
 
   styleRegulation('th, td', {

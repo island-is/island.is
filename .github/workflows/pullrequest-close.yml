@@ -52,12 +52,19 @@ jobs:
           echo "LATEST_RELEASE=$LATEST_RELEASE" >> "$GITHUB_OUTPUT"
 
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
-
+      - name: Get token
+        id: get-token
+        shell: bash
+        env:
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
       - name: Create a PR
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: create_pr
         env:
-          GITHUB_TOKEN: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
           PR_BRANCH: cherry-picks/${{ github.head_ref }}
           TARGET_BRANCH: release/${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
           HEAD_REF: ${{ github.head_ref }}
@@ -68,6 +75,14 @@ jobs:
           git config --global user.name "${ACTOR} (automated)"
           echo "${MERGE_COMMIT_SHA}"
           echo "${HEAD_REF}"
+
+          git fetch origin "$TARGET_BRANCH:$TARGET_BRANCH"
+          # Check for differences between the merge_commit and release branch
+          if git diff --quiet "$MERGE_COMMIT_SHA" "$TARGET_BRANCH"; then
+              echo "No differences found between '$MERGE_COMMIT_SHA' and '$TARGET_BRANCH' branch"
+              exit 0
+          fi
+
           git checkout "${TARGET_BRANCH}"
           git checkout -b "${PR_BRANCH}"
           git cherry-pick -x "${MERGE_COMMIT_SHA}"
@@ -79,47 +94,11 @@ jobs:
           echo "PR=${PR}" >> "$GITHUB_OUTPUT"
 
       - name: Send slack message
-        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' && steps.create_pr.outputs.PR != '' }}
         uses: slackapi/slack-github-action@v2.0.0
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
-            text: "A new PR has been created: ${{ steps.create_pr.outputs.PR }}"
-
-  cleanup:
-    name: Clean up feature deployment
-    runs-on: arc-shared
-    steps:
-      - name: Get git branch
-        run: |
-          set -euo pipefail
-          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          echo "GIT_BRANCH=$GIT_BRANCH" >> "$GITHUB_ENV"
-      - name: Generate deployment branch name
-        id: git-branch-deploy
-        run: |
-          set -euo pipefail
-          GIT_BRANCH_DEPLOY="$GIT_BRANCH"
-          if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
-            # If event is pull request but branch is not prefixed with feature/
-            GIT_BRANCH_DEPLOY=feature/$GIT_BRANCH_DEPLOY
-          fi
-          # Avoid too long resource names
-          GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
-          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
-      - name: Clean up feature
-        env:
-          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-          SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
-        run: |
-          set -euo pipefail
-          curl "$SPINNAKER_URL/webhooks/webhook/feature-cleanup" -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$SPINNAKER_WEBHOOK_TOKEN",
-            "parameters": {
-              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
-            }
-          }
-          BODY
+            text: "A new PR has been created on behalf of ${{ github.actor }}: ${{ steps.create_pr.outputs.PR }}"

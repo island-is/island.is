@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
@@ -12,6 +14,7 @@ import { MessageService } from '@island.is/judicial-system/message'
 
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
+import { CivilClaimant, Defendant, DefendantEventLog } from '../../repository'
 import { UserService } from '../../user'
 import { CivilClaimantController } from '../civilClaimant.controller'
 import { CivilClaimantService } from '../civilClaimant.service'
@@ -19,9 +22,6 @@ import { DefendantController } from '../defendant.controller'
 import { DefendantService } from '../defendant.service'
 import { InternalDefendantController } from '../internalDefendant.controller'
 import { LimitedAccessDefendantController } from '../limitedAccessDefendant.controller'
-import { CivilClaimant } from '../models/civilClaimant.model'
-import { Defendant } from '../models/defendant.model'
-import { DefendantEventLog } from '../models/defendantEventLog.model'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')
@@ -51,6 +51,7 @@ export const createTestingDefendantModule = async () => {
           error: jest.fn(),
         },
       },
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
         provide: getModelToken(Defendant),
         useValue: {
@@ -95,6 +96,8 @@ export const createTestingDefendantModule = async () => {
 
   const courtService = defendantModule.get<CourtService>(CourtService)
 
+  const sequelize = defendantModule.get<Sequelize>(Sequelize)
+
   const defendantModel = await defendantModule.resolve<typeof Defendant>(
     getModelToken(Defendant),
   )
@@ -132,6 +135,7 @@ export const createTestingDefendantModule = async () => {
     messageService,
     userService,
     courtService,
+    sequelize,
     defendantModel,
     defendantService,
     defendantController,

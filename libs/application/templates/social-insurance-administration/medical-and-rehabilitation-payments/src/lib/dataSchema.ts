@@ -9,8 +9,8 @@ import { errorMessages as coreSIAErrorMessages } from '@island.is/application/te
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
+  CURRENT_EMPLOYMENT_STATUS_OTHER,
   NOT_APPLICABLE,
-  SelfAssessmentCurrentEmploymentStatus,
 } from '../utils/constants'
 import { errorMessages } from './messages'
 
@@ -18,12 +18,6 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone && phone.isValid()
 }
-
-const FileSchema = z.object({
-  name: z.string(),
-  key: z.string(),
-  url: z.string().optional(),
-})
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -264,9 +258,8 @@ export const dataSchema = z.object({
   unionSickPay: z
     .object({
       hasUtilizedUnionSickPayRights: z.string().optional().nullable(),
-      unionNationalId: z.string().optional().nullable(),
+      unionInfo: z.string().optional().nullable(),
       endDate: z.string().optional().nullable(),
-      fileupload: z.array(FileSchema).optional(),
       unionName: z.string().optional().nullable(),
     })
     .refine(
@@ -283,18 +276,18 @@ export const dataSchema = z.object({
       },
     )
     .refine(
-      ({ hasUtilizedUnionSickPayRights, unionNationalId, unionName }) => {
+      ({ hasUtilizedUnionSickPayRights, unionInfo, unionName }) => {
         // If the union name is set then we don't need to check the union
         if (unionName) {
           return true
         }
 
         return hasUtilizedUnionSickPayRights !== NOT_APPLICABLE
-          ? !!unionNationalId
+          ? !!unionInfo
           : true
       },
       {
-        path: ['unionNationalId'],
+        path: ['unionInfo'],
       },
     )
     .refine(
@@ -304,29 +297,25 @@ export const dataSchema = z.object({
         path: ['endDate'],
         params: errorMessages.dateRequired,
       },
-    )
-    .refine(
-      ({ hasUtilizedUnionSickPayRights, fileupload }) =>
-        hasUtilizedUnionSickPayRights === YES && fileupload !== undefined
-          ? fileupload.length !== 0
-          : true,
-      {
-        path: ['fileupload'],
-        params: coreSIAErrorMessages.requireAttachment,
-      },
     ),
-  rehabilitationPlanConfirmation: z
-    .array(z.string())
-    .refine((v) => v.includes(YES)),
+  rehabilitationPlan: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
+  confirmedTreatment: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
+  confirmationOfPendingResolution: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
+  confirmationOfIllHealth: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
   selfAssessment: z
     .object({
       hadAssistance: z.enum([YES, NO]).optional(),
       educationalLevel: z.string().optional(),
-      currentEmploymentStatus: z
-        .array(z.nativeEnum(SelfAssessmentCurrentEmploymentStatus))
-        .min(1)
-        .optional(),
-      currentEmploymentStatusAdditional: z.string().optional(),
+      currentEmploymentStatuses: z.array(z.string()).min(1).optional(),
+      currentEmploymentStatusExplanation: z.string().optional(),
       lastEmploymentTitle: z.string().optional(),
       lastEmploymentYear: z.string().optional().nullable(),
       mainProblem: z.string().min(1).optional(),
@@ -341,7 +330,12 @@ export const dataSchema = z.object({
       questionnaire: z
         .array(
           z.object({
-            answer: z.string(),
+            answer: z
+              .string()
+              .min(1)
+              .refine((v) => !!v && v.trim().length > 0, {
+                params: errorMessages.selfAssessmentQuestionnaireRequired,
+              }),
             questionId: z.string(),
           }),
         )
@@ -381,14 +375,12 @@ export const dataSchema = z.object({
       { path: ['previousRehabilitationSuccessfulFurtherExplanations'] },
     )
     .refine(
-      ({ currentEmploymentStatus, currentEmploymentStatusAdditional }) =>
-        currentEmploymentStatus &&
-        currentEmploymentStatus.includes(
-          SelfAssessmentCurrentEmploymentStatus.OTHER,
-        )
-          ? !!currentEmploymentStatusAdditional
+      ({ currentEmploymentStatuses, currentEmploymentStatusExplanation }) =>
+        Array.isArray(currentEmploymentStatuses) &&
+        currentEmploymentStatuses.includes(CURRENT_EMPLOYMENT_STATUS_OTHER)
+          ? !!currentEmploymentStatusExplanation?.trim()
           : true,
-      { path: ['currentEmploymentStatusAdditional'] },
+      { path: ['currentEmploymentStatusExplanation'] },
     ),
 })
 

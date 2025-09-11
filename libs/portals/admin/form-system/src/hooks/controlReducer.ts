@@ -6,6 +6,7 @@ import {
   FormSystemSection,
   FormSystemFieldSettings,
   FormSystemFormCertificationTypeDto,
+  FormSystemFormApplicant,
 } from '@island.is/api/schema'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
@@ -34,12 +35,18 @@ type ActiveItemActions =
     }
 
 type ScreenActions =
-  | { type: 'ADD_SCREEN'; payload: { screen: FormSystemScreen } }
-  | { type: 'REMOVE_SCREEN'; payload: { id: string } }
+  | {
+      type: 'ADD_SCREEN'
+      payload: { screen: FormSystemScreen; isApplicant?: boolean }
+    }
+  | { type: 'REMOVE_SCREEN'; payload: { id: string; isApplicant?: boolean } }
 
 type FieldActions =
-  | { type: 'ADD_FIELD'; payload: { field: FormSystemField } }
-  | { type: 'REMOVE_FIELD'; payload: { id: string } }
+  | {
+      type: 'ADD_FIELD'
+      payload: { field: FormSystemField; isApplicant?: boolean }
+    }
+  | { type: 'REMOVE_FIELD'; payload: { id: string; isApplicant?: boolean } }
   | {
       type: 'CHANGE_FIELD_TYPE'
       payload: {
@@ -86,8 +93,19 @@ type DndActions =
       type: 'LIST_ITEM_OVER_LIST_ITEM'
       payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
     }
+  | {
+      type: 'REMOVE_DEPENDENCIES'
+      payload: {
+        activeId: UniqueIdentifier
+        update: (updatedForm: FormSystemForm) => void
+      }
+    }
 
 type ChangeActions =
+  | {
+      type: 'CHANGE_APPLICANT_NAME'
+      payload: { lang: 'en' | 'is'; newValue: string; id: string }
+    }
   | { type: 'CHANGE_NAME'; payload: { lang: 'en' | 'is'; newValue: string } }
   | {
       type: 'CHANGE_FORM_NAME'
@@ -108,7 +126,15 @@ type ChangeActions =
   | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
-      type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
+      type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
+  | {
+      type: 'CHANGE_HAS_SUMMARY_SCREEN'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
+  | {
+      type: 'CHANGE_HAS_PAYMENT'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | { type: 'CHANGE_FORM_SETTINGS'; payload: { newForm: FormSystemForm } }
@@ -133,6 +159,14 @@ type ChangeActions =
         certificate: FormSystemFormCertificationTypeDto
         checked: boolean
       }
+    }
+  | {
+      type: 'UPDATE_APPLICANT_TYPES'
+      payload: { newValue: FormSystemFormApplicant[] }
+    }
+  | {
+      type: 'UPDATE_FORM_URLS'
+      payload: { newValue: string[] }
     }
 
 type InputSettingsActions =
@@ -161,6 +195,23 @@ type InputSettingsActions =
         property: 'isLarge'
         value: boolean
         update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'SET_ZENDESK_FIELD_SETTINGS'
+      payload: {
+        property:
+          | 'zendeskIsPrivate'
+          | 'zendeskIsCustomField'
+          | 'zendeskCustomFieldId'
+        value: boolean | string
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'SET_IS_ZENDESK_ENABLED'
+      payload: {
+        value: boolean
       }
     }
   | {
@@ -261,6 +312,15 @@ export const controlReducer = (
 
     // Screens
     case 'ADD_SCREEN': {
+      if (action.payload.isApplicant) {
+        return {
+          ...state,
+          form: {
+            ...form,
+            screens: [...(screens || []), action.payload.screen],
+          },
+        }
+      }
       return {
         ...state,
         activeItem: {
@@ -277,6 +337,15 @@ export const controlReducer = (
       const newScreens = state.form.screens?.filter(
         (screen) => screen?.id !== action.payload.id,
       )
+      if (action.payload.isApplicant) {
+        return {
+          ...state,
+          form: {
+            ...form,
+            screens: newScreens,
+          },
+        }
+      }
       const currentItem = state.activeItem.data as FormSystemScreen
       const newActiveItem = state.form.sections?.find(
         (section) => section?.id === currentItem.sectionId,
@@ -296,6 +365,15 @@ export const controlReducer = (
 
     // Fields
     case 'ADD_FIELD': {
+      if (action.payload.isApplicant) {
+        return {
+          ...state,
+          form: {
+            ...form,
+            fields: [...(fields || []), action.payload.field],
+          },
+        }
+      }
       return {
         ...state,
         activeItem: {
@@ -312,6 +390,15 @@ export const controlReducer = (
       const newFields = state.form.fields?.filter(
         (field) => field?.id !== action.payload.id,
       )
+      if (action.payload.isApplicant) {
+        return {
+          ...state,
+          form: {
+            ...form,
+            fields: newFields,
+          },
+        }
+      }
       const currentItem = state.activeItem.data as FormSystemField
       const newActiveItem = state.form.screens?.find(
         (screen) => screen?.id === currentItem.screenId,
@@ -399,6 +486,31 @@ export const controlReducer = (
     }
 
     // Change
+    case 'CHANGE_APPLICANT_NAME': {
+      const { lang, newValue, id } = action.payload
+      const nextFields = (state.form.fields ?? [])
+        .filter((f): f is FormSystemField => !!f && typeof f.id === 'string')
+        .map((f) =>
+          f.id === id
+            ? {
+                ...f,
+                name: {
+                  ...(f.name ?? {}),
+                  [lang]: newValue,
+                },
+              }
+            : f,
+        )
+
+      return {
+        ...state,
+        form: {
+          ...state.form,
+          fields: nextFields,
+        },
+      }
+    }
+
     case 'CHANGE_NAME': {
       const { lang, newValue } = action.payload
       let newData
@@ -531,16 +643,56 @@ export const controlReducer = (
         form: action.payload.newForm,
       }
     }
-    case 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN': {
+    case 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL': {
       const updatedState = {
         ...state,
         form: {
           ...form,
-          stopProgressOnValidatingScreen: action.payload.value,
+          allowProceedOnValidationFail: action.payload.value,
         },
       }
       action.payload.update({ ...updatedState.form })
       return updatedState
+    }
+    case 'CHANGE_HAS_SUMMARY_SCREEN': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          hasSummaryScreen: action.payload.value,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'CHANGE_HAS_PAYMENT': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          hasPayment: action.payload.value,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'UPDATE_APPLICANT_TYPES': {
+      return {
+        ...state,
+        form: {
+          ...form,
+          applicantTypes: action.payload.newValue,
+        },
+      }
+    }
+    case 'UPDATE_FORM_URLS': {
+      return {
+        ...state,
+        form: {
+          ...form,
+          urls: action.payload.newValue,
+        },
+      }
     }
 
     // Check whether dependencies has a dependency object with activeId in parentProp
@@ -724,6 +876,39 @@ export const controlReducer = (
         form: {
           ...form,
           fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_ZENDESK_FIELD_SETTINGS': {
+      const field = activeItem.data as FormSystemField
+      const { property, value, update } = action.payload
+      const newField = {
+        ...field,
+        fieldSettings: {
+          ...removeTypename(field.fieldSettings),
+          [property]: value,
+        },
+      }
+      update({ type: 'Field', data: newField })
+      return {
+        ...state,
+        activeItem: {
+          type: 'Field',
+          data: newField,
+        },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_IS_ZENDESK_ENABLED': {
+      const { value } = action.payload
+      return {
+        ...state,
+        form: {
+          ...form,
+          isZendeskEnabled: value,
         },
       }
     }
@@ -1012,6 +1197,28 @@ export const controlReducer = (
           ),
         },
       }
+    }
+    case 'REMOVE_DEPENDENCIES': {
+      const { activeId, update } = action.payload
+      const id = String(activeId)
+      const source = (form.dependencies ?? []).filter(
+        (dep) => dep !== null && dep !== undefined,
+      ) as NonNullable<typeof form.dependencies>
+
+      const updatedDependencies = source
+        .filter((dep) => dep?.parentProp !== id)
+        .map((dep) => ({
+          ...dep,
+          childProps: dep?.childProps?.filter((child) => child !== id),
+        }))
+        .filter((dep) => (dep.childProps?.length ?? 0) > 0)
+
+      const updatedForm = {
+        ...form,
+        dependencies: updatedDependencies,
+      }
+      update(updatedForm)
+      return { ...state, form: updatedForm }
     }
     default:
       return state

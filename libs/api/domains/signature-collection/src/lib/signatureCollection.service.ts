@@ -34,14 +34,6 @@ export class SignatureCollectionService {
     }
   }
 
-  async currentCollection(
-    collectionTypeFilter: CollectionType,
-  ): Promise<SignatureCollection[]> {
-    return await this.signatureCollectionClientService.currentCollection(
-      collectionTypeFilter,
-    )
-  }
-
   async getLatestCollectionForType(
     collectionType: CollectionType,
   ): Promise<SignatureCollection> {
@@ -69,7 +61,7 @@ export class SignatureCollectionService {
   }
 
   async listsForUser(
-    { collectionId }: SignatureCollectionIdInput,
+    { collectionId, collectionType }: SignatureCollectionIdInput,
     signee: SignatureCollectionSignee,
     user: User,
   ): Promise<SignatureCollectionList[]> {
@@ -81,6 +73,7 @@ export class SignatureCollectionService {
         collectionId: collectionId,
         areaId: signee.area?.id,
         onlyActive: true,
+        collectionType,
       },
       user,
     )

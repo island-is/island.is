@@ -42,6 +42,8 @@ const applicationByNationalId = (id: string, nationalId?: string) => ({
     : {}),
 })
 
+const escapeLike = (s: string) => s.replace(/[\\%_]/g, (m) => '\\' + m)
+
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -146,39 +148,47 @@ export class ApplicationService {
     applicantNationalId?: string,
     from?: string,
     to?: string,
+    typeIdValue?: string,
+    searchStrValue?: string,
   ): Promise<ApplicationPaginatedResponse> {
     const statuses = status?.split(',')
-    const typeIds = getTypeIdsForInstitution(nationalId)
+    const institutionTypeIds = getTypeIdsForInstitution(nationalId)
     const toDate = to ? new Date(to) : undefined
     const fromDate = from ? new Date(from) : undefined
 
+    const filteredInstitutionTypeIds = typeIdValue
+      ? institutionTypeIds.filter((t) => typeIdValue === t)
+      : institutionTypeIds
+
     // No applications for this institution ID
-    if (typeIds.length < 1) {
+    if (filteredInstitutionTypeIds.length < 1) {
       return {
         rows: [],
         count: 0,
       }
     }
 
-    const applicantAccessConditions: WhereOptions = {
-      [Op.or]: [
-        { applicant: { [Op.eq]: applicantNationalId } },
-        { assignees: { [Op.contains]: [applicantNationalId] } },
-      ],
-    }
-
     return this.applicationModel.findAndCountAll({
       where: {
-        ...{ typeId: { [Op.in]: typeIds } },
+        ...{ typeId: { [Op.in]: filteredInstitutionTypeIds } },
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
-          applicantNationalId ? applicantAccessConditions : {},
-
-          fromDate && toDate
+          fromDate ? { created: { [Op.gte]: fromDate } } : {},
+          toDate ? { created: { [Op.lte]: toDate } } : {},
+          applicantNationalId
+            ? { applicant: { [Op.eq]: applicantNationalId } }
+            : {},
+          searchStrValue
             ? {
-                [Op.and]: [
-                  { created: { [Op.gte]: fromDate } },
-                  { created: { [Op.lte]: toDate } },
+                [Op.or]: [
+                  { applicant: { [Op.eq]: searchStrValue } },
+                  { assignees: { [Op.contains]: [searchStrValue] } },
+                  Sequelize.where(
+                    Sequelize.cast(Sequelize.col('answers'), 'text'),
+                    {
+                      [Op.iLike]: `%${escapeLike(searchStrValue)}%`,
+                    },
+                  ),
                 ],
               }
             : {},
@@ -191,6 +201,29 @@ export class ApplicationService {
       offset: (page - 1) * count,
       order: [['modified', 'DESC']],
     })
+  }
+
+  async getAllApplicationTypesInstitutionAdmin(
+    nationalId: string,
+  ): Promise<{ id: string }[]> {
+    const typeIds = getTypeIdsForInstitution(nationalId)
+
+    if (!typeIds || typeIds.length === 0) {
+      return []
+    }
+
+    const results = await this.applicationModel.findAll({
+      attributes: ['typeId'],
+      where: {
+        typeId: {
+          [Op.in]: typeIds,
+        },
+      },
+      group: ['typeId'],
+      raw: true,
+    })
+
+    return results.map((row) => ({ id: row.typeId }))
   }
 
   async findAllByNationalIdAndFilters(
@@ -252,6 +285,28 @@ export class ApplicationService {
     })
   }
 
+  async findAllDueToBePostPruned(): Promise<Application[]> {
+    return this.applicationModel.findAll({
+      attributes: ['id'],
+      where: {
+        [Op.and]: {
+          postPruneAt: {
+            [Op.and]: {
+              [Op.not]: null,
+              [Op.lt]: new Date(),
+            },
+          },
+          postPruned: {
+            [Op.eq]: false,
+          },
+          pruned: {
+            [Op.eq]: true,
+          },
+        },
+      },
+    })
+  }
+
   /**
    * A function to pass to data providers / template api modules to be able to
    * query applications of their respective type in order to infer some data to
@@ -305,6 +360,8 @@ export class ApplicationService {
         | 'draftTotalSteps'
         | 'draftFinishedSteps'
         | 'pruneAt'
+        | 'postPruned'
+        | 'postPruneAt'
       >
     >,
   ) {

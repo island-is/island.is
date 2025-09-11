@@ -459,6 +459,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
+  [ApplicationTypes.ACTIVATION_ALLOWANCE]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
     nationalId: InstitutionNationalIds.INNHEIMTUMADUR,
     slug: InstitutionTypes.INNHEIMTUMADUR,

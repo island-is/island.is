@@ -25,8 +25,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../factories'
-import { UpdateCase } from '../case.service'
-import { Case } from '../models/case.model'
+import { Case, UpdateCase } from '../../repository'
 
 type Actor = 'Prosecution' | 'Defence' | 'Neutral'
 
@@ -193,6 +192,13 @@ const requestCaseCompletionSideEffect =
       ...update,
       state,
       rulingDate: currentCourtEndTime,
+    }
+
+    // Handle completed without ruling
+    const isCompletedWithoutRuling =
+      update.isCompletedWithoutRuling ?? theCase.isCompletedWithoutRuling
+    if (isCompletedWithoutRuling) {
+      newUpdate.rulingSignatureDate = null
     }
 
     // Handle appealed in court

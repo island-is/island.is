@@ -24,17 +24,15 @@ import {
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
-import { Case } from '../case/models/case.model'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
-import { Defendant } from '../defendant/models/defendant.model'
+import { Case, Defendant, Subpoena } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { PoliceSubpoenaExistsGuard } from './guards/policeSubpoenaExists.guard'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
 import { DeliverResponse } from './models/deliver.response'
-import { Subpoena } from './models/subpoena.model'
 import { SubpoenaService } from './subpoena.service'
 
 @Controller('api/internal')
@@ -67,11 +65,7 @@ export class InternalSubpoenaController {
     DefendantExistsGuard,
     SubpoenaExistsGuard,
   )
-  // TODO: Remove DELIVERY_TO_POLICE_SUBPOENA endpoint later
   @Post([
-    `case/:caseId/${
-      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA]
-    }/:defendantId/:subpoenaId`,
     `case/:caseId/${
       messageEndpoint[
         MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA

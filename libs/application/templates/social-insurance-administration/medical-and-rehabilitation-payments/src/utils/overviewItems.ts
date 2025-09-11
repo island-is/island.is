@@ -1,12 +1,9 @@
-import { ApolloClient } from '@apollo/client'
 import { NO, YES } from '@island.is/application/core'
-import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  bankInfoToString,
+  formatBankAccount,
   getTaxLevelOption,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import {
   ExternalData,
   FormValue,
@@ -14,6 +11,7 @@ import {
   TableData,
 } from '@island.is/application/types'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
+import { Locale } from '@island.is/shared/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
@@ -21,14 +19,11 @@ import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import { isFirstApplication } from './conditionUtils'
-import {
-  NOT_APPLICABLE,
-  SelfAssessmentCurrentEmploymentStatus,
-} from './constants'
+import { CURRENT_EMPLOYMENT_STATUS_OTHER, NOT_APPLICABLE } from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getSelfAssessmentCurrentEmploymentStatusOptions,
+  getEmploymentStatuses,
   getSickPayEndDateLabel,
   getYesNoNotApplicableTranslation,
 } from './medicalAndRehabilitationPaymentsUtils'
@@ -42,7 +37,9 @@ export const applicantItems = (
     applicantName,
     applicantNationalId,
     applicantAddress,
-    applicantMunicipality,
+    apartmentNumber,
+    applicantLocation,
+    applicantAddressAndApartment,
     userProfileEmail,
     spouseName,
     spouseNationalId,
@@ -68,12 +65,14 @@ export const applicantItems = (
     {
       width: 'half',
       keyText: socialInsuranceAdministrationMessage.confirm.address,
-      valueText: applicantAddress,
+      valueText: apartmentNumber
+        ? applicantAddressAndApartment
+        : applicantAddress,
     },
     {
       width: 'half',
       keyText: socialInsuranceAdministrationMessage.confirm.municipality,
-      valueText: applicantMunicipality,
+      valueText: applicantLocation,
     },
     {
       width: 'half',
@@ -107,14 +106,14 @@ export const applicantItems = (
 }
 
 export const paymentItems = (answers: FormValue): Array<KeyValueItem> => {
-  const { bank, personalAllowance, personalAllowanceUsage, taxLevel } =
+  const { paymentInfo, personalAllowance, personalAllowanceUsage, taxLevel } =
     getApplicationAnswers(answers)
 
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'full',
       keyText: socialInsuranceAdministrationMessage.payment.bank,
-      valueText: bankInfoToString(bank),
+      valueText: formatBankAccount(paymentInfo),
     },
     {
       width: 'half',
@@ -348,20 +347,11 @@ export const unionSickPayItems = async (
   answers: FormValue,
   _externalData: ExternalData,
   _userNationalId: string,
-  apolloClient: ApolloClient<object>,
 ): Promise<KeyValueItem[]> => {
-  const {
-    hasUtilizedUnionSickPayRights,
-    unionSickPayEndDate,
-    unionNationalId,
-  } = getApplicationAnswers(answers)
+  const { hasUtilizedUnionSickPayRights, unionSickPayEndDate, unionInfo } =
+    getApplicationAnswers(answers)
 
-  const { data } = await apolloClient.query<SiaUnionsQuery>({
-    query: siaUnionsQuery,
-  })
-  const unionName = data?.socialInsuranceGeneral?.unions?.find(
-    (union) => union?.nationalId === unionNationalId,
-  )?.name
+  const unionName = unionInfo.split('::')[1]
 
   const baseItems: Array<KeyValueItem> = [
     {
@@ -414,6 +404,42 @@ export const rehabilitationPlanItems = (): Array<KeyValueItem> => [
   },
 ]
 
+export const confirmedTreatmentItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.confirmedTreatment
+        .sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmedTreatmentConfirmed,
+  },
+]
+
+export const confirmationOfPendingResolutionItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage
+        .confirmationOfPendingResolution.sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmationOfPendingResolutionConfirmed,
+  },
+]
+
+export const confirmationOfIllHealthItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.confirmationOfIllHealth
+        .sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmationOfIllHealthConfirmed,
+  },
+]
+
 export const selfAssessmentQuestionsOneItems = (
   answers: FormValue,
   externalData: ExternalData,
@@ -447,22 +473,24 @@ export const selfAssessmentQuestionsOneItems = (
 
 export const selfAssessmentQuestionsTwoItems = (
   answers: FormValue,
+  externalData: ExternalData,
+  _userNationalId: string,
+  locale: Locale,
 ): Array<KeyValueItem> => {
   const {
-    currentEmploymentStatus,
-    currentEmploymentStatusAdditional,
+    currentEmploymentStatuses,
+    currentEmploymentStatusExplanation,
     lastEmploymentTitle,
     lastEmploymentYear,
   } = getApplicationAnswers(answers)
 
-  const currentEmploymentStatusOptions =
-    getSelfAssessmentCurrentEmploymentStatusOptions()
+  const employmentStatusesOptions = getEmploymentStatuses(externalData, locale)
 
-  const statuses = currentEmploymentStatus.map((status) => {
-    return currentEmploymentStatusOptions.find(
-      (option) => option.value === status,
-    )?.label
-  })
+  const statuses = currentEmploymentStatuses.map(
+    (status) =>
+      employmentStatusesOptions.find((option) => option.value === status)
+        ?.displayName,
+  )
 
   const baseItems: Array<KeyValueItem> = [
     {
@@ -475,16 +503,14 @@ export const selfAssessmentQuestionsTwoItems = (
   ]
 
   const previousRehabilitationOrTreatmentItems: Array<KeyValueItem> =
-    currentEmploymentStatus?.includes(
-      SelfAssessmentCurrentEmploymentStatus.OTHER,
-    )
+    currentEmploymentStatuses?.includes(CURRENT_EMPLOYMENT_STATUS_OTHER)
       ? [
           {
             width: 'full',
             keyText:
               medicalAndRehabilitationPaymentsFormMessage.selfAssessment
                 .furtherExplanation,
-            valueText: currentEmploymentStatusAdditional,
+            valueText: currentEmploymentStatusExplanation,
           },
         ]
       : []
@@ -594,10 +620,12 @@ export const selfAssessmentQuestionsThreeItems = (
 export const selfAssessmentQuestionnaireItems = (): Array<KeyValueItem> => [
   {
     width: 'full',
-    keyText: medicalAndRehabilitationPaymentsFormMessage.selfAssessment.title,
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .selfAssessmentQuestionnaire,
     valueText:
       medicalAndRehabilitationPaymentsFormMessage.overview
-        .selfAssessmentConfirmed,
+        .selfAssessmentQuestionnaireConfirmed,
   },
 ]
 

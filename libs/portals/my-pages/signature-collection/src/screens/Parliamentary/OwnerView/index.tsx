@@ -65,6 +65,7 @@ const OwnerView = ({
         input: {
           collectionId: currentCollection?.id ?? '',
           listIds: listId,
+          collectionType: collectionType,
         },
       },
     })
@@ -73,10 +74,7 @@ const OwnerView = ({
   return (
     <Stack space={6}>
       <Box>
-        <SignedList
-          currentCollection={currentCollection}
-          collectionType={collectionType}
-        />
+        <SignedList collectionType={collectionType} />
         <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
           <Text variant="h4">{formatMessage(m.myListsDescription) + ' '}</Text>
           {isListHolder &&
