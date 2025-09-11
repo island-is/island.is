@@ -228,10 +228,6 @@ import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-schoo
 import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { LshClientConfig } from '@island.is/clients/lsh'
 import { HmsConfig } from '@island.is/clients/hms'
-import {
-  VmstUnemploymentClientConfig,
-  VmstUnemploymentClientModule,
-} from '@island.is/clients/vmst-unemployment'
 import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import {
@@ -490,7 +486,6 @@ const environment = getConfig
         PaymentsApiModuleConfig,
         VmstUnemploymentClientConfig,
         BankInfoClientConfig,
-        VmstUnemploymentClientConfig,
         LandspitaliApiModuleConfig,
       ],
     }),

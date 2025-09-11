@@ -25,7 +25,7 @@ export const familyInformationSubSection = buildSubSection({
           titleVariant: 'h5',
           marginTop: 0,
           formTitleNumbering: 'none',
-          hideAddItemButton: true,
+          hideAddButton: true,
           fields: {
             name: {
               label: applicantMessages.labels.childName,
