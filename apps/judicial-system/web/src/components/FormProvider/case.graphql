@@ -500,5 +500,6 @@ query Case($input: CaseQueryInput!) {
       closingEntries
       isAttestingWitness
     }
+    courtDocuments
   }
 }
