@@ -2620,6 +2620,8 @@ services-documents:
 services-payments:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/payments'
+    AUDIT_SERVICE_NAME: 'services-payments'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_payments'
