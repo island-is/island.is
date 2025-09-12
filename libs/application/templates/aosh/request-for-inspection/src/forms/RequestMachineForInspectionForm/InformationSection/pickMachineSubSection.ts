@@ -63,7 +63,7 @@ export const pickMachineSubSection = buildSubSection({
           },
         }),
         buildCustomField({
-          id: 'pickMachine',
+          id: 'machine',
           condition: (_, externalData) => {
             const machines = getValueViaPath(
               externalData,

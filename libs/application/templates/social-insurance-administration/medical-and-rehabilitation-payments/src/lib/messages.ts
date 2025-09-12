@@ -984,77 +984,40 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Hver er núverandi staða þín á vinnumarkaði?',
       description: 'What is your current status in the labour market?',
     },
-    neverOption: {
-      id: 'marp.application:self.assessment.never.option',
-      defaultMessage: 'Hef aldrei verið í launuðu starfi',
-      description: 'I have never had a paid job',
-    },
-    selfEmployedOption: {
-      id: 'marp.application:self.assessment.self.employed.option',
-      defaultMessage: 'Sjálfstætt starfandi',
-      description: 'Self-employed',
-    },
-    fullTimeOption: {
-      id: 'marp.application:self.assessment.full.time.option',
-      defaultMessage: 'Launþegi í fullu starfi',
-      description: 'Full-time worker',
-    },
-    partTimeOption: {
-      id: 'marp.application:self.assessment.part.time.option',
-      defaultMessage: 'Launþegi í hlutastarfi',
-      description: 'Part-time worker',
-    },
-    studyingOption: {
-      id: 'marp.application:self.assessment.studying.option',
-      defaultMessage: 'Er í námi',
-      description: 'I am currently studying',
-    },
-    jobSearchRegisteredOption: {
-      id: 'marp.application:self.assessment.job.search.registered.option',
-      defaultMessage: 'Í atvinnuleit (á skrá hjá VMST)',
-      description: 'In job search (registered with VMST)',
-    },
-    jobSearchNotRegisteredOption: {
-      id: 'marp.application:self.assessment.job.search.not.registered.option',
-      defaultMessage: 'Í atvinnuleit (ekki á skrá hjá VMST)',
-      description: 'In job search (not registered with VMST)',
-    },
-    volunteerOrTestWorkOption: {
-      id: 'marp.application:self.assessment.volunteer.or.test.work.option',
-      defaultMessage: 'Í sjálfboðavinnu/vinnuprófun',
-      description: 'In volunteer work/test work',
-    },
-    noParticipationOption: {
-      id: 'marp.application:self.assessment.no.participation.option',
-      defaultMessage:
-        'Engin þátttaka á vinnumarkaði vegna heilsubrests eða fötlunar',
-      description:
-        'No participation in the labour market due to illness or disability',
-    },
-    otherOption: {
-      id: 'marp.application:self.assessment.other.option',
-      defaultMessage: 'Annað',
-      description: 'Other',
-    },
     furtherExplanation: {
       id: 'marp.application:self.assessment.further.explanation',
       defaultMessage: 'Frekari skýring',
       description: 'Further explanation',
     },
-    lastEmployment: {
-      id: 'marp.application:self.assessment.last.employment.title',
+    lastProfessionTitle: {
+      id: 'marp.application:self.assessment.last.profession.title',
       defaultMessage:
         'Skráðu núverandi eða síðasta starfsheiti og ártal þegar þú varst síðast í starfi:',
       description:
         'Enter your current or last job title and the year in which you were last employed:',
     },
-    lastEmploymentYear: {
-      id: 'marp.application:self.assessment.last.employment.year',
+    lastProfessionPlaceholder: {
+      id: 'marp.application:self.assessment.last.profession.placeholder',
+      defaultMessage: 'Veldu starfsheiti',
+      description: 'Select job title',
+    },
+    lastActivityOfProfession: {
+      id: 'marp.application:self.assessment.last.activity.of.profession',
+      defaultMessage: 'Starfsemi starfsgreinar',
+      description: 'Activity of profession',
+    },
+    lastActivityOfProfessionPlaceholder: {
+      id: 'marp.application:self.assessment.last.activity.of.profession.placeholder',
+      defaultMessage: 'Veldu starfsemi starfsgreinar',
+      description: 'Select activity of profession',
+    },
+    lastProfessionYear: {
+      id: 'marp.application:self.assessment.last.profession.year',
       defaultMessage: 'Ártal',
       description: 'Year',
     },
-    lastEmploymentYearPlaceholder: {
-      id: 'marp.application:self.assessment.last.employment.year.placeholder',
+    lastProfessionYearPlaceholder: {
+      id: 'marp.application:self.assessment.last.profession.year.placeholder',
       defaultMessage: 'Veldu ártal',
       description: 'Select year',
     },
@@ -1125,13 +1088,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Þú hefur lokið við að svara spurningalista',
       description: 'You have completed answering the questionnaire',
     },
-    selfAssessmentLastEmploymentTitle: {
-      id: 'marp.application:overiew.self.assessment.last.employment.title',
+    selfAssessmentLastProfessionTitle: {
+      id: 'marp.application:overiew.self.assessment.last.profession.title',
       defaultMessage: 'Núverandi eða síðasta starfsheiti',
       description: 'Current or last job title',
     },
-    selfAssessmentLastEmploymentYear: {
-      id: 'marp.application:overiew.self.assessment.last.employment.year',
+    selfAssessmentLastProfessionYear: {
+      id: 'marp.application:overiew.self.assessment.last.profession.year',
       defaultMessage: 'Ártal þegar þú varst síðast í starfi',
       description: 'Year in which you were last employed',
     },
@@ -1214,6 +1177,13 @@ export const statesMessages = defineMessages({
     description:
       'Your application has been submitted to the Social Insurance Administration',
   },
+  applicationApproved: {
+    id: 'marp.application:application.approved',
+    defaultMessage:
+      'Tryggingastofnun hefur samþykkt umsókn þína um sjúkra- og endurhæfingargreiðslur',
+    description:
+      'Your application for medical and rehabilitation payments has been approved',
+  },
   applicationApprovedDescription: {
     id: 'marp.application:applicationApprovedDescription',
     defaultMessage:
@@ -1235,11 +1205,18 @@ export const statesMessages = defineMessages({
     description:
       'Your application for medical and rehabilitation payments has been dismissed',
   },
+  applicationRejected: {
+    id: 'marp.application:application.rejected',
+    defaultMessage:
+      'Tryggingastofnun hefur hafnað umsókn þinni um sjúkra- og endurhæfingargreiðslur',
+    description:
+      'Tryggingastofnun has rejected your application for medical and rehabilitation payments',
+  },
   applicationRejectedDescription: {
     id: 'marp.application:applicationRejectedDescription',
     defaultMessage:
-      'Umsókn um sjúkra- og endurhæfingargreiðslur hefur verið synjað',
+      'Umsókn um sjúkra- og endurhæfingargreiðslur hefur verið hafnað',
     description:
-      'The application for medical and rehabiliation payments has been rejected',
+      'The application for medical and rehabilitation payments has been rejected',
   },
 })

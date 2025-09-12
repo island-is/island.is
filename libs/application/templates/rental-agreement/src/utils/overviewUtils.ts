@@ -8,6 +8,7 @@ import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import {
   AddressProps,
   ApplicantsInfo,
+  LandlordInfo,
   Files,
   PropertyUnit,
   RentalAmountSection,
@@ -44,7 +45,7 @@ import {
 } from './options'
 
 const formatPartyItems = (
-  items: Array<ApplicantsInfo>,
+  items: Array<ApplicantsInfo | LandlordInfo>,
 ): Array<KeyValueItem> => {
   return (
     items
@@ -80,10 +81,10 @@ export const landlordOverview = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const landlords = getValueViaPath<Array<ApplicantsInfo>>(
+  const landlords = getValueViaPath<Array<LandlordInfo>>(
     answers,
     'parties.landlordInfo.table',
-  )
+  )?.filter((landlord) => !landlord.isRepresentative.includes('✔️'))
 
   if (!landlords) {
     return []
@@ -98,10 +99,10 @@ export const landlordRepresentativeOverview = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const landlordsRepresentatives = getValueViaPath<Array<ApplicantsInfo>>(
+  const landlordsRepresentatives = getValueViaPath<Array<LandlordInfo>>(
     answers,
-    'parties.landlordInfo.representativeTable',
-  )
+    'parties.landlordInfo.table',
+  )?.filter((landlord) => landlord.isRepresentative.includes('✔️'))
 
   if (!landlordsRepresentatives) {
     return []
@@ -663,20 +664,24 @@ export const rentalPropertyOverview = (
       'registerProperty.searchresults.units',
     ) ?? []
 
-  const unitIdsAsString = units
-    ?.map((unit) => `F${unit.propertyCode}`)
-    .join(', ')
-
+  const uniqueUnitIds = new Set(units.map((unit) => unit.propertyCode))
+  const unitIdsAsString = [...uniqueUnitIds].join(', ')
+  const usageUnits = units.map(
+    (unit) => `${unit.propertyUsageDescription} - ${unit.unitCode}`,
+  )
   return [
     {
       width: 'full',
       keyText: searchResults?.label,
-      valueText: {
-        ...m.summary.rentalPropertyId,
-        values: {
-          propertyId: unitIdsAsString,
+      valueText: [
+        {
+          ...m.summary.rentalPropertyId,
+          values: {
+            propertyId: unitIdsAsString,
+          },
         },
-      },
+        ...usageUnits,
+      ],
     },
   ]
 }

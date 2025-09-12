@@ -10,6 +10,7 @@ export const GetListById = gql`
         name
         min
         max
+        collectionId
       }
       endTime
       startTime
@@ -28,6 +29,7 @@ export const GetListById = gql`
       collectionId
       slug
       numberOfSignatures
+      collectionType
     }
   }
 `
@@ -60,6 +62,11 @@ export const GetSignedList = gql`
         name
         min
         max
+      }
+      candidate {
+        name
+        ownerName
+        ownerBirthDate
       }
       endTime
       startTime
@@ -94,6 +101,10 @@ export const GetListsForUser = gql`
         name
         min
         max
+      }
+      candidate {
+        ownerName
+        ownerBirthDate
       }
       endTime
       startTime
@@ -158,6 +169,7 @@ export const GetCurrentCollection = gql`
         nationalId
         collectionId
         name
+        hasActiveLists
       }
       isActive
     }

@@ -5,21 +5,23 @@ import { useGetListsForUser, useGetSignedList } from '../../../hooks'
 import { Skeleton } from '../../../lib/skeletons'
 import { sortAlpha } from '@island.is/shared/utils'
 import { m } from '../../../lib/messages'
-import SignedList from '../SignedList'
+import SignedLists from '../SignedLists'
 import {
   SignatureCollection,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
+import format from 'date-fns/format'
 
 const SigneeView = ({
   currentCollection,
-  collectionType,
 }: {
   currentCollection: SignatureCollection
-  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
-  const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
+  const { signedLists, loadingSignedLists } = useGetSignedList(
+    currentCollection?.collectionType,
+  )
+  const collectionType = currentCollection.collectionType
   const { listsForUser, loadingUserLists, getListsForUserError } =
     useGetListsForUser(collectionType, currentCollection?.id)
 
@@ -46,11 +48,8 @@ const SigneeView = ({
           )}
 
           <Box marginTop={[0, 5]}>
-            {/* Signed list */}
-            <SignedList
-              currentCollection={currentCollection}
-              collectionType={collectionType}
-            />
+            {/* Signed list(s) */}
+            <SignedLists signedLists={signedLists ?? []} />
 
             {/* Other available lists */}
             <Box marginTop={[5, 10]}>
@@ -67,13 +66,29 @@ const SigneeView = ({
                       <ActionCard
                         key={list.id}
                         backgroundColor="white"
-                        eyebrow={list.area?.name}
-                        heading={list.title.split(' - ')[0]}
+                        eyebrow={`${formatMessage(m.endTime)} ${format(
+                          new Date(list.endTime),
+                          'dd.MM.yyyy',
+                        )}`}
+                        heading={
+                          collectionType ===
+                          SignatureCollectionCollectionType.LocalGovernmental
+                            ? list.candidate.name
+                            : list.title.split(' - ')[0]
+                        }
                         text={
-                          currentCollection?.collectionType ===
+                          collectionType ===
                           SignatureCollectionCollectionType.Presidential
                             ? formatMessage(m.collectionTitle)
-                            : formatMessage(m.collectionTitleParliamentary)
+                            : collectionType ===
+                              SignatureCollectionCollectionType.Parliamentary
+                            ? formatMessage(m.collectionTitleParliamentary)
+                            : `${formatMessage(
+                                m.collectionMunicipalListOwner,
+                              )}: ${list.candidate?.ownerName ?? ''} (${format(
+                                new Date(list.candidate?.ownerBirthDate),
+                                'dd.MM.yyyy',
+                              )})`
                         }
                         cta={
                           new Date(list.endTime) > new Date() &&

@@ -32,13 +32,13 @@ import {
   getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
   isFirstApplication,
-  SelfAssessmentCurrentEmploymentStatus,
+  OTHER,
   shouldShowCalculatedRemunerationDate,
-  shouldShowIsStudyingFields,
-  shouldShowPreviousRehabilitationOrTreatmentFields,
   shouldShowConfirmationOfIllHealth,
   shouldShowConfirmationOfPendingResolution,
   shouldShowConfirmedTreatment,
+  shouldShowIsStudyingFields,
+  shouldShowPreviousRehabilitationOrTreatmentFields,
   shouldShowRehabilitationPlan,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
@@ -418,10 +418,13 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     unionInfo,
     comment,
     questionnaire,
-    currentEmploymentStatus,
-    currentEmploymentStatusAdditional,
-    lastEmploymentTitle,
-    lastEmploymentYear,
+    currentEmploymentStatuses,
+    currentEmploymentStatusExplanation,
+    lastProfession,
+    lastProfessionDescription,
+    lastActivityOfProfession,
+    lastActivityOfProfessionDescription,
+    lastProfessionYear,
     certificateForSicknessAndRehabilitationReferenceId,
     rehabilitationPlanReferenceId,
     confirmedTreatmentReferenceId,
@@ -511,14 +514,22 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     }),
     preQuestionnaire: {
       highestEducation: educationalLevel || '',
-      currentEmploymentStatus: currentEmploymentStatus?.[0], // TODO: Smári needs to change to an array
-      ...(currentEmploymentStatus?.includes(
-        SelfAssessmentCurrentEmploymentStatus.OTHER,
-      ) && {
-        currentEmploymentStatusExplanation: currentEmploymentStatusAdditional,
+      employmentStatuses: currentEmploymentStatuses.map((status) => ({
+        employmentStatus: status,
+        explanation:
+          status === OTHER ? currentEmploymentStatusExplanation ?? '' : null,
+      })),
+      ...(lastProfession && { lastProfession }),
+      ...(lastProfession === OTHER && {
+        lastProfessionDescription,
       }),
-      ...(lastEmploymentTitle && { lastJobTitle: lastEmploymentTitle }),
-      ...(lastEmploymentYear && { lastJobYear: +lastEmploymentYear }),
+      ...(lastActivityOfProfession && {
+        lastActivityOfProfession,
+      }),
+      ...(lastActivityOfProfession === OTHER && {
+        lastActivityOfProfessionDescription,
+      }),
+      ...(lastProfessionYear && { lastProfessionYear: +lastProfessionYear }),
       disabilityReason: mainProblem || '',
       hasParticipatedInRehabilitationBefore:
         hasPreviouslyReceivedRehabilitationOrTreatment === YES,
