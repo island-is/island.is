@@ -161,7 +161,7 @@ export const disabilityPensionFormMessage: MessageDir = {
     informationIncapacitatedDate: {
       id: 'dp.application:disability.pension.certificate.information.incapacitated.date',
       defaultMessage:
-        'Dagsetning þegar umsækjandi varð óvinnufær að hluta eða öllu leiti vegna núverandi heilsubrests',
+        'Dagsetning þegar umsækjandi varð óvinnufær að hluta eða öllu leyti vegna núverandi heilsubrests',
       description:
         'Date when the applicant became incapacitated due to current health problems',
     },
@@ -1172,7 +1172,7 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     previousEmploymentField: {
       id: 'dp.application:selfEvaluation.questions.previousEmployment.field',
-      defaultMessage: 'Hverskonar starfsemi fer aðallega fram þar?',
+      defaultMessage: 'Hvers konar starfsemi fer aðallega fram þar?',
       description: 'What kind of industry?',
     },
     chooseProfessionActivity: {
