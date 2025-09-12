@@ -11,7 +11,7 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          { transaction: t}
+          { transaction: t },
         ),
         queryInterface.addColumn(
           'state_history',
@@ -20,7 +20,7 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          { transaction: t}
+          { transaction: t },
         ),
       ]),
     )
@@ -33,12 +33,12 @@ module.exports = {
           'state_history',
           'exit_event_subject_national_id',
         ),
-        { transaction: t},
+        { transaction: t },
         queryInterface.removeColumn(
           'state_history',
           'exit_event_actor_national_id',
         ),
-        { transaction: t},
+        { transaction: t },
       ]),
     )
   },
