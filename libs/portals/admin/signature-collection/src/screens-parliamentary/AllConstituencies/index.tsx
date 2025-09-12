@@ -118,7 +118,8 @@ const ParliamentaryRoot = () => {
                     }}
                     tag={
                       (areaLists.length === 0 && !collection.isActive) ||
-                      areaLists.every((l) => l.reviewed)
+                      (areaLists.length > 0 &&
+                        areaLists.every((l) => l.reviewed))
                         ? {
                             label: formatMessage(m.confirmListReviewed),
                             variant: 'mint',

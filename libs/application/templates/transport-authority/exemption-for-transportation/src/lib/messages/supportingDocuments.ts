@@ -4,19 +4,19 @@ export const supportingDocuments = {
   general: defineMessages({
     sectionTitle: {
       id: 'ta.eft.application:supportingDocuments.general.sectionTitle',
-      defaultMessage: 'Fylgigögn',
+      defaultMessage: 'Athugasemdir og fylgigögn',
       description: 'Title of supporting documents section',
     },
     pageTitle: {
       id: 'ta.eft.application:supportingDocuments.general.pageTitle',
-      defaultMessage: 'Fylgigögn',
+      defaultMessage: 'Athugasemdir og fylgigögn',
       description: 'Title of supporting documents page',
     },
   }),
   labels: defineMessages({
     fileUploadHeader: {
       id: 'ta.eft.application:supportingDocuments.labels.fileUploadHeader',
-      defaultMessage: 'Dragðu inn fylgisköl, sem dæmi umsögn byggingafulltrúa',
+      defaultMessage: 'Dragðu inn fylgiskjöl, sem dæmi umsögn byggingafulltrúa',
       description: 'Supporting documents file upload header',
     },
     fileUploadDescription: {
