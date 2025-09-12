@@ -14,9 +14,21 @@ export class PostVehicleBulkMileageInput {
 export class PostVehicleBulkMileageSingleInput {
   @Field()
   @IsString()
-  vehicleId!: string
+  permno!: string
 
   @Field()
   @IsInt()
-  mileageNumber!: number
+  mileage!: number
+}
+
+@InputType()
+export class PostVehicleBulkMileageFileInput {
+  @Field({ description: 'Example: "ISLAND.IS"' })
+  originCode!: string
+
+  @Field(() => String)
+  fileUrl!: string
+
+  @Field(() => String, { nullable: true })
+  fileType?: 'csv' | 'xlsx'
 }

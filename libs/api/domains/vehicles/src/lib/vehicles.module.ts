@@ -11,6 +11,7 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { BulkMileageService } from './services/bulkMileage.service'
 import { VehiclesV3Resolver } from './resolvers/vehicleV3.resolver'
 import { VehiclesBulkMileageResolver } from './resolvers/bulkMileage.resolver'
+import { FileStorageModule } from '@island.is/file-storage'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 @Module({
@@ -29,6 +30,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
     AuthModule,
     CmsTranslationsModule,
     FeatureFlagModule,
+    FileStorageModule,
   ],
   exports: [VehiclesService],
 })
