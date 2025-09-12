@@ -1,5 +1,3 @@
-const isProduction = process.env.NODE_ENV === 'production'
-
 export const environment = {
   chargeFjs: {
     systemId: 'ISL',
