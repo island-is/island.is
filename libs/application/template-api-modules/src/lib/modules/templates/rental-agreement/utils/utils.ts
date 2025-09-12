@@ -31,6 +31,7 @@ export const mapPersonToArray = (person: ApplicantsInfo) => {
     email: person.email,
     phone: formatPhoneNumber(person.phone),
     address: person.address,
+    isRepresentative: person.isRepresentative,
   }
 }
 

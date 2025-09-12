@@ -99,6 +99,11 @@ export const landlordAndTenantDetails = defineMessages({
     defaultMessage: 'Hætta við',
     description: 'Cancel button text',
   },
+  representativeLabel: {
+    id: 'ra.application:landlordAndTenantDetails.representativeLabel',
+    defaultMessage: 'Umboðsaðili',
+    description: 'Representative label',
+  },
 
   // Error messages
   nationalIdError: {

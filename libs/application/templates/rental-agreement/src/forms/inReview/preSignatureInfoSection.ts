@@ -42,7 +42,11 @@ export const PreSignatureInfoSection = buildSection({
               application.answers,
             )
 
-            const signees = [...(landlords ?? []), ...(tenants ?? [])]
+            const signees = [
+              ...(landlords.filter((landlord) => !landlord.isRepresentative) ??
+                []),
+              ...(tenants ?? []),
+            ]
 
             return signees.map((person) => [
               person.nationalIdWithName.name ?? '',

@@ -145,6 +145,14 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
     type: 'email',
     width: 'half',
   },
+  isRepresentative: {
+    component: 'checkbox',
+    label: m.landlordAndTenantDetails.representativeLabel,
+    width: 'half',
+    options: [
+      { label: m.landlordAndTenantDetails.representativeLabel, value: '✔️' },
+    ],
+  },
 }
 
 export const applicantTableConfig = {
@@ -159,6 +167,21 @@ export const applicantTableConfig = {
     m.landlordAndTenantDetails.emailInputLabel,
   ],
   rows: ['name', 'phone', 'nationalId', 'email'],
+}
+
+export const landlordTableConfig = {
+  format: {
+    phone: (value: string) => value && formatPhoneNumber(value),
+    nationalId: (value: string) => value && formatNationalId(value),
+  },
+  header: [
+    m.landlordAndTenantDetails.nameInputLabel,
+    m.landlordAndTenantDetails.phoneInputLabel,
+    m.landlordAndTenantDetails.nationalIdHeaderLabel,
+    m.landlordAndTenantDetails.emailInputLabel,
+    m.landlordAndTenantDetails.representativeLabel,
+  ],
+  rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
 }
 
 export const toISK = (v: unknown): number => {

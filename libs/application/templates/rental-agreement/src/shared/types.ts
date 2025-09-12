@@ -16,6 +16,15 @@ export type ApplicantsInfo = {
   phone: string
   address: string
   email: string
+  isRepresentative?: boolean
+}
+
+export type LandlordInfo = {
+  nationalIdWithName: { name: string; nationalId: string }
+  phone: string
+  address: string
+  email: string
+  isRepresentative: Array<string>
 }
 
 export type CostField = {
@@ -111,7 +120,6 @@ export interface AddressProps {
 
 export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
-  landlordRepresentatives: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
 }
 
