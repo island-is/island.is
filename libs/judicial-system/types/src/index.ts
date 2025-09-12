@@ -17,7 +17,17 @@ export {
   VerdictAppealDecision,
   InformationForDefendant,
   informationForDefendantMap,
+  mapPoliceVerdictDeliveryStatus,
 } from './lib/verdict'
+
+export {
+  isSubpoenaInfoChanged,
+  isVerdictInfoChanged,
+} from './lib/policeDocument'
+export type {
+  SubpoenaPoliceDocumentInfo,
+  VerdictPoliceDocumentInfo,
+} from './lib/policeDocument'
 
 export {
   InstitutionType,

@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from 'react'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Lawyer } from '@island.is/judicial-system/types'
 
 import { Defendant, Verdict, VerdictServiceStatus } from '../../graphql/schema'
+import useVerdict from '../../utils/hooks/useVerdict'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 
 const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
@@ -58,6 +59,17 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
             : ''
         }`,
       ]
+    case VerdictServiceStatus.NOT_APPLICABLE:
+      return [
+        `Dómur birtur ${
+          verdict.serviceDate
+            ? ` - ${formatDate(verdict.serviceDate)} kl. ${formatDate(
+                verdict.serviceDate,
+                TIME_FORMAT,
+              )}`
+            : ''
+        }`,
+      ]
     default:
       return [
         `Dómur fór í birtingu ${
@@ -71,18 +83,76 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
       ]
   }
 }
-
-const VerdictStatusAlert = ({
+const VerdictStatusAlertMessage = ({
+  defendantName,
   verdict,
-  defendant,
+  lawyer,
 }: {
+  defendantName?: string
+  verdict: Verdict
+  lawyer?: Lawyer
+}) => {
+  const messages = verdict ? mapServiceStatusMessages(verdict, lawyer) : []
+
+  const isDeprecatedVerdict =
+    verdict?.serviceStatus === VerdictServiceStatus.NOT_APPLICABLE &&
+    !verdict.serviceDate
+  if (isDeprecatedVerdict) return null
+
+  const isServed = Boolean(verdict?.serviceDate && verdict?.serviceStatus)
+  if (isServed) {
+    return (
+      <AlertMessage
+        type="success"
+        title={`Birting tókst - ${defendantName}`}
+        message={
+          <Box>
+            {messages.map((msg) => (
+              <Text variant="small" key={`${msg}-${verdict.created}`}>
+                {msg}
+              </Text>
+            ))}
+          </Box>
+        }
+      />
+    )
+  }
+
+  if (verdict.legalPaperRequestDate) {
+    return (
+      <AlertMessage
+        type="info"
+        title={`Dómur sendur í Lögbirtingarblaðið - ${defendantName}`}
+        message={`Dómur sendur ${formatDate(
+          verdict.legalPaperRequestDate,
+        )} kl. ${formatDate(verdict.legalPaperRequestDate, TIME_FORMAT)}`}
+      />
+    )
+  }
+
+  if (!verdict.externalPoliceDocumentId) {
+    return (
+      <AlertMessage
+        type="info"
+        title="Dómur er í birtingarferli"
+        message={`Dómur fór í birtingu ${formatDate(
+          verdict.created, // TODO: replace this date with a correct delivery date
+        )} kl. ${formatDate(verdict.created, TIME_FORMAT)}`}
+      />
+    )
+  }
+
+  return null
+}
+
+const VerdictStatusAlert = (props: {
   verdict: Verdict
   defendant: Defendant
 }) => {
+  const { verdict: currentVerdict, defendant } = props
   const [lawyer, setLawyer] = useState<Lawyer>()
   const { lawyers } = useContext(LawyerRegistryContext)
-  const messages = mapServiceStatusMessages(verdict, lawyer)
-  const isServed = verdict.serviceDate && verdict.serviceStatus
+  const { verdict, verdictLoading } = useVerdict(currentVerdict)
 
   useEffect(() => {
     if (
@@ -101,49 +171,25 @@ const VerdictStatusAlert = ({
     )
   }, [lawyers, verdict?.defenderNationalId, verdict?.serviceStatus])
 
-  if (isServed) {
-    return (
+  return verdictLoading ? (
+    <Box display="flex" justifyContent="center" paddingY={5}>
+      <LoadingDots />
+    </Box>
+  ) : !verdict ? (
+    <Box marginBottom={2}>
       <AlertMessage
-        type="success"
-        title={`Birting tókst - ${defendant.name}`}
-        message={
-          <Box>
-            {messages.map((msg) => (
-              <Text variant="small" key={`${msg}-${verdict.created}`}>
-                {msg}
-              </Text>
-            ))}
-          </Box>
-        }
+        type="error"
+        title={'Ekki tókst að sækja stöðu birtingar'}
+        message={'Vinsamlegast reyndu aftur síðar'}
       />
-    )
-  }
-
-  if (verdict.legalPaperRequestDate) {
-    return (
-      <AlertMessage
-        type="info"
-        title={`Dómur sendur í Lögbirtingarblaðið - ${defendant.name}`}
-        message={`Dómur sendur ${formatDate(
-          verdict.legalPaperRequestDate,
-        )} kl. ${formatDate(verdict.legalPaperRequestDate, TIME_FORMAT)}`}
-      />
-    )
-  }
-
-  if (!verdict.externalPoliceDocumentId) {
-    return (
-      <AlertMessage
-        type="info"
-        title="Dómur er í birtingarferli"
-        message={`Dómur fór í birtingu ${formatDate(
-          verdict.created,
-        )} kl. ${formatDate(verdict.created, TIME_FORMAT)}`}
-      />
-    )
-  }
-
-  return null
+    </Box>
+  ) : (
+    <VerdictStatusAlertMessage
+      verdict={verdict}
+      lawyer={lawyer}
+      defendantName={defendant.name ?? ''}
+    />
+  )
 }
 
 export default VerdictStatusAlert
