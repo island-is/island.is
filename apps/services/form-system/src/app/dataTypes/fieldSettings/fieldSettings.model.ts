@@ -7,7 +7,6 @@ import {
   IsOptional,
   IsString,
   ValidateNested,
-  IsNumberString,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ListTypesEnum } from '@island.is/form-system/shared'
