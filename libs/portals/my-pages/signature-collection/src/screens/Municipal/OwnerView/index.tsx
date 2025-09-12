@@ -26,7 +26,6 @@ const OwnerView = ({
     collectionType,
     '',
   )
-
   const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
 
   return (
