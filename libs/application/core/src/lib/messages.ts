@@ -1161,4 +1161,9 @@ export const corePendingActionMessages = defineMessages({
     defaultMessage: 'Beðið er eftir þínu samþykki á þessa umsókn',
     description: 'Pending action you need to review description',
   },
+  whoNeedsToReviewDescription: {
+    id: 'application.system:core.pendingAction.whoNeedsToReviewDescription',
+    defaultMessage: 'Beðið er eftir samþykki frá eftirfarandi aðilum: {value}',
+    description: 'Pending action list up who needs to review description',
+  },
 })
