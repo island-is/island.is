@@ -1,4 +1,4 @@
-import { coreMessages, YES } from '@island.is/application/core'
+import { coreMessages} from '@island.is/application/core'
 import { Application, Field, RecordObject } from '@island.is/application/types'
 import {
   Box,
@@ -10,7 +10,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../utils'
 import { SectionRouteEnum } from '../../../types'
 
 interface SelfEvaluationReviewProps {
@@ -21,7 +20,7 @@ interface SelfEvaluationReviewProps {
   errors?: RecordObject
 }
 export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
-  application,
+  //application,
   goToScreen,
 }) => {
   const { formatMessage } = useLocale()

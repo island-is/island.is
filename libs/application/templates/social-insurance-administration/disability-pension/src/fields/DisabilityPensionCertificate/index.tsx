@@ -27,7 +27,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
 
-  const { data, loading, error } =
+  const { data, loading } =
     useQuery<SiaDisabilityPensionCertificateQuery>(
       siaDisabilityPensionCertificate,
     )

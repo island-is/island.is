@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
-import { getMonths, getYears } from '../../../../utils/dates'
+import { getYears } from '../../../../utils/dates'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const disabilityPeriodFields = buildMultiField({

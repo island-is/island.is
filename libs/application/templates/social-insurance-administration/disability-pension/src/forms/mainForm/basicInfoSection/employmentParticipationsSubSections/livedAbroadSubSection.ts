@@ -12,7 +12,6 @@ import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
 import { SectionRouteEnum } from '../../../../types'
 import { getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
-import { count } from 'rxjs'
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(
