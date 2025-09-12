@@ -62,6 +62,8 @@ ingress:
 namespace: 'services-payment-flow-update-handler'
 podDisruptionBudget:
   maxUnavailable: 1
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 3
@@ -80,3 +82,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-payment-flow-update-handler'
+  create: true
+  name: 'services-payment-flow-update-handler'
