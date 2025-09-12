@@ -46,4 +46,34 @@ describe('New Primary School Template', () => {
     expect(hasChanged).toBe(true)
     expect(newState).toBe('submitted')
   })
+
+  it('should transition from submitted to approved on inreview', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: 'submitted',
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.APPROVE,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe('approved')
+  })
+
+  it('should transition from submitted to rejected on inreview', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: 'submitted',
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.REJECT,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe('rejected')
+  })
 })
