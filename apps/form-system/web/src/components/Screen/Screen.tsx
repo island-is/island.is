@@ -1,29 +1,31 @@
-import { Box, GridColumn, Text } from '@island.is/island-ui/core'
-import { Footer } from '../Footer/Footer'
-import { useApplicationContext } from '../../context/ApplicationProvider'
-import { SectionTypes } from '@island.is/form-system/ui'
-import { ExternalData } from './components/ExternalData/ExternalData'
-import { Summary } from './components/Summary/Summary'
-import { Completed } from './components/Completed/Completed'
-import { Field } from './components/Field/Field'
-import { useState } from 'react'
-import { useLocale } from '@island.is/localization'
-import { Applicants } from './components/Applicants/Applicants'
 import { FormSystemField } from '@island.is/api/schema'
+import { m, SectionTypes } from '@island.is/form-system/ui'
+import { Box, GridColumn, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { useState } from 'react'
+import { useApplicationContext } from '../../context/ApplicationProvider'
+import { Footer } from '../Footer/Footer'
+import { Applicants } from './components/Applicants/Applicants'
+import { Completed } from './components/Completed/Completed'
+import { ExternalData } from './components/ExternalData/ExternalData'
+import { Field } from './components/Field/Field'
+import { Summary } from './components/Summary/Summary'
 
 export const Screen = () => {
   const { state } = useApplicationContext()
-  const { lang } = useLocale()
+  const { lang, formatMessage } = useLocale()
   const { currentSection, currentScreen } = state
-  const screenTitle = currentScreen
-    ? currentScreen.data?.name?.[lang]
-    : state.sections?.[currentSection.index]?.name?.[lang]
+
+  const screenTitle =
+    currentScreen?.data?.name?.[lang] ??
+    (currentSection?.data?.sectionType === SectionTypes.COMPLETED
+      ? formatMessage(m.completedHeader)
+      : state.sections?.[currentSection?.index]?.name?.[lang] ?? '')
+
   const currentSectionType = state.sections?.[currentSection.index]?.sectionType
   const [externalDataAgreement, setExternalDataAgreement] = useState(
     state.sections?.[0].isCompleted ?? false,
   )
-
-  // console.log('currentScreen', currentScreen)
 
   return (
     <Box
