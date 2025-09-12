@@ -1,6 +1,5 @@
 import { Base64 } from 'js-base64'
-import { Includeable } from 'sequelize'
-import { Transaction } from 'sequelize/types'
+import { Includeable, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -25,6 +24,7 @@ import {
   CaseFileCategory,
   HashAlgorithm,
   isFailedServiceStatus,
+  isSubpoenaInfoChanged,
   isSuccessfulServiceStatus,
   ServiceStatus,
   SubpoenaNotificationType,
@@ -38,7 +38,7 @@ import { CourtDocumentFolder, CourtService } from '../court'
 import { DefendantService } from '../defendant/defendant.service'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
+import { PoliceDocumentType, PoliceService } from '../police'
 import { Case, Defendant, Institution, Subpoena, User } from '../repository'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
@@ -68,27 +68,6 @@ export const include: Includeable[] = [
   },
   { model: Defendant, as: 'defendant' },
 ]
-
-const subpoenaInfoKeys: Array<keyof SubpoenaInfo> = [
-  'serviceStatus',
-  'comment',
-  'servedBy',
-  'defenderNationalId',
-  'serviceDate',
-]
-
-const isNewValueSetAndDifferent = (
-  newValue: unknown,
-  oldValue: unknown,
-): boolean => Boolean(newValue) && newValue !== oldValue
-
-export const isSubpoenaInfoChanged = (
-  newSubpoenaInfo: SubpoenaInfo,
-  oldSubpoenaInfo: SubpoenaInfo,
-) =>
-  subpoenaInfoKeys.some((key) =>
-    isNewValueSetAndDifferent(newSubpoenaInfo[key], oldSubpoenaInfo[key]),
-  )
 
 @Injectable()
 export class SubpoenaService {

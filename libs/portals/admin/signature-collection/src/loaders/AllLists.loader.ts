@@ -1,5 +1,6 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import {
+  CollectionStatus,
   SignatureCollection,
   SignatureCollectionCollectionType,
   SignatureCollectionList,
@@ -15,18 +16,14 @@ import {
 
 export interface ListsLoaderReturn {
   allLists: SignatureCollectionList[]
-  collectionStatus: string
+  collectionStatus: CollectionStatus
   collection: SignatureCollection
 }
 
 const createListsLoader =
   (collectionType: SignatureCollectionCollectionType): WrappedLoaderFn =>
   ({ client }) => {
-    return async (): Promise<{
-      allLists: SignatureCollectionList[]
-      collectionStatus: string
-      collection: SignatureCollection
-    }> => {
+    return async (): Promise<ListsLoaderReturn> => {
       const { data: collectionStatusData } =
         await client.query<CollectionQuery>({
           query: CollectionDocument,
