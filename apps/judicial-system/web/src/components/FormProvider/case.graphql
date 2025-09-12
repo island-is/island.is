@@ -499,7 +499,9 @@ query Case($input: CaseQueryInput!) {
       ruling
       closingEntries
       isAttestingWitness
+      filedDocuments {
+        id
+      }
     }
-    courtDocuments
   }
 }
