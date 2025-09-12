@@ -281,21 +281,24 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             }
           </Text>
         </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .physicalImpairmentExplanation,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.physicalDifficulty?.explanation
-            }
-          </Text>
-        </GridColumn>
+        {data?.socialInsuranceCertificateForSicknessAndRehabilitation
+          ?.physicalDifficulty?.explanation && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage
+                  .certificateForSicknessAndRehabilitation
+                  .physicalImpairmentExplanation,
+              )}
+            </Label>
+            <Text>
+              {
+                data?.socialInsuranceCertificateForSicknessAndRehabilitation
+                  ?.physicalDifficulty?.explanation
+              }
+            </Text>
+          </GridColumn>
+        )}
       </GridRow>
     </Stack>
   )
@@ -335,21 +338,24 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             }
           </Text>
         </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .mentalImpairmentExplanation,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.mentalDifficulty?.explanation
-            }
-          </Text>
-        </GridColumn>
+        {data?.socialInsuranceCertificateForSicknessAndRehabilitation
+          ?.mentalDifficulty?.explanation && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage
+                  .certificateForSicknessAndRehabilitation
+                  .mentalImpairmentExplanation,
+              )}
+            </Label>
+            <Text>
+              {
+                data?.socialInsuranceCertificateForSicknessAndRehabilitation
+                  ?.mentalDifficulty?.explanation
+              }
+            </Text>
+          </GridColumn>
+        )}
       </GridRow>
     </Stack>
   )
@@ -391,21 +397,24 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             }
           </Text>
         </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .activityAndParticipationImpairmentExplanation,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.activityParticipationDifficulty?.explanation
-            }
-          </Text>
-        </GridColumn>
+        {data?.socialInsuranceCertificateForSicknessAndRehabilitation
+          ?.activityParticipationDifficulty?.explanation && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage
+                  .certificateForSicknessAndRehabilitation
+                  .activityAndParticipationImpairmentExplanation,
+              )}
+            </Label>
+            <Text>
+              {
+                data?.socialInsuranceCertificateForSicknessAndRehabilitation
+                  ?.activityParticipationDifficulty?.explanation
+              }
+            </Text>
+          </GridColumn>
+        )}
       </GridRow>
     </Stack>
   )

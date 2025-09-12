@@ -64,6 +64,7 @@ class Confirmation {
   progress?: string
 }
 
+
 @ObjectType(
   'SocialInsuranceMedicalDocumentsCertificateForSicknessAndRehabilitation',
 )
