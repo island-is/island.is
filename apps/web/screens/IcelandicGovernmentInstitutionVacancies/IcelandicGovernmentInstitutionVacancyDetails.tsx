@@ -305,33 +305,31 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
 
           {vacancy?.contacts && vacancy.contacts.length > 0 && (
             <Stack space={2}>
-              {vacancy.contacts
-                .concat(vacancy.contacts)
-                .map((contact, index) => (
-                  <Box className="rs_read" key={index}>
-                    <Text>{contact.name ?? ''}</Text>
-                    {contact.jobTitle && <Text>{contact.jobTitle}</Text>}
-                    {contact.email && (
-                      <Text>
-                        {n('email', 'Tölvupóstur:')}{' '}
-                        <LinkV2
-                          underlineVisibility="always"
-                          underline="normal"
-                          color="blue400"
-                          href={`mailto:${contact.email}`}
-                        >
-                          {contact.email}
-                        </LinkV2>
-                      </Text>
-                    )}
+              {vacancy.contacts.map((contact, index) => (
+                <Box className="rs_read" key={index}>
+                  <Text>{contact.name ?? ''}</Text>
+                  {contact.jobTitle && <Text>{contact.jobTitle}</Text>}
+                  {contact.email && (
+                    <Text>
+                      {n('email', 'Tölvupóstur:')}{' '}
+                      <LinkV2
+                        underlineVisibility="always"
+                        underline="normal"
+                        color="blue400"
+                        href={`mailto:${contact.email}`}
+                      >
+                        {contact.email}
+                      </LinkV2>
+                    </Text>
+                  )}
 
-                    {contact.phone && (
-                      <Text>
-                        {n('telephone', 'Sími:')} {contact.phone}
-                      </Text>
-                    )}
-                  </Box>
-                ))}
+                  {contact.phone && (
+                    <Text>
+                      {n('telephone', 'Sími:')} {contact.phone}
+                    </Text>
+                  )}
+                </Box>
+              ))}
             </Stack>
           )}
 
