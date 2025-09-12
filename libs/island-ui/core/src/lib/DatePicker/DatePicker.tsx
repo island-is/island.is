@@ -72,7 +72,13 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   readOnly = false,
   calendarStartDay = 0,
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
+  const isValidDate = (d: unknown): d is Date =>
+    d instanceof Date && !isNaN((d as Date).getTime())
+  const normalizeDate = (d?: Date | null) => (d && isValidDate(d) ? d : null)
+
+  const [startDate, setStartDate] = useState<Date | null>(
+    normalizeDate(selected) ?? null,
+  )
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
@@ -94,7 +100,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   }, [locale])
 
   useEffect(() => {
-    setStartDate(selected ?? null)
+    setStartDate(normalizeDate(selected) ?? null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected])
 
   return (
@@ -116,7 +123,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           id={id}
           name={name}
           disabled={disabled}
-          selected={startDate ?? selected}
+          selected={normalizeDate(startDate ?? selected) ?? null}
           locale={currentLanguage.locale}
           minDate={minDate}
           maxDate={maxDate}
@@ -136,9 +143,15 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             setDatePickerState('closed')
             handleCloseCalendar && handleCloseCalendar(startDate)
           }}
-          onChange={(date: Date) => {
-            setStartDate(date)
-            handleChange && handleChange(date)
+          onChange={(date: Date | null) => {
+            if (date === null) {
+              setStartDate(null)
+              return
+            }
+            if (date instanceof Date && !isNaN(date.getTime())) {
+              setStartDate(date)
+              handleChange && handleChange(date)
+            }
           }}
           startDate={startDate}
           required={required}

@@ -86,6 +86,9 @@ export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
           calendarStartDay={calendarStartDay}
           handleChange={(date) => {
             clearErrors(id)
+            if (!(date instanceof Date) || isNaN(date.getTime())) {
+              return
+            }
             const newVal = format(date, df)
             onControllerChange(newVal)
             setValue(name, newVal)
