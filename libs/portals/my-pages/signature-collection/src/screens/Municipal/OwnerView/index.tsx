@@ -4,35 +4,35 @@ import { m } from '../../../lib/messages'
 import Managers from '../../shared/Managers'
 import {
   SignatureCollection,
-  SignatureCollectionCollectionType,
   SignatureCollectionList,
 } from '@island.is/api/schema'
-import { useGetListsForOwner } from '../../../hooks'
+import { useGetListsForOwner, useGetSignedList } from '../../../hooks'
 import { useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
-import SignedList from '../../shared/SignedList'
+import SignedLists from '../../shared/SignedLists'
 import { Skeleton } from '../../../lib/skeletons'
+import format from 'date-fns/format'
 
 const OwnerView = ({
   currentCollection,
-  collectionType,
 }: {
   currentCollection: SignatureCollection
-  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
+  const collectionType = currentCollection?.collectionType ?? ''
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
     collectionType,
     '',
   )
+  const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
 
   return (
     <Box>
-      {!loadingOwnerLists ? (
+      {!loadingOwnerLists && !loadingSignedLists ? (
         <Stack space={8}>
-          <SignedList collectionType={collectionType} />
+          <SignedLists signedLists={signedLists ?? []} />
           <Box>
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.myListsDescription)}
@@ -41,13 +41,16 @@ const OwnerView = ({
               <Box key={list.id} marginTop={3}>
                 <ActionCard
                   backgroundColor="white"
-                  heading={list.title}
+                  heading={list.candidate.name ?? ''}
                   progressMeter={{
                     currentProgress: list.numberOfSignatures || 0,
                     maxProgress: list.area?.min,
                     withLabel: true,
                   }}
-                  eyebrow={list.area.name}
+                  eyebrow={`${formatMessage(m.endTime)} ${format(
+                    new Date(list.endTime),
+                    'dd.MM.yyyy',
+                  )}`}
                   cta={
                     list.active
                       ? {

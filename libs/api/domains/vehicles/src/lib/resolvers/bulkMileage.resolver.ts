@@ -10,7 +10,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
-import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
+import { PostVehicleBulkMileageFileInput } from '../dto/postBulkVehicleMileage.input'
 import { BulkMileageService } from '../services/bulkMileage.service'
 import { VehiclesBulkMileageReadingResponse } from '../models/v3/bulkMileage/bulkMileageReadingResponse.model'
 import { VehiclesBulkMileageRegistrationRequestOverview } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestOverview.model'
@@ -67,14 +67,14 @@ export class VehiclesBulkMileageResolver {
   }
 
   @Mutation(() => VehiclesBulkMileageReadingResponse, {
-    name: 'vehicleBulkMileagePost',
     nullable: true,
+    name: 'vehicleBulkMileagePostFile',
   })
-  @Audit()
-  postBulkMileageReading(
-    @Args('input') input: PostVehicleBulkMileageInput,
+  async postBulkMileageFile(
+    @Args('input', { type: () => PostVehicleBulkMileageFileInput })
+    input: PostVehicleBulkMileageFileInput,
     @CurrentUser() user: User,
   ) {
-    return this.bulkService.postBulkMileageReading(user, input)
+    return await this.bulkService.postBulkMileageFile(user, input)
   }
 }
