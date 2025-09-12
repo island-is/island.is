@@ -15,6 +15,14 @@ export const supportingDocumentsSection = buildSection({
       id: 'supportingDocumentsMultiField',
       title: supportingDocuments.general.pageTitle,
       children: [
+        // Comments
+        buildTextField({
+          id: 'supportingDocuments.comments',
+          variant: 'textarea',
+          rows: 5,
+          title: supportingDocuments.labels.comments,
+        }),
+
         // Supporting documents
         buildFileUploadField({
           id: 'supportingDocuments.files',
@@ -28,14 +36,6 @@ export const supportingDocumentsSection = buildSection({
             values: { allowedTypes: FILE_TYPES_ALLOWED },
           },
           uploadButtonLabel: supportingDocuments.labels.fileUploadButtonLabel,
-        }),
-
-        // Comments
-        buildTextField({
-          id: 'supportingDocuments.comments',
-          variant: 'textarea',
-          rows: 5,
-          title: supportingDocuments.labels.comments,
         }),
       ],
     }),

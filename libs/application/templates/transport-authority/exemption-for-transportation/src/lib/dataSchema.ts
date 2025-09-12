@@ -293,6 +293,13 @@ const FreightPairingSchema = z
           })
         }
       })
+      if (!item.exemptionFor?.length) {
+        ctx.addIssue({
+          path: ['items', index, 'exemptionFor'],
+          code: z.ZodIssueCode.custom,
+          params: coreErrorMessages.defaultError,
+        })
+      }
     })
   })
 

@@ -20,7 +20,7 @@ export const ConvoyShortTermMultiField = buildMultiField({
   id: 'convoyShortTermMultiField',
   condition: checkIfExemptionTypeShortTerm,
   title: convoy.general.pageTitle,
-  description: convoy.general.description,
+  description: convoy.general.descriptionShortTerm,
   children: [
     buildHiddenInput({
       id: `convoy.items.${convoyIndex}.convoyId`,

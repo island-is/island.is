@@ -23,7 +23,7 @@ export const FreightLongTermCreateSubSection = buildSubSection({
     buildMultiField({
       id: 'freightLongTermCreateMultiField',
       title: freight.create.pageTitle,
-      description: freight.create.description,
+      description: freight.create.descriptionLongTerm,
       children: [
         ...FreightCommonHiddenInputs('freight'),
         buildTableRepeaterField({

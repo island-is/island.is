@@ -25,7 +25,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
   id: 'freightShortTermCreateMultiField',
   condition: checkIfExemptionTypeShortTerm,
   title: freight.create.pageTitle,
-  description: freight.create.description,
+  description: freight.create.descriptionShortTerm,
   children: [
     ...FreightCommonHiddenInputs('freight'),
     ...FreightCommonHiddenInputs(`freightPairing.${freightIndex}`),
@@ -67,6 +67,35 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       ],
     }),
 
+    // Exemption for
+    buildCheckboxField({
+      id: `freightPairing.${freightIndex}.items.${convoyIndex}.exemptionFor`,
+      large: true,
+      backgroundColor: 'blue',
+      width: 'half',
+      title: freight.labels.exemptionFor,
+      required: true,
+      options: [
+        {
+          value: ExemptionFor.WIDTH,
+          label: freight.exemptionFor.widthOptionTitle,
+        },
+        {
+          value: ExemptionFor.HEIGHT,
+          label: freight.exemptionFor.heightOptionTitle,
+        },
+        {
+          value: ExemptionFor.LENGTH,
+          label: freight.exemptionFor.lengthOptionTitle,
+        },
+        {
+          value: ExemptionFor.WEIGHT,
+          label: freight.exemptionFor.weightOptionTitle,
+        },
+      ],
+    }),
+
+    // Freight info
     buildDescriptionField({
       id: 'freight.subtitle',
       title: freight.labels.freightSubtitle,
@@ -99,11 +128,6 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       variant: 'number',
       thousandSeparator: true,
       suffix: freight.labels.tonsSuffix,
-    }),
-    buildDescriptionField({
-      id: 'freightWithConvoy.subtitle',
-      title: freight.labels.freightWithConvoySubtitle,
-      titleVariant: 'h5',
     }),
     buildTextField({
       id: `freightPairing.${freightIndex}.items.${convoyIndex}.height`,
@@ -175,35 +199,6 @@ export const FreightShortTermCreateMultiField = buildMultiField({
           (width && maxWidth ? Number(width) > maxWidth : false)
         )
       },
-    }),
-    buildDescriptionField({
-      id: 'freightExemptionFor.subtitle',
-      title: freight.labels.exemptionFor,
-      titleVariant: 'h5',
-    }),
-    buildCheckboxField({
-      id: `freightPairing.${freightIndex}.items.${convoyIndex}.exemptionFor`,
-      large: true,
-      backgroundColor: 'blue',
-      width: 'half',
-      options: [
-        {
-          value: ExemptionFor.WIDTH,
-          label: freight.exemptionFor.widthOptionTitle,
-        },
-        {
-          value: ExemptionFor.HEIGHT,
-          label: freight.exemptionFor.heightOptionTitle,
-        },
-        {
-          value: ExemptionFor.LENGTH,
-          label: freight.exemptionFor.lengthOptionTitle,
-        },
-        {
-          value: ExemptionFor.WEIGHT,
-          label: freight.exemptionFor.weightOptionTitle,
-        },
-      ],
     }),
   ],
 })

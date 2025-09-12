@@ -16,14 +16,19 @@ export const freight = {
     },
     pageTitle: {
       id: 'ta.eft.application:freight.create.pageTitle',
-      defaultMessage: 'Farmur',
+      defaultMessage: 'Upplýsingar um farm',
       description: 'Title of create freight page',
     },
-    description: {
-      id: 'ta.eft.application:freight.create.description',
+    descriptionShortTerm: {
+      id: 'ta.eft.application:freight.create.descriptionShortTerm',
+      defaultMessage: ' ',
+      description: 'Description of create freight page for short-term',
+    },
+    descriptionLongTerm: {
+      id: 'ta.eft.application:freight.create.descriptionLongTerm',
       defaultMessage:
-        'Vinsamlegast fylltu út upplýsingar um farminn sem þú ert að fara að flytja.',
-      description: 'Description of create freight page',
+        'Hér þarf að setja inn alla farma sem sótt er um langtímaundanþágu fyrir.',
+      description: 'Description of create freight page for long-term',
     },
     policeEscortAlertTitle: {
       id: 'ta.eft.application:freight.create.policeEscortAlertTitle',
@@ -104,11 +109,6 @@ export const freight = {
       id: 'ta.eft.application:freight.labels.freightWeight',
       defaultMessage: 'Þyngd farms',
       description: 'Freight weight label',
-    },
-    freightWithConvoySubtitle: {
-      id: 'ta.eft.application:freight.labels.freightWithConvoySubtitle',
-      defaultMessage: 'Upplýsingar um farm á vagnlest',
-      description: 'Freight with convoy subtitle',
     },
     heightWithConvoy: {
       id: 'ta.eft.application:freight.labels.heightWithConvoy',
