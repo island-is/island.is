@@ -134,6 +134,7 @@ const VehicleBulkMileageUpload = () => {
           ? [
               <DropdownMenu
                 icon="ellipsisHorizontal"
+                key="download-template"
                 menuLabel={formatMessage(vehicleMessage.downloadTemplate)}
                 items={FILE_TYPES.map((type) => ({
                   title: `.${type}`,
@@ -147,7 +148,12 @@ const VehicleBulkMileageUpload = () => {
                 disabled={!!templateLoading}
               />,
               loading ?? loadingURL ? (
-                <Box display="flex" alignItems="center" height="full">
+                <Box
+                  key="loading-indicator"
+                  display="flex"
+                  alignItems="center"
+                  height="full"
+                >
                   <LoadingDots single />
                 </Box>
               ) : null,
