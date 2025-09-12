@@ -61,7 +61,9 @@ export class UserProfileService {
     private readonly emailModel: typeof Emails,
     @InjectModel(ActorProfile)
     private readonly actorProfileModel: typeof ActorProfile,
-  ) {}
+  ) {
+      const k = 8 //REMOVE
+  }
 
   async findAllBySearchTerm(search: string): Promise<PaginatedUserProfileDto> {
     // Validate search term
