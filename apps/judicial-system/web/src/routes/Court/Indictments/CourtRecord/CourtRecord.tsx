@@ -8,13 +8,7 @@ import {
   useState,
 } from 'react'
 import format from 'date-fns/format'
-import {
-  AnimatePresence,
-  LayoutGroup,
-  motion,
-  Reorder,
-  useDragControls,
-} from 'motion/react'
+import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 import router from 'next/router'
 import { uuid } from 'uuidv4'
 import InputMask from '@react-input/mask/InputMask'
@@ -63,7 +57,6 @@ import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/u
 import {
   formatDateForServer,
   TUploadFile,
-  useCase,
   useCourtSessions,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -140,9 +133,7 @@ const useCourtSessionUpdater = (
 const CourtRecord: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { updateCase } = useCase()
   const { handleAddDocument } = useCourtDocuments()
-  const controls = useDragControls()
   const [reorderableItems, setReorderableItems] = useState<
     { id: string; name: string }[]
   >([])
