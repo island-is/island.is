@@ -368,6 +368,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/social-insurance-administration/death-benefits                                @island-is/deloitte
 /libs/application/templates/social-insurance-administration/household-supplement                          @island-is/deloitte
 /libs/application/templates/social-insurance-administration/income-plan                                   @island-is/deloitte
+/libs/application/templates/social-insurance-administration/disability-pension                            @island-is/hugsmidjan
 /libs/application/templates/social-insurance-administration/old-age-pension                               @island-is/deloitte
 /libs/application/templates/social-insurance-administration/pension-supplement                            @island-is/deloitte
 /libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments           @island-is/deloitte
