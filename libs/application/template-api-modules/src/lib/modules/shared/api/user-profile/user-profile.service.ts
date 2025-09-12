@@ -49,7 +49,7 @@ export class UserProfileService extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<UserProfileParameters>): Promise<UserProfile> {
-    /*const { mobilePhoneNumber, email } = await this.userProfileApiWithAuth(auth)
+    const { mobilePhoneNumber, email } = await this.userProfileApiWithAuth(auth)
       .meUserProfileControllerFindUserProfile()
       .catch((error) => {
         if (isRunningOnEnvironment('local')) {
@@ -66,13 +66,7 @@ export class UserProfileService extends BaseTemplateApiService {
         email: 'mockEmail@island.is',
         mobilePhoneNumber: '9999999',
       }
-      }*/
-
-      //TODO: REMOVE
-       return {
-        email: 'mockEmail@island.is',
-        mobilePhoneNumber: '9999999',
-      }
+    }
 
     const bankInfoRes =
       await this.bankinfoClientService.getBankAccountsForNationalId(
@@ -95,6 +89,8 @@ export class UserProfileService extends BaseTemplateApiService {
     const bankInfo = bankInfoRes
       ? formatBankInfo(bankInfoRes.bankAccountInfo)
       : undefined
+
+    console.log(email)
 
     const isActor = !!auth.actor?.nationalId
     const emailIsInvalid =
