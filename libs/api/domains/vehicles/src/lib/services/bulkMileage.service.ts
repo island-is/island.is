@@ -228,15 +228,15 @@ export class BulkMileageService {
 
     if (!Array.isArray(records)) {
       if (records.code === 1) {
-        console.error(
+        this.logger.debug(
           `'Fastanúmersdálk vantar eða er skrifaður rangt. Dálkanafn þarf að vera eitt af eftirfarandi; "permno", "vehicleid", "bilnumer","okutaeki","fastanumer"'`,
         )
       } else if (records.code === 2) {
-        console.error(
-          `'Míludálkur er ekki réttur. Dálkanafn þarf að vera "mileage"'`,
+        this.logger.debug(
+          `'Kílómetrastöðudálkur er ekki réttur. Dálkanafn þarf að vera "mileage"'`,
         )
       } else {
-        console.error(
+        this.logger.debug(
           `'Óþekkt villa við að vinna úr skrá. Vinsamlegast reyndu aftur.'`,
         )
       }
@@ -244,7 +244,7 @@ export class BulkMileageService {
     }
 
     if (!records.length) {
-      console.error('Upphleðsla mistókst. Engin gögn í skjali')
+      this.logger.info('Upphleðsla mistókst. Engin gögn í skjali')
       return null
     }
 

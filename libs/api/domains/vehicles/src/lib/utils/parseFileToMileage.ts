@@ -81,7 +81,6 @@ export const parseBufferToMileageRecord = async (
     )
   })
 
-  console.log('filteredValues', filteredValues.toString())
   const uploadedOdometerStatuses: Array<MileageRecord> = filteredValues
     .map((row) => {
       const mileage = Number(sanitizeNumber(row[mileageIndex]))

@@ -77,7 +77,7 @@ const VehicleBulkMileageUpload = () => {
 
   const handleOnInputFileUploadRemove = () => setActiveFile(undefined)
 
-  const handleNewFileUploadBoi = async (files: File[]) => {
+  const handleOnInputFileUploadChange = async (files: File[]) => {
     if (requestGuid) {
       setRequestGuid(null)
     }
@@ -220,7 +220,7 @@ const VehicleBulkMileageUpload = () => {
             accept={['.csv', '.xlsx']}
             multiple={false}
             onRemove={handleOnInputFileUploadRemove}
-            onChange={handleNewFileUploadBoi}
+            onChange={handleOnInputFileUploadChange}
             onUploadRejection={handleOnInputFileUploadError}
           />
         }
