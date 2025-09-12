@@ -1,7 +1,6 @@
 import { ApiConfiguration } from './apiConfiguration'
 import {
   Configuration,
-  UserProfileApi,
   V2UsersApi,
   V2MeApi,
   V2MeEmailsApi,
@@ -9,7 +8,6 @@ import {
 } from '../../gen/fetch'
 
 export const exportedApis = [
-  UserProfileApi,
   V2UsersApi,
   V2MeApi,
   V2MeEmailsApi,
