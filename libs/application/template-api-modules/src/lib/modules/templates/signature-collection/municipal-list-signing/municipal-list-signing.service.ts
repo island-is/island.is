@@ -26,7 +26,7 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
   async signList({ auth, application }: TemplateApiModuleActionProps) {
     const listId = application.answers.listId
     if (!listId || typeof listId !== 'string' || listId.trim() === '') {
-      return new TemplateApiError(errorMessages.submitFailure, 400)
+      throw new TemplateApiError(errorMessages.submitFailure, 400)
     }
 
     const signature = await this.signatureCollectionClientService.signList(
@@ -94,7 +94,7 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
 
     if (!areaId) {
       // If no area user will be stopped by can sign above
-      return new TemplateApiError(errorMessages.areaId, 400)
+      throw new TemplateApiError(errorMessages.areaId, 400)
     }
     const ownerId = application.answers.initialQuery as string
     // Check if user got correct ownerId
