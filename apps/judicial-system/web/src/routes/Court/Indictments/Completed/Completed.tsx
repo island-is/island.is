@@ -525,10 +525,10 @@ const Completed: FC = () => {
         <Modal
           title={formatMessage(strings.sentToPublicProsecutorModalTitle)}
           text={formatMessage(strings.sentToPublicProsecutorModalMessage)}
-          primaryButtonText={formatMessage(core.closeModal)}
-          onPrimaryButtonClick={() =>
-            router.push(getStandardUserDashboardRoute(user))
-          }
+          primaryButton={{
+            text: formatMessage(core.closeModal),
+            onClick: () => router.push(getStandardUserDashboardRoute(user)),
+          }}
         />
       )}
     </PageLayout>
