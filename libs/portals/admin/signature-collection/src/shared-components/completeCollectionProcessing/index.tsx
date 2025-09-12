@@ -28,8 +28,7 @@ const ActionCompleteCollectionProcessing = ({
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
 
   // areaId is used for LocalGovernmental collections, instead of collection.id
-  const params = useParams()
-  const area = params.municipality ?? ''
+  const { municipality: area = '' } = useParams<{ municipality?: string }>()
   const areaId = collection.areas.find((a) => a.name === area)?.collectionId
 
   const [processCollectionMutation, { loading }] =

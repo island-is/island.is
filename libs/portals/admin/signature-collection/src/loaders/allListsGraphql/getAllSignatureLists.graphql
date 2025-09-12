@@ -9,6 +9,7 @@ query allLists($input: SignatureCollectionIdInput!) {
       max
       isActive
       collectionId
+      collectionStatus
     }
     endTime
     startTime
