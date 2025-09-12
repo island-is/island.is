@@ -15,14 +15,14 @@ export const exemptionPeriod = {
     description: {
       id: 'ta.eft.application:exemptionPeriod.general.description',
       defaultMessage:
-        'Vinsamlega veldu tímabil sem ósk um flutning á að taka gildi',
+        'Vinsamlega veldu hvers eðlis umsóknin er. Skammtímaundanþága er ætluð fyrir [ ... ]. Langtímaundanþága gildir um 32 daga og lengur.',
       description: 'Description of exemption period page',
     },
   }),
   type: defineMessages({
     subtitle: {
       id: 'ta.eft.application:exemptionPeriod.type.subtitle',
-      defaultMessage: 'Hvers eðlis er umsóknin',
+      defaultMessage: ' ',
       description: 'Exemption type subtitle',
     },
     shortTermOptionTitle: {
@@ -43,7 +43,7 @@ export const exemptionPeriod = {
     alertMessage: {
       id: 'ta.eft.application:exemptionPeriod.type.alertMessage',
       defaultMessage:
-        'Þú ert að velja langtímaundanþágu. Langtímaundanþága gildir aðeins fyrir bla bla bla...',
+        'Athugið. Langtímaundanþágur eru með gildistíma frá mánuði í allt að eitt ár og eru ætlaðar fyrir ákveðin svæði sem flutningsaðili er með starfsemi á.',
       description: 'Exemption type alert message',
     },
   }),
