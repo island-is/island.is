@@ -53,6 +53,21 @@ export class HistoryService {
     })
   }
 
+  async postPruneHistoryByApplicationId(applicationId: string): Promise<void> {
+    await this.historyModel.update(
+      {
+        ...history,
+        exitEvenSubjectNationalId: null,
+        exitEventActorNationalId: null,
+      },
+      {
+        where: {
+          application_id: applicationId
+        }
+      }
+    )
+  }
+
   async deleteHistoryByApplicationId(applicationId: string): Promise<void> {
     await this.historyModel.destroy({
       where: {

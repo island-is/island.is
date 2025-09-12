@@ -16,8 +16,10 @@ import {
 } from '@island.is/application/types'
 import {
   getAdminDataForPruning,
-  getPostPruneAtDate,
+  DEFAULT_POST_PRUNE_DELAY,
 } from './application-lifecycle.utils'
+import { HistoryService } from "@island.is/application/api/history";
+import addMilliseconds from "date-fns/addMilliseconds";
 
 export interface ApplicationPruning {
   pruned: boolean
@@ -40,6 +42,7 @@ export class ApplicationLifeCycleService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationService: ApplicationService,
+    private historyService: HistoryService,
     private fileService: FileService,
     private applicationChargeService: ApplicationChargeService,
     private readonly notificationApi: NotificationsApi,
@@ -61,6 +64,7 @@ export class ApplicationLifeCycleService {
     this.logger.info(`Starting application post-pruning...`)
     await this.fetchApplicationsToBePostPruned()
     await this.postPruneApplicationData()
+    await this.postPruneApplicationHistory()
     await this.reportPostPruningResults()
     this.logger.info(`Application post-pruning done.`)
   }
@@ -152,13 +156,12 @@ export class ApplicationLifeCycleService {
               template.adminDataConfig.answers.map((x) => x.key),
             )
           }
-
-          if (prune.pruned)
-            postPruneAt = getPostPruneAtDate(
-              template.adminDataConfig.whenToPostPrune,
-              prune.application,
-            )
         }
+
+        postPruneAt = addMilliseconds(
+          new Date(),
+          template?.adminDataConfig?.postPruneDelayOverride ?? DEFAULT_POST_PRUNE_DELAY
+        )
 
         const { updatedApplication } = await this.applicationService.update(
           prune.application.id,
@@ -306,6 +309,20 @@ export class ApplicationLifeCycleService {
         prune.postPruned = false
         this.logger.error(
           `Application data post-prune error on id ${prune.application.id}`,
+          error,
+        )
+      }
+    }
+  }
+
+  private async postPruneApplicationHistory() {
+    for (const prune of this.processingApplicationsPostPruning) {
+      try {
+        await this.historyService.postPruneHistoryByApplicationId(prune.application.id)
+      } catch (error) {
+        prune.postPruned = false
+        this.logger.error(
+          `Application history post-prune error on id ${prune.application.id}`,
           error,
         )
       }
