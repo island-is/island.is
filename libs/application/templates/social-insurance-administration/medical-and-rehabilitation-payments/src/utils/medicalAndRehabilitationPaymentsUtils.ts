@@ -477,11 +477,9 @@ export const isEligible = (externalData: ExternalData): boolean => {
 
 export const eligibleText = (externalData: ExternalData) => {
   const { isEligible } = getApplicationExternalData(externalData)
-  console.log('isEligible?.reasonCode ===>', isEligible?.reasonCode)
 
   switch (isEligible?.reasonCode) {
     case EligibleReasonCodes.APPLICANT_ALREADY_HAS_PENDING_APPLICATION:
-      console.log('APPLICANT_ALREADY_HAS_PENDING_APPLICATION')
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .applicantAlreadyHasPendingApplicationDescription
     case EligibleReasonCodes.APPLICANT_AGE_OUT_OF_RANGE:
