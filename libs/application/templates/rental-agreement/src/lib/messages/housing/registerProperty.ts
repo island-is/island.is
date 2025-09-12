@@ -33,16 +33,6 @@ export const registerProperty = {
       defaultMessage: 'Merking',
       description: 'Search result header for "merking"',
     },
-    searchResultHeaderPropertySize: {
-      id: 'ra.application:registerProperty.search.searchResultHeaderPropertySize',
-      defaultMessage: 'Stærð',
-      description: 'Search result header for property size',
-    },
-    searchResultsHeaderNumOfRooms: {
-      id: 'ra.application:registerProperty.search.searchResultsHeaderNumOfRooms',
-      defaultMessage: 'Herbergi',
-      description: 'Search result header for number of rooms',
-    },
     searchResultsErrorBannerTitle: {
       id: 'ra.application:registerProperty.search.searchResultsErrorBannerTitle',
       defaultMessage:
@@ -128,16 +118,6 @@ export const registerProperty = {
       defaultMessage: 'Merking',
       description: 'Summary table header for property unit id',
     },
-    tableHeaderSize: {
-      id: 'ra.application:registerProperty.info.tableHeaderSize',
-      defaultMessage: 'Stærð',
-      description: 'Summary table header for size',
-    },
-    tableHeaderNumberOfRooms: {
-      id: 'ra.application:registerProperty.info.tableHeaderNumberOfRooms',
-      defaultMessage: 'Herbergi',
-      description: 'Summary table header for number of rooms',
-    },
   }),
 
   category: defineMessages({
@@ -168,11 +148,6 @@ export const registerProperty = {
       id: 'ra.application:registerProperty.category.typeSelectLabelEntireHome',
       defaultMessage: 'Íbúð / Einbýlishús',
       description: 'Label for entire home select option',
-    },
-    typeSelectLabelRoom: {
-      id: 'ra.application:registerProperty.category.typeSelectLabelRoom',
-      defaultMessage: 'Herbergi',
-      description: 'Label for room select option',
     },
     typeSelectLabelCommercial: {
       id: 'ra.application:registerProperty.category.typeSelectLabelCommercial',

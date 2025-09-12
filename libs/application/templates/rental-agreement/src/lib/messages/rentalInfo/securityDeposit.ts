@@ -151,11 +151,6 @@ export const securityDeposit = defineMessages({
       'Gjald í samtryggingasjóð leigusala má ekki vera hærri en 10% af mánaðarlegu leiguverði',
     description: 'security deposit mutual fund amount info message',
   },
-  securityAmountOtherTitle: {
-    id: 'ra.application:securityDeposit.securityAmountOtherTitle',
-    defaultMessage: 'Upphæð',
-    description: 'security deposit security amount other title',
-  },
   securityAmountCalculatedLabel: {
     id: 'ra.application:securityDeposit.securityAmountCalculatedLabel',
     defaultMessage: 'Upphæð tryggingar',

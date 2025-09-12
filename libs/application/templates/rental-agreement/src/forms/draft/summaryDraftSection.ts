@@ -35,7 +35,7 @@ import * as m from '../../lib/messages'
 
 export const SummaryDraftSection = buildSection({
   id: Routes.SUMMARY,
-  title: m.summary.sectionName,
+  title: m.summary.pageTitle,
   children: [
     buildMultiField({
       id: Routes.SUMMARY,

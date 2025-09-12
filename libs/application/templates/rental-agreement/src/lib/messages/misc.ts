@@ -41,4 +41,19 @@ export const misc = defineMessages({
     defaultMessage: 'Trygging',
     description: 'Security deposit',
   },
+  amount: {
+    id: 'ra.application:misc.amount',
+    defaultMessage: 'Upphæð',
+    description: 'Translation for amount, used in various contexts',
+  },
+  rooms: {
+    id: 'ra.application:misc.rooms',
+    defaultMessage: 'Herbergi',
+    description: 'Rooms label',
+  },
+  size: {
+    id: 'ra.application:misc.size',
+    defaultMessage: 'Stærð',
+    description: 'Size label',
+  },
 })

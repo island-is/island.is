@@ -132,7 +132,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
         }),
         buildTextField({
           id: 'securityDeposit.securityAmountOther',
-          title: m.securityDeposit.securityAmountOtherTitle,
+          title: m.misc.amount,
           placeholder: m.securityDeposit.securityAmountOtherPlaceholder,
           variant: 'currency',
           condition: (answers) =>

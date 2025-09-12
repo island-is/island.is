@@ -150,7 +150,7 @@ export const rentalInfoOverview = (
   return [
     {
       width: 'half',
-      keyText: m.summary.PropertyNumOfRoomsLabel,
+      keyText: m.misc.rooms,
       valueText: numOfRooms,
     },
     {
@@ -416,7 +416,7 @@ export const otherCostsOverview = (
             },
             {
               width: 'half' as const,
-              keyText: m.summary.otherCostsAmountLabel,
+              keyText: m.misc.amount,
               valueText: formatCurrency(item.amount ?? 0),
             },
           ]

@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const summary = defineMessages({
-  sectionName: {
-    id: 'ra.application:summary.sectionName',
-    defaultMessage: 'Samantekt',
-    description: 'Name of the summary section',
-  },
   pageTitle: {
     id: 'ra.application:summary.pageTitle',
     defaultMessage: 'Samantekt',
@@ -172,11 +167,6 @@ export const summary = defineMessages({
     defaultMessage: 'Dags.',
     description: 'Date of meter reading label',
   },
-  otherCostsAmountLabel: {
-    id: 'ra.application:summary.otherCostsAmountLabel',
-    defaultMessage: 'Upphæð',
-    description: 'Other costs amount label',
-  },
   otherCostsLabel: {
     id: 'ra.application:summary.otherCostsLabel',
     defaultMessage: 'Annar kostnaður',
@@ -208,11 +198,6 @@ export const summary = defineMessages({
     id: 'ra.application:summary.propertyTypeLabel',
     defaultMessage: 'Tegund húsnæðis',
     description: 'Property type label',
-  },
-  PropertyNumOfRoomsLabel: {
-    id: 'ra.application:summary.PropertyNumOfRoomsLabel',
-    defaultMessage: 'Herbergi',
-    description: 'Number of rooms label',
   },
   propertySizeLabel: {
     id: 'ra.application:summary.propertySizeLabel',
