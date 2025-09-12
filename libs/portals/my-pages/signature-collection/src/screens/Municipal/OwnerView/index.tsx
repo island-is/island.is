@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
 import SignedLists from '../../shared/SignedLists'
 import { Skeleton } from '../../../lib/skeletons'
+import format from 'date-fns/format'
 
 const OwnerView = ({
   currentCollection,
@@ -41,13 +42,16 @@ const OwnerView = ({
               <Box key={list.id} marginTop={3}>
                 <ActionCard
                   backgroundColor="white"
-                  heading={list.title}
+                  heading={list.candidate.name ?? ''}
                   progressMeter={{
                     currentProgress: list.numberOfSignatures || 0,
                     maxProgress: list.area?.min,
                     withLabel: true,
                   }}
-                  eyebrow={list.area.name}
+                  eyebrow={`${formatMessage(m.endTime)} ${format(
+                    new Date(list.endTime),
+                    'dd.MM.yyyy',
+                  )}`}
                   cta={
                     list.active
                       ? {

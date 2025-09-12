@@ -13,6 +13,7 @@ import { SignatureCollection } from '@island.is/api/schema'
 import SignedLists from '../../shared/SignedLists'
 import Managers from '../../shared/Managers'
 import { Skeleton } from '../../../lib/skeletons'
+import format from 'date-fns/format'
 
 const collectionType = SignatureCollectionCollectionType.Parliamentary
 
@@ -65,7 +66,10 @@ const OwnerView = ({
                     maxProgress: list.area?.min || 0,
                     withLabel: true,
                   }}
-                  eyebrow={list.title.split(' - ')[0]}
+                  eyebrow={`${formatMessage(m.endTime)} ${format(
+                    new Date(list.endTime),
+                    'dd.MM.yyyy',
+                  )}`}
                   cta={
                     list.active
                       ? {

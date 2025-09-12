@@ -21,8 +21,9 @@ const SigneeView = ({
   const { signedLists, loadingSignedLists } = useGetSignedList(
     currentCollection?.collectionType,
   )
+  const collectionType = currentCollection.collectionType
   const { listsForUser, loadingUserLists, getListsForUserError } =
-    useGetListsForUser(currentCollection?.collectionType, currentCollection?.id)
+    useGetListsForUser(collectionType, currentCollection?.id)
 
   if (getListsForUserError) {
     return (
@@ -65,13 +66,21 @@ const SigneeView = ({
                       <ActionCard
                         key={list.id}
                         backgroundColor="white"
-                        eyebrow={list.area?.name}
-                        heading={list.title.split(' - ')[0]}
+                        eyebrow={`${formatMessage(m.endTime)} ${format(
+                          new Date(list.endTime),
+                          'dd.MM.yyyy',
+                        )}`}
+                        heading={
+                          collectionType ===
+                          SignatureCollectionCollectionType.LocalGovernmental
+                            ? list.candidate.name
+                            : list.title.split(' - ')[0]
+                        }
                         text={
-                          currentCollection?.collectionType ===
+                          collectionType ===
                           SignatureCollectionCollectionType.Presidential
                             ? formatMessage(m.collectionTitle)
-                            : currentCollection?.collectionType ===
+                            : collectionType ===
                               SignatureCollectionCollectionType.Parliamentary
                             ? formatMessage(m.collectionTitleParliamentary)
                             : `${formatMessage(
