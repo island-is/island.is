@@ -10,6 +10,8 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
+  CourtSession,
+  CourtSessionRulingType,
   DateLog,
   Defendant,
   DefenderChoice,
@@ -554,6 +556,36 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
     })
 
   return Boolean(workingCase.prosecutor && defendantsAreValid())
+}
+
+export const isIndictmentCourtRecordStepValid = (
+  courtSessions?: CourtSession[] | null,
+) => {
+  if (!courtSessions) {
+    return false
+  }
+
+  const courtSessionsAreValid = () =>
+    courtSessions.every(
+      (courtSession) =>
+        (courtSession.isClosed
+          ? courtSession.closedLegalProvisions &&
+            courtSession.closedLegalProvisions?.length > 0
+          : true) &&
+        (courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
+        courtSession.rulingType === CourtSessionRulingType.ORDER
+          ? !!courtSession.ruling
+          : true) &&
+        validate([
+          [courtSession.startDate, ['empty', 'date-format']],
+          [courtSession.location, ['empty']],
+          [courtSession.entries, ['empty']],
+          [courtSession.rulingType, ['empty']],
+          // TODO: ADD WITNESS AND COURT END TIME
+        ]).isValid,
+    )
+
+  return courtSessionsAreValid()
 }
 
 const isIndictmentRulingDecisionValid = (workingCase: Case) => {
