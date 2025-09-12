@@ -27,10 +27,9 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
 
-  const { data, loading } =
-    useQuery<SiaDisabilityPensionCertificateQuery>(
-      siaDisabilityPensionCertificate,
-    )
+  const { data, loading } = useQuery<SiaDisabilityPensionCertificateQuery>(
+    siaDisabilityPensionCertificate,
+  )
 
   setBeforeSubmitCallback?.(async () => {
     // If data is still loading, prevent submission
