@@ -30,7 +30,6 @@ const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  console.log('status', collectionStatus)
   return (
     <GridContainer>
       <GridRow direction="row">
