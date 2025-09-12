@@ -62,7 +62,7 @@ export class UserProfileService {
     @InjectModel(ActorProfile)
     private readonly actorProfileModel: typeof ActorProfile,
   ) {
-      const k = 8 //REMOVE
+    const k = 8 //REMOVE
   }
 
   async findAllBySearchTerm(search: string): Promise<PaginatedUserProfileDto> {
