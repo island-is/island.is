@@ -1,5 +1,3 @@
-
-
 export const getYears = (min: number, max?: number) => {
   const currentYear = new Date().getFullYear()
   const start = currentYear - Math.max(0, min)

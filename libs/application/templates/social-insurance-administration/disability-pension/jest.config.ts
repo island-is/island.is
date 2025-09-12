@@ -8,5 +8,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-  '../../../../../coverage/libs/application/templates/social-insurance-administration/disability-pension'
+    '../../../../../coverage/libs/application/templates/social-insurance-administration/disability-pension',
 }

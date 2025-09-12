@@ -42,8 +42,7 @@ export const disabilityPensionFormMessage: MessageDir = {
   notEligible: defineMessages({
     title: {
       id: 'dp.application:not.eligible.title',
-      defaultMessage:
-        'Því miður átt þú ekki rétt á örorkulífeyri',
+      defaultMessage: 'Því miður átt þú ekki rétt á örorkulífeyri',
       description:
         'Unfortunately, you are not eligible for disability pension.',
     },
@@ -91,8 +90,7 @@ export const disabilityPensionFormMessage: MessageDir = {
     },
     selfEvaluation: {
       id: 'dp.application:overview.selfevaluation',
-      defaultMessage:
-        'Sjálfsmat',
+      defaultMessage: 'Sjálfsmat',
       description: 'Selfevaluation',
     },
   }),
