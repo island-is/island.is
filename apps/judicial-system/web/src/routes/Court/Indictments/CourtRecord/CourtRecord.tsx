@@ -228,18 +228,24 @@ const CourtRecord: FC = () => {
     },
   }
 
-  // useEffect(() => {
-  //   if (!workingCase.courtDocuments) {
-  //     return
-  //   }
+  useEffect(() => {
+    if (!workingCase.courtSessions) {
+      return
+    }
 
-  //   setReorderableItems(
-  //     workingCase.courtDocuments.map((doc) => ({
-  //       id: doc.id,
-  //       name: doc.name,
-  //     })),
-  //   )
-  // }, [workingCase.courtDocuments])
+    const filedDocuments = [...workingCase.courtSessions].filter(
+      (cs) => cs.filedDocuments,
+    )
+
+    setReorderableItems(
+      filedDocuments
+        .flatMap((cs) => cs.filedDocuments || [])
+        .map((doc) => ({
+          id: doc.id,
+          name: doc.name,
+        })),
+    )
+  }, [workingCase.courtSessions])
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -273,6 +279,7 @@ const CourtRecord: FC = () => {
     )
   }, [workingCase.courtSessions?.length])
 
+  console.log(reorderableItems)
   return (
     <PageLayout
       workingCase={workingCase}
