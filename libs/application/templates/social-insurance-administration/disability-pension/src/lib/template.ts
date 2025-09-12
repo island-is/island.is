@@ -125,11 +125,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                UserProfileApi.configure({
-                  params: {
-                    validateEmail: true,
-                  },
-                }),
+                UserProfileApi,
                 IdentityApi,
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
