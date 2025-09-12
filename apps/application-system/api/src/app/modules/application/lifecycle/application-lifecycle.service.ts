@@ -18,8 +18,8 @@ import {
   getAdminDataForPruning,
   DEFAULT_POST_PRUNE_DELAY,
 } from './application-lifecycle.utils'
-import { HistoryService } from "@island.is/application/api/history";
-import addMilliseconds from "date-fns/addMilliseconds";
+import { HistoryService } from '@island.is/application/api/history'
+import addMilliseconds from 'date-fns/addMilliseconds'
 
 export interface ApplicationPruning {
   pruned: boolean
@@ -160,7 +160,8 @@ export class ApplicationLifeCycleService {
 
         postPruneAt = addMilliseconds(
           new Date(),
-          template?.adminDataConfig?.postPruneDelayOverride ?? DEFAULT_POST_PRUNE_DELAY
+          template?.adminDataConfig?.postPruneDelayOverride ??
+            DEFAULT_POST_PRUNE_DELAY,
         )
 
         const { updatedApplication } = await this.applicationService.update(
@@ -318,7 +319,9 @@ export class ApplicationLifeCycleService {
   private async postPruneApplicationHistory() {
     for (const prune of this.processingApplicationsPostPruning) {
       try {
-        await this.historyService.postPruneHistoryByApplicationId(prune.application.id)
+        await this.historyService.postPruneHistoryByApplicationId(
+          prune.application.id,
+        )
       } catch (error) {
         prune.postPruned = false
         this.logger.error(

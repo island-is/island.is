@@ -1,7 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
 
-export  const DEFAULT_POST_PRUNE_DELAY = 365 * 24 * 3600 * 1000
+export const DEFAULT_POST_PRUNE_DELAY = 365 * 24 * 3600 * 1000
 
 /**
  * Sets a value in an object at the given dot-notated path.
