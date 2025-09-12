@@ -1,5 +1,6 @@
 import {
   buildForm,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -35,7 +36,6 @@ export const Draft: Form = buildForm({
             externalData,
             'getList.data',
           ) || []
-
         const initialQuery = getValueViaPath(answers, 'initialQuery')
 
         return lists.length > 0 && !initialQuery
@@ -117,6 +117,28 @@ export const Draft: Form = buildForm({
                     ? list.candidate.id === initialQuery
                     : list.id === answers.listId,
                 )?.area?.name
+              },
+            }),
+            buildHiddenInput({
+              id: 'listId',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.id
               },
             }),
             buildTextField({

@@ -1,6 +1,7 @@
 import {
   buildDescriptionField,
   buildForm,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -24,13 +25,15 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: 'selectCandidateSection',
-      condition: (_, externalData) => {
+      condition: (answers, externalData) => {
         const lists =
           getValueViaPath<SignatureCollectionList[]>(
             externalData,
             'getList.data',
           ) || []
-        return lists.length > 1
+
+        const initialQuery = getValueViaPath(answers, 'initialQuery')
+        return lists.length > 0 && !initialQuery
       },
       children: [
         buildMultiField({
@@ -40,7 +43,6 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
-              backgroundColor: 'white',
               defaultValue: '',
               required: true,
               options: ({ externalData }) => {
@@ -86,6 +88,28 @@ export const Draft: Form = buildForm({
               id: 'candidateInfoHeader',
               title: m.candidateInformationHeader,
               titleVariant: 'h4',
+            }),
+            buildHiddenInput({
+              id: 'listId',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.id
+              },
             }),
             buildTextField({
               id: 'candidateName',
