@@ -27,9 +27,9 @@ export const miscMessages = defineMessages({
     description: 'Action card done title termination',
   },
   actioncardDoneTitleCancelationWithAddress: {
-    id: 'tra.application:misc.actioncardDoneTitle',
+    id: 'tra.application:misc.actioncardDoneTitleCancelationWithAddress',
     defaultMessage: 'Tilkynning um riftun vegna {address} send til HMS',
-    description: 'Action card done title',
+    description: 'Action card done title cancelation with address',
   },
   actioncardDoneTitleTerminationWithAddress: {
     id: 'tra.application:misc.actioncardDoneTitleTerminationWithAddress',
