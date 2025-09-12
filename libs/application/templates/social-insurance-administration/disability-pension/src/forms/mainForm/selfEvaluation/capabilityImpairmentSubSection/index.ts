@@ -97,9 +97,9 @@ const buildQuestion = (index: number) => {
       }),
     ],
     condition: (_, externalData) => {
-         const questions = getQuestionnaire(externalData)
-         return (index < questions.length && index < MAX_QUESTIONS)
-       },
+      const questions = getQuestionnaire(externalData)
+      return index < questions.length && index < MAX_QUESTIONS
+    },
   })
 }
 
