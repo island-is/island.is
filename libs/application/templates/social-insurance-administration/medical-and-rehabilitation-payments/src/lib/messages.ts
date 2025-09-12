@@ -1177,6 +1177,13 @@ export const statesMessages = defineMessages({
     description:
       'Your application has been submitted to the Social Insurance Administration',
   },
+  applicationApproved: {
+    id: 'marp.application:application.approved',
+    defaultMessage:
+      'Tryggingastofnun hefur samþykkt umsókn þína um sjúkra- og endurhæfingargreiðslur',
+    description:
+      'Your application for medical and rehabilitation payments has been approved',
+  },
   applicationApprovedDescription: {
     id: 'marp.application:applicationApprovedDescription',
     defaultMessage:
@@ -1198,11 +1205,18 @@ export const statesMessages = defineMessages({
     description:
       'Your application for medical and rehabilitation payments has been dismissed',
   },
+  applicationRejected: {
+    id: 'marp.application:application.rejected',
+    defaultMessage:
+      'Tryggingastofnun hefur hafnað umsókn þinni um sjúkra- og endurhæfingargreiðslur',
+    description:
+      'Tryggingastofnun has rejected your application for medical and rehabilitation payments',
+  },
   applicationRejectedDescription: {
     id: 'marp.application:applicationRejectedDescription',
     defaultMessage:
-      'Umsókn um sjúkra- og endurhæfingargreiðslur hefur verið synjað',
+      'Umsókn um sjúkra- og endurhæfingargreiðslur hefur verið hafnað',
     description:
-      'The application for medical and rehabiliation payments has been rejected',
+      'The application for medical and rehabilitation payments has been rejected',
   },
 })
