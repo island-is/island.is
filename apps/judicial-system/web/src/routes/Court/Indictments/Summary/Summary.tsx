@@ -1,5 +1,6 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
 import router from 'next/router'
 
 import {
@@ -61,6 +62,7 @@ const Summary: FC = () => {
   >()
   const [rulingUrl, setRulingUrl] = useState<string>()
   const [hasReviewed, setHasReviewed] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState(true)
   const { user } = useContext(UserContext)
 
   const { onOpen, getFileUrl } = useFileList({
@@ -289,6 +291,7 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
           secondaryButton={{
             text: 'Hætta við',
             onClick: () => {
+              setIsLoading(true)
               setModalVisible(undefined)
               setHasReviewed(false)
             },
@@ -300,8 +303,12 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
           }}
         >
           {rulingUrl && (
-            <div className={styles.ruling}>
-              <PdfViewer file={rulingUrl} showAllPages />
+            <div className={cn(styles.ruling, { [styles.loading]: isLoading })}>
+              <PdfViewer
+                file={rulingUrl}
+                onLoadingSuccess={() => setIsLoading(false)}
+                showAllPages
+              />
             </div>
           )}
         </Modal>

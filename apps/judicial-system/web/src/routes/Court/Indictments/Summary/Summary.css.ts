@@ -12,3 +12,7 @@ export const ruling = style({
   marginBottom: theme.spacing[5],
   marginTop: -theme.spacing[1],
 })
+
+export const loading = style({
+  paddingTop: '230px',
+})
