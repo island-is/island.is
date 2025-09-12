@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -17,6 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
+import { CourtDocument } from './courtDocument.model'
 import { User } from './user.model'
 
 @Table({
@@ -83,8 +85,8 @@ export class CourtSession extends Model {
     allowNull: true,
     values: Object.values(CourtSessionRulingType),
   })
-  @ApiPropertyOptional({ type: String })
-  rulingType?: string
+  @ApiPropertyOptional({ enum: CourtSessionRulingType })
+  rulingType?: CourtSessionRulingType
 
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -106,4 +108,8 @@ export class CourtSession extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   closingEntries?: string
+
+  @HasMany(() => CourtDocument, 'courtSessionId')
+  @ApiPropertyOptional({ type: () => [CourtDocument] })
+  filedDocuments?: CourtDocument[]
 }

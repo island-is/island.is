@@ -7,11 +7,11 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import format from 'date-fns/format'
 import { useNavigate } from 'react-router-dom'
-import { useGetListsForOwner } from '../../../hooks'
+import { useGetListsForOwner, useGetSignedList } from '../../../hooks'
 import { m } from '../../../lib/messages'
 import { SignatureCollectionPaths } from '../../../lib/paths'
 import { Skeleton } from '../../../lib/skeletons'
-import SignedList from '../../shared/SignedList'
+import SignedLists from '../../shared/SignedLists'
 import CancelCollection from './CancelCollection'
 import Managers from '../../shared/Managers'
 
@@ -32,10 +32,11 @@ const OwnerView = ({
     collectionType,
     currentCollection?.id || '',
   )
+  const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
 
   return (
     <Box>
-      {!loadingOwnerLists && !!currentCollection ? (
+      {!loadingOwnerLists && !loadingSignedLists && !!currentCollection ? (
         <Stack space={6}>
           {listsForOwner?.length === 0 && currentCollection.isActive && (
             <Button
@@ -53,9 +54,7 @@ const OwnerView = ({
           )}
           <Box marginTop={[0, 5]}>
             {/* Signed list */}
-            {!user?.profile.actor && (
-              <SignedList collectionType={collectionType} />
-            )}
+            {!user?.profile.actor && <SignedLists signedLists={signedLists} />}
 
             {/* Candidate created lists */}
             <Text variant="h4" marginTop={[5, 7]} marginBottom={2}>
@@ -68,11 +67,10 @@ const OwnerView = ({
                     key={list.id}
                     backgroundColor="white"
                     heading={list.title}
-                    eyebrow={
-                      formatMessage(m.endTime) +
-                      ' ' +
-                      format(new Date(list.endTime), 'dd.MM.yyyy')
-                    }
+                    eyebrow={`${formatMessage(m.endTime)} ${format(
+                      new Date(list.endTime),
+                      'dd.MM.yyyy',
+                    )}`}
                     text={formatMessage(m.collectionTitle)}
                     cta={
                       new Date(list.endTime) > new Date() && list.active

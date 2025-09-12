@@ -1,2 +1,3 @@
 export { CourtSessionResponse } from './dto/courtSession.response'
-export { CourtSession } from './models/courtSession.model'
+export { CourtDocumentResponse } from './dto/courtDocument.response'
+export { DeleteCourtDocumentResponse } from './dto/deleteCourtDocument.response'

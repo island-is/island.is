@@ -23,4 +23,4 @@ export enum MedicalAndRehabilitationPaymentsConfirmationType {
   VIDURKENND_MEDFERD = 'VIDURKENND_MEDFERD',
 }
 
-export const CURRENT_EMPLOYMENT_STATUS_OTHER = 'ANNAD'
+export const OTHER = 'ANNAD'

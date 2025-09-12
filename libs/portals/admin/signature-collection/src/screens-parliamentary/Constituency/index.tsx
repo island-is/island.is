@@ -92,18 +92,21 @@ export const Constituency = () => {
           ) : (
             <GridRow>
               <GridColumn span="12/12">
-                <Box marginBottom={3} display="flex" justifyContent="flexEnd">
-                  <Text variant="eyebrow">
-                    {formatMessage(m.totalListsPerConstituency) +
-                      ': ' +
-                      constituencyLists.length}
+                <Box display="flex" justifyContent="flexEnd">
+                  <Text variant="eyebrow" marginBottom={3}>
+                    {`${formatMessage(m.totalListsPerConstituency)}: ${
+                      constituencyLists.length
+                    }`}
                   </Text>
                 </Box>
                 <Stack space={3}>
                   {constituencyLists.map((list) => (
                     <ActionCard
                       key={list.id}
-                      date={format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')}
+                      eyebrow={`${formatMessage(m.listEndTime)}: ${format(
+                        new Date(list.endTime),
+                        'dd.MM.yyyy',
+                      )}`}
                       heading={list.candidate.name}
                       progressMeter={{
                         currentProgress: list.numberOfSignatures ?? 0,
