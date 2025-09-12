@@ -159,14 +159,12 @@ export const createTestingCaseModule = async () => {
     CaseRepositoryService,
   )
 
-  const caseArchiveRepositoryService = caseModule.get<CaseArchiveRepositoryService>(
-    CaseArchiveRepositoryService,
-  )
+  const caseArchiveRepositoryService =
+    caseModule.get<CaseArchiveRepositoryService>(CaseArchiveRepositoryService)
 
   const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
-
 
   const dateLogModel = caseModule.get<typeof DateLog>(getModelToken(DateLog))
 
