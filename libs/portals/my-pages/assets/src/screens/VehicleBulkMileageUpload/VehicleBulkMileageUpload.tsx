@@ -147,7 +147,7 @@ const VehicleBulkMileageUpload = () => {
                 loading={templateLoading}
                 disabled={!!templateLoading}
               />,
-              loading ?? loadingURL ? (
+              loading || loadingURL ? (
                 <Box
                   key="loading-indicator"
                   display="flex"
