@@ -540,6 +540,18 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Annað varðandi megin vanda',
       description: 'Further information on main impairment',
     },
+
+    // Alma Certificate
+    almaCertificateMessage: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.alma.certificate.message',
+      defaultMessage:
+        'Hjá TR liggur fyrir eldra vottorð vegna umsóknar um endurlífeyri.\n\nVottorðið liggur til grundvallar á þessari framhaldsumsókn.',
+    },
+    almaCertificateDate: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.alma.certificate.date',
+      defaultMessage: 'Úgáfudagur vottorðs',
+      description: 'Date of issue of certificate',
+    },
   }),
 
   rehabilitationPlan: defineMessages({

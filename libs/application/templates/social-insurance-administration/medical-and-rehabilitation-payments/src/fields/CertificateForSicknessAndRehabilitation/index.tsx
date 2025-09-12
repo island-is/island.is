@@ -450,6 +450,49 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
       />
     )
   }
+  // eslint-disable-next-line no-constant-condition
+  if (1 === 1) {
+    return (
+      <Stack space={4}>
+        <Stack space={3}>
+          <GridRow rowGap={3}>
+            <GridColumn span="1/1">
+              <AlertMessage
+                type="info"
+                message={formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage
+                    .certificateForSicknessAndRehabilitation
+                    .almaCertificateMessage,
+                )}
+              />
+            </GridColumn>
+          </GridRow>
+          <GridRow rowGap={3}>
+            <GridColumn span="1/1">
+              <Text variant="h3">
+                {formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.shared
+                    .information,
+                )}
+              </Text>
+            </GridColumn>
+          </GridRow>
+          <GridRow rowGap={3}>
+            <GridColumn span="1/1">
+              <Label>
+                {formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage
+                    .certificateForSicknessAndRehabilitation
+                    .almaCertificateDate,
+                )}
+              </Label>
+              <Text>{format(new Date('2022-01-12'), 'dd.MM.yyyy')}</Text>
+            </GridColumn>
+          </GridRow>
+        </Stack>
+      </Stack>
+    )
+  }
 
   return (
     <Stack space={4}>
