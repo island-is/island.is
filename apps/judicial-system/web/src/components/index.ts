@@ -69,6 +69,7 @@ export { default as RestrictionTags } from './RestrictionTags/RestrictionTags'
 export { default as RulingAccordionItem } from './AccordionItems/RulingAccordionItem/RulingAccordionItem'
 export { default as RulingInput } from './RulingInput/RulingInput'
 export { default as SectionHeading } from './SectionHeading/SectionHeading'
+
 export {
   default as ServiceAnnouncements,
   AlternativeServiceAnnouncement,
