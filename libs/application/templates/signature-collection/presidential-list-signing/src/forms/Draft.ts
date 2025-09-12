@@ -40,7 +40,6 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
-              backgroundColor: 'white',
               defaultValue: '',
               required: true,
               options: ({ externalData }) => {
