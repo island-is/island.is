@@ -41,7 +41,7 @@ import {
   getApplicationType,
 } from '../utils/newPrimarySchoolUtils'
 import { dataSchema } from './dataSchema'
-import { newPrimarySchoolMessages } from './messages'
+import { newPrimarySchoolMessages, statesMessages } from './messages'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -164,11 +164,24 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
+            tag: {
+              label: statesMessages.applicationReceivedTitle,
+            },
             pendingAction: {
               title: corePendingActionMessages.applicationReceivedTitle,
               content: corePendingActionMessages.applicationReceivedDescription,
               displayStatus: 'success',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: statesMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: statesMessages.applicationRejected,
+              },
+            ],
           },
           roles: [
             {
@@ -182,7 +195,56 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: States.APPROVED,
+          status: FormModes.APPROVED,
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.applicationApproved,
+              content: statesMessages.applicationApprovedDescription,
+              displayStatus: 'success',
+            },
+          },
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.REJECTED]: {
+        meta: {
+          name: States.REJECTED,
+          status: FormModes.REJECTED,
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.applicationRejected,
+              content: statesMessages.applicationRejectedDescription,
+              displayStatus: 'error',
+            },
+          },
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
     },

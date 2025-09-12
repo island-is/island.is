@@ -9,6 +9,8 @@ export const enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   SUBMITTED = 'submitted',
+  REJECTED = 'rejected',
+  APPROVED = 'approved',
 }
 
 export type Events =
