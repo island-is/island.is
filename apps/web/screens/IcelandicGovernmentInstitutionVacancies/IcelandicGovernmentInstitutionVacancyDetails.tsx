@@ -308,9 +308,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
               {vacancy.contacts.map((contact, index) => (
                 <Box className="rs_read" key={index}>
                   <Text>
-                    {contact.name && contact.email
-                      ? `${contact.name}, `
-                      : contact.name}
+                    {contact.name ?? ''}
                     {contact.email && (
                       <LinkV2
                         underlineVisibility="always"
@@ -322,6 +320,21 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
                       </LinkV2>
                     )}
                   </Text>
+                  {contact.jobTitle && <Text>{contact.jobTitle}</Text>}
+                  {contact.email && (
+                    <Text>
+                      {n('email', 'Netfang:')}{' '}
+                      <LinkV2
+                        underlineVisibility="always"
+                        underline="normal"
+                        color="blue400"
+                        href={`mailto:${contact.email}`}
+                      >
+                        {contact.email}
+                      </LinkV2>
+                    </Text>
+                  )}
+
                   {contact.phone && (
                     <Text>
                       {n('telephone', 'Sími:')} {contact.phone}
