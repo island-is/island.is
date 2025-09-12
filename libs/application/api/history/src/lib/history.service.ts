@@ -62,9 +62,9 @@ export class HistoryService {
       },
       {
         where: {
-          application_id: applicationId
-        }
-      }
+          application_id: applicationId,
+        },
+      },
     )
   }
 
