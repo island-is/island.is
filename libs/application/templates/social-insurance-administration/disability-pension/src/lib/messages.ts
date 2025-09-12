@@ -39,6 +39,63 @@ export const disabilityPensionFormMessage: MessageDir = {
       description: 'Select month',
     },
   }),
+  notEligible: defineMessages({
+    title: {
+      id: 'dp.application:not.eligible.title',
+      defaultMessage:
+        'Því miður átt þú ekki rétt á örorkulífeyri',
+      description:
+        'Unfortunately, you are not eligible for disability pension.',
+    },
+    applicantAgeOutOfRangeDescription: {
+      id: 'dp.application:not.eligible.applicant.age.out.of.range.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki á aldrinum 18-67 ára.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reason for this is the following:\n* You are not aged 18-67.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+    },
+    noLegalDomicileInIcelandDescription: {
+      id: 'dp.application:not.eligible.no.legal.domicile.in.iceland.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú átt ekki lögheimili á Íslandi.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reason for this is the following:\n* You have no legal domicile in Iceland.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+    },
+    latestDisabilityPensionDocumentNotFoundDescription: {
+      id: 'dp.application:not.eligible.latest.disability.pension.document.not.found.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Örorkuvottorð fannst ekki.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reason for this is the following:\n* No disability certificate was found.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+    },
+    applicantAlreadyHasPendingApplicationDescription: {
+      id: 'dp.application:not.eligible.applicant.already.has.pending.application.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert þegar með virka umsókn í gangi.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reason for this is the following:\n* You already have a pending application.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+    },
+    applicantAlreadyHasFullDisabilityPensionDescription: {
+      id: 'dp.application:not.eligible.applicant.already.has.full.disability.pension.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert þegar með skráða fulla örorku.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reason for this is the following:\n* You already have a full disability pension.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+    },
+  }),
+  customFields: defineMessages({
+    certificate: {
+      id: 'dp.application:overview.certificate',
+      defaultMessage: 'Örorkuvottorð',
+      description: 'Disability certificate',
+    },
+    selfEvaluation: {
+      id: 'dp.application:overview.selfevaluation',
+      defaultMessage:
+        'Sjálfsmat',
+      description: 'Selfevaluation',
+    },
+  }),
   disabilityPensionCertificate: defineMessages({
     sectionTitle: {
       id: 'dp.application:disability.pension.certificate.section.title',
@@ -314,7 +371,7 @@ export const disabilityPensionFormMessage: MessageDir = {
     },
     employmentParticipationTitle: {
       id: 'dp.application:basicInfo.employmentParticipationTitle',
-      defaultMessage: 'Atvinnuþáttaka',
+      defaultMessage: 'Atvinnuþátttaka',
       description: 'Employment participation',
     },
     relatedApplicationsTitle: {
@@ -394,7 +451,7 @@ export const disabilityPensionFormMessage: MessageDir = {
     notice: {
       id: 'dp.application:paymentInfo.notice#markdown',
       defaultMessage: `Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reikning. \n\n
-Mikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa sambvand við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um ÍBAN-númer og SWIFT-númer. \n\n
+Mikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um ÍBAN-númer og SWIFT-númer. \n\n
 Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.`,
       description: 'TODO',
     },
@@ -576,7 +633,7 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     description: {
       id: 'dp.application:disabilityPeriod.description',
       defaultMessage:
-        'Hægt er að sækja um greiðslur í allt að 2 ár afturvikt, athygli er vakin á að gögn þurfa að rökstyðja afturvirkar greiðslur.',
+        'Hægt er að sækja um greiðslur í allt að 2 ár afturvirkt, athygli er vakin á að gögn þurfa að rökstyðja afturvirkar greiðslur.',
       description: 'Description for disability period',
     },
 
@@ -709,14 +766,6 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       id: 'dp.application:employmentParticipation.abroadPaymentsTableTitle',
       defaultMessage: 'Hvaðan hefur þú fengið greiðslur?',
       description: 'Where have you received payments from?',
-    },
-  }),
-  notEligible: defineMessages({
-    title: {
-      id: 'dp.application:not.eligible.title',
-      defaultMessage: 'Því miður átt þú ekki rétt á örorkulífeyri',
-      description:
-        'Unfortunately, you are not eligible for disability pension.',
     },
   }),
   selfEvaluation: defineMessages({
@@ -883,7 +932,7 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     residenceWithFamily: {
       id: 'dp.application:selfEvaluation.questions.residence.withFamily',
-      defaultMessage: 'Í húsnæði foreldar/ættingja',
+      defaultMessage: 'Í húsnæði foreldra/ættingja',
       description: 'In parents/relatives housing',
     },
     residenceOther: {
@@ -1123,12 +1172,12 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     previousEmploymentField: {
       id: 'dp.application:selfEvaluation.questions.previousEmployment.field',
-      defaultMessage: 'Hverskonar starfssemi fer aðallega fram þar?',
+      defaultMessage: 'Hverskonar starfsemi fer aðallega fram þar?',
       description: 'What kind of industry?',
     },
     chooseProfessionActivity: {
       id: 'dp.application:selfEvaluation.questions.chooseProfessionActivity',
-      defaultMessage: 'Veldu starfssemi',
+      defaultMessage: 'Veldu starfsemi',
       description: 'Choose profession activity',
     },
     chooseProfession: {
@@ -1143,7 +1192,7 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     professionActivity: {
       id: 'dp.application:selfEvaluation.questions.professionActivity',
-      defaultMessage: 'Starfssemi',
+      defaultMessage: 'Starfsemi',
       description: 'Profession activity',
     },
     educationLevelTitle: {

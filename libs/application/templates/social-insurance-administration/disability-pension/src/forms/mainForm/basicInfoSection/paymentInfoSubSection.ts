@@ -3,7 +3,6 @@ import {
   YesOrNo,
   buildAlertMessageField,
   buildAsyncSelectField,
-  buildBankAccountField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
@@ -23,7 +22,6 @@ import {
   getTaxOptions,
   getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application, FormValue } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
@@ -193,6 +191,8 @@ export const paymentInfoSubSection = buildSubSection({
           variant: 'number',
           width: 'half',
           maxLength: 4,
+          min: 0,
+          max: 100,
         }),
         buildRadioField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.taxLevel`,

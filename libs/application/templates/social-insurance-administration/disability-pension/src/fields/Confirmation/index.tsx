@@ -29,10 +29,9 @@ export const Confirmation: FC<ConfirmationScreenProps> = () => {
             <Text variant="small">
               <Markdown
                 options={{ openLinksInNewTab: true }}
-                children={formatMessage(
-                  disabilityPensionFormMessage.confirmation.warningDescription,
-                )}
-              />
+              >{formatMessage(
+                disabilityPensionFormMessage.confirmation.warningDescription,
+              )}</Markdown>
             </Text>
           </Box>
         }

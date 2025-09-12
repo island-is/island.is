@@ -6,7 +6,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { SectionRouteEnum } from '../../../../types'
+import { OTHER_STATUS_VALUE, SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
 import { EmploymentDto } from '@island.is/clients/social-insurance-administration'
 
@@ -32,7 +32,6 @@ export const employmentField = buildMultiField({
               value,
               label,
             })),
-          //"other" should be at the bottom
           ...types
             .filter((t) => t.needsFurtherInformation)
             .map(({ value, label }) => ({
@@ -54,7 +53,7 @@ export const employmentField = buildMultiField({
             `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
           ) ?? []
 
-        return statuses.includes('ANNAD')
+        return statuses.includes(OTHER_STATUS_VALUE)
       },
     }),
     buildTextField({
@@ -68,7 +67,7 @@ export const employmentField = buildMultiField({
             `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
           ) ?? []
 
-        return statuses.includes('ANNAD')
+        return statuses.includes(OTHER_STATUS_VALUE)
       },
     }),
   ],

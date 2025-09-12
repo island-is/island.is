@@ -4,13 +4,14 @@ import {
   KeyValueItem,
   TableData,
 } from '@island.is/application/types'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatCurrencyWithoutSuffix, formatPhoneNumber } from '@island.is/application/ui-components'
 import kennitala from 'kennitala'
 
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { disabilityPensionFormMessage } from '../lib/messages'
 import { SectionRouteEnum } from '../types'
+import { getApplicationAnswers } from './getApplicationAnswers'
 
 export const aboutApplicantItems = (
   answers: FormValue,
@@ -24,9 +25,10 @@ export const aboutApplicantItems = (
     {
       width: 'half',
       keyText: coreMessages.nationalId,
-      valueText: kennitala.format(
-        getValueViaPath<string>(answers, 'applicant.nationalId') ?? '',
-      ),
+      valueText: (() => {
+        const kt = getValueViaPath<string>(answers, 'applicant.nationalId')
+        return kt ? kennitala.format(kt) : ''
+      })(),
     },
     {
       width: 'half',
@@ -94,7 +96,7 @@ export const paymentInfoItems = (answers: FormValue): Array<KeyValueItem> => {
           `${SectionRouteEnum.PAYMENT_INFO}.taxLevel`,
         )
         if (Object.values(TaxLevelOptions).includes(index as TaxLevelOptions)) {
-          return getTaxLevelOption(index as TaxLevelOptions).defaultMessage
+          return getTaxLevelOption(index as TaxLevelOptions)
         }
         return typeof index === 'string' ? index : ''
       })(),
@@ -158,38 +160,15 @@ export const disabilityCertificateItems = (
       width: 'full',
       keyText:
         disabilityPensionFormMessage.disabilityCertificate.disabilityTitle,
-      valueText:
-        getValueViaPath(
-          answers,
-          `${SectionRouteEnum.DISABILITY_CERTIFICATE}`,
-        ) === undefined || null
-          ? disabilityPensionFormMessage.disabilityCertificate
-              .certificateNotAvailable
-          : disabilityPensionFormMessage.disabilityCertificate
-              .certificateAvailable,
-    },
-  ]
-}
-
-export const selfEvaluationItems = (
-  answers: FormValue,
-): Array<KeyValueItem> => {
-  return [
-    {
-      width: 'full',
-      keyText: disabilityPensionFormMessage.selfEvaluation.title,
-
-      valueText: () => {
-        const backgroundData = getValueViaPath(
-          answers,
-          `${SectionRouteEnum.SELF_EVALUATION}`,
-        )
-        const impairmentData = getValueViaPath(
-          answers,
-          `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers`,
-        )
-        return ' :D '
-      },
+        valueText: (() => {
+          const certificate = getValueViaPath(
+            answers,
+            `${SectionRouteEnum.DISABILITY_CERTIFICATE}`,
+          )
+          return certificate == null || undefined
+            ? disabilityPensionFormMessage.disabilityCertificate.certificateNotAvailable
+            : disabilityPensionFormMessage.disabilityCertificate.certificateAvailable
+        })(),
     },
   ]
 }
@@ -212,48 +191,10 @@ export const extraInfoItems = (answers: FormValue): Array<KeyValueItem> => {
   ]
 }
 
-/*
-
-export const getExamInformationOthersForOverview = (
-  answers: FormValue,
-): TableData => {
-  const examinees = getExaminees(answers)
-  const examCategories = getExamcategories(answers)
-
-  if (!examinees || !examCategories) return { header: [], rows: [] }
-
-  const tableData = examinees
-    ?.map((examinee, index) => {
-      return examCategories[index].categories.map((cat, idx) => {
-        return {
-          name: examinee.nationalId.name,
-          examCategory: cat.label,
-          instructor: examCategories[index].instructor[idx].label,
-        }
-      })
-    })
-    .flat()
-
-  return {
-    header: [
-      overview.table.examinee,
-      overview.table.examCategory,
-      overview.table.instructor,
-    ],
-    rows: tableData.map((data) => {
-      return [data.name, data.examCategory, data.instructor]
-    }),
-  }
-}
-
-*/
 export const incomePlanItems = (answers: FormValue): TableData => {
-  const incomePlanData = getValueViaPath(
-    answers,
-    `${SectionRouteEnum.INCOME_PLAN}`,
-  )
+  const { incomePlan } = getApplicationAnswers(answers)
 
-  if (!Array.isArray(incomePlanData)) return { header: [], rows: [] }
+  if (!Array.isArray(incomePlan)) return { header: [], rows: [] }
 
   return {
     header: [
@@ -261,8 +202,10 @@ export const incomePlanItems = (answers: FormValue): TableData => {
       disabilityPensionFormMessage.incomePlan.yearlyIncome,
       disabilityPensionFormMessage.incomePlan.currency,
     ],
-    rows: incomePlanData.map((item) => {
-      return [item.incomeType, item.yearlyIncome ?? '0', item.currency]
-    }),
+      rows: incomePlan.map((e) => [
+        e.incomeType,
+        formatCurrencyWithoutSuffix(e.incomePerYear),
+        e.currency,
+      ]),
   }
 }

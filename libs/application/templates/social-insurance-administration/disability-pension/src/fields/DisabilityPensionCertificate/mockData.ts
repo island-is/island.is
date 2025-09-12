@@ -7,9 +7,9 @@ import {
 export const MOCK_CERTIFICATE: SiaDisabilityPensionCertificateQuery = {
   socialInsuranceDisabilityPensionCertificate: {
     referenceId: '1',
-    lastInspectionDate: new Date().toISOString(),
-    certificateDate: new Date().toISOString(),
-    dateOfWorkIncapacity: new Date().toISOString(),
+    lastInspectionDate: '2025-01-01T00:00:00.000Z',
+    certificateDate: '2025-01-01T00:00:00.000Z',
+    dateOfWorkIncapacity: '2025-01-01T00:00:00.000Z',
     healthHistorySummary: 'Hefur farið í áfengismeðferð',
     participationLimitationCause: 10,
     abilityChangePotential: 80,

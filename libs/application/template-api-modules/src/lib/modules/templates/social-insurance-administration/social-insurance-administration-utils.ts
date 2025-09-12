@@ -666,7 +666,7 @@ export const transformApplicationToDisabilityPensionDTO = (
     },
     hasAppliedForDisabilityAtPensionFund: hasAppliedForDisabilityBefore === YES,
     isInPaidEmployment: inPaidWork === YES,
-    plansToContinueParticipation: inPaidWork
+    plansToContinueParticipation: inPaidWork === YES
       ? willContinueWorking === YES
       : undefined,
     housingTypeId: residence ?? -1,

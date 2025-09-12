@@ -114,7 +114,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['list'],
-        params: disabilityPensionFormMessage.errors.emptyForeignResidence,
+        params: disabilityPensionFormMessage.errors.emptyForeignPayments,
       },
     ),
   backgroundInfoMaritalStatus: z.object({
@@ -299,7 +299,7 @@ export const dataSchema = z.object({
       {
         path: ['rehabilitationResults'],
         params:
-          disabilityPensionFormMessage.errors.rehabilitationOrTherapyResults,
+          disabilityPensionFormMessage.errors.emptyRehabilitationOrTherapyProgress,
       },
     ),
   backgroundInfoBiggestIssue: z.object({
@@ -492,7 +492,7 @@ export const dataSchema = z.object({
     .refine((i) => i === undefined || i.length > 0, {
       params: errorMessages.incomePlanRequired,
     }),
-  selfEvaluation: z.object({
+  selfEvaluationAssistance: z.object({
     assistance: z.enum([YES, NO]),
   }),
   questionAnswer: z.object({

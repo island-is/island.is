@@ -107,7 +107,7 @@ export const previousEmploymentField = buildMultiField({
       title: disabilityPensionFormMessage.questions.previousEmploymentField,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<string>(
+        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
           formValue,
           `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
         )
@@ -120,7 +120,7 @@ export const previousEmploymentField = buildMultiField({
       width: 'full',
       placeholder: disabilityPensionFormMessage.questions.chooseProfessionActivity,
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<string>(
+        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
           formValue,
           `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
         )

@@ -15,6 +15,7 @@ export const educationLevelField = buildMultiField({
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_EDUCATION_LEVEL}.level`,
       title: disabilityPensionFormMessage.questions.educationLevelTitle,
+      required: true,
       options: (application: Application) => {
         const educationLevels =
           getValueViaPath<Array<EducationLevels>>(

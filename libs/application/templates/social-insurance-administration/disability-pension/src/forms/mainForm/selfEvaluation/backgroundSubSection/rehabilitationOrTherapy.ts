@@ -19,6 +19,7 @@ export const rehabilitationOrTherapyField = buildMultiField({
       title:
         disabilityPensionFormMessage.questions.rehabilitationOrTherapyTitle,
       options: yesOrNoOptions,
+      required: true,
       width: 'half',
     }),
     buildTitleField({

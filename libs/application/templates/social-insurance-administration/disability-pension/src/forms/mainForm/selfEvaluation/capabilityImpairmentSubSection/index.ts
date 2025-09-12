@@ -20,7 +20,7 @@ const buildQuestion = (index: number) => {
     title: disabilityPensionFormMessage.capabilityImpairment.title,
     children: [
       buildDescriptionField({
-        id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}].description`,
+        id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}].description`,
         title: (application, locale) => {
           const selfAssessmentQuestionnaire =
             getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
@@ -34,7 +34,7 @@ const buildQuestion = (index: number) => {
                 questionnaire.language.toLowerCase() === locale,
             )?.questions ?? []
 
-          return questions[index].explanationText
+          return questions[index]?.explanationText
         },
         titleVariant: 'h4',
       }),
@@ -54,7 +54,7 @@ const buildQuestion = (index: number) => {
                 questionnaire.language.toLowerCase() === locale,
             )?.questions ?? []
 
-          return questions[index].question
+          return questions[index]?.question
         },
         options: (application, _, locale) => {
           const selfAssessmentQuestionnaire =
@@ -92,7 +92,7 @@ const buildQuestion = (index: number) => {
               (questionnaire) => questionnaire.language.toLowerCase() === 'is',
             )?.questions ?? []
 
-          return questions[index].questionCode
+          return questions[index]?.questionCode
         },
       }),
     ],

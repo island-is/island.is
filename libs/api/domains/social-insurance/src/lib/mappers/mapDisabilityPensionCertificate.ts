@@ -10,7 +10,6 @@ import {
   TrWebExternalModelsServicePortalEnvironmentalCategory,
   TrWebExternalModelsServicePortalImpairmentType,
 } from '@island.is/clients/social-insurance-administration'
-import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate'
 import { Doctor } from '../models/medicalDocuments/doctor.model'
 import { DisabilityDiagnosisCollection } from '../models/medicalDocuments/disabilityDiagnosisCollection.model'
 import { DisabilityDiagnosis } from '../models/medicalDocuments/disabilityDiagnosis.model'
@@ -21,6 +20,7 @@ import { EnvironmentalFactor } from '../models/medicalDocuments/environmentalFac
 import { MedicalDocumentFunction } from '../models/medicalDocuments/function.model'
 import { EnvironmentalCategory } from '../enums/environmentalCategory'
 import { ImpairmentType } from '../enums/impairmentType'
+import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate.model'
 
 const mapDoctor = (
   doctorInfo?: TrWebExternalModelsServicePortalDoctorInfo,

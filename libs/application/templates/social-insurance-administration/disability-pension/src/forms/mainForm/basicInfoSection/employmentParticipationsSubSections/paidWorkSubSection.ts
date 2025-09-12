@@ -1,6 +1,6 @@
 import {
   NO,
-  YesOrNoEnum,
+  YesOrNo,
   buildMultiField,
   buildRadioField,
   getValueViaPath,
@@ -30,7 +30,7 @@ export const paidWorkSubSection = buildMultiField({
       width: 'half',
       backgroundColor: 'blue',
       condition: (formValue: FormValue) => {
-        const isWorking = getValueViaPath<YesOrNoEnum>(
+        const isWorking = getValueViaPath<YesOrNo>(
           formValue,
           `${SectionRouteEnum.PAID_WORK}.inPaidWork`,
         )

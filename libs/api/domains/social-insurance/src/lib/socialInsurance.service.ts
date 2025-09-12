@@ -35,8 +35,8 @@ import {
   mapPensionCalculationInput,
 } from './utils'
 import { Locale } from '@island.is/shared/types'
-import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate'
-import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertifiate'
+import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertificate'
+import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -259,8 +259,8 @@ export class SocialInsuranceService {
     user: User,
   ): Promise<DisabilityPensionCertificate | null> {
     const data =
-      await this.socialInsuranceApi.getCertificateForDisabilityPension(user)
-    return mapDisabilityPensionCertificate(data)
+      await this.socialInsuranceApi.getCertificateForDisabilityPension(user).catch(handle404)
+    return data ? mapDisabilityPensionCertificate(data) : null
   }
 
   async getConfirmedTreatment(

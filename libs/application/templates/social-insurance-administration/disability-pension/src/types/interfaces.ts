@@ -41,10 +41,10 @@ export interface Residence {
 
 export interface EmploymentStatusResponse {
   languageCode: string
-  employmentStatuses: EmploymentStatus[]
+  employmentStatuses: EmploymentStatusItem[]
 }
 
-export interface EmploymentStatus {
+export interface EmploymentStatusItem {
   value: number
   displayName: string
 }

@@ -9,6 +9,7 @@ export const icelandicCapabilityField = buildMultiField({
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_ICELANDIC_CAPABILITY}.capability`,
       title: disabilityPensionFormMessage.questions.icelandicCapabilityTitle,
+      required: true,
       options: [
         {
           value: '0',

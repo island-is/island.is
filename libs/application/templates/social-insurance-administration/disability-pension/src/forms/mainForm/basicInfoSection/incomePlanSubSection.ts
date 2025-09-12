@@ -71,7 +71,6 @@ export const incomePlanSubSection = buildSubSection({
           width: 'half',
           isSearchable: true,
           options: (application) => {
-            //TODO: GRAPHLQ?
             const categorizedIncomeTypes =
               getValueViaPath<Array<CategorizedIncomeTypes>>(
                 application.externalData,
@@ -110,7 +109,6 @@ export const incomePlanSubSection = buildSubSection({
             watchValues: 'incomeCategory',
           },
           options: (application, activeField) => {
-            //TODO: GRAPHLQ?
             const categorizedIncomeTypes =
               getValueViaPath<Array<CategorizedIncomeTypes>>(
                 application.externalData,
@@ -163,7 +161,7 @@ export const incomePlanSubSection = buildSubSection({
                 : ''
 
             return getCurrencies(
-              data.socialInsuranceGeneral.currencies ?? [],
+              data.socialInsuranceGeneral?.currencies ?? [],
               hideISKCurrency,
             )
           },

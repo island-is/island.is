@@ -19,7 +19,7 @@ If the applicant doesn't fulfill the required pre-conditions to apply for disabi
 
 #### Draft
 
-Valid applicants will be able to advance to this state where they can start filling in their details, reviewing the required documentation and answering a self-assesment questionnaire.
+Valid applicants will be able to advance to this state where they can start filling in their details, reviewing the required documentation and answering a self-assessment questionnaire.
 
 #### Tryggingastofnun submitted
 

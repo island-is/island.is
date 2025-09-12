@@ -9,7 +9,7 @@ export const assistanceField = buildMultiField({
   description: disabilityPensionFormMessage.selfEvaluation.description,
   children: [
     buildRadioField({
-      id: `${SectionRouteEnum.SELF_EVALUATION}.assistance`,
+      id: `${SectionRouteEnum.SELF_EVALUATION_ASSISTANCE}.assistance`,
       title: disabilityPensionFormMessage.selfEvaluation.assistance,
       width: 'half',
       backgroundColor: 'blue',

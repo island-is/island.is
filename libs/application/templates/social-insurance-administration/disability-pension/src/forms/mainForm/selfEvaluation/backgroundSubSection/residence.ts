@@ -33,13 +33,20 @@ export const residenceField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.other`,
       title: disabilityPensionFormMessage.questions.residenceOtherWhat,
       variant: 'textarea',
-      condition: (formValue) => {
+      condition: (formValue, externalData) => {
         const residenceStatus = getValueViaPath<string>(
           formValue,
           `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,
         )
-        //Todo: more explicit for the "other" option
-        return residenceStatus === '6'
+
+        const residenceTypes =
+          getValueViaPath<Array<ResidenceDto>>(
+            externalData,
+            'socialInsuranceAdministrationResidence.data',
+          ) ?? []
+
+        const otherType = residenceTypes.find((type) => type.value.toString() === residenceStatus)
+        return otherType?.needsFurtherInformation ?? false
       },
     }),
   ],

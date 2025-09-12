@@ -237,7 +237,6 @@ const template: ApplicationTemplate<
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           status: FormModes.IN_PROGRESS,
-          //todo: correct?
           lifecycle: pruneAfterDays(365),
           actionCard: {
             pendingAction: {

@@ -3,6 +3,7 @@ import { TaxLevelOptions } from '@island.is/application/templates/social-insuran
 import {
   BankInfo,
   CategorizedIncomeTypes,
+  Eligible,
   IncomePlanConditions,
   IncomePlanRow,
   PaymentInfo,
@@ -167,7 +168,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const hadAssistanceForSelfEvaluation = getValueViaPath<YesOrNo>(
     answers,
-    'selfEvaluation.assistance',
+    'selfEvaluationAssistance.assistance',
   )
 
   const questionnaire =
@@ -274,10 +275,10 @@ export const getApplicationExternalData = (
     'userProfile.data.mobilePhoneNumber',
   ) as string
 
-  const isEligible = getValueViaPath(
+  const isEligible = getValueViaPath<Eligible>(
     externalData,
-    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
-  ) as boolean
+    'socialInsuranceAdministrationIsApplicantEligible.data',
+  ) as Eligible
 
   const categorizedIncomeTypes = getValueViaPath<Array<CategorizedIncomeTypes>>(
     externalData,
@@ -289,10 +290,10 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIncomePlanConditions.data',
   ) as IncomePlanConditions
 
-  const countries = getValueViaPath<CountryValue[]>(
+  const countries = (getValueViaPath<CountryValue[]>(
     externalData,
     'socialInsuranceAdministrationCountries.data',
-  ) as CountryValue[]
+  ) as CountryValue[]) ?? []
 
   return {
     residenceHistory,

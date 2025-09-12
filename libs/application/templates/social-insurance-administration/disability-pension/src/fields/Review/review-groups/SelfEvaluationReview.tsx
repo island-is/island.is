@@ -26,7 +26,6 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  //TODO!!!
   type SelfEvaluationAnswers = {
     hasAssistance: boolean,
     maritalStatus: boolean,
@@ -35,6 +34,7 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
     icelandicCapability: boolean,
     language: boolean,
     employment: boolean,
+    employmentOther: boolean,
     previousEmployment: boolean,
     previousEmploymentWhen: boolean,
     previousEmploymentProfession: boolean,
@@ -58,6 +58,7 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
     icelandicCapability: icelandicCapability !== undefined,
     language: language !== undefined,
     employment: employmentStatus !== undefined && employmentStatus.length > 0,
+    employmentOther: employmentStatusOther !== undefined,
     previousEmployment: previousEmployment !== undefined && previousEmployment.hasEmployment !== undefined,
     previousEmploymentWhen: previousEmployment !== undefined && previousEmployment.when !== undefined,
     previousEmploymentProfession: previousEmployment !== undefined && previousEmployment.job !== undefined,
@@ -92,7 +93,7 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
         </Button>
       </Box>
 
-      <Text>bleble</Text>
+      <Text>TODO - hefur umsækjandi svarað aðstoðarsp-urningu</Text>
       <Box marginTop={2}>
         <BulletList>
           {

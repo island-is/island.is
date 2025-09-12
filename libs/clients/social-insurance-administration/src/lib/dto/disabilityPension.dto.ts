@@ -61,10 +61,4 @@ export interface DisabilityPensionDto {
   applicationId: string
   domesticBankInfo?: DomesticBankInfo
   foreignBankInfo?: ForeignBankInfo
-  /*uploads?: Array<
-    {
-      name: string,
-      type: string,
-      file: string
-      }>*/
 }

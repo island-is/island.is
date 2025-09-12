@@ -96,7 +96,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
                 .phoneNumber,
             )}
           </Label>
-          <Text>{'???'}</Text>
+          <Text>{'-'}</Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
@@ -104,7 +104,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
               disabilityPensionFormMessage.disabilityPensionCertificate.email,
             )}
           </Label>
-          <Text>{'???'}</Text>
+          <Text>{'-'}</Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
@@ -112,7 +112,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
               disabilityPensionFormMessage.disabilityPensionCertificate.address,
             )}
           </Label>
-          <Text>{'???'}</Text>
+          <Text>{'-'}</Text>
         </GridColumn>
       </GridRow>
     </Stack>
@@ -267,8 +267,8 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
             </Text>
           </GridColumn>
           {data?.socialInsuranceDisabilityPensionCertificate?.physicalAbilityRatings?.map(
-            (rating) => (
-              <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
+            (rating, idx) => (
+              <GridColumn  key={`${rating.type ?? 'physical'}-${idx}`} span={['1/1', '1/1', '1/1', '1/2']}>
                 <Label>{rating.type?.toString()}</Label>
                 <Text>{rating.score?.toString()}</Text>
               </GridColumn>
@@ -299,8 +299,8 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
             </Text>
           </GridColumn>
           {data?.socialInsuranceDisabilityPensionCertificate?.cognitiveAndMentalAbilityRatings?.map(
-            (rating) => (
-              <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
+            (rating, idx) => (
+              <GridColumn key={`${rating.type ?? 'physical'}-${idx}`} span={['1/1', '1/1', '1/1', '1/2']}>
                 <Label>{rating.type?.toString()}</Label>
                 <Text>{rating.score?.toString()}</Text>
               </GridColumn>
@@ -331,8 +331,8 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
             </Text>
           </GridColumn>
           {data?.socialInsuranceDisabilityPensionCertificate?.functionalAssessment?.map(
-            (rating) => (
-              <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
+            (rating, idx) => (
+              <GridColumn  key={`${rating.type ?? 'physical'}-${idx}`} span={['1/1', '1/1', '1/1', '1/2']}>
                 <Label>{rating.type?.toString()}</Label>
                 <Text>{rating.score?.toString()}</Text>
               </GridColumn>

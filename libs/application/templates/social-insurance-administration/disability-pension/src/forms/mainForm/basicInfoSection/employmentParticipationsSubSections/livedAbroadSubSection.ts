@@ -47,7 +47,6 @@ export const livedAbroadSubSection = buildMultiField({
       removeButtonTooltipText:
         disabilityPensionFormMessage.employmentParticipation.remove,
       fields: {
-        //TODO: FROM SMÁRI
         country: {
           component: 'select',
           label: disabilityPensionFormMessage.employmentParticipation.country,
@@ -58,14 +57,14 @@ export const livedAbroadSubSection = buildMultiField({
           displayInTable: true,
           isSearchable: true,
           options: (application: Application) => {
-            const { countries } = getApplicationExternalData(
+            const { countries = [] } = getApplicationExternalData(
               application.externalData,
             )
             return (
               countries.map(({ label, value }) => ({
                 value,
                 label,
-              })) ?? []
+              }))
             )
           },
         },
