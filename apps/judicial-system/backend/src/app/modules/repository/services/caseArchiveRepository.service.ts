@@ -1,14 +1,18 @@
+import CryptoJS from 'crypto-js'
 import { CreateOptions, Transaction } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 
+import { uuidFactory } from '../../../factories'
 import { CaseArchive } from '../models/caseArchive.model'
+import { repositoryModuleConfig } from '../repository.config'
 
 interface CreateArchive {
-  archive: string
+  archiveJson: string
 }
 
 interface CreateCaseArchiveOptions {
@@ -20,6 +24,8 @@ export class CaseArchiveRepositoryService {
   constructor(
     @InjectModel(CaseArchive)
     private readonly caseArchiveModel: typeof CaseArchive,
+    @Inject(repositoryModuleConfig.KEY)
+    private readonly config: ConfigType<typeof repositoryModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -34,6 +40,13 @@ export class CaseArchiveRepositoryService {
         { data: Object.keys(data) },
       )
 
+      // Encrypt the archive JSON
+      const encryptedArchive = CryptoJS.AES.encrypt(
+        data.archiveJson,
+        this.config.archiveEncryptionKey,
+        { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
+      ).toString()
+
       const createOptions: CreateOptions = {}
 
       if (options?.transaction) {
@@ -41,7 +54,19 @@ export class CaseArchiveRepositoryService {
       }
 
       const result = await this.caseArchiveModel.create(
-        { caseId, ...data },
+        {
+          caseId,
+          archive: encryptedArchive,
+          // To decrypt:
+          // JSON.parse(
+          //   Base64.fromBase64(
+          //     CryptoJS.AES.decrypt(
+          //       archive,
+          //       this.config.archiveEncryptionKey,
+          //     ).toString(CryptoJS.enc.Base64),
+          //   ),
+          // )
+        },
         createOptions,
       )
 

@@ -1,4 +1,3 @@
-import CryptoJS from 'crypto-js'
 import format from 'date-fns/format'
 import { Base64 } from 'js-base64'
 import { Op } from 'sequelize'
@@ -38,7 +37,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory, uuidFactory } from '../../factories'
+import { nowFactory } from '../../factories'
 import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
@@ -537,26 +536,13 @@ export class InternalCaseService {
       await this.caseArchiveRepositoryService.create(
         theCase.id,
         {
-          archive: CryptoJS.AES.encrypt(
-            JSON.stringify({
-              ...caseArchive,
-              defendants: defendantsArchive,
-              caseFiles: caseFilesArchive,
-              indictmentCounts: indictmentCountsArchive,
-              caseStrings: caseStringsArchive,
-            }),
-            this.config.archiveEncryptionKey,
-            { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
-          ).toString(),
-          // To decrypt:
-          // JSON.parse(
-          //   Base64.fromBase64(
-          //     CryptoJS.AES.decrypt(
-          //       archive,
-          //       this.config.archiveEncryptionKey,
-          //     ).toString(CryptoJS.enc.Base64),
-          //   ),
-          // )
+          archiveJson: JSON.stringify({
+            ...caseArchive,
+            defendants: defendantsArchive,
+            caseFiles: caseFilesArchive,
+            indictmentCounts: indictmentCountsArchive,
+            caseStrings: caseStringsArchive,
+          }),
         },
         { transaction },
       )
