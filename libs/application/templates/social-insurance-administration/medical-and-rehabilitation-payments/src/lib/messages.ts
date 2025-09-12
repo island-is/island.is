@@ -180,40 +180,68 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'Unfortunately, you are not eligible for medical and rehabilitation payments.',
     },
+    applicantAlreadyHasPendingApplicationDescription: {
+      id: 'marp.application:not.eligible.already.has.pending.applcation.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú átt nú þegar umsókn um sjúkra- og endurhæfingargreiðslur sem er í matsferli.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'The reason for this is the following:\n* You already have an application for medical and rehabilitation payments in process.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
     applicantAgeOutOfRangeDescription: {
       id: 'marp.application:not.eligible.applicant.age.out.of.range.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki á aldrinum 18-67 ára.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki á aldri sem heimilar umsókn um sjúkra- og endurhæfingargreiðslur.\n\nEf þú ert yngri en 18 ára, þá þarftu að bíða þar til þú nærð þeim aldri til að geta sótt um.\n\nEf þú hefur náð 67 ára aldri, þá bendir Tryggingastofnun þér að sækja um lífeyrir, en umsókn um ellilífeyrir finnur þú inni á heimsíðu tr.is.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* You are not aged 18-67.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n* You are not of the age that is eligible for medical and rehabilitation payments.\n\nIf you are younger than 18, please wait until you are eligible to apply.\n\nIf you have reached the age of 67, the Social Insurance Administration suggests you to apply for a pension. An application for old-age pension can be found on tr.is.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
+    noLegalDomicileinIcelandDescription: {
+      id: 'marp.application:not.eligible.no.legal.domicile.in.iceland.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með lögheimili á Íslandi.\n\nNánar má lesa um skilyrði fyrir sjúkra- og endurhæfingargreiðslur hér á [tr.is](https://island.is/sjukra-og-endurhaefingargreidslur)\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'The reason for this is the following:\n* You do not have legal domicile in Iceland.\n\nFurther information on requirements for medical and rehabilitation payments can be found at [tr.is](https://island.is/sjukra-og-endurhaefingargreidslur)\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
+    hasActivePaymentsDescription: {
+      id: 'marp.application:not.eligible.has.active.payments.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert með greiðslur frá TR.\n\nÞú getur sótt um framhald á greiðslum þegar 3 mánuðir eða minna er eftir af greiðslum sem hafa verið samþykktar.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'The reason for this is the following:\n* You are already receiving payments from the Social Insurance Administration.\n\nYou can apply for a continuation of payments when there are 3 months or less left on approved payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
     baseCertNotFoundDescription: {
       id: 'marp.application:not.eligible.base.cert.not.found.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Ekkert grunnvottorð fannst.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með vottorð sem staðfestir skerta starfsgetu sem TR getur sótt rafrænt.\n\nEf þú ert með vottorð sem staðfestir skerta starfsgetu eða óvinnufærni að öllu og vottorðið er yngra en 6 mánaða, þá bendum við þér að hafa samband við TR í gegnum Mínar síður TR undir Hafa samband eða í síma 560 4400 og fá frekari leiðbeiningar.\n\nÖll úrvinnsla umsókna sem berast frá og með 1. september 2025 tekur mið af nýjum lögum um sjúkra- og endurhæfingargreiðslur.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* No certificate for sickness and rehabilitation found.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n* You do not have a digital certificate for medical and rehabilitation.\n\nIf you have a certificate that proves reduced capacity for work or incapacity we suggest that you contact TR through My Pages under Contact Us or by phone at 560 4400 for further information.\n\nAll processing of applications received as of September 1 2025, takes into account new laws regarding medical and rehabilitation payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
     baseCertDateInvalidDescription: {
       id: 'marp.application:not.eligible.base.cert.date.invalid.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilt grunnvottorð.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilt vottorð.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n* You do not have a valid certificate for medical and rehabilitation.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
     baseCertOlderThanSevenYearsDescription: {
       id: 'marp.application:not.eligible.base.cert.older.than.seven.years.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilt grunnvottorð (má vera mest 7 ára gamalt).\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Vottorð sem staðfestir skerta starfsgetu er eldra en 7 ára.\n\nÞú þarft að fá nýja staðfestingu frá lækni á því að starfsgeta sé skert, ásamt því að fá endurhæfingaráætlun eða staðfestingu á viðurkenndri meðferð, staðfestingu á að heilsubrestur komi í veg fyrir endurhæfingu eða viðurkennda meðferð eða staðfestingu á því að þú sért á bið eftir að komast í endurhæfingu eða viðurkennda meðferð. Nánar má lesa um skilyrði fyrir sjúkra og endurhæfingargreiðslur á heimasíðu [TR](https://island.is/sjukra-og-endurhaefingargreidslur).\n\nEf hlé hefur orðið á greiðslum frá Tryggingastofnun í meira en 6 mánuði, vegna vanda sem orsakar skerta starfsgetu, þá þarf að fá nýtt grunnvottorð til þess að geta sótt aftur um sjúkra- og endurhæfingargreiðslur.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation (issued within the last 7 years).\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n* The certificate that confirms limited ability for work was issued over 7 years ago.\n\nYou need a new confirmation from a doctor that your capacity is impaired, as well as a rehabilitation plan or confirmation of treatment, confirmation of ill health that prevents rehabilitation or treatment or confirmation of pending rehabilitation or treatment.\n\nFurther information on the conditions for medical and rehabilitation payments can be found on the [TR website](https://island.is/sjukra-og-endurhaefingargreidslur).\n\nIf payments from the Social Insurance Administration have been paused for more than 6 months, due to issues that cause reduced capacity, you need to get a new certificate in order to re-apply for medical and rehabilitation payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
-    baseCertOlderThanSixMonthsDescription: {
-      id: 'marp.application:not.eligible.base.cert.older.than.six.months.description#markdown',
+    latestMedicalDocumentNotFoundDescription: {
+      id: 'marp.application:not.eligible.latest.medical.doc.not.found.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Þú er ekki með gilt grunnvottorð (má vera mest 6 mánaða gamalt).\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilda staðfestingu eða endurhæfingaráætlun.\n\nTil að geta sótt um sjúkra- og endurhæfingargreiðslur þarft þú, til viðbótar við vottorð, eitt af eftirfarandi skjölum:\n\n* Staðfestingu á viðurkenndri meðferð\n\n* Staðfestingu á að heilsubrestur komi í veg fyrir endurhæfingu eða viðurkennda meðferð\n\n* Staðfestingu á bið eftir viðurkenndri meðferð eða endurhæfingu\n\n* Endurhæfingaráætlun - fyrir þá sem eru byrjaðir í endurhæfingu\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation (issued within the last  6 months).\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n* You do not have a valid confirmation or rehabilitation plan.\n\nTo be eligible for medical and rehabilitation payments you must, as well as having a valid certificate, have been issued one of the following documents:\n\n* Confirmation of treatment\n\n* Confirmation of ill health that prevents rehabilitation or treatment.\n\n* Confirmation of pending resolution.\n\n* Rehabilitation plan - for those who have started rehabilitation\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
+    errorProcessingClientDescription: {
+      id: 'marp.application:not.eligible.error.processing.client.description#markdown',
+      defaultMessage:
+        '* Ekki tókst að stofna viðskiptamann. Vinsamlegast reynið aftur síðar.\n\nEf vandamálið heldur áfram, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        '* Unable to create user. Please try again later.\n\nIf the issue persists, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
   }),
 
