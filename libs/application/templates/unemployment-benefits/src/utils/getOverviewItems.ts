@@ -1,4 +1,4 @@
-import { ExternalData, FormText } from '@island.is/application/types'
+import { ExternalData } from '@island.is/application/types'
 
 import { FormValue } from '@island.is/application/types'
 
@@ -11,18 +11,17 @@ import {
   YesOrNoEnum,
 } from '@island.is/application/core'
 import { KeyValueItem } from '@island.is/application/types'
-import { overview, overview as overviewMessages } from '../lib/messages'
+import { overview as overviewMessages } from '../lib/messages'
 import {
   FamilyInformationInAnswers,
-  EducationHistoryInAnswers,
   EmploymentStatus,
-  FileInAnswers,
+  FileSchemaInAnswers,
   LanguagesInAnswers,
   WorkingAbility,
-  LastJobsInAnswers,
   EducationType,
   CurrentEducationInAnswers,
   PreviousEducationInAnswers,
+  EmploymentHistoryInAnswers,
 } from '../shared'
 import * as kennitala from 'kennitala'
 import {
@@ -105,14 +104,12 @@ export const useEmploymentInformationOverviewItems = (
   const abilityString = abilityAnswer
     ? getWorkingAbilityString(abilityAnswer)
     : ''
-  const employmentHistory =
-    getValueViaPath<LastJobsInAnswers>(
-      answers,
-      'employmentHistory.lastJobs',
-      [],
-    ) ?? []
+  const employmentHistory = getValueViaPath<EmploymentHistoryInAnswers>(
+    answers,
+    'employmentHistory',
+  )
 
-  const historyNames = employmentHistory.map((job) => {
+  const historyNames = employmentHistory?.lastJobs.map((job) => {
     return `${job.employer?.name}: ${job.title}`
   })
 
@@ -436,7 +433,7 @@ export const useResumeOverviewItems = (
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const fileName =
-    getValueViaPath<Array<FileInAnswers>>(
+    getValueViaPath<Array<FileSchemaInAnswers>>(
       answers,
       'resume.resumeFile.file',
       [],

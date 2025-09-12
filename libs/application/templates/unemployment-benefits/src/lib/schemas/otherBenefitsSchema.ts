@@ -25,4 +25,4 @@ export const otherBenefitsSchema = z.object({
       }),
     )
     .optional(),
-})
+}) // TODO refine required fields when data comes from Galdur

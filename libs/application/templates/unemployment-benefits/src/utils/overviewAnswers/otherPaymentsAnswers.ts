@@ -4,15 +4,10 @@ import { overview as overviewMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
   getPrivatePensionString,
-  getTypeOfIncomeString,
+  // getTypeOfIncomeString,
   getUnionString,
 } from '../stringMappers'
-import {
-  CapitalIncomeInAnswers,
-  PaymentsFromPensionInAnswers,
-  PaymentsFromPrivatePensionInAnswers,
-  PaymentsFromSicknessAllowanceInAnswers,
-} from '../../shared'
+import { CapitalIncomeInAnswers, OtherBenefitsInAnswers } from '../../shared'
 import { formatIsk } from '..'
 
 export const useOtherPaymentsAnswers = (
@@ -25,58 +20,57 @@ export const useOtherPaymentsAnswers = (
     getValueViaPath<string>(answers, 'otherBenefits.paymentsFromInsurace') ?? ''
 
   //Lífeyrissjóðir
-  const paymentsFromPension =
-    getValueViaPath<Array<PaymentsFromPensionInAnswers>>(
+  const otherBenefits =
+    getValueViaPath<Array<OtherBenefitsInAnswers>>(
       answers,
-      'otherBenefits.paymentsFromPension',
+      'otherBenefits',
       [],
     ) ?? []
+  // TODO after new schema
 
-  const paymentsFromPensionStrings = paymentsFromPension.map((payment) => {
-    return getTypeOfIncomeString(payment, externalData, locale)
-  })
+  // const paymentsFromPensionStrings = otherBenefits?.paymentsFromPension.map((payment) => {
+  //   return getTypeOfIncomeString(payment, externalData, locale)
+  // })
 
-  //Sjúkradagpeningar
-  const paymentsFromSicknessAllowance =
-    getValueViaPath<PaymentsFromSicknessAllowanceInAnswers>(
-      answers,
-      'otherBenefits.paymentsFromSicknessAllowance',
-      undefined,
-    ) ?? undefined
+  // //Sjúkradagpeningar
+  // const paymentsFromSicknessAllowance =
+  //   getValueViaPath<PaymentsFromSicknessAllowanceInAnswers>(
+  //     answers,
+  //     'otherBenefits.paymentsFromSicknessAllowance',
+  //     undefined,
+  //   ) ?? undefined
 
-  const SicknessAllowanceUnionString = getUnionString(
-    paymentsFromSicknessAllowance?.union ?? '',
-    externalData,
-  )
+  // const SicknessAllowanceUnionString = getUnionString(
+  //   paymentsFromSicknessAllowance?.union ?? '',
+  //   externalData,
+  // )
 
-  //Séreignasjóður
-  const paymentsFromPrivatePension =
-    getValueViaPath<Array<PaymentsFromPrivatePensionInAnswers>>(
-      answers,
-      'otherBenefits.payedFromPrivatePensionFundDetails',
-      [],
-    ) ?? []
+  // //Séreignasjóður
+  // const paymentsFromPrivatePension =
+  //   getValueViaPath<Array<PaymentsFromPrivatePensionInAnswers>>(
+  //     answers,
+  //     'otherBenefits.payedFromPrivatePensionFundDetails',
+  //     [],
+  //   ) ?? []
 
-  const paymentsFromPrivatePensionStrings = paymentsFromPrivatePension.map(
-    (payment) => {
-      const privatePension = getPrivatePensionString(
-        payment.privatePensionFund,
-        externalData,
-      )
-      return {
-        privatePensionFund: privatePension,
-        paymentAmount: payment.paymentAmount,
-      }
-    },
-  )
+  // const paymentsFromPrivatePensionStrings = paymentsFromPrivatePension.map(
+  //   (payment) => {
+  //     const privatePension = getPrivatePensionString(
+  //       payment.privatePensionFund,
+  //       externalData,
+  //     )
+  //     return {
+  //       privatePensionFund: privatePension,
+  //       paymentAmount: payment.paymentAmount,
+  //     }
+  //   },
+  // )
 
   //Fjármagnstekjur
-  const capitalIncome =
-    getValueViaPath<Array<CapitalIncomeInAnswers>>(
-      answers,
-      'capitalIncome.capitalIncomeAmount',
-      [],
-    ) ?? []
+  const capitalIncome = getValueViaPath<CapitalIncomeInAnswers>(
+    answers,
+    'capitalIncome',
+  )
 
   return [
     `${formatMessage(
@@ -84,27 +78,27 @@ export const useOtherPaymentsAnswers = (
     )}: ${formatIsk(parseInt(paymentsFromInsurace))} ${formatMessage(
       overviewMessages.labels.payout.paymentPerMonth,
     )}`,
-    paymentsFromPensionStrings.map((paymentString) => {
-      return `${paymentString.typeOfPayment}: ${formatIsk(
-        parseInt(paymentString.paymentAmount),
-      )} ${formatMessage(overviewMessages.labels.payout.paymentPerMonth)}`
-    }),
-    `${formatMessage(
-      overviewMessages.labels.payout.otherPayoutSicknessAllowance,
-    )}: ${SicknessAllowanceUnionString}`,
-    paymentsFromPrivatePensionStrings.map((paymentString) => {
-      return `${paymentString.privatePensionFund}: ${formatIsk(
-        parseInt(paymentString.paymentAmount),
-      )} ${formatMessage(overviewMessages.labels.payout.paymentPerMonth)}`
-    }),
+    // paymentsFromPensionStrings.map((paymentString) => {
+    //   return `${paymentString.typeOfPayment}: ${formatIsk(
+    //     parseInt(paymentString.paymentAmount),
+    //   )} ${formatMessage(overviewMessages.labels.payout.paymentPerMonth)}`
+    // }),
+    // `${formatMessage(
+    //   overviewMessages.labels.payout.otherPayoutSicknessAllowance,
+    // )}: ${SicknessAllowanceUnionString}`,
+    // paymentsFromPrivatePensionStrings.map((paymentString) => {
+    //   return `${paymentString.privatePensionFund}: ${formatIsk(
+    //     parseInt(paymentString.paymentAmount),
+    //   )} ${formatMessage(overviewMessages.labels.payout.paymentPerMonth)}`
+    // }),
     //TODO add capital income together for one value
-    capitalIncome.map(
+    capitalIncome?.capitalIncomeAmount?.map(
       (income) =>
         `${formatMessage(
           overviewMessages.labels.payout.capitalIncome,
-        )}: ${formatIsk(parseInt(income.amount))} ${formatMessage(
+        )}: ${formatIsk(parseInt(income?.amount || ''))} ${formatMessage(
           overviewMessages.labels.payout.paymentPerMonth,
         )}`,
-    ),
+    ) || '',
   ]
 }

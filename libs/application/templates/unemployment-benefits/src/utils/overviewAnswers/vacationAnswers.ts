@@ -2,7 +2,7 @@ import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import { FormText, FormValue } from '@island.is/application/types'
 import { overview as overviewMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { VacationDaysInAnswers } from '../../shared'
+import { VacationInAnswers } from '../../shared'
 
 export const useVacationAnswers = (answers: FormValue): Array<FormText> => {
   const { formatMessage } = useLocale()
@@ -17,18 +17,14 @@ export const useVacationAnswers = (answers: FormValue): Array<FormText> => {
 
   const numberOfDays = getValueViaPath<string>(answers, 'vacation.amount') ?? ''
 
-  const intendedUsage =
-    getValueViaPath<Array<VacationDaysInAnswers>>(
-      answers,
-      'vacation.vacationDays',
-      [],
-    ) ?? []
+  const intendedUsage = getValueViaPath<VacationInAnswers>(answers, 'vacation')
 
-  const intendedUsageItems = intendedUsage.map((intendedUsageItem) => {
-    return `${formatMessage(
-      overviewMessages.labels.payout.vacationDaysFrom,
-    )}: ${intendedUsageItem.startDate} - ${intendedUsageItem.endDate}`
-  })
+  const intendedUsageItems =
+    intendedUsage?.vacationDays?.map((intendedUsageItem) => {
+      return `${formatMessage(
+        overviewMessages.labels.payout.vacationDaysFrom,
+      )}: ${intendedUsageItem.startDate} - ${intendedUsageItem.endDate}`
+    }) || []
 
   const valueItems = [hasVacationString]
   if (hasVacation === YES) {

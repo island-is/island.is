@@ -3,6 +3,22 @@ import { z } from 'zod'
 import { EducationType } from '../../shared'
 import { FileSchema } from './fileSchema'
 
+export const currentEducationSchema = z.object({
+  levelOfStudy: z
+    .preprocess((val) => {
+      if (!val) {
+        return ''
+      }
+      return val
+    }, z.string())
+    .optional(),
+  units: z.string().optional(),
+  degree: z.string().optional(),
+  endDate: z.string().optional(),
+  courseOfStudy: z.string().optional(),
+  degreeFile: z.array(FileSchema).optional(),
+})
+
 export const educationSchema = z
   .object({
     lastTwelveMonths: z
@@ -20,23 +36,7 @@ export const educationSchema = z
       (val) => (val === '' ? undefined : val),
       z.nativeEnum(YesOrNoEnum).optional(),
     ),
-    currentEducation: z
-      .object({
-        levelOfStudy: z
-          .preprocess((val) => {
-            if (!val) {
-              return ''
-            }
-            return val
-          }, z.string())
-          .optional(),
-        units: z.string().optional(),
-        degree: z.string().optional(),
-        endDate: z.string().optional(),
-        courseOfStudy: z.string().optional(),
-        degreeFile: z.array(FileSchema).optional(),
-      })
-      .optional(),
+    currentEducation: currentEducationSchema.optional(),
     notAppliedForNextSemesterExplanation: z.string().optional(),
   })
   .refine(

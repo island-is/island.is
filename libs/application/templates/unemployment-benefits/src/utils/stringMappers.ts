@@ -1,7 +1,6 @@
 import {
   EducationType,
   EmploymentStatus,
-  PaymentsFromPensionInAnswers,
   PreviousEducationInAnswers,
   WorkingAbility,
 } from '../shared'
@@ -100,27 +99,27 @@ export const getPrivatePensionString = (
   return privatePensionOptions?.find((x) => x.id === id)?.name ?? ''
 }
 
-export const getTypeOfIncomeString = (
-  payment: PaymentsFromPensionInAnswers,
-  externalData: ExternalData,
-  locale: string,
-): PaymentsFromPensionInAnswers => {
-  const incomeOptions = getValueViaPath<
-    Array<GaldurDomainModelsSettingsIncomeTypesIncomeTypeDTO>
-  >(externalData, 'unemploymentApplication.data.supportData.incomeTypes', [])
+// export const getTypeOfIncomeString = ( // TODO with new dataSchema
+//   payment: PaymentsFromPensionInAnswers,
+//   externalData: ExternalData,
+//   locale: string,
+// ): PaymentsFromPensionInAnswers => {
+//   const incomeOptions = getValueViaPath<
+//     Array<GaldurDomainModelsSettingsIncomeTypesIncomeTypeDTO>
+//   >(externalData, 'unemploymentApplication.data.supportData.incomeTypes', [])
 
-  const chosenIncomeOption = incomeOptions?.find(
-    (x) => x.id === payment.typeOfPayment,
-  )
+//   const chosenIncomeOption = incomeOptions?.find(
+//     (x) => x.id === payment.typeOfPayment,
+//   )
 
-  const optionWithLocale =
-    locale === 'is' ? chosenIncomeOption?.name : chosenIncomeOption?.english
+//   const optionWithLocale =
+//     locale === 'is' ? chosenIncomeOption?.name : chosenIncomeOption?.english
 
-  return {
-    paymentAmount: payment.paymentAmount,
-    typeOfPayment: optionWithLocale ?? '',
-  }
-}
+//   return {
+//     paymentAmount: payment.paymentAmount,
+//     typeOfPayment: optionWithLocale ?? '',
+//   }
+// }
 
 export const getJobString = (
   id: string,

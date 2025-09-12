@@ -56,7 +56,6 @@ export const FieldsRepeaterFormField = ({
     itemCondition,
     minRows = 1,
     maxRows,
-    hideAddItemButton = false,
   } = data
 
   const { control, getValues, setValue } = useFormContext()

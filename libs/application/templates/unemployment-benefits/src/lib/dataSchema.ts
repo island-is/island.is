@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { YES, YesOrNoEnum } from '@island.is/application/core'
-import { application } from './messages'
+import { application, serviceErrors } from './messages'
 import {
   applicantInformationSchema,
   capitalIncomeSchema,
@@ -42,7 +42,7 @@ const resumeSchema = z.object({
   resumeFile: z.object({ file: z.array(FileSchema) }).optional(),
 })
 
-const introductoryMeetingSchema = z.object({
+export const introductoryMeetingSchema = z.object({
   language: z.string(),
 })
 
@@ -75,42 +75,42 @@ export const UnemploymentBenefitsSchema = z.object({
   informationChangeAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES), {
-      params: application.iUnderstandError,
+      params: serviceErrors.iUnderstandError,
     }),
   introductoryMeeting: introductoryMeetingSchema,
   concurrentWorkAgreement: z.array(z.string()).refine((v) => v.includes(YES), {
-    params: application.iUnderstandError,
+    params: serviceErrors.iUnderstandError,
   }),
   yourRightsAgreement: z.array(z.string()).refine((v) => v.includes(YES), {
-    params: application.iUnderstandError,
+    params: serviceErrors.iUnderstandError,
   }),
   lossOfRightsAgreement: z.array(z.string()).refine((v) => v.includes(YES), {
-    params: application.iUnderstandError,
+    params: serviceErrors.iUnderstandError,
   }),
   employmentSearchConfirmationAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES), {
-      params: application.iUnderstandError,
+      params: serviceErrors.iUnderstandError,
     }),
   interviewAndMeetingAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES), {
-      params: application.iUnderstandError,
+      params: serviceErrors.iUnderstandError,
     }),
   introductoryMeetingAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES), {
-      params: application.iUnderstandError,
+      params: serviceErrors.iUnderstandError,
     }),
   unemploymentBenefitsPayoutAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES), {
-      params: application.iUnderstandError,
+      params: serviceErrors.iUnderstandError,
     }),
   vacationsAndForeginWorkAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES), {
-      params: application.iUnderstandError,
+      params: serviceErrors.iUnderstandError,
     }),
 })
 

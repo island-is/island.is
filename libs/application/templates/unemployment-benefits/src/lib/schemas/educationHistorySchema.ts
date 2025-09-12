@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const currentStudiesSchema = z
+const currentStudiesSchema = z
   .object({
     levelOfStudy: z.string().optional(),
     courseOfStudy: z.string().optional(),
