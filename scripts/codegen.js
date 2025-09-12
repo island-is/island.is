@@ -60,8 +60,8 @@ const main = async () => {
     }
   }
 
-  // In NX 21.2.2 daemon slows down significantly after codegen, so we reset it.
-  await exec(`nx reset`)
+  // In NX 21.2.2 daemon slows down significantly after codegen, so we restart it.
+  await exec('nx daemon --stop')
 }
 
 main()
