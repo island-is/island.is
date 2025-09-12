@@ -59,6 +59,9 @@ const main = async () => {
       process.exit(err.code || 1)
     }
   }
+
+  // In NX 21.2.2 daemon slows down significantly after codegen, so we restart it.
+  await exec('nx daemon --stop')
 }
 
 main()
