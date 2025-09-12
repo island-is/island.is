@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Inject,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -58,7 +59,7 @@ export class InternalSubpoenaController {
 
     if (!subpoena.case || !subpoena.defendant) {
       // This should never happen because of the PoliceSubpoenaExistsGuard
-      throw new Error(
+      throw new InternalServerErrorException(
         `Cannot update subpoena with police subpoena id ${policeSubpoenaId} because it is not linked to a case and/or a defendant`,
       )
     }
