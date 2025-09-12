@@ -4,7 +4,6 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
   CollectionType,
-  List,
   ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
