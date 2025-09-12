@@ -85,6 +85,8 @@ export class SubpoenaController {
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
     @CurrentSubpoena() subpoena: Subpoena,
     @CurrentHttpUser() user: User,
   ): Promise<Subpoena> {
@@ -92,7 +94,7 @@ export class SubpoenaController {
       `Gets subpoena ${subpoenaId} for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.getSubpoena(subpoena, user)
+    return this.subpoenaService.getSubpoena(theCase, defendant, subpoena, user)
   }
 
   @RolesRules(
