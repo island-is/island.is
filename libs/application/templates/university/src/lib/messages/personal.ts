@@ -37,7 +37,7 @@ export const personal = {
       },
       address: {
         id: 'uni.application:personal.labels.userInformation.address',
-        defaultMessage: 'Heimili/póstfang',
+        defaultMessage: 'Heimilisfang',
         description: 'User information address label',
       },
       postalCodeAndCity: {
