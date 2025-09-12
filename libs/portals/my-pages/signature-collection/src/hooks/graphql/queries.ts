@@ -64,6 +64,7 @@ export const GetSignedList = gql`
         max
       }
       candidate {
+        name
         ownerName
         ownerBirthDate
       }

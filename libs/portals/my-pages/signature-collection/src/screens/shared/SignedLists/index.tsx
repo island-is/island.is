@@ -66,8 +66,16 @@ const SignedLists = ({
         return (
           <Box marginBottom={3} key={list.id}>
             <ActionCard
-              heading={list.title.split(' - ')[0]}
-              eyebrow={list.area?.name}
+              heading={
+                collectionType ===
+                SignatureCollectionCollectionType.LocalGovernmental
+                  ? list.candidate.name
+                  : list.title.split(' - ')[0]
+              }
+              eyebrow={`${formatMessage(m.endTime)} ${format(
+                new Date(list.endTime),
+                'dd.MM.yyyy',
+              )}`}
               text={
                 collectionType ===
                 SignatureCollectionCollectionType.Presidential

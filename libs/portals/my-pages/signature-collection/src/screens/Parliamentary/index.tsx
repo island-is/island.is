@@ -41,7 +41,7 @@ const SignatureCollectionParliamentary = () => {
             intro={formatMessage(m.pageIntro)}
             slug={listsForOwner?.[0]?.slug}
           />
-          {isOwner.success ? (
+          {isOwner?.success ? (
             <OwnerView
               currentCollection={currentCollection}
               isListHolder={

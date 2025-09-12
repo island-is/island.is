@@ -38,15 +38,18 @@ export const DownloadReports = ({
   const [instance, updateInstance] = usePDF({ document: undefined })
   const lastOpenedRef = useRef<string | null>(null)
 
+  const { municipality, constituencyName } = useParams<{
+    municipality?: string
+    constituencyName?: string
+  }>()
+  const collectionType = collection.collectionType
   // area is used for LocalGovernmental and Parliamentary collections,
   // to get the report for certain area
-  const params = useParams()
-  const collectionType = collection.collectionType
   const area =
     collectionType === SignatureCollectionCollectionType.LocalGovernmental
-      ? collection.areas.find((a) => a.name === params.municipality)
+      ? collection.areas.find((a) => a.name === municipality)
       : collectionType === SignatureCollectionCollectionType.Parliamentary
-      ? collection.areas.find((a) => a.name === params.constituencyName)
+      ? collection.areas.find((a) => a.name === constituencyName)
       : undefined
 
   const handleDownloadClick = async (area: SignatureCollectionArea) => {
