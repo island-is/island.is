@@ -6,5 +6,5 @@ export class EducationLevel {
   code!: string
 
   @Field()
-  description?: string
+  description!: string
 }

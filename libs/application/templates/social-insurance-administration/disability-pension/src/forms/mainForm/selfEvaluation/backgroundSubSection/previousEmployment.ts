@@ -80,7 +80,7 @@ export const previousEmploymentField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.job`,
       title: disabilityPensionFormMessage.questions.profession,
       width: 'full',
-      placeholder: disabilityPensionFormMessage.questions.chooseProfession,
+      placeholder: disabilityPensionFormMessage.questions.chooseJob,
       condition: (formValue: FormValue) => {
         const hasPreviousEmployment = getValueViaPath<YesOrNo>(
           formValue,
@@ -116,9 +116,9 @@ export const previousEmploymentField = buildMultiField({
     }),
     buildAsyncSelectField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.field`,
-      title: disabilityPensionFormMessage.questions.profession,
+      title: disabilityPensionFormMessage.questions.professionActivity,
       width: 'full',
-      placeholder: disabilityPensionFormMessage.questions.chooseProfession,
+      placeholder: disabilityPensionFormMessage.questions.chooseProfessionActivity,
       condition: (formValue: FormValue) => {
         const hasPreviousEmployment = getValueViaPath<string>(
           formValue,

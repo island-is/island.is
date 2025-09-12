@@ -655,8 +655,8 @@ export const transformApplicationToDisabilityPensionDTO = (
     incomePlan: {
       incomeYear:
         incomePlanConditions?.incomePlanYear ?? new Date().getFullYear(),
-      distributeIncomeByMonth: shouldDistributeIncomeByMonth(incomePlan),
-      incomeTypes: getIncomeTypes(incomePlan, categorizedIncomeTypes),
+      distributeIncomeByMonth: shouldDistributeIncomeByMonth(incomePlan ?? []),
+      incomeTypes: getIncomeTypes(incomePlan ?? [], categorizedIncomeTypes),
     },
     taxInfo: {
       personalAllowance: personalAllowance === YES,
@@ -692,7 +692,7 @@ export const transformApplicationToDisabilityPensionDTO = (
     workIncapacityIssue: biggestIssue,
     foreignPaymentDetails: {
       receivesForeignPayments: isReceivingBenefitsFromAnotherCountry === YES,
-      foreignPaymentDetails: abroadPaymentsList.map(
+      foreignPaymentDetails: (abroadPaymentsList ?? []).map(
         ({ country, abroadNationalId }) => {
           return {
             countryName:
@@ -721,7 +721,7 @@ export const transformApplicationToDisabilityPensionDTO = (
     maritalStatusTypeId: maritalStatus ?? -1,
     selfAssessment: {
       hadAssistance: hadAssistanceForSelfEvaluation === YES,
-      answers: questionnaire.map((question) => ({
+      answers: (questionnaire ?? []).map((question) => ({
         questionId: question.id,
         answer: question.answer.toString(),
       })),

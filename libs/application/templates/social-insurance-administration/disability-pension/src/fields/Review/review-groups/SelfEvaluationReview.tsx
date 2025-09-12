@@ -11,6 +11,7 @@ import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
+import { getApplicationAnswers } from '../../../utils'
 
 interface SelfEvaluationReviewProps {
   application: Application
@@ -20,76 +21,60 @@ interface SelfEvaluationReviewProps {
   errors?: RecordObject
 }
 export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
-  //application,
+  application,
   goToScreen,
 }) => {
   const { formatMessage } = useLocale()
 
-  /* TODO!!!
+  //TODO!!!
   type SelfEvaluationAnswers = {
-    hadAssistance: boolean
-    biggestIssue: string
-    children: string
-    educationLevel: string
-    employmentCapability: string
-    employmentImportance: string
-    employmentStatus: {
-      other: string
-      status: string[]
-    }
-    icelandicCapability: string
-    languageSkills: string
-    maritalStatus: string
-    previousEmployment: {
-      when: string
-      field: string
-      hasEmployment: string
-    }
-    rehabilitationOrTherapy: string
-    residence: string
+    hasAssistance: boolean,
+    maritalStatus: boolean,
+    residence: boolean,
+    children: boolean,
+    icelandicCapability: boolean,
+    language: boolean,
+    employment: boolean,
+    previousEmployment: boolean,
+    previousEmploymentWhen: boolean,
+    previousEmploymentProfession: boolean,
+    previousEmploymentProfessionActivity: boolean
+    educationLevel: boolean
+    employmentCapability: boolean
+    employmentImportance: boolean
+    rehabilitationOrTherapy: boolean
+    rehabilitationOrTherapyResults: boolean
+    rehabilitationOrTherapyDescription: boolean
+    biggestIssue: boolean
   }
 
-  const { hadAssistanceForSelfEvaluation, biggestIssue, children, educationLevel, employmentCapability, employmentImportance, employmentStatus, employmentStatusOther, icelandicCapability, language, maritalStatus, previousEmployment, hasHadRehabilitationOrTherapy, residence } = getApplicationAnswers(application.answers)
+  const { hadAssistanceForSelfEvaluation, biggestIssue, children, educationLevel, employmentCapability, employmentImportance, employmentStatus, employmentStatusOther, icelandicCapability, language, maritalStatus, previousEmployment, hasHadRehabilitationOrTherapy, rehabilitationOrTherapyResults, rehabilitationOrTherapyDescription,residence, questionnaire} = getApplicationAnswers(application.answers)
 
   const selfEvaluationsAnswers: SelfEvaluationAnswers = {
-    hadAssistance: hadAssistanceForSelfEvaluation === YES,
-    biggestIssue,
-    children,
-    educationLevel,
-    employmentCapability,
-    employmentImportance,
-    employmentStatus,
-    employmentStatusOther,
-    icelandicCapability,
-    language,
-    maritalStatus,
-    previousEmployment,
-    hasHadRehabilitationOrTherapy,
-    residence,
+    hasAssistance: hadAssistanceForSelfEvaluation !== undefined,
+    maritalStatus: maritalStatus !== undefined,
+    residence: residence !== undefined,
+    children: children !== undefined,
+    icelandicCapability: icelandicCapability !== undefined,
+    language: language !== undefined,
+    employment: employmentStatus !== undefined && employmentStatus.length > 0,
+    previousEmployment: previousEmployment !== undefined && previousEmployment.hasEmployment !== undefined,
+    previousEmploymentWhen: previousEmployment !== undefined && previousEmployment.when !== undefined,
+    previousEmploymentProfession: previousEmployment !== undefined && previousEmployment.job !== undefined,
+    previousEmploymentProfessionActivity: previousEmployment !== undefined && previousEmployment.field !== undefined,
+    educationLevel: educationLevel !== undefined,
+    employmentCapability: employmentCapability !== undefined,
+    employmentImportance: employmentImportance !== undefined,
+    rehabilitationOrTherapy: hasHadRehabilitationOrTherapy !== undefined,
+    rehabilitationOrTherapyResults: rehabilitationOrTherapyResults !== undefined,
+    rehabilitationOrTherapyDescription: rehabilitationOrTherapyDescription !== undefined,
+    biggestIssue: biggestIssue !== undefined,
   }
 
-  const hasSelfEvaluationAnswers = selfEvaluationBackgroundInfo
-    ? Object.values(selfEvaluationBackgroundInfo).some((value) => {
-        if (typeof value === 'object' && value !== null) {
-          return Object.values(value).some(
-            (v) => v !== undefined && v !== null && v !== '',
-          )
-        }
-        return value !== undefined && value !== null && value !== ''
-      })
-    : false
+  const hasSelfEvaluationAnswers = selfEvaluationsAnswers  ? Object.values(selfEvaluationsAnswers).some(value => value) : false
 
-  const hasCapabilityImpairment = capabilityImpairment
-    ? Object.values(capabilityImpairment).some((value) => {
-        if (typeof value === 'object' && value !== null) {
-          return Object.values(value).some(
-            (v) => v !== undefined && v !== null && v !== '',
-          )
-        }
-        return value !== undefined && value !== null && value !== ''
-      })
-    : false
-    */
+  const hasCapabilityImpairment = questionnaire.find(question => question.answer !== undefined)
+
   return (
     <Box marginBottom={3}>
       <Box marginTop={2} display="flex" justifyContent="spaceBetween">
@@ -107,18 +92,18 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
         </Button>
       </Box>
 
-      <Text></Text>
+      <Text>bleble</Text>
       <Box marginTop={2}>
         <BulletList>
           {
-            /*hasSelfEvaluationAnswers &&*/ <Bullet>
+            hasSelfEvaluationAnswers && <Bullet>
               {formatMessage(
                 disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
               )}
             </Bullet>
           }
           {
-            /*hasCapabilityImpairment && */ <Bullet>
+            hasCapabilityImpairment &&  <Bullet>
               {formatMessage(
                 disabilityPensionFormMessage.capabilityImpairment.title,
               )}
