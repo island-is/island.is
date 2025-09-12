@@ -14,9 +14,29 @@ import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 
 import { HealthDirectorateHealthService } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Country, isDefined } from '@island.is/shared/utils'
+import isNumber from 'lodash/isNumber'
+import { InvalidatePermitInput, PermitInput } from './dto/permit.input'
+import {
+  Permit,
+  PermitReturn,
+  Permits,
+} from './models/approvals/approvals.model'
+import {
+  MedicineHistory,
+  MedicineHistoryDispensation,
+  MedicineHistoryItem,
+} from './models/medicineHistory.model'
+import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
+import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
+import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
+import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
+import { ReferralDetail } from './models/referral.model'
 import { Referral, Referrals } from './models/referrals.model'
+import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
+import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
   mapPrescriptionCategory,
@@ -24,20 +44,8 @@ import {
   mapPrescriptionRenewalStatus,
   mapVaccinationStatus,
 } from './utils/mappers'
-import {
-  MedicineHistory,
-  MedicineHistoryDispensation,
-  MedicineHistoryItem,
-} from './models/medicineHistory.model'
-import { isDefined } from '@island.is/shared/utils'
-import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
-import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
-import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
-import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
-import { HealthDirectorateRenewalInput } from './models/renewal.input'
-import isNumber from 'lodash/isNumber'
-import { ReferralDetail } from './models/referral.model'
-import { WaitlistDetail } from './models/waitlist.model'
+import { permitData, europeanCountriesIs } from './utils/mockData'
+import { Countries } from './models/approvals/country.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -392,6 +400,75 @@ export class HealthDirectorateService {
     )
 
     return { dispensations }
+  }
+
+  /* Patient data - Permits */
+  async getPermits(auth: Auth, locale: Locale): Promise<Permits | null> {
+    //const data = await this.healthApi.getPermits(auth, locale)
+    // TODO connect to service when ready
+
+    const data: Permit[] = permitData
+    if (!data) {
+      return null
+    }
+
+    return { data }
+  }
+
+  /* Patient data - Permit Detail */
+  async getPermit(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<Permit | null> {
+    //const data = await this.healthApi.getPermits(auth, locale)
+    // TODO connect to service when ready
+
+    const data = permitData.find((permit) => permit.id === id)
+    if (!data) {
+      return null
+    }
+
+    return data
+  }
+
+  /* Patient data - Permit countries */
+  async getPermitCountries(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<Countries | null> {
+    //const data = await this.healthApi.getPermitCountries(auth, locale)
+    // TODO connect to service when ready
+
+    const data: Countries = { data: europeanCountriesIs }
+
+    if (!data) {
+      return null
+    }
+
+    return data
+  }
+
+  /* Patient data - Create approval */
+  async createPermit(
+    auth: Auth,
+    input: PermitInput,
+  ): Promise<PermitReturn | null> {
+    //const data = await this.healthApi.createPermit(auth, locale, input)
+
+    // TODO connect to service when ready
+    return { id: 'mock-approval-id' } // Mock response for now
+  }
+
+  /* Patient data - invalidate permit */
+  async invalidatePermit(
+    auth: Auth,
+    input: InvalidatePermitInput,
+  ): Promise<PermitReturn | null> {
+    //const data = await this.healthApi.invalidatePermit(auth, locale, input)
+
+    // TODO connect to service when ready
+    return { id: 'mock-approval-id' } // Mock response for now
   }
 
   private castRenewalInputToNumber = (

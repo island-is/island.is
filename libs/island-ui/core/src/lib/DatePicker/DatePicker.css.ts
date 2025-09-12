@@ -1,6 +1,7 @@
-import { style, styleVariants, globalStyle } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 import * as mixins from '../Input/Input.mixins'
+import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 export const root = style({
   position: 'relative',
@@ -13,6 +14,51 @@ export const backgroundBlue = style({
       backgroundColor: `${theme.color.blue100} !important`,
     },
   },
+})
+
+export const parentContainer = style({
+  position: 'relative',
+  zIndex: 0,
+})
+export const calendarContainer = style({})
+
+const weekendBase: StyleWithSelectors = {
+  zIndex: -1,
+  content: '""',
+  display: 'block',
+  position: 'absolute',
+  top: 95,
+  right: 0,
+  bottom: 0,
+  height: 223,
+  width: 'var(--weekend-width)',
+  backgroundColor: 'rgba(204, 223, 255, 0.3)',
+  pointerEvents: 'none',
+}
+
+export const weekendHeight = styleVariants({
+  fourWeeks: {},
+  fiveWeeks: {},
+  sixWeeks: {},
+})
+
+globalStyle(`${calendarContainer}::before`, {
+  ...weekendBase,
+})
+
+globalStyle(`${calendarContainer}.${weekendHeight.fourWeeks}::before`, {
+  ...weekendBase,
+  height: 188,
+})
+
+globalStyle(`${calendarContainer}.${weekendHeight.fiveWeeks}::before`, {
+  ...weekendBase,
+  height: 223,
+})
+
+globalStyle(`${calendarContainer}.${weekendHeight.sixWeeks}::before`, {
+  ...weekendBase,
+  height: 258,
 })
 
 export const small = style({})
@@ -99,16 +145,16 @@ export const customHeaderContainer = style({
   paddingBottom: theme.spacing[2],
   marginBottom: theme.spacing[2],
   position: 'relative',
-  '::before': {
-    content: '""',
-    display: 'block',
-    position: 'absolute',
-    top: 0,
-    height: '1px',
-    left: `-${theme.spacing[3] - 3}px`,
-    right: `-${theme.spacing[3] - 3}px`,
-    background: theme.color.blue200,
-  },
+  // '::before': {
+  //   content: '""',
+  //   display: 'block',
+  //   position: 'absolute',
+  //   top: 0,
+  //   height: '1px',
+  //   left: `-${theme.spacing[3] - 3}px`,
+  //   right: `-${theme.spacing[3] - 3}px`,
+  //   background: theme.color.blue200,
+  // },
 })
 
 export const headerSelect = style({
@@ -198,6 +244,26 @@ export const popperInline = style({
   position: `relative !important` as never,
   transform: 'none !important',
   marginBottom: '-7px',
+  top: '-12px !important',
+})
+
+export const rangeContainer = style({
+  position: 'relative',
+  '::before': {
+    content: '""',
+    display: 'block',
+    position: 'absolute',
+    top: 0,
+    height: '1px',
+    left: 0,
+    right: 0,
+    background: theme.color.blue200,
+  },
+})
+
+export const rangeItem = style({
+  flex: 1,
+  textAlign: 'center',
 })
 
 // Overwrite default ReactDatepicker styles
@@ -209,7 +275,7 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker`, {
   borderBottomLeftRadius: '8px',
   boxShadow: `inset -3px -3px 0px ${theme.color.mint400}, inset 3px -3px 0px ${theme.color.mint400}`,
   border: 'none',
-  padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
+  padding: `${theme.spacing.gutter}px ${theme.spacing.gutter}px`,
   paddingTop: 0,
 })
 
@@ -250,10 +316,11 @@ globalStyle(
     fontFamily: 'IBM Plex Sans',
     fontStyle: 'normal',
     fontWeight: 600,
-    fontSize: `${theme.typography.baseFontSize}px`,
+    fontSize: 14,
     lineHeight: `${theme.typography.baseLineHeight}`,
     textAlign: 'center',
     color: `${theme.color.dark400}`,
+    textTransform: 'capitalize',
   },
 )
 
@@ -296,10 +363,16 @@ globalStyle(
   },
 )
 
+globalStyle(`${root}.island-ui-datepickerreact-datepicker__day--range-end`, {
+  background: `${theme.color.blue400} !important`,
+  color: `${theme.color.white} !important`,
+})
+
 globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="top"]`,
   {
-    top: '11px !important',
+    top: '33px !important',
+    zIndex: 999,
   },
 )
 
@@ -307,6 +380,14 @@ globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="bottom"]`,
   {
     top: '-17px !important',
+    zIndex: 999,
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker ${popperInline}.react-datepicker-popper[data-placement^="bottom"]`,
+  {
+    top: '-12px !important',
   },
 )
 
@@ -350,6 +431,20 @@ globalStyle(
 
 globalStyle(`${root} .react-datepicker__input-time-container`, {
   marginTop: '15px',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   float: 'none !important' as any,
   margin: '30px 0px 0px 5px !important',
+})
+
+globalStyle(`${root} .react-datepicker__day--in-range `, {
+  backgroundColor: `${theme.color.blue200} !important`,
+})
+
+globalStyle(`${root} .react-datepicker__day--range-end`, {
+  backgroundColor: `${theme.color.blue400} !important`,
+  color: `${theme.color.white} !important`,
+})
+
+globalStyle(`${root} .react-datepicker__day--in-selecting-range`, {
+  backgroundColor: `${theme.color.blue200} !important`,
 })
