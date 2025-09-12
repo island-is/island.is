@@ -212,9 +212,9 @@ const AppealFiles = () => {
           text={formatMessage(strings.appealCaseFilesUpdatedModalText, {
             isDefenceUser: isDefenceUser(user),
           })}
-          secondaryButtonText={formatMessage(core.closeModal)}
-          onSecondaryButtonClick={() => {
-            router.push(previousUrl)
+          secondaryButton={{
+            text: formatMessage(core.closeModal),
+            onClick: () => router.push(previousUrl),
           }}
         />
       )}

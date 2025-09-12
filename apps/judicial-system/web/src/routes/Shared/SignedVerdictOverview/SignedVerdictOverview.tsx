@@ -646,8 +646,10 @@ export const SignedVerdictOverview: FC = () => {
           <Modal
             title={shareCaseModal.title}
             text={shareCaseModal.text}
-            primaryButtonText={formatMessage(core.closeModal)}
-            onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
+            primaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => setSharedCaseModal(undefined),
+            }}
           />
         )}
         <AnimatePresence>
@@ -714,14 +716,14 @@ export const SignedVerdictOverview: FC = () => {
                 formatMessage(m.sections.courtRecordSignatureModal.notCompleted)
               )
             }
-            primaryButtonText={
-              courtRecordSignatureConfirmationResponse
+            primaryButton={{
+              text: courtRecordSignatureConfirmationResponse
                 ? formatMessage(core.closeModal)
-                : ''
-            }
-            onPrimaryButtonClick={() => {
-              setRequestCourtRecordSignatureResponse(undefined)
-              setCourtRecordSignatureConfirmationResponse(undefined)
+                : '',
+              onClick: () => {
+                setRequestCourtRecordSignatureResponse(undefined)
+                setCourtRecordSignatureConfirmationResponse(undefined)
+              },
             }}
           />
         )}
@@ -748,17 +750,18 @@ export const SignedVerdictOverview: FC = () => {
             text={formatMessage(
               m.sections.confirmAppealAfterDeadlineModal.text,
             )}
-            primaryButtonText={formatMessage(
-              m.sections.confirmAppealAfterDeadlineModal.primaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              m.sections.confirmAppealAfterDeadlineModal.secondaryButtonText,
-            )}
-            onPrimaryButtonClick={() => {
-              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            primaryButton={{
+              text: formatMessage(
+                m.sections.confirmAppealAfterDeadlineModal.primaryButtonText,
+              ),
+              onClick: () =>
+                router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`),
             }}
-            onSecondaryButtonClick={() => {
-              setModalVisible('NoModal')
+            secondaryButton={{
+              text: formatMessage(
+                m.sections.confirmAppealAfterDeadlineModal.secondaryButtonText,
+              ),
+              onClick: () => setModalVisible('NoModal'),
             }}
           />
         )}
@@ -768,17 +771,18 @@ export const SignedVerdictOverview: FC = () => {
               strings.confirmStatementAfterDeadlineModalTitle,
             )}
             text={formatMessage(strings.confirmStatementAfterDeadlineModalText)}
-            primaryButtonText={formatMessage(
-              strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
-            )}
-            onPrimaryButtonClick={() => {
-              router.push(`${constants.STATEMENT_ROUTE}/${workingCase.id}`)
+            primaryButton={{
+              text: formatMessage(
+                strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
+              ),
+              onClick: () =>
+                router.push(`${constants.STATEMENT_ROUTE}/${workingCase.id}`),
             }}
-            onSecondaryButtonClick={() => {
-              setModalVisible('NoModal')
+            secondaryButton={{
+              text: formatMessage(
+                strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
+              ),
+              onClick: () => setModalVisible('NoModal'),
             }}
           />
         )}
@@ -786,11 +790,9 @@ export const SignedVerdictOverview: FC = () => {
           <Modal
             title={formatMessage(m.sections.appealReceived.title)}
             text={formatMessage(m.sections.appealReceived.text)}
-            primaryButtonText={formatMessage(
-              m.sections.appealReceived.primaryButtonText,
-            )}
-            onPrimaryButtonClick={() => {
-              setModalVisible('NoModal')
+            primaryButton={{
+              text: formatMessage(m.sections.appealReceived.primaryButtonText),
+              onClick: () => setModalVisible('NoModal'),
             }}
           />
         )}

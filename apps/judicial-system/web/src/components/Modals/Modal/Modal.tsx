@@ -1,32 +1,43 @@
 import {
+  ChangeEvent,
   FC,
   isValidElement,
   PropsWithChildren,
   ReactNode,
   useEffect,
+  useId,
 } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import cn from 'classnames'
 import { motion } from 'motion/react'
 
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks/useKeyboardCombo/useKeyboardCombo'
 
 import * as styles from './Modal.css'
 
+interface ButtonProps {
+  text: string
+  onClick: () => void
+  isLoading?: boolean
+  isDisabled?: boolean
+  colorScheme?: 'default' | 'destructive'
+}
+
+interface FooterCheckbox {
+  label: string
+  checked: boolean
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void
+}
+
 interface ModalProps {
   title: string
   text?: string | ReactNode
-  primaryButtonText?: string
-  secondaryButtonText?: string
+  primaryButton?: ButtonProps
+  secondaryButton?: ButtonProps
+  footerCheckbox?: FooterCheckbox
   onClose?: () => void
-  onSecondaryButtonClick?: () => void
-  onPrimaryButtonClick?: () => void
-  isPrimaryButtonLoading?: boolean
-  isPrimaryButtonDisabled?: boolean
-  primaryButtonColorScheme?: 'default' | 'destructive'
-  isSecondaryButtonLoading?: boolean
   errorMessage?: string
   children?: ReactNode
   invertButtonColors?: boolean
@@ -37,15 +48,10 @@ interface ModalProps {
 const Modal: FC<PropsWithChildren<ModalProps>> = ({
   title,
   text,
-  primaryButtonText,
-  secondaryButtonText,
+  primaryButton,
+  secondaryButton,
+  footerCheckbox,
   onClose,
-  onSecondaryButtonClick,
-  onPrimaryButtonClick,
-  isPrimaryButtonLoading,
-  isPrimaryButtonDisabled,
-  primaryButtonColorScheme = 'default',
-  isSecondaryButtonLoading,
   errorMessage,
   children,
   invertButtonColors,
@@ -62,6 +68,16 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
       transition: { duration: 0.2 },
     },
   }
+
+  const footerCheckboxId = useId()
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [])
 
   return (
     <FocusLock autoFocus={false}>
@@ -107,32 +123,47 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
             </Box>
           )}
           {children}
-          <Box display="flex">
-            {secondaryButtonText && (
-              <Box marginRight={3}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="spaceBetween"
+            columnGap={2}
+          >
+            {footerCheckbox && (
+              <Checkbox
+                data-testid="footerCheckbox"
+                id={footerCheckboxId}
+                name={footerCheckboxId}
+                label={footerCheckbox.label}
+                onChange={footerCheckbox.onChange}
+                checked={footerCheckbox.checked}
+              />
+            )}
+            <Box display="flex" columnGap={3}>
+              {secondaryButton && (
                 <Button
                   data-testid="modalSecondaryButton"
                   variant={invertButtonColors ? undefined : 'ghost'}
-                  onClick={onSecondaryButtonClick}
-                  loading={isSecondaryButtonLoading}
-                  disabled={loading}
+                  onClick={secondaryButton.onClick}
+                  loading={secondaryButton.isLoading}
+                  disabled={loading || !!secondaryButton.isDisabled}
                 >
-                  {secondaryButtonText}
+                  {secondaryButton.text}
                 </Button>
-              </Box>
-            )}
-            {primaryButtonText && (
-              <Button
-                data-testid="modalPrimaryButton"
-                variant={invertButtonColors ? 'ghost' : undefined}
-                onClick={onPrimaryButtonClick}
-                loading={isPrimaryButtonLoading}
-                disabled={isPrimaryButtonDisabled}
-                colorScheme={primaryButtonColorScheme}
-              >
-                {primaryButtonText}
-              </Button>
-            )}
+              )}
+              {primaryButton && (
+                <Button
+                  data-testid="modalPrimaryButton"
+                  variant={invertButtonColors ? 'ghost' : undefined}
+                  onClick={primaryButton.onClick}
+                  loading={loading || !!primaryButton.isLoading}
+                  disabled={loading || !!primaryButton.isDisabled}
+                  colorScheme={primaryButton.colorScheme || 'default'}
+                >
+                  {primaryButton.text}
+                </Button>
+              )}
+            </Box>
           </Box>
           {errorMessage && (
             <Box marginTop={1} data-testid="modalErrorMessage">
@@ -216,15 +247,10 @@ export const ModalContainer = ({
 const ModalPortal = ({
   title,
   text,
-  primaryButtonText,
-  secondaryButtonText,
+  primaryButton,
+  secondaryButton,
+  footerCheckbox,
   onClose,
-  onSecondaryButtonClick,
-  onPrimaryButtonClick,
-  isPrimaryButtonLoading,
-  isPrimaryButtonDisabled,
-  primaryButtonColorScheme,
-  isSecondaryButtonLoading,
   errorMessage,
   children,
   invertButtonColors,
@@ -237,15 +263,10 @@ const ModalPortal = ({
     <Modal
       title={title}
       text={text}
-      primaryButtonText={primaryButtonText}
-      secondaryButtonText={secondaryButtonText}
+      primaryButton={primaryButton}
+      secondaryButton={secondaryButton}
+      footerCheckbox={footerCheckbox}
       onClose={onClose}
-      onSecondaryButtonClick={onSecondaryButtonClick}
-      onPrimaryButtonClick={onPrimaryButtonClick}
-      isPrimaryButtonLoading={isPrimaryButtonLoading}
-      isPrimaryButtonDisabled={isPrimaryButtonDisabled}
-      primaryButtonColorScheme={primaryButtonColorScheme}
-      isSecondaryButtonLoading={isSecondaryButtonLoading}
       errorMessage={errorMessage}
       children={children}
       invertButtonColors={invertButtonColors}

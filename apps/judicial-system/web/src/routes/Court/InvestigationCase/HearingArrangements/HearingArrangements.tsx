@@ -371,30 +371,34 @@ const HearingArrangements = () => {
                 : m.modal.prosecutorPresentText,
               { courtDateHasChanged },
             )}
-            onPrimaryButtonClick={async () => {
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                NotificationType.COURT_DATE,
-              )
+            primaryButton={{
+              text: formatMessage(m.modal.primaryButtonText),
+              onClick: async () => {
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  NotificationType.COURT_DATE,
+                )
 
-              if (notificationSent) {
+                if (notificationSent) {
+                  router.push(`${navigateTo}/${workingCase.id}`)
+                }
+              },
+              isLoading: isSendingNotification,
+            }}
+            secondaryButton={{
+              text: formatMessage(m.modal.secondaryButtonText, {
+                courtDateHasChanged,
+              }),
+              onClick: () => {
+                sendNotification(
+                  workingCase.id,
+                  NotificationType.COURT_DATE,
+                  true,
+                )
+
                 router.push(`${navigateTo}/${workingCase.id}`)
-              }
+              },
             }}
-            onSecondaryButtonClick={() => {
-              sendNotification(
-                workingCase.id,
-                NotificationType.COURT_DATE,
-                true,
-              )
-
-              router.push(`${navigateTo}/${workingCase.id}`)
-            }}
-            primaryButtonText={formatMessage(m.modal.primaryButtonText)}
-            secondaryButtonText={formatMessage(m.modal.secondaryButtonText, {
-              courtDateHasChanged,
-            })}
-            isPrimaryButtonLoading={isSendingNotification}
           />
         )}
       </>
