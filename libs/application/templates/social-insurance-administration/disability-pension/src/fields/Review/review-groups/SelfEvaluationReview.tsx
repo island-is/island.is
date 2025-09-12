@@ -27,17 +27,17 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
   const { formatMessage } = useLocale()
 
   type SelfEvaluationAnswers = {
-    hasAssistance: boolean,
-    maritalStatus: boolean,
-    residence: boolean,
-    children: boolean,
-    icelandicCapability: boolean,
-    language: boolean,
-    employment: boolean,
-    employmentOther: boolean,
-    previousEmployment: boolean,
-    previousEmploymentWhen: boolean,
-    previousEmploymentProfession: boolean,
+    hasAssistance: boolean
+    maritalStatus: boolean
+    residence: boolean
+    children: boolean
+    icelandicCapability: boolean
+    language: boolean
+    employment: boolean
+    employmentOther: boolean
+    previousEmployment: boolean
+    previousEmploymentWhen: boolean
+    previousEmploymentProfession: boolean
     previousEmploymentProfessionActivity: boolean
     educationLevel: boolean
     employmentCapability: boolean
@@ -48,7 +48,25 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
     biggestIssue: boolean
   }
 
-  const { hadAssistanceForSelfEvaluation, biggestIssue, children, educationLevel, employmentCapability, employmentImportance, employmentStatus, employmentStatusOther, icelandicCapability, language, maritalStatus, previousEmployment, hasHadRehabilitationOrTherapy, rehabilitationOrTherapyResults, rehabilitationOrTherapyDescription,residence, questionnaire} = getApplicationAnswers(application.answers)
+  const {
+    hadAssistanceForSelfEvaluation,
+    biggestIssue,
+    children,
+    educationLevel,
+    employmentCapability,
+    employmentImportance,
+    employmentStatus,
+    employmentStatusOther,
+    icelandicCapability,
+    language,
+    maritalStatus,
+    previousEmployment,
+    hasHadRehabilitationOrTherapy,
+    rehabilitationOrTherapyResults,
+    rehabilitationOrTherapyDescription,
+    residence,
+    questionnaire,
+  } = getApplicationAnswers(application.answers)
 
   const selfEvaluationsAnswers: SelfEvaluationAnswers = {
     hasAssistance: hadAssistanceForSelfEvaluation !== undefined,
@@ -59,22 +77,34 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
     language: language !== undefined,
     employment: employmentStatus !== undefined && employmentStatus.length > 0,
     employmentOther: employmentStatusOther !== undefined,
-    previousEmployment: previousEmployment !== undefined && previousEmployment.hasEmployment !== undefined,
-    previousEmploymentWhen: previousEmployment !== undefined && previousEmployment.when !== undefined,
-    previousEmploymentProfession: previousEmployment !== undefined && previousEmployment.job !== undefined,
-    previousEmploymentProfessionActivity: previousEmployment !== undefined && previousEmployment.field !== undefined,
+    previousEmployment:
+      previousEmployment !== undefined &&
+      previousEmployment.hasEmployment !== undefined,
+    previousEmploymentWhen:
+      previousEmployment !== undefined && previousEmployment.when !== undefined,
+    previousEmploymentProfession:
+      previousEmployment !== undefined && previousEmployment.job !== undefined,
+    previousEmploymentProfessionActivity:
+      previousEmployment !== undefined &&
+      previousEmployment.field !== undefined,
     educationLevel: educationLevel !== undefined,
     employmentCapability: employmentCapability !== undefined,
     employmentImportance: employmentImportance !== undefined,
     rehabilitationOrTherapy: hasHadRehabilitationOrTherapy !== undefined,
-    rehabilitationOrTherapyResults: rehabilitationOrTherapyResults !== undefined,
-    rehabilitationOrTherapyDescription: rehabilitationOrTherapyDescription !== undefined,
+    rehabilitationOrTherapyResults:
+      rehabilitationOrTherapyResults !== undefined,
+    rehabilitationOrTherapyDescription:
+      rehabilitationOrTherapyDescription !== undefined,
     biggestIssue: biggestIssue !== undefined,
   }
 
-  const hasSelfEvaluationAnswers = selfEvaluationsAnswers  ? Object.values(selfEvaluationsAnswers).some(value => value) : false
+  const hasSelfEvaluationAnswers = selfEvaluationsAnswers
+    ? Object.values(selfEvaluationsAnswers).some((value) => value)
+    : false
 
-  const hasCapabilityImpairment = questionnaire.find(question => question.answer !== undefined)
+  const hasCapabilityImpairment = questionnaire.find(
+    (question) => question.answer !== undefined,
+  )
 
   return (
     <Box marginBottom={3}>
@@ -96,20 +126,20 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
       <Text>TODO - hefur umsækjandi svarað aðstoðarsp-urningu</Text>
       <Box marginTop={2}>
         <BulletList>
-          {
-            hasSelfEvaluationAnswers && <Bullet>
+          {hasSelfEvaluationAnswers && (
+            <Bullet>
               {formatMessage(
                 disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
               )}
             </Bullet>
-          }
-          {
-            hasCapabilityImpairment &&  <Bullet>
+          )}
+          {hasCapabilityImpairment && (
+            <Bullet>
               {formatMessage(
                 disabilityPensionFormMessage.capabilityImpairment.title,
               )}
             </Bullet>
-          }
+          )}
         </BulletList>
       </Box>
     </Box>

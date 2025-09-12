@@ -299,7 +299,8 @@ export const dataSchema = z.object({
       {
         path: ['rehabilitationResults'],
         params:
-          disabilityPensionFormMessage.errors.emptyRehabilitationOrTherapyProgress,
+          disabilityPensionFormMessage.errors
+            .emptyRehabilitationOrTherapyProgress,
       },
     ),
   backgroundInfoBiggestIssue: z.object({

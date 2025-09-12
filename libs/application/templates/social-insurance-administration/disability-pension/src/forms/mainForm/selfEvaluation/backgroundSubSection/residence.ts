@@ -45,7 +45,9 @@ export const residenceField = buildMultiField({
             'socialInsuranceAdministrationResidence.data',
           ) ?? []
 
-        const otherType = residenceTypes.find((type) => type.value.toString() === residenceStatus)
+        const otherType = residenceTypes.find(
+          (type) => type.value.toString() === residenceStatus,
+        )
         return otherType?.needsFurtherInformation ?? false
       },
     }),

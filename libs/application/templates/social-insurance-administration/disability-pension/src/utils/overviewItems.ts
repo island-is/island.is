@@ -4,7 +4,10 @@ import {
   KeyValueItem,
   TableData,
 } from '@island.is/application/types'
-import { formatCurrencyWithoutSuffix, formatPhoneNumber } from '@island.is/application/ui-components'
+import {
+  formatCurrencyWithoutSuffix,
+  formatPhoneNumber,
+} from '@island.is/application/ui-components'
 import kennitala from 'kennitala'
 
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -160,15 +163,17 @@ export const disabilityCertificateItems = (
       width: 'full',
       keyText:
         disabilityPensionFormMessage.disabilityCertificate.disabilityTitle,
-        valueText: (() => {
-          const certificate = getValueViaPath(
-            answers,
-            `${SectionRouteEnum.DISABILITY_CERTIFICATE}`,
-          )
-          return certificate == null || undefined
-            ? disabilityPensionFormMessage.disabilityCertificate.certificateNotAvailable
-            : disabilityPensionFormMessage.disabilityCertificate.certificateAvailable
-        })(),
+      valueText: (() => {
+        const certificate = getValueViaPath(
+          answers,
+          `${SectionRouteEnum.DISABILITY_CERTIFICATE}`,
+        )
+        return certificate == null || undefined
+          ? disabilityPensionFormMessage.disabilityCertificate
+              .certificateNotAvailable
+          : disabilityPensionFormMessage.disabilityCertificate
+              .certificateAvailable
+      })(),
     },
   ]
 }
@@ -202,10 +207,10 @@ export const incomePlanItems = (answers: FormValue): TableData => {
       disabilityPensionFormMessage.incomePlan.yearlyIncome,
       disabilityPensionFormMessage.incomePlan.currency,
     ],
-      rows: incomePlan.map((e) => [
-        e.incomeType,
-        formatCurrencyWithoutSuffix(e.incomePerYear),
-        e.currency,
-      ]),
+    rows: incomePlan.map((e) => [
+      e.incomeType,
+      formatCurrencyWithoutSuffix(e.incomePerYear),
+      e.currency,
+    ]),
   }
 }

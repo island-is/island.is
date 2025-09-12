@@ -258,8 +258,9 @@ export class SocialInsuranceService {
   async getDisabilityPensionCertificate(
     user: User,
   ): Promise<DisabilityPensionCertificate | null> {
-    const data =
-      await this.socialInsuranceApi.getCertificateForDisabilityPension(user).catch(handle404)
+    const data = await this.socialInsuranceApi
+      .getCertificateForDisabilityPension(user)
+      .catch(handle404)
     return data ? mapDisabilityPensionCertificate(data) : null
   }
 

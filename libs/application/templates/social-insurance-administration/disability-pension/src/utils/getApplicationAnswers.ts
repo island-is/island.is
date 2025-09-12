@@ -290,10 +290,11 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIncomePlanConditions.data',
   ) as IncomePlanConditions
 
-  const countries = (getValueViaPath<CountryValue[]>(
-    externalData,
-    'socialInsuranceAdministrationCountries.data',
-  ) as CountryValue[]) ?? []
+  const countries =
+    (getValueViaPath<CountryValue[]>(
+      externalData,
+      'socialInsuranceAdministrationCountries.data',
+    ) as CountryValue[]) ?? []
 
   return {
     residenceHistory,

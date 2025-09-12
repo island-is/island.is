@@ -27,11 +27,11 @@ export const Confirmation: FC<ConfirmationScreenProps> = () => {
         message={
           <Box className={styles.markdownContent}>
             <Text variant="small">
-              <Markdown
-                options={{ openLinksInNewTab: true }}
-              >{formatMessage(
-                disabilityPensionFormMessage.confirmation.warningDescription,
-              )}</Markdown>
+              <Markdown options={{ openLinksInNewTab: true }}>
+                {formatMessage(
+                  disabilityPensionFormMessage.confirmation.warningDescription,
+                )}
+              </Markdown>
             </Text>
           </Box>
         }

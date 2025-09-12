@@ -33,7 +33,6 @@ export const Review: FC<ReviewScreenProps> = ({
   }
 
   return <SelfEvaluationReview {...childProps} />
-
 }
 
 export default Review

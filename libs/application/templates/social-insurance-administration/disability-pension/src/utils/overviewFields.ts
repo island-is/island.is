@@ -46,13 +46,17 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildCustomField({
       id: `${SectionRouteEnum.OVERVIEW}.disabilityCertificate`,
-      title: disabilityPensionFormMessage.customFields.certificate ?? 'Custom disability certificate',
+      title:
+        disabilityPensionFormMessage.customFields.certificate ??
+        'Custom disability certificate',
 
       component: 'CertificateOverview',
     }),
     buildCustomField({
       id: `${SectionRouteEnum.OVERVIEW}.customField`,
-      title: disabilityPensionFormMessage.customFields.selfEvaluation ?? 'Custom self evaluation',
+      title:
+        disabilityPensionFormMessage.customFields.selfEvaluation ??
+        'Custom self evaluation',
       component: 'Review',
     }),
     buildOverviewField({

@@ -60,12 +60,10 @@ export const livedAbroadSubSection = buildMultiField({
             const { countries = [] } = getApplicationExternalData(
               application.externalData,
             )
-            return (
-              countries.map(({ label, value }) => ({
-                value,
-                label,
-              }))
-            )
+            return countries.map(({ label, value }) => ({
+              value,
+              label,
+            }))
           },
         },
         abroadNationalId: {
