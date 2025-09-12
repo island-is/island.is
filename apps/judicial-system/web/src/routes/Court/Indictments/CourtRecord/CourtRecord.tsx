@@ -44,7 +44,6 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { useCourtDocuments } from '@island.is/judicial-system-web/src/components/CourtDocuments/CourtDocuments'
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
   Case,
@@ -57,6 +56,7 @@ import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/u
 import {
   formatDateForServer,
   TUploadFile,
+  useCourtDocuments,
   useCourtSessions,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -133,7 +133,6 @@ const useCourtSessionUpdater = (
 const CourtRecord: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { handleAddDocument } = useCourtDocuments()
   const [reorderableItems, setReorderableItems] = useState<
     { id: string; name: string }[]
   >([])
@@ -143,6 +142,7 @@ const CourtRecord: FC = () => {
   const [courtEndTimeErrorMessage, setCourtEndTimeErrorMessage] =
     useState<string>('')
   const { createCourtSession, updateCourtSession } = useCourtSessions()
+  const { updateCourtDocument } = useCourtDocuments()
   const updateSession = useCourtSessionUpdater(
     workingCase,
     setWorkingCase,
@@ -471,7 +471,18 @@ const CourtRecord: FC = () => {
                         <Reorder.Group
                           axis="y"
                           values={reorderableItems}
-                          onReorder={setReorderableItems}
+                          onReorder={(newOrder) => {
+                            setReorderableItems(newOrder)
+
+                            // Update the order in the backend
+                            updateCourtDocument({
+                              caseId: workingCase.id,
+                              courtDocumentId:
+                                '32c7020b-f07e-4ed4-9ef5-9d341f42c5e4', // TODO: This should be the id of the document being moved
+                              courtSessionId: courtSession.id,
+                              documentOrder: 2,
+                            })
+                          }}
                           className={styles.grid}
                         >
                           {reorderableItems.map((item) => {
