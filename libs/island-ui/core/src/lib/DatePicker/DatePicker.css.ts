@@ -1,6 +1,7 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 import * as mixins from '../Input/Input.mixins'
+import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 export const root = style({
   position: 'relative',
@@ -13,6 +14,51 @@ export const backgroundBlue = style({
       backgroundColor: `${theme.color.blue100} !important`,
     },
   },
+})
+
+export const parentContainer = style({
+  position: 'relative',
+  zIndex: 0,
+})
+export const calendarContainer = style({})
+
+const weekendBase: StyleWithSelectors = {
+  zIndex: -1,
+  content: '""',
+  display: 'block',
+  position: 'absolute',
+  top: 95,
+  right: 0,
+  bottom: 0,
+  height: 223,
+  width: 'var(--weekend-width)',
+  backgroundColor: 'rgba(204, 223, 255, 0.3)',
+  pointerEvents: 'none',
+}
+
+export const weekendHeight = styleVariants({
+  fourWeeks: {},
+  fiveWeeks: {},
+  sixWeeks: {},
+})
+
+globalStyle(`${calendarContainer}::before`, {
+  ...weekendBase,
+})
+
+globalStyle(`${calendarContainer}.${weekendHeight.fourWeeks}::before`, {
+  ...weekendBase,
+  height: 188,
+})
+
+globalStyle(`${calendarContainer}.${weekendHeight.fiveWeeks}::before`, {
+  ...weekendBase,
+  height: 223,
+})
+
+globalStyle(`${calendarContainer}.${weekendHeight.sixWeeks}::before`, {
+  ...weekendBase,
+  height: 258,
 })
 
 export const small = style({})
@@ -218,9 +264,6 @@ export const rangeContainer = style({
 export const rangeItem = style({
   flex: 1,
   textAlign: 'center',
-  ':hover': {
-    borderColor: theme.color.blue400,
-  },
 })
 
 // Overwrite default ReactDatepicker styles

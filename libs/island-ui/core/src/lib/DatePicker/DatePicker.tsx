@@ -17,7 +17,6 @@ import {
   ReactDatePickerProps,
   registerLocale,
 } from 'react-datepicker'
-
 import { Icon } from '../IconRC/Icon'
 import { ErrorMessage } from '../Input/ErrorMessage'
 import { Text } from '../Text/Text'
@@ -52,7 +51,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   id = name,
   label,
   placeholderText,
-  locale = 'en',
+  locale = 'is',
   minDate,
   maxDate,
   excludeDates,
@@ -85,6 +84,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
+
   const currentLanguage = languageConfig[locale]
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -115,6 +115,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
         })}
       >
         <ReactDatePicker
+          key={
+            range
+              ? `${startDate?.getTime()}-${endDate?.getTime()}`
+              : startDate?.getTime()
+          }
           popperClassName={cn(styles.popper, {
             [styles.popperInline]: appearInline,
             [styles.popperXsmall]: size === 'xs',
@@ -130,7 +135,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           minDate={minDate}
           maxDate={maxDate}
           excludeDates={excludeDates}
-          //formatWeekDay={(nameOfDay) => nameOfDay.toString().substr(0, 3)}
+          formatWeekDay={(nameOfDay) => nameOfDay.toString().substr(0, 3)}
           dateFormat={
             showTimeInput
               ? currentLanguage.formatWithTime
@@ -200,6 +205,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           calendarContainer={(props) => (
             <CustomCalendarContainer
               {...props}
+              startDate={startDate}
+              endDate={endDate}
               setDate={(startDay, endDay) => {
                 setStartDate(startDay)
                 endDay && setEndDate(endDay)

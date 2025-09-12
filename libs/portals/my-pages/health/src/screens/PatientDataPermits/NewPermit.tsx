@@ -15,9 +15,11 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useCreatePatientDataPermitMutation } from './PatientDataPermits.generated'
 
+const DEFAULT_STEP = 1 // Default to step 1 to start with the first step
+
 const NewPermit: React.FC = () => {
   const { formatMessage } = useLocale()
-  const [step, setStep] = useState<number | undefined>(1)
+  const [step, setStep] = useState<number | undefined>(DEFAULT_STEP)
   const [formState, setFormState] =
     useState<HealthDirectoratePatientDataPermitInput>()
 
