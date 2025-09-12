@@ -13,6 +13,21 @@ export const grid = style({
   width: '100%',
 })
 
+export const courtEndTimeContainer = style({
+  display: 'flex',
+  gap: theme.spacing[2],
+  flexGrow: 1,
+})
+
+export const button = style({
+  display: 'flex',
+  whiteSpace: 'nowrap',
+})
+
+export const fullWidth = style({
+  width: '100%',
+})
+
 export const twoColGrid = style({
   display: 'grid',
   gap: theme.spacing[2],

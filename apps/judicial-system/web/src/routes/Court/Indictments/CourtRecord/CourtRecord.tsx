@@ -7,6 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react'
+import format from 'date-fns/format'
 import {
   AnimatePresence,
   LayoutGroup,
@@ -16,6 +17,7 @@ import {
 } from 'motion/react'
 import router from 'next/router'
 import { uuid } from 'uuidv4'
+import InputMask from '@react-input/mask/InputMask'
 
 import {
   Accordion,
@@ -29,7 +31,10 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { INDICTMENTS_CASE_FILE_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  DATE_PICKER_TIME,
+  INDICTMENTS_CASE_FILE_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { INDICTMENTS_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import { CourtSessionClosedLegalBasis } from '@island.is/judicial-system/types'
 import {
@@ -49,23 +54,22 @@ import { useCourtDocuments } from '@island.is/judicial-system-web/src/components
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
   Case,
-  CourtSession,
+  CourtSessionResponse,
   CourtSessionRulingType,
-  UpdateCourtSessionInput,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  removeTabsValidateAndSet,
-  validateAndSetErrorMessage,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   TUploadFile,
   useCase,
   useCourtSessions,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isIndictmentCourtRecordStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  isIndictmentCourtRecordStepValid,
+  validate,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
 import { useSelectCourtOfficialsUsersQuery } from '../../components/ReceptionAndAssignment/SelectCourtOfficials/selectCourtOfficialsUsers.generated'
 import * as styles from './CourtRecord.css'
@@ -113,7 +117,7 @@ const useCourtSessionUpdater = (
   setWorkingCase: Dispatch<SetStateAction<Case>>,
   updateFn: any,
 ) => {
-  return (sessionId: string, updates: Partial<CourtSession>) => {
+  return (sessionId: string, updates: Partial<CourtSessionResponse>) => {
     setWorkingCase((prev) => {
       if (!prev.courtSessions) return prev
 
@@ -145,6 +149,8 @@ const CourtRecord: FC = () => {
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
+  const [courtEndTimeErrorMessage, setCourtEndTimeErrorMessage] =
+    useState<string>('')
   const { createCourtSession, updateCourtSession } = useCourtSessions()
   const updateSession = useCourtSessionUpdater(
     workingCase,
@@ -244,7 +250,7 @@ const CourtRecord: FC = () => {
     workingCase.courtSessions,
   )
 
-  const updateItem = (id: string, newData: Partial<CourtSession>) => {
+  const updateItem = (id: string, newData: Partial<CourtSessionResponse>) => {
     setWorkingCase((prev) => {
       if (!prev.courtSessions) return prev
 
@@ -258,7 +264,7 @@ const CourtRecord: FC = () => {
   }
 
   const [expandedIndex, setExpandedIndex] = useState<number>()
-
+  const [courtEndTime, setCourtEndTime] = useState<string>('')
   useEffect(() => {
     setExpandedIndex(
       workingCase.courtSessions?.length
@@ -723,33 +729,65 @@ const CourtRecord: FC = () => {
                     </Box>
                     <Box>
                       <SectionHeading title="Þinghaldi slitið" />
-                      <BlueBox>
-                        <DateTime
-                          name="courtEndTime"
-                          timeLabel="Þinghald hófst (kk:mm)"
-                          maxDate={new Date()}
-                          selectedDate={courtSession.startDate}
-                          onChange={(
-                            date: Date | undefined,
-                            valid: boolean,
-                          ) => {
-                            if (date && valid) {
-                              updateCourtSession({
-                                caseId: workingCase.id,
-                                courtSessionId: courtSession.id,
-                                startDate: date,
-                              })
-                            }
-                          }}
-                          blueBox={false}
-                          required
-                        />
-                        <Button
-                          icon="checkmark"
-                          onClick={() => setExpandedIndex(undefined)}
-                        >
-                          Staðfesta þingbók
-                        </Button>
+                      <BlueBox className={styles.courtEndTimeContainer}>
+                        <div className={styles.fullWidth}>
+                          <InputMask
+                            component={Input}
+                            mask={DATE_PICKER_TIME}
+                            replacement={{ ' ': /\d/ }}
+                            name="courtEndTime"
+                            label="Þinghaldi lauk (kk:mm)"
+                            onBlur={(evt) => {
+                              const validateTime = validate([
+                                [evt.target.value, ['empty', 'time-format']],
+                              ])
+
+                              if (!validateTime.isValid) {
+                                setCourtEndTimeErrorMessage(
+                                  validateTime.errorMessage,
+                                )
+
+                                return
+                              }
+
+                              const d = new Date(
+                                `${format(
+                                  new Date(courtSession.startDate || ''),
+                                  'yyyy-MM-dd',
+                                )}T${evt.target.value}`,
+                              )
+
+                              const validateDate = validate([
+                                [d.toString(), ['empty', 'date-format']],
+                              ])
+
+                              if (validateDate.isValid) {
+                                updateSession(courtSession.id, {
+                                  endDate: formatDateForServer(d),
+                                })
+                              } else {
+                                setCourtEndTimeErrorMessage(
+                                  validateDate.errorMessage,
+                                )
+                              }
+                            }}
+                            placeholder="Sláðu inn tíma"
+                            autoComplete="off"
+                            errorMessage={courtEndTimeErrorMessage}
+                            hasError={courtEndTimeErrorMessage !== ''}
+                            size="sm"
+                            required
+                          />
+                        </div>
+                        <Box className={styles.button}>
+                          <Button
+                            icon="checkmark"
+                            onClick={() => setExpandedIndex(undefined)}
+                            size="small"
+                          >
+                            Staðfesta þingbók
+                          </Button>
+                        </Box>
                       </BlueBox>
                     </Box>
                   </LayoutGroup>
@@ -777,7 +815,7 @@ const CourtRecord: FC = () => {
                   {
                     id: courtSession.id,
                     created: courtSession.created,
-                  } as CourtSession,
+                  } as CourtSessionResponse,
                 ],
               }))
             }}
