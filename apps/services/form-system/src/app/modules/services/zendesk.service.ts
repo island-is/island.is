@@ -234,7 +234,9 @@ export class ZendeskService {
       section?.screens?.forEach((screen) => {
         screen.fields?.forEach((field) => {
           if (field.fieldSettings?.zendeskIsCustomField === true) {
-            const customFieldId = field.fieldSettings?.zendeskCustomFieldId ?? 0
+            const customFieldId = Number(
+              field.fieldSettings?.zendeskCustomFieldId ?? '0',
+            )
             if (customFieldId === 0) {
               return
             }
