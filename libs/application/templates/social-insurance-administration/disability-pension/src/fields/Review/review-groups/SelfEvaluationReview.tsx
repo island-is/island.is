@@ -1,4 +1,4 @@
-import { coreMessages} from '@island.is/application/core'
+import { coreMessages } from '@island.is/application/core'
 import { Application, Field, RecordObject } from '@island.is/application/types'
 import {
   Box,
