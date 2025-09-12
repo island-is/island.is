@@ -90,6 +90,8 @@ export class UserProfileService extends BaseTemplateApiService {
       ? formatBankInfo(bankInfoRes.bankAccountInfo)
       : undefined
 
+    console.log(email)
+
     const isActor = !!auth.actor?.nationalId
     const emailIsInvalid =
       (params?.validateEmail ||

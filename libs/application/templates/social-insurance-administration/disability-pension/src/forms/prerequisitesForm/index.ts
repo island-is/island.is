@@ -34,7 +34,6 @@ import {
 } from '../../dataProviders'
 import { disabilityPensionFormMessage } from '../../lib/messages'
 
-//TODO: Fix and correct providers per item <---------- !!!!!!!!
 export const Prerequisites = buildForm({
   id: 'disabilityPensionPrerequisites',
   title: disabilityPensionFormMessage.shared.title,

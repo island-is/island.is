@@ -1,5 +1,5 @@
 import {
-  NO,
+  YES,
   YesOrNo,
   buildMultiField,
   buildRadioField,
@@ -34,7 +34,7 @@ export const paidWorkSubSection = buildMultiField({
           formValue,
           `${SectionRouteEnum.PAID_WORK}.inPaidWork`,
         )
-        return isWorking === NO
+        return isWorking === YES
       },
       options: yesOrNoOptions,
     }),

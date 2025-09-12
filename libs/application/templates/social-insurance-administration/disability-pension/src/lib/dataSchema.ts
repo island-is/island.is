@@ -84,7 +84,7 @@ export const dataSchema = z.object({
     })
     .refine(
       ({ inPaidWork, continuedWork }) => {
-        if (inPaidWork === NO) {
+        if (inPaidWork === YES) {
           return continuedWork !== undefined
         }
         return true

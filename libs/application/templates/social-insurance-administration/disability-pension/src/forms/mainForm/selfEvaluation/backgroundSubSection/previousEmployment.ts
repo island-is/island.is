@@ -56,7 +56,6 @@ export const previousEmploymentField = buildMultiField({
         return hasPreviousEmployment === YES
       },
       options: () => {
-        //TODO: Validate that the user is not selecting more than two years (calculate months as well)
         const years = getYears(20)
         return years.map((year) => ({
           value: year.toString(),

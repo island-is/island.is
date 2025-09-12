@@ -23,7 +23,6 @@ export const disabilityPeriodFields = buildMultiField({
       width: 'half',
       placeholder: disabilityPensionFormMessage.shared.chooseYear,
       options: () => {
-        //TODO: Validate that the user is not selecting more than two years (calculate months as well)
         const years = getYears(2)
         return years.map((year) => ({
           value: year.toString(),

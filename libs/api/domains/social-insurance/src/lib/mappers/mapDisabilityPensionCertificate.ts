@@ -168,9 +168,9 @@ export const mapDisabilityPensionCertificate = (
   return {
     referenceId: data.referenceId,
     doctor: mapDoctor(data.doctorInfo),
-    lastInspectionDate: data.lastInspectionDate?.toISOString(),
-    certificateDate: data.certificateDate?.toISOString(),
-    dateOfWorkIncapacity: data.dateOfWorkIncapacityStart?.toISOString(),
+    lastInspectionDate: data.lastInspectionDate ? data.lastInspectionDate.toISOString() : undefined,
+    certificateDate: data.certificateDate ? data.certificateDate.toISOString() : undefined,
+    dateOfWorkIncapacity: data.dateOfWorkIncapacityStart ? data.dateOfWorkIncapacityStart.toISOString() : undefined,
     diagnoses: mapDisabilityDiagnosisCollection(
       data.diagnosis,
       data.diagnosesOthers,

@@ -442,9 +442,6 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1ApplicantResidenceInformationGet()
   }
 
-  /**
-   * TODO: Map all used application types to the enum and deprecate the old method
-   */
   async getEducationLevelsWithEnum(
     user: User,
     applicationType: ApplicationTypeEnum,
