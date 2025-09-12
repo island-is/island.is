@@ -18,14 +18,17 @@ export const PaymentInformationValidation: FC<
   const [errors, setErrors] = useState<Array<MessageDescriptor>>([])
   const [invalidError, setInvalidError] = useState<boolean>()
   const { formatMessage } = useLocale()
-  const getIsValidBankInformation = useLazyIsBankInfoValid()
+  const [getIsValidBankInformation] = useLazyIsBankInfoValid()
+
   const getIsCompanyValidCallback = useCallback(
     async (input: {
       bankNumber: string
       ledger: string
       accountNumber: string
     }) => {
-      const { data } = await getIsValidBankInformation({ input: input })
+      const { data } = await getIsValidBankInformation({
+        variables: { input },
+      })
       return data
     },
     [getIsValidBankInformation],
@@ -67,6 +70,10 @@ export const PaymentInformationValidation: FC<
       setErrors((prev) => [...prev, paymentErrors.invalidBankNumber])
     }
 
+    if (!ledgerSupportData || !bankNumberSupportData) {
+      return [false, '']
+    }
+
     try {
       const isValid = await getIsCompanyValidCallback({
         bankNumber: paymentInfo.bankNumber || '',
@@ -74,7 +81,7 @@ export const PaymentInformationValidation: FC<
         accountNumber: paymentInfo.accountNumber?.padStart(6, '0') || '',
       })
 
-      if (isValid.vmstApplicationsAccountNumberValidation) return [true, null]
+      if (isValid?.vmstApplicationsAccountNumberValidation) return [true, null]
       setErrors((prev) => [...prev, paymentErrors.invalidAccountNumber])
     } catch (e) {
       setErrors((prev) => [...prev, paymentErrors.invalidAccountNumber])

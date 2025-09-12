@@ -11,7 +11,6 @@ import { useStartCollectionMutation } from './startCollection.generated'
 
 const StartAreaCollection = ({ areaId }: { areaId: string }) => {
   const { formatMessage } = useLocale()
-
   const [startCollectionMutation, { loading }] = useStartCollectionMutation()
 
   const onStartCollection = () => {
@@ -22,16 +21,14 @@ const StartAreaCollection = ({ areaId }: { areaId: string }) => {
         },
       },
       onCompleted: (response) => {
-        if (
-          response.signatureCollectionAdminStartMunicipalityCollection.success
-        )
-          toast.success(formatMessage(m.openMunicipalCollectionSuccess))
-        else {
-          toast.error(
-            response.signatureCollectionAdminStartMunicipalityCollection
-              .reasons?.[0] ?? formatMessage(m.openMunicipalCollectionError),
-          )
-        }
+        const { success, reasons } =
+          response.signatureCollectionAdminStartMunicipalityCollection
+
+        success
+          ? toast.success(formatMessage(m.openMunicipalCollectionSuccess))
+          : toast.error(
+              reasons?.[0] ?? formatMessage(m.openMunicipalCollectionError),
+            )
       },
     })
   }

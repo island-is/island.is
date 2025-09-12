@@ -1,5 +1,5 @@
+import { useLazyQuery } from '@apollo/client'
 import { VALIDATE_ACCOUNT_NUMBER } from '../graphql/queries'
-import { useLazyQuery } from './useLazyQuery'
 
 export const useLazyIsBankInfoValid = () => {
   return useLazyQuery<
