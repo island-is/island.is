@@ -56,8 +56,7 @@ export class HistoryService {
   async postPruneHistoryByApplicationId(applicationId: string): Promise<void> {
     await this.historyModel.update(
       {
-        ...history,
-        exitEvenSubjectNationalId: null,
+        exitEventSubjectNationalId: null,
         exitEventActorNationalId: null,
       },
       {
