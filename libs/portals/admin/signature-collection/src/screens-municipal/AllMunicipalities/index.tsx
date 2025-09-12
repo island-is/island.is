@@ -25,6 +25,7 @@ import EmptyState from '../../shared-components/emptyState'
 import StartAreaCollection from './startCollection'
 import { useStartCollectionMutation } from './startCollection/startCollection.generated'
 import sortBy from 'lodash/sortBy'
+import { CollectionStatus } from '@island.is/api/schema'
 
 const AllMunicipalities = ({
   isProcurationHolder,
@@ -182,6 +183,12 @@ const AllMunicipalities = ({
                               )}
                             />
                           ),
+                        }
+                      : area.collectionStatus === CollectionStatus.InReview
+                      ? {
+                          label: formatMessage(m.confirmListReviewed),
+                          variant: 'mint',
+                          outlined: true,
                         }
                       : area.isActive
                       ? {

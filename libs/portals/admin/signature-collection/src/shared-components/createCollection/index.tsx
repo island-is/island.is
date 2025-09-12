@@ -33,19 +33,17 @@ const CreateCollection = ({
 }) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
-
   const { id, collectionType } = collection
 
-  const params = useParams() as {
+  const { constituencyName, municipality } = useParams<{
     constituencyName?: string
     municipality?: string
-  }
+  }>()
 
-  // Get the right area name based on collection type
   const areaName =
     collectionType === SignatureCollectionCollectionType.Parliamentary
-      ? params.constituencyName
-      : params.municipality
+      ? constituencyName
+      : municipality
 
   // Find the area by name if we have an area name
   const currentArea =
