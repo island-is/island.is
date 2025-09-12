@@ -58,7 +58,7 @@ import { IndictmentCountService } from '../indictment-count'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
-  CaseArchive,
+  CaseArchiveRepositoryService,
   CaseFile,
   CaseRepositoryService,
   CaseString,
@@ -159,8 +159,8 @@ export class InternalCaseService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,
-    @InjectModel(CaseArchive)
-    private readonly caseArchiveModel: typeof CaseArchive,
+    @Inject(forwardRef(() => CaseArchiveRepositoryService))
+    private readonly caseArchiveRepositoryService: CaseArchiveRepositoryService,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => CaseRepositoryService))
@@ -534,9 +534,9 @@ export class InternalCaseService {
         })
       }
 
-      await this.caseArchiveModel.create(
+      await this.caseArchiveRepositoryService.create(
+        theCase.id,
         {
-          caseId: theCase.id,
           archive: CryptoJS.AES.encrypt(
             JSON.stringify({
               ...caseArchive,

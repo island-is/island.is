@@ -26,7 +26,7 @@ import { FileService } from '../../file'
 import { IndictmentCountService } from '../../indictment-count'
 import { PoliceService } from '../../police'
 import {
-  CaseArchive,
+  CaseArchiveRepositoryService,
   CaseRepositoryService,
   CaseString,
   DateLog,
@@ -53,6 +53,7 @@ jest.mock('../../defendant/defendant.service')
 jest.mock('../../defendant/civilClaimant.service')
 jest.mock('../../indictment-count/indictmentCount.service')
 jest.mock('../../repository/services/caseRepository.service')
+jest.mock('../../repository/services/caseArchiveRepository.service')
 
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
@@ -81,6 +82,7 @@ export const createTestingCaseModule = async () => {
       CivilClaimantService,
       IndictmentCountService,
       CaseRepositoryService,
+      CaseArchiveRepositoryService,
       {
         provide: IntlService,
         useValue: {
@@ -102,10 +104,6 @@ export const createTestingCaseModule = async () => {
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
-      {
-        provide: getModelToken(CaseArchive),
-        useValue: { create: jest.fn() },
-      },
       {
         provide: getModelToken(DateLog),
         useValue: {
@@ -161,13 +159,14 @@ export const createTestingCaseModule = async () => {
     CaseRepositoryService,
   )
 
+  const caseArchiveRepositoryService = caseModule.get<CaseArchiveRepositoryService>(
+    CaseArchiveRepositoryService,
+  )
+
   const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
 
-  const caseArchiveModel = caseModule.get<typeof CaseArchive>(
-    getModelToken(CaseArchive),
-  )
 
   const dateLogModel = caseModule.get<typeof DateLog>(getModelToken(DateLog))
 
@@ -211,9 +210,9 @@ export const createTestingCaseModule = async () => {
     civilClaimantService,
     indictmentCountService,
     caseRepositoryService,
+    caseArchiveRepositoryService,
     logger,
     sequelize,
-    caseArchiveModel,
     dateLogModel,
     caseStringModel,
     caseConfig,

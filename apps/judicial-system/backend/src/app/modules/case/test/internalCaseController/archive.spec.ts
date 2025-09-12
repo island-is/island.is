@@ -13,7 +13,7 @@ import { DefendantService } from '../../../defendant'
 import { FileService } from '../../../file'
 import { IndictmentCountService } from '../../../indictment-count'
 import {
-  CaseArchive,
+  CaseArchiveRepositoryService,
   CaseFile,
   CaseRepositoryService,
   CaseString,
@@ -41,7 +41,7 @@ describe('InternalCaseController - Archive', () => {
   let mockIndictmentCountService: IndictmentCountService
   let mockCaseStringModel: typeof CaseString
   let mockCaseRepositoryService: CaseRepositoryService
-  let mockCaseArchiveModel: typeof CaseArchive
+  let mockCaseArchiveRepositoryService: CaseArchiveRepositoryService
   let mockCaseConfig: ConfigType<typeof caseModuleConfig>
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
@@ -54,7 +54,7 @@ describe('InternalCaseController - Archive', () => {
       sequelize,
       caseStringModel,
       caseRepositoryService,
-      caseArchiveModel,
+      caseArchiveRepositoryService,
       caseConfig,
       internalCaseController,
     } = await createTestingCaseModule()
@@ -64,7 +64,7 @@ describe('InternalCaseController - Archive', () => {
     mockIndictmentCountService = indictmentCountService
     mockCaseStringModel = caseStringModel
     mockCaseRepositoryService = caseRepositoryService
-    mockCaseArchiveModel = caseArchiveModel
+    mockCaseArchiveRepositoryService = caseArchiveRepositoryService
     mockCaseConfig = caseConfig
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -357,9 +357,9 @@ describe('InternalCaseController - Archive', () => {
         mockCaseConfig.archiveEncryptionKey,
         { iv: parsedIv },
       )
-      expect(mockCaseArchiveModel.create).toHaveBeenCalledWith(
+      expect(mockCaseArchiveRepositoryService.create).toHaveBeenCalledWith(
+        caseId,
         {
-          caseId,
           archive: encryptedCase,
         },
         { transaction },
