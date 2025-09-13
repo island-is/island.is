@@ -42,7 +42,11 @@ import {
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { EmploymentDto, mapEmploymentDto } from './dto/employment.dto'
-import { ApplicationWriteApi, MedicalDocumentApiForDisabilityPension, QuestionnairesApiForDisabilityPension } from './socialInsuranceAdministrationClient.type'
+import {
+  ApplicationWriteApi,
+  MedicalDocumentApiForDisabilityPension,
+  QuestionnairesApiForDisabilityPension,
+} from './socialInsuranceAdministrationClient.type'
 import { ApplicationTypeEnum } from './enums'
 import { mapApplicationEnumToType } from './mapper'
 import { mapProfessionDto, ProfessionDto } from './dto/profession.dto'
@@ -105,10 +109,14 @@ export class SocialInsuranceAdministrationClientService {
     this.questionnairesApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   private medicalDocumentsApiForDisabilityPensionWithAuth = (user: User) =>
-    this.medicalDocumentsApiForDisabilityPension.withMiddleware(new AuthMiddleware(user as Auth))
+    this.medicalDocumentsApiForDisabilityPension.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
 
   private questionnairesApiForDisabilityPensionWithAuth = (user: User) =>
-    this.questionnairesApiForDisabilityPension.withMiddleware(new AuthMiddleware(user as Auth))
+    this.questionnairesApiForDisabilityPension.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
 
   getPaymentPlan(
     user: User,
