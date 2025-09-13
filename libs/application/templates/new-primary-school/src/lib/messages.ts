@@ -1064,3 +1064,31 @@ export const errorMessages = defineMessages({
     description: 'At least one allergy must be selected',
   },
 })
+
+export const statesMessages = defineMessages({
+  applicationApproved: {
+    id: 'nps.application:application.approved',
+    defaultMessage: 'Umsókn samþykkt',
+    description: 'Application approved',
+  },
+  applicationApprovedDescription: {
+    id: 'nps.application:application.approved.description',
+    defaultMessage: 'Umsókn um grunnskóla samþykkt',
+    description: 'The application for primary school has been approved',
+  },
+  applicationRejected: {
+    id: 'nps.application:application.rejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application rejected',
+  },
+  applicationRejectedDescription: {
+    id: 'nps.application:application.rejected.description',
+    defaultMessage: 'Umsókn um grunnskóla hefur verið hafnað',
+    description: 'The application for primary school has been rejected',
+  },
+  applicationReceivedTitle: {
+    id: 'nps.application:application.received.title',
+    defaultMessage: 'Móttekin',
+    description: 'Received',
+  },
+})
