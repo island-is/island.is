@@ -107,7 +107,7 @@ export class InternalVerdictController {
   @Post([
     `case/:caseId/${
       messageEndpoint[
-        MessageType.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT
+        MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT
       ]
     }/:defendantId`,
   ])

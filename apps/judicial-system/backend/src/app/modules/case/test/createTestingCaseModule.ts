@@ -31,6 +31,7 @@ import {
   CaseString,
   DateLog,
 } from '../../repository'
+import { SubpoenaService } from '../../subpoena'
 import { UserService } from '../../user'
 import { caseModuleConfig } from '../case.config'
 import { CaseController } from '../case.controller'
@@ -51,6 +52,7 @@ jest.mock('../../file/file.service')
 jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
 jest.mock('../../defendant/civilClaimant.service')
+jest.mock('../../subpoena/subpoena.service')
 jest.mock('../../indictment-count/indictmentCount.service')
 jest.mock('../../repository/services/caseRepository.service')
 
@@ -80,6 +82,7 @@ export const createTestingCaseModule = async () => {
       DefendantService,
       CivilClaimantService,
       IndictmentCountService,
+      SubpoenaService,
       CaseRepositoryService,
       {
         provide: IntlService,
@@ -150,6 +153,8 @@ export const createTestingCaseModule = async () => {
 
   const defendantService = caseModule.get<DefendantService>(DefendantService)
 
+  const subpoenaService = caseModule.get<SubpoenaService>(SubpoenaService)
+
   const civilClaimantService =
     caseModule.get<CivilClaimantService>(CivilClaimantService)
 
@@ -208,6 +213,7 @@ export const createTestingCaseModule = async () => {
     fileService,
     awsS3Service,
     defendantService,
+    subpoenaService,
     civilClaimantService,
     indictmentCountService,
     caseRepositoryService,

@@ -269,7 +269,7 @@ export const IndictmentCount: FC<Props> = ({
     if (indictmentCount.policeCaseNumber !== originalPoliceCaseNumber) {
       // Our position in the list may have changed because we changed the police case number
       const dateElement = document.getElementById(indictmentCount.id)
-      console.log(dateElement)
+
       // Make sure the indictment count is visible
       if (dateElement && !isPartiallyVisible(dateElement)) {
         dateElement.scrollIntoView({ behavior: 'smooth', block: 'center' })

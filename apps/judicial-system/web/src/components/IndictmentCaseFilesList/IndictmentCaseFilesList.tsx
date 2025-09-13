@@ -325,9 +325,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                             caseId={workingCase.id}
                             title={formatMessage(
                               strings.serviceCertificateButtonText,
-                              {
-                                name: defendant.name,
-                              },
+                              { name: defendant.name },
                             )}
                             pdfType="serviceCertificate"
                             elementId={[defendant.id, subpoena.id]}

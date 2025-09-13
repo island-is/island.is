@@ -18,6 +18,7 @@ import { MessageService } from '@island.is/judicial-system/message'
 
 import { CaseService, InternalCaseService, PdfService } from '../../case'
 import { CourtService } from '../../court'
+import { CourtDocumentService } from '../../court-session'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
 import { FileService } from '../../file'
@@ -36,6 +37,7 @@ jest.mock('../../case/pdf.service')
 jest.mock('../../police/police.service')
 jest.mock('../../event/event.service')
 jest.mock('../../defendant/defendant.service')
+jest.mock('../../court-session/courtDocument.service')
 jest.mock('../../court/court.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/internalCase.service')
@@ -63,6 +65,7 @@ export const createTestingSubpoenaModule = async () => {
       PoliceService,
       EventService,
       DefendantService,
+      CourtDocumentService,
       CourtService,
       InternalCaseService,
       {
