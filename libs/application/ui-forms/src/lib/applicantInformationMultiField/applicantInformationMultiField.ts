@@ -30,6 +30,7 @@ export const applicantInformationArray = (
     baseInfoReadOnly = false,
     emailAndPhoneReadOnly = false,
     compactFields = false,
+    customAddressLabel,
   } = props ?? {}
 
   // Note: base info fields are not editable, and are default displayed as disabled fields.
@@ -64,7 +65,7 @@ export const applicantInformationArray = (
     }),
     buildTextField({
       id: 'applicant.address',
-      title: applicantInformation.labels.address,
+      title: customAddressLabel ?? applicantInformation.labels.address,
       width: 'half',
       backgroundColor: 'white',
       disabled: baseInfoDisabled,
