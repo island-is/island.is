@@ -1,19 +1,15 @@
-import CryptoJS from 'crypto-js'
 import { Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
-
-import { ConfigType } from '@island.is/nest/config'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { uuidFactory } from '../../../../factories'
 import { DefendantService } from '../../../defendant'
 import { FileService } from '../../../file'
 import { IndictmentCountService } from '../../../indictment-count'
 import {
-  CaseArchive,
+  CaseArchiveRepositoryService,
   CaseFile,
   CaseRepositoryService,
   CaseString,
@@ -21,12 +17,8 @@ import {
   IndictmentCount,
   Offense,
 } from '../../../repository'
-import { caseModuleConfig } from '../../case.config'
 import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
-
-jest.mock('crypto-js')
-jest.mock('../../../../factories')
 
 interface Then {
   result: ArchiveResponse
@@ -41,8 +33,7 @@ describe('InternalCaseController - Archive', () => {
   let mockIndictmentCountService: IndictmentCountService
   let mockCaseStringModel: typeof CaseString
   let mockCaseRepositoryService: CaseRepositoryService
-  let mockCaseArchiveModel: typeof CaseArchive
-  let mockCaseConfig: ConfigType<typeof caseModuleConfig>
+  let mockCaseArchiveRepositoryService: CaseArchiveRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -54,8 +45,7 @@ describe('InternalCaseController - Archive', () => {
       sequelize,
       caseStringModel,
       caseRepositoryService,
-      caseArchiveModel,
-      caseConfig,
+      caseArchiveRepositoryService,
       internalCaseController,
     } = await createTestingCaseModule()
 
@@ -64,8 +54,7 @@ describe('InternalCaseController - Archive', () => {
     mockIndictmentCountService = indictmentCountService
     mockCaseStringModel = caseStringModel
     mockCaseRepositoryService = caseRepositoryService
-    mockCaseArchiveModel = caseArchiveModel
-    mockCaseConfig = caseConfig
+    mockCaseArchiveRepositoryService = caseArchiveRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -248,9 +237,6 @@ describe('InternalCaseController - Archive', () => {
         { value: 'original_comment2' },
       ],
     })
-    const iv = uuid()
-    const parsedIv = 'parsed_iv'
-    const encryptedCase = 'encrypted_case'
     let then: Then
 
     beforeEach(async () => {
@@ -260,12 +246,6 @@ describe('InternalCaseController - Archive', () => {
       mockFindOne.mockResolvedValueOnce(theCase)
       const mockUpdate = mockCaseRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(theCase)
-      const mockUuidFactory = uuidFactory as jest.Mock
-      mockUuidFactory.mockReturnValueOnce(iv)
-      const mockParse = CryptoJS.enc.Hex.parse as jest.Mock
-      mockParse.mockReturnValueOnce(parsedIv)
-      const mockEncrypt = CryptoJS.AES.encrypt as jest.Mock
-      mockEncrypt.mockReturnValueOnce(encryptedCase)
 
       then = await givenWhenThen()
     })
@@ -351,17 +331,9 @@ describe('InternalCaseController - Archive', () => {
         { value: '' },
         { where: { id: caseStringId2, caseId }, transaction },
       )
-      expect(CryptoJS.enc.Hex.parse).toHaveBeenCalledWith(iv)
-      expect(CryptoJS.AES.encrypt).toHaveBeenCalledWith(
-        archive,
-        mockCaseConfig.archiveEncryptionKey,
-        { iv: parsedIv },
-      )
-      expect(mockCaseArchiveModel.create).toHaveBeenCalledWith(
-        {
-          caseId,
-          archive: encryptedCase,
-        },
+      expect(mockCaseArchiveRepositoryService.create).toHaveBeenCalledWith(
+        caseId,
+        { archiveJson: archive },
         { transaction },
       )
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
