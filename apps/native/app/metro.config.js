@@ -17,8 +17,8 @@ const customConfig = {
   resolver: {
     assetExts: assetExts.filter((ext) => ext !== 'svg'),
     sourceExts: [...sourceExts, 'cjs', 'mjs', 'svg'],
-    // Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
-    disableHierarchicalLookup: true,
+    // Allow hierarchical lookup for workspace libraries
+    disableHierarchicalLookup: false,
   },
 }
 
