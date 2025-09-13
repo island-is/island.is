@@ -5,6 +5,7 @@ import { m } from '@island.is/portals/my-pages/core'
 import { Navigate } from 'react-router-dom'
 import { messages as hm } from './lib/messages'
 import { HealthPaths } from './lib/paths'
+import QuestionnaireDetail from './screens/Questionnaires/QuestionnaireDetail'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -90,6 +91,10 @@ const ReferralsDetail = lazy(() =>
 const Waitlist = lazy(() => import('./screens/Waitlists/Waitlists'))
 
 const WaitlistDetail = lazy(() => import('./screens/Waitlists/WaitlistsDetail'))
+
+const Questionnaires = lazy(() =>
+  import('./screens/Questionnaires/Questionnaires'),
+)
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
@@ -361,6 +366,20 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <WaitlistDetail />,
+    },
+    {
+      name: hm.questionnaires,
+      path: HealthPaths.HealthQuestionnaires,
+      key: undefined, //TODO
+      enabled: true, // TODO
+      element: <Questionnaires />,
+    },
+    {
+      name: hm.questionnaire,
+      path: HealthPaths.HealthQuestionnairesDetail,
+      key: undefined, //TODO
+      enabled: true, // TODO
+      element: <QuestionnaireDetail />,
     },
   ],
 }
