@@ -18,6 +18,7 @@ env:
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   NX_SKIP_NX_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nx-cache') }}
+  SHOULD_SKIP_NPM_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-yarn-cache') }}
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
@@ -64,6 +65,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
+          skip-cache: ${{ env.SHOULD_SKIP_NPM_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -95,6 +99,10 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          # Useless comment
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
+          skip-cache: ${{ env.SHOULD_SKIP_NPM_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -155,6 +163,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
+          skip-cache: ${{ env.SHOULD_SKIP_NPM_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -195,6 +206,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
+          skip-cache: ${{ env.SHOULD_SKIP_NPM_CACHE }}
 
       - name: NX format:write
         env:
@@ -221,6 +235,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
+          skip-cache: ${{ env.SHOULD_SKIP_NPM_CACHE }}
 
       - name: Run lintfix
         id: lintfix
@@ -258,6 +275,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
+          skip-cache: ${{ env.SHOULD_SKIP_NPM_CACHE }}
 
       - name: Create output directory for lint output
         run: |
@@ -324,6 +344,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
+          skip-cache: ${{ env.SHOULD_SKIP_NPM_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
