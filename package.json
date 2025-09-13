@@ -1,5 +1,6 @@
 {
   "name": "island.is",
+  "forceEverythingToBeAffected_but_please_remove_before_merging": true,
   "version": "0.0.6",
   "license": "MIT",
   "engines": {
