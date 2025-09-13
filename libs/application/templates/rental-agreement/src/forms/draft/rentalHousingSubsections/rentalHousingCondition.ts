@@ -36,7 +36,7 @@ export const RentalHousingCondition = buildSubSection({
         }),
         buildTextField({
           id: 'condition.inspectorName',
-          title: m.housingCondition.independentInspectorNameLabel,
+          title: m.misc.fullName,
           placeholder: m.housingCondition.independentInspectorNamePlaceholder,
           condition: (answers) => {
             const { inspector } = applicationAnswers(answers)

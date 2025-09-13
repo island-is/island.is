@@ -68,7 +68,7 @@ const formatPartyItems = (
           },
           {
             width: 'half' as const,
-            keyText: m.summary.phoneNumberLabel,
+            keyText: m.misc.phoneNumber,
             valueText: formatPhoneNumber(party.phone ?? ''),
           },
         ]
@@ -605,7 +605,7 @@ export const depositOverview = (
   return [
     {
       width: 'full',
-      keyText: m.summary.securityDepositLabel,
+      keyText: m.misc.securityDeposit,
       valueText: formatCurrency(toISK(securityAmount ?? '0')),
     },
     {

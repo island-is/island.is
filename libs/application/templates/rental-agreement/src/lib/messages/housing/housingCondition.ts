@@ -38,11 +38,6 @@ export const housingCondition = defineMessages({
     defaultMessage: 'Óháður aðili',
     description: 'Housing condition inspector option independent party',
   },
-  independentInspectorNameLabel: {
-    id: 'ra.application:housingCondition.independentInspectorNameLabel',
-    defaultMessage: 'Fullt nafn',
-    description: 'Housing condition independent inspector name',
-  },
   independentInspectorNamePlaceholder: {
     id: 'ra.application:housingCondition.independentInspectorNamePlaceholder',
     defaultMessage: 'Skrifaðu hér fullt nafn óháðs aðila',

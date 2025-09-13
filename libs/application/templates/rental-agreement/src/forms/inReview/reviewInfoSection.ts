@@ -10,26 +10,26 @@ import { DefaultEvents } from '@island.is/application/types'
 import { applicationAnswers } from '../../shared'
 import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
 import { NextStepInReviewOptions } from '../../utils/enums'
-import { application, inReview } from '../../lib/messages'
 import { getNextStepInReviewOptions } from '../../utils/options'
+import * as m from '../../lib/messages'
 
 export const ReviewInfoSection = buildSection({
   id: 'inReview',
-  title: inReview.reviewInfo.sectionName,
+  title: m.inReview.reviewInfo.sectionName,
   children: [
     buildMultiField({
       id: 'reviewInfo',
-      title: inReview.reviewInfo.sectionName,
-      description: inReview.reviewInfo.pageDescription,
+      title: m.inReview.reviewInfo.sectionName,
+      description: m.inReview.reviewInfo.pageDescription,
       children: [
         buildStaticTableField({
-          title: inReview.reviewInfo.tableTitle,
+          title: m.inReview.reviewInfo.tableTitle,
           marginTop: 3,
           header: [
-            inReview.preSignatureInfo.tableHeaderName,
-            inReview.preSignatureInfo.tableHeaderId,
-            inReview.preSignatureInfo.tableHeaderPhone,
-            inReview.preSignatureInfo.tableHeaderEmail,
+            m.misc.fullName,
+            m.misc.nationalId,
+            m.misc.phoneNumber,
+            m.misc.email,
           ],
           rows: (application) => {
             const { landlords, tenants } = applicationAnswers(
@@ -53,8 +53,8 @@ export const ReviewInfoSection = buildSection({
         }),
         buildDescriptionField({
           id: 'reviewInfo.applicationReview.info',
-          title: inReview.reviewInfo.infoHeading,
-          description: inReview.reviewInfo.infoBullets,
+          title: m.inReview.reviewInfo.infoHeading,
+          description: m.inReview.reviewInfo.infoBullets,
           titleVariant: 'h3',
           space: 6,
         }),
@@ -71,7 +71,7 @@ export const ReviewInfoSection = buildSection({
           actions: [
             {
               event: DefaultEvents.EDIT,
-              name: application.backToOverviewButton,
+              name: m.application.backToOverviewButton,
               type: 'subtle',
             },
           ],

@@ -69,26 +69,6 @@ export const inReview = {
       defaultMessage: 'Aðilar sem undirrita',
       description: 'Title for the signature table',
     },
-    tableHeaderName: {
-      id: 'ra.application:inReview.preSignatureInfo.tableHeaderName',
-      defaultMessage: 'Fullt nafn',
-      description: 'Header for the name column in signature table',
-    },
-    tableHeaderId: {
-      id: 'ra.application:inReview.preSignatureInfo.tableHeaderId',
-      defaultMessage: 'Kennitala',
-      description: 'Header for the ID column in signature table',
-    },
-    tableHeaderPhone: {
-      id: 'ra.application:inReview.preSignatureInfo.tableHeaderPhone',
-      defaultMessage: 'Símanúmer',
-      description: 'Header for the phone column in signature table',
-    },
-    tableHeaderEmail: {
-      id: 'ra.application:inReview.preSignatureInfo.tableHeaderEmail',
-      defaultMessage: 'Netfang',
-      description: 'Header for the email column in signature table',
-    },
     statementLabel: {
       id: 'ra.application:inReview.preSignatureInfo.statementLabel',
       defaultMessage:
@@ -99,11 +79,6 @@ export const inReview = {
       id: 'ra.application:inReview.preSignatureInfo.submitButtonText',
       defaultMessage: 'Senda í undirritun',
       description: 'Text on the page submit button',
-    },
-    editButtonText: {
-      id: 'ra.application:inReview.preSignatureInfo.editButtonText',
-      defaultMessage: 'Til baka í yfirlit',
-      description: 'Text on the page edit button',
     },
 
     // dataSchema errors

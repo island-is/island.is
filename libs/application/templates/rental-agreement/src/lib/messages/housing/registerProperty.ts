@@ -51,11 +51,6 @@ export const registerProperty = {
     },
 
     // Error messages
-    searchError: {
-      id: 'ra.application:registerProperty.search.searchError',
-      defaultMessage: 'Ekki tókst að sækja staðföng',
-      description: 'Error message when search fails',
-    },
     addressSearchError: {
       id: 'ra.application:registerProperty.search.addressSearchError',
       defaultMessage: 'Ekki tókst að sækja heimilisföng',
@@ -66,12 +61,6 @@ export const registerProperty = {
       defaultMessage:
         'Ekki tókst að sækja fasteignir út frá völdu heimilisfangi',
       description: 'Error message when property info search fails',
-    },
-    searchResultsEmptyError: {
-      id: 'ra.application:registerProperty.search.searchResultsEmptyError',
-      defaultMessage:
-        'Skráning leiguhúsnæðis þarf að vera til staðar til að halda áfram',
-      description: 'Error message when no search results',
     },
     searchResultsNoUnitChosenError: {
       id: 'ra.application:registerProperty.search.searchResultsNoUnitChosenError',
@@ -247,11 +236,6 @@ export const registerProperty = {
       id: 'ra.application:registerProperty.category.classGroupSelectLabelIncomeBasedHousing',
       defaultMessage: 'Tekjumark',
       description: 'Label for income based housing select option',
-    },
-    classGroupSelectLabelEmployeeHousing: {
-      id: 'ra.application:registerProperty.category.classGroupSelectLabelEmployeeHousing',
-      defaultMessage: 'Starfsmannaíbúð eða -herbergi',
-      description: 'Label for employee housing select option',
     },
 
     // Error messages

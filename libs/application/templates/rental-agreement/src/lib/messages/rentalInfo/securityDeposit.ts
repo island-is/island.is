@@ -1,16 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const securityDeposit = defineMessages({
-  subSectionName: {
-    id: 'ra.application:securityDeposit.subSectionName',
-    defaultMessage: 'Trygging',
-    description: 'security deposit sub section name',
-  },
-  pageTitle: {
-    id: 'ra.application:securityDeposit.pageTitle',
-    defaultMessage: 'Trygging',
-    description: 'security deposit page title',
-  },
   pageDescription: {
     id: 'ra.application:securityDeposit.pageDescription',
     defaultMessage:
@@ -124,11 +114,6 @@ export const securityDeposit = defineMessages({
     id: 'ra.application:securityDeposit.otherInfoPlaceholder',
     defaultMessage: 'Skrifaðu hér í hvaða formi tryggingin er',
     description: 'security deposit other info placeholder',
-  },
-  amountHeaderTitle: {
-    id: 'ra.application:securityDeposit.amountHeaderTitle',
-    defaultMessage: 'Upphæð tryggingar',
-    description: 'security deposit amount header title',
   },
   amountRadioFieldTitle: {
     id: 'ra.application:securityDeposit.amountRadioFieldTitle',

@@ -36,12 +36,12 @@ import {
 export const RentalPeriodSecurityDeposit = buildSubSection({
   condition: securityDepositRequired,
   id: Routes.SECURITYDEPOSIT,
-  title: m.securityDeposit.subSectionName,
+  title: m.misc.securityDeposit,
   children: [
     buildMultiField({
       condition: securityDepositRequired,
       id: Routes.SECURITYDEPOSIT,
-      title: m.securityDeposit.pageTitle,
+      title: m.misc.securityDeposit,
       description: m.securityDeposit.pageDescription,
       children: [
         buildDescriptionField({

@@ -37,11 +37,6 @@ export const otherFees = defineMessages({
     defaultMessage: 'Hússjóður',
     description: 'Housing fund title',
   },
-  housingFundCheckboxLabel: {
-    id: 'ra.application:otherFees.housingFundCheckboxLabel',
-    defaultMessage: 'Greitt er í hússjóð',
-    description: 'Housing fund checkbox label',
-  },
   housingFundAmountLabel: {
     id: 'ra.application:otherFees.housingFundAmountLabel',
     defaultMessage: 'Upphæð á mánuði',
@@ -142,25 +137,10 @@ export const otherFees = defineMessages({
     defaultMessage: 'Kostnaðarliður',
     description: 'Other costs description label',
   },
-  otherCostsDescriptionPlaceholder: {
-    id: 'ra.application:otherFees.otherCostsDescriptionPlaceholder',
-    defaultMessage: 'Hvað er verið að borga fyrir?',
-    description: 'Other costs description placeholder',
-  },
   otherCostsAmountLabel: {
     id: 'ra.application:otherFees.otherCostsAmountLabel',
     defaultMessage: 'Upphæð',
     description: 'Other costs amount label',
-  },
-  otherCostsAmountPlaceholder: {
-    id: 'ra.application:otherFees.otherCostsAmountPlaceholder',
-    defaultMessage: 'Upphæð í tölustöfum',
-    description: 'Other costs amount placeholder',
-  },
-  otherCostsAddLine: {
-    id: 'ra.application:otherFees.otherCostsAddLine',
-    defaultMessage: 'Bæta við kostnaðarlið',
-    description: 'Other costs button text',
   },
 
   // Error messages
