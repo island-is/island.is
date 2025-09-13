@@ -32,6 +32,7 @@ import { siaRehabilitationPlanQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 import { SiaRehabilitationPlanQuery } from '../../types/schema'
 import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPaymentsUtils'
+import { ManagedBy } from '../components/ManagedBy'
 
 export const RehabilitationPlan: FC<FieldBaseProps> = ({
   application,
@@ -73,79 +74,6 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
     )?.display
   }
 
-  const serviceProvider = () => (
-    <Stack space={3}>
-      <GridRow rowGap={3}>
-        <GridColumn span="1/1">
-          <Text variant="h3">
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .serviceProvider,
-              {
-                serviceProvider:
-                  data?.socialInsuranceRehabilitationPlan?.serviceProvider
-                    ?.serviceProviderName,
-              },
-            )}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.location,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.serviceProvider
-                ?.workplace
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              socialInsuranceAdministrationMessage.info.applicantPhonenumber,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.serviceProvider
-                ?.phoneNumber
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .serviceProviderRehabilitationProvider,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.serviceProvider
-                ?.coordinatorName
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.jobTitle,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.serviceProvider
-                ?.coordinatorTitle
-            }
-          </Text>
-        </GridColumn>
-      </GridRow>
-    </Stack>
-  )
-
   const information = () => (
     <Stack space={3}>
       <GridRow rowGap={3}>
@@ -169,6 +97,14 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
                 ?.display
             }
           </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.shared.applyingFor,
+            )}
+          </Label>
+          <Text>{data?.socialInsuranceRehabilitationPlan?.typeAppliedFor}</Text>
         </GridColumn>
         {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
           ?.rehabilitationProgress?.display && (
@@ -700,7 +636,11 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
 
   return (
     <Stack space={4}>
-      {serviceProvider()}
+      <ManagedBy
+        serviceProvider={
+          data?.socialInsuranceRehabilitationPlan?.serviceProvider
+        }
+      />
       <Divider />
       {information()}
       <Divider />

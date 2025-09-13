@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 import { PreviousApplication } from './previousApplication.model'
 import { RequestedPeriod } from './requestedPeriod.model'
 import { ServiceProvider } from './serviceProvider.model'
@@ -7,6 +7,9 @@ import { ServiceProvider } from './serviceProvider.model'
 export class ConfirmationOfIllHealth {
   @Field({ nullable: true })
   referenceId?: string
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  created?: Date
 
   @Field(() => ServiceProvider, { nullable: true })
   serviceProvider?: ServiceProvider
@@ -19,4 +22,7 @@ export class ConfirmationOfIllHealth {
 
   @Field(() => RequestedPeriod, { nullable: true })
   requestedPeriod?: RequestedPeriod
+
+  @Field({ nullable: true })
+  typeAppliedFor?: string
 }

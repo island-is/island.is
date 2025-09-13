@@ -102,4 +102,7 @@ export class RehabilitationPlan {
 
   @Field(() => HealthGoals, { nullable: true })
   activityAndParticipationGoals?: HealthGoals
+
+  @Field({ nullable: true })
+  typeAppliedFor?: string
 }
