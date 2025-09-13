@@ -27,6 +27,7 @@ const fileExists = async (path) =>
   !!(await promisify(stat)(path).catch((_) => false))
 
 const main = async () => {
+  let exitCode = 0
   const schemaExists = await fileExists(SCHEMA_PATH)
   const nxParallel = parseInt(process.env.NX_PARALLEL ?? '6', 10)
   // NX_MAX_PARALLEL sets the parallelism for file system operations in Nx.
@@ -56,12 +57,15 @@ const main = async () => {
       )
     } catch (err) {
       console.error(`Error running command: ${err.message}`)
-      process.exit(err.code || 1)
+      exitCode = err.code || 1
+      break
     }
   }
 
   // In NX 21.2.2 daemon slows down significantly after codegen, so we restart it.
   await exec('nx daemon --stop')
+
+  process.exit(exitCode)
 }
 
 main()
