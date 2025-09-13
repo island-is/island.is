@@ -88,7 +88,7 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{
   if (!person) return null
 
   return (
-    <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
+    <View style={{ flex: 1 }} testID={testIDs.SCREEN_FAMILY_DETAIL}>
       <NavigationBarSheet
         componentId={componentId}
         title={intl.formatMessage({ id: 'familyDetail.title' })}
