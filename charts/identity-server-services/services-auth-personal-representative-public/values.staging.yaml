@@ -19,6 +19,8 @@ global:
 name: 'services-auth-personal-representative-public'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/personal-representative-public'
+  AUDIT_SERVICE_NAME: 'services-personal-representative-public'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'servicesauth'
   DB_REPLICAS_HOST: 'postgres-applications.internal'

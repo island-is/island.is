@@ -157,7 +157,7 @@ import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
 import { WorkAccidentClientConfig } from '@island.is/clients/work-accident-ver'
 import { PracticalExamsClientConfig } from '@island.is/clients/practical-exams-ver'
@@ -255,7 +255,7 @@ const environment = getConfig
       useClass: GraphqlOptionsFactory,
     }),
     AuthDomainModule,
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     ContentSearchModule,
     ConsultationPortalModule,
     FormSystemModule,
@@ -483,6 +483,7 @@ const environment = getConfig
         emailModuleConfig,
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
+        AuditConfig,
         PaymentsApiModuleConfig,
         BankInfoClientConfig,
         VmstUnemploymentClientConfig,

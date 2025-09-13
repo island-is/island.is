@@ -86,11 +86,6 @@ const prodConfig = () => ({
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
-  audit: {
-    defaultNamespace: '@island.is/api',
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'api',
-  },
 })
 
 const devConfig = () => ({
@@ -193,9 +188,6 @@ const devConfig = () => ({
     callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
-  },
-  audit: {
-    defaultNamespace: '@island.is/api',
   },
 })
 

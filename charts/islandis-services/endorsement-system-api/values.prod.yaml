@@ -25,6 +25,8 @@ command:
   - 'node'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/services-endorsements-api'
+  AUDIT_SERVICE_NAME: 'services-endorsements-api'
   CODE_OWNER: 'juni'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'services_endorsements_api'

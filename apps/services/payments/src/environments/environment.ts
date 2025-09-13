@@ -1,11 +1,4 @@
-const isProduction = process.env.NODE_ENV === 'production'
-
 export const environment = {
-  audit: {
-    defaultNamespace: '@island.is/payments',
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: isProduction ? 'services-payments' : undefined,
-  },
   chargeFjs: {
     systemId: 'ISL',
     returnUrl: process.env.INVOICE_RETURN_URL,

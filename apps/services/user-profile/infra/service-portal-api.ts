@@ -45,6 +45,8 @@ const envVariables: EnvironmentVariables = {
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
     '@island.is/auth/delegations/index:system',
   ]),
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/user-profile',
+  AUDIT_SERVICE_NAME: 'services-user-profile',
 }
 
 const secrets: Secrets = {

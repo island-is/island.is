@@ -19,6 +19,8 @@ global:
 name: 'license-api'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/license-api'
+  AUDIT_SERVICE_NAME: 'license-api'
   CODE_OWNER: 'hugsmidjan'
   HUNTING_LICENSE_PASS_TEMPLATE_ID: '1da72d52-a93a-4d0f-8463-1933a2bd210b'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
