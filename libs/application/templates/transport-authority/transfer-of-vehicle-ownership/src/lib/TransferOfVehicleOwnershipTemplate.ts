@@ -17,6 +17,8 @@ import {
   corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
+  getHistoryLogRejectedWithSubjectAndActor,
+  getHistoryLogApprovedWithSubjectAndActor,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
@@ -124,7 +126,6 @@ const template: ApplicationTemplate<
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
   adminDataConfig: {
-    whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
     answers: [
       {
         key: 'pickVehicle.plate',
@@ -223,11 +224,11 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: applicationMessage.historyLogApprovedByReviewer,
+                logMessage: getHistoryLogApprovedWithSubjectAndActor,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: getHistoryLogRejectedWithSubjectAndActor,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,

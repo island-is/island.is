@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
 import { FormatMessage } from '@island.is/application/types'
 import { StaticText } from '@island.is/shared/types'
+import isObject from 'lodash/isObject'
 
 export class HistoryResponseDto {
   @ApiProperty()
@@ -15,8 +16,21 @@ export class HistoryResponseDto {
   @IsString()
   log?: string
 
-  constructor(timeStamp: Date, log: StaticText, formatMessage: FormatMessage) {
+  constructor(
+    timeStamp: Date,
+    log: StaticText,
+    formatMessage: FormatMessage,
+    values?: Record<string, any>,
+  ) {
     this.date = timeStamp
-    this.log = log ? formatMessage(log) : undefined
+    if (log) {
+      if (values) {
+        this.log = formatMessage(log, values)
+      } else {
+        this.log = formatMessage(log)
+      }
+    } else {
+      this.log = undefined
+    }
   }
 }
