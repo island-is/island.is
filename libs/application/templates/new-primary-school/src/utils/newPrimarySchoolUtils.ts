@@ -24,8 +24,8 @@ import {
 import {
   AffiliationRole,
   ApplicationType,
-  FIRST_GRADE_AGE,
   CaseWorkerInputTypeEnum,
+  FIRST_GRADE_AGE,
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
