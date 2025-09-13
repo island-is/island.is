@@ -242,6 +242,10 @@ export type EstateAsset = {
   share: number
   enabled?: boolean
   marketValue?: string
+  // Additional fields for specific asset types
+  upphaed?: string // Face value for stocks
+  gengiVextir?: string // Exchange rate for stocks
+  exchangeRateOrInterest?: string // Interest/exchange rate for bank accounts
 }
 
 export type AvailableSettlements = {
@@ -271,8 +275,10 @@ interface EstateCommon {
   ships: EstateAsset[]
   flyers: EstateAsset[]
   cash: EstateAsset[]
+  moneyAndDeposit: EstateAsset[]
   guns: EstateAsset[]
   otherAssets: EstateAsset[]
+  otherDebts?: Array<EstateAsset & { debtType: DebtTypes }>
   estateMembers: EstateMember[]
   caseNumber: string
   districtCommissionerHasWill: boolean
@@ -283,7 +289,17 @@ interface EstateCommon {
   knowledgeOfOtherWills: 'Yes' | 'No'
 }
 
-export interface EstateInfo extends EstateCommon {
+interface EstateCommonWithBankAccounts extends EstateCommon {
+  bankAccounts: EstateAsset[]
+  claims: EstateAsset[]
+  stocks: EstateAsset[]
+  inventory?: {
+    info: string
+    value: string
+  }
+}
+
+export interface EstateInfo extends EstateCommonWithBankAccounts {
   addressOfDeceased: string
   availableSettlements?: AvailableSettlements
 }
