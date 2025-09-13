@@ -1,58 +1,56 @@
-import React from 'react'
-import { useLocale } from '@island.is/localization'
-import { GridRow, GridColumn, Box } from '@island.is/island-ui/core'
-import { StatisticBox } from '../../components/StatisticBox/StatisticBox'
-import { useGetProviderStatistics } from '../../shared/useGetProviderStatistics'
-import { m } from '../../lib/messages'
+import { GridRow, Box, Text } from '@island.is/island-ui/core'
+import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/OpenedFilesDonutChart'
+import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
+import { SentFilesAndErrorsBarChart } from '../../components/SentFilesAndErrorsBarChart/SentFilesAndErrorsBarChart'
+import { SentFilesProfitBarChart } from '../../components/SentFilesProfitBarChart/SentFilesProfitBarChart'
+import {
+  DocumentProviderDashboardChartData,
+  SentFilesChartDataItem,
+} from '../../lib/types'
 
 interface Props {
-  organisationId: string
-  fromDate?: Date
-  toDate?: Date
-}
-interface StatisticsBoxData {
-  name: string
-  value: number
+  sentFilesData?: Array<SentFilesChartDataItem>
+  chartData?: DocumentProviderDashboardChartData[]
 }
 
 export const DocumentProviderDashboard = ({
-  organisationId,
-  fromDate,
-  toDate,
+  sentFilesData,
+  chartData,
 }: Props) => {
-  const { formatMessage } = useLocale()
-  const { statistics } = useGetProviderStatistics(
-    organisationId,
-    fromDate,
-    toDate,
-  )
+  //Get the sum of opened and published from chartData
+  const opened =
+    chartData?.reduce((acc, item) => acc + (item.opened || 0), 0) || 0
+  const published =
+    chartData?.reduce((acc, item) => acc + (item.published || 0), 0) || 0
 
-  const data: StatisticsBoxData[] = [
-    {
-      name: formatMessage(m.statisticsBoxPublishedDocuments),
-      value: statistics?.published || 0,
-    },
-    {
-      name: formatMessage(m.statisticsBoxOpenedDocuments),
-      value: statistics?.opened || 0,
-    },
-    {
-      name: formatMessage(m.statisticsBoxNotifications),
-      value: statistics?.notifications || 0,
-    },
+  const openedPercentage =
+    published > 0 ? Math.round((opened / published) * 100) : 0
+
+  const openedFilesData = [
+    { name: 'Opnuð skjöl', value: openedPercentage || 0, color: '#007bff' },
+    { name: 'Óopnuð skjöl', value: 100 - openedPercentage, color: '#d6b3ff' },
   ]
 
   return (
     <Box marginBottom={2}>
-      {data && (
-        <GridRow>
-          {data.map((Data, index) => (
-            <GridColumn span={['12/12', '3/12']} key={index}>
-              <StatisticBox name={Data.name} value={Data.value} />
-            </GridColumn>
-          ))}
-        </GridRow>
-      )}
+      <Text variant="h4" marginBottom={1} marginTop={4}>
+        Tölfræði
+      </Text>
+      <Text marginBottom={2}>Hér er tölfræði síðustu 6 mánuða</Text>
+
+      <GridRow>
+        <SentFilesBarChart data={sentFilesData || []} />
+
+        <OpenedFilesDonutChart
+          valueIndex={0}
+          title="Opnuð skjöl"
+          data={openedFilesData}
+        />
+
+        <SentFilesAndErrorsBarChart data={chartData || []} />
+
+        <SentFilesProfitBarChart data={chartData || []} />
+      </GridRow>
     </Box>
   )
 }

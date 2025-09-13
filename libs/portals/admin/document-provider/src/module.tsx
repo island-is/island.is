@@ -11,10 +11,6 @@ const DocumentProviders = lazy(() =>
 const SingleDocumentProvider = lazy(() =>
   import('./screens/SingleDocumentProvider/SingleDocumentProvider'),
 )
-const PaperScreen = lazy(() => import('./screens/Paper/Paper'))
-const CategoriesAndTypesScreen = lazy(() =>
-  import('./screens/CategoriesAndTypes'),
-)
 
 export const documentProviderModule: PortalModule = {
   name: m.rootName,
@@ -28,7 +24,7 @@ export const documentProviderModule: PortalModule = {
         path: DocumentProviderPaths.DocumentProviderRoot,
         element: (
           <Navigate
-            to={DocumentProviderPaths.DocumentProviderOverview}
+            to={DocumentProviderPaths.DocumentProviderRootOverview}
             replace
           />
         ),
@@ -44,13 +40,8 @@ export const documentProviderModule: PortalModule = {
         element: <SingleDocumentProvider />,
       },
       {
-        name: m.paper,
-        path: DocumentProviderPaths.DocumentProviderPaper,
-        element: <PaperScreen />,
-      },
-      {
-        name: m.catAndTypeName,
-        path: DocumentProviderPaths.DocumentProviderCategoryAndType,
+        name: m.Settings,
+        path: DocumentProviderPaths.DocumentProviderSettings,
         element: <CategoriesAndTypesScreen />,
       },
     ]

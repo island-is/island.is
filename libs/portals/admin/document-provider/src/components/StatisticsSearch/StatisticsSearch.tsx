@@ -27,10 +27,6 @@ export interface StatisticsSearchData {
   dateTo: string
 }
 
-interface Props {
-  onSubmit: (data: StatisticsSearchData) => void
-}
-
 export const StatisticsSearch = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [options] = useState([

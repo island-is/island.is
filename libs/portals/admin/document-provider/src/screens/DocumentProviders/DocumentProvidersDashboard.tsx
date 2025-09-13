@@ -1,59 +1,75 @@
-import React from 'react'
 import { useLocale } from '@island.is/localization'
-import { GridRow, GridColumn, Box } from '@island.is/island-ui/core'
-import { StatisticBox } from '../../components/StatisticBox/StatisticBox'
-import { useGetProviderStatistics } from '../../shared/useGetProviderStatistics'
+import { GridRow, Box, Text } from '@island.is/island-ui/core'
+import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/OpenedFilesDonutChart'
+import { useGetProviderStatisticCategoriesByNationalId } from '../../shared/useGetProviderStatisticCategoriesByNationalId'
+import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
+import { SentFilesChartDataItem, StatisticsOverview } from '../../lib/types'
 import { m } from '../../lib/messages'
 
 interface Props {
-  organisationsCount: number
+  statistics: StatisticsOverview | null
+  nationalId: string
+  sentFilesData?: Array<SentFilesChartDataItem>
   fromDate?: Date
   toDate?: Date
 }
-interface StatisticsBoxData {
-  name: string
-  value: number
-}
 
 export const DocumentProvidersDashboard = ({
-  organisationsCount,
+  statistics,
+  nationalId,
+  sentFilesData,
   fromDate,
   toDate,
 }: Props) => {
   const { formatMessage } = useLocale()
 
-  const { statistics } = useGetProviderStatistics(undefined, fromDate, toDate)
+  const { categories } = useGetProviderStatisticCategoriesByNationalId(
+    nationalId,
+    fromDate,
+    toDate,
+  )
+  const opened = statistics?.statistics?.opened || 0
+  const published = statistics?.statistics?.published || 0
+  const rawOpenedPct = published > 0 ? (opened / published) * 100 : 0
+  const openedPercentage = Math.min(100, Math.max(0, Math.round(rawOpenedPct)))
+  const unopenedPercentage = Math.max(0, 100 - openedPercentage)
 
-  const data: StatisticsBoxData[] = [
-    {
-      name: formatMessage(m.statisticsBoxOrganisationsCount),
-      value: organisationsCount,
-    },
-    {
-      name: formatMessage(m.statisticsBoxPublishedDocuments),
-      value: statistics?.published || 0,
-    },
+  const openedFilesData = [
     {
       name: formatMessage(m.statisticsBoxOpenedDocuments),
-      value: statistics?.opened || 0,
+      value: openedPercentage || 0,
+      color: '#007bff',
     },
     {
-      name: formatMessage(m.statisticsBoxNotifications),
-      value: statistics?.notifications || 0,
+      name: formatMessage(m.statisticsBoxUnopenedDocuments),
+      value: unopenedPercentage,
+      color: '#d6b3ff',
     },
   ]
 
   return (
     <Box marginBottom={2}>
-      {data && (
-        <GridRow>
-          {data.map((statData, index) => (
-            <GridColumn span={['12/12', '3/12']} key={index}>
-              <StatisticBox name={statData.name} value={statData.value} />
-            </GridColumn>
-          ))}
-        </GridRow>
-      )}
+      <Text variant="h4" marginBottom={1} marginTop={4}>
+        {formatMessage(m.Statistics)}
+      </Text>
+      <Text marginBottom={2}>
+        {formatMessage(m.statisticsDescription6months)}
+      </Text>
+
+      <GridRow>
+        <SentFilesBarChart data={sentFilesData || []} />
+
+        <OpenedFilesDonutChart
+          valueIndex={0}
+          title={formatMessage(m.statisticsBoxOpenedDocuments)}
+          data={openedFilesData}
+        />
+
+        <OpenedFilesDonutChart
+          title={formatMessage(m.categories)}
+          data={categories}
+        />
+      </GridRow>
     </Box>
   )
 }

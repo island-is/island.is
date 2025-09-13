@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -9,8 +9,8 @@ import {
   Tabs,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
-import { documentProviderNavigation } from '../../lib/navigation'
+import { IntroHeader } from '@island.is/portals/core'
+//import { documentProviderNavigation } from '../../lib/navigation'
 import DocumentCategories from './Categories'
 import DocumentTypes from './Types'
 import { AddTypeCategory } from '../../components/AddTypeCategory'
@@ -42,12 +42,7 @@ const CategoriesAndTypes = () => {
             span={['12/12', '5/12', '5/12', '3/12']}
             offset={['0', '7/12', '7/12', '0']}
           >
-            <Box paddingBottom={4}>
-              <PortalNavigation
-                navigation={documentProviderNavigation}
-                title={formatMessage(m.documentProviders)}
-              />
-            </Box>
+            <Box paddingBottom={4}></Box>
           </GridColumn>
           <GridColumn
             paddingTop={[5, 5, 5, 2]}
