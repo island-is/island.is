@@ -10,7 +10,6 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import {
   EventLocation,
-  EventTime,
   LatestEventSliceCard,
   NewsCard,
 } from '@island.is/web/components'
@@ -22,10 +21,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import {
-  formatEventLocation,
-  formatEventTime,
-} from '@island.is/web/utils/event'
+import { formatEventLocation } from '@island.is/web/utils/event'
 
 interface EventListProps {
   namespace: Record<string, string>
@@ -70,9 +66,13 @@ export const EventList = ({
       {variant === 'InfoCard' && (
         <Stack space={4}>
           {eventList.map((event) => {
-            const formattedDate = event.startDate
-              ? format(new Date(event.startDate), 'do MMMM yyyy')
+            const formattedStartDate = event.startDateTime
+              ? format(new Date(event.startDateTime), 'do MMMM yyyy HH:mm')
               : ''
+            const formattedEndDate = event.startDateTime
+              ? format(new Date(event.startDateTime), 'do MMMM yyyy HH:mm')
+              : ''
+
             const link = linkResolver('organizationevent', [
               parentPageSlug,
               event.slug,
@@ -82,17 +82,6 @@ export const EventList = ({
               icon: IconMapIcon
               text: string
             }> = []
-
-            const eventTime = formatEventTime(
-              event.time,
-              n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string,
-            )
-            if (eventTime) {
-              detailLines.push({
-                icon: 'time',
-                text: eventTime,
-              })
-            }
 
             const eventLocation = formatEventLocation(event.location)
             if (eventLocation) {
@@ -105,7 +94,7 @@ export const EventList = ({
             return (
               <InfoCard
                 key={event.id}
-                eyebrow={formattedDate}
+                eyebrow={`${formattedStartDate} - ${formattedEndDate}`}
                 id={event.id}
                 link={{
                   href: link.href,
@@ -139,25 +128,10 @@ export const EventList = ({
                 introduction={
                   <Stack space={4}>
                     <EventLocation location={eventItem.location} />
-                    <EventTime
-                      startTime={eventItem.time?.startTime ?? ''}
-                      endTime={eventItem.time?.endTime ?? ''}
-                      timePrefix={
-                        n(
-                          'timePrefix',
-                          activeLocale === 'is' ? 'kl.' : '',
-                        ) as string
-                      }
-                      timeSuffix={
-                        n(
-                          'timeSuffix',
-                          activeLocale === 'is' ? 'til' : 'to',
-                        ) as string
-                      }
-                    />
                   </Stack>
                 }
-                date={eventItem.startDate}
+                date={eventItem.startDateTime ?? undefined}
+                date2={eventItem.endDateTime ?? undefined}
                 image={eventItem.thumbnailImage as ImageSchema}
                 titleAs="h2"
                 readMoreText=""

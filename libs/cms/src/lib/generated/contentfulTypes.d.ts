@@ -1095,6 +1095,15 @@ export interface IEventFields {
 
   /** og:image */
   featuredImage?: Asset | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+
+  /** Start date time */
+  startDateTime?: string | undefined
+
+  /** End date time */
+  endDateTime?: string | undefined
 }
 
 export interface IEvent extends Entry<IEventFields> {
