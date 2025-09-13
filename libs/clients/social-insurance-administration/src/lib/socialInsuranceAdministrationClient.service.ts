@@ -42,7 +42,7 @@ import {
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { EmploymentDto, mapEmploymentDto } from './dto/employment.dto'
-import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
+import { ApplicationWriteApi, MedicalDocumentApiForDisabilityPension, QuestionnairesApiForDisabilityPension } from './socialInsuranceAdministrationClient.type'
 import { ApplicationTypeEnum } from './enums'
 import { mapApplicationEnumToType } from './mapper'
 import { mapProfessionDto, ProfessionDto } from './dto/profession.dto'
@@ -70,6 +70,8 @@ export class SocialInsuranceAdministrationClientService {
     private readonly generalApi: GeneralApi,
     private readonly medicalDocumentsApi: MedicalDocumentsApi,
     private readonly questionnairesApi: QuestionnairesApi,
+    private readonly medicalDocumentsApiForDisabilityPension: MedicalDocumentApiForDisabilityPension,
+    private readonly questionnairesApiForDisabilityPension: QuestionnairesApiForDisabilityPension,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -101,6 +103,12 @@ export class SocialInsuranceAdministrationClientService {
 
   private questionnairesApiWithAuth = (user: User) =>
     this.questionnairesApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private medicalDocumentsApiForDisabilityPensionWithAuth = (user: User) =>
+    this.medicalDocumentsApiForDisabilityPension.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private questionnairesApiForDisabilityPensionWithAuth = (user: User) =>
+    this.questionnairesApiForDisabilityPension.withMiddleware(new AuthMiddleware(user as Auth))
 
   getPaymentPlan(
     user: User,
@@ -265,7 +273,7 @@ export class SocialInsuranceAdministrationClientService {
           languages,
         )
       case 'DisabilityPension':
-        return this.questionnairesApiWithAuth(
+        return this.questionnairesApiForDisabilityPensionWithAuth(
           user,
         ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
           languages,
@@ -284,7 +292,7 @@ export class SocialInsuranceAdministrationClientService {
   async getCertificateForDisabilityPension(
     user: User,
   ): Promise<TrWebExternalModelsServicePortalDisabilityPensionCertificate> {
-    return this.medicalDocumentsApiWithAuth(
+    return this.medicalDocumentsApiForDisabilityPensionWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsDisabilitypensioncertificateGet()
   }
