@@ -577,7 +577,6 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
       [courtSession.entries, ['empty']],
       [courtSession.rulingType, ['empty']],
       [courtSession.endDate, ['empty', 'date-format']],
-      // TODO: add witness once defined
     ]).isValid
   )
 }
