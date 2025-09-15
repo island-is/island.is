@@ -201,33 +201,31 @@ export const estateSchema = z.object({
     bankAccounts: z
       .object({
         accountNumber: z.string(),
-        exchangeRateOrInterest: z.string(),
+        accruedInterest: z.string(),
         balance: z.string(),
         initial: z.boolean(),
         enabled: z.boolean(),
       })
       .refine(
-        ({ enabled, accountNumber, balance, exchangeRateOrInterest }) => {
+        ({ enabled, accountNumber, balance, accruedInterest }) => {
           if (!enabled) return true
 
           const errors: string[] = []
           if (!accountNumber || accountNumber === '')
             errors.push('accountNumber')
           if (!isValidString(balance)) errors.push('balance')
-          if (!isValidString(exchangeRateOrInterest))
-            errors.push('exchangeRateOrInterest')
+          if (!isValidString(accruedInterest)) errors.push('accruedInterest')
 
           return errors.length === 0
         },
-        ({ enabled, accountNumber, balance, exchangeRateOrInterest }) => {
+        ({ enabled, accountNumber, balance, accruedInterest }) => {
           if (!enabled) return { message: 'Valid' }
 
           const errors: string[] = []
           if (!accountNumber || accountNumber === '')
             errors.push('accountNumber')
           if (!isValidString(balance)) errors.push('balance')
-          if (!isValidString(exchangeRateOrInterest))
-            errors.push('exchangeRateOrInterest')
+          if (!isValidString(accruedInterest)) errors.push('accruedInterest')
 
           return {
             path: errors.length === 1 ? [errors[0]] : ['accountNumber'],
@@ -470,7 +468,8 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ info, value }) => {
-        return value !== '' ? isValidString(info) : true
+        // Allow value of '0' without requiring info
+        return value !== '' && value !== '0' ? isValidString(info) : true
       },
       {
         path: ['info'],

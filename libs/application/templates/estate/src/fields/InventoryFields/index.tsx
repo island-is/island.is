@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -17,32 +17,27 @@ export const InventoryFields: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
   const estateData = getEstateDataFromApplication(application)
-  const [hasInitialized, setHasInitialized] = useState(false)
 
   const infoFieldId = `${id}.info`
   const valueFieldId = `${id}.value`
 
   useEffect(() => {
-    if (hasInitialized) return
-
     const prefill = estateData?.estate?.inventory as any | undefined
-    const currentInfo = getValues(infoFieldId)
-    const currentValue = getValues(valueFieldId)
 
     if (prefill) {
-      if (!currentInfo && prefill.info) setValue(infoFieldId, prefill.info)
-      if (!currentValue && prefill.value) setValue(valueFieldId, prefill.value)
-    }
+      // Set default values only if they haven't been set yet
+      const currentInfo = getValues(infoFieldId)
+      const currentValue = getValues(valueFieldId)
 
-    setHasInitialized(true)
-  }, [
-    estateData,
-    setValue,
-    getValues,
-    infoFieldId,
-    valueFieldId,
-    hasInitialized,
-  ])
+      if (currentInfo === undefined && prefill.info) {
+        setValue(infoFieldId, prefill.info)
+      }
+
+      if (currentValue === undefined && prefill.value) {
+        setValue(valueFieldId, prefill.value)
+      }
+    }
+  }, [estateData, setValue, getValues, infoFieldId, valueFieldId])
 
   return (
     <Box>

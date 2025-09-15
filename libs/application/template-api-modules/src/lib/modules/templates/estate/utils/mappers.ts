@@ -33,12 +33,12 @@ const estateAssetMapper = <T>(element: T) => {
 }
 
 const bankAccountMapper = (
-  element: EstateAsset & { exchangeRateOrInterest?: string },
+  element: EstateAsset & { accruedInterest?: string },
 ) => {
   return {
     accountNumber: element.assetNumber || '',
     balance: element.marketValue || '',
-    exchangeRateOrInterest: element.exchangeRateOrInterest || '',
+    accruedInterest: element.exchangeRateOrInterest || '0',
     initial: true,
     enabled: true,
   }
@@ -111,26 +111,30 @@ const moneyAndDepositMapper = (elements: EstateAsset[]) => {
   }
 }
 
+// Map camelCase debt types from API to PascalCase for dropdown
+const mapDebtTypeForUI = (debtType: string): string => {
+  const debtTypeMapping: Record<string, string> = {
+    duties: 'Duties',
+    otherDebts: 'OtherDebts',
+    propertyFees: 'PropertyFees',
+    insuranceCompany: 'InsuranceCompany',
+    loan: 'Loan',
+    creditCard: 'CreditCard',
+    overdraft: 'Overdraft',
+  }
+  return debtTypeMapping[debtType] || 'OtherDebts'
+}
+
 const debtsMapper = (element: any) => {
   return {
     creditorName: element.description || '',
     nationalId: '', // Should be empty - only filled by user
     loanIdentity: element.assetNumber || '',
     balance: element.amount || element.marketValue || '',
-    debtType: debtTypeMapping[element.tegundAngalgs] || 'OtherDebts',
+    debtType: mapDebtTypeForUI(element.debtType || 'otherDebts'),
     initial: true,
     enabled: true,
   }
-}
-
-const debtTypeMapping: Record<number, string> = {
-  13: 'Duties',
-  14: 'OtherDebts',
-  17: 'PropertyFees',
-  18: 'InsuranceCompany',
-  19: 'Loan',
-  20: 'CreditCard',
-  21: 'Overdraft',
 }
 
 const otherAssetsMapper = (element: EstateAsset) => {
@@ -306,7 +310,7 @@ export const expandBankAccounts = (
       expandedBankAccounts.push({
         accountNumber: bankAccount.accountNumber ?? '',
         balance: bankAccount.balance ?? '',
-        exchangeRateOrInterest: bankAccount.exchangeRateOrInterest ?? '',
+        accruedInterest: bankAccount.accruedInterest ?? '0',
         accountTotal: bankAccount.accountTotal ?? '',
       })
     })
@@ -329,6 +333,7 @@ export const expandDebts = (
         loanIdentity: debt.loanIdentity ?? '',
         nationalId: debt.nationalId ?? '',
         ssn: debt.ssn ?? '',
+        debtType: debt.debtType ?? 'OtherDebts',
       })
     })
 

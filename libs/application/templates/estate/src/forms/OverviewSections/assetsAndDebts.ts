@@ -237,7 +237,7 @@ export const overviewAssetsAndDebts = [
               `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
                 (
                   valueToNumber(account.balance) +
-                  valueToNumber(account.exchangeRateOrInterest)
+                  valueToNumber(account.accruedInterest)
                 ).toString() ?? '0',
               )}`,
             ],
@@ -485,8 +485,21 @@ export const overviewAssetsAndDebts = [
       doesNotRequireAnswer: true,
     },
     {
-      cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).debts?.data ?? [])
+      cards: ({ answers }: Application) => {
+        const getDebtTypeLabel = (debtType: string): string => {
+          const debtTypeLabels: Record<string, string> = {
+            Duties: m.debtsTypeDuties.defaultMessage,
+            OtherDebts: m.debtsTypeOther.defaultMessage,
+            PropertyFees: m.debtsTypePropertyFees.defaultMessage,
+            InsuranceCompany: m.debtsTypeInsurance.defaultMessage,
+            Loan: m.debtsTypeLoan.defaultMessage,
+            CreditCard: m.debtsTypeCreditCard.defaultMessage,
+            Overdraft: m.debtsTypeOverdraft.defaultMessage,
+          }
+          return debtTypeLabels[debtType] || m.debtsTypeOther.defaultMessage
+        }
+
+        return ((answers as unknown as EstateSchema).debts?.data ?? [])
           .filter((debt) => debt.enabled !== false)
           .map((debt) => ({
             title: debt.creditorName,
@@ -501,8 +514,10 @@ export const overviewAssetsAndDebts = [
               `${m.debtsBalance.defaultMessage}: ${formatCurrency(
                 debt.balance ?? '0',
               )}`,
-            ],
-          })),
+              debt.debtType && `Tegund: ${getDebtTypeLabel(debt.debtType)}`,
+            ].filter(Boolean),
+          }))
+      },
     },
   ),
   buildDescriptionField({

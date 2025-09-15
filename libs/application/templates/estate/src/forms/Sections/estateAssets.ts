@@ -161,7 +161,7 @@ export const estateAssets = buildSection({
                   },
                   {
                     title: m.bankAccountInterestRate,
-                    id: 'exchangeRateOrInterest',
+                    id: 'accruedInterest',
                     required: true,
                     currency: true,
                   },

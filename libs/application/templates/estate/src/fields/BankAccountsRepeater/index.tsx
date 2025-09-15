@@ -20,7 +20,7 @@ interface BankAccountFormField {
   id: string
   accountNumber?: string
   balance?: string
-  exchangeRateOrInterest?: string
+  accruedInterest?: string
   accountTotal?: string
   initial?: boolean
   enabled?: boolean
@@ -37,6 +37,7 @@ interface BankAccountsRepeaterProps {
 export const BankAccountsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & BankAccountsRepeaterProps>
 > = ({ application, field, errors }) => {
+  // console.log('application', application)
   const { id } = field
   const repeaterButtonText = field?.props?.repeaterButtonText
   const error = (errors as ErrorValue)?.estate?.bankAccounts
@@ -54,19 +55,18 @@ export const BankAccountsRepeater: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Calculate bank account total from balance + exchangeRateOrInterest
+  // Calculate bank account total from balance + accruedInterest
   const updateBankAccountValue = (fieldIndex: string) => {
     const bankAccountValues = getValues(fieldIndex)
     const balance =
       bankAccountValues?.balance?.replace(',', '.').replace(/[^\d.]/g, '') ||
       '0'
-    const exchangeRateOrInterest =
-      bankAccountValues?.exchangeRateOrInterest
+    const accruedInterest =
+      bankAccountValues?.accruedInterest
         ?.replace(',', '.')
         .replace(/[^\d.]/g, '') || '0'
 
-    const accountTotal =
-      parseFloat(balance) + parseFloat(exchangeRateOrInterest)
+    const accountTotal = parseFloat(balance) + parseFloat(accruedInterest)
     setValue(`${fieldIndex}.accountTotal`, accountTotal.toString())
 
     if (accountTotal > 0) {
@@ -78,7 +78,7 @@ export const BankAccountsRepeater: FC<
     append({
       accountNumber: '',
       balance: '',
-      exchangeRateOrInterest: '0',
+      accruedInterest: '0',
       accountTotal: '',
       initial: false,
       enabled: true,
@@ -103,7 +103,7 @@ export const BankAccountsRepeater: FC<
         const fieldIndex = `${id}[${index}]`
         const accountNumberField = `${fieldIndex}.accountNumber`
         const balanceField = `${fieldIndex}.balance`
-        const exchangeRateField = `${fieldIndex}.exchangeRateOrInterest`
+        const accruedInterestField = `${fieldIndex}.accruedInterest`
         const accountTotalField = `${fieldIndex}.accountTotal`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
@@ -203,13 +203,13 @@ export const BankAccountsRepeater: FC<
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
-                  id={exchangeRateField}
-                  name={exchangeRateField}
+                  id={accruedInterestField}
+                  name={accruedInterestField}
                   label={formatMessage(m.bankAccountInterestRate)}
-                  defaultValue={field.exchangeRateOrInterest}
+                  defaultValue={field.accruedInterest}
                   placeholder="0 kr."
                   required
-                  error={fieldError?.exchangeRateOrInterest}
+                  error={fieldError?.accruedInterest}
                   currency
                   size="sm"
                   backgroundColor="blue"

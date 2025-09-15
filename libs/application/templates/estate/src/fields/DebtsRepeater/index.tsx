@@ -159,6 +159,7 @@ export const DebtsRepeater: FC<
                       <SelectController
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
+                        defaultValue={repeaterField[field.id] || ''}
                         label={
                           field.title
                             ? formatMessage(field.title as any) || ''
