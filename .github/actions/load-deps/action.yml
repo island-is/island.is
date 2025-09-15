@@ -40,8 +40,6 @@ runs:
       id: generate-files-hash
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      env:
-        SKIP_CACHE: ${{ inputs.skip-cache }}
       run: |
         node ./scripts/ci/generate-files.mjs /dev/null \
           --skip-codegen \
@@ -60,6 +58,8 @@ runs:
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       working-directory: ${{ inputs.working-directory }}
       shell: bash
+      env:
+        SKIP_CACHE: ${{ inputs.skip-cache }}
       run: |
         node ./scripts/ci/generate-files.mjs ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
 
