@@ -104,18 +104,18 @@ definitions:
         fi
         cd android
         ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
-    - &boot-simulator-ios
+    - &boot_simulator_ios
       name: Boot simulator
       script: |
         xcrun simctl boot "iPhone 16"
         xcrun simctl list devices
-    - &build-simulator-ios
+    - &build_simulator_ios
       name: Build for simulator
       script: |
         xcodebuild -workspace "ios/$XCODE_WORKSPACE" -scheme "$XCODE_SCHEME" -sdk iphonesimulator -configuration Debug -derivedDataPath build
         xcrun simctl install booted build/Build/Products/Debug-iphonesimulator/*.app
         xcrun simctl launch booted is.island.app.dev
-    - &maestro-tests
+    - &maestro_tests
       name: Install and run Maestro end to end tests
       script: |
         curl -Ls "https://get.maestro.mobile.dev" | bash
@@ -203,6 +203,7 @@ workflows:
       - *npm_install
       - *codegen
       - *cocoapods
+      - *boot-simulator-ios
       - *provisioning_profiles
       - *increment_build_number
       - *build_ipa
@@ -301,8 +302,8 @@ workflows:
       - *npm_install
       - *codegen
       - *cocoapods
-      - *boot-simulator-ios
-      - *build-simulator-ios
-      - *maestro-tests
+      - *boot_simulator_ios
+      - *build_simulator_ios
+      - *maestro_tests
     artifacts: &ios_artifacts_e2e_tests
       - /tmp/xcodebuild_logs/*.log
