@@ -2699,6 +2699,7 @@ services-payments:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5'
+    PAYMENTS_SERVICE_INTERNAL_CLUSTER_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENTS_WEB_URL: 'https://beta.staging01.devland.is/greida'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
@@ -2751,6 +2752,11 @@ services-payments:
         - host: 'services-payments-xrd.internal.staging01.devland.is'
           paths:
             - '/'
+            - '/payments/invoice/callback'
+        - host: 'services-payments-invoice-callback-xrd.internal.staging01.devland.is'
+          paths:
+            - '/'
+            - '/payments/invoice/callback'
   initContainer:
     containers:
       - args:
@@ -2799,6 +2805,8 @@ services-payments:
     PAYMENTS_GATEWAY_API_SECRET: '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET'
     PAYMENTS_GATEWAY_API_URL: '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL'
     PAYMENTS_GATEWAY_SYSTEM_CALLING: '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING'
+    PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM: '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM'
+    PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET: '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET'
     PAYMENTS_JWT_SIGNING_KEY_ID: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_KEY_ID'
     PAYMENTS_JWT_SIGNING_PRIVATE_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PRIVATE_KEY'
     PAYMENTS_JWT_SIGNING_PUBLIC_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PUBLIC_KEY'
