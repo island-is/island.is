@@ -13,7 +13,6 @@ import { AnswerValidator } from './AnswerValidator'
 import { Features } from '@island.is/feature-flags'
 import { AllowedDelegation } from './ApplicationAllowedDelegations'
 import { CodeOwners } from '@island.is/shared/constants'
-import { PruningApplication } from './ApplicationLifecycle'
 
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
