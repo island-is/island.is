@@ -40,17 +40,6 @@ const safelyConvertStringToDate = (
   return undefined
 }
 
-const safelyConvertDateToISOString = (
-  date: string | Date | null | undefined,
-) => {
-  if (!date) return ''
-  try {
-    return new Date(date).toISOString()
-  } catch (error) {
-    return ''
-  }
-}
-
 @Injectable()
 export class VerdictsClientService {
   constructor(
@@ -72,8 +61,6 @@ export class VerdictsClientService {
     dateTo?: string
   }) {
     const onlyFetchSupremeCourtVerdicts = input.courtLevel === 'Hæstiréttur'
-
-    console.log(this.goproVerdictApi)
 
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
       !onlyFetchSupremeCourtVerdicts
@@ -307,6 +294,15 @@ export class VerdictsClientService {
     }
   }
 
+  private safelyConvertDateToISOString(date: string | Date | null | undefined) {
+    if (!date) return ''
+    try {
+      return new Date(date).toISOString()
+    } catch (error) {
+      return ''
+    }
+  }
+
   async getCourtAgendas(input: { page?: number }) {
     const pageNumber = input.page ?? 1
     const itemsPerPage = 10
@@ -331,7 +327,7 @@ export class VerdictsClientService {
         items.push({
           id: agenda.id ?? '',
           caseNumber: agenda.caseNumber ?? '',
-          dateFrom: safelyConvertDateToISOString(agenda.verdictDate),
+          dateFrom: this.safelyConvertDateToISOString(agenda.verdictDate),
           dateTo: '',
           closedHearing: agenda.closedSession ?? false,
           courtRoom: agenda.courtroom ?? '',
@@ -347,8 +343,8 @@ export class VerdictsClientService {
         items.push({
           id: `${agenda.bookingId}-${agenda.caseId}-${agenda.caseNumberRaw}`,
           caseNumber: agenda.caseNumberRaw ?? '',
-          dateFrom: safelyConvertDateToISOString(agenda.scheduleDate),
-          dateTo: safelyConvertDateToISOString(agenda.scheduleToDate),
+          dateFrom: this.safelyConvertDateToISOString(agenda.scheduleDate),
+          dateTo: this.safelyConvertDateToISOString(agenda.scheduleToDate),
           closedHearing: agenda.closedHearing ?? false,
           courtRoom: agenda.courtRoom ?? '',
           judges: agenda.judges ?? [],

@@ -6,7 +6,6 @@ import {
   Configuration as SupremeCourtConfiguration,
 } from '../../gen/fetch/supreme-court'
 import {
-  SecurityApi,
   VerdictApi,
   Configuration as GoProConfiguration,
   BookingApi,
@@ -33,15 +32,13 @@ export const GoProApiConfig = {
   inject: [VerdictsClientConfig.KEY],
 }
 
-export const GoProApiProviders = [SecurityApi, VerdictApi, BookingApi].map(
-  (api) => ({
-    provide: api,
-    useFactory: (config: GoProConfiguration) => {
-      return new api(config)
-    },
-    inject: [GoProApiConfig.provide],
-  }),
-)
+export const GoProApiProviders = [VerdictApi, BookingApi].map((api) => ({
+  provide: api,
+  useFactory: (config: GoProConfiguration) => {
+    return new api(config)
+  },
+  inject: [GoProApiConfig.provide],
+}))
 
 export const SupremeCourtApiConfig = {
   provide: 'SupremeCourtVerdictApiConfig',
