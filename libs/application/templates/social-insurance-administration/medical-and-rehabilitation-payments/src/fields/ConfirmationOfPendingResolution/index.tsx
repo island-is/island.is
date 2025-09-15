@@ -24,6 +24,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaConfirmationOfPendingResolutionQuery } from '../../graphql/queries'
@@ -87,7 +88,7 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
           <Text>
             {data?.socialInsuranceConfirmationOfPendingResolution?.created
               ? format(
-                  new Date(
+                  parseISO(
                     data.socialInsuranceConfirmationOfPendingResolution.created,
                   ),
                   'dd.MM.yyyy',
@@ -207,8 +208,9 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
             {data?.socialInsuranceConfirmationOfPendingResolution
               ?.requestedPeriod?.startDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmationOfPendingResolution.requestedPeriod.startDate,
+                  parseISO(
+                    data.socialInsuranceConfirmationOfPendingResolution
+                      .requestedPeriod.startDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -227,8 +229,9 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
             {data?.socialInsuranceConfirmationOfPendingResolution
               ?.requestedPeriod?.endDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmationOfPendingResolution.requestedPeriod.endDate,
+                  parseISO(
+                    data.socialInsuranceConfirmationOfPendingResolution
+                      .requestedPeriod.endDate,
                   ),
                   'dd.MM.yyyy',
                 )

@@ -17,6 +17,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaCertificateForSicknessAndRehabilitationQuery } from '../../graphql/queries'
@@ -120,8 +121,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             {data?.socialInsuranceCertificateForSicknessAndRehabilitation
               ?.lastExaminationDate
               ? format(
-                  new Date(
-                    data.socialInsuranceCertificateForSicknessAndRehabilitation.lastExaminationDate,
+                  parseISO(
+                    data.socialInsuranceCertificateForSicknessAndRehabilitation
+                      .lastExaminationDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -140,8 +142,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             {data?.socialInsuranceCertificateForSicknessAndRehabilitation
               ?.certificateDate
               ? format(
-                  new Date(
-                    data.socialInsuranceCertificateForSicknessAndRehabilitation.certificateDate,
+                  parseISO(
+                    data.socialInsuranceCertificateForSicknessAndRehabilitation
+                      .certificateDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -160,8 +163,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             {data?.socialInsuranceCertificateForSicknessAndRehabilitation
               ?.disabilityDate
               ? format(
-                  new Date(
-                    data.socialInsuranceCertificateForSicknessAndRehabilitation.disabilityDate,
+                  parseISO(
+                    data.socialInsuranceCertificateForSicknessAndRehabilitation
+                      .disabilityDate,
                   ),
                   'dd.MM.yyyy',
                 )

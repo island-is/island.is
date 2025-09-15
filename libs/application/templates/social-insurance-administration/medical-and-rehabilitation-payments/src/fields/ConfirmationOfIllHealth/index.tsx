@@ -23,6 +23,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaConfirmationOfIllHealthQuery } from '../../graphql/queries'
@@ -85,7 +86,7 @@ export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
           <Text>
             {data?.socialInsuranceConfirmationOfIllHealth?.created
               ? format(
-                  new Date(data.socialInsuranceConfirmationOfIllHealth.created),
+                  parseISO(data.socialInsuranceConfirmationOfIllHealth.created),
                   'dd.MM.yyyy',
                 )
               : '-'}
@@ -173,8 +174,9 @@ export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
             {data?.socialInsuranceConfirmationOfIllHealth?.requestedPeriod
               ?.startDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmationOfIllHealth.requestedPeriod.startDate,
+                  parseISO(
+                    data.socialInsuranceConfirmationOfIllHealth.requestedPeriod
+                      .startDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -192,8 +194,9 @@ export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
             {data?.socialInsuranceConfirmationOfIllHealth?.requestedPeriod
               ?.endDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmationOfIllHealth.requestedPeriod.endDate,
+                  parseISO(
+                    data.socialInsuranceConfirmationOfIllHealth.requestedPeriod
+                      .endDate,
                   ),
                   'dd.MM.yyyy',
                 )

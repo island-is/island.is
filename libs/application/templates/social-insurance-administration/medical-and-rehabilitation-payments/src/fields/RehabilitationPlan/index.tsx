@@ -26,6 +26,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaRehabilitationPlanQuery } from '../../graphql/queries'
@@ -466,7 +467,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
           <Text>
             {data?.socialInsuranceRehabilitationPlan?.startDate
               ? format(
-                  new Date(data.socialInsuranceRehabilitationPlan.startDate),
+                  parseISO(data.socialInsuranceRehabilitationPlan.startDate),
                   'dd.MM.yyyy',
                 )
               : '-'}
@@ -482,7 +483,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
           <Text>
             {data?.socialInsuranceRehabilitationPlan?.plannedEndDate
               ? format(
-                  new Date(
+                  parseISO(
                     data.socialInsuranceRehabilitationPlan.plannedEndDate,
                   ),
                   'dd.MM.yyyy',

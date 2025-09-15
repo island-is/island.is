@@ -24,6 +24,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaConfirmedTreatmentQuery } from '../../graphql/queries'
@@ -86,7 +87,7 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
           <Text>
             {data?.socialInsuranceConfirmedTreatment?.created
               ? format(
-                  new Date(data.socialInsuranceConfirmedTreatment.created),
+                  parseISO(data.socialInsuranceConfirmedTreatment.created),
                   'dd.MM.yyyy',
                 )
               : '-'}
@@ -184,8 +185,9 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
           <Text>
             {data?.socialInsuranceConfirmedTreatment?.requestedPeriod?.startDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmedTreatment.requestedPeriod.startDate,
+                  parseISO(
+                    data.socialInsuranceConfirmedTreatment.requestedPeriod
+                      .startDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -202,8 +204,9 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
           <Text>
             {data?.socialInsuranceConfirmedTreatment?.requestedPeriod?.endDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmedTreatment.requestedPeriod.endDate,
+                  parseISO(
+                    data.socialInsuranceConfirmedTreatment.requestedPeriod
+                      .endDate,
                   ),
                   'dd.MM.yyyy',
                 )
