@@ -689,15 +689,16 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       return
                     }
 
+                    patchSession(courtSession.id, {
+                      attestingWitness: {
+                        id: selectedUser.value || '',
+                        name: selectedUser.label,
+                      },
+                    })
+
                     patchSession(
                       courtSession.id,
-                      {
-                        attestingWitnessId: evt?.value,
-                        attestingWitness: {
-                          id: selectedUser.value || '',
-                          name: selectedUser.label,
-                        },
-                      },
+                      { attestingWitnessId: evt?.value },
                       { persist: true },
                     )
                   }}

@@ -568,12 +568,16 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
     courtSession.rulingType === CourtSessionRulingType.ORDER
       ? !!courtSession.ruling
       : true) &&
+    (courtSession.isAttestingWitness
+      ? courtSession.attestingWitnessId
+      : true) &&
     validate([
       [courtSession.startDate, ['empty', 'date-format']],
       [courtSession.location, ['empty']],
       [courtSession.entries, ['empty']],
       [courtSession.rulingType, ['empty']],
-      // TODO: add witness and endTime once defined
+      [courtSession.endDate, ['empty', 'date-format']],
+      // TODO: add witness once defined
     ]).isValid
   )
 }
