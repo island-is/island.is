@@ -45,7 +45,7 @@ jobs:
     secrets: inherit
     with:
       main_branch: ${{ github.base_ref }}
-      force_codegen: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nx-cache')}}
+      force_codegen: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nx-cache') && 'true' || 'false' }}
 
   tests:
     needs:

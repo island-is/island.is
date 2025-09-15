@@ -54,7 +54,7 @@ jobs:
       run_merge_queue: true
       force_all_to_be_affected: ${{ github.event_name == 'workflow_dispatch' }}
       main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
-      force_codegen: ${{ github.event.inputs.skip-nx-cache-codegen == 'true' }}
+      force_codegen: ${{ github.event.inputs.skip-nx-cache-codegen || 'false' }}
     needs:
       - pre-checks
   docker-build:
