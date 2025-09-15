@@ -8,7 +8,11 @@ import {
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { coreErrorMessages, getValueViaPath, YES } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 import {
   ApplicationTypes,
   FormValue,
