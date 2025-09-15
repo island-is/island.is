@@ -31,12 +31,15 @@ import {
 import {
   getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
-  isEHApplication,
   isFirstApplication,
-  SelfAssessmentCurrentEmploymentStatus,
+  OTHER,
   shouldShowCalculatedRemunerationDate,
+  shouldShowConfirmationOfIllHealth,
+  shouldShowConfirmationOfPendingResolution,
+  shouldShowConfirmedTreatment,
   shouldShowIsStudyingFields,
   shouldShowPreviousRehabilitationOrTreatmentFields,
+  shouldShowRehabilitationPlan,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
@@ -412,15 +415,22 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
-    unionNationalId,
+    unionInfo,
     comment,
     questionnaire,
-    currentEmploymentStatus,
-    currentEmploymentStatusAdditional,
-    lastEmploymentTitle,
-    lastEmploymentYear,
+    currentEmploymentStatuses,
+    currentEmploymentStatusExplanation,
+    lastProfession,
+    lastProfessionDescription,
+    lastActivityOfProfession,
+    lastActivityOfProfessionDescription,
+    lastProfessionYear,
     certificateForSicknessAndRehabilitationReferenceId,
+    isAlmaCertificate,
     rehabilitationPlanReferenceId,
+    confirmedTreatmentReferenceId,
+    confirmationOfPendingResolutionReferenceId,
+    confirmationOfIllHealthReferenceId,
     educationalLevel,
     hadAssistance,
     mainProblem,
@@ -439,15 +449,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       email: applicantEmail,
       phonenumber: applicantPhonenumber,
     },
-    period: {
-      year: new Date().getFullYear(), //TODO: remove when backend is ready
-      month: new Date().getMonth(), //TODO: remove when backend is ready
-    },
     comment,
     applicationId: application.id,
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
       domesticBankInfo: {
-        bank: getBankIsk(paymentInfo),
+        bank: formatBank(getBankIsk(paymentInfo)),
       },
     }),
     taxInfo: {
@@ -496,26 +502,36 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
         ),
         ...((hasUtilizedUnionSickPayRights === YES ||
           hasUtilizedUnionSickPayRights === NO) && {
-          unionNationalId,
+          unionNationalId: unionInfo.split('::')[0],
+          unionName: unionInfo.split('::')[1],
           unionSickPayEndDate,
         }),
       },
     }),
     baseCertificateReference:
       certificateForSicknessAndRehabilitationReferenceId ?? '',
-    ...(isEHApplication(application.externalData) && {
+    isAlmaCertificate: isAlmaCertificate === 'true',
+    ...(shouldShowRehabilitationPlan(application.externalData) && {
       rehabilitationPlanReference: rehabilitationPlanReferenceId,
     }),
     preQuestionnaire: {
       highestEducation: educationalLevel || '',
-      currentEmploymentStatus: currentEmploymentStatus?.[0], // TODO: Smári needs to change to an array
-      ...(currentEmploymentStatus?.includes(
-        SelfAssessmentCurrentEmploymentStatus.OTHER,
-      ) && {
-        currentEmploymentStatusExplanation: currentEmploymentStatusAdditional,
+      employmentStatuses: currentEmploymentStatuses.map((status) => ({
+        employmentStatus: status,
+        explanation:
+          status === OTHER ? currentEmploymentStatusExplanation ?? '' : null,
+      })),
+      ...(lastProfession && { lastProfession }),
+      ...(lastProfession === OTHER && {
+        lastProfessionDescription,
       }),
-      ...(lastEmploymentTitle && { lastJobTitle: lastEmploymentTitle }),
-      ...(lastEmploymentYear && { lastJobYear: +lastEmploymentYear }),
+      ...(lastActivityOfProfession && {
+        lastActivityOfProfession,
+      }),
+      ...(lastActivityOfProfession === OTHER && {
+        lastActivityOfProfessionDescription,
+      }),
+      ...(lastProfessionYear && { lastProfessionYear: +lastProfessionYear }),
       disabilityReason: mainProblem || '',
       hasParticipatedInRehabilitationBefore:
         hasPreviouslyReceivedRehabilitationOrTreatment === YES,
@@ -532,6 +548,16 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
         }),
       }),
     },
+    ...(shouldShowConfirmedTreatment(application.externalData) && {
+      confirmedTreatmentReference: confirmedTreatmentReferenceId,
+    }),
+    ...(shouldShowConfirmationOfPendingResolution(application.externalData) && {
+      confirmationOfPendingResolutionReference:
+        confirmationOfPendingResolutionReferenceId,
+    }),
+    ...(shouldShowConfirmationOfIllHealth(application.externalData) && {
+      confirmationOfIllHealthReference: confirmationOfIllHealthReferenceId,
+    }),
     selfAssessment: {
       hadAssistance: hadAssistance === YES,
       answers: questionnaire,

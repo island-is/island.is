@@ -51,12 +51,18 @@ query Case($input: CaseQueryInput!) {
       }
       verdict {
         id
+        created
         appealDate
         appealDecision
         serviceRequirement
         serviceStatus
         serviceDate
         serviceInformationForDefendant
+        externalPoliceDocumentId
+        legalPaperRequestDate
+        comment
+        defenderNationalId
+        servedBy
       }
     }
     defenderName
@@ -239,6 +245,52 @@ query Case($input: CaseQueryInput!) {
       indictmentCountSubtypes
       recordedSpeed
       speedLimit
+    }
+    courtSessions {
+      id
+      created
+      modified
+      caseId
+      location
+      startDate
+      endDate
+      isClosed
+      closedLegalProvisions
+      attendees
+      entries
+      rulingType
+      ruling
+      isAttestingWitness
+      attestingWitnessId
+      attestingWitness {
+        id
+        name
+      }
+      closingEntries
+      filedDocuments {
+        id
+        created
+        modified
+        caseId
+        courtSessionId
+        documentType
+        documentOrder
+        name
+        caseFileId
+        generatedPdfUri
+      }
+    }
+    unfiledCourtDocuments {
+      id
+      created
+      modified
+      caseId
+      courtSessionId
+      documentType
+      documentOrder
+      name
+      caseFileId
+      generatedPdfUri
     }
     requestDriversLicenseSuspension
     appealState

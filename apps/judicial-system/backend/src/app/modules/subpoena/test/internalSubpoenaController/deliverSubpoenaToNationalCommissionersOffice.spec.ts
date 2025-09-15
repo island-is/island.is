@@ -2,11 +2,10 @@ import { uuid } from 'uuidv4'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { Case, PdfService } from '../../../case'
-import { Defendant } from '../../../defendant'
+import { PdfService } from '../../../case'
+import { Case, Defendant, Subpoena } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Subpoena } from '../../models/subpoena.model'
 
 interface Then {
   result: DeliverResponse
@@ -68,7 +67,7 @@ describe('InternalSubpoenaController - Deliver subpoena to national commissioner
     })
 
     it('should call deliverSubpoenaToPolice', () => {
-      expect(mockPdfService.getSubpoenaPdf).toBeCalledWith(
+      expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
         theCase,
         defendant,
         subpoena,

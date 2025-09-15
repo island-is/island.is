@@ -22,16 +22,17 @@ export const MachineAnswersSchema = z.object({
       category: z.string().optional(),
       regNumber: z.string().optional(),
       ownerNumber: z.string().optional(),
+      findVehicle: z.boolean().optional(),
+      isValid: z.boolean().optional(),
+    })
+    .refine(({ isValid, findVehicle }) => {
+      return (findVehicle && isValid) || !findVehicle
     })
     .refine((obj) => Object.keys(obj).length > 0),
   contact: z.object({
     name: z.string().min(1),
     email: z.string().email().min(1),
     phone: z.string(),
-  }),
-  pickMachine: z.object({
-    index: z.string().optional(),
-    id: z.string().min(1),
   }),
   licencePlate: z.object({
     size: z.enum(['A', 'B', 'D']),

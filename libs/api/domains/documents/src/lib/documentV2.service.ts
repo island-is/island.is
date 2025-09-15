@@ -114,6 +114,7 @@ export class DocumentServiceV2 {
             createdDate: c.createdAt,
             authorId: c.authorId?.toString(),
             author: c.author,
+            isZendeskAgent: c.isAgent,
           })),
         }
       : null

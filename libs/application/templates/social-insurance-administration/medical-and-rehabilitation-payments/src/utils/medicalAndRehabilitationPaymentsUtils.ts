@@ -10,22 +10,18 @@ import {
   IncomePlanRow,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { Application, ExternalData, Option } from '@island.is/application/types'
+import { Application, ExternalData } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
   Countries,
-  EctsUnits,
+  CurrentEmploymentStatusLang,
   EducationLevels,
+  LabeledValue,
   SelfAssessmentQuestionnaire,
   SelfAssessmentQuestionnaireAnswers,
 } from '../types'
-import {
-  EligibleReasonCodes,
-  NOT_APPLICABLE,
-  NotApplicable,
-  SelfAssessmentCurrentEmploymentStatus,
-} from './constants'
+import { EligibleReasonCodes, NOT_APPLICABLE, NotApplicable } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber =
@@ -104,16 +100,19 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'unionSickPay.endDate',
   )
 
-  const unionNationalId = getValueViaPath<string>(
-    answers,
-    'unionSickPay.unionNationalId',
-  )
+  const unionInfo =
+    getValueViaPath<string>(answers, 'unionSickPay.unionInfo') ?? ''
 
   const certificateForSicknessAndRehabilitationReferenceId =
     getValueViaPath<string>(
       answers,
-      'certificateForSicknessAndRehabilitationReferenceId',
+      'certificateForSicknessAndRehabilitation.referenceId',
     )
+
+  const isAlmaCertificate = getValueViaPath<string>(
+    answers,
+    'certificateForSicknessAndRehabilitation.isAlmaCertificate',
+  )
 
   const rehabilitationPlanConfirmation = getValueViaPath<string[]>(
     answers,
@@ -123,6 +122,36 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const rehabilitationPlanReferenceId = getValueViaPath<string>(
     answers,
     'rehabilitationPlan.referenceId',
+  )
+
+  const confirmedTreatmentConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmedTreatment.confirmation',
+  )
+
+  const confirmedTreatmentReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmedTreatment.referenceId',
+  )
+
+  const confirmationOfPendingResolutionConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmationOfPendingResolution.confirmation',
+  )
+
+  const confirmationOfPendingResolutionReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmationOfPendingResolution.referenceId',
+  )
+
+  const confirmationOfIllHealthConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmationOfIllHealth.confirmation',
+  )
+
+  const confirmationOfIllHealthReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmationOfIllHealth.referenceId',
   )
 
   const hadAssistance = getValueViaPath<YesOrNo>(
@@ -170,25 +199,40 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
       'selfAssessment.previousRehabilitationSuccessfulFurtherExplanations',
     )
 
-  const currentEmploymentStatus =
-    getValueViaPath<SelfAssessmentCurrentEmploymentStatus[]>(
+  const currentEmploymentStatuses =
+    getValueViaPath<string[]>(
       answers,
-      'selfAssessment.currentEmploymentStatus',
+      'selfAssessment.currentEmploymentStatuses',
     ) ?? []
 
-  const currentEmploymentStatusAdditional = getValueViaPath<string>(
+  const currentEmploymentStatusExplanation = getValueViaPath<string>(
     answers,
-    'selfAssessment.currentEmploymentStatusAdditional',
+    'selfAssessment.currentEmploymentStatusExplanation',
   )
 
-  const lastEmploymentTitle = getValueViaPath<string>(
+  const lastProfession = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastEmploymentTitle',
+    'selfAssessment.lastProfession',
   )
 
-  const lastEmploymentYear = getValueViaPath<string>(
+  const lastProfessionDescription = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastEmploymentYear',
+    'selfAssessment.lastProfessionDescription',
+  )
+
+  const lastActivityOfProfession = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastActivityOfProfession',
+  )
+
+  const lastActivityOfProfessionDescription = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastActivityOfProfessionDescription',
+  )
+
+  const lastProfessionYear = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastProfessionYear',
   )
 
   return {
@@ -211,10 +255,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
-    unionNationalId,
+    unionInfo,
     certificateForSicknessAndRehabilitationReferenceId,
+    isAlmaCertificate,
     rehabilitationPlanConfirmation,
     rehabilitationPlanReferenceId,
+    confirmedTreatmentConfirmation,
+    confirmedTreatmentReferenceId,
+    confirmationOfPendingResolutionConfirmation,
+    confirmationOfPendingResolutionReferenceId,
+    confirmationOfIllHealthConfirmation,
+    confirmationOfIllHealthReferenceId,
     hadAssistance,
     educationalLevel,
     comment,
@@ -224,10 +275,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     previousRehabilitationOrTreatment,
     previousRehabilitationSuccessful,
     previousRehabilitationSuccessfulFurtherExplanations,
-    currentEmploymentStatus,
-    currentEmploymentStatusAdditional,
-    lastEmploymentTitle,
-    lastEmploymentYear,
+    currentEmploymentStatuses,
+    currentEmploymentStatusExplanation,
+    lastProfession,
+    lastProfessionDescription,
+    lastActivityOfProfession,
+    lastActivityOfProfessionDescription,
+    lastProfessionYear,
   }
 }
 
@@ -327,7 +381,7 @@ export const getApplicationExternalData = (
     ) ?? []
 
   const ectsUnits =
-    getValueViaPath<EctsUnits[]>(
+    getValueViaPath<LabeledValue[]>(
       externalData,
       'socialInsuranceAdministrationEctsUnits.data',
     ) ?? []
@@ -338,15 +392,38 @@ export const getApplicationExternalData = (
       'socialInsuranceAdministrationEducationLevels.data',
     ) ?? []
 
+  const employmentStatuses =
+    getValueViaPath<CurrentEmploymentStatusLang[]>(
+      externalData,
+      'socialInsuranceAdministrationEmploymentStatuses.data',
+    ) ?? []
+
   const marpApplicationType = getValueViaPath<string>(
     externalData,
     'socialInsuranceAdministrationMARPApplicationType.data.applicationType',
+  )
+
+  const marpConfirmationType = getValueViaPath<string>(
+    externalData,
+    'socialInsuranceAdministrationMARPApplicationType.data.confirmationType',
   )
 
   const isEligible = getValueViaPath<Eligible>(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data',
   )
+
+  const professions =
+    getValueViaPath<LabeledValue[]>(
+      externalData,
+      'socialInsuranceAdministrationProfessions.data',
+    ) ?? []
+
+  const activitiesOfProfessions =
+    getValueViaPath<LabeledValue[]>(
+      externalData,
+      'socialInsuranceAdministrationActivitiesOfProfessions.data',
+    ) ?? []
 
   return {
     applicantName,
@@ -370,8 +447,12 @@ export const getApplicationExternalData = (
     selfAssessmentQuestionnaire,
     ectsUnits,
     educationLevels,
+    employmentStatuses,
     marpApplicationType,
+    marpConfirmationType,
     isEligible,
+    professions,
+    activitiesOfProfessions,
   }
 }
 
@@ -401,70 +482,6 @@ export const getSickPayEndDateLabel = (hasUtilizedSickPayRights?: YesOrNo) => {
     : medicalAndRehabilitationPaymentsFormMessage.shared.sickPayDoesEndDate
 }
 
-export const getSelfAssessmentCurrentEmploymentStatusOptions = () => {
-  const options: Option[] = [
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.NEVER_HAD_A_PAID_JOB,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment.neverOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.SELF_EMPLOYED,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .selfEmployedOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.FULL_TIME_WORKER,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .fullTimeOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.PART_TIME_WORKER,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .partTimeOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.CURRENTLY_STUDYING,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .studyingOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.JOB_SEARCH_REGISTERED,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .jobSearchRegisteredOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.JOB_SEARCH_NOT_REGISTERED,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .jobSearchNotRegisteredOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.VOLOUNTEER_OR_TEST_WORK,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .volunteerOrTestWorkOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.NO_PARTICIPATION,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .noParticipationOption,
-    },
-    {
-      value: SelfAssessmentCurrentEmploymentStatus.OTHER,
-      label:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment.otherOption,
-    },
-  ]
-  return options
-}
-
 export const hasUtilizedRights = (
   hasUtilizedSickPayRights?: YesOrNo | NotApplicable,
 ) => {
@@ -478,7 +495,7 @@ export const hasNotUtilizedRights = (
 }
 
 // Returns an array of year options from current year to 30 years in the past
-export const getSelfAssessmentLastEmploymentYearOptions = () => {
+export const getSelfAssessmentLastProfessionYearOptions = () => {
   const currentYear = new Date().getFullYear()
 
   return Array.from({ length: 31 }, (_, index) => {
@@ -500,9 +517,21 @@ export const eligibleText = (externalData: ExternalData) => {
   const { isEligible } = getApplicationExternalData(externalData)
 
   switch (isEligible?.reasonCode) {
+    case EligibleReasonCodes.APPLICANT_ALREADY_HAS_PENDING_APPLICATION:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .applicantAlreadyHasPendingApplicationDescription
     case EligibleReasonCodes.APPLICANT_AGE_OUT_OF_RANGE:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .applicantAgeOutOfRangeDescription
+    case EligibleReasonCodes.NO_LEGAL_DOMICILE_IN_ICELAND:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .noLegalDomicileinIcelandDescription
+    case EligibleReasonCodes.HAS_ACTIVE_PAYMENTS:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .hasActivePaymentsDescription
+    case EligibleReasonCodes.INACTIVE_PAYMENTS_FOR_TOO_LONG:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSevenYearsDescription
     case EligibleReasonCodes.BASE_CERT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertNotFoundDescription
@@ -512,9 +541,12 @@ export const eligibleText = (externalData: ExternalData) => {
     case EligibleReasonCodes.BASE_CERT_OLDER_THAN_7YEARS:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertOlderThanSevenYearsDescription
-    case EligibleReasonCodes.BASE_CERT_OLDER_THAN_6MONTHS:
+    case EligibleReasonCodes.LATEST_MEDICAL_DOCUMENT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
-        .baseCertOlderThanSixMonthsDescription
+        .latestMedicalDocumentNotFoundDescription
+    case EligibleReasonCodes.ERROR_PROCESSING_CLIENT:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .errorProcessingClientDescription
     default:
       return undefined
   }
@@ -531,5 +563,18 @@ export const getSelfAssessmentQuestionnaireQuestions = (
     selfAssessmentQuestionnaire.find(
       (questionnaire) => questionnaire.language.toLowerCase() === locale,
     )?.questions ?? []
+  )
+}
+
+export const getEmploymentStatuses = (
+  externalData: ExternalData,
+  locale: Locale = 'is',
+) => {
+  const { employmentStatuses } = getApplicationExternalData(externalData)
+
+  return (
+    employmentStatuses.find(
+      (status) => status.languageCode.toLowerCase() === locale,
+    )?.employmentStatuses ?? []
   )
 }

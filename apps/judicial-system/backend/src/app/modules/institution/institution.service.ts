@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { InstitutionType } from '@island.is/judicial-system/types'
 
-import { Institution } from './institution.model'
+import { Institution } from '../repository'
 
 @Injectable()
 export class InstitutionService {

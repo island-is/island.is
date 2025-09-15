@@ -45,7 +45,9 @@ const CompleteListReview = ({
       },
     },
     onCompleted: (response) => {
-      if (response.signatureCollectionAdminToggleListReview.success) {
+      const result = response.signatureCollectionAdminToggleListReview
+
+      if (result?.success) {
         setModalSubmitReviewIsOpen(false)
         revalidate()
         toast.success(
@@ -54,15 +56,10 @@ const CompleteListReview = ({
             : formatMessage(m.toggleReviewSuccess),
         )
       } else {
-        const message =
-          response.signatureCollectionAdminToggleListReview?.reasons?.[0] ??
-          formatMessage(m.toggleReviewError)
-        toast.error(message)
+        toast.error(result?.reasons?.[0] ?? formatMessage(m.toggleReviewError))
       }
     },
-    onError: () => {
-      toast.error(formatMessage(m.toggleReviewError))
-    },
+    onError: () => toast.error(formatMessage(m.toggleReviewError)),
   })
 
   return (
@@ -72,11 +69,13 @@ const CompleteListReview = ({
           <Box display="flex">
             <Tag>
               <Box display="flex" justifyContent="center">
-                {listStatus === ListStatus.Reviewed ? (
-                  <Icon icon="reload" type="outline" color="blue600" />
-                ) : (
-                  <Icon icon="checkmark" type="outline" color="red600" />
-                )}
+                <Icon
+                  icon={
+                    listStatus === ListStatus.Reviewed ? 'reload' : 'checkmark'
+                  }
+                  type="outline"
+                  color="blue600"
+                />
               </Box>
             </Tag>
             <Box marginLeft={5}>

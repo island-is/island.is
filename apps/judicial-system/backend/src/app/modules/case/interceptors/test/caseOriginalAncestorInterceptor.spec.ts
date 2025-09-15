@@ -4,8 +4,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
+import { Case } from '../../../repository'
 import { InternalCaseService } from '../../internalCase.service'
-import { Case } from '../../models/case.model'
 import { CaseOriginalAncestorInterceptor } from '../caseOriginalAncestor.interceptor'
 
 interface Then {

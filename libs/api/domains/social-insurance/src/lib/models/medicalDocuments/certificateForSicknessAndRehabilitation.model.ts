@@ -1,4 +1,4 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
 import { EnumType } from './enumType.model'
 
 @ObjectType('SocialInsuranceMedicalDocumentsDoctor')
@@ -74,13 +74,13 @@ export class CertificateForSicknessAndRehabilitation {
   @Field(() => Doctor, { nullable: true })
   doctor?: Doctor
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastExaminationDate?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   certificateDate?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   disabilityDate?: Date
 
   @Field(() => Diagnosis, { nullable: true })
@@ -106,4 +106,7 @@ export class CertificateForSicknessAndRehabilitation {
 
   @Field(() => Confirmation, { nullable: true })
   confirmation?: Confirmation
+
+  @Field({ nullable: true })
+  isAlmaCertificate?: boolean
 }

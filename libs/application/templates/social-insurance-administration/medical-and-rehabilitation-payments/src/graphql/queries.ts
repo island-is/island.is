@@ -80,6 +80,7 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
   query SiaCertificateForSicknessAndRehabilitation {
     socialInsuranceCertificateForSicknessAndRehabilitation {
       referenceId
+      isAlmaCertificate
       doctor {
         name
         doctorNumber
@@ -128,6 +129,110 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
         treatmentMeasures
         explanation
         progress
+      }
+    }
+  }
+`
+
+export const siaConfirmedTreatmentQuery = gql`
+  query SiaConfirmedTreatment {
+    socialInsuranceConfirmedTreatment {
+      referenceId
+      caseManager {
+        name
+        jobTitle
+        workplace
+      }
+      confirmationDate
+      previousTreatment {
+        description
+        application
+        type {
+          value
+          name
+          display
+        }
+        other
+        content
+      }
+      treatmentPlan {
+        applicationType
+        treatmentType {
+          value
+          name
+          display
+        }
+        explanation
+        discharge
+        plannedFollowup
+      }
+      treatmentType {
+        value
+        name
+        display
+      }
+      estimatedDuration {
+        start
+        end
+        months
+      }
+    }
+  }
+`
+
+export const siaConfirmationOfPendingResolutionQuery = gql`
+  query SiaConfirmationOfPendingResolution {
+    socialInsuranceConfirmationOfPendingResolution {
+      referenceId
+      serviceProvider {
+        serviceProviderName
+        coordinatorName
+        coordinatorTitle
+        workplace
+        phoneNumber
+      }
+      requestedTreatment {
+        treatmentType {
+          value
+          name
+          display
+        }
+        otherTreatmentDescription
+      }
+      treatmentExplanation
+      previousApplication {
+        hasPreviousApproval
+        additionalDetails
+      }
+      requestedPeriod {
+        startDate
+        endDate
+        totalRequestedMonths
+      }
+    }
+  }
+`
+
+export const siaConfirmationOfIllHealthQuery = gql`
+  query SiaConfirmationOfIllHealth {
+    socialInsuranceConfirmationOfIllHealth {
+      referenceId
+      serviceProvider {
+        serviceProviderName
+        coordinatorName
+        coordinatorTitle
+        workplace
+        phoneNumber
+      }
+      currentMedicalStatus
+      previousApplication {
+        hasPreviousApproval
+        additionalDetails
+      }
+      requestedPeriod {
+        startDate
+        endDate
+        totalRequestedMonths
       }
     }
   }

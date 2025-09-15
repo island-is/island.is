@@ -122,4 +122,28 @@ export const errorMessages = {
       description: '',
     },
   }),
+  candidateNotFound: defineMessages({
+    title: {
+      id: 'sls.application:error.candidateNotFound.title',
+      defaultMessage: 'Framboð finnst ekki',
+      description: '',
+    },
+    summary: {
+      id: 'sls.application:error.candidateNotFound.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
+      description: '',
+    },
+  }),
+  candidateListActive: defineMessages({
+    title: {
+      id: 'sls.application:error.candidateListActive.title',
+      defaultMessage: 'Framboð er ekki með virka söfnun í þínum landsfjórðungi',
+      description: '',
+    },
+    summary: {
+      id: 'sls.application:error.active.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
+      description: '',
+    },
+  }),
 }

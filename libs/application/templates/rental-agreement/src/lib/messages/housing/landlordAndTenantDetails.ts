@@ -1,70 +1,45 @@
 import { defineMessages } from 'react-intl'
 
-export const landlordDetails = defineMessages({
+export const partiesDetails = defineMessages({
   subSectionName: {
-    id: 'ra.application:landlordDetails.subSectionName',
-    defaultMessage: 'Leigusali',
-    description: 'Landlord details subsection name',
+    id: 'ra.application:partiesDetails.subSectionName',
+    defaultMessage: 'Aðilar',
+    description: 'Parties details subsection name',
   },
-  pageTitle: {
-    id: 'ra.application:landlordDetails.pageTitle',
-    defaultMessage: 'Skrá leigusala',
-    description: 'Landlord details page title',
+  multiFieldTitle: {
+    id: 'ra.application:partiesDetails.multiFieldTitle',
+    defaultMessage: 'Aðilar samnings',
+    description: 'Parties details multi field title',
   },
-  tableTitle: {
-    id: 'ra.application:landlordDetails.tableTitle',
-    defaultMessage: 'Leigusali',
-    description: 'Landlord details table title',
-  },
-  pageDescription: {
-    id: 'ra.application:landlordDetails.pageDescription',
+  multiFieldDescription: {
+    id: 'ra.application:partiesDetails.multiFieldDescription',
     defaultMessage:
-      'Hér skal skrá leigusala húsnæðis. Hægt er að bæta við eins mörgum leigusölum á samninginn eins og óskað er eftir.',
-    description: 'Landlord details page description',
+      'Hér skal skrá aðila samnings: Leigusala, umboðsaðila leigusala og leigjendur. Hægt er að bæta við eins mörgum aðilum á samninginn eins og óskað er eftir.',
+    description: 'Parties details multi field description',
+  },
+  landlordTableTitle: {
+    id: 'ra.application:partiesDetails.landlordTableTitle',
+    defaultMessage: 'Leigusalar',
+    description: 'Parties details page title',
   },
 
   // DataSchema errors
-  landlordEmptyTableError: {
-    id: 'ra.application:landlordDetails.landlordEmptyTableError',
+  partiesEmptyTableError: {
+    id: 'ra.application:partiesDetails.partiesEmptyTableError',
     defaultMessage:
       'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn.',
-    description: 'Landlord details no landlords in table',
+    description: 'Parties details no parties in table',
   },
-  uniqueApplicantsError: {
-    id: 'ra.application:landlordDetails.uniqueApplicantsError',
+  duplicateNationalIdError: {
+    id: 'ra.application:partiesDetails.duplicateNationalIdError',
     defaultMessage:
-      'Sami aðili má ekki vera skráður oftar en einu sinni á leigusamninginn.',
-
-    description: 'Applicant already exists on application error',
+      'Þessi kennitala er nú þegar skráð sem aðili að leigusamningnum. Ekki er hægt að skrá sama aðila tvisvar.',
+    description: 'Duplicate national ID error in table',
   },
-})
-
-export const tenantDetails = defineMessages({
-  subSectionName: {
-    id: 'ra.application:tenantDetails.subSectionName',
-    defaultMessage: 'Leigjandi',
-    description: 'Tenant Details sub section name',
-  },
-  pageTitle: {
-    id: 'ra.application:tenantDetails.pageTitle',
-    defaultMessage: 'Skrá leigjanda',
-    description: 'Tenant Details page title',
-  },
-  tableTitle: {
-    id: 'ra.application:tenantDetails.tableTitle',
-    defaultMessage: 'Leigjandi',
+  tenantTableTitle: {
+    id: 'ra.application:tenantDetails.tenantTableTitle',
+    defaultMessage: 'Leigjendur',
     description: 'Tenant details table title',
-  },
-  representativeTableTitle: {
-    id: 'ra.application:tenantDetails.representativeTableTitle',
-    defaultMessage: 'Umboðsaðili (ef við á)',
-    description: 'Tenant details representative table title',
-  },
-  pageDescription: {
-    id: 'ra.application:tenantDetails.pageDescription',
-    defaultMessage:
-      'Hér skal skrá leigjendur í húsnæðinu. Hægt er að bæta við eins mörgum leigjendum á samninginn eins og óskað er eftir.',
-    description: 'Tenant Details page description',
   },
 
   // DataSchema errors
@@ -74,49 +49,18 @@ export const tenantDetails = defineMessages({
       'Að minnsta kosti einn leigutaki þarf að vera skráður á leigusamninginn.',
     description: 'Tenant details no tenants in table',
   },
-  uniqueApplicantsError: {
-    id: 'ra.application:tenantDetails.uniqueApplicantsError',
-    defaultMessage:
-      'Sami aðili má ekki vera skráður oftar en einu sinni á leigusamninginn.',
-    description: 'Applicant already exists on application error',
-  },
 })
 
 export const landlordAndTenantDetails = defineMessages({
   representativeTableTitle: {
     id: 'ra.application:landlordAndTenantDetails.representativeTableTitle',
-    defaultMessage: 'Umboðsaðili (ef við á)',
+    defaultMessage: 'Umboðsaðilar leigusala (ef við á)',
     description: 'Representative table title',
   },
-  nationalIdHeaderLabel: {
-    id: 'ra.application:landlordAndTenantDetails.nationalIdHeaderLabel',
-    defaultMessage: 'Kennitala',
-    description: 'National id header label',
-  },
-  nameInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.nameLabel',
-    defaultMessage: 'Fullt nafn',
-    description: 'Name input label',
-  },
-  emailInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.emailLabel',
-    defaultMessage: 'Netfang',
-    description: 'Email input label',
-  },
-  phoneInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.phoneLabel',
-    defaultMessage: 'Símanúmer',
-    description: 'Phone input label',
-  },
-  addressInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.addressInputLabel',
-    defaultMessage: 'Heimilisfang',
-    description: 'Address input label',
-  },
-  cancelButtonText: {
-    id: 'ra.application:landlordAndTenantDetails.cancelButtonText',
-    defaultMessage: 'Hætta við',
-    description: 'Cancel button text',
+  representativeLabel: {
+    id: 'ra.application:landlordAndTenantDetails.representativeLabel',
+    defaultMessage: 'Umboðsaðili',
+    description: 'Representative label',
   },
 
   // Error messages

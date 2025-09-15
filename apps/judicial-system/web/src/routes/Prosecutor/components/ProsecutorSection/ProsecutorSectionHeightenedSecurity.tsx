@@ -100,20 +100,20 @@ const ProsecutorSectionHeightenedSecurity = () => {
         <Modal
           title={formatMessage(strings.accessModalTitle)}
           text={formatMessage(strings.accessModalText)}
-          primaryButtonText={formatMessage(
-            strings.accessModalPrimaryButtonText,
-          )}
-          secondaryButtonText={formatMessage(
-            strings.accessModalSecondaryButtonText,
-          )}
-          onPrimaryButtonClick={async () => {
-            if (substituteProsecutorId) {
-              await setProsecutor(substituteProsecutorId)
-              router.push(getStandardUserDashboardRoute(user))
-            }
+          primaryButton={{
+            text: formatMessage(strings.accessModalPrimaryButtonText),
+            onClick: async () => {
+              if (substituteProsecutorId) {
+                await setProsecutor(substituteProsecutorId)
+                router.push(getStandardUserDashboardRoute(user))
+              }
+            },
           }}
-          onSecondaryButtonClick={() => {
-            setIsProsecutorAccessModalVisible(false)
+          secondaryButton={{
+            text: formatMessage(strings.accessModalSecondaryButtonText),
+            onClick: () => {
+              setIsProsecutorAccessModalVisible(false)
+            },
           }}
         />
       )}

@@ -1,7 +1,6 @@
 import {
   ActionCard,
   Box,
-  FilterInput,
   GridColumn,
   GridContainer,
   GridRow,
@@ -12,6 +11,7 @@ import {
   FilterMultiChoice,
   Breadcrumbs,
   Divider,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -19,11 +19,13 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  CollectionStatus,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import {
-  CollectionStatus,
   FiltersOverview,
   countryAreas,
   getTagConfig,
@@ -33,10 +35,10 @@ import { format as formatNationalId } from 'kennitala'
 import EmptyState from '../../shared-components/emptyState'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
+import FindSignature from '../../shared-components/findSignature'
 
 const Lists = () => {
   const { formatMessage } = useLocale()
@@ -47,8 +49,6 @@ const Lists = () => {
 
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
-  // hasInReview is used to check if any list is in review
-  const [hasInReview, setHasInReview] = useState(false)
   const [filters, setFilters] = useState<FiltersOverview>({
     area: [],
     candidate: [],
@@ -90,10 +90,6 @@ const Lists = () => {
     if (lists.length > 0) {
       const candidates = lists
         .map((list) => {
-          // mapping all lists to check if any are in review
-          if (!list.reviewed) {
-            setHasInReview(true)
-          }
           return list.candidate.name
         })
         .filter((value, index, self) => self.indexOf(value) === index)
@@ -146,25 +142,38 @@ const Lists = () => {
                   Actions.DownloadReports,
                   Actions.CreateCollection,
                   Actions.ReviewCandidates,
+                  Actions.CompleteCollectionProcessing,
                 ]}
               />
             }
             marginBottom={4}
           />
+          {collectionStatus === CollectionStatus.Processed && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionProcessedTitle)}
+                message={formatMessage(m.collectionProcessedMessage)}
+              />
+            </Box>
+          )}
+          {collectionStatus === CollectionStatus.InReview && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionPresidentialReviewedTitle)}
+                message={formatMessage(m.collectionPresidentialReviewedMessage)}
+              />
+            </Box>
+          )}
           <Divider />
           <Box marginTop={9} />
           {lists?.length > 0 && (
             <GridRow marginBottom={5}>
-              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-                <FilterInput
-                  name="input"
-                  placeholder={formatMessage(m.searchInAllListsPlaceholder)}
-                  value={filters.input}
-                  onChange={(value) => setFilters({ ...filters, input: value })}
-                  backgroundColor="blue"
-                />
+              <GridColumn span={'12/12'}>
+                <FindSignature collectionId={collection.id} />
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <Box
                   display="flex"
                   justifyContent="spaceBetween"
@@ -174,7 +183,7 @@ const Lists = () => {
                     labelClear=""
                     labelClose=""
                     labelResult=""
-                    labelOpen={formatMessage(m.filter)}
+                    labelOpen={formatMessage(m.filterCandidates)}
                     labelClearAll={formatMessage(m.clearAllFilters)}
                     resultCount={lists.length}
                     variant="popover"
@@ -233,7 +242,7 @@ const Lists = () => {
                     )
                   : allLists.length > 0 && (
                       <Text variant="eyebrow">
-                        {formatMessage(m.totalListResults)}: {allLists.length}
+                        {formatMessage(m.totalCandidates)}: {candidates.length}
                       </Text>
                     )}
               </Box>
@@ -244,13 +253,11 @@ const Lists = () => {
                     return (
                       <ActionCard
                         key={list.id}
-                        eyebrow={
-                          formatMessage(m.listEndTime) +
-                          ': ' +
-                          format(new Date(list.endTime), 'dd.MM.yyyy')
-                        }
+                        eyebrow={`${formatMessage(m.listEndTime)}: ${format(
+                          new Date(list.endTime),
+                          'dd.MM.yyyy',
+                        )}`}
                         heading={list.title}
-                        text={formatMessage(m.collectionTitle)}
                         progressMeter={{
                           currentProgress: list.numberOfSignatures ?? 0,
                           maxProgress: list.area.min,
@@ -308,19 +315,10 @@ const Lists = () => {
             </Box>
           )}
           {lists?.length > 0 && (
-            <Box>
-              <CompareLists
-                collectionId={collection?.id}
-                collectionType={collection?.collectionType}
-              />
-              {!hasInReview &&
-                collectionStatus === CollectionStatus.InInitialReview && (
-                  <ActionCompleteCollectionProcessing
-                    collectionType={collection?.collectionType}
-                    collectionId={collection?.id}
-                  />
-                )}
-            </Box>
+            <CompareLists
+              collectionId={collection?.id}
+              collectionType={collection?.collectionType}
+            />
           )}
         </GridColumn>
       </GridRow>
