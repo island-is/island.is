@@ -135,7 +135,7 @@ export const parseCsvString = async (chunk: string): Promise<string[][]> => {
   return new Promise((resolve, reject) => {
     const records: string[][] = []
 
-    const parser = parse({
+    const parser = csv.parse({
       delimiter: [';', ','],
       skipRecordsWithEmptyValues: true,
       trim: true,

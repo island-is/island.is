@@ -46,8 +46,8 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           header: [
             messagesInfo.tableHeaderUsablity,
             messagesInfo.tableHeaderUnitId,
-            messagesInfo.tableHeaderSize,
-            messagesInfo.tableHeaderNumberOfRooms,
+            m.misc.size,
+            m.misc.rooms,
           ],
           rows({ answers }) {
             const { units } = applicationAnswers(answers)
