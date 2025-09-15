@@ -191,11 +191,7 @@ const Completed: FC = () => {
           )
         : true
 
-    if (features?.includes(Feature.SERVICE_PORTAL)) {
-      return Boolean(workingCase.ruling) && isValidDefendants
-    } else {
-      return isValidDefendants
-    }
+    return isValidDefendants
   }
 
   const hasLawsBroken = lawsBroken.size > 0
