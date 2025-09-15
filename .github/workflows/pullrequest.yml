@@ -45,7 +45,7 @@ jobs:
     secrets: inherit
     with:
       main_branch: ${{ github.base_ref }}
-      force_codegen ${{ env.NX_SKIP_NX_CACHE }}
+      force_codegen: ${{ env.NX_SKIP_NX_CACHE }}
 
   tests:
     needs:
