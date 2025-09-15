@@ -24,7 +24,7 @@ const SignatureCollectionPresidential = () => {
   const user = useUserInfo()
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection(collectionType)
-  const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner(collectionType)
+  const { isOwner, loadingIsOwner } = useIsOwner(collectionType)
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
     collectionType,
     currentCollection?.id ?? '',
@@ -56,7 +56,7 @@ const SignatureCollectionPresidential = () => {
       {isOwner?.success ? (
         <>
           {!user?.profile.actor && currentCollection.isActive && (
-            <ActionDrawer refetchIsOwner={refetchIsOwner} />
+            <ActionDrawer />
           )}
           <Divider />
           <OwnerView listsForOwner={listsForOwner} signedLists={signedLists} />

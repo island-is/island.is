@@ -15,14 +15,12 @@ const OwnerView = ({
   currentCollection,
   // list holder is an individual who owns a list or has a delegation of type Procuration Holder
   isListHolder,
-  refetchListsForOwner,
   listsForOwner,
   signedLists,
 }: {
   currentCollection: SignatureCollection
   isListHolder: boolean
   listsForOwner: SignatureCollectionList[]
-  refetchListsForOwner: () => void
   signedLists: SignatureCollectionSignedList[]
 }) => {
   const navigate = useNavigate()
@@ -42,7 +40,6 @@ const OwnerView = ({
                 lists={listsForOwner}
                 collection={currentCollection}
                 candidateId={listsForOwner[0]?.candidate?.id}
-                refetch={refetchListsForOwner}
               />
             )}
         </Box>

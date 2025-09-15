@@ -3,7 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
 import CancelCandidacy from '../CancelCandidacy'
 
-const ActionDrawer = ({ refetchIsOwner }: { refetchIsOwner: () => void }) => {
+const ActionDrawer = () => {
   const { formatMessage } = useLocale()
 
   return (
@@ -23,7 +23,7 @@ const ActionDrawer = ({ refetchIsOwner }: { refetchIsOwner: () => void }) => {
         {
           //Todo: we can add reports section to here once we have the info
         }
-        <CancelCandidacy refetchIsOwner={refetchIsOwner} />
+        <CancelCandidacy />
       </Drawer>
     </Box>
   )

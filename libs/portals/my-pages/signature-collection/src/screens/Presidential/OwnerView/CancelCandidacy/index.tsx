@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
 import { Modal } from '@island.is/portals/my-pages/core'
 import { useState } from 'react'
-import { useGetCurrentCollection } from '../../../../hooks'
+import { useGetCurrentCollection, useIsOwner } from '../../../../hooks'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../../hooks/graphql/mutations'
 import {
@@ -11,17 +11,14 @@ import {
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
 
-const CancelCandidacy = ({
-  refetchIsOwner,
-}: {
-  refetchIsOwner: () => void
-}) => {
+const CancelCandidacy = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const { currentCollection } = useGetCurrentCollection(
     SignatureCollectionCollectionType.Presidential,
   )
+  const { refetchIsOwner } = useIsOwner(currentCollection.collectionType)
 
   const [cancelCollection, { loading }] =
     useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {
