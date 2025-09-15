@@ -18,7 +18,7 @@ const CancelCandidacy = () => {
   const { currentCollection } = useGetCurrentCollection(
     SignatureCollectionCollectionType.Presidential,
   )
-  const { refetchIsOwner } = useIsOwner(currentCollection.collectionType)
+  const { refetchIsOwner } = useIsOwner(currentCollection?.collectionType)
 
   const [cancelCollection, { loading }] =
     useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {

@@ -33,7 +33,7 @@ const AddConstituencyModal = ({
   const [selectedConstituencies, setSelectedConstituencies] = useState<
     string[]
   >([])
-  const { refetchIsOwner } = useIsOwner(collection.collectionType)
+  const { refetchIsOwner } = useIsOwner(collection?.collectionType)
 
   const [addNewConstituency, { loading }] = useMutation(addConstituency, {
     onCompleted: () => {
