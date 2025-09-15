@@ -10,7 +10,7 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
-  CourtSession,
+  CourtSessionResponse,
   CourtSessionRulingType,
   DateLog,
   Defendant,
@@ -559,7 +559,7 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
 }
 
 export const isIndictmentCourtRecordStepValid = (
-  courtSessions?: CourtSession[] | null,
+  courtSessions?: CourtSessionResponse[] | null,
 ) => {
   if (!courtSessions) {
     return false

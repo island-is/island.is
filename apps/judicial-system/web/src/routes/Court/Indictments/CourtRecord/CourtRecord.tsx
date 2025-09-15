@@ -45,8 +45,6 @@ import {
   CourtSessionResponse,
   CourtSessionRulingType,
   UpdateCourtSessionInput,
-  User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -54,10 +52,15 @@ import {
   TUploadFile,
   useCourtSessions,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useUsers from '@island.is/judicial-system-web/src/utils/hooks/useUsers'
 import { isIndictmentCourtRecordStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { useSelectCourtOfficialsUsersQuery } from '../../components/ReceptionAndAssignment/SelectCourtOfficials/selectCourtOfficialsUsers.generated'
 import * as styles from './CourtRecord.css'
+
+interface ReorderableFile {
+  id: string
+  name: string
+}
 
 const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
   [
@@ -123,49 +126,27 @@ const useCourtSessionUpdater = (
 }
 
 const CourtRecord: FC = () => {
-  const { createCourtSession, updateCourtSession } = useCourtSessions()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { createCourtSession, updateCourtSession } = useCourtSessions()
+  const {
+    judges,
+    registrars,
+    loading: usersLoading,
+  } = useUsers(workingCase.court?.id)
 
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
-  const [reorderableItems, setReorderableItems] = useState<
-    { id: string; name: string }[]
-  >([])
+  const [reorderableFiles, setReorderableFiles] = useState<ReorderableFile[]>(
+    [],
+  )
 
   const updateSession = useCourtSessionUpdater(
     workingCase,
     setWorkingCase,
     updateCourtSession,
   )
-
-  const { data: usersData, loading: usersLoading } =
-    useSelectCourtOfficialsUsersQuery({
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    })
-
-  const judges = (usersData?.users ?? [])
-    .filter(
-      (user: User) =>
-        (user.role === UserRole.DISTRICT_COURT_JUDGE ||
-          user.role === UserRole.DISTRICT_COURT_ASSISTANT) &&
-        user.institution?.id === workingCase.court?.id,
-    )
-    .map((judge: User) => {
-      return { label: judge.name ?? '', value: judge.id, judge }
-    })
-
-  const registrars = (usersData?.users ?? [])
-    .filter(
-      (user: User) =>
-        user.role === UserRole.DISTRICT_COURT_REGISTRAR &&
-        user.institution?.id === workingCase.court?.id,
-    )
-    .map((registrar: User) => {
-      return { label: registrar.name ?? '', value: registrar.id, registrar }
-    })
 
   const containerVariants = {
     hidden: {
@@ -434,7 +415,7 @@ const CourtRecord: FC = () => {
                     />
                     <MultipleValueList
                       onAddValue={(v) =>
-                        setReorderableItems((prev) => [
+                        setReorderableFiles((prev) => [
                           ...prev,
                           { id: uuid(), name: v },
                         ])
@@ -453,11 +434,11 @@ const CourtRecord: FC = () => {
                       >
                         <Reorder.Group
                           axis="y"
-                          values={reorderableItems}
-                          onReorder={setReorderableItems}
+                          values={reorderableFiles}
+                          onReorder={setReorderableFiles}
                           className={styles.grid}
                         >
-                          {reorderableItems.map((item) => {
+                          {reorderableFiles.map((item) => {
                             return (
                               <Reorder.Item
                                 key={item.id}
@@ -483,7 +464,7 @@ const CourtRecord: FC = () => {
                                     throw new Error('Function not implemented.')
                                   }}
                                   onDelete={(file: TUploadFile) => {
-                                    setReorderableItems((prev) =>
+                                    setReorderableFiles((prev) =>
                                       prev.filter((i) => i.id !== file.id),
                                     )
                                   }}
@@ -500,7 +481,7 @@ const CourtRecord: FC = () => {
                           justifyContent="spaceAround"
                           rowGap={2}
                         >
-                          {reorderableItems.map((item, index) => (
+                          {reorderableFiles.map((item, index) => (
                             <Box key={item.name}>
                               <Tag variant="darkerBlue" outlined disabled>
                                 Þingmerkt nr. {index + 1}
