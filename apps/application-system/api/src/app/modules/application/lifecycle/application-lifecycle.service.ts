@@ -63,8 +63,8 @@ export class ApplicationLifeCycleService {
     // Post-pruning
     this.logger.info(`Starting application post-pruning...`)
     await this.fetchApplicationsToBePostPruned()
-    await this.postPruneApplicationData()
     await this.postPruneApplicationHistory()
+    await this.postPruneApplicationData()
     await this.reportPostPruningResults()
     this.logger.info(`Application post-pruning done.`)
   }
@@ -158,7 +158,7 @@ export class ApplicationLifeCycleService {
           }
         }
 
-        const postPruneAt = addMilliseconds(
+        postPruneAt = addMilliseconds(
           new Date(),
           template?.adminDataConfig?.postPruneDelayOverride ??
             DEFAULT_POST_PRUNE_DELAY,
@@ -293,6 +293,22 @@ export class ApplicationLifeCycleService {
     })
   }
 
+  private async postPruneApplicationHistory() {
+    for (const prune of this.processingApplicationsPostPruning) {
+      try {
+        await this.historyService.postPruneHistoryByApplicationId(
+          prune.application.id,
+        )
+      } catch (error) {
+        prune.postPruned = false
+        this.logger.error(
+          `Application history post-prune error on id ${prune.application.id}`,
+          error,
+        )
+      }
+    }
+  }
+
   private async postPruneApplicationData() {
     for (const prune of this.processingApplicationsPostPruning) {
       try {
@@ -310,22 +326,6 @@ export class ApplicationLifeCycleService {
         prune.postPruned = false
         this.logger.error(
           `Application data post-prune error on id ${prune.application.id}`,
-          error,
-        )
-      }
-    }
-  }
-
-  private async postPruneApplicationHistory() {
-    for (const prune of this.processingApplicationsPostPruning) {
-      try {
-        await this.historyService.postPruneHistoryByApplicationId(
-          prune.application.id,
-        )
-      } catch (error) {
-        prune.postPruned = false
-        this.logger.error(
-          `Application history post-prune error on id ${prune.application.id}`,
           error,
         )
       }

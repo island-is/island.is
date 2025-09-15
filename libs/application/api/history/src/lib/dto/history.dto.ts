@@ -3,7 +3,6 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
 import { FormatMessage } from '@island.is/application/types'
 import { StaticText } from '@island.is/shared/types'
-import isObject from 'lodash/isObject'
 
 export class HistoryResponseDto {
   @ApiProperty()
@@ -24,11 +23,7 @@ export class HistoryResponseDto {
   ) {
     this.date = timeStamp
     if (log) {
-      if (values) {
-        this.log = formatMessage(log, values)
-      } else {
-        this.log = formatMessage(log)
-      }
+      this.log = formatMessage(log, values)
     } else {
       this.log = undefined
     }
