@@ -16,7 +16,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { PaymentFlowFjsChargeConfirmation } from './paymentFlowFjsChargeConfirmation.model'
+import { FjsCharge } from './fjsCharge.model'
 
 @Table({
   tableName: 'payment_flow_charge',
@@ -138,8 +138,8 @@ export class PaymentFlow extends Model<
   @HasMany(() => PaymentFlowCharge, 'paymentFlowId')
   charges!: PaymentFlowCharge[]
 
-  @HasOne(() => PaymentFlowFjsChargeConfirmation, 'paymentFlowId')
-  fjsChargeConfirmation?: PaymentFlowFjsChargeConfirmation
+  @HasOne(() => FjsCharge, 'paymentFlowId')
+  fjsChargeConfirmation?: FjsCharge
 
   @ApiProperty({ type: [String] })
   @Column({

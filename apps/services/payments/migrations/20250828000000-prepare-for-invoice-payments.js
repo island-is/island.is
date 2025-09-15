@@ -1,0 +1,197 @@
+'use strict'
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    return queryInterface.sequelize.transaction(async (t) => {
+      // Rename fjs charge table, no longer just confirmations
+      await queryInterface.renameTable(
+        'payment_flow_fjs_charge_confirmation',
+        'fjs_charge',
+        { transaction: t },
+      )
+
+      // Since payment confirmations are not just cards anymore, we need to rename the table
+      await queryInterface.renameTable(
+        'payment_flow_payment_confirmation',
+        'card_payment_details',
+        { transaction: t },
+      )
+
+      // Rename existing index on payment_flow_id
+      await queryInterface.sequelize.query(
+        `
+        DO $$ BEGIN
+          IF EXISTS (
+            SELECT 1 FROM pg_class c
+            WHERE c.relname = 'payment_flow_fjs_charge_confirmation_payment_flow_id_idx'
+          ) THEN
+            ALTER INDEX payment_flow_fjs_charge_confirmation_payment_flow_id_idx
+            RENAME TO fjs_charge_payment_flow_id_idx;
+          END IF;
+        END $$;
+        `,
+        { transaction: t },
+      )
+
+      // Add status enum column with default
+      await queryInterface.addColumn(
+        'fjs_charge',
+        'status',
+        {
+          type: Sequelize.ENUM(
+            'unpaid',
+            'paid',
+            'cancelled',
+            'recreated',
+            'recreated_paid',
+          ),
+          allowNull: false,
+          defaultValue: 'unpaid',
+        },
+        { transaction: t },
+      )
+
+      // Index for callback lookups by reception_id
+      await queryInterface.addIndex('fjs_charge', ['reception_id'], {
+        name: 'idx_fjs_charge_reception_id',
+        transaction: t,
+      })
+
+      // Mark FJS charges as paid when there is an card payment found for the same payment flow id
+      await queryInterface.sequelize.query(
+        `
+        UPDATE fjs_charge f
+        SET status = 'paid'
+        WHERE f.status = 'unpaid'
+          AND EXISTS (
+            SELECT 1
+            FROM card_payment_details c
+            WHERE c.payment_flow_id = f.payment_flow_id
+          )
+        `,
+        { transaction: t },
+      )
+
+      // Create the payment fulfillment table which will be source of truth of which payments have been made
+      await queryInterface.createTable(
+        'payment_fulfillment',
+        {
+          id: {
+            type: Sequelize.UUID,
+            primaryKey: true,
+            allowNull: false,
+            defaultValue: Sequelize.UUIDV4,
+          },
+          payment_flow_id: {
+            type: Sequelize.UUID,
+            allowNull: false,
+            references: {
+              model: 'payment_flow',
+              key: 'id',
+            },
+            onDelete: 'CASCADE',
+            unique: true, // To prevent double payments
+          },
+          payment_method: {
+            type: Sequelize.ENUM('card', 'invoice'),
+            allowNull: false,
+          },
+          confirmation_ref_id: {
+            type: Sequelize.UUID,
+            allowNull: false,
+          },
+          fjs_charge_id: {
+            type: Sequelize.UUID,
+            allowNull: true,
+            references: {
+              model: 'fjs_charge',
+              key: 'id',
+            },
+            onDelete: 'CASCADE',
+          },
+          created: {
+            type: Sequelize.DATE,
+            allowNull: false,
+            defaultValue: Sequelize.fn('now'),
+          },
+          modified: {
+            type: Sequelize.DATE,
+            allowNull: false,
+            defaultValue: Sequelize.fn('now'),
+          },
+        },
+        {
+          transaction: t,
+          uniqueKeys: {
+            unique_payment_method_confirmation_ref_id: {
+              fields: ['payment_method', 'confirmation_ref_id'],
+            },
+          },
+        },
+      )
+
+      await queryInterface.addIndex(
+        'payment_fulfillment',
+        ['payment_flow_id'],
+        {
+          name: 'idx_payment_fulfillment_flow',
+          transaction: t,
+        },
+      )
+
+      // Create payment fulfillments for existing card payments
+      await queryInterface.sequelize.query(
+        `
+          WITH picked AS (
+            SELECT DISTINCT ON (c.payment_flow_id)
+                  c.id          AS confirmation_id,
+                  c.payment_flow_id,
+                  c.created,
+                  c.modified
+            FROM card_payment_details c
+            ORDER BY c.payment_flow_id, c.created DESC, c.id DESC
+          )
+          INSERT INTO payment_fulfillment
+            (payment_flow_id, payment_method, confirmation_ref_id, created, modified)
+          SELECT
+            p.payment_flow_id,
+            'card',
+            p.confirmation_id,
+            COALESCE(p.created, NOW()),
+            COALESCE(p.modified, NOW())
+          FROM picked p
+          ON CONFLICT (payment_flow_id) DO NOTHING;
+        `,
+        { transaction: t },
+      )
+    })
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    return queryInterface.sequelize.transaction(async (t) => {
+      // Remove the column that was added
+      await queryInterface.removeColumn(
+        'payment_flow_fjs_charge_confirmation',
+        'status',
+        { transaction: t },
+      )
+
+      // Revert the fjs charge table rename
+      await queryInterface.renameTable(
+        'fjs_charge',
+        'payment_flow_fjs_charge_confirmation',
+        { transaction: t },
+      )
+
+      // Revert the card payment details table rename
+      await queryInterface.renameTable(
+        'card_payment_details',
+        'payment_flow_payment_confirmation',
+        { transaction: t },
+      )
+
+      // Drop the payment fulfillment table
+      await queryInterface.dropTable('payment_fulfillment', { transaction: t })
+    })
+  },
+}

@@ -35,7 +35,7 @@ import { GetVerificationStatus } from './dtos/params.dto'
 import { VerificationStatusResponse } from './dtos/verificationStatus.response.dto'
 import { VerifyCardResponse } from './dtos/verifyCard.response.dto'
 import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
-import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
+import { FjsCharge } from '../paymentFlow/models/fjsCharge.model'
 import { VerificationCallbackResponse } from './dtos/verificationCallback.response.dto'
 import { CardPaymentService } from './cardPayment.service'
 import { PaymentTrackingData } from '../../types/cardPayment'
@@ -298,7 +298,7 @@ export class CardPaymentController {
   ): Promise<boolean> {
     const paymentFlowId = chargeCardInput.paymentFlowId
     try {
-      await this.paymentFlowService.createPaymentConfirmation({
+      await this.paymentFlowService.createCardPaymentConfirmation({
         paymentResult,
         paymentFlowId: paymentFlowId,
         totalPrice,
@@ -388,10 +388,9 @@ export class CardPaymentController {
     merchantReferenceData: string,
     persistedPaymentConfirmation: boolean,
     paymentConfirmationId: string,
-  ): Promise<PaymentFlowFjsChargeConfirmation | null> {
+  ): Promise<FjsCharge | null> {
     const paymentFlowId = chargeCardInput.paymentFlowId
-    let createdFjsChargeConfirmation: PaymentFlowFjsChargeConfirmation | null =
-      null
+    let createdFjsChargeConfirmation: FjsCharge | null = null
     try {
       // TODO: look into paymentFlow.existingInvoiceId later when we use the existingInvoiceId
       // then we can reuse an existing charge and pay for it
@@ -407,7 +406,7 @@ export class CardPaymentController {
 
       createdFjsChargeConfirmation = await retry(
         () =>
-          this.paymentFlowService.createPaymentCharge(
+          this.paymentFlowService.createFjsCharge(
             paymentFlow.id,
             fjsChargePayload,
           ),
@@ -421,6 +420,7 @@ export class CardPaymentController {
           },
         },
       )
+
       return createdFjsChargeConfirmation
     } catch (e) {
       this.logger.error(
@@ -451,7 +451,7 @@ export class CardPaymentController {
           // After successful refund, delete the payment confirmation.
           if (persistedPaymentConfirmation) {
             try {
-              await this.paymentFlowService.deletePaymentConfirmation(
+              await this.paymentFlowService.deleteCardPaymentConfirmation(
                 paymentFlowId,
                 paymentConfirmationId,
               )
@@ -552,7 +552,7 @@ export class CardPaymentController {
   private async handleSuccessfulPaymentNotification(
     paymentFlowId: string,
     paymentResult: ChargeResponse,
-    confirmation: PaymentFlowFjsChargeConfirmation | null,
+    confirmation: FjsCharge | null,
     chargeCardInput: ChargeCardInput,
     paymentConfirmationId: string,
   ) {
@@ -592,7 +592,7 @@ export class CardPaymentController {
 
         // After successful refund, delete the confirmation.
         try {
-          await this.paymentFlowService.deletePaymentConfirmation(
+          await this.paymentFlowService.deleteCardPaymentConfirmation(
             paymentFlowId,
             paymentConfirmationId,
           )

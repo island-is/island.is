@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
+import {
   Column,
   CreatedAt,
   DataType,
@@ -10,24 +15,20 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { PaymentFlow } from './paymentFlow.model'
-import {
-  CreationOptional,
-  InferAttributes,
-  InferCreationAttributes,
-} from 'sequelize'
+import { FjsCharge } from './fjsCharge.model'
 
 @Table({
-  tableName: 'payment_flow_fjs_charge_confirmation',
+  tableName: 'payment_fulfillment',
   indexes: [
     {
-      name: 'payment_flow_fjs_charge_confirmation_payment_flow_id_idx',
+      name: 'idx_payment_fulfillment_flow',
       fields: ['payment_flow_id'],
     },
   ],
 })
-export class PaymentFlowFjsChargeConfirmation extends Model<
-  InferAttributes<PaymentFlowFjsChargeConfirmation>,
-  InferCreationAttributes<PaymentFlowFjsChargeConfirmation>
+export class PaymentFulfillment extends Model<
+  InferAttributes<PaymentFulfillment>,
+  InferCreationAttributes<PaymentFulfillment>
 > {
   @ApiProperty()
   @PrimaryKey
@@ -44,26 +45,37 @@ export class PaymentFlowFjsChargeConfirmation extends Model<
     type: DataType.UUID,
     allowNull: false,
     field: 'payment_flow_id',
+    unique: true, // To prevent double payments
   })
   paymentFlowId!: string
 
   @ApiProperty()
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM('card', 'invoice'),
     allowNull: false,
-    field: 'user4',
+    field: 'payment_method',
   })
-  user4!: string
+  paymentMethod!: 'card' | 'invoice'
 
   @ApiProperty()
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     allowNull: false,
-    field: 'reception_id',
+    field: 'confirmation_ref_id',
   })
-  receptionId!: string
+  confirmationRefId!: string
+
+  @ApiProperty()
+  @ForeignKey(() => FjsCharge)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+    field: 'fjs_charge_id',
+  })
+  fjsChargeId?: string
 
   @CreatedAt
+  @ApiProperty()
   @Column({
     type: DataType.DATE,
     allowNull: false,
@@ -73,6 +85,7 @@ export class PaymentFlowFjsChargeConfirmation extends Model<
   created!: CreationOptional<Date>
 
   @UpdatedAt
+  @ApiProperty()
   @Column({
     type: DataType.DATE,
     allowNull: false,
@@ -81,3 +94,8 @@ export class PaymentFlowFjsChargeConfirmation extends Model<
   })
   modified!: CreationOptional<Date>
 }
+
+export type PaymentFulfillmentAttributes = Omit<
+  InferAttributes<PaymentFulfillment>,
+  'created' | 'modified' | 'id'
+>

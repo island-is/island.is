@@ -29,15 +29,19 @@ import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { environment } from '../../environments'
 import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
-import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeConfirmation.model'
-import { FjsErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import { FjsCharge } from './models/fjsCharge.model'
+import {
+  FjsErrorCode,
+  InvoiceErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import {
   generateChargeFJSPayload,
   mapFjsErrorToCode,
 } from '../../utils/fjsCharge'
 import { processCharges } from '../../utils/chargeUtils'
-import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfirmation.model'
+import { CardPaymentDetails } from './models/cardPaymentDetails.model'
 import { ChargeResponse } from '../cardPayment/cardPayment.types'
 import { PaymentTrackingData } from '../../types/cardPayment'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
@@ -46,6 +50,7 @@ import { JwksConfigService } from '../jwks/jwks-config.service'
 import { ChargeItem } from '../../utils/chargeUtils'
 import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
+import { PaymentFulfillment } from './models/paymentFulfillment.model'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -69,10 +74,12 @@ export class PaymentFlowService {
     private readonly paymentFlowChargeModel: typeof PaymentFlowCharge,
     @InjectModel(PaymentFlowEvent)
     private readonly paymentFlowEventModel: typeof PaymentFlowEvent,
-    @InjectModel(PaymentFlowFjsChargeConfirmation)
-    private readonly paymentFlowFjsChargeConfirmationModel: typeof PaymentFlowFjsChargeConfirmation,
-    @InjectModel(PaymentFlowPaymentConfirmation)
-    private readonly paymentFlowConfirmationModel: typeof PaymentFlowPaymentConfirmation,
+    @InjectModel(FjsCharge)
+    private readonly fjsChargeModel: typeof FjsCharge,
+    @InjectModel(CardPaymentDetails)
+    private readonly cardPaymentDetailsModel: typeof CardPaymentDetails,
+    @InjectModel(PaymentFulfillment)
+    private readonly paymentFulfillmentModel: typeof PaymentFulfillment,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
@@ -258,18 +265,19 @@ export class PaymentFlowService {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowNotFound)
     }
 
-    const paymentFlowSuccessEvent = (
-      await this.paymentFlowEventModel.findOne({
+    const paymentFulfillment = (
+      await this.paymentFulfillmentModel.findOne({
         where: {
           paymentFlowId: id,
-          type: 'success',
         },
       })
     )?.toJSON()
 
-    if (paymentFlowSuccessEvent) {
+    if (paymentFulfillment) {
       return false
     }
+
+    // TODO: look for fjs charge (invoice pending?)
 
     return true
   }
@@ -285,7 +293,7 @@ export class PaymentFlowService {
             model: PaymentFlowCharge,
           },
           {
-            model: PaymentFlowFjsChargeConfirmation,
+            model: FjsCharge,
           },
         ],
       })
@@ -299,45 +307,40 @@ export class PaymentFlowService {
   }
 
   async getPaymentFlowStatus(paymentFlow: PaymentFlowAttributes) {
-    const paymentFlowSuccessEvent = (
-      await this.paymentFlowEventModel.findOne({
+    const paymentFulfillment = (
+      await this.paymentFulfillmentModel.findOne({
         where: {
           paymentFlowId: paymentFlow.id,
-          type: 'success',
         },
       })
     )?.toJSON()
 
-    const isAlreadyPaid = !!paymentFlowSuccessEvent
-
-    let paymentStatus: PaymentStatus = isAlreadyPaid
-      ? PaymentStatus.PAID
-      : PaymentStatus.UNPAID
-    let updatedAt = paymentFlowSuccessEvent?.modified ?? paymentFlow.modified
-
-    if (!isAlreadyPaid) {
-      const chargeConfirmation = (
-        await this.paymentFlowFjsChargeConfirmationModel.findOne({
-          where: {
-            paymentFlowId: paymentFlow.id,
-          },
-        })
-      )?.toJSON()
-
-      if (chargeConfirmation) {
-        paymentStatus = PaymentStatus.INVOICE_PENDING
-      }
-
-      if (chargeConfirmation) {
-        updatedAt = chargeConfirmation.created
+    if (paymentFulfillment) {
+      return {
+        paymentStatus: PaymentStatus.PAID,
+        updatedAt: paymentFulfillment.created,
       }
     }
 
-    console.log({
-      paymentStatus,
-    })
+    const existingFjsCharge = (
+      await this.fjsChargeModel.findOne({
+        where: {
+          paymentFlowId: paymentFlow.id,
+        },
+      })
+    )?.toJSON()
 
-    return { paymentStatus, updatedAt }
+    if (existingFjsCharge && existingFjsCharge.status === 'unpaid') {
+      return {
+        paymentStatus: PaymentStatus.INVOICE_PENDING,
+        updatedAt: existingFjsCharge.created,
+      }
+    }
+
+    return {
+      paymentStatus: PaymentStatus.UNPAID,
+      updatedAt: existingFjsCharge?.created ?? paymentFlow.modified,
+    }
   }
 
   async getPaymentFlow(id: string): Promise<GetPaymentFlowDTO | null> {
@@ -486,7 +489,7 @@ export class PaymentFlowService {
     }
   }
 
-  async createPaymentConfirmation({
+  async createCardPaymentConfirmation({
     paymentResult,
     paymentFlowId,
     totalPrice,
@@ -499,8 +502,8 @@ export class PaymentFlowService {
   }) {
     try {
       return await retry(
-        () =>
-          this.paymentFlowConfirmationModel.create({
+        async () => {
+          const confirmation = await this.cardPaymentDetailsModel.create({
             id: paymentTrackingData.correlationId,
             acquirerReferenceNumber: paymentResult.acquirerReferenceNumber,
             authorizationCode: paymentResult.authorizationCode,
@@ -510,7 +513,16 @@ export class PaymentFlowService {
             cardUsage: paymentResult.cardInformation.cardUsage,
             totalPrice,
             merchantReferenceData: paymentTrackingData.merchantReferenceData,
-          }),
+          })
+
+          await this.paymentFulfillmentModel.create({
+            paymentFlowId,
+            paymentMethod: 'card',
+            confirmationRefId: confirmation.id,
+          })
+
+          return confirmation
+        },
         {
           maxRetries: 3,
           retryDelayMs: 1000,
@@ -538,21 +550,98 @@ export class PaymentFlowService {
     }
   }
 
-  async createPaymentCharge(paymentFlowId: string, chargePayload: Charge) {
+  async createInvoicePaymentConfirmation(
+    paymentFlowId: string,
+    receptionId: string,
+  ) {
     try {
-      const chargeConfirmation =
-        await this.chargeFjsV2ClientService.createCharge(chargePayload)
+      return await retry(
+        async () => {
+          const charge = await this.fjsChargeModel.findOne({
+            where: {
+              receptionId,
+              status: 'unpaid',
+            },
+          })
 
-      const newChargeConfirmation =
-        await this.paymentFlowFjsChargeConfirmationModel.create({
-          paymentFlowId,
-          receptionId: chargeConfirmation.receptionID,
-          user4: chargeConfirmation.user4,
-        })
+          if (!charge) {
+            throw new BadRequestException(
+              PaymentServiceCode.PaymentFlowNotFound,
+            )
+          }
+
+          await this.paymentFulfillmentModel.create({
+            paymentFlowId,
+            paymentMethod: 'invoice',
+            confirmationRefId: charge.id,
+            fjsChargeId: charge.id,
+          })
+
+          const [affectedCount] = await this.fjsChargeModel.update(
+            {
+              status: 'paid',
+            },
+            {
+              where: { id: charge.id },
+            },
+          )
+
+          if (affectedCount === 0) {
+            this.logger.error(
+              `[${paymentFlowId}] Failed to update FJS charge status to paid`,
+              {
+                chargeId: charge.id,
+              },
+            )
+            // TODO: Should we throw an error here?
+          }
+
+          this.logger.info(
+            `[${paymentFlowId}] Successfully updated FJS charge status to paid`,
+            {
+              chargeId: charge.id,
+            },
+          )
+        },
+        {
+          maxRetries: 3,
+          retryDelayMs: 1000,
+          shouldRetryOnError: (error) => {
+            if (error.message === PaymentServiceCode.PaymentFlowNotFound) {
+              return false
+            }
+
+            return true
+          },
+          logger: this.logger,
+          logPrefix: 'Failed to persist invoice payment confirmation',
+        },
+      )
+    } catch (e) {
+      this.logger.error(
+        `[${paymentFlowId}] Failed to create invoice payment confirmation`,
+        { error: e },
+      )
+      throw new BadRequestException(InvoiceErrorCode.FailedToCreateInvoice)
+    }
+  }
+
+  async createFjsCharge(paymentFlowId: string, chargePayload: Charge) {
+    try {
+      const charge = await this.chargeFjsV2ClientService.createCharge(
+        chargePayload,
+      )
+
+      const newCharge = await this.fjsChargeModel.create({
+        paymentFlowId,
+        receptionId: charge.receptionID,
+        user4: charge.user4,
+        status: chargePayload.payInfo ? 'paid' : 'unpaid',
+      })
 
       await this.paymentFlowModel.update(
         {
-          existingInvoiceId: chargeConfirmation.receptionID,
+          existingInvoiceId: charge.receptionID,
         },
         {
           where: {
@@ -561,7 +650,21 @@ export class PaymentFlowService {
         },
       )
 
-      return newChargeConfirmation
+      if (chargePayload.payInfo) {
+        // If it's paid
+        await this.paymentFulfillmentModel.update(
+          {
+            fjsChargeId: newCharge.id,
+          },
+          {
+            where: {
+              paymentFlowId,
+            },
+          },
+        )
+      }
+
+      return newCharge
     } catch (e) {
       this.logger.error(`Failed to create payment charge (${paymentFlowId})`, e)
 
@@ -579,12 +682,11 @@ export class PaymentFlowService {
       )
 
       // Delete local confirmation
-      const deletedConfirmations =
-        await this.paymentFlowFjsChargeConfirmationModel.destroy({
-          where: {
-            paymentFlowId,
-          },
-        })
+      const deletedConfirmations = await this.fjsChargeModel.destroy({
+        where: {
+          paymentFlowId,
+        },
+      })
       if (deletedConfirmations > 0) {
         this.logger.info(
           `[${paymentFlowId}] Deleted PaymentFlowFjsChargeConfirmation`,
@@ -659,7 +761,7 @@ export class PaymentFlowService {
     return paymentFlowDTO
   }
 
-  async deletePaymentConfirmation(
+  async deleteCardPaymentConfirmation(
     paymentFlowId: string,
     correlationId: string,
   ): Promise<void> {
@@ -667,7 +769,7 @@ export class PaymentFlowService {
       `Attempting to delete payment confirmation for flow ${paymentFlowId} with correlation ID ${correlationId}`,
     )
     try {
-      const deletedCount = await this.paymentFlowConfirmationModel.destroy({
+      const deletedCount = await this.cardPaymentDetailsModel.destroy({
         where: {
           id: correlationId,
           paymentFlowId: paymentFlowId,

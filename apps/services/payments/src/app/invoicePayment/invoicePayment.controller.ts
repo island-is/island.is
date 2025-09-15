@@ -2,10 +2,15 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Inject,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   FeatureFlag,
@@ -19,20 +24,28 @@ import {
 } from '@island.is/shared/constants'
 import { CreateInvoiceResponse } from './dtos/createInvoice.response'
 import { CreateInvoiceInput } from './dtos/createInvoice.input'
+import { CallbackInput } from './dtos/callback.input'
+import { PaidStatus } from './dtos/paidStatus.enum'
 import { PaymentMethod } from '../../types'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import { environment } from '../../environments'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
+import { InvoicePaymentService } from './invoicePayment.service'
 
 @UseGuards(FeatureFlagGuard)
-@FeatureFlag(Features.isIslandisPaymentEnabled)
+@FeatureFlag(Features.isIslandisInvoicePaymentEnabled)
 @ApiTags('payments')
 @Controller({
   path: 'payments/invoice',
   version: ['1'],
 })
 export class InvoicePaymentController {
-  constructor(private readonly paymentFlowService: PaymentFlowService) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+    private readonly paymentFlowService: PaymentFlowService,
+    private readonly invoicePaymentService: InvoicePaymentService,
+  ) {}
 
   @Post('/create')
   @ApiOkResponse({
@@ -62,14 +75,18 @@ export class InvoicePaymentController {
         throw new BadRequestException(InvoiceErrorCode.InvoiceAlreadyExists)
       }
 
-      const fjsConfirmation = await this.paymentFlowService.createPaymentCharge(
+      const callbackUrl = await this.invoicePaymentService.createCallbackUrl(
+        paymentFlow.id,
+      )
+
+      const fjsConfirmation = await this.paymentFlowService.createFjsCharge(
         paymentFlow.id,
         generateChargeFJSPayload({
           paymentFlow,
           charges: catalogItems,
           totalPrice,
           systemId: environment.chargeFjs.systemId,
-          returnUrl: '', // TODO
+          returnUrl: callbackUrl,
         }),
       )
 
@@ -105,6 +122,69 @@ export class InvoicePaymentController {
           InvoiceErrorCode.UnknownInvoiceError,
         ),
       )
+    }
+  }
+
+  @Post('/callback')
+  async callback(
+    @Body() callbackInput: CallbackInput,
+    @Query('token') token: string,
+  ) {
+    if (
+      callbackInput.status !== PaidStatus.paid &&
+      callbackInput.status !== PaidStatus.recreatedAndPaid
+    ) {
+      this.logger.info(`Ignoring callback because status is not paid`, {
+        status: callbackInput.status,
+      })
+      return
+    }
+
+    const { paymentFlowId } = await this.invoicePaymentService.validateCallback(
+      callbackInput,
+      token,
+    )
+
+    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
+      paymentFlowId,
+    )
+
+    const { paymentStatus } =
+      await this.paymentFlowService.getPaymentFlowStatus(paymentFlow)
+
+    if (paymentStatus !== 'invoice_pending') {
+      throw new BadRequestException(
+        'Payment flow is not in invoice_pending status',
+      )
+    }
+
+    await this.paymentFlowService.createInvoicePaymentConfirmation(
+      paymentFlowId,
+      callbackInput.receptionID,
+    )
+
+    // TODO extract this to a method
+    try {
+      await this.paymentFlowService.logPaymentFlowUpdate(
+        {
+          paymentFlowId,
+          type: 'success',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.INVOICE,
+          reason: 'payment_completed',
+          message: 'Invoice payment completed',
+          metadata: {
+            payment: callbackInput,
+          },
+        },
+        {
+          useRetry: true,
+          throwOnError: true,
+        },
+      )
+    } catch (e) {
+      await this.paymentFlowService.deletePaymentCharge(paymentFlowId)
+      // Refund the payment by deleting the FJS charge
     }
   }
 }
