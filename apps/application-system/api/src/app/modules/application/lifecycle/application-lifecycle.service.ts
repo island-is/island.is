@@ -133,7 +133,6 @@ export class ApplicationLifeCycleService {
       try {
         let prunedExternalData: RecordObject = {}
         let prunedAnswers: RecordObject = {}
-        let postPruneAt: Date | undefined
 
         // Check if template has configured admin data to keep fields in answers/externalData after pruning
         // Note: These fields will then be completely pruned in post-prune
@@ -158,7 +157,7 @@ export class ApplicationLifeCycleService {
           }
         }
 
-        postPruneAt = addMilliseconds(
+        const postPruneAt = addMilliseconds(
           new Date(),
           template?.adminDataConfig?.postPruneDelayOverride ??
             DEFAULT_POST_PRUNE_DELAY,
