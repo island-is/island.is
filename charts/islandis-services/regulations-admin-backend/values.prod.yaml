@@ -19,6 +19,8 @@ global:
 name: 'regulations-admin-backend'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/services/regulations-admin-backend'
+  AUDIT_SERVICE_NAME: 'regulations-admin-backend'
   CODE_OWNER: 'hugsmidjan'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'regulations_admin_backend'

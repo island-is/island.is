@@ -20,6 +20,8 @@ name: 'services-auth-ids-api'
 enabled: true
 env:
   ALSO_USE_FAKE_USER_API: 'true'
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/auth-api'
+  AUDIT_SERVICE_NAME: 'services-auth-api'
   CODE_OWNER: 'aranja'
   COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
   COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'

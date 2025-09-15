@@ -6,9 +6,8 @@ import {
 } from '@island.is/nest/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 
-import { environment } from '../environments'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { DraftRegulationModule } from './modules/draft_regulation'
@@ -18,8 +17,8 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
   imports: [
-    AuthModule.register(environment.auth),
-    AuditModule.forRoot(environment.audit),
+    AuthModule,
+    AuditModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
@@ -33,6 +32,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
         XRoadConfig,
         NationalRegistryV3ClientConfig,
         IdsClientConfig,
+        AuditConfig,
       ],
     }),
   ],

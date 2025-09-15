@@ -71,6 +71,7 @@ import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
+import { AuditConfig } from '@island.is/nest/audit'
 
 @Module({
   imports: [
@@ -141,6 +142,7 @@ import { ExemptionForTransportationClientConfig } from '@island.is/clients/trans
         VmstUnemploymentClientConfig,
         HmsRentalAgreementClientConfig,
         ExemptionForTransportationClientConfig,
+        AuditConfig,
       ],
     }),
   ],

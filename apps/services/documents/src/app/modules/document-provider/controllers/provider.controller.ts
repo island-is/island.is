@@ -24,14 +24,13 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
-import { environment } from '../../../../environments'
 import { DocumentProviderService } from '../document-provider.service'
 import { CreateProviderDto } from '../dto/createProvider.dto'
 import { UpdateProviderDto } from '../dto/updateProvider.dto'
 import { Provider } from '../models/provider.model'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
-const namespace = `${environment.audit.defaultNamespace}/providers`
+const namespace = '@island.is/documents/providers'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('providers')

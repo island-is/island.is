@@ -47,6 +47,8 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         ]),
       },
       PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/payments',
+      AUDIT_SERVICE_NAME: 'services-payments',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:

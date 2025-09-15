@@ -1,8 +1,5 @@
 const devConfig = {
   production: false,
-  audit: {
-    defaultNamespace: '@island.is/auth-public-api',
-  },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
@@ -12,11 +9,6 @@ const devConfig = {
 
 const prodConfig = {
   production: true,
-  audit: {
-    defaultNamespace: '@island.is/auth-public-api',
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'services-auth-public-api',
-  },
   auth: {
     audience: '@island.is',
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,

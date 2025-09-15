@@ -1,9 +1,6 @@
 const devConfig = {
   production: false,
   port: 3366,
-  audit: {
-    defaultNamespace: '@island.is/user-profile',
-  },
   auth: {
     issuer:
       process.env.IDENTITY_SERVER_ISSUER_URL ??
@@ -15,11 +12,6 @@ const devConfig = {
 const prodConfig = {
   production: true,
   port: 3333,
-  audit: {
-    defaultNamespace: '@island.is/user-profile',
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'services-user-profile',
-  },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
     audience: ['@island.is', '@admin.island.is'],

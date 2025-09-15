@@ -10,9 +10,8 @@ import {
 import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { LoggingModule } from '@island.is/logging'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 
-import { environment } from '../../../../environments'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { ApplicationChargeModule } from '../charge/application-charge.module'
 import { ApplicationLifeCycleService } from './application-lifecycle.service'
@@ -33,7 +32,7 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
     ApplicationChargeModule,
     ApplicationFilesModule,
     UserNotificationEagerClientModule,
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -41,6 +40,7 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
         signingModuleConfig,
         ApplicationFilesConfig,
         FileStorageConfig,
+        AuditConfig,
         PaymentsApiClientConfig,
         FeatureFlagConfig,
       ],

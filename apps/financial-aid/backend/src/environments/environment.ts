@@ -30,11 +30,6 @@ const prodConfig = {
   oskBaseUrl: process.env.OSK_BASE_URL,
   applicationSystemBaseUrl: process.env.APPLICATION_SYSTEM_BASE_URL,
   veitaBaseUrl: process.env.VEITA_BASE_URL,
-  audit: {
-    defaultNamespace: '@samband.is/financial-aid',
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'financial-aid-backend',
-  },
   navEncryptionKey: process.env.NAV_ENCRYPTION_KEY,
   municipalityAccessApiEncryptionKey:
     process.env.MUNICIPALITY_ACCESS_API_ENCRYPTION_KEY,
@@ -64,9 +59,6 @@ const devConfig = {
     process.env.APPLICATION_SYSTEM_BASE_URL ??
     'http://localhost:4242/umsoknir/fjarhagsadstod',
   veitaBaseUrl: process.env.VEITA_BASE_URL ?? 'http://localhost:4200',
-  audit: {
-    defaultNamespace: '@samband.is/financial-backend',
-  },
   navEncryptionKey: process.env.NAV_ENCRYPTION_KEY,
   municipalityAccessApiEncryptionKey:
     process.env.MUNICIPALITY_ACCESS_API_ENCRYPTION_KEY,

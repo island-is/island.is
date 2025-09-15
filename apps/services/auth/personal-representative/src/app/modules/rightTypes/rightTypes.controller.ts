@@ -27,11 +27,10 @@ import {
 } from '@nestjs/common'
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
-import { environment } from '../../../environments'
 import { AuditService, Audit } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
 
-const namespace = `${environment.audit.defaultNamespace}/right-types`
+const namespace = '@island.is/personal-representative/right-types'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.adminPersonalRepresentative)

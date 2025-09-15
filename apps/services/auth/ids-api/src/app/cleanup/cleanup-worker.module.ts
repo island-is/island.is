@@ -23,15 +23,16 @@ import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 import { AuthModule } from '@island.is/auth-nest-tools'
+
 import { environment } from '../../environments'
 
 @Module({
   imports: [
     LoggingModule,
     IdentityConfirmationModule,
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
@@ -51,6 +52,7 @@ import { environment } from '../../environments'
         SyslumennClientConfig,
         NationalRegistryClientConfig,
         DelegationConfig,
+        AuditConfig,
       ],
       envFilePath: ['.env', '.env.secret'],
     }),

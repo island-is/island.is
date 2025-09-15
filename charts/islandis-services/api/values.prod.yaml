@@ -30,6 +30,8 @@ env:
   AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.island.is'
   APOLLO_CACHE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
   APPLICATION_SYSTEM_API_URL: 'http://application-system-api.application-system.svc.cluster.local'
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/api'
+  AUDIT_SERVICE_NAME: 'api'
   AUTH_ADMIN_API_PATH: 'https://innskra.island.is/backend'
   AUTH_ADMIN_API_PATHS: '{"development":"https://identity-server.dev01.devland.is/backend","staging":"https://identity-server.staging01.devland.is/backend","production":"https://innskra.island.is/backend"}'
   AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'

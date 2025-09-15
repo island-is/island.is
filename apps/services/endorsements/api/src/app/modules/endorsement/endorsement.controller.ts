@@ -30,7 +30,6 @@ import {
   ApiExtraModels,
   ApiResponse,
 } from '@nestjs/swagger'
-import { environment } from '../../../environments'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
 import { EndorsementDto } from './dto/endorsement.dto'
@@ -44,7 +43,7 @@ import { EndorsementInterceptor } from './interceptors/endorsement.interceptor'
 import { PaginatedEndorsementInterceptor } from './interceptors/paginatedEndorsement.interceptor'
 import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
 
-const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
+const auditNamespace = '@island.is/services-endorsements-api/endorsement'
 @Audit({
   namespace: auditNamespace,
 })
