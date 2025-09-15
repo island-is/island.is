@@ -1,6 +1,6 @@
 import { isDefined } from '@island.is/shared/utils'
 import XLSX from 'xlsx'
-import csv from 'csv-parse'
+import * as csv from 'csv-parse'
 
 export interface MileageRecord {
   permno: string
