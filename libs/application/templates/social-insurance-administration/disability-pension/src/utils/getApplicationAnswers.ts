@@ -62,7 +62,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'disabilityPeriod.month',
   )
 
-
   const disabilityRenumerationDateYear = getValueViaPath<string>(
     answers,
     'disabilityPeriod.year',
@@ -137,7 +136,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'backgroundInfoEmploymentCapability.capability',
   )
-
 
   const employmentImportance = getValueViaPath<string>(
     answers,

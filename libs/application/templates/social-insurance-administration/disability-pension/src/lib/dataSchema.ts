@@ -54,7 +54,7 @@ export const dataSchema = z.object({
   disabilityAppliedBefore: z.enum([YES, NO]),
   disabilityPeriod: z.object({
     year: z.coerce.number().int().min(1000).optional(),
-    month: z.coerce.number().int().min(1).max(12).optional()
+    month: z.coerce.number().int().min(1).max(12).optional(),
   }),
   livedAbroad: livedAbroadSchema.refine(
     ({ list, hasLivedAbroad }) => {
@@ -110,9 +110,10 @@ export const dataSchema = z.object({
       },
     ),
   backgroundInfoMaritalStatus: z.object({
-    status: z.coerce.number().int()
+    status: z.coerce.number().int(),
   }),
-  backgroundInfoResidence: z.object({
+  backgroundInfoResidence: z
+    .object({
       status: z.coerce.number().int(),
       other: z.string().optional(),
     })
@@ -132,7 +133,7 @@ export const dataSchema = z.object({
     count: z.string(),
   }),
   backgroundInfoIcelandicCapability: z.object({
-    capability: z.coerce.number().int()
+    capability: z.coerce.number().int(),
   }),
   backgroundInfoLanguage: z
     .object({
@@ -210,7 +211,7 @@ export const dataSchema = z.object({
     ),
   backgroundInfoEmploymentCapability: z
     .object({
-      capability: z.coerce.number().int().min(0).max(100)
+      capability: z.coerce.number().int().min(0).max(100),
     })
     .refine(
       ({ capability }) => {
@@ -225,7 +226,7 @@ export const dataSchema = z.object({
       },
     ),
   backgroundInfoEmploymentImportance: z.object({
-    importance: z.coerce.number().int().min(0).max(4)
+    importance: z.coerce.number().int().min(0).max(4),
   }),
   backgroundInfoRehabilitationOrTherapy: z
     .object({

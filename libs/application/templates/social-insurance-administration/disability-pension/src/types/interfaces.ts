@@ -10,7 +10,6 @@ export interface Country {
   abroadNationalId: string
 }
 
-
 export interface PreviousEmployment {
   hasEmployment: YesOrNo
   when: string

@@ -157,14 +157,9 @@ export class SocialInsuranceAdministrationClientService {
 
   sendDisabilityPensionApplication(
     user: User,
-    input: DisabilityPensionDto
+    input: DisabilityPensionDto,
   ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
-    return this.sendApplication(
-      user,
-      input,
-      'disabilityPension',
-      'lightweight'
-    )
+    return this.sendApplication(user, input, 'disabilityPension', 'lightweight')
   }
 
   sendApplication(
