@@ -106,21 +106,21 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
   phone: {
     component: 'phone',
     required: true,
-    label: m.landlordAndTenantDetails.phoneInputLabel,
+    label: m.misc.phoneNumber,
     enableCountrySelector: true,
     width: 'half',
   },
   email: {
     component: 'input',
     required: true,
-    label: m.landlordAndTenantDetails.emailInputLabel,
+    label: m.misc.email,
     type: 'email',
     width: 'half',
   },
   address: {
     component: 'input',
     required: true,
-    label: m.landlordAndTenantDetails.addressInputLabel,
+    label: m.misc.address,
     maxLength: 100,
   },
 }
@@ -134,16 +134,24 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
   phone: {
     component: 'phone',
     required: true,
-    label: m.landlordAndTenantDetails.phoneInputLabel,
+    label: m.misc.phoneNumber,
     enableCountrySelector: true,
     width: 'half',
   },
   email: {
     component: 'input',
     required: true,
-    label: m.landlordAndTenantDetails.emailInputLabel,
+    label: m.misc.email,
     type: 'email',
     width: 'half',
+  },
+  isRepresentative: {
+    component: 'checkbox',
+    label: m.landlordAndTenantDetails.representativeLabel,
+    width: 'half',
+    options: [
+      { label: m.landlordAndTenantDetails.representativeLabel, value: '✔️' },
+    ],
   },
 }
 
@@ -153,12 +161,27 @@ export const applicantTableConfig = {
     nationalId: (value: string) => value && formatNationalId(value),
   },
   header: [
-    m.landlordAndTenantDetails.nameInputLabel,
-    m.landlordAndTenantDetails.phoneInputLabel,
-    m.landlordAndTenantDetails.nationalIdHeaderLabel,
-    m.landlordAndTenantDetails.emailInputLabel,
+    m.misc.fullName,
+    m.misc.phoneNumber,
+    m.misc.nationalId,
+    m.misc.email,
   ],
   rows: ['name', 'phone', 'nationalId', 'email'],
+}
+
+export const landlordTableConfig = {
+  format: {
+    phone: (value: string) => value && formatPhoneNumber(value),
+    nationalId: (value: string) => value && formatNationalId(value),
+  },
+  header: [
+    m.misc.fullName,
+    m.misc.phoneNumber,
+    m.misc.nationalId,
+    m.misc.email,
+    m.landlordAndTenantDetails.representativeLabel,
+  ],
+  rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
 }
 
 export const toISK = (v: unknown): number => {

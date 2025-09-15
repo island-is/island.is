@@ -168,65 +168,67 @@ const Lists = () => {
           )}
           <Divider />
           <Box marginTop={9} />
-          <GridRow marginBottom={5}>
-            <GridColumn span={'12/12'}>
-              <FindSignature collectionId={collection.id} />
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                marginTop={[2, 2, 2, 0]}
-              >
-                <Filter
-                  labelClear=""
-                  labelClose=""
-                  labelResult=""
-                  labelOpen={formatMessage(m.filterCandidates)}
-                  labelClearAll={formatMessage(m.clearAllFilters)}
-                  resultCount={lists.length}
-                  variant="popover"
-                  onFilterClear={() => {
-                    setFilters({
-                      area: [],
-                      candidate: [],
-                      input: '',
-                    })
-                  }}
+          {lists?.length > 0 && (
+            <GridRow marginBottom={5}>
+              <GridColumn span={'12/12'}>
+                <FindSignature collectionId={collection.id} />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  marginTop={[2, 2, 2, 0]}
                 >
-                  <FilterMultiChoice
-                    labelClear={formatMessage(m.clearFilter)}
-                    categories={[
-                      {
-                        id: 'area',
-                        label: formatMessage(m.countryArea),
-                        selected: filters.area,
-                        filters: countryAreas,
-                      },
-                      {
-                        id: 'candidate',
-                        label: formatMessage(m.candidate),
-                        selected: filters.candidate,
-                        filters: candidates,
-                      },
-                    ]}
-                    onChange={(event) =>
+                  <Filter
+                    labelClear=""
+                    labelClose=""
+                    labelResult=""
+                    labelOpen={formatMessage(m.filterCandidates)}
+                    labelClearAll={formatMessage(m.clearAllFilters)}
+                    resultCount={lists.length}
+                    variant="popover"
+                    onFilterClear={() => {
                       setFilters({
-                        ...filters,
-                        [event.categoryId]: event.selected,
+                        area: [],
+                        candidate: [],
+                        input: '',
                       })
-                    }
-                    onClear={(categoryId) =>
-                      setFilters({
-                        ...filters,
-                        [categoryId]: [],
-                      })
-                    }
-                  />
-                </Filter>
-              </Box>
-            </GridColumn>
-          </GridRow>
+                    }}
+                  >
+                    <FilterMultiChoice
+                      labelClear={formatMessage(m.clearFilter)}
+                      categories={[
+                        {
+                          id: 'area',
+                          label: formatMessage(m.countryArea),
+                          selected: filters.area,
+                          filters: countryAreas,
+                        },
+                        {
+                          id: 'candidate',
+                          label: formatMessage(m.candidate),
+                          selected: filters.candidate,
+                          filters: candidates,
+                        },
+                      ]}
+                      onChange={(event) =>
+                        setFilters({
+                          ...filters,
+                          [event.categoryId]: event.selected,
+                        })
+                      }
+                      onClear={(categoryId) =>
+                        setFilters({
+                          ...filters,
+                          [categoryId]: [],
+                        })
+                      }
+                    />
+                  </Filter>
+                </Box>
+              </GridColumn>
+            </GridRow>
+          )}
           {lists?.length > 0 ? (
             <Box>
               <Box marginBottom={2} display="flex" justifyContent="flexEnd">
