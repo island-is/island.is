@@ -41,20 +41,10 @@ export const rentalAmount = defineMessages({
     defaultMessage: 'Leiguverð fylgir vísitölu neysluverðs til verðtryggingar',
     description: 'Rental amount price index checkbox label',
   },
-  indexOptionsLabel: {
-    id: 'ra.application:rentalAmount.indexOptionsLabel',
-    defaultMessage: 'Vísitala',
-    description: 'Rental amount index options label',
-  },
   indexDateLabel: {
     id: 'ra.application:rentalAmount.indexDateLabel',
     defaultMessage: 'Viðmið',
     description: 'Rental amount index type date label',
-  },
-  indexNewestDateText: {
-    id: 'ra.application:rentalAmount.indexNewestDateText',
-    defaultMessage: ' (Nýjasta útgáfa)',
-    description: 'Rental amount index type date newest rate text',
   },
   indexRateLabel: {
     id: 'ra.application:rentalAmount.indexRateLabel',
@@ -107,7 +97,7 @@ export const rentalAmount = defineMessages({
 
   // Payment method
   paymentMethodTitle: {
-    id: 'ra.application:rentalAmount.peymentMethodTitle',
+    id: 'ra.application:rentalAmount.paymentMethodTitle',
     defaultMessage: 'Greiðsla',
     description: 'Rental amount payment method title',
   },
@@ -148,11 +138,6 @@ export const rentalAmount = defineMessages({
   },
 
   // Payment insurance
-  securityDepositTitle: {
-    id: 'ra.application:rentalAmount.securityDepositTitle',
-    defaultMessage: 'Trygging',
-    description: 'Rental amount payment insurance title',
-  },
   securityDepositRequiredLabel: {
     id: 'ra.application:rentalAmount.securityDepositRequiredLabel',
     defaultMessage: 'Tryggingar er krafist við upphaf leigutíma',
