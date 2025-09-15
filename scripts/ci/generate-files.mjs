@@ -185,6 +185,9 @@ async function main() {
   } else {
     console.log('Running codegen...')
     const skipCache = process.env['SKIP_CACHE'] === 'true'
+    if (skipCache) {
+      console.log('Skipping cache for codegen...')
+    }
     execSync(`yarn codegen ${skipCache ? '--skip-cache' : ''} >> codegen.log`, { stdio: 'inherit' })
   }
 
