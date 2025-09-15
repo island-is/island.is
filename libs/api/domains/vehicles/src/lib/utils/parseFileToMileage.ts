@@ -1,5 +1,6 @@
 import { isDefined } from '@island.is/shared/utils'
 import XLSX from 'xlsx'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let parseCsv: any
 
 export interface MileageRecord {
@@ -122,7 +123,7 @@ const parseXlsxFromBuffer = async (
   }
 }
 
-async function getParse() {
+const getParse = async () => {
   if (!parseCsv) {
     parseCsv = (await import('csv-parse')).parse
   }
