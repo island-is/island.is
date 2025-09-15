@@ -1401,13 +1401,26 @@ export class InternalCaseService {
     theCase: Case,
     defendantNationalId: string,
   ): Promise<Case> {
-    const subpoena = theCase.defendants?.[0].subpoenas?.[0]
+    // TODO: Handle multiple defendants
+    //       Here we should use the defendant with the given national id
+    const defendant = theCase.defendants?.[0]
+
+    if (!defendant) {
+      // This should not happen as we always search for cases with a defendant national id
+      return theCase
+    }
+
+    const subpoena = defendant?.subpoenas?.[0]
 
     if (!subpoena) {
       return theCase
     }
 
-    const latestSubpoena = await this.subpoenaService.getSubpoena(subpoena)
+    const latestSubpoena = await this.subpoenaService.getSubpoena(
+      theCase,
+      defendant,
+      subpoena,
+    )
 
     if (latestSubpoena === subpoena) {
       // The subpoena was up to date

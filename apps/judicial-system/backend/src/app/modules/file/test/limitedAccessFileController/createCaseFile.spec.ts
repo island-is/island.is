@@ -101,7 +101,6 @@ describe('limitedAccessFileController - Create case file', () => {
         mockCreate.mockResolvedValueOnce(caseFile)
 
         then = await givenWhenThen(caseId, createCaseFile, theCase)
-        console.log(then)
       })
 
       it('should create a case file', () => {

@@ -19,7 +19,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -2238,16 +2241,30 @@ export class CaseService {
           await Promise.all(
             theCase.defendants
               .filter((defendant) => !defendant.isAlternativeService)
-              .map((defendant) =>
-                this.subpoenaService.createSubpoena(
+              .map(async (defendant) => {
+                const subpoena = await this.subpoenaService.createSubpoena(
                   defendant.id,
                   theCase.id,
                   transaction,
                   updatedArraignmentDate?.date,
                   updatedArraignmentDate?.location,
                   defendant.subpoenaType,
-                ),
-              ),
+                )
+
+                const name = `Fyrirkall ${defendant.name} ${formatDate(
+                  subpoena.created,
+                )}`
+
+                return this.courtDocumentService.create(
+                  theCase.id,
+                  {
+                    documentType: CourtDocumentType.GENERATED_DOCUMENT,
+                    name,
+                    generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
+                  },
+                  transaction,
+                )
+              }),
           )
         }
 
