@@ -5,14 +5,15 @@ import {
   buildRadioField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { yesOrNoOptions } from '../../../../utils'
 import { SectionRouteEnum } from '../../../../types'
 import { FormValue } from '@island.is/application/types'
+import * as m from '../../../../lib/messages'
+
 
 export const paidWorkSubSection = buildMultiField({
   id: SectionRouteEnum.PAID_WORK,
-  title: disabilityPensionFormMessage.employmentParticipation.inPaidWorkTitle,
+  title: m.employmentParticipation.inPaidWorkTitle,
   space: 'containerGutter',
   children: [
     buildRadioField({
@@ -25,7 +26,7 @@ export const paidWorkSubSection = buildMultiField({
     buildRadioField({
       id: `${SectionRouteEnum.PAID_WORK}.continuedWork`,
       title:
-        disabilityPensionFormMessage.employmentParticipation
+        m.employmentParticipation
           .continuedWorkQuestion,
       width: 'half',
       backgroundColor: 'blue',

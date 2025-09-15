@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const disabilityCertificateMessages = defineMessages({
+export const disabilityCertificate = defineMessages({
   tabTitle: {
     id: 'dp.application:disabilityCertificate.tabTitle',
     defaultMessage: 'Grunnvottorð',

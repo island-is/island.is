@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const employmentParticipationMessages = defineMessages({
+export const employmentParticipation = defineMessages({
   title: {
     id: 'dp.application:employmentParticipation.title',
     defaultMessage: 'Atvinnuþátttaka',

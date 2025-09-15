@@ -3,25 +3,25 @@ import {
   buildSelectField,
   buildTitleField,
 } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { getYears } from '../../../../utils/dates'
+import * as m from '../../../../lib/messages'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const disabilityPeriodFields = buildMultiField({
   id: SectionRouteEnum.DISABILITY_PERIOD,
-  title: disabilityPensionFormMessage.disabilityPeriod.title,
-  description: disabilityPensionFormMessage.disabilityPeriod.description,
+  title: m.disabilityPeriod.title,
+  description: m.disabilityPeriod.description,
   children: [
     buildTitleField({
-      title: disabilityPensionFormMessage.disabilityPeriod.chooseDate,
+      title: m.disabilityPeriod.chooseDate,
       titleVariant: 'h5',
     }),
     buildSelectField({
       id: `${SectionRouteEnum.DISABILITY_PERIOD}.year`,
-      title: disabilityPensionFormMessage.shared.year,
+      title: m.shared.year,
       width: 'half',
-      placeholder: disabilityPensionFormMessage.shared.chooseYear,
+      placeholder: m.shared.chooseYear,
       options: () => {
         const years = getYears(2)
         return years.map((year) => ({
@@ -32,9 +32,9 @@ export const disabilityPeriodFields = buildMultiField({
     }),
     buildSelectField({
       id: `${SectionRouteEnum.DISABILITY_PERIOD}.month`,
-      title: disabilityPensionFormMessage.shared.month,
+      title: m.shared.month,
       width: 'half',
-      placeholder: disabilityPensionFormMessage.shared.chooseMonth,
+      placeholder: m.shared.chooseMonth,
       options: () => {
         const months = MONTHS
         return months.map((month, i) => ({

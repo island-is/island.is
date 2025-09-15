@@ -1,6 +1,6 @@
 import { defineMessages } from "react-intl";
 
-export const sharedMessages = defineMessages({
+export const shared = defineMessages({
   formTitle: {
     id: 'dp.application:title',
     defaultMessage: 'Umsókn',

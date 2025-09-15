@@ -1,26 +1,26 @@
 import { ExternalData } from '@island.is/application/types'
 import { getApplicationExternalData } from './getApplicationAnswers'
 import { NotEligibleReasonCodes } from '../types/constants'
-import { disabilityPensionFormMessage } from '../lib/messages'
+import * as m from '../lib/messages'
 
 export const notEligibleText = (externalData: ExternalData) => {
   const { isEligible } = getApplicationExternalData(externalData)
 
   switch (isEligible?.reasonCode) {
     case NotEligibleReasonCodes.APPLICANT_AGE_OUT_OF_RANGE:
-      return disabilityPensionFormMessage.notEligible
+      return m.notEligible
         .applicantAgeOutOfRangeDescription
     case NotEligibleReasonCodes.NO_LEGAL_DOMICILE_IN_ICELAND:
-      return disabilityPensionFormMessage.notEligible
+      return m.notEligible
         .noLegalDomicileInIcelandDescription
     case NotEligibleReasonCodes.LATEST_DISABILITY_PENSION_DOCUMENT_NOT_FOUND:
-      return disabilityPensionFormMessage.notEligible
+      return m.notEligible
         .latestDisabilityPensionDocumentNotFoundDescription
     case NotEligibleReasonCodes.APPLICANT_ALREADY_HAS_PENDING_APPLICATION:
-      return disabilityPensionFormMessage.notEligible
+      return m.notEligible
         .applicantAlreadyHasPendingApplicationDescription
     case NotEligibleReasonCodes.APPLICANT_ALREADY_HAS_FULL_DISABILITY_PENSION:
-      return disabilityPensionFormMessage.notEligible
+      return m.notEligible
         .applicantAlreadyHasFullDisabilityPensionDescription
     default:
       return undefined

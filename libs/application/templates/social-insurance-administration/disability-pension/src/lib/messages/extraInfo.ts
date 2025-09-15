@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const extraInfoMessages = defineMessages({
+export const extraInfo = defineMessages({
   tabTitle: {
     id: 'dp.application:extraInfo.tabTitle',
     defaultMessage: 'Viðbótarupplýsingar',

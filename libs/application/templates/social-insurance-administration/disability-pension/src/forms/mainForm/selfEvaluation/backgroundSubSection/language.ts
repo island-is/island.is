@@ -3,18 +3,18 @@ import {
   buildRadioField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../../lib/messages'
+import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
 import { LanguageDto } from '@island.is/clients/social-insurance-administration'
 
 export const languageField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_LANGUAGE,
-  title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+  title: m.selfEvaluation.questionFormTitle,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.language`,
-      title: disabilityPensionFormMessage.questions.languageTitle,
+      title: m.questions.languageTitle,
       width: 'full',
       options: (application: Application) => {
         const languages =
@@ -31,7 +31,7 @@ export const languageField = buildMultiField({
     }),
     /*
     buildTitleField({
-      title: disabilityPensionFormMessage.questions.languageOtherSpecify,
+      title: m.questions.languageOtherSpecify,
       titleVariant: 'h5',
       marginTop: 2,
       marginBottom: 0,

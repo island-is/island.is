@@ -3,28 +3,28 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
+import * as m from '../../../lib/messages'
 
 export const incomePlanInstructionsSubSection = buildSubSection({
   id: SectionRouteEnum.INCOME_PLAN_INSTRUCTION,
-  title: disabilityPensionFormMessage.basicInfo.incomePlanInstructionsTitle,
+  title: m.basicInfo.incomePlanInstructionsTitle,
   children: [
     buildMultiField({
       id: SectionRouteEnum.INCOME_PLAN_INSTRUCTION,
-      title: disabilityPensionFormMessage.incomePlan.instructionsTitle,
+      title: m.incomePlan.instructionsTitle,
       description:
-        disabilityPensionFormMessage.incomePlan.instructionsDescription,
+        m.incomePlan.instructionsDescription,
       space: 'gutter',
       children: [
         buildDescriptionField({
           id: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.bullets`,
           description:
-            disabilityPensionFormMessage.incomePlan.instructionsBullets,
+            m.incomePlan.instructionsBullets,
         }),
         buildDescriptionField({
           id: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.link`,
-          description: disabilityPensionFormMessage.incomePlan.instructionsLink,
+          description: m.incomePlan.instructionsLink,
         }),
       ],
     }),

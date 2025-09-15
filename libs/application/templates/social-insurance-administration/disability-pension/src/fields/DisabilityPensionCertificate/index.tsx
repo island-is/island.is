@@ -14,11 +14,12 @@ import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { disabilityPensionFormMessage } from '../../lib/messages'
 import { useQuery } from '@apollo/client'
 import { siaDisabilityPensionCertificate } from '../../graphql/queries'
 import { SiaDisabilityPensionCertificateQuery } from '../../types/schema'
 import format from 'date-fns/format'
+import * as m from '../../lib/messages'
+
 
 export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   field,
@@ -47,7 +48,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .managedBy,
             )}
           </Text>
@@ -63,7 +64,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .doctorNumber,
             )}
           </Label>
@@ -78,7 +79,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .managedByLocation,
             )}
           </Label>
@@ -92,7 +93,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .phoneNumber,
             )}
           </Label>
@@ -101,7 +102,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate.email,
+              m.certificate.email,
             )}
           </Label>
           <Text>{'-'}</Text>
@@ -109,7 +110,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate.address,
+              m.certificate.address,
             )}
           </Label>
           <Text>{'-'}</Text>
@@ -124,7 +125,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .information,
             )}
           </Text>
@@ -132,7 +133,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span={'1/1'}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .informationIncapacitatedDate,
             )}
           </Label>
@@ -152,7 +153,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .informationICDAnalysis,
             )}
           </Label>
@@ -168,7 +169,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .informationOtherICDAnalysis,
             )}
           </Label>
@@ -184,7 +185,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .informationMedicalHistory,
             )}
           </Label>
@@ -197,7 +198,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .informationMedicalImpairmentCause,
             )}
           </Label>
@@ -210,7 +211,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .informationMedicalImpairmentStability,
             )}
           </Label>
@@ -223,7 +224,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .informationMedicalImpairmentProjectedImprovement,
             )}
           </Label>
@@ -233,7 +234,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityPensionCertificate
+              m.certificate
                 .informationMedicalMedicalImplementsUsage,
             )}
           </Label>
@@ -250,7 +251,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   const physicalImpairments = () => (
     <AccordionItem
       label={formatMessage(
-        disabilityPensionFormMessage.disabilityPensionCertificate
+        m.certificate
           .physicalImpairment,
       )}
       id="physical-impairments-accordion-item"
@@ -261,7 +262,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           <GridColumn span="1/1">
             <Text>
               {formatMessage(
-                disabilityPensionFormMessage.disabilityPensionCertificate
+                m.certificate
                   .physicalImpairmentEffect,
               )}
             </Text>
@@ -285,7 +286,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   const cognitiveImpairments = () => (
     <AccordionItem
       label={formatMessage(
-        disabilityPensionFormMessage.disabilityPensionCertificate
+        m.certificate
           .cognitiveImpairment,
       )}
       id="cognitive-impairments-accordion-item"
@@ -296,7 +297,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           <GridColumn span="1/1">
             <Text>
               {formatMessage(
-                disabilityPensionFormMessage.disabilityPensionCertificate
+                m.certificate
                   .cognitiveImpairmentEffect,
               )}
             </Text>
@@ -320,7 +321,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   const functionalAssessments = () => (
     <AccordionItem
       label={formatMessage(
-        disabilityPensionFormMessage.disabilityPensionCertificate
+        m.certificate
           .functionalAssessment,
       )}
       id="functional-assessments-accordion-item"
@@ -331,7 +332,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           <GridColumn span="1/1">
             <Text>
               {formatMessage(
-                disabilityPensionFormMessage.disabilityPensionCertificate
+                m.certificate
                   .functionalAssessmentDescription,
               )}
             </Text>

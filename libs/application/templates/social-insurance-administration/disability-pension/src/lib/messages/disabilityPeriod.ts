@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const disabilityPeriodMessages = defineMessages({
+export const disabilityPeriod = defineMessages({
   title: {
     id: 'dp.application:disabilityPeriod.title',
     defaultMessage: 'Sækja aftur í tímann',

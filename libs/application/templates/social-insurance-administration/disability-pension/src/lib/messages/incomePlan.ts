@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const incomePlanMessages = defineMessages({
+export const incomePlan = defineMessages({
   instructionsTitle: {
     id: 'dp.application:incomePlan.instructionsTitle',
     defaultMessage: 'Tekjuáætlun',

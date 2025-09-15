@@ -1,32 +1,32 @@
 import { buildMultiField, buildRadioField } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../../lib/messages'
+import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 
 export const icelandicCapabilityField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_ICELANDIC_CAPABILITY,
-  title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+  title: m.selfEvaluation.questionFormTitle,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_ICELANDIC_CAPABILITY}.capability`,
-      title: disabilityPensionFormMessage.questions.icelandicCapabilityTitle,
+      title: m.questions.icelandicCapabilityTitle,
       required: true,
       options: [
         {
           value: '0',
-          label: disabilityPensionFormMessage.questions.icelandicCapabilityPoor,
+          label: m.questions.icelandicCapabilityPoor,
         },
         {
           value: '1',
-          label: disabilityPensionFormMessage.questions.icelandicCapabilityFair,
+          label: m.questions.icelandicCapabilityFair,
         },
         {
           value: '2',
-          label: disabilityPensionFormMessage.questions.icelandicCapabilityGood,
+          label: m.questions.icelandicCapabilityGood,
         },
         {
           value: '3',
           label:
-            disabilityPensionFormMessage.questions.icelandicCapabilityVeryGood,
+            m.questions.icelandicCapabilityVeryGood,
         },
       ],
     }),

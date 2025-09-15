@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const errorsMessages = defineMessages({
+export const errors = defineMessages({
   emptyForeignResidence: {
     id: 'dp.application:errors.foreignResidenceRequired',
     defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni dvöl erlendis',

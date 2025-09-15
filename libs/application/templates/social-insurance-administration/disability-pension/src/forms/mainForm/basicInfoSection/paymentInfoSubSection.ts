@@ -24,31 +24,31 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { Application, FormValue } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
-import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
 import { accountNationality, getApplicationExternalData } from '../../../utils'
 import { siaGeneralCurrencies } from '../../../graphql/queries'
 import { SocialInsuranceGeneralCurrenciesQuery } from '../../../types/schema'
+import * as m from '../../../lib/messages'
 
 export const paymentInfoSubSection = buildSubSection({
   id: SectionRouteEnum.PAYMENT_INFO,
-  tabTitle: disabilityPensionFormMessage.basicInfo.paymentInfo,
-  title: disabilityPensionFormMessage.basicInfo.paymentInfo,
+  tabTitle: m.basicInfo.paymentInfo,
+  title: m.basicInfo.paymentInfo,
   children: [
     buildMultiField({
       space: 'gutter',
-      title: disabilityPensionFormMessage.basicInfo.paymentInfo,
+      title: m.basicInfo.paymentInfo,
       id: SectionRouteEnum.PAYMENT_INFO,
       children: [
         buildAlertMessageField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.notice`,
           alertType: 'info',
-          title: disabilityPensionFormMessage.paymentInfo.noticeTitle,
-          message: disabilityPensionFormMessage.paymentInfo.notice,
+          title: m.paymentInfo.noticeTitle,
+          message: m.paymentInfo.notice,
         }),
         buildRadioField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.bankAccountType`,
-          title: disabilityPensionFormMessage.paymentInfo.accountType,
+          title: m.paymentInfo.accountType,
           width: 'full',
           largeButtons: false,
           required: true,
@@ -62,7 +62,7 @@ export const paymentInfoSubSection = buildSubSection({
             },
             {
               value: BankAccountType.FOREIGN,
-              label: disabilityPensionFormMessage.paymentInfo.foreignAccount,
+              label: m.paymentInfo.foreignAccount,
             },
           ],
         }),
@@ -71,11 +71,11 @@ export const paymentInfoSubSection = buildSubSection({
           condition: (formValue: FormValue) =>
             accountNationality(formValue) === BankAccountType.FOREIGN,
           description:
-            disabilityPensionFormMessage.paymentInfo.foreignAccountNotice,
+            m.paymentInfo.foreignAccountNotice,
         }),
         buildTextField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.bank`,
-          title: disabilityPensionFormMessage.paymentInfo.bank,
+          title: m.paymentInfo.bank,
           placeholder: '0000-00-000000',
           required: true,
           condition: (formValue: FormValue) =>
@@ -150,7 +150,7 @@ export const paymentInfoSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'paymentInfo.bankAddress',
-          title: disabilityPensionFormMessage.paymentInfo.bankAddress,
+          title: m.paymentInfo.bankAddress,
           width: 'half',
           required: true,
           defaultValue: (application: Application) => {
@@ -166,7 +166,7 @@ export const paymentInfoSubSection = buildSubSection({
         }),
         buildRadioField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.personalAllowance`,
-          title: disabilityPensionFormMessage.paymentInfo.personalAllowance,
+          title: m.paymentInfo.personalAllowance,
           width: 'half',
           options: getYesNoOptions(),
           largeButtons: true,

@@ -9,9 +9,10 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
-import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
 import { getApplicationAnswers } from '../../../utils'
+import * as m from '../../../lib/messages'
+
 
 interface SelfEvaluationReviewProps {
   application: Application
@@ -110,7 +111,7 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
     <Box marginBottom={3}>
       <Box marginTop={2} display="flex" justifyContent="spaceBetween">
         <Text variant="h4" as="h3" marginBottom={2}>
-          {formatMessage(disabilityPensionFormMessage.selfEvaluation.title)}
+          {formatMessage(m.selfEvaluation.title)}
         </Text>
         <Button
           variant="utility"
@@ -129,14 +130,14 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
           {hasSelfEvaluationAnswers && (
             <Bullet>
               {formatMessage(
-                disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+                m.selfEvaluation.questionFormTitle,
               )}
             </Bullet>
           )}
           {hasCapabilityImpairment && (
             <Bullet>
               {formatMessage(
-                disabilityPensionFormMessage.capabilityImpairment.title,
+                m.capabilityImpairment.title,
               )}
             </Bullet>
           )}

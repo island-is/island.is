@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const overviewMessages = defineMessages({
+export const overview = defineMessages({
   title: {
     id: 'dp.application:overview.tabTitle',
     defaultMessage: 'Yfirlit',

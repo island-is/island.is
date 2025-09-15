@@ -6,8 +6,8 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
+import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
-import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SelfAssessmentQuestionnaire } from '../../../../types/interfaces'
 import { Application } from '@island.is/application/types'
 import { getQuestionnaire } from '../../../../utils/getQuestionnaire'
@@ -17,7 +17,7 @@ export const MAX_QUESTIONS = 5
 const buildQuestion = (index: number) => {
   return buildMultiField({
     id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}]`,
-    title: disabilityPensionFormMessage.capabilityImpairment.title,
+    title: m.capabilityImpairment.title,
     children: [
       buildDescriptionField({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}].description`,
@@ -105,16 +105,15 @@ const buildQuestion = (index: number) => {
 
 export const capabilityImpairmentSubSection = buildSubSection({
   id: SectionRouteEnum.CAPABILITY_IMPAIRMENT,
-  title: disabilityPensionFormMessage.capabilityImpairment.tabTitle,
-  tabTitle: disabilityPensionFormMessage.capabilityImpairment.tabTitle,
+  title: m.capabilityImpairment.tabTitle,
+  tabTitle: m.capabilityImpairment.tabTitle,
   children: [
     buildDescriptionField({
       id: SectionRouteEnum.CAPABILITY_IMPAIRMENT,
-      title: disabilityPensionFormMessage.capabilityImpairment.title,
+      title: m.capabilityImpairment.title,
       description:
-        disabilityPensionFormMessage.capabilityImpairment.description,
+        m.capabilityImpairment.description,
     }),
-    //TODO: validate and collect correct questions
     ...[...Array(MAX_QUESTIONS)].map((_key, index) => buildQuestion(index)),
   ],
 })

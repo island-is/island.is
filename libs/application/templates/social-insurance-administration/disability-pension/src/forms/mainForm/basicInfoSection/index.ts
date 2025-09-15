@@ -1,5 +1,4 @@
 import { buildSection } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
 import { disabilityEvaluationSubSection } from './disabilityEvaluationSubSections'
 import { employmentParticipationSubSection } from './employmentParticipationsSubSections'
@@ -7,10 +6,12 @@ import { incomePlanInstructionsSubSection } from './incomePlanInstructionsSubSec
 import { incomePlanSubSection } from './incomePlanSubSection'
 import { paymentInfoSubSection } from './paymentInfoSubSection'
 import { personalInfoSubSection } from './personalInfoSubSection'
+import * as m from '../../../lib/messages'
+
 
 export const basicInfoSection = buildSection({
   id: SectionRouteEnum.BASIC_INFO,
-  title: disabilityPensionFormMessage.basicInfo.title,
+  title: m.basicInfo.title,
   children: [
     personalInfoSubSection,
     paymentInfoSubSection,

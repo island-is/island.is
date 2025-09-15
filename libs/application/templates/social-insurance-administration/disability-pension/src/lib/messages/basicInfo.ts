@@ -1,6 +1,6 @@
 import { defineMessages } from "react-intl";
 
-export const basicInfoMessages = defineMessages({
+export const basicInfo = defineMessages({
   title: {
     id: 'dp.application:basicInfo.title',
     defaultMessage: 'Almennar upplýsingar',

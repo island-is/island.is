@@ -5,18 +5,18 @@ import {
   buildTitleField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../../lib/messages'
+import * as m from '../../../../lib/messages'
 import { OTHER_STATUS_VALUE, SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
 import { EmploymentDto } from '@island.is/clients/social-insurance-administration'
 
 export const employmentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT,
-  title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+  title: m.selfEvaluation.questionFormTitle,
   children: [
     buildCheckboxField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
-      title: disabilityPensionFormMessage.questions.employmentStatusTitle,
+      title: m.questions.employmentStatusTitle,
       width: 'full',
       options: (application: Application) => {
         const types =
@@ -42,7 +42,7 @@ export const employmentField = buildMultiField({
       },
     }),
     buildTitleField({
-      title: disabilityPensionFormMessage.questions.employmentStatusOtherWhat,
+      title: m.questions.employmentStatusOtherWhat,
       titleVariant: 'h5',
       marginTop: 2,
       marginBottom: 0,

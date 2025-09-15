@@ -1,6 +1,6 @@
 import { defineMessages } from "react-intl";
 
-export const personalInfoMessages = defineMessages({
+export const personalInfo = defineMessages({
   nationalId: {
     id: 'dp.application:basicInfo.personalInfo.nationalId',
     defaultMessage: 'Kennitala',

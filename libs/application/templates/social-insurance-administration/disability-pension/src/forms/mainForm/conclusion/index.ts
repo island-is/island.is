@@ -6,40 +6,40 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
 import ConfirmationImage from '../../../assets/ConfirmationImage'
 
 export const conclusionSection = buildSection({
   id: SectionRouteEnum.CONFIRMATION,
-  title: disabilityPensionFormMessage.confirmation.title,
-  tabTitle: disabilityPensionFormMessage.confirmation.tabTitle,
+  title: m.confirmation.title,
+  tabTitle: m.confirmation.tabTitle,
   children: [
     buildMultiField({
       id: SectionRouteEnum.CONFIRMATION,
-      title: disabilityPensionFormMessage.confirmation.title,
+      title: m.confirmation.title,
       space: 'containerGutter',
       children: [
         buildAlertMessageField({
           id: `${SectionRouteEnum.CONFIRMATION}.successMessage`,
           alertType: 'success',
-          title: disabilityPensionFormMessage.confirmation.successTitle,
-          message: disabilityPensionFormMessage.confirmation.successDescription,
+          title: m.confirmation.successTitle,
+          message: m.confirmation.successDescription,
           marginBottom: 0,
         }),
         buildDescriptionField({
           id: `${SectionRouteEnum.CONFIRMATION}.bullets`,
-          title: disabilityPensionFormMessage.confirmation.whatHappensNext,
+          title: m.confirmation.whatHappensNext,
           titleVariant: 'h4',
           space: 'gutter',
           description:
-            disabilityPensionFormMessage.confirmation.whatHappensNextOptions,
+            m.confirmation.whatHappensNextOptions,
         }),
         buildCustomField({
           id: `${SectionRouteEnum.CONFIRMATION}.customField`,
-          title: disabilityPensionFormMessage.confirmation.customFieldTitle,
+          title: m.confirmation.warningTitle,
           description:
-            disabilityPensionFormMessage.confirmation.customFieldDescription,
+            m.confirmation.warningDescription,
           component: 'Confirmation',
         }),
         buildImageField({

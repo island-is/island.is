@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const confirmationMessages = defineMessages({
+export const confirmation = defineMessages({
   tabTitle: {
     id: 'dp.application:confirmation.tabTitle',
     defaultMessage: 'Staðfesting',

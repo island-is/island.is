@@ -4,18 +4,18 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../../lib/messages'
+import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
 import { ResidenceDto } from '@island.is/clients/social-insurance-administration'
 
 export const residenceField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_RESIDENCE,
-  title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+  title: m.selfEvaluation.questionFormTitle,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,
-      title: disabilityPensionFormMessage.questions.residenceTitle,
+      title: m.questions.residenceTitle,
       options: (application: Application) => {
         const residenceTypes =
           getValueViaPath<Array<ResidenceDto>>(
@@ -31,7 +31,7 @@ export const residenceField = buildMultiField({
     }),
     buildTextField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.other`,
-      title: disabilityPensionFormMessage.questions.residenceOtherWhat,
+      title: m.questions.residenceOtherWhat,
       variant: 'textarea',
       condition: (formValue, externalData) => {
         const residenceStatus = getValueViaPath<string>(

@@ -1,6 +1,6 @@
 import { defineMessages } from "react-intl";
 
-export const customFieldsMessages = defineMessages({
+export const customFields = defineMessages({
   certificate: {
     id: 'dp.application:overview.certificate',
     defaultMessage: 'Örorkuvottorð',

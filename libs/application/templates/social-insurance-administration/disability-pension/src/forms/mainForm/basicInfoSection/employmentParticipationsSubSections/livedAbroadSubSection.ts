@@ -6,12 +6,12 @@ import {
   YesOrNoEnum,
   buildTableRepeaterField,
 } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
 import { SectionRouteEnum } from '../../../../types'
 import { getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
+import * as m from '../../../../lib/messages'
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(
@@ -23,9 +23,9 @@ const livedAbroadCondition = (formValue: FormValue) => {
 
 export const livedAbroadSubSection = buildMultiField({
   id: SectionRouteEnum.LIVED_ABROAD,
-  title: disabilityPensionFormMessage.employmentParticipation.livedAbroadTitle,
+  title: m.employmentParticipation.livedAbroadTitle,
   description:
-    disabilityPensionFormMessage.employmentParticipation.livedAbroadDescription,
+    m.employmentParticipation.livedAbroadDescription,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.LIVED_ABROAD}.hasLivedAbroad`,
@@ -38,20 +38,19 @@ export const livedAbroadSubSection = buildMultiField({
       id: `${SectionRouteEnum.LIVED_ABROAD}.list`,
       condition: livedAbroadCondition,
       formTitle:
-        disabilityPensionFormMessage.employmentParticipation
-          .livedAbroadTableTitle,
+        m.employmentParticipation.livedAbroadTitle,
       addItemButtonText:
-        disabilityPensionFormMessage.employmentParticipation.addCountry,
+        m.employmentParticipation.addCountry,
       saveItemButtonText:
-        disabilityPensionFormMessage.employmentParticipation.save,
+        m.employmentParticipation.save,
       removeButtonTooltipText:
-        disabilityPensionFormMessage.employmentParticipation.remove,
+        m.employmentParticipation.remove,
       fields: {
         country: {
           component: 'select',
-          label: disabilityPensionFormMessage.employmentParticipation.country,
+          label: m.employmentParticipation.country,
           placeholder:
-            disabilityPensionFormMessage.employmentParticipation
+            m.employmentParticipation
               .countryPlaceholder,
           width: 'half',
           displayInTable: true,
@@ -69,7 +68,7 @@ export const livedAbroadSubSection = buildMultiField({
         abroadNationalId: {
           component: 'input',
           label:
-            disabilityPensionFormMessage.employmentParticipation
+            m.employmentParticipation
               .abroadNationalId,
           width: 'half',
           displayInTable: true,
@@ -78,9 +77,9 @@ export const livedAbroadSubSection = buildMultiField({
         periodStart: {
           component: 'date',
           label:
-            disabilityPensionFormMessage.employmentParticipation.periodStart,
+            m.employmentParticipation.periodStart,
           placeholder:
-            disabilityPensionFormMessage.employmentParticipation
+            m.employmentParticipation
               .periodStartPlaceholder,
           width: 'half',
           displayInTable: false,
@@ -115,9 +114,9 @@ export const livedAbroadSubSection = buildMultiField({
         //TODO: ONly month
         periodEnd: {
           component: 'date',
-          label: disabilityPensionFormMessage.employmentParticipation.periodEnd,
+          label: m.employmentParticipation.periodEnd,
           placeholder:
-            disabilityPensionFormMessage.employmentParticipation
+            m.employmentParticipation
               .periodEndPlaceholder,
           width: 'half',
           displayInTable: false,
@@ -181,9 +180,9 @@ export const livedAbroadSubSection = buildMultiField({
       },
       table: {
         header: [
-          disabilityPensionFormMessage.employmentParticipation.country,
-          disabilityPensionFormMessage.employmentParticipation.abroadNationalId,
-          disabilityPensionFormMessage.employmentParticipation.period,
+          m.employmentParticipation.country,
+          m.employmentParticipation.abroadNationalId,
+          m.employmentParticipation.period,
         ],
         rows: ['country', 'abroadNationalId', 'period'],
       },

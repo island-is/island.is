@@ -3,19 +3,19 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
 
 export const disabilityCertificateSection = buildSection({
   id: SectionRouteEnum.DISABILITY_CERTIFICATE,
-  title: disabilityPensionFormMessage.disabilityCertificate.tabTitle,
-  tabTitle: disabilityPensionFormMessage.disabilityCertificate.tabTitle,
+  title: m.disabilityCertificate.tabTitle,
+  tabTitle: m.disabilityCertificate.tabTitle,
   children: [
     buildMultiField({
       id: SectionRouteEnum.DISABILITY_CERTIFICATE,
-      title: disabilityPensionFormMessage.disabilityCertificate.title,
+      title: m.disabilityCertificate.title,
       description:
-        disabilityPensionFormMessage.disabilityCertificate.description,
+        m.disabilityCertificate.description,
       children: [
         buildCustomField({
           id: 'disabilityPensionCertificateReferenceId',

@@ -12,38 +12,38 @@ import {
   NationalRegistrySpouse,
 } from '@island.is/application/types'
 import { applicantInformationArray } from '@island.is/application/ui-forms'
-import { disabilityPensionFormMessage } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
 
 export const personalInfoSubSection = buildSubSection({
   id: SectionRouteEnum.PERSONAL_INFO,
-  tabTitle: disabilityPensionFormMessage.basicInfo.personalInfo,
-  title: disabilityPensionFormMessage.basicInfo.personalInfo,
+  tabTitle: m.basicInfo.personalInfo,
+  title: m.basicInfo.personalInfo,
   children: [
     buildMultiField({
       id: SectionRouteEnum.PERSONAL_INFO,
-      title: disabilityPensionFormMessage.basicInfo.personalInfo,
+      title: m.basicInfo.personalInfo,
       children: [
         buildDescriptionField({
           id: 'personalInfoInstructions',
           description:
-            disabilityPensionFormMessage.basicInfo.personalInfoInstructions,
+            m.basicInfo.personalInfoInstructions,
           marginBottom: 'containerGutter',
         }),
         ...applicantInformationArray({
           phoneRequired: true,
           emailRequired: false,
           emailDisabled: true,
-          customAddressLabel: disabilityPensionFormMessage.personalInfo.address,
+          customAddressLabel: m.personalInfo.address,
         }),
         buildTitleField({
           marginTop: 'containerGutter',
-          title: disabilityPensionFormMessage.personalInfo.maritalStatusTitle,
+          title: m.personalInfo.maritalStatusTitle,
           titleVariant: 'h4',
         }),
         buildTextField({
           id: `${SectionRouteEnum.PERSONAL_INFO}.maritalStatus`,
-          title: disabilityPensionFormMessage.personalInfo.maritalStatus,
+          title: m.personalInfo.maritalStatus,
           disabled: true,
           backgroundColor: 'white',
           readOnly: true,
@@ -59,7 +59,7 @@ export const personalInfoSubSection = buildSubSection({
         }),
         buildTextField({
           id: `${SectionRouteEnum.PERSONAL_INFO}.spouseName`,
-          title: disabilityPensionFormMessage.personalInfo.spouseName,
+          title: m.personalInfo.spouseName,
           backgroundColor: 'white',
           disabled: true,
           readOnly: true,
@@ -76,7 +76,7 @@ export const personalInfoSubSection = buildSubSection({
         }),
         buildTextField({
           id: `${SectionRouteEnum.PERSONAL_INFO}.spouseNationalId`,
-          title: disabilityPensionFormMessage.personalInfo.spouseNationalId,
+          title: m.personalInfo.spouseNationalId,
           backgroundColor: 'white',
           disabled: true,
           readOnly: true,

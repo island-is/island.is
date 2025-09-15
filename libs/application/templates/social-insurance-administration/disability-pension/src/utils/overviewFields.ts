@@ -2,7 +2,7 @@ import {
   buildOverviewField,
   buildCustomField,
 } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../lib/messages'
+import * as m from '../lib/messages'
 import { SectionRouteEnum } from '../types'
 import {
   aboutApplicantItems,
@@ -27,7 +27,7 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.incomePlan`,
-      title: disabilityPensionFormMessage.incomePlan.instructionsTitle,
+      title: m.incomePlan.instructionsTitle,
       hideIfEmpty: true,
       backId: editable ? SectionRouteEnum.INCOME_PLAN : undefined,
       tableData: incomePlanItems,
@@ -47,7 +47,7 @@ export const overviewFields = (editable?: boolean) => {
     buildCustomField({
       id: `${SectionRouteEnum.OVERVIEW}.disabilityCertificate`,
       title:
-        disabilityPensionFormMessage.customFields.certificate ??
+        m.customFields.certificate ??
         'Custom disability certificate',
 
       component: 'CertificateOverview',
@@ -55,7 +55,7 @@ export const overviewFields = (editable?: boolean) => {
     buildCustomField({
       id: `${SectionRouteEnum.OVERVIEW}.customField`,
       title:
-        disabilityPensionFormMessage.customFields.selfEvaluation ??
+        m.customFields.selfEvaluation ??
         'Custom self evaluation',
       component: 'Review',
     }),

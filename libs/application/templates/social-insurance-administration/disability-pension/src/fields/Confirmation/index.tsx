@@ -2,9 +2,9 @@ import { Application, Field, RecordObject } from '@island.is/application/types'
 import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
-import { disabilityPensionFormMessage } from '../../lib/messages'
 import { Markdown } from '@island.is/shared/components'
 import * as styles from './confirmation.css'
+import * as m from '../../lib/messages'
 
 interface ConfirmationScreenProps {
   application: Application
@@ -22,14 +22,14 @@ export const Confirmation: FC<ConfirmationScreenProps> = () => {
       <AlertMessage
         type="warning"
         title={formatMessage(
-          disabilityPensionFormMessage.confirmation.warningTitle,
+          m.confirmation.warningTitle,
         )}
         message={
           <Box className={styles.markdownContent}>
             <Text variant="small">
               <Markdown options={{ openLinksInNewTab: true }}>
                 {formatMessage(
-                  disabilityPensionFormMessage.confirmation.warningDescription,
+                  m.confirmation.warningDescription,
                 )}
               </Markdown>
             </Text>

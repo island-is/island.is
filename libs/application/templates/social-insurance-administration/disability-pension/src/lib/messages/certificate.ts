@@ -1,11 +1,12 @@
 import { defineMessages } from "react-intl";
 
- export const certificateMessages = defineMessages({
+ export const certificate = defineMessages({
    sectionTitle: {
      id: 'dp.application:disability.pension.certificate.section.title',
      defaultMessage: 'Grunnvottorð / Vottorð um örorku',
      description: 'Certificate for Disability Pension',
    },
+
    description: {
      id: 'dp.application:disability.pension.certificate.description',
      defaultMessage:

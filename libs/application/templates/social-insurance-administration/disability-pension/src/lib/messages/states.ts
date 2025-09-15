@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const statesMessages = defineMessages({
+export const states = defineMessages({
   applicationSubmittedDescription: {
     id: 'dp.application:applicationSubmittedDescription',
     defaultMessage: 'Umsókn þín hefur verið send til Tryggingastofnunar',

@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const selfEvaluationMessages = defineMessages({
+export const selfEvaluation = defineMessages({
   backgroundTitle: {
     id: 'dp.application:selfEvaluation.backgroundTitle',
     defaultMessage: 'Bakgrunnur',

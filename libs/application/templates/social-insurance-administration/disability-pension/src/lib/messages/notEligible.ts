@@ -1,6 +1,6 @@
 import { defineMessages } from "react-intl";
 
-export const notEligibleMessages = defineMessages({
+export const notEligible = defineMessages({
   title: {
     id: 'dp.application:not.eligible.title',
     defaultMessage: 'Því miður átt þú ekki rétt á örorkulífeyri',

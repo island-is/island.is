@@ -1,5 +1,5 @@
 import { buildSubSection } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../../lib/messages'
+import * as m from '../../../../lib/messages'
 import { maritalStatusField } from './maritalStatus'
 import { residenceField } from './residence'
 import { childrenField } from './children'
@@ -17,7 +17,7 @@ import { employmentCapabilityField } from './employmentCapability'
 
 export const backgroundInfoSubSection = buildSubSection({
   id: SectionRouteEnum.BACKGROUND_INFO,
-  title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+  title: m.selfEvaluation.questionFormTitle,
   children: [
     assistanceField,
     maritalStatusField,

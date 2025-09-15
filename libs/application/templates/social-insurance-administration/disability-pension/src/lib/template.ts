@@ -30,10 +30,7 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
-import {
-  disabilityPensionFormMessage,
-  statesMessages as dpStatesMessages,
-} from './messages'
+import * as m from './messages'
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
@@ -77,7 +74,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DISABILITY_PENSION,
-  name: disabilityPensionFormMessage.shared.applicationTitle,
+  name: m.shared.applicationTitle,
   codeOwner: CodeOwners.Hugsmidjan,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces:
@@ -237,7 +234,7 @@ const template: ApplicationTemplate<
           actionCard: {
             pendingAction: {
               title: statesMessages.tryggingastofnunSubmittedTitle,
-              content: dpStatesMessages.applicationSubmittedDescription,
+              content: m.states.applicationSubmittedDescription,
               displayStatus: 'info',
             },
             historyLogs: [
@@ -311,7 +308,7 @@ const template: ApplicationTemplate<
           actionCard: {
             pendingAction: {
               title: socialInsuranceAdministrationMessage.applicationRejected,
-              content: dpStatesMessages.applicationRejectedDescription,
+              content: m.states.applicationRejectedDescription,
               displayStatus: 'error',
             },
           },
@@ -338,8 +335,8 @@ const template: ApplicationTemplate<
               label: socialInsuranceAdministrationMessage.dismissedTag,
             },
             pendingAction: {
-              title: dpStatesMessages.applicationDismissed,
-              content: dpStatesMessages.applicationDismissedDescription,
+              title: m.states.applicationDismissed,
+              content: m.states.applicationDismissedDescription,
               displayStatus: 'error',
             },
           },

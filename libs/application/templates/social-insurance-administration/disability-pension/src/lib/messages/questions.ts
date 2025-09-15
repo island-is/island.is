@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const questionsMessages = defineMessages({
+export const questions = defineMessages({
   maritalStatusTitle: {
     id: 'dp.application:selfEvaluation.questions.maritalStatus.title',
     defaultMessage: 'Hver er hjúskaparstaða þín?',

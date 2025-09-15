@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const disabilityEvaluationMessages = defineMessages({
+export const disabilityEvaluation = defineMessages({
   title: {
     id: 'dp.application:disabilityEvaluation.title',
     defaultMessage: 'Sótt um örorkumat hjá lífeyrissjóði',

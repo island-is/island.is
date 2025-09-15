@@ -13,7 +13,8 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
-import { disabilityPensionFormMessage } from './messages'
+import * as m from './messages'
+
 
 export const fileSchema = z.object({
   name: z.string(),
@@ -74,7 +75,7 @@ export const dataSchema = z.object({
     },
     {
       path: ['list'],
-      params: disabilityPensionFormMessage.errors.emptyForeignResidence,
+      params: m.errors.emptyForeignResidence,
     },
   ),
   paidWork: z
@@ -114,7 +115,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['list'],
-        params: disabilityPensionFormMessage.errors.emptyForeignPayments,
+        params: m.errors.emptyForeignPayments,
       },
     ),
   backgroundInfoMaritalStatus: z.object({
@@ -144,7 +145,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['other'],
-        params: disabilityPensionFormMessage.errors.emptyResidenceOtherText,
+        params: m.errors.emptyResidenceOtherText,
       },
     ),
   backgroundInfoChildren: z.object({
@@ -172,7 +173,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['other'],
-        params: disabilityPensionFormMessage.errors.emptyLanguageOtherText,
+        params: m.errors.emptyLanguageOtherText,
       },
     ),
   backgroundInfoEmployment: z
@@ -186,7 +187,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['status'],
-        params: disabilityPensionFormMessage.errors.emptyEmploymentStatus,
+        params: m.errors.emptyEmploymentStatus,
       },
     ),
   backgroundInfoPreviousEmployment: z
@@ -210,7 +211,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['when'],
-        params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentWhen,
+        params: m.errors.emptyPreviousEmploymentWhen,
       },
     )
     .refine(
@@ -222,7 +223,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['job'],
-        params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentJob,
+        params: m.errors.emptyPreviousEmploymentJob,
       },
     )
     .refine(
@@ -235,7 +236,7 @@ export const dataSchema = z.object({
       {
         path: ['field'],
         params:
-          disabilityPensionFormMessage.errors.emptyPreviousEmploymentField,
+          m.errors.emptyPreviousEmploymentField,
       },
     ),
   backgroundInfoEmploymentCapability: z
@@ -256,7 +257,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['capability'],
-        params: disabilityPensionFormMessage.errors.capabilityBetween0And100,
+        params: m.errors.capabilityBetween0And100,
       },
     ),
   backgroundInfoEmploymentImportance: z.object({
@@ -285,7 +286,7 @@ export const dataSchema = z.object({
       {
         path: ['rehabilitationDescription'],
         params:
-          disabilityPensionFormMessage.errors
+          m.errors
             .emptyRehabilitationOrTherapyDescription,
       },
     )
@@ -299,7 +300,7 @@ export const dataSchema = z.object({
       {
         path: ['rehabilitationResults'],
         params:
-          disabilityPensionFormMessage.errors
+          m.errors
             .emptyRehabilitationOrTherapyProgress,
       },
     ),

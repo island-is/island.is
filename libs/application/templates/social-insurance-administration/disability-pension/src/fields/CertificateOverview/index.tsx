@@ -1,4 +1,4 @@
-import { disabilityPensionFormMessage } from '../../lib/messages'
+import * as m from '../../lib/messages'
 import { SectionRouteEnum } from '../../types'
 import { Box, Button, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -19,7 +19,7 @@ export const CertificateOverview: React.FC<CertificateOverviewProps> = ({
         <Box marginTop={2} display="flex" justifyContent="spaceBetween">
           <Text variant="h4" as="h3" marginBottom={2}>
             {formatMessage(
-              disabilityPensionFormMessage.disabilityCertificate
+              m.disabilityCertificate
                 .disabilityTitle,
             )}
           </Text>
@@ -31,12 +31,12 @@ export const CertificateOverview: React.FC<CertificateOverviewProps> = ({
               goToScreen?.(SectionRouteEnum.DISABILITY_CERTIFICATE)
             }}
           >
-            {formatMessage(disabilityPensionFormMessage.shared.view)}
+            {formatMessage(m.shared.view)}
           </Button>
         </Box>
         <Text>
           {formatMessage(
-            disabilityPensionFormMessage.disabilityCertificate
+            m.disabilityCertificate
               .certificateAvailable,
           )}
         </Text>

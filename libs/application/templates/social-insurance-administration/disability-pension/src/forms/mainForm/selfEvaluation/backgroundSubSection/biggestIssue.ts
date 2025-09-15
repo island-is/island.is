@@ -3,16 +3,16 @@ import {
   buildTextField,
   buildTitleField,
 } from '@island.is/application/core'
-import { disabilityPensionFormMessage } from '../../../../lib/messages'
+import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 
 export const biggestIssueField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_BIGGEST_ISSUE,
-  title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+  title: m.selfEvaluation.questionFormTitle,
   children: [
     buildTitleField({
       marginTop: 2,
-      title: disabilityPensionFormMessage.questions.biggestIssueTitle,
+      title: m.questions.biggestIssueTitle,
     }),
     buildTextField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_BIGGEST_ISSUE}.text`,

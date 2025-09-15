@@ -9,7 +9,7 @@ import {
   YesOrNo,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { disabilityPensionFormMessage } from '../../../../lib/messages'
+import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { getYears } from '../../../../utils/dates'
 import {
@@ -24,16 +24,16 @@ import { yesOrNoOptions } from '../../../../utils'
 
 export const previousEmploymentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT,
-  title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+  title: m.selfEvaluation.questionFormTitle,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
-      title: disabilityPensionFormMessage.questions.previousEmploymentTitle,
+      title: m.questions.previousEmploymentTitle,
       width: 'half',
       options: yesOrNoOptions,
     }),
     buildTitleField({
-      title: disabilityPensionFormMessage.questions.previousEmploymentWhen,
+      title: m.questions.previousEmploymentWhen,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
         const hasPreviousEmployment = getValueViaPath<YesOrNo>(
@@ -45,9 +45,9 @@ export const previousEmploymentField = buildMultiField({
     }),
     buildSelectField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.when`,
-      title: disabilityPensionFormMessage.shared.year,
+      title: m.shared.year,
       width: 'half',
-      placeholder: disabilityPensionFormMessage.shared.chooseYear,
+      placeholder: m.shared.chooseYear,
       condition: (formValue: FormValue) => {
         const hasPreviousEmployment = getValueViaPath<YesOrNo>(
           formValue,
@@ -65,7 +65,7 @@ export const previousEmploymentField = buildMultiField({
     }),
 
     buildTitleField({
-      title: disabilityPensionFormMessage.questions.previousEmploymentJob,
+      title: m.questions.previousEmploymentJob,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
         const hasPreviousEmployment = getValueViaPath<YesOrNo>(
@@ -77,9 +77,9 @@ export const previousEmploymentField = buildMultiField({
     }),
     buildAsyncSelectField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.job`,
-      title: disabilityPensionFormMessage.questions.profession,
+      title: m.questions.profession,
       width: 'full',
-      placeholder: disabilityPensionFormMessage.questions.chooseJob,
+      placeholder: m.questions.chooseProfession,
       condition: (formValue: FormValue) => {
         const hasPreviousEmployment = getValueViaPath<YesOrNo>(
           formValue,
@@ -103,7 +103,7 @@ export const previousEmploymentField = buildMultiField({
     }),
 
     buildTitleField({
-      title: disabilityPensionFormMessage.questions.previousEmploymentField,
+      title: m.questions.previousEmploymentField,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
         const hasPreviousEmployment = getValueViaPath<YesOrNo>(
@@ -115,10 +115,10 @@ export const previousEmploymentField = buildMultiField({
     }),
     buildAsyncSelectField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.field`,
-      title: disabilityPensionFormMessage.questions.professionActivity,
+      title: m.questions.professionActivity,
       width: 'full',
       placeholder:
-        disabilityPensionFormMessage.questions.chooseProfessionActivity,
+        m.questions.chooseProfessionActivity,
       condition: (formValue: FormValue) => {
         const hasPreviousEmployment = getValueViaPath<YesOrNo>(
           formValue,
