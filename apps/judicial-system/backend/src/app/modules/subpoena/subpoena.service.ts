@@ -423,7 +423,7 @@ export class SubpoenaService {
     user: TUser,
   ): Promise<DeliverResponse> {
     return this.pdfService
-      .getServiceCertificatePdf(theCase, defendant, subpoena)
+      .getSubpoenaServiceCertificatePdf(theCase, defendant, subpoena)
       .then(async (pdf) => {
         const fileName = `Birtingarvottorð - ${defendant.name}`
 

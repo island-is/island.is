@@ -47,9 +47,11 @@ describe('InternalSubpoenaController - Deliver subpoena certificate to court', (
       await createTestingSubpoenaModule()
 
     mockPdfService = pdfService
-    const mockGetServiceCertificatePdf =
-      mockPdfService.getServiceCertificatePdf as jest.Mock
-    mockGetServiceCertificatePdf.mockRejectedValue(new Error('Some error'))
+    const mockGetSubpoenaServiceCertificatePdf =
+      mockPdfService.getSubpoenaServiceCertificatePdf as jest.Mock
+    mockGetSubpoenaServiceCertificatePdf.mockRejectedValue(
+      new Error('Some error'),
+    )
 
     mockCourtService = courtService
     const mockCreateDocument = mockCourtService.createDocument as jest.Mock
@@ -80,9 +82,11 @@ describe('InternalSubpoenaController - Deliver subpoena certificate to court', (
     let then: Then
 
     beforeEach(async () => {
-      const mockGetServiceCertificatePdf =
-        mockPdfService.getServiceCertificatePdf as jest.Mock
-      mockGetServiceCertificatePdf.mockResolvedValue(serviceCertificatePdf)
+      const mockGetSubpoenaServiceCertificatePdf =
+        mockPdfService.getSubpoenaServiceCertificatePdf as jest.Mock
+      mockGetSubpoenaServiceCertificatePdf.mockResolvedValue(
+        serviceCertificatePdf,
+      )
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
       mockCreateDocument.mockResolvedValue('')
 
@@ -90,7 +94,7 @@ describe('InternalSubpoenaController - Deliver subpoena certificate to court', (
     })
 
     it('should deliver the service certificate', () => {
-      expect(mockPdfService.getServiceCertificatePdf).toBeCalledWith(
+      expect(mockPdfService.getSubpoenaServiceCertificatePdf).toBeCalledWith(
         theCase,
         defendant,
         subpoena,

@@ -51,7 +51,7 @@ const getRole = (userRole?: UserRole) => {
   }
 }
 
-export const createServiceCertificate = (
+export const createSubpoenaServiceCertificate = (
   theCase: Case,
   defendant: Defendant,
   subpoena: Subpoena,
@@ -77,10 +77,10 @@ export const createServiceCertificate = (
   addLargeHeading(doc, formatMessage(strings.title).toUpperCase(), 'Times-Bold')
   addMediumCenteredText(
     doc,
-    `Mál nr. ${theCase.courtCaseNumber || ''}`,
+    `Mál nr. ${theCase.courtCaseNumber ?? ''}`,
     'Times-Bold',
   )
-  addNormalCenteredText(doc, theCase.court?.name || '', 'Times-Bold')
+  addNormalCenteredText(doc, theCase.court?.name ?? '', 'Times-Bold')
 
   addEmptyLines(doc, 3)
 
@@ -99,7 +99,7 @@ export const createServiceCertificate = (
     doc,
     subpoena.serviceStatus === ServiceStatus.ELECTRONICALLY
       ? 'Rafrænt pósthólf island.is'
-      : subpoena.servedBy || '',
+      : subpoena.servedBy ?? 'Ekki skráð',
     'Times-Roman',
   )
 
@@ -170,10 +170,11 @@ export const createServiceCertificate = (
   addNormalText(doc, 'Þingfesting: ', 'Times-Bold', true)
   addNormalText(
     doc,
-    formatDate(
-      subpoena.arraignmentDate ? new Date(subpoena.arraignmentDate) : null,
-      'Pp',
-    ) || 'Ekki skráð',
+    `${
+      subpoena.arraignmentDate
+        ? formatDate(new Date(subpoena.arraignmentDate), 'Pp')
+        : 'Ekki skráð'
+    }`,
     'Times-Roman',
   )
 
@@ -182,7 +183,7 @@ export const createServiceCertificate = (
   addNormalText(doc, 'Staður: ', 'Times-Bold', true)
   addNormalText(
     doc,
-    `Dómsalur ${subpoena.location}` || 'ekki skráður',
+    `Dómsalur ${subpoena.location ?? 'ekki skráður'}`,
     'Times-Roman',
   )
 

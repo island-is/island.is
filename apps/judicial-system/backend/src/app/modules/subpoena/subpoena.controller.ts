@@ -169,7 +169,7 @@ export class SubpoenaController {
       `Getting service certificate for defendant ${defendantId} in subpoena ${subpoenaId} of case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getServiceCertificatePdf(
+    const pdf = await this.pdfService.getSubpoenaServiceCertificatePdf(
       theCase,
       defendant,
       subpoena,

@@ -19,7 +19,8 @@ interface Props {
     | 'custodyNotice'
     | 'indictment'
     | 'subpoena'
-    | 'serviceCertificate'
+    | 'subpoenaServiceCertificate'
+    | 'verdictServiceCertificate'
     | 'rulingSentToPrisonAdmin'
 
   disabled?: boolean

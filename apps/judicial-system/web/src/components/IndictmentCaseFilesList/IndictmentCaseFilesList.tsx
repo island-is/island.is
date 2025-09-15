@@ -149,8 +149,16 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
         isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
+      canViewVerdictServiceCertificate:
+        workingCase.defendants?.some(({ verdict }) => !!verdict?.serviceDate) &&
+        (isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user)),
     }),
-    [user, workingCase.hasCivilClaims, workingCase.state],
+    [
+      user,
+      workingCase.hasCivilClaims,
+      workingCase.state,
+      workingCase.defendants,
+    ],
   )
 }
 
@@ -329,7 +337,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                                 name: defendant.name,
                               },
                             )}
-                            pdfType="serviceCertificate"
+                            pdfType="subpoenaServiceCertificate"
                             elementId={[defendant.id, subpoena.id]}
                             renderAs="row"
                           />
@@ -351,7 +359,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
             shouldRender={permissions.canViewCivilClaims}
           />
           {filteredFiles.courtRecords?.length ||
-          filteredFiles.rulings?.length ? (
+          filteredFiles.rulings?.length ||
+          permissions.canViewVerdictServiceCertificate ? (
             <Box marginBottom={5}>
               <SectionHeading
                 title={formatMessage(strings.rulingAndCourtRecordsTitle)}
@@ -374,6 +383,19 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     onOpenFile={onOpen}
                   />
                 )}
+              {permissions.canViewVerdictServiceCertificate &&
+                workingCase.defendants?.map((defendant) => (
+                  <PdfButton
+                    key={defendant.id}
+                    caseId={workingCase.id}
+                    title={formatMessage(strings.serviceCertificateButtonText, {
+                      name: defendant.name,
+                    })}
+                    pdfType="verdictServiceCertificate"
+                    elementId={[defendant.id]}
+                    renderAs="row"
+                  />
+                ))}
             </Box>
           ) : null}
           <FileSection

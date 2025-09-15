@@ -222,9 +222,9 @@ export class FileController {
     )
   }
 
-  @Get('serviceCertificate/:defendantId/:subpoenaId')
+  @Get('subpoenaServiceCertificate/:defendantId/:subpoenaId')
   @Header('Content-Type', 'application/pdf')
-  getServiceCertificatePdf(
+  getSubpoenaServiceCertificatePdf(
     @Param('id') id: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
@@ -238,9 +238,33 @@ export class FileController {
 
     return this.fileService.tryGetFile(
       user.id,
-      AuditedAction.GET_SERVICE_CERTIFICATE_PDF,
+      AuditedAction.GET_SUBPOENA_SERVICE_CERTIFICATE_PDF,
       id,
       `defendant/${defendantId}/subpoena/${subpoenaId}/serviceCertificate`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
+  @Get('verdictServiceCertificate/:defendantId')
+  @Header('Content-Type', 'application/pdf')
+  getVerdictServiceCertificatePdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting service certificate for verdict of defendant ${defendantId} and case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_VERDICT_SERVICE_CERTIFICATE_PDF,
+      id,
+      `defendant/${defendantId}/verdict/serviceCertificate`,
       req,
       res,
       'pdf',

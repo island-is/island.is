@@ -207,6 +207,19 @@ const IndictmentOverview = () => {
               ) ?? []
             }
           />
+          {workingCase.defendants?.map(
+            (defendant) =>
+              defendant.verdict?.serviceDate && (
+                <PdfButton
+                  key={defendant.id}
+                  caseId={workingCase.id}
+                  title={`Birtingarvottorð ${defendant.name}.pdf`}
+                  pdfType="verdictServiceCertificate"
+                  elementId={[defendant.id]}
+                  renderAs="row"
+                />
+              ),
+          )}
         </Box>
         {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>
