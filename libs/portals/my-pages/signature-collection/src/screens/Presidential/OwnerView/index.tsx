@@ -92,7 +92,7 @@ const OwnerView = ({
                         : undefined
                     }
                     tag={
-                      new Date(list.endTime) < new Date()
+                      new Date(list.endTime) < new Date() || !list.active
                         ? {
                             label: formatMessage(m.collectionClosed),
                             variant: 'red',
