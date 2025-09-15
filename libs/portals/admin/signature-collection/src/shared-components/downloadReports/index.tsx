@@ -42,7 +42,7 @@ export const DownloadReports = ({
     municipality?: string
     constituencyName?: string
   }>()
-  
+
   const collectionType = collection.collectionType
   // area is used for LocalGovernmental and Parliamentary collections,
   // to get the report for certain area
