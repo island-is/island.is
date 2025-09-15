@@ -7,13 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import {
-  AnimatePresence,
-  LayoutGroup,
-  motion,
-  Reorder,
-  useDragControls,
-} from 'motion/react'
+import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 import router from 'next/router'
 import { uuid } from 'uuidv4'
 
@@ -45,12 +39,12 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { useCourtDocuments } from '@island.is/judicial-system-web/src/components/CourtDocuments/CourtDocuments'
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
   Case,
   CourtSessionResponse,
   CourtSessionRulingType,
+  UpdateCourtSessionInput,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -58,7 +52,6 @@ import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/u
 import {
   formatDateForServer,
   TUploadFile,
-  useCase,
   useCourtSessions,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isIndictmentCourtRecordStepValid } from '@island.is/judicial-system-web/src/utils/validate'
@@ -107,7 +100,7 @@ const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
 const useCourtSessionUpdater = (
   workingCase: Case,
   setWorkingCase: Dispatch<SetStateAction<Case>>,
-  updateFn: any,
+  updateFn: (updateCourtSession: UpdateCourtSessionInput) => Promise<boolean>,
 ) => {
   return (sessionId: string, updates: Partial<CourtSessionResponse>) => {
     setWorkingCase((prev) => {
@@ -132,9 +125,6 @@ const useCourtSessionUpdater = (
 const CourtRecord: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { updateCase } = useCase()
-  const { handleAddDocument } = useCourtDocuments()
-  const controls = useDragControls()
   const [reorderableItems, setReorderableItems] = useState<
     { id: string; name: string }[]
   >([])
