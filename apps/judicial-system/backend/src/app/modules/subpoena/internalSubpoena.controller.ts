@@ -240,9 +240,6 @@ export class InternalSubpoenaController {
           .DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION
       ]
     }/:defendantId/:subpoenaId`,
-    `case/:caseId/${
-      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION]
-    }/:defendantId/:subpoenaId`,
   ])
   @ApiOkResponse({
     type: DeliverResponse,

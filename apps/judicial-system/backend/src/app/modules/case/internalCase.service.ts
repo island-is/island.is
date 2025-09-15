@@ -1,5 +1,8 @@
 import CryptoJS from 'crypto-js'
 import format from 'date-fns/format'
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
 import { Base64 } from 'js-base64'
 import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -24,10 +27,14 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseType,
+  DefendantEventType,
   EventType,
+  getIndictmentAppealDeadlineDate,
+  hasDatePassed,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -64,6 +71,7 @@ import {
   CaseString,
   DateLog,
   Defendant,
+  DefendantEventLog,
   EventLog,
   IndictmentCount,
   Institution,
@@ -571,6 +579,68 @@ export class InternalCaseService {
     this.eventService.postEvent('ARCHIVE', theCase)
 
     return { caseArchived: true }
+  }
+
+  async getIndictmentCaseDefendantsWithExpiredAppealDeadline(): Promise<
+    { theCase: Case; defendant: Defendant }[]
+  > {
+    const cases = await this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: false,
+          order: [['created', 'ASC']],
+          include: [
+            {
+              model: DefendantEventLog,
+              as: 'eventLogs',
+              required: false,
+              separate: true,
+            },
+            {
+              model: Verdict,
+              as: 'verdict',
+              required: false,
+            },
+          ],
+          separate: true,
+        },
+      ],
+      where: {
+        state: { [Op.eq]: CaseState.COMPLETED },
+        type: CaseType.INDICTMENT,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      },
+    })
+
+    const isRuling = true // we iterate through cases completed with ruling
+    return cases.flatMap((theCase) =>
+      pipe(
+        theCase.defendants ?? [],
+        filterMap((defendant) => {
+          const isVerdictServiceCertificateDelivered =
+            DefendantEventLog.getEventLogByEventType(
+              DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+              defendant.eventLogs,
+            )
+          if (
+            !isVerdictServiceCertificateDelivered &&
+            defendant.verdict?.serviceDate
+          ) {
+            const appealDeadline = getIndictmentAppealDeadlineDate(
+              defendant.verdict?.serviceDate,
+              isRuling,
+            )
+            const isAppealDeadlineExpired = hasDatePassed(appealDeadline)
+            if (isAppealDeadlineExpired) {
+              return option.some({ theCase, defendant })
+            }
+          }
+          return option.none
+        }),
+      ),
+    )
   }
 
   async getCaseHearingArrangements(date: Date): Promise<Case[]> {

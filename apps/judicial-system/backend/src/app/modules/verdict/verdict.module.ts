@@ -8,7 +8,14 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 
 import { Verdict } from '../repository'
-import { CaseModule, FileModule, PoliceModule } from '..'
+import {
+  CaseModule,
+  DefendantModule,
+  EventModule,
+  FileModule,
+  PoliceModule,
+  UserModule,
+} from '..'
 import { InternalVerdictController } from './internalVerdict.controller'
 import { VerdictController } from './verdict.controller'
 import { VerdictService } from './verdict.service'
@@ -16,9 +23,12 @@ import { VerdictService } from './verdict.service'
 @Module({
   imports: [
     AuditTrailModule,
+    forwardRef(() => EventModule),
     forwardRef(() => CaseModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => FileModule),
+    forwardRef(() => DefendantModule),
+    forwardRef(() => UserModule),
     SequelizeModule.forFeature([Verdict]),
     ConfigModule.forRoot({
       isGlobal: true,

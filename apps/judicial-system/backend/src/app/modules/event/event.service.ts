@@ -204,6 +204,37 @@ export class EventService {
     }
   }
 
+  async postDailyVerdictServiceDeliveryEvent(count: number) {
+    const title = ':outbox_tray: Birtingarvottorð dóma'
+    const message = `Alls ${count} birtingarvottorð send í LÖKE.`
+
+    try {
+      if (!this.config.url) {
+        return
+      }
+
+      await fetch(`${this.config.url}`, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({
+          blocks: [
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `*${title}*\n${message}`,
+              },
+            },
+          ],
+        }),
+      })
+    } catch (error) {
+      this.logger.error(`Failed to log verdict service delivery event`, {
+        error,
+      })
+    }
+  }
+
   async postDailyHearingArrangementEvents(date: Date, cases: Case[]) {
     const title = `:judge: Fyrirtökur ${formatDate(date)}`
 
