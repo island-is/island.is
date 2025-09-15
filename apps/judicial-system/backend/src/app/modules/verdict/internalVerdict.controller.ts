@@ -36,7 +36,6 @@ import {
   CaseExistsGuard,
   CaseTypeGuard,
   CurrentCase,
-  InternalCaseService,
 } from '../case'
 import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
@@ -96,7 +95,6 @@ export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
     private readonly auditTrailService: AuditTrailService,
-    private readonly internalCaseService: InternalCaseService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -244,13 +242,9 @@ export class InternalVerdictController {
     this.logger.debug(
       `Delivering verdict service certificates pdf to court for all verdict where appeal decision deadline has passed`,
     )
-    const defendantsWithCases =
-      await this.internalCaseService.getIndictmentCaseDefendantsWithExpiredAppealDeadline()
 
     const delivered =
-      await this.verdictService.deliverVerdictServiceCertificatesToPolice(
-        defendantsWithCases,
-      )
+      await this.verdictService.deliverVerdictServiceCertificatesToPolice()
 
     await this.eventService.postDailyLawyerRegistryResetEvent(
       delivered.filter((delivery) => delivery).length,

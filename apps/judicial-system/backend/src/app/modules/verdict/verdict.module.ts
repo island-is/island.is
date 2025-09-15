@@ -23,8 +23,8 @@ import { VerdictService } from './verdict.service'
 @Module({
   imports: [
     AuditTrailModule,
-    forwardRef(() => EventModule),
     forwardRef(() => CaseModule),
+    forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => FileModule),
     forwardRef(() => DefendantModule),

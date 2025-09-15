@@ -53,12 +53,10 @@ export class VerdictService {
     private readonly fileService: FileService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
+    private readonly defendantService: DefendantService,
+    private readonly userService: UserService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
-    @Inject(forwardRef(() => DefendantService))
-    private readonly defendantService: DefendantService,
-    @Inject(forwardRef(() => UserService))
-    private readonly userService: UserService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -374,13 +372,14 @@ export class VerdictService {
     }
   }
 
-  async deliverVerdictServiceCertificatesToPolice(
-    defendantsWithCases: { defendant: Defendant; theCase: Case }[],
-  ): Promise<
+  async deliverVerdictServiceCertificatesToPolice(): Promise<
     {
       delivered: boolean
     }[]
   > {
+    const defendantsWithCases =
+      await this.internalCaseService.getIndictmentCaseDefendantsWithExpiredAppealDeadline()
+
     const delivered = await Promise.all(
       defendantsWithCases.map(async ({ defendant, theCase }) => {
         // this delivery is not directly triggered by a user, thus specifically fetch the court judge here
