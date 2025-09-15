@@ -22,10 +22,15 @@ import {
 } from '@island.is/shared/utils/server'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import type { User } from '@island.is/judicial-system/types'
+import type {
+  SubpoenaPoliceDocumentInfo,
+  User,
+  VerdictPoliceDocumentInfo,
+} from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
@@ -152,6 +157,18 @@ export class PoliceService {
     delivered: z.boolean().nullish(),
     deliveredOnPaper: z.boolean().nullish(),
     deliveredToLawyer: z.boolean().nullish(),
+  })
+
+  // TODO: Template - confirm with RLS
+  private documentStructure = z.object({
+    comment: z.string().nullish(),
+    servedBy: z.string().nullish(),
+    servedAt: z.string().nullish(),
+    delivered: z.boolean().nullish(),
+    deliveredOnPaper: z.boolean().nullish(),
+    deliveredToLawyer: z.boolean().nullish(),
+    deliveredOnIslandis: z.boolean().nullish(),
+    defenderNationalId: z.string().nullish(),
   })
 
   constructor(
@@ -350,7 +367,7 @@ export class PoliceService {
   async getSubpoenaStatus(
     policeSubpoenaId: string,
     user?: User,
-  ): Promise<SubpoenaInfo> {
+  ): Promise<SubpoenaPoliceDocumentInfo> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetSubpoenaStatus?id=${policeSubpoenaId}`,
     )
@@ -682,6 +699,82 @@ export class PoliceService {
 
       throw error
     }
+  }
+
+  async getVerdictDocumentStatus(
+    policeDocumentId: string,
+    user?: User,
+  ): Promise<VerdictPoliceDocumentInfo> {
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/GetDocumentStatus?id=${policeDocumentId}`,
+    )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const response: z.infer<typeof this.documentStructure> =
+            await res.json()
+          this.documentStructure.parse(response)
+
+          const servedAt =
+            response.servedAt && !Number.isNaN(Date.parse(response.servedAt))
+              ? new Date(response.servedAt)
+              : undefined
+
+          return {
+            serviceStatus: mapPoliceVerdictDeliveryStatus({
+              delivered: response.delivered ?? false,
+              deliveredOnPaper: response.deliveredOnPaper ?? false,
+              deliveredOnIslandis: response.deliveredOnIslandis ?? false,
+              deliveredToLawyer: response.deliveredToLawyer ?? false,
+            }),
+            comment: response.comment ?? undefined,
+            servedBy: response.servedBy ?? undefined,
+            serviceDate: servedAt,
+            defenderNationalId: response.defenderNationalId ?? undefined,
+          }
+        }
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When a document does not exist, a stack trace is returned.
+        throw new NotFoundException({
+          message: `Document with police document id ${policeDocumentId} does not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the document does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Police document ${policeDocumentId} does not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get police document status',
+          {
+            policeDocumentId,
+            actor: user?.name || 'Digital-mailbox',
+            institution: user?.institution?.name,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          message: `Failed to get police document status ${policeDocumentId}`,
+          detail:
+            reason instanceof Error
+              ? reason.message
+              : typeof reason === 'string'
+              ? reason
+              : JSON.stringify(reason),
+        })
+      })
   }
 
   async createSubpoena(

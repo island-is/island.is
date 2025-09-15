@@ -16,8 +16,8 @@ import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
   Countries,
   CurrentEmploymentStatusLang,
-  EctsUnits,
   EducationLevels,
+  LabeledValue,
   SelfAssessmentQuestionnaire,
   SelfAssessmentQuestionnaireAnswers,
 } from '../types'
@@ -205,14 +205,29 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'selfAssessment.currentEmploymentStatusExplanation',
   )
 
-  const lastEmploymentTitle = getValueViaPath<string>(
+  const lastProfession = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastEmploymentTitle',
+    'selfAssessment.lastProfession',
   )
 
-  const lastEmploymentYear = getValueViaPath<string>(
+  const lastProfessionDescription = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastEmploymentYear',
+    'selfAssessment.lastProfessionDescription',
+  )
+
+  const lastActivityOfProfession = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastActivityOfProfession',
+  )
+
+  const lastActivityOfProfessionDescription = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastActivityOfProfessionDescription',
+  )
+
+  const lastProfessionYear = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastProfessionYear',
   )
 
   return {
@@ -256,8 +271,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     previousRehabilitationSuccessfulFurtherExplanations,
     currentEmploymentStatuses,
     currentEmploymentStatusExplanation,
-    lastEmploymentTitle,
-    lastEmploymentYear,
+    lastProfession,
+    lastProfessionDescription,
+    lastActivityOfProfession,
+    lastActivityOfProfessionDescription,
+    lastProfessionYear,
   }
 }
 
@@ -357,7 +375,7 @@ export const getApplicationExternalData = (
     ) ?? []
 
   const ectsUnits =
-    getValueViaPath<EctsUnits[]>(
+    getValueViaPath<LabeledValue[]>(
       externalData,
       'socialInsuranceAdministrationEctsUnits.data',
     ) ?? []
@@ -389,6 +407,18 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIsApplicantEligible.data',
   )
 
+  const professions =
+    getValueViaPath<LabeledValue[]>(
+      externalData,
+      'socialInsuranceAdministrationProfessions.data',
+    ) ?? []
+
+  const activitiesOfProfessions =
+    getValueViaPath<LabeledValue[]>(
+      externalData,
+      'socialInsuranceAdministrationActivitiesOfProfessions.data',
+    ) ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -415,6 +445,8 @@ export const getApplicationExternalData = (
     marpApplicationType,
     marpConfirmationType,
     isEligible,
+    professions,
+    activitiesOfProfessions,
   }
 }
 
@@ -457,7 +489,7 @@ export const hasNotUtilizedRights = (
 }
 
 // Returns an array of year options from current year to 30 years in the past
-export const getSelfAssessmentLastEmploymentYearOptions = () => {
+export const getSelfAssessmentLastProfessionYearOptions = () => {
   const currentYear = new Date().getFullYear()
 
   return Array.from({ length: 31 }, (_, index) => {
@@ -479,9 +511,21 @@ export const eligibleText = (externalData: ExternalData) => {
   const { isEligible } = getApplicationExternalData(externalData)
 
   switch (isEligible?.reasonCode) {
+    case EligibleReasonCodes.APPLICANT_ALREADY_HAS_PENDING_APPLICATION:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .applicantAlreadyHasPendingApplicationDescription
     case EligibleReasonCodes.APPLICANT_AGE_OUT_OF_RANGE:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .applicantAgeOutOfRangeDescription
+    case EligibleReasonCodes.NO_LEGAL_DOMICILE_IN_ICELAND:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .noLegalDomicileinIcelandDescription
+    case EligibleReasonCodes.HAS_ACTIVE_PAYMENTS:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .hasActivePaymentsDescription
+    case EligibleReasonCodes.INACTIVE_PAYMENTS_FOR_TOO_LONG:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSevenYearsDescription
     case EligibleReasonCodes.BASE_CERT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertNotFoundDescription
@@ -491,9 +535,12 @@ export const eligibleText = (externalData: ExternalData) => {
     case EligibleReasonCodes.BASE_CERT_OLDER_THAN_7YEARS:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertOlderThanSevenYearsDescription
-    case EligibleReasonCodes.BASE_CERT_OLDER_THAN_6MONTHS:
+    case EligibleReasonCodes.LATEST_MEDICAL_DOCUMENT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
-        .baseCertOlderThanSixMonthsDescription
+        .latestMedicalDocumentNotFoundDescription
+    case EligibleReasonCodes.ERROR_PROCESSING_CLIENT:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .errorProcessingClientDescription
     default:
       return undefined
   }

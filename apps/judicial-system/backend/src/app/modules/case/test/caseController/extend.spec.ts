@@ -1,5 +1,4 @@
-import { Op } from 'sequelize'
-import { Transaction } from 'sequelize/types'
+import { Op, Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import {

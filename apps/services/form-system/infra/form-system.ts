@@ -29,17 +29,6 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       FORM_SYSTEM_ZENDESK_API_KEY_PROD:
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_PROD',
     })
-    .ingress({
-      primary: {
-        host: {
-          dev: ['beta'],
-          staging: ['beta'],
-          prod: ['', 'www.island.is'],
-        },
-        paths: ['/form-api'],
-        public: true,
-      },
-    })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },

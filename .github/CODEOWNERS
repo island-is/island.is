@@ -340,6 +340,8 @@ codemagic.yaml                                                                  
 /libs/api/domains/umbodsmadur-skuldara/                                                                   @island-is/stefna
 /libs/api/domains/verdicts/                                                                               @island-is/stefna
 /libs/clients/verdicts/                                                                                   @island-is/stefna
+/libs/api/domains/landspitali/                                                                            @island-is/stefna
+/apps/services/payment-flow-update-handler/                                                               @island-is/stefna
 
 /libs/island-ui/                                                                                          @island-is/island-ui
 
@@ -405,6 +407,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/activation-allowance                     @island-is/origo
 /libs/application/templates/activation-allowance                                                          @island-is/origo
 /libs/clients/vmst-unemployment                                                                           @island-is/origo
+/libs/api/domains/vmst-applications                                                                       @island-is/origo
 
 /libs/clients/practical-exams-ver                                                                         @island-is/origo
 /libs/api/domains/practical-exams                                                                         @island-is/origo

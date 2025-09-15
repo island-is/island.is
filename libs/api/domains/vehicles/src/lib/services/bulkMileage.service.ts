@@ -5,11 +5,15 @@ import {
 } from '@island.is/clients/vehicles-mileage'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
-import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
+import {
+  PostVehicleBulkMileageFileInput,
+  PostVehicleBulkMileageInput,
+} from '../dto/postBulkVehicleMileage.input'
 import { isDefined } from '@island.is/shared/utils'
 import type { Locale } from '@island.is/shared/types'
 import { LOG_CATEGORY } from '../constants'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { FileStorageService } from '@island.is/file-storage'
 import { VehiclesBulkMileageReadingResponse } from '../models/v3/bulkMileage/bulkMileageReadingResponse.model'
 import { VehiclesBulkMileageRegistrationJobHistory } from '../models/v3/bulkMileage/bulkMileageRegistrationJobHistory.model'
 import { VehiclesBulkMileageRegistrationRequestStatus } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestStatus.model'
@@ -17,6 +21,10 @@ import { VehiclesBulkMileageRegistrationRequestOverview } from '../models/v3/bul
 import { FetchError } from '@island.is/clients/middlewares'
 import { IntlService } from '@island.is/cms-translations'
 import { errorCodeMessageMap } from './errorCodes'
+import {
+  parseBufferToMileageRecord,
+  getFileTypeFromUrl,
+} from '../utils/parseFileToMileage'
 
 const namespaces = ['api.bulk-vehicle-mileage']
 
@@ -25,6 +33,7 @@ export class BulkMileageService {
   constructor(
     private mileageReadingApi: MileageReadingApi,
     private readonly intlService: IntlService,
+    private readonly fileStorageService: FileStorageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -32,7 +41,17 @@ export class BulkMileageService {
     return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async postBulkMileageReading(
+  private async prepareDownload(file: string): Promise<string> {
+    if (!file) {
+      return ''
+    }
+
+    const objUrl = this.fileStorageService.getObjectUrl(file)
+    const signedUrl = await this.fileStorageService.generateSignedUrl(objUrl)
+    return signedUrl
+  }
+
+  private async postBulkMileageReading(
     auth: User,
     input: PostVehicleBulkMileageInput,
   ): Promise<VehiclesBulkMileageReadingResponse | null> {
@@ -46,10 +65,7 @@ export class BulkMileageService {
       ).requestbulkmileagereadingPost({
         postBulkMileageReadingModel: {
           originCode: input.originCode,
-          mileageData: input.mileageData.map((m) => ({
-            permno: m.vehicleId,
-            mileage: m.mileageNumber,
-          })),
+          mileageData: input.mileageData,
         },
       })
 
@@ -168,6 +184,89 @@ export class BulkMileageService {
           }
         })
         .filter(isDefined),
+    }
+  }
+
+  async postBulkMileageFile(
+    auth: User,
+    input: PostVehicleBulkMileageFileInput,
+  ): Promise<VehiclesBulkMileageReadingResponse | null> {
+    const uploadUrl = await this.prepareDownload(input.fileUrl)
+
+    // Download the file from S3 using the signed URL
+    let file: Buffer | null = null
+    try {
+      const response = await fetch(uploadUrl)
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+
+      const arrayBuffer = await response.arrayBuffer()
+      file = Buffer.from(arrayBuffer)
+    } catch (error) {
+      this.logger.error('Failed to download file from S3', {
+        category: LOG_CATEGORY,
+        error: error.message,
+        uploadUrl,
+      })
+      throw new Error('Failed to download file from S3')
+    }
+
+    if (!file || file.length === 0) {
+      this.logger.error('Downloaded file is empty or null', {
+        category: LOG_CATEGORY,
+        uploadUrl,
+      })
+      throw new Error('Downloaded file is empty')
+    }
+    const type = input.fileType || getFileTypeFromUrl(input.fileUrl)
+
+    const records = await parseBufferToMileageRecord(
+      file,
+      type as 'csv' | 'xlsx',
+    )
+
+    if (!Array.isArray(records)) {
+      if (records.code === 1) {
+        this.logger.debug(
+          `'Fastanúmersdálk vantar eða er skrifaður rangt. Dálkanafn þarf að vera eitt af eftirfarandi; "permno", "vehicleid", "bilnumer","okutaeki","fastanumer"'`,
+        )
+      } else if (records.code === 2) {
+        this.logger.debug(
+          `'Kílómetrastöðudálkur er ekki réttur. Dálkanafn þarf að vera "mileage"'`,
+        )
+      } else {
+        this.logger.debug(
+          `'Óþekkt villa við að vinna úr skrá. Vinsamlegast reyndu aftur.'`,
+        )
+      }
+      return null
+    }
+
+    if (!records.length) {
+      this.logger.info('Upphleðsla mistókst. Engin gögn í skjali')
+      return null
+    }
+
+    try {
+      const res = await this.postBulkMileageReading(auth, {
+        originCode: input.originCode || 'ISLAND.IS',
+        mileageData: records,
+      })
+
+      this.logger.info('Bulk mileage file processed successfully', {
+        category: LOG_CATEGORY,
+        recordCount: records.length,
+        fileSize: file.length,
+      })
+      return res
+    } catch (error) {
+      this.logger.error('Failed to process bulk mileage records', {
+        category: LOG_CATEGORY,
+        error: error.message,
+        recordCount: records.length,
+      })
+      throw error
     }
   }
 }
