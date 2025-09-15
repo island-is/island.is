@@ -129,7 +129,8 @@ const EditableCaseFile: FC<Props> = (props) => {
   return (
     <div
       className={cn(styles.caseFileWrapper, {
-        [styles.caseFileWrapperBackground[backgroundColor!]]: backgroundColor,
+        [styles.caseFileWrapperBackground['white']]:
+          backgroundColor === 'white',
         [styles.error]:
           !backgroundColor && styleIndex === FileUploadStatus.error,
         [styles.done]: !backgroundColor && styleIndex === FileUploadStatus.done,
