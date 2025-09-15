@@ -178,6 +178,7 @@ export { type CourtDocument } from './lib/courtDocument'
 export {
   CourtSessionClosedLegalBasis,
   CourtSessionRulingType,
+  CourtDocumentType,
 } from './lib/courtSession'
 
 export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'

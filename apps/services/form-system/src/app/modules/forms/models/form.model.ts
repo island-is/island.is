@@ -97,7 +97,7 @@ export class Form extends Model<Form> {
 
   @Column({
     type: DataType.INTEGER,
-    defaultValue: 60,
+    defaultValue: 30,
   })
   applicationDaysToRemove!: number
 

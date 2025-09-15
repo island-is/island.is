@@ -1,4 +1,5 @@
 import { mock } from 'jest-mock-extended'
+import { Sequelize } from 'sequelize-typescript'
 
 import { Test } from '@nestjs/testing'
 
@@ -24,6 +25,7 @@ export const createTestingCourtSessionModule = async () => {
           error: jest.fn(),
         },
       },
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
       CourtSessionService,
     ],
   })
@@ -33,6 +35,8 @@ export const createTestingCourtSessionModule = async () => {
       }
     })
     .compile()
+
+  const sequelize = courtSessionModule.get<Sequelize>(Sequelize)
 
   const courtSessionRepositoryService =
     courtSessionModule.get<CourtSessionRepositoryService>(
@@ -45,8 +49,5 @@ export const createTestingCourtSessionModule = async () => {
 
   courtSessionModule.close()
 
-  return {
-    courtSessionRepositoryService,
-    courtSessionController,
-  }
+  return { sequelize, courtSessionRepositoryService, courtSessionController }
 }

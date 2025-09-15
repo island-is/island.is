@@ -7,6 +7,7 @@ import {
   applicantTableConfig,
   applicantTableFields,
   landLordInfoTableFields,
+  landlordTableConfig,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
 import * as m from '../../../lib/messages'
@@ -27,16 +28,7 @@ export const RentalHousingPartiesInfo = buildSubSection({
           marginTop: 1,
           maxRows: 10,
           fields: landLordInfoTableFields,
-          table: applicantTableConfig,
-        }),
-        buildTableRepeaterField({
-          id: 'parties.landlordInfo.representativeTable',
-          title: m.landlordAndTenantDetails.representativeTableTitle,
-          editField: true,
-          marginTop: 6,
-          maxRows: 10,
-          fields: landLordInfoTableFields,
-          table: applicantTableConfig,
+          table: landlordTableConfig,
         }),
         buildTableRepeaterField({
           id: 'parties.tenantInfo.table',

@@ -269,6 +269,7 @@ test.describe.serial('Indictment tests', () => {
     await expect(page).toHaveURL(`domur/akaera/samantekt/${caseId}`)
 
     await page.getByTestId('continueButton').click()
+    await page.getByTestId('footerCheckbox').check()
     await page.getByTestId('modalPrimaryButton').click()
 
     // Completed case overview

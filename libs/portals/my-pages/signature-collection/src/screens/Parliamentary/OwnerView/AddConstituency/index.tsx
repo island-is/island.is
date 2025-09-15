@@ -68,7 +68,7 @@ const AddConstituencyModal = ({
           setModalIsOpen(true)
         }}
       >
-        {formatMessage(m.add)}
+        {formatMessage(m.addConstituency)}
       </Button>
       <Modal
         id="addConstituency"

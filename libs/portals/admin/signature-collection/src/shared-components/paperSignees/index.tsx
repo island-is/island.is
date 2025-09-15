@@ -73,27 +73,24 @@ export const PaperSignees = ({
     useSignatureCollectionAdminUploadPaperSignatureMutation({
       variables: {
         input: {
-          listId: listId,
+          listId,
           nationalId: nationalIdInput,
           pageNumber: Number(page),
           collectionType,
         },
       },
       onCompleted: (res) => {
-        if (res.signatureCollectionAdminUploadPaperSignature?.success) {
+        const result = res.signatureCollectionAdminUploadPaperSignature
+
+        if (result?.success) {
           toast.success(formatMessage(m.paperSigneeSuccess))
         } else {
-          const message =
-            res.signatureCollectionAdminUploadPaperSignature?.reasons?.[0] ??
-            formatMessage(m.paperSigneeError)
-          toast.error(message)
+          toast.error(result?.reasons?.[0] ?? formatMessage(m.paperSigneeError))
         }
         revalidate()
         onClearForm()
       },
-      onError: () => {
-        toast.error(formatMessage(m.paperSigneeError))
-      },
+      onError: () => toast.error(formatMessage(m.paperSigneeError)),
     })
 
   const onClearForm = () => {
