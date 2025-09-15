@@ -1,4 +1,5 @@
 import {
+  SignatureCollectionCollectionType,
   SignatureCollectionList,
   SignatureCollectionSignedList,
 } from '@island.is/api/schema'
@@ -13,9 +14,11 @@ import SignedLists from '../../shared/SignedLists'
 import Managers from '../../shared/Managers'
 
 const OwnerView = ({
+  collectionType,
   listsForOwner,
   signedLists,
 }: {
+  collectionType: SignatureCollectionCollectionType
   listsForOwner: SignatureCollectionList[]
   signedLists: SignatureCollectionSignedList[]
 }) => {
@@ -29,7 +32,10 @@ const OwnerView = ({
       <Box marginTop={[0, 5]}>
         {/* Signed list */}
         {!user?.profile.actor && (
-          <SignedLists signedLists={signedLists ?? []} />
+          <SignedLists
+            collectionType={collectionType}
+            signedLists={signedLists ?? []}
+          />
         )}
 
         {/* Candidate created lists */}
@@ -96,7 +102,7 @@ const OwnerView = ({
           })}
         </Stack>
       </Box>
-      <Managers collectionType={listsForOwner[0]?.collectionType} />
+      <Managers collectionType={collectionType} />
     </Stack>
   )
 }

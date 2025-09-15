@@ -59,10 +59,18 @@ const SignatureCollectionPresidential = () => {
             <ActionDrawer />
           )}
           <Divider />
-          <OwnerView listsForOwner={listsForOwner} signedLists={signedLists} />
+          <OwnerView
+            collectionType={collectionType}
+            listsForOwner={listsForOwner}
+            signedLists={signedLists}
+          />
         </>
       ) : (
-        <SigneeView signedLists={signedLists} listsForUser={listsForUser} />
+        <SigneeView
+          collectionType={collectionType}
+          signedLists={signedLists}
+          listsForUser={listsForUser}
+        />
       )}
     </Box>
   )

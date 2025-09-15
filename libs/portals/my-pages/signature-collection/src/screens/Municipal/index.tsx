@@ -59,7 +59,11 @@ const SignatureCollectionMunicipal = () => {
           signedLists={signedLists}
         />
       ) : (
-        <SigneeView listsForUser={listsForUser} signedLists={signedLists} />
+        <SigneeView
+          collectionType={collectionType}
+          listsForUser={listsForUser}
+          signedLists={signedLists}
+        />
       )}
     </Box>
   )

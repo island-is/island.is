@@ -12,14 +12,15 @@ import format from 'date-fns/format'
 import { SignatureCollectionSignedList } from '../../../types/schema'
 
 const SigneeView = ({
+  collectionType,
   listsForUser,
   signedLists,
 }: {
+  collectionType: SignatureCollectionCollectionType
   listsForUser: SignatureCollectionList[]
   signedLists: SignatureCollectionSignedList[]
 }) => {
   const { formatMessage } = useLocale()
-  const collectionType = listsForUser[0]?.collectionType
 
   return (
     <Box>
@@ -34,7 +35,10 @@ const SigneeView = ({
 
       <Box marginTop={[0, 5]}>
         {/* Signed list(s) */}
-        <SignedLists signedLists={signedLists ?? []} />
+        <SignedLists
+          collectionType={collectionType}
+          signedLists={signedLists ?? []}
+        />
 
         {/* Other available lists */}
         <Box marginTop={[5, 10]}>
