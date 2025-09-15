@@ -33,17 +33,10 @@ import {
 } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
-  type GetVerdictCaseCategoriesQuery,
-  type GetVerdictCaseCategoriesQueryVariables,
-  type GetVerdictCaseTypesQuery,
-  type GetVerdictCaseTypesQueryVariables,
-  type GetVerdictKeywordsQuery,
-  type GetVerdictKeywordsQueryVariables,
+  GetCourtAgendasQuery,
+  GetCourtAgendasQueryVariables,
   type GetVerdictsQuery,
   type GetVerdictsQueryVariables,
-  type WebVerdictCaseCategory,
-  type WebVerdictCaseType,
-  type WebVerdictKeyword,
   type WebVerdictsInput,
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -55,25 +48,19 @@ import {
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
 import SidebarLayout from '../Layouts/SidebarLayout'
-import {
-  GET_VERDICT_CASE_CATEGORIES_QUERY,
-  GET_VERDICT_CASE_TYPES_QUERY,
-  GET_VERDICT_KEYWORDS_QUERY,
-  GET_VERDICTS_QUERY,
-} from '../queries/Verdicts'
+import { GET_COURT_AGENDAS_QUERY } from '../queries/CourtAgendas'
 import { DebouncedCheckbox } from './components/DebouncedCheckbox'
 import { DebouncedDatePicker } from './components/DebouncedDatePicker'
 import { DebouncedInput } from './components/DebouncedInput'
-import { InfoCardGrid } from './components/InfoCardGrid/InfoCardGrid'
 import { m } from './translations.strings'
-import * as styles from './VerdictsList.css'
+import * as styles from './CourtAgendas.css'
 
 const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 500
 const DATE_FORMAT = 'd. MMMM yyyy'
 
 const ALL_COURTS_TAG = ''
-const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómur Reykjavíkur'
+const DEFAULT_DISTRICT_COURT_TAG = 'hd-reykjavik'
 
 enum QueryParam {
   SEARCH_TERM = 'q',
@@ -87,15 +74,12 @@ enum QueryParam {
   DATE_TO = 'dateTo',
 }
 
-interface VerdictsListProps {
+interface CourtAgendasProps {
   initialData: {
-    visibleVerdicts: GetVerdictsQuery['webVerdicts']['items']
-    invisibleVerdicts: GetVerdictsQuery['webVerdicts']['items']
+    visibleCourtAgendas: GetCourtAgendasQuery['webCourtAgendas']['items']
+    invisibleCourtAgendas: GetCourtAgendasQuery['webCourtAgendas']['items']
     total: number
   }
-  keywords: WebVerdictKeyword[]
-  caseCategories: WebVerdictCaseCategory[]
-  caseTypes: WebVerdictCaseType[]
 }
 
 const normalizeLawReference = (input: string): string => {
@@ -165,7 +149,7 @@ const normalizeLawReference = (input: string): string => {
 const extractCourtLevelFromState = (court: string | null | undefined) =>
   court || ALL_COURTS_TAG
 
-const useVerdictListState = (props: VerdictsListProps) => {
+const useCourtAgendasState = (props: CourtAgendasProps) => {
   const initialRender = useRef(true)
   const [renderKey, setRenderKey] = useState(1)
   const [queryState, setQueryState] = useQueryStates(
@@ -263,9 +247,9 @@ const useVerdictListState = (props: VerdictsListProps) => {
   )
 
   const [fetchVerdicts, { loading, error }] = useLazyQuery<
-    GetVerdictsQuery,
-    GetVerdictsQueryVariables
-  >(GET_VERDICTS_QUERY)
+    GetCourtAgendasQuery,
+    GetCourtAgendasQueryVariables
+  >(GET_COURT_AGENDAS_QUERY)
 
   useEffect(() => {
     if (initialRender.current) {
@@ -280,7 +264,7 @@ const useVerdictListState = (props: VerdictsListProps) => {
       onCompleted(response) {
         // We skip processing the response if we've changed query params since the request
         if (queryStateRef.current) {
-          const input = { ...response.webVerdicts.input }
+          const input = { ...response.webCourtAgendas.input }
           delete input['__typename']
 
           if (
@@ -294,44 +278,44 @@ const useVerdictListState = (props: VerdictsListProps) => {
         }
 
         let totalAccordingToFirstPage = total
-        const isFirstPage = response.webVerdicts.input.page === 1
+        const isFirstPage = response.webCourtAgendas.input.page === 1
         if (isFirstPage) {
-          totalAccordingToFirstPage = response.webVerdicts.total
+          totalAccordingToFirstPage = response.webCourtAgendas.total
           setTotal(totalAccordingToFirstPage)
         }
 
         setData((prevData) => {
-          let verdicts = [...response.webVerdicts.items]
+          let verdicts = [...response.webCourtAgendas.items]
 
           if (!isFirstPage) {
             verdicts = verdicts
-              .concat(prevData.invisibleVerdicts)
+              .concat(prevData.invisibleCourtAgendas)
               // Remove all duplicate verdicts in case there were new verdicts published since last page load
               .filter(
                 (verdict) =>
                   !verdict.id ||
-                  !prevData.visibleVerdicts
+                  !prevData.visibleCourtAgendas
                     .map(({ id }) => id)
                     .includes(verdict.id),
               )
           }
 
-          verdicts.sort((a, b) => {
-            if (!a.verdictDate && !b.verdictDate) return 0
-            if (!b.verdictDate) return -1
-            if (!a.verdictDate) return 1
-            return (
-              new Date(b.verdictDate).getTime() -
-              new Date(a.verdictDate).getTime()
-            )
-          })
+          // verdicts.sort((a, b) => {
+          //   if (!a.verdictDate && !b.verdictDate) return 0
+          //   if (!b.verdictDate) return -1
+          //   if (!a.verdictDate) return 1
+          //   return (
+          //     new Date(b.verdictDate).getTime() -
+          //     new Date(a.verdictDate).getTime()
+          //   )
+          // })
 
           return {
-            visibleVerdicts: (isFirstPage
+            visibleCourtAgendas: (isFirstPage
               ? []
-              : prevData.visibleVerdicts
+              : prevData.visibleCourtAgendas
             ).concat(verdicts.slice(0, ITEMS_PER_PAGE)),
-            invisibleVerdicts: verdicts.slice(ITEMS_PER_PAGE),
+            invisibleCourtAgendas: verdicts.slice(ITEMS_PER_PAGE),
             total: totalAccordingToFirstPage,
           }
         })
@@ -439,11 +423,8 @@ const FILTER_ACCORDION_ITEM_IDS = [
 
 interface FiltersProps {
   startExpanded?: boolean
-  queryState: ReturnType<typeof useVerdictListState>['queryState']
-  updateQueryState: ReturnType<typeof useVerdictListState>['updateQueryState']
-  keywords: VerdictsListProps['keywords']
-  caseCategories: VerdictsListProps['caseCategories']
-  caseTypes: VerdictsListProps['caseTypes']
+  queryState: ReturnType<typeof useCourtAgendasState>['queryState']
+  updateQueryState: ReturnType<typeof useCourtAgendasState>['updateQueryState']
   renderKey: string | number
   updateRenderKey: () => void
   whiteBackground?: boolean
@@ -452,9 +433,6 @@ interface FiltersProps {
 const Filters = ({
   startExpanded = false,
   queryState,
-  keywords,
-  caseCategories,
-  caseTypes,
   updateQueryState,
   renderKey,
   updateRenderKey,
@@ -465,25 +443,6 @@ const Filters = ({
     startExpanded ? FILTER_ACCORDION_ITEM_IDS : [],
   )
   const [openFiltersToggle, setOpenFiltersToggle] = useState(!startExpanded)
-
-  const keywordOptions = useMemo(() => {
-    return keywords.map((keyword) => ({
-      label: keyword.label,
-      value: keyword.label,
-    }))
-  }, [keywords])
-  const caseCategoryOptions = useMemo(() => {
-    return caseCategories.map((category) => ({
-      label: category.label,
-      value: category.label,
-    }))
-  }, [caseCategories])
-  const caseTypeOptions = useMemo(() => {
-    return caseTypes.map((caseType) => ({
-      label: caseType.label,
-      value: caseType.label,
-    }))
-  }, [caseTypes])
 
   const handleToggle = useCallback((expanded: boolean, itemId: string) => {
     if (!expanded) {
@@ -524,288 +483,12 @@ const Filters = ({
           </Button>
         </Box>
       )}
-      <Box {...boxProps}>
-        <Accordion
-          singleExpand={false}
-          dividerOnTop={false}
-          dividerOnBottom={false}
-        >
-          <AccordionItem
-            id={FILTER_ACCORDION_ITEM_IDS[0]}
-            label={formatMessage(m.listPage.caseNumberAccordionLabel)}
-            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[0])}
-            onToggle={(expanded) => {
-              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[0])
-            }}
-            iconVariant="small"
-            labelVariant="h5"
-            labelColor={
-              queryState[QueryParam.CASE_NUMBER] ? 'blue400' : undefined
-            }
-          >
-            <DebouncedInput
-              key={renderKey}
-              value={queryState[QueryParam.CASE_NUMBER]}
-              onChange={(value) => {
-                updateQueryState(QueryParam.CASE_NUMBER, value)
-              }}
-              label={formatMessage(m.listPage.caseNumberInputLabel)}
-              name="casenumber-input"
-              debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-              clearStateButtonText={formatMessage(m.listPage.clearFilter)}
-            />
-          </AccordionItem>
-
-          <AccordionItem
-            id={FILTER_ACCORDION_ITEM_IDS[1]}
-            label={formatMessage(m.listPage.lawsAccordionLabel)}
-            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[1])}
-            onToggle={(expanded) => {
-              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[1])
-            }}
-            iconVariant="small"
-            labelVariant="h5"
-            labelColor={queryState[QueryParam.LAWS] ? 'blue400' : undefined}
-          >
-            <Stack space={2}>
-              <DebouncedInput
-                key={renderKey}
-                label={formatMessage(m.listPage.lawsInputLabel)}
-                name="laws-input"
-                onChange={(value) => {
-                  updateQueryState(QueryParam.LAWS, value)
-                }}
-                value={queryState[QueryParam.LAWS]}
-                debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                clearStateButtonText={formatMessage(m.listPage.clearFilter)}
-              />
-            </Stack>
-          </AccordionItem>
-
-          <AccordionItem
-            id={FILTER_ACCORDION_ITEM_IDS[2]}
-            label={formatMessage(m.listPage.keywordAccordionLabel)}
-            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[2])}
-            onToggle={(expanded) => {
-              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[2])
-            }}
-            iconVariant="small"
-            labelVariant="h5"
-            labelColor={queryState[QueryParam.KEYWORD] ? 'blue400' : undefined}
-          >
-            <KeywordSelect
-              key={renderKey}
-              keywordOptions={keywordOptions}
-              value={keywordOptions.find(
-                (option) => option.value === queryState[QueryParam.KEYWORD],
-              )}
-              onChange={(option) => {
-                updateQueryState(QueryParam.KEYWORD, option?.value ?? null)
-              }}
-              clearStateButtonText={formatMessage(m.listPage.clearFilter)}
-            />
-          </AccordionItem>
-
-          <AccordionItem
-            id={FILTER_ACCORDION_ITEM_IDS[3]}
-            label={formatMessage(m.listPage.caseCategoryAccordionLabel)}
-            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[3])}
-            onToggle={(expanded) => {
-              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[3])
-            }}
-            iconVariant="small"
-            labelVariant="h5"
-            labelColor={
-              queryState[QueryParam.CASE_CATEGORIES] ? 'blue400' : undefined
-            }
-          >
-            <Stack space={2}>
-              <Stack space={2} key={renderKey}>
-                {caseCategoryOptions.map((option) => (
-                  <DebouncedCheckbox
-                    debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                    key={option.value}
-                    checked={Boolean(
-                      queryState[QueryParam.CASE_CATEGORIES]?.includes(
-                        option.value,
-                      ),
-                    )}
-                    label={option.label}
-                    value={option.value}
-                    onChange={(checked) => {
-                      updateQueryState(
-                        QueryParam.CASE_CATEGORIES,
-                        (previousState) => {
-                          let updatedCaseCategories = [
-                            ...(previousState[QueryParam.CASE_CATEGORIES] ??
-                              []),
-                          ]
-                          if (checked) {
-                            updatedCaseCategories.push(option.value)
-                          } else {
-                            updatedCaseCategories =
-                              updatedCaseCategories.filter(
-                                (value) => value !== option.value,
-                              )
-                          }
-                          return {
-                            ...previousState,
-                            [QueryParam.CASE_CATEGORIES]:
-                              updatedCaseCategories.length === 0
-                                ? null
-                                : updatedCaseCategories,
-                          }
-                        },
-                      )
-                    }}
-                  />
-                ))}
-              </Stack>
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="text"
-                  icon="reload"
-                  size="small"
-                  onClick={() => {
-                    updateQueryState(QueryParam.CASE_CATEGORIES, [])
-                    updateRenderKey()
-                  }}
-                >
-                  {formatMessage(m.listPage.clearFilter)}
-                </Button>
-              </Box>
-            </Stack>
-          </AccordionItem>
-
-          <AccordionItem
-            id={FILTER_ACCORDION_ITEM_IDS[4]}
-            label={formatMessage(m.listPage.caseTypeAccordionLabel)}
-            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[4])}
-            onToggle={(expanded) => {
-              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[4])
-            }}
-            iconVariant="small"
-            labelVariant="h5"
-            labelColor={
-              queryState[QueryParam.CASE_TYPES] ? 'blue400' : undefined
-            }
-          >
-            <Stack space={2}>
-              <Stack space={2} key={renderKey}>
-                {caseTypeOptions.map((option) => (
-                  <DebouncedCheckbox
-                    debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                    key={option.value}
-                    checked={Boolean(
-                      queryState[QueryParam.CASE_TYPES]?.includes(option.value),
-                    )}
-                    label={option.label}
-                    value={option.value}
-                    onChange={(checked) => {
-                      updateQueryState(
-                        QueryParam.CASE_TYPES,
-                        (previousState) => {
-                          let updatedCaseTypes = [
-                            ...(previousState[QueryParam.CASE_TYPES] ?? []),
-                          ]
-                          if (checked) {
-                            updatedCaseTypes.push(option.value)
-                          } else {
-                            updatedCaseTypes = updatedCaseTypes.filter(
-                              (value) => value !== option.value,
-                            )
-                          }
-                          return {
-                            ...previousState,
-                            [QueryParam.CASE_TYPES]:
-                              updatedCaseTypes.length === 0
-                                ? null
-                                : updatedCaseTypes,
-                          }
-                        },
-                      )
-                    }}
-                  />
-                ))}
-              </Stack>
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="text"
-                  icon="reload"
-                  size="small"
-                  onClick={() => {
-                    updateQueryState(QueryParam.CASE_TYPES, [])
-                    updateRenderKey()
-                  }}
-                >
-                  {formatMessage(m.listPage.clearFilter)}
-                </Button>
-              </Box>
-            </Stack>
-          </AccordionItem>
-
-          <AccordionItem
-            id={FILTER_ACCORDION_ITEM_IDS[5]}
-            label={formatMessage(m.listPage.dateAccordionLabel)}
-            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[5])}
-            onToggle={(expanded) => {
-              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[5])
-            }}
-            iconVariant="small"
-            labelVariant="h5"
-            labelColor={
-              Boolean(queryState[QueryParam.DATE_FROM]) ||
-              Boolean(queryState[QueryParam.DATE_TO])
-                ? 'blue400'
-                : undefined
-            }
-          >
-            <Stack space={2}>
-              <Stack space={2} key={renderKey}>
-                <DebouncedDatePicker
-                  debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                  name="from"
-                  label={formatMessage(m.listPage.dateFromLabel)}
-                  handleChange={(date) => {
-                    updateQueryState(QueryParam.DATE_FROM, date)
-                  }}
-                  value={queryState[QueryParam.DATE_FROM]}
-                  maxDate={queryState[QueryParam.DATE_TO]}
-                />
-                <DebouncedDatePicker
-                  debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                  name="to"
-                  label={formatMessage(m.listPage.dateToLabel)}
-                  handleChange={(date) => {
-                    updateQueryState(QueryParam.DATE_TO, date)
-                  }}
-                  value={queryState[QueryParam.DATE_TO]}
-                  minDate={queryState[QueryParam.DATE_FROM]}
-                />
-              </Stack>
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="text"
-                  icon="reload"
-                  size="small"
-                  onClick={() => {
-                    updateQueryState(QueryParam.DATE_FROM, null)
-                    updateQueryState(QueryParam.DATE_TO, null)
-                    updateRenderKey()
-                  }}
-                >
-                  {formatMessage(m.listPage.clearFilter)}
-                </Button>
-              </Box>
-            </Stack>
-          </AccordionItem>
-        </Accordion>
-      </Box>
+      <Box {...boxProps}>Hello</Box>
     </Stack>
   )
 }
 
-const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
+const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
   const {
     queryState,
     updateQueryState,
@@ -818,8 +501,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
     total,
     renderKey,
     updateRenderKey,
-  } = useVerdictListState(props)
-  const { customPageData, keywords, caseCategories, caseTypes } = props
+  } = useCourtAgendasState(props)
+  const { customPageData } = props
 
   const { format } = useDateUtils()
   const { formatMessage } = useIntl()
@@ -838,15 +521,11 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       },
       {
         label: formatMessage(m.listPage.showCourtOfAppeal),
-        value: 'Landsréttur',
+        value: 'Landsréttur', // TODO
       },
       {
         label: formatMessage(m.listPage.showSupremeCourt),
-        value: 'Hæstiréttur',
-      },
-      {
-        label: formatMessage(m.listPage.showRetrialCourt),
-        value: 'Endurupptökudómur',
+        value: 'Hæstiréttur', // TODO
       },
     ]
   }, [formatMessage])
@@ -858,31 +537,31 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       },
       {
         label: 'Vesturland',
-        value: 'Héraðsdómur Vesturlands',
+        value: 'hd-vesturland',
       },
       {
         label: 'Vestfirðir',
-        value: 'Héraðsdómur Vestfjarða',
+        value: 'hd-vestfirdir',
       },
       {
         label: 'Norðurland vestra',
-        value: 'Héraðsdómur Norðurlands vestra',
+        value: 'hd-nordurland-vestra',
       },
       {
         label: 'Norðurland eystra',
-        value: 'Héraðsdómur Norðurlands eystra',
+        value: 'hd-nordurland-eystra',
       },
       {
         label: 'Austurland',
-        value: 'Héraðsdómur Austurlands',
+        value: 'hd-austurland',
       },
       {
         label: 'Suðurland',
-        value: 'Héraðsdómur Suðurlands',
+        value: 'hd-sudurland',
       },
       {
         label: 'Reykjanes',
-        value: 'Héraðsdómur Reykjaness',
+        value: 'hd-reykjanes',
       },
     ]
   }, [])
@@ -1016,7 +695,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
     return tags
   }, [format, formatMessage, queryState, updateQueryState, updateRenderKey])
-
+  console.log(data.visibleCourtAgendas)
   return (
     <Box className="rs_read">
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
@@ -1168,9 +847,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 <Filters
                   renderKey={renderKey}
                   startExpanded={true}
-                  caseCategories={caseCategories}
-                  caseTypes={caseTypes}
-                  keywords={keywords}
                   queryState={queryState}
                   updateQueryState={updateQueryState}
                   updateRenderKey={updateRenderKey}
@@ -1217,8 +893,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                   {formatMessage(
                     m.listPage[
                       data.total === 1
-                        ? 'verdictsFoundSingular'
-                        : 'verdictsFoundPlural'
+                        ? 'courtAgendasFoundSingular'
+                        : 'courtAgendasFoundPlural'
                     ],
                   )}
                 </Text>
@@ -1241,9 +917,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       <Filters
                         renderKey={renderKey}
                         updateRenderKey={updateRenderKey}
-                        caseCategories={caseCategories}
-                        caseTypes={caseTypes}
-                        keywords={keywords}
                         queryState={queryState}
                         updateQueryState={updateQueryState}
                       />
@@ -1251,49 +924,25 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                   </Filter>
                 </Hidden>
               </Inline>
-              <InfoCardGrid
-                variant="detailed-reveal"
-                columns={1}
-                cards={data.visibleVerdicts
-                  .filter((verdict) => Boolean(verdict.id))
-                  .map((verdict) => {
-                    const detailLines = [
-                      {
-                        icon: 'calendar',
-                        text: verdict.verdictDate
-                          ? format(new Date(verdict.verdictDate), DATE_FORMAT)
-                          : '',
-                      },
-                      { icon: 'hammer', text: verdict.court ?? '' },
-                    ]
-
-                    if (verdict.presidentJudge?.name) {
-                      detailLines.push({
-                        icon: 'person',
-                        text: `${verdict.presidentJudge?.name ?? ''} ${
-                          verdict.presidentJudge?.title ?? ''
-                        }`,
-                      })
-                    }
-
-                    return {
-                      description: verdict.title,
-                      eyebrow: '',
-                      id: verdict.id,
-                      link: { href: `/domar/${verdict.id}`, label: '' },
-                      title: verdict.caseNumber,
-                      subDescription: verdict.keywords.join(', '),
-                      borderColor: 'blue200',
-                      detailLines,
-                      revealMoreButtonProps: {
-                        revealLabel: formatMessage(m.listPage.revealMoreLabel),
-                        hideLabel: formatMessage(m.listPage.hideMoreLabel),
-                        revealedText: verdict.presentings,
-                      },
-                    }
-                  })}
-              />
-              {total > data.visibleVerdicts.length && (
+              {data.visibleCourtAgendas.map((courtAgenda) => (
+                <Box
+                  key={courtAgenda.id}
+                  border="standard"
+                  borderRadius="large"
+                  padding={2}
+                  background="white"
+                >
+                  <Inline alignY="center" space={2}>
+                    <Text variant="h5" color="blue400">
+                      {courtAgenda.caseNumber}
+                    </Text>
+                    <Text variant="eyebrow" color="blue400">
+                      {courtAgenda.court}
+                    </Text>
+                  </Inline>
+                </Box>
+              ))}
+              {total > data.visibleCourtAgendas.length && (
                 <Box
                   key={page}
                   paddingTop={4}
@@ -1315,9 +964,9 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       updatePage(page + 1)
                     }}
                   >
-                    {formatMessage(m.listPage.seeMoreVerdicts, {
-                      remainingVerdictCount:
-                        total - data.visibleVerdicts.length,
+                    {formatMessage(m.listPage.seeMoreCourtAgendas, {
+                      remainingCourtAgendasCount:
+                        total - data.visibleCourtAgendas.length,
                     })}
                   </Button>
                 </Box>
@@ -1330,96 +979,38 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   )
 }
 
-VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
-  const searchTerm = parseAsString.parseServerSide(
-    query[QueryParam.SEARCH_TERM],
-  )
-  const caseNumber = parseAsString.parseServerSide(
-    query[QueryParam.CASE_NUMBER],
-  )
-  const court = parseAsString.parseServerSide(query[QueryParam.COURT])
-  const caseCategories = parseAsArrayOf(parseAsString).parseServerSide(
-    query[QueryParam.CASE_CATEGORIES],
-  )
-  const caseTypes = parseAsArrayOf(parseAsString).parseServerSide(
-    query.caseTypes,
-  )
-  const keywords = parseAsArrayOf(parseAsString).parseServerSide(
-    query[QueryParam.KEYWORD],
-  )
-  const laws = parseAsArrayOf(parseAsString).parseServerSide(
-    query[QueryParam.LAWS],
-  )
-  const dateFrom = parseAsString.parseServerSide(query[QueryParam.DATE_FROM])
-  const dateTo = parseAsString.parseServerSide(query[QueryParam.DATE_TO])
-
-  const [
-    verdictListResponse,
-    caseTypesResponse,
-    caseCategoriesResponse,
-    keywordsResponse,
-  ] = await Promise.all([
-    apolloClient.query<GetVerdictsQuery, GetVerdictsQueryVariables>({
-      query: GET_VERDICTS_QUERY,
+CourtAgendas.getProps = async ({ apolloClient, customPageData }) => {
+  const [CourtAgendasResponse] = await Promise.all([
+    apolloClient.query<GetCourtAgendasQuery, GetCourtAgendasQueryVariables>({
+      query: GET_COURT_AGENDAS_QUERY,
       variables: {
         input: {
-          searchTerm,
-          caseCategories,
-          caseTypes,
-          keywords,
           page: 1,
-          courtLevel: extractCourtLevelFromState(court),
-          laws: laws?.map(normalizeLawReference),
-          caseNumber,
-          dateFrom,
-          dateTo,
         },
       },
     }),
-    apolloClient.query<
-      GetVerdictCaseTypesQuery,
-      GetVerdictCaseTypesQueryVariables
-    >({
-      query: GET_VERDICT_CASE_TYPES_QUERY,
-    }),
-    apolloClient.query<
-      GetVerdictCaseCategoriesQuery,
-      GetVerdictCaseCategoriesQueryVariables
-    >({
-      query: GET_VERDICT_CASE_CATEGORIES_QUERY,
-    }),
-    apolloClient.query<
-      GetVerdictKeywordsQuery,
-      GetVerdictKeywordsQueryVariables
-    >({
-      query: GET_VERDICT_KEYWORDS_QUERY,
-    }),
   ])
 
-  const items = verdictListResponse.data.webVerdicts.items
+  const items = CourtAgendasResponse.data.webCourtAgendas.items
 
-  if (!customPageData?.configJson?.showVerdictListPage) {
-    throw new CustomNextError(
-      404,
-      'Verdict list page has been turned off in the CMS',
-    )
-  }
+  // if (!customPageData?.configJson?.showCourtAgendasPage) {
+  //   throw new CustomNextError(
+  //     404,
+  //     'Verdict list page has been turned off in the CMS',
+  //   )
+  // }
 
   return {
     initialData: {
-      visibleVerdicts: items.slice(0, ITEMS_PER_PAGE),
-      invisibleVerdicts: items.slice(ITEMS_PER_PAGE),
-      total: verdictListResponse.data.webVerdicts.total,
+      visibleCourtAgendas: items.slice(0, ITEMS_PER_PAGE),
+      invisibleCourtAgendas: items.slice(ITEMS_PER_PAGE),
+      total: CourtAgendasResponse.data.webCourtAgendas.total,
     },
-    caseTypes: caseTypesResponse.data.webVerdictCaseTypes.caseTypes,
-    caseCategories:
-      caseCategoriesResponse.data.webVerdictCaseCategories.caseCategories,
-    keywords: keywordsResponse.data.webVerdictKeywords.keywords,
   }
 }
 
 export default withMainLayout(
-  withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictsList),
+  withCustomPageWrapper(CustomPageUniqueIdentifier.CourtAgendas, CourtAgendas),
   {
     footerVersion: 'organization',
   },
