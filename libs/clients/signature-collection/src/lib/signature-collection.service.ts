@@ -492,7 +492,6 @@ export class SignatureCollectionClientService {
     auth: User,
   ): Promise<SignedList[] | null> {
     const { signatures } = await this.getSignee(auth, collectionType)
-    const { endTime } = await this.getLatestCollectionForType(collectionType)
     if (!signatures) {
       return null
     }
