@@ -29,6 +29,7 @@
 /libs/application/templates/signature-collection                                                          @island-is/norda
 /libs/application/templates/social-insurance-administration/                                              @island-is/norda
 /libs/application/templates/transport-authority/                                                          @island-is/norda
+/libs/application/template-api-modules/                                                                   @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/                                     @island-is/norda
 
 /*                                                                                                        @island-is/core
@@ -148,9 +149,9 @@ codemagic.yaml                                                                  
 # /libs/api/domains/municipalities-financial-aid                                                            @island-is/kolibri-robin-hood
 # /libs/clients/municipalities-financial-aid                                                                @island-is/kolibri-robin-hood
 
-/libs/clients/hms/                                                                                        @island-is/kolibri-kotid
-/libs/clients/hms-rental-agreement/                                                                       @island-is/kolibri-kotid
-/libs/api/domains/hms/                                                                                    @island-is/kolibri-kotid
+/libs/clients/hms/                                                                                        @island-is/norda
+/libs/clients/hms-rental-agreement/                                                                       @island-is/norda
+/libs/api/domains/hms/                                                                                    @island-is/norda
 
 /apps/download-service/                                                                                   @island-is/hugsmidjan
 /apps/portals/my-pages*/                                                                                  @island-is/hugsmidjan
