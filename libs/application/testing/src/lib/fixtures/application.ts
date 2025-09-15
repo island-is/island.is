@@ -12,7 +12,7 @@ import {
   ApplicationTemplate,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'crypto'
 
 export const createApplication = (
   overrides?: Partial<ApplicationWithAttachments>,
