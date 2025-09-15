@@ -21,7 +21,7 @@ const OwnerView = ({
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const collectionType = currentCollection?.collectionType ?? ''
+  const { id: collectionId, collectionType } = currentCollection
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
     collectionType,
     '',
@@ -65,7 +65,7 @@ const OwnerView = ({
                               ),
                               {
                                 state: {
-                                  collectionId: currentCollection?.id || '',
+                                  collectionId: collectionId || '',
                                 },
                               },
                             )

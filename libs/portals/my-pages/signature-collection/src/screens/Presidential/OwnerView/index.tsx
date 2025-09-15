@@ -1,8 +1,5 @@
-import {
-  SignatureCollection,
-  SignatureCollectionCollectionType,
-} from '@island.is/api/schema'
-import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import { SignatureCollection } from '@island.is/api/schema'
+import { ActionCard, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import format from 'date-fns/format'
@@ -12,46 +9,29 @@ import { m } from '../../../lib/messages'
 import { SignatureCollectionPaths } from '../../../lib/paths'
 import { Skeleton } from '../../../lib/skeletons'
 import SignedLists from '../../shared/SignedLists'
-import CancelCollection from './CancelCollection'
 import Managers from '../../shared/Managers'
 
-const collectionType = SignatureCollectionCollectionType.Presidential
-
 const OwnerView = ({
-  refetchIsOwner,
   currentCollection,
 }: {
-  refetchIsOwner: () => void
   currentCollection: SignatureCollection
 }) => {
   useNamespaces('sp.signatureCollection')
   const navigate = useNavigate()
   const user = useUserInfo()
   const { formatMessage } = useLocale()
+
+  const { id: collectionId, collectionType } = currentCollection
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
     collectionType,
-    currentCollection?.id || '',
+    collectionId || '',
   )
   const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
 
   return (
     <Box>
       {!loadingOwnerLists && !loadingSignedLists && !!currentCollection ? (
-        <Stack space={6}>
-          {listsForOwner?.length === 0 && currentCollection.isActive && (
-            <Button
-              icon="open"
-              iconType="outline"
-              onClick={() =>
-                window.open(
-                  `${document.location.origin}/umsoknir/medmaelasofnun/`,
-                )
-              }
-              size="small"
-            >
-              {formatMessage(m.createListButton)}
-            </Button>
-          )}
+        <Stack space={8}>
           <Box marginTop={[0, 5]}>
             {/* Signed list */}
             {!user?.profile.actor && (
@@ -122,12 +102,6 @@ const OwnerView = ({
               })}
             </Stack>
           </Box>
-          {listsForOwner?.length > 0 &&
-            !user?.profile.actor &&
-            currentCollection.isActive && (
-              <CancelCollection refetchIsOwner={refetchIsOwner} />
-            )}
-
           <Managers collectionType={collectionType} />
         </Stack>
       ) : (

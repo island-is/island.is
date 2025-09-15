@@ -1,4 +1,4 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, Divider } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import OwnerView from './OwnerView'
 import {
@@ -10,12 +10,15 @@ import { m } from '../../lib/messages'
 import SigneeView from '../shared/SigneeView'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 import Intro from '../shared/Intro'
+import ActionDrawer from './OwnerView/ActionDrawer'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 const collectionType = SignatureCollectionCollectionType.Presidential
 
 const SignatureCollectionPresidential = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+  const user = useUserInfo()
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection(collectionType)
   const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner(collectionType)
@@ -36,11 +39,12 @@ const SignatureCollectionPresidential = () => {
             intro={formatMessage(m.pageIntro)}
             slug={listsForOwner?.[0]?.slug}
           />
+          {!user?.profile.actor && currentCollection.isActive && (
+            <ActionDrawer refetchIsOwner={refetchIsOwner} />
+          )}
+          <Divider />
           {isOwner?.success ? (
-            <OwnerView
-              refetchIsOwner={refetchIsOwner}
-              currentCollection={currentCollection}
-            />
+            <OwnerView currentCollection={currentCollection} />
           ) : (
             <SigneeView currentCollection={currentCollection} />
           )}

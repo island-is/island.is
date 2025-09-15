@@ -4,18 +4,13 @@ import { SignatureCollectionPaths } from '../../../lib/paths'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import AddConstituency from './AddConstituency'
-import {
-  SignatureCollectionCollectionType,
-  SignatureCollectionList,
-} from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import { useGetListsForOwner, useGetSignedList } from '../../../hooks'
 import { SignatureCollection } from '@island.is/api/schema'
 import SignedLists from '../../shared/SignedLists'
 import Managers from '../../shared/Managers'
 import { Skeleton } from '../../../lib/skeletons'
 import format from 'date-fns/format'
-
-const collectionType = SignatureCollectionCollectionType.Parliamentary
 
 const OwnerView = ({
   currentCollection,
@@ -27,10 +22,11 @@ const OwnerView = ({
 }) => {
   const navigate = useNavigate()
   const location = useLocation()
-
   const { formatMessage } = useLocale()
+
+  const { id: collectionId, collectionType } = currentCollection
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
-    useGetListsForOwner(collectionType, currentCollection?.id || '')
+    useGetListsForOwner(collectionType, collectionId || '')
   const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
 
   return (
