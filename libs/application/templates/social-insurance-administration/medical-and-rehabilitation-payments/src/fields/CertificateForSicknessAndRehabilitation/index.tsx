@@ -450,8 +450,11 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
       />
     )
   }
-  // eslint-disable-next-line no-constant-condition
-  if (1 === 1) {
+
+  if (
+    data?.socialInsuranceCertificateForSicknessAndRehabilitation
+      ?.isAlmaCertificate
+  ) {
     return (
       <Stack space={4}>
         <Stack space={3}>
@@ -486,10 +489,25 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
                     .almaCertificateDate,
                 )}
               </Label>
-              <Text>{format(new Date('2022-01-12'), 'dd.MM.yyyy')}</Text>
+              <Text>
+                {data?.socialInsuranceCertificateForSicknessAndRehabilitation
+                  ?.certificateDate
+                  ? format(
+                      new Date(
+                        data.socialInsuranceCertificateForSicknessAndRehabilitation.certificateDate,
+                      ),
+                      'dd.MM.yyyy',
+                    )
+                  : '-'}
+              </Text>
             </GridColumn>
           </GridRow>
         </Stack>
+        <input
+          type="hidden"
+          value="true"
+          {...register(`${field.id}.isAlmaCertificate`)}
+        />
       </Stack>
     )
   }
@@ -516,7 +534,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
                 .referenceId
             : undefined
         }
-        {...register(field.id)}
+        {...register(`${field.id}.referenceId`)}
       />
     </Stack>
   )

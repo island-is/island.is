@@ -24,6 +24,7 @@ export interface MedicalAndRehabilitationPaymentsDTO {
   preQuestionnaire?: PreQuestionnaire
   selfAssessment?: SelfAssessment
   baseCertificateReference: string
+  isAlmaCertificate?: boolean
   rehabilitationPlanReference?: string
   incomePlan?: IncomePlanInfo
   confirmedTreatmentReference?: string
