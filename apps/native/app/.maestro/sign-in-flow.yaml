@@ -1,5 +1,7 @@
 appId: 'is.island.app.dev'
 ---
+- launchApp:
+    appId: 'is.island.app.dev'
 - tapOn:
     text: 'Mock'
     optional: true
