@@ -486,23 +486,5 @@ query Case($input: CaseQueryInput!) {
       nationalId
       caseFileCategory
     }
-    courtSessions {
-      id
-      location
-      startDate
-      endDate
-      isClosed
-      closedLegalProvisions
-      attendees
-      entries
-      rulingType
-      ruling
-      closingEntries
-      isAttestingWitness
-      attestingWitness {
-        name
-      }
-    }
-    courtDocuments
   }
 }
