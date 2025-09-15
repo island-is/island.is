@@ -31,6 +31,9 @@
 /libs/application/templates/transport-authority/                                                          @island-is/norda
 /libs/application/template-api-modules/                                                                   @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/                                     @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/aosh/                                    @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/signature-collection/                    @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/                     @island-is/norda
 
 /*                                                                                                        @island-is/core
 /libs/api/domains/identity/                                                                               @island-is/core
