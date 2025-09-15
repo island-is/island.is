@@ -123,17 +123,17 @@ const useCourtSessionUpdater = (
 }
 
 const CourtRecord: FC = () => {
+  const { createCourtSession, updateCourtSession } = useCourtSessions()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const [reorderableItems, setReorderableItems] = useState<
-    { id: string; name: string }[]
-  >([])
+
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
-  const [courtEndTimeErrorMessage, setCourtEndTimeErrorMessage] =
-    useState<string>('')
-  const { createCourtSession, updateCourtSession } = useCourtSessions()
+  const [reorderableItems, setReorderableItems] = useState<
+    { id: string; name: string }[]
+  >([])
+
   const updateSession = useCourtSessionUpdater(
     workingCase,
     setWorkingCase,
@@ -222,21 +222,6 @@ const CourtRecord: FC = () => {
   //     })),
   //   )
   // }, [workingCase.courtDocuments])
-
-  const handleEndTimeChange = (id: string, endTime: string) => {
-    // You’ll need the start date from the current session
-    const session = workingCase.courtSessions?.find((s) => s.id === id)
-    if (!session || !session.startDate) return
-
-    const startDate = new Date(session.startDate)
-    const [hours, minutes] = endTime.split(':').map(Number)
-
-    const newEnd = new Date(startDate)
-    newEnd.setHours(hours, minutes, 0, 0)
-
-    console.log('newEnd', startDate, hours, minutes, newEnd)
-    updateItem(id, { endDate: newEnd.toISOString() })
-  }
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -747,6 +732,7 @@ const CourtRecord: FC = () => {
                           label="Veldu vott"
                           placeholder="Veldu vott að þinghaldi"
                           isDisabled={!courtSession.isAttestingWitness}
+                          isLoading={usersLoading}
                           required
                         />
                       </BlueBox>
@@ -765,7 +751,6 @@ const CourtRecord: FC = () => {
                                 updateSession(courtSession.id, {
                                   endDate: formatDateForServer(date),
                                 })
-                                setCourtEndTimeErrorMessage('')
                               }
                             }}
                             blueBox={false}
