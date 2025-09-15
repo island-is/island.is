@@ -1,36 +1,65 @@
 import { m } from '@island.is/form-system/ui'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+  Text,
+} from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 export const Completed = () => {
   const { formatMessage } = useIntl()
-  const { state } = useApplicationContext()
+  const supportEmail = 'island@island.is'
+
   return (
-    <Box marginTop={2}>
-      {state.submitted ? (
-        <AlertMessage
-          type="success"
-          title={formatMessage(m.completedSuccessTitle)}
-          message={formatMessage(m.completedSuccessDescription)}
-        />
-      ) : (
-        <AlertMessage
-          type="error"
-          title={formatMessage(m.completedErrorTitle)}
-          message={formatMessage(m.completedErrorDescription)}
-        />
-      )}
-      <Box marginTop={5} display="flex" justifyContent="center">
-        <Text>{formatMessage(m.LoremIpsum)}</Text>
-      </Box>
-      <Box marginTop={5} display="flex" justifyContent="center">
-        <img
-          src={'./assets/images/train.svg'}
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-        />
+    <Box marginTop={5}>
+      <AlertMessage
+        type="success"
+        title={formatMessage(m.completedSuccessTitle)}
+        message={formatMessage(m.completedSuccessDescription)}
+      />
+      <Box
+        marginTop={5}
+        width="full"
+        border="standard"
+        borderColor="blue200"
+        borderRadius="standard"
+        padding={3}
+      >
+        <Accordion
+          dividers={false}
+          dividerOnBottom={false}
+          dividerOnTop={false}
+        >
+          <AccordionItem
+            id="completed-accordion"
+            label={formatMessage(m.completedAccordionTitle)}
+            startExpanded
+          >
+            <Box marginBottom={2}>
+              <Text>{formatMessage(m.completedText)}</Text>
+            </Box>
+
+            <BulletList space={1}>
+              <Bullet>{formatMessage(m.completedBullet1)}</Bullet>
+              <Bullet>{formatMessage(m.completedBullet2)}</Bullet>
+              <Bullet>
+                <Text>
+                  {formatMessage(m.completedBullet3)}
+                  <a
+                    href={`mailto:${supportEmail}`}
+                    style={{ textDecoration: 'underline' }}
+                  >
+                    {supportEmail}
+                  </a>
+                </Text>
+              </Bullet>
+            </BulletList>
+          </AccordionItem>
+        </Accordion>
       </Box>
     </Box>
   )
