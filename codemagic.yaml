@@ -109,10 +109,25 @@ definitions:
       script: |
         xcrun simctl boot "iPhone 16"
         xcrun simctl list devices
-    - &build_simulator_ios
-      name: Build for simulator
+    - &build_debug_with_bundle_simulator_ios
+      name: Build debug app with bundled JS
       script: |
-        xcodebuild -workspace "ios/$XCODE_WORKSPACE" -scheme "$XCODE_SCHEME" -sdk iphonesimulator -configuration Release -derivedDataPath build
+        # Create debug bundle (no Metro needed)
+        yarn react-native bundle \
+          --platform ios \
+          --dev false \
+          --entry-file index.js \
+          --bundle-output ios/main.jsbundle \
+          --assets-dest ios/
+
+        # Build debug configuration with bundled JS
+        xcodebuild -workspace "ios/$XCODE_WORKSPACE" \
+          -scheme "Ísland.dev" \
+          -configuration Debug \
+          -sdk iphonesimulator \
+          -derivedDataPath build
+
+        # Install and launch
         xcrun simctl install booted build/Build/Products/Debug-iphonesimulator/*.app
         xcrun simctl launch booted is.island.app.dev
     - &maestro_tests
@@ -302,7 +317,7 @@ workflows:
       - *codegen
       - *cocoapods
       - *boot_simulator_ios
-      - *build_simulator_ios
+      - *build_debug_with_bundle_simulator_ios
       - *maestro_tests
     artifacts: &ios_artifacts_e2e_tests
       - /tmp/xcodebuild_logs/*.log
