@@ -1,7 +1,33 @@
-import { buildExternalDataProvider, buildSubmitField, buildDataProviderItem } from "@island.is/application/core";
-import { socialInsuranceAdministrationMessage as sm } from "@island.is/application/templates/social-insurance-administration-core/lib/messages";
-import { DefaultEvents, UserProfileApi, IdentityApi, NationalRegistrySpouseApi, NationalRegistryUserApi } from "@island.is/application/types";
-import { SocialInsuranceAdministrationWithholdingTaxApi, SocialInsuranceAdministrationCategorizedIncomeTypesApi, SocialInsuranceAdministrationEducationLevelsApi, SocialInsuranceAdministrationCountriesApi, SocialInsuranceAdministrationLanguagesApi, SocialInsuranceAdministrationMaritalStatusesApi, SocialInsuranceAdministrationLatestIncomePlan, SocialInsuranceAdministrationIncomePlanConditionsApi, SocialInsuranceAdministrationCurrenciesApi, SocialInsuranceAdministrationSelfAssessmentQuestionsApi, SocialInsuranceAdministrationResidenceApi, SocialInsuranceAdministrationEmploymentStatusesApi, SocialInsuranceAdministrationProfessionsApi, SocialInsuranceAdministrationProfessionActivitiesApi, SocialInsuranceAdministrationIsApplicantEligibleApi } from "../../dataProviders";
+import {
+  buildExternalDataProvider,
+  buildSubmitField,
+  buildDataProviderItem,
+} from '@island.is/application/core'
+import { socialInsuranceAdministrationMessage as sm } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  DefaultEvents,
+  UserProfileApi,
+  IdentityApi,
+  NationalRegistrySpouseApi,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
+import {
+  SocialInsuranceAdministrationWithholdingTaxApi,
+  SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+  SocialInsuranceAdministrationEducationLevelsApi,
+  SocialInsuranceAdministrationCountriesApi,
+  SocialInsuranceAdministrationLanguagesApi,
+  SocialInsuranceAdministrationMaritalStatusesApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
+  SocialInsuranceAdministrationIncomePlanConditionsApi,
+  SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
+  SocialInsuranceAdministrationResidenceApi,
+  SocialInsuranceAdministrationEmploymentStatusesApi,
+  SocialInsuranceAdministrationProfessionsApi,
+  SocialInsuranceAdministrationProfessionActivitiesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
+} from '../../dataProviders'
 import * as m from '../../lib/messages'
 
 export const externalDataSection = buildExternalDataProvider({

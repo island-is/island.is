@@ -48,11 +48,13 @@ export const overviewFields = (editable?: boolean) => {
       id: `${SectionRouteEnum.OVERVIEW}.disabilityCertificate`,
       title: m.customFields.certificate,
       items: () => {
-        return [{
-          width: 'full',
-          value: 'Til staðar er vottorð um örorku'
-        }]
-      }
+        return [
+          {
+            width: 'full',
+            value: 'Til staðar er vottorð um örorku',
+          },
+        ]
+      },
     }),
     buildCustomField({
       id: `${SectionRouteEnum.OVERVIEW}.customField`,
