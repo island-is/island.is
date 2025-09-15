@@ -1,7 +1,5 @@
 appId: 'is.island.app.dev'
 ---
-- launchApp:
-    appId: 'is.island.app.dev'
 - tapOn:
     text: 'Mock'
     optional: true
@@ -16,4 +14,3 @@ appId: 'is.island.app.dev'
           text: 'Mock'
 - tapOn:
     id: 'LOGIN_BUTTON_AUTHENTICATE'
-    waitUntilVisible: true

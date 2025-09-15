@@ -104,32 +104,23 @@ definitions:
         fi
         cd android
         ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
-    - &boot_simulator_ios
-      name: Boot simulator
+    - &build_unsigned_app
+      name: Build unsigned .app
       script: |
-        xcrun simctl boot "iPhone 16"
-        xcrun simctl list devices
-    - &build_debug_with_bundle_simulator_ios
-      name: Build debug app with bundled JS
+        xcodebuild \
+        -workspace "ios/$XCODE_WORKSPACE" \
+        -scheme "Ísland.dev" \
+        -configuration "Debug" \
+        -sdk iphonesimulator \
+        -derivedDataPath ios/output
+    - name: Run tests on Maestro cloud
       script: |
-        # Create debug bundle (no Metro needed)
-        yarn react-native bundle \
-          --platform ios \
-          --dev false \
-          --entry-file index.js \
-          --bundle-output ios/main.jsbundle \
-          --assets-dest ios/
-
-        # Build debug configuration with bundled JS
-        xcodebuild -workspace "ios/$XCODE_WORKSPACE" \
-          -scheme "Ísland.dev" \
-          -configuration Debug \
-          -sdk iphonesimulator \
-          -derivedDataPath build
-
-        # Install and launch
-        xcrun simctl install booted build/Build/Products/Debug-iphonesimulator/*.app
-        xcrun simctl launch booted is.island.app.dev
+        export PATH="$PATH":"$HOME/.maestro/bin"
+        iosAppPath="$ios/output/..."
+        maestro cloud \
+        --apiKey $MDEV_API_KEY \
+        $iosAppPath \
+        .maestro/
     - &maestro_tests
       name: Install and run Maestro end to end tests
       script: |
@@ -316,8 +307,7 @@ workflows:
       - *npm_install
       - *codegen
       - *cocoapods
-      - *boot_simulator_ios
-      - *build_debug_with_bundle_simulator_ios
+      - *build_unsigned_app
       - *maestro_tests
     artifacts: &ios_artifacts_e2e_tests
       - /tmp/xcodebuild_logs/*.log
