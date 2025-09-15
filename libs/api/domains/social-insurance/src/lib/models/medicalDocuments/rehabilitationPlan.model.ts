@@ -57,6 +57,9 @@ class ComprehensiveEvaluation {
 
   @Field(() => Int, { nullable: true })
   leisureAndHobbies?: number
+
+  @Field(() => Int, { nullable: true })
+  expression?: number
 }
 
 @ObjectType('SocialInsuranceMedicalDocumentsHealthGoals')

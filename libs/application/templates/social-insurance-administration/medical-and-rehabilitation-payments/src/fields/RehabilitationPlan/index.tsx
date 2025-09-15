@@ -442,6 +442,20 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Text>
         </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                .comprehensiveAssessmentExpression,
+            )}
+          </Label>
+          <Text>
+            {getEvaluationScaleName(
+              data?.socialInsuranceRehabilitationPlan?.comprehensiveEvaluation
+                ?.expression ?? 0,
+            )}
+          </Text>
+        </GridColumn>
       </GridRow>
     </Stack>
   )

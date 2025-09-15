@@ -56,6 +56,7 @@ export const siaRehabilitationPlanQuery = gql`
         domesticLife
         mainDailyLifeAreas
         leisureAndHobbies
+        expression
       }
       startDate
       plannedEndDate

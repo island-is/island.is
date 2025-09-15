@@ -746,6 +746,11 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'How is the applicant at participating in leisure activities, social activities or other events outside of the home.',
     },
+    comprehensiveAssessmentExpression: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.expression',
+      defaultMessage: 'Tjáskipti',
+      description: 'Expression',
+    },
 
     // Rehabilitation objective
     rehabilitationObjective: {
