@@ -432,15 +432,16 @@ codemagic.yaml                                                                  
 /libs/application/templates/transport-authority/order-vehicle-registration-certificate                    @island-is/origo
 /libs/application/templates/transport-authority/transfer-of-vehicle-ownership                             @island-is/origo
 /libs/application/templates/transport-authority/exemption-for-transportation                              @island-is/origo
-/libs/application/template-api-modules/transport-authority/anonymity-in-vehicle-registry                  @island-is/origo
-/libs/application/template-api-modules/transport-authority/change-co-owner-of-vehicle                     @island-is/origo
-/libs/application/template-api-modules/transport-authority/change-operator-of-vehicle                     @island-is/origo
-/libs/application/template-api-modules/transport-authority/digital-tachograph-drivers-card                @island-is/origo
-/libs/application/template-api-modules/transport-authority/exemption-for-transportation                   @island-is/origo
-/libs/application/template-api-modules/transport-authority/license-plate-renewal                          @island-is/origo
-/libs/application/template-api-modules/transport-authority/order-vehicle-license-plate                    @island-is/origo
-/libs/application/template-api-modules/transport-authority/order-vehicle-registration-certificate         @island-is/origo
-/libs/application/template-api-modules/transport-authority/transfer-of-vehicle-ownership                  @island-is/origo
+
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/anonymity-in-vehicle-registry                  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-co-owner-of-vehicle                     @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-operator-of-vehicle                     @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/digital-tachograph-drivers-card                @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/exemption-for-transportation                   @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/license-plate-renewal                          @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-license-plate                    @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-registration-certificate         @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/transfer-of-vehicle-ownership                  @island-is/origo
 
 /libs/api/domains/transport-authority/                                                                    @island-is/origo
 /libs/clients/transport-authority/                                                                        @island-is/origo
