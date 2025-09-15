@@ -14,6 +14,7 @@ export const serviceSetup =
     service(serviceName)
       .image(imageName)
       .namespace(namespace)
+      .serviceAccount(serviceName)
       .env({
         PAYMENTS_WEB_URL: {
           dev: ref(
@@ -54,7 +55,7 @@ export const serviceSetup =
           '/k8s/api/LANDSPITALI_PAYMENT_CONFIRMATION_SEND_TO_EMAIL',
       })
       .liveness('/liveness')
-      .readiness('/readiness')
+      .readiness('/health/check')
       .grantNamespaces('services-payments')
       .codeOwner(CodeOwners.Stefna)
       .ingress({

@@ -32,17 +32,21 @@ export const PreSignatureInfoSection = buildSection({
           title: m.inReview.preSignatureInfo.tableTitle,
           marginTop: 6,
           header: [
-            m.inReview.preSignatureInfo.tableHeaderName,
-            m.inReview.preSignatureInfo.tableHeaderId,
-            m.inReview.preSignatureInfo.tableHeaderPhone,
-            m.inReview.preSignatureInfo.tableHeaderEmail,
+            m.misc.fullName,
+            m.misc.nationalId,
+            m.misc.phoneNumber,
+            m.misc.email,
           ],
           rows: (application) => {
             const { landlords, tenants } = applicationAnswers(
               application.answers,
             )
 
-            const signees = [...(landlords ?? []), ...(tenants ?? [])]
+            const signees = [
+              ...(landlords.filter((landlord) => !landlord.isRepresentative) ??
+                []),
+              ...(tenants ?? []),
+            ]
 
             return signees.map((person) => [
               person.nationalIdWithName.name ?? '',

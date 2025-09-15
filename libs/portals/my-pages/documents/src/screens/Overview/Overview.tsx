@@ -49,7 +49,8 @@ export const DocumentsOverview = () => {
     sendersAvailable,
     docLoading,
     documentDisplayError,
-
+    replyState,
+    setReplyState,
     setSelectedLines,
     setActiveDocument,
     setFilterValue,
@@ -108,13 +109,18 @@ export const DocumentsOverview = () => {
   const rowDirection = error ? 'column' : 'columnReverse'
 
   return (
-    <GridContainer>
-      <GridRow direction={[rowDirection, rowDirection, rowDirection, 'row']}>
+    <GridContainer
+      className={replyState?.replyOpen ? styles.gridContainer : undefined}
+    >
+      <GridRow
+        direction={[rowDirection, rowDirection, rowDirection, 'row']}
+        className={replyState?.replyOpen ? styles.gridRow : undefined}
+      >
         <GridColumn
           hiddenBelow={activeDocument?.document ? 'lg' : undefined}
           span={['12/12', '12/12', '12/12', '5/12']}
         >
-          <Box className={styles.documentList}>
+          <Box>
             <Box marginY={2} printHidden>
               <Box
                 className={styles.btn}
@@ -291,6 +297,7 @@ export const DocumentsOverview = () => {
         <GridColumn
           span={['12/12', '12/12', '12/12', '7/12']}
           position="relative"
+          className={styles.documentDisplayGridColumn}
         >
           <DocumentDisplay
             activeBookmark={
@@ -304,6 +311,12 @@ export const DocumentsOverview = () => {
             onPressBack={() => {
               if (activeDocument?.id) {
                 setFocusId(activeDocument.id)
+              }
+              if (replyState?.replyOpen) {
+                setReplyState((prev) => ({
+                  ...prev,
+                  replyOpen: false,
+                }))
               }
               setActiveDocument(null)
             }}
