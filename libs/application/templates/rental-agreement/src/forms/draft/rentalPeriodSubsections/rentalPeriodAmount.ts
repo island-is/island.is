@@ -141,10 +141,6 @@ export const RentalPeriodAmount = buildSubSection({
           space: 6,
         }),
         buildSelectField({
-          condition: (answers) => {
-            console.log('answers: ', answers)
-            return true
-          },
           id: 'rentalAmount.paymentMethodOptions',
           title: m.rentalAmount.paymentMethodOptionsLabel,
           options: getPaymentMethodOptions(),
