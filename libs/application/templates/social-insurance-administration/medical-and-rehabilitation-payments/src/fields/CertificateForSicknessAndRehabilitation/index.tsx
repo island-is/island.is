@@ -1,7 +1,11 @@
 import { useQuery } from '@apollo/client'
 import { coreErrorMessages } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import { Label } from '@island.is/application/ui-components'
 import {
   AlertMessage,
@@ -17,15 +21,18 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaCertificateForSicknessAndRehabilitationQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 import { SiaCertificateForSicknessAndRehabilitationQuery } from '../../types/schema'
+import { AlertMessageFormField } from '@island.is/application/ui-fields'
 
 export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
   field,
   setBeforeSubmitCallback,
+  application,
 }) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
@@ -451,6 +458,75 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
     )
   }
 
+  if (
+    data?.socialInsuranceCertificateForSicknessAndRehabilitation
+      ?.isAlmaCertificate
+  ) {
+    return (
+      <Stack space={4}>
+        <Stack space={3}>
+          <GridRow>
+            <GridColumn span="1/1">
+              <AlertMessageFormField
+                application={application}
+                field={{
+                  ...field,
+                  type: FieldTypes.ALERT_MESSAGE,
+                  component: FieldComponents.ALERT_MESSAGE,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
+                  alertType: 'info',
+                  message:
+                    medicalAndRehabilitationPaymentsFormMessage
+                      .certificateForSicknessAndRehabilitation
+                      .almaCertificateMessage,
+                }}
+              />
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn span="1/1">
+              <Text variant="h3">
+                {formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.shared
+                    .information,
+                )}
+              </Text>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn span="1/1">
+              <Label>
+                {formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage
+                    .certificateForSicknessAndRehabilitation
+                    .almaCertificateDate,
+                )}
+              </Label>
+              <Text>
+                {data?.socialInsuranceCertificateForSicknessAndRehabilitation
+                  ?.certificateDate
+                  ? format(
+                      parseISO(
+                        data
+                          .socialInsuranceCertificateForSicknessAndRehabilitation
+                          .certificateDate,
+                      ),
+                      'dd.MM.yyyy',
+                    )
+                  : '-'}
+              </Text>
+            </GridColumn>
+          </GridRow>
+        </Stack>
+        <input
+          type="hidden"
+          value="true"
+          {...register(`${field.id}.isAlmaCertificate`)}
+        />
+      </Stack>
+    )
+  }
+
   return (
     <Stack space={4}>
       {managedBy()}
@@ -473,7 +549,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
                 .referenceId
             : undefined
         }
-        {...register(field.id)}
+        {...register(`${field.id}.referenceId`)}
       />
     </Stack>
   )

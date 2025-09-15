@@ -106,8 +106,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const certificateForSicknessAndRehabilitationReferenceId =
     getValueViaPath<string>(
       answers,
-      'certificateForSicknessAndRehabilitationReferenceId',
+      'certificateForSicknessAndRehabilitation.referenceId',
     )
+
+  const isAlmaCertificate = getValueViaPath<string>(
+    answers,
+    'certificateForSicknessAndRehabilitation.isAlmaCertificate',
+  )
 
   const rehabilitationPlanConfirmation = getValueViaPath<string[]>(
     answers,
@@ -252,6 +257,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     unionSickPayEndDate,
     unionInfo,
     certificateForSicknessAndRehabilitationReferenceId,
+    isAlmaCertificate,
     rehabilitationPlanConfirmation,
     rehabilitationPlanReferenceId,
     confirmedTreatmentConfirmation,
