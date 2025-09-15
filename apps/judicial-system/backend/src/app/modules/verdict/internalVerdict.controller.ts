@@ -246,7 +246,7 @@ export class InternalVerdictController {
     const delivered =
       await this.verdictService.deliverVerdictServiceCertificatesToPolice()
 
-    await this.eventService.postDailyLawyerRegistryResetEvent(
+    await this.eventService.postDailyVerdictServiceDeliveryEvent(
       delivered.filter((delivery) => delivery).length,
     )
 

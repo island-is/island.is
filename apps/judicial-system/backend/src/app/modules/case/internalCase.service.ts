@@ -587,6 +587,11 @@ export class InternalCaseService {
     const cases = await this.caseRepositoryService.findAll({
       include: [
         {
+          model: User,
+          as: 'judge',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
           model: Defendant,
           as: 'defendants',
           required: false,
