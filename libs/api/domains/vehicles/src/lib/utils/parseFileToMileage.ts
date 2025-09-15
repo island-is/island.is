@@ -1,7 +1,6 @@
 import { isDefined } from '@island.is/shared/utils'
 import XLSX from 'xlsx'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let parseCsv: any
+import { parse } from 'csv-parse'
 
 export interface MileageRecord {
   permno: string
@@ -102,7 +101,7 @@ const parseCsvFromBuffer = async (
   buffer: Buffer,
 ): Promise<Array<Array<string>>> => {
   const content = buffer.toString('utf-8')
-  return await parseCsvString(content)
+  return parseCsvString(content)
 }
 
 const parseXlsxFromBuffer = async (
@@ -117,22 +116,13 @@ const parseXlsxFromBuffer = async (
       blankrows: false,
     })
 
-    return await parseCsvString(jsonData)
+    return parseCsvString(jsonData)
   } catch (e) {
     throw new Error('Failed to parse XLSX file: ' + e.message)
   }
 }
 
-const getParse = async () => {
-  if (!parseCsv) {
-    parseCsv = (await import('csv-parse')).parse
-  }
-  return parseCsv
-}
-
-export const parseCsvString = async (chunk: string): Promise<string[][]> => {
-  const parse = await getParse()
-
+const parseCsvString = (chunk: string): Promise<string[][]> => {
   return new Promise((resolve, reject) => {
     const records: string[][] = []
 
@@ -149,7 +139,10 @@ export const parseCsvString = async (chunk: string): Promise<string[][]> => {
       }
     })
 
-    parser.on('error', reject)
+    parser.on('error', (err) => {
+      reject(err)
+    })
+
     parser.on('end', () => {
       resolve(records)
     })
