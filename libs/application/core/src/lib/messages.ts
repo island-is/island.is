@@ -1080,12 +1080,12 @@ export const coreHistoryMessages = defineMessages({
   },
   applicationApprovedByReviewer: {
     id: 'application.system:core.history.applicationApprovedByReviewer',
-    defaultMessage: 'Samþykkt af {subject}',
+    defaultMessage: 'Samþykkt. [{subject}]',
     description: 'History log approved by reviewer',
   },
   applicationApprovedByReviewerWithActor: {
     id: 'application.system:core.history.applicationApprovedByReviewerWithActor',
-    defaultMessage: 'Samþykkt af {actor} fyrir hönd {subject}',
+    defaultMessage: 'Samþykkt. [{actor} fyrir hönd {subject}]',
     description: 'History log approved by actor on behalf of reviewer',
   },
   applicationApprovedByReviewerFallback: {
