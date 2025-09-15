@@ -112,9 +112,9 @@ definitions:
     - &build_simulator_ios
       name: Build for simulator
       script: |
-        xcodebuild -workspace "ios/$XCODE_WORKSPACE" -scheme "$XCODE_SCHEME" -sdk iphonesimulator -configuration Debug -derivedDataPath build
+        xcodebuild -workspace "ios/$XCODE_WORKSPACE" -scheme "$XCODE_SCHEME" -sdk iphonesimulator -configuration Release -derivedDataPath build
         xcrun simctl install booted build/Build/Products/Debug-iphonesimulator/*.app
-        xcrun simctl launch booted is.island.app.dev
+        xcrun simctl launch booted is.island.app.dev 
     - &maestro_tests
       name: Install and run Maestro end to end tests
       script: |
