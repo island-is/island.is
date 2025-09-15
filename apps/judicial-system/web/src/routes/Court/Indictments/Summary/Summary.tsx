@@ -63,6 +63,7 @@ const Summary: FC = () => {
   const [rulingUrl, setRulingUrl] = useState<string>()
   const [hasReviewed, setHasReviewed] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [pdfError, setPDFError] = useState(false)
   const { user } = useContext(UserContext)
 
   const { onOpen, getFileUrl } = useFileList({
@@ -286,7 +287,7 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
             text: 'Staðfesta',
             onClick: async () => await handleModalPrimaryButtonClick(),
             isLoading: isTransitioningCase,
-            isDisabled: !hasReviewed,
+            isDisabled: !hasReviewed || pdfError,
           }}
           secondaryButton={{
             text: 'Hætta við',
@@ -300,6 +301,7 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
             label: 'Ég hef rýnt þetta dómskjal',
             checked: hasReviewed,
             onChange: () => setHasReviewed(!hasReviewed),
+            disabled: pdfError,
           }}
         >
           {rulingUrl && (
@@ -307,6 +309,7 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
               <PdfViewer
                 file={rulingUrl}
                 onLoadingSuccess={() => setIsLoading(false)}
+                onLoadingError={() => setPDFError(true)}
                 showAllPages
               />
             </div>
