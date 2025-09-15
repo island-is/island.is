@@ -7,7 +7,6 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { Routes } from '../../utils/enums'
-import { application } from '../../lib/messages'
 import {
   depositOverview,
   fireProtectionsOverview,
@@ -154,7 +153,7 @@ export const SummaryDraftSection = buildSection({
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: application.goToOverviewButton,
+              name: m.application.goToOverviewButton,
               type: 'primary',
             },
           ],
