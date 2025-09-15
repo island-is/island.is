@@ -139,7 +139,7 @@ export class PaymentFlow extends Model<
   charges!: PaymentFlowCharge[]
 
   @HasOne(() => FjsCharge, 'paymentFlowId')
-  fjsChargeConfirmation?: FjsCharge
+  fjsCharge?: FjsCharge
 
   @ApiProperty({ type: [String] })
   @Column({

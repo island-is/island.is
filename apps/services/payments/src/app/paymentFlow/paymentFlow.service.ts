@@ -750,7 +750,7 @@ export class PaymentFlowService {
       })
     }
 
-    if (paymentFlowDetails.fjsChargeConfirmation) {
+    if (paymentFlowDetails.fjsCharge) {
       await this.deletePaymentCharge(id)
     }
 

@@ -33,7 +33,7 @@ module.exports = {
         { transaction: t },
       )
 
-      // Add status enum column with default
+      // Add status enum column with default to fjs_charge table
       await queryInterface.addColumn(
         'fjs_charge',
         'status',
@@ -51,7 +51,7 @@ module.exports = {
         { transaction: t },
       )
 
-      // Index for callback lookups by reception_id
+      // Index for callback lookups by reception_id to fjs_charge table
       await queryInterface.addIndex('fjs_charge', ['reception_id'], {
         name: 'idx_fjs_charge_reception_id',
         transaction: t,
