@@ -5,8 +5,8 @@ on:
       force_codegen:
         description: 'Force codegen to run'
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: 'false'
       force_all_to_be_affected:
         description: 'Should all be affected'
         required: false
