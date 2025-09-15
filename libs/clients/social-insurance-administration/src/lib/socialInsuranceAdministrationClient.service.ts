@@ -283,7 +283,7 @@ export class SocialInsuranceAdministrationClientService {
       case 'DisabilityPension':
         return this.questionnairesApiForDisabilityPensionWithAuth(
           user,
-        ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
+        ).apiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGet(
           languages,
         )
     }
