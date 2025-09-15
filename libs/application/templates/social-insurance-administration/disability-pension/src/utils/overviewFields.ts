@@ -44,13 +44,15 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? SectionRouteEnum.EMPLOYMENT_PARTICIPATION : undefined,
       items: employmentItems,
     }),
-    buildCustomField({
+    buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.disabilityCertificate`,
-      title:
-        m.customFields.certificate ??
-        'Custom disability certificate',
-
-      component: 'CertificateOverview',
+      title: m.customFields.certificate,
+      items: () => {
+        return [{
+          width: 'full',
+          value: 'Til staðar er vottorð um örorku'
+        }]
+      }
     }),
     buildCustomField({
       id: `${SectionRouteEnum.OVERVIEW}.customField`,
