@@ -43,7 +43,6 @@ export const Prerequisites = buildForm({
   children: [
     buildSection({
       id: 'prerequisites',
-      title: disabilityPensionFormMessage.prerequisites.title,
       tabTitle: disabilityPensionFormMessage.prerequisites.title,
       children: [
         buildExternalDataProvider({
@@ -99,14 +98,89 @@ export const Prerequisites = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationWithholdingTaxApi,
-              title: disabilityPensionFormMessage.prerequisites.incomeTitle,
-              subTitle: disabilityPensionFormMessage.prerequisites.incomeText,
-            }),
-            buildDataProviderItem({
-              provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
               title: disabilityPensionFormMessage.prerequisites.dataFetchTitle,
               subTitle:
                 disabilityPensionFormMessage.prerequisites.dataFetchText,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationEducationLevelsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCountriesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationLanguagesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationMaritalStatusesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationLatestIncomePlan,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCurrenciesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationResidenceApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationEmploymentStatusesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationProfessionsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationProfessionActivitiesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'prerequisites',
+      tabTitle: disabilityPensionFormMessage.prerequisites.title,
+      children: [
+        buildExternalDataProvider({
+          id: 'approveExternalData',
+          title: socialInsuranceAdministrationMessage.pre.externalDataSection,
+          subTitle:
+            socialInsuranceAdministrationMessage.pre.externalDataDescription,
+          checkboxLabel:
+            disabilityPensionFormMessage.prerequisites.checkboxLabel,
+          submitField: buildSubmitField({
+            id: 'submit',
+            placement: 'footer',
+            title: socialInsuranceAdministrationMessage.pre.startApplication,
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: socialInsuranceAdministrationMessage.pre.startApplication,
+                type: 'primary',
+              },
+            ],
+          }),
+          dataProviders: [
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationWithholdingTaxApi,
+              title: disabilityPensionFormMessage.prerequisites.dataFetchTitle,
+              subTitle:
+                disabilityPensionFormMessage.prerequisites.dataFetchText,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationEducationLevelsApi,
