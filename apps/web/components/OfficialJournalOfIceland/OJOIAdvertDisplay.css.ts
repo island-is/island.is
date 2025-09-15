@@ -12,7 +12,9 @@ export const advertDescription = style({
   margin: '0 auto',
 })
 
-export const bodyText = style({})
+export const bodyText = style({
+  marginTop: '1.6em',
+})
 regulationContentStyling(bodyText)
 
 globalStyle(

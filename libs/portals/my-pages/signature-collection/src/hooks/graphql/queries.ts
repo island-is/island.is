@@ -64,6 +64,7 @@ export const GetSignedList = gql`
         max
       }
       candidate {
+        name
         ownerName
         ownerBirthDate
       }
@@ -78,6 +79,7 @@ export const GetSignedList = gql`
       canUnsign
       slug
       signedDate
+      collectionType
     }
   }
 `
@@ -111,6 +113,7 @@ export const GetListsForUser = gql`
       collectionId
       slug
       numberOfSignatures
+      collectionType
     }
   }
 `

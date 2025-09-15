@@ -54,7 +54,9 @@ const OwnerView = ({
           )}
           <Box marginTop={[0, 5]}>
             {/* Signed list */}
-            {!user?.profile.actor && <SignedLists signedLists={signedLists} />}
+            {!user?.profile.actor && (
+              <SignedLists signedLists={signedLists ?? []} />
+            )}
 
             {/* Candidate created lists */}
             <Text variant="h4" marginTop={[5, 7]} marginBottom={2}>

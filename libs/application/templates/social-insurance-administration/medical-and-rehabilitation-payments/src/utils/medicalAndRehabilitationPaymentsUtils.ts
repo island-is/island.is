@@ -511,9 +511,21 @@ export const eligibleText = (externalData: ExternalData) => {
   const { isEligible } = getApplicationExternalData(externalData)
 
   switch (isEligible?.reasonCode) {
+    case EligibleReasonCodes.APPLICANT_ALREADY_HAS_PENDING_APPLICATION:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .applicantAlreadyHasPendingApplicationDescription
     case EligibleReasonCodes.APPLICANT_AGE_OUT_OF_RANGE:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .applicantAgeOutOfRangeDescription
+    case EligibleReasonCodes.NO_LEGAL_DOMICILE_IN_ICELAND:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .noLegalDomicileinIcelandDescription
+    case EligibleReasonCodes.HAS_ACTIVE_PAYMENTS:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .hasActivePaymentsDescription
+    case EligibleReasonCodes.INACTIVE_PAYMENTS_FOR_TOO_LONG:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSevenYearsDescription
     case EligibleReasonCodes.BASE_CERT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertNotFoundDescription
@@ -523,9 +535,12 @@ export const eligibleText = (externalData: ExternalData) => {
     case EligibleReasonCodes.BASE_CERT_OLDER_THAN_7YEARS:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertOlderThanSevenYearsDescription
-    case EligibleReasonCodes.BASE_CERT_OLDER_THAN_6MONTHS:
+    case EligibleReasonCodes.LATEST_MEDICAL_DOCUMENT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
-        .baseCertOlderThanSixMonthsDescription
+        .latestMedicalDocumentNotFoundDescription
+    case EligibleReasonCodes.ERROR_PROCESSING_CLIENT:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .errorProcessingClientDescription
     default:
       return undefined
   }
