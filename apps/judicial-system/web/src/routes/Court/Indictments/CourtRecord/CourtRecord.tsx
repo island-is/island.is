@@ -7,7 +7,6 @@ import {
   useEffect,
   useState,
 } from 'react'
-import format from 'date-fns/format'
 import {
   AnimatePresence,
   LayoutGroup,
@@ -17,7 +16,6 @@ import {
 } from 'motion/react'
 import router from 'next/router'
 import { uuid } from 'uuidv4'
-import InputMask from '@react-input/mask/InputMask'
 
 import {
   Accordion,
@@ -31,12 +29,8 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import {
-  DATE_PICKER_TIME,
-  INDICTMENTS_CASE_FILE_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { INDICTMENTS_CASE_FILE_ROUTE } from '@island.is/judicial-system/consts'
 import { INDICTMENTS_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import { CourtSessionClosedLegalBasis } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -67,10 +61,7 @@ import {
   useCase,
   useCourtSessions,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  isIndictmentCourtRecordStepValid,
-  validate,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { isIndictmentCourtRecordStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { useSelectCourtOfficialsUsersQuery } from '../../components/ReceptionAndAssignment/SelectCourtOfficials/selectCourtOfficialsUsers.generated'
 import * as styles from './CourtRecord.css'
@@ -152,7 +143,6 @@ const CourtRecord: FC = () => {
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [courtEndTimeErrorMessage, setCourtEndTimeErrorMessage] =
     useState<string>('')
-  const [courtEndTime, setCourtEndTime] = useState<string[]>([])
   const { createCourtSession, updateCourtSession } = useCourtSessions()
   const updateSession = useCourtSessionUpdater(
     workingCase,
@@ -243,15 +233,20 @@ const CourtRecord: FC = () => {
   //   )
   // }, [workingCase.courtDocuments])
 
-  useEffect(() => {
-    workingCase.courtSessions?.forEach((courtSession) => {
-      const endTime = courtSession.endDate
-        ? format(new Date(courtSession.endDate), 'HH:mm')
-        : ''
+  const handleEndTimeChange = (id: string, endTime: string) => {
+    // You’ll need the start date from the current session
+    const session = workingCase.courtSessions?.find((s) => s.id === id)
+    if (!session || !session.startDate) return
 
-      setCourtEndTime((prev) => [...prev, endTime])
-    })
-  }, [workingCase.courtSessions])
+    const startDate = new Date(session.startDate)
+    const [hours, minutes] = endTime.split(':').map(Number)
+
+    const newEnd = new Date(startDate)
+    newEnd.setHours(hours, minutes, 0, 0)
+
+    console.log('newEnd', startDate, hours, minutes, newEnd)
+    updateItem(id, { endDate: newEnd.toISOString() })
+  }
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -770,61 +765,22 @@ const CourtRecord: FC = () => {
                       <SectionHeading title="Þinghaldi slitið" />
                       <BlueBox className={styles.courtEndTimeContainer}>
                         <div className={styles.fullWidth}>
-                          <InputMask
-                            component={Input}
-                            mask={DATE_PICKER_TIME}
-                            replacement={{ ' ': /\d/ }}
+                          <DateTime
                             name="courtEndTime"
-                            label="Þinghaldi lauk (kk:mm)"
-                            value={courtEndTime[index] || ''}
-                            onChange={(evt) => {
-                              setCourtEndTime((prev) => {
-                                const newCourtEndTime = [...prev]
-                                newCourtEndTime[index] = evt.target.value
-                                return newCourtEndTime
-                              })
-                              setCourtEndTimeErrorMessage('')
-                            }}
-                            onBlur={(evt) => {
-                              const validateTime = validate([
-                                [evt.target.value, ['empty', 'time-format']],
-                              ])
-
-                              if (!validateTime.isValid) {
-                                setCourtEndTimeErrorMessage(
-                                  validateTime.errorMessage,
-                                )
-
-                                return
-                              }
-
-                              const d = new Date(
-                                `${format(
-                                  new Date(courtSession.startDate || ''),
-                                  'yyyy-MM-dd',
-                                )}T${evt.target.value}`,
-                              )
-
-                              const validateDate = validate([
-                                [d.toISOString(), ['empty', 'date-format']],
-                              ])
-
-                              if (validateDate.isValid) {
+                            onChange={(
+                              date: Date | undefined,
+                              valid: boolean,
+                            ) => {
+                              if (date && valid) {
                                 updateSession(courtSession.id, {
-                                  endDate: formatDateForServer(d),
+                                  endDate: formatDateForServer(date),
                                 })
-                              } else {
-                                setCourtEndTimeErrorMessage(
-                                  validateDate.errorMessage,
-                                )
+                                setCourtEndTimeErrorMessage('')
                               }
                             }}
-                            placeholder="Sláðu inn tíma"
-                            autoComplete="off"
-                            errorMessage={courtEndTimeErrorMessage}
-                            hasError={courtEndTimeErrorMessage !== ''}
-                            size="sm"
-                            required
+                            blueBox={false}
+                            selectedDate={courtSession.endDate || new Date()}
+                            timeOnly
                           />
                         </div>
                         <Box className={styles.button}>
