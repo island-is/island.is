@@ -48,15 +48,6 @@ export const BankAccountFormField = ({
 
   const bankInfo = getDefaultValue(field, application)
 
-  // Debug bankInfo to see if it's causing the issue
-  console.log('🏦 BankInfo debug:', {
-    bankInfo,
-    bankInfoType: typeof bankInfo,
-    bankNumber: bankInfo?.bankNumber,
-    ledger: bankInfo?.ledger,
-    accountNumber: bankInfo?.accountNumber,
-  })
-
   // Extract errors for each bank account field part (individual field errors)
   const bankNumberError = getErrorViaPath(errors || {}, `${id}.bankNumber`)
   const ledgerError = getErrorViaPath(errors || {}, `${id}.ledger`)
@@ -73,36 +64,11 @@ export const BankAccountFormField = ({
   const safeAccountNumberError =
     typeof accountNumberError === 'string' ? accountNumberError : undefined
 
-  // Ensure component-level error is also a string
   const safeComponentError = typeof error === 'string' ? error : undefined
 
-  // Use component-level error if present, otherwise use individual field errors
   const useBankNumberError = safeComponentError || safeBankNumberError
   const useLedgerError = safeComponentError || safeLedgerError
   const useAccountNumberError = safeComponentError || safeAccountNumberError
-
-  // Debug: Remove this after testing
-  if (
-    safeBankNumberError ||
-    safeLedgerError ||
-    safeAccountNumberError ||
-    error
-  ) {
-    console.log('🏦 BankAccount errors found:', {
-      id,
-      safeBankNumberError,
-      safeLedgerError,
-      safeAccountNumberError,
-      safeComponentError,
-      rawComponentError: error,
-      rawErrors: { bankNumberError, ledgerError, accountNumberError },
-      finalErrorsUsed: {
-        useBankNumberError,
-        useLedgerError,
-        useAccountNumberError,
-      },
-    })
-  }
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
