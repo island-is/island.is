@@ -19,7 +19,7 @@ export class HistoryResponseDto {
     timeStamp: Date,
     log: StaticText,
     formatMessage: FormatMessage,
-    values?: Record<string, any>,
+    values?: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   ) {
     this.date = timeStamp
     if (log) {
