@@ -77,48 +77,5 @@ export const income = {
       defaultMessage: 'Styrkir, uppgjör launagreiðanda...',
       description: 'Income explanation placeholder',
     },
-    leaveDescription: {
-      id: 'aa.application:income.labels.leaveDescription',
-      defaultMessage: 'Áttirðu ótekið orlof þegar þú hættir í starfi?',
-      description: 'Had remaining leave days description label',
-    },
-    numberAndUsageOfLeaveTitle: {
-      id: 'aa.application:income.labels.numberAndUsageOfLeaveTitle',
-      defaultMessage:
-        'Vinsamlegast tilgreindu fjölda orlofsdaga og hvenær þú ætlar að nýta þá',
-      description: 'If user has leave days left, label for that',
-    },
-    numberAndUsageOfLeaveDescription: {
-      id: 'aa.application:income.labels.numberAndUsageOfLeaveDescription#markdown',
-      defaultMessage:
-        'Námundaðu upp í næsta heila dag, dagur telst 8 klukkustundir. Ef klukkutímafjöldi fer framyfir 8 klukkustundir þá telst það sem næsti dagur.  Dæmi:  8 tímar=1 dagur, 9 tímar=2 dagar, 15 tímar=2 dagar, 16 tímar=2 dagar, 17 tímar=3 dagar.',
-      description: 'If user has leave days left, label for that',
-    },
-
-    numberOfLeaveDays: {
-      id: 'aa.application:income.labels.numberOfLeaveDays',
-      defaultMessage: 'Fjöldi orlofsdaga',
-      description: 'Number of leave days left label',
-    },
-    dateFrom: {
-      id: 'aa.application:income.labels.dateFrom',
-      defaultMessage: 'Dagsetning frá',
-      description: 'Date from label',
-    },
-    dateTo: {
-      id: 'aa.application:income.labels.dateTo',
-      defaultMessage: 'Dagsetning til',
-      description: 'Date to label',
-    },
-    pickDatePlaceHolder: {
-      id: 'aa.application:income.labels.pickDatePlaceHolder',
-      defaultMessage: 'Veldu dagsetningu',
-      description: 'Pick a date placeholder label',
-    },
-    addLine: {
-      id: 'aa.application:income.labels.addLine',
-      defaultMessage: 'Bæta við línu',
-      description: 'Add line button label',
-    },
   }),
 }

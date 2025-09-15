@@ -165,17 +165,6 @@ const incomeSchema = z
       hasEmploymentEnded: z.enum([YES, NO]).optional(),
       endOfEmploymentDate: z.string().optional(),
       explanation: z.string().optional(),
-      hasLeaveDays: z.enum([YES, NO]).optional(),
-      numberOfLeaveDays: z.string().optional(),
-      leaveDates: z
-        .array(
-          z.object({
-            dateFrom: z.string(),
-            dateTo: z.string(),
-          }),
-        )
-        .optional()
-        .or(z.literal('')), // Explicitly allow empty strings since clearing this field turns it to an empty string
     }),
   )
   .optional()
