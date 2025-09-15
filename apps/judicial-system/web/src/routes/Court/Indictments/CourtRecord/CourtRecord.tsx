@@ -213,17 +213,21 @@ const CourtRecord: FC = () => {
     workingCase.courtSessions,
   )
 
-  const updateItem = (id: string, newData: Partial<CourtSessionResponse>) => {
-    setWorkingCase((prev) => {
-      if (!prev.courtSessions) return prev
+  const patchSession = (
+    id: string,
+    updates: Partial<CourtSessionResponse>,
+    { persist = false } = {},
+  ) => {
+    setWorkingCase((prev) => ({
+      ...prev,
+      courtSessions: prev.courtSessions?.map((session) =>
+        session.id === id ? { ...session, ...updates } : session,
+      ),
+    }))
 
-      return {
-        ...prev,
-        courtSessions: prev.courtSessions?.map((item) =>
-          item.id === id ? { ...item, ...newData } : item,
-        ),
-      }
-    })
+    if (persist) {
+      updateSession(id, updates)
+    }
   }
 
   const [expandedIndex, setExpandedIndex] = useState<number>()
@@ -275,9 +279,11 @@ const CourtRecord: FC = () => {
                             valid: boolean,
                           ) => {
                             if (date && valid) {
-                              updateSession(courtSession.id, {
-                                startDate: formatDateForServer(date),
-                              })
+                              patchSession(
+                                courtSession.id,
+                                { startDate: formatDateForServer(date) },
+                                { persist: true },
+                              )
                             }
                           }}
                           blueBox={false}
@@ -292,7 +298,7 @@ const CourtRecord: FC = () => {
                           placeholder='Staðsetning þinghalds, t.d. "í Héraðsdómi Reykjavíkur"'
                           onChange={(event) => {
                             setLocationErrorMessage('')
-                            updateItem(courtSession.id, {
+                            patchSession(courtSession.id, {
                               location: event.target.value,
                             })
                           }}
@@ -305,7 +311,11 @@ const CourtRecord: FC = () => {
                               setLocationErrorMessage,
                             )
 
-                            updateSession(courtSession.id, { location })
+                            patchSession(
+                              courtSession.id,
+                              { location },
+                              { persist: true },
+                            )
                           }}
                           errorMessage={locationErrorMessage}
                           hasError={locationErrorMessage !== ''}
@@ -313,14 +323,18 @@ const CourtRecord: FC = () => {
                           required
                         />
                         <Checkbox
-                          name="isClosedProceeding"
+                          name={`isClosedProceeding-${courtSession.id}`}
                           label="Þinghaldið er lokað"
-                          onChange={(evt) => {
-                            updateSession(courtSession.id, {
-                              isClosed: evt.target.checked,
-                              closedLegalProvisions: [],
-                            })
-                          }}
+                          onChange={(evt) =>
+                            patchSession(
+                              courtSession.id,
+                              {
+                                isClosed: evt.target.checked,
+                                closedLegalProvisions: [],
+                              },
+                              { persist: true },
+                            )
+                          }
                           checked={Boolean(courtSession.isClosed)}
                           filled
                           large
@@ -378,9 +392,13 @@ const CourtRecord: FC = () => {
                                               (v) => v !== legalProvision,
                                             )
 
-                                        updateSession(courtSession.id, {
-                                          closedLegalProvisions,
-                                        })
+                                        patchSession(
+                                          courtSession.id,
+                                          {
+                                            closedLegalProvisions,
+                                          },
+                                          { persist: true },
+                                        )
                                       }}
                                       large
                                       filled
@@ -400,14 +418,18 @@ const CourtRecord: FC = () => {
                       value={courtSession.attendees || ''}
                       placeholder="Skrifa hér..."
                       onChange={(event) => {
-                        updateItem(courtSession.id, {
+                        patchSession(courtSession.id, {
                           attendees: event.target.value,
                         })
                       }}
                       onBlur={(event) => {
-                        updateSession(courtSession.id, {
-                          attendees: event.target.value,
-                        })
+                        patchSession(
+                          courtSession.id,
+                          {
+                            attendees: event.target.value,
+                          },
+                          { persist: true },
+                        )
                       }}
                       textarea
                       rows={7}
@@ -502,7 +524,7 @@ const CourtRecord: FC = () => {
                         onChange={(event) => {
                           setEntriesErrorMessage('')
 
-                          updateItem(courtSession.id, {
+                          patchSession(courtSession.id, {
                             entries: event.target.value,
                           })
                         }}
@@ -513,9 +535,13 @@ const CourtRecord: FC = () => {
                             setEntriesErrorMessage,
                           )
 
-                          updateSession(courtSession.id, {
-                            entries: event.target.value,
-                          })
+                          patchSession(
+                            courtSession.id,
+                            {
+                              entries: event.target.value,
+                            },
+                            { persist: true },
+                          )
                         }}
                         hasError={entriesErrorMessage !== ''}
                         errorMessage={entriesErrorMessage}
@@ -539,13 +565,17 @@ const CourtRecord: FC = () => {
                             courtSession.rulingType ===
                             CourtSessionRulingType.NONE
                           }
-                          onChange={() => {
-                            updateSession(courtSession.id, {
-                              rulingType: CourtSessionRulingType.NONE,
-                              ruling: '',
-                              closingEntries: '',
-                            })
-                          }}
+                          onChange={() =>
+                            patchSession(
+                              courtSession.id,
+                              {
+                                rulingType: CourtSessionRulingType.NONE,
+                                ruling: '',
+                                closingEntries: '',
+                              },
+                              { persist: true },
+                            )
+                          }
                           large
                         />
                         <RadioButton
@@ -556,11 +586,15 @@ const CourtRecord: FC = () => {
                             courtSession.rulingType ===
                             CourtSessionRulingType.JUDGEMENT
                           }
-                          onChange={() => {
-                            updateSession(courtSession.id, {
-                              rulingType: CourtSessionRulingType.JUDGEMENT,
-                            })
-                          }}
+                          onChange={() =>
+                            patchSession(
+                              courtSession.id,
+                              {
+                                rulingType: CourtSessionRulingType.JUDGEMENT,
+                              },
+                              { persist: true },
+                            )
+                          }
                           large
                         />
                         <RadioButton
@@ -571,11 +605,15 @@ const CourtRecord: FC = () => {
                             courtSession.rulingType ===
                             CourtSessionRulingType.ORDER
                           }
-                          onChange={() => {
-                            updateSession(courtSession.id, {
-                              rulingType: CourtSessionRulingType.ORDER,
-                            })
-                          }}
+                          onChange={() =>
+                            patchSession(
+                              courtSession.id,
+                              {
+                                rulingType: CourtSessionRulingType.ORDER,
+                              },
+                              { persist: true },
+                            )
+                          }
                           large
                         />
                       </BlueBox>
@@ -613,7 +651,7 @@ const CourtRecord: FC = () => {
                             onChange={(event) => {
                               setRulingErrorMessage('')
 
-                              updateItem(courtSession.id, {
+                              patchSession(courtSession.id, {
                                 ruling: event.target.value,
                               })
                             }}
@@ -624,9 +662,13 @@ const CourtRecord: FC = () => {
                                 setRulingErrorMessage,
                               )
 
-                              updateSession(courtSession.id, {
-                                ruling: event.target.value,
-                              })
+                              patchSession(
+                                courtSession.id,
+                                {
+                                  ruling: event.target.value,
+                                },
+                                { persist: true },
+                              )
                             }}
                             hasError={rulingErrorMessage !== ''}
                             errorMessage={rulingErrorMessage}
@@ -645,14 +687,18 @@ const CourtRecord: FC = () => {
                             value={courtSession.closingEntries || ''}
                             placeholder="T.d. Dómfelldi er ekki viðstaddur dómsuppsögu og verður lögreglu falið að birta dóminn fyrir honum..."
                             onChange={(event) => {
-                              updateItem(courtSession.id, {
+                              patchSession(courtSession.id, {
                                 closingEntries: event.target.value,
                               })
                             }}
                             onBlur={(event) => {
-                              updateSession(courtSession.id, {
-                                closingEntries: event.target.value,
-                              })
+                              patchSession(
+                                courtSession.id,
+                                {
+                                  closingEntries: event.target.value,
+                                },
+                                { persist: true },
+                              )
                             }}
                             rows={15}
                             autoExpand={{ on: true, maxHeight: 300 }}
@@ -668,12 +714,16 @@ const CourtRecord: FC = () => {
                           label="Skrá vott að þinghaldi"
                           name="isAttestingWitness"
                           checked={courtSession.isAttestingWitness || false}
-                          onChange={(evt) => {
-                            updateSession(courtSession.id, {
-                              isAttestingWitness: evt.target.checked,
-                              attestingWitnessId: undefined,
-                            })
-                          }}
+                          onChange={(evt) =>
+                            patchSession(
+                              courtSession.id,
+                              {
+                                isAttestingWitness: evt.target.checked,
+                                attestingWitnessId: undefined,
+                              },
+                              { persist: true },
+                            )
+                          }
                           large
                           filled
                         />
@@ -698,16 +748,17 @@ const CourtRecord: FC = () => {
                               return
                             }
 
-                            updateItem(courtSession.id, {
-                              attestingWitness: {
-                                name: selectedUser.label,
-                                id: selectedUser.value || '',
+                            patchSession(
+                              courtSession.id,
+                              {
+                                attestingWitnessId: evt?.value,
+                                attestingWitness: {
+                                  id: selectedUser.value || '',
+                                  name: selectedUser.label,
+                                },
                               },
-                            })
-
-                            updateSession(courtSession.id, {
-                              attestingWitnessId: evt?.value,
-                            })
+                              { persist: true },
+                            )
                           }}
                           size="md"
                           label="Veldu vott"
@@ -729,9 +780,13 @@ const CourtRecord: FC = () => {
                               valid: boolean,
                             ) => {
                               if (date && valid) {
-                                updateSession(courtSession.id, {
-                                  endDate: formatDateForServer(date),
-                                })
+                                patchSession(
+                                  courtSession.id,
+                                  {
+                                    endDate: formatDateForServer(date),
+                                  },
+                                  { persist: true },
+                                )
                               }
                             }}
                             blueBox={false}
