@@ -158,7 +158,7 @@ export class ApplicationLifeCycleService {
           }
         }
 
-        postPruneAt = addMilliseconds(
+        const postPruneAt = addMilliseconds(
           new Date(),
           template?.adminDataConfig?.postPruneDelayOverride ??
             DEFAULT_POST_PRUNE_DELAY,
