@@ -1,7 +1,11 @@
 import { useQuery } from '@apollo/client'
 import { coreErrorMessages } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import { Label } from '@island.is/application/ui-components'
 import {
   AlertMessage,
@@ -17,15 +21,18 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaCertificateForSicknessAndRehabilitationQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 import { SiaCertificateForSicknessAndRehabilitationQuery } from '../../types/schema'
+import { AlertMessageFormField } from '@island.is/application/ui-fields'
 
 export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
   field,
   setBeforeSubmitCallback,
+  application,
 }) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
@@ -458,19 +465,25 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
     return (
       <Stack space={4}>
         <Stack space={3}>
-          <GridRow rowGap={3}>
+          <GridRow>
             <GridColumn span="1/1">
-              <AlertMessage
-                type="info"
-                message={formatMessage(
-                  medicalAndRehabilitationPaymentsFormMessage
-                    .certificateForSicknessAndRehabilitation
-                    .almaCertificateMessage,
-                )}
+              <AlertMessageFormField
+                application={application}
+                field={{
+                  ...field,
+                  type: FieldTypes.ALERT_MESSAGE,
+                  component: FieldComponents.ALERT_MESSAGE,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
+                  alertType: 'info',
+                  message:
+                    medicalAndRehabilitationPaymentsFormMessage
+                      .certificateForSicknessAndRehabilitation
+                      .almaCertificateMessage,
+                }}
               />
             </GridColumn>
           </GridRow>
-          <GridRow rowGap={3}>
+          <GridRow>
             <GridColumn span="1/1">
               <Text variant="h3">
                 {formatMessage(
@@ -480,7 +493,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
               </Text>
             </GridColumn>
           </GridRow>
-          <GridRow rowGap={3}>
+          <GridRow>
             <GridColumn span="1/1">
               <Label>
                 {formatMessage(
@@ -493,8 +506,10 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
                 {data?.socialInsuranceCertificateForSicknessAndRehabilitation
                   ?.certificateDate
                   ? format(
-                      new Date(
-                        data.socialInsuranceCertificateForSicknessAndRehabilitation.certificateDate,
+                      parseISO(
+                        data
+                          .socialInsuranceCertificateForSicknessAndRehabilitation
+                          .certificateDate,
                       ),
                       'dd.MM.yyyy',
                     )

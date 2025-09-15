@@ -543,7 +543,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
 
     // Alma Certificate
     almaCertificateMessage: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.alma.certificate.message',
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.alma.certificate.message#markdown',
       defaultMessage:
         'Hjá TR liggur fyrir eldra vottorð vegna umsóknar um endurlífeyri.\n\nVottorðið liggur til grundvallar á þessari framhaldsumsókn.',
       description:
@@ -551,8 +551,8 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     almaCertificateDate: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.alma.certificate.date',
-      defaultMessage: 'Útgáfudagur vottorðs',
-      description: 'Date of issue of certificate',
+      defaultMessage: 'Dagsetning vottorðs',
+      description: 'Date of certificate',
     },
   }),
 
