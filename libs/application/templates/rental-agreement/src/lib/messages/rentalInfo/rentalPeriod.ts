@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const rentalPeriod = defineMessages({
-  subSectionName: {
-    id: 'ra.application:rentalPeriodDetails.subSectionName',
-    defaultMessage: 'Tímabil',
-    description: 'Rental period sub section name',
-  },
   pageTitle: {
     id: 'ra.application:rentalPeriodDetails.pageTitle',
     defaultMessage: 'Tímabil',

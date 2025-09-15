@@ -20,7 +20,7 @@ export const getPropertyTypeOptions = () => [
   },
   {
     value: RentalHousingCategoryTypes.ROOM,
-    label: m.registerProperty.category.typeSelectLabelRoom,
+    label: m.misc.rooms,
   },
   {
     value: RentalHousingCategoryTypes.COMMERCIAL,

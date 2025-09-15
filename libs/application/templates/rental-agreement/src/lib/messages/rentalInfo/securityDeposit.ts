@@ -1,16 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const securityDeposit = defineMessages({
-  subSectionName: {
-    id: 'ra.application:securityDeposit.subSectionName',
-    defaultMessage: 'Trygging',
-    description: 'security deposit sub section name',
-  },
-  pageTitle: {
-    id: 'ra.application:securityDeposit.pageTitle',
-    defaultMessage: 'Trygging',
-    description: 'security deposit page title',
-  },
   pageDescription: {
     id: 'ra.application:securityDeposit.pageDescription',
     defaultMessage:
@@ -125,11 +115,6 @@ export const securityDeposit = defineMessages({
     defaultMessage: 'Skrifaðu hér í hvaða formi tryggingin er',
     description: 'security deposit other info placeholder',
   },
-  amountHeaderTitle: {
-    id: 'ra.application:securityDeposit.amountHeaderTitle',
-    defaultMessage: 'Upphæð tryggingar',
-    description: 'security deposit amount header title',
-  },
   amountRadioFieldTitle: {
     id: 'ra.application:securityDeposit.amountRadioFieldTitle',
     defaultMessage: 'Veldu upphæð',
@@ -165,11 +150,6 @@ export const securityDeposit = defineMessages({
     defaultMessage:
       'Gjald í samtryggingasjóð leigusala má ekki vera hærri en 10% af mánaðarlegu leiguverði',
     description: 'security deposit mutual fund amount info message',
-  },
-  securityAmountOtherTitle: {
-    id: 'ra.application:securityDeposit.securityAmountOtherTitle',
-    defaultMessage: 'Upphæð',
-    description: 'security deposit security amount other title',
   },
   securityAmountCalculatedLabel: {
     id: 'ra.application:securityDeposit.securityAmountCalculatedLabel',

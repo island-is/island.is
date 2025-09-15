@@ -41,18 +41,14 @@ export const PropertyTableHeader = () => {
             className: `${tableHeadingCell} ${tableCellSize}`,
           }}
         >
-          {formatMessage(
-            m.registerProperty.search.searchResultHeaderPropertySize,
-          )}
+          {formatMessage(m.misc.size)}
         </Table.HeadData>
         <Table.HeadData
           box={{
             className: `${tableHeadingCell} ${tableCellNumOfRooms}`,
           }}
         >
-          {formatMessage(
-            m.registerProperty.search.searchResultsHeaderNumOfRooms,
-          )}
+          {formatMessage(m.misc.rooms)}
         </Table.HeadData>
       </Table.Row>
     </Table.Head>

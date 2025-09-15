@@ -21,16 +21,6 @@ export const application = defineMessages({
     defaultMessage: 'Tímabil og verð',
     description: `Name of rental period section`,
   },
-  summarySectionName: {
-    id: 'ra.application:application.summarySectionName',
-    defaultMessage: 'Samantekt',
-    description: `Name of summary section`,
-  },
-  signingSectionName: {
-    id: 'ra.application:application.signingSectionName',
-    defaultMessage: 'Undirritun',
-    description: `Name of signing section`,
-  },
   goToOverviewButton: {
     id: 'ra.application:application.sendToOverviewButton',
     defaultMessage: 'Senda í yfirlestur',
@@ -40,11 +30,6 @@ export const application = defineMessages({
     id: 'ra.application:application.backToOverviewButton',
     defaultMessage: 'Til baka/breyta samningi',
     description: `Button text for going back to overview`,
-  },
-  goToPreSigningButton: {
-    id: 'ra.application:application.goToPreSigningButton',
-    defaultMessage: 'Áfram í undirritun',
-    description: `Button text for going to pre-signing`,
   },
   goToSigningButton: {
     id: 'ra.application:application.goToSigningButton',

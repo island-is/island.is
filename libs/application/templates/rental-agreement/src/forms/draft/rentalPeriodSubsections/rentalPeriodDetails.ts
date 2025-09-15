@@ -18,7 +18,7 @@ import * as m from '../../../lib/messages'
 
 export const RentalPeriodDetails = buildSubSection({
   id: Routes.RENTALPERIOD,
-  title: m.rentalPeriod.subSectionName,
+  title: m.rentalPeriod.pageTitle,
   children: [
     buildMultiField({
       id: Routes.RENTALPERIOD,

@@ -44,16 +44,6 @@ export const housingFireProtections = defineMessages({
     defaultMessage: 'Slökkvitæki',
     description: 'Fire extinguisher label',
   },
-  fireExtinguisherAlertTitle: {
-    id: 'ra.application:housingFireProtections.fireExtinguisherAlertTitle',
-    defaultMessage: 'Húsnæðið ætti að hafa slökkvitæki',
-    description: 'Fire extinguisher alert title',
-  },
-  fireExtinguisherAlertMessage: {
-    id: 'ra.application:housingFireProtections.fireExtinguisherAlertMessage',
-    defaultMessage: 'Húsnæðið ætti að hafa að minnsta kosti 1 slökkvitæki',
-    description: 'Fire extinguisher alert message',
-  },
   exitsLabel: {
     id: 'ra.application:housingFireProtections.exitsLabel',
     defaultMessage: 'Er flóttaleið til staðar?',
@@ -69,16 +59,6 @@ export const housingFireProtections = defineMessages({
     defaultMessage: 'Eldvarnarteppi',
     description: 'Fire blanket label',
   },
-  typeRadioYesExit: {
-    id: 'ra.application:housingFireProtections.typeRadioYesExit',
-    defaultMessage: 'Já',
-    description: 'Label for yes - property has emergency exit',
-  },
-  typeRadioNoExit: {
-    id: 'ra.application:housingFireProtections.typeRadioNoExit',
-    defaultMessage: 'Nei',
-    description: 'Label for no - property does not have an emergency exit',
-  },
   fireBlanketRequirements: {
     id: 'ra.application:housingFireProtections.fireBlanketRequirements',
     defaultMessage: 'Er eldvarnarteppi til staðar?',
@@ -86,16 +66,6 @@ export const housingFireProtections = defineMessages({
   },
 
   // dataSchema
-  smokeDetectorNullError: {
-    id: 'ra.application:housingFireProtections.smokeDetectorNullError',
-    defaultMessage: 'Reykskynjara þarf að skrá',
-    description: 'Smoke detectors 0 error',
-  },
-  smokeDetectorMinRequiredError: {
-    id: 'ra.application:housingFireProtections.smokeDetectorMinRequiredError',
-    defaultMessage: 'Reykskynjarar þurfa að vera a.m.k. 1 á hverja 80m2',
-    description: 'Smoke detectors min 1 per 80 square meters',
-  },
   fireExtinguisherNullError: {
     id: 'ra.application:housingFireProtections.fireExtinguisherNullError',
     defaultMessage: 'Það þarf að vera a.m.k. eitt slökkvitæki í eigninni',
