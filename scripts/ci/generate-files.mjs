@@ -180,11 +180,12 @@ async function main() {
   inputs.forEach((file) => console.log(file))
   console.log('::endgroup::')
 
-  if (skipCodegen) {
+ const skipCache = process.env['SKIP_CACHE'] === 'true'
+
+  if (skipCodegen && !skipCache) {
     console.log('Skipping codegen command...')
   } else {
     console.log('Running codegen...')
-    const skipCache = process.env['SKIP_CACHE'] === 'true'
     if (skipCache) {
       console.log('Skipping cache for codegen...')
     }

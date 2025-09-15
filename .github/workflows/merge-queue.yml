@@ -1,7 +1,12 @@
 name: Validate code in the merge queue (post merge)
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      skip-nx-cache-codegen:
+        description: 'Skip NX cache codegen'
+        required: false
+        default: 'false'
   merge_group:
 
 defaults:
@@ -49,6 +54,7 @@ jobs:
       run_merge_queue: true
       force_all_to_be_affected: ${{ github.event_name == 'workflow_dispatch' }}
       main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
+      force_codegen: ${{ github.event.inputs.skip-nx-cache-codegen == 'true' }}
     needs:
       - pre-checks
   docker-build:
