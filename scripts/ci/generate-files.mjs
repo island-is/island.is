@@ -10,6 +10,7 @@ const additionalPatterns = [
   '**/schema.d.ts',
   '**/schema.tsx',
   '**/schema.ts',
+  '**/*.model.ts',
   '**/gen/graphql.ts',
   '**/*.generated.ts',
   '**/possibleTypes.json',
@@ -183,7 +184,8 @@ async function main() {
     console.log('Skipping codegen command...')
   } else {
     console.log('Running codegen...')
-    execSync('yarn codegen >> codegen.log', { stdio: 'inherit' })
+    const skipCache = process.env['SKIP_CACHE'] === 'true'
+    execSync(`yarn codegen ${skipCache ? '--skip-cache' : ''} >> codegen.log`, { stdio: 'inherit' })
   }
 
   console.log(

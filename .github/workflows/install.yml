@@ -2,6 +2,11 @@ name: 'Prep Dependencies'
 on:
   workflow_call:
     inputs:
+      force_codegen:
+        description: 'Force codegen to run'
+        required: false
+        type: boolean
+        default: false
       force_all_to_be_affected:
         description: 'Should all be affected'
         required: false
@@ -118,6 +123,8 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+        with:
+         skip-cache: ${{ inputs.force_codegen }}
 
       - id: get-branch
         env:

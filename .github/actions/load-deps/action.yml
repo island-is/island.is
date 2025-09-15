@@ -10,7 +10,10 @@ inputs:
     description: 'Cache path'
     required: false
     default: ${{ runner.temp }}
-
+  skip-cache:
+    description: 'Skip cache restore and generation'
+    required: false
+    default: 'false'
 runs:
   using: 'composite'
   steps:
@@ -37,6 +40,8 @@ runs:
       id: generate-files-hash
       shell: bash
       working-directory: ${{ inputs.working-directory }}
+      env:
+        SKIP_CACHE: ${{ inputs.skip-cache }}
       run: |
         node ./scripts/ci/generate-files.mjs /dev/null \
           --skip-codegen \
