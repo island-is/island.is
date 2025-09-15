@@ -367,7 +367,7 @@ codemagic.yaml                                                                  
 /libs/clients/vmst/                                                                                                         @island-is/deloitte
 /libs/api/domains/directorate-of-labour/                                                                                    @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/social-insurance-administration                            @island-is/deloitte
-/libs/application/templates/social-insurance-administration/additional-support-for-the-elderly                             @island-is/deloitte
+/libs/application/templates/social-insurance-administration/additional-support-for-the-elderly                              @island-is/deloitte
 /libs/application/templates/social-insurance-administration/core                                                            @island-is/deloitte
 /libs/application/templates/social-insurance-administration/death-benefits                                                  @island-is/deloitte
 /libs/application/templates/social-insurance-administration/household-supplement                                            @island-is/deloitte
@@ -436,7 +436,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/anonymity-in-vehicle-registry          @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-co-owner-of-vehicle             @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-operator-of-vehicle             @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/digital-tachograph-drivers-card         @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/digital-tachograph-drivers-card        @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/exemption-for-transportation           @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/license-plate-renewal                  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-license-plate            @island-is/origo
@@ -515,7 +515,7 @@ codemagic.yaml                                                                  
 # Islandis
 /apps/system-e2e/src/tests/islandis/admin-portal/                                                                           @island-is/aranja
 /apps/system-e2e/src/tests/islandis/application-system/                                                                     @island-is/norda
-/apps/system-e2e/src/tests/islandis/application-system/acceptance/parental-leave.spec.ts                                   @island-is/deloitte
+/apps/system-e2e/src/tests/islandis/application-system/acceptance/parental-leave.spec.ts                                    @island-is/deloitte
 /apps/system-e2e/src/tests/islandis/consultation-portal/                                                                    @island-is/advania
 /apps/system-e2e/src/tests/islandis/service-portal/                                                                         @island-is/hugsmidjan @island-is/juni @island-is/norda
 /apps/system-e2e/src/tests/islandis/web/                                                                                    @island-is/hugsmidjan @island-is/juni @island-is/stefna
