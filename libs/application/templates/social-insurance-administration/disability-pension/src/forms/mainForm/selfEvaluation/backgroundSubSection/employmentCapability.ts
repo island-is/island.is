@@ -18,7 +18,7 @@ export const employmentCapabilityField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT_CAPABILITY}.capability`,
       title: m.questions.employmentCapabilityLabel,
       variant: 'number',
-      min: 0,
+      min:0,
       max: 100,
       required: true,
       width: 'full',

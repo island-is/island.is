@@ -208,6 +208,8 @@ Component.getProps = async (context) => {
 
   const modifiedContext = { ...context, organizationPage }
 
+
+  console.log(modifiedContext)
   const isStandaloneTheme = organizationPage.theme === 'standalone'
 
   if (slugs.length === 1) {

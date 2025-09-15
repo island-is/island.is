@@ -177,6 +177,28 @@ export const livedAbroadSubSection = buildMultiField({
             watchValues: ['periodStart', 'periodEnd'],
           },
         },
+        countryDisplay: {
+          component: 'hiddenInput',
+          updateValueObj: {
+            valueModifier: (application, activeField) => {
+              if (!activeField) {
+                return ''
+              }
+
+               const { country } = activeField
+               if (!country) {
+                 return ''
+               }
+
+              const { countries = [] } = getApplicationExternalData(
+                application.externalData,
+              )
+
+              return countries.find(c => c.value === country)?.label ?? ''
+            },
+            watchValues: ['country'],
+          },
+        },
       },
       table: {
         header: [
@@ -184,7 +206,7 @@ export const livedAbroadSubSection = buildMultiField({
           m.employmentParticipation.abroadNationalId,
           m.employmentParticipation.period,
         ],
-        rows: ['country', 'abroadNationalId', 'period'],
+        rows: ['countryDisplay', 'abroadNationalId', 'period'],
       },
     }),
   ],

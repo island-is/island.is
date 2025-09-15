@@ -67,6 +67,28 @@ export const abroadPaymentsSubSection = buildMultiField({
             }))
           },
         },
+        countryDisplay: {
+          component: 'hiddenInput',
+          updateValueObj: {
+            valueModifier: (application, activeField) => {
+              if (!activeField) {
+                return ''
+              }
+
+               const { country } = activeField
+               if (!country) {
+                 return ''
+               }
+
+              const { countries = [] } = getApplicationExternalData(
+                application.externalData,
+              )
+
+              return countries.find(c => c.value === country)?.label ?? ''
+            },
+            watchValues: ['country'],
+          },
+        },
         abroadNationalId: {
           component: 'input',
           label:
@@ -82,7 +104,7 @@ export const abroadPaymentsSubSection = buildMultiField({
           m.employmentParticipation.country,
           m.employmentParticipation.abroadNationalId,
         ],
-        rows: ['country', 'abroadNationalId'],
+        rows: ['countryDisplay', 'abroadNationalId'],
       },
     }),
   ],

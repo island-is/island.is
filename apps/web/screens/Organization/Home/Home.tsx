@@ -52,6 +52,12 @@ const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   return link
 }
 
+const WITH_SEARCH = [
+  'syslumenn',
+  'district-commissioner',
+
+]
+
 const OrganizationHomePage = ({
   organizationPage,
   organization,

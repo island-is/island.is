@@ -28,6 +28,7 @@ const livedAbroadSchema = z.object({
     .array(
       z.object({
         country: z.string(),
+        countryDislay: z.string(),
         abroadNationalId: z.string().min(4).optional().or(z.literal('')),
         periodStart: z.string(),
         periodEnd: z.string(),
@@ -101,6 +102,7 @@ export const dataSchema = z.object({
         .array(
           z.object({
             country: z.string(),
+            countryDisplay: z.string(),
             abroadNationalId: z.string().min(4).optional().or(z.literal('')),
           }),
         )

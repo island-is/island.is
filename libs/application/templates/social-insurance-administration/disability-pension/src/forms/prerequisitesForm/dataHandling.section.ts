@@ -8,20 +8,15 @@ import { socialInsuranceAdministrationMessage as sm } from '@island.is/applicati
 
 export const dataHandlingSection = buildSection({
   id: 'dataHandlingSection',
-  title: sm.pre.externalDataSection,
+  title: sm.pre.socialInsuranceAdministrationPrivacyTitle,
   children: [
     buildMultiField({
-      title: m.prerequisite.pre,
       id: 'agreementDescriptionMultiField',
       space: 2,
       children: [
         buildDescriptionField({
           id: 'agreementDescriptionDescriptionField',
-          description: m.externalData.bullets,
-        }),
-        buildDescriptionField({
-          id: 'moreInformation',
-          description: m.externalData.moreInformation,
+          description: m.dataHandling.dataFetchText,
         }),
       ],
     }),
