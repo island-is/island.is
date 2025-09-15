@@ -63,7 +63,8 @@ export const parseTerminateContract = (
       'unboundTermination.unboundTerminationDate',
     ) ?? null
 
-  const terminateOn = (boundTerminationDate || unboundTerminationDate) ?? ''
+  const terminateOn =
+    (boundTerminationDate || unboundTerminationDate) ?? new Date()
 
   const obj = {
     contractId:
