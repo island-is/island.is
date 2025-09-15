@@ -1,4 +1,4 @@
-import { defineMessages } from "react-intl";
+import { defineMessages } from 'react-intl'
 
 export const shared = defineMessages({
   formTitle: {

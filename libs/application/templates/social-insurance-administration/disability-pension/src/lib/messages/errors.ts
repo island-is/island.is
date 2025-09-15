@@ -8,8 +8,7 @@ export const errors = defineMessages({
   },
   emptyForeignPayments: {
     id: 'dp.application:errors.abroadPaymentsRequired',
-    defaultMessage:
-      'Nauðsynlegt er að bæta við a.m.k einni greiðslu erlendis',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni greiðslu erlendis',
     description: 'You must add at least one foreign payment',
   },
   emptyCountry: {
@@ -86,8 +85,7 @@ export const errors = defineMessages({
     id: 'dp.application:errors.employmentStatusRequired',
     defaultMessage:
       'Nauðsynlegt er að velja a.m.k einn valkost eða útskýra í texta',
-    description:
-      'You must select at least one option or provide a description',
+    description: 'You must select at least one option or provide a description',
   },
   capabilityBetween0And100: {
     id: 'dp.application:errors.capabilityBetween0And100',

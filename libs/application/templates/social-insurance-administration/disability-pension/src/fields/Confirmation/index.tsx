@@ -21,16 +21,12 @@ export const Confirmation: FC<ConfirmationScreenProps> = () => {
     <Stack space={6}>
       <AlertMessage
         type="warning"
-        title={formatMessage(
-          m.confirmation.warningTitle,
-        )}
+        title={formatMessage(m.confirmation.warningTitle)}
         message={
           <Box className={styles.markdownContent}>
             <Text variant="small">
               <Markdown options={{ openLinksInNewTab: true }}>
-                {formatMessage(
-                  m.confirmation.warningDescription,
-                )}
+                {formatMessage(m.confirmation.warningDescription)}
               </Markdown>
             </Text>
           </Box>

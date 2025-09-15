@@ -18,8 +18,7 @@ export const disabilityEvaluationFields = buildMultiField({
   children: [
     buildRadioField({
       id: SectionRouteEnum.DISABILITY_APPLIED_BEFORE,
-      title:
-        m.disabilityEvaluation.appliedBeforeTitle,
+      title: m.disabilityEvaluation.appliedBeforeTitle,
       required: true,
       width: 'half',
       options: yesOrNoOptions,

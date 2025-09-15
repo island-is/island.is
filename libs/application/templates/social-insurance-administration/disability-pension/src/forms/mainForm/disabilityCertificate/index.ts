@@ -14,8 +14,7 @@ export const disabilityCertificateSection = buildSection({
     buildMultiField({
       id: SectionRouteEnum.DISABILITY_CERTIFICATE,
       title: m.disabilityCertificate.title,
-      description:
-        m.disabilityCertificate.description,
+      description: m.disabilityCertificate.description,
       children: [
         buildCustomField({
           id: 'disabilityPensionCertificateReferenceId',

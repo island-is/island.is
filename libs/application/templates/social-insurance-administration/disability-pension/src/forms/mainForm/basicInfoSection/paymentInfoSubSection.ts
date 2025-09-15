@@ -70,8 +70,7 @@ export const paymentInfoSubSection = buildSubSection({
           id: `${SectionRouteEnum.PAYMENT_INFO}.alertMessage`,
           condition: (formValue: FormValue) =>
             accountNationality(formValue) === BankAccountType.FOREIGN,
-          description:
-            m.paymentInfo.foreignAccountNotice,
+          description: m.paymentInfo.foreignAccountNotice,
         }),
         buildTextField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.bank`,

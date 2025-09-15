@@ -24,8 +24,7 @@ const livedAbroadCondition = (formValue: FormValue) => {
 export const livedAbroadSubSection = buildMultiField({
   id: SectionRouteEnum.LIVED_ABROAD,
   title: m.employmentParticipation.livedAbroadTitle,
-  description:
-    m.employmentParticipation.livedAbroadDescription,
+  description: m.employmentParticipation.livedAbroadDescription,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.LIVED_ABROAD}.hasLivedAbroad`,
@@ -37,21 +36,15 @@ export const livedAbroadSubSection = buildMultiField({
     buildTableRepeaterField({
       id: `${SectionRouteEnum.LIVED_ABROAD}.list`,
       condition: livedAbroadCondition,
-      formTitle:
-        m.employmentParticipation.livedAbroadTitle,
-      addItemButtonText:
-        m.employmentParticipation.addCountry,
-      saveItemButtonText:
-        m.employmentParticipation.save,
-      removeButtonTooltipText:
-        m.employmentParticipation.remove,
+      formTitle: m.employmentParticipation.livedAbroadTitle,
+      addItemButtonText: m.employmentParticipation.addCountry,
+      saveItemButtonText: m.employmentParticipation.save,
+      removeButtonTooltipText: m.employmentParticipation.remove,
       fields: {
         country: {
           component: 'select',
           label: m.employmentParticipation.country,
-          placeholder:
-            m.employmentParticipation
-              .countryPlaceholder,
+          placeholder: m.employmentParticipation.countryPlaceholder,
           width: 'half',
           displayInTable: true,
           isSearchable: true,
@@ -67,20 +60,15 @@ export const livedAbroadSubSection = buildMultiField({
         },
         abroadNationalId: {
           component: 'input',
-          label:
-            m.employmentParticipation
-              .abroadNationalId,
+          label: m.employmentParticipation.abroadNationalId,
           width: 'half',
           displayInTable: true,
         },
         //TODO: ONly month
         periodStart: {
           component: 'date',
-          label:
-            m.employmentParticipation.periodStart,
-          placeholder:
-            m.employmentParticipation
-              .periodStartPlaceholder,
+          label: m.employmentParticipation.periodStart,
+          placeholder: m.employmentParticipation.periodStartPlaceholder,
           width: 'half',
           displayInTable: false,
           updateValueObj: {
@@ -115,9 +103,7 @@ export const livedAbroadSubSection = buildMultiField({
         periodEnd: {
           component: 'date',
           label: m.employmentParticipation.periodEnd,
-          placeholder:
-            m.employmentParticipation
-              .periodEndPlaceholder,
+          placeholder: m.employmentParticipation.periodEndPlaceholder,
           width: 'half',
           displayInTable: false,
           updateValueObj: {
@@ -185,16 +171,16 @@ export const livedAbroadSubSection = buildMultiField({
                 return ''
               }
 
-               const { country } = activeField
-               if (!country) {
-                 return ''
-               }
+              const { country } = activeField
+              if (!country) {
+                return ''
+              }
 
               const { countries = [] } = getApplicationExternalData(
                 application.externalData,
               )
 
-              return countries.find(c => c.value === country)?.label ?? ''
+              return countries.find((c) => c.value === country)?.label ?? ''
             },
             watchValues: ['country'],
           },

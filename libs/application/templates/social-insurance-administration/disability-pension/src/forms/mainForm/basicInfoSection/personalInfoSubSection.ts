@@ -26,8 +26,7 @@ export const personalInfoSubSection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'personalInfoInstructions',
-          description:
-            m.basicInfo.personalInfoInstructions,
+          description: m.basicInfo.personalInfoInstructions,
           marginBottom: 'containerGutter',
         }),
         ...applicantInformationArray({

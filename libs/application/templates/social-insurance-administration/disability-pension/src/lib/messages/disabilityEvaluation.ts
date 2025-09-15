@@ -15,8 +15,7 @@ export const disabilityEvaluation = defineMessages({
   appliedBeforeTitle: {
     id: 'dp.application:disabilityEvaluation.appliedBeforeTitle',
     defaultMessage: 'Hefur þú sótt um örorkumat hjá lífeyrissjóði?',
-    description:
-      'Have you applied for disability evaluation at pension fund?',
+    description: 'Have you applied for disability evaluation at pension fund?',
   },
   fileUploadTitle: {
     id: 'dp.application:disabilityEvaluation.fileUploadTitle',

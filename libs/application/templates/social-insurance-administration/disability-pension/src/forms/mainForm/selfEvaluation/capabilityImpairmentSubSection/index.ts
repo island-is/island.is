@@ -111,8 +111,7 @@ export const capabilityImpairmentSubSection = buildSubSection({
     buildDescriptionField({
       id: SectionRouteEnum.CAPABILITY_IMPAIRMENT,
       title: m.capabilityImpairment.title,
-      description:
-        m.capabilityImpairment.description,
+      description: m.capabilityImpairment.description,
     }),
     ...[...Array(MAX_QUESTIONS)].map((_key, index) => buildQuestion(index)),
   ],

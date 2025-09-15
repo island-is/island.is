@@ -1,11 +1,10 @@
-import { defineMessages } from "react-intl";
+import { defineMessages } from 'react-intl'
 
 export const notEligible = defineMessages({
   title: {
     id: 'dp.application:not.eligible.title',
     defaultMessage: 'Því miður átt þú ekki rétt á örorkulífeyri',
-    description:
-      'Unfortunately, you are not eligible for disability pension.',
+    description: 'Unfortunately, you are not eligible for disability pension.',
   },
   applicantAgeOutOfRangeDescription: {
     id: 'dp.application:not.eligible.applicant.age.out.of.range.description#markdown',

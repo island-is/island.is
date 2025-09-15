@@ -12,32 +12,23 @@ export const employmentImportanceField = buildMultiField({
       options: [
         {
           value: '0',
-          label:
-            m.questions
-              .employmentImportanceNotImportantAtAll,
+          label: m.questions.employmentImportanceNotImportantAtAll,
         },
         {
           value: '1',
-          label:
-            m.questions
-              .employmentImportanceNotImportant,
+          label: m.questions.employmentImportanceNotImportant,
         },
         {
           value: '2',
-          label:
-            m.questions.employmentImportanceNeutral,
+          label: m.questions.employmentImportanceNeutral,
         },
         {
           value: '3',
-          label:
-            m.questions
-              .employmentImportanceImportant,
+          label: m.questions.employmentImportanceImportant,
         },
         {
           value: '4',
-          label:
-            m.questions
-              .employmentImportanceVeryImportant,
+          label: m.questions.employmentImportanceVeryImportant,
         },
       ],
     }),
