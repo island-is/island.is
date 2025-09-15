@@ -500,7 +500,11 @@ export const priceOverview = (
             width: 'half' as const,
             keyText: m.summary.paymentMethodAccountLabel,
             valueText: formatBankInfo(
-              rentalAmount?.paymentMethodBankAccountNumber ?? '-',
+              rentalAmount?.paymentMethodBankAccountNumber ?? {
+                bankNumber: '',
+                ledger: '',
+                accountNumber: '',
+              },
             ),
           },
         ]

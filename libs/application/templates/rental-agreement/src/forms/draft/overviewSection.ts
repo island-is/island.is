@@ -33,7 +33,7 @@ import {
 } from '../../utils/conditions'
 import * as m from '../../lib/messages'
 
-export const SummaryDraftSection = buildSection({
+export const overviewSection = buildSection({
   id: Routes.SUMMARY,
   title: summary.sectionName,
   children: [

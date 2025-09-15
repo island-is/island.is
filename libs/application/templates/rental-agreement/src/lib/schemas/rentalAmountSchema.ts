@@ -137,25 +137,6 @@ export const rentalAmount = z
           path: ['paymentMethodNationalId'],
         })
       }
-      if (!paymentMethodBankAccountNumber?.trim().length) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Custom error message',
-          params: m.rentalAmount.paymentMethodBankAccountNumberRequiredError,
-          path: ['paymentMethodBankAccountNumber'],
-        })
-      }
-      if (
-        paymentMethodBankAccountNumber?.trim().length &&
-        paymentMethodBankAccountNumber.length < 7
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Custom error message',
-          params: m.rentalAmount.paymentMethodBankAccountNumberInvalidError,
-          path: ['paymentMethodBankAccountNumber'],
-        })
-      }
     }
 
     if (paymentMethodOptions === RentalPaymentMethodOptions.OTHER) {

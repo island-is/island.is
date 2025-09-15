@@ -53,7 +53,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
       )}
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-          <Box marginBottom={[2, 2, 4]}>
+          <Box>
             <InputController
               id={`${id}.bankNumber`}
               defaultValue={bankInfo?.bankNumber || ''}
@@ -68,7 +68,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
           </Box>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '3/12', '2/12']}>
-          <Box marginBottom={[2, 2, 4]}>
+          <Box>
             <InputController
               id={`${id}.ledger`}
               defaultValue={bankInfo?.ledger || ''}
@@ -82,7 +82,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
           </Box>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12', '6/12']}>
-          <Box marginBottom={[2, 2, 4]}>
+          <Box>
             <InputController
               id={`${id}.accountNumber`}
               defaultValue={bankInfo?.accountNumber || ''}
