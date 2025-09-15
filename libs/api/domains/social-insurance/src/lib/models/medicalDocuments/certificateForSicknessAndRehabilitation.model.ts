@@ -106,4 +106,7 @@ export class CertificateForSicknessAndRehabilitation {
 
   @Field(() => Confirmation, { nullable: true })
   confirmation?: Confirmation
+
+  @Field({ nullable: true })
+  isAlmaCertificate?: boolean
 }
