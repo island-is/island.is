@@ -110,6 +110,7 @@ const CourtRecord: FC = () => {
                 ],
               }))
             }}
+            disabled={!stepIsValid}
             icon="add"
           >
             Bæta við þinghaldi

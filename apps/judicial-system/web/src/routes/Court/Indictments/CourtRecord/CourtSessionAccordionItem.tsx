@@ -34,6 +34,7 @@ import {
   useCourtSessions,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useUsers from '@island.is/judicial-system-web/src/utils/hooks/useUsers'
+import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import * as styles from './CourtRecord.css'
 
@@ -323,7 +324,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           >
                             <Checkbox
                               label={label}
-                              name={label}
+                              name={`${label}-${courtSession.id}`}
                               tooltip={tooltip}
                               checked={courtSession.closedLegalProvisions?.includes(
                                 legalProvision,
@@ -504,7 +505,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               />
               <BlueBox className={styles.grid}>
                 <RadioButton
-                  name="result_no"
+                  name={`result_no-${courtSession.id}`}
                   label="Nei"
                   backgroundColor="white"
                   checked={
@@ -524,7 +525,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   large
                 />
                 <RadioButton
-                  name="result_verdict"
+                  name={`result_verdict-${courtSession.id}`}
                   label="Dómur kveðinn upp"
                   backgroundColor="white"
                   checked={
@@ -542,7 +543,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   large
                 />
                 <RadioButton
-                  name="result_ruling"
+                  name={`result_ruling-${courtSession.id}`}
                   label="Úrskurður kveðinn upp"
                   backgroundColor="white"
                   checked={
@@ -653,7 +654,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               <BlueBox className={styles.grid}>
                 <Checkbox
                   label="Skrá vott að þinghaldi"
-                  name="isAttestingWitness"
+                  name={`isAttestingWitness-${courtSession.id}`}
                   checked={courtSession.isAttestingWitness || false}
                   onChange={(evt) =>
                     patchSession(
@@ -736,6 +737,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     icon="checkmark"
                     onClick={onConfirmClick}
                     size="small"
+                    disabled={!isCourtSessionValid(courtSession)}
                   >
                     Staðfesta þingbók
                   </Button>
