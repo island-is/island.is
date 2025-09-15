@@ -16,6 +16,7 @@ export const disabilityCertificateSection = buildSection({
       title: m.disabilityCertificate.title,
       description: m.disabilityCertificate.description,
       children: [
+        //sensitive data, can't be stored in state
         buildCustomField({
           id: 'disabilityPensionCertificateReferenceId',
           component: 'DisabilityPensionCertificate',
