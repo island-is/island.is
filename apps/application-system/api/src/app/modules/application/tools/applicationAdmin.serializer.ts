@@ -40,11 +40,13 @@ import {
   getApplicationNameTranslationString,
   getApplicationStatisticsNameTranslationString,
   getPaymentStatusForAdmin,
+  tryToGetNameFromNationalId,
 } from '../utils/application'
 import {
   ApplicationListAdminResponseDto,
   ApplicationTypeAdminInstitution,
 } from '../dto/applicationAdmin.response.dto'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 @Injectable()
 export class ApplicationAdminSerializer
@@ -56,6 +58,7 @@ export class ApplicationAdminSerializer
     private historyBuilder: HistoryBuilder,
     private featureFlagService: FeatureFlagService,
     private paymentService: PaymentService,
+    private nationalRegistryApi: NationalRegistryClientService,
   ) {}
 
   intercept(
@@ -124,6 +127,12 @@ export class ApplicationAdminSerializer
     const userRole = template.mapUserToRole(nationalId, application) ?? ''
 
     const roleInState = helper.getRoleInState(userRole)
+
+    const applicantActors = await Promise.all(
+      application.applicantActors.map((actorNationalId) =>
+        tryToGetNameFromNationalId(actorNationalId, this.nationalRegistryApi),
+      ),
+    )
     const actors =
       application.applicant === nationalId ? application.applicantActors : []
 
@@ -148,9 +157,20 @@ export class ApplicationAdminSerializer
       application.id,
     )
 
+    let applicantName: string | undefined | null
+    try {
+      const applicant = await this.nationalRegistryApi.getIndividual(
+        application.applicant,
+      )
+      applicantName = applicant?.fullName
+    } catch (e) {
+      applicantName = getApplicantName(application)
+    }
+
     const dto = plainToInstance(ApplicationListAdminResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
+      applicantActors,
       applicationActors: actors,
       actionCard: {
         title: actionCardMeta.title
@@ -183,11 +203,12 @@ export class ApplicationAdminSerializer
       answers: [],
       externalData: [],
       paymentStatus: getPaymentStatusForAdmin(payment),
-      applicantName: getApplicantName(application),
-      adminData: getAdminDataForAdminPortal(
+      applicantName: applicantName,
+      adminData: await getAdminDataForAdminPortal(
         template,
         application,
         intl.formatMessage,
+        this.nationalRegistryApi,
       ),
     })
     return instanceToPlain(dto)

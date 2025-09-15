@@ -21,6 +21,7 @@ import { FormatMessage } from '@island.is/cms-translations'
 import { ApplicationStatistics } from '../dto/applicationAdmin.response.dto'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import { expandFieldKeys } from '../lifecycle/application-lifecycle.utils'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 export const getApplicationLifecycle = (
   application: Application,
@@ -144,19 +145,27 @@ export const getPaymentStatusForAdmin = (
   return null
 }
 
-export const getApplicantName = (application: Application) => {
+export const getApplicantName = (
+  application: Application,
+): string | undefined | null => {
   if (application.externalData.nationalRegistry) {
-    return getValueViaPath(
+    return getValueViaPath<string>(
       application.externalData,
       'nationalRegistry.data.fullName',
     )
   }
   if (application.externalData.identity) {
-    return getValueViaPath(application.externalData, 'identity.data.name')
+    return getValueViaPath<string>(
+      application.externalData,
+      'identity.data.name',
+    )
   }
   // special case for parental leave
   if (application.externalData.person) {
-    return getValueViaPath(application.externalData, 'person.data.fullname')
+    return getValueViaPath<string>(
+      application.externalData,
+      'person.data.fullname',
+    )
   }
   return null
 }
@@ -288,43 +297,84 @@ const hasContent = (value: unknown): boolean => {
  * - Gathers all values for each key (single or multiple, depending on wildcard).
  * - Keeps the original `key` with the `$` placeholder intact for readability in config.
  * - Returns values as a string array (`value`), even for single-value fields.
+ * - If `isNationalId` is true in the adminDataConfig, values are formatted as
+ *   "<name> (<nationalId>)" using the National Registry API. If the name is missing,
+ *   only "<nationalId>" is used.
  *
- * Example:
- *   config.key = 'coOwners.$.name'
+ * Example 1:
+ *   config = { key: 'coOwners.$.name' }
  *   answers = { coOwners: [{ name: 'Alice' }, { name: 'Bob' }] }
  *
  *   result = {
  *     key: 'coOwners.$.name',
- *     value: ['Alice', 'Bob'],
+ *     values: ['Alice', 'Bob'],
  *     label: 'Co-owner Name'
  *   }
+ *
+ * Example 2 (with nationalId):
+ *   config = { key: 'coOwners.$.nationalId', isNationalId = true }
+ *   answers = { coOwners: [{ nationalId: '1234567890' }] }
+ *
+ *   result = {
+ *     key: 'coOwners.$.nationalId',
+ *     values: ['Alice (1234567890)'],
+ *     label: 'Co-owner'
+ *   }
  */
-export const getAdminDataForAdminPortal = (
+
+export const getAdminDataForAdminPortal = async (
   template: Template,
   application: Application,
   formatMessage: FormatMessage,
+  nationalRegistryApi: NationalRegistryClientService,
 ) => {
   if (!template.adminDataConfig?.answers) return []
 
-  return template.adminDataConfig.answers
-    .filter((config) => config.isListed)
-    .map((config) => {
-      const expandedKeys = expandFieldKeys(application.answers, [config.key])
+  return await Promise.all(
+    template.adminDataConfig.answers
+      .filter((config) => config.isListed)
+      .map(async (config) => {
+        const expandedKeys = expandFieldKeys(application.answers, [config.key])
 
-      const values: string[] = expandedKeys
-        .map((expandedKey) => getValueViaPath(application.answers, expandedKey))
-        .flatMap((v) => {
-          if (v === undefined || v === null) return []
-          if (Array.isArray(v)) return v.filter((x) => x != null).map(String)
-          if (typeof v === 'object') return []
-          return [String(v)]
-        })
-      const label = config.label ? formatMessage(config.label) : ''
+        let values: string[] = expandedKeys
+          .map((expandedKey) =>
+            getValueViaPath(application.answers, expandedKey),
+          )
+          .flatMap((v) => {
+            if (v === undefined || v === null) return []
+            if (Array.isArray(v)) return v.filter((x) => x != null).map(String)
+            if (typeof v === 'object') return []
+            return [String(v)]
+          })
 
-      return {
-        key: config.key,
-        values,
-        label,
-      }
-    })
+        // If this field contains national IDs, fetch names and format them
+        if (config.isNationalId) {
+          values = await Promise.all(
+            values.map((nationalId) =>
+              tryToGetNameFromNationalId(nationalId, nationalRegistryApi),
+            ),
+          )
+        }
+
+        const label = config.label ? formatMessage(config.label) : ''
+
+        return {
+          key: config.key,
+          values,
+          label,
+        }
+      }),
+  )
+}
+
+export const tryToGetNameFromNationalId = async (
+  nationalId: string,
+  nationalRegistryApi: NationalRegistryClientService,
+): Promise<string> => {
+  try {
+    const person = await nationalRegistryApi.getIndividual(nationalId)
+    return person?.fullName ? `${person.fullName} (${nationalId})` : nationalId
+  } catch (e) {
+    return nationalId
+  }
 }
