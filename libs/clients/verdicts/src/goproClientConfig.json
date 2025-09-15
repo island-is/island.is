@@ -844,6 +844,79 @@
         "security": [{ "basic": [] }]
       }
     },
+    "/Case/PublishCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Register or update a case details in public registry by court.\r\nIf case by specified court and external id is already published then it is updated",
+        "operationId": "PublishCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/PublishCaseRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/GetPublishedCase/{court}/{id}": {
+      "get": {
+        "tags": ["Case"],
+        "summary": "Get a detailed case data specified by unique ID",
+        "operationId": "GetPublishedCase",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "court",
+            "in": "path",
+            "description": "Published case court",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique ID of the published case",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetPublishedCaseResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
     "/Clients/CreateCompany": {
       "post": {
         "tags": ["Clients"],
@@ -2646,6 +2719,99 @@
         },
         "subject": { "description": "Folder name", "type": "string" },
         "body": { "description": "Description / comments", "type": "string" }
+      }
+    },
+    "PublishCaseRequest": {
+      "type": "object",
+      "properties": {
+        "recordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "court": { "type": "string" },
+        "caseNumber": { "type": "string" },
+        "caseType": { "type": "string" },
+        "caseTitleHtml": { "type": "string" },
+        "caseTitleRaw": { "type": "string" },
+        "publishDate": { "type": "string" },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "judges": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/JudgeModel" }
+        },
+        "attack": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PartyModel" }
+        },
+        "defense": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PartyModel" }
+        },
+        "links": { "type": "string" },
+        "status": { "type": "string" }
+      }
+    },
+    "PartyModel": {
+      "required": ["name"],
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "lawyers": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/LawyerModel" }
+        },
+        "placement": { "format": "int32", "type": "integer" }
+      }
+    },
+    "GetPublishedCaseResponse": {
+      "type": "object",
+      "properties": {
+        "item": { "$ref": "#/definitions/DetailedCaseData" },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "DetailedCaseData": {
+      "type": "object",
+      "properties": {
+        "recordId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "court": { "type": "string" },
+        "caseNumber": { "type": "string" },
+        "caseType": { "type": "string" },
+        "caseTitleHtml": { "type": "string" },
+        "caseTitleRaw": { "type": "string" },
+        "publishDate": { "format": "date-time", "type": "string" },
+        "keywords": { "type": "string" },
+        "judges": { "type": "string" },
+        "plaintiffs": { "type": "string" },
+        "defendants": { "type": "string" },
+        "status": { "type": "string" }
       }
     },
     "Company": {
