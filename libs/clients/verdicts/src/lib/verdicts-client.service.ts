@@ -4,7 +4,7 @@ import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 import { isValidDate, sortAlpha } from '@island.is/shared/utils'
 
-import { VerdictApi } from '../../gen/fetch/gopro'
+import { BookingApi, VerdictApi } from '../../gen/fetch/gopro'
 import { DefaultApi } from '../../gen/fetch/supreme-court'
 import { logger } from '@island.is/logging'
 
@@ -45,6 +45,7 @@ export class VerdictsClientService {
   constructor(
     private readonly goproApi: VerdictApi,
     private readonly supremeCourtApi: DefaultApi,
+    private readonly goproBookingApi: BookingApi,
   ) {}
 
   async getVerdicts(input: {
@@ -290,6 +291,74 @@ export class VerdictsClientService {
 
     return {
       keywords,
+    }
+  }
+
+  private safelyConvertDateToISOString(
+    value: string | Date | null | undefined,
+  ) {
+    if (!value) return ''
+    try {
+      return new Date(value).toISOString()
+    } catch (error) {
+      return ''
+    }
+  }
+
+  async getCourtAgendas(input: { page?: number }) {
+    const pageNumber = input.page ?? 1
+    const itemsPerPage = 10
+    const [supremeCourtResponse, goproResponse] = await Promise.allSettled([
+      this.supremeCourtApi.apiV2VerdictGetAgendasGet({
+        page: pageNumber,
+        limit: itemsPerPage,
+      }),
+      this.goproBookingApi.getPublishedBookings({
+        pageNumber: pageNumber,
+        court: '',
+        itemsPerPage,
+      }),
+    ])
+
+    const items = []
+    let total = 0
+
+    if (supremeCourtResponse.status === 'fulfilled') {
+      total += supremeCourtResponse.value.total ?? 0
+      for (const agenda of supremeCourtResponse.value.items ?? []) {
+        items.push({
+          id: agenda.id ?? '',
+          caseNumber: agenda.caseNumber ?? '',
+          dateFrom: this.safelyConvertDateToISOString(agenda.verdictDate),
+          dateTo: '',
+          closedHearing: agenda.closedSession ?? false,
+          courtRoom: agenda.courtroom ?? '',
+          judges: agenda.judges ?? [],
+          lawyers: [], // TODO: Lawyers from supreme court are missing
+          court: (agenda as { court?: string }).court ?? '',
+        })
+      }
+    }
+    if (goproResponse.status === 'fulfilled') {
+      total += goproResponse.value.total ?? 0
+      for (const agenda of goproResponse.value.items ?? []) {
+        items.push({
+          id: `${agenda.bookingId}-${agenda.caseId}-${agenda.caseNumberRaw}`,
+          caseNumber: agenda.caseNumberRaw ?? '',
+          dateFrom: this.safelyConvertDateToISOString(agenda.scheduleDate),
+          dateTo: this.safelyConvertDateToISOString(agenda.scheduleToDate),
+          closedHearing: agenda.closedHearing ?? false,
+          courtRoom: agenda.courtRoom ?? '',
+          judges: agenda.judges ?? [],
+          lawyers: agenda.lawyers ?? [],
+          court: (agenda as { court?: string }).court ?? '',
+        })
+      }
+    }
+
+    return {
+      items,
+      total,
     }
   }
 }
