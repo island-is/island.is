@@ -36,6 +36,7 @@ import {
   INDICTMENTS_CASE_FILE_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { INDICTMENTS_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { CourtSessionClosedLegalBasis } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -151,6 +152,7 @@ const CourtRecord: FC = () => {
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [courtEndTimeErrorMessage, setCourtEndTimeErrorMessage] =
     useState<string>('')
+  const [courtEndTime, setCourtEndTime] = useState<string[]>([])
   const { createCourtSession, updateCourtSession } = useCourtSessions()
   const updateSession = useCourtSessionUpdater(
     workingCase,
@@ -241,6 +243,16 @@ const CourtRecord: FC = () => {
   //   )
   // }, [workingCase.courtDocuments])
 
+  useEffect(() => {
+    workingCase.courtSessions?.forEach((courtSession) => {
+      const endTime = courtSession.endDate
+        ? format(new Date(courtSession.endDate), 'HH:mm')
+        : ''
+
+      setCourtEndTime((prev) => [...prev, endTime])
+    })
+  }, [workingCase.courtSessions])
+
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
@@ -264,7 +276,6 @@ const CourtRecord: FC = () => {
   }
 
   const [expandedIndex, setExpandedIndex] = useState<number>()
-  const [courtEndTime, setCourtEndTime] = useState<string>('')
   useEffect(() => {
     setExpandedIndex(
       workingCase.courtSessions?.length
@@ -581,6 +592,7 @@ const CourtRecord: FC = () => {
                             updateSession(courtSession.id, {
                               rulingType: CourtSessionRulingType.NONE,
                               ruling: '',
+                              closingEntries: '',
                             })
                           }}
                           large
@@ -719,6 +731,33 @@ const CourtRecord: FC = () => {
                           options={[...judges, ...registrars].sort((a, b) =>
                             a.label.localeCompare(b.label),
                           )}
+                          value={{
+                            label: courtSession.attestingWitness
+                              ? courtSession.attestingWitness.name || ''
+                              : '',
+                            value: courtSession.attestingWitnessId || '',
+                          }}
+                          onChange={(evt) => {
+                            const selectedUser = [
+                              ...judges,
+                              ...registrars,
+                            ].find((u) => u.value === evt?.value)
+
+                            if (!selectedUser) {
+                              return
+                            }
+
+                            updateItem(courtSession.id, {
+                              attestingWitness: {
+                                name: selectedUser.label,
+                                id: selectedUser.value || '',
+                              },
+                            })
+
+                            updateSession(courtSession.id, {
+                              attestingWitnessId: evt?.value,
+                            })
+                          }}
                           size="md"
                           label="Veldu vott"
                           placeholder="Veldu vott að þinghaldi"
@@ -737,6 +776,15 @@ const CourtRecord: FC = () => {
                             replacement={{ ' ': /\d/ }}
                             name="courtEndTime"
                             label="Þinghaldi lauk (kk:mm)"
+                            value={courtEndTime[index] || ''}
+                            onChange={(evt) => {
+                              setCourtEndTime((prev) => {
+                                const newCourtEndTime = [...prev]
+                                newCourtEndTime[index] = evt.target.value
+                                return newCourtEndTime
+                              })
+                              setCourtEndTimeErrorMessage('')
+                            }}
                             onBlur={(evt) => {
                               const validateTime = validate([
                                 [evt.target.value, ['empty', 'time-format']],
@@ -758,7 +806,7 @@ const CourtRecord: FC = () => {
                               )
 
                               const validateDate = validate([
-                                [d.toString(), ['empty', 'date-format']],
+                                [d.toISOString(), ['empty', 'date-format']],
                               ])
 
                               if (validateDate.isValid) {
@@ -796,7 +844,12 @@ const CourtRecord: FC = () => {
             </AccordionItem>
           ))}
         </Accordion>
-        <Box display="flex" justifyContent="flexEnd" marginTop={5}>
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          marginTop={5}
+          marginBottom={10}
+        >
           <Button
             variant="ghost"
             onClick={async () => {
