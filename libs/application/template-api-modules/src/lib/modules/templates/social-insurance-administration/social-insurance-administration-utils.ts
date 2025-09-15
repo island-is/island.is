@@ -431,6 +431,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     lastActivityOfProfessionDescription,
     lastProfessionYear,
     certificateForSicknessAndRehabilitationReferenceId,
+    isAlmaCertificate,
     rehabilitationPlanReferenceId,
     confirmedTreatmentReferenceId,
     confirmationOfPendingResolutionReferenceId,
@@ -514,6 +515,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     }),
     baseCertificateReference:
       certificateForSicknessAndRehabilitationReferenceId ?? '',
+    isAlmaCertificate: isAlmaCertificate === 'true',
     ...(shouldShowRehabilitationPlan(application.externalData) && {
       rehabilitationPlanReference: rehabilitationPlanReferenceId,
     }),
