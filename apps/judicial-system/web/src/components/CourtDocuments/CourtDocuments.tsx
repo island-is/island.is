@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 import Select from 'react-select'
 
@@ -7,10 +7,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { CourtDocument } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
-import {
-  FormContext,
-  IconButton,
-} from '@island.is/judicial-system-web/src/components'
+import { IconButton } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
   UserRole,
@@ -33,11 +30,26 @@ interface Props {
   setWorkingCase: Dispatch<SetStateAction<Case>>
 }
 
-export const useCourtDocuments = () => {
-  const { setAndSendCaseToServer } = useCase()
-  const { setWorkingCase, workingCase } = useContext(FormContext)
-
+const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
+  const { formatMessage } = useIntl()
+  const { setAndSendCaseToServer, isUpdatingCase } = useCase()
+  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<number>(-1)
   const [updateIndex, setUpdateIndex] = useState<number | undefined>(undefined)
+
+  const whoFiledOptions = [
+    {
+      value: UserRole.PROSECUTOR,
+      label: formatMessage(courtDocuments.whoFiled.prosecutor),
+    },
+    {
+      value: UserRole.DEFENDER,
+      label: formatMessage(courtDocuments.whoFiled.defendant),
+    },
+    {
+      value: UserRole.DISTRICT_COURT_JUDGE,
+      label: formatMessage(courtDocuments.whoFiled.court),
+    },
+  ]
 
   const handleRemoveDocument = (index: number) => {
     const updatedCourtDocuments = workingCase.courtDocuments?.filter(
@@ -83,39 +95,6 @@ export const useCourtDocuments = () => {
       setWorkingCase,
     )
   }
-  return {
-    updateIndex,
-    handleRemoveDocument,
-    handleAddDocument,
-    handleSubmittedBy,
-  }
-}
-
-const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
-  const { formatMessage } = useIntl()
-  const { isUpdatingCase } = useCase()
-  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<number>(-1)
-  const {
-    updateIndex,
-    handleRemoveDocument,
-    handleAddDocument,
-    handleSubmittedBy,
-  } = useCourtDocuments()
-
-  const whoFiledOptions = [
-    {
-      value: UserRole.PROSECUTOR,
-      label: formatMessage(courtDocuments.whoFiled.prosecutor),
-    },
-    {
-      value: UserRole.DEFENDER,
-      label: formatMessage(courtDocuments.whoFiled.defendant),
-    },
-    {
-      value: UserRole.DISTRICT_COURT_JUDGE,
-      label: formatMessage(courtDocuments.whoFiled.court),
-    },
-  ]
 
   return (
     <>
