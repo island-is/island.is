@@ -16,3 +16,4 @@ appId: 'is.island.app.dev'
           text: 'Mock'
 - tapOn:
     id: 'LOGIN_BUTTON_AUTHENTICATE'
+    waitUntilVisible: true
