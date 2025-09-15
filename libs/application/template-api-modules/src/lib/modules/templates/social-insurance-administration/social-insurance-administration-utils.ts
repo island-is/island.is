@@ -668,23 +668,23 @@ export const transformApplicationToDisabilityPensionDTO = (
     isInPaidEmployment: inPaidWork === YES,
     plansToContinueParticipation:
       inPaidWork === YES ? willContinueWorking === YES : undefined,
-    housingTypeId: residence ?? -1,
+    housingTypeId: residence ? Number.parseInt(residence) : -1,
     housingTypeAdditionalDescription: residenceExtraComment,
     numberOfChildrenInHome: children ?? '',
-    languageProficiency: icelandicCapability ?? -1,
+    languageProficiency: icelandicCapability ? Number.parseInt(icelandicCapability) : -1,
     applicantNativeLanguage: language ?? '',
     applicantNativeLanguageOther: languageOther,
     hasBeenInPaidEmployment: previousEmployment?.hasEmployment
       ? previousEmployment.hasEmployment === YES
       : false,
     lastProfession: previousEmployment?.job,
-    lastProfessionYear: previousEmployment?.when,
+    lastProfessionYear: previousEmployment?.when ? Number.parseInt(previousEmployment.when) : -1,
     lastProfessionDescription: undefined,
     lastActivityOfProfession: previousEmployment?.field,
     lastActivityOfProfessionDescription: undefined,
     educationalLevel: educationLevel ?? '',
-    workCapacityAssessment: employmentCapability ?? -1,
-    importanceOfEmployment: employmentImportance ?? -1,
+    workCapacityAssessment: employmentCapability ? Number.parseInt(employmentCapability) : -1,
+    importanceOfEmployment: employmentImportance  ? Number.parseInt(employmentImportance) : -1,
     hasBeenInRehabilitationOrTreatment: hasHadRehabilitationOrTherapy === YES,
     rehabilitationOrTreatment: rehabilitationOrTherapyDescription,
     rehabilitationOrTreatmentOutcome: rehabilitationOrTherapyResults,
@@ -717,7 +717,7 @@ export const transformApplicationToDisabilityPensionDTO = (
             }
           }) ?? []
         : [],
-    maritalStatusTypeId: maritalStatus ?? -1,
+    maritalStatusTypeId: maritalStatus ? Number.parseInt(maritalStatus) : -1,
     selfAssessment: {
       hadAssistance: hadAssistanceForSelfEvaluation === YES,
       answers: (questionnaire ?? []).map((question) => ({
@@ -734,8 +734,8 @@ export const transformApplicationToDisabilityPensionDTO = (
             : '',
       })) ?? [],
     retroactivePayments: {
-      year: disabilityRenumerationDateYear ?? -1,
-      month: disabilityRenumerationDateMonth ?? -1,
+      year: disabilityRenumerationDateYear ? Number.parseInt(disabilityRenumerationDateYear) : -1,
+      month: disabilityRenumerationDateMonth ? Number.parseInt(disabilityRenumerationDateMonth) : -1,
     },
     comment: extraInfo,
   }

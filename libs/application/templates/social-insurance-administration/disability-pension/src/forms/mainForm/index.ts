@@ -2,7 +2,6 @@ import { buildForm } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { FormModes } from '@island.is/application/types'
 import { basicInfoSection } from './basicInfoSection'
-import { newCertificateSection } from './newCertificate'
 import { disabilityCertificateSection } from './disabilityCertificate'
 import { extraInfoSection } from './extraInfo'
 import { overviewSection } from './overview'
@@ -16,11 +15,10 @@ export const MainForm = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
-    //basicInfoSection,
+   //basicInfoSection,
     //selfEvaluationSection,
-    newCertificateSection,
-    disabilityCertificateSection,
-    extraInfoSection,
+    //disabilityCertificateSection,
+    //extraInfoSection,
     overviewSection,
     conclusionSection,
   ],

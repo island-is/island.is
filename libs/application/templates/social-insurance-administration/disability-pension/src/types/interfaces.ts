@@ -10,14 +10,10 @@ export interface Country {
   abroadNationalId: string
 }
 
-export interface MaritalStatus {
-  value: number
-  label: string
-}
 
 export interface PreviousEmployment {
   hasEmployment: YesOrNo
-  when: number
+  when: string
   job: string
   field: string
 }
@@ -32,11 +28,6 @@ export interface LivedAbroad {
   abroadNationalId?: string
   periodStart: string
   periodEnd: string
-}
-
-export interface Residence {
-  value: number
-  label: string
 }
 
 export interface EmploymentStatusResponse {

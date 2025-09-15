@@ -27,7 +27,7 @@ const livedAbroadSchema = z.object({
     .array(
       z.object({
         country: z.string(),
-        countryDislay: z.string(),
+        countryDisplay: z.string(),
         abroadNationalId: z.string().min(4).optional().or(z.literal('')),
         periodStart: z.string(),
         periodEnd: z.string(),
@@ -53,18 +53,8 @@ export const dataSchema = z.object({
   }),
   disabilityAppliedBefore: z.enum([YES, NO]),
   disabilityPeriod: z.object({
-    year: z.preprocess((value) => {
-      if (typeof value === 'string' && value !== '') {
-        const number = Number.parseInt(value as string, 10)
-        return isNaN(number) ? undefined : number
-      }
-    }, z.number()),
-    month: z.preprocess((value) => {
-      if (typeof value === 'string' && value !== '') {
-        const number = Number.parseInt(value as string, 10)
-        return isNaN(number) ? undefined : number
-      }
-    }, z.number()),
+    year: z.coerce.number().int().min(1000).optional(),
+    month: z.coerce.number().int().min(1).max(12).optional()
   }),
   livedAbroad: livedAbroadSchema.refine(
     ({ list, hasLivedAbroad }) => {
@@ -120,21 +110,10 @@ export const dataSchema = z.object({
       },
     ),
   backgroundInfoMaritalStatus: z.object({
-    status: z.preprocess((value) => {
-      if (typeof value === 'string' && value !== '') {
-        const number = Number.parseInt(value as string, 10)
-        return isNaN(number) ? undefined : number
-      }
-    }, z.number()),
+    status: z.coerce.number().int()
   }),
-  backgroundInfoResidence: z
-    .object({
-      status: z.preprocess((value) => {
-        if (typeof value === 'string' && value !== '') {
-          const number = Number.parseInt(value as string, 10)
-          return isNaN(number) ? undefined : number
-        }
-      }, z.number()),
+  backgroundInfoResidence: z.object({
+      status: z.coerce.number().int(),
       other: z.string().optional(),
     })
     .refine(
@@ -153,12 +132,7 @@ export const dataSchema = z.object({
     count: z.string(),
   }),
   backgroundInfoIcelandicCapability: z.object({
-    capability: z.preprocess((value) => {
-      if (typeof value === 'string' && value !== '') {
-        const number = Number.parseInt(value as string, 10)
-        return isNaN(number) ? undefined : number
-      }
-    }, z.number()),
+    capability: z.coerce.number().int()
   }),
   backgroundInfoLanguage: z
     .object({
@@ -194,12 +168,7 @@ export const dataSchema = z.object({
   backgroundInfoPreviousEmployment: z
     .object({
       hasEmployment: z.enum([YES, NO]),
-      when: z.preprocess((value) => {
-        if (typeof value === 'string' && value !== '') {
-          const number = Number.parseInt(value as string, 10)
-          return isNaN(number) ? undefined : number
-        }
-      }, z.number().nullable().optional()),
+      when: z.coerce.number().int().nullable().optional(),
       job: z.string().nullable().optional(),
       field: z.string().nullable().optional(),
     })
@@ -241,12 +210,7 @@ export const dataSchema = z.object({
     ),
   backgroundInfoEmploymentCapability: z
     .object({
-      capability: z.preprocess((value) => {
-        if (typeof value === 'string' && value !== '') {
-          const number = Number.parseInt(value as string, 10)
-          return isNaN(number) ? undefined : number
-        }
-      }, z.number({ required_error: 'capability must be a valid number' })),
+      capability: z.coerce.number().int().min(0).max(100)
     })
     .refine(
       ({ capability }) => {
@@ -261,12 +225,7 @@ export const dataSchema = z.object({
       },
     ),
   backgroundInfoEmploymentImportance: z.object({
-    importance: z.preprocess((value) => {
-      if (typeof value === 'string' && value !== '') {
-        const number = Number.parseInt(value as string, 10)
-        return isNaN(number) ? undefined : number
-      }
-    }, z.number().min(0).max(4)),
+    importance: z.coerce.number().int().min(0).max(4)
   }),
   backgroundInfoRehabilitationOrTherapy: z
     .object({

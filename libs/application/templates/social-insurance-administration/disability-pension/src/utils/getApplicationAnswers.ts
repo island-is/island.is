@@ -57,11 +57,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'disabilityAppliedBefore',
   )
 
-  const disabilityRenumerationDateMonth = getValueViaPath<number>(
+  const disabilityRenumerationDateMonth = getValueViaPath<string>(
     answers,
     'disabilityPeriod.month',
   )
-  const disabilityRenumerationDateYear = getValueViaPath<number>(
+
+
+  const disabilityRenumerationDateYear = getValueViaPath<string>(
     answers,
     'disabilityPeriod.year',
   )
@@ -81,12 +83,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'paidWork.continuedWork',
   )
 
-  const maritalStatus = getValueViaPath<number>(
+  const maritalStatus = getValueViaPath<string>(
     answers,
     'backgroundInfoMaritalStatus.status',
   )
 
-  const residence = getValueViaPath<number>(
+  const residence = getValueViaPath<string>(
     answers,
     'backgroundInfoResidence.status',
   )
@@ -101,7 +103,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'backgroundInfoChildren.count',
   )
 
-  const icelandicCapability = getValueViaPath<number>(
+  const icelandicCapability = getValueViaPath<string>(
     answers,
     'backgroundInfoIcelandicCapability.capability',
   )
@@ -131,12 +133,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'backgroundInfoPreviousEmployment',
   )
 
-  const employmentCapability = getValueViaPath<number>(
+  const employmentCapability = getValueViaPath<string>(
     answers,
     'backgroundInfoEmploymentCapability.capability',
   )
 
-  const employmentImportance = getValueViaPath<number>(
+
+  const employmentImportance = getValueViaPath<string>(
     answers,
     'backgroundInfoEmploymentImportance.importance',
   )

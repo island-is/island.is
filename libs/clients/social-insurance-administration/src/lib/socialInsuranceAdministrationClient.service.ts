@@ -59,6 +59,7 @@ import { GenericLocaleInputDto } from './dto/genericLocale.dto.input'
 import { LanguageDto, mapLanguageDto } from './dto/language.dto'
 import { CountryDto, mapCountryDto } from './dto/country.dto'
 import { mapMaritalStatusDto, MaritalStatusDto } from './dto/maritalStatus.dto'
+import { DisabilityPensionDto } from './dto'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -152,6 +153,18 @@ export class SocialInsuranceAdministrationClientService {
     return this.incomePlanApiWithAuth(
       user,
     ).apiProtectedV1IncomePlanIncomePlanConditionsGet()
+  }
+
+  sendDisabilityPensionApplication(
+    user: User,
+    input: DisabilityPensionDto
+  ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
+    return this.sendApplication(
+      user,
+      input,
+      'disabilityPension',
+      'lightweight'
+    )
   }
 
   sendApplication(
