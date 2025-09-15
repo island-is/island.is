@@ -437,7 +437,7 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
       LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK:
         '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
-      LANDSPITALI_PAYER_NATIONAL_ID:
+      LANDSPITALI_PAYMENT_PAYER_NATIONAL_ID:
         '/k8s/api/LANDSPITALI_PAYMENT_PAYER_NATIONAL_ID',
     })
     .xroad(
