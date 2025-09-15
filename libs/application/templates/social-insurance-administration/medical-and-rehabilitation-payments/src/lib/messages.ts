@@ -549,7 +549,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     almaCertificateDate: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.alma.certificate.date',
-      defaultMessage: 'Úgáfudagur vottorðs',
+      defaultMessage: 'Útgáfudagur vottorðs',
       description: 'Date of issue of certificate',
     },
   }),
