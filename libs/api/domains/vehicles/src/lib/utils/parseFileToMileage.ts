@@ -3,7 +3,7 @@ import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
 
 export interface MileageRecord {
-  vehicleId: string
+  permno: string
   mileage: number
 }
 
@@ -30,18 +30,25 @@ export const errorMap: Record<number, string> = {
   )}`,
 }
 
-export const parseFileToMileageRecord = async (
-  file: File,
+export const parseBufferToMileageRecord = async (
+  buffer: Buffer,
   type: 'csv' | 'xlsx',
 ): Promise<Array<MileageRecord> | MileageError> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
-    ? parseCsv(file)
-    : parseXlsx(file))
+    ? parseCsvFromBuffer(buffer)
+    : parseXlsxFromBuffer(buffer))
 
-  const [header, ...values] = parsedLines
-  const vehicleIndex = header.findIndex((l) =>
-    vehicleIndexTitle.includes(l.toLowerCase()),
+  const [rawHeader, ...values] = parsedLines
+
+  // strip BOM, trim, and lowercase each header cell
+  const header = rawHeader.map((h) =>
+    h
+      .replace(/^\uFEFF/, '')
+      .trim()
+      .toLowerCase(),
   )
+
+  const vehicleIndex = header.findIndex((h) => vehicleIndexTitle.includes(h))
 
   if (vehicleIndex < 0) {
     return {
@@ -61,50 +68,53 @@ export const parseFileToMileageRecord = async (
     }
   }
 
-  const uploadedOdometerStatuses: Array<MileageRecord> = values
+  const filteredValues = values.filter((row) => {
+    const mileageValue = row[mileageIndex]
+    const sanitizedMileage = sanitizeNumber(mileageValue || '')
+    const numericMileage = Number(sanitizedMileage)
+
+    // Keep row if mileage is not NaN, not 0, and not empty
+    return (
+      !Number.isNaN(numericMileage) &&
+      numericMileage > 0 &&
+      mileageValue?.trim() !== ''
+    )
+  })
+
+  const uploadedOdometerStatuses: Array<MileageRecord> = filteredValues
     .map((row) => {
       const mileage = Number(sanitizeNumber(row[mileageIndex]))
       if (Number.isNaN(mileage)) {
         return undefined
       }
       return {
-        vehicleId: row[vehicleIndex],
-        mileage,
+        permno: row[vehicleIndex],
+        mileage: mileage,
       }
     })
     .filter(isDefined)
+
   return uploadedOdometerStatuses
 }
 
-const parseCsv = async (file: File) => {
-  const reader = file.stream().getReader()
-  const decoder = new TextDecoder('utf-8')
-
-  let accumulatedChunk = ''
-  let done = false
-
-  while (!done) {
-    const res = await reader.read()
-    done = res.done
-    if (!done) {
-      accumulatedChunk += decoder.decode(res.value)
-    }
-  }
-  return parseCsvString(accumulatedChunk)
+const parseCsvFromBuffer = async (
+  buffer: Buffer,
+): Promise<Array<Array<string>>> => {
+  const content = buffer.toString('utf-8')
+  return parseCsvString(content)
 }
 
-const parseXlsx = async (file: File) => {
+const parseXlsxFromBuffer = async (
+  buffer: Buffer,
+): Promise<Array<Array<string>>> => {
   try {
-    //FIRST SHEET ONLY
-    const buffer = await file.arrayBuffer()
+    // FIRST SHEET ONLY
     const parsedFile = XLSX.read(buffer, { type: 'buffer' })
+    const sheetName = parsedFile.SheetNames[0]
 
-    const jsonData = XLSX.utils.sheet_to_csv(
-      parsedFile.Sheets[parsedFile.SheetNames[0]],
-      {
-        blankrows: false,
-      },
-    )
+    const jsonData = XLSX.utils.sheet_to_csv(parsedFile.Sheets[sheetName], {
+      blankrows: false,
+    })
 
     return parseCsvString(jsonData)
   } catch (e) {
@@ -143,3 +153,11 @@ const parseCsvString = (chunk: string): Promise<string[][]> => {
 }
 
 const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
+
+export const getFileTypeFromUrl = (url: string): 'csv' | 'xlsx' => {
+  const extension = url.split('.').pop()?.toLowerCase()
+  if (extension === 'xlsx' || extension === 'xls') {
+    return 'xlsx'
+  }
+  return 'csv' // Default fallback
+}

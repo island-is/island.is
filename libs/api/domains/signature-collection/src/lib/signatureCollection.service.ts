@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  MethodNotAllowedException,
+  NotFoundException,
+} from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
 import { SignatureCollection } from './models/collection.model'
 import {
@@ -99,7 +103,11 @@ export class SignatureCollectionService {
     signee: SignatureCollectionSignee,
   ): Promise<SignatureCollectionList> {
     this.checkListAccess(listId, signee)
-    return await this.signatureCollectionClientService.getList(listId, user)
+    try {
+      return await this.signatureCollectionClientService.getList(listId, user)
+    } catch (e) {
+      throw new MethodNotAllowedException((e as Error).message)
+    }
   }
 
   async signedList(

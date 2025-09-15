@@ -17,6 +17,8 @@ import { SignatureCollectionCandidate } from '@island.is/api/schema'
 import { formatNationalId } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 
+const { Table, Row, Head, HeadData, Body, Data } = T
+
 const ReviewCandidates = ({
   candidates,
 }: {
@@ -40,24 +42,13 @@ const ReviewCandidates = ({
 
   const removeFromList = async (candidateId: string) => {
     try {
-      const res = await signatureCollectionAdminRemoveCandidateMutation({
-        variables: {
-          input: {
-            candidateId: candidateId,
-          },
-        },
+      const { data } = await signatureCollectionAdminRemoveCandidateMutation({
+        variables: { input: { candidateId } },
       })
 
-      if (
-        res.data &&
-        res.data.signatureCollectionAdminRemoveCandidate.success
-      ) {
+      if (data?.signatureCollectionAdminRemoveCandidate?.success) {
         toast.success(formatMessage(m.unsignFromListSuccess))
-        setAllCandidates(
-          allCandidates?.filter((candidate: SignatureCollectionCandidate) => {
-            return candidate.id !== candidateId
-          }),
-        )
+        setAllCandidates(allCandidates?.filter((c) => c.id !== candidateId))
       }
     } catch (e) {
       toast.error(e.message)
@@ -104,52 +95,46 @@ const ReviewCandidates = ({
         label={''}
       >
         <Box marginTop={3} key={candidateInReview?.id}>
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData></T.HeadData>
-                <T.HeadData>{formatMessage(m.candidate)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.nationalId)}</T.HeadData>
-                <T.HeadData></T.HeadData>
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              {allCandidates.map(
-                (candidate: SignatureCollectionCandidate, key) => (
-                  <T.Row key={candidate.id}>
-                    <T.Data span={3}>{key + 1}</T.Data>
-                    <T.Data span={3}>{candidate.name}</T.Data>
-                    <T.Data span={3}>
-                      {formatNationalId(candidate.nationalId)}
-                    </T.Data>
-                    <T.Data style={{ display: 'flex', justifyContent: 'end' }}>
-                      <Button
-                        variant="text"
-                        icon="trash"
-                        colorScheme="destructive"
-                        onClick={() => {
-                          setConfirmModalIsOpen(true)
-                          setCandidateInReview(candidate)
-                        }}
-                      >
-                        {formatMessage(m.removeCandidateFromList)}
-                      </Button>
-                    </T.Data>
-                  </T.Row>
-                ),
-              )}
-            </T.Body>
-          </T.Table>
+          <Table>
+            <Head>
+              <Row>
+                <HeadData></HeadData>
+                <HeadData>{formatMessage(m.candidate)}</HeadData>
+                <HeadData>{formatMessage(m.nationalId)}</HeadData>
+                <HeadData></HeadData>
+              </Row>
+            </Head>
+            <Body>
+              {allCandidates.map((candidate, key) => (
+                <Row key={candidate.id}>
+                  <Data span={3}>{key + 1}</Data>
+                  <Data span={3}>{candidate.name}</Data>
+                  <Data span={3}>{formatNationalId(candidate.nationalId)}</Data>
+                  <Data style={{ display: 'flex', justifyContent: 'end' }}>
+                    <Button
+                      variant="text"
+                      icon="trash"
+                      colorScheme="destructive"
+                      onClick={() => {
+                        setConfirmModalIsOpen(true)
+                        setCandidateInReview(candidate)
+                      }}
+                    >
+                      {formatMessage(m.removeCandidateFromList)}
+                    </Button>
+                  </Data>
+                </Row>
+              ))}
+            </Body>
+          </Table>
         </Box>
       </Modal>
       <Modal
         id="confirmRemoveCandidateFromListModal"
         isVisible={confirmModalIsOpen}
-        title={
-          candidateInReview?.name +
-          ' - ' +
-          formatMessage(m.removeCandidateFromListModalDescription)
-        }
+        title={`${candidateInReview?.name} - ${formatMessage(
+          m.removeCandidateFromListModalDescription,
+        )}`}
         onClose={() => {
           setConfirmModalIsOpen(false)
         }}
@@ -158,10 +143,9 @@ const ReviewCandidates = ({
         label={''}
       >
         <Text>
-          {formatMessage(m.confirmRemoveCandidateFromList) +
-            ' ' +
-            candidateInReview?.name +
-            ' ?'}
+          {`${formatMessage(m.confirmRemoveCandidateFromList)} ${
+            candidateInReview?.name
+          } ?`}
         </Text>
         <Box display="flex" justifyContent="center" marginY={5}>
           <Button

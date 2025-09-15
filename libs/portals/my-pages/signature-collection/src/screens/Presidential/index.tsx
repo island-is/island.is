@@ -6,7 +6,6 @@ import {
   useGetListsForOwner,
   useIsOwner,
 } from '../../hooks'
-import { EmptyState } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import SigneeView from '../shared/SigneeView'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
@@ -17,44 +16,35 @@ const collectionType = SignatureCollectionCollectionType.Presidential
 const SignatureCollectionPresidential = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection(collectionType)
   const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner(collectionType)
-  const { listsForOwner } = useGetListsForOwner(
+  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
     collectionType,
     currentCollection?.id ?? '',
   )
 
+  const isLoading =
+    loadingIsOwner || loadingCurrentCollection || loadingOwnerLists
+
   return (
     <Box>
-      <Intro
-        title={formatMessage(m.pageTitlePresidential)}
-        intro={formatMessage(m.pageIntro)}
-        slug={listsForOwner?.[0]?.slug}
-      />
-      {!loadingIsOwner && !loadingCurrentCollection && (
-        <Box>
-          {currentCollection?.collectionType ===
-          SignatureCollectionCollectionType.Presidential ? (
-            isOwner?.success ? (
-              <OwnerView
-                refetchIsOwner={refetchIsOwner}
-                currentCollection={currentCollection}
-              />
-            ) : (
-              <SigneeView
-                currentCollection={currentCollection}
-                collectionType={collectionType}
-              />
-            )
-          ) : (
-            <EmptyState
-              title={m.noCollectionIsActive}
-              description={m.noCollectionIsActiveDescription}
+      {!isLoading && (
+        <>
+          <Intro
+            title={formatMessage(m.pageTitlePresidential)}
+            intro={formatMessage(m.pageIntro)}
+            slug={listsForOwner?.[0]?.slug}
+          />
+          {isOwner?.success ? (
+            <OwnerView
+              refetchIsOwner={refetchIsOwner}
+              currentCollection={currentCollection}
             />
+          ) : (
+            <SigneeView currentCollection={currentCollection} />
           )}
-        </Box>
+        </>
       )}
     </Box>
   )

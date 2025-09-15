@@ -45,7 +45,9 @@ const CompleteListReview = ({
       },
     },
     onCompleted: (response) => {
-      if (response.signatureCollectionAdminToggleListReview.success) {
+      const result = response.signatureCollectionAdminToggleListReview
+
+      if (result?.success) {
         setModalSubmitReviewIsOpen(false)
         revalidate()
         toast.success(
@@ -54,15 +56,10 @@ const CompleteListReview = ({
             : formatMessage(m.toggleReviewSuccess),
         )
       } else {
-        const message =
-          response.signatureCollectionAdminToggleListReview?.reasons?.[0] ??
-          formatMessage(m.toggleReviewError)
-        toast.error(message)
+        toast.error(result?.reasons?.[0] ?? formatMessage(m.toggleReviewError))
       }
     },
-    onError: () => {
-      toast.error(formatMessage(m.toggleReviewError))
-    },
+    onError: () => toast.error(formatMessage(m.toggleReviewError)),
   })
 
   return (

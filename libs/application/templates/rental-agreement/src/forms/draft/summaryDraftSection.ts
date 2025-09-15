@@ -7,7 +7,6 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { Routes } from '../../utils/enums'
-import { summary, application } from '../../lib/messages'
 import {
   depositOverview,
   fireProtectionsOverview,
@@ -35,29 +34,29 @@ import * as m from '../../lib/messages'
 
 export const SummaryDraftSection = buildSection({
   id: Routes.SUMMARY,
-  title: summary.sectionName,
+  title: m.summary.pageTitle,
   children: [
     buildMultiField({
       id: Routes.SUMMARY,
       children: [
         buildDescriptionField({
           id: 'summaryTitle',
-          title: summary.pageTitle,
+          title: m.summary.pageTitle,
           marginBottom: 2,
         }),
         buildDescriptionField({
           id: 'summaryFirstDescription',
-          description: summary.pageDescriptionFirstParagraph,
+          description: m.summary.pageDescriptionFirstParagraph,
         }),
         buildDescriptionField({
           id: 'summarySecondDescription',
-          description: summary.pageDescriptionSecondparagraph,
+          description: m.summary.pageDescriptionSecondparagraph,
           marginBottom: 6,
         }),
         // Property address
         buildOverviewField({
           id: 'rentalInfoOverview',
-          title: summary.propertyInfoHeader,
+          title: m.summary.propertyInfoHeader,
           items: rentalPropertyOverview,
           backId: Routes.PROPERTYSEARCH,
         }),
@@ -86,7 +85,7 @@ export const SummaryDraftSection = buildSection({
         // Rental property
         buildOverviewField({
           id: 'rentalInfoOverview',
-          title: summary.propertyInfoHeader,
+          title: m.summary.propertyInfoHeader,
           items: rentalInfoOverview,
           backId: Routes.PROPERTYSEARCH,
         }),
@@ -107,7 +106,7 @@ export const SummaryDraftSection = buildSection({
         // Property condition
         buildOverviewField({
           id: 'propertyConditionOverview',
-          title: summary.propertyConditionTitle,
+          title: m.summary.propertyConditionTitle,
           items: propertyConditionOverview,
           attachments: propertyConditionFilesOverview,
           backId: Routes.CONDITION,
@@ -115,21 +114,21 @@ export const SummaryDraftSection = buildSection({
         // Fire protections
         buildOverviewField({
           id: 'fireProtectionsOverview',
-          title: summary.fireProtectionsTitle,
+          title: m.summary.fireProtectionsTitle,
           items: fireProtectionsOverview,
           backId: Routes.FIREPROTECTIONS,
         }),
         // Rental period (start and end date)
         buildOverviewField({
           id: 'rentalPeriodOverview',
-          title: summary.rentalPeriodDefiniteLabel,
+          title: m.summary.rentalPeriodDefiniteLabel,
           items: rentalPeriodOverview,
           backId: Routes.RENTALPERIOD,
         }),
         // Price
         buildOverviewField({
           id: 'priceOverview',
-          title: summary.rentalAmountTitle,
+          title: m.summary.rentalAmountTitle,
           items: priceOverview,
           backId: Routes.RENTALAMOUNT,
         }),
@@ -137,14 +136,14 @@ export const SummaryDraftSection = buildSection({
         buildOverviewField({
           id: 'depositOverview',
           condition: securityDepositRequired,
-          title: summary.securityDepositLabel,
+          title: m.misc.securityDeposit,
           items: depositOverview,
           backId: Routes.SECURITYDEPOSIT,
         }),
         // Other fees
         buildOverviewField({
           id: 'otherCostsOverview',
-          title: summary.otherCostsHeader,
+          title: m.summary.otherCostsHeader,
           items: otherCostsOverview,
           backId: Routes.OTHERFEES,
         }),
@@ -154,7 +153,7 @@ export const SummaryDraftSection = buildSection({
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: application.goToOverviewButton,
+              name: m.application.goToOverviewButton,
               type: 'primary',
             },
           ],
