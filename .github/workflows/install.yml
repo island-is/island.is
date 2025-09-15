@@ -124,7 +124,7 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
         with:
-         skip-cache: ${{ inputs.force_codegen }}
+          skip-cache: ${{ inputs.force_codegen }}
 
       - id: get-branch
         env:
