@@ -8,20 +8,15 @@ export const notEligibleText = (externalData: ExternalData) => {
 
   switch (isEligible?.reasonCode) {
     case NotEligibleReasonCodes.APPLICANT_AGE_OUT_OF_RANGE:
-      return m.notEligible
-        .applicantAgeOutOfRangeDescription
+      return m.notEligible.applicantAgeOutOfRangeDescription
     case NotEligibleReasonCodes.NO_LEGAL_DOMICILE_IN_ICELAND:
-      return m.notEligible
-        .noLegalDomicileInIcelandDescription
+      return m.notEligible.noLegalDomicileInIcelandDescription
     case NotEligibleReasonCodes.LATEST_DISABILITY_PENSION_DOCUMENT_NOT_FOUND:
-      return m.notEligible
-        .latestDisabilityPensionDocumentNotFoundDescription
+      return m.notEligible.latestDisabilityPensionDocumentNotFoundDescription
     case NotEligibleReasonCodes.APPLICANT_ALREADY_HAS_PENDING_APPLICATION:
-      return m.notEligible
-        .applicantAlreadyHasPendingApplicationDescription
+      return m.notEligible.applicantAlreadyHasPendingApplicationDescription
     case NotEligibleReasonCodes.APPLICANT_ALREADY_HAS_FULL_DISABILITY_PENSION:
-      return m.notEligible
-        .applicantAlreadyHasFullDisabilityPensionDescription
+      return m.notEligible.applicantAlreadyHasFullDisabilityPensionDescription
     default:
       return undefined
   }

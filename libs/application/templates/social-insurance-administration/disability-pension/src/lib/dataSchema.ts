@@ -15,7 +15,6 @@ import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
 import * as m from './messages'
 
-
 export const fileSchema = z.object({
   name: z.string(),
   key: z.string(),
@@ -237,8 +236,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['field'],
-        params:
-          m.errors.emptyPreviousEmploymentField,
+        params: m.errors.emptyPreviousEmploymentField,
       },
     ),
   backgroundInfoEmploymentCapability: z
@@ -287,9 +285,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['rehabilitationDescription'],
-        params:
-          m.errors
-            .emptyRehabilitationOrTherapyDescription,
+        params: m.errors.emptyRehabilitationOrTherapyDescription,
       },
     )
     .refine(
@@ -301,9 +297,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['rehabilitationResults'],
-        params:
-          m.errors
-            .emptyRehabilitationOrTherapyProgress,
+        params: m.errors.emptyRehabilitationOrTherapyProgress,
       },
     ),
   backgroundInfoBiggestIssue: z.object({

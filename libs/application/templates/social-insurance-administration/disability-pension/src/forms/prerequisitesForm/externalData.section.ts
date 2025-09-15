@@ -7,10 +7,8 @@ import * as m from '../../lib/messages'
 export const externalDataSection = buildExternalDataProvider({
   id: 'approveExternalData',
   title: sm.pre.externalDataSection,
-  subTitle:
-    sm.pre.externalDataDescription,
-  checkboxLabel:
-    m.prerequisite.checkboxLabel,
+  subTitle: sm.pre.externalDataDescription,
+  checkboxLabel: m.prerequisite.checkboxLabel,
   submitField: buildSubmitField({
     id: 'submit',
     placement: 'footer',
@@ -26,11 +24,8 @@ export const externalDataSection = buildExternalDataProvider({
   }),
   dataProviders: [
     buildDataProviderItem({
-      title:
-        m.prerequisite
-          .organizationDataTitle,
-      subTitle:
-        m.prerequisite.organizationDataText,
+      title: m.prerequisite.organizationDataTitle,
+      subTitle: m.prerequisite.organizationDataText,
     }),
     buildDataProviderItem({
       provider: UserProfileApi,
@@ -40,15 +35,12 @@ export const externalDataSection = buildExternalDataProvider({
     buildDataProviderItem({
       provider: IdentityApi,
       title: m.prerequisite.healthDataTitle,
-      subTitle:
-        m.prerequisite.healthDataText,
+      subTitle: m.prerequisite.healthDataText,
     }),
     buildDataProviderItem({
       provider: NationalRegistrySpouseApi,
-      title:
-        m.prerequisite.rehabilitationTitle,
-      subTitle:
-        m.prerequisite.rehabilitationText,
+      title: m.prerequisite.rehabilitationTitle,
+      subTitle: m.prerequisite.rehabilitationText,
     }),
     buildDataProviderItem({
       provider: NationalRegistryUserApi,

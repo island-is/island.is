@@ -111,8 +111,7 @@ export const appliedBeforeItems = (answers: FormValue): Array<KeyValueItem> => {
   return [
     {
       width: 'full',
-      keyText:
-        m.disabilityEvaluation.appliedBeforeTitle,
+      keyText: m.disabilityEvaluation.appliedBeforeTitle,
       valueText:
         getValueViaPath<string>(
           answers,
@@ -128,8 +127,7 @@ export const employmentItems = (answers: FormValue): Array<KeyValueItem> => {
   return [
     {
       width: 'full',
-      keyText:
-        m.employmentParticipation.inPaidWorkTitle,
+      keyText: m.employmentParticipation.inPaidWorkTitle,
       valueText: () => {
         const answer = getValueViaPath<string>(
           answers,
@@ -142,8 +140,7 @@ export const employmentItems = (answers: FormValue): Array<KeyValueItem> => {
     },
     {
       width: 'full',
-      keyText:
-        m.employmentParticipation.continuedWorkTitle,
+      keyText: m.employmentParticipation.continuedWorkTitle,
       valueText:
         getValueViaPath<string>(
           answers,
@@ -161,18 +158,15 @@ export const disabilityCertificateItems = (
   return [
     {
       width: 'full',
-      keyText:
-        m.disabilityCertificate.disabilityTitle,
+      keyText: m.disabilityCertificate.disabilityTitle,
       valueText: (() => {
         const certificate = getValueViaPath(
           answers,
           `${SectionRouteEnum.DISABILITY_CERTIFICATE}`,
         )
         return certificate == null || undefined
-          ? m.disabilityCertificate
-              .certificateNotAvailable
-          : m.disabilityCertificate
-              .certificateAvailable
+          ? m.disabilityCertificate.certificateNotAvailable
+          : m.disabilityCertificate.certificateAvailable
       })(),
     },
   ]
@@ -188,10 +182,7 @@ export const extraInfoItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.extraInfo.title,
-      valueText:
-        value && value.trim() !== ''
-          ? value
-          : m.extraInfo.noExtraInfo,
+      valueText: value && value.trim() !== '' ? value : m.extraInfo.noExtraInfo,
     },
   ]
 }

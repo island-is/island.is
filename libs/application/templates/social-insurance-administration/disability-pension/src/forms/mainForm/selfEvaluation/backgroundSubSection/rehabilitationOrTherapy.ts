@@ -16,16 +16,13 @@ export const rehabilitationOrTherapyField = buildMultiField({
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_REHABILITATION_OR_THERAPY}.rehabilitationOrTherapy`,
-      title:
-        m.questions.rehabilitationOrTherapyTitle,
+      title: m.questions.rehabilitationOrTherapyTitle,
       options: yesOrNoOptions,
       required: true,
       width: 'half',
     }),
     buildTitleField({
-      title:
-        m.questions
-          .rehabilitationOrTherapyDescription,
+      title: m.questions.rehabilitationOrTherapyDescription,
       titleVariant: 'h5',
       marginTop: 2,
       marginBottom: 0,
@@ -47,11 +44,10 @@ export const rehabilitationOrTherapyField = buildMultiField({
         return rehabOrTherapy === YesOrNoEnum.YES
       },
       variant: 'textarea',
-      rows: 6
+      rows: 6,
     }),
     buildTitleField({
-      title:
-        m.questions.rehabilitationOrTherapyResults,
+      title: m.questions.rehabilitationOrTherapyResults,
       titleVariant: 'h5',
       marginTop: 2,
       marginBottom: 0,

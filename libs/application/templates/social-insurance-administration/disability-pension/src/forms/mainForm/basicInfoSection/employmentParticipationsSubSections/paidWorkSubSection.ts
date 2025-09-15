@@ -10,7 +10,6 @@ import { SectionRouteEnum } from '../../../../types'
 import { FormValue } from '@island.is/application/types'
 import * as m from '../../../../lib/messages'
 
-
 export const paidWorkSubSection = buildMultiField({
   id: SectionRouteEnum.PAID_WORK,
   title: m.employmentParticipation.inPaidWorkTitle,
@@ -25,9 +24,7 @@ export const paidWorkSubSection = buildMultiField({
     }),
     buildRadioField({
       id: `${SectionRouteEnum.PAID_WORK}.continuedWork`,
-      title:
-        m.employmentParticipation
-          .continuedWorkQuestion,
+      title: m.employmentParticipation.continuedWorkQuestion,
       width: 'half',
       backgroundColor: 'blue',
       condition: (formValue: FormValue) => {

@@ -8,7 +8,6 @@ import { paymentInfoSubSection } from './paymentInfoSubSection'
 import { personalInfoSubSection } from './personalInfoSubSection'
 import * as m from '../../../lib/messages'
 
-
 export const basicInfoSection = buildSection({
   id: SectionRouteEnum.BASIC_INFO,
   title: m.basicInfo.title,

@@ -1,6 +1,6 @@
-import { defineMessages } from "react-intl";
+import { defineMessages } from 'react-intl'
 
-export const paymentInfo =  defineMessages({
+export const paymentInfo = defineMessages({
   title: {
     id: 'dp.application:paymentInfo.title',
     defaultMessage: 'Greiðsluupplýsingar',

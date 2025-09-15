@@ -22,11 +22,8 @@ const abroadPaymentsCondition = (formValue: FormValue) => {
 
 export const abroadPaymentsSubSection = buildMultiField({
   id: SectionRouteEnum.ABROAD_PAYMENT,
-  title:
-    m.employmentParticipation.abroadPaymentsTitle,
-  description:
-    m.employmentParticipation
-      .abroadPaymentsDescription,
+  title: m.employmentParticipation.abroadPaymentsTitle,
+  description: m.employmentParticipation.abroadPaymentsDescription,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.ABROAD_PAYMENT}.hasAbroadPayments`,
@@ -38,22 +35,15 @@ export const abroadPaymentsSubSection = buildMultiField({
     buildTableRepeaterField({
       id: `${SectionRouteEnum.ABROAD_PAYMENT}.list`,
       condition: abroadPaymentsCondition,
-      formTitle:
-        m.employmentParticipation
-          .abroadPaymentsTableTitle,
-      addItemButtonText:
-        m.employmentParticipation.addCountry,
-      saveItemButtonText:
-        m.employmentParticipation.save,
-      removeButtonTooltipText:
-        m.employmentParticipation.remove,
+      formTitle: m.employmentParticipation.abroadPaymentsTableTitle,
+      addItemButtonText: m.employmentParticipation.addCountry,
+      saveItemButtonText: m.employmentParticipation.save,
+      removeButtonTooltipText: m.employmentParticipation.remove,
       fields: {
         country: {
           component: 'select',
           label: m.employmentParticipation.country,
-          placeholder:
-            m.employmentParticipation
-              .countryPlaceholder,
+          placeholder: m.employmentParticipation.countryPlaceholder,
           width: 'half',
           displayInTable: true,
           isSearchable: true,
@@ -75,25 +65,23 @@ export const abroadPaymentsSubSection = buildMultiField({
                 return ''
               }
 
-               const { country } = activeField
-               if (!country) {
-                 return ''
-               }
+              const { country } = activeField
+              if (!country) {
+                return ''
+              }
 
               const { countries = [] } = getApplicationExternalData(
                 application.externalData,
               )
 
-              return countries.find(c => c.value === country)?.label ?? ''
+              return countries.find((c) => c.value === country)?.label ?? ''
             },
             watchValues: ['country'],
           },
         },
         abroadNationalId: {
           component: 'input',
-          label:
-            m.employmentParticipation
-              .abroadNationalId,
+          label: m.employmentParticipation.abroadNationalId,
           width: 'half',
           required: false,
           displayInTable: true,

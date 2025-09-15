@@ -13,7 +13,6 @@ import { SectionRouteEnum } from '../../../types'
 import { getApplicationAnswers } from '../../../utils'
 import * as m from '../../../lib/messages'
 
-
 interface SelfEvaluationReviewProps {
   application: Application
   field: Field & { props?: { editable?: boolean } }
@@ -128,18 +127,10 @@ export const SelfEvaluationReview: React.FC<SelfEvaluationReviewProps> = ({
       <Box marginTop={2}>
         <BulletList>
           {hasSelfEvaluationAnswers && (
-            <Bullet>
-              {formatMessage(
-                m.selfEvaluation.questionFormTitle,
-              )}
-            </Bullet>
+            <Bullet>{formatMessage(m.selfEvaluation.questionFormTitle)}</Bullet>
           )}
           {hasCapabilityImpairment && (
-            <Bullet>
-              {formatMessage(
-                m.capabilityImpairment.title,
-              )}
-            </Bullet>
+            <Bullet>{formatMessage(m.capabilityImpairment.title)}</Bullet>
           )}
         </BulletList>
       </Box>

@@ -8,8 +8,7 @@ export const confirmation = defineMessages({
   },
   title: {
     id: 'dp.application:confirmation.title',
-    defaultMessage:
-      'Umsókn um örorku hefur verið send og bíður tekjuáætlunar',
+    defaultMessage: 'Umsókn um örorku hefur verið send og bíður tekjuáætlunar',
     description:
       'Application for disability benefits has been submitted and is awaiting income assessment.',
   },
@@ -20,8 +19,7 @@ export const confirmation = defineMessages({
   },
   successDescription: {
     id: 'dp.application:confirmation.successDescription',
-    defaultMessage:
-      'Umsókn um örorku hefur verið send til Tryggingastofnunar',
+    defaultMessage: 'Umsókn um örorku hefur verið send til Tryggingastofnunar',
     description: 'Confirmation',
   },
   whatHappensNext: {

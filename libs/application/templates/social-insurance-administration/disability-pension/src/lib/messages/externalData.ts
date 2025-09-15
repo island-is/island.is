@@ -11,5 +11,4 @@ export const externalData = defineMessages({
     defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt.',
     description: 'External information retrieval subtitle',
   },
-
 })

@@ -56,9 +56,7 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildCustomField({
       id: `${SectionRouteEnum.OVERVIEW}.customField`,
-      title:
-        m.customFields.selfEvaluation ??
-        'Custom self evaluation',
+      title: m.customFields.selfEvaluation ?? 'Custom self evaluation',
       component: 'Review',
     }),
     buildOverviewField({

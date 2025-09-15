@@ -18,10 +18,7 @@ export const CertificateOverview: React.FC<CertificateOverviewProps> = ({
       <Box marginBottom={3}>
         <Box marginTop={2} display="flex" justifyContent="spaceBetween">
           <Text variant="h4" as="h3" marginBottom={2}>
-            {formatMessage(
-              m.disabilityCertificate
-                .disabilityTitle,
-            )}
+            {formatMessage(m.disabilityCertificate.disabilityTitle)}
           </Text>
           <Button
             variant="utility"
@@ -35,10 +32,7 @@ export const CertificateOverview: React.FC<CertificateOverviewProps> = ({
           </Button>
         </Box>
         <Text>
-          {formatMessage(
-            m.disabilityCertificate
-              .certificateAvailable,
-          )}
+          {formatMessage(m.disabilityCertificate.certificateAvailable)}
         </Text>
       </Box>
       <Divider />

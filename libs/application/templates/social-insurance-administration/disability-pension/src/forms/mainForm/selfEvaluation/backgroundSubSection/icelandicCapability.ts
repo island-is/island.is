@@ -25,8 +25,7 @@ export const icelandicCapabilityField = buildMultiField({
         },
         {
           value: '3',
-          label:
-            m.questions.icelandicCapabilityVeryGood,
+          label: m.questions.icelandicCapabilityVeryGood,
         },
       ],
     }),

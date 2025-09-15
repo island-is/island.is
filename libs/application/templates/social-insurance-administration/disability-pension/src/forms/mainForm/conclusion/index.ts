@@ -32,14 +32,12 @@ export const conclusionSection = buildSection({
           title: m.confirmation.whatHappensNext,
           titleVariant: 'h4',
           space: 'gutter',
-          description:
-            m.confirmation.whatHappensNextOptions,
+          description: m.confirmation.whatHappensNextOptions,
         }),
         buildCustomField({
           id: `${SectionRouteEnum.CONFIRMATION}.customField`,
           title: m.confirmation.warningTitle,
-          description:
-            m.confirmation.warningDescription,
+          description: m.confirmation.warningDescription,
           component: 'Confirmation',
         }),
         buildImageField({

@@ -13,14 +13,12 @@ export const incomePlanInstructionsSubSection = buildSubSection({
     buildMultiField({
       id: SectionRouteEnum.INCOME_PLAN_INSTRUCTION,
       title: m.incomePlan.instructionsTitle,
-      description:
-        m.incomePlan.instructionsDescription,
+      description: m.incomePlan.instructionsDescription,
       space: 'gutter',
       children: [
         buildDescriptionField({
           id: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.bullets`,
-          description:
-            m.incomePlan.instructionsBullets,
+          description: m.incomePlan.instructionsBullets,
         }),
         buildDescriptionField({
           id: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.link`,
