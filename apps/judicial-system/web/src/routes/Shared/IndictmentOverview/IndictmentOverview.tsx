@@ -7,6 +7,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   isCompletedCase,
   isDefenceUser,
   isSuccessfulServiceStatus,
@@ -16,6 +17,7 @@ import {
   AlternativeServiceAnnouncement,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -32,6 +34,7 @@ import {
   UserContext,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
+import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
@@ -104,6 +107,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 const IndictmentOverview: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { features } = useContext(FeatureContext)
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -168,6 +172,21 @@ const IndictmentOverview: FC = () => {
               : formatMessage(strings.inProgressTitle)}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
+          {workingCase.defendants?.map(
+            (defendant) =>
+              features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) &&
+              defendant.verdict && (
+                <Box
+                  key={`${defendant.id}${defendant.verdict.id}`}
+                  marginBottom={2}
+                >
+                  <VerdictStatusAlert
+                    defendant={defendant}
+                    verdict={defendant.verdict}
+                  />
+                </Box>
+              ),
+          )}
           {isDefenceUser(user) &&
             workingCase.defendants?.map((defendant) => (
               <>
