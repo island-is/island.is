@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 import { uuid } from 'uuidv4'
 
@@ -31,6 +31,7 @@ import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/u
 import {
   formatDateForServer,
   TUploadFile,
+  useCourtDocuments,
   useCourtSessions,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useUsers from '@island.is/judicial-system-web/src/utils/hooks/useUsers'
@@ -127,9 +128,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     setWorkingCase,
   } = props
   const { updateCourtSession } = useCourtSessions()
+  const { updateCourtDocument } = useCourtDocuments()
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
+  const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
   const [reorderableFiles, setReorderableFiles] = useState<ReorderableFile[]>(
     [],
   )
@@ -145,6 +148,25 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     setWorkingCase,
     updateCourtSession,
   )
+
+  useEffect(() => {
+    if (!workingCase.courtSessions) {
+      return
+    }
+
+    const filedDocuments = [...workingCase.courtSessions].filter(
+      (cs) => cs.filedDocuments,
+    )
+
+    setReorderableFiles(
+      filedDocuments
+        .flatMap((cs) => cs.filedDocuments || [])
+        .map((doc) => ({
+          id: doc.id,
+          name: doc.name,
+        })),
+    )
+  }, [workingCase.courtSessions])
 
   const patchSession = (
     id: string,
@@ -404,7 +426,23 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 <Reorder.Group
                   axis="y"
                   values={reorderableFiles}
-                  onReorder={setReorderableFiles}
+                  onReorder={(newOrder) => {
+                    const newIndex = newOrder.findIndex(
+                      (f) => f.id === draggedFileId,
+                    )
+                    if (!draggedFileId || newIndex === -1) {
+                      return
+                    }
+
+                    updateCourtDocument({
+                      caseId: workingCase.id,
+                      courtSessionId: courtSession.id,
+                      courtDocumentId: draggedFileId,
+                      documentOrder: newIndex + 1, // +1 because index starts at 0 and the order at 1
+                    })
+
+                    setReorderableFiles(newOrder)
+                  }}
                   className={styles.grid}
                 >
                   {reorderableFiles.map((item) => {
@@ -413,6 +451,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         key={item.id}
                         value={item}
                         data-reorder-item
+                        onDragStart={() => {
+                          setDraggedFileId(item.id)
+                        }}
+                        onDragEnd={() => {
+                          setDraggedFileId(null)
+                        }}
                       >
                         <EditableCaseFile
                           enableDrag
