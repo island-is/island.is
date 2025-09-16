@@ -1,6 +1,5 @@
 import { YesOrNoEnum } from '@island.is/application/core'
 import { NextStepInReviewOptions } from '../utils/enums'
-import { BankAccountField } from '@island.is/application/types'
 
 export type Maybe<T> = T | null
 
