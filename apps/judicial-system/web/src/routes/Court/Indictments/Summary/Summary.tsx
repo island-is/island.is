@@ -295,6 +295,7 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
               setIsLoading(true)
               setModalVisible(undefined)
               setHasReviewed(false)
+              setPDFError(false)
             },
           }}
           footerCheckbox={{
@@ -308,7 +309,10 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
             <div className={cn(styles.ruling, { [styles.loading]: isLoading })}>
               <PdfViewer
                 file={rulingUrl}
-                onLoadingSuccess={() => setIsLoading(false)}
+                onLoadingSuccess={() => {
+                  setPdfError(false)
+                  setIsLoading(false)
+                }}
                 onLoadingError={() => setPDFError(true)}
                 showAllPages
               />
