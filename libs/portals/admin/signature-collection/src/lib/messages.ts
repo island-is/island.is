@@ -783,6 +783,21 @@ export const m = defineMessages({
     defaultMessage: 'Taka af lista',
     description: '',
   },
+  removeSignatureFromListModalDescription: {
+    id: 'admin-portal.signature-collection:removeSignatureFromListModalDescription',
+    defaultMessage: 'Taka af lista',
+    description: '',
+  },
+  confirmRemoveSignatureFromList: {
+    id: 'admin-portal.signature-collection:confirmRemoveSignatureFromList',
+    defaultMessage: 'Ertu viss um að þú viljir taka aðila af lista?',
+    description: '',
+  },
+  removeSignatureFromListButton: {
+    id: 'admin-portal.signature-collection:removeSignatureFromListButton',
+    defaultMessage: 'Já, taka af lista',
+    description: '',
+  },
   unsignFromListSuccess: {
     id: 'admin-portal.signature-collection:unsignFromListSuccess',
     defaultMessage: 'Tókst að taka aðila af lista',

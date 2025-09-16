@@ -7,6 +7,7 @@ import format from 'date-fns/format'
 import Signees from '../../../shared/Signees'
 import ListActions from './ListActions'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import { Skeleton } from '../../../../lib/skeletons'
 
 const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
@@ -18,7 +19,7 @@ const ViewList = () => {
 
   return (
     <Box>
-      {listInfo && (
+      {listInfo ? (
         <Stack space={5}>
           <Text variant="h3">{listInfo.title}</Text>
           <Box>
@@ -40,6 +41,8 @@ const ViewList = () => {
             totalSignees={listInfo?.numberOfSignatures ?? 0}
           />
         </Stack>
+      ) : (
+        <Skeleton />
       )}
     </Box>
   )
