@@ -33,16 +33,6 @@ export const registerProperty = {
       defaultMessage: 'Merking',
       description: 'Search result header for "merking"',
     },
-    searchResultHeaderPropertySize: {
-      id: 'ra.application:registerProperty.search.searchResultHeaderPropertySize',
-      defaultMessage: 'Stærð',
-      description: 'Search result header for property size',
-    },
-    searchResultsHeaderNumOfRooms: {
-      id: 'ra.application:registerProperty.search.searchResultsHeaderNumOfRooms',
-      defaultMessage: 'Herbergi',
-      description: 'Search result header for number of rooms',
-    },
     searchResultsErrorBannerTitle: {
       id: 'ra.application:registerProperty.search.searchResultsErrorBannerTitle',
       defaultMessage:
@@ -51,11 +41,6 @@ export const registerProperty = {
     },
 
     // Error messages
-    searchError: {
-      id: 'ra.application:registerProperty.search.searchError',
-      defaultMessage: 'Ekki tókst að sækja staðföng',
-      description: 'Error message when search fails',
-    },
     addressSearchError: {
       id: 'ra.application:registerProperty.search.addressSearchError',
       defaultMessage: 'Ekki tókst að sækja heimilisföng',
@@ -66,12 +51,6 @@ export const registerProperty = {
       defaultMessage:
         'Ekki tókst að sækja fasteignir út frá völdu heimilisfangi',
       description: 'Error message when property info search fails',
-    },
-    searchResultsEmptyError: {
-      id: 'ra.application:registerProperty.search.searchResultsEmptyError',
-      defaultMessage:
-        'Skráning leiguhúsnæðis þarf að vera til staðar til að halda áfram',
-      description: 'Error message when no search results',
     },
     searchResultsNoUnitChosenError: {
       id: 'ra.application:registerProperty.search.searchResultsNoUnitChosenError',
@@ -139,16 +118,6 @@ export const registerProperty = {
       defaultMessage: 'Merking',
       description: 'Summary table header for property unit id',
     },
-    tableHeaderSize: {
-      id: 'ra.application:registerProperty.info.tableHeaderSize',
-      defaultMessage: 'Stærð',
-      description: 'Summary table header for size',
-    },
-    tableHeaderNumberOfRooms: {
-      id: 'ra.application:registerProperty.info.tableHeaderNumberOfRooms',
-      defaultMessage: 'Herbergi',
-      description: 'Summary table header for number of rooms',
-    },
   }),
 
   category: defineMessages({
@@ -179,11 +148,6 @@ export const registerProperty = {
       id: 'ra.application:registerProperty.category.typeSelectLabelEntireHome',
       defaultMessage: 'Íbúð / Einbýlishús',
       description: 'Label for entire home select option',
-    },
-    typeSelectLabelRoom: {
-      id: 'ra.application:registerProperty.category.typeSelectLabelRoom',
-      defaultMessage: 'Herbergi',
-      description: 'Label for room select option',
     },
     typeSelectLabelCommercial: {
       id: 'ra.application:registerProperty.category.typeSelectLabelCommercial',
@@ -247,11 +211,6 @@ export const registerProperty = {
       id: 'ra.application:registerProperty.category.classGroupSelectLabelIncomeBasedHousing',
       defaultMessage: 'Tekjumark',
       description: 'Label for income based housing select option',
-    },
-    classGroupSelectLabelEmployeeHousing: {
-      id: 'ra.application:registerProperty.category.classGroupSelectLabelEmployeeHousing',
-      defaultMessage: 'Starfsmannaíbúð eða -herbergi',
-      description: 'Label for employee housing select option',
     },
 
     // Error messages

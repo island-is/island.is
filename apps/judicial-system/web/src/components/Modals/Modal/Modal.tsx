@@ -29,6 +29,7 @@ interface FooterCheckbox {
   label: string
   checked: boolean
   onChange: (event: ChangeEvent<HTMLInputElement>) => void
+  disabled?: boolean
 }
 
 interface ModalProps {
@@ -137,6 +138,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
                 label={footerCheckbox.label}
                 onChange={footerCheckbox.onChange}
                 checked={footerCheckbox.checked}
+                disabled={footerCheckbox.disabled || loading}
               />
             )}
             <Box display="flex" columnGap={3}>
