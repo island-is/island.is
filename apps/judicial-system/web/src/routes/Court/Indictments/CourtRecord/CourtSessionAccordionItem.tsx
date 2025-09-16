@@ -445,48 +445,43 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   }}
                   className={styles.grid}
                 >
-                  {reorderableFiles.map((item) => {
-                    return (
-                      <Reorder.Item
-                        key={item.id}
-                        value={item}
-                        data-reorder-item
-                        onDragStart={() => {
-                          setDraggedFileId(item.id)
+                  {reorderableFiles.map((item) => (
+                    <Reorder.Item
+                      key={item.id}
+                      value={item}
+                      data-reorder-item
+                      onDragStart={() => {
+                        setDraggedFileId(item.id)
+                      }}
+                      onDragEnd={() => {
+                        setDraggedFileId(null)
+                      }}
+                    >
+                      <EditableCaseFile
+                        enableDrag
+                        caseFile={{
+                          id: item.id,
+                          displayText: item.name,
+                          canEdit: ['fileName'],
                         }}
-                        onDragEnd={() => {
-                          setDraggedFileId(null)
+                        backgroundColor="white"
+                        onRename={(
+                          _id: string,
+                          _name: string,
+                          _displayDate: string,
+                        ): void => {
+                          throw new Error('Function not implemented.')
                         }}
-                      >
-                        <EditableCaseFile
-                          enableDrag
-                          caseFile={{
-                            id: item.id,
-                            displayText: item.name,
-                            canEdit: ['fileName'],
-                          }}
-                          backgroundColor="white"
-                          onOpen={(_id: string): void => {
-                            throw new Error('Function not implemented.')
-                          }}
-                          onRename={(
-                            _id: string,
-                            _name: string,
-                            _displayDate: string,
-                          ): void => {
-                            throw new Error('Function not implemented.')
-                          }}
-                          onDelete={(file: TUploadFile) => {
-                            setReorderableFiles((prev) =>
-                              prev.filter((i) => i.id !== file.id),
-                            )
-                          }}
-                          onStartEditing={() => console.log('start')}
-                          onStopEditing={() => console.log('stop')}
-                        />
-                      </Reorder.Item>
-                    )
-                  })}
+                        onDelete={(file: TUploadFile) => {
+                          setReorderableFiles((prev) =>
+                            prev.filter((i) => i.id !== file.id),
+                          )
+                        }}
+                        onStartEditing={() => console.log('start')}
+                        onStopEditing={() => console.log('stop')}
+                      />
+                    </Reorder.Item>
+                  ))}
                 </Reorder.Group>
                 <Box
                   display="flex"

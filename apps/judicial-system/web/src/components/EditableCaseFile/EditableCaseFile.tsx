@@ -47,9 +47,9 @@ interface Props {
   caseFile: TEditableCaseFile
   // Overwrites the default background color based on file status
   backgroundColor?: 'white'
-  onOpen: (id: string) => void
   onRename: (id: string, name: string, displayDate: string) => void
   onDelete: (file: TUploadFile) => void
+  onOpen?: (id: string) => void
   onRetry?: (file: TUploadFile) => void
   onStartEditing: () => void
   onStopEditing: () => void
@@ -245,7 +245,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                 component={caseFile.canOpen ? 'button' : undefined}
                 onClick={() => {
                   if (caseFile.canOpen && caseFile.id) {
-                    onOpen(caseFile.id)
+                    onOpen?.(caseFile.id)
                   }
                 }}
               >
