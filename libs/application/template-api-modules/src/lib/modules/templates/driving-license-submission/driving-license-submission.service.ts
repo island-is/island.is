@@ -8,7 +8,11 @@ import {
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 import {
   ApplicationTypes,
   FormValue,
@@ -137,6 +141,18 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     answers: FormValue,
     auth: User,
   ): Promise<NewDrivingLicenseResult> {
+    // If using fake data, skip calling RLS and pretend submission succeeded
+    const useFakeData = getValueViaPath<'yes' | 'no'>(
+      answers,
+      'fakeData.useFakeData',
+    )
+    if (useFakeData === YES) {
+      return {
+        success: true,
+        errorMessage: null,
+      }
+    }
+
     const applicationFor =
       getValueViaPath<'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'>(
         answers,
