@@ -38,6 +38,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   type CustomScreen,
@@ -708,6 +709,31 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                   time = format(new Date(agenda.dateFrom), 'HH:mm')
                 }
 
+                let description = ''
+
+                if (agenda.caseNumber) {
+                  description += agenda.caseNumber + '\n\n'
+                }
+
+                if (agenda.court) {
+                  description += agenda.court + '\n\n'
+                }
+
+                if (agenda.courtRoom) {
+                  description += agenda.courtRoom + '\n\n'
+                }
+
+                if (time) {
+                  description += time + '\n\n'
+                }
+
+                if (agenda.closedHearing) {
+                  description +=
+                    (agenda.closedHearing
+                      ? formatMessage(m.listPage.closedHearing)
+                      : '') + '\n\n'
+                }
+
                 return (
                   <AgendaCard
                     key={agenda.id}
@@ -745,9 +771,13 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                         <AddToCalendarButton
                           event={{
                             title: agenda.title,
-                            description: '',
+                            description,
                             location: `${
-                              agenda.court ? `${agenda.court} - ` : ''
+                              agenda.court
+                                ? `${agenda.court}${
+                                    agenda.courtRoom ? ' - ' : ''
+                                  }${agenda.courtRoom}`
+                                : ''
                             }${agenda.courtRoom}`,
                             startDate: agenda.dateFrom.split('T')[0],
                             startTime: agenda.dateFrom
@@ -801,6 +831,13 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
 }
 
 CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
+  if (customPageData?.configJson?.showCourtAgendasPage === false) {
+    throw new CustomNextError(
+      404,
+      'Court agendas page has been turned off in the CMS',
+    )
+  }
+
   const court = parseAsString.parseServerSide(query[QueryParam.COURT])
   const dateFrom = parseAsString.parseServerSide(query[QueryParam.DATE_FROM])
   const dateTo = parseAsString.parseServerSide(query[QueryParam.DATE_TO])
@@ -820,13 +857,6 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
   ])
 
   const items = CourtAgendasResponse.data.webCourtAgendas.items
-
-  // if (!customPageData?.configJson?.showCourtAgendasPage) {
-  //   throw new CustomNextError(
-  //     404,
-  //     'Verdict list page has been turned off in the CMS',
-  //   )
-  // }
 
   return {
     initialData: {
