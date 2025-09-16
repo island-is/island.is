@@ -14,6 +14,7 @@ import Intro from '../shared/Intro'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Skeleton } from '../../lib/skeletons'
+import { EmptyState } from '@island.is/portals/my-pages/core'
 
 const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
@@ -53,11 +54,18 @@ const SignatureCollectionMunicipal = () => {
         slug={listsForOwner?.[0]?.slug}
       />
       {isOwner?.success || user?.profile.actor ? (
-        <OwnerView
-          currentCollection={currentCollection}
-          listsForOwner={listsForOwner}
-          signedLists={signedLists}
-        />
+        isOwner?.success ? (
+          <OwnerView
+            currentCollection={currentCollection}
+            listsForOwner={listsForOwner}
+            signedLists={signedLists}
+          />
+        ) : (
+          <EmptyState
+            title={m.noCollectionIsActive}
+            description={m.noCollectionIsActiveDescription}
+          />
+        )
       ) : (
         <SigneeView
           collectionType={collectionType}

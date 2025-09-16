@@ -15,6 +15,7 @@ import Intro from '../shared/Intro'
 import ActionDrawer from './OwnerView/ActionDrawer'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Skeleton } from '../../lib/skeletons'
+import { EmptyState } from '@island.is/portals/my-pages/core'
 
 const collectionType = SignatureCollectionCollectionType.Presidential
 
@@ -53,18 +54,23 @@ const SignatureCollectionPresidential = () => {
         intro={formatMessage(m.pageIntro)}
         slug={listsForOwner?.[0]?.slug}
       />
-      {isOwner?.success ? (
-        <>
-          {!user?.profile.actor && currentCollection.isActive && (
+      {isOwner?.success || user?.profile.actor ? (
+        isOwner?.success ? (
+          <>
             <ActionDrawer />
-          )}
-          <Divider />
-          <OwnerView
-            collectionType={collectionType}
-            listsForOwner={listsForOwner}
-            signedLists={signedLists}
+            <Divider />
+            <OwnerView
+              collectionType={collectionType}
+              listsForOwner={listsForOwner}
+              signedLists={signedLists}
+            />
+          </>
+        ) : (
+          <EmptyState
+            title={m.noCollectionIsActive}
+            description={m.noCollectionIsActiveDescription}
           />
-        </>
+        )
       ) : (
         <SigneeView
           collectionType={collectionType}

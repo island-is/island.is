@@ -212,12 +212,26 @@ export class SignatureCollectionAdminClientService
 
       let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
 
+      if (
+        collectionType === CollectionType.Parliamentary &&
+        !candidacy &&
+        !collectionName
+      ) {
+        // Fail safe for when we don't have the name of the candidacy
+        const user = await this.getApiWithAuth(
+          this.adminApi,
+          auth,
+        ).adminMedmaelasofnunIDEinsInfoKennitalaGet({
+          kennitala: owner.nationalId,
+          iD: parseInt(id),
+        })
+        collectionName = user.listabokstafur?.frambodNafn
+      }
+
       const listName = (areaName: string) =>
         collectionType === CollectionType.Parliamentary
           ? candidacy?.nafn ?? collectionName
           : `${owner.name} - ${areaName}`
-
-      console.log('listName', listName)
 
       // If no candidacy exists, create one
       if (!candidacy) {

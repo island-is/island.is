@@ -28,10 +28,12 @@ const OwnerView = ({
 
   return (
     <Stack space={8}>
-      <SignedLists
-        collectionType={collectionType}
-        signedLists={signedLists ?? []}
-      />
+      {signedLists && (
+        <SignedLists
+          collectionType={collectionType}
+          signedLists={signedLists}
+        />
+      )}
       <Box>
         <Text variant="h4" marginBottom={3}>
           {formatMessage(m.myListsDescription)}
