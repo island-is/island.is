@@ -75,7 +75,8 @@ describe('AppService - Run', () => {
       // fetch for archive cases 3x
       // fetch for resetting lawyer-registry 1x
       // fetch for post daily hearing 1x
-      expect(fetch).toHaveBeenCalledTimes(5)
+      // fetch for delivering service certificates to police 1x
+      expect(fetch).toHaveBeenCalledTimes(6)
       expect(fetch).toHaveBeenCalledWith(
         `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
         {
@@ -101,6 +102,18 @@ describe('AppService - Run', () => {
       )
       expect(fetch).toHaveBeenCalledWith(
         `${appModuleConfig().backendUrl}/api/lawyer-registry/reset`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${appModuleConfig().backendAccessToken}`,
+          },
+        },
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        `${
+          appModuleConfig().backendUrl
+        }/api/internal/verdict/deliverVerdictServiceCertificates`,
         {
           method: 'POST',
           headers: {
