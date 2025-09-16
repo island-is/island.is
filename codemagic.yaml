@@ -116,8 +116,23 @@ definitions:
     - &run_ios_tests_on_maestro_cloud
       name: Run tests on Maestro cloud
       script: |
+        # Install Maestro CLI first
+        curl -Ls "https://get.maestro.mobile.dev" | bash
+
+        # Add to PATH
         export PATH="$PATH":"$HOME/.maestro/bin"
-        iosAppPath="$ios/output/..."
+
+        # Verify installation
+        maestro --version
+
+        # Find the built app
+        iosAppPath=$(find ios/output -name "*.app" | head -1)
+        if [ -z "$iosAppPath" ]; then
+          echo "No .app file found in ios/output"
+          exit 1
+        fi
+
+        # Run Maestro Cloud
         maestro cloud \
         --apiKey $MDEV_API_KEY \
         --project-id proj_01k57043b8e7vvkd20k4epgh44 \
