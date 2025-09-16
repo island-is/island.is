@@ -104,7 +104,7 @@ definitions:
         fi
         cd android
         ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
-    - &build_unsigned_app
+    - &build_ios_unsigned_app
       name: Build unsigned .app
       script: |
         xcodebuild \
@@ -113,7 +113,8 @@ definitions:
         -configuration "Debug" \
         -sdk iphonesimulator \
         -derivedDataPath ios/output
-    - name: Run tests on Maestro cloud
+    - &run_ios_tests_on_maestro_cloud
+      name: Run tests on Maestro cloud
       script: |
         export PATH="$PATH":"$HOME/.maestro/bin"
         iosAppPath="$ios/output/..."
@@ -121,13 +122,6 @@ definitions:
         --apiKey $MDEV_API_KEY \
         $iosAppPath \
         .maestro/
-    - &maestro_tests
-      name: Install and run Maestro end to end tests
-      script: |
-        curl -Ls "https://get.maestro.mobile.dev" | bash
-        export PATH="$PATH":"$HOME/.maestro/bin"
-        maestro test .maestro/try-signing-in-flow.yaml || true
-        maestro test .maestro/inbox-flow.yaml || true
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -307,7 +301,7 @@ workflows:
       - *npm_install
       - *codegen
       - *cocoapods
-      - *build_unsigned_app
-      - *maestro_tests
+      - *build_ios_unsigned_app
+      - *run_ios_tests_on_maestro_cloud
     artifacts: &ios_artifacts_e2e_tests
       - /tmp/xcodebuild_logs/*.log
