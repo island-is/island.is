@@ -73,9 +73,10 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
   locale,
   initialGrantList,
   tags,
+  customPageData,
   customSubpage,
 }) => {
-  useContentfulId(customSubpage?.id)
+  useContentfulId(customPageData?.id, customSubpage?.id)
   useLocalLinkTypeResolver()
 
   const { formatMessage } = useIntl()

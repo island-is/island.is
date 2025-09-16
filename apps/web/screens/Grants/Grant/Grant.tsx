@@ -46,7 +46,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({
   locale,
   customPageData,
 }) => {
-  useContentfulId(customPageData?.id)
+  useContentfulId(customPageData?.id, grant?.id)
   useLocalLinkTypeResolver()
 
   const { formatMessage } = useIntl()
