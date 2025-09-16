@@ -128,7 +128,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     setWorkingCase,
   } = props
   const { updateCourtSession } = useCourtSessions()
-  const { updateCourtDocument } = useCourtDocuments()
+  const { updateCourtDocument, deleteCourtDocument } = useCourtDocuments()
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
@@ -472,7 +472,21 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         ): void => {
                           throw new Error('Function not implemented.')
                         }}
-                        onDelete={(file: TUploadFile) => {
+                        onDelete={async (file: TUploadFile) => {
+                          if (!file.id) {
+                            return
+                          }
+
+                          const deleted = await deleteCourtDocument({
+                            caseId: workingCase.id,
+                            courtSessionId: courtSession.id,
+                            courtDocumentId: file.id,
+                          })
+
+                          if (!deleted) {
+                            return
+                          }
+
                           setReorderableFiles((prev) =>
                             prev.filter((i) => i.id !== file.id),
                           )

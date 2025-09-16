@@ -3,15 +3,18 @@ import { useCallback } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import {
   CreateCourtDocumentInput,
+  DeleteCourtDocumentInput,
   UpdateCourtDocumentInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCreateCourtDocumentMutation } from './createCourtDocument.generated'
+import { useDeleteCourtDocumentMutation } from './deleteCourtDocument.generated'
 import { useUpdateCourtDocumentMutation } from './updateCourtDocument.generated'
 
 const useCourtDocuments = () => {
   const [updateCourtDocumentMutation] = useUpdateCourtDocumentMutation()
   const [createCourtDocumentMutation] = useCreateCourtDocumentMutation()
+  const [deleteCourtDocumentMutation] = useDeleteCourtDocumentMutation()
 
   const createCourtDocument = useCallback(
     async (createCourtDocumentInput: CreateCourtDocumentInput) => {
@@ -58,9 +61,29 @@ const useCourtDocuments = () => {
     [updateCourtDocumentMutation],
   )
 
+  const deleteCourtDocument = useCallback(
+    async (deleteCourtDocument: DeleteCourtDocumentInput) => {
+      try {
+        const { data } = await deleteCourtDocumentMutation({
+          variables: {
+            input: deleteCourtDocument,
+          },
+        })
+
+        return Boolean(data)
+      } catch (error) {
+        toast.error('Upp kom villa við að uppfæra þingskjal')
+
+        return false
+      }
+    },
+    [deleteCourtDocumentMutation],
+  )
+
   return {
     createCourtDocument,
     updateCourtDocument,
+    deleteCourtDocument,
   }
 }
 
