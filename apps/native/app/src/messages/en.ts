@@ -412,6 +412,12 @@ export const en: TranslatedMessages = {
   'profile.finance': 'Finance',
   'profile.airDiscount': 'Air discount',
   'profile.health': 'Health',
+  'profile.moreInfo': 'More on my-pages',
+  'profile.accessControl': 'Access control',
+  'profile.supportPayments': 'Support payments',
+  'profile.education': 'Education',
+  'profile.lawAndOrder': 'Law and order',
+  'profile.occupationalLicenses': 'Occupational licenses',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -468,6 +474,16 @@ export const en: TranslatedMessages = {
   'vehicle.mileage.moreInformationCopy': 'See more information at Ísland.is',
   'vehicle.mileage.historyTitle': 'Mileage history',
   'vehicle.mileage.editRecordButton': 'Edit mileage',
+
+  // vehicle links
+  'vehicle.links.ownerLookup': 'Vehicle registry lookup',
+  'vehicle.links.vehicleHistory': 'Vehicle history',
+  'vehicle.links.ownershipCertificatePdf':
+    'Ownership status certificate as PDF',
+  'vehicle.links.reportOwnerChange': 'Report change of ownership',
+  'vehicle.links.returnCertificate': 'Return certificate',
+  'vehicle.links.nameConfidentiality':
+    'Name confidentiality in vehicle registry',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',

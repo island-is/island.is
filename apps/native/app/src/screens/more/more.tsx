@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { SafeAreaView, ScrollView, TouchableHighlight } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -11,12 +11,12 @@ import financeIcon from '../../assets/icons/finance.png'
 import healthIcon from '../../assets/icons/health.png'
 import vehicleIcon from '../../assets/icons/vehicle.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { ExternalLinks } from '../../components/external-links/external-links'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
-import { formatNationalId } from '../../lib/format-national-id'
-import { useAuthStore } from '../../stores/auth-store'
-import { FamilyMemberCard, MoreCard } from '../../ui'
+import { getMyPagesLinks } from '../../lib/my-pages-links'
+import { MoreCard, Typography } from '../../ui'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
@@ -60,14 +60,43 @@ const { useNavigationOptions, getNavigationOptions } =
 
 export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
-  const authStore = useAuthStore()
+
   const intl = useIntl()
   const theme = useTheme()
+  const myPagesLinks = getMyPagesLinks()
 
   useConnectivityIndicator({
     componentId,
     rightButtons: getRightButtons({ icons: ['settings'] }),
   })
+
+  const externalLinks = [
+    {
+      link: myPagesLinks.accessControl,
+      title: intl.formatMessage({ id: 'profile.accessControl' }),
+      icon: require('../../assets/icons/lock.png'),
+    },
+    {
+      link: myPagesLinks.supportPayments,
+      title: intl.formatMessage({ id: 'profile.supportPayments' }),
+      icon: require('../../assets/icons/cardSuccess.png'),
+    },
+    {
+      link: myPagesLinks.education,
+      title: intl.formatMessage({ id: 'profile.education' }),
+      icon: require('../../assets/icons/education.png'),
+    },
+    {
+      link: myPagesLinks.lawAndOrder,
+      title: intl.formatMessage({ id: 'profile.lawAndOrder' }),
+      icon: require('../../assets/icons/lawAndOrder.png'),
+    },
+    {
+      link: myPagesLinks.occupationalLicenses,
+      title: intl.formatMessage({ id: 'profile.occupationalLicenses' }),
+      icon: require('../../assets/icons/scroll.png'),
+    },
+  ]
 
   return (
     <>
@@ -78,21 +107,6 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
           paddingVertical: 16,
         }}
       >
-        <SafeAreaView style={{ marginBottom: theme.spacing[1] }}>
-          <TouchableHighlight
-            underlayColor={
-              theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-            }
-            onPress={() => {
-              navigateTo('/personalinfo')
-            }}
-          >
-            <FamilyMemberCard
-              name={authStore.userInfo?.name ?? ''}
-              nationalId={formatNationalId(authStore.userInfo?.nationalId)}
-            />
-          </TouchableHighlight>
-        </SafeAreaView>
         <Row>
           <MoreCard
             title={intl.formatMessage({ id: 'profile.family' })}
@@ -129,7 +143,22 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             onPress={() => navigateTo('/air-discount')}
           />
         </Row>
+        <View
+          style={{
+            marginTop: theme.spacing[3],
+          }}
+        >
+          <Typography variant="heading5">
+            {intl.formatMessage({ id: 'profile.moreInfo' })}
+          </Typography>
+          <View style={{ marginHorizontal: -16 }}>
+            {externalLinks.map((link) => (
+              <ExternalLinks links={link} key={link.title} />
+            ))}
+          </View>
+        </View>
       </ScrollView>
+
       <BottomTabsIndicator index={4} total={5} />
     </>
   )

@@ -292,6 +292,12 @@ export const is = {
   'profile.finance': 'Fjármál',
   'profile.airDiscount': 'Loftbrú',
   'profile.health': 'Heilsa',
+  'profile.moreInfo': 'Meira a mínum síðum',
+  'profile.accessControl': 'Aðgangsstýring',
+  'profile.supportPayments': 'Framfærsla',
+  'profile.education': 'Menntun',
+  'profile.lawAndOrder': 'Lög og rglur',
+  'profile.occupationalLicenses': 'Starfsleyfi',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -348,6 +354,14 @@ export const is = {
   'vehicle.mileage.moreInformationCopy': 'Sjá nánari upplýsingar á Ísland.is',
   'vehicle.mileage.historyTitle': 'Skráningar',
   'vehicle.mileage.editRecordButton': 'Breyta færslu',
+
+  // vehicle links
+  'vehicle.links.ownerLookup': 'Uppfletting í ökutækjaskrá',
+  'vehicle.links.vehicleHistory': 'Ökutækjaferill',
+  'vehicle.links.ownershipCertificatePdf': 'Eignastöðuvottorð sem PDF',
+  'vehicle.links.reportOwnerChange': 'Tilkynna eigendaskipti',
+  'vehicle.links.returnCertificate': 'Skilavottorð',
+  'vehicle.links.nameConfidentiality': 'Nafnleynd í ökutækjaskrá',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',

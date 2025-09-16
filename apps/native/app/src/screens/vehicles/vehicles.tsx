@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import {
   ActivityIndicator,
   Animated,
@@ -11,7 +11,7 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
-import { EmptyList, GeneralCardSkeleton, TopLine } from '../../ui'
+import { EmptyList, GeneralCardSkeleton, TopLine, Typography } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-moving-s4.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
@@ -22,6 +22,8 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { testIDs } from '../../utils/test-ids'
 import { VehicleItem } from './components/vehicle-item'
+import { ExternalLinks } from '../../components/external-links/external-links'
+import { getMyPagesLinks } from '../../lib/my-pages-links'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
@@ -69,6 +71,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
   const theme = useTheme()
+  const intl = useIntl()
 
   const flatListRef = useRef<FlatList>(null)
   const [refetching, setRefetching] = useState(false)
@@ -87,6 +90,39 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
     queryResult: res,
     refetching,
   })
+
+  const myPagesLinks = getMyPagesLinks()
+
+  console.log('myPagesLinks', myPagesLinks)
+
+  const externalLinks = [
+    {
+      link: myPagesLinks.ownerLookup,
+      title: intl.formatMessage({ id: 'vehicle.links.ownerLookup' }),
+    },
+    {
+      link: myPagesLinks.vehicleHistory,
+      title: intl.formatMessage({ id: 'vehicle.links.vehicleHistory' }),
+    },
+    {
+      link: myPagesLinks.ownershipCertificatePdf,
+      title: intl.formatMessage({
+        id: 'vehicle.links.ownershipCertificatePdf',
+      }),
+    },
+    {
+      link: myPagesLinks.reportOwnerChange,
+      title: intl.formatMessage({ id: 'vehicle.links.reportOwnerChange' }),
+    },
+    {
+      link: myPagesLinks.returnCertificate,
+      title: intl.formatMessage({ id: 'vehicle.links.returnCertificate' }),
+    },
+    {
+      link: myPagesLinks.nameConfidentiality,
+      title: intl.formatMessage({ id: 'vehicle.links.nameConfidentiality' }),
+    },
+  ]
 
   // What to do when refreshing
   const onRefresh = useCallback(() => {
@@ -216,14 +252,34 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
             })
         }}
         ListFooterComponent={
-          loadingMore ? (
-            <View>
-              <ActivityIndicator size="small" animating />
+          <>
+            {loadingMore ? (
+              <View>
+                <ActivityIndicator size="small" animating />
+              </View>
+            ) : null}
+            <View
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                borderTopColor: theme.color.blue200,
+              }}
+            >
+              <Typography variant="heading5">
+                {intl.formatMessage({ id: 'profile.moreInfo' })}
+              </Typography>
+              <View style={{ marginHorizontal: -16 }}>
+                {externalLinks.map((link) => (
+                  <ExternalLinks links={link} key={link.title} />
+                ))}
+              </View>
             </View>
-          ) : null
+          </>
         }
       />
+
       <TopLine scrollY={scrollY} />
+
       <BottomTabsIndicator index={2} total={3} />
     </>
   )
