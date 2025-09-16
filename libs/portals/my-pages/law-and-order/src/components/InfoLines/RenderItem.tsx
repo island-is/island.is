@@ -13,7 +13,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { InfoLine } from '@island.is/portals/my-pages/core'
-import { Markdown } from '@island.is/shared/components'
+import HtmlParser from 'react-html-parser'
+import * as styles from './InfoLines.css'
 export interface RenderItemProps {
   item: LawAndOrderSubpoenaItem
   loading?: boolean
@@ -35,14 +36,16 @@ export const RenderItem: React.FC<RenderItemProps> = ({
       )
     case LawAndOrderItemType.Accordion:
       return (
-        <Accordion space={2} dividerOnBottom={dividerOnBottom}>
-          <AccordionItem
-            id={`accordion-${item.label ?? ''}`}
-            label={item.label ?? ''}
-          >
-            <Markdown>{String(item.value)}</Markdown>
-          </AccordionItem>
-        </Accordion>
+        <div className={styles.htmlContainer}>
+          <Accordion space={2} dividerOnBottom={dividerOnBottom}>
+            <AccordionItem
+              id={`accordion-${item.label ?? ''}`}
+              label={item.label ?? ''}
+            >
+              {HtmlParser(String(item.value))}
+            </AccordionItem>
+          </Accordion>
+        </div>
       )
     default:
       return (
