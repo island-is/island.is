@@ -58,7 +58,7 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
     'jurisdictions.data',
   )
 
-  if ((willBringQualityPhoto || willBringHealthCert) && (!jurisdictions || !selectedJurisdictionId)) {
+  if (!(willBringQualityPhoto || willBringHealthCert) && (!jurisdictions || !selectedJurisdictionId)) {
     throw new Error(
       'no jurisdiction or selected juristication ID - not handled',
     )
