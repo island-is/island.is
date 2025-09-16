@@ -160,7 +160,6 @@ export class PoliceService {
     deliveredToLawyer: z.boolean().nullish(),
   })
 
-  // TODO: Template - confirm with RLS
   private documentStructure = z.object({
     comment: z.string().nullish(),
     servedBy: z.string().nullish(),
@@ -707,7 +706,7 @@ export class PoliceService {
     user?: User,
   ): Promise<VerdictPoliceDocumentInfo> {
     return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetDocumentStatus?id=${policeDocumentId}`,
+      `${this.xRoadPath}/GetDeliveryStatus?id=${policeDocumentId}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
