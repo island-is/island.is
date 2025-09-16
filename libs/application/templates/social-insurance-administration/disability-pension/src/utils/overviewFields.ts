@@ -12,6 +12,10 @@ import {
   employmentItems,
   extraInfoItems,
 } from './overviewItems'
+import { getApplicationAnswers } from '../utils'
+import { hasSelfEvaluationAnswers } from './hasSelfEvaluationAnswers'
+import { KeyValueItem } from '@island.is/application/types'
+
 
 export const overviewFields = (editable?: boolean) => {
   return [
@@ -56,10 +60,40 @@ export const overviewFields = (editable?: boolean) => {
         ]
       },
     }),
-    buildCustomField({
-      id: `${SectionRouteEnum.OVERVIEW}.customField`,
-      title: m.customFields.selfEvaluation ?? 'Custom self evaluation',
-      component: 'Review',
+    buildOverviewField({
+      id: `${SectionRouteEnum.OVERVIEW}.selfEvaluation`,
+      title: m.selfEvaluation.title,
+      titleVariant: 'h4',
+      backId: SectionRouteEnum.SELF_EVALUATION,
+      items: (
+        answers,
+      )  => {
+        const {
+          hadAssistanceForSelfEvaluation,
+          questionnaire
+        } = getApplicationAnswers(answers)
+
+        const hasAnsweredSelfEvalution = hasSelfEvaluationAnswers(answers)
+
+        const hasCapabilityImpairment = questionnaire.find(
+          (question) => question.answer !== undefined,
+        )
+
+        return ([
+          {
+            width: 'full',
+            value: hadAssistanceForSelfEvaluation !== undefined ? m.selfEvaluation.applicantHasAnsweredAssistance : m.selfEvaluation.applicantHasNotAnsweredAssistance
+          },
+          hasAnsweredSelfEvalution && {
+            width: 'full',
+            value: m.selfEvaluation.applicantHasAnsweredSelfEvaluation
+          },
+          hasCapabilityImpairment && {
+            width: 'full',
+            value: m.selfEvaluation.applicantHasAnsweredCapabilityImpairment
+          }
+        ].filter(Boolean) as Array<KeyValueItem> | undefined) ?? []
+      },
     }),
     buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.extraInfo`,

@@ -68,6 +68,7 @@ export const rehabilitationOrTherapyField = buildMultiField({
         )
         return rehabOrTherapy === YesOrNoEnum.YES
       },
+      rows: 6,
       variant: 'textarea',
     }),
   ],

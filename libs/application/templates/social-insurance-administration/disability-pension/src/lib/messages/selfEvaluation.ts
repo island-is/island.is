@@ -21,6 +21,26 @@ export const selfEvaluation = defineMessages({
     defaultMessage: 'Sjálfsmat',
     description: 'Self evaluation',
   },
+  applicantHasAnsweredAssistance: {
+    id: 'dp.application:selfEvaluation.applicantHasAnsweredAssistance',
+    defaultMessage: 'Þú hefur svarað spurningunni um aðstoð við sjálfsmat',
+    description: 'Self evaluation',
+  },
+  applicantHasNotAnsweredAssistance: {
+    id: 'dp.application:selfEvaluation.applicantHasNotAnsweredAssistance',
+    defaultMessage: 'Þú hefur ekki svarað spurningunni um aðstoð við sjálfsmat',
+    description: 'Self evaluation',
+  },
+  applicantHasAnsweredSelfEvaluation: {
+    id: 'dp.application:selfEvaluation.applicantHasAnsweredSelfEvaluation#markdown',
+    defaultMessage: '* Bakgrunnur og aðstæður\\n\\n',
+    description: 'Self evaluation',
+  },
+  applicantHasAnsweredCapabilityImpairment: {
+    id: 'dp.application:selfEvaluation.applicantHasAnsweredCapabilityImpairment#markdown',
+    defaultMessage: '* Færnisskerðing\\n\\n',
+    description: 'Capability impairment',
+  },
   description: {
     id: 'dp.application:selfEvaluation.description',
     defaultMessage:

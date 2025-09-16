@@ -20,6 +20,7 @@ export const employmentCapabilityField = buildMultiField({
       variant: 'number',
       min: 0,
       max: 100,
+      maxLength: 3,
       required: true,
       width: 'full',
     }),
