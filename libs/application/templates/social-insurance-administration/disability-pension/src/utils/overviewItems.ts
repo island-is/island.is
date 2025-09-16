@@ -10,7 +10,10 @@ import {
 } from '@island.is/application/ui-components'
 import kennitala from 'kennitala'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { formatBankAccount, getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import {
+  formatBankAccount,
+  getTaxLevelOption,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import * as m from '../lib/messages'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { hasSelfEvaluationAnswers } from './hasSelfEvaluationAnswers'
@@ -70,7 +73,7 @@ export const paymentInfoItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.paymentInfo.bank,
-      valueText: formatBankAccount(paymentInfo)
+      valueText: formatBankAccount(paymentInfo),
     },
     {
       width: 'half',
@@ -150,16 +153,19 @@ export const selfEvaluationItems = (
   return [
     {
       width: 'full',
-      valueText: hadAssistanceForSelfEvaluation !== undefined ? m.selfEvaluation.applicantHasAnsweredAssistance : m.selfEvaluation.applicantHasNotAnsweredAssistance
+      valueText:
+        hadAssistanceForSelfEvaluation !== undefined
+          ? m.selfEvaluation.applicantHasAnsweredAssistance
+          : m.selfEvaluation.applicantHasNotAnsweredAssistance,
     },
     hasAnsweredSelfEvalution && {
       width: 'full',
-      valueText: m.selfEvaluation.applicantHasAnsweredSelfEvaluation
+      valueText: m.selfEvaluation.applicantHasAnsweredSelfEvaluation,
     },
     hasCapabilityImpairment && {
       width: 'full',
-      valueText: m.selfEvaluation.applicantHasAnsweredCapabilityImpairment
-    }
+      valueText: m.selfEvaluation.applicantHasAnsweredCapabilityImpairment,
+    },
   ].filter(Boolean) as KeyValueItem[]
 }
 
