@@ -10,7 +10,7 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
-  CourtSession,
+  CourtSessionResponse,
   CourtSessionRulingType,
   DateLog,
   Defendant,
@@ -558,34 +558,37 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }
 
+export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
+  return (
+    (courtSession.isClosed
+      ? courtSession.closedLegalProvisions &&
+        courtSession.closedLegalProvisions.length > 0
+      : true) &&
+    (courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
+    courtSession.rulingType === CourtSessionRulingType.ORDER
+      ? !!courtSession.ruling
+      : true) &&
+    (courtSession.isAttestingWitness
+      ? courtSession.attestingWitnessId
+      : true) &&
+    validate([
+      [courtSession.startDate, ['empty', 'date-format']],
+      [courtSession.location, ['empty']],
+      [courtSession.entries, ['empty']],
+      [courtSession.rulingType, ['empty']],
+      [courtSession.endDate, ['empty', 'date-format']],
+    ]).isValid
+  )
+}
+
 export const isIndictmentCourtRecordStepValid = (
-  courtSessions?: CourtSession[] | null,
+  courtSessions?: CourtSessionResponse[] | null,
 ) => {
-  if (!courtSessions) {
+  if (!Array.isArray(courtSessions) || courtSessions.length === 0) {
     return false
   }
 
-  const courtSessionsAreValid = () =>
-    courtSessions.every(
-      (courtSession) =>
-        (courtSession.isClosed
-          ? courtSession.closedLegalProvisions &&
-            courtSession.closedLegalProvisions?.length > 0
-          : true) &&
-        (courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
-        courtSession.rulingType === CourtSessionRulingType.ORDER
-          ? !!courtSession.ruling
-          : true) &&
-        validate([
-          [courtSession.startDate, ['empty', 'date-format']],
-          [courtSession.location, ['empty']],
-          [courtSession.entries, ['empty']],
-          [courtSession.rulingType, ['empty']],
-          // TODO: ADD WITNESS AND COURT END TIME
-        ]).isValid,
-    )
-
-  return courtSessionsAreValid()
+  return courtSessions.every(isCourtSessionValid)
 }
 
 const isIndictmentRulingDecisionValid = (workingCase: Case) => {
