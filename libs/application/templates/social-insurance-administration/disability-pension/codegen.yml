@@ -3,8 +3,10 @@ schema:
 documents: libs/application/templates/social-insurance-administration/disability-pension/src/graphql/queries.ts
 generates:
   libs/application/templates/social-insurance-administration/disability-pension/src/types/schema.ts:
+    preset: 'near-operation-file'
+    presetConfig:
+      baseTypesPath: '~@island.is/api/schema'
     plugins:
-      - typescript
       - typescript-operations
 hooks:
   afterAllFileWrite:

@@ -18,7 +18,7 @@ import {
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
-  socialInsuranceAdministrationMessage,
+  socialInsuranceAdministrationMessage as sm,
   statesMessages,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
@@ -76,7 +76,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.DISABILITY_PENSION,
   name: m.shared.applicationTitle,
   codeOwner: CodeOwners.Hugsmidjan,
-  institution: socialInsuranceAdministrationMessage.shared.institution,
+  institution: sm.shared.institution,
   translationNamespaces:
     ApplicationConfigurations.DisabilityPension.translation,
   dataSchema,
@@ -122,8 +122,13 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                UserProfileApi,
-                IdentityApi,
+                UserProfileApi/*
+                  TODO: REENABLE ON PROD
+                  .configure({
+                    params: {
+                      validateEmail: true,
+                    },
+                  })*/,
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
                 SocialInsuranceAdministrationCategorizedIncomeTypesApi,
@@ -283,7 +288,7 @@ const template: ApplicationTemplate<
           status: FormModes.APPROVED,
           actionCard: {
             pendingAction: {
-              title: socialInsuranceAdministrationMessage.applicationApproved,
+              title: sm.applicationApproved,
               content: statesMessages.applicationApproved,
               displayStatus: 'success',
             },
@@ -307,7 +312,7 @@ const template: ApplicationTemplate<
           status: FormModes.REJECTED,
           actionCard: {
             pendingAction: {
-              title: socialInsuranceAdministrationMessage.applicationRejected,
+              title: sm.applicationRejected,
               content: m.states.applicationRejectedDescription,
               displayStatus: 'error',
             },
@@ -332,7 +337,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: socialInsuranceAdministrationMessage.dismissedTag,
+              label: sm.dismissedTag,
             },
             pendingAction: {
               title: m.states.applicationDismissed,

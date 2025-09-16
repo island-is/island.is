@@ -14,7 +14,7 @@ import {
   BankAccountType,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { socialInsuranceAdministrationMessage as sm } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
@@ -27,8 +27,8 @@ import isEmpty from 'lodash/isEmpty'
 import { SectionRouteEnum } from '../../../types'
 import { accountNationality, getApplicationExternalData } from '../../../utils'
 import { siaGeneralCurrencies } from '../../../graphql/queries'
-import { SocialInsuranceGeneralCurrenciesQuery } from '../../../types/schema'
 import * as m from '../../../lib/messages'
+import { SocialInsuranceGeneralCurrenciesQuery } from '../../../graphql/queries.generated'
 
 export const paymentInfoSubSection = buildSubSection({
   id: SectionRouteEnum.PAYMENT_INFO,
@@ -57,7 +57,7 @@ export const paymentInfoSubSection = buildSubSection({
             {
               value: BankAccountType.ICELANDIC,
               label:
-                socialInsuranceAdministrationMessage.payment
+                sm.payment
                   .icelandicBankAccount,
             },
             {
@@ -83,7 +83,7 @@ export const paymentInfoSubSection = buildSubSection({
         }),
         buildTextField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.iban`,
-          title: socialInsuranceAdministrationMessage.payment.iban,
+          title: sm.payment.iban,
           placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
           required: true,
           defaultValue: (application: Application) => {
@@ -97,7 +97,7 @@ export const paymentInfoSubSection = buildSubSection({
         }),
         buildTextField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.swift`,
-          title: socialInsuranceAdministrationMessage.payment.swift,
+          title: sm.payment.swift,
           placeholder: 'AAAA BB CC XXX',
           width: 'half',
           required: true,
@@ -112,11 +112,11 @@ export const paymentInfoSubSection = buildSubSection({
         }),
         buildAsyncSelectField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.currency`,
-          title: socialInsuranceAdministrationMessage.payment.currency,
+          title: sm.payment.currency,
           width: 'half',
           required: true,
           placeholder:
-            socialInsuranceAdministrationMessage.payment.selectCurrency,
+            sm.payment.selectCurrency,
           loadOptions: async ({ apolloClient }) => {
             const { data } =
               await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
@@ -135,7 +135,7 @@ export const paymentInfoSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'paymentInfo.bankName',
-          title: socialInsuranceAdministrationMessage.payment.bankName,
+          title: sm.payment.bankName,
           width: 'half',
           required: true,
           defaultValue: (application: Application) => {
@@ -174,7 +174,7 @@ export const paymentInfoSubSection = buildSubSection({
         buildTextField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.personalAllowanceUsage`,
           title:
-            socialInsuranceAdministrationMessage.payment
+            sm.payment
               .personalAllowancePercentage,
           suffix: '%',
           dataTestId: 'personal-allowance-usage',
@@ -195,7 +195,7 @@ export const paymentInfoSubSection = buildSubSection({
         }),
         buildRadioField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.taxLevel`,
-          title: socialInsuranceAdministrationMessage.payment.taxLevel,
+          title: sm.payment.taxLevel,
           options: getTaxOptions(),
           width: 'full',
           largeButtons: true,

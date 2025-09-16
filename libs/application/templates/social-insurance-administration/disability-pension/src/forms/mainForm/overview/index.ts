@@ -6,7 +6,7 @@ import {
 import * as m from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
 import { overviewFields } from '../../../utils/overviewFields'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { socialInsuranceAdministrationMessage as sm } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
 
 export const overviewSection = buildSection({
@@ -24,11 +24,11 @@ export const overviewSection = buildSection({
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: socialInsuranceAdministrationMessage.confirm.submitButton,
+          title: sm.confirm.submitButton,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: socialInsuranceAdministrationMessage.confirm.submitButton,
+              name: sm.confirm.submitButton,
               type: 'primary',
             },
           ],

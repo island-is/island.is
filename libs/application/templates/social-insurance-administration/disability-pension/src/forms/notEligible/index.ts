@@ -3,7 +3,7 @@ import {
   buildForm,
   buildSection,
 } from '@island.is/application/core'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { socialInsuranceAdministrationMessage as sm } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import * as m from '../../lib/messages'
 import { notEligibleText } from '../../utils/getNotEligibleText'
@@ -14,7 +14,7 @@ export const NotEligible: Form = buildForm({
   children: [
     buildSection({
       id: 'notEligible',
-      tabTitle: socialInsuranceAdministrationMessage.pre.externalDataSection,
+      tabTitle: sm.pre.externalDataSection,
       children: [
         buildDescriptionField({
           id: 'notEligible.description',

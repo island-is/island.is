@@ -1,4 +1,4 @@
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { socialInsuranceAdministrationMessage as sm} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Label } from '@island.is/application/ui-components'
 import {
@@ -16,9 +16,9 @@ import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useQuery } from '@apollo/client'
 import { siaDisabilityPensionCertificate } from '../../graphql/queries'
-import { SiaDisabilityPensionCertificateQuery } from '../../types/schema'
 import format from 'date-fns/format'
 import * as m from '../../lib/messages'
+import { SiaDisabilityPensionCertificateQuery } from '../../graphql/queries.generated'
 
 export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   field,
@@ -49,7 +49,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
-            {formatMessage(socialInsuranceAdministrationMessage.confirm.name)}
+            {formatMessage(sm.confirm.name)}
           </Label>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate?.doctor?.name}

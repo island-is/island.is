@@ -18,7 +18,6 @@ export const paidWorkSubSection = buildMultiField({
     buildRadioField({
       id: `${SectionRouteEnum.PAID_WORK}.inPaidWork`,
       width: 'full',
-      backgroundColor: 'blue',
       required: true,
       options: yesOrNoOptions,
     }),
@@ -26,7 +25,6 @@ export const paidWorkSubSection = buildMultiField({
       id: `${SectionRouteEnum.PAID_WORK}.continuedWork`,
       title: m.employmentParticipation.continuedWorkQuestion,
       width: 'half',
-      backgroundColor: 'blue',
       condition: (formValue: FormValue) => {
         const isWorking = getValueViaPath<YesOrNo>(
           formValue,
