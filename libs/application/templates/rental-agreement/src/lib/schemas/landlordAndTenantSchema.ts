@@ -182,6 +182,10 @@ export const parties = z
     const landlordTable = landlordInfo.table || []
     const tenantTable = tenantInfo.table || []
 
+    // Create arrays of national IDs from landlord and tenant tables
+    const landlordNationalIds = landlordTable
+      .map((rep) => rep.nationalIdWithName?.nationalId)
+      .filter((id) => !!id) as string[]
     const tenantNationalIds = tenantTable
       .map((tenant) => tenant.nationalIdWithName?.nationalId)
       .filter((id) => !!id) as string[]
@@ -203,6 +207,29 @@ export const parties = z
           'landlordInfo',
           'table',
           duplicateIndexInLandlordTable,
+          'nationalIdWithName',
+          'nationalId',
+        ],
+      })
+    }
+
+    // Check tenantTable for duplicates in landlordTable and representativeTable
+    const {
+      hasDuplicates: hasDuplicatesInTenantTable,
+      duplicateIndex: duplicateIndexInTenantTable,
+    } = checkforDuplicatesHelper(tenantTable, landlordNationalIds)
+
+    if (
+      hasDuplicatesInTenantTable &&
+      duplicateIndexInTenantTable !== undefined
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        params: m.partiesDetails.duplicateNationalIdError,
+        path: [
+          'tenantInfo',
+          'table',
+          duplicateIndexInTenantTable,
           'nationalIdWithName',
           'nationalId',
         ],
