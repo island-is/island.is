@@ -728,7 +728,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                     }
                     title={agenda.title}
                     closedHearingText={
-                      !agenda.closedHearing
+                      agenda.closedHearing
                         ? formatMessage(m.listPage.closedHearing)
                         : ''
                     }

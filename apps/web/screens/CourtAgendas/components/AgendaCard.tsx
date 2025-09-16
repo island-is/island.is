@@ -38,61 +38,49 @@ export const AgendaCard = ({
   closedHearingText,
   addToCalendarButton,
 }: AgendaCardProps) => {
-  const detailLines: { icon: IconMapIcon; text: string }[] = []
+  const detailLines: { text: string }[] = []
 
   if (court) {
     detailLines.push({
-      icon: 'hammer',
       text: court,
     })
   }
 
   if (courtRoom) {
     detailLines.push({
-      icon: 'home',
       text: courtRoom,
     })
   }
 
   if (time) {
     detailLines.push({
-      icon: 'time',
       text: time,
     })
   }
 
   if (closedHearingText) {
     detailLines.push({
-      icon: 'lockClosed',
       text: closedHearingText,
     })
   }
 
   const renderDetails = () => {
     return (
-      <Box marginTop={2}>
-        <Stack space={1}>
-          {detailLines?.slice(0, 5).map((d, index) => (
-            <Box
-              key={index}
-              display="flex"
-              flexDirection={'row'}
-              alignItems="center"
-              className={styles.iconBox}
-            >
-              <Icon
-                icon={d.icon}
-                size="medium"
-                type="outline"
-                color="blue400"
-              />
-              <Box marginLeft={2}>
-                <Text variant="small">{d.text}</Text>
-              </Box>
+      <Stack space={1}>
+        {detailLines.slice(0, 5).map((d, index) => (
+          <Box
+            key={index}
+            display="flex"
+            flexDirection={'row'}
+            justifyContent="flexEnd"
+            className={styles.iconBox}
+          >
+            <Box marginLeft={2}>
+              <Text variant="medium">{d.text}</Text>
             </Box>
-          ))}
-        </Stack>
-      </Box>
+          </Box>
+        ))}
+      </Stack>
     )
   }
 
@@ -118,7 +106,9 @@ export const AgendaCard = ({
                   </Tag>
                 )}
               </Inline>
-              <Text variant="medium">{date}</Text>
+              <Text variant="medium" color="purple400" fontWeight="semiBold">
+                {date}
+              </Text>
             </Inline>
             <GridRow direction="row">
               <GridColumn span="8/12">
@@ -146,7 +136,9 @@ export const AgendaCard = ({
                   </Tag>
                 )}
               </Inline>
-              <Text variant="medium">{date}</Text>
+              <Text variant="medium" color="purple400" fontWeight="semiBold">
+                {date}
+              </Text>
             </Inline>
             {judgesString && <Text variant="small">{judgesString}</Text>}
             {title && (
