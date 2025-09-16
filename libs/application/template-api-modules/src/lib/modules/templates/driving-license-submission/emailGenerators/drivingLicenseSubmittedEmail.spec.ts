@@ -24,7 +24,7 @@ describe('driving license submission', () => {
         certificate: 'yes',
         willBringQualityPhoto: 'yes',
         delivery: {
-          jurisdiction: 1
+          jurisdiction: 1,
         },
         healthDeclaration: {
           a: 'no',
