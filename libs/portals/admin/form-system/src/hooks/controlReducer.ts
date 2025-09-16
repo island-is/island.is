@@ -126,11 +126,7 @@ type ChangeActions =
   | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
-      type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
-      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
-    }
-  | {
-      type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
+      type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | {
@@ -647,12 +643,12 @@ export const controlReducer = (
         form: action.payload.newForm,
       }
     }
-    case 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN': {
+    case 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL': {
       const updatedState = {
         ...state,
         form: {
           ...form,
-          stopProgressOnValidatingScreen: action.payload.value,
+          allowProceedOnValidationFail: action.payload.value,
         },
       }
       action.payload.update({ ...updatedState.form })

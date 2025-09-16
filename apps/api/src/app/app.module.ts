@@ -82,6 +82,7 @@ import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { QuestionnairesModule } from '@island.is/api/domains/questionnaires'
 import { PracticalExamsModule } from '@island.is/api/domains/practical-exams'
 import { SeminarsModule } from '@island.is/api/domains/seminars-ver'
+import { VmstApplicationsModule } from '@island.is/api/domains/vmst-applications'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
@@ -230,6 +231,10 @@ import {
 } from '@island.is/clients/vmst-unemployment'
 import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
+import {
+  LandspitaliModule,
+  LandspitaliApiModuleConfig,
+} from '@island.is/api/domains/landspitali'
 
 const environment = getConfig
 
@@ -368,6 +373,8 @@ const environment = getConfig
     SecondarySchoolApiModule,
     VmstUnemploymentClientModule,
     PracticalExamsModule,
+    VmstApplicationsModule,
+    LandspitaliModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -481,6 +488,7 @@ const environment = getConfig
         PaymentsApiModuleConfig,
         BankInfoClientConfig,
         VmstUnemploymentClientConfig,
+        LandspitaliApiModuleConfig,
       ],
     }),
   ],
