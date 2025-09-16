@@ -20,8 +20,14 @@ const CancelCandidacy = () => {
   )
   const { refetchIsOwner } = useIsOwner(currentCollection?.collectionType)
 
-  const [cancelCollection, { loading }] =
-    useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {
+  const [cancelCollection, { loading }] = useMutation<{
+    signatureCollectionCancel: SignatureCollectionSuccess
+  }>(cancelCollectionMutation)
+
+  const onCancelCandidacy = async () => {
+    if (!currentCollection) return
+
+    const { data } = await cancelCollection({
       variables: {
         input: {
           collectionId: currentCollection?.id ?? '',
@@ -30,13 +36,7 @@ const CancelCandidacy = () => {
       },
     })
 
-  const onCancelCandidacy = async () => {
-    const { data } = await cancelCollection()
-    const success = (
-      data as unknown as {
-        signatureCollectionCancel: SignatureCollectionSuccess
-      }
-    ).signatureCollectionCancel.success
+    const success = data?.signatureCollectionCancel.success
 
     if (success) {
       toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
