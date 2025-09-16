@@ -70,11 +70,7 @@ export const paymentInfoItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.paymentInfo.bank,
-<<<<<<< HEAD
       valueText: formatBankAccount(paymentInfo)
-=======
-      valueText: paymentInfo?.bank,
->>>>>>> refs/remotes/origin/feat/disability-pension-application
     },
     {
       width: 'half',
