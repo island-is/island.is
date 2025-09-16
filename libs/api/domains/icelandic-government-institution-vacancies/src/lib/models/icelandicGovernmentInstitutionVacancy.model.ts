@@ -62,6 +62,9 @@ export class IcelandicGovernmentInstitutionVacancyContact {
 
   @Field({ nullable: true })
   phone?: string
+
+  @Field({ nullable: true })
+  jobTitle?: string
 }
 
 @ObjectType()

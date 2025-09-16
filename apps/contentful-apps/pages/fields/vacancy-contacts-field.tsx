@@ -11,6 +11,7 @@ interface Contact {
   name?: string
   email?: string
   phone?: string
+  jobTitle?: string
 }
 
 const VacancyContactsField = () => {
@@ -88,6 +89,22 @@ const VacancyContactsField = () => {
                       return {
                         ...prevContact,
                         name: ev.target.value,
+                      }
+                    }),
+                  )
+                }}
+              />
+
+              <Text>Job Title</Text>
+              <TextInput
+                value={contact.jobTitle}
+                onChange={(ev) => {
+                  setContacts((prevContacts) =>
+                    prevContacts.map((prevContact, prevIndex) => {
+                      if (prevIndex !== index) return prevContact
+                      return {
+                        ...prevContact,
+                        jobTitle: ev.target.value,
                       }
                     }),
                   )
