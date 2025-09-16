@@ -38,6 +38,7 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationEducationLevelsApi,
+  SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCountriesApi,
   SocialInsuranceAdministrationLanguagesApi,
   SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
@@ -122,6 +123,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
+                IdentityApi,
                 UserProfileApi/*
                   TODO: REENABLE ON PROD
                   .configure({
@@ -131,6 +133,7 @@ const template: ApplicationTemplate<
                   })*/,
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
+                SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCategorizedIncomeTypesApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationWithholdingTaxApi,

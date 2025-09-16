@@ -3,6 +3,7 @@ import {
   YesOrNo,
   buildAlertMessageField,
   buildAsyncSelectField,
+  buildBankAccountField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
@@ -25,7 +26,7 @@ import {
 import { Application, FormValue } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
 import { SectionRouteEnum } from '../../../types/routes'
-import { accountNationality, getApplicationExternalData } from '../../../utils'
+import { accountNationality, getApplicationAnswers, getApplicationExternalData } from '../../../utils'
 import { siaGeneralCurrenciesQuery } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
 import { SocialInsuranceGeneralCurrenciesQuery } from '../../../graphql/queries.generated'
@@ -71,14 +72,16 @@ export const paymentInfoSubSection = buildSubSection({
             accountNationality(formValue) === BankAccountType.FOREIGN,
           description: m.paymentInfo.foreignAccountNotice,
         }),
-        buildTextField({
+        buildBankAccountField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.bank`,
-          title: m.paymentInfo.bank,
-          placeholder: '0000-00-000000',
           required: true,
-          condition: (formValue: FormValue) =>
-            accountNationality(formValue) === BankAccountType.ICELANDIC,
-
+          defaultValue: (application: Application) => {
+            const { bankInfo } = getApplicationExternalData(
+              application.externalData,
+            )
+            return { ...bankInfo, bankNumber: bankInfo?.bank }
+          },
+          condition: (formValue: FormValue) => accountNationality(formValue) === BankAccountType.ICELANDIC
         }),
         buildTextField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.iban`,

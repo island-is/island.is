@@ -7,6 +7,12 @@ export {
   NationalRegistrySpouseApi,
 } from '@island.is/application/types'
 
+export const SocialInsuranceAdministrationApplicantApi = defineTemplateApi({
+  action: 'getApplicant',
+  externalDataId: 'socialInsuranceAdministrationApplicant',
+  namespace: 'SocialInsuranceAdministration',
+})
+
 export const SocialInsuranceAdministrationCategorizedIncomeTypesApi =
   defineTemplateApi({
     action: 'getCategorizedIncomeTypes',

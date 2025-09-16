@@ -8,9 +8,10 @@ import { socialInsuranceAdministrationMessage as sm } from '@island.is/applicati
 
 export const dataHandlingSection = buildSection({
   id: 'dataHandlingSection',
-  title: sm.pre.socialInsuranceAdministrationPrivacyTitle,
+  tabTitle: sm.pre.socialInsuranceAdministrationPrivacyTitle,
   children: [
     buildMultiField({
+      title: sm.pre.socialInsuranceAdministrationPrivacyTitle,
       id: 'agreementDescriptionMultiField',
       space: 2,
       children: [

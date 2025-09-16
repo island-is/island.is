@@ -760,6 +760,9 @@ export const getIncomeTypes = (
   incomePlan: IncomePlanRow[],
   categorizedIncomeTypes: CategorizedIncomeTypes[],
 ): IncomeTypes[] => {
+  console.log(incomePlan)
+  console.log(categorizedIncomeTypes)
+
   return incomePlan.map((i) => ({
     incomeTypeNumber:
       categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)

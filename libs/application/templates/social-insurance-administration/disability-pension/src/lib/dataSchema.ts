@@ -269,14 +269,23 @@ export const dataSchema = z.object({
   paymentInfo: z
     .object({
       bankAccountType: z.nativeEnum(BankAccountType),
-      bank: z.string(),
+      bank: z.object({
+        bankNumber: z.string().regex(/^\d{4}$/),
+        ledger: z.string().regex(/^\d{2}$/),
+        accountNumber: z.string().regex(/^\d{6}$/),
+      }),
       bankAddress: z.string(),
       bankName: z.string(),
       currency: z.string().nullable(),
       iban: z.string(),
       swift: z.string(),
       personalAllowance: z.enum([YES, NO]),
-      personalAllowanceUsage: z.string().optional(),
+      personalAllowanceUsage: z.coerce
+        .number()
+        .int()
+        .min(1)
+        .max(100)
+        .optional(),
       taxLevel: z.enum([
         TaxLevelOptions.INCOME,
         TaxLevelOptions.FIRST_LEVEL,
