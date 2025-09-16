@@ -13,7 +13,6 @@ import {
   selfEvaluationItems,
 } from './overviewItems'
 
-
 export const overviewFields = (editable?: boolean) => {
   return [
     buildOverviewField({
