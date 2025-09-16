@@ -158,11 +158,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
         )
     }
 
-    // console.log('estates raw:', estateResponse)
-
     const estates = estateResponse.map(estateTransformer)
-
-    // console.log('estates transformed:', estates)
 
     const relationOptions = (await this.syslumennService.getEstateRelations())
       .relations
@@ -250,9 +246,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
         }
       }
     }
-
-    // console.log('uploadData')
-    // console.log(uploadData)
 
     const result: DataUploadResponse = await this.syslumennService
       .uploadData(

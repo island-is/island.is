@@ -669,10 +669,6 @@ export class SyslumennService {
       },
     })
 
-    // console.log('getEstateInfoWithAvailableSettlements')
-    // console.log(res)
-    // console.log('end of getEstateInfoWithAvailableSettlements')
-
     return res?.yfirlit?.map(mapEstateInfo) ?? []
   }
 

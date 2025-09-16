@@ -37,7 +37,6 @@ interface BankAccountsRepeaterProps {
 export const BankAccountsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & BankAccountsRepeaterProps>
 > = ({ application, field, errors }) => {
-  // console.log('application', application)
   const { id } = field
   const repeaterButtonText = field?.props?.repeaterButtonText
   const error = (errors as ErrorValue)?.estate?.bankAccounts
