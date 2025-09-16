@@ -79,6 +79,7 @@ export const GetSignedList = gql`
       canUnsign
       slug
       signedDate
+      collectionType
     }
   }
 `
@@ -112,6 +113,7 @@ export const GetListsForUser = gql`
       collectionId
       slug
       numberOfSignatures
+      collectionType
     }
   }
 `
