@@ -33,8 +33,8 @@ import {
   TUploadFile,
   useCourtDocuments,
   useCourtSessions,
+  useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useUsers from '@island.is/judicial-system-web/src/utils/hooks/useUsers'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import * as styles from './CourtRecord.css'

@@ -9,8 +9,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import useUsers from '@island.is/judicial-system-web/src/utils/hooks/useUsers'
+import {
+  useCase,
+  useUsers,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './SelectCourtOfficials.strings'
 
