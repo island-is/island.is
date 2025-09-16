@@ -208,7 +208,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
   return (
     <AccordionItem
-      id="courtRecordAccordionItem"
+      id={`courtRecordAccordionItem-${courtSession.id}`}
       label={`Þinghald ${index + 1}`}
       labelVariant="h3"
       key={courtSession.id}
