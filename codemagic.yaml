@@ -135,7 +135,7 @@ definitions:
         # Run Maestro Cloud
         maestro cloud \
         --apiKey $MDEV_API_KEY \
-        --project-id proj_01k57043b8e7vvkd20k4epgh44 \
+        --projectId proj_01k57043b8e7vvkd20k4epgh44 \
         --name "Ísland.dev" \
         $iosAppPath \
         .maestro/
