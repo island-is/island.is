@@ -276,7 +276,11 @@ export class LimitedAccessCaseController {
     JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases, ...indictmentCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseReadGuard,
     CaseCompletedGuard,
   )
