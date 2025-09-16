@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import * as m from '../../../../lib/messages'
-import { SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types/routes'
 import { getYears } from '../../../../utils/dates'
 import {
   siaGeneralProfessionActivities,

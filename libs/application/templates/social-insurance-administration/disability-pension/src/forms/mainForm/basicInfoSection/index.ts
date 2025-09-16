@@ -1,5 +1,5 @@
 import { buildSection } from '@island.is/application/core'
-import { SectionRouteEnum } from '../../../types'
+import { SectionRouteEnum } from '../../../types/routes'
 import { disabilityEvaluationSubSection } from './disabilityEvaluationSubSections'
 import { employmentParticipationSubSection } from './employmentParticipationsSubSections'
 import { incomePlanInstructionsSubSection } from './incomePlanInstructionsSubSection'

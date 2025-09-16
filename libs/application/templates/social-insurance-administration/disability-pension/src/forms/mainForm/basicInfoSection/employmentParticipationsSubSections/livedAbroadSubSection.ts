@@ -9,7 +9,7 @@ import {
 import { Application, FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
-import { SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types/routes'
 import { getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
 import * as m from '../../../../lib/messages'
 
@@ -29,7 +29,6 @@ export const livedAbroadSubSection = buildMultiField({
     buildRadioField({
       id: `${SectionRouteEnum.LIVED_ABROAD}.hasLivedAbroad`,
       width: 'half',
-      backgroundColor: 'blue',
       required: true,
       options: yesOrNoOptions,
     }),

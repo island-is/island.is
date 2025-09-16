@@ -3,7 +3,7 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { SectionRouteEnum } from '../../../types'
+import { SectionRouteEnum } from '../../../types/routes'
 import * as m from '../../../lib/messages'
 
 export const incomePlanInstructionsSubSection = buildSubSection({

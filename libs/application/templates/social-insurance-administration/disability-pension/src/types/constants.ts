@@ -1,5 +1,3 @@
-import { socialInsuranceAdministrationMessage as sm } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-
 export enum NotEligibleReasonCodes {
   ERROR_PROCESSING_CLIENT = 'ERROR_PROCESSING_CLIENT',
   APPLICANT_AGE_OUT_OF_RANGE = 'APPLICANT_AGE_OUT_OF_RANGE',
@@ -10,6 +8,8 @@ export enum NotEligibleReasonCodes {
 }
 
 export const OTHER_STATUS_VALUE = 'ANNAD'
+
+export const MAX_QUESTIONNAIRE_QUESTIONS = 5
 
 export const MONTH_NAMES = [
                   'january',

@@ -1,5 +1,5 @@
 import * as m from '../../lib/messages'
-import { SectionRouteEnum } from '../../types'
+import { SectionRouteEnum } from '../../types/routes'
 import { Box, Button, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 

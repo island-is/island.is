@@ -10,7 +10,9 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   Application,
+  NationalRegistryIndividual,
   NationalRegistryResidenceHistory,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import {
   Country,
@@ -229,6 +231,9 @@ export const getApplicationExternalData = (
     [],
   ) as NationalRegistryResidenceHistory[]
 
+  const individual = getValueViaPath<NationalRegistryIndividual>(externalData, 'nationalRegistry.data')
+  const spouse = getValueViaPath<NationalRegistrySpouse>(externalData, 'nationalRegistrySpouse.data')
+
   const applicantName = getValueViaPath(
     externalData,
     'nationalRegistry.data.fullName',
@@ -300,6 +305,8 @@ export const getApplicationExternalData = (
   return {
     residenceHistory,
     applicantName,
+    individual,
+    spouse,
     applicantNationalId,
     applicantAddress,
     applicantPostalCode,

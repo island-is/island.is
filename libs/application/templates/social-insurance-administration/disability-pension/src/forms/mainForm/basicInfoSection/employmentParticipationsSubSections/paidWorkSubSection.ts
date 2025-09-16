@@ -6,7 +6,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { yesOrNoOptions } from '../../../../utils'
-import { SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types/routes'
 import { FormValue } from '@island.is/application/types'
 import * as m from '../../../../lib/messages'
 

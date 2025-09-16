@@ -4,7 +4,7 @@ import {
   buildTitleField,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
-import { SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types/routes'
 
 export const biggestIssueField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_BIGGEST_ISSUE,

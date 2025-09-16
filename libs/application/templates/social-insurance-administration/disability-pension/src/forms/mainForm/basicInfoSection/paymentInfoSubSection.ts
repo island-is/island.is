@@ -24,7 +24,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { Application, FormValue } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
-import { SectionRouteEnum } from '../../../types'
+import { SectionRouteEnum } from '../../../types/routes'
 import { accountNationality, getApplicationExternalData } from '../../../utils'
 import { siaGeneralCurrencies } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
@@ -52,7 +52,6 @@ export const paymentInfoSubSection = buildSubSection({
           width: 'full',
           largeButtons: false,
           required: true,
-          backgroundColor: 'white',
           options: [
             {
               value: BankAccountType.ICELANDIC,
@@ -79,7 +78,7 @@ export const paymentInfoSubSection = buildSubSection({
           required: true,
           condition: (formValue: FormValue) =>
             accountNationality(formValue) === BankAccountType.ICELANDIC,
-          backgroundColor: 'blue',
+
         }),
         buildTextField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.iban`,
@@ -185,7 +184,7 @@ export const paymentInfoSubSection = buildSubSection({
             )
             return personalAllowance === YES
           },
-          placeholder: '1%',
+          placeholder: sm.payment.personalAllowancePlaceholder,
           defaultValue: '100',
           variant: 'number',
           width: 'half',

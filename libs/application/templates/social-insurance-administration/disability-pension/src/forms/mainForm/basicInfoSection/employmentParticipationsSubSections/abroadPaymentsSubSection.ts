@@ -7,7 +7,7 @@ import {
   YesOrNoEnum,
 } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
-import { SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types/routes'
 import { getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
 import * as m from '../../../../lib/messages'
 
@@ -28,7 +28,6 @@ export const abroadPaymentsSubSection = buildMultiField({
     buildRadioField({
       id: `${SectionRouteEnum.ABROAD_PAYMENT}.hasAbroadPayments`,
       width: 'half',
-      backgroundColor: 'blue',
       required: true,
       options: yesOrNoOptions,
     }),

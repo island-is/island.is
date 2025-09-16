@@ -4,7 +4,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import * as m from '../../../lib/messages'
-import { SectionRouteEnum } from '../../../types'
+import { SectionRouteEnum } from '../../../types/routes'
 import { overviewFields } from '../../../utils/overviewFields'
 import { socialInsuranceAdministrationMessage as sm } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { DefaultEvents } from '@island.is/application/types'

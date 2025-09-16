@@ -19,7 +19,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import { Application } from '@island.is/application/types'
-import { SectionRouteEnum } from '../../../types'
+import { SectionRouteEnum } from '../../../types/routes'
 import { siaGeneralCurrencies } from '../../../graphql/queries'
 import { SocialInsuranceGeneralCurrenciesQuery } from '../../../graphql/queries.generated'
 import { generateMonthInput } from '../../../utils/generateMonthInput'
@@ -188,7 +188,6 @@ export const incomePlanSubSection = buildSubSection({
             valueModifier: (_, activeField) => updateIncomePerYear(activeField),
             watchValues: watchIncomePerYearValue,
           },
-          suffix: '',
           condition: (_, activeField) => incomePerYearCondition(activeField)
         },
         unevenIncomePerYear: {
@@ -206,7 +205,6 @@ export const incomePlanSubSection = buildSubSection({
                   .monthlyDistributionOfIncomeTooltip,
             },
           ],
-          backgroundColor: 'blue',
           displayInTable: false,
           condition: (_, activeField) => unevenIncomePerYearCondition(activeField),
         },

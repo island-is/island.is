@@ -7,12 +7,11 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
-import { SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types/routes'
+import { MAX_QUESTIONNAIRE_QUESTIONS } from '../../../../types/constants'
 import { SelfAssessmentQuestionnaire } from '../../../../types/interfaces'
 import { Application } from '@island.is/application/types'
 import { getQuestionnaire } from '../../../../utils/getQuestionnaire'
-
-export const MAX_QUESTIONS = 5
 
 const buildQuestion = (index: number) => {
   return buildMultiField({
@@ -98,7 +97,7 @@ const buildQuestion = (index: number) => {
     ],
     condition: (_, externalData) => {
       const questions = getQuestionnaire(externalData)
-      return index < questions.length && index < MAX_QUESTIONS
+      return index < questions.length && index < MAX_QUESTIONNAIRE_QUESTIONS
     },
   })
 }
@@ -113,6 +112,6 @@ export const capabilityImpairmentSubSection = buildSubSection({
       title: m.capabilityImpairment.title,
       description: m.capabilityImpairment.description,
     }),
-    ...[...Array(MAX_QUESTIONS)].map((_key, index) => buildQuestion(index)),
+    ...[...Array(MAX_QUESTIONNAIRE_QUESTIONS)].map((_key, index) => buildQuestion(index)),
   ],
 })

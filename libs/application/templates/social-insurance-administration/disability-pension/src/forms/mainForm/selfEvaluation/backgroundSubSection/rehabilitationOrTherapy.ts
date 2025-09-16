@@ -7,7 +7,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
-import { SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types/routes'
 import { yesOrNoOptions } from '../../../../utils'
 
 export const rehabilitationOrTherapyField = buildMultiField({

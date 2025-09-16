@@ -4,7 +4,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
-import { SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types/routes'
 import { Application } from '@island.is/application/types'
 import { EducationLevels } from '../../../../types/interfaces'
 

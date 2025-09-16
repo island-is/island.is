@@ -11,7 +11,7 @@ import { educationLevelField } from './educationLevel'
 import { employmentImportanceField } from './employmentImportance'
 import { rehabilitationOrTherapyField } from './rehabilitationOrTherapy'
 import { biggestIssueField } from './biggestIssue'
-import { SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types/routes'
 import { assistanceField } from './assistance'
 import { employmentCapabilityField } from './employmentCapability'
 

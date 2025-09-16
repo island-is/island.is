@@ -6,7 +6,7 @@ import {
   NO,
   YesOrNo,
 } from '@island.is/application/core'
-import { SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types/routes'
 import { yesOrNoOptions } from '../../../../utils'
 import * as m from '../../../../lib/messages'
 

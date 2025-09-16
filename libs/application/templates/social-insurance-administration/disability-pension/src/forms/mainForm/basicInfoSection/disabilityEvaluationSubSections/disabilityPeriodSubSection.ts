@@ -3,7 +3,7 @@ import {
   buildSelectField,
   buildTitleField,
 } from '@island.is/application/core'
-import { SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types/routes'
 import { getYears } from '../../../../utils/dates'
 import * as m from '../../../../lib/messages'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'

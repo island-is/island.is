@@ -13,7 +13,7 @@ import kennitala from 'kennitala'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import * as m from '../lib/messages'
-import { SectionRouteEnum } from '../types'
+import { SectionRouteEnum } from '../types/routes'
 import { getApplicationAnswers } from './getApplicationAnswers'
 
 export const aboutApplicantItems = (
