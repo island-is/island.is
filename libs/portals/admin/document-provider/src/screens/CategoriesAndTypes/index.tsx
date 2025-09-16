@@ -19,6 +19,10 @@ import {
   TabOptions,
   TypeCategoryContext,
 } from './TypeCategoryContext'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { DocumentProvidersNavigation } from '../../components/DocumentProvidersNavigation/DocumentProvidersNavigation'
+import { useGetProvidersByNationalId } from '../../shared/useGetProvidersByNationalId'
+import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
 
 const CategoriesAndTypes = () => {
   const { formatMessage } = useLocale()
@@ -26,6 +30,16 @@ const CategoriesAndTypes = () => {
     useState<CategoryAndType>()
   const [activeTab, setActiveTab] = useState<TabOptions>('categories')
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const user = useUserInfo()
+  const { loading, items: providers } = useGetProvidersByNationalId(
+    user.profile.nationalId,
+    undefined,
+    undefined,
+  )
+
+  if (loading) {
+    return <DocumentProvidersLoading />
+  }
 
   return (
     <TypeCategoryContext.Provider
@@ -42,7 +56,9 @@ const CategoriesAndTypes = () => {
             span={['12/12', '5/12', '5/12', '3/12']}
             offset={['0', '7/12', '7/12', '0']}
           >
-            <Box paddingBottom={4}></Box>
+            <Box paddingBottom={4}>
+              <DocumentProvidersNavigation providers={providers || []} />
+            </Box>
           </GridColumn>
           <GridColumn
             paddingTop={[5, 5, 5, 2]}

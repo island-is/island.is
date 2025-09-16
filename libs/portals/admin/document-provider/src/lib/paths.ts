@@ -3,6 +3,9 @@ export enum DocumentProviderPaths {
   DocumentProviderRootOverview = 'yfirlit',
   DocumentProviderOverview = 'skjalaveitur/yfirlit',
   DocumentProviderDocumentProvidersSingle = 'skjalaveitur/yfirlit/:providerId',
+  InstitutionDocumentProviderOverview = 'skjalaveitur/stofnun/yfirlit',
+  InstitutionDocumentProviderDocumentProvidersSingle = 'skjalaveitur/stofnun/yfirlit/:providerId',
   DocumentProviderPaper = 'skjalaveitur/pappir',
-  DocumentProviderSettings = 'skjalaveitur/stillingar',
+  DocumentProviderCategoryAndType = 'skjalaveitur/flokkar-og-tegundir',
+  DocumentProviderSettings = '/skjalaveitur/stillingar',
 }

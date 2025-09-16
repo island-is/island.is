@@ -12,11 +12,31 @@ const SingleDocumentProvider = lazy(() =>
   import('./screens/SingleDocumentProvider/SingleDocumentProvider'),
 )
 
+const InstitutionDocumentProviders = lazy(() =>
+  import('./screens/InstitutionDocumentProviders/InstitutionDocumentProviders'),
+)
+const InstitutionSingleDocumentProvider = lazy(() =>
+  import(
+    './screens/InstitutionSingleDocumentProvider/InstitutionSingleDocumentProvider'
+  ),
+)
+
+const PaperScreen = lazy(() => import('./screens/Paper/Paper'))
+const CategoriesAndTypesScreen = lazy(() =>
+  import('./screens/CategoriesAndTypes'),
+)
+
+const allowedScopes: string[] = [
+  AdminPortalScope.documentProvider,
+  AdminPortalScope.documentProviderAdmin,
+  AdminPortalScope.documentProviderInstitution,
+]
+
 export const documentProviderModule: PortalModule = {
   name: m.rootName,
   layout: 'full',
   enabled: ({ userInfo }) =>
-    userInfo.scopes.includes(AdminPortalScope.documentProvider),
+    userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
   routes: () => {
     return [
       {
@@ -40,8 +60,23 @@ export const documentProviderModule: PortalModule = {
         element: <SingleDocumentProvider />,
       },
       {
-        name: m.Settings,
-        path: DocumentProviderPaths.DocumentProviderSettings,
+        name: m.overview,
+        path: DocumentProviderPaths.InstitutionDocumentProviderOverview,
+        element: <InstitutionDocumentProviders />,
+      },
+      {
+        name: m.documentProviderSingle,
+        path: DocumentProviderPaths.InstitutionDocumentProviderDocumentProvidersSingle,
+        element: <InstitutionSingleDocumentProvider />,
+      },
+      {
+        name: m.paper,
+        path: DocumentProviderPaths.DocumentProviderPaper,
+        element: <PaperScreen />,
+      },
+      {
+        name: m.catAndTypeName,
+        path: DocumentProviderPaths.DocumentProviderCategoryAndType,
         element: <CategoriesAndTypesScreen />,
       },
     ]

@@ -1,83 +1,65 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
-  Breadcrumbs,
   DatePicker,
   GridColumn,
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { ProvidersTable } from '../../components/DocumentProvidersTable/DocumentProvidersTable'
+import { gql, useQuery } from '@apollo/client'
+import { Organisation } from '@island.is/api/schema'
+import { DocumentProvidersSearch } from './DocumentProvidersSearch'
 import { DocumentProvidersDashboard } from './DocumentProvidersDashboard'
 import { IntroHeader } from '@island.is/portals/core'
-import { useGetProvidersByNationalId } from '../../shared/useGetProvidersByNationalId'
 import { DocumentProvidersNavigation } from '../../components/DocumentProvidersNavigation/DocumentProvidersNavigation'
-import { useGetProviderStatisticsBreakdownWCategoriesByNationalId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByNationalId'
-import { useUserInfo } from '@island.is/react-spa/bff'
-import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
-import { useGetStatisticsByNationalId } from '../../shared/useGetStatisticsByNationalId'
-import {
-  StatisticBoxList,
-  StatisticsBoxData,
-} from '../../components/StatisticBoxList/StatisticBoxList'
-import { TotalStatisticsSortBy } from '@island.is/api/schema'
-import startOfMonth from 'date-fns/startOfMonth'
-import subYears from 'date-fns/subYears'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { DocumentProviderPaths } from '../../lib/paths'
+import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
+
+export type OrganisationPreview = Pick<
+  Organisation,
+  'name' | 'id' | 'nationalId'
+>
+
+const getOrganisationsPreviewQuery = gql`
+  query GetOrganisationsPreviewQuery {
+    getProviderOrganisations {
+      name
+      id
+      nationalId
+    }
+  }
+`
 
 const DocumentProviders = () => {
-  const today = new Date()
-
-  // first day of the current month
-  const firstOfThisMonth = startOfMonth(today)
-
-  // first day of the same month, one year ago
-  const firstOfLastYearMonth = startOfMonth(subYears(today, 1))
-
-  const [fromDate, setFromDate] = useState<Date | undefined>(
-    firstOfLastYearMonth,
-  )
-  const [toDate, setToDate] = useState<Date | undefined>(firstOfThisMonth)
-
-  const { formatMessage } = useLocale()
+  const navigate = useNavigate()
   const user = useUserInfo()
+  const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
+  const [toDate, setToDate] = useState<Date | undefined>(undefined)
+  const { formatMessage } = useLocale()
+  const { data, error } = useQuery(getOrganisationsPreviewQuery, {
+    fetchPolicy: 'cache-and-network',
+  })
 
-  const { loading: loadingStatistics, statistics } =
-    useGetStatisticsByNationalId(user.profile.nationalId, fromDate, toDate)
-  const { loading, items: providers } = useGetProvidersByNationalId(
-    user.profile.nationalId,
-    fromDate,
-    toDate,
-  )
-  const { loading: loadingSentFiles, chartData: sentFilesChartData } =
-    useGetProviderStatisticsBreakdownWCategoriesByNationalId(
-      user.profile.nationalId,
-      fromDate,
-      toDate,
-      TotalStatisticsSortBy.Date,
-      true,
-      1,
-      4,
-    )
+  const today = new Date()
+  const organisationsPreview: OrganisationPreview[] =
+    data?.getProviderOrganisations || []
 
-  const statisticsBoxdata: StatisticsBoxData[] = [
-    {
-      name: formatMessage(m.statisticsBoxOrganisationsCount),
-      value: statistics?.providerCount || 0,
-    },
-    {
-      name: formatMessage(m.statisticsBoxPublishedDocuments),
-      value: statistics?.statistics?.published || 0,
-    },
-    {
-      name: formatMessage(m.statisticsBoxOpenedDocuments),
-      value: statistics?.statistics?.opened || 0,
-    },
-  ]
+  useEffect(() => {
+    if (
+      /*!user.scopes.includes(AdminPortalScope.documentProvider) &&*/ user.scopes.includes(
+        AdminPortalScope.documentProviderInstitution,
+      )
+    ) {
+      navigate(DocumentProviderPaths.InstitutionDocumentProviderOverview)
+    }
+  }, [user, navigate])
 
-  if (loading || loadingSentFiles || loadingStatistics) {
+  if (!user) {
     return <DocumentProvidersLoading />
   }
 
@@ -89,7 +71,7 @@ const DocumentProviders = () => {
           offset={['0', '7/12', '7/12', '0']}
         >
           <Box paddingBottom={4}>
-            <DocumentProvidersNavigation providers={providers || []} />
+            <DocumentProvidersNavigation providers={[]} />
           </Box>
         </GridColumn>
         <GridColumn
@@ -97,17 +79,7 @@ const DocumentProviders = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Breadcrumbs
-            items={[
-              { title: formatMessage(m.documentProvidersTitle) },
-              {
-                title: user.profile.name,
-                href: DocumentProviderPaths.DocumentProviderOverview,
-              },
-            ]}
-          />
-
-          <Box marginTop={1} marginBottom={[2, 3, 5]}>
+          <Box marginBottom={[2, 3, 5]}>
             <IntroHeader
               title={formatMessage(m.documentProvidersTitle)}
               intro={formatMessage(m.documentProvidersDescription)}
@@ -121,15 +93,13 @@ const DocumentProviders = () => {
                     placeholderText={formatMessage(
                       m.documentProvidersDateFromPlaceholderText,
                     )}
-                    selected={fromDate}
                     locale="is"
                     minDate={new Date(2011, 1, 1)}
                     maxDate={new Date()}
                     minYear={2011}
                     maxYear={today.getFullYear()}
                     handleChange={(date: Date) => setFromDate(date)}
-                    size="sm"
-                    appearInline={true}
+                    size="xs"
                   />
                 </GridColumn>
                 <GridColumn span="6/12">
@@ -139,7 +109,6 @@ const DocumentProviders = () => {
                     placeholderText={formatMessage(
                       m.documentProvidersDateToPlaceholderText,
                     )}
-                    selected={toDate}
                     locale="is"
                     minDate={new Date(2011, 1, 1)}
                     maxDate={new Date()}
@@ -150,27 +119,23 @@ const DocumentProviders = () => {
                     errorMessage={formatMessage(
                       m.documentProvidersDateToErrorMessage,
                     )}
-                    size="sm"
-                    appearInline={true}
+                    size="xs"
                   />
                 </GridColumn>
               </GridRow>
             </Box>
-
-            <StatisticBoxList
-              loading={loadingStatistics}
-              statistics={statisticsBoxdata || []}
-            />
-
-            <DocumentProvidersDashboard
-              statistics={statistics}
-              nationalId={user.profile.nationalId}
-              sentFilesData={sentFilesChartData || []}
-              fromDate={fromDate}
-              toDate={toDate}
-            />
-
-            <ProvidersTable providers={providers || []}></ProvidersTable>
+            {!error && (
+              <DocumentProvidersDashboard
+                organisationsCount={organisationsPreview.length}
+                fromDate={fromDate}
+                toDate={toDate}
+              />
+            )}
+            {!error && (
+              <DocumentProvidersSearch
+                organisationsPreview={organisationsPreview}
+              />
+            )}
           </Box>
         </GridColumn>
       </GridRow>

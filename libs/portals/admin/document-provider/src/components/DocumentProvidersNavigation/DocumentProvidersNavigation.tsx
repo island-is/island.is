@@ -4,6 +4,7 @@ import { getDocumentProviderNavigationItems } from '../../lib/navigation'
 import { Navigation, NavigationItem } from '@island.is/island-ui/core'
 import { DocumentProviderPaths } from '../../lib/paths'
 import { useLocation } from 'react-router-dom'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 interface DocumentProvidersNavigationProps {
   providers: ProviderInfo[]
@@ -13,11 +14,12 @@ export const DocumentProvidersNavigation = ({
   providers,
 }: DocumentProvidersNavigationProps) => {
   const location = useLocation()
+  const user = useUserInfo()
 
   const dynamicChildren: NavigationItem[] =
     providers?.map((provider) => ({
       title: provider.name,
-      href: DocumentProviderPaths.DocumentProviderDocumentProvidersSingle.replace(
+      href: DocumentProviderPaths.InstitutionDocumentProviderDocumentProvidersSingle.replace(
         ':providerId',
         provider.providerId,
       ),
@@ -26,6 +28,7 @@ export const DocumentProvidersNavigation = ({
   const nav = getDocumentProviderNavigationItems(
     dynamicChildren,
     location.pathname,
+    user,
   )
 
   return (
