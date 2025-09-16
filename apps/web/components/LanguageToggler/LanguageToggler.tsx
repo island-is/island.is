@@ -51,13 +51,20 @@ export const LanguageToggler = ({
       return null
     }
 
+    console.log('bebe')
+
     const pathWithoutQueryParams = Router.asPath.split('?')[0]
+
+    console.log(contentfulIds)
 
     if (!contentfulIds?.length) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
       const { type } = typeResolver(pathWithoutQueryParams, true)
       const pagePath = linkResolver(type, [], otherLanguage).href
+
+      console.log(type)
+      console.log(pagePath)
 
       if (pagePath === '/404') {
         return setShowDialog(true)
