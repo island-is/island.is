@@ -5,7 +5,7 @@ mutation MarkAllDocumentsAsRead {
 }
 
 query ListOrganizations {
-  getOrganizations(input: { lang: "is-IS", perPage: 200 }) {
+  getOrganizations(input: { lang: "is-IS" }) {
     items {
       ...OrganizationFragment
     }
