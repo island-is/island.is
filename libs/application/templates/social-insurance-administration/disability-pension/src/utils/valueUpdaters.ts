@@ -1,24 +1,35 @@
-import { getTypesOptions } from "@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils";
-import { Application } from "@island.is/application/types";
-import { getApplicationExternalData } from "./getApplicationAnswers";
-import { ISK, INCOME, RatioType } from "@island.is/application/templates/social-insurance-administration-core/lib/constants";
-import { YES } from "@island.is/application/core";
+import { getTypesOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { Application } from '@island.is/application/types'
+import { getApplicationExternalData } from './getApplicationAnswers'
+import {
+  ISK,
+  INCOME,
+  RatioType,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { YES } from '@island.is/application/core'
 
+export const updateIncomeTypeValue = (
+  application: Application,
+  activeField?: Record<string, string>,
+) => {
+  const { categorizedIncomeTypes = [] } = getApplicationExternalData(
+    application.externalData,
+  )
 
-export const updateIncomeTypeValue = (application: Application, activeField?: Record<string, string>) => {
-    const { categorizedIncomeTypes = [] } = getApplicationExternalData(application.externalData)
-
-    const options = getTypesOptions(
-      categorizedIncomeTypes,
-      activeField?.incomeCategory,
-    )
-    const selectedOption = options.find(
-      (option) => option.value === activeField?.incomeType,
-    )?.value
-    return selectedOption ?? null
+  const options = getTypesOptions(
+    categorizedIncomeTypes,
+    activeField?.incomeCategory,
+  )
+  const selectedOption = options.find(
+    (option) => option.value === activeField?.incomeType,
+  )?.value
+  return selectedOption ?? null
 }
 
-export const updateEqualIncomePerMonth = (activeField?: Record<string, string>, foreign?: boolean) => {
+export const updateEqualIncomePerMonth = (
+  activeField?: Record<string, string>,
+  foreign?: boolean,
+) => {
   const unevenAndEmploymentIncome =
     activeField?.unevenIncomePerYear?.[0] !== YES ||
     (activeField?.incomeCategory !== INCOME &&
@@ -29,9 +40,7 @@ export const updateEqualIncomePerMonth = (activeField?: Record<string, string>, 
     (foreign ? activeField?.currency !== ISK : activeField?.currency === ISK) &&
     unevenAndEmploymentIncome
   ) {
-    return Math.round(
-      Number(activeField?.incomePerYear) / 12,
-    ).toString()
+    return Math.round(Number(activeField?.incomePerYear) / 12).toString()
   }
   return undefined
 }
@@ -62,18 +71,14 @@ export const updateIncomePerYear = (activeField?: Record<string, string>) => {
     activeField?.income === RatioType.MONTHLY &&
     activeField?.currency === ISK
   ) {
-    return (
-      Number(activeField?.equalIncomePerMonth) * 12
-    ).toString()
+    return (Number(activeField?.equalIncomePerMonth) * 12).toString()
   }
 
   if (
     activeField?.income === RatioType.MONTHLY &&
     activeField?.currency !== ISK
   ) {
-    return (
-      Number(activeField?.equalForeignIncomePerMonth) * 12
-    ).toString()
+    return (Number(activeField?.equalForeignIncomePerMonth) * 12).toString()
   }
 
   return undefined

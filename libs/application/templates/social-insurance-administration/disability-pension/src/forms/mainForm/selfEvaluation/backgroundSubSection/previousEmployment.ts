@@ -17,7 +17,10 @@ import {
   siaGeneralProfessionsQuery,
 } from '../../../../graphql/queries'
 import { yesOrNoOptions } from '../../../../utils'
-import { SocialInsuranceGeneralProfessionsQuery, SocialInsuranceGeneralProfessionActivitiesQuery } from '../../../../graphql/queries.generated'
+import {
+  SocialInsuranceGeneralProfessionsQuery,
+  SocialInsuranceGeneralProfessionActivitiesQuery,
+} from '../../../../graphql/queries.generated'
 
 export const previousEmploymentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT,

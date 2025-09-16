@@ -328,7 +328,7 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Heimili banka',
       description: 'Bank address',
     },
-    personalAllowancePlaceholder:{
+    personalAllowancePlaceholder: {
       id: 'sia.application:payment.personal.allowance.placeholder',
       defaultMessage: '1%',
       description: '1%',

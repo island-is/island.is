@@ -112,6 +112,8 @@ export const capabilityImpairmentSubSection = buildSubSection({
       title: m.capabilityImpairment.title,
       description: m.capabilityImpairment.description,
     }),
-    ...[...Array(MAX_QUESTIONNAIRE_QUESTIONS)].map((_key, index) => buildQuestion(index)),
+    ...[...Array(MAX_QUESTIONNAIRE_QUESTIONS)].map((_key, index) =>
+      buildQuestion(index),
+    ),
   ],
 })

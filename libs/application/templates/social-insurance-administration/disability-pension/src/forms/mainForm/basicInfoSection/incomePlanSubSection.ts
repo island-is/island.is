@@ -9,9 +9,7 @@ import {
   ISK,
   RatioType,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import {
-  IncomePlanConditions,
-} from '@island.is/application/templates/social-insurance-administration-core/types'
+import { IncomePlanConditions } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   getCategoriesOptions,
   getCurrencies,
@@ -24,9 +22,17 @@ import { siaGeneralCurrenciesQuery } from '../../../graphql/queries'
 import { SocialInsuranceGeneralCurrenciesQuery } from '../../../graphql/queries.generated'
 import { generateMonthInput } from '../../../utils/generateMonthInput'
 import { getApplicationExternalData } from '../../../utils'
-import { updateEqualIncomePerMonth, updateIncomePerYear, updateIncomeTypeValue } from '../../../utils/valueUpdaters'
+import {
+  updateEqualIncomePerMonth,
+  updateIncomePerYear,
+  updateIncomeTypeValue,
+} from '../../../utils/valueUpdaters'
 import { isForeignCurrency } from '../../../utils/isForeignCurrency'
-import { equalIncomePerMonthCondition, incomePerYearCondition, unevenIncomePerYearCondition } from '../../../utils/conditions'
+import {
+  equalIncomePerMonthCondition,
+  incomePerYearCondition,
+  unevenIncomePerYearCondition,
+} from '../../../utils/conditions'
 import { watchIncomePerYearValue } from '../../../utils/valueWatchers'
 
 export const incomePlanSubSection = buildSubSection({
@@ -50,43 +56,38 @@ export const incomePlanSubSection = buildSubSection({
         }
       },
       formTitle: sm.incomePlan.registerIncome,
-      addItemButtonText:
-        sm.incomePlan.addIncome,
-      saveItemButtonText:
-        sm.incomePlan.saveIncome,
+      addItemButtonText: sm.incomePlan.addIncome,
+      saveItemButtonText: sm.incomePlan.saveIncome,
       editField: true,
-      editButtonTooltipText:
-        sm.incomePlan.editIncome,
-      removeButtonTooltipText:
-        sm.incomePlan.removeIncome,
+      editButtonTooltipText: sm.incomePlan.editIncome,
+      removeButtonTooltipText: sm.incomePlan.removeIncome,
       fields: {
         incomeCategory: {
           component: 'select',
           label: sm.incomePlan.incomeCategory,
-          placeholder:
-            sm.incomePlan
-              .selectIncomeCategory,
+          placeholder: sm.incomePlan.selectIncomeCategory,
           displayInTable: false,
           width: 'half',
           isSearchable: true,
-          options: ({externalData}) => {
-            const { categorizedIncomeTypes = [] } = getApplicationExternalData(externalData)
+          options: ({ externalData }) => {
+            const { categorizedIncomeTypes = [] } =
+              getApplicationExternalData(externalData)
             return getCategoriesOptions(categorizedIncomeTypes)
           },
         },
         incomeType: {
           component: 'select',
           label: sm.incomePlan.incomeType,
-          placeholder:
-            sm.incomePlan.selectIncomeType,
+          placeholder: sm.incomePlan.selectIncomeType,
           width: 'half',
           isSearchable: true,
           updateValueObj: {
             valueModifier: updateIncomeTypeValue,
             watchValues: 'incomeCategory',
           },
-          options: ({externalData}, activeField) => {
-            const { categorizedIncomeTypes = [] } = getApplicationExternalData(externalData)
+          options: ({ externalData }, activeField) => {
+            const { categorizedIncomeTypes = [] } =
+              getApplicationExternalData(externalData)
 
             return getTypesOptions(
               categorizedIncomeTypes,
@@ -97,14 +98,13 @@ export const incomePlanSubSection = buildSubSection({
         currency: {
           component: 'selectAsync',
           label: sm.incomePlan.currency,
-          placeholder:
-            sm.incomePlan.selectCurrency,
+          placeholder: sm.incomePlan.selectCurrency,
           isSearchable: true,
           updateValueObj: {
             valueModifier: (_, activeField) => {
               const defaultCurrency = isForeignCurrency(activeField)
-                  ? null
-                  : ISK
+                ? null
+                : ISK
 
               return defaultCurrency
             },
@@ -116,10 +116,7 @@ export const incomePlanSubSection = buildSubSection({
                 query: siaGeneralCurrenciesQuery,
               })
 
-            const hideISKCurrency =
-              isForeignCurrency(activeField)
-                ? ISK
-                : ''
+            const hideISKCurrency = isForeignCurrency(activeField) ? ISK : ''
 
             return getCurrencies(
               data.socialInsuranceGeneral?.currencies ?? [],
@@ -134,46 +131,45 @@ export const incomePlanSubSection = buildSubSection({
           options: [
             {
               value: RatioType.YEARLY,
-              label:
-                sm.incomePlan.annualIncome,
+              label: sm.incomePlan.annualIncome,
             },
             {
               value: RatioType.MONTHLY,
-              label:
-                sm.incomePlan.monthlyIncome,
+              label: sm.incomePlan.monthlyIncome,
             },
           ],
         },
         equalForeignIncomePerMonth: {
           component: 'input',
-          label:
-            sm.incomePlan
-              .equalForeignIncomePerMonth,
+          label: sm.incomePlan.equalForeignIncomePerMonth,
           width: 'half',
           type: 'number',
           displayInTable: false,
           currency: true,
           updateValueObj: {
-            valueModifier: (_, activeField) => updateEqualIncomePerMonth(activeField, true),
+            valueModifier: (_, activeField) =>
+              updateEqualIncomePerMonth(activeField, true),
             watchValues: 'income',
           },
           suffix: '',
-          condition: (_, activeField) => equalIncomePerMonthCondition(activeField, true)
+          condition: (_, activeField) =>
+            equalIncomePerMonthCondition(activeField, true),
         },
         equalIncomePerMonth: {
           component: 'input',
-          label:
-            sm.incomePlan.equalIncomePerMonth,
+          label: sm.incomePlan.equalIncomePerMonth,
           width: 'half',
           type: 'number',
           displayInTable: false,
           currency: true,
           updateValueObj: {
-            valueModifier: (_, activeField) => updateEqualIncomePerMonth(activeField),
+            valueModifier: (_, activeField) =>
+              updateEqualIncomePerMonth(activeField),
             watchValues: 'income',
           },
           suffix: '',
-          condition: (_, activeField) => equalIncomePerMonthCondition(activeField)
+          condition: (_, activeField) =>
+            equalIncomePerMonthCondition(activeField),
         },
         incomePerYear: {
           component: 'input',
@@ -188,7 +184,7 @@ export const incomePlanSubSection = buildSubSection({
             valueModifier: (_, activeField) => updateIncomePerYear(activeField),
             watchValues: watchIncomePerYearValue,
           },
-          condition: (_, activeField) => incomePerYearCondition(activeField)
+          condition: (_, activeField) => incomePerYearCondition(activeField),
         },
         unevenIncomePerYear: {
           component: 'checkbox',
@@ -197,16 +193,13 @@ export const incomePlanSubSection = buildSubSection({
           options: [
             {
               value: YES,
-              label:
-                sm.incomePlan
-                  .monthlyDistributionOfIncome,
-              tooltip:
-                sm.incomePlan
-                  .monthlyDistributionOfIncomeTooltip,
+              label: sm.incomePlan.monthlyDistributionOfIncome,
+              tooltip: sm.incomePlan.monthlyDistributionOfIncomeTooltip,
             },
           ],
           displayInTable: false,
-          condition: (_, activeField) => unevenIncomePerYearCondition(activeField),
+          condition: (_, activeField) =>
+            unevenIncomePerYearCondition(activeField),
         },
         january: generateMonthInput(sm.months.january),
         february: generateMonthInput(sm.months.february),
@@ -214,12 +207,12 @@ export const incomePlanSubSection = buildSubSection({
         april: generateMonthInput(sm.months.april),
         may: generateMonthInput(sm.months.may),
         june: generateMonthInput(sm.months.june),
-        july: generateMonthInput( sm.months.july),
-        august: generateMonthInput( sm.months.august),
+        july: generateMonthInput(sm.months.july),
+        august: generateMonthInput(sm.months.august),
         september: generateMonthInput(sm.months.september),
-        october: generateMonthInput( sm.months.october),
-        november: generateMonthInput( sm.months.november),
-        december: generateMonthInput( sm.months.december),
+        october: generateMonthInput(sm.months.october),
+        november: generateMonthInput(sm.months.november),
+        december: generateMonthInput(sm.months.december),
       },
       table: {
         format: {

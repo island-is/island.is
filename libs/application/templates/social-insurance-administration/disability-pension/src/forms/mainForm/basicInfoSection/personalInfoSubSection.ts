@@ -5,9 +5,7 @@ import {
   buildTextField,
   buildTitleField,
 } from '@island.is/application/core'
-import {
-  Application,
-} from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { applicantInformationArray } from '@island.is/application/ui-forms'
 import * as m from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types/routes'
@@ -44,7 +42,9 @@ export const personalInfoSubSection = buildSubSection({
           disabled: true,
           readOnly: true,
           defaultValue: (application: Application) => {
-            const { individual } = getApplicationExternalData(application.externalData)
+            const { individual } = getApplicationExternalData(
+              application.externalData,
+            )
             return individual?.maritalTitle?.description
           },
         }),
@@ -55,7 +55,9 @@ export const personalInfoSubSection = buildSubSection({
           readOnly: true,
           width: 'half',
           defaultValue: (application: Application) => {
-            const { spouse } = getApplicationExternalData(application.externalData)
+            const { spouse } = getApplicationExternalData(
+              application.externalData,
+            )
             return spouse?.name
           },
         }),
@@ -66,7 +68,9 @@ export const personalInfoSubSection = buildSubSection({
           readOnly: true,
           width: 'half',
           defaultValue: (application: Application) => {
-            const { spouse } = getApplicationExternalData(application.externalData)
+            const { spouse } = getApplicationExternalData(
+              application.externalData,
+            )
             return spouse?.nationalId
           },
         }),

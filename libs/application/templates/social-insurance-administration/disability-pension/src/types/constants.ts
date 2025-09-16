@@ -12,16 +12,16 @@ export const OTHER_STATUS_VALUE = 'ANNAD'
 export const MAX_QUESTIONNAIRE_QUESTIONS = 5
 
 export const MONTH_NAMES = [
-                  'january',
-                  'february',
-                  'march',
-                  'april',
-                  'may',
-                  'june',
-                  'july',
-                  'august',
-                  'september',
-                  'october',
-                  'november',
-                  'december',
-                ]
+  'january',
+  'february',
+  'march',
+  'april',
+  'may',
+  'june',
+  'july',
+  'august',
+  'september',
+  'october',
+  'november',
+  'december',
+]

@@ -23,16 +23,14 @@ import {
 } from '../types/interfaces'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  const applicantName =
-    getValueViaPath<string>(answers, 'applicant.name') ?? ''
+  const applicantName = getValueViaPath<string>(answers, 'applicant.name') ?? ''
 
-  const applicantCity =
-    getValueViaPath<string>(answers, 'applicant.city') ?? ''
+  const applicantCity = getValueViaPath<string>(answers, 'applicant.city') ?? ''
 
   const applicantNationalId =
     getValueViaPath<string>(answers, 'applicant.nationalId') ?? ''
 
-  const applicantAddress   =
+  const applicantAddress =
     getValueViaPath<string>(answers, 'applicant.address') ?? ''
 
   const applicantPhonenumber =
@@ -247,8 +245,14 @@ export const getApplicationExternalData = (
     [],
   )
 
-  const individual = getValueViaPath<NationalRegistryIndividual>(externalData, 'nationalRegistry.data')
-  const spouse = getValueViaPath<NationalRegistrySpouse>(externalData, 'nationalRegistrySpouse.data')
+  const individual = getValueViaPath<NationalRegistryIndividual>(
+    externalData,
+    'nationalRegistry.data',
+  )
+  const spouse = getValueViaPath<NationalRegistrySpouse>(
+    externalData,
+    'nationalRegistrySpouse.data',
+  )
 
   const applicantName = getValueViaPath<string>(
     externalData,
@@ -308,9 +312,9 @@ export const getApplicationExternalData = (
   )
 
   const countries = getValueViaPath<CountryValue[]>(
-      externalData,
-      'socialInsuranceAdministrationCountries.data',
-      []
+    externalData,
+    'socialInsuranceAdministrationCountries.data',
+    [],
   )
 
   return {

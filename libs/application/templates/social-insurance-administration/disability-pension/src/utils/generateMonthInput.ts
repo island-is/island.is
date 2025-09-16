@@ -1,9 +1,9 @@
-import { RepeaterItem } from "@island.is/application/types"
-import { MessageDescriptor } from "react-intl"
-import { monthInputCondition } from "./conditions"
+import { RepeaterItem } from '@island.is/application/types'
+import { MessageDescriptor } from 'react-intl'
+import { monthInputCondition } from './conditions'
 
-export const generateMonthInput = (label:  MessageDescriptor): RepeaterItem => {
-  return ({
+export const generateMonthInput = (label: MessageDescriptor): RepeaterItem => {
+  return {
     component: 'input',
     label,
     width: 'third',
@@ -11,6 +11,6 @@ export const generateMonthInput = (label:  MessageDescriptor): RepeaterItem => {
     displayInTable: false,
     currency: true,
     suffix: '',
-    condition: (_, activeField) => monthInputCondition(activeField)
-  })
+    condition: (_, activeField) => monthInputCondition(activeField),
+  }
 }
