@@ -16,8 +16,8 @@ import {
   housingFundAmountPayedByTenant,
   otherFeesPayedByTenant,
 } from '../../../utils/rentalPeriodUtils'
-import * as m from '../../../lib/messages'
 import { getOtherFeesPayeeOptions } from '../../../utils/options'
+import * as m from '../../../lib/messages'
 
 export const otherFeesSubsection = buildSubSection({
   id: Routes.OTHERFEES,

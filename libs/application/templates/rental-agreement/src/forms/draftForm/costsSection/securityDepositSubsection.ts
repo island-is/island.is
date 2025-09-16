@@ -27,11 +27,11 @@ import {
   securityDepositIsOther,
   securityDepositIsThirdPartyGuarantee,
 } from '../../../utils/rentalPeriodUtils'
-import * as m from '../../../lib/messages'
 import {
   getSecurityAmountOptions,
   getSecurityDepositTypeOptions,
 } from '../../../utils/options'
+import * as m from '../../../lib/messages'
 
 export const securityDepositSubsection = buildSubSection({
   condition: securityDepositRequired,

@@ -8,8 +8,8 @@ import {
 } from '@island.is/application/core'
 import { applicationAnswers } from '../../../shared'
 import { Routes, RentalHousingConditionInspector } from '../../../utils/enums'
-import * as m from '../../../lib/messages'
 import { getInspectorOptions } from '../../../utils/options'
+import * as m from '../../../lib/messages'
 
 export const conditionSubsection = buildSubSection({
   id: Routes.CONDITION,

@@ -3,7 +3,6 @@ import {
   buildSection,
   buildTableRepeaterField,
 } from '@island.is/application/core'
-import * as m from '../../../lib/messages'
 import {
   applicantTableConfig,
   landlordTableConfig,
@@ -11,6 +10,7 @@ import {
   landLordInfoTableFields,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
+import * as m from '../../../lib/messages'
 
 export const partiesSection = buildSection({
   id: Routes.PARTIESINFORMATION,
