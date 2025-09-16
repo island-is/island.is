@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    closedHearing: {
+      id: 'web.courtAgendas:listPage.closedHearing',
+      defaultMessage: 'Lokað þinghald',
+      description: 'Lokað þinghald',
+    },
     timeSeparator: {
       id: 'web.courtAgendas:listPage.timeSeparator',
       defaultMessage: ' til ',

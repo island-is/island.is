@@ -23,6 +23,7 @@ type AgendaCardProps = {
   court: string
   courtRoom: string
   addToCalendarButton: React.ReactNode
+  closedHearingText: string
 }
 
 export const AgendaCard = ({
@@ -34,6 +35,7 @@ export const AgendaCard = ({
   time,
   court,
   courtRoom,
+  closedHearingText,
   addToCalendarButton,
 }: AgendaCardProps) => {
   const detailLines: { icon: IconMapIcon; text: string }[] = []
@@ -56,6 +58,13 @@ export const AgendaCard = ({
     detailLines.push({
       icon: 'time',
       text: time,
+    })
+  }
+
+  if (closedHearingText) {
+    detailLines.push({
+      icon: 'lockClosed',
+      text: closedHearingText,
     })
   }
 
@@ -100,7 +109,9 @@ export const AgendaCard = ({
           <Stack space={1}>
             <Inline space={1} alignY="center" justifyContent="spaceBetween">
               <Inline space={2} alignY="center">
-                <Text variant="h5">{caseNumber}</Text>
+                <Text variant="h5" as="h2">
+                  {caseNumber}
+                </Text>
                 {Boolean(type) && (
                   <Tag variant="blue" disabled>
                     {type}
@@ -126,7 +137,9 @@ export const AgendaCard = ({
           <Stack space={1}>
             <Inline space={1} alignY="center" justifyContent="spaceBetween">
               <Inline space={2} alignY="center">
-                <Text variant="h5">{caseNumber}</Text>
+                <Text variant="h5" as="h2">
+                  {caseNumber}
+                </Text>
                 {Boolean(type) && (
                   <Tag variant="blue" disabled>
                     {type}

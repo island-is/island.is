@@ -192,15 +192,14 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
               )
           }
 
-          // verdicts.sort((a, b) => {
-          //   if (!a.verdictDate && !b.verdictDate) return 0
-          //   if (!b.verdictDate) return -1
-          //   if (!a.verdictDate) return 1
-          //   return (
-          //     new Date(b.verdictDate).getTime() -
-          //     new Date(a.verdictDate).getTime()
-          //   )
-          // })
+          courtAgendas.sort((a, b) => {
+            if (!a.dateFrom && !b.dateFrom) return 0
+            if (!b.dateFrom) return -1
+            if (!a.dateFrom) return 1
+            return (
+              new Date(b.dateFrom).getTime() - new Date(a.dateFrom).getTime()
+            )
+          })
 
           return {
             visibleCourtAgendas: (isFirstPage
@@ -239,16 +238,6 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
     renderKey,
     updateRenderKey,
   }
-}
-
-interface KeywordSelectProps {
-  keywordOptions: {
-    label: string
-    value: string
-  }[]
-  value: { label: string; value: string } | undefined
-  onChange: (_: { label: string; value: string } | undefined) => void
-  clearStateButtonText?: string
 }
 
 const FILTER_ACCORDION_ITEM_IDS = ['date-accordion']
@@ -695,6 +684,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                   >
                     <Box paddingY={3}>
                       <Filters
+                        startExpanded={true}
                         renderKey={renderKey}
                         updateRenderKey={updateRenderKey}
                         queryState={queryState}
@@ -717,19 +707,31 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                 } else if (agenda.dateFrom) {
                   time = format(new Date(agenda.dateFrom), 'HH:mm')
                 }
+
                 return (
                   <AgendaCard
                     key={agenda.id}
                     caseNumber={agenda.caseNumber}
                     type={agenda.type}
-                    judgesString={`${formatMessage(
-                      m.listPage[
-                        agenda.judges.length === 1
-                          ? 'judgesSingluarPrefix'
-                          : 'judgesPluralPrefix'
-                      ],
-                    )}: ${agenda.judges.map((judge) => judge.name).join(', ')}`}
+                    judgesString={
+                      agenda.judges.length > 0
+                        ? `${formatMessage(
+                            m.listPage[
+                              agenda.judges.length === 1
+                                ? 'judgesSingluarPrefix'
+                                : 'judgesPluralPrefix'
+                            ],
+                          )}: ${agenda.judges
+                            .map((judge) => judge.name)
+                            .join(', ')}`
+                        : ''
+                    }
                     title={agenda.title}
+                    closedHearingText={
+                      !agenda.closedHearing
+                        ? formatMessage(m.listPage.closedHearing)
+                        : ''
+                    }
                     date={
                       agenda.dateFrom
                         ? format(new Date(agenda.dateFrom), 'd. MMMM yyyy')
@@ -761,7 +763,6 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                   />
                 )
               })}
-
               {total > data.visibleCourtAgendas.length && (
                 <Box
                   key={page}
@@ -801,6 +802,8 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
 
 CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
   const court = parseAsString.parseServerSide(query[QueryParam.COURT])
+  const dateFrom = parseAsString.parseServerSide(query[QueryParam.DATE_FROM])
+  const dateTo = parseAsString.parseServerSide(query[QueryParam.DATE_TO])
 
   const [CourtAgendasResponse] = await Promise.all([
     apolloClient.query<GetCourtAgendasQuery, GetCourtAgendasQueryVariables>({
@@ -809,6 +812,8 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
         input: {
           page: 1,
           court,
+          dateFrom,
+          dateTo,
         },
       },
     }),

@@ -336,10 +336,10 @@ export class VerdictsClientService {
     let total = 0
 
     if (supremeCourtResponse.status === 'fulfilled') {
-      total += supremeCourtResponse.value.total ?? 0
+      total += Number(supremeCourtResponse.value.total ?? 0)
       for (const agenda of supremeCourtResponse.value.items ?? []) {
         items.push({
-          id: agenda.id ?? '',
+          id: `${agenda.id}-${agenda.caseId}-${agenda.caseNumber}`,
           caseNumber: agenda.caseNumber ?? '',
           dateFrom: this.safelyConvertDateToISOString(agenda.verdictDate),
           dateTo: '',
@@ -354,7 +354,7 @@ export class VerdictsClientService {
       }
     }
     if (goproResponse.status === 'fulfilled') {
-      total += goproResponse.value.total ?? 0
+      total += Number(goproResponse.value.total ?? 0)
       for (const agenda of goproResponse.value.items ?? []) {
         items.push({
           id: `${agenda.bookingId}-${agenda.caseId}-${agenda.caseNumberRaw}`,

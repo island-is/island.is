@@ -13,11 +13,7 @@ export const GET_COURT_AGENDAS_QUERY = gql`
         type
         title
         judges {
-          id
           name
-          title
-          isPresident
-          placement
         }
         lawyers {
           id
@@ -31,6 +27,9 @@ export const GET_COURT_AGENDAS_QUERY = gql`
       total
       input {
         page
+        dateFrom
+        dateTo
+        court
       }
     }
   }
