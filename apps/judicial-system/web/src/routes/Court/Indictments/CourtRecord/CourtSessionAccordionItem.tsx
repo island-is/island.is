@@ -422,14 +422,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                             canEdit: ['fileName'],
                           }}
                           backgroundColor="white"
-                          onOpen={function (id: string): void {
+                          onOpen={(_id: string): void => {
                             throw new Error('Function not implemented.')
                           }}
-                          onRename={function (
-                            id: string,
-                            name: string,
-                            displayDate: string,
-                          ): void {
+                          onRename={(
+                            _id: string,
+                            _name: string,
+                            _displayDate: string,
+                          ): void => {
                             throw new Error('Function not implemented.')
                           }}
                           onDelete={(file: TUploadFile) => {
