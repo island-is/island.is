@@ -4,7 +4,10 @@ import { SignatureCollectionPaths } from '../../../lib/paths'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import AddConstituency from './AddConstituency'
-import { SignatureCollectionList, SignatureCollectionSignedList } from '@island.is/api/schema'
+import {
+  SignatureCollectionList,
+  SignatureCollectionSignedList,
+} from '@island.is/api/schema'
 import { SignatureCollection } from '@island.is/api/schema'
 import SignedLists from '../../shared/SignedLists'
 import Managers from '../../shared/Managers'
@@ -29,10 +32,12 @@ const OwnerView = ({
 
   return (
     <Stack space={8}>
-      <SignedLists
-        collectionType={collectionType}
-        signedLists={signedLists ?? []}
-      />
+      {signedLists && (
+        <SignedLists
+          collectionType={collectionType}
+          signedLists={signedLists}
+        />
+      )}
       <Box>
         <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
           <Text variant="h4">{formatMessage(m.myListsDescription)}</Text>
