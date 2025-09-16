@@ -584,7 +584,7 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
 export const isIndictmentCourtRecordStepValid = (
   courtSessions?: CourtSessionResponse[] | null,
 ) => {
-  if (!courtSessions) {
+  if (!Array.isArray(courtSessions) || courtSessions.length === 0) {
     return false
   }
 
