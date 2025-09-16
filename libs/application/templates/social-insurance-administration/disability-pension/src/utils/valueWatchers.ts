@@ -1,6 +1,6 @@
 import { YES } from "@island.is/application/core";
 import { RatioType, INCOME, ISK } from "@island.is/application/templates/social-insurance-administration-core/lib/constants";
-import { MONTH_NAMES } from "../types";
+import { MONTH_NAMES } from "../types/constants";
 
 export const watchIncomePerYearValue = (activeField?: Record<string, string>) => {
   if (

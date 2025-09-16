@@ -658,7 +658,7 @@ export const transformApplicationToDisabilityPensionDTO = (
       incomeYear:
         incomePlanConditions?.incomePlanYear ?? new Date().getFullYear(),
       distributeIncomeByMonth: shouldDistributeIncomeByMonth(incomePlan ?? []),
-      incomeTypes: getIncomeTypes(incomePlan ?? [], categorizedIncomeTypes),
+      incomeTypes: getIncomeTypes(incomePlan ?? [], categorizedIncomeTypes ?? []),
     },
     taxInfo: {
       personalAllowance: personalAllowance === YES,
@@ -705,7 +705,7 @@ export const transformApplicationToDisabilityPensionDTO = (
         ({ country, abroadNationalId }) => {
           return {
             countryName:
-              countries.find((item) => item.value === country)?.label ?? '',
+              countries?.find((item) => item.value === country)?.label ?? '',
             countryCode: country,
             foreignNationalId: abroadNationalId ?? '',
           }
@@ -715,7 +715,7 @@ export const transformApplicationToDisabilityPensionDTO = (
     foreignResidencies:
       hasLivedAbroad === YES
         ? livedAbroadList?.map((abroadStay) => {
-            const countryName = countries.find(
+            const countryName = countries?.find(
               (item) => item.value === abroadStay.country,
             )?.label
             return {

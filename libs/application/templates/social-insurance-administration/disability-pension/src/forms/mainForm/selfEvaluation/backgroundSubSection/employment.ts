@@ -6,9 +6,10 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
-import { OTHER_STATUS_VALUE, SectionRouteEnum } from '../../../../types/routes'
+import { SectionRouteEnum } from '../../../../types/routes'
 import { Application } from '@island.is/application/types'
 import { EmploymentDto } from '@island.is/clients/social-insurance-administration'
+import { OTHER_STATUS_VALUE } from '../../../../types/constants'
 
 export const employmentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT,

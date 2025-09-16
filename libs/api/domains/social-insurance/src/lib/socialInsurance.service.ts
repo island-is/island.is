@@ -320,7 +320,7 @@ export class SocialInsuranceService {
   }
 
   async getProfessions(user: User) {
-    return await this.socialInsuranceApi.getProfessions(user)
+    return await this.socialInsuranceApi.getProfessionsInDto(user)
   }
 
   async getResidenceTypes(user: User) {
@@ -328,6 +328,6 @@ export class SocialInsuranceService {
   }
 
   async getProfessionActivities(user: User) {
-    return await this.socialInsuranceApi.getProfessionActivities(user)
+    return await this.socialInsuranceApi.getProfessionActivitiesInDto(user)
   }
 }

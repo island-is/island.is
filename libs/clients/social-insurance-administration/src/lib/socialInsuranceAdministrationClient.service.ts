@@ -39,7 +39,7 @@ import {
   TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebExternalModelsServicePortalDisabilityPensionCertificate,
   TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
-  TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto
+  TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto,
   TrWebApiServicesDomainProfessionsModelsProfessionDto,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
