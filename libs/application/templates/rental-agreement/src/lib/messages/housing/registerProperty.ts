@@ -126,12 +126,6 @@ export const registerProperty = {
       defaultMessage: 'Skráning húsnæðis',
       description: 'Property category page title',
     },
-    pageDescription: {
-      id: 'ra.application:registerProperty.category.pageDescription',
-      defaultMessage:
-        'Hér þarft þú að velja tegund og flokkun leiguhúsnæðisins.',
-      description: 'Property category page description',
-    },
 
     typeTitle: {
       id: 'ra.application:registerProperty.category.typeTitle',
