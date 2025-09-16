@@ -39,6 +39,8 @@ import {
   TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebExternalModelsServicePortalDisabilityPensionCertificate,
   TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
+  TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto
+  TrWebApiServicesDomainProfessionsModelsProfessionDto,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { EmploymentDto, mapEmploymentDto } from './dto/employment.dto'
@@ -402,18 +404,6 @@ export class SocialInsuranceAdministrationClientService {
     )
   }
 
-  async getProfessions(user: User): Promise<Array<ProfessionDto> | null> {
-    const data = await this.generalApiWithAuth(
-      user,
-    ).apiProtectedV1GeneralProfessionsGet()
-
-    return (
-      data
-        .map((d) => mapProfessionDto(d))
-        .filter((i): i is ProfessionDto => Boolean(i)) ?? null
-    )
-  }
-
   async getResidenceTypes(user: User): Promise<Array<ResidenceDto> | null> {
     const data = await this.generalApiWithAuth(
       user,
@@ -426,7 +416,35 @@ export class SocialInsuranceAdministrationClientService {
     )
   }
 
-  async getProfessionActivities(
+  async getProfessions(
+      user: User,
+    ): Promise<Array<TrWebApiServicesDomainProfessionsModelsProfessionDto>> {
+      return this.generalApiWithAuth(user).apiProtectedV1GeneralProfessionsGet()
+    }
+
+  async getActivitiesOfProfessions(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralProfessionsActivitiesGet()
+  }
+
+  async getProfessionsInDto(user: User): Promise<Array<ProfessionDto> | null> {
+    const data = await this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralProfessionsGet()
+
+    return (
+      data
+        .map((d) => mapProfessionDto(d))
+        .filter((i): i is ProfessionDto => Boolean(i)) ?? null
+    )
+  }
+
+  async getProfessionActivitiesInDto(
     user: User,
   ): Promise<Array<ProfessionActivityDto> | null> {
     const data = await this.generalApiWithAuth(

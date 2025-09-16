@@ -62,14 +62,14 @@ export const SocialInsuranceAdministrationEmploymentStatusesApi =
   })
 
 export const SocialInsuranceAdministrationProfessionsApi = defineTemplateApi({
-  action: 'getProfessions',
+  action: 'getProfessionsInDto',
   externalDataId: 'socialInsuranceAdministrationProfessions',
   namespace: 'SocialInsuranceAdministration',
 })
 
 export const SocialInsuranceAdministrationProfessionActivitiesApi =
   defineTemplateApi({
-    action: 'getProfessionActivities',
+    action: 'getProfessionActivitiesInDto',
     externalDataId: 'socialInsuranceAdministrationProfessionActivities',
     namespace: 'SocialInsuranceAdministration',
   })

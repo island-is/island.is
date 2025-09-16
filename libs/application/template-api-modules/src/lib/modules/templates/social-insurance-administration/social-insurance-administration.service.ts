@@ -757,12 +757,22 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     })
   }
 
+  async getProfessionsInDto({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getProfessionsInDto(auth)
+  }
+
+  async getProfessionActivitiesInDto({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getProfessionActivitiesInDto(auth)
+  }
+
   async getProfessions({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getProfessions(auth)
   }
 
-  async getProfessionActivities({ auth }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getProfessionActivities(auth)
+  async getActivitiesOfProfessions({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getActivitiesOfProfessions(auth)
   }
 
   async getEmploymentStatuses({ auth }: TemplateApiModuleActionProps) {
