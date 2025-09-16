@@ -201,7 +201,7 @@ export class AppService {
   private async deliverVerdictServiceCertificateToPolice() {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/api/internal/deliverVerdictServiceCertificate`,
+        `${this.config.backendUrl}/api/internal/verdict/deliverVerdictServiceCertificates`,
         {
           method: 'POST',
           headers: {

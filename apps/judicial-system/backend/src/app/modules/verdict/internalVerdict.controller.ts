@@ -233,7 +233,7 @@ export class InternalVerdictController {
     description:
       'Delivers a service certificate to the police for all defendants where appeal deadline is expired',
   })
-  @Post('verdict/deliverVerdictServiceCertificate')
+  @Post('verdict/deliverVerdictServiceCertificates')
   async deliverVerdictServiceCertificatesToPolice(): Promise<
     {
       delivered: boolean
@@ -247,7 +247,7 @@ export class InternalVerdictController {
       await this.verdictService.deliverVerdictServiceCertificatesToPolice()
 
     await this.eventService.postDailyVerdictServiceDeliveryEvent(
-      delivered.filter((delivery) => delivery).length,
+      delivered.filter((d) => d.delivered).length,
     )
 
     return delivered
