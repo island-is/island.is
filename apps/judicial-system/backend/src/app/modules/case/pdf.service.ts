@@ -14,6 +14,7 @@ import {
   CaseIndictmentRulingDecision,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
+  isIndictmentCase,
   SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
@@ -23,6 +24,7 @@ import {
   createCaseFilesRecord,
   createFineSentToPrisonAdminPdf,
   createIndictment,
+  createIndictmentCourtRecordPdf,
   createRulingSentToPrisonAdminPdf,
   createServiceCertificate,
   createSubpoena,
@@ -153,6 +155,10 @@ export class PdfService {
     }
 
     await this.refreshFormatMessage()
+
+    if (isIndictmentCase(theCase.type)) {
+      return createIndictmentCourtRecordPdf(theCase, user)
+    }
 
     return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
   }

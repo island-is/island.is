@@ -4,6 +4,7 @@ import router from 'next/router'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseTag,
@@ -18,6 +19,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   RenderFiles,
   SectionHeading,
   UserContext,
@@ -55,6 +57,10 @@ const Summary: FC = () => {
   const { onOpen } = useFileList({
     caseId: workingCase.id,
   })
+
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.courtSessions,
+  )
 
   const initialize = useCallback(() => {
     if (!workingCase.courtEndTime) {
@@ -189,6 +195,15 @@ const Summary: FC = () => {
           </Accordion>
         )}
         <SectionHeading title={formatMessage(strings.caseFiles)} />
+        {hasGeneratedCourtRecord && (
+          <PdfButton
+            caseId={workingCase.id}
+            title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+            pdfType="courtRecord"
+            renderAs="row"
+            elementId="Þingbók"
+          />
+        )}
         {(rulingFiles.length > 0 || courtRecordFiles.length > 0) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4">

@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -100,6 +101,9 @@ const IndictmentOverview = () => {
   const fileCategory = hasRuling
     ? CaseFileCategory.RULING
     : CaseFileCategory.COURT_RECORD
+
+  const showGeneratedCourtRecord =
+    !hasRuling && hasGeneratedCourtRecordPdf(workingCase.courtSessions)
 
   const savePunishmentType = async () => {
     const updatedCase = await updateCase(workingCase.id, {
@@ -199,6 +203,15 @@ const IndictmentOverview = () => {
               hasRuling ? strings.verdictTitle : strings.courtRecordTitle,
             )}
           </Text>
+          {showGeneratedCourtRecord && (
+            <PdfButton
+              caseId={workingCase.id}
+              title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+              pdfType="courtRecord"
+              renderAs="row"
+              elementId="Þingbók"
+            />
+          )}
           <RenderFiles
             onOpenFile={onOpen}
             caseFiles={

@@ -21,3 +21,12 @@ export enum CourtDocumentType {
   GENERATED_DOCUMENT = 'GENERATED_DOCUMENT',
   EXTERNAL_DOCUMENT = 'EXTERNAL_DOCUMENT',
 }
+
+interface CourtSession {
+  endDate?: string | Date | null
+}
+
+export const hasGeneratedCourtRecordPdf = (
+  courtSessions: CourtSession[] | undefined | null,
+) =>
+  Boolean(courtSessions && courtSessions.length > 0 && courtSessions[0].endDate)

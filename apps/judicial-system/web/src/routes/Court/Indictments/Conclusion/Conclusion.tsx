@@ -12,7 +12,10 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { courtSessionTypeNames } from '@island.is/judicial-system/types'
+import {
+  courtSessionTypeNames,
+  hasGeneratedCourtRecordPdf,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -24,6 +27,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   SectionHeading,
   useCourtArrangements,
   UserContext,
@@ -117,6 +121,10 @@ const Conclusion: FC = () => {
   const [mergeCaseNumber, setMergeCaseNumber] = useState<string>()
   const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
     useState<string>()
+
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.courtSessions,
+  )
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -640,6 +648,15 @@ const Conclusion: FC = () => {
               />
             </Box>
           )}
+        {hasGeneratedCourtRecord && (
+          <PdfButton
+            caseId={workingCase.id}
+            title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+            pdfType="courtRecord"
+            renderAs="row"
+            elementId="Þingbók"
+          />
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

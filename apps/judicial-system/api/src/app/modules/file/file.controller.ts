@@ -84,7 +84,12 @@ export class FileController {
     )
   }
 
-  @Get('courtRecord')
+  @Get([
+    'courtRecord',
+    'courtRecord/:fileName',
+    'mergedCase/:mergedCaseId/courtRecord',
+    'mergedCase/:mergedCaseId/courtRecord/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getCourtRecordPdf(
     @Param('id') id: string,

@@ -218,6 +218,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       incidentDescription
       legalArguments
     }
+    courtSessions {
+      id
+      endDate
+    }
     mergedCases {
       id
       courtCaseNumber
