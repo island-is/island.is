@@ -417,10 +417,10 @@ export class SocialInsuranceAdministrationClientService {
   }
 
   async getProfessions(
-      user: User,
-    ): Promise<Array<TrWebApiServicesDomainProfessionsModelsProfessionDto>> {
-      return this.generalApiWithAuth(user).apiProtectedV1GeneralProfessionsGet()
-    }
+    user: User,
+  ): Promise<Array<TrWebApiServicesDomainProfessionsModelsProfessionDto>> {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralProfessionsGet()
+  }
 
   async getActivitiesOfProfessions(
     user: User,

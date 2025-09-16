@@ -128,6 +128,6 @@ export const externalDataSection = buildSection({
           provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
         }),
       ],
-    })
+    }),
   ],
 })

@@ -18,7 +18,14 @@ import { hasSelfEvaluationAnswers } from './hasSelfEvaluationAnswers'
 export const aboutApplicantItems = (
   answers: FormValue,
 ): Array<KeyValueItem> => {
-  const {applicantName, applicantNationalId, applicantAddress, applicantCity, applicantEmail, applicantPhonenumber} = getApplicationAnswers(answers)
+  const {
+    applicantName,
+    applicantNationalId,
+    applicantAddress,
+    applicantCity,
+    applicantEmail,
+    applicantPhonenumber,
+  } = getApplicationAnswers(answers)
   return [
     {
       width: 'half',
@@ -36,42 +43,44 @@ export const aboutApplicantItems = (
       width: 'half',
       keyText: m.personalInfo.address,
       valueText: applicantAddress,
-    },{
+    },
+    {
       width: 'half',
       keyText: m.personalInfo.municipality,
-      valueText: applicantCity
+      valueText: applicantCity,
     },
     {
       width: 'half',
       keyText: m.personalInfo.email,
-      valueText: applicantEmail
+      valueText: applicantEmail,
     },
     {
       width: 'half',
       keyText: m.personalInfo.phone,
-      valueText: formatPhoneNumber(
-        applicantPhonenumber
-      ),
+      valueText: formatPhoneNumber(applicantPhonenumber),
     },
   ]
 }
 
 export const paymentInfoItems = (answers: FormValue): Array<KeyValueItem> => {
-  const {paymentInfo, personalAllowance, personalAllowanceUsage, taxLevel} = getApplicationAnswers(answers)
+  const { paymentInfo, personalAllowance, personalAllowanceUsage, taxLevel } =
+    getApplicationAnswers(answers)
 
   return [
     {
       width: 'full',
       keyText: m.paymentInfo.bank,
+<<<<<<< HEAD
       valueText: formatBankAccount(paymentInfo)
+=======
+      valueText: paymentInfo?.bank,
+>>>>>>> refs/remotes/origin/feat/disability-pension-application
     },
     {
       width: 'half',
       keyText: m.paymentInfo.personalAllowanceLabel,
       valueText:
-      personalAllowance === YES
-        ? m.paymentInfo.yes
-        : m.paymentInfo.no,
+        personalAllowance === YES ? m.paymentInfo.yes : m.paymentInfo.no,
     },
     {
       width: 'half',
@@ -83,51 +92,58 @@ export const paymentInfoItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.paymentInfo.taxationLevel,
-      valueText: (() => {
-        if (Object.values(TaxLevelOptions).includes(taxLevel as TaxLevelOptions)) {
+      valueText: () => {
+        if (
+          Object.values(TaxLevelOptions).includes(taxLevel as TaxLevelOptions)
+        ) {
           return getTaxLevelOption(taxLevel as TaxLevelOptions)
         }
         return typeof taxLevel === 'string' ? taxLevel : ''
-      })
+      },
     },
   ]
 }
 
 export const appliedBeforeItems = (answers: FormValue): Array<KeyValueItem> => {
-  const {hasAppliedForDisabilityBefore} = getApplicationAnswers(answers)
+  const { hasAppliedForDisabilityBefore } = getApplicationAnswers(answers)
 
   return [
     {
       width: 'full',
       keyText: m.disabilityEvaluation.appliedBeforeTitle,
-      valueText: hasAppliedForDisabilityBefore ? coreMessages.radioYes
-          : coreMessages.radioNo,
+      valueText: hasAppliedForDisabilityBefore
+        ? coreMessages.radioYes
+        : coreMessages.radioNo,
     },
   ]
 }
 
 export const employmentItems = (answers: FormValue): Array<KeyValueItem> => {
-  const {inPaidWork, willContinueWorking} = getApplicationAnswers(answers)
+  const { inPaidWork, willContinueWorking } = getApplicationAnswers(answers)
   return [
     {
       width: 'full',
       keyText: m.employmentParticipation.inPaidWorkTitle,
-      valueText: () => inPaidWork? m.employmentParticipation.yes  : m.employmentParticipation.no
+      valueText: () =>
+        inPaidWork
+          ? m.employmentParticipation.yes
+          : m.employmentParticipation.no,
     },
     {
       width: 'full',
       keyText: m.employmentParticipation.continuedWorkTitle,
-      valueText: willContinueWorking ? coreMessages.radioYes
-          : coreMessages.radioNo,
+      valueText: willContinueWorking
+        ? coreMessages.radioYes
+        : coreMessages.radioNo,
     },
   ]
 }
 
-export const selfEvaluationItems = (answers: FormValue): Array<KeyValueItem> => {
-  const {
-    hadAssistanceForSelfEvaluation,
-    questionnaire
-  } = getApplicationAnswers(answers)
+export const selfEvaluationItems = (
+  answers: FormValue,
+): Array<KeyValueItem> => {
+  const { hadAssistanceForSelfEvaluation, questionnaire } =
+    getApplicationAnswers(answers)
 
   const hasAnsweredSelfEvalution = hasSelfEvaluationAnswers(answers)
 
@@ -158,7 +174,10 @@ export const extraInfoItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.extraInfo.title,
-      valueText: extraInfo && extraInfo.trim() !== '' ? extraInfo : m.extraInfo.noExtraInfo,
+      valueText:
+        extraInfo && extraInfo.trim() !== ''
+          ? extraInfo
+          : m.extraInfo.noExtraInfo,
     },
   ]
 }

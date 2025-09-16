@@ -26,7 +26,11 @@ import {
 import { Application, FormValue } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
 import { SectionRouteEnum } from '../../../types/routes'
-import { accountNationality, getApplicationAnswers, getApplicationExternalData } from '../../../utils'
+import {
+  accountNationality,
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../../../utils'
 import { siaGeneralCurrenciesQuery } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
 import { SocialInsuranceGeneralCurrenciesQuery } from '../../../graphql/queries.generated'
@@ -56,9 +60,7 @@ export const paymentInfoSubSection = buildSubSection({
           options: [
             {
               value: BankAccountType.ICELANDIC,
-              label:
-                sm.payment
-                  .icelandicBankAccount,
+              label: sm.payment.icelandicBankAccount,
             },
             {
               value: BankAccountType.FOREIGN,
@@ -117,8 +119,7 @@ export const paymentInfoSubSection = buildSubSection({
           title: sm.payment.currency,
           width: 'half',
           required: true,
-          placeholder:
-            sm.payment.selectCurrency,
+          placeholder: sm.payment.selectCurrency,
           loadOptions: async ({ apolloClient }) => {
             const { data } =
               await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
@@ -175,9 +176,7 @@ export const paymentInfoSubSection = buildSubSection({
         }),
         buildTextField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.personalAllowanceUsage`,
-          title:
-            sm.payment
-              .personalAllowancePercentage,
+          title: sm.payment.personalAllowancePercentage,
           suffix: '%',
           dataTestId: 'personal-allowance-usage',
           condition: (formValue: FormValue) => {

@@ -658,7 +658,10 @@ export const transformApplicationToDisabilityPensionDTO = (
       incomeYear:
         incomePlanConditions?.incomePlanYear ?? new Date().getFullYear(),
       distributeIncomeByMonth: shouldDistributeIncomeByMonth(incomePlan ?? []),
-      incomeTypes: getIncomeTypes(incomePlan ?? [], categorizedIncomeTypes ?? []),
+      incomeTypes: getIncomeTypes(
+        incomePlan ?? [],
+        categorizedIncomeTypes ?? [],
+      ),
     },
     taxInfo: {
       personalAllowance: personalAllowance === YES,

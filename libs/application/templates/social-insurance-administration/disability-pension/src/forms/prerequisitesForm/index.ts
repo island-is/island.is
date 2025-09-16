@@ -12,8 +12,5 @@ export const Prerequisites = buildForm({
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [
-    dataHandlingSection,
-    externalDataSection
-  ]
+  children: [dataHandlingSection, externalDataSection],
 })

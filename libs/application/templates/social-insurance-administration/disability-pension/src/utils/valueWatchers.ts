@@ -1,8 +1,14 @@
-import { YES } from "@island.is/application/core";
-import { RatioType, INCOME, ISK } from "@island.is/application/templates/social-insurance-administration-core/lib/constants";
-import { MONTH_NAMES } from "../types/constants";
+import { YES } from '@island.is/application/core'
+import {
+  RatioType,
+  INCOME,
+  ISK,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { MONTH_NAMES } from '../types/constants'
 
-export const watchIncomePerYearValue = (activeField?: Record<string, string>) => {
+export const watchIncomePerYearValue = (
+  activeField?: Record<string, string>,
+) => {
   if (
     activeField?.income === RatioType.MONTHLY &&
     activeField?.incomeCategory === INCOME &&
@@ -23,4 +29,4 @@ export const watchIncomePerYearValue = (activeField?: Record<string, string>) =>
     return 'equalForeignIncomePerMonth'
   }
   return undefined
-};
+}

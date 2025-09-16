@@ -3,7 +3,7 @@ import { FormValue } from '@island.is/application/types'
 import { getApplicationAnswers } from './getApplicationAnswers'
 
 export const accountNationality = (
-  applicationAnswers: FormValue
+  applicationAnswers: FormValue,
 ): BankAccountType | null => {
   const { paymentInfo } = getApplicationAnswers(applicationAnswers)
   return paymentInfo?.bankAccountType ?? null

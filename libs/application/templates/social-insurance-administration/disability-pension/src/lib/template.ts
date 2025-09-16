@@ -124,7 +124,7 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 IdentityApi,
-                UserProfileApi/*
+                UserProfileApi /*
                   TODO: REENABLE ON PROD
                   .configure({
                     params: {

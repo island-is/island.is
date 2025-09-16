@@ -1,6 +1,4 @@
-import {
-  buildOverviewField,
-} from '@island.is/application/core'
+import { buildOverviewField } from '@island.is/application/core'
 import * as m from '../lib/messages'
 import { SectionRouteEnum } from '../types/routes'
 import {
@@ -63,7 +61,7 @@ export const overviewFields = (editable?: boolean) => {
       title: m.selfEvaluation.title,
       titleVariant: 'h4',
       backId: SectionRouteEnum.SELF_EVALUATION,
-      items: selfEvaluationItems
+      items: selfEvaluationItems,
     }),
     buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.extraInfo`,
