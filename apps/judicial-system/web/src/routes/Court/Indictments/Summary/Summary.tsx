@@ -310,7 +310,7 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
               <PdfViewer
                 file={rulingUrl}
                 onLoadingSuccess={() => {
-                  setPdfError(false)
+                  setPDFError(false)
                   setIsLoading(false)
                 }}
                 onLoadingError={() => setPDFError(true)}
