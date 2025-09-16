@@ -11,7 +11,7 @@ import { Routes, RentalHousingConditionInspector } from '../../../utils/enums'
 import * as m from '../../../lib/messages'
 import { getInspectorOptions } from '../../../utils/options'
 
-export const RentalHousingCondition = buildSubSection({
+export const conditionSubsection = buildSubSection({
   id: Routes.CONDITION,
   title: m.housingCondition.subSectionName,
   children: [

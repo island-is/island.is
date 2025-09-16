@@ -2,11 +2,13 @@ import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 
 import Logo from '../../assets/Logo'
-import { RentalHousingSection } from './rentalHousingSection'
-import { RentalPeriodSection } from './rentalPeriodSection'
-import { SummaryDraftSection } from './summaryDraftSection'
+import { rentalHousingSection } from './rentalPropertySection'
+import { rentalPeriodSection } from './rentalPeriodSection'
+import { overviewSection } from './overviewSection'
 
 import { application } from '../../lib/messages'
+import { partiesSection } from './partiesSection'
+import { costsSection } from './costsSection'
 
 export const draftForm: Form = buildForm({
   id: 'draftForm',
@@ -15,5 +17,11 @@ export const draftForm: Form = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [RentalHousingSection, RentalPeriodSection, SummaryDraftSection],
+  children: [
+    partiesSection,
+    rentalHousingSection,
+    rentalPeriodSection,
+    costsSection,
+    overviewSection,
+  ],
 })

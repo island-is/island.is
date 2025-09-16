@@ -6,20 +6,19 @@ import {
   buildStaticTableField,
   buildSubSection,
 } from '@island.is/application/core'
-import { SubSection } from '@island.is/application/types'
 import { RentalHousingCategoryClass, applicationAnswers } from '../../../shared'
 import { Routes, RentalHousingCategoryTypes } from '../../../utils/enums'
-import * as m from '../../../lib/messages'
 import {
   getPropertyClassGroupOptions,
   getPropertyClassOptions,
   getPropertyTypeOptions,
 } from '../../../utils/options'
+import * as m from '../../../lib/messages'
 
 const messagesInfo = m.registerProperty.info
 const messagesCategory = m.registerProperty.category
 
-export const RentalHousingPropertyInfo: SubSection = buildSubSection({
+export const propertyInfoSubsection = buildSubSection({
   id: Routes.PROPERTYINFORMATION,
   title: messagesInfo.subsectionName,
   children: [

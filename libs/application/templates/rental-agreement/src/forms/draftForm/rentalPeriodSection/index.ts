@@ -1,24 +1,25 @@
 import {
-  buildSubSection,
-  buildMultiField,
-  buildDescriptionField,
-  buildDateField,
-  buildCheckboxField,
-  YesOrNoEnum,
-  getValueViaPath,
   buildAlertMessageField,
+  buildCheckboxField,
+  buildDateField,
+  buildDescriptionField,
+  buildMultiField,
+  buildSection,
+  getValueViaPath,
+  YesOrNoEnum,
 } from '@island.is/application/core'
+import { application } from '../../../lib/messages'
 import { Routes } from '../../../utils/enums'
+import * as m from '../../../lib/messages'
 import {
   isDateMoreThanOneYearInFuture,
   rentalPeriodIsDefinite,
 } from '../../../utils/rentalPeriodUtils'
 import addMonths from 'date-fns/addMonths'
-import * as m from '../../../lib/messages'
 
-export const RentalPeriodDetails = buildSubSection({
-  id: Routes.RENTALPERIOD,
-  title: m.rentalPeriod.pageTitle,
+export const rentalPeriodSection = buildSection({
+  id: 'rentalPeriodSection',
+  title: application.rentalPeriodSectionName,
   children: [
     buildMultiField({
       id: Routes.RENTALPERIOD,

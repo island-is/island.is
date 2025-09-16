@@ -19,7 +19,7 @@ import {
 import * as m from '../../../lib/messages'
 import { getOtherFeesPayeeOptions } from '../../../utils/options'
 
-export const RentalPeriodOtherFees = buildSubSection({
+export const otherFeesSubsection = buildSubSection({
   id: Routes.OTHERFEES,
   title: m.otherFees.subSectionName,
   children: [

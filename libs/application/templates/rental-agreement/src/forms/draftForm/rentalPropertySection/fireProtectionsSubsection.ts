@@ -15,7 +15,7 @@ import { shouldShowSmokeDetectorsAlert } from '../../../utils/conditions'
 import { PropertyUnit } from '../../../shared/types'
 import { getYesNoOptions } from '../../../utils/options'
 
-export const RentalHousingFireProtections = buildSubSection({
+export const fireProtectionsSubsection = buildSubSection({
   id: Routes.FIREPROTECTIONS,
   title: m.housingFireProtections.subSectionName,
   children: [

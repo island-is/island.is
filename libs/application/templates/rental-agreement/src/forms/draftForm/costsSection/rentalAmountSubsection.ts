@@ -31,7 +31,7 @@ import {
   getRentalAmountPaymentDateOptions,
 } from '../../../utils/options'
 
-export const RentalPeriodAmount = buildSubSection({
+export const rentalAmountSubsection = buildSubSection({
   id: Routes.RENTALAMOUNT,
   title: m.rentalAmount.subSectionName,
   children: [

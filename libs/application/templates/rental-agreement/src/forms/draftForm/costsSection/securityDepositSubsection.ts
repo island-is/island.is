@@ -33,7 +33,7 @@ import {
   getSecurityDepositTypeOptions,
 } from '../../../utils/options'
 
-export const RentalPeriodSecurityDeposit = buildSubSection({
+export const securityDepositSubsection = buildSubSection({
   condition: securityDepositRequired,
   id: Routes.SECURITYDEPOSIT,
   title: m.misc.securityDeposit,
