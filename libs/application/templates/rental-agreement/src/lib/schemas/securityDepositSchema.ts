@@ -139,7 +139,7 @@ export const securityDeposit = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
-        params: m.securityDeposit.amountOtherCapitolError,
+        params: m.securityDeposit.amountOtherCapitalError,
         path: ['securityAmountOther'],
       })
     }
@@ -155,7 +155,7 @@ export const securityDeposit = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
-        params: m.securityDeposit.amountOtherCapitolError,
+        params: m.securityDeposit.amountOtherCapitalError,
         path: ['securityAmountOther'],
       })
     }

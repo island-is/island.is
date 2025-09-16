@@ -206,8 +206,8 @@ export const securityDeposit = defineMessages({
     defaultMessage: 'Upphæð tryggingar má ekki vera 0 kr.',
     description: 'security deposit amount zero error',
   },
-  amountOtherCapitolError: {
-    id: 'ra.application:securityDeposit.amountOtherCapitolError',
+  amountOtherCapitalError: {
+    id: 'ra.application:securityDeposit.amountOtherCapitalError',
     defaultMessage:
       'Upphæð tryggingar má ekki vera meira en þreföld mánaðarleg leiguupphæð',
     description: 'security deposit amount other capitol error',
