@@ -84,7 +84,8 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
   }
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
-    if (application.externalData.canSign.status !== 'success') {
+    const canSignStatus = application.externalData?.canSign?.status
+    if (canSignStatus !== 'success') {
       // If canSign failed, the user will be stopped by the error there
       // We return an empty array to not add redundant errors to the response
       return []
