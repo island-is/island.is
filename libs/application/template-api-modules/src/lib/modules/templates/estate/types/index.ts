@@ -58,7 +58,7 @@ type AssetFrame = {
 type BankAccount = {
   accountNumber?: string
   balance?: string | number
-  exchangeRateOrInterest?: string | number
+  accruedInterest?: string | number
   accountTotal?: string | number
 }
 
@@ -77,6 +77,7 @@ type Debt = {
   nationalId?: string
   balance?: string | number
   loanIdentity?: string
+  debtType?: string
 }
 
 type OtherAssets = {

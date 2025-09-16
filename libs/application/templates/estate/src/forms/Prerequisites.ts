@@ -71,6 +71,8 @@ export const getForm = ({
                     return {
                       value: estate.caseNumber,
                       label: estate.nameOfDeceased,
+                      // see the case number in the label for ease of use when testing
+                      // label: estate.caseNumber + ' ' + estate.nameOfDeceased,
                     }
                   })
                 },
