@@ -14,7 +14,7 @@ import {
   CaseIndictmentRulingDecision,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
-  isIndictmentCase,
+  isDistrictCourtUser,
   SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
@@ -161,8 +161,11 @@ export class PdfService {
     return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
   }
 
-  async getCourtRecordPdfForIndictmentCase(theCase: Case): Promise<Buffer> {
-    return createIndictmentCourtRecordPdf(theCase)
+  async getCourtRecordPdfForIndictmentCase(
+    theCase: Case,
+    user: TUser,
+  ): Promise<Buffer> {
+    return createIndictmentCourtRecordPdf(theCase, isDistrictCourtUser(user))
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {

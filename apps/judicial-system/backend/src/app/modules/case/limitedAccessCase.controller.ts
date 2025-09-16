@@ -314,7 +314,10 @@ export class LimitedAccessCaseController {
         )
       }
 
-      pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(theCase)
+      pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+        theCase,
+        user,
+      )
     }
 
     res.end(pdf)

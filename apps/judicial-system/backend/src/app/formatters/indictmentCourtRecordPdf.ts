@@ -1,11 +1,7 @@
-import { add } from 'lodash'
 import PDFDocument from 'pdfkit'
 
-import {
-  applyDativeCaseToCourtName,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
-import { User } from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { CourtSessionRulingType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
 import { Case } from '../modules/repository'
@@ -14,6 +10,7 @@ import {
   addEmptyLines,
   addLargeHeading,
   addMediumHeading,
+  addNormalCenteredText,
   addNormalText,
   setLineGap,
   setTitle,
@@ -21,6 +18,7 @@ import {
 
 export const createIndictmentCourtRecordPdf = (
   theCase: Case,
+  showOpenCourtSession: boolean,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -45,8 +43,10 @@ export const createIndictmentCourtRecordPdf = (
   addMediumHeading(doc, 'Þingbók')
   addMediumHeading(doc, `Mál nr. ${theCase.courtCaseNumber}`)
 
+  let nrOfFiledDocuments = 0
+
   for (const courtSession of theCase.courtSessions ?? []) {
-    if (!courtSession.endDate) {
+    if (!courtSession.endDate && !showOpenCourtSession) {
       break
     }
 
@@ -102,6 +102,75 @@ export const createIndictmentCourtRecordPdf = (
       courtSession.attendees?.trim() || 'Enginn er mættur í þinghaldið.',
       'Times-Roman',
     )
+
+    if (nrOfFiledDocuments > 0) {
+      addEmptyLines(doc, 2)
+      addNormalText(
+        doc,
+        `Skjöl málsing nr. 1-${nrOfFiledDocuments} liggja frammi.`,
+      )
+    }
+
+    if (courtSession.filedDocuments && courtSession.filedDocuments.length > 0) {
+      addEmptyLines(doc)
+      addNormalText(doc, 'Lagt er fram:', 'Times-Bold')
+      addNormalText(doc, 'Nr.', 'Times-Roman')
+
+      nrOfFiledDocuments =
+        courtSession.filedDocuments[courtSession.filedDocuments.length - 1]
+          .documentOrder
+    }
+
+    addEmptyLines(doc, 2)
+    addNormalText(doc, courtSession.entries ?? 'Engar bóknari voru skráðar.')
+
+    if (courtSession.rulingType !== CourtSessionRulingType.NONE) {
+      addEmptyLines(doc)
+      addNormalCenteredText(
+        doc,
+        courtSession.rulingType === CourtSessionRulingType.JUDGMENT
+          ? 'DÓMSORÐ:'
+          : 'ÚRSKURÐARORÐ:',
+        'Times-Bold',
+      )
+      addEmptyLines(doc)
+      addNormalText(
+        doc,
+        courtSession.ruling ?? 'Engin niðurstaða er skráð.',
+        'Times-Roman',
+      )
+      addEmptyLines(doc)
+      addNormalCenteredText(doc, theCase.judge?.name ?? 'Óþekktur héraðsdómari')
+
+      if (courtSession.closingEntries) {
+        addEmptyLines(doc)
+        addNormalText(doc, courtSession.closingEntries)
+      }
+    }
+
+    addEmptyLines(doc, 3)
+    addNormalCenteredText(
+      doc,
+      `Dómþingi slitið kl. ${formatDate(
+        courtSession.endDate ?? nowFactory(),
+        'p',
+      )}`,
+    )
+    addNormalCenteredText(doc, theCase.judge?.name ?? 'Óþekktur héraðsdómari')
+
+    if (courtSession.isAttestingWitness) {
+      const attestingWitnessName =
+        courtSession.attestingWitness?.name ?? 'óþekktur'
+      const attestingWitnessTitle = courtSession.attestingWitness?.title
+        ? ` ${courtSession.attestingWitness.title.toLocaleLowerCase()}`
+        : ''
+
+      addEmptyLines(doc)
+      addNormalText(
+        doc,
+        `(Vottur að þinghaldi er ${attestingWitnessName}${attestingWitnessTitle}.)`,
+      )
+    }
   }
 
   doc.end()

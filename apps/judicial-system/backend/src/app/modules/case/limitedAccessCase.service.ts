@@ -673,7 +673,7 @@ export class LimitedAccessCaseService {
       ) {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
-            this.pdfService.getCourtRecordPdfForIndictmentCase(theCase),
+            this.pdfService.getCourtRecordPdfForIndictmentCase(theCase, user),
             'Þingbók.pdf',
             filesToZip,
           ),
