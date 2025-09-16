@@ -11,6 +11,7 @@ import {
   RadioButton,
   Select,
   Tag,
+  toast,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
@@ -728,18 +729,37 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   <DateTime
                     name="courtEndTime"
                     onChange={(date: Date | undefined, valid: boolean) => {
-                      if (date && valid) {
-                        patchSession(
-                          courtSession.id,
-                          {
-                            endDate: formatDateForServer(date),
-                          },
-                          { persist: true },
-                        )
+                      if (!date || !valid) {
+                        return
                       }
+
+                      const startDate = courtSession.startDate
+                        ? new Date(courtSession.startDate)
+                        : new Date()
+
+                      const merged = new Date(startDate)
+                      merged.setHours(date.getHours(), date.getMinutes(), 0, 0)
+
+                      if (merged < startDate) {
+                        toast.error('Upp kom villa við að uppfæra lokatíma')
+                      }
+
+                      patchSession(
+                        courtSession.id,
+                        {
+                          endDate: formatDateForServer(merged),
+                        },
+                        { persist: true },
+                      )
                     }}
                     blueBox={false}
-                    selectedDate={courtSession.endDate || new Date()}
+                    selectedDate={
+                      courtSession.endDate
+                        ? new Date(courtSession.endDate)
+                        : courtSession.startDate
+                        ? new Date(courtSession.startDate)
+                        : new Date()
+                    }
                     timeOnly
                   />
                 </div>
