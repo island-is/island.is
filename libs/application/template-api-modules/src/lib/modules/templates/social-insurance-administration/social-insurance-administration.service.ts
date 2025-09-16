@@ -513,10 +513,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       const disabilityPensionDTO =
         transformApplicationToDisabilityPensionDTO(application)
 
-      const response = await this.siaClientService.sendDisabilityPensionApplication(
-        auth,
-        disabilityPensionDTO
-      )
+      const response =
+        await this.siaClientService.sendDisabilityPensionApplication(
+          auth,
+          disabilityPensionDTO,
+        )
 
       return response
     }

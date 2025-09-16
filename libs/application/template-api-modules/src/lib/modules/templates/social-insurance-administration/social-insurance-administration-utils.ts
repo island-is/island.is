@@ -431,6 +431,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     lastActivityOfProfessionDescription,
     lastProfessionYear,
     certificateForSicknessAndRehabilitationReferenceId,
+    isAlmaCertificate,
     rehabilitationPlanReferenceId,
     confirmedTreatmentReferenceId,
     confirmationOfPendingResolutionReferenceId,
@@ -514,6 +515,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     }),
     baseCertificateReference:
       certificateForSicknessAndRehabilitationReferenceId ?? '',
+    isAlmaCertificate: isAlmaCertificate === 'true',
     ...(shouldShowRehabilitationPlan(application.externalData) && {
       rehabilitationPlanReference: rehabilitationPlanReferenceId,
     }),
@@ -671,20 +673,28 @@ export const transformApplicationToDisabilityPensionDTO = (
     housingTypeId: residence ? Number.parseInt(residence) : -1,
     housingTypeAdditionalDescription: residenceExtraComment,
     numberOfChildrenInHome: children ?? '',
-    languageProficiency: icelandicCapability ? Number.parseInt(icelandicCapability) : -1,
+    languageProficiency: icelandicCapability
+      ? Number.parseInt(icelandicCapability)
+      : -1,
     applicantNativeLanguage: language ?? '',
     applicantNativeLanguageOther: languageOther,
     hasBeenInPaidEmployment: previousEmployment?.hasEmployment
       ? previousEmployment.hasEmployment === YES
       : false,
     lastProfession: previousEmployment?.job,
-    lastProfessionYear: previousEmployment?.when ? Number.parseInt(previousEmployment.when) : -1,
+    lastProfessionYear: previousEmployment?.when
+      ? Number.parseInt(previousEmployment.when)
+      : -1,
     lastProfessionDescription: undefined,
     lastActivityOfProfession: previousEmployment?.field,
     lastActivityOfProfessionDescription: undefined,
     educationalLevel: educationLevel ?? '',
-    workCapacityAssessment: employmentCapability ? Number.parseInt(employmentCapability) : -1,
-    importanceOfEmployment: employmentImportance  ? Number.parseInt(employmentImportance) : -1,
+    workCapacityAssessment: employmentCapability
+      ? Number.parseInt(employmentCapability)
+      : -1,
+    importanceOfEmployment: employmentImportance
+      ? Number.parseInt(employmentImportance)
+      : -1,
     hasBeenInRehabilitationOrTreatment: hasHadRehabilitationOrTherapy === YES,
     rehabilitationOrTreatment: rehabilitationOrTherapyDescription,
     rehabilitationOrTreatmentOutcome: rehabilitationOrTherapyResults,
@@ -734,8 +744,12 @@ export const transformApplicationToDisabilityPensionDTO = (
             : '',
       })) ?? [],
     retroactivePayments: {
-      year: disabilityRenumerationDateYear ? Number.parseInt(disabilityRenumerationDateYear) : -1,
-      month: disabilityRenumerationDateMonth ? Number.parseInt(disabilityRenumerationDateMonth) : -1,
+      year: disabilityRenumerationDateYear
+        ? Number.parseInt(disabilityRenumerationDateYear)
+        : -1,
+      month: disabilityRenumerationDateMonth
+        ? Number.parseInt(disabilityRenumerationDateMonth)
+        : -1,
     },
     comment: extraInfo,
   }
