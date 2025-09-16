@@ -9,6 +9,7 @@ import {
   YesOrNoEnum,
   buildDisplayField,
   buildHiddenInputWithWatchedValue,
+  buildBankAccountField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
@@ -145,19 +146,17 @@ export const RentalPeriodAmount = buildSubSection({
           options: getPaymentMethodOptions(),
           defaultValue: RentalPaymentMethodOptions.BANK_TRANSFER,
         }),
+        buildBankAccountField({
+          condition: rentalPaymentMethodIsBankTransfer,
+          id: 'rentalAmount.paymentMethodBankAccountNumber',
+          marginTop: 2,
+          marginBottom: 0,
+        }),
         buildTextField({
           condition: rentalPaymentMethodIsBankTransfer,
           id: 'rentalAmount.paymentMethodNationalId',
           title: m.rentalAmount.paymentMethodNationalIdLabel,
           format: '######-####',
-          width: 'half',
-        }),
-        buildTextField({
-          id: 'rentalAmount.paymentMethodBankAccountNumber',
-          title: m.rentalAmount.paymentMethodBankAccountNumberLabel,
-          format: '####-##-######',
-          width: 'half',
-          condition: rentalPaymentMethodIsBankTransfer,
         }),
         buildTextField({
           condition: rentalPaymentMethodIsOther,

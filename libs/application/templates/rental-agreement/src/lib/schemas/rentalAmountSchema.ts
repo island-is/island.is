@@ -22,7 +22,13 @@ export const rentalAmount = z
     paymentDateOther: z.string().optional(),
     paymentMethodOptions: z.nativeEnum(RentalPaymentMethodOptions).optional(),
     paymentMethodNationalId: z.string().optional(),
-    paymentMethodBankAccountNumber: z.string().optional(),
+    paymentMethodBankAccountNumber: z
+      .object({
+        bankNumber: z.string().optional(),
+        ledger: z.string().optional(),
+        accountNumber: z.string().optional(),
+      })
+      .optional(),
     paymentMethodOtherTextField: z.string().optional(),
     securityDepositRequired: z.string().array().optional(),
   })
@@ -125,6 +131,7 @@ export const rentalAmount = z
           path: ['paymentMethodNationalId'],
         })
       }
+
       if (
         paymentMethodNationalId &&
         paymentMethodNationalId?.trim().length &&
@@ -137,23 +144,41 @@ export const rentalAmount = z
           path: ['paymentMethodNationalId'],
         })
       }
-      if (!paymentMethodBankAccountNumber?.trim().length) {
+
+      // Validate bank account fields with proper length constraints
+      const bankNumber =
+        paymentMethodBankAccountNumber?.bankNumber?.trim() || ''
+      const ledger = paymentMethodBankAccountNumber?.ledger?.trim() || ''
+      const accountNumber =
+        paymentMethodBankAccountNumber?.accountNumber?.trim() || ''
+
+      // Bank number validation (required, 1-4 characters)
+      if (bankNumber.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.rentalAmount.paymentMethodBankAccountNumberRequiredError,
-          path: ['paymentMethodBankAccountNumber'],
+          params: m.rentalAmount.bankNumberError,
+          path: ['paymentMethodBankAccountNumber', 'bankNumber'],
         })
       }
-      if (
-        paymentMethodBankAccountNumber?.trim().length &&
-        paymentMethodBankAccountNumber.length < 7
-      ) {
+
+      // Ledger validation (required, 1-2 characters)
+      if (ledger.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.rentalAmount.paymentMethodBankAccountNumberInvalidError,
-          path: ['paymentMethodBankAccountNumber'],
+          params: m.rentalAmount.ledgerError,
+          path: ['paymentMethodBankAccountNumber', 'ledger'],
+        })
+      }
+
+      // Account number validation (required, 3-6 characters)
+      if (accountNumber.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.accountNumberError,
+          path: ['paymentMethodBankAccountNumber', 'accountNumber'],
         })
       }
     }

@@ -55,7 +55,7 @@ export const mapRentalApplicationData = (
     paymentMethodOther,
     paymentDateOptions,
     paymentDayOther,
-    paymentMethodBankAccountNumber,
+    paymentMethodBankAccountNumber: bankAccount,
     paymentMethodNationalId,
     securityType,
     securityDepositAmount,
@@ -148,7 +148,7 @@ export const mapRentalApplicationData = (
           paymentDateOptions === PaymentDay.Other ? paymentDayOther : null,
         bankAccountNumber:
           paymentMethodOptions === PaymentMethod.BankTransfer
-            ? paymentMethodBankAccountNumber
+            ? `${bankAccount?.bankNumber}-${bankAccount?.ledger}-${bankAccount?.accountNumber}`
             : null,
         nationalIdOfAccountOwner:
           paymentMethodOptions === PaymentMethod.BankTransfer

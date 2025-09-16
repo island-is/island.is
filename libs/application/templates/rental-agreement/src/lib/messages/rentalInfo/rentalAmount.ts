@@ -178,11 +178,20 @@ export const rentalAmount = defineMessages({
     defaultMessage: 'Kennitala viðtakanda er ekki á réttu formi',
     description: 'Rental amount payment method national id invalid error',
   },
-  paymentMethodBankAccountNumberRequiredError: {
-    id: 'ra.application:rentalAmount.paymentMethodBankAccountNumberRequiredError',
-    defaultMessage: 'Bankareikningur viðtakanda þarf að vera til staðar',
-    description:
-      'Rental amount payment method bank account number required error',
+  bankNumberError: {
+    id: 'ra.application:rentalAmount.bankNumberError',
+    defaultMessage: 'Bankanúmer þarf að vera til staðar',
+    description: 'Message for bank number error',
+  },
+  ledgerError: {
+    id: 'ra.application:rentalAmount.ledgerError',
+    defaultMessage: 'Höfuðbók þarf að vera til staðar',
+    description: 'Message for ledger error',
+  },
+  accountNumberError: {
+    id: 'ra.application:rentalAmount.accountNumberError',
+    defaultMessage: 'Reikningsnúmer þarf að vera til staðar',
+    description: 'Message for account number error',
   },
   paymentMethodBankAccountNumberInvalidError: {
     id: 'ra.application:rentalAmount.paymentMethodBankAccountNumberInvalidError',

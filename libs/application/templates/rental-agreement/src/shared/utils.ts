@@ -17,6 +17,7 @@ import {
   ProvisionsAndConditionSection,
   Files,
   LandlordInfo,
+  BankAccount,
 } from './types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
@@ -144,7 +145,7 @@ const extractRentalAmount = (
     answers,
     'rentalAmount.paymentDateOther',
   ),
-  paymentMethodBankAccountNumber: getValueViaPath<string>(
+  paymentMethodBankAccountNumber: getValueViaPath<BankAccount>(
     answers,
     'rentalAmount.paymentMethodBankAccountNumber',
   ),
