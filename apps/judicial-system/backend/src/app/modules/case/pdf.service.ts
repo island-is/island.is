@@ -26,8 +26,9 @@ import {
   createIndictment,
   createIndictmentCourtRecordPdf,
   createRulingSentToPrisonAdminPdf,
-  createServiceCertificate,
   createSubpoena,
+  createSubpoenaServiceCertificate,
+  createVerdictServiceCertificate,
   getCaseFileHash,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
@@ -41,6 +42,7 @@ import {
   Defendant,
   EventLog,
   Subpoena,
+  Verdict,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 
@@ -359,17 +361,34 @@ export class PdfService {
     return generatedPdf
   }
 
-  async getServiceCertificatePdf(
+  async getSubpoenaServiceCertificatePdf(
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
   ): Promise<Buffer> {
     await this.refreshFormatMessage()
 
-    const generatedPdf = await createServiceCertificate(
+    const generatedPdf = await createSubpoenaServiceCertificate(
       theCase,
       defendant,
       subpoena,
+      this.formatMessage,
+    )
+
+    return generatedPdf
+  }
+
+  async getVerdictServiceCertificatePdf(
+    theCase: Case,
+    defendant: Defendant,
+    verdict: Verdict,
+  ): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    const generatedPdf = await createVerdictServiceCertificate(
+      theCase,
+      defendant,
+      verdict,
       this.formatMessage,
     )
 

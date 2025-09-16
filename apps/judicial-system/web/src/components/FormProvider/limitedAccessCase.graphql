@@ -64,6 +64,9 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       }
       verdict {
         id
+        created
+        serviceStatus
+        servedBy
         appealDate
         appealDecision
         serviceRequirement

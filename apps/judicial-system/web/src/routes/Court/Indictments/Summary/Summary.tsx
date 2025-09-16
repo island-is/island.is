@@ -1,8 +1,15 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
 import router from 'next/router'
 
-import { Accordion, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  Box,
+  PdfViewer,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -39,6 +46,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Summary.strings'
+import * as styles from './Summary.css'
 
 const Summary: FC = () => {
   const { formatMessage } = useIntl()
@@ -51,10 +59,16 @@ const Summary: FC = () => {
   } = useContext(FormContext)
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
     useCase()
-  const [modalVisible, setModalVisible] = useState<'CONFIRM_INDICTMENT'>()
+  const [modalVisible, setModalVisible] = useState<
+    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING'
+  >()
+  const [rulingUrl, setRulingUrl] = useState<string>()
+  const [hasReviewed, setHasReviewed] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [pdfError, setPDFError] = useState(false)
   const { user } = useContext(UserContext)
 
-  const { onOpen } = useFileList({
+  const { onOpen, getFileUrl } = useFileList({
     caseId: workingCase.id,
   })
 
@@ -96,6 +110,40 @@ const Summary: FC = () => {
     }
 
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
+  }
+
+  const handleRuling = async () => {
+    const showError = () => toast.error('Dómur fannst ekki')
+
+    const rulings = workingCase.caseFiles?.filter(
+      (c) => c.category === CaseFileCategory.RULING,
+    )
+
+    if (!rulings || rulings.length === 0) {
+      showError()
+      return
+    }
+
+    const rulingId = rulings[0].id
+    const url = await getFileUrl(rulingId)
+
+    if (url) {
+      setRulingUrl(url)
+      setModalVisible('CONFIRM_RULING')
+    } else {
+      showError()
+    }
+  }
+
+  const handleNextButtonClick = async () => {
+    if (
+      workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.RULING
+    ) {
+      await handleRuling()
+    } else {
+      setModalVisible('CONFIRM_INDICTMENT')
+    }
   }
 
   const handleCourtEndTimeChange = useCallback(
@@ -155,11 +203,9 @@ const Summary: FC = () => {
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
-
       <FormContentContainer>
         <Box display="flex" justifyContent="spaceBetween">
           <PageTitle>{formatMessage(strings.title)}</PageTitle>
-
           {workingCase.indictmentRulingDecision && (
             <Box marginTop={2}>
               <CaseTag
@@ -238,7 +284,7 @@ const Summary: FC = () => {
           previousUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextButtonIcon="checkmark"
           nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
+          onNextButtonClick={handleNextButtonClick}
           hideNextButton={!canUserCompleteCase}
           infoBoxText={
             canUserCompleteCase
@@ -247,21 +293,61 @@ const Summary: FC = () => {
           }
         />
       </FormContentContainer>
+      {modalVisible === 'CONFIRM_RULING' && (
+        <Modal
+          title="Staðfesting dóms"
+          text={`Vinsamlegast rýnið skjal fyrir staðfestingu.            
+Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. Ef birta þarf dóminn verður hann sendur í rafræna birtingu í stafrænt pósthólf dómfellda á island.is.`}
+          primaryButton={{
+            text: 'Staðfesta',
+            onClick: async () => await handleModalPrimaryButtonClick(),
+            isLoading: isTransitioningCase,
+            isDisabled: !hasReviewed || pdfError,
+          }}
+          secondaryButton={{
+            text: 'Hætta við',
+            onClick: () => {
+              setIsLoading(true)
+              setModalVisible(undefined)
+              setHasReviewed(false)
+              setPDFError(false)
+            },
+          }}
+          footerCheckbox={{
+            label: 'Ég hef rýnt þetta dómskjal',
+            checked: hasReviewed,
+            onChange: () => setHasReviewed(!hasReviewed),
+            disabled: pdfError,
+          }}
+        >
+          {rulingUrl && (
+            <div className={cn(styles.ruling, { [styles.loading]: isLoading })}>
+              <PdfViewer
+                file={rulingUrl}
+                onLoadingSuccess={() => {
+                  setPDFError(false)
+                  setIsLoading(false)
+                }}
+                onLoadingError={() => setPDFError(true)}
+                showAllPages
+              />
+            </div>
+          )}
+        </Modal>
+      )}
       {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
           title={formatMessage(strings.completeCaseModalTitle)}
           text={formatMessage(strings.completeCaseModalBody)}
-          primaryButtonText={formatMessage(
-            strings.completeCaseModalPrimaryButton,
-          )}
-          onPrimaryButtonClick={async () =>
-            await handleModalPrimaryButtonClick()
-          }
-          secondaryButtonText={formatMessage(
-            strings.completeCaseModalSecondaryButton,
-          )}
-          onSecondaryButtonClick={() => setModalVisible(undefined)}
-          isPrimaryButtonLoading={isTransitioningCase}
+          primaryButton={{
+            text: formatMessage(strings.completeCaseModalPrimaryButton),
+            onClick: async () => await handleModalPrimaryButtonClick(),
+            isLoading: isTransitioningCase,
+          }}
+          secondaryButton={{
+            text: formatMessage(strings.completeCaseModalSecondaryButton),
+            onClick: () => setModalVisible(undefined),
+          }}
         />
       )}
     </PageLayout>
