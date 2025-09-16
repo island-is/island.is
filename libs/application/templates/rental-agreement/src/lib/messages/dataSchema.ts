@@ -23,22 +23,4 @@ export const dataSchema = defineMessages({
     defaultMessage: 'Ekki er leyfilegt að setja inn neikvæðar tölur',
     description: 'Error message when a required field has not been filled',
   },
-
-  phoneNumberFormatError: {
-    id: 'ra.application:dataSchema.phoneNumberFormatError',
-    defaultMessage: 'Símanúmer verður að vera á réttu formi',
-    description: 'Tenant details phone number format error',
-  },
-  emailFormatError: {
-    id: 'ra.application:dataSchema.emailFormatError',
-    defaultMessage:
-      'Netfangið er rangt ritað. Vinsamlegast athugaðu hvort vanti @-merkið eða lénið (eins og ".is")',
-    description: 'Tenant details email format error',
-  },
-  nationalIdNotFoundError: {
-    id: 'ra.application:tenantDetails.nationalIdNotFoundError',
-    defaultMessage:
-      'Enginn aðili í Þjóðskrá hefur þessa kennitölu. Aðilar leigusamnings verða að hafa kennitölu til að geta undirritað samning rafrænt.',
-    description: 'National id not found error',
-  },
 })

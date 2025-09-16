@@ -21,19 +21,25 @@ import {
   TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto,
+  TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto,
+  TrWebApiServicesDomainProfessionsModelsProfessionDto,
   TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
+  TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
   TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto,
   TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto,
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
-  TrWebExternalModelsServicePortalNationalRegistryAddress,
   TrWebExternalModelsServicePortalBaseCertificate,
+  TrWebExternalModelsServicePortalConfirmationOfIllHealth,
+  TrWebExternalModelsServicePortalConfirmationOfPendingResolution,
+  TrWebExternalModelsServicePortalConfirmedTreatment,
+  TrWebExternalModelsServicePortalNationalRegistryAddress,
   TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
@@ -250,6 +256,30 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1MedicalDocumentsBasecertificateGet()
   }
 
+  async getConfirmedTreatment(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmedTreatment> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsConfirmedtreatmentGet()
+  }
+
+  async getConfirmationOfPendingResolution(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmationOfPendingResolution> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsConfirmationofpendingresolutionGet()
+  }
+
+  async getConfirmationOfIllHealth(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalConfirmationOfIllHealth> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsConfirmationofillhealthGet()
+  }
+
   async getCountries(
     user: User,
   ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
@@ -301,5 +331,31 @@ export class SocialInsuranceAdministrationClientService {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
+  }
+
+  async getEmploymentStatuses(
+    user: User,
+  ): Promise<
+    Array<TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEmploymentStatusGet()
+  }
+
+  async getProfessions(
+    user: User,
+  ): Promise<Array<TrWebApiServicesDomainProfessionsModelsProfessionDto>> {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralProfessionsGet()
+  }
+
+  async getActivitiesOfProfessions(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralProfessionsActivitiesGet()
   }
 }

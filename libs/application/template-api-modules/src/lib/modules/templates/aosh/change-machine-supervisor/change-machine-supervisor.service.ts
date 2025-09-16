@@ -79,7 +79,7 @@ export class ChangeMachineSupervisorTemplateService extends BaseTemplateApiServi
         400,
       )
     }
-    const machineId = answers.machine.id || answers.pickMachine.id
+    const machineId = answers.machine?.id
     if (!machineId) {
       throw new Error('Machine has not been selected')
     }

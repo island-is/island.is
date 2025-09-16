@@ -79,7 +79,10 @@ export interface SignatureCollectionAdminClient {
     nationalId: string,
   ): Promise<Signature[]>
 
-  lockList(auth: Auth, listId: string): Promise<Success>
+  lockList(
+    auth: Auth,
+    input: { listId: string; setLocked: boolean },
+  ): Promise<Success>
 
   uploadPaperSignature(
     auth: Auth,

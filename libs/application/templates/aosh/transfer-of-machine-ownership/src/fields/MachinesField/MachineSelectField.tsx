@@ -23,7 +23,7 @@ interface MachineSearchFieldProps {
 
 export const MachineSelectField: FC<
   React.PropsWithChildren<MachineSearchFieldProps & FieldBaseProps>
-> = ({ currentMachineList, application, setFieldLoadingState }) => {
+> = ({ currentMachineList, application, setFieldLoadingState, field }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const machineValue = getValueViaPath(
@@ -40,7 +40,7 @@ export const MachineSelectField: FC<
     currentMachine && currentMachine.regNumber ? currentMachine : null,
   )
   const [machineId, setMachineId] = useState<string>(
-    getValueViaPath(application.answers, 'pickMachine.id', '') as string,
+    getValueViaPath<string>(application.answers, 'machine.id', '') || '',
   )
 
   const getMachineDetails = useLazyMachineDetails()
@@ -87,8 +87,13 @@ export const MachineSelectField: FC<
           )
           setValue('machine.id', response.getWorkerMachineDetails.id)
           setValue('machine.date', new Date().toISOString())
+          setValue('machine.findVehicle', true)
           setValue(
-            'pickMachine.isValid',
+            'machine.paymentRequiredForOwnerChange',
+            response.getWorkerMachineDetails.paymentRequiredForOwnerChange,
+          )
+          setValue(
+            'machine.isValid',
             response.getWorkerMachineDetails.disabled ? undefined : true,
           )
           setMachineId(currentMachine?.id || '')
@@ -106,8 +111,8 @@ export const MachineSelectField: FC<
     <Box>
       <SelectController
         label={formatMessage(information.labels.pickMachine.vehicle)}
-        id="pickMachine.id"
-        name="pickMachine.id"
+        id={`${field.id}.index`}
+        name={`${field.id}.index`}
         onSelect={(option) => onChange(option as Option)}
         options={currentMachineList.map((machine, index) => {
           return {

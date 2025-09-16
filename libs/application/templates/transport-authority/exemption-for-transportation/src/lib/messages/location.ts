@@ -96,7 +96,7 @@ export const location = {
     },
     fileUploadHeader: {
       id: 'ta.eft.application:location.longTerm.fileUploadHeader',
-      defaultMessage: 'Dragðu inn fylgisköl, sem dæmi umsögn byggingafulltrúa',
+      defaultMessage: 'Dragðu inn fylgiskjöl, sem dæmi umsögn byggingafulltrúa',
       description: 'Location file upload header',
     },
     fileUploadDescription: {

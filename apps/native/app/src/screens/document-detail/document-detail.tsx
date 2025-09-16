@@ -49,7 +49,7 @@ import {
   ButtonRegistry,
   ComponentRegistry,
 } from '../../utils/component-registry'
-import { ListParams } from '../inbox/inbox'
+import { ListParams } from '../inbox/components/pressable-list-item'
 import { ButtonDrawer } from './components/button-drawer'
 import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { shareFile } from './utils/share-file'

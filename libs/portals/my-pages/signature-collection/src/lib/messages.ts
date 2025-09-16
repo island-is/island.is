@@ -70,7 +70,7 @@ export const m = defineMessages({
   },
   collectionClosed: {
     id: 'sp.signatureCollection:collectionClosed',
-    defaultMessage: 'Söfnuninni lokið',
+    defaultMessage: 'Söfnun lokið',
     description: '',
   },
   collectionMaxReached: {
@@ -225,9 +225,9 @@ export const m = defineMessages({
     defaultMessage: 'Tímabil lista:',
     description: '',
   },
-  numberOfSigns: {
-    id: 'sp.signatureCollection:numberOfSigns',
-    defaultMessage: 'Fjöldi meðmæla:',
+  numberOfValidSigns: {
+    id: 'sp.signatureCollection:numberOfValidSigns',
+    defaultMessage: 'Fjöldi gildra meðmæla:',
     description: '',
   },
   coOwners: {
@@ -247,13 +247,13 @@ export const m = defineMessages({
   },
   downloadPdf: {
     id: 'sp.signatureCollection:downloadPdf',
-    defaultMessage: 'Sækja skýrslu',
+    defaultMessage: 'Hlaða niður skýrslu',
     description: '',
   },
   downloadPdfDescription: {
     id: 'sp.signatureCollection:downloadPdfDescription',
     defaultMessage:
-      '              Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
+      'Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
     description: '',
   },
   copyLink: {
@@ -431,6 +431,16 @@ export const m = defineMessages({
   },
 
   /* Municipal */
+  collectionTitleMunicipal: {
+    id: 'sp.signatureCollection:collectionTitleMunicipal',
+    defaultMessage: 'Sveitarstjórnarkosningar',
+    description: '',
+  },
+  collectionMunicipalListOwner: {
+    id: 'sp.signatureCollection:collectionMunicipalListOwner',
+    defaultMessage: 'Stofnandi söfnunar',
+    description: '',
+  },
   pageTitleMunicipal: {
     id: 'sp.signatureCollection:pageTitleMunicipal',
     defaultMessage: 'Meðmælasafnanir fyrir sveitarstjórnarkosningar',
@@ -476,7 +486,7 @@ export const m = defineMessages({
   },
   deleteCollection: {
     id: 'sp.signatureCollection:deleteCollection',
-    defaultMessage: 'Eyða frambooði',
+    defaultMessage: 'Eyða framboði',
     description: '',
   },
   deleteCollectionDescription: {

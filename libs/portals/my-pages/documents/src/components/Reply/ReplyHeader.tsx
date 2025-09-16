@@ -1,4 +1,11 @@
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  Inline,
+  Link,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m, Tooltip, useIsMobile } from '@island.is/portals/my-pages/core'
 import { InformationPaths } from '@island.is/portals/my-pages/information'
@@ -7,9 +14,9 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { messages } from '../../utils/messages'
+import AvatarImage from '../DocumentLine/AvatarImage'
 import ReplyHeaderMobile from './Mobile/MobileHeader'
 import * as styles from './Reply.css'
-import AvatarImage from '../DocumentLine/AvatarImage'
 
 interface ReplyHeaderProps {
   initials?: string
@@ -147,7 +154,18 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
             </Box>
             {displayEmail &&
               (hasEmail ? (
-                <Text variant="medium">{secondSubTitle}</Text>
+                <Inline>
+                  <Text variant="medium">{secondSubTitle}</Text>
+                  <Tooltip
+                    text={formatMessage(messages.replyEmailTooltip, {
+                      link: (
+                        <Link href={InformationPaths.Settings}>
+                          {formatMessage(messages.pleaseRegisterEmail)}
+                        </Link>
+                      ),
+                    })}
+                  />
+                </Inline>
               ) : (
                 <Button
                   variant="text"

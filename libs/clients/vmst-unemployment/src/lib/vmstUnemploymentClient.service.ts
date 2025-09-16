@@ -144,7 +144,8 @@ export class VmstUnemploymentClientService {
     const response = await api.activationGrantValidateBankInformation(
       requestParameter,
     )
-
-    return response
+    // OpenApi codegen does not seem to handle pure primitive values (i.e not in an object)
+    // So the generated code transforms this bool into text, I change it back here
+    return (response as unknown) === 'true' || response === true
   }
 }

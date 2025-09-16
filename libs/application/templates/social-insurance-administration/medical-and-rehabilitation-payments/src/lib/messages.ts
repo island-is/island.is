@@ -38,6 +38,73 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Starfsheiti',
       description: 'Job title',
     },
+    managedBy: {
+      id: 'marp.application:managed.by',
+      defaultMessage: 'Utanumhaldandi',
+      description: 'Managed by',
+    },
+    location: {
+      id: 'marp.application:location',
+      defaultMessage: 'Starfsstöð',
+      description: 'Location',
+    },
+    information: {
+      id: 'marp.application:information',
+      defaultMessage: 'Upplýsingar',
+      description: 'Information',
+    },
+    dateOfConfirmation: {
+      id: 'marp.application:date.of.confirmation',
+      defaultMessage: 'Dagsetning staðfestingar',
+      description: 'Date of confirmation',
+    },
+    furtherExplanation: {
+      id: 'marp.application:further.explanation',
+      defaultMessage: 'Nánari útskýring',
+      description: 'Further explanation',
+    },
+    application: {
+      id: 'marp.application:application',
+      defaultMessage: 'Sótt er um sjúkra- og endurhæfingargreiðslur',
+      description: 'Application for medical and rehabilitation payments',
+    },
+    applyingFor: {
+      id: 'marp.application:applying.for',
+      defaultMessage: 'Sótt er um',
+      description: 'Applying for',
+    },
+    startOfTreatment: {
+      id: 'marp.application:start.of.treatment',
+      defaultMessage: 'Upphaf meðferðar',
+      description: 'Start of treatment',
+    },
+    estimatedEndOfTreatment: {
+      id: 'marp.application:estimated.end.of.treatment',
+      defaultMessage: 'Áætluð lok meðferðar',
+      description: 'Estimated end of treatment',
+    },
+    estimatedTimeUnclear: {
+      id: 'marp.application:estimated.time.unclear',
+      defaultMessage: 'Óljóst',
+      description: 'Unclear',
+    },
+    estimatedTime: {
+      id: 'marp.application:estimated.time',
+      defaultMessage: 'Áætluð tímalengd',
+      description: 'Estimated time',
+    },
+    estimatedTimeMonths: {
+      id: 'marp.application:estimated.time.months',
+      defaultMessage: '{months} mánuðir',
+      description: '{months} months',
+    },
+    confirmationConfirm: {
+      id: 'marp.application:confirmation.confirm',
+      defaultMessage:
+        'Ég staðfesti að upplýsingar að ofan eru réttar, enda eru þær forsenda fyrir áframhaldandi sjúkragreiðslum.',
+      description:
+        'I confirm that the above information is correct, as it is a prerequisite for ongoing medical payments.',
+    },
   }),
 
   pre: defineMessages({
@@ -113,40 +180,68 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'Unfortunately, you are not eligible for medical and rehabilitation payments.',
     },
+    applicantAlreadyHasPendingApplicationDescription: {
+      id: 'marp.application:not.eligible.already.has.pending.applcation.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú átt nú þegar umsókn um sjúkra- og endurhæfingargreiðslur sem er í matsferli.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'The reason for this is the following:\n* You already have an application for medical and rehabilitation payments in process.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
     applicantAgeOutOfRangeDescription: {
       id: 'marp.application:not.eligible.applicant.age.out.of.range.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki á aldrinum 18-67 ára.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki á aldri sem heimilar umsókn um sjúkra- og endurhæfingargreiðslur.\n\nEf þú ert yngri en 18 ára, þá þarftu að bíða þar til þú nærð þeim aldri til að geta sótt um.\n\nEf þú hefur náð 67 ára aldri, þá bendir Tryggingastofnun þér að sækja um lífeyrir, en umsókn um ellilífeyrir finnur þú inni á heimsíðu tr.is.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* You are not aged 18-67.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n* You are not of the age that is eligible for medical and rehabilitation payments.\n\nIf you are younger than 18, please wait until you are eligible to apply.\n\nIf you have reached the age of 67, the Social Insurance Administration suggests you to apply for a pension. An application for old-age pension can be found on tr.is.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
+    noLegalDomicileinIcelandDescription: {
+      id: 'marp.application:not.eligible.no.legal.domicile.in.iceland.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með lögheimili á Íslandi.\n\nNánar má lesa um skilyrði fyrir sjúkra- og endurhæfingargreiðslur hér á [tr.is](https://island.is/sjukra-og-endurhaefingargreidslur)\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'The reason for this is the following:\n* You do not have legal domicile in Iceland.\n\nFurther information on requirements for medical and rehabilitation payments can be found at [tr.is](https://island.is/sjukra-og-endurhaefingargreidslur)\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
+    hasActivePaymentsDescription: {
+      id: 'marp.application:not.eligible.has.active.payments.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert með greiðslur frá TR.\n\nÞú getur sótt um framhald á greiðslum þegar 3 mánuðir eða minna er eftir af greiðslum sem hafa verið samþykktar.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'The reason for this is the following:\n* You are already receiving payments from the Social Insurance Administration.\n\nYou can apply for a continuation of payments when there are 3 months or less left on approved payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
     baseCertNotFoundDescription: {
       id: 'marp.application:not.eligible.base.cert.not.found.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Ekkert grunnvottorð fannst.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með vottorð sem staðfestir skerta starfsgetu sem TR getur sótt rafrænt.\n\nEf þú ert með vottorð sem staðfestir skerta starfsgetu eða óvinnufærni að öllu og vottorðið er yngra en 6 mánaða, þá bendum við þér að hafa samband við TR í gegnum Mínar síður TR undir Hafa samband eða í síma 560 4400 og fá frekari leiðbeiningar.\n\nÖll úrvinnsla umsókna sem berast frá og með 1. september 2025 tekur mið af nýjum lögum um sjúkra- og endurhæfingargreiðslur.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* No certificate for sickness and rehabilitation found.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n* You do not have a digital certificate for medical and rehabilitation.\n\nIf you have a certificate that proves reduced capacity for work or incapacity we suggest that you contact TR through My Pages under Contact Us or by phone at 560 4400 for further information.\n\nAll processing of applications received as of September 1 2025, takes into account new laws regarding medical and rehabilitation payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
     baseCertDateInvalidDescription: {
       id: 'marp.application:not.eligible.base.cert.date.invalid.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilt grunnvottorð.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilt vottorð.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n* You do not have a valid certificate for medical and rehabilitation.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
     baseCertOlderThanSevenYearsDescription: {
       id: 'marp.application:not.eligible.base.cert.older.than.seven.years.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilt grunnvottorð (má vera mest 7 ára gamalt).\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Vottorð sem staðfestir skerta starfsgetu er eldra en 7 ára.\n\nÞú þarft að fá nýja staðfestingu frá lækni á því að starfsgeta sé skert, ásamt því að fá endurhæfingaráætlun eða staðfestingu á viðurkenndri meðferð, staðfestingu á að heilsubrestur komi í veg fyrir endurhæfingu eða viðurkennda meðferð eða staðfestingu á því að þú sért á bið eftir að komast í endurhæfingu eða viðurkennda meðferð. Nánar má lesa um skilyrði fyrir sjúkra og endurhæfingargreiðslur á heimasíðu [TR](https://island.is/sjukra-og-endurhaefingargreidslur).\n\nEf hlé hefur orðið á greiðslum frá Tryggingastofnun í meira en 6 mánuði, vegna vanda sem orsakar skerta starfsgetu, þá þarf að fá nýtt grunnvottorð til þess að geta sótt aftur um sjúkra- og endurhæfingargreiðslur.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation (issued within the last 7 years).\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n* The certificate that confirms limited ability for work was issued over 7 years ago.\n\nYou need a new confirmation from a doctor that your capacity is impaired, as well as a rehabilitation plan or confirmation of treatment, confirmation of ill health that prevents rehabilitation or treatment or confirmation of pending rehabilitation or treatment.\n\nFurther information on the conditions for medical and rehabilitation payments can be found on the [TR website](https://island.is/sjukra-og-endurhaefingargreidslur).\n\nIf payments from the Social Insurance Administration have been paused for more than 6 months, due to issues that cause reduced capacity, you need to get a new certificate in order to re-apply for medical and rehabilitation payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
-    baseCertOlderThanSixMonthsDescription: {
-      id: 'marp.application:not.eligible.base.cert.older.than.six.months.description#markdown',
+    latestMedicalDocumentNotFoundDescription: {
+      id: 'marp.application:not.eligible.latest.medical.doc.not.found.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Þú er ekki með gilt grunnvottorð (má vera mest 6 mánaða gamalt).\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilda staðfestingu eða endurhæfingaráætlun.\n\nTil að geta sótt um sjúkra- og endurhæfingargreiðslur þarft þú, til viðbótar við vottorð, eitt af eftirfarandi skjölum:\n\n* Staðfestingu á viðurkenndri meðferð\n\n* Staðfestingu á að heilsubrestur komi í veg fyrir endurhæfingu eða viðurkennda meðferð\n\n* Staðfestingu á bið eftir viðurkenndri meðferð eða endurhæfingu\n\n* Endurhæfingaráætlun - fyrir þá sem eru byrjaðir í endurhæfingu\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
-        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation (issued within the last  6 months).\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+        'The reason for this is the following:\n* You do not have a valid confirmation or rehabilitation plan.\n\nTo be eligible for medical and rehabilitation payments you must, as well as having a valid certificate, have been issued one of the following documents:\n\n* Confirmation of treatment\n\n* Confirmation of ill health that prevents rehabilitation or treatment.\n\n* Confirmation of pending resolution.\n\n* Rehabilitation plan - for those who have started rehabilitation\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
+    errorProcessingClientDescription: {
+      id: 'marp.application:not.eligible.error.processing.client.description#markdown',
+      defaultMessage:
+        '* Ekki tókst að stofna viðskiptamann. Vinsamlegast reynið aftur síðar.\n\nEf vandamálið heldur áfram, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        '* Unable to create user. Please try again later.\n\nIf the issue persists, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
   }),
 
@@ -345,24 +440,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
         'The prerequisite for payments is that the person’s health issues is the result of illness, accident or trauma. The Certificate for Sickness and Rehabilitation must contain confirmation to that effect.',
     },
 
-    // Managed by
-    managedBy: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.managed.by',
-      defaultMessage: 'Utanumhaldandi',
-      description: 'Managed by',
-    },
-    managedByLocation: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.managed.by.location',
-      defaultMessage: 'Starfsstöð',
-      description: 'Location',
-    },
-
     // Information
-    information: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.information',
-      defaultMessage: 'Upplýsingar',
-      description: 'Information',
-    },
     informationDateOfLastExamination: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.information.date.of.last.examination',
       defaultMessage: 'Dagsetning síðustu skoðunar',
@@ -490,6 +568,20 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Annað varðandi megin vanda',
       description: 'Further information on main impairment',
     },
+
+    // Alma Certificate
+    almaCertificateMessage: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.alma.certificate.message#markdown',
+      defaultMessage:
+        'Hjá TR liggur fyrir eldra vottorð vegna umsóknar um endurlífeyri.\n\nVottorðið liggur til grundvallar á þessari framhaldsumsókn.',
+      description:
+        'TR has an older certificate for a re-pension application.\n\nThe certificate forms the basis for this follow-up application.',
+    },
+    almaCertificateDate: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.alma.certificate.date',
+      defaultMessage: 'Dagsetning vottorðs',
+      description: 'Date of certificate',
+    },
   }),
 
   rehabilitationPlan: defineMessages({
@@ -512,11 +604,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Þjónustuaðili: {serviceProvider}',
       description: 'Service Provider: {serviceProvider}',
     },
-    serviceProviderLocation: {
-      id: 'marp.application:rehabilitation.plan.service.provider.location',
-      defaultMessage: 'Starfsstöð',
-      description: 'Location',
-    },
     serviceProviderRehabilitationProvider: {
       id: 'marp.application:rehabilitation.plan.service.provider.rehabilitation.provider',
       defaultMessage: 'Endurhæfingaraðili',
@@ -524,21 +611,11 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
 
     // Information
-    information: {
-      id: 'marp.application:rehabilitation.plan.information',
-      defaultMessage: 'Upplýsingar',
-      description: 'Information',
-    },
     informationCurrentPosition: {
       id: 'marp.application:rehabilitation.plan.information.current.position',
       defaultMessage: 'Staða umsækjanda gagnvart vinnumarkaði eða námi í dag',
       description:
         'The applicant’s current position in relation to the labour market or study.',
-    },
-    informationApplyingFor: {
-      id: 'marp.application:rehabilitation.plan.information.applying.for',
-      defaultMessage: 'Sótt er um',
-      description: 'Applying for',
     },
     informationProgress: {
       id: 'marp.application:rehabilitation.plan.information.progress',
@@ -780,6 +857,121 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
   }),
 
+  confirmedTreatment: defineMessages({
+    sectionTitle: {
+      id: 'marp.application:confirmed.treatment.section.title',
+      defaultMessage: 'Staðfesting á viðurkenndri meðferð',
+      description: 'Confirmation of treatment',
+    },
+    description: {
+      id: 'marp.application:confirmed.treatment.description',
+      defaultMessage:
+        'Forsenda fyrir áframhaldandi greiðslum er að staðfesting á viðurkenndri meðferð.',
+      description:
+        'A prerequisite for ongoing payments is a confirmation of treatment.',
+    },
+
+    // Information
+    informationFurtherExplanationOfPreviousTreatment: {
+      id: 'marp.application:confirmed.treatment.information.further.explanation.of.previous.treatment',
+      defaultMessage: 'Nánari útskýring á fyrri meðferð',
+      description: 'Further explanation of previous treatment',
+    },
+    informationInformationRegardingTreatment: {
+      id: 'marp.application:confirmed.treatment.information.information.regarding.treatment',
+      defaultMessage: 'Upplýsingar um meðferð',
+      description: 'Information regarding treatment',
+    },
+    informationTreatmentType: {
+      id: 'marp.application:confirmed.treatment.information.treatment.type',
+      defaultMessage: 'Tegund meðferðar',
+      description: 'Treatment type',
+    },
+  }),
+
+  confirmationOfPendingResolution: defineMessages({
+    sectionTitle: {
+      id: 'marp.application:confirmation.of.pending.resolution.section.title',
+      defaultMessage: 'Staðfesting á bið eftir úrræðum',
+      description: 'Confirmation of pending resolution',
+    },
+    description: {
+      id: 'marp.application:confirmation.of.pending.resolution.description',
+      defaultMessage:
+        'Forsenda fyrir áframhaldandi greiðslum er að staðfesting á að bið eftir viðurkenndri meðferð eða endurhæfingu.',
+      description:
+        'A prerequisite for ongoing payments is a confirmation of pending treatment or rehabilitation',
+    },
+
+    // Information
+    informationResources: {
+      id: 'marp.application:confirmation.of.pending.resolution.information.resources',
+      defaultMessage: 'Hvaða úrræði hefur verið sótt um og beðið er eftir:',
+      description: 'What resources have been requested and are still awaited:',
+    },
+    informationPreviousResourcesUsed: {
+      id: 'marp.application:confirmation.of.pending.resolution.information.previous.resources.used',
+      defaultMessage: 'Fyrri úrræði sem hafa verið nýtt',
+      description: 'Previous resources used',
+    },
+    informationFurtherExplanation: {
+      id: 'marp.application:confirmation.of.pending.resolution.information.further.explanation',
+      defaultMessage: 'Nánari útskýring',
+      description: 'Further explanation',
+    },
+
+    // Application for medical and rehabilitation payments
+    applicationStartOfWaitingList: {
+      id: 'marp.application:confirmation.of.pending.resolution.application.start.of.waiting.list',
+      defaultMessage: 'Hvenær var viðkomandi settur á biðlista',
+      description: 'When was the individual placed on a waiting list?',
+    },
+    applicationEstimatedEndOfWaitPeriod: {
+      id: 'marp.application:confirmation.of.pending.resolution.application.estimated.end.of.wait.period',
+      defaultMessage: 'Hvenær er áætlað að bið ljúki?',
+      description: 'Estimated end of wait period',
+    },
+    applicationEstimatedTimeOfWait: {
+      id: 'marp.application:confirmation.of.pending.resolution.application.estimated.time.of.wait',
+      defaultMessage: 'Áætluð tímalengd á bið',
+      description: 'Estimated time of wait',
+    },
+  }),
+
+  confirmationOfIllHealth: defineMessages({
+    sectionTitle: {
+      id: 'marp.application:confirmation.of.ill.health.section.title',
+      defaultMessage: 'Staðfesting á heilsubresti',
+      description: 'Confirmation of ill health',
+    },
+    description: {
+      id: 'marp.application:confirmation.of.ill.health.description',
+      defaultMessage:
+        'Forsenda fyrir áframhaldandi greiðslum er staðfesting á heilsubresti sem kemur í veg fyrir að viðurkennd meðferð eða endurhæfing geti hafist.',
+      description:
+        'A prerequisite for ongoing payments is a confirmation of ill health that prevents the start of treatment or rehabilitation',
+    },
+
+    // Information
+    informationProgress: {
+      id: 'marp.application:confirmation.of.ill.health.information.progress',
+      defaultMessage: 'Upplýsingar um framvindu',
+      description: 'Information regarding progress',
+    },
+
+    // Application for medical and rehabilitation payments
+    applicationStartOfIllHealth: {
+      id: 'marp.application:confirmation.of.ill.health.application.start.of.ill.health',
+      defaultMessage: 'Upphaf heilsubrests',
+      description: 'Start of ill health',
+    },
+    applicationEstimatedEnd: {
+      id: 'marp.application:confirmation.of.ill.health.application.estimated.end',
+      defaultMessage: 'Áætluð lok',
+      description: 'Estimated end',
+    },
+  }),
+
   selfAssessment: defineMessages({
     sectionTitle: {
       id: 'marp.application:self.assessment.section.title',
@@ -834,77 +1026,40 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Hver er núverandi staða þín á vinnumarkaði?',
       description: 'What is your current status in the labour market?',
     },
-    neverOption: {
-      id: 'marp.application:self.assessment.never.option',
-      defaultMessage: 'Hef aldrei verið í launuðu starfi',
-      description: 'I have never had a paid job',
-    },
-    selfEmployedOption: {
-      id: 'marp.application:self.assessment.self.employed.option',
-      defaultMessage: 'Sjálfstætt starfandi',
-      description: 'Self-employed',
-    },
-    fullTimeOption: {
-      id: 'marp.application:self.assessment.full.time.option',
-      defaultMessage: 'Launþegi í fullu starfi',
-      description: 'Full-time worker',
-    },
-    partTimeOption: {
-      id: 'marp.application:self.assessment.part.time.option',
-      defaultMessage: 'Launþegi í hlutastarfi',
-      description: 'Part-time worker',
-    },
-    studyingOption: {
-      id: 'marp.application:self.assessment.studying.option',
-      defaultMessage: 'Er í námi',
-      description: 'I am currently studying',
-    },
-    jobSearchRegisteredOption: {
-      id: 'marp.application:self.assessment.job.search.registered.option',
-      defaultMessage: 'Í atvinnuleit (á skrá hjá VMST)',
-      description: 'In job search (registered with VMST)',
-    },
-    jobSearchNotRegisteredOption: {
-      id: 'marp.application:self.assessment.job.search.not.registered.option',
-      defaultMessage: 'Í atvinnuleit (ekki á skrá hjá VMST)',
-      description: 'In job search (not registered with VMST)',
-    },
-    volunteerOrTestWorkOption: {
-      id: 'marp.application:self.assessment.volunteer.or.test.work.option',
-      defaultMessage: 'Í sjálfboðavinnu/vinnuprófun',
-      description: 'In volunteer work/test work',
-    },
-    noParticipationOption: {
-      id: 'marp.application:self.assessment.no.participation.option',
-      defaultMessage:
-        'Engin þátttaka á vinnumarkaði vegna heilsubrests eða fötlunar',
-      description:
-        'No participation in the labour market due to illness or disability',
-    },
-    otherOption: {
-      id: 'marp.application:self.assessment.other.option',
-      defaultMessage: 'Annað',
-      description: 'Other',
-    },
     furtherExplanation: {
       id: 'marp.application:self.assessment.further.explanation',
       defaultMessage: 'Frekari skýring',
       description: 'Further explanation',
     },
-    lastEmployment: {
-      id: 'marp.application:self.assessment.last.employment.title',
+    lastProfessionTitle: {
+      id: 'marp.application:self.assessment.last.profession.title',
       defaultMessage:
         'Skráðu núverandi eða síðasta starfsheiti og ártal þegar þú varst síðast í starfi:',
       description:
         'Enter your current or last job title and the year in which you were last employed:',
     },
-    lastEmploymentYear: {
-      id: 'marp.application:self.assessment.last.employment.year',
+    lastProfessionPlaceholder: {
+      id: 'marp.application:self.assessment.last.profession.placeholder',
+      defaultMessage: 'Veldu starfsheiti',
+      description: 'Select job title',
+    },
+    lastActivityOfProfession: {
+      id: 'marp.application:self.assessment.last.activity.of.profession',
+      defaultMessage: 'Starfsemi starfsgreinar',
+      description: 'Activity of profession',
+    },
+    lastActivityOfProfessionPlaceholder: {
+      id: 'marp.application:self.assessment.last.activity.of.profession.placeholder',
+      defaultMessage: 'Veldu starfsemi starfsgreinar',
+      description: 'Select activity of profession',
+    },
+    lastProfessionYear: {
+      id: 'marp.application:self.assessment.last.profession.year',
       defaultMessage: 'Ártal',
       description: 'Year',
     },
-    lastEmploymentYearPlaceholder: {
-      id: 'marp.application:self.assessment.last.employment.year.placeholder',
+    lastProfessionYearPlaceholder: {
+      id: 'marp.application:self.assessment.last.profession.year.placeholder',
       defaultMessage: 'Veldu ártal',
       description: 'Select year',
     },
@@ -950,6 +1105,21 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Þú hefur staðfest endurhæfingaráætlunina',
       description: 'You have confirmed your rehabilitation plan',
     },
+    confirmedTreatmentConfirmed: {
+      id: 'marp.application:overiew.confirmed.treatment.confirmed',
+      defaultMessage: 'Þú hefur staðfest staðfestingu á viðurkenndri meðferð',
+      description: 'You have confirmed your confirmation of treatment',
+    },
+    confirmationOfPendingResolutionConfirmed: {
+      id: 'marp.application:overiew.confirmation.of.pending.resolution.confirmed',
+      defaultMessage: 'Þú hefur staðfest staðfestingu á bið eftir úrræðum',
+      description: 'You have confirmed your confirmation of pending resolution',
+    },
+    confirmationOfIllHealthConfirmed: {
+      id: 'marp.application:overiew.confirmation.of.ill.health.confirmed',
+      defaultMessage: 'Þú hefur staðfest staðfestingu á heilsubresti',
+      description: 'You have confirmed your confirmation of ill health',
+    },
     selfAssessmentQuestionnaire: {
       id: 'marp.application:overiew.self.assessment.questionnaire',
       defaultMessage: 'Spurningalisti vegna færniskerðingar',
@@ -960,13 +1130,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Þú hefur lokið við að svara spurningalista',
       description: 'You have completed answering the questionnaire',
     },
-    selfAssessmentLastEmploymentTitle: {
-      id: 'marp.application:overiew.self.assessment.last.employment.title',
+    selfAssessmentLastProfessionTitle: {
+      id: 'marp.application:overiew.self.assessment.last.profession.title',
       defaultMessage: 'Núverandi eða síðasta starfsheiti',
       description: 'Current or last job title',
     },
-    selfAssessmentLastEmploymentYear: {
-      id: 'marp.application:overiew.self.assessment.last.employment.year',
+    selfAssessmentLastProfessionYear: {
+      id: 'marp.application:overiew.self.assessment.last.profession.year',
       defaultMessage: 'Ártal þegar þú varst síðast í starfi',
       description: 'Year in which you were last employed',
     },
@@ -1043,11 +1213,52 @@ export const errorMessages = defineMessages({
 })
 
 export const statesMessages = defineMessages({
+  applicationSubmittedDescription: {
+    id: 'marp.application:applicationSubmittedDescription',
+    defaultMessage: 'Umsókn þín hefur verið send til Tryggingastofnunar',
+    description:
+      'Your application has been submitted to the Social Insurance Administration',
+  },
+  applicationApproved: {
+    id: 'marp.application:application.approved',
+    defaultMessage:
+      'Tryggingastofnun hefur samþykkt umsókn þína um sjúkra- og endurhæfingargreiðslur',
+    description:
+      'Your application for medical and rehabilitation payments has been approved',
+  },
   applicationApprovedDescription: {
     id: 'marp.application:applicationApprovedDescription',
     defaultMessage:
-      'Umsókn vegna sjúkra- og endurhæfingagreiðslna hefur verið samþykkt',
+      'Umsókn vegna sjúkra- og endurhæfingargreiðslna hefur verið samþykkt',
     description:
       'The application for medical and rehabilitation payments has been approved',
+  },
+  applicationDismissed: {
+    id: 'marp.application:application.dismissed',
+    defaultMessage:
+      'Tryggingastofnun hefur vísað umsókn þinni um sjúkra- og endurhæfingargreiðslur frá',
+    description:
+      'Tryggingastofnun has dismissed your application for medical and rehabilitation payments',
+  },
+  applicationDismissedDescription: {
+    id: 'marp.application:application.dismissed.description',
+    defaultMessage:
+      'Umsókn þinni um sjúkra- og endurhæfingargreiðslur hefur verið vísað frá',
+    description:
+      'Your application for medical and rehabilitation payments has been dismissed',
+  },
+  applicationRejected: {
+    id: 'marp.application:application.rejected',
+    defaultMessage:
+      'Tryggingastofnun hefur hafnað umsókn þinni um sjúkra- og endurhæfingargreiðslur',
+    description:
+      'Tryggingastofnun has rejected your application for medical and rehabilitation payments',
+  },
+  applicationRejectedDescription: {
+    id: 'marp.application:applicationRejectedDescription',
+    defaultMessage:
+      'Umsókn um sjúkra- og endurhæfingargreiðslur hefur verið hafnað',
+    description:
+      'The application for medical and rehabilitation payments has been rejected',
   },
 })

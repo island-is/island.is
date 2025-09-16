@@ -871,7 +871,7 @@ export const m = defineMessages({
   },
   searchPlaceholder: {
     id: 'service.portal:search-placeholder',
-    defaultMessage: 'Sláðu inn leitarorð',
+    defaultMessage: 'Skrifaðu leitarorð',
   },
   searchByNationalId: {
     id: 'service.portal:search-by-national-id',
@@ -1224,10 +1224,6 @@ export const m = defineMessages({
   closeFinanceDetail: {
     id: 'service.portal:close-finance-detail',
     defaultMessage: 'Loka sundurliðun',
-  },
-  islykill: {
-    id: 'service.portal:islykill',
-    defaultMessage: 'Íslykill',
   },
   saveInfo: {
     id: 'service.portal:saveInfo',

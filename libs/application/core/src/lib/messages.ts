@@ -732,6 +732,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú ert ekki með skráðan bankareikning',
     description: 'No bank account error',
   },
+  invalidBankAccountError: {
+    id: 'application.system:core.fetch.data.invalidBankAccountError',
+    defaultMessage: 'Ógildur bankareikningur skráður',
+    description: 'Invalid bank account registered',
+  },
   invalidEmailOrPhone: {
     id: 'application.system:core.fetch.data.invalidEmailOrPhone',
     defaultMessage: 'Ekkert netfang né símanúmer skráð',
@@ -829,6 +834,17 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Tókst ekki að sækja ökutæki út frá þessu bílnúmeri.',
     description:
       'Error message if there was no vehicle associated with given permno',
+  },
+  noContractFoundTitle: {
+    id: 'application.system:core.fetch.data.noContractFoundTitle',
+    defaultMessage: 'Engir samningar fundust',
+    description: 'No contract found title',
+  },
+  noContractFoundSummary: {
+    id: 'application.system:core.fetch.data.noContractFoundSummary',
+    defaultMessage:
+      'Engir gildir samningar fundust skráðir fyrir þessa kennitölu.',
+    description: 'No contract found summary',
   },
 })
 
@@ -1062,6 +1078,38 @@ export const coreHistoryMessages = defineMessages({
     defaultMessage: 'Umsókn samþykkt',
     description: 'History application accepted',
   },
+  applicationApprovedByReviewer: {
+    id: 'application.system:core.history.applicationApprovedByReviewer',
+    defaultMessage: 'Samþykkt. [{subject}]',
+    description: 'History log approved by reviewer',
+  },
+  applicationApprovedByReviewerWithActor: {
+    id: 'application.system:core.history.applicationApprovedByReviewerWithActor',
+    defaultMessage: 'Samþykkt. [{actor} fyrir hönd {subject}]',
+    description: 'History log approved by actor on behalf of reviewer',
+  },
+  applicationApprovedByReviewerFallback: {
+    id: 'application.system:core.history.applicationApprovedByReviewerFallback',
+    defaultMessage: 'Samþykkt af samþykktaraðila',
+    description:
+      'History log approved by reviewer, fallback string when nationalId info missing',
+  },
+  applicationRejectedByReviewer: {
+    id: 'application.system:core.history.applicationRejectedByReviewer',
+    defaultMessage: 'Hafnað af {subject}',
+    description: 'History log Rejected by reviewer',
+  },
+  applicationRejectedByReviewerWithActor: {
+    id: 'application.system:core.history.applicationRejectedByReviewerWithActor',
+    defaultMessage: 'Hafnað af {actor} fyrir hönd {subject}',
+    description: 'History log Rejected by actor on behalf of reviewer',
+  },
+  applicationRejectedByReviewerFallback: {
+    id: 'application.system:core.history.applicationRejectedByReviewerFallback',
+    defaultMessage: 'Hafnað af samþykktaraðila',
+    description:
+      'History log Rejected by reviewer, fallback string when nationalId info missing',
+  },
   applicationRejected: {
     id: 'application.system:core.history.applicationRejected',
     defaultMessage: 'Umsókn hafnað',
@@ -1160,5 +1208,10 @@ export const corePendingActionMessages = defineMessages({
     id: 'application.system:core.pendingAction.youNeedToReviewDescription',
     defaultMessage: 'Beðið er eftir þínu samþykki á þessa umsókn',
     description: 'Pending action you need to review description',
+  },
+  whoNeedsToReviewDescription: {
+    id: 'application.system:core.pendingAction.whoNeedsToReviewDescription',
+    defaultMessage: 'Beðið er eftir samþykki frá eftirfarandi aðilum: {value}',
+    description: 'Pending action list up who needs to review description',
   },
 })

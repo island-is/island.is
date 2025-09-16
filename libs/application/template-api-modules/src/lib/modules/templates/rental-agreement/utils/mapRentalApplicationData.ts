@@ -30,9 +30,7 @@ export const mapRentalApplicationData = (
 ) => {
   const {
     landlords,
-    landlordRepresentatives,
     tenants,
-    tenantRepresentatives,
     searchResults,
     units,
     categoryType,
@@ -50,18 +48,18 @@ export const mapRentalApplicationData = (
     emergencyExits,
     startDate,
     endDate,
-    rentalAmount,
+    amount,
     isIndexConnected,
     indexRate,
-    paymentMethod,
+    paymentMethodOptions,
     paymentMethodOther,
-    paymentDay,
+    paymentDateOptions,
     paymentDayOther,
-    bankAccountNumber,
-    nationalIdOfAccountOwner,
-    securityDepositType,
+    paymentMethodBankAccountNumber,
+    paymentMethodNationalId,
+    securityType,
     securityDepositAmount,
-    securityDepositAmountOther,
+    securityAmountOther,
     otherInfo,
     bankGuaranteeInfo,
     thirdPartyGuaranteeInfo,
@@ -83,21 +81,12 @@ export const mapRentalApplicationData = (
   const landlordsArray = [
     ...(landlords?.map((person) => ({
       ...mapPersonToArray(person),
-      isRepresentative: false,
-    })) || []),
-    ...(landlordRepresentatives?.map((person) => ({
-      ...mapPersonToArray(person),
-      isRepresentative: true,
     })) || []),
   ]
   const tenantsArray = [
     ...(tenants?.map((person) => ({
       ...mapPersonToArray(person),
       isRepresentative: false,
-    })) || []),
-    ...(tenantRepresentatives?.map((person) => ({
-      ...mapPersonToArray(person),
-      isRepresentative: true,
     })) || []),
   ]
 
@@ -130,7 +119,7 @@ export const mapRentalApplicationData = (
       hasInspectionFiles: files && files.length > 0,
       indipendantInspector: inspectorName,
       fireProtections: {
-        fireBlanket: parseToNumber(fireBlanket || '0'),
+        fireBlanket: fireBlanket === YesOrNoEnum.YES ? 1 : 0,
         emergencyExits: parseToNumber(emergencyExits || '0'),
         smokeDetectors: parseToNumber(smokeDetectors || '0'),
         fireExtinguisher: parseToNumber(fireExtinguisher || '0'),
@@ -139,7 +128,7 @@ export const mapRentalApplicationData = (
       endDate: endDate ? new Date(endDate) : null,
       isFixedTerm: Boolean(endDate),
       rent: {
-        amount: parseToNumber(rentalAmount || '0'),
+        amount: parseToNumber(amount || '0'),
         index: isIndexConnected?.includes(YesOrNoEnum.YES)
           ? RentIndex.ConsumerPriceIndex
           : RentIndex.None,
@@ -149,30 +138,30 @@ export const mapRentalApplicationData = (
             : null,
       },
       payment: {
-        method: paymentMethod as PaymentMethod,
+        method: paymentMethodOptions as PaymentMethod,
         otherMethod:
-          paymentMethod === PaymentMethod.Other ? paymentMethodOther : null,
-        paymentDay: paymentDay as PaymentDay,
+          paymentMethodOptions === PaymentMethod.Other
+            ? paymentMethodOther
+            : null,
+        paymentDay: paymentDateOptions as PaymentDay,
         otherPaymentDay:
-          paymentDay === PaymentDay.Other ? paymentDayOther : null,
+          paymentDateOptions === PaymentDay.Other ? paymentDayOther : null,
         bankAccountNumber:
-          paymentMethod === PaymentMethod.BankTransfer
-            ? bankAccountNumber
+          paymentMethodOptions === PaymentMethod.BankTransfer
+            ? paymentMethodBankAccountNumber
             : null,
         nationalIdOfAccountOwner:
-          paymentMethod === PaymentMethod.BankTransfer
-            ? nationalIdOfAccountOwner
+          paymentMethodOptions === PaymentMethod.BankTransfer
+            ? paymentMethodNationalId
             : null,
       },
       securityDeposit: {
-        type: securityDepositType
-          ? (securityDepositType as SecurityDepositType)
-          : undefined,
+        type: securityType ? (securityType as SecurityDepositType) : undefined,
         otherType:
-          securityDepositType === SecurityDepositType.Other ? otherInfo : null,
-        description: securityDepositType
+          securityType === SecurityDepositType.Other ? otherInfo : null,
+        description: securityType
           ? getSecurityDepositTypeDescription(
-              securityDepositType,
+              securityType,
               bankGuaranteeInfo,
               thirdPartyGuaranteeInfo,
               insuranceCompanyInfo,
@@ -182,7 +171,7 @@ export const mapRentalApplicationData = (
         amount: securityDepositAmount as DepositAmount,
         otherAmount:
           securityDepositAmount === DepositAmount.Other
-            ? parseToNumber(securityDepositAmountOther || '0')
+            ? parseToNumber(securityAmountOther || '0')
             : 0,
       },
       otherFees: {

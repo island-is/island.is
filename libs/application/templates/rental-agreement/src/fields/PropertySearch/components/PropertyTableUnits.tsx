@@ -1,4 +1,4 @@
-import { Checkbox, Table as T } from '@island.is/island-ui/core'
+import { Checkbox, Table } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   hiddenTableRow,
@@ -14,7 +14,8 @@ import {
   tableCellFastNum,
   noInputArrows,
 } from '../propertySearch.css'
-import { registerProperty } from '../../../lib/messages'
+import * as m from '../../../lib/messages'
+import { isValidDecimal, isValidInteger } from '../../../utils/utils'
 
 interface PropertyUnitsProps {
   unitCode?: string
@@ -55,19 +56,19 @@ export const PropertyTableUnits = ({
 
   const sizeInputError =
     unitInputErrorMessage ===
-      formatMessage(registerProperty.search.changedSizeTooLargeError) ||
+      formatMessage(m.registerProperty.search.changedSizeTooLargeError) ||
     unitInputErrorMessage ===
-      formatMessage(registerProperty.search.changedSizeTooSmallError)
+      formatMessage(m.registerProperty.search.changedSizeTooSmallError)
 
   const roomsInputError =
     unitInputErrorMessage ===
-      formatMessage(registerProperty.search.numOfRoomsMinimumError) ||
+      formatMessage(m.registerProperty.search.numOfRoomsMinimumError) ||
     unitInputErrorMessage ===
-      formatMessage(registerProperty.search.numOfRoomsMaximumError)
+      formatMessage(m.registerProperty.search.numOfRoomsMaximumError)
 
   return (
     <tr key={unitCode}>
-      <T.Data
+      <Table.Data
         colSpan={5}
         box={{
           paddingLeft: 0,
@@ -83,12 +84,12 @@ export const PropertyTableUnits = ({
             isTableExpanded && hiddenTableRowExpanded
           }`}
         >
-          <T.Data
+          <Table.Data
             box={{
               className: `${dropdownTableCell} ${tableCellExpand}`,
             }}
-          ></T.Data>
-          <T.Data
+          ></Table.Data>
+          <Table.Data
             box={{
               className: `${dropdownTableCell} ${tableCellFastNum}`,
             }}
@@ -100,15 +101,15 @@ export const PropertyTableUnits = ({
               checked={checkedUnits ?? false}
               onChange={onCheckboxChange}
             />
-          </T.Data>
-          <T.Data
+          </Table.Data>
+          <Table.Data
             box={{
               className: `${dropdownTableCell} ${tableCellMerking}`,
             }}
           >
             {unitCode ?? ''}
-          </T.Data>
-          <T.Data
+          </Table.Data>
+          <Table.Data
             box={{
               className: `${dropdownTableCell} ${tableCellSize}`,
             }}
@@ -123,19 +124,23 @@ export const PropertyTableUnits = ({
                 className={`${input} ${sizeInput} ${noInputArrows} ${
                   checkedUnits && sizeInputError ? inputError : ''
                 }`}
-                type="number"
+                type="text"
                 name="propertySize"
                 min={0}
                 step={0.1}
-                value={unitSizeValue}
-                onChange={onUnitSizeChange}
+                value={Number(unitSizeValue)}
+                onChange={(e) => {
+                  if (isValidDecimal(e.target.value)) {
+                    onUnitSizeChange?.(e)
+                  }
+                }}
                 onWheel={preventScrollChange}
                 disabled={isUnitSizeDisabled}
               />
               <span>{sizeUnit}</span>
             </div>
-          </T.Data>
-          <T.Data
+          </Table.Data>
+          <Table.Data
             box={{
               className: `${dropdownTableCell} ${tableCellNumOfRooms}`,
             }}
@@ -149,17 +154,16 @@ export const PropertyTableUnits = ({
               min={0}
               value={Number(numOfRoomsValue)}
               onChange={(e) => {
-                if (!/^\d*$/.test(e.target.value)) {
-                  return
+                if (isValidInteger(e.target.value)) {
+                  onUnitRoomsChange?.(e)
                 }
-                onUnitRoomsChange?.(e)
               }}
               onWheel={preventScrollChange}
               disabled={isNumOfRoomsDisabled}
             />
-          </T.Data>
+          </Table.Data>
         </div>
-      </T.Data>
+      </Table.Data>
     </tr>
   )
 }
