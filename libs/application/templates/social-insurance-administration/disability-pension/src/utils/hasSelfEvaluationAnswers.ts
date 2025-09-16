@@ -1,5 +1,5 @@
-import { Application } from "@island.is/application/types"
-import { getApplicationAnswers } from "./getApplicationAnswers"
+import { Application } from '@island.is/application/types'
+import { getApplicationAnswers } from './getApplicationAnswers'
 
 type SelfEvaluationAnswers = {
   hasAssistance: boolean
@@ -23,7 +23,9 @@ type SelfEvaluationAnswers = {
   biggestIssue: boolean
 }
 
-export const hasSelfEvaluationAnswers = (answers: Application['answers']): boolean => {
+export const hasSelfEvaluationAnswers = (
+  answers: Application['answers'],
+): boolean => {
   const {
     hadAssistanceForSelfEvaluation,
     biggestIssue,
@@ -73,6 +75,5 @@ export const hasSelfEvaluationAnswers = (answers: Application['answers']): boole
     biggestIssue: biggestIssue !== undefined,
   }
 
-
-  return Object.values(selfEvaluationsAnswers).some((value) => value);
-};
+  return Object.values(selfEvaluationsAnswers).some((value) => value)
+}

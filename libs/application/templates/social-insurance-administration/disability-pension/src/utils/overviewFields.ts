@@ -16,7 +16,6 @@ import { getApplicationAnswers } from '../utils'
 import { hasSelfEvaluationAnswers } from './hasSelfEvaluationAnswers'
 import { KeyValueItem } from '@island.is/application/types'
 
-
 export const overviewFields = (editable?: boolean) => {
   return [
     buildOverviewField({
@@ -65,13 +64,9 @@ export const overviewFields = (editable?: boolean) => {
       title: m.selfEvaluation.title,
       titleVariant: 'h4',
       backId: SectionRouteEnum.SELF_EVALUATION,
-      items: (
-        answers,
-      )  => {
-        const {
-          hadAssistanceForSelfEvaluation,
-          questionnaire
-        } = getApplicationAnswers(answers)
+      items: (answers) => {
+        const { hadAssistanceForSelfEvaluation, questionnaire } =
+          getApplicationAnswers(answers)
 
         const hasAnsweredSelfEvalution = hasSelfEvaluationAnswers(answers)
 
@@ -79,20 +74,25 @@ export const overviewFields = (editable?: boolean) => {
           (question) => question.answer !== undefined,
         )
 
-        return ([
-          {
-            width: 'full',
-            value: hadAssistanceForSelfEvaluation !== undefined ? m.selfEvaluation.applicantHasAnsweredAssistance : m.selfEvaluation.applicantHasNotAnsweredAssistance
-          },
-          hasAnsweredSelfEvalution && {
-            width: 'full',
-            value: m.selfEvaluation.applicantHasAnsweredSelfEvaluation
-          },
-          hasCapabilityImpairment && {
-            width: 'full',
-            value: m.selfEvaluation.applicantHasAnsweredCapabilityImpairment
-          }
-        ].filter(Boolean) as Array<KeyValueItem> | undefined) ?? []
+        return (
+          ([
+            {
+              width: 'full',
+              value:
+                hadAssistanceForSelfEvaluation !== undefined
+                  ? m.selfEvaluation.applicantHasAnsweredAssistance
+                  : m.selfEvaluation.applicantHasNotAnsweredAssistance,
+            },
+            hasAnsweredSelfEvalution && {
+              width: 'full',
+              value: m.selfEvaluation.applicantHasAnsweredSelfEvaluation,
+            },
+            hasCapabilityImpairment && {
+              width: 'full',
+              value: m.selfEvaluation.applicantHasAnsweredCapabilityImpairment,
+            },
+          ].filter(Boolean) as Array<KeyValueItem> | undefined) ?? []
+        )
       },
     }),
     buildOverviewField({
