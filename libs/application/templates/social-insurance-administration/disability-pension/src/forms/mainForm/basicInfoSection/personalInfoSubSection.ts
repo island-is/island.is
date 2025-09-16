@@ -4,12 +4,9 @@ import {
   buildSubSection,
   buildTextField,
   buildTitleField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
-  NationalRegistryIndividual,
-  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import { applicantInformationArray } from '@island.is/application/ui-forms'
 import * as m from '../../../lib/messages'

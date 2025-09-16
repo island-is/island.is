@@ -26,7 +26,7 @@ import { Application, FormValue } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
 import { SectionRouteEnum } from '../../../types/routes'
 import { accountNationality, getApplicationExternalData } from '../../../utils'
-import { siaGeneralCurrencies } from '../../../graphql/queries'
+import { siaGeneralCurrenciesQuery } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
 import { SocialInsuranceGeneralCurrenciesQuery } from '../../../graphql/queries.generated'
 
@@ -119,7 +119,7 @@ export const paymentInfoSubSection = buildSubSection({
           loadOptions: async ({ apolloClient }) => {
             const { data } =
               await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
-                query: siaGeneralCurrencies,
+                query: siaGeneralCurrenciesQuery,
               })
             return getCurrencies(data.socialInsuranceGeneral.currencies ?? [])
           },

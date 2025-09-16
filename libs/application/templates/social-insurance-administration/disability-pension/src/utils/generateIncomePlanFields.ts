@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { YES } from "@island.is/application/core";
 import { ISK, RatioType } from "@island.is/application/templates/social-insurance-administration-core/lib/constants";
-import { siaGeneralCurrencies } from "../graphql/queries";
+import { siaGeneralCurrenciesQuery } from "../graphql/queries";
 import { SocialInsuranceGeneralCurrenciesQuery } from "../graphql/queries.generated";
 import { updateEqualIncomePerMonth, updateIncomePerYear, updateIncomeTypeValue } from "./valueUpdaters";
 import { isForeignCurrency } from "./isForeignCurrency";
@@ -67,7 +67,7 @@ export const generateIncomePlanFields = (): Record<string, RepeaterItem> => {
       loadOptions: async ({ apolloClient }, _, activeField) => {
         const { data } =
           await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
-            query: siaGeneralCurrencies,
+            query: siaGeneralCurrenciesQuery,
           })
 
         return getCurrencies(

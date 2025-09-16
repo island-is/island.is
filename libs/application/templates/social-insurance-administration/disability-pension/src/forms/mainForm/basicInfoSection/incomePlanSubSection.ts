@@ -20,7 +20,7 @@ import {
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import { Application } from '@island.is/application/types'
 import { SectionRouteEnum } from '../../../types/routes'
-import { siaGeneralCurrencies } from '../../../graphql/queries'
+import { siaGeneralCurrenciesQuery } from '../../../graphql/queries'
 import { SocialInsuranceGeneralCurrenciesQuery } from '../../../graphql/queries.generated'
 import { generateMonthInput } from '../../../utils/generateMonthInput'
 import { getApplicationExternalData } from '../../../utils'
@@ -113,7 +113,7 @@ export const incomePlanSubSection = buildSubSection({
           loadOptions: async ({ apolloClient }, _, activeField) => {
             const { data } =
               await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
-                query: siaGeneralCurrencies,
+                query: siaGeneralCurrenciesQuery,
               })
 
             const hideISKCurrency =

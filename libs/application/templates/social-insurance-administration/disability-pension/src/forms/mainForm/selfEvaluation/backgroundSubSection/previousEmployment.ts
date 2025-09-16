@@ -13,8 +13,8 @@ import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { getYears } from '../../../../utils/dates'
 import {
-  siaGeneralProfessionActivities,
-  siaGeneralProfessions,
+  siaGeneralProfessionActivitiesQuery,
+  siaGeneralProfessionsQuery,
 } from '../../../../graphql/queries'
 import { yesOrNoOptions } from '../../../../utils'
 import { SocialInsuranceGeneralProfessionsQuery, SocialInsuranceGeneralProfessionActivitiesQuery } from '../../../../graphql/queries.generated'
@@ -87,7 +87,7 @@ export const previousEmploymentField = buildMultiField({
       loadOptions: async ({ apolloClient }) => {
         const { data } =
           await apolloClient.query<SocialInsuranceGeneralProfessionsQuery>({
-            query: siaGeneralProfessions,
+            query: siaGeneralProfessionsQuery,
           })
 
         return (
@@ -126,7 +126,7 @@ export const previousEmploymentField = buildMultiField({
         const { data } =
           await apolloClient.query<SocialInsuranceGeneralProfessionActivitiesQuery>(
             {
-              query: siaGeneralProfessionActivities,
+              query: siaGeneralProfessionActivitiesQuery,
             },
           )
 

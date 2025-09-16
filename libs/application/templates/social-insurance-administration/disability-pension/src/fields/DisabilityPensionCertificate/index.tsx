@@ -15,7 +15,7 @@ import { Markdown } from '@island.is/shared/components'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useQuery } from '@apollo/client'
-import { siaDisabilityPensionCertificate } from '../../graphql/queries'
+import { siaDisabilityPensionCertificateQuery } from '../../graphql/queries'
 import format from 'date-fns/format'
 import * as m from '../../lib/messages'
 import { SiaDisabilityPensionCertificateQuery } from '../../graphql/queries.generated'
@@ -28,7 +28,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   const { register } = useFormContext()
 
   const { data, loading } = useQuery<SiaDisabilityPensionCertificateQuery>(
-    siaDisabilityPensionCertificate,
+    siaDisabilityPensionCertificateQuery,
   )
 
   setBeforeSubmitCallback?.(async () => {

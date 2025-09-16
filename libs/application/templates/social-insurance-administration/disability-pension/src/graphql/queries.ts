@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const siaDisabilityPensionCertificate = gql`
+export const siaDisabilityPensionCertificateQuery = gql`
   query SiaDisabilityPensionCertificate {
     socialInsuranceDisabilityPensionCertificate {
       referenceId
@@ -60,14 +60,14 @@ export const siaDisabilityPensionCertificate = gql`
   }
 `
 
-export const siaGeneralCurrencies = gql`
+export const siaGeneralCurrenciesQuery = gql`
   query SocialInsuranceGeneralCurrencies {
     socialInsuranceGeneral {
       currencies
     }
   }
 `
-export const siaGeneralProfessions = gql`
+export const siaGeneralProfessionsQuery = gql`
   query SocialInsuranceGeneralProfessions {
     socialInsuranceGeneral {
       professions {
@@ -79,7 +79,7 @@ export const siaGeneralProfessions = gql`
   }
 `
 
-export const siaGeneralProfessionActivities = gql`
+export const siaGeneralProfessionActivitiesQuery = gql`
   query SocialInsuranceGeneralProfessionActivities {
     socialInsuranceGeneral {
       professionActivities {

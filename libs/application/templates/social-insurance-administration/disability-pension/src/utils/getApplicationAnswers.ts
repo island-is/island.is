@@ -23,6 +23,18 @@ import {
 } from '../types/interfaces'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
+  const applicantName =
+    getValueViaPath<string>(answers, 'applicant.name') ?? ''
+
+  const applicantCity =
+    getValueViaPath<string>(answers, 'applicant.city') ?? ''
+
+  const applicantNationalId =
+    getValueViaPath<string>(answers, 'applicant.nationalId') ?? ''
+
+  const applicantAddress   =
+    getValueViaPath<string>(answers, 'applicant.address') ?? ''
+
   const applicantPhonenumber =
     getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? ''
 
@@ -184,7 +196,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   return {
     extraInfo,
+    applicantName,
+    applicantAddress,
+    applicantNationalId,
     applicantPhonenumber,
+    applicantCity,
     applicantEmail,
     paymentInfo,
     personalAllowance,
@@ -225,82 +241,77 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
 ) => {
-  const residenceHistory = getValueViaPath(
+  const residenceHistory = getValueViaPath<NationalRegistryResidenceHistory[]>(
     externalData,
     'nationalRegistryResidenceHistory.data',
     [],
-  ) as NationalRegistryResidenceHistory[]
+  )
 
   const individual = getValueViaPath<NationalRegistryIndividual>(externalData, 'nationalRegistry.data')
   const spouse = getValueViaPath<NationalRegistrySpouse>(externalData, 'nationalRegistrySpouse.data')
 
-  const applicantName = getValueViaPath(
+  const applicantName = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.fullName',
-  ) as string
+  )
 
-  const applicantNationalId = getValueViaPath(
+  const applicantNationalId = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.nationalId',
-  ) as string
+  )
 
-  const applicantAddress = getValueViaPath(
+  const applicantAddress = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.address.streetAddress',
-  ) as string
+  )
 
-  const applicantPostalCode = getValueViaPath(
+  const applicantPostalCode = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.address.postalCode',
-  ) as string
+  )
 
-  const applicantLocality = getValueViaPath(
+  const applicantLocality = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.address.locality',
-  ) as string
+  )
 
   const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
 
-  const hasSpouse = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data',
-  ) as object
-
-  const bankInfo = getValueViaPath(
+  const bankInfo = getValueViaPath<BankInfo>(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
-  ) as BankInfo
+  )
 
-  const userProfileEmail = getValueViaPath(
+  const userProfileEmail = getValueViaPath<string>(
     externalData,
     'userProfile.data.email',
-  ) as string
+  )
 
-  const userProfilePhoneNumber = getValueViaPath(
+  const userProfilePhoneNumber = getValueViaPath<string>(
     externalData,
     'userProfile.data.mobilePhoneNumber',
-  ) as string
+  )
 
   const isEligible = getValueViaPath<Eligible>(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data',
-  ) as Eligible
+  )
 
   const categorizedIncomeTypes = getValueViaPath<Array<CategorizedIncomeTypes>>(
     externalData,
     'socialInsuranceAdministrationCategorizedIncomeTypes.data',
-  ) as CategorizedIncomeTypes[]
+  )
 
-  const incomePlanConditions = getValueViaPath(
+  const incomePlanConditions = getValueViaPath<IncomePlanConditions>(
     externalData,
     'socialInsuranceAdministrationIncomePlanConditions.data',
-  ) as IncomePlanConditions
+  )
 
-  const countries =
-    (getValueViaPath<CountryValue[]>(
+  const countries = getValueViaPath<CountryValue[]>(
       externalData,
       'socialInsuranceAdministrationCountries.data',
-    ) as CountryValue[]) ?? []
+      []
+  )
 
   return {
     residenceHistory,
@@ -312,7 +323,6 @@ export const getApplicationExternalData = (
     applicantPostalCode,
     applicantLocality,
     applicantMunicipality,
-    hasSpouse,
     bankInfo,
     userProfileEmail,
     userProfilePhoneNumber,
