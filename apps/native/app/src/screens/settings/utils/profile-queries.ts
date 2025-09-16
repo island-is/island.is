@@ -22,7 +22,9 @@ export const useUpdateUserProfile = () => {
       },
     }).then((res) => {
       if (res.data) {
-        getProfileLazyQuery()
+        getProfileLazyQuery({
+          fetchPolicy: 'network-only',
+        })
       }
 
       return res
