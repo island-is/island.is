@@ -70,6 +70,7 @@ const CourtRecord: FC = () => {
         <Accordion dividerOnTop={false} singleExpand>
           {workingCase.courtSessions?.map((courtSession, index) => (
             <CourtSessionAccordionItem
+              key={courtSession.id}
               index={index}
               courtSession={courtSession}
               isExpanded={expandedIndex === index}
