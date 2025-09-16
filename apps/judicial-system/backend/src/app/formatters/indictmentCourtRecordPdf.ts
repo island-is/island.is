@@ -12,6 +12,7 @@ import {
   addMediumHeading,
   addNormalCenteredText,
   addNormalText,
+  addNumberedList,
   setLineGap,
   setTitle,
 } from './pdfHelpers'
@@ -115,6 +116,11 @@ export const createIndictmentCourtRecordPdf = (
       addEmptyLines(doc)
       addNormalText(doc, 'Lagt er fram:', 'Times-Bold')
       addNormalText(doc, 'Nr.', 'Times-Roman')
+      addNumberedList(
+        doc,
+        courtSession.filedDocuments.map((d) => d.name),
+        courtSession.filedDocuments[0].documentOrder,
+      )
 
       nrOfFiledDocuments =
         courtSession.filedDocuments[courtSession.filedDocuments.length - 1]
