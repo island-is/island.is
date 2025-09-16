@@ -3486,114 +3486,6 @@
         }
       }
     },
-    "/api/protected/v1/MedicalDocuments/rehabilitationplan": {
-      "get": {
-        "tags": ["MedicalDocuments"],
-        "summary": "Returns the latest rehabilitation plan (ísl. endurhæfingaráætlun) for the logged-in user if it exists, 404 otherwise.",
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RehabilitationPlan"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RehabilitationPlan"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RehabilitationPlan"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/protected/v1/MedicalDocuments/disabilitypensioncertificate": {
       "get": {
         "tags": ["MedicalDocuments"],
@@ -3695,6 +3587,114 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.DisabilityPensionCertificate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/MedicalDocuments/rehabilitationplan": {
+      "get": {
+        "tags": ["MedicalDocuments"],
+        "summary": "Returns the latest rehabilitation plan (ísl. endurhæfingaráætlun) for the logged-in user if it exists, 404 otherwise.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RehabilitationPlan"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RehabilitationPlan"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RehabilitationPlan"
                 }
               }
             }
@@ -6471,6 +6471,7 @@
         "type": "object",
         "properties": {
           "referenceId": { "type": "string", "nullable": true },
+          "isAlmaCertificate": { "type": "boolean" },
           "serviceProviderName": { "type": "string", "nullable": true },
           "serviceProviderRegistrationNumber": {
             "type": "string",
@@ -7026,7 +7027,11 @@
             "type": "string",
             "nullable": true
           },
-          "created": { "type": "string", "format": "date-time" },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "person": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Person"
           },
