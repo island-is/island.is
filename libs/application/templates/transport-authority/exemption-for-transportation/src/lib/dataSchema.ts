@@ -164,7 +164,8 @@ const FreightSchema = z
       .optional(),
     items: z.array(
       z.object({
-        freightId: z.string(),
+        // Note: this field is actually required, but setting as optional so it is possible to use onSubmitLoad in tableRepeater
+        freightId: z.string().optional(),
         name: z.string().min(1).max(100),
         length: z.string().min(1),
         weight: z.string().min(1),

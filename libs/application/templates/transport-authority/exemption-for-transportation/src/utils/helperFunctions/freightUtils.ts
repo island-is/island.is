@@ -18,7 +18,10 @@ export const getFreightItems = (answers: FormValue): Freight[] => {
       'freight.items',
     ) || []
 
-  return items
+  return items.map((item) => ({
+    ...item,
+    freightId: item.freightId ?? '',
+  }))
 }
 
 export const getFreightItem = (

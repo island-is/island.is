@@ -37,7 +37,19 @@ export const FreightLongTermCreateSubSection = buildSubSection({
           editField: true,
           initActiveFieldIfEmpty: true,
           table: {
+            header: [
+              freight.labels.freightNumberTableHeader,
+              freight.labels.freightName,
+              freight.labels.freightLength,
+              freight.labels.freightWeight,
+            ],
             format: {
+              index: (_, index) => {
+                return {
+                  ...freight.labels.freightNumber,
+                  values: { number: index + 1 },
+                }
+              },
               length: (value) => {
                 return {
                   ...freight.labels.valueAndMetersSuffix,
@@ -52,11 +64,20 @@ export const FreightLongTermCreateSubSection = buildSubSection({
               },
             },
           },
+          onSubmitLoad: async ({ tableItems }) => {
+            const index = tableItems.length - 1
+            return {
+              dictionaryOfItems: [
+                {
+                  path: `freight.items[${index}].freightId`,
+                  value: getRandomId(),
+                },
+              ],
+            }
+          },
           fields: {
-            freightId: {
+            index: {
               component: 'hiddenInput',
-              defaultValue: () => getRandomId(),
-              displayInTable: false,
             },
             name: {
               component: 'input',

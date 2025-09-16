@@ -95,6 +95,16 @@ export const freight = {
       defaultMessage: 'Upplýsingar um farm',
       description: 'Freight subtitle',
     },
+    freightNumber: {
+      id: 'ta.eft.application:freight.labels.freightNumber',
+      defaultMessage: 'Farmur {number}',
+      description: 'Freight number label',
+    },
+    freightNumberTableHeader: {
+      id: 'ta.eft.application:freight.labels.freightNumberTableHeader',
+      defaultMessage: 'Farmur',
+      description: 'Freight number table header label',
+    },
     freightName: {
       id: 'ta.eft.application:freight.labels.freightName',
       defaultMessage: 'Tegund farms',

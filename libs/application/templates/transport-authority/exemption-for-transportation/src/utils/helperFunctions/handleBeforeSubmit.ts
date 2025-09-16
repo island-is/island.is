@@ -92,7 +92,7 @@ export const getUpdatedFreightPairingList = (
   )
 
   return freight.items.map((freightItem) => {
-    const freightPairing = freightPairingMap.get(freightItem.freightId)
+    const freightPairing = freightPairingMap.get(freightItem.freightId ?? '')
     if (!freightPairing) return null
 
     if (freightPairing.items) {

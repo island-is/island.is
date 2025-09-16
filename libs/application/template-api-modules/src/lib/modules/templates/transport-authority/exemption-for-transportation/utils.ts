@@ -412,7 +412,7 @@ export const mapApplicationToDto = async (
     comment: supportingDocumentsAnswers?.comments,
     cargoes:
       freightAnswers?.items?.map((item) => ({
-        code: item.freightId,
+        code: item.freightId ?? '',
         name: item.name,
         length: Number(item.length),
         weight: Number(item.weight),
