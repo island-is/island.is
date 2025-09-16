@@ -12,7 +12,7 @@ import {
 import { Routes } from '../../../utils/enums'
 import * as m from '../../../lib/messages'
 
-export const RentalHousingPartiesInfo = buildSubSection({
+export const partiesSubsection = buildSubSection({
   id: Routes.PARTIESINFORMATION,
   title: m.partiesDetails.subSectionName,
   children: [
