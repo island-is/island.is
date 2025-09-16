@@ -656,16 +656,24 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   label="Skrá vott að þinghaldi"
                   name={`isAttestingWitness-${courtSession.id}`}
                   checked={courtSession.isAttestingWitness || false}
-                  onChange={(evt) =>
+                  onChange={(evt) => {
+                    patchSession(courtSession.id, {
+                      attestingWitness: evt.target.checked
+                        ? courtSession.attestingWitness ?? null
+                        : null,
+                    })
+
                     patchSession(
                       courtSession.id,
                       {
                         isAttestingWitness: evt.target.checked,
-                        attestingWitnessId: undefined,
+                        attestingWitnessId: evt.target.checked
+                          ? courtSession.attestingWitnessId ?? null
+                          : null,
                       },
                       { persist: true },
                     )
-                  }
+                  }}
                   large
                   filled
                 />
@@ -674,12 +682,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   options={[...judges, ...registrars].sort((a, b) =>
                     a.label.localeCompare(b.label),
                   )}
-                  value={{
-                    label: courtSession.attestingWitness
-                      ? courtSession.attestingWitness.name || ''
-                      : '',
-                    value: courtSession.attestingWitnessId || '',
-                  }}
+                  value={
+                    courtSession.attestingWitness
+                      ? {
+                          label: courtSession.attestingWitness.name || '',
+                          value: courtSession.attestingWitnessId,
+                        }
+                      : null
+                  }
                   onChange={(evt) => {
                     const selectedUser = [...judges, ...registrars].find(
                       (u) => u.value === evt?.value,
