@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDebounce } from 'react-use'
 import isEqual from 'lodash/isEqual'
 import {
-  parseAsArrayOf,
   parseAsIsoDateTime,
   parseAsString,
   useQueryStates,
@@ -27,21 +25,19 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  AddToCalendarButton,
   FilterTag,
   HeadWithSocialSharing,
   Webreader,
 } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
-  GetCourtAgendasQuery,
-  GetCourtAgendasQueryVariables,
-  type GetVerdictsQuery,
-  type GetVerdictsQueryVariables,
-  type WebVerdictsInput,
+  type GetCourtAgendasQuery,
+  type GetCourtAgendasQueryVariables,
+  type WebCourtAgendasInput,
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   type CustomScreen,
@@ -49,27 +45,19 @@ import {
 } from '../CustomPage/CustomPageWrapper'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_COURT_AGENDAS_QUERY } from '../queries/CourtAgendas'
-import { DebouncedCheckbox } from './components/DebouncedCheckbox'
+import { AgendaCard } from './components/AgendaCard'
 import { DebouncedDatePicker } from './components/DebouncedDatePicker'
-import { DebouncedInput } from './components/DebouncedInput'
 import { m } from './translations.strings'
 import * as styles from './CourtAgendas.css'
 
 const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 500
-const DATE_FORMAT = 'd. MMMM yyyy'
 
 const ALL_COURTS_TAG = ''
 const DEFAULT_DISTRICT_COURT_TAG = 'hd-reykjavik'
 
 enum QueryParam {
-  SEARCH_TERM = 'q',
   COURT = 'court',
-  KEYWORD = 'keyword',
-  CASE_CATEGORIES = 'caseCategories',
-  CASE_TYPES = 'caseTypes',
-  CASE_NUMBER = 'number',
-  LAWS = 'laws',
   DATE_FROM = 'dateFrom',
   DATE_TO = 'dateTo',
 }
@@ -82,70 +70,6 @@ interface CourtAgendasProps {
   }
 }
 
-const normalizeLawReference = (input: string): string => {
-  const trimmed = input
-    .replace(/\./g, '') // remove dots
-    .replace(/\s+/g, ' ') // collapse multiple spaces
-    .toLowerCase()
-    .trim()
-
-  let year = ''
-  let lawNo = ''
-  let gr = ''
-  let mgr = ''
-
-  const parts = trimmed.split(' ')
-
-  for (let i = 0; i < parts.length; i++) {
-    const part = parts[i]
-
-    if (part === 'mgr') {
-      // Previous part is the mgr number
-      if (i > 0 && /^\d+$/.test(parts[i - 1])) {
-        mgr = parts[i - 1]
-      }
-    }
-    if (part === 'gr') {
-      // Previous part is the gr number
-      if (i > 0 && /^\d+$/.test(parts[i - 1])) {
-        gr = parts[i - 1]
-      }
-    }
-    if (part === 'nr') {
-      // Next part is lawNo/year
-      if (i + 1 < parts.length && parts[i + 1].includes('/')) {
-        const lawParts = parts[i + 1].split('/')
-        if (lawParts.length === 2) {
-          lawNo = lawParts[0]
-          year = lawParts[1]
-        }
-      }
-    }
-    // As fallback: detect bare lawNo/year like "91/1991"
-    if (!lawNo && part.includes('/')) {
-      const lawParts = part.split('/')
-      if (
-        lawParts.length === 2 &&
-        /^\d+$/.test(lawParts[0]) &&
-        /^\d{4}$/.test(lawParts[1])
-      ) {
-        lawNo = lawParts[0]
-        year = lawParts[1]
-      }
-    }
-  }
-
-  if (!year || !lawNo) {
-    return input
-  }
-
-  let result = `${year}.${lawNo}`
-  if (gr) result += `.${gr}`
-  if (mgr) result += `.${mgr}`
-
-  return result
-}
-
 const extractCourtLevelFromState = (court: string | null | undefined) =>
   court || ALL_COURTS_TAG
 
@@ -154,35 +78,11 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
   const [renderKey, setRenderKey] = useState(1)
   const [queryState, setQueryState] = useQueryStates(
     {
-      [QueryParam.SEARCH_TERM]: parseAsString
-        .withOptions({
-          clearOnDefault: true,
-        })
-        .withDefault(''),
       [QueryParam.COURT]: parseAsString
         .withOptions({
           clearOnDefault: true,
         })
         .withDefault(ALL_COURTS_TAG),
-      [QueryParam.KEYWORD]: parseAsString
-        .withOptions({ clearOnDefault: true })
-        .withDefault(''),
-      [QueryParam.CASE_CATEGORIES]: parseAsArrayOf(
-        parseAsString.withOptions({ clearOnDefault: true }),
-      ).withOptions({
-        clearOnDefault: true,
-      }),
-      [QueryParam.CASE_TYPES]: parseAsArrayOf(
-        parseAsString.withOptions({ clearOnDefault: true }),
-      ).withOptions({
-        clearOnDefault: true,
-      }),
-      [QueryParam.CASE_NUMBER]: parseAsString
-        .withOptions({ clearOnDefault: true })
-        .withDefault(''),
-      [QueryParam.LAWS]: parseAsString
-        .withOptions({ clearOnDefault: true })
-        .withDefault(''),
       [QueryParam.DATE_FROM]: parseAsIsoDateTime.withOptions({
         clearOnDefault: true,
       }),
@@ -227,18 +127,10 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
   )
 
   const convertQueryParamsToInput = useCallback(
-    (queryParams: typeof queryState, page: number): WebVerdictsInput => {
-      const keyword = queryParams[QueryParam.KEYWORD]
-      const laws = normalizeLawReference(queryParams[QueryParam.LAWS])
+    (queryParams: typeof queryState, page: number): WebCourtAgendasInput => {
       return {
         page,
-        searchTerm: queryParams[QueryParam.SEARCH_TERM],
-        courtLevel: extractCourtLevelFromState(queryParams[QueryParam.COURT]),
-        caseNumber: queryParams[QueryParam.CASE_NUMBER],
-        keywords: keyword ? [keyword] : null,
-        caseCategories: queryParams[QueryParam.CASE_CATEGORIES],
-        caseTypes: queryParams[QueryParam.CASE_TYPES],
-        laws: laws ? [laws] : null,
+        court: extractCourtLevelFromState(queryParams[QueryParam.COURT]),
         dateFrom: queryParams[QueryParam.DATE_FROM]?.toISOString() ?? null,
         dateTo: queryParams[QueryParam.DATE_TO]?.toISOString() ?? null,
       }
@@ -246,7 +138,7 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
     [],
   )
 
-  const [fetchVerdicts, { loading, error }] = useLazyQuery<
+  const [fetchCourtAgendas, { loading, error }] = useLazyQuery<
     GetCourtAgendasQuery,
     GetCourtAgendasQueryVariables
   >(GET_COURT_AGENDAS_QUERY)
@@ -257,7 +149,7 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
       return
     }
 
-    fetchVerdicts({
+    fetchCourtAgendas({
       variables: {
         input: convertQueryParamsToInput(queryState, page),
       },
@@ -285,18 +177,18 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
         }
 
         setData((prevData) => {
-          let verdicts = [...response.webCourtAgendas.items]
+          let courtAgendas = [...response.webCourtAgendas.items]
 
           if (!isFirstPage) {
-            verdicts = verdicts
+            courtAgendas = courtAgendas
               .concat(prevData.invisibleCourtAgendas)
               // Remove all duplicate verdicts in case there were new verdicts published since last page load
               .filter(
-                (verdict) =>
-                  !verdict.id ||
+                (courtAgenda) =>
+                  !courtAgenda.id ||
                   !prevData.visibleCourtAgendas
                     .map(({ id }) => id)
-                    .includes(verdict.id),
+                    .includes(courtAgenda.id),
               )
           }
 
@@ -314,14 +206,14 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
             visibleCourtAgendas: (isFirstPage
               ? []
               : prevData.visibleCourtAgendas
-            ).concat(verdicts.slice(0, ITEMS_PER_PAGE)),
-            invisibleCourtAgendas: verdicts.slice(ITEMS_PER_PAGE),
+            ).concat(courtAgendas.slice(0, ITEMS_PER_PAGE)),
+            invisibleCourtAgendas: courtAgendas.slice(ITEMS_PER_PAGE),
             total: totalAccordingToFirstPage,
           }
         })
       },
     })
-  }, [convertQueryParamsToInput, fetchVerdicts, page, queryState, total])
+  }, [convertQueryParamsToInput, fetchCourtAgendas, page, queryState, total])
 
   const resetQueryState = useCallback(() => {
     updatePage(1)
@@ -359,67 +251,7 @@ interface KeywordSelectProps {
   clearStateButtonText?: string
 }
 
-const KeywordSelect = ({
-  keywordOptions,
-  value,
-  onChange,
-  clearStateButtonText,
-}: KeywordSelectProps) => {
-  const { formatMessage } = useIntl()
-  const [state, setState] = useState(value)
-  const initialRender = useRef(true)
-  const [renderKey, setRenderKey] = useState(0)
-
-  useDebounce(
-    () => {
-      if (initialRender.current) {
-        initialRender.current = false
-        return
-      }
-      onChange(state)
-    },
-    DEBOUNCE_TIME_IN_MS,
-    [state],
-  )
-  return (
-    <Stack space={2}>
-      <Select
-        key={renderKey}
-        size="sm"
-        options={keywordOptions}
-        value={state}
-        onChange={(option) => {
-          if (option) setState(option)
-        }}
-        placeholder={formatMessage(m.listPage.keywordSelectPlaceholder)}
-      />
-      {Boolean(clearStateButtonText) && (
-        <Box display="flex" justifyContent="flexEnd">
-          <Button
-            variant="text"
-            icon="reload"
-            size="small"
-            onClick={() => {
-              setState(undefined)
-              setRenderKey((key) => key + 1)
-            }}
-          >
-            {formatMessage(m.listPage.clearFilter)}
-          </Button>
-        </Box>
-      )}
-    </Stack>
-  )
-}
-
-const FILTER_ACCORDION_ITEM_IDS = [
-  'case-number-accordion',
-  'laws-accordion',
-  'keywords-accordion',
-  'case-category-accordion',
-  'case-types-accordion',
-  'date-accordion',
-]
+const FILTER_ACCORDION_ITEM_IDS = ['date-accordion']
 
 interface FiltersProps {
   startExpanded?: boolean
@@ -483,7 +315,69 @@ const Filters = ({
           </Button>
         </Box>
       )}
-      <Box {...boxProps}>Hello</Box>
+      <Box {...boxProps}>
+        <Accordion
+          singleExpand={false}
+          dividerOnTop={false}
+          dividerOnBottom={false}
+        >
+          <AccordionItem
+            id={FILTER_ACCORDION_ITEM_IDS[0]}
+            label={formatMessage(m.listPage.dateAccordionLabel)}
+            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[0])}
+            onToggle={(expanded) => {
+              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[0])
+            }}
+            iconVariant="small"
+            labelVariant="h5"
+            labelColor={
+              Boolean(queryState[QueryParam.DATE_FROM]) ||
+              Boolean(queryState[QueryParam.DATE_TO])
+                ? 'blue400'
+                : undefined
+            }
+          >
+            <Stack space={2}>
+              <Stack space={2} key={renderKey}>
+                <DebouncedDatePicker
+                  debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
+                  name="from"
+                  label={formatMessage(m.listPage.dateFromLabel)}
+                  handleChange={(date) => {
+                    updateQueryState(QueryParam.DATE_FROM, date)
+                  }}
+                  value={queryState[QueryParam.DATE_FROM]}
+                  maxDate={queryState[QueryParam.DATE_TO]}
+                />
+                <DebouncedDatePicker
+                  debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
+                  name="to"
+                  label={formatMessage(m.listPage.dateToLabel)}
+                  handleChange={(date) => {
+                    updateQueryState(QueryParam.DATE_TO, date)
+                  }}
+                  value={queryState[QueryParam.DATE_TO]}
+                  minDate={queryState[QueryParam.DATE_FROM]}
+                />
+              </Stack>
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  variant="text"
+                  icon="reload"
+                  size="small"
+                  onClick={() => {
+                    updateQueryState(QueryParam.DATE_FROM, null)
+                    updateQueryState(QueryParam.DATE_TO, null)
+                    updateRenderKey()
+                  }}
+                >
+                  {formatMessage(m.listPage.clearFilter)}
+                </Button>
+              </Box>
+            </Stack>
+          </AccordionItem>
+        </Accordion>
+      </Box>
     </Stack>
   )
 }
@@ -525,7 +419,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
       },
       {
         label: formatMessage(m.listPage.showSupremeCourt),
-        value: 'Hæstiréttur', // TODO
+        value: 'Hæstiréttur',
       },
     ]
   }, [formatMessage])
@@ -570,102 +464,6 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
 
   const filterTags = useMemo(() => {
     const tags: { label: string; onClick: () => void }[] = []
-    if (queryState[QueryParam.CASE_NUMBER]) {
-      tags.push({
-        label: `${formatMessage(m.listPage.caseNumberAccordionLabel)}: ${
-          queryState[QueryParam.CASE_NUMBER]
-        }`,
-        onClick: () => {
-          updateQueryState(QueryParam.CASE_NUMBER, '')
-          updateRenderKey()
-        },
-      })
-    }
-
-    if (queryState[QueryParam.LAWS]) {
-      tags.push({
-        label: `${formatMessage(m.listPage.lawsAccordionLabel)}: ${
-          queryState[QueryParam.LAWS]
-        }`,
-        onClick: () => {
-          updateQueryState(QueryParam.LAWS, '')
-          updateRenderKey()
-        },
-      })
-    }
-
-    if (queryState[QueryParam.KEYWORD]) {
-      tags.push({
-        label: `${formatMessage(m.listPage.keywordAccordionLabel)}: ${
-          queryState[QueryParam.KEYWORD]
-        }`,
-        onClick: () => {
-          updateQueryState(QueryParam.KEYWORD, null)
-          updateRenderKey()
-        },
-      })
-    }
-
-    if (queryState[QueryParam.CASE_CATEGORIES]) {
-      if (queryState[QueryParam.CASE_CATEGORIES].length > 0) {
-        for (const category of queryState[QueryParam.CASE_CATEGORIES]) {
-          tags.push({
-            label: `${formatMessage(
-              m.listPage.caseCategoryAccordionLabel,
-            )}: ${category}`,
-            onClick: () => {
-              updateQueryState(QueryParam.CASE_CATEGORIES, (previousState) => {
-                let previousCategories =
-                  previousState[QueryParam.CASE_CATEGORIES]
-                if (previousCategories) {
-                  previousCategories = previousCategories.filter(
-                    (previousCategory) => previousCategory !== category,
-                  )
-                  if (previousCategories.length === 0) {
-                    previousCategories = null
-                  }
-                }
-                return {
-                  ...previousState,
-                  [QueryParam.CASE_CATEGORIES]: previousCategories,
-                }
-              })
-              updateRenderKey()
-            },
-          })
-        }
-      }
-    }
-
-    if (queryState[QueryParam.CASE_TYPES]) {
-      if (queryState[QueryParam.CASE_TYPES].length > 0) {
-        for (const caseType of queryState[QueryParam.CASE_TYPES]) {
-          tags.push({
-            label: `${formatMessage(
-              m.listPage.caseTypeAccordionLabel,
-            )}: ${caseType}`,
-            onClick: () => {
-              updateQueryState(QueryParam.CASE_TYPES, (previousState) => {
-                let previousCaseTypes = previousState[QueryParam.CASE_TYPES]
-                if (previousCaseTypes) {
-                  previousCaseTypes = previousCaseTypes.filter(
-                    (previousCaseType) => previousCaseType !== caseType,
-                  )
-                  if (previousCaseTypes.length === 0) {
-                    previousCaseTypes = null
-                  }
-                }
-                return {
-                  ...previousState,
-                  [QueryParam.CASE_TYPES]: previousCaseTypes,
-                }
-              })
-              updateRenderKey()
-            },
-          })
-        }
-      }
-    }
 
     if (queryState[QueryParam.DATE_FROM]) {
       tags.push({
@@ -695,7 +493,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
 
     return tags
   }, [format, formatMessage, queryState, updateQueryState, updateRenderKey])
-  console.log(data.visibleCourtAgendas)
+
   return (
     <Box className="rs_read">
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
@@ -725,24 +523,6 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
               </Stack>
 
               <Stack space={3}>
-                <Box className={styles.searchInput}>
-                  <DebouncedInput
-                    debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                    key={renderKey}
-                    value={queryState[QueryParam.SEARCH_TERM]}
-                    loading={loading}
-                    onChange={(value) => {
-                      updateQueryState(QueryParam.SEARCH_TERM, value)
-                    }}
-                    name="verdict-search-input"
-                    icon={{ name: 'search', type: 'outline' }}
-                    backgroundColor="blue"
-                    placeholder={formatMessage(
-                      m.listPage.searchInputPlaceholder,
-                    )}
-                    size="md"
-                  />
-                </Box>
                 <Hidden above="xs">
                   <Select
                     key={renderKey}
@@ -924,24 +704,64 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                   </Filter>
                 </Hidden>
               </Inline>
-              {data.visibleCourtAgendas.map((courtAgenda) => (
-                <Box
-                  key={courtAgenda.id}
-                  border="standard"
-                  borderRadius="large"
-                  padding={2}
-                  background="white"
-                >
-                  <Inline alignY="center" space={2}>
-                    <Text variant="h5" color="blue400">
-                      {courtAgenda.caseNumber}
-                    </Text>
-                    <Text variant="eyebrow" color="blue400">
-                      {courtAgenda.court}
-                    </Text>
-                  </Inline>
-                </Box>
-              ))}
+              {data.visibleCourtAgendas.map((agenda) => {
+                let time = ''
+                if (agenda.dateFrom && agenda.dateTo) {
+                  time = `${format(
+                    new Date(agenda.dateFrom),
+                    'HH:mm',
+                  )}${formatMessage(m.listPage.timeSeparator)}${format(
+                    new Date(agenda.dateTo),
+                    'HH:mm',
+                  )}`
+                } else if (agenda.dateFrom) {
+                  time = format(new Date(agenda.dateFrom), 'HH:mm')
+                }
+                return (
+                  <AgendaCard
+                    key={agenda.id}
+                    caseNumber={agenda.caseNumber}
+                    type={agenda.type}
+                    judgesString={`${formatMessage(
+                      m.listPage[
+                        agenda.judges.length === 1
+                          ? 'judgesSingluarPrefix'
+                          : 'judgesPluralPrefix'
+                      ],
+                    )}: ${agenda.judges.map((judge) => judge.name).join(', ')}`}
+                    title={agenda.title}
+                    date={
+                      agenda.dateFrom
+                        ? format(new Date(agenda.dateFrom), 'd. MMMM yyyy')
+                        : ''
+                    }
+                    time={time}
+                    court={agenda.court}
+                    courtRoom={agenda.courtRoom}
+                    addToCalendarButton={
+                      agenda.dateFrom ? (
+                        <AddToCalendarButton
+                          event={{
+                            title: agenda.title,
+                            description: '',
+                            location: `${
+                              agenda.court ? `${agenda.court} - ` : ''
+                            }${agenda.courtRoom}`,
+                            startDate: agenda.dateFrom.split('T')[0],
+                            startTime: agenda.dateFrom
+                              ? format(new Date(agenda.dateFrom), 'HH:mm')
+                              : undefined,
+                            endTime: agenda.dateTo
+                              ? format(new Date(agenda.dateTo), 'HH:mm')
+                              : undefined,
+                          }}
+                        />
+                      ) : null
+                    }
+                  />
+                )
+              })}
+
               {total > data.visibleCourtAgendas.length && (
                 <Box
                   key={page}
@@ -979,13 +799,16 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
   )
 }
 
-CourtAgendas.getProps = async ({ apolloClient, customPageData }) => {
+CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
+  const court = parseAsString.parseServerSide(query[QueryParam.COURT])
+
   const [CourtAgendasResponse] = await Promise.all([
     apolloClient.query<GetCourtAgendasQuery, GetCourtAgendasQueryVariables>({
       query: GET_COURT_AGENDAS_QUERY,
       variables: {
         input: {
           page: 1,
+          court,
         },
       },
     }),

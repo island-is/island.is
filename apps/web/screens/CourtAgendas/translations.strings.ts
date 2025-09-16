@@ -2,6 +2,21 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    timeSeparator: {
+      id: 'web.courtAgendas:listPage.timeSeparator',
+      defaultMessage: ' til ',
+      description: '-',
+    },
+    judgesSingluarPrefix: {
+      id: 'web.courtAgendas:listPage.judgesSingluarPrefix',
+      defaultMessage: 'Dómari',
+      description: 'Dómari (eintala)',
+    },
+    judgesPluralPrefix: {
+      id: 'web.courtAgendas:listPage.judgesPluralPrefix',
+      defaultMessage: 'Dómarar',
+      description: 'Dómarar (fleirtala)',
+    },
     revealMoreLabel: {
       id: 'web.courtAgendas:listPage.revealMoreLabel',
       defaultMessage: 'Sjá reifun',

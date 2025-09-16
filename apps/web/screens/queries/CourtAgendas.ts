@@ -10,6 +10,8 @@ export const GET_COURT_AGENDAS_QUERY = gql`
         dateTo
         closedHearing
         courtRoom
+        type
+        title
         judges {
           id
           name

@@ -58,14 +58,20 @@ class CourtAgenda {
   @Field(() => String)
   courtRoom!: string
 
-  @Field(() => [CourtAgendaJudge])
+  @Field(() => String)
+  type!: string
+
+  @CacheField(() => [CourtAgendaJudge])
   judges!: CourtAgendaJudge[]
 
-  @Field(() => [CourtAgendaLawyer])
+  @CacheField(() => [CourtAgendaLawyer])
   lawyers!: CourtAgendaLawyer[]
 
   @Field(() => String)
   court!: string
+
+  @Field(() => String)
+  title!: string
 }
 
 @ObjectType('WebCourtAgendasResponse')

@@ -303,19 +303,33 @@ export class VerdictsClientService {
     }
   }
 
-  async getCourtAgendas(input: { page?: number }) {
+  async getCourtAgendas(input: {
+    page?: number
+    court?: string
+    dateFrom?: string
+    dateTo?: string
+  }) {
+    const onlyFetchSupremeCourtAgendas = input.court === 'Hæstiréttur'
+
     const pageNumber = input.page ?? 1
     const itemsPerPage = 10
     const [supremeCourtResponse, goproResponse] = await Promise.allSettled([
-      this.supremeCourtApi.apiV2VerdictGetAgendasGet({
-        page: pageNumber,
-        limit: itemsPerPage,
-      }),
-      this.goproCourtAgendasApi.getPublishedBookings({
-        pageNumber: pageNumber,
-        court: '',
-        itemsPerPage,
-      }),
+      !input.court || onlyFetchSupremeCourtAgendas
+        ? this.supremeCourtApi.apiV2VerdictGetAgendasGet({
+            page: pageNumber,
+            limit: itemsPerPage,
+            // TODO: dateFrom and dateTo
+          })
+        : { status: 'rejected', items: [], total: 0 },
+      onlyFetchSupremeCourtAgendas
+        ? { status: 'rejected', items: [], total: 0 }
+        : this.goproCourtAgendasApi.getPublishedBookings({
+            pageNumber: pageNumber,
+            court: input.court ?? '',
+            itemsPerPage,
+            dateFrom: input.dateFrom ? input.dateFrom : undefined,
+            dateTo: input.dateTo ? input.dateTo : undefined,
+          }),
     ])
 
     const items = []
@@ -333,7 +347,9 @@ export class VerdictsClientService {
           courtRoom: agenda.courtroom ?? '',
           judges: agenda.judges ?? [],
           lawyers: [], // TODO: Lawyers from supreme court are missing
-          court: (agenda as { court?: string }).court ?? '',
+          court: 'Hæstiréttur',
+          type: agenda.caseType ?? '',
+          title: agenda.title ?? '',
         })
       }
     }
@@ -350,6 +366,8 @@ export class VerdictsClientService {
           judges: agenda.judges ?? [],
           lawyers: agenda.lawyers ?? [],
           court: (agenda as { court?: string }).court ?? '',
+          type: agenda.bookingType ?? '',
+          title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
         })
       }
     }
