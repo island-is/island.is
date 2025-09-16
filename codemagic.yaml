@@ -135,7 +135,7 @@ definitions:
         # Run Maestro Cloud
         maestro cloud \
         --apiKey $MDEV_API_KEY \
-        --projectId proj_01k57043b8e7vvkd20k4epgh44 \
+        --projectId $MAESTRO_PROJECT_ID \
         --name "Ísland.dev" \
         $iosAppPath \
         .maestro/
@@ -312,6 +312,8 @@ workflows:
         BUNDLE_ID: 'is.island.app.dev'
         XCODE_SCHEME: 'Ísland.dev'
         APP_STORE_APPLE_ID: 1570427360
+        MDEV_API_KEY: $MDEV_API_KEY
+        MAESTRO_PROJECT_ID: proj_01k57043b8e7vvkd20k4epgh44
     scripts:
       - *check_changes
       - *pip_install
