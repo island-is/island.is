@@ -7,9 +7,9 @@ import SignedLists from '../SignedLists'
 import {
   SignatureCollectionCollectionType,
   SignatureCollectionList,
+  SignatureCollectionSignedList,
 } from '@island.is/api/schema'
 import format from 'date-fns/format'
-import { SignatureCollectionSignedList } from '../../../types/schema'
 
 const SigneeView = ({
   collectionType,
