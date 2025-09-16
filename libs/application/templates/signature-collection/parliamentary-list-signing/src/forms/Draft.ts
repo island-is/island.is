@@ -19,7 +19,7 @@ export const Draft: Form = buildForm({
   id: 'ParliamentaryListSigningDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: false,
+  renderLastScreenBackButton: true,
   logo: Logo,
   children: [
     buildSection({

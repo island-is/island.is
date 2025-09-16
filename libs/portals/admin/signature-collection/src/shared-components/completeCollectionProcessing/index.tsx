@@ -100,7 +100,7 @@ const ActionCompleteCollectionProcessing = ({
         onClose={() => setModalSubmitReviewIsOpen(false)}
         closeButtonLabel={''}
       >
-        <Box marginTop={5}>
+        <Box>
           <Text>
             {formatMessage(m.completeCollectionProcessingDescription)}
           </Text>

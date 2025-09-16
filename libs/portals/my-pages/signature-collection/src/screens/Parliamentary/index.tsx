@@ -6,6 +6,8 @@ import SigneeView from '../shared/SigneeView'
 import {
   useGetCurrentCollection,
   useGetListsForOwner,
+  useGetListsForUser,
+  useGetSignedList,
   useIsOwner,
 } from '../../hooks'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -14,6 +16,7 @@ import {
   AuthDelegationType,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
+import { Skeleton } from '../../lib/skeletons'
 
 const collectionType = SignatureCollectionCollectionType.Parliamentary
 
@@ -28,33 +31,48 @@ const SignatureCollectionParliamentary = () => {
     collectionType,
     currentCollection?.id ?? '',
   )
+  const { listsForUser, loadingUserLists } = useGetListsForUser(
+    collectionType,
+    currentCollection?.id ?? '',
+  )
+  const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
 
   const isLoading =
-    loadingCurrentCollection || loadingIsOwner || loadingOwnerLists
+    loadingCurrentCollection ||
+    loadingIsOwner ||
+    loadingOwnerLists ||
+    loadingSignedLists ||
+    loadingUserLists
+
+  if (isLoading) {
+    return <Skeleton />
+  }
 
   return (
     <Box>
-      {!isLoading && (
-        <>
-          <Intro
-            title={formatMessage(m.pageTitleParliamentary)}
-            intro={formatMessage(m.pageIntro)}
-            slug={listsForOwner?.[0]?.slug}
-          />
-          {isOwner?.success ? (
-            <OwnerView
-              currentCollection={currentCollection}
-              isListHolder={
-                !user?.profile?.delegationType ||
-                user?.profile?.delegationType?.includes(
-                  AuthDelegationType.ProcurationHolder,
-                )
-              }
-            />
-          ) : (
-            <SigneeView currentCollection={currentCollection} />
-          )}
-        </>
+      <Intro
+        title={formatMessage(m.pageTitleParliamentary)}
+        intro={formatMessage(m.pageIntro)}
+        slug={listsForOwner?.[0]?.slug}
+      />
+      {isOwner?.success ? (
+        <OwnerView
+          isListHolder={
+            !user?.profile?.delegationType ||
+            user?.profile?.delegationType?.includes(
+              AuthDelegationType.ProcurationHolder,
+            )
+          }
+          currentCollection={currentCollection}
+          listsForOwner={listsForOwner}
+          signedLists={signedLists}
+        />
+      ) : (
+        <SigneeView
+          collectionType={collectionType}
+          listsForUser={listsForUser}
+          signedLists={signedLists}
+        />
       )}
     </Box>
   )

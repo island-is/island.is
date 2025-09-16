@@ -108,7 +108,7 @@ const CompleteListReview = ({
         label={''}
         closeButtonLabel={''}
       >
-        <Box marginTop={5}>
+        <Box>
           <Text>
             {listReviewed
               ? formatMessage(m.listReviewedModalDescriptionToggleBack)

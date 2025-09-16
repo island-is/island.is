@@ -94,7 +94,7 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
         onClose={() => setModalChangeDateIsOpen(false)}
         closeButtonLabel={''}
       >
-        <Box marginTop={5}>
+        <Box>
           <DatePicker
             locale="is"
             label={formatMessage(m.listEndTime)}

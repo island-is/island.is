@@ -75,7 +75,13 @@ export class SignatureListSigningService extends BaseTemplateApiService {
   }
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
-    // Returns the list user is trying to sign, in the apporiate area
+    const canSignStatus = application.externalData?.canSign?.status
+    if (canSignStatus !== 'success') {
+      // If canSign failed, the user will be stopped by the error there
+      // We return an empty array to not add redundant errors to the response
+      return []
+    }
+    // Returns the list user is trying to sign, in the appropriate area
     const areaId = (
       application.externalData.canSign.data as {
         area: { id: string }

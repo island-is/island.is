@@ -212,6 +212,13 @@ export class SignatureCollectionAdminClientService
 
       let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
 
+      const listName = (areaName: string) =>
+        collectionType === CollectionType.Parliamentary
+          ? candidacy?.nafn ?? collectionName
+          : `${owner.name} - ${areaName}`
+
+      console.log('listName', listName)
+
       // If no candidacy exists, create one
       if (!candidacy) {
         candidacy = await adminApi.adminFrambodPost({
@@ -223,7 +230,7 @@ export class SignatureCollectionAdminClientService
             frambodNafn: collectionName,
             medmaelalistar: filteredAreas.map((area) => ({
               svaediID: parseInt(area.id),
-              listiNafn: `${owner.name} - ${area.name}`,
+              listiNafn: listName(area.name),
             })),
           },
         })
@@ -235,7 +242,7 @@ export class SignatureCollectionAdminClientService
             frambodID: candidacy.id,
             medmaelalistar: filteredAreas.map((area) => ({
               svaediID: parseInt(area.id),
-              listiNafn: `${owner.name} - ${area.name}`,
+              listiNafn: listName(area.name),
             })),
           },
         })

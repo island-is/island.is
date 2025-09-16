@@ -1,58 +1,52 @@
-import { Box, Text, Button, toast, Tag, Icon } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../../lib/messages'
+import { Box, Button, Icon, Tag, Text, toast } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { m } from '../../../../lib/messages'
+import { Modal } from '@island.is/portals/my-pages/core'
 import { useState } from 'react'
+import { useGetCurrentCollection, useIsOwner } from '../../../../hooks'
 import { useMutation } from '@apollo/client'
+import { cancelCollectionMutation } from '../../../../hooks/graphql/mutations'
 import {
-  SignatureCollectionCancelListsInput,
   SignatureCollectionCollectionType,
-  SignatureCollectionList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
-import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
-import { Modal } from '@island.is/portals/my-pages/core'
-import { useNavigate } from 'react-router-dom'
-import { useIsOwner } from '../../../hooks'
 
-const CancelCollection = ({ list }: { list: SignatureCollectionList }) => {
+const CancelCandidacy = () => {
+  useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const navigate = useNavigate()
-  const { refetchIsOwner } = useIsOwner(list?.collectionType)
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const { currentCollection } = useGetCurrentCollection(
+    SignatureCollectionCollectionType.Presidential,
+  )
+  const { refetchIsOwner } = useIsOwner(currentCollection?.collectionType)
 
-  const [cancelCollection, { loading }] = useMutation<
-    { signatureCollectionCancel: SignatureCollectionSuccess },
-    {
-      input: SignatureCollectionCancelListsInput
-    }
-  >(cancelCollectionMutation, {
-    variables: {
-      input: {
-        collectionType: list?.collectionType,
-        listIds: [list.id],
-        collectionId:
-          list.collectionType ===
-          SignatureCollectionCollectionType.LocalGovernmental
-            ? list.area?.collectionId ?? ''
-            : list.collectionId ?? '',
+  const [cancelCollection, { loading }] = useMutation<{
+    signatureCollectionCancel: SignatureCollectionSuccess
+  }>(cancelCollectionMutation)
+
+  const onCancelCandidacy = async () => {
+    if (!currentCollection) return
+
+    const { data } = await cancelCollection({
+      variables: {
+        input: {
+          collectionId: currentCollection?.id ?? '',
+          collectionType: currentCollection?.collectionType ?? '',
+        },
       },
-    },
-    onCompleted: ({ signatureCollectionCancel }) => {
-      const { success } = signatureCollectionCancel ?? {}
-      if (success) {
-        toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
-      } else {
-        toast.error(formatMessage(m.cancelCollectionModalToastError))
-      }
-      setModalIsOpen(false)
+    })
+
+    const success = data?.signatureCollectionCancel.success
+
+    if (success) {
+      toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
       refetchIsOwner()
-      navigate(-1)
-    },
-    onError: () => {
+    } else {
       toast.error(formatMessage(m.cancelCollectionModalToastError))
-      setModalIsOpen(false)
-    },
-  })
+    }
+
+    setModalIsOpen(false)
+  }
 
   return (
     <Box display="flex">
@@ -64,7 +58,7 @@ const CancelCollection = ({ list }: { list: SignatureCollectionList }) => {
         </Tag>
       </Box>
       <Box marginLeft={5}>
-        <Text variant="h4">{formatMessage(m.deleteCollection)}</Text>
+        <Text variant="h4">{formatMessage(m.deleteCollectionCandidacy)}</Text>
         <Text marginBottom={2}>
           {formatMessage(m.deleteCollectionDescription)}
         </Text>
@@ -80,7 +74,7 @@ const CancelCollection = ({ list }: { list: SignatureCollectionList }) => {
               colorScheme="destructive"
               onClick={() => setModalIsOpen(true)}
             >
-              {formatMessage(m.deleteCollection)}
+              {formatMessage(m.deleteCollectionCandidacy)}
             </Button>
           }
         >
@@ -98,7 +92,7 @@ const CancelCollection = ({ list }: { list: SignatureCollectionList }) => {
               justifyContent="center"
             >
               <Button
-                onClick={() => cancelCollection()}
+                onClick={() => onCancelCandidacy()}
                 loading={loading}
                 colorScheme="destructive"
               >
@@ -112,4 +106,4 @@ const CancelCollection = ({ list }: { list: SignatureCollectionList }) => {
   )
 }
 
-export default CancelCollection
+export default CancelCandidacy

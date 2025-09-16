@@ -3,6 +3,8 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   useGetCurrentCollection,
   useGetListsForOwner,
+  useGetListsForUser,
+  useGetSignedList,
   useIsOwner,
 } from '../../hooks'
 import OwnerView from './OwnerView'
@@ -11,6 +13,7 @@ import { m } from '../../lib/messages'
 import Intro from '../shared/Intro'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { Skeleton } from '../../lib/skeletons'
 
 const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
@@ -25,25 +28,42 @@ const SignatureCollectionMunicipal = () => {
     collectionType,
     '',
   )
+  const { listsForUser, loadingUserLists } = useGetListsForUser(
+    collectionType,
+    currentCollection?.id ?? '',
+  )
+  const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
 
   const isLoading =
-    loadingCurrentCollection || loadingIsOwner || loadingOwnerLists
+    loadingCurrentCollection ||
+    loadingIsOwner ||
+    loadingOwnerLists ||
+    loadingUserLists ||
+    loadingSignedLists
+
+  if (isLoading) {
+    return <Skeleton />
+  }
 
   return (
     <Box>
-      {!isLoading && (
-        <>
-          <Intro
-            title={formatMessage(m.pageTitleMunicipal)}
-            intro={formatMessage(m.pageIntro)}
-            slug={listsForOwner?.[0]?.slug}
-          />
-          {isOwner?.success || user?.profile.actor ? (
-            <OwnerView currentCollection={currentCollection} />
-          ) : (
-            <SigneeView currentCollection={currentCollection} />
-          )}
-        </>
+      <Intro
+        title={formatMessage(m.pageTitleMunicipal)}
+        intro={formatMessage(m.pageIntro)}
+        slug={listsForOwner?.[0]?.slug}
+      />
+      {isOwner?.success || user?.profile.actor ? (
+        <OwnerView
+          currentCollection={currentCollection}
+          listsForOwner={listsForOwner}
+          signedLists={signedLists}
+        />
+      ) : (
+        <SigneeView
+          collectionType={collectionType}
+          listsForUser={listsForUser}
+          signedLists={signedLists}
+        />
       )}
     </Box>
   )
