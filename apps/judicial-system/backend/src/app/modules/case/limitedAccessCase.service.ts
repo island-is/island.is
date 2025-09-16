@@ -664,6 +664,21 @@ export class LimitedAccessCaseService {
           ),
         ),
       )
+
+      if (
+        allowedCaseFileCategories.includes(CaseFileCategory.COURT_RECORD) &&
+        !theCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.COURT_RECORD,
+        )
+      ) {
+        promises.push(
+          this.tryAddGeneratedPdfToFilesToZip(
+            this.pdfService.getCourtRecordPdfForIndictmentCase(theCase),
+            'Þingbók.pdf',
+            filesToZip,
+          ),
+        )
+      }
     }
 
     await Promise.all(promises)

@@ -42,8 +42,10 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isRequestCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -532,7 +534,19 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    let pdf: Buffer
+
+    if (isRequestCase(theCase.type)) {
+      pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    } else {
+      if (!hasGeneratedCourtRecordPdf(theCase.courtSessions)) {
+        throw new BadRequestException(
+          `Case ${caseId} does not have a generated court record pdf document`,
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(theCase)
+    }
 
     res.end(pdf)
   }

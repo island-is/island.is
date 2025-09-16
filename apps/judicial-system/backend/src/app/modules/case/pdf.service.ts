@@ -158,11 +158,11 @@ export class PdfService {
 
     await this.refreshFormatMessage()
 
-    if (isIndictmentCase(theCase.type)) {
-      return createIndictmentCourtRecordPdf(theCase, user)
-    }
-
     return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
+  }
+
+  async getCourtRecordPdfForIndictmentCase(theCase: Case): Promise<Buffer> {
+    return createIndictmentCourtRecordPdf(theCase)
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {

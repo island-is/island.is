@@ -21,7 +21,6 @@ import {
 
 export const createIndictmentCourtRecordPdf = (
   theCase: Case,
-  user?: User,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -57,11 +56,9 @@ export const createIndictmentCourtRecordPdf = (
       `Þann ${formatDate(
         courtSession.startDate ?? nowFactory(),
         'PPP',
-      )} heldur ${
-        theCase.judge?.name ?? 'óþekktur'
-      } héraðsdómari dómþing í ${applyDativeCaseToCourtName(
-        theCase.court?.name ?? 'héraðsdómi',
-      )}. Fyrir er tekið mál nr. ${
+      )} heldur ${theCase.judge?.name ?? 'óþekktur'} héraðsdómari dómþing ${
+        courtSession.location ?? 'á óþekktum stað'
+      }. Fyrir er tekið mál nr. ${
         theCase.courtCaseNumber ?? 'S-xxxx/yyyy'
       }. Þinghald hefst kl. ${formatDate(
         courtSession.startDate ?? nowFactory(),
@@ -95,6 +92,15 @@ export const createIndictmentCourtRecordPdf = (
     addNormalText(
       doc,
       `Varnaraðili er ${theCase.defendants?.[0].name ?? 'óþekktur'}.`,
+    )
+
+    addEmptyLines(doc)
+    addNormalText(doc, 'Mættir eru:', 'Times-Bold')
+    addNormalText(
+      doc,
+      // Must use || here as we want to display a default message if the file has no content
+      courtSession.attendees?.trim() || 'Enginn er mættur í þinghaldið.',
+      'Times-Roman',
     )
   }
 
