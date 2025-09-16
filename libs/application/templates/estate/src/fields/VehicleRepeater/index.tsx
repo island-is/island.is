@@ -36,6 +36,7 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     if (fields.length === 0 && estateData.estate?.vehicles) {
       replace(estateData.estate.vehicles)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleAddProperty = () =>
@@ -123,7 +124,7 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           />
         </Box>
       ))}
-      <Box marginTop={1}>
+      <Box marginTop={2}>
         <Button
           variant="text"
           icon="add"
