@@ -136,10 +136,10 @@ const FreightPairingSubSection = (freightIndex: number) =>
                 component: 'description',
                 title: freight.labels.exemptionFor,
                 titleVariant: 'h5',
+                required: true,
               },
               exemptionFor: {
                 component: 'checkbox',
-                label: freight.labels.exemptionFor,
                 large: true,
                 backgroundColor: 'blue',
                 width: 'half',
@@ -162,6 +162,11 @@ const FreightPairingSubSection = (freightIndex: number) =>
                     label: freight.exemptionFor.weightOptionTitle,
                   },
                 ],
+              },
+              informationTitle: {
+                component: 'description',
+                title: freight.labels.freightSubtitle,
+                titleVariant: 'h5',
               },
               height: {
                 component: 'input',

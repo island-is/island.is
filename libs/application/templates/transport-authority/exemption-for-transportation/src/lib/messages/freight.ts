@@ -127,7 +127,7 @@ export const freight = {
     },
     exemptionFor: {
       id: 'ta.eft.application:freight.labels.exemptionFor',
-      defaultMessage: 'Óskað er eftir undanþágu vegna:',
+      defaultMessage: 'Óskað er eftir undanþágu vegna',
       description: 'Exemption for checkbox label',
     },
     metersSuffix: {
