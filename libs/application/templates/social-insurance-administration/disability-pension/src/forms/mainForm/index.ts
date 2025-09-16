@@ -15,9 +15,9 @@ export const MainForm = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
-    basicInfoSection,
-    selfEvaluationSection,
-    disabilityCertificateSection,
+    //basicInfoSection,
+    //selfEvaluationSection,
+    //disabilityCertificateSection,
     extraInfoSection,
     overviewSection,
     conclusionSection,

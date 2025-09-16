@@ -54,7 +54,7 @@ export const dataSchema = z.object({
   disabilityAppliedBefore: z.enum([YES, NO]),
   disabilityPeriod: z.object({
     year: z.coerce.number().int().min(1000).optional(),
-    month: z.coerce.number().int().min(1).max(12).optional(),
+    month: z.coerce.number().int().min(0).max(11).optional(),
   }),
   livedAbroad: livedAbroadSchema.refine(
     ({ list, hasLivedAbroad }) => {

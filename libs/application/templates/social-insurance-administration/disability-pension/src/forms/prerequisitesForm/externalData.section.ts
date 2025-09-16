@@ -27,6 +27,7 @@ import {
   SocialInsuranceAdministrationEmploymentStatusesApi,
   SocialInsuranceAdministrationProfessionsApi,
   SocialInsuranceAdministrationProfessionActivitiesApi,
+  SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../../dataProviders'
 import * as m from '../../lib/messages'
@@ -101,6 +102,9 @@ export const externalDataSection = buildSection({
         }),
         buildDataProviderItem({
           provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
+        }),
+        buildDataProviderItem({
+          provider: SocialInsuranceAdministrationApplicantApi,
         }),
         buildDataProviderItem({
           provider: SocialInsuranceAdministrationCurrenciesApi,

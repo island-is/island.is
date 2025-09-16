@@ -9,9 +9,8 @@ import {
   formatPhoneNumber,
 } from '@island.is/application/ui-components'
 import kennitala from 'kennitala'
-
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { formatBankAccount, getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import * as m from '../lib/messages'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { hasSelfEvaluationAnswers } from './hasSelfEvaluationAnswers'
@@ -64,7 +63,7 @@ export const paymentInfoItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.paymentInfo.bank,
-      valueText: paymentInfo?.bank
+      valueText: formatBankAccount(paymentInfo)
     },
     {
       width: 'half',
@@ -136,20 +135,20 @@ export const selfEvaluationItems = (answers: FormValue): Array<KeyValueItem> => 
     (question) => question.answer !== undefined,
   )
 
-  return ([
+  return [
     {
       width: 'full',
-      value: hadAssistanceForSelfEvaluation !== undefined ? m.selfEvaluation.applicantHasAnsweredAssistance : m.selfEvaluation.applicantHasNotAnsweredAssistance
+      valueText: hadAssistanceForSelfEvaluation !== undefined ? m.selfEvaluation.applicantHasAnsweredAssistance : m.selfEvaluation.applicantHasNotAnsweredAssistance
     },
     hasAnsweredSelfEvalution && {
       width: 'full',
-      value: m.selfEvaluation.applicantHasAnsweredSelfEvaluation
+      valueText: m.selfEvaluation.applicantHasAnsweredSelfEvaluation
     },
     hasCapabilityImpairment && {
       width: 'full',
-      value: m.selfEvaluation.applicantHasAnsweredCapabilityImpairment
+      valueText: m.selfEvaluation.applicantHasAnsweredCapabilityImpairment
     }
-  ].filter(Boolean) as Array<KeyValueItem> | undefined) ?? []
+  ].filter(Boolean) as KeyValueItem[]
 }
 
 export const extraInfoItems = (answers: FormValue): Array<KeyValueItem> => {

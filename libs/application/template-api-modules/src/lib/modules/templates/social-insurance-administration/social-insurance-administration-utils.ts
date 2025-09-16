@@ -760,10 +760,7 @@ export const getIncomeTypes = (
   incomePlan: IncomePlanRow[],
   categorizedIncomeTypes: CategorizedIncomeTypes[],
 ): IncomeTypes[] => {
-  console.log(incomePlan)
-  console.log(categorizedIncomeTypes)
-
-  return incomePlan.map((i) => ({
+ return incomePlan.map((i) => ({
     incomeTypeNumber:
       categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)
         ?.incomeTypeNumber ?? 0,
@@ -811,6 +808,7 @@ export const getIncomeTypes = (
           amountDec: Number(i.incomePerYear) / 12,
         }),
   }))
+
 }
 
 export const shouldDistributeIncomeByMonth = (incomePlan: IncomePlanRow[]) => {

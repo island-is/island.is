@@ -6,7 +6,7 @@ import {
   Eligible,
   IncomePlanConditions,
   IncomePlanRow,
-  PaymentInfo,
+  PaymentInfo
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   Application,
@@ -18,6 +18,7 @@ import {
   Country,
   CountryValue,
   LivedAbroad,
+  SchemaPaymentInfo,
   PreviousEmployment,
   SelfAssessmentQuestionnaireAnswers,
 } from '../types/interfaces'
@@ -41,7 +42,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantEmail =
     getValueViaPath<string>(answers, 'applicant.email') ?? ''
 
-  const paymentInfo = getValueViaPath<PaymentInfo>(answers, 'paymentInfo')
+  const {bank, bankAccountType, ...rest} = getValueViaPath<SchemaPaymentInfo>(answers, 'paymentInfo') ?? {bank: undefined}
+  const paymentInfo: PaymentInfo | undefined = bankAccountType ? {
+    ...rest,
+    bankAccountType,
+    ...bank,
+  } : undefined
 
   const personalAllowance = getValueViaPath<YesOrNo>(
     answers,

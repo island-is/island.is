@@ -1,4 +1,6 @@
 import { YesOrNo } from '@island.is/application/core'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { PaymentInfo as CorePaymentInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export interface EducationLevels {
   code: string
@@ -8,6 +10,20 @@ export interface EducationLevels {
 export interface Country {
   country: string
   abroadNationalId: string
+}
+
+export interface SchemaPaymentInfo extends Omit<CorePaymentInfo, 'bank' | 'bankNumber' | 'ledger' | 'accountNumber'> {
+  bankAccountType: BankAccountType
+  bank?: {
+    ledger: string
+    accountNumber: string
+    bankNumber: string
+  }
+  iban?: string
+  swift?: string
+  bankName?: string
+  bankAddress?: string
+  currency?: string
 }
 
 export interface PreviousEmployment {

@@ -75,13 +75,13 @@ export const paymentInfoSubSection = buildSubSection({
         buildBankAccountField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.bank`,
           required: true,
+          condition: (formValue: FormValue) => accountNationality(formValue) === BankAccountType.FOREIGN,
           defaultValue: (application: Application) => {
             const { bankInfo } = getApplicationExternalData(
               application.externalData,
             )
             return { ...bankInfo, bankNumber: bankInfo?.bank }
           },
-          condition: (formValue: FormValue) => accountNationality(formValue) === BankAccountType.ICELANDIC
         }),
         buildTextField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.iban`,
