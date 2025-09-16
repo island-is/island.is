@@ -12,7 +12,6 @@ import {
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
-import { QueryGetCustomSubpageArgs } from '@island.is/api/schema'
 import {
   Box,
   BreadCrumbItem,
@@ -36,6 +35,7 @@ import {
   Grant,
   GrantList,
   Query,
+  QueryGetCustomSubpageArgs,
   QueryGetGenericTagsInTagGroupsArgs,
   QueryGetGrantsArgs,
 } from '@island.is/web/graphql/schema'
