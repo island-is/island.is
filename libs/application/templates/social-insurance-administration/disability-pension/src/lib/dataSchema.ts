@@ -160,7 +160,11 @@ export const dataSchema = z.object({
     })
     .refine(
       ({ status, other }) => {
-        return status && status.length > 0 && (!status.includes(OTHER_STATUS_VALUE) || other && other.length > 0)
+        return (
+          status &&
+          status.length > 0 &&
+          (!status.includes(OTHER_STATUS_VALUE) || (other && other.length > 0))
+        )
       },
       {
         path: ['status'],

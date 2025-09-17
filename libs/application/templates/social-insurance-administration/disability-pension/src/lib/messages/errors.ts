@@ -85,7 +85,8 @@ export const errors = defineMessages({
     id: 'dp.application:errors.employmentStatusRequired',
     defaultMessage:
       'Nauðsynlegt er að velja a.m.k einn valkost. Ef valið er "Annað" þarf að útskýra í texta',
-    description: 'You must select at least one option. If "other" is selected, a description must be provided',
+    description:
+      'You must select at least one option. If "other" is selected, a description must be provided',
   },
   capabilityBetween0And100: {
     id: 'dp.application:errors.capabilityBetween0And100',

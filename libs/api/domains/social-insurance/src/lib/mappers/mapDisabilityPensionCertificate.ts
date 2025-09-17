@@ -32,7 +32,7 @@ const mapDoctor = (
     doctorNumber: doctorInfo.doctorNumber ?? undefined,
     residence: doctorInfo.residence ?? undefined,
     phoneNumber: doctorInfo.phoneNumber ?? undefined,
-    email: doctorInfo.email ?? undefined
+    email: doctorInfo.email ?? undefined,
   }
 }
 

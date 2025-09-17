@@ -666,7 +666,9 @@ export const transformApplicationToDisabilityPensionDTO = (
     taxInfo: {
       personalAllowance: personalAllowance === YES,
       personalAllowanceUsage:
-        personalAllowance === YES ? Number.parseInt(personalAllowanceUsage) : -1,
+        personalAllowance === YES
+          ? Number.parseInt(personalAllowanceUsage)
+          : -1,
       taxLevel: +taxLevel,
     },
     hasAppliedForDisabilityAtPensionFund: hasAppliedForDisabilityBefore === YES,

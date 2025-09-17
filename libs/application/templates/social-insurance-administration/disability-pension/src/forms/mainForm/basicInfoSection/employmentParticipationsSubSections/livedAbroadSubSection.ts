@@ -90,9 +90,9 @@ export const livedAbroadSubSection = buildMultiField({
           displayInTable: false,
           maxDate: () => new Date(),
           minDate: (_, activeField) => {
-            return activeField?.periodStart ?
-              addDays(new Date(activeField.periodStart), 1)
-            : addDays(addYears(new Date(), -50), 1)
+            return activeField?.periodStart
+              ? addDays(new Date(activeField.periodStart), 1)
+              : addDays(addYears(new Date(), -50), 1)
           },
         },
         period: {

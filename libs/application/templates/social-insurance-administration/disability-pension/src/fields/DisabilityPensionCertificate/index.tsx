@@ -50,38 +50,37 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(sm.confirm.name)}</Label>
           <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate?.doctor?.name ?? '-'}
+            {data?.socialInsuranceDisabilityPensionCertificate?.doctor?.name ??
+              '-'}
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.doctorNumber)}</Label>
           <Text>
-            {
-              data?.socialInsuranceDisabilityPensionCertificate?.doctor
-                ?.doctorNumber ?? '-'
-            }
+            {data?.socialInsuranceDisabilityPensionCertificate?.doctor
+              ?.doctorNumber ?? '-'}
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.residence)}</Label>
           <Text>
-            {
-              data?.socialInsuranceDisabilityPensionCertificate?.doctor
-                ?.residence ?? '-'
-            }
+            {data?.socialInsuranceDisabilityPensionCertificate?.doctor
+              ?.residence ?? '-'}
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.phoneNumber)}</Label>
-          <Text>{
-            data?.socialInsuranceDisabilityPensionCertificate?.doctor
-              ?.phoneNumber ?? '-'
-          }</Text>
+          <Text>
+            {data?.socialInsuranceDisabilityPensionCertificate?.doctor
+              ?.phoneNumber ?? '-'}
+          </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.email)}</Label>
-          <Text>{data?.socialInsuranceDisabilityPensionCertificate?.doctor
-            ?.email ?? '-'}</Text>
+          <Text>
+            {data?.socialInsuranceDisabilityPensionCertificate?.doctor?.email ??
+              '-'}
+          </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.address)}</Label>
