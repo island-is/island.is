@@ -103,7 +103,13 @@ const IndictmentOverview = () => {
     : CaseFileCategory.COURT_RECORD
 
   const showGeneratedCourtRecord =
-    !hasRuling && hasGeneratedCourtRecordPdf(workingCase.courtSessions)
+    !hasRuling &&
+    hasGeneratedCourtRecordPdf(
+      workingCase.state,
+      workingCase.indictmentRulingDecision,
+      workingCase.courtSessions,
+      user,
+    )
 
   const savePunishmentType = async () => {
     const updatedCase = await updateCase(workingCase.id, {

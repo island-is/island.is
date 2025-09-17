@@ -34,6 +34,8 @@ import {
   CaseRepositoryService,
   CaseString,
   CivilClaimant,
+  CourtDocument,
+  CourtSession,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -225,6 +227,28 @@ export const include: Includeable[] = [
     separate: true,
   },
   {
+    model: CourtSession,
+    as: 'courtSessions',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: User,
+        as: 'attestingWitness',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: CourtDocument,
+        as: 'filedDocuments',
+        required: false,
+        order: [['documentOrder', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  {
     model: CaseFile,
     as: 'caseFiles',
     required: false,
@@ -280,7 +304,20 @@ export const include: Includeable[] = [
     where: { stringType: stringTypes },
     separate: true,
   },
-  { model: Case, as: 'mergeCase', attributes },
+  {
+    model: Case,
+    as: 'mergeCase',
+    attributes,
+    include: [
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+  },
   {
     model: Case,
     as: 'mergedCases',

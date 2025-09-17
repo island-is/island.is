@@ -5,10 +5,10 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseReadGuard } from '../../guards/caseRead.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
+import { MergedCaseExistsGuard } from '../../guards/mergedCaseExists.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
 describe('LimitedAccessCaseController - Get court record pdf guards', () => {
@@ -32,10 +32,10 @@ describe('LimitedAccessCaseController - Get court record pdf guards', () => {
       allowedCaseTypes: [
         ...restrictionCases,
         ...investigationCases,
-        indictmentCases,
+        ...indictmentCases,
       ],
     })
     expect(new guards[4]()).toBeInstanceOf(CaseReadGuard)
-    expect(new guards[5]()).toBeInstanceOf(CaseCompletedGuard)
+    expect(new guards[5]()).toBeInstanceOf(MergedCaseExistsGuard)
   })
 })

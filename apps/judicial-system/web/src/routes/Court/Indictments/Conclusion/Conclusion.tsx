@@ -123,7 +123,10 @@ const Conclusion: FC = () => {
     useState<string>()
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
     workingCase.courtSessions,
+    user,
   )
 
   const handleNavigationTo = useCallback(

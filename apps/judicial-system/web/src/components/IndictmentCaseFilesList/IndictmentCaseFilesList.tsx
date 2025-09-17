@@ -219,7 +219,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const permissions = useFilePermissions(workingCase, user)
   const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
     workingCase.courtSessions,
+    user,
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)

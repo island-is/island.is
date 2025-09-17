@@ -508,6 +508,7 @@ export class CaseController {
       ...indictmentCases,
     ]),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -518,7 +519,10 @@ export class CaseController {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
   )
-  @Get('case/:caseId/courtRecord')
+  @Get([
+    'case/:caseId/courtRecord',
+    'case/:caseId/mergedCase/:mergedCaseId/courtRecord',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -539,7 +543,14 @@ export class CaseController {
     if (isRequestCase(theCase.type)) {
       pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
     } else {
-      if (!hasGeneratedCourtRecordPdf(theCase.courtSessions)) {
+      if (
+        !hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.courtSessions,
+          user,
+        )
+      ) {
         throw new BadRequestException(
           `Case ${caseId} does not have a generated court record pdf document`,
         )

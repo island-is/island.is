@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Header,
   Inject,
@@ -33,6 +34,7 @@ import {
   hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isCompletedCase,
   isRequestCase,
   restrictionCases,
   UserRole,
@@ -284,10 +286,13 @@ export class LimitedAccessCaseController {
       ...indictmentCases,
     ]),
     CaseReadGuard,
-    CaseCompletedGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)
-  @Get('case/:caseId/limitedAccess/courtRecord')
+  @Get([
+    'case/:caseId/limitedAccess/courtRecord',
+    'case/:caseId/limitedAccess/mergedCase/:mergedCaseId/courtRecord',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -306,9 +311,20 @@ export class LimitedAccessCaseController {
     let pdf: Buffer
 
     if (isRequestCase(theCase.type)) {
+      if (!isCompletedCase(theCase.state)) {
+        throw new ForbiddenException(`Case ${caseId} is not completed`)
+      }
+
       pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
     } else {
-      if (!hasGeneratedCourtRecordPdf(theCase.courtSessions)) {
+      if (
+        !hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.courtSessions,
+          user,
+        )
+      ) {
         throw new BadRequestException(
           `Case ${caseId} does not have a generated court record pdf document`,
         )

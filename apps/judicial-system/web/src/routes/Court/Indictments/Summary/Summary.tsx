@@ -73,7 +73,10 @@ const Summary: FC = () => {
   })
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
     workingCase.courtSessions,
+    user,
   )
 
   const initialize = useCallback(() => {
