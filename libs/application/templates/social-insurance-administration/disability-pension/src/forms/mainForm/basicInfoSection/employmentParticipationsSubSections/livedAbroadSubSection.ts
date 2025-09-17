@@ -8,12 +8,13 @@ import {
 } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
-import addMonths from 'date-fns/addMonths'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
 import * as m from '../../../../lib/messages'
 import addYears from 'date-fns/addYears'
 import addDays from 'date-fns/addDays'
+import parseISO from 'date-fns/parseISO'
+import isValid from 'date-fns/isValid'
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(
@@ -73,8 +74,8 @@ export const livedAbroadSubSection = buildMultiField({
           width: 'half',
           maxDate: (_, activeField) => {
             if (activeField?.periodEnd) {
-              const endDate = new Date(activeField.periodEnd)
-              return addDays(endDate, -1)
+              const end = parseISO(activeField.periodEnd)
+              if (isValid(end)) return addDays(end, -1)
             }
             return addDays(new Date(), -1)
           },
@@ -90,9 +91,11 @@ export const livedAbroadSubSection = buildMultiField({
           displayInTable: false,
           maxDate: () => new Date(),
           minDate: (_, activeField) => {
-            return activeField?.periodStart
-              ? addDays(new Date(activeField.periodStart), 1)
-              : addDays(addYears(new Date(), -50), 1)
+            if (activeField?.periodStart) {
+              const start = parseISO(activeField.periodStart)
+              if (isValid(start)) return addDays(start, 1)
+            }
+            return addDays(addYears(new Date(), -50), 1)
           },
         },
         period: {
@@ -108,16 +111,15 @@ export const livedAbroadSubSection = buildMultiField({
               if (!periodStart || !periodEnd) {
                 return ''
               }
+              const start = parseISO(periodStart)
+              const end = parseISO(periodEnd)
 
-              const dateStart = new Date(periodStart)
-              const dateEnd = new Date(periodEnd)
-
-              if (!dateStart || !dateEnd) {
+              if (!isValid(start) || !isValid(end)) {
                 return ''
               }
 
-              const formattedDateStart = format(dateStart, 'MMMM yyyy')
-              const formattedDateEnd = format(dateEnd, 'MMMM yyyy')
+              const formattedDateStart = format(start, 'MMMM yyyy')
+              const formattedDateEnd = format(end, 'MMMM yyyy')
 
               return `${formattedDateStart} - ${formattedDateEnd}`
             },

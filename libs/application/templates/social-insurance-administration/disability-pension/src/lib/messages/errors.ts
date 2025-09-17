@@ -3,18 +3,18 @@ import { defineMessages } from 'react-intl'
 export const errors = defineMessages({
   emptyForeignResidence: {
     id: 'dp.application:errors.foreignResidenceRequired',
-    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni dvöl erlendis',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k. einni dvöl erlendis',
     description: 'You must add at least one foreign residence',
   },
   emptyForeignPayments: {
     id: 'dp.application:errors.abroadPaymentsRequired',
-    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni greiðslu erlendis',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k. einni greiðslu erlendis',
     description: 'You must add at least one foreign payment',
   },
   emptyCountry: {
     id: 'dp.application:errors.countryRequired',
     defaultMessage: 'Nauðsynlegt er að velja land',
-    description: 'You must add at least one country',
+    description: 'You must select a country',
   },
   emptyNationalId: {
     id: 'dp.application:errors.abroadNationalIdRequired',
@@ -23,32 +23,32 @@ export const errors = defineMessages({
   },
   nationalIdAbroadTooShort: {
     id: 'dp.application:errors.abroadNationalIdTooShort',
-    defaultMessage: 'Kennitala í landi verður að vera a.m.k 4 tölustafir',
-    description: 'TODO',
+    defaultMessage: 'Kennitala í landi verður að vera a.m.k. 4 tölustafir',
+    description: 'The foreign national ID must be at least 4 digits.',
   },
   emptyStartDate: {
     id: 'dp.application:errors.startDateRequired',
     defaultMessage: 'Nauðsynlegt er að velja upphaf tímabils',
-    description: 'You must select the start of period',
+    description: 'You must select the start of the period',
   },
   emptyEndDate: {
     id: 'dp.application:errors.endDateRequired',
     defaultMessage:
       'Nauðsynlegt er að velja enda tímabils, og að dagsetningin sé á eftir upphafsdagsetningu',
     description:
-      'You must select the end of period. The end date must be after the start date.',
+      'You must select the end of the period. The end date must be after the start date.',
   },
   emptyResidenceOtherText: {
     id: 'dp.application:errors.residenceOtherTextRequired',
     defaultMessage:
-      'Nauðsynlegt taka fram í hvernig húsnæði þú býrð ef "Annað" er valið',
-    description: 'TODO',
+      'Nauðsynlegt er að taka fram í hvernig húsnæði þú býrð ef "Annað" er valið',
+    description: 'You must describe your housing type if "Other" is selected.'
   },
   emptyLanguageOtherText: {
     id: 'dp.application:errors.languageOtherTextRequired',
     defaultMessage:
-      'Nauðsynlegt taka fram hvaða tungumál þú talar ef "Annað" er valið',
-    description: 'TODO',
+      'Nauðsynlegt er að taka fram hvaða tungumál þú talar ef "Annað" er valið',
+    description: 'You must specify what language you speak if "Other" is selected.',
   },
   emptyRehabilitationOrTherapyDescription: {
     id: 'dp.application:errors.rehabilitationOrTherapyDescriptionRequired',
@@ -84,13 +84,13 @@ export const errors = defineMessages({
   emptyEmploymentStatus: {
     id: 'dp.application:errors.employmentStatusRequired',
     defaultMessage:
-      'Nauðsynlegt er að velja a.m.k einn valkost. Ef valið er "Annað" þarf að útskýra í texta',
+      'Nauðsynlegt er að velja a.m.k. einn valkost. Ef valið er "Annað" þarf að útskýra í texta',
     description:
       'You must select at least one option. If "other" is selected, a description must be provided',
   },
   capabilityBetween0And100: {
     id: 'dp.application:errors.capabilityBetween0And100',
-    defaultMessage: 'Starfsgeta þarf að vera á bilinu 0-100',
-    description: 'Todo',
+    defaultMessage: 'Starfsgeta þarf að vera á bilinu 0 - 100',
+    description: 'Work capability must be between 0 - 100.',
   },
 })
