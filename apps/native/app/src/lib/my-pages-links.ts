@@ -7,11 +7,13 @@ export const getMyPagesLinks = () => {
   const { userInfo } = authStore.getState()
 
   return {
+    // For More screen
     accessControl: `${baseUrl}/minarsidur/adgangsstyring/umbod`,
     supportPayments: `${baseUrl}/minarsidur/framfaersla/greidsluaetlun`,
     education: `${baseUrl}/minarsidur/menntun/grunnskoli/namsmat`,
     lawAndOrder: `${baseUrl}/minarsidur/log-og-reglur/yfirlit`,
     occupationalLicenses: `${baseUrl}/minarsidur/starfsleyfi`,
+    // For Vehicles screen
     ownerLookup: `${baseUrl}/minarsidur/eignir/okutaeki/leit`,
     vehicleHistory: `${baseUrl}/minarsidur/eignir/okutaeki/okutaekjaferill`,
     ownershipCertificatePdf: `${baseUrl}/bff/api?url=https%3A%2F%2Fapi.dev01.devland.is%2Fdownload%2Fv1%2Fvehicles%2Fownership%2Fpdf%2F${userInfo?.nationalId}`,
@@ -19,10 +21,13 @@ export const getMyPagesLinks = () => {
     returnCertificate: `${baseUrl}/umsoknir/skilavottord`,
     nameConfidentiality: `${baseUrl}/umsoknir/nafnleynd-i-okutaekjaskra`,
     // Vehicle detail dropdown placeholders
+    // For Vehicle detail screen dropdown
     orderNumberPlate: `${baseUrl}/umsoknir/panta-numeraplotu`,
     orderRegistrationCertificate: `${baseUrl}/umsoknir/panta-skraningarskirteini`,
     changeCoOwner: `${baseUrl}/umsoknir/medeigandi-okutaekis`,
     changeOperator: `${baseUrl}/umsoknir/umradamadur-okutaekis`,
     vehicleHistoryReport: `${baseUrl}/umsoknir/okutaekjaferill`,
+    // For assets screen
+    mortgageCertificate: `${baseUrl}/umsoknir/vedbokarvottord`,
   }
 }

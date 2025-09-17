@@ -377,6 +377,9 @@ export const is = {
   'assetsOverview.emptyListDescription':
     'Fasteignir sem skráðar eru á þig munu birtast hér.',
 
+  // assets links
+  'assets.links.mortgageCertificate': 'Veðbókarvottorð',
+
   // assets details
   'assetsDetail.propertyNumber': 'Fastanúmer',
   'assetsDetail.displaySize': 'Stærð',

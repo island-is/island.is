@@ -12,14 +12,16 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
-import { AssetCard, EmptyList, Skeleton, TopLine } from '../../ui'
+import { AssetCard, EmptyList, Skeleton, TopLine, Typography } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-moving-s1.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { ExternalLinks } from '../../components/external-links/external-links'
 import { useListAssetsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
+import { getMyPagesLinks } from '../../lib/my-pages-links'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
@@ -90,6 +92,14 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
 
   const isSkeleton = assetsRes.loading && !assetsRes.data
   const assetsList = assetsRes?.data?.assetsOverview?.properties || []
+
+  const myPagesLinks = getMyPagesLinks()
+  const externalLinks = [
+    {
+      link: myPagesLinks.mortgageCertificate,
+      title: intl.formatMessage({ id: 'assets.links.mortgageCertificate' }),
+    },
+  ]
 
   const onRefresh = useCallback(() => {
     try {
@@ -195,7 +205,27 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
       )
     }
 
-    return <AssetItem item={item} />
+    return (
+      <>
+        <AssetItem item={item} />
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            borderTopColor: theme.color.blue200,
+          }}
+        >
+          <Typography variant="heading5">
+            {intl.formatMessage({ id: 'profile.moreInfo' })}
+          </Typography>
+          <View style={{ marginHorizontal: -16 }}>
+            {externalLinks.map((link) => (
+              <ExternalLinks links={link} key={link.title} />
+            ))}
+          </View>
+        </View>
+      </>
+    )
   }
 
   const keyExtractor = useCallback(

@@ -499,6 +499,9 @@ export const en: TranslatedMessages = {
   'assetsOverview.emptyListDescription':
     'Assets registered to you will appear here.',
 
+  // assets links
+  'assets.links.mortgageCertificate': 'Mortgage certificate',
+
   // assets details
   'assetsDetail.propertyNumber': 'Property number',
   'assetsDetail.displaySize': 'Size',
