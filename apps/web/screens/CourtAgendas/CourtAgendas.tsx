@@ -775,10 +775,14 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                             location: [agenda.court, agenda.courtRoom]
                               .filter(Boolean)
                               .join(' - '),
-                            startDate: agenda.dateFrom.split('T')[0],
-                            startTime: agenda.dateFrom
-                              ? format(new Date(agenda.dateFrom), 'HH:mm')
-                              : undefined,
+                            startDate: format(
+                              new Date(agenda.dateFrom),
+                              'yyyy-MM-dd',
+                            ),
+                            startTime: format(
+                              new Date(agenda.dateFrom),
+                              'HH:mm',
+                            ),
                             endTime: agenda.dateTo
                               ? format(new Date(agenda.dateTo), 'HH:mm')
                               : undefined,
