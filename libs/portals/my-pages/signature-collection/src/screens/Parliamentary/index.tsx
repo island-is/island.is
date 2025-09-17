@@ -17,6 +17,7 @@ import {
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import { Skeleton } from '../../lib/skeletons'
+import { EmptyState } from '@island.is/portals/my-pages/core'
 
 const collectionType = SignatureCollectionCollectionType.Parliamentary
 
@@ -55,18 +56,25 @@ const SignatureCollectionParliamentary = () => {
         intro={formatMessage(m.pageIntro)}
         slug={listsForOwner?.[0]?.slug}
       />
-      {isOwner?.success ? (
-        <OwnerView
-          isListHolder={
-            !user?.profile?.delegationType ||
-            user?.profile?.delegationType?.includes(
-              AuthDelegationType.ProcurationHolder,
-            )
-          }
-          currentCollection={currentCollection}
-          listsForOwner={listsForOwner}
-          signedLists={signedLists}
-        />
+      {isOwner?.success || user?.profile.actor ? (
+        isOwner?.success ? (
+          <OwnerView
+            isListHolder={
+              !user?.profile?.delegationType ||
+              user?.profile?.delegationType?.includes(
+                AuthDelegationType.ProcurationHolder,
+              )
+            }
+            currentCollection={currentCollection}
+            listsForOwner={listsForOwner}
+            signedLists={signedLists}
+          />
+        ) : (
+          <EmptyState
+            title={m.noCollectionIsActive}
+            description={m.noCollectionIsActiveDescription}
+          />
+        )
       ) : (
         <SigneeView
           collectionType={collectionType}
