@@ -1,21 +1,25 @@
 import {
   buildAlertMessageField,
-  buildMultiField,
+  buildDescriptionField,
   buildRadioField,
+  buildSubSection,
   getValueViaPath,
   NO,
   YesOrNo,
 } from '@island.is/application/core'
-import { SectionRouteEnum } from '../../../../types/routes'
-import { yesOrNoOptions } from '../../../../utils'
-import * as m from '../../../../lib/messages'
+import { SectionRouteEnum } from '../../../types/routes'
+import { yesOrNoOptions } from '../../../utils'
+import * as m from '../../../lib/messages'
 
-export const disabilityEvaluationFields = buildMultiField({
+export const disabilityEvaluationSubSection = buildSubSection({
   id: SectionRouteEnum.DISABILITY_APPLIED_BEFORE,
   title: m.disabilityEvaluation.title,
-  description: m.disabilityEvaluation.description,
-  space: 'gutter',
+  tabTitle: m.disabilityEvaluation.tabTitle,
   children: [
+    buildDescriptionField({
+      id: `${SectionRouteEnum.DISABILITY_APPLIED_BEFORE}.description`,
+      title:  m.disabilityEvaluation.description,
+    }),
     buildRadioField({
       id: SectionRouteEnum.DISABILITY_APPLIED_BEFORE,
       title: m.disabilityEvaluation.appliedBeforeTitle,

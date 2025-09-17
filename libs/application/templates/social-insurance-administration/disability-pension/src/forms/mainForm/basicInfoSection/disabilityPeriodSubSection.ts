@@ -1,22 +1,21 @@
 import {
-  buildMultiField,
+  buildDescriptionField,
   buildSelectField,
-  buildTitleField,
+  buildSubSection,
 } from '@island.is/application/core'
-import { SectionRouteEnum } from '../../../../types/routes'
-import { getYears } from '../../../../utils/dates'
-import * as m from '../../../../lib/messages'
+import * as m from '../../../lib/messages'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { SectionRouteEnum } from '../../../types/routes'
+import { getYears } from '../../../utils/dates'
 
-export const disabilityPeriodFields = buildMultiField({
+export const disabilityPeriodSubsection = buildSubSection({
   id: SectionRouteEnum.DISABILITY_PERIOD,
   title: m.disabilityPeriod.title,
-  description: m.disabilityPeriod.description,
+  tabTitle: m.disabilityPeriod.tabTitle,
   children: [
-    buildTitleField({
-      marginTop: 2,
-      title: m.disabilityPeriod.chooseDate,
-      titleVariant: 'h5',
+    buildDescriptionField({
+      id: `${SectionRouteEnum.DISABILITY_PERIOD}.description`,
+      title: m.disabilityPeriod.description,
     }),
     buildSelectField({
       id: `${SectionRouteEnum.DISABILITY_PERIOD}.year`,

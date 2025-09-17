@@ -6,6 +6,11 @@ export const disabilityPeriod = defineMessages({
     defaultMessage: 'Sækja aftur í tímann',
     description: 'From what time are you applying for payments?',
   },
+  tabTitle: {
+    id: 'dp.application:disabilityPeriod.retroactive.payments',
+    defaultMessage: 'Afturvirkar greiðslur',
+    description: 'Retroactive payments',
+  },
   description: {
     id: 'dp.application:disabilityPeriod.description',
     defaultMessage:
