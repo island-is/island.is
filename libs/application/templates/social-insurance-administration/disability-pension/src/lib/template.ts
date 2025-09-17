@@ -124,13 +124,12 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 IdentityApi,
-                UserProfileApi /*
-                  TODO: REENABLE ON PROD
+                UserProfileApi
                   .configure({
                     params: {
                       validateEmail: true,
                     },
-                  })*/,
+                  }),
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
                 SocialInsuranceAdministrationApplicantApi,
