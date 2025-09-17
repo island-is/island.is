@@ -125,9 +125,41 @@ export const LanguageToggler = ({
       }
     }
 
+    // Special case for grants since the slug is not sufficient to identify the correct page
+    if ((type as string) === 'grantsplazagrant') {
+      title = {
+        is: 'Styrkur',
+        en: 'Grant',
+      }
+
+      // We need to extract the grant ID from the current path
+      const pathParts = pathWithoutQueryParams.split('/')
+      const grantId = pathParts[pathParts.length - 1]
+      if (grantId) {
+        const queryParamsString = new URLSearchParams(
+          queryParams?.[otherLanguage],
+        ).toString()
+
+        return goToOtherLanguagePage(
+          `${linkResolver('grantsplazagrant', [grantId], otherLanguage).href}${
+            queryParamsString.length > 0 ? '?' + queryParamsString : ''
+          }`,
+        )
+      }
+    }
+
+    // Special case for grants search since it's a custom page and doesn't have a title in english
+    if ((type as string) === 'grantsplazasearch') {
+      title = {
+        is: 'Styrkjatorg - Leit',
+        en: 'Grantplaza - Search',
+      }
+    }
+
     // Some content models are set up such that a slug is generated from the title
     // Unfortunately, Contentful generates slug for both locales which frequently
     // results in bogus english content. Therefore we check whether the other language has a title as well.
+
     if (
       type &&
       slugs.every((s) => s?.[otherLanguage]) &&
