@@ -23,12 +23,14 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaConfirmationOfIllHealthQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 import { SiaConfirmationOfIllHealthQuery } from '../../types/schema'
 import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPaymentsUtils'
+import { ManagedBy } from '../components/ManagedBy'
 
 export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
   application,
@@ -64,57 +66,6 @@ export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
     return [true, null]
   })
 
-  const managedBy = () => (
-    <Stack space={3}>
-      <GridRow rowGap={3}>
-        <GridColumn span="1/1">
-          <Text variant="h3">
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.managedBy,
-            )}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(socialInsuranceAdministrationMessage.confirm.name)}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceConfirmationOfIllHealth?.serviceProvider
-                ?.coordinatorName
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.jobTitle,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceConfirmationOfIllHealth?.serviceProvider
-                ?.coordinatorTitle
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.location,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceConfirmationOfIllHealth?.serviceProvider
-                ?.workplace
-            }
-          </Text>
-        </GridColumn>
-      </GridRow>
-    </Stack>
-  )
-
   const information = () => (
     <Stack space={3}>
       <GridRow rowGap={3}>
@@ -125,6 +76,69 @@ export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
             )}
           </Text>
         </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.shared
+                .dateOfConfirmation,
+            )}
+          </Label>
+          <Text>
+            {data?.socialInsuranceConfirmationOfIllHealth?.created
+              ? format(
+                  parseISO(data.socialInsuranceConfirmationOfIllHealth.created),
+                  'dd.MM.yyyy',
+                )
+              : '-'}
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage
+                .confirmationOfIllHealth.informationCurrentMedicalStatus,
+            )}
+          </Label>
+          <Text>
+            {data?.socialInsuranceConfirmationOfIllHealth?.currentMedicalStatus
+              ? data.socialInsuranceConfirmationOfIllHealth.currentMedicalStatus
+              : formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.shared
+                    .notApplicable,
+                )}
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.shared
+                .hasPreviousApproval,
+            )}
+          </Label>
+          <Text>
+            {data?.socialInsuranceConfirmationOfIllHealth?.previousApplication
+              ?.hasPreviousApproval
+              ? formatMessage(socialInsuranceAdministrationMessage.shared.yes)
+              : formatMessage(socialInsuranceAdministrationMessage.shared.no)}
+          </Text>
+        </GridColumn>
+        {data?.socialInsuranceConfirmationOfIllHealth?.previousApplication
+          ?.hasPreviousApproval && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.shared
+                  .previousApplicationDetails,
+              )}
+            </Label>
+            <Text>
+              {
+                data?.socialInsuranceConfirmationOfIllHealth
+                  ?.previousApplication?.additionalDetails
+              }
+            </Text>
+          </GridColumn>
+        )}
       </GridRow>
     </Stack>
   )
@@ -139,6 +153,16 @@ export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
             )}
           </Text>
         </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.shared.applyingFor,
+            )}
+          </Label>
+          <Text>
+            {data?.socialInsuranceConfirmationOfIllHealth?.typeAppliedFor}
+          </Text>
+        </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/3']}>
           <Label>
             {formatMessage(
@@ -150,8 +174,9 @@ export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
             {data?.socialInsuranceConfirmationOfIllHealth?.requestedPeriod
               ?.startDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmationOfIllHealth.requestedPeriod.startDate,
+                  parseISO(
+                    data.socialInsuranceConfirmationOfIllHealth.requestedPeriod
+                      .startDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -169,8 +194,9 @@ export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
             {data?.socialInsuranceConfirmationOfIllHealth?.requestedPeriod
               ?.endDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmationOfIllHealth.requestedPeriod.endDate,
+                  parseISO(
+                    data.socialInsuranceConfirmationOfIllHealth.requestedPeriod
+                      .endDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -222,7 +248,11 @@ export const ConfirmationOfIllHealth: FC<FieldBaseProps> = ({
 
   return (
     <Stack space={4}>
-      {managedBy()}
+      <ManagedBy
+        serviceProvider={
+          data?.socialInsuranceConfirmationOfIllHealth?.serviceProvider
+        }
+      />
       <Divider />
       {information()}
       <Divider />
