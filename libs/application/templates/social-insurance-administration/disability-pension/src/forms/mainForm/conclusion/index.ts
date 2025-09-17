@@ -11,7 +11,6 @@ import ConfirmationImage from '../../../assets/ConfirmationImage'
 
 export const conclusionSection = buildSection({
   id: SectionRouteEnum.CONFIRMATION,
-  title: m.confirmation.title,
   tabTitle: m.confirmation.tabTitle,
   children: [
     buildMultiField({
