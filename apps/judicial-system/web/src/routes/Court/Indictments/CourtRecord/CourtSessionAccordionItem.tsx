@@ -682,34 +682,41 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         type="success"
                       />
                     ) : (
-                      unfiledFiles.map((file) => (
-                        <Box
-                          display="flex"
-                          alignItems="center"
-                          columnGap={2}
-                          key={file.id}
-                        >
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        columnGap={2}
+                        rowGap={2}
+                      >
+                        {unfiledFiles.map((file) => (
                           <Box
-                            flexGrow={1}
-                            background="white"
-                            borderRadius="large"
-                            border="standard"
-                            borderColor="blue200"
+                            display="flex"
+                            alignItems="center"
+                            columnGap={2}
+                            key={file.id}
                           >
-                            <Box paddingX={2} paddingY={2}>
-                              <Text variant="h5">{file.name}</Text>
+                            <Box
+                              flexGrow={1}
+                              background="white"
+                              borderRadius="large"
+                              border="standard"
+                              borderColor="blue200"
+                            >
+                              <Box paddingX={2} paddingY={2}>
+                                <Text variant="h5">{file.name}</Text>
+                              </Box>
                             </Box>
+                            <Tag
+                              outlined
+                              variant="darkerBlue"
+                              onClick={() => handleFileCourtDocument(file)}
+                              disabled={courtDocument.isCreating}
+                            >
+                              Leggja fram
+                            </Tag>
                           </Box>
-                          <Tag
-                            outlined
-                            variant="darkerBlue"
-                            onClick={() => handleFileCourtDocument(file)}
-                            disabled={courtDocument.isCreating}
-                          >
-                            Leggja fram
-                          </Tag>
-                        </Box>
-                      ))
+                        ))}
+                      </Box>
                     )}
                   </AccordionItem>
                 </Accordion>
