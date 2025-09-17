@@ -54,20 +54,19 @@ export const freight = {
     errorPoliceEscortAlertMessage: {
       id: 'ta.eft.application:freight.create.errorPoliceEscortAlertMessage',
       defaultMessage:
-        'Farmur sem fer yfir {maxLength} metra lengd þarfnast lögreglufylgdar. Lögreglufylgd er aðeins í boði fyrir skammtímaundanþágu. Vinsamlegast fjarlægðu farm {freightNumber}: {freightName}.',
+        'Farmur sem fer yfir {maxLength} metra lengd þarfnast lögreglufylgdar. Lögreglufylgd er aðeins í boði fyrir skammtímaundanþágu.',
       description: 'Error police escort alert message when creating freight',
     },
   }),
   pairing: defineMessages({
     subSectionTitle: {
       id: 'ta.eft.application:freight.pairing.subSectionTitle',
-      defaultMessage:
-        'Para vagnlestir við farm {freightNumber}: {freightName} {length}/{weight}',
+      defaultMessage: 'Para vagnlestir við farm {freightNumber}: {freightName}',
       description: 'Title of pairing freight with convoy sub section',
     },
     pageTitle: {
       id: 'ta.eft.application:freight.pairing.pageTitle',
-      defaultMessage: 'Farmur {freightNumber}: {freightName} {length}/{weight}',
+      defaultMessage: 'Farmur {freightNumber}: {freightName}',
       description: 'Title of pairing freight with convoy page',
     },
     description: {

@@ -66,7 +66,7 @@ export const CheckboxFormField = ({
             locale as Locale,
             formatMessage,
           )}
-          {required && (
+          {required && title && (
             <span aria-hidden="true" className={styles.isRequiredStar}>
               {' '}
               *

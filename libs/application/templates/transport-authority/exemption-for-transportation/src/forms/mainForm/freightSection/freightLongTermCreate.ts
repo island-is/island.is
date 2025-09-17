@@ -10,10 +10,8 @@ import {
   getRandomId,
   checkIfExemptionTypeLongTerm,
   MAX_CNT_FREIGHT,
-  formatNumber,
-  getFreightLongTermErrorMessage,
+  getFreightCreateLongTermErrorMessage,
 } from '../../../utils'
-import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
 
 export const FreightLongTermCreateSubSection = buildSubSection({
   id: 'freightLongTermCreateSubSection',
@@ -25,7 +23,6 @@ export const FreightLongTermCreateSubSection = buildSubSection({
       title: freight.create.pageTitle,
       description: freight.create.descriptionLongTerm,
       children: [
-        ...FreightCommonHiddenInputs('freight'),
         buildTableRepeaterField({
           id: 'freight.items',
           addItemButtonText: freight.labels.addItemButtonText,
@@ -40,26 +37,12 @@ export const FreightLongTermCreateSubSection = buildSubSection({
             header: [
               freight.labels.freightNumberTableHeader,
               freight.labels.freightName,
-              freight.labels.freightLength,
-              freight.labels.freightWeight,
             ],
             format: {
               index: (_, index) => {
                 return {
                   ...freight.labels.freightNumber,
                   values: { number: index + 1 },
-                }
-              },
-              length: (value) => {
-                return {
-                  ...freight.labels.valueAndMetersSuffix,
-                  values: { value: formatNumber(value) },
-                }
-              },
-              weight: (value) => {
-                return {
-                  ...freight.labels.valueAndTonsSuffix,
-                  values: { value: formatNumber(value) },
                 }
               },
             },
@@ -85,36 +68,18 @@ export const FreightLongTermCreateSubSection = buildSubSection({
               width: 'full',
               required: true,
             },
-            length: {
-              component: 'input',
-              type: 'number',
-              label: freight.labels.freightLength,
-              width: 'half',
-              thousandSeparator: true,
-              suffix: freight.labels.metersSuffix,
-              required: true,
-            },
-            weight: {
-              component: 'input',
-              type: 'number',
-              label: freight.labels.freightWeight,
-              width: 'half',
-              thousandSeparator: true,
-              suffix: freight.labels.tonsSuffix,
-              required: true,
-            },
           },
         }),
         buildAlertMessageField({
           id: 'freight.alertValidation',
           title: freight.create.errorAlertMessageTitle,
           message: (application) =>
-            getFreightLongTermErrorMessage(
+            getFreightCreateLongTermErrorMessage(
               application.externalData,
               application.answers,
             ) || '',
           condition: (answers, externalData) =>
-            !!getFreightLongTermErrorMessage(externalData, answers),
+            !!getFreightCreateLongTermErrorMessage(externalData, answers),
           doesNotRequireAnswer: true,
           alertType: 'error',
           shouldBlockInSetBeforeSubmitCallback: true,
