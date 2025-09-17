@@ -11,6 +11,7 @@ import {
   RadioButton,
   Select,
   Tag,
+  toast,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
@@ -230,7 +231,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
   return (
     <AccordionItem
-      id="courtRecordAccordionItem"
+      id={`courtRecordAccordionItem-${courtSession.id}`}
       label={`Þinghald ${index + 1}`}
       labelVariant="h3"
       key={courtSession.id}
@@ -709,16 +710,24 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   label="Skrá vott að þinghaldi"
                   name={`isAttestingWitness-${courtSession.id}`}
                   checked={courtSession.isAttestingWitness || false}
-                  onChange={(evt) =>
+                  onChange={(evt) => {
+                    patchSession(courtSession.id, {
+                      attestingWitness: evt.target.checked
+                        ? courtSession.attestingWitness ?? null
+                        : null,
+                    })
+
                     patchSession(
                       courtSession.id,
                       {
                         isAttestingWitness: evt.target.checked,
-                        attestingWitnessId: undefined,
+                        attestingWitnessId: evt.target.checked
+                          ? courtSession.attestingWitnessId ?? null
+                          : null,
                       },
                       { persist: true },
                     )
-                  }
+                  }}
                   large
                   filled
                 />
@@ -727,12 +736,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   options={[...judges, ...registrars].sort((a, b) =>
                     a.label.localeCompare(b.label),
                   )}
-                  value={{
-                    label: courtSession.attestingWitness
-                      ? courtSession.attestingWitness.name || ''
-                      : '',
-                    value: courtSession.attestingWitnessId || '',
-                  }}
+                  value={
+                    courtSession.attestingWitness
+                      ? {
+                          label: courtSession.attestingWitness.name || '',
+                          value: courtSession.attestingWitnessId,
+                        }
+                      : null
+                  }
                   onChange={(evt) => {
                     const selectedUser = [...judges, ...registrars].find(
                       (u) => u.value === evt?.value,
@@ -771,18 +782,37 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   <DateTime
                     name="courtEndTime"
                     onChange={(date: Date | undefined, valid: boolean) => {
-                      if (date && valid) {
-                        patchSession(
-                          courtSession.id,
-                          {
-                            endDate: formatDateForServer(date),
-                          },
-                          { persist: true },
-                        )
+                      if (!date || !valid) {
+                        return
                       }
+
+                      const startDate = courtSession.startDate
+                        ? new Date(courtSession.startDate)
+                        : new Date()
+
+                      const merged = new Date(startDate)
+                      merged.setHours(date.getHours(), date.getMinutes(), 0, 0)
+
+                      if (merged < startDate) {
+                        toast.error('Upp kom villa við að uppfæra lokatíma')
+                      }
+
+                      patchSession(
+                        courtSession.id,
+                        {
+                          endDate: formatDateForServer(merged),
+                        },
+                        { persist: true },
+                      )
                     }}
                     blueBox={false}
-                    selectedDate={courtSession.endDate || new Date()}
+                    selectedDate={
+                      courtSession.endDate
+                        ? new Date(courtSession.endDate)
+                        : courtSession.startDate
+                        ? new Date(courtSession.startDate)
+                        : new Date()
+                    }
                     timeOnly
                   />
                 </div>
