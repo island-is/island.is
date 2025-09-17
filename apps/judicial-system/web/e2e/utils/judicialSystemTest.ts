@@ -1,12 +1,12 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Page, test as base } from '@playwright/test'
 
+import { judicialSystemSession } from '@island.is/e2e-shared'
 import {
   JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL,
   JUDICIAL_SYSTEM_DEFENDER_HOME_URL,
   JUDICIAL_SYSTEM_JUDGE_HOME_URL,
-} from '../../../support/urls'
-
-import { judicialSystemSession } from '../../../support/session'
+} from '@island.is/e2e-shared'
 
 export const test = base.extend<{
   prosecutorPage: Page

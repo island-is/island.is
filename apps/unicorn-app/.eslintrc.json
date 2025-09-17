@@ -1,6 +1,5 @@
 {
   "extends": [
-    "plugin:playwright/recommended",
     "plugin:@nx/react",
     "../../.eslintrc.json"
   ],

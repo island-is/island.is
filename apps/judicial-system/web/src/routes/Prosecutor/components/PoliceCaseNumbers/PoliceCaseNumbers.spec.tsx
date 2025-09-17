@@ -41,7 +41,7 @@ describe('PoliceCaseNumbers component', () => {
 
     // Assert
     expect(await screen.findAllByTestId('icon-close')).toHaveLength(1)
-    expect(
+    await expect(
       await screen.findByLabelText('Eyða númeri 007-0000-0000'),
     ).toBeDisabled()
   })

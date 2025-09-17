@@ -1,0 +1,23 @@
+{
+  "extends": [
+    "plugin:playwright/recommended",
+    "plugin:@nx/react",
+    "plugin:jsx-a11y/strict",
+    "../../../.eslintrc.json"
+  ],
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    }
+  ]
+}

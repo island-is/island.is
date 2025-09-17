@@ -1,6 +1,7 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../support/urls'
-import { judicialSystemSession } from '../../../support/session'
+
+import { judicialSystemSession } from '@island.is/e2e-shared'
+import { urls } from '@island.is/e2e-shared'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 

@@ -31,7 +31,15 @@ export async function renderLocalServices({
   const envConfig = Envs[Deployments[chartName][env]]
   envConfig.type = 'local'
   let uberChart = new Localhost()
-  const habitat = Charts[chartName][env]
+  const keys = Object.keys(Charts)
+
+  // For local run we want all services to be in the same namespace
+  const habitat = keys
+    .map((key) => {
+      return Charts[key as keyof typeof Charts][env]
+    })
+    .flat()
+
   const renderedLocalServices = await localrun(
     envConfig,
     habitat,
@@ -86,7 +94,7 @@ export async function runLocalServices(
     dryRun,
     noUpdateSecrets,
   })
-
+  console.log(renderedLocalServices)
   // Verify that all dependencies exist in the rendered dependency list
   for (const dependency of dependencies) {
     if (!renderedLocalServices.services[dependency]) {
@@ -121,7 +129,7 @@ export async function runLocalServices(
   for (const [name, service] of Object.entries(
     renderedLocalServices.services,
   )) {
-    if (dependencies.length > 0 && !dependencies.includes(name)) {
+    if (!services.includes(name) && !dependencies.includes(name)) {
       logger.info(`Skipping ${name} (not a dependency)`)
       continue
     }
