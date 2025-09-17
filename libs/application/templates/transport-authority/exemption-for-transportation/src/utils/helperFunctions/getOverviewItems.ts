@@ -369,7 +369,7 @@ export const getFreightOverviewLongTermItems = (
         {
           ...overview.freight.weightLabel,
           values: {
-            weight: formatNumberWithTons(pairingItems?.[0]?.length),
+            weight: formatNumberWithTons(pairingItems?.[0]?.weight),
           },
         },
       ],
