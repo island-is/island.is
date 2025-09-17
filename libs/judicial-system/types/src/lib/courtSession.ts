@@ -65,10 +65,10 @@ export const hasGeneratedCourtRecordPdf = (
 
   if (
     isPrisonAdminUser(user) &&
-    (!isCompletedCase(caseState) ||
-      indictmentRulingDecision === CaseIndictmentRulingDecision.FINE)
+    isCompletedCase(caseState) &&
+    indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
   ) {
-    return true
+    return Boolean(courtSessions[0].endDate)
   }
 
   return false
