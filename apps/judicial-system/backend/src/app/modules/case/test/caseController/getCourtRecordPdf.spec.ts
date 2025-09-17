@@ -3,7 +3,13 @@ import { uuid } from 'uuidv4'
 
 import { Logger } from '@island.is/logging'
 
-import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -162,7 +168,10 @@ describe('CaseController - Get court record pdf', () => {
   })
 
   describe('generated pdf returned for indictment case', () => {
-    const user = {} as User
+    const user = {
+      role: UserRole.PROSECUTOR,
+      institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+    } as User
     const caseId = uuid()
     const theCase = {
       id: caseId,

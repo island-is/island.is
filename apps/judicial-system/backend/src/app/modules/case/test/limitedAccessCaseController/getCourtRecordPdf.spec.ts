@@ -3,7 +3,12 @@ import { uuid } from 'uuidv4'
 
 import { Logger } from '@island.is/logging'
 
-import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -111,6 +116,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     const theCase = {
       id: caseId,
       type: CaseType.PSYCHIATRIC_EXAMINATION,
+      state: CaseState.DISMISSED,
       courtRecordSignatureDate: nowFactory(),
     } as Case
     const res = {} as Response
@@ -134,6 +140,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     const theCase = {
       id: caseId,
       type: CaseType.PHONE_TAPPING,
+      state: CaseState.ACCEPTED,
       courtRecordSignatureDate: nowFactory(),
     } as Case
     const res = { end: jest.fn() } as unknown as Response
@@ -163,6 +170,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     const theCase = {
       id: caseId,
       type: CaseType.VIDEO_RECORDING_EQUIPMENT,
+      state: CaseState.REJECTED,
       courtRecordSignatureDate: nowFactory(),
     } as Case
     let then: Then
@@ -179,7 +187,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
   })
 
   describe('generated pdf returned', () => {
-    const user = {} as User
+    const user = { role: UserRole.DEFENDER } as User
     const caseId = uuid()
     const theCase = {
       id: caseId,
