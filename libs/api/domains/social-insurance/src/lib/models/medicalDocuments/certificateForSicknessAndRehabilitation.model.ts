@@ -1,5 +1,4 @@
 import { ObjectType, Field, GraphQLISODateTime } from '@nestjs/graphql'
-import { Confirmation } from './confirmation.model'
 import { Diagnosis } from './diagnosis.model'
 import { Difficulty } from './difficulty.model'
 import { Doctor } from './doctor.model'
@@ -43,9 +42,6 @@ export class CertificateForSicknessAndRehabilitation {
 
   @Field({ nullable: true })
   other?: string
-
-  @Field(() => Confirmation, { nullable: true })
-  confirmation?: Confirmation
 
   @Field({ nullable: true })
   isAlmaCertificate?: boolean
