@@ -16,13 +16,13 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 
 const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 
-const isNumberWithinLimit = (
+const isNumberOutsideOfLimit = (
   valueStr: string | null | undefined,
   max?: number,
 ): boolean => {
-  if (max === undefined || valueStr == null) return true
+  if (max === undefined || valueStr == null) return false
   const valueNum = Number(valueStr)
-  return !isNaN(valueNum) && valueNum > 0 && valueNum <= max
+  return isNaN(valueNum) || valueNum <= 0 || valueNum > max
 }
 
 const isRequiredFieldValid = (value: string | null | undefined): boolean => {
@@ -212,7 +212,7 @@ const FreightPairingSchema = z
   .superRefine(({ limit, items, convoyIdList, length, weight }, ctx) => {
     // Check limit for length and weight
     if (limit) {
-      if (!isNumberWithinLimit(length, limit.maxLength)) {
+      if (isNumberOutsideOfLimit(length, limit.maxLength)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           params: {
@@ -223,7 +223,7 @@ const FreightPairingSchema = z
         })
       }
 
-      if (!isNumberWithinLimit(weight, limit.maxWeight)) {
+      if (isNumberOutsideOfLimit(weight, limit.maxWeight)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           params: {
@@ -253,7 +253,7 @@ const FreightPairingSchema = z
         ]
 
         limitFields.forEach(({ key, max }) => {
-          if (!isNumberWithinLimit(item[key], max)) {
+          if (isNumberOutsideOfLimit(item[key], max)) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               params: {
