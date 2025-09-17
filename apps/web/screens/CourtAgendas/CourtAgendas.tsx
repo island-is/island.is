@@ -772,13 +772,9 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                           event={{
                             title: agenda.title,
                             description,
-                            location: `${
-                              agenda.court
-                                ? `${agenda.court}${
-                                    agenda.courtRoom ? ' - ' : ''
-                                  }${agenda.courtRoom}`
-                                : ''
-                            }${agenda.courtRoom}`,
+                            location: [agenda.court, agenda.courtRoom]
+                              .filter(Boolean)
+                              .join(' - '),
                             startDate: agenda.dateFrom.split('T')[0],
                             startTime: agenda.dateFrom
                               ? format(new Date(agenda.dateFrom), 'HH:mm')
