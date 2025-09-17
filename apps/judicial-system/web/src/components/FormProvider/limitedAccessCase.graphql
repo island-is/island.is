@@ -223,12 +223,20 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     }
     courtSessions {
       id
+      startDate
       endDate
     }
     mergedCases {
       id
       courtCaseNumber
       type
+      state
+      indictmentRulingDecision
+      courtSessions {
+        id
+        startDate
+        endDate
+      }
       caseFiles {
         id
         created
