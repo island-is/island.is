@@ -745,6 +745,7 @@ export class PaymentFlowService {
       after: after || '',
       before: before,
       limit: limit || 10,
+      distinctCol: this.paymentFlowModel.primaryKeyAttribute,
       include: [
         {
           model: PaymentFlowCharge,
