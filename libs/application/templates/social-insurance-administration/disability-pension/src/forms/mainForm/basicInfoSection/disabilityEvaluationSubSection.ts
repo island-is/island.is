@@ -18,7 +18,7 @@ export const disabilityEvaluationSubSection = buildSubSection({
   children: [
     buildDescriptionField({
       id: `${SectionRouteEnum.DISABILITY_APPLIED_BEFORE}.description`,
-      title:  m.disabilityEvaluation.description,
+      title: m.disabilityEvaluation.description,
     }),
     buildRadioField({
       id: SectionRouteEnum.DISABILITY_APPLIED_BEFORE,

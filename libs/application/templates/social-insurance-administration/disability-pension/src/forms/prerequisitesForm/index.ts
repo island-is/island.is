@@ -1,9 +1,39 @@
-import { buildDataProviderItem, buildExternalDataProvider, buildForm, buildSection, buildSubmitField } from '@island.is/application/core'
+import {
+  buildDataProviderItem,
+  buildExternalDataProvider,
+  buildForm,
+  buildSection,
+  buildSubmitField,
+} from '@island.is/application/core'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { DefaultEvents, FormModes, IdentityApi, NationalRegistrySpouseApi, NationalRegistryUserApi, UserProfileApi } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  FormModes,
+  IdentityApi,
+  NationalRegistrySpouseApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 import * as m from '../../lib/messages'
 import { socialInsuranceAdministrationMessage as sm } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { SocialInsuranceAdministrationWithholdingTaxApi, SocialInsuranceAdministrationCategorizedIncomeTypesApi, SocialInsuranceAdministrationEducationLevelsApi, SocialInsuranceAdministrationCountriesApi, SocialInsuranceAdministrationLanguagesApi, SocialInsuranceAdministrationMaritalStatusesApi, SocialInsuranceAdministrationLatestIncomePlan, SocialInsuranceAdministrationIncomePlanConditionsApi, SocialInsuranceAdministrationApplicantApi, SocialInsuranceAdministrationCurrenciesApi, SocialInsuranceAdministrationSelfAssessmentQuestionsApi, SocialInsuranceAdministrationResidenceApi, SocialInsuranceAdministrationEmploymentStatusesApi, SocialInsuranceAdministrationProfessionsApi, SocialInsuranceAdministrationProfessionActivitiesApi, SocialInsuranceAdministrationIsApplicantEligibleApi } from '../../dataProviders'
+import {
+  SocialInsuranceAdministrationWithholdingTaxApi,
+  SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+  SocialInsuranceAdministrationEducationLevelsApi,
+  SocialInsuranceAdministrationCountriesApi,
+  SocialInsuranceAdministrationLanguagesApi,
+  SocialInsuranceAdministrationMaritalStatusesApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
+  SocialInsuranceAdministrationIncomePlanConditionsApi,
+  SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
+  SocialInsuranceAdministrationResidenceApi,
+  SocialInsuranceAdministrationEmploymentStatusesApi,
+  SocialInsuranceAdministrationProfessionsApi,
+  SocialInsuranceAdministrationProfessionActivitiesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
+} from '../../dataProviders'
 
 export const Prerequisites = buildForm({
   id: 'disabilityPensionPrerequisites',
@@ -110,9 +140,9 @@ export const Prerequisites = buildForm({
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
             }),
-          ]
-        })
-      ]
-    })
-  ]
+          ],
+        }),
+      ],
+    }),
+  ],
 })
