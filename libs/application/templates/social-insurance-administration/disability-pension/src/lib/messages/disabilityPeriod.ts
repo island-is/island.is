@@ -3,13 +3,13 @@ import { defineMessages } from 'react-intl'
 export const disabilityPeriod = defineMessages({
   title: {
     id: 'dp.application:disabilityPeriod.title',
-    defaultMessage: 'Sækja aftur í tímann',
-    description: 'From what time are you applying for payments?',
+    description: 'Retroactive payments',
+    defaultMessage: 'Afturvirkar greiðslur',
   },
   tabTitle: {
     id: 'dp.application:disabilityPeriod.retroactive.payments',
-    defaultMessage: 'Afturvirkar greiðslur',
-    description: 'Retroactive payments',
+    description: 'From what time are you applying for payments?',
+    defaultMessage: 'Sækja aftur í tímann',
   },
   description: {
     id: 'dp.application:disabilityPeriod.description',
