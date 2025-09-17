@@ -3,7 +3,9 @@ import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 import { uuid } from 'uuidv4'
 
 import {
+  Accordion,
   AccordionItem,
+  AlertMessage,
   Box,
   Button,
   Checkbox,
@@ -11,6 +13,7 @@ import {
   RadioButton,
   Select,
   Tag,
+  Text,
   toast,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -128,12 +131,17 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     workingCase,
     setWorkingCase,
   } = props
+  const {
+    updateCourtDocument,
+    deleteCourtDocument,
+    fileCourtDocumentInCourtSession,
+  } = useCourtDocuments()
   const { updateCourtSession } = useCourtSessions()
-  const { updateCourtDocument, deleteCourtDocument } = useCourtDocuments()
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
+  const [unfiledFiles, setUnfiledFiles] = useState<ReorderableFile[]>([])
   const [reorderableFiles, setReorderableFiles] = useState<ReorderableFile[]>(
     [],
   )
@@ -168,6 +176,19 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         })),
     )
   }, [workingCase.courtSessions])
+
+  useEffect(() => {
+    if (!workingCase.unfiledCourtDocuments) {
+      return
+    }
+
+    setUnfiledFiles(
+      workingCase.unfiledCourtDocuments.map((doc) => ({
+        id: doc.id,
+        name: doc.name,
+      })),
+    )
+  }, [workingCase.unfiledCourtDocuments])
 
   const patchSession = (
     id: string,
@@ -418,99 +439,167 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               name="indictmentCourtDocuments"
               isDisabled={() => false}
             >
-              <Box
-                display="flex"
-                rowGap={2}
-                justifyContent="spaceBetween"
-                className={styles.reorderGroup}
-              >
-                <Reorder.Group
-                  axis="y"
-                  values={reorderableFiles}
-                  onReorder={(newOrder) => {
-                    const newIndex = newOrder.findIndex(
-                      (f) => f.id === draggedFileId,
-                    )
-                    if (!draggedFileId || newIndex === -1) {
-                      return
-                    }
-
-                    updateCourtDocument({
-                      caseId: workingCase.id,
-                      courtSessionId: courtSession.id,
-                      courtDocumentId: draggedFileId,
-                      documentOrder: newIndex + 1, // +1 because index starts at 0 and the order at 1
-                    })
-
-                    setReorderableFiles(newOrder)
-                  }}
-                  className={styles.grid}
-                >
-                  {reorderableFiles.map((item) => (
-                    <Reorder.Item
-                      key={item.id}
-                      value={item}
-                      data-reorder-item
-                      onDragStart={() => {
-                        setDraggedFileId(item.id)
-                      }}
-                      onDragEnd={() => {
-                        setDraggedFileId(null)
-                      }}
-                    >
-                      <EditableCaseFile
-                        enableDrag
-                        caseFile={{
-                          id: item.id,
-                          displayText: item.name,
-                          canEdit: ['fileName'],
-                        }}
-                        backgroundColor="white"
-                        onRename={(
-                          _id: string,
-                          _name: string,
-                          _displayDate: string,
-                        ): void => {
-                          throw new Error('Function not implemented.')
-                        }}
-                        onDelete={async (file: TUploadFile) => {
-                          if (!file.id) {
-                            return
-                          }
-
-                          const deleted = await deleteCourtDocument({
-                            caseId: workingCase.id,
-                            courtSessionId: courtSession.id,
-                            courtDocumentId: file.id,
-                          })
-
-                          if (!deleted) {
-                            return
-                          }
-
-                          setReorderableFiles((prev) =>
-                            prev.filter((i) => i.id !== file.id),
-                          )
-                        }}
-                        onStartEditing={() => console.log('start')}
-                        onStopEditing={() => console.log('stop')}
-                      />
-                    </Reorder.Item>
-                  ))}
-                </Reorder.Group>
+              <Box display="flex" flexDirection="column" rowGap={2}>
                 <Box
                   display="flex"
-                  flexDirection="column"
-                  justifyContent="spaceAround"
                   rowGap={2}
+                  justifyContent="spaceBetween"
+                  className={styles.reorderGroup}
                 >
-                  {reorderableFiles.map((item, index) => (
-                    <Box key={item.name}>
-                      <Tag variant="darkerBlue" outlined disabled>
-                        Þingmerkt nr. {index + 1}
-                      </Tag>
-                    </Box>
-                  ))}
+                  <Reorder.Group
+                    axis="y"
+                    values={reorderableFiles}
+                    onReorder={(newOrder) => {
+                      const newIndex = newOrder.findIndex(
+                        (f) => f.id === draggedFileId,
+                      )
+                      if (!draggedFileId || newIndex === -1) {
+                        return
+                      }
+
+                      updateCourtDocument({
+                        caseId: workingCase.id,
+                        courtSessionId: courtSession.id,
+                        courtDocumentId: draggedFileId,
+                        documentOrder: newIndex + 1, // +1 because index starts at 0 and the order at 1
+                      })
+
+                      setReorderableFiles(newOrder)
+                    }}
+                    className={styles.grid}
+                  >
+                    {reorderableFiles.map((item) => (
+                      <Reorder.Item
+                        key={item.id}
+                        value={item}
+                        data-reorder-item
+                        onDragStart={() => {
+                          setDraggedFileId(item.id)
+                        }}
+                        onDragEnd={() => {
+                          setDraggedFileId(null)
+                        }}
+                      >
+                        <EditableCaseFile
+                          enableDrag
+                          caseFile={{
+                            id: item.id,
+                            displayText: item.name,
+                            canEdit: ['fileName'],
+                          }}
+                          backgroundColor="white"
+                          onRename={(
+                            _id: string,
+                            _name: string,
+                            _displayDate: string,
+                          ): void => {
+                            throw new Error('Function not implemented.')
+                          }}
+                          onDelete={async (file: TUploadFile) => {
+                            if (!file.id) {
+                              return
+                            }
+
+                            const deleted = await deleteCourtDocument({
+                              caseId: workingCase.id,
+                              courtSessionId: courtSession.id,
+                              courtDocumentId: file.id,
+                            })
+
+                            if (!deleted) {
+                              return
+                            }
+
+                            setReorderableFiles((prev) =>
+                              prev.filter((i) => i.id !== file.id),
+                            )
+                          }}
+                          onStartEditing={() => console.log('start')}
+                          onStopEditing={() => console.log('stop')}
+                        />
+                      </Reorder.Item>
+                    ))}
+                  </Reorder.Group>
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="spaceAround"
+                    rowGap={2}
+                  >
+                    {reorderableFiles.map((item, index) => (
+                      <Box key={item.name}>
+                        <Tag variant="darkerBlue" outlined disabled>
+                          Þingmerkt nr. {index + 1}
+                        </Tag>
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+                <Box borderRadius="large" background="white" paddingX={2}>
+                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
+                    <AccordionItem
+                      id={`unfiled-files-${courtSession.id}`}
+                      label={`Önnur skjöl (${unfiledFiles.length})`}
+                      labelVariant="h5"
+                    >
+                      {unfiledFiles.length === 0 ? (
+                        <AlertMessage
+                          title="Engin óþingmerkt skjöl"
+                          message="Öll skjöl málsins hafa verið lögð fram"
+                          type="success"
+                        />
+                      ) : (
+                        unfiledFiles.map((file) => (
+                          <Box
+                            display="flex"
+                            alignItems="center"
+                            columnGap={2}
+                            key={file.id}
+                          >
+                            <Box
+                              flexGrow={1}
+                              background="white"
+                              borderRadius="large"
+                              border="standard"
+                              borderColor="blue200"
+                            >
+                              <Box paddingX={2} paddingY={2}>
+                                <Text variant="h5">{file.name}</Text>
+                              </Box>
+                            </Box>
+                            <Tag
+                              outlined
+                              variant="darkerBlue"
+                              onClick={async () => {
+                                const res =
+                                  await fileCourtDocumentInCourtSession({
+                                    caseId: workingCase.id,
+                                    courtSessionId: courtSession.id,
+                                    courtDocumentId: file.id,
+                                  })
+
+                                if (!res) return
+
+                                setUnfiledFiles((prev) =>
+                                  prev.filter((item) => item.id !== file.id),
+                                )
+
+                                setReorderableFiles((prev) => [
+                                  ...prev,
+                                  {
+                                    id: res.fileCourtDocumentInCourtSession.id,
+                                    name: file.name,
+                                  },
+                                ])
+                              }}
+                            >
+                              Leggja fram
+                            </Tag>
+                          </Box>
+                        ))
+                      )}
+                    </AccordionItem>
+                  </Accordion>
                 </Box>
               </Box>
             </MultipleValueList>

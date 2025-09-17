@@ -4,17 +4,21 @@ import { toast } from '@island.is/island-ui/core'
 import {
   CreateCourtDocumentInput,
   DeleteCourtDocumentInput,
+  FileCourtDocumentInCourtSessionInput,
   UpdateCourtDocumentInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCreateCourtDocumentMutation } from './createCourtDocument.generated'
 import { useDeleteCourtDocumentMutation } from './deleteCourtDocument.generated'
+import { useFileCourtDocumentInCourtSessionMutation } from './fileCourtDocumentInCourt.generated'
 import { useUpdateCourtDocumentMutation } from './updateCourtDocument.generated'
 
 const useCourtDocuments = () => {
   const [updateCourtDocumentMutation] = useUpdateCourtDocumentMutation()
   const [createCourtDocumentMutation] = useCreateCourtDocumentMutation()
   const [deleteCourtDocumentMutation] = useDeleteCourtDocumentMutation()
+  const [fileCourtDocumentInCourtSessionMutation] =
+    useFileCourtDocumentInCourtSessionMutation()
 
   const createCourtDocument = useCallback(
     async (createCourtDocumentInput: CreateCourtDocumentInput) => {
@@ -80,10 +84,35 @@ const useCourtDocuments = () => {
     [deleteCourtDocumentMutation],
   )
 
+  const fileCourtDocumentInCourtSession = useCallback(
+    async (
+      fileCourtDocumentInCourtSession: FileCourtDocumentInCourtSessionInput,
+    ) => {
+      try {
+        const { data } = await fileCourtDocumentInCourtSessionMutation({
+          variables: {
+            input: fileCourtDocumentInCourtSession,
+          },
+        })
+
+        if (!data || !data.fileCourtDocumentInCourtSession) {
+          throw new Error()
+        }
+
+        return data
+      } catch (error) {
+        toast.error('Upp kom villa við að leggja fram þingskjal')
+
+        return false
+      }
+    },
+    [fileCourtDocumentInCourtSessionMutation],
+  )
   return {
     createCourtDocument,
     updateCourtDocument,
     deleteCourtDocument,
+    fileCourtDocumentInCourtSession,
   }
 }
 
