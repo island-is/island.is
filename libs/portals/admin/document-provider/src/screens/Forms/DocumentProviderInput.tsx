@@ -1,6 +1,12 @@
 import React from 'react'
 import { Box, Input, SkeletonLoader } from '@island.is/island-ui/core'
-import { Controller, Control, FieldValues, Path, PathValue } from 'react-hook-form'
+import {
+  Controller,
+  Control,
+  FieldValues,
+  Path,
+  PathValue,
+} from 'react-hook-form'
 import {
   Validate,
   ValidationRule,
