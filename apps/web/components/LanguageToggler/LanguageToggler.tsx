@@ -152,14 +152,14 @@ export const LanguageToggler = ({
     if ((type as string) === 'grantsplazasearch') {
       title = {
         is: 'Styrkjatorg - Leit',
-        en: 'Grantplaza - Search',
+        en: 'Grantsplaza - Search',
       }
     }
 
     if ((type as string) === 'grantsplaza') {
       title = {
         is: 'Styrkjatorg',
-        en: 'Grantplaza',
+        en: 'Grantsplaza',
       }
 
       return goToOtherLanguagePage(
@@ -193,7 +193,7 @@ export const LanguageToggler = ({
       )
     }
 
-    //setShowDialog(true)
+    setShowDialog(true)
   }
 
   const goToOtherLanguagePage = (path: string) => {
