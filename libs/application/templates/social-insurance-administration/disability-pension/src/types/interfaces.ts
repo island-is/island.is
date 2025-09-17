@@ -12,7 +12,11 @@ export interface Country {
   abroadNationalId: string
 }
 
-export interface SchemaPaymentInfo extends Omit<CorePaymentInfo, 'bank' | 'bankNumber' | 'ledger' | 'accountNumber'> {
+export interface SchemaPaymentInfo
+  extends Omit<
+    CorePaymentInfo,
+    'bank' | 'bankNumber' | 'ledger' | 'accountNumber'
+  > {
   bankAccountType: BankAccountType
   bank?: {
     ledger: string

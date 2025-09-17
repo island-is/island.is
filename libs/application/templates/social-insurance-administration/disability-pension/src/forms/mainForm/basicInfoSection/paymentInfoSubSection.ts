@@ -77,7 +77,8 @@ export const paymentInfoSubSection = buildSubSection({
         buildBankAccountField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.bank`,
           required: true,
-          condition: (formValue: FormValue) => accountNationality(formValue) === BankAccountType.FOREIGN,
+          condition: (formValue: FormValue) =>
+            accountNationality(formValue) === BankAccountType.FOREIGN,
           defaultValue: (application: Application) => {
             const { bankInfo } = getApplicationExternalData(
               application.externalData,
