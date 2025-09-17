@@ -8,11 +8,15 @@ import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
-import { getCourtRecordPdfAsBuffer } from '../../../../formatters'
+import {
+  createIndictmentCourtRecordPdf,
+  getCourtRecordPdfAsBuffer,
+} from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../../repository'
 
 jest.mock('../../../../formatters/courtRecordPdf')
+jest.mock('../../../../formatters/indictmentCourtRecordPdf')
 
 interface Then {
   error: Error
@@ -37,11 +41,16 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     mockAwsS3Service = awsS3Service
     mockLogger = logger
 
-    const mockGetGeneratedObject =
+    const mockGetGeneratedRequestCaseObject =
       mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
-    mockGetGeneratedObject.mockRejectedValue(new Error('Some error'))
-    const getMock = getCourtRecordPdfAsBuffer as jest.Mock
-    getMock.mockRejectedValue(new Error('Some error'))
+    mockGetGeneratedRequestCaseObject.mockRejectedValue(new Error('Some error'))
+    const getCourtRecordPdfAsBufferMock = getCourtRecordPdfAsBuffer as jest.Mock
+    getCourtRecordPdfAsBufferMock.mockRejectedValue(new Error('Some error'))
+    const createIndictmentCourtRecordPdfMock =
+      createIndictmentCourtRecordPdf as jest.Mock
+    createIndictmentCourtRecordPdfMock.mockRejectedValue(
+      new Error('Some error'),
+    )
 
     givenWhenThen = async (
       caseId: string,
@@ -81,9 +90,9 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     const pdf = {}
 
     beforeEach(async () => {
-      const mockGetGeneratedObject =
+      const mockGetGeneratedRequestCaseObject =
         mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
-      mockGetGeneratedObject.mockResolvedValueOnce(pdf)
+      mockGetGeneratedRequestCaseObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, user, theCase, res)
     })
@@ -101,6 +110,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
+      type: CaseType.PSYCHIATRIC_EXAMINATION,
       courtRecordSignatureDate: nowFactory(),
     } as Case
     const res = {} as Response
@@ -123,14 +133,16 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
+      type: CaseType.PHONE_TAPPING,
       courtRecordSignatureDate: nowFactory(),
     } as Case
     const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
     beforeEach(async () => {
-      const getMock = getCourtRecordPdfAsBuffer as jest.Mock
-      getMock.mockResolvedValueOnce(pdf)
+      const getCourtRecordPdfAsBufferMock =
+        getCourtRecordPdfAsBuffer as jest.Mock
+      getCourtRecordPdfAsBufferMock.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, user, theCase, res)
     })
@@ -150,6 +162,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
+      type: CaseType.VIDEO_RECORDING_EQUIPMENT,
       courtRecordSignatureDate: nowFactory(),
     } as Case
     let then: Then
@@ -162,6 +175,34 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     it('should throw Error', () => {
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe('Some error')
+    })
+  })
+
+  describe('generated pdf returned', () => {
+    const user = {} as User
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      courtSessions: [{ endDate: nowFactory() }],
+    } as Case
+    const res = { end: jest.fn() } as unknown as Response
+    const pdf = {}
+
+    beforeEach(async () => {
+      const createIndictmentCourtRecordPdfMock =
+        createIndictmentCourtRecordPdf as jest.Mock
+      createIndictmentCourtRecordPdfMock.mockResolvedValueOnce(pdf)
+
+      await givenWhenThen(caseId, user, theCase, res)
+    })
+
+    it('should return pdf', () => {
+      expect(createIndictmentCourtRecordPdf).toHaveBeenCalledWith(
+        theCase,
+        false,
+      )
+      expect(res.end).toHaveBeenCalledWith(pdf)
     })
   })
 })
