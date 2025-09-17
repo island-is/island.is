@@ -221,7 +221,7 @@ const Completed: FC = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map(
           (defendant) =>
-            features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) &&
+            features?.includes(Feature.VERDICT_DELIVERY) &&
             defendant.verdict && (
               <Box
                 key={`${defendant.id}${defendant.verdict.id}`}
