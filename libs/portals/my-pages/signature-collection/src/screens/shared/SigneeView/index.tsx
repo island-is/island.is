@@ -25,12 +25,10 @@ const SigneeView = ({
   return (
     <Box>
       {listsForUser?.length === 0 && signedLists?.length === 0 && (
-        <Box marginTop={10}>
-          <EmptyState
-            title={m.noCollectionIsActive}
-            description={m.noCollectionIsActiveDescription}
-          />
-        </Box>
+        <EmptyState
+          title={m.noCollectionIsActive}
+          description={m.noCollectionIsActiveDescription}
+        />
       )}
 
       <Box marginTop={[0, 5]}>

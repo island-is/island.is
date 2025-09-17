@@ -5,7 +5,6 @@ import {
 } from '@island.is/api/schema'
 import { ActionCard, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import format from 'date-fns/format'
 import { useNavigate } from 'react-router-dom'
 import { m } from '../../../lib/messages'
@@ -25,16 +24,14 @@ const OwnerView = ({
   useNamespaces('sp.signatureCollection')
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
-  const user = useUserInfo()
 
   return (
     <Stack space={8}>
       <Box marginTop={[0, 5]}>
-        {/* Signed list */}
-        {!user?.profile.actor && (
+        {signedLists && (
           <SignedLists
             collectionType={collectionType}
-            signedLists={signedLists ?? []}
+            signedLists={signedLists}
           />
         )}
 

@@ -127,8 +127,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             {data?.socialInsuranceCertificateForSicknessAndRehabilitation
               ?.lastExaminationDate
               ? format(
-                  new Date(
-                    data.socialInsuranceCertificateForSicknessAndRehabilitation.lastExaminationDate,
+                  parseISO(
+                    data.socialInsuranceCertificateForSicknessAndRehabilitation
+                      .lastExaminationDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -147,8 +148,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             {data?.socialInsuranceCertificateForSicknessAndRehabilitation
               ?.certificateDate
               ? format(
-                  new Date(
-                    data.socialInsuranceCertificateForSicknessAndRehabilitation.certificateDate,
+                  parseISO(
+                    data.socialInsuranceCertificateForSicknessAndRehabilitation
+                      .certificateDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -167,8 +169,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             {data?.socialInsuranceCertificateForSicknessAndRehabilitation
               ?.disabilityDate
               ? format(
-                  new Date(
-                    data.socialInsuranceCertificateForSicknessAndRehabilitation.disabilityDate,
+                  parseISO(
+                    data.socialInsuranceCertificateForSicknessAndRehabilitation
+                      .disabilityDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -281,21 +284,24 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             }
           </Text>
         </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .physicalImpairmentExplanation,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.physicalDifficulty?.explanation
-            }
-          </Text>
-        </GridColumn>
+        {data?.socialInsuranceCertificateForSicknessAndRehabilitation
+          ?.physicalDifficulty?.explanation && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage
+                  .certificateForSicknessAndRehabilitation
+                  .physicalImpairmentExplanation,
+              )}
+            </Label>
+            <Text>
+              {
+                data?.socialInsuranceCertificateForSicknessAndRehabilitation
+                  ?.physicalDifficulty?.explanation
+              }
+            </Text>
+          </GridColumn>
+        )}
       </GridRow>
     </Stack>
   )
@@ -335,21 +341,24 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             }
           </Text>
         </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .mentalImpairmentExplanation,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.mentalDifficulty?.explanation
-            }
-          </Text>
-        </GridColumn>
+        {data?.socialInsuranceCertificateForSicknessAndRehabilitation
+          ?.mentalDifficulty?.explanation && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage
+                  .certificateForSicknessAndRehabilitation
+                  .mentalImpairmentExplanation,
+              )}
+            </Label>
+            <Text>
+              {
+                data?.socialInsuranceCertificateForSicknessAndRehabilitation
+                  ?.mentalDifficulty?.explanation
+              }
+            </Text>
+          </GridColumn>
+        )}
       </GridRow>
     </Stack>
   )
@@ -391,21 +400,24 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             }
           </Text>
         </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .activityAndParticipationImpairmentExplanation,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.activityParticipationDifficulty?.explanation
-            }
-          </Text>
-        </GridColumn>
+        {data?.socialInsuranceCertificateForSicknessAndRehabilitation
+          ?.activityParticipationDifficulty?.explanation && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage
+                  .certificateForSicknessAndRehabilitation
+                  .activityAndParticipationImpairmentExplanation,
+              )}
+            </Label>
+            <Text>
+              {
+                data?.socialInsuranceCertificateForSicknessAndRehabilitation
+                  ?.activityParticipationDifficulty?.explanation
+              }
+            </Text>
+          </GridColumn>
+        )}
       </GridRow>
     </Stack>
   )
