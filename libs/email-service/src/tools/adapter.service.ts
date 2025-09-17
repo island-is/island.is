@@ -97,6 +97,10 @@ export class AdapterService {
             }
           }
 
+          if (component === 'spacer') {
+            item.context = { ...item.context, nbsp: '\u00A0' }
+          }
+
           return this.cachedComponents[component](item.context, {
             partials: this.cachedComponents,
           })
@@ -118,6 +122,7 @@ export class AdapterService {
       {
         title,
         body,
+        nbsp: '\u00A0',
       },
       { partials: this.cachedComponents },
     )

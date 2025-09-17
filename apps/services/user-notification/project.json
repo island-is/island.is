@@ -23,7 +23,11 @@
         "esbuildConfig": "tools/esbuild.config.js",
         "format": ["cjs"],
         "assets": [
-          "apps/services/user-notification/src/assets",
+          {
+            "glob": "**/*",
+            "input": "apps/services/user-notification/src/assets",
+            "output": "./assets"
+          },
           {
             "glob": "*",
             "input": "apps/services/user-notification/migrations",
