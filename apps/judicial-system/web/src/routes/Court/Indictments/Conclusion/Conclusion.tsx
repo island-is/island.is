@@ -268,6 +268,17 @@ const Conclusion: FC = () => {
       return false
     }
 
+    const isCourtRecordValid = (): boolean =>
+      hasGeneratedCourtRecord
+        ? Boolean(
+            workingCase.courtSessions?.every((session) => session.endDate),
+          )
+        : uploadFiles.some(
+            (file) =>
+              file.category === CaseFileCategory.COURT_RECORD &&
+              file.status === FileUploadStatus.done,
+          )
+
     switch (selectedAction) {
       case IndictmentDecision.POSTPONING:
         return Boolean(postponementReason)
@@ -278,13 +289,7 @@ const Conclusion: FC = () => {
           case CaseIndictmentRulingDecision.RULING:
           case CaseIndictmentRulingDecision.DISMISSAL:
             return (
-              (hasGeneratedCourtRecord
-                ? workingCase.courtSessions?.every((session) => session.endDate)
-                : uploadFiles.some(
-                    (file) =>
-                      file.category === CaseFileCategory.COURT_RECORD &&
-                      file.status === FileUploadStatus.done,
-                  )) &&
+              isCourtRecordValid() &&
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.RULING &&
@@ -293,25 +298,15 @@ const Conclusion: FC = () => {
             )
           case CaseIndictmentRulingDecision.CANCELLATION:
           case CaseIndictmentRulingDecision.FINE:
-            return hasGeneratedCourtRecord
-              ? workingCase.courtSessions?.every((session) => session.endDate)
-              : uploadFiles.some(
-                  (file) =>
-                    file.category === CaseFileCategory.COURT_RECORD &&
-                    file.status === FileUploadStatus.done,
-                )
+            return isCourtRecordValid()
           case CaseIndictmentRulingDecision.MERGE:
-            return Boolean(
-              (hasGeneratedCourtRecord
-                ? workingCase.courtSessions?.every((session) => session.endDate)
-                : uploadFiles.some(
-                    (file) =>
-                      file.category === CaseFileCategory.COURT_RECORD &&
-                      file.status === FileUploadStatus.done,
-                  )) &&
-                (workingCase.mergeCase?.id ||
+            return (
+              isCourtRecordValid() &&
+              Boolean(
+                workingCase.mergeCase?.id ||
                   validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
-                    .isValid),
+                    .isValid,
+              )
             )
           default:
             return false
