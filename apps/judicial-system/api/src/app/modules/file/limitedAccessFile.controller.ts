@@ -82,7 +82,12 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get(['courtRecord', 'mergedCase/:mergedCaseId/courtRecord'])
+  @Get([
+    'courtRecord',
+    'courtRecord/:fileName',
+    'mergedCase/:mergedCaseId/courtRecord',
+    'mergedCase/:mergedCaseId/courtRecord/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   async getCourtRecordPdf(
     @Param('id') id: string,

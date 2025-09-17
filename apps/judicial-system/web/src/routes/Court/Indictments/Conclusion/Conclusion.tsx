@@ -580,7 +580,7 @@ const Conclusion: FC = () => {
             )}
           </>
         )}
-        {selectedAction && (
+        {selectedAction && !hasGeneratedCourtRecord && (
           <Box
             component="section"
             marginBottom={selectedDecision === 'RULING' ? 5 : 10}
@@ -617,7 +617,10 @@ const Conclusion: FC = () => {
         {selectedAction === IndictmentDecision.COMPLETING &&
           (selectedDecision === CaseIndictmentRulingDecision.RULING ||
             selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
-            <Box component="section" marginBottom={10}>
+            <Box
+              component="section"
+              marginBottom={hasGeneratedCourtRecord ? 5 : 10}
+            >
               <SectionHeading
                 title={formatMessage(
                   selectedDecision === CaseIndictmentRulingDecision.RULING
@@ -651,14 +654,15 @@ const Conclusion: FC = () => {
               />
             </Box>
           )}
-        {hasGeneratedCourtRecord && (
-          <PdfButton
-            caseId={workingCase.id}
-            title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
-            pdfType="courtRecord"
-            renderAs="row"
-            elementId="Þingbók"
-          />
+        {selectedAction && hasGeneratedCourtRecord && (
+          <Box component="section" marginBottom={10}>
+            <PdfButton
+              caseId={workingCase.id}
+              title={'Þingbók - PDF'}
+              pdfType="courtRecord"
+              elementId="Þingbók"
+            />
+          </Box>
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>
