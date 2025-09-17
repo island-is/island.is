@@ -39,7 +39,7 @@ Application has been dismissed by TR.
 
 All localisation can be found on Contentful.
 
-- [Disability pension translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/marp.application)
+- [Disability pension translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/dp.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../../localization/README.md#message-extraction).

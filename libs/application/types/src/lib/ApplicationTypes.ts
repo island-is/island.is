@@ -312,7 +312,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.DISABILITY_PENSION]: {
     slug: 'ororkulifeyrir',
-    translation: ['oap.application', 'sia.application', 'uiForms.application'],
+    translation: ['dp.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
     slug: 'heimilisuppbot',
