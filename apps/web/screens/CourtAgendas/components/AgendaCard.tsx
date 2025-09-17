@@ -3,8 +3,6 @@ import {
   GridColumn,
   GridRow,
   Hidden,
-  Icon,
-  IconMapIcon,
   Inline,
   Stack,
   Tag,
