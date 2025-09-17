@@ -17,7 +17,7 @@ export const disabilityEvaluationSubSection = buildSubSection({
   title: m.disabilityEvaluation.tabTitle,
   children: [
     buildMultiField({
-      title:  m.disabilityEvaluation.title,
+      title: m.disabilityEvaluation.title,
       description: m.disabilityEvaluation.description,
       children: [
         buildRadioField({
@@ -39,7 +39,7 @@ export const disabilityEvaluationSubSection = buildSubSection({
             return answer === NO
           },
         }),
-      ]
-    })
+      ],
+    }),
   ],
 })
