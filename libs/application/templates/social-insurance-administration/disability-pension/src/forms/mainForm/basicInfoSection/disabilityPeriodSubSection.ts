@@ -14,13 +14,13 @@ export const disabilityPeriodSubsection = buildSubSection({
   title: m.disabilityPeriod.title,
   children: [
     buildMultiField({
-      title:  m.disabilityPeriod.tabTitle,
+      title: m.disabilityPeriod.tabTitle,
       description: m.disabilityPeriod.description,
       children: [
         buildDescriptionField({
           id: `${SectionRouteEnum.DISABILITY_PERIOD}.description`,
           title: m.disabilityPeriod.chooseDate,
-          titleVariant: 'h5'
+          titleVariant: 'h5',
         }),
         buildSelectField({
           id: `${SectionRouteEnum.DISABILITY_PERIOD}.year`,
@@ -49,6 +49,6 @@ export const disabilityPeriodSubsection = buildSubSection({
           },
         }),
       ],
-    })
+    }),
   ],
 })
