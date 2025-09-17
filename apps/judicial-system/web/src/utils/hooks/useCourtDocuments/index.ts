@@ -15,7 +15,8 @@ import { useUpdateCourtDocumentMutation } from './updateCourtDocument.generated'
 
 const useCourtDocuments = () => {
   const [updateCourtDocumentMutation] = useUpdateCourtDocumentMutation()
-  const [createCourtDocumentMutation] = useCreateCourtDocumentMutation()
+  const [createCourtDocumentMutation, { loading: createCourtDocumentLoading }] =
+    useCreateCourtDocumentMutation()
   const [deleteCourtDocumentMutation] = useDeleteCourtDocumentMutation()
   const [fileCourtDocumentInCourtSessionMutation] =
     useFileCourtDocumentInCourtSessionMutation()
@@ -109,7 +110,10 @@ const useCourtDocuments = () => {
     [fileCourtDocumentInCourtSessionMutation],
   )
   return {
-    createCourtDocument,
+    courtDocument: {
+      create: createCourtDocument,
+      isCreating: createCourtDocumentLoading,
+    },
     updateCourtDocument,
     deleteCourtDocument,
     fileCourtDocumentInCourtSession,

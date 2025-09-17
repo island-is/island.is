@@ -132,6 +132,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     setWorkingCase,
   } = props
   const {
+    courtDocument,
     updateCourtDocument,
     deleteCourtDocument,
     fileCourtDocumentInCourtSession,
@@ -310,6 +311,21 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       },
       { persist: true },
     )
+  }
+
+  const handleAddCourtDocument = async (
+    value: string,
+    courtSessionId: string,
+  ) => {
+    const res = await courtDocument.create({
+      caseId: workingCase.id,
+      courtSessionId,
+      name: value,
+    })
+
+    if (!res) return
+
+    setReorderableFiles((prev) => [...prev, { id: res.id, name: value }])
   }
 
   const containerVariants = {
@@ -532,17 +548,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               autoExpand={{ on: true, maxHeight: 300 }}
             />
             <MultipleValueList
-              onAddValue={(v) =>
-                setReorderableFiles((prev) => [
-                  ...prev,
-                  { id: uuid(), name: v },
-                ])
-              }
+              onAddValue={(val) => handleAddCourtDocument(val, courtSession.id)}
               inputLabel="Heiti dómskjals"
               inputPlaceholder="Skrá inn heiti á skjali hér"
               buttonText="Bæta við skjali"
               name="indictmentCourtDocuments"
-              isDisabled={() => false}
+              isDisabled={() => courtDocument.isCreating}
             >
               <Box display="flex" flexDirection="column" rowGap={2}>
                 <Box
@@ -570,7 +581,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         }}
                       >
                         <EditableCaseFile
-                          enableDrag
+                          enableDrag={!courtDocument.isCreating}
                           caseFile={{
                             id: item.id,
                             displayText: item.name,
@@ -596,8 +607,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     justifyContent="spaceAround"
                     rowGap={2}
                   >
-                    {reorderableFiles.map((item, index) => (
-                      <Box key={item.name}>
+                    {reorderableFiles.map((_item, index) => (
+                      <Box key={`þingmerkt_nr_${index + 1}`}>
                         <Tag variant="darkerBlue" outlined disabled>
                           Þingmerkt nr. {index + 1}
                         </Tag>
@@ -641,6 +652,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                               outlined
                               variant="darkerBlue"
                               onClick={() => handleFileCourtDocument(file)}
+                              disabled={courtDocument.isCreating}
                             >
                               Leggja fram
                             </Tag>
