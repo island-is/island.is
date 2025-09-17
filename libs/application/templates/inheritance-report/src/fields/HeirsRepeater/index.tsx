@@ -261,7 +261,9 @@ export const HeirsRepeater: FC<
         taxFreeInheritanceValue = inheritanceValue
       } else {
         const baseAmount = roughlySumsTo100
-          ? integerPercentageSplit(inheritanceTaxFreeLimit, heirPercentages)[index ?? 0]
+          ? integerPercentageSplit(inheritanceTaxFreeLimit, heirPercentages)[
+              index ?? 0
+            ]
           : inheritanceTaxFreeLimit * percentage
 
         taxFreeInheritanceValue = customSpouseSharePercentage
