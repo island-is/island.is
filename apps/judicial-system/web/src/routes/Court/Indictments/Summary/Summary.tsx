@@ -244,25 +244,27 @@ const Summary: FC = () => {
           </Accordion>
         )}
         <SectionHeading title={formatMessage(strings.caseFiles)} />
-        {hasGeneratedCourtRecord && (
-          <PdfButton
-            caseId={workingCase.id}
-            title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
-            pdfType="courtRecord"
-            renderAs="row"
-            elementId="Þingbók"
-          />
-        )}
-        {(rulingFiles.length > 0 || courtRecordFiles.length > 0) && (
+        {(rulingFiles.length > 0 ||
+          courtRecordFiles.length > 0 ||
+          hasGeneratedCourtRecord) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4">
               {formatMessage(strings.caseFilesSubtitleRuling)}
             </Text>
-            {rulingFiles.length > 0 && (
-              <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
+            {hasGeneratedCourtRecord && (
+              <PdfButton
+                caseId={workingCase.id}
+                title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                pdfType="courtRecord"
+                renderAs="row"
+                elementId="Þingbók"
+              />
             )}
             {courtRecordFiles.length > 0 && (
               <RenderFiles caseFiles={courtRecordFiles} onOpenFile={onOpen} />
+            )}
+            {rulingFiles.length > 0 && (
+              <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
             )}
           </Box>
         )}
