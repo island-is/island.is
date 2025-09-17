@@ -7,7 +7,7 @@ export const disabilityEvaluation = defineMessages({
     description: 'Applied for disability evaluation at pension fund',
   },
   description: {
-    id: 'dp.application:disabilityEvaluation.description#markdown',
+    id: 'dp.application:disabilityEvaluation.description',
     defaultMessage:
       'Þeir sem eiga rétt á örorkulífeyri hjá lífeyrissjóði þurfa að sækja um þau réttindi áður en greiðslur frá TR geta hafist, nóg er að sækja um hjá einum lífeyrissjóði. TR sækir upplýsingar til lífeyrissjóða um hvort réttindi séu til staðar og hvort búið sé að sækja um.',
     description: 'Description for disability evaluation process',

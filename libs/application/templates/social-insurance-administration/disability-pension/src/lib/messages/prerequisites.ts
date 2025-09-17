@@ -61,7 +61,7 @@ export const prerequisite = defineMessages({
     description: 'Income information title',
   },
   incomeText: {
-    id: 'dp.application:prerequisites.incomeText#markdown',
+    id: 'dp.application:prerequisites.incomeText',
     defaultMessage:
       'Í sumum tilfellum þarf Tryggingastofnun að sækja tekjuupplýsingar til Innheimtustofnunar sveitarfélaga, lífeyrissjóða, stéttarfélaga og RSK til að ákvarða réttindi.',
     description: 'Income information text',

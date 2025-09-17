@@ -12,7 +12,7 @@ export const incomePlan = defineMessages({
     description: 'Instructions for recording income plan',
   },
   instructionsBullets: {
-    id: 'dp.application:incomePlan.instructionsBullets',
+    id: 'dp.application:incomePlan.instructionsBullets#markdown',
     defaultMessage:
       '- Á næstu síðu er að finna tillögu að tekjuáætlun. Þar getur þú breytt upphæðum og bætt við tekjum. \n- Skrá skal heildartekjur fyrir skatt í tekjuáætlun. \n- Fjármagnstekjur eru sameignlegar hjá hjónum/sambúðarfólki og skal skrá heildar fjármagnstekjur hjóna/sambúðarfólks í tekjuáætlun. \n- Ef maki er á lífeyri verða greiðslur hans einnig endurreiknaðar ef fjármagnstekjum er breytt. \n- Heimilt er að skrá atvinnutekjur á þá mánuði sem þeirra er aflað. Reiknast þá þær atvinnutekjur eingöngu í þeim mánuði. Vakin er athygli á að það þarf að haka sérstaklega við þann kost að óska eftir mánaðarskiptingu atvinnutekna í tekjuáætlun.\n- Laun / lífeyrisgreiðslur skal skrá í þeim gjaldmiðli sem þau eru greidd.\n- Það er á ábyrgð umsækjanda að tekjuáætlun sé rétt og að nauðsynlegar upplýsingar liggi fyrir til að hægt sé að ákvarða réttar greiðslur.',
     description: 'Instructions for recording income plan',

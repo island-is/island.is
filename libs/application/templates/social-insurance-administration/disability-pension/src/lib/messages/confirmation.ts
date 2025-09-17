@@ -28,7 +28,7 @@ export const confirmation = defineMessages({
     description: 'What happens next?',
   },
   whatHappensNextOptions: {
-    id: 'dp.application:confirmation.whatHappensNextOptions',
+    id: 'dp.application:confirmation.whatHappensNextOptions#markdown',
     defaultMessage:
       '* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.  \n\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. \n\n*         Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til sjúkra- og endurhæfingarlífeyris. Vinnslutími umsókna um sjúkra- og endurhæfingarlífeyri er allt að fjórar vikur.',
     description: 'What happens next options',
@@ -39,7 +39,7 @@ export const confirmation = defineMessages({
     description: 'Warning title',
   },
   warningDescription: {
-    id: 'dp.application:confirmation.warningDescription',
+    id: 'dp.application:confirmation.warningDescription#markdown',
     defaultMessage: `Tryggingastofnun vekur athygli þína á því að þú getur átt rétt á greiðslum úr öðrum bótaflokkum sem tengjast heimilisaðstæðum. \n\nSérstaklega er bent á eftirfarandi umsóknir: \n\n- Umsókn um barnalífeyrir \n- Umsókn um heimilisuppbót \n\nTryggingastofnun hvetur þig til að fara í gegnum þessar umsóknir. Þær er hægt að nálgast inni á [tr.is](https://tr.is) og velur þar "Mínar síður". Innskráning fer fram með rafrænum skilríkjum.`,
     description: 'Warning description',
   },

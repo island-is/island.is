@@ -12,7 +12,7 @@ export const capabilityImpairment = defineMessages({
     description: 'Work capability impairment',
   },
   description: {
-    id: 'dp.application:capabilityImpairment.description',
+    id: 'dp.application:capabilityImpairment.description#markdown',
     defaultMessage:
       'Þessi hluti inniheldur spurningar um hvernig þú upplifir eigin færni í daglegu lífi og starfi. Hér getur verið um að ræða líkamlega, andlega eða félagslega þætti sem geta haft áhrif á getu þína til að sinna daglegum athöfnum, starfi og frístundum. \n\n Hafðu í huga að um er að ræða umfangsmikinn lista yfir atriði sem eiga ekki endilega við þig. Því er mikilvægt að þú metir hvernig þú upplifir stöðuna eins og hún er núna, ekki hvernig hún var áður eða hvernig þú vilt að hún verði.',
     description:

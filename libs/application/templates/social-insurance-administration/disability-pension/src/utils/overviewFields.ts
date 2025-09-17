@@ -63,8 +63,6 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.extraInfo`,
-      title: m.extraInfo.title,
-      titleVariant: 'h4',
       backId: editable ? SectionRouteEnum.EXTRA_INFO : undefined,
       hideIfEmpty: true,
       items: extraInfoItems,
