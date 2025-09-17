@@ -862,24 +862,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       })
     }
 
-    return [
-      {
-        label: formatMessage(m.listPage.showAllCourts),
-        value: ALL_COURTS_TAG,
-      },
-      {
-        label: formatMessage(m.listPage.showDistrictCourts),
-        value: DEFAULT_DISTRICT_COURT_TAG,
-      },
-      {
-        label: formatMessage(m.listPage.showCourtOfAppeal),
-        value: 'Landsréttur',
-      },
-      {
-        label: formatMessage(m.listPage.showSupremeCourt),
-        value: 'Hæstiréttur',
-      },
-    ]
+    return tags
   }, [formatMessage, showRetrialCourtOption, retrialCourtOptionValue])
   const districtCourtTags = useMemo(() => {
     return [
