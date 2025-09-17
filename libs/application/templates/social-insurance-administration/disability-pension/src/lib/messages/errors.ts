@@ -42,13 +42,14 @@ export const errors = defineMessages({
     id: 'dp.application:errors.residenceOtherTextRequired',
     defaultMessage:
       'Nauðsynlegt er að taka fram í hvernig húsnæði þú býrð ef "Annað" er valið',
-    description: 'You must describe your housing type if "Other" is selected.'
+    description: 'You must describe your housing type if "Other" is selected.',
   },
   emptyLanguageOtherText: {
     id: 'dp.application:errors.languageOtherTextRequired',
     defaultMessage:
       'Nauðsynlegt er að taka fram hvaða tungumál þú talar ef "Annað" er valið',
-    description: 'You must specify what language you speak if "Other" is selected.',
+    description:
+      'You must specify what language you speak if "Other" is selected.',
   },
   emptyRehabilitationOrTherapyDescription: {
     id: 'dp.application:errors.rehabilitationOrTherapyDescriptionRequired',
