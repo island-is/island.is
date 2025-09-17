@@ -10,13 +10,17 @@ import {
   QuestionnairesList,
 } from '../models/questionnaires.model'
 import { transformQuestionnaireData } from '../mockdata/transform-scripts/transform'
+import { LshDevService } from '@island.is/clients/health-directorate'
 
 // Example URL for the LSH API (not used in this mock implementation)
 const url =
   'https://patientappdevws.landspitali.is/swagger/docs/v2/swagger.json?urls.primaryName=V2'
 @Injectable()
 export class QuestionnairesService {
-  constructor(private api: LshClientService) {}
+  constructor(
+    private readonly api: LshClientService,
+    private readonly lshDevApi: LshDevService,
+  ) {}
 
   async getQuestionnaire(
     user: User,
@@ -54,6 +58,10 @@ export class QuestionnairesService {
     const data = lsh_list_1
     const data2 = lsh_list_2
     const data3 = EL_list_1
+
+    // const lshForms = await this.lshDevApi.getPatientForms(user)
+
+    //  console.log('LSH Forms:', lshForms)
 
     if (!data) {
       return null

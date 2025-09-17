@@ -13,6 +13,11 @@ import {
   exportedHealthApis,
   sharedApiConfig,
 } from './clients/health/health.provider'
+import {
+  LshDevApiConfiguration,
+  exportedLshDevApis,
+} from './clients/lsh-dev/lsh-dev.provider'
+import { LshDevService } from './clients/lsh-dev/lsh-dev.service'
 
 @Module({
   providers: [
@@ -20,11 +25,14 @@ import {
     HealthDirectorateVaccinationsService,
     HealthDirectorateOrganDonationService,
     HealthDirectorateHealthService,
+    LshDevService,
     OrganDonorApiProvider,
     OrganExceptionsApiProvider,
     VaccinationsApiProvider,
     ...exportedHealthApis,
     ...exportedApis,
+    ...exportedLshDevApis,
+    LshDevApiConfiguration,
     sharedApiConfig,
   ],
   exports: [
@@ -32,6 +40,7 @@ import {
     HealthDirectorateVaccinationsService,
     HealthDirectorateOrganDonationService,
     HealthDirectorateHealthService,
+    LshDevService,
   ],
 })
 export class HealthDirectorateClientModule {}
