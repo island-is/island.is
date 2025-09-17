@@ -1,9 +1,9 @@
-import { hasTimestamp } from 'libs/judicial-system/types/src/lib/dates'
 import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import { hasTimestamp } from '@island.is/judicial-system/types'
 import {
   UserRole,
   VerdictAppealDecision,
