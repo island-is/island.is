@@ -183,7 +183,7 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
           if (!isFirstPage) {
             courtAgendas = courtAgendas
               .concat(prevData.invisibleCourtAgendas)
-              // Remove all duplicate verdicts in case there were new verdicts published since last page load
+              // Remove all duplicates in case there were new agendas published since last page load
               .filter(
                 (courtAgenda) =>
                   !courtAgenda.id ||
@@ -487,7 +487,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
   return (
     <Box className="rs_read">
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
-        {Boolean(customPageData?.configJson?.noIndexOnListPage) && (
+        {Boolean(customPageData?.configJson?.noIndex) && (
           <meta name="robots" content="noindex, nofollow" />
         )}
       </HeadWithSocialSharing>
