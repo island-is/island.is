@@ -544,6 +544,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             buttonText="Bæta við skjali"
             name="indictmentCourtDocuments"
             isDisabled={() => courtDocument.isCreating}
+            isLoading={courtDocument.isCreating}
           >
             <Box display="flex" flexDirection="column" rowGap={2}>
               <Box
