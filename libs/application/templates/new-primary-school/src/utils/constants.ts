@@ -28,6 +28,7 @@ export enum ApiModuleActions {
 
 export enum Roles {
   APPLICANT = 'applicant',
+  ORGANIZATION_REVIEWER = 'organizationReviewer',
 }
 
 export enum ReasonForApplicationOptions {

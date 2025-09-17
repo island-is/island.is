@@ -1,12 +1,13 @@
 import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   Application,
-  ApplicationTypes,
-  ExternalData,
-  DefaultEvents,
-  FormValue,
   ApplicationStatus,
+  ApplicationTypes,
+  DefaultEvents,
+  ExternalData,
+  FormValue,
 } from '@island.is/application/types'
+import { States } from '../utils/constants'
 import NewPrimarySchoolTemplate from './NewPrimarySchoolTemplate'
 
 const buildApplication = (data: {
@@ -44,13 +45,13 @@ describe('New Primary School Template', () => {
       type: DefaultEvents.SUBMIT,
     })
     expect(hasChanged).toBe(true)
-    expect(newState).toBe('submitted')
+    expect(newState).toBe(States.SUBMITTED)
   })
 
-  it('should transition from submitted to approved on inreview', () => {
+  it('should transition from submitted to approved on approve', () => {
     const helper = new ApplicationTemplateHelper(
       buildApplication({
-        state: 'submitted',
+        state: States.SUBMITTED,
       }),
       NewPrimarySchoolTemplate,
     )
@@ -59,13 +60,13 @@ describe('New Primary School Template', () => {
       type: DefaultEvents.APPROVE,
     })
     expect(hasChanged).toBe(true)
-    expect(newState).toBe('approved')
+    expect(newState).toBe(States.APPROVED)
   })
 
-  it('should transition from submitted to rejected on inreview', () => {
+  it('should transition from submitted to rejected on reject', () => {
     const helper = new ApplicationTemplateHelper(
       buildApplication({
-        state: 'submitted',
+        state: States.SUBMITTED,
       }),
       NewPrimarySchoolTemplate,
     )
@@ -74,6 +75,6 @@ describe('New Primary School Template', () => {
       type: DefaultEvents.REJECT,
     })
     expect(hasChanged).toBe(true)
-    expect(newState).toBe('rejected')
+    expect(newState).toBe(States.REJECTED)
   })
 })

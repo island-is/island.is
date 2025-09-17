@@ -16,6 +16,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   FormModes,
+  InstitutionNationalIds,
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
@@ -161,7 +162,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       [States.SUBMITTED]: {
         meta: {
           name: States.SUBMITTED,
-          status: FormModes.COMPLETED,
+          status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
@@ -170,7 +171,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
             pendingAction: {
               title: corePendingActionMessages.applicationReceivedTitle,
               content: corePendingActionMessages.applicationReceivedDescription,
-              displayStatus: 'success',
+              displayStatus: 'info',
             },
             historyLogs: [
               {
@@ -186,6 +187,14 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION_REVIEWER,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
@@ -373,12 +382,19 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   },
 
   mapUserToRole(
-    id: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (id === application.applicant) {
+    if (nationalId === application.applicant) {
       return Roles.APPLICANT
     }
+
+    if (
+      nationalId === InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU
+    ) {
+      return Roles.ORGANIZATION_REVIEWER
+    }
+
     return undefined
   },
 }
