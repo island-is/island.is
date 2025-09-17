@@ -561,7 +561,9 @@ const isIndictmentRulingDecisionValid = (workingCase: Case) => {
     case CaseIndictmentRulingDecision.RULING:
     case CaseIndictmentRulingDecision.DISMISSAL:
       return Boolean(
-        (workingCase.courtSessions?.every((session) => session.endDate) ||
+        ((workingCase.courtSessions &&
+          workingCase.courtSessions.length > 0 &&
+          workingCase.courtSessions.every((session) => session.endDate)) ||
           workingCase.caseFiles?.some(
             (file) => file.category === CaseFileCategory.COURT_RECORD,
           )) &&
@@ -572,7 +574,9 @@ const isIndictmentRulingDecisionValid = (workingCase: Case) => {
     case CaseIndictmentRulingDecision.FINE:
     case CaseIndictmentRulingDecision.CANCELLATION:
       return Boolean(
-        workingCase.courtSessions?.every((session) => session.endDate) ||
+        (workingCase.courtSessions &&
+          workingCase.courtSessions.length > 0 &&
+          workingCase.courtSessions?.every((session) => session.endDate)) ||
           workingCase.caseFiles?.some(
             (file) => file.category === CaseFileCategory.COURT_RECORD,
           ),

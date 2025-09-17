@@ -45,6 +45,7 @@ import {
   hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isPublicProsecutionOfficeUser,
   isRequestCase,
   restrictionCases,
   UserRole,
@@ -518,6 +519,7 @@ export class CaseController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Get([
     'case/:caseId/courtRecord',
@@ -541,6 +543,12 @@ export class CaseController {
     let pdf: Buffer
 
     if (isRequestCase(theCase.type)) {
+      if (isPublicProsecutionOfficeUser(user)) {
+        throw new ForbiddenException(
+          'Public prosecution office users are not allowed to get court record pdfs for request cases',
+        )
+      }
+
       pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
     } else {
       if (
