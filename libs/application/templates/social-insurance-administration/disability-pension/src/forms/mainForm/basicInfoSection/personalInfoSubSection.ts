@@ -5,7 +5,7 @@ import {
   buildTextField,
   buildTitleField,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, Comparators } from '@island.is/application/types'
 import { applicantInformationArray } from '@island.is/application/ui-forms'
 import * as m from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types/routes'
@@ -29,6 +29,9 @@ export const personalInfoSubSection = buildSubSection({
           phoneRequired: true,
           emailRequired: false,
           emailDisabled: true,
+          postalCodeRequired: false,
+          addressRequired: false,
+          cityRequired: false,
           customAddressLabel: m.personalInfo.address,
         }),
         buildTitleField({
@@ -54,6 +57,12 @@ export const personalInfoSubSection = buildSubSection({
           disabled: true,
           readOnly: true,
           width: 'half',
+          condition: (_, externalData) => {
+            const { spouse } = getApplicationExternalData(
+              externalData,
+            )
+            return spouse?.name !== undefined
+          },
           defaultValue: (application: Application) => {
             const { spouse } = getApplicationExternalData(
               application.externalData,
@@ -64,6 +73,12 @@ export const personalInfoSubSection = buildSubSection({
         buildTextField({
           id: `${SectionRouteEnum.PERSONAL_INFO}.spouseNationalId`,
           title: m.personalInfo.spouseNationalId,
+          condition: (_, externalData) => {
+            const { spouse } = getApplicationExternalData(
+              externalData,
+            )
+            return spouse?.nationalId !== undefined
+          },
           disabled: true,
           readOnly: true,
           width: 'half',

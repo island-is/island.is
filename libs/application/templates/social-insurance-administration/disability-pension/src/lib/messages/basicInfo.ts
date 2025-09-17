@@ -12,9 +12,9 @@ export const basicInfo = defineMessages({
     description: 'Personal information',
   },
   personalInfoInstructions: {
-    id: 'dp.application:basicInfo.personalInfoInstructions',
+    id: 'dp.application:basicInfo.personalInfoInstructions#markdown',
     defaultMessage:
-      'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt hér. Athugið að ef að aðrar upplýsingar eru ekki réttar þarft þú að hafa samband við Þjóðskrá og fara fram á breytingu.',
+      'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt [hér](https://island.is/minarsidur/min-gogn/stillingar/). Athugið að ef að aðrar upplýsingar eru ekki réttar þarft þú að hafa samband við Þjóðskrá og fara fram á breytingu.',
     description: 'Instructions for personal information',
   },
   paymentInfo: {

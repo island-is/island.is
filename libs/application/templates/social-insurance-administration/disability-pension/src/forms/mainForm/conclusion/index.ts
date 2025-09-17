@@ -34,10 +34,10 @@ export const conclusionSection = buildSection({
           description: m.confirmation.whatHappensNextOptions,
         }),
         buildAlertMessageField({
-          id: `${SectionRouteEnum.CONFIRMATION}.customField`,
+          id: `${SectionRouteEnum.CONFIRMATION}.alert`,
           alertType: 'warning',
           title: m.confirmation.warningTitle,
-          description: m.confirmation.warningDescription,
+          message: m.confirmation.warningDescription,
         }),
         buildImageField({
           id: `${SectionRouteEnum.CONFIRMATION}.image`,

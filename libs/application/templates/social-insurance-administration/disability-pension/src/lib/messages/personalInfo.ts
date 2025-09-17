@@ -8,7 +8,7 @@ export const personalInfo = defineMessages({
   },
   address: {
     id: 'dp.application:basicInfo.personalInfo.address',
-    defaultMessage: 'Heimilisfang',
+    defaultMessage: 'Heimili / póstfang ',
     description: 'Address',
   },
   name: {
