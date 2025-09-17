@@ -60,7 +60,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     TaxLevelOptions.INCOME
 
   const incomePlan =
-    getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
+    getValueViaPath<IncomePlanRow[]>(answers, 'incomePlan') ?? []
 
   const isReceivingBenefitsFromAnotherCountry = getValueViaPath<YesOrNo>(
     answers,

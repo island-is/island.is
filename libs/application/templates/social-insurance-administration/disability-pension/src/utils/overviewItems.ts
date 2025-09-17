@@ -165,7 +165,6 @@ export const selfEvaluationItems = (
 
 export const extraInfoItems = (answers: FormValue): Array<KeyValueItem> => {
   const { extraInfo } = getApplicationAnswers(answers)
-
   return [
     {
       width: 'full',

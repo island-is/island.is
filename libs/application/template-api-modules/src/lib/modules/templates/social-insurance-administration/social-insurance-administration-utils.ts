@@ -751,7 +751,7 @@ export const transformApplicationToDisabilityPensionDTO = (
         ? Number.parseInt(disabilityRenumerationDateYear)
         : -1,
       month: disabilityRenumerationDateMonth
-        ? Number.parseInt(disabilityRenumerationDateMonth)
+        ? Number.parseInt(disabilityRenumerationDateMonth) + 1
         : -1,
     },
     comment: extraInfo,
