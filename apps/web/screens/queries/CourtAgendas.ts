@@ -15,13 +15,6 @@ export const GET_COURT_AGENDAS_QUERY = gql`
         judges {
           name
         }
-        lawyers {
-          id
-          name
-          title
-          placement
-          side
-        }
         court
       }
       total

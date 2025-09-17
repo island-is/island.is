@@ -5,7 +5,10 @@ import { NodeHtmlMarkdown } from 'node-html-markdown'
 import { isValidDate, sortAlpha } from '@island.is/shared/utils'
 
 import { BookingApi, VerdictApi } from '../../gen/fetch/gopro'
-import { DefaultApi } from '../../gen/fetch/supreme-court'
+import {
+  ApiV2VerdictGetAgendasGetRequest,
+  DefaultApi,
+} from '../../gen/fetch/supreme-court'
 import { logger } from '@island.is/logging'
 
 const ITEMS_PER_PAGE = 10
@@ -318,8 +321,10 @@ export class VerdictsClientService {
         ? this.supremeCourtApi.apiV2VerdictGetAgendasGet({
             page: pageNumber,
             limit: itemsPerPage,
-            // TODO: dateFrom and dateTo
-          })
+            orderBy: 'verdictDate desc',
+            dateFrom: input.dateFrom ? input.dateFrom : undefined,
+            dateTo: input.dateTo ? input.dateTo : undefined,
+          } as ApiV2VerdictGetAgendasGetRequest)
         : { status: 'rejected', items: [], total: 0 },
       onlyFetchSupremeCourtAgendas
         ? { status: 'rejected', items: [], total: 0 }
@@ -346,7 +351,7 @@ export class VerdictsClientService {
           closedHearing: agenda.closedSession ?? false,
           courtRoom: agenda.courtroom ?? '',
           judges: agenda.judges ?? [],
-          lawyers: [], // TODO: Lawyers from supreme court are missing
+          lawyers: [],
           court: 'Hæstiréttur',
           type: agenda.caseType ?? '',
           title: agenda.title ?? '',
