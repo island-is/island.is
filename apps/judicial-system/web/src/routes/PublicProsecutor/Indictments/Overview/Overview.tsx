@@ -353,23 +353,26 @@ export const Overview = () => {
             caseNumber: workingCase.courtCaseNumber,
             reviewer: selectedIndictmentReviewer?.label,
           })}
-          secondaryButtonText={fm(core.back)}
-          onSecondaryButtonClick={() =>
-            router.push(getStandardUserDashboardRoute(user))
-          }
+          secondaryButton={{
+            text: fm(core.back),
+            onClick: () => router.push(getStandardUserDashboardRoute(user)),
+          }}
         />
       )}
       {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
         <Modal
           title="Afturkalla úr fullnustu"
           text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
-          onPrimaryButtonClick={() =>
-            handleRevokeSendToPrisonAdmin(modalVisible.defendant)
-          }
-          primaryButtonText="Afturkalla"
-          isPrimaryButtonLoading={isUpdatingDefendant}
-          secondaryButtonText={fm(core.cancel)}
-          onSecondaryButtonClick={() => setModalVisible(undefined)}
+          primaryButton={{
+            text: 'Afturkalla',
+            onClick: () =>
+              handleRevokeSendToPrisonAdmin(modalVisible.defendant),
+            isLoading: isUpdatingDefendant,
+          }}
+          secondaryButton={{
+            text: fm(core.cancel),
+            onClick: () => setModalVisible(undefined),
+          }}
         />
       )}
     </PageLayout>

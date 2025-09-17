@@ -352,15 +352,15 @@ export const Overview = () => {
             })}
             text={modalText}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
-            onSecondaryButtonClick={() => {
-              router.push(getStandardUserDashboardRoute(user))
+            secondaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => router.push(getStandardUserDashboardRoute(user)),
             }}
             errorMessage={
               sendNotificationError
                 ? formatMessage(errors.sendNotification)
                 : undefined
             }
-            secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

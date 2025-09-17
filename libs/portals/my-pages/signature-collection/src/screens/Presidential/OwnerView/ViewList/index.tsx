@@ -7,6 +7,7 @@ import format from 'date-fns/format'
 import Signees from '../../../shared/Signees'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 import ListActions from './ListActions'
+import { Skeleton } from '../../../../lib/skeletons'
 
 const collectionType = SignatureCollectionCollectionType.Presidential
 
@@ -18,7 +19,7 @@ const ViewList = () => {
 
   return (
     <Box>
-      {!loadingList && !!listInfo && (
+      {!loadingList && !!listInfo ? (
         <Stack space={5}>
           <Text variant="h3">
             {listInfo.candidate.name + ' - ' + listInfo.area.name}
@@ -26,9 +27,10 @@ const ViewList = () => {
           <Box>
             <Text variant="h5">{formatMessage(m.listPeriod)}</Text>
             <Text>
-              {format(new Date(listInfo.startTime), 'dd.MM.yyyy') +
-                ' - ' +
-                format(new Date(listInfo.endTime), 'dd.MM.yyyy')}
+              {`${format(
+                new Date(listInfo.startTime),
+                'dd.MM.yyyy',
+              )} - ${format(new Date(listInfo.endTime), 'dd.MM.yyyy')}`}
             </Text>
             <ListActions listId={listInfo.id} />
             <Divider />
@@ -38,6 +40,8 @@ const ViewList = () => {
             totalSignees={listInfo?.numberOfSignatures ?? 0}
           />
         </Stack>
+      ) : (
+        <Skeleton />
       )}
     </Box>
   )

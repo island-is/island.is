@@ -6,6 +6,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
+import { CourtDocumentResponse } from './courtDocument.response'
 
 registerEnumType(CourtSessionClosedLegalBasis, {
   name: 'CourtSessionClosedLegalBasis',
@@ -67,4 +68,7 @@ export class CourtSessionResponse {
 
   @Field(() => String, { nullable: true })
   readonly closingEntries?: string
+
+  @Field(() => [CourtDocumentResponse], { nullable: true })
+  readonly filedDocuments?: CourtDocumentResponse[]
 }

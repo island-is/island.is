@@ -84,6 +84,7 @@ export const useGetSignedList = (
         collectionType,
       },
     },
+    skip: !collectionType,
   })
   const signedLists =
     (getSignedList?.signatureCollectionSignedList as SignatureCollectionSignedList[]) ??
@@ -165,6 +166,7 @@ export const useIsOwner = (
           collectionType,
         },
       },
+      skip: !collectionType,
     },
   )
 

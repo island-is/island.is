@@ -84,4 +84,7 @@ export class CertificateForSicknessAndRehabilitation {
 
   @Field({ nullable: true })
   other?: string
+
+  @Field({ nullable: true })
+  isAlmaCertificate?: boolean
 }

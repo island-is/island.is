@@ -82,6 +82,7 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
   query SiaCertificateForSicknessAndRehabilitation {
     socialInsuranceCertificateForSicknessAndRehabilitation {
       referenceId
+      isAlmaCertificate
       doctor {
         name
         doctorNumber

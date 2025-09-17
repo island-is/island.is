@@ -9,6 +9,7 @@ import {
   YesOrNoEnum,
   buildDisplayField,
   buildHiddenInputWithWatchedValue,
+  buildBankAccountField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
@@ -83,6 +84,7 @@ export const RentalPeriodAmount = buildSubSection({
           marginTop: 1,
         }),
         buildSelectField({
+          condition: rentalAmountConnectedToIndex,
           id: 'rentalAmount.indexDate',
           title: m.rentalAmount.indexDateLabel,
           options: (application: Application) => {
@@ -90,13 +92,15 @@ export const RentalPeriodAmount = buildSubSection({
           },
           defaultValue: (application: Application) => {
             const options = getConsumerIndexDateOptions(application)
-            return options.length > 0 ? options[0].value : undefined
+            return options.length > 1
+              ? options[1].value
+              : options[0].value ?? undefined
           },
-          condition: rentalAmountConnectedToIndex,
           width: 'half',
           marginTop: 1,
         }),
         buildDisplayField({
+          condition: rentalAmountConnectedToIndex,
           id: 'rentalAmount.indexRate',
           label: m.rentalAmount.indexRateLabel,
           variant: 'text',
@@ -104,7 +108,6 @@ export const RentalPeriodAmount = buildSubSection({
             const rate = getIndexRateForConsumerIndexDate(answers, externalData)
             return rate !== undefined ? rate.replace('.', ',') : ''
           },
-          condition: rentalAmountConnectedToIndex,
           width: 'half',
         }),
 
@@ -123,11 +126,11 @@ export const RentalPeriodAmount = buildSubSection({
           defaultValue: RentalAmountPaymentDateOptions.FIRST_DAY,
         }),
         buildTextField({
+          condition: rentalPaymentDateIsOther,
           id: 'rentalAmount.paymentDateOther',
           title: m.rentalAmount.paymentDateOtherOptionLabel,
           placeholder: m.rentalAmount.paymentDateOtherOptionPlaceholder,
           maxLength: 100,
-          condition: rentalPaymentDateIsOther,
         }),
 
         // Payment method
@@ -143,31 +146,29 @@ export const RentalPeriodAmount = buildSubSection({
           options: getPaymentMethodOptions(),
           defaultValue: RentalPaymentMethodOptions.BANK_TRANSFER,
         }),
+        buildBankAccountField({
+          condition: rentalPaymentMethodIsBankTransfer,
+          id: 'rentalAmount.paymentMethodBankAccountNumber',
+          marginTop: 2,
+          marginBottom: 0,
+        }),
         buildTextField({
+          condition: rentalPaymentMethodIsBankTransfer,
           id: 'rentalAmount.paymentMethodNationalId',
           title: m.rentalAmount.paymentMethodNationalIdLabel,
           format: '######-####',
-          width: 'half',
-          condition: rentalPaymentMethodIsBankTransfer,
         }),
         buildTextField({
-          id: 'rentalAmount.paymentMethodBankAccountNumber',
-          title: m.rentalAmount.paymentMethodBankAccountNumberLabel,
-          format: '####-##-######',
-          width: 'half',
-          condition: rentalPaymentMethodIsBankTransfer,
-        }),
-        buildTextField({
+          condition: rentalPaymentMethodIsOther,
           id: 'rentalAmount.paymentMethodOtherTextField',
           title: m.rentalAmount.paymentMethodOtherTextFieldLabel,
           maxLength: 50,
-          condition: rentalPaymentMethodIsOther,
         }),
 
         // SecurityDeposit
         buildDescriptionField({
           id: 'rentalAmount.securityDepositTitle',
-          title: m.rentalAmount.securityDepositTitle,
+          title: m.misc.securityDeposit,
           titleVariant: 'h4',
           space: 6,
         }),
@@ -183,8 +184,8 @@ export const RentalPeriodAmount = buildSubSection({
         buildHiddenInput({
           // Hidden field to capture payment insurance details when insurance is required.
           // Its value is populated by the insurance-details component at runtime.
-          id: 'rentalAmount.securityDepositDetails',
           condition: rentalInsuranceRequired,
+          id: 'rentalAmount.securityDepositDetails',
         }),
       ],
     }),
