@@ -19,6 +19,7 @@ export enum PrePaidHeirsRelationTypes {
 }
 
 export const RelationSpouse = 'Maki'
+export const RelationCharity = 'Almannaheillafélag'
 
 export enum PrePaidInheritanceOptions {
   REAL_ESTATE = 'realEstate',

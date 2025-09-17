@@ -34,6 +34,7 @@ import {
   DEFAULT_TAX_FREE_LIMIT,
   PREPAID_INHERITANCE,
   PrePaidHeirsRelations,
+  RelationCharity,
   RelationSpouse,
 } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
@@ -63,7 +64,6 @@ export const HeirsRepeater: FC<
   const heirsRelations = (values?.heirs?.data ?? []).map((x: EstateMember) => {
     return x.relation
   })
-
   const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
       const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
@@ -247,28 +247,28 @@ export const HeirsRepeater: FC<
       const withCustomPercentage =
         (100 - Number(customSpouseSharePercentage)) * 2
 
+      const isCharity = currentHeir?.relation === RelationCharity
+
       // This is a complicated calculation that's difficult to reason about.
       // It's been confirmed to work to DC's standards and thus it remains
       // functionally unaltered when calculating the augmented percentageSplit
       // for heir percentages that finally add up to 100 (during user input)
       let taxFreeInheritanceValue
-      if (roughlySumsTo100) {
-        const taxablePropertySplit = integerPercentageSplit(
-          inheritanceTaxFreeLimit,
-          heirPercentages,
-        )
-        const heirSplit = taxablePropertySplit[index ?? 0]
-        taxFreeInheritanceValue = isSpouse
-          ? inheritanceValue
-          : customSpouseSharePercentage
-          ? (withCustomPercentage / 100) * heirSplit
-          : heirSplit
+
+      if (isCharity) {
+        taxFreeInheritanceValue = inheritanceValue
+      } else if (isSpouse) {
+        taxFreeInheritanceValue = inheritanceValue
       } else {
-        taxFreeInheritanceValue = isSpouse
-          ? inheritanceValue
-          : customSpouseSharePercentage
-          ? (withCustomPercentage / 100) * inheritanceTaxFreeLimit * percentage
+        const baseAmount = roughlySumsTo100
+          ? integerPercentageSplit(inheritanceTaxFreeLimit, heirPercentages)[
+              index ?? 0
+            ]
           : inheritanceTaxFreeLimit * percentage
+
+        taxFreeInheritanceValue = customSpouseSharePercentage
+          ? (withCustomPercentage / 100) * baseAmount
+          : baseAmount
       }
 
       const taxableInheritanceValue = inheritanceValue - taxFreeInheritanceValue
