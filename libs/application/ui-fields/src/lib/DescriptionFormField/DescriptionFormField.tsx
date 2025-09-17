@@ -58,7 +58,7 @@ export const DescriptionFormField: FC<
               />
             </Box>
           )}
-          {field.showRequiredStar && (
+          {field.showRequiredStar && field.title && (
             <span aria-hidden="true" className={styles.isRequiredStar}>
               {' '}
               *
