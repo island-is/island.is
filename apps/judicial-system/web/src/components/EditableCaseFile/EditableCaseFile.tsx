@@ -52,8 +52,8 @@ interface Props {
   onDelete: (file: TUploadFile) => void
   onOpen?: (id: string) => void
   onRetry?: (file: TUploadFile) => void
-  onStartEditing: () => void
-  onStopEditing: () => void
+  onStartEditing?: () => void
+  onStopEditing?: () => void
 }
 
 const EditableCaseFile: FC<Props> = (props) => {
@@ -112,7 +112,7 @@ const EditableCaseFile: FC<Props> = (props) => {
     onRename(caseFile.id, trimmedFilename, newDate.toISOString())
 
     setIsEditing(false)
-    onStopEditing()
+    onStopEditing?.()
   }
 
   const displayDate = useMemo(() => {
@@ -210,7 +210,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                     <button
                       onClick={() => {
                         onDelete(caseFile as TUploadFile)
-                        onStopEditing()
+                        onStopEditing?.()
                       }}
                       className={cn(styles.editCaseFileButton, {
                         [styles.background.primary]:
@@ -294,7 +294,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <button
                     onClick={() => {
                       setIsEditing(true)
-                      onStartEditing()
+                      onStartEditing?.()
                     }}
                     className={cn(styles.editCaseFileButton, {
                       [styles.background.primary]:

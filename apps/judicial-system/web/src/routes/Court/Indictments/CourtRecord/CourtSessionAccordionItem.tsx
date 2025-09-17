@@ -521,8 +521,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                               prev.filter((i) => i.id !== file.id),
                             )
                           }}
-                          onStartEditing={() => console.log('start')}
-                          onStopEditing={() => console.log('stop')}
                         />
                       </Reorder.Item>
                     ))}
