@@ -12,6 +12,8 @@ import addMonths from 'date-fns/addMonths'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
 import * as m from '../../../../lib/messages'
+import addYears from 'date-fns/addYears'
+import addDays from 'date-fns/addDays'
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(
@@ -45,7 +47,8 @@ export const livedAbroadSubSection = buildMultiField({
           label: m.employmentParticipation.country,
           placeholder: m.employmentParticipation.countryPlaceholder,
           width: 'half',
-          displayInTable: true,
+          required: true,
+          displayInTable: false,
           isSearchable: true,
           options: (application: Application) => {
             const { countries = [] } = getApplicationExternalData(
@@ -61,76 +64,35 @@ export const livedAbroadSubSection = buildMultiField({
           component: 'input',
           label: m.employmentParticipation.abroadNationalId,
           width: 'half',
-          displayInTable: true,
         },
-        //TODO: ONly month
         periodStart: {
           component: 'date',
           label: m.employmentParticipation.periodStart,
           placeholder: m.employmentParticipation.periodStartPlaceholder,
+          required: true,
           width: 'half',
-          displayInTable: false,
-          updateValueObj: {
-            valueModifier: (_, activeField) => {
-              if (!activeField) {
-                return ''
-              }
-              const { periodEnd, periodStart } = activeField
-
-              if (!periodStart || !periodEnd) {
-                return activeField.periodStart
-              }
-
-              const dateStart = new Date(periodStart)
-              const dateEnd = new Date(periodEnd)
-
-              if (!dateStart || !dateEnd) {
-                return activeField.periodStart
-              }
-
-              if (dateStart.getMonth() > dateEnd.getMonth()) {
-                const newDate = addMonths(dateEnd, -1)
-                return format(newDate, 'yyyy-MM-dd')
-              }
-
-              return activeField.periodStart
-            },
-            watchValues: ['periodEnd'],
+          maxDate: (_, activeField) => {
+            if (activeField?.periodEnd) {
+              const endDate = new Date(activeField.periodEnd)
+              return addDays(endDate, -1)
+            }
+            return addDays(new Date(), -1)
           },
+          minDate: () => addYears(new Date(), -50),
+          displayInTable: false,
         },
-        //TODO: ONly month
         periodEnd: {
           component: 'date',
           label: m.employmentParticipation.periodEnd,
           placeholder: m.employmentParticipation.periodEndPlaceholder,
+          required: true,
           width: 'half',
           displayInTable: false,
-          updateValueObj: {
-            valueModifier: (_, activeField) => {
-              if (!activeField) {
-                return ''
-              }
-              const { periodEnd, periodStart } = activeField
-
-              if (!periodStart || !periodEnd) {
-                return activeField.periodEnd
-              }
-
-              const dateStart = new Date(periodStart)
-              const dateEnd = new Date(periodEnd)
-
-              if (!dateStart || !dateEnd) {
-                return activeField.periodEnd
-              }
-
-              if (dateEnd.getMonth() < dateStart.getMonth()) {
-                const newDate = addMonths(dateStart, 1)
-                return format(newDate, 'yyyy-MM-dd')
-              }
-
-              return activeField.periodEnd
-            },
-            watchValues: ['periodStart'],
+          maxDate: () => new Date(),
+          minDate: (_, activeField) => {
+            return activeField?.periodStart ?
+              addDays(new Date(activeField.periodStart), 1)
+            : addDays(addYears(new Date(), -50), 1)
           },
         },
         period: {

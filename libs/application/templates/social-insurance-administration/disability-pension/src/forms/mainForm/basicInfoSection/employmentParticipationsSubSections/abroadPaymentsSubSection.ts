@@ -44,8 +44,8 @@ export const abroadPaymentsSubSection = buildMultiField({
           label: m.employmentParticipation.country,
           placeholder: m.employmentParticipation.countryPlaceholder,
           width: 'half',
-          displayInTable: true,
           isSearchable: true,
+          displayInTable: false,
           options: (application: Application) => {
             const { countries = [] } = getApplicationExternalData(
               application.externalData,
@@ -82,8 +82,6 @@ export const abroadPaymentsSubSection = buildMultiField({
           component: 'input',
           label: m.employmentParticipation.abroadNationalId,
           width: 'half',
-          required: false,
-          displayInTable: true,
         },
       },
       table: {

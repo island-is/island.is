@@ -7,6 +7,8 @@ export const siaDisabilityPensionCertificateQuery = gql`
       doctor {
         name
         doctorNumber
+        phoneNumber
+        email
         residence
       }
       lastInspectionDate

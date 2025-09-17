@@ -31,6 +31,8 @@ const mapDoctor = (
     name: doctorInfo.name ?? undefined,
     doctorNumber: doctorInfo.doctorNumber ?? undefined,
     residence: doctorInfo.residence ?? undefined,
+    phoneNumber: doctorInfo.phoneNumber ?? undefined,
+    email: doctorInfo.email ?? undefined
   }
 }
 

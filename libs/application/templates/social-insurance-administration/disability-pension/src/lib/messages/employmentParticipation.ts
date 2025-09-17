@@ -64,8 +64,8 @@ export const employmentParticipation = defineMessages({
   },
   abroadNationalId: {
     id: 'dp.application:employmentParticipation.abroadNationalId',
-    defaultMessage: 'Kennitala í landi',
-    description: 'National ID abroad',
+    defaultMessage: 'Kennitala/auðkenni í landi',
+    description: 'Foreign ID number',
   },
   period: {
     id: 'dp.application:employmentParticipation.period',

@@ -666,7 +666,7 @@ export const transformApplicationToDisabilityPensionDTO = (
     taxInfo: {
       personalAllowance: personalAllowance === YES,
       personalAllowanceUsage:
-        personalAllowance === YES ? +personalAllowanceUsage : 0,
+        personalAllowance === YES ? Number.parseInt(personalAllowanceUsage) : -1,
       taxLevel: +taxLevel,
     },
     hasAppliedForDisabilityAtPensionFund: hasAppliedForDisabilityBefore === YES,
@@ -687,7 +687,7 @@ export const transformApplicationToDisabilityPensionDTO = (
     lastProfession: previousEmployment?.job,
     lastProfessionYear: previousEmployment?.when
       ? Number.parseInt(previousEmployment.when)
-      : -1,
+      : undefined,
     lastProfessionDescription: undefined,
     lastActivityOfProfession: previousEmployment?.field,
     lastActivityOfProfessionDescription: undefined,

@@ -26,6 +26,7 @@ export const overviewFields = (editable?: boolean) => {
     buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.incomePlan`,
       title: m.incomePlan.instructionsTitle,
+      titleVariant: 'h4',
       hideIfEmpty: true,
       backId: editable ? SectionRouteEnum.INCOME_PLAN : undefined,
       tableData: incomePlanItems,
@@ -44,13 +45,12 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.disabilityCertificate`,
-      title: m.customFields.certificate,
-      titleVariant: 'h4',
       backId: SectionRouteEnum.DISABILITY_CERTIFICATE,
       items: () => {
         return [
           {
             width: 'full',
+            keyText: m.customFields.certificate,
             valueText: m.disabilityCertificate.certificateAvailable,
           },
         ]
@@ -58,13 +58,13 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.selfEvaluation`,
-      title: m.selfEvaluation.title,
-      titleVariant: 'h4',
       backId: SectionRouteEnum.SELF_EVALUATION,
       items: selfEvaluationItems,
     }),
     buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.extraInfo`,
+      title: m.extraInfo.title,
+      titleVariant: 'h4',
       backId: editable ? SectionRouteEnum.EXTRA_INFO : undefined,
       hideIfEmpty: true,
       items: extraInfoItems,

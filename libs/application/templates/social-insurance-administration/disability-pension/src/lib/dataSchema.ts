@@ -14,6 +14,7 @@ import {
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
 import * as m from './messages'
+import { OTHER_STATUS_VALUE } from '../types/constants'
 
 export const fileSchema = z.object({
   name: z.string(),
@@ -159,7 +160,7 @@ export const dataSchema = z.object({
     })
     .refine(
       ({ status, other }) => {
-        return (status && status.length > 0) || (other && other.length > 0)
+        return status && status.length > 0 && (!status.includes(OTHER_STATUS_VALUE) || other && other.length > 0)
       },
       {
         path: ['status'],

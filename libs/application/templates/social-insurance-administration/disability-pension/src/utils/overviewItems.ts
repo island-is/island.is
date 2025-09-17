@@ -153,6 +153,7 @@ export const selfEvaluationItems = (
   return [
     {
       width: 'full',
+      keyText: m.selfEvaluation.title,
       valueText:
         hadAssistanceForSelfEvaluation !== undefined
           ? m.selfEvaluation.applicantHasAnsweredAssistance
@@ -171,6 +172,8 @@ export const selfEvaluationItems = (
 
 export const extraInfoItems = (answers: FormValue): Array<KeyValueItem> => {
   const { extraInfo } = getApplicationAnswers(answers)
+
+  if (!extraInfo) return []
   return [
     {
       width: 'full',

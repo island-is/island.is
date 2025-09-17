@@ -21,10 +21,10 @@ export const certificate = defineMessages({
     defaultMessage: 'Utanumhaldandi',
     description: 'Managed by',
   },
-  managedByLocation: {
-    id: 'dp.application:disability.pension.certificate.managed.by.location',
-    defaultMessage: 'Starfsstöð',
-    description: 'Location',
+  residence: {
+    id: 'dp.application:disability.pension.certificate.residence',
+    defaultMessage: 'Aðsetur',
+    description: 'Residence',
   },
   doctorNumber: {
     id: 'dp.application:disability.pension.certificate.doctor.number',

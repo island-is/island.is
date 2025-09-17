@@ -50,35 +50,38 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(sm.confirm.name)}</Label>
           <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate?.doctor?.name}
+            {data?.socialInsuranceDisabilityPensionCertificate?.doctor?.name ?? '-'}
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.doctorNumber)}</Label>
           <Text>
-            {/* Put doctorNumber here for now - Smári will search for doctor's number and find job title and return it instead */}
             {
               data?.socialInsuranceDisabilityPensionCertificate?.doctor
-                ?.doctorNumber
+                ?.doctorNumber ?? '-'
             }
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>{formatMessage(m.certificate.managedByLocation)}</Label>
+          <Label>{formatMessage(m.certificate.residence)}</Label>
           <Text>
             {
               data?.socialInsuranceDisabilityPensionCertificate?.doctor
-                ?.residence
+                ?.residence ?? '-'
             }
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.phoneNumber)}</Label>
-          <Text>{'-'}</Text>
+          <Text>{
+            data?.socialInsuranceDisabilityPensionCertificate?.doctor
+              ?.phoneNumber ?? '-'
+          }</Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.email)}</Label>
-          <Text>{'-'}</Text>
+          <Text>{data?.socialInsuranceDisabilityPensionCertificate?.doctor
+            ?.email ?? '-'}</Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>{formatMessage(m.certificate.address)}</Label>

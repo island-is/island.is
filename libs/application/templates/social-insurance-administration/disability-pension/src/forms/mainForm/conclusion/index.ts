@@ -30,7 +30,6 @@ export const conclusionSection = buildSection({
           id: `${SectionRouteEnum.CONFIRMATION}.bullets`,
           title: m.confirmation.whatHappensNext,
           titleVariant: 'h4',
-          space: 'gutter',
           description: m.confirmation.whatHappensNextOptions,
         }),
         buildAlertMessageField({

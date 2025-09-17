@@ -14,6 +14,7 @@ export const disabilityPeriodFields = buildMultiField({
   description: m.disabilityPeriod.description,
   children: [
     buildTitleField({
+      marginTop: 2,
       title: m.disabilityPeriod.chooseDate,
       titleVariant: 'h5',
     }),
