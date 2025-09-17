@@ -74,6 +74,7 @@ export const DownloadReports = ({
           <MyPdfDocument report={res.signatureCollectionAreaSummaryReport} />,
         )
       },
+      fetchPolicy: 'no-cache',
     })
   }
 

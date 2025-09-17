@@ -32,11 +32,12 @@ const SigneeView = ({
       )}
 
       <Box marginTop={[0, 5]}>
-        {/* Signed list(s) */}
-        <SignedLists
-          collectionType={collectionType}
-          signedLists={signedLists ?? []}
-        />
+        {signedLists && (
+          <SignedLists
+            collectionType={collectionType}
+            signedLists={signedLists ?? []}
+          />
+        )}
 
         {/* Other available lists */}
         <Box marginTop={[5, 10]}>
