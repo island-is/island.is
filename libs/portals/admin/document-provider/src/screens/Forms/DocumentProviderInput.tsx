@@ -1,6 +1,6 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Box, Input, SkeletonLoader } from '@island.is/island-ui/core'
-import { Controller, Control, FieldValues } from 'react-hook-form'
+import { Controller, Control, FieldValues, Path, PathValue } from 'react-hook-form'
 import {
   Validate,
   ValidationRule,
@@ -17,10 +17,10 @@ type ControllerRules = Partial<{
   validate: Validate<string, FieldValues>
 }>
 
-interface Props {
-  control: Control<any, string>
-  name: string
-  defaultValue: string
+interface Props<T extends FieldValues> {
+  control: Control<T, string>
+  name: Path<T>
+  defaultValue: PathValue<T, Path<T>>
   hasError: boolean
   errorMessage: string
   label: string
@@ -28,7 +28,7 @@ interface Props {
   rules?: ControllerRules
 }
 
-export const DocumentProviderInput: FC<React.PropsWithChildren<Props>> = ({
+export const DocumentProviderInput = <T extends FieldValues = FieldValues>({
   control,
   name,
   defaultValue,
@@ -37,7 +37,7 @@ export const DocumentProviderInput: FC<React.PropsWithChildren<Props>> = ({
   label,
   placeholder,
   rules,
-}) => {
+}: Props<T>) => {
   const loading = false
   return (
     <Box marginBottom={2}>
