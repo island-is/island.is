@@ -6,7 +6,7 @@ import { isValidDate, sortAlpha } from '@island.is/shared/utils'
 
 import { BookingApi, VerdictApi } from '../../gen/fetch/gopro'
 import {
-  ApiV2VerdictGetAgendasGetRequest,
+  type ApiV2VerdictGetAgendasPostRequest,
   DefaultApi,
 } from '../../gen/fetch/supreme-court'
 import { logger } from '@island.is/logging'
@@ -313,18 +313,19 @@ export class VerdictsClientService {
     dateTo?: string
   }) {
     const onlyFetchSupremeCourtAgendas = input.court === 'Hæstiréttur'
-
     const pageNumber = input.page ?? 1
     const itemsPerPage = 10
+
     const [supremeCourtResponse, goproResponse] = await Promise.allSettled([
       !input.court || onlyFetchSupremeCourtAgendas
-        ? this.supremeCourtApi.apiV2VerdictGetAgendasGet({
-            page: pageNumber,
-            limit: itemsPerPage,
-            orderBy: 'verdictDate desc',
-            dateFrom: input.dateFrom ? input.dateFrom : undefined,
-            dateTo: input.dateTo ? input.dateTo : undefined,
-          } as ApiV2VerdictGetAgendasGetRequest)
+        ? this.supremeCourtApi.apiV2VerdictGetAgendasPost({
+            agendaSearchRequest: {
+              page: pageNumber,
+              limit: itemsPerPage,
+              dateFrom: safelyConvertStringToDate(input.dateFrom, 'dateFrom'),
+              dateTo: safelyConvertStringToDate(input.dateTo, 'dateTo'),
+            },
+          } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
       onlyFetchSupremeCourtAgendas
         ? { status: 'rejected', items: [], total: 0 }
