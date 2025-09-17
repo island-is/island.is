@@ -30,7 +30,7 @@ export const confirmation = defineMessages({
   whatHappensNextOptions: {
     id: 'dp.application:confirmation.whatHappensNextOptions#markdown',
     defaultMessage:
-      '* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.  \n\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. \n\n*         Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til sjúkra- og endurhæfingarlífeyris. Vinnslutími umsókna um sjúkra- og endurhæfingarlífeyri er allt að fjórar vikur.',
+      '* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.  \n\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. \n\n*         Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til örorkulífeyris. Vinnslutími umsókna um örorkulífeyris er allt að fjórar vikur.',
     description: 'What happens next options',
   },
   warningTitle: {
