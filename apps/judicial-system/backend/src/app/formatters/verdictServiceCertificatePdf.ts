@@ -1,3 +1,4 @@
+import { hasTimestamp } from 'libs/judicial-system/types/src/lib/dates'
 import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
@@ -78,9 +79,10 @@ export const createVerdictServiceCertificate = (
   addEmptyLines(doc, 3)
 
   if (verdict.serviceDate) {
+    const format = hasTimestamp(verdict.serviceDate) ? 'PPPp' : 'PPP'
     addMediumCenteredText(
       doc,
-      `Birting tókst ${formatDate(verdict.serviceDate, 'PPPp')}`,
+      `Birting tókst ${formatDate(verdict.serviceDate, format)}`,
       'Times-Bold',
     )
   }
