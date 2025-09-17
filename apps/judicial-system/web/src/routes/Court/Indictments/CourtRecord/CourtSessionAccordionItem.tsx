@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 
 import {
@@ -50,6 +57,11 @@ interface Props {
   onConfirmClick: () => void
   workingCase: Case
   setWorkingCase: Dispatch<SetStateAction<Case>>
+}
+
+interface FiledDocuments {
+  courtSessionId: string
+  files: ReorderableFile[]
 }
 
 interface ReorderableFile {
@@ -142,9 +154,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
   const [unfiledFiles, setUnfiledFiles] = useState<ReorderableFile[]>([])
-  const [reorderableFiles, setReorderableFiles] = useState<ReorderableFile[]>(
-    [],
-  )
+  const [reorderableFiles, setReorderableFiles] = useState<FiledDocuments[]>([])
 
   const {
     judges,
@@ -163,18 +173,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    const filedDocuments = [...workingCase.courtSessions].filter(
-      (cs) => cs.filedDocuments,
+    const filedDocuments: FiledDocuments[] = workingCase.courtSessions.map(
+      (a) => ({
+        courtSessionId: a.id,
+        files:
+          a.filedDocuments?.filter((aa) => aa.courtSessionId === a.id) || [],
+      }),
     )
 
-    setReorderableFiles(
-      filedDocuments
-        .flatMap((cs) => cs.filedDocuments || [])
-        .map((doc) => ({
-          id: doc.id,
-          name: doc.name,
-        })),
-    )
+    setReorderableFiles(filedDocuments)
   }, [workingCase.courtSessions])
 
   useEffect(() => {
@@ -225,7 +232,13 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     setUnfiledFiles((prev) => [{ id, name: file.name }, ...prev])
 
-    setReorderableFiles((prev) => prev.filter((i) => i.id !== file.id))
+    setReorderableFiles((prev) =>
+      prev.map((session) =>
+        session.courtSessionId === courtSession.id
+          ? { ...session, files: session.files.filter((i) => i.id !== file.id) }
+          : session,
+      ),
+    )
   }
 
   const handleReorder = (newOrder: ReorderableFile[]) => {
@@ -241,7 +254,13 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       documentOrder: newIndex + 1, // +1 because index starts at 0 and the order at 1
     })
 
-    setReorderableFiles(newOrder)
+    setReorderableFiles((prev) =>
+      prev.map((session) =>
+        session.courtSessionId === courtSession.id
+          ? { ...session, files: newOrder }
+          : session,
+      ),
+    )
   }
 
   const handleFileCourtDocument = async (file: ReorderableFile) => {
@@ -255,13 +274,19 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     setUnfiledFiles((prev) => prev.filter((item) => item.id !== file.id))
 
-    setReorderableFiles((prev) => [
-      ...prev,
-      {
-        id: res.fileCourtDocumentInCourtSession.id,
-        name: file.name,
-      },
-    ])
+    setReorderableFiles((prev) =>
+      prev.map((session) =>
+        session.courtSessionId === courtSession.id
+          ? {
+              ...session,
+              files: [
+                ...session.files,
+                { id: res.fileCourtDocumentInCourtSession.id, name: file.name },
+              ],
+            }
+          : session,
+      ),
+    )
   }
 
   const handleChangeWitness = (value?: string | null) => {
@@ -324,7 +349,16 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     if (!res) return
 
-    setReorderableFiles((prev) => [...prev, { id: res.id, name: value }])
+    setReorderableFiles((prev) =>
+      prev.map((session) =>
+        session.courtSessionId === courtSession.id
+          ? {
+              ...session,
+              files: [...session.files, { id: res.id, name: value }],
+            }
+          : session,
+      ),
+    )
   }
 
   const containerVariants = {
@@ -369,6 +403,13 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       opacity: 0,
     },
   }
+
+  const filedDocuments = useMemo(
+    () =>
+      reorderableFiles.find((d) => d.courtSessionId === courtSession.id)
+        ?.files || [],
+    [courtSession.id, reorderableFiles],
+  )
 
   return (
     <AccordionItem
@@ -555,12 +596,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               >
                 <Reorder.Group
                   axis="y"
-                  values={reorderableFiles}
+                  values={filedDocuments}
                   onReorder={handleReorder}
                   className={styles.grid}
                 >
                   <AnimatePresence>
-                    {reorderableFiles.map((item) => (
+                    {filedDocuments.map((item) => (
                       <Reorder.Item
                         key={item.id}
                         value={item}
@@ -605,19 +646,25 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   rowGap={2}
                 >
                   <AnimatePresence>
-                    {reorderableFiles.map((_item, index) => (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10, height: 'auto' }}
-                        animate={{ opacity: 1, y: 0, height: 'auto' }}
-                        exit={{ opacity: 0, y: 10, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                        key={`þingmerkt_nr_${index + 1}`}
-                      >
-                        <Tag variant="darkerBlue" outlined disabled>
-                          Þingmerkt nr. {index + 1}
-                        </Tag>
-                      </motion.div>
-                    ))}
+                    {filedDocuments.map((_item, i) => {
+                      const currentIndex =
+                        reorderableFiles.slice(0, index).flatMap((a) => a.files)
+                          .length + i
+
+                      return (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10, height: 'auto' }}
+                          animate={{ opacity: 1, y: 0, height: 'auto' }}
+                          exit={{ opacity: 0, y: 10, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          key={`þingmerkt_nr_${currentIndex + 1}`}
+                        >
+                          <Tag variant="darkerBlue" outlined disabled>
+                            Þingmerkt nr. {currentIndex + 1}
+                          </Tag>
+                        </motion.div>
+                      )
+                    })}
                   </AnimatePresence>
                 </Box>
               </Box>
