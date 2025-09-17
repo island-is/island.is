@@ -207,6 +207,111 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     }
   }
 
+  const handleDeleteFile = async (file: TUploadFile) => {
+    if (!file.id) {
+      return
+    }
+    const id = file.id
+
+    const deleted = await deleteCourtDocument({
+      caseId: workingCase.id,
+      courtSessionId: courtSession.id,
+      courtDocumentId: id,
+    })
+
+    if (!deleted) {
+      return
+    }
+
+    setUnfiledFiles((prev) => [{ id, name: file.name }, ...prev])
+
+    setReorderableFiles((prev) => prev.filter((i) => i.id !== file.id))
+  }
+
+  const handleReorder = (newOrder: ReorderableFile[]) => {
+    const newIndex = newOrder.findIndex((f) => f.id === draggedFileId)
+    if (!draggedFileId || newIndex === -1) {
+      return
+    }
+
+    updateCourtDocument({
+      caseId: workingCase.id,
+      courtSessionId: courtSession.id,
+      courtDocumentId: draggedFileId,
+      documentOrder: newIndex + 1, // +1 because index starts at 0 and the order at 1
+    })
+
+    setReorderableFiles(newOrder)
+  }
+
+  const handleFileCourtDocument = async (file: ReorderableFile) => {
+    const res = await fileCourtDocumentInCourtSession({
+      caseId: workingCase.id,
+      courtSessionId: courtSession.id,
+      courtDocumentId: file.id,
+    })
+
+    if (!res) return
+
+    setUnfiledFiles((prev) => prev.filter((item) => item.id !== file.id))
+
+    setReorderableFiles((prev) => [
+      ...prev,
+      {
+        id: res.fileCourtDocumentInCourtSession.id,
+        name: file.name,
+      },
+    ])
+  }
+
+  const handleChangeWitness = (value?: string | null) => {
+    const selectedUser = [...judges, ...registrars].find(
+      (u) => u.value === value,
+    )
+
+    if (!selectedUser) {
+      return
+    }
+
+    patchSession(courtSession.id, {
+      attestingWitness: {
+        id: selectedUser.value || '',
+        name: selectedUser.label,
+      },
+    })
+
+    patchSession(
+      courtSession.id,
+      { attestingWitnessId: value },
+      { persist: true },
+    )
+  }
+
+  const handleEndTimeChange = (date: Date | undefined, valid: boolean) => {
+    if (!date || !valid) {
+      return
+    }
+
+    const startDate = courtSession.startDate
+      ? new Date(courtSession.startDate)
+      : new Date()
+
+    const merged = new Date(startDate)
+    merged.setHours(date.getHours(), date.getMinutes(), 0, 0)
+
+    if (merged < startDate) {
+      toast.error('Upp kom villa við að uppfæra lokatíma')
+    }
+
+    patchSession(
+      courtSession.id,
+      {
+        endDate: formatDateForServer(merged),
+      },
+      { persist: true },
+    )
+  }
+
   const containerVariants = {
     hidden: {
       height: 0,
@@ -449,23 +554,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   <Reorder.Group
                     axis="y"
                     values={reorderableFiles}
-                    onReorder={(newOrder) => {
-                      const newIndex = newOrder.findIndex(
-                        (f) => f.id === draggedFileId,
-                      )
-                      if (!draggedFileId || newIndex === -1) {
-                        return
-                      }
-
-                      updateCourtDocument({
-                        caseId: workingCase.id,
-                        courtSessionId: courtSession.id,
-                        courtDocumentId: draggedFileId,
-                        documentOrder: newIndex + 1, // +1 because index starts at 0 and the order at 1
-                      })
-
-                      setReorderableFiles(newOrder)
-                    }}
+                    onReorder={handleReorder}
                     className={styles.grid}
                   >
                     {reorderableFiles.map((item) => (
@@ -496,31 +585,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           ): void => {
                             throw new Error('Function not implemented.')
                           }}
-                          onDelete={async (file) => {
-                            if (!file.id) {
-                              return
-                            }
-                            const id = file.id
-
-                            const deleted = await deleteCourtDocument({
-                              caseId: workingCase.id,
-                              courtSessionId: courtSession.id,
-                              courtDocumentId: id,
-                            })
-
-                            if (!deleted) {
-                              return
-                            }
-
-                            setUnfiledFiles((prev) => [
-                              { id, name: file.name },
-                              ...prev,
-                            ])
-
-                            setReorderableFiles((prev) =>
-                              prev.filter((i) => i.id !== file.id),
-                            )
-                          }}
+                          onDelete={handleDeleteFile}
                         />
                       </Reorder.Item>
                     ))}
@@ -575,28 +640,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                             <Tag
                               outlined
                               variant="darkerBlue"
-                              onClick={async () => {
-                                const res =
-                                  await fileCourtDocumentInCourtSession({
-                                    caseId: workingCase.id,
-                                    courtSessionId: courtSession.id,
-                                    courtDocumentId: file.id,
-                                  })
-
-                                if (!res) return
-
-                                setUnfiledFiles((prev) =>
-                                  prev.filter((item) => item.id !== file.id),
-                                )
-
-                                setReorderableFiles((prev) => [
-                                  ...prev,
-                                  {
-                                    id: res.fileCourtDocumentInCourtSession.id,
-                                    name: file.name,
-                                  },
-                                ])
-                              }}
+                              onClick={() => handleFileCourtDocument(file)}
                             >
                               Leggja fram
                             </Tag>
@@ -838,28 +882,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         }
                       : null
                   }
-                  onChange={(evt) => {
-                    const selectedUser = [...judges, ...registrars].find(
-                      (u) => u.value === evt?.value,
-                    )
-
-                    if (!selectedUser) {
-                      return
-                    }
-
-                    patchSession(courtSession.id, {
-                      attestingWitness: {
-                        id: selectedUser.value || '',
-                        name: selectedUser.label,
-                      },
-                    })
-
-                    patchSession(
-                      courtSession.id,
-                      { attestingWitnessId: evt?.value },
-                      { persist: true },
-                    )
-                  }}
+                  onChange={(evt) => handleChangeWitness(evt?.value)}
                   size="md"
                   label="Veldu vott"
                   placeholder="Veldu vott að þinghaldi"
@@ -875,30 +898,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 <div className={styles.fullWidth}>
                   <DateTime
                     name="courtEndTime"
-                    onChange={(date: Date | undefined, valid: boolean) => {
-                      if (!date || !valid) {
-                        return
-                      }
-
-                      const startDate = courtSession.startDate
-                        ? new Date(courtSession.startDate)
-                        : new Date()
-
-                      const merged = new Date(startDate)
-                      merged.setHours(date.getHours(), date.getMinutes(), 0, 0)
-
-                      if (merged < startDate) {
-                        toast.error('Upp kom villa við að uppfæra lokatíma')
-                      }
-
-                      patchSession(
-                        courtSession.id,
-                        {
-                          endDate: formatDateForServer(merged),
-                        },
-                        { persist: true },
-                      )
-                    }}
+                    onChange={handleEndTimeChange}
                     blueBox={false}
                     selectedDate={
                       courtSession.endDate
