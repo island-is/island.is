@@ -744,7 +744,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                         ? `${formatMessage(
                             m.listPage[
                               agenda.judges.length === 1
-                                ? 'judgesSingluarPrefix'
+                                ? 'judgesSingularPrefix'
                                 : 'judgesPluralPrefix'
                             ],
                           )}: ${agenda.judges
