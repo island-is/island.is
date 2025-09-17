@@ -485,6 +485,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           caseFile={{
                             id: item.id,
                             displayText: item.name,
+                            name: item.name,
                             canEdit: ['fileName'],
                           }}
                           backgroundColor="white"
@@ -495,20 +496,26 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           ): void => {
                             throw new Error('Function not implemented.')
                           }}
-                          onDelete={async (file: TUploadFile) => {
+                          onDelete={async (file) => {
                             if (!file.id) {
                               return
                             }
+                            const id = file.id
 
                             const deleted = await deleteCourtDocument({
                               caseId: workingCase.id,
                               courtSessionId: courtSession.id,
-                              courtDocumentId: file.id,
+                              courtDocumentId: id,
                             })
 
                             if (!deleted) {
                               return
                             }
+
+                            setUnfiledFiles((prev) => [
+                              { id, name: file.name },
+                              ...prev,
+                            ])
 
                             setReorderableFiles((prev) =>
                               prev.filter((i) => i.id !== file.id),

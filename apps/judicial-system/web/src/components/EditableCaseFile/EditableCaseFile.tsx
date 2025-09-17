@@ -32,6 +32,7 @@ export interface TEditableCaseFile {
   id: string
   category?: CaseFileCategory | null
   created?: string | null
+  name?: string | null
   displayText?: string | null
   userGeneratedFilename?: string | null
   displayDate?: string | null
