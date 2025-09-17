@@ -98,7 +98,7 @@ const ActionLockList = ({
         label={''}
         closeButtonLabel={''}
       >
-        <Box marginTop={5}>
+        <Box>
           <Text>
             {formatMessage(
               isLocked ? m.unlockListDescription : m.lockListDescription,

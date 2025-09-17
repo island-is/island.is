@@ -20,7 +20,7 @@ export const Draft: Form = buildForm({
   id: 'SignListDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: false,
+  renderLastScreenBackButton: true,
   logo: Logo,
   children: [
     buildSection({
