@@ -94,7 +94,6 @@ export async function runLocalServices(
     dryRun,
     noUpdateSecrets,
   })
-  console.log(renderedLocalServices)
   // Verify that all dependencies exist in the rendered dependency list
   for (const dependency of dependencies) {
     if (!renderedLocalServices.services[dependency]) {
