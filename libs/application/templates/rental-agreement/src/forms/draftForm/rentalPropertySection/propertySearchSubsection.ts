@@ -3,11 +3,10 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { SubSection } from '@island.is/application/types'
 import { Routes } from '../../../utils/enums'
 import * as m from '../../../lib/messages'
 
-export const RentalHousingPropertySearch: SubSection = buildSubSection({
+export const propertySearchSubsection = buildSubSection({
   id: Routes.REGISTERPROPERTY,
   title: m.registerProperty.search.subsectionName,
   children: [
