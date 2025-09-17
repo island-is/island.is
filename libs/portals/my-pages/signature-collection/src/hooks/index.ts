@@ -166,6 +166,7 @@ export const useIsOwner = (
           collectionType,
         },
       },
+      skip: !collectionType,
     },
   )
 

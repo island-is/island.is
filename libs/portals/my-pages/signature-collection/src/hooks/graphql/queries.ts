@@ -149,6 +149,7 @@ export const GetListsForOwner = gql`
       slug
       numberOfSignatures
       maxReached
+      collectionType
     }
   }
 `

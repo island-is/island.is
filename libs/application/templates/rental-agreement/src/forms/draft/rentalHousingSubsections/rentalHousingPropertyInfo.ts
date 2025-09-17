@@ -26,7 +26,6 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
     buildMultiField({
       id: Routes.PROPERTYINFORMATION,
       title: messagesCategory.pageTitle,
-      description: messagesCategory.pageDescription,
       children: [
         buildDescriptionField({
           id: 'propertyInfo.propertyInfoAddress',
@@ -46,8 +45,8 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           header: [
             messagesInfo.tableHeaderUsablity,
             messagesInfo.tableHeaderUnitId,
-            messagesInfo.tableHeaderSize,
-            messagesInfo.tableHeaderNumberOfRooms,
+            m.misc.size,
+            m.misc.rooms,
           ],
           rows({ answers }) {
             const { units } = applicationAnswers(answers)

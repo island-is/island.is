@@ -492,7 +492,6 @@ export class SignatureCollectionClientService {
     auth: User,
   ): Promise<SignedList[] | null> {
     const { signatures } = await this.getSignee(auth, collectionType)
-    const { endTime } = await this.getLatestCollectionForType(collectionType)
     if (!signatures) {
       return null
     }
@@ -506,21 +505,13 @@ export class SignatureCollectionClientService {
           this.getApiWithAuth(this.collectionsApi, auth),
           this.getApiWithAuth(this.electionsApi, auth),
         )
-        const isExtended = list.endTime > endTime
-        const signedThisPeriod = signature.isInitialType === !isExtended
         return {
           signedDate: signature.created,
           isDigital: signature.isDigital,
           pageNumber: signature.pageNumber,
           isValid: signature.valid,
           // TODO: consider extracting this into a helper function, canUnsign(ctype: CollectionType) => bool
-          canUnsign:
-            collectionType === CollectionType.Presidential
-              ? signature.isDigital &&
-                signature.valid &&
-                list.active &&
-                signedThisPeriod
-              : !signature.locked,
+          canUnsign: !signature.locked,
           ...list,
         } as SignedList
       }),

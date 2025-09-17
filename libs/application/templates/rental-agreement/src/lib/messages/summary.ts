@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const summary = defineMessages({
-  sectionName: {
-    id: 'ra.application:summary.sectionName',
-    defaultMessage: 'Samantekt',
-    description: 'Name of the summary section',
-  },
   pageTitle: {
     id: 'ra.application:summary.pageTitle',
     defaultMessage: 'Samantekt',
@@ -23,28 +18,8 @@ export const summary = defineMessages({
       'Aðilum leigusamnings ber að kynna sér hvað löglegur leigusamningur skuli innihalda. [Sjá nánar hér..](https://www.althingi.is/lagas/nuna/1994036.html)',
     description: 'Second paragraph description of the summary page',
   },
-  changeSectionButtonLabel: {
-    id: 'ra.application:summary.changeSectionButtonLabel',
-    defaultMessage: 'Breyta',
-    description: 'Change section button label',
-  },
-  submitButtonLabel: {
-    id: 'ra.application:summary.submitButtonLabel',
-    defaultMessage: 'Áfram í undirritun',
-    description: 'Submit button label',
-  },
-  editButtonLabel: {
-    id: 'ra.application:summary.editButtonLabel',
-    defaultMessage: 'Uppfæra umsókn',
-    description: 'Edit button label',
-  },
 
   // Property address
-  rentalPropertyIdPrefix: {
-    id: 'ra.application:summary.rentalPropertyIdPrefix',
-    defaultMessage: 'Fasteignanúmer: ',
-    description: 'Property id prefix',
-  },
   rentalPropertyId: {
     id: 'ra.application:summary.rentalPropertyId',
     defaultMessage: 'Fasteignanúmer: {propertyId}',
@@ -78,21 +53,28 @@ export const summary = defineMessages({
     description: 'Value if rental period is indefinite',
   },
 
+  // Rental amount
+  rentalAmountTitle: {
+    id: 'ra.application:summary.rentalAmountTitle',
+    defaultMessage: 'Leiga',
+    description: 'Rental amount title',
+  },
+  rentalAmountValue: {
+    id: 'ra.application:summary.rentalAmountValue',
+    defaultMessage: 'Upphæð leigu',
+    description: 'Rental amount value',
+  },
+  rentalAmountIndexedLabel: {
+    id: 'ra.application:summary.rentalAmountIndexedLabel',
+    defaultMessage: 'Leiga fylgir vísitölu',
+    description: 'Rental amount indexed label',
+  },
+
   // Rental amount & security deposit
   rentalAmountLabel: {
     id: 'ra.application:summary.rentalAmountLabel',
     defaultMessage: 'Leiguupphæð',
     description: 'Rental amount label',
-  },
-  securityDepositLabel: {
-    id: 'ra.application:summary.securityDepositLabel',
-    defaultMessage: 'Trygging',
-    description: 'Security deposit label',
-  },
-  securityDepositNotRequired: {
-    id: 'ra.application:summary.securityDepositNotRequired',
-    defaultMessage: 'Ekki krafist',
-    description: 'Security deposit not required',
   },
   securityTypeLabel: {
     id: 'ra.application:summary.securityTypeLabel',
@@ -126,11 +108,6 @@ export const summary = defineMessages({
   },
 
   // Payment & indexation
-  paymentDateOptionsLabel: {
-    id: 'ra.application:summary.paymentDateOptionsLabel',
-    defaultMessage: 'Gjalddagi leigu',
-    description: 'Payment date options label',
-  },
   indexRateLabel: {
     id: 'ra.application:summary.indexRateLabel',
     defaultMessage: 'Vísitölugildi',
@@ -138,11 +115,6 @@ export const summary = defineMessages({
   },
 
   // Rent transaction details
-  paymentMethodTypeLabel: {
-    id: 'ra.application:summary.paymentMethodTypeLabel',
-    defaultMessage: 'Greiðslufyrirkomulag',
-    description: 'Payment method type label',
-  },
   paymentMethodAccountLabel: {
     id: 'ra.application:summary.paymentMethodAccountLabel',
     defaultMessage: 'Reikningsnúmer',
@@ -175,11 +147,6 @@ export const summary = defineMessages({
     defaultMessage: 'Hússjóður',
     description: 'Housing fund label',
   },
-  houseFundAmountLabel: {
-    id: 'ra.application:summary.houseFundAmountLabel',
-    defaultMessage: 'Upphæð hússjóðs',
-    description: 'House fund amount label',
-  },
   electricityMeterNumberLabel: {
     id: 'ra.application:summary.electricityMeterNumberLabel',
     defaultMessage: 'Rafmagnsmælir',
@@ -200,15 +167,25 @@ export const summary = defineMessages({
     defaultMessage: 'Dags.',
     description: 'Date of meter reading label',
   },
-  otherCostsAmountLabel: {
-    id: 'ra.application:summary.otherCostsAmountLabel',
-    defaultMessage: 'Upphæð',
-    description: 'Other costs amount label',
-  },
   otherCostsLabel: {
     id: 'ra.application:summary.otherCostsLabel',
     defaultMessage: 'Annar kostnaður',
     description: 'Other costs amount label',
+  },
+  houseFundAmountLabel: {
+    id: 'ra.application:summary.houseFundAmountLabel',
+    defaultMessage: 'Upphæð hússjóðs',
+    description: 'House fund amount label',
+  },
+  paymentDateOptionsLabel: {
+    id: 'ra.application:summary.paymentDateOptionsLabel',
+    defaultMessage: 'Gjalddagi leigu',
+    description: 'Payment date options label',
+  },
+  paymentMethodTypeLabel: {
+    id: 'ra.application:summary.paymentMethodTypeLabel',
+    defaultMessage: 'Greiðslufyrirkomulag',
+    description: 'Payment method type label',
   },
 
   // Property information
@@ -221,11 +198,6 @@ export const summary = defineMessages({
     id: 'ra.application:summary.propertyTypeLabel',
     defaultMessage: 'Tegund húsnæðis',
     description: 'Property type label',
-  },
-  PropertyNumOfRoomsLabel: {
-    id: 'ra.application:summary.PropertyNumOfRoomsLabel',
-    defaultMessage: 'Herbergi',
-    description: 'Number of rooms label',
   },
   propertySizeLabel: {
     id: 'ra.application:summary.propertySizeLabel',
@@ -365,11 +337,6 @@ export const summary = defineMessages({
     defaultMessage: 'Kennitala: ',
     description: 'National ID label',
   },
-  phoneNumberLabel: {
-    id: 'ra.application:summary.phoneNumberLabel',
-    defaultMessage: 'Símanúmer',
-    description: 'Phone number label',
-  },
   emailLabel: {
     id: 'ra.application:summary.emailLabel',
     defaultMessage: 'Netfang',
@@ -379,69 +346,5 @@ export const summary = defineMessages({
     id: 'ra.application:summary.fireProtectionsTitle',
     defaultMessage: 'Brunavarnir',
     description: 'Fire protections title',
-  },
-
-  // Rental amount
-  rentalAmountTitle: {
-    id: 'ra.application:summary.rentalAmountTitle',
-    defaultMessage: 'Leiga',
-    description: 'Rental amount title',
-  },
-  rentalAmountValue: {
-    id: 'ra.application:summary.rentalAmountValue',
-    defaultMessage: 'Upphæð leigu',
-    description: 'Rental amount value',
-  },
-  rentalAmountIndexedLabel: {
-    id: 'ra.application:summary.rentalAmountIndexedLabel',
-    defaultMessage: 'Leiga fylgir vísitölu',
-    description: 'Rental amount indexed label',
-  },
-
-  // Share link
-  shareLinkLabel: {
-    id: 'ra.application:summary.shareLinkLabel',
-    defaultMessage: 'Deila samningsdrögum',
-    description: 'Share link label',
-  },
-  shareLinkDescription: {
-    id: 'ra.application:summary.shareLinkDescription',
-    defaultMessage:
-      'Þú getur deilt samningsdrögum með öðrum aðilum samnings til að fá álit þeirra.',
-    description: 'Share link tooltip',
-  },
-  shareLinkbuttonLabel: {
-    id: 'ra.application:summary.shareLinkbuttonLabel',
-    defaultMessage: 'Afrita hlekk',
-    description: 'Share link copy button label',
-  },
-
-  // Alert message for missing information
-  alertMissingInfoTitle: {
-    id: 'ra.application:summary.alertMissingInfoTitle',
-    defaultMessage:
-      'Ekki er hægt að halda áfram í undirritun fyrr en eftirfarandi upplýsingar hafa verið fylltar út:',
-    description: 'Missing information alert title',
-  },
-  alertMissingInfoFireProtections: {
-    id: 'ra.application:summary.alertMissingInfoFireProtections',
-    defaultMessage: 'Staða brunavarna í húsnæðinu',
-    description: 'Missing information alert fire protections',
-  },
-  alertMissingInfoCondition: {
-    id: 'ra.application:summary.alertMissingInfoCondition',
-    defaultMessage: 'Ástand húsnæðis',
-    description: 'Missing information alert condition',
-  },
-  alertMissingInfoOtherFees: {
-    id: 'ra.application:summary.alertMissingInfoOtherFees',
-    defaultMessage: 'Önnur gjöld',
-    description: 'Missing information alert other fees',
-  },
-  uniqueApplicantsError: {
-    id: 'ra.application:tenantDetails.uniqueApplicantsError',
-    defaultMessage:
-      'Sami aðili má ekki vera skráður oftar en einu sinni á leigusamning.',
-    description: 'Applicant already exists on application error',
   },
 })

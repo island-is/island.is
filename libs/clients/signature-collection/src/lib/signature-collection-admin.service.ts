@@ -212,6 +212,27 @@ export class SignatureCollectionAdminClientService
 
       let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
 
+      if (
+        collectionType === CollectionType.Parliamentary &&
+        !candidacy &&
+        !collectionName
+      ) {
+        // Fail safe for when we don't have the name of the candidacy
+        const user = await this.getApiWithAuth(
+          this.adminApi,
+          auth,
+        ).adminMedmaelasofnunIDEinsInfoKennitalaGet({
+          kennitala: owner.nationalId,
+          iD: parseInt(id),
+        })
+        collectionName = user.listabokstafur?.frambodNafn
+      }
+
+      const listName = (areaName: string) =>
+        collectionType === CollectionType.Parliamentary
+          ? candidacy?.nafn ?? collectionName
+          : `${owner.name} - ${areaName}`
+
       // If no candidacy exists, create one
       if (!candidacy) {
         candidacy = await adminApi.adminFrambodPost({
@@ -223,7 +244,7 @@ export class SignatureCollectionAdminClientService
             frambodNafn: collectionName,
             medmaelalistar: filteredAreas.map((area) => ({
               svaediID: parseInt(area.id),
-              listiNafn: `${owner.name} - ${area.name}`,
+              listiNafn: listName(area.name),
             })),
           },
         })
@@ -235,7 +256,7 @@ export class SignatureCollectionAdminClientService
             frambodID: candidacy.id,
             medmaelalistar: filteredAreas.map((area) => ({
               svaediID: parseInt(area.id),
-              listiNafn: `${owner.name} - ${area.name}`,
+              listiNafn: listName(area.name),
             })),
           },
         })
