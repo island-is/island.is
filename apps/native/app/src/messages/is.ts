@@ -363,6 +363,14 @@ export const is = {
   'vehicle.links.returnCertificate': 'Skilavottorð',
   'vehicle.links.nameConfidentiality': 'Nafnleynd í ökutækjaskrá',
 
+  // vehicle dropdown links
+  'vehicle.links.dropdown.orderNumberPlate': 'Panta númeraplötu',
+  'vehicle.links.dropdown.orderRegistrationCertificate':
+    'Panta skráningarskírteini',
+  'vehicle.links.dropdown.changeCoOwner': 'Breyta meðeiganda',
+  'vehicle.links.dropdown.changeOperator': 'Breyta umráðamanni',
+  'vehicle.links.dropdown.vehicleHistoryReport': 'Ferilskýrsla',
+
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
   'assetsOverview.emptyListTitle': 'Engar fasteignir finnast fyrir notanda',

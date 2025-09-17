@@ -93,8 +93,6 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
 
   const myPagesLinks = getMyPagesLinks()
 
-  console.log('myPagesLinks', myPagesLinks)
-
   const externalLinks = [
     {
       link: myPagesLinks.ownerLookup,

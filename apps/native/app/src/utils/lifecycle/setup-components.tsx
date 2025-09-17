@@ -1,5 +1,6 @@
 import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
 import { OfflineBanner } from '../../components/offline/offline-banner'
+import { DropdownMenuOverlay } from '../../components/dropdown/dropdown-menu-overlay'
 import { isTestingApp } from '../../config'
 import { AirDiscountScreen } from '../../screens/air-discount/air-discount'
 import { AppLockScreen } from '../../screens/app-lock/app-lock'
@@ -123,6 +124,7 @@ export function registerAllComponents() {
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)
+  registerComponent(CR.DropdownMenuOverlay, DropdownMenuOverlay)
 
   // Navigation buttons
   registerComponent(BR.LoadingButton, LoadingIcon)

@@ -1,10 +1,10 @@
-import { useAuthStore } from '../stores/auth-store'
+import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
 
 export const getMyPagesLinks = () => {
   const baseUrl =
     environmentStore.getState().environment?.baseUrl ?? 'https://island.is'
-  const { userInfo } = useAuthStore()
+  const { userInfo } = authStore.getState()
 
   return {
     accessControl: `${baseUrl}/minarsidur/adgangsstyring/umbod`,
@@ -18,5 +18,11 @@ export const getMyPagesLinks = () => {
     reportOwnerChange: `${baseUrl}/umsoknir/eigendaskipti-okutaekis`,
     returnCertificate: `${baseUrl}/umsoknir/skilavottord`,
     nameConfidentiality: `${baseUrl}/umsoknir/nafnleynd-i-okutaekjaskra`,
+    // Vehicle detail dropdown placeholders
+    orderNumberPlate: `${baseUrl}/umsoknir/panta-numeraplotu`,
+    orderRegistrationCertificate: `${baseUrl}/umsoknir/panta-skraningarskirteini`,
+    changeCoOwner: `${baseUrl}/umsoknir/medeigandi-okutaekis`,
+    changeOperator: `${baseUrl}/umsoknir/umradamadur-okutaekis`,
+    vehicleHistoryReport: `${baseUrl}/umsoknir/okutaekjaferill`,
   }
 }

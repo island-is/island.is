@@ -1,7 +1,11 @@
+import { getMyPagesLinks } from '../../lib/my-pages-links'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, Text, View } from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 
 import { Button, Divider, Input, InputRow, Problem } from '../../ui'
 import { useGetVehicleQuery } from '../../graphql/types/schema'
@@ -9,11 +13,20 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
+import { getRightButtons } from '../../utils/get-main-root'
+import { useNavigationButtonPress } from 'react-native-navigation-hooks'
+import {
+  ButtonRegistry,
+  ComponentRegistry,
+} from '../../utils/component-registry'
+import { ExternalLinks } from '../../components/external-links/external-links'
+import { setDropdownContent } from '../../components/dropdown/dropdown-content-registry'
 
 const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks(() => ({
+  createNavigationOptionHooks((theme) => ({
     topBar: {
       visible: true,
+      rightButtons: getRightButtons({ icons: ['dots'], theme }),
     },
     bottomTabs: {
       visible: false,
@@ -28,7 +41,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
 
   const intl = useIntl()
-
   const { data, loading, error } = useGetVehicleQuery({
     variables: {
       input: {
@@ -42,6 +54,71 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
   useConnectivityIndicator({
     componentId,
     queryResult: { data, loading },
+    rightButtons: getRightButtons({ icons: ['dots'] }),
+  })
+
+  useNavigationButtonPress(({ buttonId }) => {
+    if (buttonId === ButtonRegistry.HomeScreenDropdownButton) {
+      const myPagesLinks = getMyPagesLinks()
+
+      const items = [
+        {
+          title: intl.formatMessage({
+            id: 'vehicle.links.dropdown.orderNumberPlate',
+          }),
+          link: myPagesLinks.orderNumberPlate,
+        },
+        {
+          title: intl.formatMessage({
+            id: 'vehicle.links.dropdown.orderRegistrationCertificate',
+          }),
+          link: myPagesLinks.orderRegistrationCertificate,
+        },
+        {
+          title: intl.formatMessage({
+            id: 'vehicle.links.dropdown.changeCoOwner',
+          }),
+          link: myPagesLinks.changeCoOwner,
+        },
+        {
+          title: intl.formatMessage({
+            id: 'vehicle.links.dropdown.changeOperator',
+          }),
+          link: myPagesLinks.changeOperator,
+        },
+        {
+          title: intl.formatMessage({
+            id: 'vehicle.links.dropdown.vehicleHistoryReport',
+          }),
+          link: myPagesLinks.vehicleHistoryReport,
+        },
+      ]
+
+      const contentId = `vehicle-dropdown-${id}`
+      setDropdownContent(
+        contentId,
+        <View>
+          {items.map((item, index) => (
+            <ExternalLinks
+              key={item.title}
+              links={{ link: item.link, title: item.title }}
+              borderBottom={index !== items.length - 1}
+              fontWeight="600"
+              fontSize={14}
+            />
+          ))}
+        </View>,
+      )
+
+      void Navigation.showOverlay({
+        component: {
+          name: ComponentRegistry.DropdownMenuOverlay,
+          passProps: {
+            contentId,
+          },
+        },
+      })
+    }
   })
 
   const {

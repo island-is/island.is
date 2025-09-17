@@ -4,13 +4,25 @@ import { ImageSourcePropType } from 'react-native'
 import externalLinkIcon from '../../assets/icons/external-link.png'
 import { navigateTo } from '../../lib/deep-linking'
 
-export interface ExternalLinksProps {
+export interface ExternalLink {
   link: string
   title: string
   icon?: ImageSourcePropType
 }
 
-export const ExternalLinks = ({ links }: { links: ExternalLinksProps }) => {
+export interface ExternalLinksProps {
+  links: ExternalLink
+  fontWeight?: '300' | '400' | '500' | '600' | '700'
+  borderBottom?: boolean
+  fontSize?: number
+}
+
+export const ExternalLinks = ({
+  links,
+  fontWeight = '300',
+  borderBottom = true,
+  fontSize = 16,
+}: ExternalLinksProps) => {
   return (
     <Pressable
       onPress={() =>
@@ -22,8 +34,8 @@ export const ExternalLinks = ({ links }: { links: ExternalLinksProps }) => {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: '100%',
-        borderBottomWidth: 1,
+        gap: theme.spacing[2],
+        borderBottomWidth: borderBottom ? 1 : 0,
         borderBottomColor: theme.color.blue200,
         padding: theme.spacing[2],
       }}
@@ -51,9 +63,9 @@ export const ExternalLinks = ({ links }: { links: ExternalLinksProps }) => {
         )}
         <Typography
           lineHeight={24}
-          weight="300"
+          weight={fontWeight}
           color={theme.color.dark400}
-          size={16}
+          size={fontSize}
         >
           {links.title}
         </Typography>
