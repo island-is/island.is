@@ -58,9 +58,7 @@ export const personalInfoSubSection = buildSubSection({
           readOnly: true,
           width: 'half',
           condition: (_, externalData) => {
-            const { spouse } = getApplicationExternalData(
-              externalData,
-            )
+            const { spouse } = getApplicationExternalData(externalData)
             return spouse?.name !== undefined
           },
           defaultValue: (application: Application) => {
@@ -74,9 +72,7 @@ export const personalInfoSubSection = buildSubSection({
           id: `${SectionRouteEnum.PERSONAL_INFO}.spouseNationalId`,
           title: m.personalInfo.spouseNationalId,
           condition: (_, externalData) => {
-            const { spouse } = getApplicationExternalData(
-              externalData,
-            )
+            const { spouse } = getApplicationExternalData(externalData)
             return spouse?.nationalId !== undefined
           },
           disabled: true,
