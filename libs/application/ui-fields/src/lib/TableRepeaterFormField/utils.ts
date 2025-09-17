@@ -108,31 +108,6 @@ export const buildDefaultTableRows = (
     })
     .flat(2)
 
-export const buildEmptyRepeaterRow = (
-  items: Array<RepeaterItem & { id: string }>,
-) => {
-  const empty: Record<string, unknown> = {}
-  items.forEach((it) => {
-    empty[it.id] = getEmptyValueForRepeaterItem(it)
-  })
-  return empty
-}
-
-export const getEmptyValueForRepeaterItem = (item: RepeaterItem) => {
-  switch (item.component) {
-    case 'checkbox':
-      return []
-    case 'select':
-      return item?.isMulti ? [] : ''
-    case 'nationalIdWithName':
-      return { nationalId: '', name: '' }
-    case 'vehiclePermnoWithInfo':
-      return { permno: '', makeAndColor: '', numberOfAxles: 0, hasError: false }
-    default:
-      return ''
-  }
-}
-
 export const setObjectWithNestedKey = <T extends Record<string, unknown>>(
   obj: T,
   nestedKey: string,
