@@ -405,7 +405,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
       },
       {
         label: formatMessage(m.listPage.showCourtOfAppeal),
-        value: 'Landsréttur', // TODO
+        value: 'landsrettur',
       },
       {
         label: formatMessage(m.listPage.showSupremeCourt),
