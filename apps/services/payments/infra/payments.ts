@@ -90,7 +90,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         host: {
           dev: [`${serviceName}-xrd`],
           staging: [`${serviceName}-xrd`],
-          prod: [`${serviceName}-xrd`, `${serviceName}-invoice-callback-xrd`],
+          prod: [`${serviceName}-xrd`],
         },
         paths: ['/'],
         public: false,
