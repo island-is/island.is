@@ -13,7 +13,7 @@ export const m = {
       description: 'Samtals',
     },
     totalMobileDrawer: {
-      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.total',
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.totalMobileDrawer',
       defaultMessage: 'Samtals:',
       description: 'Samtals:',
     },
