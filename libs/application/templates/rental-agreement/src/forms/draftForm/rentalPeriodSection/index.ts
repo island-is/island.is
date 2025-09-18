@@ -1,12 +1,12 @@
 import {
-  buildSubSection,
-  buildMultiField,
-  buildDescriptionField,
-  buildDateField,
-  buildCheckboxField,
-  YesOrNoEnum,
-  getValueViaPath,
   buildAlertMessageField,
+  buildCheckboxField,
+  buildDateField,
+  buildDescriptionField,
+  buildMultiField,
+  buildSection,
+  getValueViaPath,
+  YesOrNoEnum,
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
 import {
@@ -16,9 +16,9 @@ import {
 import addMonths from 'date-fns/addMonths'
 import * as m from '../../../lib/messages'
 
-export const RentalPeriodDetails = buildSubSection({
-  id: Routes.RENTALPERIOD,
-  title: m.rentalPeriod.pageTitle,
+export const rentalPeriodSection = buildSection({
+  id: 'rentalPeriodSection',
+  title: m.application.rentalPeriodSectionName,
   children: [
     buildMultiField({
       id: Routes.RENTALPERIOD,
