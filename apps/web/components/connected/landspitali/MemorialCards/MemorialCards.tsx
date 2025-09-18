@@ -426,12 +426,14 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               inputMode="numeric"
               maxLength={14}
               currency={true}
-              error={
-                parseInt(watch('amountISKCustom') || '0') < 1000
-                  ? formatMessage(m.validation.minimumAmount)
-                  : undefined
-              }
-              rules={requiredRule}
+              rules={{
+                required: requiredRule.required,
+                min: {
+                  value: 1000,
+                  message: formatMessage(m.validation.minimumAmount),
+                },
+              }}
+              error={errors.amountISKCustom?.message}
             />
           )}
 
