@@ -4,7 +4,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { RentalHousingSection } from './draft/rentalHousingSection'
 import { RentalPeriodSection } from './draft/rentalPeriodSection'
-import { SummaryDraftSection } from './draft/summaryDraftSection'
+import { overviewSection } from './draft/overviewSection'
 
 import { application } from '../lib/messages'
 
@@ -15,5 +15,5 @@ export const draftForm: Form = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [RentalHousingSection, RentalPeriodSection, SummaryDraftSection],
+  children: [RentalHousingSection, RentalPeriodSection, overviewSection],
 })
