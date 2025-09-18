@@ -1,3 +1,4 @@
+import { OrganizationModelTypeEnum } from '@island.is/api/schema'
 import gql from 'graphql-tag'
 
 export const friggOptionsQuery = gql`
