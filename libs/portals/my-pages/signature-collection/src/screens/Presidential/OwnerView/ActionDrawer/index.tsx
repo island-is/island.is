@@ -13,7 +13,13 @@ import CancelCandidacy from '../CancelCandidacy'
 import PdfReport from '../../../shared/PdfReport'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
-const ActionDrawer = ({ candidateId, collectionType }: { candidateId: string, collectionType: SignatureCollectionCollectionType }) => {
+const ActionDrawer = ({
+  candidateId,
+  collectionType,
+}: {
+  candidateId: string
+  collectionType: SignatureCollectionCollectionType
+}) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -44,7 +50,10 @@ const ActionDrawer = ({ candidateId, collectionType }: { candidateId: string, co
               <Text marginBottom={2}>
                 {formatMessage(m.pdfReportDescription)}
               </Text>
-              <PdfReport candidateId={candidateId} collectionType={collectionType} />
+              <PdfReport
+                candidateId={candidateId}
+                collectionType={collectionType}
+              />
             </Box>
           </Box>
           <CancelCandidacy />

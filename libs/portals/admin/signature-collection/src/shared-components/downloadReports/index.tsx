@@ -60,7 +60,9 @@ export const DownloadReports = ({
         },
         onCompleted: (res) => {
           instance.updateContainer(
-            <MyPdfDocument report={res.signatureCollectionAdminCandidateReport} />,
+            <MyPdfDocument
+              report={res.signatureCollectionAdminCandidateReport}
+            />,
             async () => {
               const url = await instance
                 .toBlob()
