@@ -643,9 +643,13 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const { marpApplicationType } = getMARPApplicationExternalData(
+    const { marpApplicationType, isEligible } = getMARPApplicationExternalData(
       application.externalData,
     )
+
+    if (!isEligible?.isEligible) {
+      return null
+    }
 
     return await this.siaClientService.getEducationLevels(
       auth,
@@ -654,8 +658,17 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getMedicalAndRehabilitationApplicationType({
+    application,
     auth,
   }: TemplateApiModuleActionProps) {
+    const { isEligible } = getMARPApplicationExternalData(
+      application.externalData,
+    )
+
+    if (!isEligible?.isEligible) {
+      return null
+    }
+
     return await this.siaClientService.getMedicalAndRehabilitationApplicationType(
       auth,
     )
