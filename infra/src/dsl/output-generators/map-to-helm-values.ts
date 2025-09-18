@@ -366,7 +366,9 @@ function serializeIngress(
 
   const className =
     ingressConf.public ?? true ? 'nginx-external-alb' : 'nginx-internal-alb'
-  const pathTypeOverride = ingressConf.pathTypeOverride ? {'pathTypeOverride': ingressConf.pathTypeOverride} : null
+  const pathTypeOverride = ingressConf.pathTypeOverride
+    ? { pathTypeOverride: ingressConf.pathTypeOverride }
+    : null
   return {
     annotations: {
       'kubernetes.io/ingress.class': className,
@@ -378,7 +380,7 @@ function serializeIngress(
       host: host,
       ...pathTypeOverride,
       paths: ingressConf.paths,
-    }))
+    })),
   }
 }
 
