@@ -56,9 +56,7 @@ jobs:
       - name: Setup yarn
         if: ${{ steps.dedupe.outputs.should == 'true' }}
         uses: ./.github/actions/setup-yarn
-        with:
-          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
-
+       
       - name: Deduplicate (check)
         if: ${{ !inputs.write && steps.dedupe.outputs.should == 'true' }}
         run: yarn dedupe --check

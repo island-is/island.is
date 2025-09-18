@@ -25,9 +25,7 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
-
+    
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
 

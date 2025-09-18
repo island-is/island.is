@@ -101,6 +101,22 @@ jobs:
     permissions:
       contents: 'read'
       actions: 'read'
+    services:
+      npminstall:
+        image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/islandis-npm-proxy:1
+        ports:
+          - 3000:3000
+        env: 
+          REDIS_HOSTS: "redis://master.npm-proxy-cluster01.58fvbi.euw1.cache.amazonaws.com:6379"
+          REDIS_STANDALONE: "true"
+          REDIS_TLS: "true"
+          SELF_URL: "http://localhost:3000"
+          NODE_ENV: "production"
+        options: >-
+          --health-cmd="curl --fail http://localhost:3000/__ready || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=30
     steps:
       - name: Set outputs
         id: set-outputs
@@ -115,9 +131,7 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
-
+       
       - name: load-deps
         uses: ./.github/actions/load-deps
 

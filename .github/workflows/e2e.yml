@@ -61,9 +61,7 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          registry: ${{ secrets.NPM_REGISTRY_SERVER_PROXY }}
-
+      
       - name: load-deps
         uses: ./.github/actions/load-deps
 
