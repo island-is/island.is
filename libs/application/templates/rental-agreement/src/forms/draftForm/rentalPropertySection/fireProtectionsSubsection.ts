@@ -9,13 +9,13 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
-import * as m from '../../../lib/messages'
 import { getRentalPropertySize } from '../../../utils/utils'
 import { shouldShowSmokeDetectorsAlert } from '../../../utils/conditions'
 import { PropertyUnit } from '../../../shared/types'
 import { getYesNoOptions } from '../../../utils/options'
+import * as m from '../../../lib/messages'
 
-export const RentalHousingFireProtections = buildSubSection({
+export const fireProtectionsSubsection = buildSubSection({
   id: Routes.FIREPROTECTIONS,
   title: m.housingFireProtections.subSectionName,
   children: [
