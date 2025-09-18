@@ -20,6 +20,7 @@ import ActionDrawer from '../../shared-components/actionDrawer'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import { replaceParams } from '@island.is/react-spa/shared'
+import { Actions } from '../../shared-components/actionDrawer/ListActions'
 
 const CandidateLists = () => {
   const { formatMessage } = useLocale()
@@ -67,7 +68,9 @@ const CandidateLists = () => {
             img={nationalRegistryLogo}
             imgPosition="right"
             imgHiddenBelow="sm"
-            buttonGroup={<ActionDrawer allowedActions={[]} />}
+            buttonGroup={
+              <ActionDrawer allowedActions={[Actions.DownloadReports]} />
+            }
             marginBottom={4}
           />
           <Divider />

@@ -81,7 +81,6 @@ const AllCandidates = () => {
             buttonGroup={
               <ActionDrawer
                 allowedActions={[
-                  Actions.DownloadReports,
                   Actions.CreateCollection,
                   Actions.ReviewCandidates,
                   Actions.CompleteCollectionProcessing,
