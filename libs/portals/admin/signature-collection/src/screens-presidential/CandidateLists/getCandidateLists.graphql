@@ -1,4 +1,6 @@
-query signatureCollectionAdminListsForCandidate($input: SignatureCollectionCandidateIdInput!) {
+query signatureCollectionAdminListsForCandidate(
+  $input: SignatureCollectionCandidateIdInput!
+) {
   signatureCollectionAdminListsForCandidate(input: $input) {
     id
     title
