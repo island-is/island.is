@@ -110,7 +110,7 @@ export const Municipality = () => {
           <Box marginTop={9} />
           {municipalityLists.length === 0 ? (
             <EmptyState
-              title={formatMessage(m.noLists) + ' í ' + municipality}
+              title={formatMessage(m.noLists)}
               description={formatMessage(m.noListsDescription)}
             />
           ) : (
