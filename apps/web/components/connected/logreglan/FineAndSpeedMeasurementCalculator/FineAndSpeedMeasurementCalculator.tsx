@@ -316,7 +316,7 @@ export const FineAndSpeedMeasurementCalculator = ({
                         : formatMessage(m.fines.pointsPostfixPlural)}
                     </Text>
                   </Stack>
-                  <Box display="flex" justifyContent="center">
+                  <Box display="flex" justifyContent="flexEnd">
                     <Button
                       onClick={() => {
                         breakdownRef.current?.scrollIntoView({
