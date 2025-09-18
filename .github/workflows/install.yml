@@ -2,6 +2,11 @@ name: 'Prep Dependencies'
 on:
   workflow_call:
     inputs:
+      skip_cache:
+        description: 'Skip cache setup'
+        required: false
+        type: boolean
+        default: false
       force_all_to_be_affected:
         description: 'Should all be affected'
         required: false
@@ -131,6 +136,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          skip-cache: ${{ inputs.skip_cache }}
        
       - name: load-deps
         uses: ./.github/actions/load-deps

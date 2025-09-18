@@ -46,6 +46,7 @@ jobs:
     secrets: inherit
     with:
       main_branch: ${{ github.base_ref }}
+      skip_cahce: true
 
   tests:
     needs:
@@ -62,11 +63,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          skip-cache: ${{ env.SHOULD_SKIP_NPM_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
