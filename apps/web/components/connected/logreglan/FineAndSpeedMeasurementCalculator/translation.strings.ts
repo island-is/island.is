@@ -12,6 +12,11 @@ export const m = {
       defaultMessage: 'Samtals',
       description: 'Samtals',
     },
+    totalMobileDrawer: {
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.total',
+      defaultMessage: 'Samtals:',
+      description: 'Samtals:',
+    },
     inputPlaceholder: {
       id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.inputPlaceholder',
       defaultMessage: 'Leitaðu að sekt',
