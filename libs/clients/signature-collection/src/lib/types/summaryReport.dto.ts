@@ -49,7 +49,7 @@ export const mapCandidateSummaryReport = (
 ): SummaryReport => {
   return {
     id: candidate.id?.toString() || '',
-    name: `${candidate.nafn} - ${candidate.abyrgdaradili?.nafn || ''}`,
+    name: candidate.nafn ?? '',
     min: 0,
     max: 0,
     lists: candidate.medmaelalistar?.map(mapListSummary) || [],
