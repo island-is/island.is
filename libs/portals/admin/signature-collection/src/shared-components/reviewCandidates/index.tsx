@@ -16,6 +16,7 @@ import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCand
 import { SignatureCollectionCandidate } from '@island.is/api/schema'
 import { formatNationalId } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
+import { useRevalidator } from 'react-router-dom'
 
 const { Table, Row, Head, HeadData, Body, Data } = T
 
@@ -25,6 +26,7 @@ const ReviewCandidates = ({
   candidates: Array<SignatureCollectionCandidate>
 }) => {
   const { formatMessage } = useLocale()
+  const { revalidate } = useRevalidator()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
   const [candidateInReview, setCandidateInReview] =
@@ -49,6 +51,7 @@ const ReviewCandidates = ({
       if (data?.signatureCollectionAdminRemoveCandidate?.success) {
         toast.success(formatMessage(m.unsignFromListSuccess))
         setAllCandidates(allCandidates?.filter((c) => c.id !== candidateId))
+        revalidate()
       }
     } catch (e) {
       toast.error(e.message)
@@ -115,6 +118,7 @@ const ReviewCandidates = ({
                       variant="text"
                       icon="trash"
                       colorScheme="destructive"
+                      size="small"
                       onClick={() => {
                         setConfirmModalIsOpen(true)
                         setCandidateInReview(candidate)

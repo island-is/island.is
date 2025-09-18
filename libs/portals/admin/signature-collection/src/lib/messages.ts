@@ -120,6 +120,11 @@ export const m = defineMessages({
     defaultMessage: 'Nafn framboðs',
     description: '',
   },
+  candidateBirthDate: {
+    id: 'admin-portal.signature-collection:candidateBirthDate',
+    defaultMessage: 'Fæðingardagur:',
+    description: '',
+  },
   listEndTime: {
     id: 'admin-portal.signature-collection:listEndTime',
     defaultMessage: 'Lokadagur',
@@ -303,6 +308,11 @@ export const m = defineMessages({
   listSupervisors: {
     id: 'admin-portal.signature-collection:listSupervisors',
     defaultMessage: 'Umsjónaraðilar',
+    description: '',
+  },
+  listNoSupervisors: {
+    id: 'admin-portal.signature-collection:listNoSupervisors',
+    defaultMessage: 'Engir umsjónaraðilar skráðir',
     description: '',
   },
   singleList: {
