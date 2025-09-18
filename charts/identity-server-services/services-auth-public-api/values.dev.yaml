@@ -93,7 +93,7 @@ ingress:
     hosts:
       - host: 'identity-server.dev01.devland.is'
         paths:
-          - '/api'
+          - '/api(/|$)(.*)'
 namespace: 'identity-server-admin'
 podDisruptionBudget:
   maxUnavailable: 1
