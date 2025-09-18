@@ -83,5 +83,5 @@ export class VehiclesClientService {
   ownershipReportPdf = (
     user: User,
   ): Promise<Blob> =>
-    this.pdfApiWithAuth(user).ownershipReportPdfGet({ ssn: user.nationalId })
+    this.pdfApiWithAuth(user).ownershipReportPdfGet()
 }
