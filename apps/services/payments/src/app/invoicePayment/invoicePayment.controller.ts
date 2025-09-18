@@ -158,10 +158,20 @@ export class InvoicePaymentController {
       )
     }
 
-    await this.paymentFlowService.createInvoicePaymentConfirmation(
-      paymentFlowId,
-      callbackInput.receptionID,
-    )
+    try {
+      await this.paymentFlowService.createInvoicePaymentConfirmation(
+        paymentFlowId,
+        callbackInput.receptionID,
+      )
+    } catch (e) {
+      if (e.message === InvoiceErrorCode.FailedToCreateInvoice) {
+        // log?
+      }
+
+      throw new BadRequestException(
+        InvoiceErrorCode.FailedToCreateInvoiceConfirmation,
+      )
+    }
 
     // TODO extract this to a method
     try {
@@ -183,8 +193,27 @@ export class InvoicePaymentController {
         },
       )
     } catch (e) {
-      await this.paymentFlowService.deletePaymentCharge(paymentFlowId)
-      // Refund the payment by deleting the FJS charge
+      await this.refundPaymentAndLogError(paymentFlowId, e.message)
     }
+  }
+
+  private async refundPaymentAndLogError(
+    paymentFlowId: string,
+    errorMessage: string,
+  ): Promise<void> {
+    // Refund the payment by deleting the FJS charge
+    await this.paymentFlowService.deleteFjsCharge(paymentFlowId)
+
+    await this.paymentFlowService.logPaymentFlowUpdate({
+      paymentFlowId,
+      type: 'error',
+      occurredAt: new Date(),
+      paymentMethod: PaymentMethod.INVOICE,
+      reason: 'other',
+      message: `Failed to create invoice payment confirmation`,
+      metadata: {
+        error: errorMessage,
+      },
+    })
   }
 }

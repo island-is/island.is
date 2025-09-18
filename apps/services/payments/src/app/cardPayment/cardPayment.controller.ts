@@ -471,7 +471,7 @@ export class CardPaymentController {
             this.logger.info(
               `[${paymentFlowId}] Attempting to delete FJS charge ${paymentFlow.id} after refund due to FJS charge creation/persistence issue.`,
             )
-            await this.paymentFlowService.deletePaymentCharge(paymentFlowId)
+            await this.paymentFlowService.deleteFjsCharge(paymentFlowId)
           }
 
           await this.paymentFlowService.logPaymentFlowUpdate({
@@ -611,7 +611,7 @@ export class CardPaymentController {
           this.logger.info(
             `[${paymentFlowId}] Attempting to delete FJS charge ${confirmation.receptionId} after refund due to notification failure.`,
           )
-          await this.paymentFlowService.deletePaymentCharge(paymentFlowId)
+          await this.paymentFlowService.deleteFjsCharge(paymentFlowId)
         }
 
         await this.paymentFlowService.logPaymentFlowUpdate({

@@ -695,7 +695,7 @@ export class PaymentFlowService {
     }
   }
 
-  async deletePaymentCharge(paymentFlowId: string): Promise<void> {
+  async deleteFjsCharge(paymentFlowId: string): Promise<void> {
     this.logger.info(`[${paymentFlowId}] Attempting to delete FJS charge`)
     try {
       // Delete from FJS
@@ -711,13 +711,9 @@ export class PaymentFlowService {
         },
       })
       if (deletedConfirmations > 0) {
-        this.logger.info(
-          `[${paymentFlowId}] Deleted PaymentFlowFjsChargeConfirmation`,
-        )
+        this.logger.info(`[${paymentFlowId}] Deleted FjsCharge`)
       } else {
-        this.logger.warn(
-          `[${paymentFlowId}] No PaymentFlowFjsChargeConfirmation found to delete`,
-        )
+        this.logger.warn(`[${paymentFlowId}] No FjsCharge found to delete`)
       }
     } catch (error) {
       this.logger.error(
@@ -779,7 +775,7 @@ export class PaymentFlowService {
     }
 
     if (paymentFlowDetails.fjsCharge) {
-      await this.deletePaymentCharge(id)
+      await this.deleteFjsCharge(id)
     }
 
     // By deleting the payment flow, the related charges, events, and other

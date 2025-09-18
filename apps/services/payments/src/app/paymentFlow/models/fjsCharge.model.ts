@@ -98,3 +98,5 @@ export class FjsCharge extends Model<
   })
   modified!: CreationOptional<Date>
 }
+
+export type FjsChargeAttributes = InferAttributes<FjsCharge>
