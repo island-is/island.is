@@ -162,10 +162,9 @@ export class ApplicationLifeCycleService {
           postPruneAt = addMilliseconds(
             new Date(),
             template?.adminDataConfig?.postPruneDelayOverride ??
-            DEFAULT_POST_PRUNE_DELAY,
+              DEFAULT_POST_PRUNE_DELAY,
           )
         }
-
 
         const { updatedApplication } = await this.applicationService.update(
           prune.application.id,
