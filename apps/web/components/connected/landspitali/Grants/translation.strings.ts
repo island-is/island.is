@@ -2,6 +2,12 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   info: defineMessages({
+    senderNationalIdDescription: {
+      id: 'web.landspitali.directGrants:info.senderNationalIdDescription',
+      defaultMessage:
+        'Með því að skrá kennitölu er hægt að nýta styrkinn til skattafsláttar. Ef ekki er skráð kennitala fæst ekki endurgreiðsla.',
+      description: 'Upplýsingar um kennitölureitinn',
+    },
     grantLabel: {
       id: 'web.landspitali.directGrants:info.grantLabel',
       defaultMessage: 'Veldu nafn styrktarsjóðs úr listanum',

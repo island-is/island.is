@@ -2,6 +2,12 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   info: defineMessages({
+    senderNationalIdDescription: {
+      id: 'web.landspitali.memorialCard:info.senderNationalIdDescription',
+      defaultMessage:
+        'Með því að skrá kennitölu er hægt að nýta styrkinn til skattafsláttar. Ef ekki er skráð kennitala fæst ekki endurgreiðsla.',
+      description: 'Upplýsingar um kennitölureitinn',
+    },
     fundLabel: {
       id: 'web.landspitali.memorialCard:info.fundLabel',
       defaultMessage: 'Veldu nafn minningarsjóðs úr listanum',

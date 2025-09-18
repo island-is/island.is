@@ -9,6 +9,9 @@ import {
   Box,
   Button,
   Checkbox,
+  GridColumn,
+  GridContainer,
+  GridRow,
   type Option,
   RadioButton,
   Stack,
@@ -502,48 +505,60 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               control={control}
               required
             />
-
-            <Stack space={1}>
-              <InputController
-                id="senderNationalId"
-                label={formatMessage(m.info.senderNationalIdLabel)}
-                size="xs"
-                error={
-                  nationalIdSkipped
-                    ? undefined
-                    : errors.senderNationalId?.message
-                }
-                type="text"
-                inputMode="numeric"
-                format="######-####"
-                disabled={nationalIdSkipped}
-                rules={{
-                  validate: (value) => {
-                    if (nationalIdSkipped) {
-                      return true
-                    }
-                    if (!isValidKennitala(value)) {
-                      return formatMessage(m.validation.invalidNationalIdFormat)
-                    }
-                    return true
-                  },
-                }}
-                control={control}
-              />
-              <Checkbox
-                id="senderNationalIdSkipped"
-                label={formatMessage(m.info.senderNationalIdSkippedLabel)}
-                checked={nationalIdSkipped}
-                onChange={() => {
-                  const newValue = !nationalIdSkipped
-                  setNationalIdSkipped(newValue)
-                  if (newValue) {
-                    setValue('senderNationalId', '')
-                  }
-                }}
-                labelVariant="small"
-              />
-            </Stack>
+            <GridContainer>
+              <GridRow alignItems="center" rowGap={2}>
+                <GridColumn span={['1/1', '1/1', '1/1', '1/1', '2/3']}>
+                  <Stack space={1}>
+                    <InputController
+                      id="senderNationalId"
+                      label={formatMessage(m.info.senderNationalIdLabel)}
+                      size="xs"
+                      error={
+                        nationalIdSkipped
+                          ? undefined
+                          : errors.senderNationalId?.message
+                      }
+                      type="text"
+                      inputMode="numeric"
+                      format="######-####"
+                      disabled={nationalIdSkipped}
+                      rules={{
+                        validate: (value) => {
+                          if (nationalIdSkipped) {
+                            return true
+                          }
+                          if (!isValidKennitala(value)) {
+                            return formatMessage(
+                              m.validation.invalidNationalIdFormat,
+                            )
+                          }
+                          return true
+                        },
+                      }}
+                      control={control}
+                    />
+                    <Checkbox
+                      id="senderNationalIdSkipped"
+                      label={formatMessage(m.info.senderNationalIdSkippedLabel)}
+                      checked={nationalIdSkipped}
+                      onChange={() => {
+                        const newValue = !nationalIdSkipped
+                        setNationalIdSkipped(newValue)
+                        if (newValue) {
+                          setValue('senderNationalId', '')
+                        }
+                      }}
+                      labelVariant="small"
+                    />
+                  </Stack>
+                </GridColumn>
+                <GridColumn span={['1/1', '1/1', '1/1', '1/1', '1/3']}>
+                  <Text variant="small">
+                    {formatMessage(m.info.senderNationalIdDescription)}
+                  </Text>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
 
             <InputController
               id="senderAddress"
