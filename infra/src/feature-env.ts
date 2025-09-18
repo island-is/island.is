@@ -136,7 +136,7 @@ const deployedComment = (
     .map((d) => d.name())
     .join(',')}. \nExcluded services: \`${excluded.join(',')}\n\n
 
-You can view the progress of your feature deployment in ArgoCD [here](https://argocd.shared.devland.is/applications?labels=feature-name%253D${feature}) \n\n\``
+You can view the progress of your feature deployment in ArgoCD [here](https://argocd.shared.devland.is/applications?labels=feature-name%253D${feature}) \n\n`
 }
 
 yargs(process.argv.slice(2))
