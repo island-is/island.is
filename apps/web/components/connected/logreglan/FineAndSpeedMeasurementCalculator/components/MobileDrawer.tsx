@@ -1,4 +1,4 @@
-import { Box, Button, Inline, Text } from '@island.is/island-ui/core'
+import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
 
 import * as styles from './MobileDrawer.css'
 
@@ -36,12 +36,14 @@ export const MobileDrawer = ({
           <Text variant="eyebrow" fontWeight="semiBold">
             {totalText}
           </Text>
-          <Text variant="small" fontWeight="semiBold">
-            {priceText}
-          </Text>
-          <Text variant="small" fontWeight="semiBold">
-            {pointsText}
-          </Text>
+          <Stack space={1}>
+            <Text variant="small" fontWeight="semiBold">
+              {priceText}
+            </Text>
+            <Text variant="small" fontWeight="semiBold">
+              {pointsText}
+            </Text>
+          </Stack>
         </Inline>
         <Button variant="text" size="small" onClick={onSeeBreakdownClick}>
           {seeBreakdownText}

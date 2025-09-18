@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -285,6 +285,13 @@ export const FineAndSpeedMeasurementCalculator = ({
 
   const points = finePoints + (speedMeasurementPoints ?? 0)
 
+  const onSeeBreakdownClick = useCallback(() => {
+    breakdownRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }, [])
+
   return (
     <>
       <Stack space={3}>
@@ -323,12 +330,7 @@ export const FineAndSpeedMeasurementCalculator = ({
                     </Stack>
                     <Box display="flex" justifyContent="flexEnd">
                       <Button
-                        onClick={() => {
-                          breakdownRef.current?.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                          })
-                        }}
+                        onClick={onSeeBreakdownClick}
                         variant="text"
                         size="small"
                       >
@@ -401,12 +403,7 @@ export const FineAndSpeedMeasurementCalculator = ({
                             ? formatMessage(m.fines.pointsPostfixSingular)
                             : formatMessage(m.fines.pointsPostfixPlural)
                         }`}
-          onSeeBreakdownClick={() => {
-            breakdownRef.current?.scrollIntoView({
-              behavior: 'smooth',
-              block: 'center',
-            })
-          }}
+          onSeeBreakdownClick={onSeeBreakdownClick}
         />
       </Hidden>
     </>
