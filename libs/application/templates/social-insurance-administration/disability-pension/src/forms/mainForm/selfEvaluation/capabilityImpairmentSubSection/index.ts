@@ -16,30 +16,30 @@ const buildQuestion = (index: number) => {
   return buildMultiField({
     id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}]`,
     title: (application, locale) => {
-      const {questionnaire} = getApplicationExternalData(application.externalData)
+      const { questionnaire } = getApplicationExternalData(
+        application.externalData,
+      )
 
       const questions =
-        questionnaire?.find(
-          (q) =>
-            q.language.toLowerCase() === locale,
-        )?.questions ?? []
+        questionnaire?.find((q) => q.language.toLowerCase() === locale)
+          ?.questions ?? []
 
       return {
-       ...m.capabilityImpairment.title,
+        ...m.capabilityImpairment.title,
         values: {
           index: index + 1,
-          total: questions.length
-        }
+          total: questions.length,
+        },
       }
     },
     nextButtonText: (application) => {
-      const { questionnaire } = getApplicationExternalData(application.externalData)
+      const { questionnaire } = getApplicationExternalData(
+        application.externalData,
+      )
 
       const questions =
-        questionnaire?.find(
-          (q) =>
-            q.language.toLowerCase() === 'is',
-        )?.questions ?? []
+        questionnaire?.find((q) => q.language.toLowerCase() === 'is')
+          ?.questions ?? []
 
       if (index === questions.length - 1) {
         return m.capabilityImpairment.completeSelfAssessment
@@ -49,13 +49,13 @@ const buildQuestion = (index: number) => {
       buildDescriptionField({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}].description`,
         title: (application, locale) => {
-          const { questionnaire } = getApplicationExternalData(application.externalData)
+          const { questionnaire } = getApplicationExternalData(
+            application.externalData,
+          )
 
           const questions =
-            questionnaire?.find(
-              (q) =>
-                q.language.toLowerCase() === locale,
-            )?.questions ?? []
+            questionnaire?.find((q) => q.language.toLowerCase() === locale)
+              ?.questions ?? []
 
           return questions[index]?.explanationText
         },
@@ -65,24 +65,24 @@ const buildQuestion = (index: number) => {
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}].answer`,
         marginTop: 0,
         title: (application, locale) => {
-          const { questionnaire } = getApplicationExternalData(application.externalData)
+          const { questionnaire } = getApplicationExternalData(
+            application.externalData,
+          )
 
           const questions =
-            questionnaire?.find(
-              (q) =>
-                q.language.toLowerCase() === locale,
-            )?.questions ?? []
+            questionnaire?.find((q) => q.language.toLowerCase() === locale)
+              ?.questions ?? []
 
           return questions[index]?.question
         },
         options: (application, _, locale) => {
-          const { questionnaire } = getApplicationExternalData(application.externalData)
+          const { questionnaire } = getApplicationExternalData(
+            application.externalData,
+          )
 
           const scale =
-            questionnaire?.find(
-              (q) =>
-                q.language.toLowerCase() === locale,
-            )?.scale ?? []
+            questionnaire?.find((q) => q.language.toLowerCase() === locale)
+              ?.scale ?? []
 
           return (
             scale?.map(({ value, display }) => ({
@@ -96,13 +96,13 @@ const buildQuestion = (index: number) => {
       buildHiddenInput({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}].id`,
         defaultValue: (application: Application, locale: string) => {
-          const { questionnaire } = getApplicationExternalData(application.externalData)
+          const { questionnaire } = getApplicationExternalData(
+            application.externalData,
+          )
 
           const questions =
-            questionnaire?.find(
-              (q) =>
-                q.language.toLowerCase() === locale,
-            )?.questions ?? []
+            questionnaire?.find((q) => q.language.toLowerCase() === locale)
+              ?.questions ?? []
 
           return questions[index]?.questionCode
         },

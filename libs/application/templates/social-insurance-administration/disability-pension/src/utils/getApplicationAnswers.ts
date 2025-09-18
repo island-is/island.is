@@ -352,6 +352,6 @@ export const getApplicationExternalData = (
     countries,
     categorizedIncomeTypes,
     incomePlanConditions,
-    questionnaire
+    questionnaire,
   }
 }
