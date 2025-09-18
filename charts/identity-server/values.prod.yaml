@@ -847,6 +847,7 @@ services-auth-public-api:
         - host: 'innskra.island.is'
           paths:
             - '/api(/|$)(.*)'
+      pathTypeOverride: 'ImplementationSpecific'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
