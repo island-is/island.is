@@ -95,6 +95,7 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
             onKeyDown={handleEnter}
             hasError={hasError}
             errorMessage={errorMessage}
+            disabled={isDisabled(value)}
           />
         ) : (
           <Input
@@ -109,6 +110,7 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
             onBlur={onBlur}
             hasError={hasError}
             errorMessage={errorMessage}
+            disabled={isDisabled(value)}
           />
         )}
         <Button
