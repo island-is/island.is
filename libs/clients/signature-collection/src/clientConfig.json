@@ -893,6 +893,35 @@
         }
       }
     },
+    "/Frambod/{ID}/Info": {
+      "get": {
+        "tags": ["Frambod"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FrambodInfoDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Frambod/{ID}/Medmaelalistar": {
       "get": {
         "tags": ["Frambod"],
