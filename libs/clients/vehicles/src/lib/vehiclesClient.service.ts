@@ -79,8 +79,6 @@ export class VehiclesClientService {
   ownershipReportExcel = async (user: User): Promise<Blob> =>
     this.excelApiWithAuth(user).ownershipReportExcelGet()
 
-  ownershipReportPdf = (
-    user: User,
-  ): Promise<Blob> =>
+  ownershipReportPdf = (user: User): Promise<Blob> =>
     this.pdfApiWithAuth(user).ownershipReportPdfGet()
 }

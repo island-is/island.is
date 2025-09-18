@@ -200,9 +200,7 @@ export class VehicleController {
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    const documentResponse = await this.vehicleService.ownershipReportPdf(
-      user,
-    )
+    const documentResponse = await this.vehicleService.ownershipReportPdf(user)
 
     if (documentResponse) {
       this.auditService.audit({
