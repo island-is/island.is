@@ -130,7 +130,7 @@ const buildComment = (data: Services<HelmService>): string => {
 const deployedComment = (
   data: ServiceBuilder<any>[],
   excluded: string[],
-  feature: string
+  feature: string,
 ): string => {
   return `Deployed services: ${data
     .map((d) => d.name())
@@ -269,7 +269,8 @@ yargs(process.argv.slice(2))
     builder: (yargs) => yargs,
     handler: async (argv) => {
       const typedArgv = argv as unknown as Arguments
-      const { habitat, affectedServices, env, feature } = parseArguments(typedArgv)
+      const { habitat, affectedServices, env, feature } =
+        parseArguments(typedArgv)
       const { included: featureYaml, excluded } =
         await getFeatureAffectedServices(
           habitat,
@@ -281,7 +282,11 @@ yargs(process.argv.slice(2))
         (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
           .services,
       )
-      const includedServicesComment = deployedComment(featureYaml, excluded, feature)
+      const includedServicesComment = deployedComment(
+        featureYaml,
+        excluded,
+        feature,
+      )
       await writeToOutput(
         `${ingressComment}\n\n${includedServicesComment}`,
         typedArgv.output,
