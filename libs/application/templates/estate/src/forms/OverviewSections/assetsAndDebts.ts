@@ -226,23 +226,25 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).estate.bankAccounts ?? []).map(
-          (
-            account: NonNullable<
-              EstateSchema['estate']['bankAccounts']
-            >[number],
-          ) => ({
-            title: formatBankInfo(account.accountNumber ?? ''),
-            description: [
-              `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
-                (
-                  valueToNumber(account.balance) +
-                  valueToNumber(account.accruedInterest)
-                ).toString() ?? '0',
-              )}`,
-            ],
-          }),
-        ),
+        ((answers as unknown as EstateSchema).estate.bankAccounts ?? [])
+          .filter((account) => account.enabled !== false)
+          .map(
+            (
+              account: NonNullable<
+                EstateSchema['estate']['bankAccounts']
+              >[number],
+            ) => ({
+              title: formatBankInfo(account.accountNumber ?? ''),
+              description: [
+                `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
+                  (
+                    valueToNumber(account.balance) +
+                    valueToNumber(account.accruedInterest)
+                  ).toString() ?? '0',
+                )}`,
+              ],
+            }),
+          ),
     },
   ),
   buildDescriptionField({
@@ -251,11 +253,21 @@ export const overviewAssetsAndDebts = [
     description: ({ answers }) =>
       getSumFromAnswers<
         NonNullable<EstateSchema['estate']['bankAccounts']>[number]
-      >(answers, 'estate.bankAccounts', 'accountTotal'),
+      >(
+        answers,
+        'estate.bankAccounts',
+        'accountTotal',
+        (account) => !!account?.enabled,
+      ),
     condition: (answers) =>
       !!getSumFromAnswers<
         NonNullable<EstateSchema['estate']['bankAccounts']>[number]
-      >(answers, 'estate.bankAccounts', 'accountTotal'),
+      >(
+        answers,
+        'estate.bankAccounts',
+        'accountTotal',
+        (account) => !!account?.enabled,
+      ),
     titleVariant: 'h4',
   }),
   buildDividerField({
@@ -307,11 +319,12 @@ export const overviewAssetsAndDebts = [
         answers,
         'estate.claims',
         'value',
+        (claim) => !!claim?.enabled,
       ),
     condition: (answers) =>
       !!getSumFromAnswers<
         NonNullable<EstateSchema['estate']['claims']>[number]
-      >(answers, 'estate.claims', 'value'),
+      >(answers, 'estate.claims', 'value', (claim) => !!claim?.enabled),
     titleVariant: 'h4',
   }),
   buildDividerField({
@@ -345,8 +358,9 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).estate?.stocks ?? []).map(
-          (stock) => {
+        ((answers as unknown as EstateSchema).estate?.stocks ?? [])
+          .filter((stock) => stock.enabled !== false)
+          .map((stock) => {
             return {
               title: stock.organization,
               description: [
@@ -365,8 +379,7 @@ export const overviewAssetsAndDebts = [
                 )}`,
               ],
             }
-          },
-        ),
+          }),
     },
   ),
   buildDescriptionField({
@@ -377,11 +390,12 @@ export const overviewAssetsAndDebts = [
         answers,
         'estate.stocks',
         'value',
+        (stock) => !!stock?.enabled,
       ),
     condition: (answers) =>
       !!getSumFromAnswers<
         NonNullable<EstateSchema['estate']['stocks']>[number]
-      >(answers, 'estate.stocks', 'value'),
+      >(answers, 'estate.stocks', 'value', (stock) => !!stock?.enabled),
     titleVariant: 'h4',
   }),
   buildDividerField({}),
@@ -399,8 +413,9 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).estate.otherAssets ?? []).map(
-          (otherAsset) => {
+        ((answers as unknown as EstateSchema).estate.otherAssets ?? [])
+          .filter((otherAsset) => otherAsset.enabled !== false)
+          .map((otherAsset) => {
             return {
               title: otherAsset.description,
               description: [
@@ -409,8 +424,7 @@ export const overviewAssetsAndDebts = [
                 )}`,
               ],
             }
-          },
-        ),
+          }),
     },
   ),
   buildDescriptionField({
@@ -419,11 +433,21 @@ export const overviewAssetsAndDebts = [
     description: ({ answers }) =>
       getSumFromAnswers<
         NonNullable<EstateSchema['estate']['otherAssets']>[number]
-      >(answers, 'estate.otherAssets', 'value'),
+      >(
+        answers,
+        'estate.otherAssets',
+        'value',
+        (otherAsset) => !!otherAsset?.enabled,
+      ),
     condition: (answers) =>
       !!getSumFromAnswers<
         NonNullable<EstateSchema['estate']['otherAssets']>[number]
-      >(answers, 'estate.otherAssets', 'value'),
+      >(
+        answers,
+        'estate.otherAssets',
+        'value',
+        (otherAsset) => !!otherAsset?.enabled,
+      ),
     titleVariant: 'h4',
   }),
   buildDividerField({}),

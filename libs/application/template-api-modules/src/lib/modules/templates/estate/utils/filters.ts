@@ -7,12 +7,18 @@ export type Extract<T extends ArrayLike<any> | Record<any, any>> =
 export const filterAndRemoveRepeaterMetadata = <T>(
   elements: RepeaterType<Extract<NonNullable<T>>>[],
 ): Omit<Extract<NonNullable<T>>, 'initial' | 'enabled' | 'dummy'>[] => {
-  elements.forEach((element) => {
+  // First filter out disabled items, then remove metadata
+  const enabledElements = elements.filter(
+    (element) => element.enabled !== false,
+  )
+
+  enabledElements.forEach((element) => {
     delete element.initial
+    delete element.enabled
     delete element.dummy
   })
 
-  return elements
+  return enabledElements
 }
 
 export const filterEmptyObjects = <T extends Record<string, unknown>>(
