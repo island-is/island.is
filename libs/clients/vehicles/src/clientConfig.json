@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "SamgÃ¶ngustofa",
-    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-60 : 20250822.1",
+    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-63 : 20250918.2",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -77,6 +77,12 @@
                   "type": "string",
                   "format": "binary"
                 }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
               }
             }
           },
@@ -100,20 +106,17 @@
     "/OwnershipReportPdf": {
       "get": {
         "tags": ["Pdf"],
-        "parameters": [
-          {
-            "name": "ssn",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
                 "schema": {
                   "type": "string",
                   "format": "binary"
@@ -921,13 +924,6 @@
       "get": {
         "tags": ["VehicleSearch"],
         "parameters": [
-          {
-            "name": "ssn",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "afterPermno",
             "in": "query",

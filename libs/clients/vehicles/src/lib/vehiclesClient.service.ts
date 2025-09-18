@@ -6,7 +6,6 @@ import {
   mapVehicleResponseDto,
 } from './dtos/vehiclesResponse.dto'
 import { GetVehiclesInput } from './input/getVehicles.input'
-import { OwnershipReportInput } from './input/ownershipReport.input'
 import { VehicleHistoryInput } from './input/vehicleHistory.input'
 import { mapVehicleDataToNestedArray } from './dtos/tableData.dto'
 
@@ -80,9 +79,6 @@ export class VehiclesClientService {
   ownershipReportExcel = async (user: User): Promise<Blob> =>
     this.excelApiWithAuth(user).ownershipReportExcelGet()
 
-  ownershipReportPdf = (
-    user: User,
-    { personNationalId }: OwnershipReportInput,
-  ): Promise<Blob> =>
-    this.pdfApiWithAuth(user).ownershipReportPdfGet({ ssn: personNationalId })
+  ownershipReportPdf = (user: User): Promise<Blob> =>
+    this.pdfApiWithAuth(user).ownershipReportPdfGet()
 }
