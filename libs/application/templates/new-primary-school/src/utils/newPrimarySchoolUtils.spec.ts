@@ -161,7 +161,7 @@ describe('getApplicationType', () => {
     )
   })
 
-  it('should return NEW_PRIMARY_SCHOOL for child in 2. grade if no data is found in Frigg', () => {
+  it('should return NEW_PRIMARY_SCHOOL for child in 2. grade, if no data is found in Frigg', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
 
     const answers = {
@@ -196,7 +196,7 @@ describe('getApplicationType', () => {
     )
   })
 
-  it('should return NEW_PRIMARY_SCHOOL for child in first grade', () => {
+  it('should return NEW_PRIMARY_SCHOOL for child in first grade, if child has enrolled before (data is found in Frigg)', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
 
     const answers = {
