@@ -250,7 +250,7 @@ export const FineAndSpeedMeasurementCalculator = ({
 
   const [measuredSpeed, setMeasuredSpeed] = useState('')
   const [speedLimit, setSpeedLimit] = useState(
-    slice.configJson?.defaultSpeedLimitValue ?? speedLimitOptions[0].value,
+    slice.configJson?.defaultSpeedLimitValue ?? speedLimitOptions[0]?.value,
   )
   const [over3500kgOrWithTrailer, setOver3500kgOrWithTrailer] = useState(false)
 
