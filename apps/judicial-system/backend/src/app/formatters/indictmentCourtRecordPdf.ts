@@ -14,6 +14,7 @@ import {
   addNormalCenteredText,
   addNormalText,
   addNumberedList,
+  Confirmation,
   setLineGap,
   setTitle,
 } from './pdfHelpers'
@@ -21,6 +22,7 @@ import {
 export const createIndictmentCourtRecordPdf = (
   theCase: Case,
   showOpenCourtSession: boolean,
+  confirmation: Confirmation | undefined,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
