@@ -466,9 +466,7 @@ export class TransportAuthorityApi {
       })
 
       const model = vehicle.make
-      const subModel = [vehicle.vehcom, vehicle.speccom]
-        .filter(Boolean)
-        .join(' ')
+      const subModel = vehicle.vehcom ?? ''
 
       return {
         permno: vehicle.permno,
