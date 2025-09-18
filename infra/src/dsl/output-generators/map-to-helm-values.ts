@@ -376,9 +376,9 @@ function serializeIngress(
     },
     hosts: hosts.map((host) => ({
       host: host,
+      ...pathTypeOverride,
       paths: ingressConf.paths,
-    })),
-    ...pathTypeOverride
+    }))
   }
 }
 

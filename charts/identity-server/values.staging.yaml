@@ -848,9 +848,9 @@ services-auth-public-api:
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'identity-server.staging01.devland.is'
+          pathTypeOverride: 'ImplementationSpecific'
           paths:
             - '/api(/|$)(.*)'
-      pathTypeOverride: 'ImplementationSpecific'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
