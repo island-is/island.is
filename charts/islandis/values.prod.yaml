@@ -2892,9 +2892,6 @@ services-payments:
         - host: 'services-payments-xrd.internal.island.is'
           paths:
             - '/'
-        - host: 'services-payments-invoice-callback-xrd.internal.island.is'
-          paths:
-            - '/'
   initContainer:
     containers:
       - args:
