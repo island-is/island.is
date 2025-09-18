@@ -361,6 +361,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             onSelect={(opt) => setValue('fund', (opt?.value as string) || '')}
             error={errors.fund?.message}
             rules={requiredRule}
+            required
           />
 
           <InputController
@@ -370,6 +371,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             size="xs"
             error={errors.inMemoryOf?.message}
             rules={requiredRule}
+            required
           />
 
           <InputController
@@ -379,6 +381,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             size="xs"
             error={errors.senderSignature?.message}
             rules={requiredRule}
+            required
           />
 
           <Text variant="h2">{formatMessage(m.info.amountOfMoneyTitle)}</Text>
@@ -434,6 +437,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                 },
               }}
               error={errors.amountISKCustom?.message}
+              required
             />
           )}
 
@@ -446,6 +450,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.recipientName?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="recipientAddress"
@@ -454,6 +459,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.recipientAddress?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="recipientPostalCode"
@@ -462,6 +468,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.recipientPostalCode?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="recipientPlace"
@@ -470,6 +477,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.recipientPlace?.message}
               rules={requiredRule}
               control={control}
+              required
             />
           </Stack>
 
@@ -482,6 +490,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderName?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderEmail"
@@ -491,6 +500,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderEmail?.message}
               rules={requiredRule}
               control={control}
+              required
             />
 
             <Stack space={1}>
@@ -542,6 +552,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderAddress?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderPostalCode"
@@ -550,6 +561,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderPostalCode?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderPlace"
@@ -558,6 +570,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderPlace?.message}
               rules={requiredRule}
               control={control}
+              required
             />
           </Stack>
           <Box>

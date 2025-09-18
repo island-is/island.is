@@ -309,6 +309,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             onSelect={(opt) => setValue('grant', (opt?.value as string) || '')}
             error={errors.grant?.message}
             rules={requiredRule}
+            required
           />
           <Text variant="h2">{formatMessage(m.info.projectTitle)}</Text>
           <Box display="flex" flexWrap="wrap" columnGap={2} rowGap={2}>
@@ -380,6 +381,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
                 },
               }}
               error={errors.amountISKCustom?.message}
+              required
             />
           )}
           <Stack space={2}>
@@ -391,6 +393,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               error={errors.senderName?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderEmail"
@@ -399,6 +402,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               size="xs"
               error={errors.senderEmail?.message}
               control={control}
+              required
             />
 
             <Stack space={1}>
@@ -450,6 +454,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               error={errors.senderAddress?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderPostalCode"
@@ -458,6 +463,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               error={errors.senderPostalCode?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderPlace"
@@ -466,12 +472,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               error={errors.senderPlace?.message}
               rules={requiredRule}
               control={control}
-            />
-            <InputController
-              id="senderGrantExplanation"
-              label={formatMessage(m.info.senderGrantExplanation)}
-              size="xs"
-              control={control}
+              required
             />
           </Stack>
           <Box>
