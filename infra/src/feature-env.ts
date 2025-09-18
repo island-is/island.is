@@ -134,8 +134,9 @@ const deployedComment = (
 ): string => {
   return `Deployed services: ${data
     .map((d) => d.name())
-    .join(',')}. \n Excluded services: \`${excluded.join(',')}\` \n \n
-    You can view the progress of your feature deployment in ArgoCD here: https://argocd.shared.devland.is/applications?labels=feature-name%253D${feature}`
+    .join(',')}. \nExcluded services: \`${excluded.join(',')}\`
+
+You can view the progress of your feature deployment in ArgoCD [here](https://argocd.shared.devland.is/applications?labels=feature-name%253D${feature})`
 }
 
 yargs(process.argv.slice(2))
