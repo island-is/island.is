@@ -1,7 +1,7 @@
-query signatureCollectionCandidateReport(
+query signatureCollectionAdminCandidateReport(
   $input: SignatureCollectionCandidateIdInput!
 ) {
-  signatureCollectionCandidateReport(input: $input) {
+  signatureCollectionAdminCandidateReport(input: $input) {
     id
     name
     lists {

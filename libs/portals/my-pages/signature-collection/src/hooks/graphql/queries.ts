@@ -207,3 +207,21 @@ export const getPdfReport = gql`
     }
   }
 `
+
+export const getPdfReportPresidentialCandidate = gql`
+  query signatureCollectionCandidateReport(
+  $input: SignatureCollectionCandidateIdInput!
+) {
+  signatureCollectionCandidateReport(input: $input) {
+    id
+    name
+    lists {
+      candidateName
+      listName
+      nrOfSignatures
+      nrOfDigitalSignatures
+      nrOfPaperSignatures
+    }
+  }
+}
+`

@@ -261,7 +261,7 @@ export class SignatureCollectionAdminResolver {
 
   @Query(() => SignatureCollectionSummaryReport)
   @Audit()
-  async signatureCollectionCandidateReport(
+  async signatureCollectionAdminCandidateReport(
     @CurrentAdmin() admin: SignatureCollectionAdmin,
     @Args('input') input: SignatureCollectionCandidateIdInput,
   ): Promise<SignatureCollectionSummaryReport> {

@@ -273,12 +273,12 @@ export class SignatureCollectionResolver {
   @Query(() => SignatureCollectionSummaryReport)
   @Audit()
   async signatureCollectionCandidateReport(
-    @CurrentAdmin() admin: SignatureCollectionAdmin,
+    @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionCandidateIdInput,
   ): Promise<SignatureCollectionSummaryReport> {
     return this.signatureCollectionService.getCandidateSummaryReport(
       input,
-      admin,
+      user,
     )
   }
 }

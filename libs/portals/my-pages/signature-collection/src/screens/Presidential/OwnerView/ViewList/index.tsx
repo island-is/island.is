@@ -6,7 +6,6 @@ import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
 import Signees from '../../../shared/Signees'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
-import ListActions from './ListActions'
 import { Skeleton } from '../../../../lib/skeletons'
 
 const collectionType = SignatureCollectionCollectionType.Presidential
@@ -32,8 +31,6 @@ const ViewList = () => {
                 'dd.MM.yyyy',
               )} - ${format(new Date(listInfo.endTime), 'dd.MM.yyyy')}`}
             </Text>
-            <ListActions listId={listInfo.id} />
-            <Divider />
           </Box>
           <Signees
             collectionType={collectionType}

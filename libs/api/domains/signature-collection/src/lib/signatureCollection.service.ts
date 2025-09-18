@@ -244,10 +244,10 @@ export class SignatureCollectionService {
 
   async getCandidateSummaryReport(
     input: SignatureCollectionCandidateIdInput,
-    admin: SignatureCollectionAdmin,
+    user: User,
   ): Promise<SignatureCollectionSummaryReport> {
     return await this.signatureCollectionClientService.getCandidateSummaryReport(
-      admin,
+      user,
       input.candidateId,
     )
   }

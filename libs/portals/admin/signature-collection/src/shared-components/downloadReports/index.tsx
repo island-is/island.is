@@ -18,7 +18,7 @@ import MyPdfDocument from './MyPdfDocument'
 import { SignatureCollectionAreaSummaryReportDocument } from './MyPdfDocument/areaSummary.generated'
 import { useLazyQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
-import { SignatureCollectionCandidateReportDocument } from './MyPdfDocument/candidateSummary.generated'
+import { SignatureCollectionAdminCandidateReportDocument } from './MyPdfDocument/candidateSummary.generated'
 
 export const DownloadReports = ({
   collection,
@@ -31,7 +31,7 @@ export const DownloadReports = ({
     SignatureCollectionAreaSummaryReportDocument,
   )
   const [getCandidateReport, { loading: loadingCandidate }] = useLazyQuery(
-    SignatureCollectionCandidateReportDocument,
+    SignatureCollectionAdminCandidateReportDocument,
   )
   const instance = pdf(undefined)
 
@@ -60,7 +60,7 @@ export const DownloadReports = ({
         },
         onCompleted: (res) => {
           instance.updateContainer(
-            <MyPdfDocument report={res.signatureCollectionCandidateReport} />,
+            <MyPdfDocument report={res.signatureCollectionAdminCandidateReport} />,
             async () => {
               const url = await instance
                 .toBlob()
