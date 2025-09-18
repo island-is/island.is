@@ -23,7 +23,12 @@ import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
-import { ListSummary, mapListSummary } from './types/summaryReport.dto'
+import {
+  ListSummary,
+  mapCandidateSummaryReport,
+  mapListSummary,
+  SummaryReport,
+} from './types/summaryReport.dto'
 type Api =
   | MedmaelalistarApi
   | MedmaelasofnunApi
@@ -725,6 +730,23 @@ export class SignatureCollectionClientService {
       return { success: res.bladsidaNr === pageNumber }
     } catch {
       return { success: false }
+    }
+  }
+
+  async getCandidateSummaryReport(
+    auth: Auth,
+    candidateId: string,
+  ): Promise<SummaryReport> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.candidateApi,
+        auth,
+      ).frambodIDInfoGet({
+        iD: parseInt(candidateId, 10),
+      })
+      return mapCandidateSummaryReport(res)
+    } catch {
+      return {} as SummaryReport
     }
   }
 }

@@ -23,8 +23,13 @@ import { SignatureCollectionAddListsInput } from './dto/addLists.input'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
 import { SignatureCollectionCollector } from './models/collector.model'
-import { SignatureCollectionListSummary } from './models/summaryReport.model'
+import {
+  SignatureCollectionListSummary,
+  SignatureCollectionSummaryReport,
+} from './models/summaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionCandidateIdInput } from './dto'
+import { SignatureCollectionAdmin } from './models'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -234,6 +239,16 @@ export class SignatureCollectionService {
       user,
       input.signatureId,
       input.pageNumber,
+    )
+  }
+
+  async getCandidateSummaryReport(
+    input: SignatureCollectionCandidateIdInput,
+    admin: SignatureCollectionAdmin,
+  ): Promise<SignatureCollectionSummaryReport> {
+    return await this.signatureCollectionClientService.getCandidateSummaryReport(
+      admin,
+      input.candidateId,
     )
   }
 }

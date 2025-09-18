@@ -16,14 +16,21 @@ import { ApiScope } from '@island.is/auth/scopes'
 import {
   SignatureCollectionAddListsInput,
   SignatureCollectionCancelListsInput,
+  SignatureCollectionCandidateIdInput,
   SignatureCollectionCanSignFromPaperInput,
   SignatureCollectionIdInput,
   SignatureCollectionListIdInput,
   SignatureCollectionUploadPaperSignatureInput,
 } from './dto'
-import { AllowManager, CurrentSignee, IsOwner } from './decorators'
+import {
+  AllowManager,
+  CurrentAdmin,
+  CurrentSignee,
+  IsOwner,
+} from './decorators'
 import {
   SignatureCollection,
+  SignatureCollectionAdmin,
   SignatureCollectionCollector,
   SignatureCollectionList,
   SignatureCollectionListBase,
@@ -31,7 +38,10 @@ import {
   SignatureCollectionSignedList,
   SignatureCollectionSignee,
 } from './models'
-import { SignatureCollectionListSummary } from './models/summaryReport.model'
+import {
+  SignatureCollectionListSummary,
+  SignatureCollectionSummaryReport,
+} from './models/summaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 import { SignatureCollectionBaseInput } from './dto/signatureCollectionBase.input'
 
@@ -254,6 +264,21 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.updateSignaturePageNumber(
       user,
       input,
+    )
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @IsOwner()
+  @AllowManager()
+  @Query(() => SignatureCollectionSummaryReport)
+  @Audit()
+  async signatureCollectionCandidateReport(
+    @CurrentAdmin() admin: SignatureCollectionAdmin,
+    @Args('input') input: SignatureCollectionCandidateIdInput,
+  ): Promise<SignatureCollectionSummaryReport> {
+    return this.signatureCollectionService.getCandidateSummaryReport(
+      input,
+      admin,
     )
   }
 }
