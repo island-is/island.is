@@ -61,7 +61,7 @@ export class QuestionnairesService {
 
     // const lshForms = await this.lshDevApi.getPatientForms(user)
 
-    //  console.log('LSH Forms:', lshForms)
+    // console.log('LSH Forms:', lshForms)
 
     if (!data) {
       return null
