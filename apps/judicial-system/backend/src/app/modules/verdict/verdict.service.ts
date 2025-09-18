@@ -1,5 +1,6 @@
 import { Base64 } from 'js-base64'
-import { Sequelize, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -16,6 +17,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  isVerdictInfoChanged,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
@@ -321,5 +323,27 @@ export class VerdictService {
     await this.updateVerdict(verdict, createdDocument)
 
     return { delivered: true }
+  }
+
+  async getAndSyncVerdict(verdict: Verdict, user?: TUser) {
+    // RLS: Remove boolean var when the getVerdictDocumentStatus is supported by RLS
+    const isDocumentStatusImplemented = false
+
+    // check specifically a verdict that is delivered and service status hasn't been updated
+    if (
+      isDocumentStatusImplemented &&
+      verdict.externalPoliceDocumentId &&
+      !verdict.serviceStatus
+    ) {
+      const verdictInfo = await this.policeService.getVerdictDocumentStatus(
+        verdict.externalPoliceDocumentId,
+        user,
+      )
+
+      if (isVerdictInfoChanged(verdictInfo, verdict)) {
+        return this.update(verdict, verdictInfo)
+      }
+    }
+    return verdict
   }
 }

@@ -1,6 +1,7 @@
 import {
   buildDescriptionField,
   buildForm,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -18,20 +19,21 @@ export const Draft: Form = buildForm({
   id: 'ParliamentaryListSigningDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: false,
+  renderLastScreenBackButton: true,
   logo: Logo,
   children: [
     buildSection({
       id: 'selectCandidateSection',
       title: m.selectCandidate,
-      condition: (_, externalData) => {
+      condition: (answers, externalData) => {
         const lists =
           getValueViaPath<SignatureCollectionList[]>(
             externalData,
             'getList.data',
           ) || []
+        const initialQuery = getValueViaPath(answers, 'initialQuery')
 
-        return lists.length > 0
+        return lists.length > 0 && !initialQuery
       },
       children: [
         buildMultiField({
@@ -87,7 +89,28 @@ export const Draft: Form = buildForm({
               title: m.listHeader,
               titleVariant: 'h3',
             }),
+            buildHiddenInput({
+              id: 'listId',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
 
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.id
+              },
+            }),
             buildTextField({
               id: 'list.name',
               title: m.listName,

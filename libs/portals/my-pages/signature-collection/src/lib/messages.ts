@@ -452,6 +452,12 @@ export const m = defineMessages({
       'Hér eru upplýsingar um hlekk á söfnunina, stöðuna og yfirlit yfir umsjónaraðila.',
     description: '',
   },
+  pageIntroSignee: {
+    id: 'sp.signatureCollection:pageIntroSignee',
+    defaultMessage:
+      'Hægt er að draga meðmæli til baka og mæla með öðru framboði.',
+    description: '',
+  },
   collectionIsActive: {
     id: 'sp.signatureCollection:collectionIsActive',
     defaultMessage: 'Söfnun í gangi',
@@ -484,9 +490,14 @@ export const m = defineMessages({
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu justo interdum, pharetra enim vel, ultrices augue.',
     description: '',
   },
+  deleteCollectionCandidacy: {
+    id: 'sp.signatureCollection:deleteCollectionCandidacy',
+    defaultMessage: 'Eyða framboði',
+    description: '',
+  },
   deleteCollection: {
     id: 'sp.signatureCollection:deleteCollection',
-    defaultMessage: 'Eyða framboði',
+    defaultMessage: 'Eyða söfnun',
     description: '',
   },
   deleteCollectionDescription: {

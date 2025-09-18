@@ -78,7 +78,12 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   range = false,
   ranges,
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
+  const isValidDate = (d: unknown): d is Date =>
+    d instanceof Date && !isNaN((d as Date).getTime())
+  const normalizeDate = (d?: Date | null) => (d && isValidDate(d) ? d : null)
+  const [startDate, setStartDate] = useState<Date | null>(
+    normalizeDate(selected) ?? null,
+  )
   const [endDate, setEndDate] = useState<Date | null>(null)
 
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
@@ -103,7 +108,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   }, [locale])
 
   useEffect(() => {
-    setStartDate(selected ?? null)
+    setStartDate(normalizeDate(selected) ?? null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected])
 
   return (
@@ -130,7 +136,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           id={id}
           name={name}
           disabled={disabled}
-          selected={startDate ?? selected}
+          selected={normalizeDate(startDate ?? selected) ?? null}
           locale={currentLanguage.locale ?? 'is'}
           minDate={minDate}
           maxDate={maxDate}
@@ -154,18 +160,36 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           onChange={
             range
               ? (date: any) => {
+                  if (date === null) {
+                    setStartDate(null)
+                    return
+                  }
+
                   const [start, end] = date
-                  setStartDate(start)
-                  range && setEndDate(end)
-                  if (range && end) {
-                    start && handleChange && handleChange(start, end)
-                  } else {
-                    start && handleChange && handleChange(start)
+                  if (
+                    start instanceof Date &&
+                    !isNaN(start.getTime()) &&
+                    (end === null ||
+                      (end instanceof Date && !isNaN(end.getTime())))
+                  ) {
+                    setStartDate(start)
+                    range && setEndDate(end)
+                    if (range && end) {
+                      start && handleChange && handleChange(start, end)
+                    } else {
+                      start && handleChange && handleChange(start)
+                    }
                   }
                 }
               : (date: any) => {
-                  setStartDate(date)
-                  handleChange && handleChange(date)
+                  if (date === null) {
+                    setStartDate(null)
+                    return
+                  }
+                  if (date instanceof Date && !isNaN(date.getTime())) {
+                    setStartDate(date)
+                    handleChange && handleChange(date)
+                  }
                 }
           }
           startDate={startDate}

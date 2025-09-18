@@ -15,7 +15,6 @@ import { Modal } from '@island.is/react/components'
 import { useParams, useRevalidator } from 'react-router-dom'
 import { useProcessCollectionMutation } from './finishCollectionProcess.generated'
 import {
-  CollectionStatus,
   SignatureCollection,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
@@ -29,8 +28,7 @@ const ActionCompleteCollectionProcessing = ({
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
 
   // areaId is used for LocalGovernmental collections, instead of collection.id
-  const params = useParams()
-  const area = params.municipality ?? ''
+  const { municipality: area = '' } = useParams<{ municipality?: string }>()
   const areaId = collection.areas.find((a) => a.name === area)?.collectionId
 
   const [processCollectionMutation, { loading }] =
@@ -56,7 +54,10 @@ const ActionCompleteCollectionProcessing = ({
         setModalSubmitReviewIsOpen(false)
         revalidate()
       } else {
-        toast.error(formatMessage(m.toggleCollectionProcessError))
+        toast.error(
+          res?.data?.signatureCollectionAdminProcess.reasons?.[0] ??
+            formatMessage(m.toggleCollectionProcessError),
+        )
       }
     } catch (e) {
       toast.error(e.message)
@@ -84,7 +85,6 @@ const ActionCompleteCollectionProcessing = ({
                 variant="text"
                 size="small"
                 onClick={() => setModalSubmitReviewIsOpen(true)}
-                disabled={collection.status === CollectionStatus.Processed}
               >
                 {formatMessage(m.completeCollectionProcessing)}
               </Button>
@@ -100,7 +100,7 @@ const ActionCompleteCollectionProcessing = ({
         onClose={() => setModalSubmitReviewIsOpen(false)}
         closeButtonLabel={''}
       >
-        <Box marginTop={5}>
+        <Box>
           <Text>
             {formatMessage(m.completeCollectionProcessingDescription)}
           </Text>

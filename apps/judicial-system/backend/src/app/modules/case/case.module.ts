@@ -10,6 +10,7 @@ import { CaseArchive, CaseString, DateLog } from '../repository'
 import {
   AwsS3Module,
   CourtModule,
+  CourtSessionModule,
   DefendantModule,
   EventLogModule,
   EventModule,
@@ -42,6 +43,7 @@ import { PdfService } from './pdf.service'
     forwardRef(() => UserModule),
     forwardRef(() => FileModule),
     forwardRef(() => IndictmentCountModule),
+    forwardRef(() => CourtSessionModule),
     forwardRef(() => CourtModule),
     forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
