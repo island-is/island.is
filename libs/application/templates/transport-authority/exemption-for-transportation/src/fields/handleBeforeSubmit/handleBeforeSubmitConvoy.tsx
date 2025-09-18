@@ -6,6 +6,7 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useFormContext } from 'react-hook-form'
 import {
   checkIfConvoyChanged,
+  checkIfExemptionTypeShortTerm,
   getUpdatedAxleSpacing,
   getUpdatedFreightPairingList,
   getUpdatedVehicleSpacing,
@@ -22,6 +23,15 @@ export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
   setBeforeSubmitCallback?.(async () => {
     try {
       const newAnswers = getValues()
+
+      // Make sure if this is short-term, that there is only one convoy
+      if (
+        checkIfExemptionTypeShortTerm(newAnswers) &&
+        Array.isArray(newAnswers.convoy?.items) &&
+        newAnswers.convoy.items.length > 0
+      ) {
+        newAnswers.convoy.items = [newAnswers.convoy.items[0]]
+      }
 
       // No need to do anything if nothing of importance changed
       if (!checkIfConvoyChanged(application.answers, newAnswers)) {

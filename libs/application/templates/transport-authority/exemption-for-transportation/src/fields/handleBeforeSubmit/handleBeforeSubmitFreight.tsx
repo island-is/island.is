@@ -5,6 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useFormContext } from 'react-hook-form'
 import {
+  checkIfExemptionTypeShortTerm,
   checkIfFreightChanged,
   getUpdatedFreightPairingList,
 } from '../../utils'
@@ -20,6 +21,15 @@ export const HandleBeforeSubmitFreight: FC<FieldBaseProps> = ({
   setBeforeSubmitCallback?.(async () => {
     try {
       const newAnswers = getValues()
+
+      // Make sure if this is short-term, that there is only one freight
+      if (
+        checkIfExemptionTypeShortTerm(newAnswers) &&
+        Array.isArray(newAnswers.freight?.items) &&
+        newAnswers.freight.items.length > 0
+      ) {
+        newAnswers.freight.items = [newAnswers.freight.items[0]]
+      }
 
       // No need to do anything if nothing of importance changed
       if (!checkIfFreightChanged(application.answers, newAnswers)) {
