@@ -134,7 +134,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/inReviewApplicantForm').then((module) =>
+                import('../forms/inReviewForm').then((module) =>
                   Promise.resolve(module.inReviewApplicantForm),
                 ),
               actions: [

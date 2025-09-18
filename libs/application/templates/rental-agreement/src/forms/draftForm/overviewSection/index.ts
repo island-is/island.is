@@ -6,7 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { Routes } from '../../utils/enums'
+import { Routes } from '../../../utils/enums'
 import {
   depositOverview,
   fireProtectionsOverview,
@@ -22,17 +22,17 @@ import {
   rentalPropertyOverview,
   specialProvisionsOverview,
   tenantOverview,
-} from '../../utils/overviewUtils'
+} from '../../../utils/overviewUtils'
 import {
   securityDepositRequired,
   shouldShowRepresentative,
   singularOrPluralLandlordsTitle,
   singularOrPluralRepresentativeTitle,
   singularOrPluralTenantsTitle,
-} from '../../utils/conditions'
-import * as m from '../../lib/messages'
+} from '../../../utils/conditions'
+import * as m from '../../../lib/messages'
 
-export const SummaryDraftSection = buildSection({
+export const overviewSection = buildSection({
   id: Routes.SUMMARY,
   title: m.summary.pageTitle,
   children: [

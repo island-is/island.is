@@ -1,18 +1,18 @@
 import {
-  buildSubSection,
   buildMultiField,
+  buildSection,
   buildTableRepeaterField,
 } from '@island.is/application/core'
 import {
   applicantTableConfig,
+  landlordTableConfig,
   applicantTableFields,
   landLordInfoTableFields,
-  landlordTableConfig,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
 import * as m from '../../../lib/messages'
 
-export const RentalHousingPartiesInfo = buildSubSection({
+export const partiesSection = buildSection({
   id: Routes.PARTIESINFORMATION,
   title: m.partiesDetails.subSectionName,
   children: [
