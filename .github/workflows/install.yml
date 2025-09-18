@@ -88,14 +88,18 @@ jobs:
     name: Get ECR password
     runs-on: arc-shared
     outputs:
-      ecr_password: ${{ steps.ecr-password.outputs.ecr_password }}
+      ecr_username: ${{ steps.ecr-password.outputs.docker_username_821090935708_dkr_ecr_eu_west_1_amazonaws_com }}
+      ecr_password: ${{ steps.ecr-password.outputs.docker_password_821090935708_dkr_ecr_eu_west_1_amazonaws_com }}
     steps:
       - name: Get ECR password
         id: ecr-password
-        uses: aws-actions/amazon-ecr-login@v1
-        with:
-          region: eu-west-1
+        uses: aws-actions/amazon-ecr-login@v2
+        with: 
+          mask-password: true
+          aws-region: eu-west-1
   install:
+    needs:
+      - get-ecr-password
     outputs:
       MQ_SHA: ${{ steps.prepare-merge-queue.outputs.GIT_SHA }}
       MQ_HELM_VALUES_BRANCH: ${{ steps.prepare-merge-queue.outputs.HELM_VALUES_BRANCH }}
@@ -121,7 +125,7 @@ jobs:
       npminstall:
         image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/islandis-npm-proxy:1
         credentials:
-          username: AWS
+          username: ${{ needs.get-ecr-password.outputs.ecr_username }}
           password: ${{ needs.get-ecr-password.outputs.ecr_password }}
         ports:
           - 3000:3000
