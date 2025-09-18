@@ -3,7 +3,6 @@ import {
   ServiceBuilder,
   json,
   ref,
-  getInternalServiceUrl,
 } from '../../../../infra/src/dsl/dsl'
 import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
 
@@ -48,9 +47,11 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         ]),
       },
       PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
-      PAYMENTS_SERVICE_INTERNAL_CLUSTER_URL: ref(
-        getInternalServiceUrl(serviceName, namespace),
-      ),
+      XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL: {
+        dev: 'XROAD:/IS-DEV/GOV/10000/island-is/payments-v1',
+        staging: 'XROAD:',
+        prod: 'XROAD:/IS/GOV/5501692829/island-is/payments-v1',
+      },
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
@@ -87,14 +88,11 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     .ingress({
       primary: {
         host: {
-          dev: [`${serviceName}-xrd`, `${serviceName}-invoice-callback-xrd`],
-          staging: [
-            `${serviceName}-xrd`,
-            `${serviceName}-invoice-callback-xrd`,
-          ],
+          dev: [`${serviceName}-xrd`],
+          staging: [`${serviceName}-xrd`],
           prod: [`${serviceName}-xrd`, `${serviceName}-invoice-callback-xrd`],
         },
-        paths: ['/', '/payments/invoice/callback'],
+        paths: ['/'],
         public: false,
         extraAnnotations: {
           dev: {

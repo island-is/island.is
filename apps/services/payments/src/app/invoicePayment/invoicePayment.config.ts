@@ -6,7 +6,6 @@ import { environment } from '../../environments'
 const schema = z.object({
   callbackBaseUrl: z.string(),
   tokenExpiryMinutes: z.number().int(),
-  memCacheExpiryMinutes: z.number().int(),
   tokenSigningSecret: z.string(),
   tokenSigningAlgorithm: z.string(),
   previousTokenSigningSecret: z.string().optional(),
@@ -19,12 +18,11 @@ export const InvoicePaymentModuleConfig = defineConfig({
   schema,
   load: (env) => ({
     callbackBaseUrl: env.required(
-      'PAYMENTS_SERVICE_INTERNAL_CLUSTER_URL',
+      'XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL',
       `http://localhost:${environment.port}`,
     ),
-    tokenExpiryMinutes: env.optionalJSON('INVOICE_TOKEN_EXPIRY_MINUTES') ?? 30, // TODO: do they expire?
-    memCacheExpiryMinutes:
-      env.optionalJSON('INVOICE_MEM_CACHE_EXPIRY_MINUTES') ?? 5,
+    tokenExpiryMinutes:
+      env.optionalJSON('INVOICE_TOKEN_EXPIRY_MINUTES') ?? 60 * 24 * 30, // TODO: do they expire?
     tokenSigningSecret: env.required('PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET'),
     tokenSigningAlgorithm: env.required(
       'PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM',

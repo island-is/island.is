@@ -572,13 +572,5 @@ export const service = <Service extends string>(
 
 export const json = (value: unknown): string => JSON.stringify(value)
 
-export const getInternalServiceUrl =
-  (serviceName: string, namespace: string) => (ctx: Context) =>
-    `http://${serviceName}.${
-      ctx.featureDeploymentName
-        ? `feature-${ctx.featureDeploymentName}`
-        : namespace
-    }.svc.cluster.local`
-
 export { CodeOwners }
 export type { Context }
