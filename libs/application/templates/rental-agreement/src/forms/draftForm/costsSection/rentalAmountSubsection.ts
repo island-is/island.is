@@ -157,7 +157,6 @@ export const rentalAmountSubsection = buildSubSection({
           id: 'rentalAmount.paymentMethodNationalId',
           title: m.rentalAmount.paymentMethodNationalIdLabel,
           format: '######-####',
-
         }),
         buildTextField({
           condition: rentalPaymentMethodIsOther,
