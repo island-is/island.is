@@ -389,7 +389,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               <RadioButton
                 key={amount}
                 id={`amount-${amount}`}
-                name="amountISK"
+                name={`amount-${amount}`}
                 label={amount}
                 checked={selectedAmount === amount}
                 onChange={() =>
