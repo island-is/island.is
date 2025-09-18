@@ -536,21 +536,21 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   slice: ConnectedComponent & { componentType?: string },
                 ) => {
                   if (
-                    slice.componentType ===
+                    slice.componentType !==
                     'Police/FineAndSpeedMeasurementCalculator'
                   ) {
-                    return (
-                      <TranslationNamespaceProvider
-                        messages={slice.translationStrings ?? slice.json ?? {}}
-                      >
-                        <FineAndSpeedMeasurementCalculator
-                          slice={slice}
-                          chatBubbleIsPushedUp={chatBubbleIsPushedUp}
-                        />
-                      </TranslationNamespaceProvider>
-                    )
+                    return webRenderConnectedComponent(slice)
                   }
-                  return webRenderConnectedComponent(slice)
+                  return (
+                    <TranslationNamespaceProvider
+                      messages={slice.translationStrings ?? slice.json ?? {}}
+                    >
+                      <FineAndSpeedMeasurementCalculator
+                        slice={slice}
+                        chatBubbleIsPushedUp={chatBubbleIsPushedUp}
+                      />
+                    </TranslationNamespaceProvider>
+                  )
                 },
               },
             },
