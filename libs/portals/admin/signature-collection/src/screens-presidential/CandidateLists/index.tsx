@@ -7,30 +7,32 @@ import {
   Stack,
   Breadcrumbs,
   Divider,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
-import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { getTagConfig } from '../../lib/utils'
-import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
+import { useSignatureCollectionAdminListsForCandidateQuery } from './getCandidateLists.generated'
 
 const CandidateLists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const { candidateId = '' } = useParams<{ candidateId?: string }>()
-  const { allLists } = useLoaderData() as ListsLoaderReturn
 
-  const candidateLists = allLists.filter(
-    (list) => list.candidate.id === candidateId,
-  )
+  const { candidateId = '' } = useParams<{ candidateId?: string }>()
+  const {
+    data: { signatureCollectionAdminListsForCandidate: candidateLists } = {},
+  } = useSignatureCollectionAdminListsForCandidateQuery({
+    variables: { input: { candidateId } },
+  })
 
   return (
     <GridContainer>
@@ -57,7 +59,7 @@ const CandidateLists = () => {
                   href: `/stjornbord${SignatureCollectionPaths.PresidentialListOfCandidates}`,
                 },
                 {
-                  title: candidateLists[0]?.candidate.name || '',
+                  title: candidateLists?.[0]?.candidate.name || '',
                 },
               ]}
             />
@@ -75,39 +77,48 @@ const CandidateLists = () => {
           />
           <Divider />
           <Box marginTop={9} />
-          <Stack space={3}>
-            {candidateLists.map((list: SignatureCollectionList) => {
-              return (
-                <ActionCard
-                  key={list.id}
-                  eyebrow={list.candidate.name}
-                  heading={list.area.name}
-                  progressMeter={{
-                    currentProgress: list.numberOfSignatures ?? 0,
-                    maxProgress: list.area.min,
-                    withLabel: true,
-                  }}
-                  tag={getTagConfig(list)}
-                  cta={{
-                    label: formatMessage(m.viewList),
-                    variant: 'text',
-                    icon: 'arrowForward',
-                    onClick: () => {
-                      navigate(
-                        replaceParams({
-                          href: SignatureCollectionPaths.PresidentialList,
-                          params: {
-                            candidateId: list.candidate.id,
-                            listId: list.id,
-                          },
-                        }),
-                      )
-                    },
-                  }}
-                />
-              )
-            })}
-          </Stack>
+          {candidateLists ? (
+            <Stack space={3}>
+              {candidateLists.map((list: SignatureCollectionList) => {
+                return (
+                  <ActionCard
+                    key={list.id}
+                    eyebrow={list.candidate.name}
+                    heading={list.area.name}
+                    progressMeter={{
+                      currentProgress: list.numberOfSignatures ?? 0,
+                      maxProgress: list.area.min,
+                      withLabel: true,
+                    }}
+                    tag={getTagConfig(list)}
+                    cta={{
+                      label: formatMessage(m.viewList),
+                      variant: 'text',
+                      icon: 'arrowForward',
+                      onClick: () => {
+                        navigate(
+                          replaceParams({
+                            href: SignatureCollectionPaths.PresidentialList,
+                            params: {
+                              candidateId: list.candidate.id,
+                              listId: list.id,
+                            },
+                          }),
+                        )
+                      },
+                    }}
+                  />
+                )
+              })}
+            </Stack>
+          ) : (
+            <SkeletonLoader
+              height={160}
+              borderRadius="large"
+              repeat={4}
+              space={3}
+            />
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>
