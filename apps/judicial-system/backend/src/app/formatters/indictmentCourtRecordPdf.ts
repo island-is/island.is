@@ -174,7 +174,7 @@ export const createIndictmentCourtRecordPdf = (
       addEmptyLines(doc)
       addNormalText(
         doc,
-        `(Vottur að þinghaldi er ${attestingWitnessName}${attestingWitnessTitle}.)`,
+        `Vottur að þinghaldi er ${attestingWitnessName}${attestingWitnessTitle}.`,
       )
     }
   }
