@@ -1,10 +1,9 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { intro } from './prerequisites/intro'
-import { externalData } from './prerequisites/externalData'
-import Logo from '../assets/Logo'
-
-import * as m from '../lib/messages'
+import { intro } from './intro'
+import { externalData } from './externalData'
+import Logo from '../../assets/Logo'
+import * as m from '../../lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',

@@ -452,6 +452,12 @@ export const m = defineMessages({
       'Hér eru upplýsingar um hlekk á söfnunina, stöðuna og yfirlit yfir umsjónaraðila.',
     description: '',
   },
+  pageIntroSignee: {
+    id: 'sp.signatureCollection:pageIntroSignee',
+    defaultMessage:
+      'Hægt er að draga meðmæli til baka og mæla með öðru framboði.',
+    description: '',
+  },
   collectionIsActive: {
     id: 'sp.signatureCollection:collectionIsActive',
     defaultMessage: 'Söfnun í gangi',

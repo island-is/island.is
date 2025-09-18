@@ -13,7 +13,7 @@ import { Routes } from '../../../utils/enums'
 import { PropertyUnit } from '../../../shared'
 import * as m from '../../../lib/messages'
 
-export const RentalHousingSpecialProvisions = buildSubSection({
+export const descriptionAndSpecialProvisionsSubsection = buildSubSection({
   id: Routes.SPECIALPROVISIONS,
   title: m.specialProvisions.subsection.name,
   children: [

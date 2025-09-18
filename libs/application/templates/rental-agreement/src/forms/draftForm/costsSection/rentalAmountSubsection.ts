@@ -26,13 +26,13 @@ import {
   getConsumerIndexDateOptions,
   getIndexRateForConsumerIndexDate,
 } from '../../../utils/rentalPeriodUtils'
-import * as m from '../../../lib/messages'
 import {
   getPaymentMethodOptions,
   getRentalAmountPaymentDateOptions,
 } from '../../../utils/options'
+import * as m from '../../../lib/messages'
 
-export const RentalPeriodAmount = buildSubSection({
+export const rentalAmountSubsection = buildSubSection({
   id: Routes.RENTALAMOUNT,
   title: m.rentalAmount.subSectionName,
   children: [
