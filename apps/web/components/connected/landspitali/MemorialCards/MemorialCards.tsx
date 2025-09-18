@@ -584,9 +584,18 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             <Text>{formatMessage(m.info.amountISKExtra)}</Text>
           </Box>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
-            <Button type="submit" icon="arrowForward">
-              {formatMessage(m.info.continue)}
-            </Button>
+            <Stack space={2}>
+              <Box display="flex" justifyContent="flexEnd">
+                <Button type="submit" icon="arrowForward">
+                  {formatMessage(m.info.continue)}
+                </Button>
+              </Box>
+              {Object.keys(errors).length > 0 && (
+                <Text variant="small" color="red600" fontWeight="medium">
+                  {formatMessage(m.validation.genericFormErrorMessage)}
+                </Text>
+              )}
+            </Stack>
           </Box>
         </Stack>
       </form>

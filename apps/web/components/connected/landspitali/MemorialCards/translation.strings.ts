@@ -228,6 +228,12 @@ export const m = {
     },
   }),
   validation: defineMessages({
+    genericFormErrorMessage: {
+      id: 'web.landspitali.memorialCard:validation.genericFormErrorMessage',
+      defaultMessage:
+        'Það vantar upplýsingar í einn af reitunum hér fyrir ofan',
+      description: 'Villuskilaboð fyrir form',
+    },
     invalidNationalIdLength: {
       id: 'web.landspitali.memorialCard:validation.invalidNationalIdLength',
       defaultMessage: 'Kennitala verður að vera 10 tölustafir',

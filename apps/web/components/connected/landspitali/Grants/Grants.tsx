@@ -486,9 +486,18 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             <Text>{formatMessage(m.info.amountISKExtra)}</Text>
           </Box>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
-            <Button loading={loading} type="submit">
-              {formatMessage(m.info.pay)}
-            </Button>
+            <Stack space={2}>
+              <Box display="flex" justifyContent="flexEnd">
+                <Button loading={loading} type="submit">
+                  {formatMessage(m.info.pay)}
+                </Button>
+              </Box>
+              {Object.keys(errors).length > 0 && (
+                <Text variant="small" color="red600" fontWeight="medium">
+                  {formatMessage(m.validation.genericFormErrorMessage)}
+                </Text>
+              )}
+            </Stack>
           </Box>
           {errorOccuredWhenCreatingPaymentUrl && (
             <AlertMessage

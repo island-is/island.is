@@ -114,6 +114,12 @@ export const m = {
     },
   }),
   validation: defineMessages({
+    genericFormErrorMessage: {
+      id: 'web.landspitali.directGrants:validation.genericFormErrorMessage',
+      defaultMessage:
+        'Það vantar upplýsingar í einn af reitunum hér fyrir ofan',
+      description: 'Villuskilaboð fyrir form',
+    },
     errorTitle: {
       id: 'web.landspitali.directGrants:validation.errorTitle',
       defaultMessage: 'Villa',
