@@ -142,7 +142,7 @@ export const overview = {
     },
     label: {
       id: 'ta.eft.application:overview.freight.label',
-      defaultMessage: 'Farmur {freightNumber}: {freightName} {length}/{weight}',
+      defaultMessage: 'Farmur {freightNumber}: {freightName}',
       description: 'Overview freight label',
     },
     convoyLabel: {

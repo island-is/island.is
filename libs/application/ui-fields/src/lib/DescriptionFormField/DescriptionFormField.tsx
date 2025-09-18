@@ -7,6 +7,7 @@ import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { Locale } from '@island.is/shared/types'
 import { useFormContext } from 'react-hook-form'
+import * as styles from './DescriptionFormField.css'
 
 export const DescriptionFormField: FC<
   React.PropsWithChildren<{
@@ -56,6 +57,12 @@ export const DescriptionFormField: FC<
                 )}
               />
             </Box>
+          )}
+          {field.showRequiredStar && field.title && (
+            <span aria-hidden="true" className={styles.isRequiredStar}>
+              {' '}
+              *
+            </span>
           )}
         </Text>
       )}

@@ -10,9 +10,8 @@ import {
 import { freight } from '../../../lib/messages'
 import { ExemptionFor } from '../../../shared'
 import {
-  formatNumber,
-  getExemptionRules,
   checkIfExemptionTypeShortTerm,
+  getFreightShortTermErrorMessage,
 } from '../../../utils'
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
 import { Application } from '@island.is/application/types'
@@ -110,7 +109,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       required: true,
     }),
     buildTextField({
-      id: `freight.items.${freightIndex}.length`,
+      id: `freightPairing.${freightIndex}.length`,
       title: freight.labels.freightLength,
       backgroundColor: 'blue',
       width: 'half',
@@ -120,7 +119,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       suffix: freight.labels.metersSuffix,
     }),
     buildTextField({
-      id: `freight.items.${freightIndex}.weight`,
+      id: `freightPairing.${freightIndex}.weight`,
       title: freight.labels.freightWeight,
       backgroundColor: 'blue',
       width: 'half',
@@ -163,42 +162,20 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       id: 'freightShortTermPoliceEscortAlertMessage',
       alertType: 'info',
       title: freight.create.policeEscortAlertTitle,
-      message: (application) => {
-        const rules = getExemptionRules(application.externalData)
-        return {
-          ...freight.create.warningPoliceEscortAlertMessage,
-          values: {
-            maxLength: formatNumber(rules?.policeEscort.maxLength),
-            maxHeight: formatNumber(rules?.policeEscort.maxHeight),
-            maxWidth: formatNumber(rules?.policeEscort.maxWidth),
-          },
-        }
-      },
-      condition: (answers, externalData) => {
-        const rules = getExemptionRules(externalData)
-        const maxLength = rules?.policeEscort.maxLength
-        const maxHeight = rules?.policeEscort.maxHeight
-        const maxWidth = rules?.policeEscort.maxWidth
-
-        const length = getValueViaPath<string>(
+      message: (application) =>
+        getFreightShortTermErrorMessage(
+          application.externalData,
+          application.answers,
+          freightIndex,
+          convoyIndex,
+        ) || '',
+      condition: (answers, externalData) =>
+        !!getFreightShortTermErrorMessage(
+          externalData,
           answers,
-          `freight.items.${freightIndex}.length`,
-        )
-        const height = getValueViaPath<string>(
-          answers,
-          `freightPairing.${freightIndex}.items.${convoyIndex}.height`,
-        )
-        const width = getValueViaPath<string>(
-          answers,
-          `freightPairing.${freightIndex}.items.${convoyIndex}.width`,
-        )
-
-        return (
-          (length && maxLength ? Number(length) > maxLength : false) ||
-          (height && maxHeight ? Number(height) > maxHeight : false) ||
-          (width && maxWidth ? Number(width) > maxWidth : false)
-        )
-      },
+          freightIndex,
+          convoyIndex,
+        ),
     }),
   ],
 })
