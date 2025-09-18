@@ -8,6 +8,7 @@ import { Case } from '../modules/repository'
 import {
   addCoatOfArms,
   addEmptyLines,
+  addFooter,
   addLargeHeading,
   addMediumHeading,
   addNormalCenteredText,
@@ -178,6 +179,8 @@ export const createIndictmentCourtRecordPdf = (
       )
     }
   }
+
+  addFooter(doc)
 
   doc.end()
 
