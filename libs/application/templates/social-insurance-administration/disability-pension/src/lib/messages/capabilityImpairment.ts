@@ -18,4 +18,16 @@ export const capabilityImpairment = defineMessages({
     description:
       'Here you can describe in more detail the problem that affects your work capacity.',
   },
+
+  // Questionnaire
+  questionnaire: {
+    id: 'dp.application:capabilityImpairment.question.number',
+    defaultMessage: 'Sjálfsmat (Spurning {index} af {total})',
+    description: 'Self-assessment (Question {index} of {total})',
+  },
+  completeSelfAssessment: {
+    id: 'dp.application:capabilityImpairment.complete.self.assessment',
+    defaultMessage: 'Ljúka sjálfsmati',
+    description: 'Complete self-assessment',
+  },
 })

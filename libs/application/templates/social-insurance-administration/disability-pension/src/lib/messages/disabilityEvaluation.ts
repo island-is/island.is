@@ -22,25 +22,10 @@ export const disabilityEvaluation = defineMessages({
     defaultMessage: 'Hlaða inn staðfestingu',
     description: 'Upload confirmation',
   },
-  uploadButtonLabel: {
-    id: 'dp.application:disabilityEvaluation.uploadButtonLabel',
-    defaultMessage: 'Velja skjöl til að hlaða upp',
-    description: 'Choose files to upload',
-  },
   tabTitle: {
     id: 'dp.application:disabilityEvaluation.tabTitle',
     defaultMessage: 'Örorkumat',
     description: 'Disability evaluation',
-  },
-  yes: {
-    id: 'dp.application:disabilityEvaluation.yes',
-    defaultMessage: 'Já',
-    description: 'Yes',
-  },
-  no: {
-    id: 'dp.application:disabilityEvaluation.no',
-    defaultMessage: 'Nei',
-    description: 'No',
   },
   noInfo: {
     id: 'dp.application:disabilityEvaluation.noInfo',

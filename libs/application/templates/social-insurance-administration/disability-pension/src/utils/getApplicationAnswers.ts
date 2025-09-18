@@ -21,6 +21,7 @@ import {
   SchemaPaymentInfo,
   PreviousEmployment,
   SelfAssessmentQuestionnaireAnswers,
+  SelfAssessmentQuestionnaire,
 } from '../types/interfaces'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -328,6 +329,12 @@ export const getApplicationExternalData = (
     [],
   )
 
+  const questionnaire = getValueViaPath<SelfAssessmentQuestionnaire[]>(
+    externalData,
+    'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
+    [],
+  )
+
   return {
     residenceHistory,
     applicantName,
@@ -345,5 +352,6 @@ export const getApplicationExternalData = (
     countries,
     categorizedIncomeTypes,
     incomePlanConditions,
+    questionnaire
   }
 }

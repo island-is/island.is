@@ -4,33 +4,57 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { MAX_QUESTIONNAIRE_QUESTIONS } from '../../../../types/constants'
-import { SelfAssessmentQuestionnaire } from '../../../../types/interfaces'
 import { Application } from '@island.is/application/types'
 import { getQuestionnaire } from '../../../../utils/getQuestionnaire'
+import { getApplicationExternalData } from '../../../../utils'
 
 const buildQuestion = (index: number) => {
   return buildMultiField({
     id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}]`,
-    title: m.capabilityImpairment.title,
+    title: (application, locale) => {
+      const {questionnaire} = getApplicationExternalData(application.externalData)
+
+      const questions =
+        questionnaire?.find(
+          (q) =>
+            q.language.toLowerCase() === locale,
+        )?.questions ?? []
+
+      return {
+       ...m.capabilityImpairment.title,
+        values: {
+          index: index + 1,
+          total: questions.length
+        }
+      }
+    },
+    nextButtonText: (application) => {
+      const { questionnaire } = getApplicationExternalData(application.externalData)
+
+      const questions =
+        questionnaire?.find(
+          (q) =>
+            q.language.toLowerCase() === 'is',
+        )?.questions ?? []
+
+      if (index === questions.length - 1) {
+        return m.capabilityImpairment.completeSelfAssessment
+      }
+    },
     children: [
       buildDescriptionField({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}].description`,
         title: (application, locale) => {
-          const selfAssessmentQuestionnaire =
-            getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
-              application.externalData,
-              'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
-            ) ?? []
+          const { questionnaire } = getApplicationExternalData(application.externalData)
 
           const questions =
-            selfAssessmentQuestionnaire.find(
-              (questionnaire) =>
-                questionnaire.language.toLowerCase() === locale,
+            questionnaire?.find(
+              (q) =>
+                q.language.toLowerCase() === locale,
             )?.questions ?? []
 
           return questions[index]?.explanationText
@@ -41,35 +65,27 @@ const buildQuestion = (index: number) => {
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}].answer`,
         marginTop: 0,
         title: (application, locale) => {
-          const selfAssessmentQuestionnaire =
-            getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
-              application.externalData,
-              'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
-            ) ?? []
+          const { questionnaire } = getApplicationExternalData(application.externalData)
 
           const questions =
-            selfAssessmentQuestionnaire.find(
-              (questionnaire) =>
-                questionnaire.language.toLowerCase() === locale,
+            questionnaire?.find(
+              (q) =>
+                q.language.toLowerCase() === locale,
             )?.questions ?? []
 
           return questions[index]?.question
         },
         options: (application, _, locale) => {
-          const selfAssessmentQuestionnaire =
-            getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
-              application.externalData,
-              'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
-            ) ?? []
+          const { questionnaire } = getApplicationExternalData(application.externalData)
 
-          const selfAssessmentQuestionnaireScale =
-            selfAssessmentQuestionnaire.find(
-              (questionnaire) =>
-                questionnaire.language.toLowerCase() === locale,
-            )?.scale
+          const scale =
+            questionnaire?.find(
+              (q) =>
+                q.language.toLowerCase() === locale,
+            )?.scale ?? []
 
           return (
-            selfAssessmentQuestionnaireScale?.map(({ value, display }) => ({
+            scale?.map(({ value, display }) => ({
               value: value.toString(),
               label: display,
             })) ?? []
@@ -79,16 +95,13 @@ const buildQuestion = (index: number) => {
       }),
       buildHiddenInput({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}].id`,
-        defaultValue: (application: Application) => {
-          const selfAssessmentQuestionnaire =
-            getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
-              application.externalData,
-              'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
-            ) ?? []
+        defaultValue: (application: Application, locale: string) => {
+          const { questionnaire } = getApplicationExternalData(application.externalData)
 
           const questions =
-            selfAssessmentQuestionnaire.find(
-              (questionnaire) => questionnaire.language.toLowerCase() === 'is',
+            questionnaire?.find(
+              (q) =>
+                q.language.toLowerCase() === locale,
             )?.questions ?? []
 
           return questions[index]?.questionCode
