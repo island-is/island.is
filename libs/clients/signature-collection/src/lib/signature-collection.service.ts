@@ -23,7 +23,7 @@ import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
-import { ListSummary, mapListSummary } from './types/areaSummaryReport.dto'
+import { ListSummary, mapListSummary } from './types/summaryReport.dto'
 type Api =
   | MedmaelalistarApi
   | MedmaelasofnunApi

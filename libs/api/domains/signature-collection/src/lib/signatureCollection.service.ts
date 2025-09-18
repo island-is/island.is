@@ -23,7 +23,7 @@ import { SignatureCollectionAddListsInput } from './dto/addLists.input'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
 import { SignatureCollectionCollector } from './models/collector.model'
-import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
+import { SignatureCollectionListSummary } from './models/summaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 
 @Injectable()

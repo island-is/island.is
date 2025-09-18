@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { SignatureCollectionArea } from './area.model'
 
 @ObjectType()
-export class SignatureCollectionAreaSummaryReport extends SignatureCollectionArea {
+export class SignatureCollectionSummaryReport extends SignatureCollectionArea {
   @Field(() => [SignatureCollectionListSummary])
   lists!: SignatureCollectionListSummary[]
 }
@@ -15,8 +15,8 @@ export class SignatureCollectionListSummary {
   @Field(() => String)
   listName!: string
 
-  @Field(() => String)
-  partyBallotLetter!: string
+  @Field(() => String, { nullable: true })
+  partyBallotLetter?: string
 
   @Field(() => Number)
   nrOfSignatures!: number

@@ -31,7 +31,7 @@ import {
   SignatureCollectionSignedList,
   SignatureCollectionSignee,
 } from './models'
-import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
+import { SignatureCollectionListSummary } from './models/summaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 import { SignatureCollectionBaseInput } from './dto/signatureCollectionBase.input'
 
