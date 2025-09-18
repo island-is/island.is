@@ -259,6 +259,7 @@ export const useGetPdfReport = (
         },
       },
       skip: !listId,
+      fetchPolicy: 'no-cache',
     },
   )
   const report = pdfReportData?.signatureCollectionListOverview ?? {}

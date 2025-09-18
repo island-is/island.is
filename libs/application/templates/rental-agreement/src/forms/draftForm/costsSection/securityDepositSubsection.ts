@@ -27,13 +27,13 @@ import {
   securityDepositIsOther,
   securityDepositIsThirdPartyGuarantee,
 } from '../../../utils/rentalPeriodUtils'
-import * as m from '../../../lib/messages'
 import {
   getSecurityAmountOptions,
   getSecurityDepositTypeOptions,
 } from '../../../utils/options'
+import * as m from '../../../lib/messages'
 
-export const RentalPeriodSecurityDeposit = buildSubSection({
+export const securityDepositSubsection = buildSubSection({
   condition: securityDepositRequired,
   id: Routes.SECURITYDEPOSIT,
   title: m.misc.securityDeposit,
