@@ -141,8 +141,6 @@ const DEFAULT_GRANT_OPTIONS: Option<string>[] = [
 
 const PRESET_AMOUNTS = ['5.000', '10.000', '50.000', '100.000']
 
-const PRESET_PROJECTS = ['Endurmennt', 'Ótilgreint', 'Rannsóknir', 'Tækjakaup']
-
 export const DirectGrants = ({ slice }: DirectGrantsProps) => {
   const { formatMessage } = useIntl()
 
@@ -273,6 +271,28 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
   }
 
+  const projectOptions = useMemo(() => {
+    return [
+      {
+        label: formatMessage(m.info.continuingEducationProject),
+        value: 'Endurmenntun',
+      },
+      {
+        label: formatMessage(m.info.researchProject),
+        value: 'Rannsóknir',
+      },
+
+      {
+        label: formatMessage(m.info.equipmentPurchaseProject),
+        value: 'Tækjakaup',
+      },
+      {
+        label: formatMessage(m.info.otherProjects),
+        value: 'Önnur verkefni',
+      },
+    ]
+  }, [formatMessage])
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -292,15 +312,15 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
           />
           <Text variant="h2">{formatMessage(m.info.projectTitle)}</Text>
           <Box display="flex" flexWrap="wrap" columnGap={2} rowGap={2}>
-            {PRESET_PROJECTS.map((project) => (
+            {projectOptions.map((project) => (
               <RadioButton
-                key={project}
-                id={`project-${project}`}
-                name="project"
-                label={project}
-                checked={selectedProject === project}
+                key={project.value}
+                id={project.value}
+                name={project.value}
+                label={project.label}
+                checked={selectedProject === project.value}
                 onChange={() =>
-                  setValue('project', project, { shouldValidate: true })
+                  setValue('project', project.value, { shouldValidate: true })
                 }
                 large={true}
               />
@@ -317,7 +337,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               <RadioButton
                 key={amount}
                 id={`amount-${amount}`}
-                name="amountISK"
+                name={`amount-${amount}`}
                 label={amount}
                 checked={selectedAmount === amount}
                 onChange={() =>

@@ -92,6 +92,26 @@ export const m = {
       defaultMessage: 'Greiða',
       description: 'Halda áfram í greiðslu takki',
     },
+    continuingEducationProject: {
+      id: 'web.landspitali.directGrants:info.continuingEducationProject',
+      defaultMessage: 'Endurmenntun',
+      description: 'Endurmenntun',
+    },
+    researchProject: {
+      id: 'web.landspitali.directGrants:info.researchProject',
+      defaultMessage: 'Rannsóknir',
+      description: 'Rannsóknir',
+    },
+    equipmentPurchaseProject: {
+      id: 'web.landspitali.directGrants:info.equipmentPurchaseProject',
+      defaultMessage: 'Tækjakaup',
+      description: 'Tækjakaup',
+    },
+    otherProjects: {
+      id: 'web.landspitali.directGrants:info.otherProjects',
+      defaultMessage: 'Önnur verkefni',
+      description: 'Önnur verkefni',
+    },
   }),
   validation: defineMessages({
     errorTitle: {
