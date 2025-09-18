@@ -6,7 +6,6 @@ import {
   mapVehicleResponseDto,
 } from './dtos/vehiclesResponse.dto'
 import { GetVehiclesInput } from './input/getVehicles.input'
-import { OwnershipReportInput } from './input/ownershipReport.input'
 import { VehicleHistoryInput } from './input/vehicleHistory.input'
 import { mapVehicleDataToNestedArray } from './dtos/tableData.dto'
 
