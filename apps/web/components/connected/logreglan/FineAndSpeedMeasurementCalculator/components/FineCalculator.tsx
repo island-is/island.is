@@ -23,6 +23,7 @@ interface Fine {
   price: number
   points: number
   maxAmountThatCanBeSelected?: number
+  keywords?: string[]
 }
 
 interface FineState extends Fine {
@@ -78,7 +79,12 @@ const FineCardList = ({
                     .includes(searchValue.toLowerCase()) ||
                   fine.subtitle
                     .toLowerCase()
-                    .includes(searchValue.toLowerCase()),
+                    .includes(searchValue.toLowerCase()) ||
+                  fine.law.toLowerCase().includes(searchValue.toLowerCase()) ||
+                  (fine.keywords?.some((keyword) =>
+                    keyword.toLowerCase().includes(searchValue.toLowerCase()),
+                  ) ??
+                    false),
               )
               .map((fine) => {
                 const onClick = () => {
