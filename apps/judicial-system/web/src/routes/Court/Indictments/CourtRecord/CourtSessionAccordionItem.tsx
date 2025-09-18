@@ -263,6 +263,36 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     )
   }
 
+  const handleRename = (
+    courtSessionId: string,
+    fileId: string,
+    newName: string,
+  ) => {
+    if (!fileId || !newName.trim()) {
+      return
+    }
+
+    updateCourtDocument({
+      caseId: workingCase.id,
+      courtSessionId,
+      courtDocumentId: fileId,
+      name: newName,
+    })
+
+    setReorderableFiles((prev) =>
+      prev.map((session) =>
+        session.courtSessionId === courtSessionId
+          ? {
+              ...session,
+              files: session.files.map((file) =>
+                file.id === fileId ? { ...file, name: newName } : file,
+              ),
+            }
+          : session,
+      ),
+    )
+  }
+
   const handleFileCourtDocument = async (file: ReorderableFile) => {
     const res = await fileCourtDocumentInCourtSession({
       caseId: workingCase.id,
@@ -626,12 +656,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                             canEdit: ['fileName'],
                           }}
                           backgroundColor="white"
-                          onRename={(
-                            _id: string,
-                            _name: string,
-                            _displayDate: string,
-                          ): void => {
-                            throw new Error('Function not implemented.')
+                          onRename={(id: string, newName: string) => {
+                            handleRename(courtSession.id, id, newName)
                           }}
                           onDelete={handleDeleteFile}
                         />

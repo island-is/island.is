@@ -92,24 +92,37 @@ const EditableCaseFile: FC<Props> = (props) => {
     const trimmedFilename = editedFilename?.trim()
     const trimmedDisplayDate = editedDisplayDate?.trim()
 
-    if (trimmedFilename === undefined || trimmedFilename.length === 0) {
-      toast.error(formatMessage(strings.invalidFilenameErrorMessage))
-      return
+    if (canEditName) {
+      if (trimmedFilename === undefined || trimmedFilename.length === 0) {
+        toast.error(formatMessage(strings.invalidFilenameErrorMessage))
+        return
+      }
     }
 
-    let newDate: Date | undefined
+    let isoDate: string | undefined
 
-    if (trimmedDisplayDate) {
+    if (canEditDate) {
+      if (!trimmedDisplayDate) {
+        toast.error(formatMessage(strings.invalidDateErrorMessage))
+        return
+      }
+
       const [day, month, year] = trimmedDisplayDate.split('.')
-      newDate = parseISO(`${year}-${month}-${day}`)
+      const parsedDate = parseISO(`${year}-${month}-${day}`)
+
+      if (!isValid(parsedDate)) {
+        toast.error(formatMessage(strings.invalidDateErrorMessage))
+        return
+      }
+
+      isoDate = parsedDate.toISOString()
     }
 
-    if (!newDate || !isValid(newDate)) {
-      toast.error(formatMessage(strings.invalidDateErrorMessage))
-      return
-    }
-
-    onRename(caseFile.id, trimmedFilename, newDate.toISOString())
+    onRename(
+      caseFile.id,
+      trimmedFilename ?? caseFile.userGeneratedFilename ?? '',
+      isoDate ?? caseFile.displayDate ?? '',
+    )
 
     setIsEditing(false)
     onStopEditing?.()
