@@ -174,7 +174,7 @@ export const Overview = () => {
           return (
             <Fragment key={defendant.id}>
               <Box className={styles.container}>
-                {features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) && (
+                {features?.includes(Feature.VERDICT_DELIVERY) && (
                   <VerdictStatusAlert verdict={verdict} defendant={defendant} />
                 )}
                 <Box component="section">

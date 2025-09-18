@@ -3,6 +3,7 @@ import PDFDocument from 'pdfkit'
 import { FormatMessage } from '@island.is/cms-translations'
 
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import { hasTimestamp } from '@island.is/judicial-system/types'
 import {
   UserRole,
   VerdictAppealDecision,
@@ -78,9 +79,10 @@ export const createVerdictServiceCertificate = (
   addEmptyLines(doc, 3)
 
   if (verdict.serviceDate) {
+    const format = hasTimestamp(verdict.serviceDate) ? 'PPPp' : 'PPP'
     addMediumCenteredText(
       doc,
-      `Birting tókst ${formatDate(verdict.serviceDate, 'PPPp')}`,
+      `Birting tókst ${formatDate(verdict.serviceDate, format)}`,
       'Times-Bold',
     )
   }

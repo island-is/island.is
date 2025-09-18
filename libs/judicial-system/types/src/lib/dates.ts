@@ -22,3 +22,10 @@ export const getIndictmentAppealDeadlineDate = (
 
 export const getAppealDeadlineDate = (baseDate: Date) =>
   addDays(baseDate, APPEAL_WINDOW_DAYS)
+
+export const hasTimestamp = (date: Date): boolean => {
+  return (
+    date.getTime() !==
+    new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+  )
+}

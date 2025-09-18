@@ -4,6 +4,7 @@ import {
   getAppealDeadlineDate,
   getIndictmentAppealDeadlineDate,
   hasDatePassed,
+  hasTimestamp,
 } from './dates'
 
 describe('getIndictmentAppealDeadlineDate', () => {
@@ -67,5 +68,25 @@ describe('hasDatePassed', () => {
 
     // Assert
     expect(isFutureDate).toBe(false)
+  })
+})
+
+describe('hasTimestamp', () => {
+  test('should return true if timestamp is present', () => {
+    // Arrange
+    const date = new Date(2024, 0, 1, 1, 1, 1)
+
+    // Act
+    // Assert
+    expect(hasTimestamp(date)).toBe(true)
+  })
+
+  test('should return true if timestamp is not present', () => {
+    // Arrange
+    const date = new Date(2024, 0, 1)
+
+    // Act
+    // Assert
+    expect(hasTimestamp(date)).toBe(false)
   })
 })

@@ -147,6 +147,7 @@ export {
   getIndictmentAppealDeadlineDate,
   getAppealDeadlineDate,
   hasDatePassed,
+  hasTimestamp,
 } from './lib/dates'
 
 export type {
