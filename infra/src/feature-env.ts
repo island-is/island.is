@@ -99,6 +99,7 @@ const parseArguments = (argv: Arguments) => {
       .filter((x) => !affectedSet.has(x)),
   })
   return {
+    feature,
     habitat,
     affectedServices,
     env,
@@ -129,10 +130,12 @@ const buildComment = (data: Services<HelmService>): string => {
 const deployedComment = (
   data: ServiceBuilder<any>[],
   excluded: string[],
+  feature: string
 ): string => {
   return `Deployed services: ${data
     .map((d) => d.name())
-    .join(',')}. \n Excluded services: \`${excluded.join(',')}\``
+    .join(',')}. \n Excluded services: \`${excluded.join(',')}\` \n \n
+    You can view the progress of your feature deployment in ArgoCD here: https://argocd.shared.devland.is/applications?labels=feature-name%253D${feature}`
 }
 
 yargs(process.argv.slice(2))
@@ -266,7 +269,7 @@ yargs(process.argv.slice(2))
     builder: (yargs) => yargs,
     handler: async (argv) => {
       const typedArgv = argv as unknown as Arguments
-      const { habitat, affectedServices, env } = parseArguments(typedArgv)
+      const { habitat, affectedServices, env, feature } = parseArguments(typedArgv)
       const { included: featureYaml, excluded } =
         await getFeatureAffectedServices(
           habitat,
@@ -278,7 +281,7 @@ yargs(process.argv.slice(2))
         (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
           .services,
       )
-      const includedServicesComment = deployedComment(featureYaml, excluded)
+      const includedServicesComment = deployedComment(featureYaml, excluded, feature)
       await writeToOutput(
         `${ingressComment}\n\n${includedServicesComment}`,
         typedArgv.output,
