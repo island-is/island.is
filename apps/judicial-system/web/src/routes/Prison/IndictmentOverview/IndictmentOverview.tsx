@@ -12,9 +12,11 @@ import {
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
+import { Feature } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -48,6 +50,7 @@ const IndictmentOverview = () => {
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { features } = useContext(FeatureContext)
 
   const { updateCase, isUpdatingCase } = useCase()
 
@@ -226,19 +229,20 @@ const IndictmentOverview = () => {
               ) ?? []
             }
           />
-          {workingCase.defendants?.map(
-            (defendant) =>
-              defendant.verdict?.serviceDate && (
-                <PdfButton
-                  key={defendant.id}
-                  caseId={workingCase.id}
-                  title={`Birtingarvottorð ${defendant.name}.pdf`}
-                  pdfType="verdictServiceCertificate"
-                  elementId={[defendant.id]}
-                  renderAs="row"
-                />
-              ),
-          )}
+          {features?.includes(Feature.VERDICT_DELIVERY) &&
+            workingCase.defendants?.map(
+              (defendant) =>
+                defendant.verdict?.serviceDate && (
+                  <PdfButton
+                    key={defendant.id}
+                    caseId={workingCase.id}
+                    title={`Birtingarvottorð ${defendant.name}.pdf`}
+                    pdfType="verdictServiceCertificate"
+                    elementId={[defendant.id]}
+                    renderAs="row"
+                  />
+                ),
+            )}
         </Box>
         {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>
