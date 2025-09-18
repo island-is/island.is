@@ -1,11 +1,11 @@
 import { useLocale } from '@island.is/localization'
 import { Button } from '@island.is/island-ui/core'
-import { usePDF, Document } from '@react-pdf/renderer'
+import { Document, pdf } from '@react-pdf/renderer'
 import MyPdfDocument from './Document'
 import { useGetPdfReport } from '../../../hooks'
 import { m } from '../../../lib/messages'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export const PdfReport = ({
   listId,
@@ -15,23 +15,39 @@ export const PdfReport = ({
   collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
-  const { report } = useGetPdfReport(listId || '', collectionType)
+  const { report, refetch } = useGetPdfReport(listId || '', collectionType)
 
-  const [instance, updateInstance] = usePDF({ document: <Document /> })
+  const instance = pdf(<Document />)
+  const [openAfterUpdate, setOpenAfterUpdate] = useState(false)
 
   useEffect(() => {
     if (report) {
-      updateInstance(
+      instance.updateContainer(
         <MyPdfDocument report={report} collectionType={collectionType} />,
+        async () => {
+          if (openAfterUpdate) {
+            const url = await instance
+              .toBlob()
+              .then((b) => URL.createObjectURL(b))
+            window.open(url, '_blank')
+            setOpenAfterUpdate(false)
+          }
+        },
       )
     }
-    // eslint-disable-next-line
-  }, [report, updateInstance])
+  }, [report, instance, collectionType, openAfterUpdate])
+
+  const onClick = async () => {
+    await refetch()
+    setOpenAfterUpdate(true)
+  }
 
   return (
     <Button
       variant="text"
-      onClick={() => window.open(instance.url?.toString(), '_blank')}
+      onClick={onClick}
+      disabled={openAfterUpdate}
+      loading={openAfterUpdate}
     >
       {formatMessage(m.downloadPdf)}
     </Button>

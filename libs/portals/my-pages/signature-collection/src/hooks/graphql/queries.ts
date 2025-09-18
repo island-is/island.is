@@ -106,6 +106,7 @@ export const GetListsForUser = gql`
       candidate {
         ownerName
         ownerBirthDate
+        name
       }
       endTime
       startTime
