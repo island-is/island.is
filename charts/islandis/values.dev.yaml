@@ -1984,7 +1984,6 @@ namespaces:
     - 'payments'
     - 'services-payments'
     - 'portals-my-pages'
-    - 'unicorn-app'
     - 'services-form-system-api'
     - 'form-system-web'
     - 'services-payment-flow-update-handler'
