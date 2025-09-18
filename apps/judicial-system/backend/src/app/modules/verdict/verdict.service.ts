@@ -17,11 +17,13 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  DefendantEventType,
   isVerdictInfoChanged,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
+import { DefendantService } from '../defendant'
 import { FileService } from '../file'
 import { PoliceService } from '../police'
 import { Case, Defendant, Verdict } from '../repository'
@@ -48,6 +50,7 @@ export class VerdictService {
     private readonly fileService: FileService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
+    private readonly defendantService: DefendantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -319,8 +322,16 @@ export class VerdictService {
     if (!createdDocument) {
       return { delivered: false }
     }
+
     // update existing verdict with the external document id returned from the police
     await this.updateVerdict(verdict, createdDocument)
+
+    await this.defendantService.createDefendantEvent({
+      caseId: theCase.id,
+      defendantId: defendant.id,
+      eventType:
+        DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
+    })
 
     return { delivered: true }
   }

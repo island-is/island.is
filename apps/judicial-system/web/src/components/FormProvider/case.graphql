@@ -52,6 +52,7 @@ query Case($input: CaseQueryInput!) {
       verdict {
         id
         created
+        verdictDeliveredToNationalCommissionersOffice
         appealDate
         appealDecision
         serviceRequirement
