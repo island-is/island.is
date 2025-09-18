@@ -46,7 +46,7 @@ jobs:
     secrets: inherit
     with:
       main_branch: ${{ github.base_ref }}
-      skip_cahce: true
+      skip_cache: true
 
   tests:
     needs:
