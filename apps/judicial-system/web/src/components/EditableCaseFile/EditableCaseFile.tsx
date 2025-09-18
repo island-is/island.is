@@ -48,6 +48,7 @@ interface Props {
   caseFile: TEditableCaseFile
   // Overwrites the default background color based on file status
   backgroundColor?: 'white'
+  disabled?: boolean
   onRename: (id: string, name: string, displayDate: string) => void
   onDelete: (file: TUploadFile) => void
   onOpen?: (id: string) => void
@@ -62,6 +63,7 @@ const EditableCaseFile: FC<Props> = (props) => {
     caseFile,
     backgroundColor,
     onOpen,
+    disabled,
     onRename,
     onDelete,
     onRetry,
@@ -316,7 +318,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                       [styles.background.secondary]:
                         caseFile.status === FileUploadStatus.error || isEmpty,
                     })}
-                    disabled={!caseFile.canEdit?.length}
+                    disabled={!caseFile.canEdit?.length || disabled}
                     aria-label="Breyta skrá"
                   >
                     <Icon icon="pencil" color={color} />

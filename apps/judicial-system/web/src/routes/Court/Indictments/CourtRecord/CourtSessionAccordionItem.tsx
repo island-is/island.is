@@ -242,6 +242,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }
 
   const handleReorder = (newOrder: ReorderableFile[]) => {
+    if (courtSession.isConfirmed) {
+      return
+    }
+
     const newIndex = newOrder.findIndex((f) => f.id === draggedFileId)
     if (!draggedFileId || newIndex === -1) {
       return
@@ -469,6 +473,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     )
                   }
                 }}
+                disabled={courtSession.isConfirmed || false}
                 blueBox={false}
                 required
               />
@@ -499,6 +504,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 errorMessage={locationErrorMessage}
                 hasError={locationErrorMessage !== ''}
                 autoComplete="off"
+                disabled={courtSession.isConfirmed || false}
                 required
               />
               <Checkbox
@@ -515,6 +521,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   )
                 }
                 checked={Boolean(courtSession.isClosed)}
+                disabled={courtSession.isConfirmed || false}
                 filled
                 large
               />
@@ -574,6 +581,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                               { persist: true },
                             )
                           }}
+                          disabled={courtSession.isConfirmed || false}
                           large
                           filled
                         />
@@ -607,6 +615,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
+            disabled={courtSession.isConfirmed || false}
           />
           <MultipleValueList
             onAddValue={(val) => handleAddCourtDocument(val, courtSession.id)}
@@ -614,7 +623,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             inputPlaceholder="Skrá inn heiti á skjali hér"
             buttonText="Bæta við skjali"
             name="indictmentCourtDocuments"
-            isDisabled={() => courtDocument.isCreating}
+            isDisabled={() =>
+              courtDocument.isCreating || courtSession.isConfirmed || false
+            }
             isLoading={courtDocument.isCreating}
           >
             <Box display="flex" flexDirection="column" rowGap={2}>
@@ -660,6 +671,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                             handleRename(courtSession.id, id, newName)
                           }}
                           onDelete={handleDeleteFile}
+                          disabled={courtSession.isConfirmed || false}
                         />
                       </Reorder.Item>
                     ))}
@@ -736,7 +748,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                               outlined
                               variant="darkerBlue"
                               onClick={() => handleFileCourtDocument(file)}
-                              disabled={courtDocument.isCreating}
+                              disabled={
+                                courtDocument.isCreating ||
+                                courtSession.isConfirmed ||
+                                false
+                              }
                             >
                               Leggja fram
                             </Tag>
@@ -783,6 +799,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               errorMessage={entriesErrorMessage}
               rows={15}
               autoExpand={{ on: true, maxHeight: 300 }}
+              disabled={courtSession.isConfirmed || false}
               textarea
               required
             />
@@ -811,6 +828,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     { persist: true },
                   )
                 }
+                disabled={courtSession.isConfirmed || false}
                 large
               />
               <RadioButton
@@ -829,6 +847,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     { persist: true },
                   )
                 }
+                disabled={courtSession.isConfirmed || false}
                 large
               />
               <RadioButton
@@ -847,6 +866,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     { persist: true },
                   )
                 }
+                disabled={courtSession.isConfirmed || false}
                 large
               />
             </BlueBox>
@@ -902,6 +922,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   errorMessage={rulingErrorMessage}
                   rows={15}
                   autoExpand={{ on: true, maxHeight: 300 }}
+                  disabled={courtSession.isConfirmed || false}
                   textarea
                   required
                 />
@@ -930,6 +951,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   }}
                   rows={15}
                   autoExpand={{ on: true, maxHeight: 300 }}
+                  disabled={courtSession.isConfirmed || false}
                   textarea
                 />
               </Box>
@@ -960,6 +982,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     { persist: true },
                   )
                 }}
+                disabled={courtSession.isConfirmed || false}
                 large
                 filled
               />
@@ -980,7 +1003,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 size="md"
                 label="Veldu vott"
                 placeholder="Veldu vott að þinghaldi"
-                isDisabled={!courtSession.isAttestingWitness}
+                isDisabled={
+                  !courtSession.isAttestingWitness ||
+                  courtSession.isConfirmed ||
+                  false
+                }
                 isLoading={usersLoading}
                 required
               />
@@ -1001,17 +1028,20 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       ? new Date(courtSession.startDate)
                       : new Date()
                   }
+                  disabled={courtSession.isConfirmed || false}
                   timeOnly
                 />
               </div>
               <Box className={styles.button}>
                 <Button
-                  icon="checkmark"
+                  icon={courtSession.isConfirmed ? 'pencil' : 'checkmark'}
                   onClick={onConfirmClick}
                   size="small"
                   disabled={!isCourtSessionValid(courtSession)}
                 >
-                  Staðfesta þingbók
+                  {`${
+                    courtSession.isConfirmed ? 'Leiðrétta' : 'Staðfesta'
+                  } þingbók`}
                 </Button>
               </Box>
             </BlueBox>

@@ -22,7 +22,7 @@ import CourtSessionAccordionItem from './CourtSessionAccordionItem'
 const CourtRecord: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { createCourtSession } = useCourtSessions()
+  const { createCourtSession, updateCourtSession } = useCourtSessions()
   const [expandedIndex, setExpandedIndex] = useState<number>()
 
   const handleNavigationTo = useCallback(
@@ -33,6 +33,26 @@ const CourtRecord: FC = () => {
   const stepIsValid = isIndictmentCourtRecordStepValid(
     workingCase.courtSessions,
   )
+
+  const handleConfirmClick = (
+    courtSessionId: string,
+    isConfirmed: boolean | null = false,
+  ) => {
+    setWorkingCase((prev) => ({
+      ...prev,
+      courtSessions: prev.courtSessions?.map((session) =>
+        session.id === courtSessionId
+          ? { ...session, isConfirmed: !isConfirmed }
+          : session,
+      ),
+    }))
+
+    updateCourtSession({
+      courtSessionId,
+      caseId: workingCase.id,
+      isConfirmed: !isConfirmed,
+    })
+  }
 
   useEffect(() => {
     setExpandedIndex(
@@ -64,7 +84,9 @@ const CourtRecord: FC = () => {
               onToggle={() =>
                 setExpandedIndex(index === expandedIndex ? -1 : index)
               }
-              onConfirmClick={() => setExpandedIndex(undefined)}
+              onConfirmClick={() =>
+                handleConfirmClick(courtSession.id, courtSession.isConfirmed)
+              }
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
             />
