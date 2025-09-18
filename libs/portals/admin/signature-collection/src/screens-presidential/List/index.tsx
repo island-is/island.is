@@ -11,9 +11,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Text,
 } from '@island.is/island-ui/core'
-import { format as formatNationalId } from 'kennitala'
 import Signees from '../../shared-components/signees'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { PaperSignees } from '../../shared-components/paperSignees'
@@ -79,20 +77,6 @@ export const List = () => {
               />
               <Divider />
               <Box marginTop={9} />
-              {!!list.collectors?.length && (
-                <Box marginBottom={5}>
-                  <Text variant="h5">{formatMessage(m.collectors)}</Text>
-                  {list.collectors?.map((collector) => (
-                    <Text variant="medium" key={collector.name}>
-                      {collector.name +
-                        ' ' +
-                        '(' +
-                        formatNationalId(collector.nationalId) +
-                        ')'}
-                    </Text>
-                  ))}
-                </Box>
-              )}
               <Signees list={list} />
               {!list.reviewed && (
                 <PaperSignees

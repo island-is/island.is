@@ -168,27 +168,6 @@ export class ApplicationService {
       }
     }
 
-    const applicantAccessConditions = applicantNationalId
-      ? {
-          [Op.or]: [
-            { applicant: { [Op.eq]: applicantNationalId } },
-            { assignees: { [Op.contains]: [applicantNationalId] } },
-          ],
-        }
-      : {}
-
-    const searchCondition = searchStrValue
-      ? {
-          [Op.or]: [
-            { applicant: { [Op.eq]: searchStrValue } },
-            { assignees: { [Op.contains]: [searchStrValue] } },
-            Sequelize.where(Sequelize.cast(Sequelize.col('answers'), 'text'), {
-              [Op.iLike]: `%${escapeLike(searchStrValue)}%`,
-            }),
-          ],
-        }
-      : {}
-
     return this.applicationModel.findAndCountAll({
       where: {
         ...{ typeId: { [Op.in]: filteredInstitutionTypeIds } },
@@ -196,8 +175,23 @@ export class ApplicationService {
         [Op.and]: [
           fromDate ? { created: { [Op.gte]: fromDate } } : {},
           toDate ? { created: { [Op.lte]: toDate } } : {},
-          applicantAccessConditions,
-          searchCondition,
+          applicantNationalId
+            ? { applicant: { [Op.eq]: applicantNationalId } }
+            : {},
+          searchStrValue
+            ? {
+                [Op.or]: [
+                  { applicant: { [Op.eq]: searchStrValue } },
+                  { assignees: { [Op.contains]: [searchStrValue] } },
+                  Sequelize.where(
+                    Sequelize.cast(Sequelize.col('answers'), 'text'),
+                    {
+                      [Op.iLike]: `%${escapeLike(searchStrValue)}%`,
+                    },
+                  ),
+                ],
+              }
+            : {},
         ],
         isListed: {
           [Op.eq]: true,

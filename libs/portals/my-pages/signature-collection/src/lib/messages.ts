@@ -70,7 +70,7 @@ export const m = defineMessages({
   },
   collectionClosed: {
     id: 'sp.signatureCollection:collectionClosed',
-    defaultMessage: 'Söfnuninni lokið',
+    defaultMessage: 'Söfnun lokið',
     description: '',
   },
   collectionMaxReached: {
@@ -436,6 +436,11 @@ export const m = defineMessages({
     defaultMessage: 'Sveitarstjórnarkosningar',
     description: '',
   },
+  collectionMunicipalListOwner: {
+    id: 'sp.signatureCollection:collectionMunicipalListOwner',
+    defaultMessage: 'Stofnandi söfnunar',
+    description: '',
+  },
   pageTitleMunicipal: {
     id: 'sp.signatureCollection:pageTitleMunicipal',
     defaultMessage: 'Meðmælasafnanir fyrir sveitarstjórnarkosningar',
@@ -445,6 +450,12 @@ export const m = defineMessages({
     id: 'sp.signatureCollection:pageIntro',
     defaultMessage:
       'Hér eru upplýsingar um hlekk á söfnunina, stöðuna og yfirlit yfir umsjónaraðila.',
+    description: '',
+  },
+  pageIntroSignee: {
+    id: 'sp.signatureCollection:pageIntroSignee',
+    defaultMessage:
+      'Hægt er að draga meðmæli til baka og mæla með öðru framboði.',
     description: '',
   },
   collectionIsActive: {
@@ -479,9 +490,14 @@ export const m = defineMessages({
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu justo interdum, pharetra enim vel, ultrices augue.',
     description: '',
   },
+  deleteCollectionCandidacy: {
+    id: 'sp.signatureCollection:deleteCollectionCandidacy',
+    defaultMessage: 'Eyða framboði',
+    description: '',
+  },
   deleteCollection: {
     id: 'sp.signatureCollection:deleteCollection',
-    defaultMessage: 'Eyða frambooði',
+    defaultMessage: 'Eyða söfnun',
     description: '',
   },
   deleteCollectionDescription: {

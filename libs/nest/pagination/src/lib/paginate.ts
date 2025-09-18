@@ -121,6 +121,7 @@ export interface PaginateInput {
   after: string
   before?: string
   limit: number
+  distinctCol?: string
   [key: string]: any
 }
 
@@ -140,6 +141,7 @@ export async function paginate<T = any>({
   before,
   limit,
   attributes,
+  distinctCol,
   ...queryArgs
 }: PaginateInput): Promise<{
   totalCount: number
@@ -174,14 +176,14 @@ export async function paginate<T = any>({
     where,
     ...queryArgs,
     distinct: true,
-    col: Model.primaryKeyAttribute,
+    ...(distinctCol && { col: distinctCol }),
   }
 
   const cursorCountQueryOptions = {
     where: paginationWhere,
     ...queryArgs,
     distinct: true,
-    col: Model.primaryKeyAttribute,
+    ...(distinctCol && { col: distinctCol }),
   }
 
   const [instances, totalCount, cursorCount] = await Promise.all([

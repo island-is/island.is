@@ -1,8 +1,8 @@
 import {
   coreHistoryMessages,
-  pruneAfterDays,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
   YES,
 } from '@island.is/application/core'
 import {
@@ -43,15 +43,18 @@ import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import {
+  SocialInsuranceAdministrationActivitiesOfProfessionsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationEctsUnitsApi,
   SocialInsuranceAdministrationEducationLevelsApi,
+  SocialInsuranceAdministrationEmploymentStatusesApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationMARPQuestionnairesApi,
+  SocialInsuranceAdministrationProfessionsApi,
   SocialInsuranceAdministrationResidenceInformationApi,
 } from '../dataProviders'
 import {
@@ -135,6 +138,9 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationResidenceInformationApi,
                 SocialInsuranceAdministrationMARPApplicationTypeApi,
                 SocialInsuranceAdministrationEducationLevelsApi,
+                SocialInsuranceAdministrationEmploymentStatusesApi,
+                SocialInsuranceAdministrationProfessionsApi,
+                SocialInsuranceAdministrationActivitiesOfProfessionsApi,
               ],
               delete: true,
             },
@@ -233,11 +239,11 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: coreSIAStatesMessages.applicationApproved,
+                logMessage: coreHistoryMessages.applicationApproved,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreSIAStatesMessages.applicationRejected,
+                logMessage: coreHistoryMessages.applicationRejected,
               },
               {
                 onEvent: OAPEvents.DISMISS,
@@ -276,7 +282,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
           status: FormModes.APPROVED,
           actionCard: {
             pendingAction: {
-              title: coreSIAStatesMessages.applicationApproved,
+              title: statesMessages.applicationApproved,
               content: statesMessages.applicationApprovedDescription,
               displayStatus: 'success',
             },
@@ -300,7 +306,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
           status: FormModes.REJECTED,
           actionCard: {
             pendingAction: {
-              title: coreSIAStatesMessages.applicationRejected,
+              title: statesMessages.applicationRejected,
               content: statesMessages.applicationRejectedDescription,
               displayStatus: 'error',
             },

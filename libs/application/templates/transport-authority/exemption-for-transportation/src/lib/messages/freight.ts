@@ -16,14 +16,19 @@ export const freight = {
     },
     pageTitle: {
       id: 'ta.eft.application:freight.create.pageTitle',
-      defaultMessage: 'Farmur',
+      defaultMessage: 'Upplýsingar um farm',
       description: 'Title of create freight page',
     },
-    description: {
-      id: 'ta.eft.application:freight.create.description',
+    descriptionShortTerm: {
+      id: 'ta.eft.application:freight.create.descriptionShortTerm',
+      defaultMessage: ' ',
+      description: 'Description of create freight page for short-term',
+    },
+    descriptionLongTerm: {
+      id: 'ta.eft.application:freight.create.descriptionLongTerm',
       defaultMessage:
-        'Vinsamlegast fylltu út upplýsingar um farminn sem þú ert að fara að flytja.',
-      description: 'Description of create freight page',
+        'Hér þarf að setja inn alla farma sem sótt er um langtímaundanþágu fyrir.',
+      description: 'Description of create freight page for long-term',
     },
     policeEscortAlertTitle: {
       id: 'ta.eft.application:freight.create.policeEscortAlertTitle',
@@ -49,20 +54,19 @@ export const freight = {
     errorPoliceEscortAlertMessage: {
       id: 'ta.eft.application:freight.create.errorPoliceEscortAlertMessage',
       defaultMessage:
-        'Farmur sem fer yfir {maxLength} metra lengd þarfnast lögreglufylgdar. Lögreglufylgd er aðeins í boði fyrir skammtímaundanþágu. Vinsamlegast fjarlægðu farm {freightNumber}: {freightName}.',
+        'Farmur sem fer yfir {maxLength} metra lengd þarfnast lögreglufylgdar. Lögreglufylgd er aðeins í boði fyrir skammtímaundanþágu.',
       description: 'Error police escort alert message when creating freight',
     },
   }),
   pairing: defineMessages({
     subSectionTitle: {
       id: 'ta.eft.application:freight.pairing.subSectionTitle',
-      defaultMessage:
-        'Para vagnlestir við farm {freightNumber}: {freightName} {length}/{weight}',
+      defaultMessage: 'Para vagnlestir við farm {freightNumber}: {freightName}',
       description: 'Title of pairing freight with convoy sub section',
     },
     pageTitle: {
       id: 'ta.eft.application:freight.pairing.pageTitle',
-      defaultMessage: 'Farmur {freightNumber}: {freightName} {length}/{weight}',
+      defaultMessage: 'Farmur {freightNumber}: {freightName}',
       description: 'Title of pairing freight with convoy page',
     },
     description: {
@@ -90,6 +94,16 @@ export const freight = {
       defaultMessage: 'Upplýsingar um farm',
       description: 'Freight subtitle',
     },
+    freightNumber: {
+      id: 'ta.eft.application:freight.labels.freightNumber',
+      defaultMessage: 'Farmur {number}',
+      description: 'Freight number label',
+    },
+    freightNumberTableHeader: {
+      id: 'ta.eft.application:freight.labels.freightNumberTableHeader',
+      defaultMessage: 'Farmur',
+      description: 'Freight number table header label',
+    },
     freightName: {
       id: 'ta.eft.application:freight.labels.freightName',
       defaultMessage: 'Tegund farms',
@@ -104,11 +118,6 @@ export const freight = {
       id: 'ta.eft.application:freight.labels.freightWeight',
       defaultMessage: 'Þyngd farms',
       description: 'Freight weight label',
-    },
-    freightWithConvoySubtitle: {
-      id: 'ta.eft.application:freight.labels.freightWithConvoySubtitle',
-      defaultMessage: 'Upplýsingar um farm á vagnlest',
-      description: 'Freight with convoy subtitle',
     },
     heightWithConvoy: {
       id: 'ta.eft.application:freight.labels.heightWithConvoy',
@@ -127,7 +136,7 @@ export const freight = {
     },
     exemptionFor: {
       id: 'ta.eft.application:freight.labels.exemptionFor',
-      defaultMessage: 'Óskað er eftir undanþágu vegna:',
+      defaultMessage: 'Óskað er eftir undanþágu vegna',
       description: 'Exemption for checkbox label',
     },
     metersSuffix: {

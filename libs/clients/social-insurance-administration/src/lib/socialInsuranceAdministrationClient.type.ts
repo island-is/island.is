@@ -180,12 +180,19 @@ export interface SelfAssessment {
   answers: Answer[]
 }
 
+export interface EmploymentStatus {
+  employmentStatus: string
+  explanation: string | null
+}
+
 export interface PreQuestionnaire {
   highestEducation: string
-  currentEmploymentStatus: string // TODO: Smári needs to change to an array
-  currentEmploymentStatusExplanation?: string
-  lastJobTitle?: string
-  lastJobYear?: number
+  employmentStatuses: EmploymentStatus[]
+  lastProfession?: string
+  lastProfessionDescription?: string
+  lastActivityOfProfession?: string
+  lastActivityOfProfessionDescription?: string
+  lastProfessionYear?: number
   disabilityReason: string
   hasParticipatedInRehabilitationBefore: boolean
   rehabilitationDetails?: string

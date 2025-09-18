@@ -31,6 +31,7 @@ export const ValueFragment = gql`
     bankAccount
     time
     s3Key
+    isLoggedInUser
   }
 `
 
