@@ -170,11 +170,9 @@ module.exports = {
   down: async (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction(async (t) => {
       // Remove the column that was added
-      await queryInterface.removeColumn(
-        'payment_flow_fjs_charge_confirmation',
-        'status',
-        { transaction: t },
-      )
+      await queryInterface.removeColumn('fjs_charge', 'status', {
+        transaction: t,
+      })
 
       // Revert the fjs charge table rename
       await queryInterface.renameTable(
