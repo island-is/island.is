@@ -22,15 +22,9 @@ import {
   SignatureCollectionListIdInput,
   SignatureCollectionUploadPaperSignatureInput,
 } from './dto'
-import {
-  AllowManager,
-  CurrentAdmin,
-  CurrentSignee,
-  IsOwner,
-} from './decorators'
+import { AllowManager, CurrentSignee, IsOwner } from './decorators'
 import {
   SignatureCollection,
-  SignatureCollectionAdmin,
   SignatureCollectionCollector,
   SignatureCollectionList,
   SignatureCollectionListBase,

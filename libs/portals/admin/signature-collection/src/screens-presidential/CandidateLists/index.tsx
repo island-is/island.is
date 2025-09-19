@@ -18,7 +18,10 @@ import { getTagConfig } from '../../lib/utils'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  SignatureCollectionCollectionType,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import { useSignatureCollectionAdminListsForCandidateQuery } from './getCandidateLists.generated'
@@ -31,7 +34,12 @@ const CandidateLists = () => {
   const {
     data: { signatureCollectionAdminListsForCandidate: candidateLists } = {},
   } = useSignatureCollectionAdminListsForCandidateQuery({
-    variables: { input: { candidateId } },
+    variables: {
+      input: {
+        candidateId,
+        collectionType: SignatureCollectionCollectionType.Presidential,
+      },
+    },
   })
 
   return (

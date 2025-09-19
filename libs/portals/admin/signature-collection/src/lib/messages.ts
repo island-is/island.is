@@ -592,6 +592,16 @@ export const m = defineMessages({
     defaultMessage: 'Ekki tókst að loka úrvinnslu safnanna',
     description: '',
   },
+  uploadHeader: {
+    id: 'admin-portal.signature-collection:uploadHeader',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: '',
+  },
+  uploadText: {
+    id: 'admin-portal.signature-collection:uploadText',
+    defaultMessage: 'Tekið er við skjölum með endingu: .xlsx, .xls',
+    description: '',
+  },
   downloadTemplate: {
     id: 'admin-portal.signature-collection:downloadTemplate',
     defaultMessage: 'Sækja sniðmát',

@@ -237,7 +237,7 @@ export const m = defineMessages({
   },
   pdfReport: {
     id: 'sp.signatureCollection:pdfReport',
-    defaultMessage: 'Skýrsla',
+    defaultMessage: 'Sækja skýrslu',
     description: '',
   },
   pdfReportDescription: {
