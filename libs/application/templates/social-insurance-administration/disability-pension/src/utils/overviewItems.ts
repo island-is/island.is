@@ -16,15 +16,30 @@ import {
   getTaxLevelOption,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import * as m from '../lib/messages'
-import { getApplicationAnswers, getApplicationExternalData } from './getApplicationAnswers'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from './getApplicationAnswers'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import isValid from 'date-fns/isValid'
-import { generateChildrenOptions, generateEmploymentImportanceOptions, generateIcelandicCapabilityOptions } from './options'
+import {
+  generateChildrenOptions,
+  generateEmploymentImportanceOptions,
+  generateIcelandicCapabilityOptions,
+} from './options'
 import { ApolloClient } from '@apollo/client'
-import { siaGeneralLanguagesQuery, siaGeneralProfessionActivitiesQuery, siaGeneralProfessionsQuery } from '../graphql/queries'
-import { SocialInsuranceGeneralLanguagesQuery, SocialInsuranceGeneralProfessionActivitiesQuery, SocialInsuranceGeneralProfessionsQuery } from '../graphql/queries.generated'
+import {
+  siaGeneralLanguagesQuery,
+  siaGeneralProfessionActivitiesQuery,
+  siaGeneralProfessionsQuery,
+} from '../graphql/queries'
+import {
+  SocialInsuranceGeneralLanguagesQuery,
+  SocialInsuranceGeneralProfessionActivitiesQuery,
+  SocialInsuranceGeneralProfessionsQuery,
+} from '../graphql/queries.generated'
 import { Locale } from '@island.is/shared/types'
 
 export const aboutApplicantItems = (
@@ -112,8 +127,11 @@ export const paymentInfoItems = (answers: FormValue): Array<KeyValueItem> => {
   ]
 }
 
-export const disabilityPeriodItems = (answers: FormValue): Array<KeyValueItem> => {
-  const { disabilityRenumerationDateMonth, disabilityRenumerationDateYear } = getApplicationAnswers(answers)
+export const disabilityPeriodItems = (
+  answers: FormValue,
+): Array<KeyValueItem> => {
+  const { disabilityRenumerationDateMonth, disabilityRenumerationDateYear } =
+    getApplicationAnswers(answers)
 
   if (!disabilityRenumerationDateYear || !disabilityRenumerationDateMonth) {
     return []
@@ -124,10 +142,13 @@ export const disabilityPeriodItems = (answers: FormValue): Array<KeyValueItem> =
       width: 'full',
       keyText: m.disabilityPeriod.chosenDate,
       valueText: format(
-        new Date(+disabilityRenumerationDateYear, +disabilityRenumerationDateMonth - 1),
+        new Date(
+          +disabilityRenumerationDateYear,
+          +disabilityRenumerationDateMonth - 1,
+        ),
         'MMMM yyyy',
-        { locale: is}
-      )
+        { locale: is },
+      ),
     },
   ]
 }
@@ -139,20 +160,22 @@ export const livedAbroadItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.employmentParticipation.livedAbroadQuestion,
-      valueText: hasLivedAbroad ? coreMessages.radioYes : coreMessages.radioNo
+      valueText: hasLivedAbroad ? coreMessages.radioYes : coreMessages.radioNo,
     },
   ]
 }
 
-
-
 export const livedAbroadTableItems = (answers: FormValue): TableData => {
   const { livedAbroadList, hasLivedAbroad } = getApplicationAnswers(answers)
 
-  if (hasLivedAbroad !== YES || !livedAbroadList || livedAbroadList.length < 1) {
+  if (
+    hasLivedAbroad !== YES ||
+    !livedAbroadList ||
+    livedAbroadList.length < 1
+  ) {
     return {
       header: [],
-      rows: []
+      rows: [],
     }
   }
 
@@ -162,46 +185,56 @@ export const livedAbroadTableItems = (answers: FormValue): TableData => {
       m.employmentParticipation.abroadNationalId,
       m.employmentParticipation.period,
     ],
-    rows: livedAbroadList.map(item => {
-      const start = parseISO(item.periodStart)
-      const end = parseISO(item.periodEnd)
+    rows: livedAbroadList
+      .map((item) => {
+        const start = parseISO(item.periodStart)
+        const end = parseISO(item.periodEnd)
 
-      if (!isValid(start) || !isValid(end)) {
-        return undefined
-      }
+        if (!isValid(start) || !isValid(end)) {
+          return undefined
+        }
 
-      const formattedDateStart = format(start, 'MMMM yyyy')
-      const formattedDateEnd = format(end, 'MMMM yyyy')
+        const formattedDateStart = format(start, 'MMMM yyyy')
+        const formattedDateEnd = format(end, 'MMMM yyyy')
 
-      return [
-        item.countryDisplay,
-        item.abroadNationalId ?? '-',
-        `${formattedDateStart} - ${formattedDateEnd}`,
-      ]
-    }).filter(Boolean) as string[][]
+        return [
+          item.countryDisplay,
+          item.abroadNationalId ?? '-',
+          `${formattedDateStart} - ${formattedDateEnd}`,
+        ]
+      })
+      .filter(Boolean) as string[][],
   }
 }
-export const abroadPaymentsItems = (answers: FormValue): Array<KeyValueItem> => {
-  const { isReceivingBenefitsFromAnotherCountry } = getApplicationAnswers(answers)
+export const abroadPaymentsItems = (
+  answers: FormValue,
+): Array<KeyValueItem> => {
+  const { isReceivingBenefitsFromAnotherCountry } =
+    getApplicationAnswers(answers)
 
   return [
     {
       width: 'full',
       keyText: m.employmentParticipation.abroadPaymentsTitle,
-      valueText: isReceivingBenefitsFromAnotherCountry ? coreMessages.radioYes : coreMessages.radioNo
-    }
+      valueText: isReceivingBenefitsFromAnotherCountry
+        ? coreMessages.radioYes
+        : coreMessages.radioNo,
+    },
   ]
 }
 
-
-
 export const abroadPaymentsTableItems = (answers: FormValue): TableData => {
-  const { isReceivingBenefitsFromAnotherCountry, countries} = getApplicationAnswers(answers)
+  const { isReceivingBenefitsFromAnotherCountry, countries } =
+    getApplicationAnswers(answers)
 
-  if (isReceivingBenefitsFromAnotherCountry !== YES || !countries || countries.length < 1) {
+  if (
+    isReceivingBenefitsFromAnotherCountry !== YES ||
+    !countries ||
+    countries.length < 1
+  ) {
     return {
       header: [],
-      rows: []
+      rows: [],
     }
   }
 
@@ -210,13 +243,9 @@ export const abroadPaymentsTableItems = (answers: FormValue): TableData => {
       m.employmentParticipation.country,
       m.employmentParticipation.abroadNationalId,
     ],
-    rows: countries.map(item => ([
-      item.countryDisplay,
-      item.abroadNationalId,
-      ]))
+    rows: countries.map((item) => [item.countryDisplay, item.abroadNationalId]),
   }
 }
-
 
 export const appliedBeforeItems = (answers: FormValue): Array<KeyValueItem> => {
   const { hasAppliedForDisabilityBefore } = getApplicationAnswers(answers)
@@ -253,7 +282,13 @@ export const employmentItems = (answers: FormValue): Array<KeyValueItem> => {
   ]
 }
 
-export const selfEvaluationItems = async (answers: FormValue, externalData: ExternalData, userNationalId: string, apolloClient: ApolloClient<object>, locale: Locale): Promise<Array<KeyValueItem>> => {
+export const selfEvaluationItems = async (
+  answers: FormValue,
+  externalData: ExternalData,
+  userNationalId: string,
+  apolloClient: ApolloClient<object>,
+  locale: Locale,
+): Promise<Array<KeyValueItem>> => {
   const {
     biggestIssue,
     children,
@@ -273,30 +308,39 @@ export const selfEvaluationItems = async (answers: FormValue, externalData: Exte
     residenceExtraComment,
   } = getApplicationAnswers(answers)
 
-  const { maritalStatuses = [], residenceTypes = [], employmentTypes = [], educationLevels = [] } = getApplicationExternalData(externalData)
+  const {
+    maritalStatuses = [],
+    residenceTypes = [],
+    employmentTypes = [],
+    educationLevels = [],
+  } = getApplicationExternalData(externalData)
 
-  const [languageData, employmentJobData, employmentFieldData] = await Promise.all([
-    apolloClient.query<SocialInsuranceGeneralLanguagesQuery>({
-      query: siaGeneralLanguagesQuery,
-    }),
-    apolloClient.query<SocialInsuranceGeneralProfessionsQuery>({
-      query: siaGeneralProfessionsQuery,
-    }),
-    apolloClient.query<SocialInsuranceGeneralProfessionActivitiesQuery>({
-      query: siaGeneralProfessionActivitiesQuery,
-    }),
-  ])
+  const [languageData, employmentJobData, employmentFieldData] =
+    await Promise.all([
+      apolloClient.query<SocialInsuranceGeneralLanguagesQuery>({
+        query: siaGeneralLanguagesQuery,
+      }),
+      apolloClient.query<SocialInsuranceGeneralProfessionsQuery>({
+        query: siaGeneralProfessionsQuery,
+      }),
+      apolloClient.query<SocialInsuranceGeneralProfessionActivitiesQuery>({
+        query: siaGeneralProfessionActivitiesQuery,
+      }),
+    ])
 
   return [
     {
       width: 'full',
       keyText: m.questions.maritalStatusTitle,
-      valueText: maritalStatuses.find(m => m.value.toString() === maritalStatus)?.label
+      valueText: maritalStatuses.find(
+        (m) => m.value.toString() === maritalStatus,
+      )?.label,
     },
     {
       width: 'full',
       keyText: m.questions.residenceTitle,
-      valueText: residenceTypes.find(m => m.value.toString() === residence)?.label
+      valueText: residenceTypes.find((m) => m.value.toString() === residence)
+        ?.label,
     },
     {
       width: 'full',
@@ -307,22 +351,31 @@ export const selfEvaluationItems = async (answers: FormValue, externalData: Exte
     {
       width: 'full',
       keyText: m.questions.childrenCountTitle,
-      valueText: generateChildrenOptions(m).find(g => g.value === children)?.label
+      valueText: generateChildrenOptions(m).find((g) => g.value === children)
+        ?.label,
     },
     {
       width: 'full',
       keyText: m.questions.icelandicCapabilityTitle,
-      valueText: generateIcelandicCapabilityOptions(m).find(g => g.value === icelandicCapability)?.label
+      valueText: generateIcelandicCapabilityOptions(m).find(
+        (g) => g.value === icelandicCapability,
+      )?.label,
     },
     {
       width: 'full',
       keyText: m.questions.languageTitle,
-      valueText: languageData?.data.socialInsuranceGeneral.languages?.find(l => l.value === language)?.label
+      valueText: languageData?.data.socialInsuranceGeneral.languages?.find(
+        (l) => l.value === language,
+      )?.label,
     },
     {
       width: 'full',
       keyText: m.questions.employmentStatusTitle,
-      valueText: Array.isArray(employmentStatus) ? employmentStatus.map(e => employmentTypes.find(et => et.value === e)?.label) : undefined
+      valueText: Array.isArray(employmentStatus)
+        ? employmentStatus.map(
+            (e) => employmentTypes.find((et) => et.value === e)?.label,
+          )
+        : undefined,
     },
     {
       width: 'full',
@@ -332,7 +385,9 @@ export const selfEvaluationItems = async (answers: FormValue, externalData: Exte
     {
       width: 'full',
       keyText: m.questions.previousEmploymentTitle,
-      valueText: previousEmployment ? coreMessages.radioYes : coreMessages.radioNo
+      valueText: previousEmployment
+        ? coreMessages.radioYes
+        : coreMessages.radioNo,
     },
     {
       width: 'full',
@@ -343,19 +398,26 @@ export const selfEvaluationItems = async (answers: FormValue, externalData: Exte
     {
       width: 'full',
       keyText: m.questions.previousEmploymentJob,
-      valueText: employmentJobData?.data.socialInsuranceGeneral.professions?.find(p => p.value === previousEmployment?.job)?.label,
+      valueText:
+        employmentJobData?.data.socialInsuranceGeneral.professions?.find(
+          (p) => p.value === previousEmployment?.job,
+        )?.label,
       hideIfEmpty: true,
     },
     {
       width: 'full',
       keyText: m.questions.previousEmploymentField,
-      valueText: employmentFieldData?.data.socialInsuranceGeneral.professionActivities?.find(p => p.value === previousEmployment?.field)?.label,
+      valueText:
+        employmentFieldData?.data.socialInsuranceGeneral.professionActivities?.find(
+          (p) => p.value === previousEmployment?.field,
+        )?.label,
       hideIfEmpty: true,
     },
     {
       width: 'full',
       keyText: m.questions.educationLevelTitle,
-      valueText: educationLevels.find(e => e.code === educationLevel)?.description
+      valueText: educationLevels.find((e) => e.code === educationLevel)
+        ?.description,
     },
     {
       width: 'full',
@@ -366,12 +428,16 @@ export const selfEvaluationItems = async (answers: FormValue, externalData: Exte
     {
       width: 'full',
       keyText: m.questions.employmentImportanceTitle,
-      valueText: generateEmploymentImportanceOptions(m).find(e => e.value === employmentImportance)?.label
+      valueText: generateEmploymentImportanceOptions(m).find(
+        (e) => e.value === employmentImportance,
+      )?.label,
     },
     {
       width: 'full',
       keyText: m.questions.rehabilitationOrTherapyTitle,
-      valueText: hasHadRehabilitationOrTherapy ? coreMessages.radioYes : coreMessages.radioNo
+      valueText: hasHadRehabilitationOrTherapy
+        ? coreMessages.radioYes
+        : coreMessages.radioNo,
     },
     {
       width: 'full',

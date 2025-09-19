@@ -17,7 +17,9 @@ export const maritalStatusField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_MARITAL_STATUS}.status`,
       title: m.questions.maritalStatusTitle,
       options: (application: Application) => {
-        const { maritalStatuses = [] } = getApplicationExternalData(application.externalData)
+        const { maritalStatuses = [] } = getApplicationExternalData(
+          application.externalData,
+        )
 
         return maritalStatuses?.map(({ value, label }) => ({
           value: value.toString(),

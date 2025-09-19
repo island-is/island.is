@@ -6,7 +6,10 @@ import {
 import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { Application } from '@island.is/application/types'
-import { getApplicationAnswers, getApplicationExternalData } from '../../../../utils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../../../../utils'
 
 export const residenceField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_RESIDENCE,
@@ -16,7 +19,9 @@ export const residenceField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,
       title: m.questions.residenceTitle,
       options: (application: Application) => {
-        const { residenceTypes = [] } = getApplicationExternalData(application.externalData)
+        const { residenceTypes = [] } = getApplicationExternalData(
+          application.externalData,
+        )
         return residenceTypes.map(({ value, label }) => ({
           value: value.toString(),
           label,
@@ -29,7 +34,7 @@ export const residenceField = buildMultiField({
       variant: 'textarea',
       condition: (formValue, externalData) => {
         const { residence } = getApplicationAnswers(formValue)
-        const {residenceTypes} = getApplicationExternalData(externalData)
+        const { residenceTypes } = getApplicationExternalData(externalData)
 
         const otherType = residenceTypes?.find(
           (type) => type.value.toString() === residence,

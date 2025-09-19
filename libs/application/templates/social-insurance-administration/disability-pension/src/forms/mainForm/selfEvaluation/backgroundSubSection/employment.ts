@@ -8,7 +8,10 @@ import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { Application } from '@island.is/application/types'
 import { OTHER_STATUS_VALUE } from '../../../../types/constants'
-import { getApplicationAnswers, getApplicationExternalData } from '../../../../utils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../../../../utils'
 
 export const employmentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT,
@@ -19,7 +22,9 @@ export const employmentField = buildMultiField({
       title: m.questions.employmentStatusTitle,
       width: 'full',
       options: (application: Application) => {
-        const { employmentTypes = [] } = getApplicationExternalData(application.externalData)
+        const { employmentTypes = [] } = getApplicationExternalData(
+          application.externalData,
+        )
         return [
           ...employmentTypes
             .filter((t) => !t.needsFurtherInformation)
@@ -42,7 +47,7 @@ export const employmentField = buildMultiField({
       marginTop: 2,
       marginBottom: 0,
       condition: (formValue) => {
-        const {employmentStatus} = getApplicationAnswers(formValue)
+        const { employmentStatus } = getApplicationAnswers(formValue)
         return employmentStatus?.includes(OTHER_STATUS_VALUE) ?? false
       },
     }),
@@ -51,7 +56,7 @@ export const employmentField = buildMultiField({
       variant: 'textarea',
       rows: 3,
       condition: (formValue) => {
-        const {employmentStatus} = getApplicationAnswers(formValue)
+        const { employmentStatus } = getApplicationAnswers(formValue)
         return employmentStatus?.includes(OTHER_STATUS_VALUE) ?? false
       },
     }),

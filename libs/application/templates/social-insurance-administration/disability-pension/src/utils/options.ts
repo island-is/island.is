@@ -1,6 +1,8 @@
-import { MessageDescriptor } from "react-intl";
+import { MessageDescriptor } from 'react-intl'
 
-export const generateChildrenOptions = (m: Record<string, Record<string, MessageDescriptor>>) => [
+export const generateChildrenOptions = (
+  m: Record<string, Record<string, MessageDescriptor>>,
+) => [
   {
     value: 'Engin',
     label: m.questions.childrenCountZero,
@@ -31,7 +33,9 @@ export const generateChildrenOptions = (m: Record<string, Record<string, Message
   },
 ]
 
-export const generateIcelandicCapabilityOptions = (m: Record<string, Record<string, MessageDescriptor>>) => [
+export const generateIcelandicCapabilityOptions = (
+  m: Record<string, Record<string, MessageDescriptor>>,
+) => [
   {
     value: '0',
     label: m.questions.icelandicCapabilityPoor,
@@ -50,7 +54,9 @@ export const generateIcelandicCapabilityOptions = (m: Record<string, Record<stri
   },
 ]
 
-export const generateEmploymentImportanceOptions = (m: Record<string, Record<string, MessageDescriptor>>) => [
+export const generateEmploymentImportanceOptions = (
+  m: Record<string, Record<string, MessageDescriptor>>,
+) => [
   {
     value: '0',
     label: m.questions.employmentImportanceNotImportantAtAll,

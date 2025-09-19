@@ -29,7 +29,8 @@ export const disabilityEvaluationSubSection = buildSubSection({
           message: m.disabilityEvaluation.noInfo,
           alertType: 'warning',
           condition: (formValue) => {
-            const {hasAppliedForDisabilityBefore } = getApplicationAnswers(formValue)
+            const { hasAppliedForDisabilityBefore } =
+              getApplicationAnswers(formValue)
             return hasAppliedForDisabilityBefore === NO
           },
         }),

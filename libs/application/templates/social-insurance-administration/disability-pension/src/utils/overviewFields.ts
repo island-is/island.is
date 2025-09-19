@@ -14,7 +14,7 @@ import {
   livedAbroadTableItems,
   abroadPaymentsTableItems,
   abroadPaymentsItems,
-  selfEvaluationItems
+  selfEvaluationItems,
 } from './overviewItems'
 
 export const overviewFields = (editable?: boolean) => {

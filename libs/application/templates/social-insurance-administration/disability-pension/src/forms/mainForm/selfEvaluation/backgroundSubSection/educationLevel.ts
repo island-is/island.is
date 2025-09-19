@@ -1,7 +1,4 @@
-import {
-  buildMultiField,
-  buildRadioField,
-} from '@island.is/application/core'
+import { buildMultiField, buildRadioField } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { Application } from '@island.is/application/types'
@@ -16,7 +13,9 @@ export const educationLevelField = buildMultiField({
       title: m.questions.educationLevelTitle,
       required: true,
       options: (application: Application) => {
-        const { educationLevels = [] } = getApplicationExternalData(application.externalData)
+        const { educationLevels = [] } = getApplicationExternalData(
+          application.externalData,
+        )
 
         return educationLevels.map(({ code, description }) => ({
           value: code,

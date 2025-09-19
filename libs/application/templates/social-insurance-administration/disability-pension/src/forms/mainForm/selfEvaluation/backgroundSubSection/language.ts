@@ -1,5 +1,5 @@
 import {
-    buildAsyncSelectField,
+  buildAsyncSelectField,
   buildMultiField,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
@@ -20,7 +20,7 @@ export const languageField = buildMultiField({
       loadOptions: async ({ apolloClient }) => {
         const { data } =
           await apolloClient.query<SocialInsuranceGeneralLanguagesQuery>({
-            query: siaGeneralLanguagesQuery ,
+            query: siaGeneralLanguagesQuery,
           })
 
         return (

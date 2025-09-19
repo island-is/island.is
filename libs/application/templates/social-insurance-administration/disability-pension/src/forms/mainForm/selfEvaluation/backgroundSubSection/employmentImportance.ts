@@ -10,7 +10,7 @@ export const employmentImportanceField = buildMultiField({
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT_IMPORTANCE}.importance`,
       title: m.questions.employmentImportanceTitle,
-      options: generateEmploymentImportanceOptions(m)
-    })
+      options: generateEmploymentImportanceOptions(m),
+    }),
   ],
 })

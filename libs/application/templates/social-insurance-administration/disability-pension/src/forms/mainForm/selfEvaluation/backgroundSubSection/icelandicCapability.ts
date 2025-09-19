@@ -11,7 +11,7 @@ export const icelandicCapabilityField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_ICELANDIC_CAPABILITY}.capability`,
       title: m.questions.icelandicCapabilityTitle,
       required: true,
-      options: generateIcelandicCapabilityOptions(m)
-    })
+      options: generateIcelandicCapabilityOptions(m),
+    }),
   ],
 })

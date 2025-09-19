@@ -26,14 +26,16 @@ export const rehabilitationOrTherapyField = buildMultiField({
       marginTop: 2,
       marginBottom: 0,
       condition: (formValue) => {
-        const {hasHadRehabilitationOrTherapy } = getApplicationAnswers(formValue)
+        const { hasHadRehabilitationOrTherapy } =
+          getApplicationAnswers(formValue)
         return hasHadRehabilitationOrTherapy === YesOrNoEnum.YES
       },
     }),
     buildTextField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_REHABILITATION_OR_THERAPY}.rehabilitationDescription`,
       condition: (formValue) => {
-        const {hasHadRehabilitationOrTherapy } = getApplicationAnswers(formValue)
+        const { hasHadRehabilitationOrTherapy } =
+          getApplicationAnswers(formValue)
         return hasHadRehabilitationOrTherapy === YesOrNoEnum.YES
       },
       variant: 'textarea',
@@ -45,14 +47,16 @@ export const rehabilitationOrTherapyField = buildMultiField({
       marginTop: 2,
       marginBottom: 0,
       condition: (formValue) => {
-        const {hasHadRehabilitationOrTherapy } = getApplicationAnswers(formValue)
+        const { hasHadRehabilitationOrTherapy } =
+          getApplicationAnswers(formValue)
         return hasHadRehabilitationOrTherapy === YesOrNoEnum.YES
       },
     }),
     buildTextField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_REHABILITATION_OR_THERAPY}.rehabilitationResults`,
       condition: (formValue) => {
-        const {hasHadRehabilitationOrTherapy } = getApplicationAnswers(formValue)
+        const { hasHadRehabilitationOrTherapy } =
+          getApplicationAnswers(formValue)
         return hasHadRehabilitationOrTherapy === YesOrNoEnum.YES
       },
       rows: 6,

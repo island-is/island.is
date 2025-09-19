@@ -36,7 +36,7 @@ export const previousEmploymentField = buildMultiField({
       title: m.questions.previousEmploymentWhen,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
-        const {previousEmployment} = getApplicationAnswers(formValue)
+        const { previousEmployment } = getApplicationAnswers(formValue)
         return previousEmployment?.hasEmployment === YES
       },
     }),
@@ -46,7 +46,7 @@ export const previousEmploymentField = buildMultiField({
       width: 'half',
       placeholder: m.shared.chooseYear,
       condition: (formValue: FormValue) => {
-        const {previousEmployment} = getApplicationAnswers(formValue)
+        const { previousEmployment } = getApplicationAnswers(formValue)
         return previousEmployment?.hasEmployment === YES
       },
       options: () => {
@@ -62,7 +62,7 @@ export const previousEmploymentField = buildMultiField({
       title: m.questions.previousEmploymentJob,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
-        const {previousEmployment} = getApplicationAnswers(formValue)
+        const { previousEmployment } = getApplicationAnswers(formValue)
         return previousEmployment?.hasEmployment === YES
       },
     }),
@@ -72,7 +72,7 @@ export const previousEmploymentField = buildMultiField({
       width: 'full',
       placeholder: m.questions.chooseProfession,
       condition: (formValue: FormValue) => {
-        const {previousEmployment} = getApplicationAnswers(formValue)
+        const { previousEmployment } = getApplicationAnswers(formValue)
         return previousEmployment?.hasEmployment === YES
       },
       loadOptions: async ({ apolloClient }) => {
@@ -94,7 +94,7 @@ export const previousEmploymentField = buildMultiField({
       title: m.questions.previousEmploymentField,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
-        const {previousEmployment} = getApplicationAnswers(formValue)
+        const { previousEmployment } = getApplicationAnswers(formValue)
         return previousEmployment?.hasEmployment === YES
       },
     }),
@@ -104,7 +104,7 @@ export const previousEmploymentField = buildMultiField({
       width: 'full',
       placeholder: m.questions.chooseProfessionActivity,
       condition: (formValue: FormValue) => {
-        const {previousEmployment} = getApplicationAnswers(formValue)
+        const { previousEmployment } = getApplicationAnswers(formValue)
         return previousEmployment?.hasEmployment === YES
       },
       loadOptions: async ({ apolloClient }) => {

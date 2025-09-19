@@ -6,11 +6,16 @@ import {
 } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import { SectionRouteEnum } from '../../../../types/routes'
-import { getApplicationAnswers, getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  yesOrNoOptions,
+} from '../../../../utils'
 import * as m from '../../../../lib/messages'
 
 const abroadPaymentsCondition = (formValue: FormValue) => {
-  const { isReceivingBenefitsFromAnotherCountry } = getApplicationAnswers(formValue)
+  const { isReceivingBenefitsFromAnotherCountry } =
+    getApplicationAnswers(formValue)
   return isReceivingBenefitsFromAnotherCountry === YES
 }
 
