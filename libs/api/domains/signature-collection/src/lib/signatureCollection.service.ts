@@ -29,7 +29,6 @@ import {
 } from './models/summaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 import { SignatureCollectionCandidateIdInput } from './dto'
-import { SignatureCollectionAdmin } from './models'
 
 @Injectable()
 export class SignatureCollectionService {
