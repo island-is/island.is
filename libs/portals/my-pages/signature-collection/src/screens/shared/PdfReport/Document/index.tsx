@@ -24,7 +24,7 @@ const PdfDocument = ({
         <Page style={styles.body} key={list.listName}>
           <View>
             <Text style={styles.pageTitle}>
-              {list.listName?.split(' - ')[1] || list.listName}
+              {list.listName?.split(' - ')[1] ?? list.areaName}
             </Text>
             <View style={styles.dividerLineBox}>
               <View style={styles.dividerLine} />

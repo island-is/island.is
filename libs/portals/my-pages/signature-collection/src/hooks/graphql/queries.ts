@@ -204,6 +204,7 @@ export const getPdfReport = gql`
       nrOfSignatures
       nrOfDigitalSignatures
       nrOfPaperSignatures
+      areaName
     }
   }
 `
