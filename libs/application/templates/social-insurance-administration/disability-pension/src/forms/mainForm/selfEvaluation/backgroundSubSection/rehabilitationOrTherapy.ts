@@ -4,11 +4,10 @@ import {
   buildRadioField,
   buildTextField,
   buildTitleField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
-import { yesOrNoOptions } from '../../../../utils'
+import { getApplicationAnswers, yesOrNoOptions } from '../../../../utils'
 
 export const rehabilitationOrTherapyField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_REHABILITATION_OR_THERAPY,
@@ -27,21 +26,15 @@ export const rehabilitationOrTherapyField = buildMultiField({
       marginTop: 2,
       marginBottom: 0,
       condition: (formValue) => {
-        const rehabOrTherapy = getValueViaPath<YesOrNoEnum>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_REHABILITATION_OR_THERAPY}.rehabilitationOrTherapy`,
-        )
-        return rehabOrTherapy === YesOrNoEnum.YES
+        const {hasHadRehabilitationOrTherapy } = getApplicationAnswers(formValue)
+        return hasHadRehabilitationOrTherapy === YesOrNoEnum.YES
       },
     }),
     buildTextField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_REHABILITATION_OR_THERAPY}.rehabilitationDescription`,
       condition: (formValue) => {
-        const rehabOrTherapy = getValueViaPath<YesOrNoEnum>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_REHABILITATION_OR_THERAPY}.rehabilitationOrTherapy`,
-        )
-        return rehabOrTherapy === YesOrNoEnum.YES
+        const {hasHadRehabilitationOrTherapy } = getApplicationAnswers(formValue)
+        return hasHadRehabilitationOrTherapy === YesOrNoEnum.YES
       },
       variant: 'textarea',
       rows: 6,
@@ -52,21 +45,15 @@ export const rehabilitationOrTherapyField = buildMultiField({
       marginTop: 2,
       marginBottom: 0,
       condition: (formValue) => {
-        const rehabOrTherapy = getValueViaPath<YesOrNoEnum>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_REHABILITATION_OR_THERAPY}.rehabilitationOrTherapy`,
-        )
-        return rehabOrTherapy === YesOrNoEnum.YES
+        const {hasHadRehabilitationOrTherapy } = getApplicationAnswers(formValue)
+        return hasHadRehabilitationOrTherapy === YesOrNoEnum.YES
       },
     }),
     buildTextField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_REHABILITATION_OR_THERAPY}.rehabilitationResults`,
       condition: (formValue) => {
-        const rehabOrTherapy = getValueViaPath<YesOrNoEnum>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_REHABILITATION_OR_THERAPY}.rehabilitationOrTherapy`,
-        )
-        return rehabOrTherapy === YesOrNoEnum.YES
+        const {hasHadRehabilitationOrTherapy } = getApplicationAnswers(formValue)
+        return hasHadRehabilitationOrTherapy === YesOrNoEnum.YES
       },
       rows: 6,
       variant: 'textarea',

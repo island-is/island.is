@@ -16,7 +16,7 @@ import {
   siaGeneralProfessionActivitiesQuery,
   siaGeneralProfessionsQuery,
 } from '../../../../graphql/queries'
-import { yesOrNoOptions } from '../../../../utils'
+import { getApplicationAnswers, yesOrNoOptions } from '../../../../utils'
 import {
   SocialInsuranceGeneralProfessionsQuery,
   SocialInsuranceGeneralProfessionActivitiesQuery,
@@ -36,11 +36,8 @@ export const previousEmploymentField = buildMultiField({
       title: m.questions.previousEmploymentWhen,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
-        )
-        return hasPreviousEmployment === YES
+        const {previousEmployment} = getApplicationAnswers(formValue)
+        return previousEmployment?.hasEmployment === YES
       },
     }),
     buildSelectField({
@@ -49,11 +46,8 @@ export const previousEmploymentField = buildMultiField({
       width: 'half',
       placeholder: m.shared.chooseYear,
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
-        )
-        return hasPreviousEmployment === YES
+        const {previousEmployment} = getApplicationAnswers(formValue)
+        return previousEmployment?.hasEmployment === YES
       },
       options: () => {
         const years = getYears(20)
@@ -68,11 +62,8 @@ export const previousEmploymentField = buildMultiField({
       title: m.questions.previousEmploymentJob,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
-        )
-        return hasPreviousEmployment === YES
+        const {previousEmployment} = getApplicationAnswers(formValue)
+        return previousEmployment?.hasEmployment === YES
       },
     }),
     buildAsyncSelectField({
@@ -81,11 +72,8 @@ export const previousEmploymentField = buildMultiField({
       width: 'full',
       placeholder: m.questions.chooseProfession,
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
-        )
-        return hasPreviousEmployment === YES
+        const {previousEmployment} = getApplicationAnswers(formValue)
+        return previousEmployment?.hasEmployment === YES
       },
       loadOptions: async ({ apolloClient }) => {
         const { data } =
@@ -106,11 +94,8 @@ export const previousEmploymentField = buildMultiField({
       title: m.questions.previousEmploymentField,
       titleVariant: 'h5',
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
-        )
-        return hasPreviousEmployment === YES
+        const {previousEmployment} = getApplicationAnswers(formValue)
+        return previousEmployment?.hasEmployment === YES
       },
     }),
     buildAsyncSelectField({
@@ -119,11 +104,8 @@ export const previousEmploymentField = buildMultiField({
       width: 'full',
       placeholder: m.questions.chooseProfessionActivity,
       condition: (formValue: FormValue) => {
-        const hasPreviousEmployment = getValueViaPath<YesOrNo>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
-        )
-        return hasPreviousEmployment === YES
+        const {previousEmployment} = getApplicationAnswers(formValue)
+        return previousEmployment?.hasEmployment === YES
       },
       loadOptions: async ({ apolloClient }) => {
         const { data } =

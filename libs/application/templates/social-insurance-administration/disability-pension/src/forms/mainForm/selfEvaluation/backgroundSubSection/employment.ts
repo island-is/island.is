@@ -3,13 +3,12 @@ import {
   buildMultiField,
   buildTextField,
   buildTitleField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { Application } from '@island.is/application/types'
-import { EmploymentDto } from '@island.is/clients/social-insurance-administration'
 import { OTHER_STATUS_VALUE } from '../../../../types/constants'
+import { getApplicationAnswers, getApplicationExternalData } from '../../../../utils'
 
 export const employmentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT,
@@ -20,20 +19,15 @@ export const employmentField = buildMultiField({
       title: m.questions.employmentStatusTitle,
       width: 'full',
       options: (application: Application) => {
-        const types =
-          getValueViaPath<Array<EmploymentDto>>(
-            application.externalData,
-            'socialInsuranceAdministrationEmploymentStatuses.data',
-          ) ?? []
-
+        const { employmentTypes = [] } = getApplicationExternalData(application.externalData)
         return [
-          ...types
+          ...employmentTypes
             .filter((t) => !t.needsFurtherInformation)
             .map(({ value, label }) => ({
               value,
               label,
             })),
-          ...types
+          ...employmentTypes
             .filter((t) => t.needsFurtherInformation)
             .map(({ value, label }) => ({
               value,
@@ -48,13 +42,8 @@ export const employmentField = buildMultiField({
       marginTop: 2,
       marginBottom: 0,
       condition: (formValue) => {
-        const statuses =
-          getValueViaPath<Array<string>>(
-            formValue,
-            `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
-          ) ?? []
-
-        return statuses.includes(OTHER_STATUS_VALUE)
+        const {employmentStatus} = getApplicationAnswers(formValue)
+        return employmentStatus?.includes(OTHER_STATUS_VALUE) ?? false
       },
     }),
     buildTextField({
@@ -62,13 +51,8 @@ export const employmentField = buildMultiField({
       variant: 'textarea',
       rows: 3,
       condition: (formValue) => {
-        const statuses =
-          getValueViaPath<Array<string>>(
-            formValue,
-            `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
-          ) ?? []
-
-        return statuses.includes(OTHER_STATUS_VALUE)
+        const {employmentStatus} = getApplicationAnswers(formValue)
+        return employmentStatus?.includes(OTHER_STATUS_VALUE) ?? false
       },
     }),
   ],

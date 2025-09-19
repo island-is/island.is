@@ -6,10 +6,9 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
-import { Locale } from '@island.is/shared/types'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { MAX_QUESTIONNAIRE_QUESTIONS } from '../../../../types/constants'
-import { Application, Field } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { getQuestionnaire } from '../../../../utils/getQuestionnaire'
 import { getApplicationExternalData } from '../../../../utils'
 

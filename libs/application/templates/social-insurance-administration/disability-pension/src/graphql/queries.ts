@@ -69,6 +69,18 @@ export const siaGeneralCurrenciesQuery = gql`
     }
   }
 `
+
+export const siaGeneralLanguagesQuery = gql`
+  query SocialInsuranceGeneralLanguages {
+    socialInsuranceGeneral {
+      languages {
+        value
+        label
+      }
+    }
+  }
+`
+
 export const siaGeneralProfessionsQuery = gql`
   query SocialInsuranceGeneralProfessions {
     socialInsuranceGeneral {

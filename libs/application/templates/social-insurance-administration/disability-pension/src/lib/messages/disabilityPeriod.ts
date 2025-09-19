@@ -22,4 +22,9 @@ export const disabilityPeriod = defineMessages({
     defaultMessage: 'Veldu dagsetningu sem þú vilt hefja töku örorku',
     description: 'Select date',
   },
+  chosenDate: {
+    id: 'dp.application:disabilityPeriod.chosenDate',
+    defaultMessage: 'Dagsetning sem taka örorku skal hefjast',
+    description: 'What date should the disability period start',
+  },
 })

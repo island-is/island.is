@@ -2,12 +2,11 @@ import {
   buildMultiField,
   buildRadioField,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { Application } from '@island.is/application/types'
-import { ResidenceDto } from '@island.is/clients/social-insurance-administration'
+import { getApplicationAnswers, getApplicationExternalData } from '../../../../utils'
 
 export const residenceField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_RESIDENCE,
@@ -17,12 +16,7 @@ export const residenceField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,
       title: m.questions.residenceTitle,
       options: (application: Application) => {
-        const residenceTypes =
-          getValueViaPath<Array<ResidenceDto>>(
-            application.externalData,
-            'socialInsuranceAdministrationResidence.data',
-          ) ?? []
-
+        const { residenceTypes = [] } = getApplicationExternalData(application.externalData)
         return residenceTypes.map(({ value, label }) => ({
           value: value.toString(),
           label,
@@ -34,19 +28,11 @@ export const residenceField = buildMultiField({
       title: m.questions.residenceOtherWhat,
       variant: 'textarea',
       condition: (formValue, externalData) => {
-        const residenceStatus = getValueViaPath<string>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,
-        )
+        const { residence } = getApplicationAnswers(formValue)
+        const {residenceTypes} = getApplicationExternalData(externalData)
 
-        const residenceTypes =
-          getValueViaPath<Array<ResidenceDto>>(
-            externalData,
-            'socialInsuranceAdministrationResidence.data',
-          ) ?? []
-
-        const otherType = residenceTypes.find(
-          (type) => type.value.toString() === residenceStatus,
+        const otherType = residenceTypes?.find(
+          (type) => type.value.toString() === residence,
         )
         return otherType?.needsFurtherInformation ?? false
       },

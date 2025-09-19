@@ -58,7 +58,7 @@ export class GeneralResolver {
     return this.service.getCurrencies(user)
   }
 
-  @ResolveField('languages', () => [GenericKeyValueNumberObject], {
+  @ResolveField('languages', () => [GenericKeyValueStringObject], {
     nullable: true,
   })
   resolveLanguages(

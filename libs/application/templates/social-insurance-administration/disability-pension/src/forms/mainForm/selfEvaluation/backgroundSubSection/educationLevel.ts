@@ -1,12 +1,11 @@
 import {
   buildMultiField,
   buildRadioField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { Application } from '@island.is/application/types'
-import { EducationLevels } from '../../../../types/interfaces'
+import { getApplicationExternalData } from '../../../../utils'
 
 export const educationLevelField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_EDUCATION_LEVEL,
@@ -17,11 +16,7 @@ export const educationLevelField = buildMultiField({
       title: m.questions.educationLevelTitle,
       required: true,
       options: (application: Application) => {
-        const educationLevels =
-          getValueViaPath<Array<EducationLevels>>(
-            application.externalData,
-            'socialInsuranceAdministrationEducationLevels.data',
-          ) ?? []
+        const { educationLevels = [] } = getApplicationExternalData(application.externalData)
 
         return educationLevels.map(({ code, description }) => ({
           value: code,

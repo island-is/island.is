@@ -8,7 +8,13 @@ import {
   appliedBeforeItems,
   employmentItems,
   extraInfoItems,
-  selfEvaluationItems,
+  capabilityImpairmentItems,
+  disabilityPeriodItems,
+  livedAbroadItems,
+  livedAbroadTableItems,
+  abroadPaymentsTableItems,
+  abroadPaymentsItems,
+  selfEvaluationItems
 } from './overviewItems'
 
 export const overviewFields = (editable?: boolean) => {
@@ -32,6 +38,11 @@ export const overviewFields = (editable?: boolean) => {
       tableData: incomePlanItems,
     }),
     buildOverviewField({
+      id: `${SectionRouteEnum.OVERVIEW}.disabilityPeriod`,
+      backId: editable ? SectionRouteEnum.DISABILITY_PERIOD : undefined,
+      items: disabilityPeriodItems,
+    }),
+    buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.appliedBefore`,
       hideIfEmpty: true,
       backId: editable ? SectionRouteEnum.DISABILITY_APPLIED_BEFORE : undefined,
@@ -42,6 +53,30 @@ export const overviewFields = (editable?: boolean) => {
       hideIfEmpty: true,
       backId: editable ? SectionRouteEnum.EMPLOYMENT_PARTICIPATION : undefined,
       items: employmentItems,
+    }),
+    buildOverviewField({
+      id: `${SectionRouteEnum.OVERVIEW}.livedAbroad`,
+      backId: editable ? SectionRouteEnum.LIVED_ABROAD : undefined,
+      items: livedAbroadItems,
+      tableData: livedAbroadTableItems,
+      bottomLine: false,
+    }),
+    buildOverviewField({
+      id: `${SectionRouteEnum.OVERVIEW}.abroadPayments`,
+      backId: editable ? SectionRouteEnum.ABROAD_PAYMENT : undefined,
+      items: abroadPaymentsItems,
+      tableData: abroadPaymentsTableItems,
+      bottomLine: false,
+    }),
+    buildOverviewField({
+      id: `${SectionRouteEnum.OVERVIEW}.selfEvaluation`,
+      backId: editable ? SectionRouteEnum.SELF_EVALUATION : undefined,
+      loadItems: selfEvaluationItems,
+    }),
+    buildOverviewField({
+      id: `${SectionRouteEnum.OVERVIEW}.capabilityImpairment`,
+      backId: editable ? SectionRouteEnum.CAPABILITY_IMPAIRMENT : undefined,
+      items: capabilityImpairmentItems,
     }),
     buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.disabilityCertificate`,
@@ -55,11 +90,6 @@ export const overviewFields = (editable?: boolean) => {
           },
         ]
       },
-    }),
-    buildOverviewField({
-      id: `${SectionRouteEnum.OVERVIEW}.selfEvaluation`,
-      backId: editable ? SectionRouteEnum.SELF_EVALUATION : undefined,
-      items: selfEvaluationItems,
     }),
     buildOverviewField({
       id: `${SectionRouteEnum.OVERVIEW}.extraInfo`,

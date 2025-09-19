@@ -3,21 +3,15 @@ import {
   buildRadioField,
   buildTableRepeaterField,
   YES,
-  getValueViaPath,
-  YesOrNoEnum,
 } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import { SectionRouteEnum } from '../../../../types/routes'
-import { getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
+import { getApplicationAnswers, getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
 import * as m from '../../../../lib/messages'
 
 const abroadPaymentsCondition = (formValue: FormValue) => {
-  const hasAbroadPayments = getValueViaPath<YesOrNoEnum>(
-    formValue,
-    `${SectionRouteEnum.ABROAD_PAYMENT}.hasAbroadPayments`,
-  )
-
-  return hasAbroadPayments === YES
+  const { isReceivingBenefitsFromAnotherCountry } = getApplicationAnswers(formValue)
+  return isReceivingBenefitsFromAnotherCountry === YES
 }
 
 export const abroadPaymentsSubSection = buildMultiField({
@@ -80,6 +74,7 @@ export const abroadPaymentsSubSection = buildMultiField({
         },
         abroadNationalId: {
           component: 'input',
+          required: true,
           label: m.employmentParticipation.abroadNationalId,
           width: 'half',
         },

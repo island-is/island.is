@@ -9,6 +9,7 @@ export interface EducationLevels {
 
 export interface Country {
   country: string
+  countryDisplay: string
   abroadNationalId: string
 }
 
@@ -44,6 +45,7 @@ export interface SelfAssessmentQuestionnaireAnswers {
 
 export interface LivedAbroad {
   country: string
+  countryDisplay: string
   abroadNationalId?: string
   periodStart: string
   periodEnd: string

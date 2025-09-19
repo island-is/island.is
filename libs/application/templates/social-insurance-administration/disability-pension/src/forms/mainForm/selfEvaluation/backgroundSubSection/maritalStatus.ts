@@ -6,7 +6,7 @@ import {
 import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { Application } from '@island.is/application/types'
-import { MaritalStatusDto } from '@island.is/clients/social-insurance-administration'
+import { getApplicationExternalData } from '../../../../utils'
 
 export const maritalStatusField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_MARITAL_STATUS,
@@ -17,11 +17,7 @@ export const maritalStatusField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_MARITAL_STATUS}.status`,
       title: m.questions.maritalStatusTitle,
       options: (application: Application) => {
-        const maritalStatuses =
-          getValueViaPath<Array<MaritalStatusDto>>(
-            application.externalData,
-            'socialInsuranceAdministrationMaritalStatuses.data',
-          ) ?? []
+        const { maritalStatuses = [] } = getApplicationExternalData(application.externalData)
 
         return maritalStatuses?.map(({ value, label }) => ({
           value: value.toString(),

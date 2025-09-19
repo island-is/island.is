@@ -22,7 +22,9 @@ import {
   PreviousEmployment,
   SelfAssessmentQuestionnaireAnswers,
   SelfAssessmentQuestionnaire,
+  EducationLevels,
 } from '../types/interfaces'
+import { EmploymentDto, MaritalStatusDto, ResidenceDto } from '@island.is/clients/social-insurance-administration'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantName = getValueViaPath<string>(answers, 'applicant.name') ?? ''
@@ -252,6 +254,33 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
 ) => {
+  const educationLevels =
+    getValueViaPath<Array<EducationLevels>>(
+     externalData,
+      'socialInsuranceAdministrationEducationLevels.data',
+      []
+    )
+
+  const employmentTypes =
+    getValueViaPath<Array<EmploymentDto>>(
+      externalData,
+      'socialInsuranceAdministrationEmploymentStatuses.data',
+      []
+    )
+
+  const residenceTypes =
+    getValueViaPath<Array<ResidenceDto>>(
+      externalData,
+      'socialInsuranceAdministrationResidence.data',
+      []
+    )
+
+  const maritalStatuses = getValueViaPath<Array<MaritalStatusDto>>(
+    externalData,
+    'socialInsuranceAdministrationMaritalStatuses.data',
+    []
+  )
+
   const residenceHistory = getValueViaPath<NationalRegistryResidenceHistory[]>(
     externalData,
     'nationalRegistryResidenceHistory.data',
@@ -355,5 +384,9 @@ export const getApplicationExternalData = (
     categorizedIncomeTypes,
     incomePlanConditions,
     questionnaire,
+    maritalStatuses,
+    residenceTypes,
+    employmentTypes,
+    educationLevels
   }
 }

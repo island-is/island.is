@@ -1,15 +1,12 @@
 import {
   buildAlertMessageField,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  getValueViaPath,
   NO,
-  YesOrNo,
 } from '@island.is/application/core'
 import { SectionRouteEnum } from '../../../types/routes'
-import { yesOrNoOptions } from '../../../utils'
+import { getApplicationAnswers, yesOrNoOptions } from '../../../utils'
 import * as m from '../../../lib/messages'
 
 export const disabilityEvaluationSubSection = buildSubSection({
@@ -32,11 +29,8 @@ export const disabilityEvaluationSubSection = buildSubSection({
           message: m.disabilityEvaluation.noInfo,
           alertType: 'warning',
           condition: (formValue) => {
-            const answer = getValueViaPath<YesOrNo>(
-              formValue,
-              SectionRouteEnum.DISABILITY_APPLIED_BEFORE,
-            )
-            return answer === NO
+            const {hasAppliedForDisabilityBefore } = getApplicationAnswers(formValue)
+            return hasAppliedForDisabilityBefore === NO
           },
         }),
       ],

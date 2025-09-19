@@ -93,7 +93,7 @@ export const dataSchema = z.object({
           z.object({
             country: z.string(),
             countryDisplay: z.string(),
-            abroadNationalId: z.string().min(4).optional().or(z.literal('')),
+            abroadNationalId: z.string().min(4),
           }),
         )
         .optional(),
