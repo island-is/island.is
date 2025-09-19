@@ -4,6 +4,7 @@ import { z } from 'zod'
 const schema = z.object({
   paymentFlowEventCallbackUrl: z.string(),
   paymentNationalIdFallback: z.string(),
+  payerNationalId: z.string(),
 })
 
 export const LandspitaliApiModuleConfig = defineConfig({
@@ -16,5 +17,6 @@ export const LandspitaliApiModuleConfig = defineConfig({
     paymentNationalIdFallback: env.required(
       'LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
     ),
+    payerNationalId: env.required('LANDSPITALI_PAYMENT_PAYER_NATIONAL_ID'),
   }),
 })

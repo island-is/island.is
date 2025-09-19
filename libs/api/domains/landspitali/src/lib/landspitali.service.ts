@@ -84,8 +84,7 @@ export class LandspitaliService {
             },
           ],
           organisationId: LANDSPITALI_NATIONAL_ID,
-          payerNationalId:
-            input.payerNationalId || this.config.paymentNationalIdFallback,
+          payerNationalId: this.config.payerNationalId,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
           extraData: [
             {
@@ -189,8 +188,7 @@ export class LandspitaliService {
             locale === 'is'
               ? 'https://island.is/s/landspitali'
               : 'https://island.is/en/o/landspitali',
-          payerNationalId:
-            input.payerNationalId || this.config.paymentNationalIdFallback,
+          payerNationalId: this.config.payerNationalId,
           organisationId: LANDSPITALI_NATIONAL_ID,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
           extraData: [
