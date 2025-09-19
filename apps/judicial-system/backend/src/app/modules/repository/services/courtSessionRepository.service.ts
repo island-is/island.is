@@ -34,6 +34,7 @@ interface UpdateCourtSession {
   isAttestingWitness?: boolean
   attestingWitnessId?: string
   closingEntries?: string
+  isConfirmed?: boolean
 }
 
 @Injectable()

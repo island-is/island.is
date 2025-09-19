@@ -112,4 +112,8 @@ export class CourtSession extends Model {
   @HasMany(() => CourtDocument, 'courtSessionId')
   @ApiPropertyOptional({ type: () => [CourtDocument] })
   filedDocuments?: CourtDocument[]
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isConfirmed?: boolean
 }
