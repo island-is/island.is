@@ -89,10 +89,10 @@ jobs:
     runs-on: arc-shared
     outputs:
       ecr_username: 'AWS'
-      ecr_password: ${{ steps.ecr-password.outputs.password }}
+      ecr_password: ${{ steps.pass.outputs.password }}
     steps:
       - shell: bash
-        id: ecr-password
+        id: pass
         run: |
           ECR_PASSWORD=$(aws ecr get-login-password)
           echo "::add-mask::$ECR_PASSWORD"
