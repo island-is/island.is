@@ -58,7 +58,6 @@ jobs:
     if: needs.pre-checks.outputs.PRE_CHECK
     needs:
       - pre-checks
-
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
@@ -162,7 +161,7 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
+       
       - name: Install infra modules
         working-directory: infra
         run: |
@@ -310,7 +309,7 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
+        
       - name: Set id for matrix
         run: |
           node ./scripts/ci/docker/create-id.mjs
@@ -359,7 +358,7 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
+       
       - name: Building Docker images
         continue-on-error: true
         id: dockerbuild
@@ -430,7 +429,7 @@ jobs:
           aws-region: eu-west-1
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
+  
       - name: Docker build image
         working-directory: infra
         run: |
@@ -503,7 +502,7 @@ jobs:
         uses: ./monorepo/.github/actions/setup-yarn
         with:
           working-directory: monorepo
-
+       
       - name: Install infra modules
         id: install-infra-modules
         working-directory: monorepo/infra

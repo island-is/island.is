@@ -66,12 +66,12 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
+        
       - name: Setup yarn (infra)
         uses: ./.github/actions/setup-yarn
         with:
           working-directory: infra
-
+        
       - name: Run unit tests
         working-directory: infra
         run: yarn test
