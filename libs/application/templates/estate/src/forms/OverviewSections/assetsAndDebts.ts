@@ -37,7 +37,7 @@ export const overviewAssetsAndDebts = [
       cards: ({ answers }: Application) =>
         (
           (answers.estate as unknown as EstateInfo).assets?.filter(
-            (asset) => asset.enabled,
+            (asset) => asset.enabled !== false,
           ) ?? []
         ).map((asset) => ({
           title: asset.description,
@@ -65,7 +65,7 @@ export const overviewAssetsAndDebts = [
         answers,
         'estate.assets',
         'marketValue',
-        (asset) => !!asset?.enabled,
+        (asset) => asset?.enabled !== false,
       ),
     titleVariant: 'h4',
   }),
@@ -128,7 +128,7 @@ export const overviewAssetsAndDebts = [
       cards: ({ answers }: Application) =>
         (
           (answers.estate as unknown as EstateInfo)?.vehicles?.filter(
-            (vehicle) => vehicle.enabled,
+            (vehicle) => vehicle.enabled !== false,
           ) ?? []
         ).map((vehicle) => ({
           title: vehicle.description,
@@ -151,14 +151,14 @@ export const overviewAssetsAndDebts = [
         answers,
         'estate.vehicles',
         'marketValue',
-        (asset) => !!asset?.enabled,
+        (asset) => asset?.enabled !== false,
       ),
     condition: (answers) =>
       !!getSumFromAnswers<EstateAsset>(
         answers,
         'estate.vehicles',
         'marketValue',
-        (asset) => !!asset?.enabled,
+        (asset) => asset?.enabled !== false,
       ),
     titleVariant: 'h4',
   }),
@@ -179,7 +179,7 @@ export const overviewAssetsAndDebts = [
       cards: ({ answers }: Application) =>
         (
           (answers.estate as unknown as EstateInfo)?.guns?.filter(
-            (guns) => guns.enabled,
+            (guns) => guns.enabled !== false,
           ) ?? []
         ).map((gun) => ({
           title: gun.description,
@@ -200,14 +200,14 @@ export const overviewAssetsAndDebts = [
         answers,
         'estate.guns',
         'marketValue',
-        (asset) => !!asset?.enabled,
+        (asset) => asset?.enabled !== false,
       ),
     condition: (answers) =>
       !!getSumFromAnswers<EstateAsset>(
         answers,
         'estate.guns',
         'marketValue',
-        (asset) => !!asset?.enabled,
+        (asset) => asset?.enabled !== false,
       ),
     titleVariant: 'h4',
   }),
@@ -257,7 +257,7 @@ export const overviewAssetsAndDebts = [
         answers,
         'estate.bankAccounts',
         'accountTotal',
-        (account) => !!account?.enabled,
+        (account) => account?.enabled !== false,
       ),
     condition: (answers) =>
       !!getSumFromAnswers<
@@ -266,7 +266,7 @@ export const overviewAssetsAndDebts = [
         answers,
         'estate.bankAccounts',
         'accountTotal',
-        (account) => !!account?.enabled,
+        (account) => account?.enabled !== false,
       ),
     titleVariant: 'h4',
   }),
@@ -300,7 +300,7 @@ export const overviewAssetsAndDebts = [
     {
       cards: ({ answers }: Application) =>
         ((answers as unknown as EstateSchema).estate?.claims ?? [])
-          .filter((claim) => claim.enabled)
+          .filter((claim) => claim.enabled !== false)
           .map((claim) => ({
             title: claim.publisher,
             description: [
@@ -319,12 +319,12 @@ export const overviewAssetsAndDebts = [
         answers,
         'estate.claims',
         'value',
-        (claim) => !!claim?.enabled,
+        (claim) => claim?.enabled !== false,
       ),
     condition: (answers) =>
       !!getSumFromAnswers<
         NonNullable<EstateSchema['estate']['claims']>[number]
-      >(answers, 'estate.claims', 'value', (claim) => !!claim?.enabled),
+      >(answers, 'estate.claims', 'value', (claim) => claim?.enabled !== false),
     titleVariant: 'h4',
   }),
   buildDividerField({
@@ -390,12 +390,12 @@ export const overviewAssetsAndDebts = [
         answers,
         'estate.stocks',
         'value',
-        (stock) => !!stock?.enabled,
+        (stock) => stock?.enabled !== false,
       ),
     condition: (answers) =>
       !!getSumFromAnswers<
         NonNullable<EstateSchema['estate']['stocks']>[number]
-      >(answers, 'estate.stocks', 'value', (stock) => !!stock?.enabled),
+      >(answers, 'estate.stocks', 'value', (stock) => stock?.enabled !== false),
     titleVariant: 'h4',
   }),
   buildDividerField({}),
@@ -437,7 +437,7 @@ export const overviewAssetsAndDebts = [
         answers,
         'estate.otherAssets',
         'value',
-        (otherAsset) => !!otherAsset?.enabled,
+        (otherAsset) => otherAsset?.enabled !== false,
       ),
     condition: (answers) =>
       !!getSumFromAnswers<
@@ -446,7 +446,7 @@ export const overviewAssetsAndDebts = [
         answers,
         'estate.otherAssets',
         'value',
-        (otherAsset) => !!otherAsset?.enabled,
+        (otherAsset) => otherAsset?.enabled !== false,
       ),
     titleVariant: 'h4',
   }),
