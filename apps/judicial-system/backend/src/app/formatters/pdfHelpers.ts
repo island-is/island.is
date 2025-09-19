@@ -538,12 +538,34 @@ export const addNormalRightAlignedText = (
 
 export const addNumberedList = (
   doc: PDFKit.PDFDocument,
-  list: string[],
+  items: string[],
+  start = 1,
   font?: string,
 ) => {
+  const originalX = doc.x
+
   setFont(doc, font)
 
-  doc.fontSize(baseFontSize).list(list, {
-    listType: 'numbered',
-  })
+  const x = doc.page.margins.left + 18
+  const gap = 6
+
+  const maxIndex = start + items.length - 1
+  const labelExample = `${maxIndex}.`
+  const labelBoxWidth = doc.widthOfString(labelExample)
+
+  const rightMargin = doc.page.margins.right
+  const itemX = x + labelBoxWidth + gap
+  const wrapWidth = doc.page.width - rightMargin - itemX
+
+  for (const [i, item] of items.entries()) {
+    const label = `${start + i}.`
+    const labelWidth = doc.widthOfString(label)
+    const labelX = x + (labelBoxWidth - labelWidth)
+    const y = doc.y
+
+    doc.text(label, labelX, y)
+    drawTextWithEllipsis(doc, ` ${item}`, itemX, y, wrapWidth)
+  }
+
+  doc.x = originalX
 }

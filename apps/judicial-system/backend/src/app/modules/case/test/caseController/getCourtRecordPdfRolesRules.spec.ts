@@ -6,6 +6,7 @@ import {
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
@@ -29,5 +30,6 @@ describe('CaseController - Get court record pdf rules', () => {
     expect(rules).toContain(courtOfAppealsJudgeRule)
     expect(rules).toContain(courtOfAppealsRegistrarRule)
     expect(rules).toContain(courtOfAppealsAssistantRule)
+    expect(rules).toContain(publicProsecutorStaffRule)
   })
 })
