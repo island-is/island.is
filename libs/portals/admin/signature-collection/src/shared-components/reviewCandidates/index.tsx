@@ -13,18 +13,25 @@ import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
-import { SignatureCollectionCandidate } from '@island.is/api/schema'
+import {
+  SignatureCollectionCandidate,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 import { formatNationalId } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
+import { useRevalidator } from 'react-router-dom'
 
 const { Table, Row, Head, HeadData, Body, Data } = T
 
 const ReviewCandidates = ({
   candidates,
+  collectionType,
 }: {
   candidates: Array<SignatureCollectionCandidate>
+  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
+  const { revalidate } = useRevalidator()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
   const [candidateInReview, setCandidateInReview] =
@@ -43,12 +50,13 @@ const ReviewCandidates = ({
   const removeFromList = async (candidateId: string) => {
     try {
       const { data } = await signatureCollectionAdminRemoveCandidateMutation({
-        variables: { input: { candidateId } },
+        variables: { input: { candidateId, collectionType } },
       })
 
       if (data?.signatureCollectionAdminRemoveCandidate?.success) {
         toast.success(formatMessage(m.unsignFromListSuccess))
         setAllCandidates(allCandidates?.filter((c) => c.id !== candidateId))
+        revalidate()
       }
     } catch (e) {
       toast.error(e.message)
@@ -115,6 +123,7 @@ const ReviewCandidates = ({
                       variant="text"
                       icon="trash"
                       colorScheme="destructive"
+                      size="small"
                       onClick={() => {
                         setConfirmModalIsOpen(true)
                         setCandidateInReview(candidate)

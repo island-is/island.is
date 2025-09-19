@@ -57,7 +57,10 @@ const SignatureCollectionPresidential = () => {
       {isOwner?.success || user?.profile.actor ? (
         isOwner?.success ? (
           <>
-            <ActionDrawer />
+            <ActionDrawer
+              candidateId={listsForOwner?.[0]?.candidate?.id}
+              collectionType={collectionType}
+            />
             <Divider />
             <OwnerView
               collectionType={collectionType}

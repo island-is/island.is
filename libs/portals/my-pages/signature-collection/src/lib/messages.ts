@@ -237,7 +237,7 @@ export const m = defineMessages({
   },
   pdfReport: {
     id: 'sp.signatureCollection:pdfReport',
-    defaultMessage: 'Skýrsla',
+    defaultMessage: 'Sækja skýrslu',
     description: '',
   },
   pdfReportDescription: {
@@ -248,6 +248,11 @@ export const m = defineMessages({
   downloadPdf: {
     id: 'sp.signatureCollection:downloadPdf',
     defaultMessage: 'Hlaða niður skýrslu',
+    description: '',
+  },
+  pdfReportError: {
+    id: 'sp.signatureCollection:pdfReportError',
+    defaultMessage: 'Ekki tókst að sækja skýrslu',
     description: '',
   },
   downloadPdfDescription: {
@@ -482,12 +487,6 @@ export const m = defineMessages({
   listActions: {
     id: 'sp.signatureCollection:listActions',
     defaultMessage: 'Aðgerðir',
-    description: '',
-  },
-  listActionsDescription: {
-    id: 'sp.signatureCollection:listActionsDescription',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu justo interdum, pharetra enim vel, ultrices augue.',
     description: '',
   },
   deleteCollectionCandidacy: {

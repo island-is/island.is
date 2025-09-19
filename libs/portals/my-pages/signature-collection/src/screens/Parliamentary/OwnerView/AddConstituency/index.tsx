@@ -36,10 +36,16 @@ const AddConstituencyModal = ({
   const { refetchIsOwner } = useIsOwner(collection?.collectionType)
 
   const [addNewConstituency, { loading }] = useMutation(addConstituency, {
-    onCompleted: () => {
-      setModalIsOpen(false)
-      refetchIsOwner()
-      toast.success(formatMessage(m.addConstituencySuccess))
+    onCompleted: (res) => {
+      const success = res?.signatureCollectionAddAreas.success
+      if (success) {
+        setSelectedConstituencies([])
+        setModalIsOpen(false)
+        refetchIsOwner()
+        toast.success(formatMessage(m.addConstituencySuccess))
+      } else {
+        toast.error(formatMessage(m.addConstituencyError))
+      }
     },
     onError: () => {
       toast.error(formatMessage(m.addConstituencyError))

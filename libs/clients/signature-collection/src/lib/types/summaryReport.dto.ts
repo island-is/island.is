@@ -1,6 +1,10 @@
-import { MedmaelalistiExtendedDTO, SvaediExtendedDTO } from '../../../gen/fetch'
+import {
+  FrambodInfoDTO,
+  MedmaelalistiExtendedDTO,
+  SvaediExtendedDTO,
+} from '../../../gen/fetch'
 
-export interface AreaSummaryReport {
+export interface SummaryReport {
   id: string
   name: string
   min: number
@@ -15,6 +19,7 @@ export interface ListSummary {
   nrOfSignatures: number
   nrOfDigitalSignatures: number
   nrOfPaperSignatures: number
+  areaName: string
 }
 
 export const mapListSummary = (list: MedmaelalistiExtendedDTO): ListSummary => {
@@ -25,17 +30,30 @@ export const mapListSummary = (list: MedmaelalistiExtendedDTO): ListSummary => {
     nrOfSignatures: list.fjoldiMedmaela || 0,
     nrOfDigitalSignatures: list.fjoldiMedmaelaRafraen || 0,
     nrOfPaperSignatures: list.fjoldiMedmaelaSkrifleg || 0,
+    areaName: list.svaedi?.nafn || '',
   }
 }
 
 export const mapAreaSummaryReport = (
   svaedi: SvaediExtendedDTO,
-): AreaSummaryReport => {
+): SummaryReport => {
   return {
     id: svaedi.id?.toString() || '',
     name: svaedi.nafn ?? '',
     min: svaedi.fjoldi || 0,
     max: svaedi.fjoldiMax || 0,
     lists: svaedi.medmaelalistar?.map(mapListSummary) || [],
+  }
+}
+
+export const mapCandidateSummaryReport = (
+  candidate: FrambodInfoDTO,
+): SummaryReport => {
+  return {
+    id: candidate.id?.toString() || '',
+    name: candidate.nafn ?? '',
+    min: 0,
+    max: 0,
+    lists: candidate.medmaelalistar?.map(mapListSummary) || [],
   }
 }
