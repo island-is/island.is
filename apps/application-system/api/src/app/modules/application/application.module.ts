@@ -28,7 +28,7 @@ import { PaymentModule } from '@island.is/application/api/payment'
 import { HistoryModule } from '@island.is/application/api/history'
 import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 import { ApplicationActionService } from './application-action.service'
-import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import { IdentityClientModule } from '@island.is/clients/identity'
 
 @Module({
   imports: [
@@ -48,7 +48,7 @@ import { NationalRegistryClientModule } from '@island.is/clients/national-regist
     LoggingModule,
     ApplicationChargeModule,
     AuthPublicApiClientModule,
-    NationalRegistryClientModule,
+    IdentityClientModule,
   ],
   controllers: [ApplicationController, AdminController],
   providers: [

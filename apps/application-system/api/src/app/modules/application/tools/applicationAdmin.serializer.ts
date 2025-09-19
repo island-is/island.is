@@ -45,7 +45,7 @@ import {
   ApplicationListAdminResponseDto,
   ApplicationTypeAdminInstitution,
 } from '../dto/applicationAdmin.response.dto'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { IdentityClientService } from '@island.is/clients/identity'
 
 @Injectable()
 export class ApplicationAdminSerializer
@@ -57,7 +57,7 @@ export class ApplicationAdminSerializer
     private historyBuilder: HistoryBuilder,
     private featureFlagService: FeatureFlagService,
     private paymentService: PaymentService,
-    private nationalRegistryApi: NationalRegistryClientService,
+    private identityService: IdentityClientService,
   ) {}
 
   intercept(
@@ -128,8 +128,13 @@ export class ApplicationAdminSerializer
     const roleInState = helper.getRoleInState(userRole)
 
     const applicantActors = await Promise.all(
-      application.applicantActors.map((actorNationalId) =>
-        tryToGetNameFromNationalId(actorNationalId, this.nationalRegistryApi),
+      application.applicantActors.map(
+        (actorNationalId) =>
+          tryToGetNameFromNationalId(
+            actorNationalId,
+            this.identityService,
+            true,
+          ) ?? actorNationalId,
       ),
     )
     const actors =
@@ -156,15 +161,12 @@ export class ApplicationAdminSerializer
       application.id,
     )
 
-    let applicantName: string | undefined | null
-    try {
-      const applicant = await this.nationalRegistryApi.getIndividual(
+    const applicantName =
+      tryToGetNameFromNationalId(
         application.applicant,
-      )
-      applicantName = applicant?.fullName
-    } catch (e) {
-      applicantName = ''
-    }
+        this.identityService,
+        false,
+      ) ?? ''
 
     const dto = plainToInstance(ApplicationListAdminResponseDto, {
       ...application,
@@ -207,7 +209,7 @@ export class ApplicationAdminSerializer
         template,
         application,
         intl.formatMessage,
-        this.nationalRegistryApi,
+        this.identityService,
       ),
     })
     return instanceToPlain(dto)

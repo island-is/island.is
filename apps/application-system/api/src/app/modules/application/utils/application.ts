@@ -21,7 +21,7 @@ import { FormatMessage } from '@island.is/cms-translations'
 import { ApplicationStatistics } from '../dto/applicationAdmin.response.dto'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import { expandFieldKeys } from '../lifecycle/application-lifecycle.utils'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { IdentityClientService } from '@island.is/clients/identity'
 
 export const getApplicationLifecycle = (
   application: Application,
@@ -297,19 +297,20 @@ export const getAdminDataForAdminPortal = async (
   template: Template,
   application: Application,
   formatMessage: FormatMessage,
-  nationalRegistryApi: NationalRegistryClientService,
+  identityService: IdentityClientService,
 ): Promise<Array<{ key: string; values: string[]; label: string }>> => {
   if (!template.adminDataConfig?.answers) return []
 
   // Simple per-request memoization to reduce duplicate NR calls
   const nationalIdMap = new Map<string, string>()
-  const resolveWithNationalIdMap = async (nationalId: string) => {
+  const resolveWithNationalIdMap = async (
+    nationalId: string,
+  ): Promise<string> => {
     const valueFromMap = nationalIdMap.get(nationalId)
     if (valueFromMap) return valueFromMap
-    const valueFromApi = await tryToGetNameFromNationalId(
-      nationalId,
-      nationalRegistryApi,
-    )
+    const valueFromApi =
+      (await tryToGetNameFromNationalId(nationalId, identityService, true)) ??
+      nationalId
     nationalIdMap.set(nationalId, valueFromApi)
     return valueFromApi
   }
@@ -356,12 +357,18 @@ export const getAdminDataForAdminPortal = async (
 
 export const tryToGetNameFromNationalId = async (
   nationalId: string,
-  nationalRegistryApi: NationalRegistryClientService,
-): Promise<string> => {
+  identityService: IdentityClientService,
+  returnWithNationalId: boolean,
+): Promise<string | undefined> => {
+  const identity = await identityService.getIdentity(nationalId)
+
   try {
-    const person = await nationalRegistryApi.getIndividual(nationalId)
-    return person?.fullName ? `${person.fullName} (${nationalId})` : nationalId
+    return identity?.name
+      ? returnWithNationalId
+        ? `${identity?.name} (${nationalId})`
+        : identity?.name
+      : undefined
   } catch (e) {
-    return nationalId
+    return undefined
   }
 }
