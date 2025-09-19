@@ -1,6 +1,7 @@
 import { DefaultEvents } from '@island.is/application/types'
 
 export const FIRST_GRADE_AGE = 6
+export const TENTH_GRADE_AGE = 16
 
 export enum Actions {
   SEND_APPLICATION = 'sendApplication',
