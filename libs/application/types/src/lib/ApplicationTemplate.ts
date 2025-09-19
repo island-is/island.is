@@ -13,7 +13,6 @@ import { AnswerValidator } from './AnswerValidator'
 import { Features } from '@island.is/feature-flags'
 import { AllowedDelegation } from './ApplicationAllowedDelegations'
 import { CodeOwners } from '@island.is/shared/constants'
-import { PruningApplication } from './ApplicationLifecycle'
 
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
@@ -63,14 +62,15 @@ export interface ApplicationTemplate<
    */
   readonly adminDataConfig?: {
     /**
-     * When the application should be post-pruned.
-     * Can be either:
-     * - A number (milliseconds after pruning), e.g., `2 * 365 * 24 * 3600 * 1000` for 2 years.
-     * - A function returning a Date, e.g., `(application) => addMonths(new Date(), 6)`.
+     * Optional override for post-prune delay. The default is to post-prune applications 1 year after they are pruned.
+     * Post-pruning removes the last PIIs from an application so please be careful when using this override.
+     *
+     * Value given as the number of milliseconds after pruning, e.g., `2 * 365 * 24 * 3600 * 1000` for 2 years.
      *
      * At post-pruning, all remaining `answers` and `externalData` will be cleared.
+     * Additionally all nationalIds will be deleted from the state_history table
      */
-    whenToPostPrune: number | ((application: PruningApplication) => Date)
+    postPruneDelayOverride?: number
 
     /**
      * List of fields from the `answers` object to retain after pruning.

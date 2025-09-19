@@ -14,8 +14,10 @@ import {
 } from '@island.is/api/schema'
 
 const SignedLists = ({
+  collectionType,
   signedLists,
 }: {
+  collectionType: SignatureCollectionCollectionType
   signedLists: SignatureCollectionSignedList[]
 }) => {
   useNamespaces('sp.signatureCollection')
@@ -24,7 +26,6 @@ const SignedLists = ({
   const [listIdToUnsign, setListIdToUnsign] = useState<string | undefined>(
     undefined,
   )
-  const collectionType = signedLists?.[0]?.collectionType ?? ''
   const { refetchSignedLists } = useGetSignedList(collectionType)
 
   const [unSign, { loading }] = useMutation<{
@@ -66,8 +67,16 @@ const SignedLists = ({
         return (
           <Box marginBottom={3} key={list.id}>
             <ActionCard
-              heading={list.title.split(' - ')[0]}
-              eyebrow={list.area?.name}
+              heading={
+                collectionType ===
+                SignatureCollectionCollectionType.LocalGovernmental
+                  ? list.candidate.name
+                  : list.title.split(' - ')[0]
+              }
+              eyebrow={`${formatMessage(m.endTime)} ${format(
+                new Date(list.endTime),
+                'dd.MM.yyyy',
+              )}`}
               text={
                 collectionType ===
                 SignatureCollectionCollectionType.Presidential

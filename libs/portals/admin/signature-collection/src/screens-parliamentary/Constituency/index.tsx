@@ -27,7 +27,7 @@ export const Constituency = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { allLists } = useLoaderData() as ListsLoaderReturn
-  const { constituencyName } = useParams() as { constituencyName: string }
+  const { constituencyName = '' } = useParams<{ constituencyName: string }>()
   const constituencyLists = allLists.filter(
     (list) => list.area.name === constituencyName,
   )

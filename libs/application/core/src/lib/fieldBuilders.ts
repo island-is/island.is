@@ -1193,6 +1193,7 @@ export const buildBankAccountField = (
   } = data
 
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,

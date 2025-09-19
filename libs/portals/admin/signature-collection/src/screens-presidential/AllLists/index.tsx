@@ -168,16 +168,12 @@ const Lists = () => {
           )}
           <Divider />
           <Box marginTop={9} />
-          <GridRow marginBottom={5}>
-            <GridColumn span={'12/12'}>
-              <FindSignature collectionId={collection.id} />
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                marginTop={[2, 2, 2, 0]}
-              >
+          {lists?.length > 0 && (
+            <GridRow marginBottom={5}>
+              <GridColumn span={'12/12'}>
+                <FindSignature collectionId={collection.id} />
+              </GridColumn>
+              <GridColumn span={'12/12'}>
                 <Filter
                   labelClear=""
                   labelClose=""
@@ -224,9 +220,9 @@ const Lists = () => {
                     }
                   />
                 </Filter>
-              </Box>
-            </GridColumn>
-          </GridRow>
+              </GridColumn>
+            </GridRow>
+          )}
           {lists?.length > 0 ? (
             <Box>
               <Box marginBottom={2} display="flex" justifyContent="flexEnd">

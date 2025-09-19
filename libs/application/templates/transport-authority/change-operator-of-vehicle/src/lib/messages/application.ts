@@ -35,9 +35,4 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is done',
   },
-  historyLogApprovedByReviewer: {
-    id: 'ta.cov.application:historyLogApprovedByReviewer',
-    defaultMessage: 'Samþykkt af öllum aðilum',
-    description: 'History log approved by reviewer',
-  },
 })

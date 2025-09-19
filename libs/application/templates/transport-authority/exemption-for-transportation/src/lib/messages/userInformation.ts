@@ -21,7 +21,7 @@ export const userInformation = {
     },
     subtitle: {
       id: 'ta.eft.application:userInformation.applicant.subtitle',
-      defaultMessage: 'Umsækjandi',
+      defaultMessage: 'Innskráður aðili',
       description: 'Applicant subtitle',
     },
   }),
@@ -43,7 +43,7 @@ export const userInformation = {
     },
     isSameAsApplicant: {
       id: 'ta.eft.application:userInformation.transporter.isSameAsApplicant',
-      defaultMessage: 'Flutningsaðili er sá sami og umsækjandi',
+      defaultMessage: 'Flutningsaðili er sá sami og innskráður aðili',
       description: 'Transporter is same as applicant checkbox text',
     },
     nationalId: {
@@ -85,7 +85,7 @@ export const userInformation = {
     },
     isSameAsApplicant: {
       id: 'ta.eft.application:userInformation.responsiblePerson.isSameAsApplicant',
-      defaultMessage: 'Ábyrgðarmaður er sá sami og umsækjandi',
+      defaultMessage: 'Ábyrgðarmaður er sá sami og innskráður aðili',
       description: 'Responsible person is same as applicant checkbox text',
     },
     nationalId: {
