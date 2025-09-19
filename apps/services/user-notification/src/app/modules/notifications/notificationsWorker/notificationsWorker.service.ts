@@ -129,12 +129,14 @@ export class NotificationsWorkerService {
     formattedTemplate,
     fullName,
     subjectId,
+    processedArgs,
   }: {
     isEnglish: boolean
     recipientEmail: string | null
     formattedTemplate: HnippTemplate
     fullName: string
     subjectId?: string
+    processedArgs: any[]
   }): Message {
     if (!recipientEmail) {
       throw new Error('Missing recipient email address')
@@ -214,7 +216,9 @@ export class NotificationsWorkerService {
         name: fullName,
         address: recipientEmail,
       },
-      subject: formattedTemplate.title,
+      subject:
+        processedArgs.find((arg) => arg.key === 'subject')?.value ||
+        formattedTemplate.title,
       template: {
         title: formattedTemplate.title,
         body: generateBody(),
@@ -289,6 +293,7 @@ export class NotificationsWorkerService {
         recipientEmail: profile.email ?? null,
         fullName,
         subjectId: message.onBehalfOf?.subjectId,
+        processedArgs: message.args,
       })
 
       await this.emailService.sendEmail(emailContent)

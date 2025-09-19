@@ -118,16 +118,27 @@ export class NotificationsController {
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
+    // Validate required arguments and sanitize invalid ones
     await this.notificationsService.validate(body.templateId, body.args)
-    const id = await this.queue.add(body)
+    const validArgs = await this.notificationsService.sanitize(
+      body.templateId,
+      body.args,
+    )
+
+    const sanitizedBody = {
+      ...body,
+      args: validArgs,
+    }
+
+    const id = await this.queue.add(sanitizedBody)
     const flattenedArgs: Record<string, string> = {}
-    for (const arg of body.args) {
+    for (const arg of validArgs) {
       flattenedArgs[arg.key] = arg.value
     }
     this.logger.info('Message queued', {
       messageId: id,
       ...flattenedArgs,
-      ...body,
+      ...sanitizedBody,
       args: {}, // Remove args, since they're in a better format in `flattenedArgs`
       queue: { url: this.queue.url, name: this.queue.queueName },
     })
