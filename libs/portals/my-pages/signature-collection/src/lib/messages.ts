@@ -250,6 +250,11 @@ export const m = defineMessages({
     defaultMessage: 'Hlaða niður skýrslu',
     description: '',
   },
+  pdfReportError: {
+    id: 'sp.signatureCollection:pdfReportError',
+    defaultMessage: 'Ekki tókst að sækja skýrslu',
+    description: '',
+  },
   downloadPdfDescription: {
     id: 'sp.signatureCollection:downloadPdfDescription',
     defaultMessage:

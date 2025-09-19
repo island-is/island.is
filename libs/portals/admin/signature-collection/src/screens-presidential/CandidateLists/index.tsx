@@ -40,6 +40,7 @@ const CandidateLists = () => {
         collectionType: SignatureCollectionCollectionType.Presidential,
       },
     },
+    skip: !candidateId,
   })
 
   return (

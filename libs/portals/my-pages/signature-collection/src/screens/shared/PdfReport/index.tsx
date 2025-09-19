@@ -1,5 +1,5 @@
 import { useLocale } from '@island.is/localization'
-import { Button } from '@island.is/island-ui/core'
+import { Button, toast } from '@island.is/island-ui/core'
 import { Document, pdf } from '@react-pdf/renderer'
 import MyPdfDocument from './Document'
 import { m } from '../../../lib/messages'
@@ -53,12 +53,18 @@ export const PdfReport = ({
   }, [areaReport, candidateReport, instance, collectionType, openAfterUpdate])
 
   const onClick = async () => {
-    if (collectionType === SignatureCollectionCollectionType.Presidential) {
-      await getCandidateReport({
-        variables: { input: { candidateId, collectionType } },
-      })
-    } else {
-      await getAreaReport({ variables: { input: { listId, collectionType } } })
+    try {
+      if (collectionType === SignatureCollectionCollectionType.Presidential) {
+        await getCandidateReport({
+          variables: { input: { candidateId, collectionType } },
+        })
+      } else {
+        await getAreaReport({
+          variables: { input: { listId, collectionType } },
+        })
+      }
+    } catch {
+      toast.error(formatMessage(m.pdfReportError))
     }
 
     setOpenAfterUpdate(true)
