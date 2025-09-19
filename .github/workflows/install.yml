@@ -96,6 +96,11 @@ jobs:
         run: |
           ECR_PASSWORD=$(aws ecr get-login-password)
           echo "::add-mask::$ECR_PASSWORD"
+          if [ ${#ECR_PASSWORD} -gt 3 ]; then
+            echo "CORRECT LENGTH"
+          else
+            echo "INVALID LENGTH"
+          fi
           echo "password=$ECR_PASSWORD" >> $GITHUB_OUTPUT
   install:
     needs:
