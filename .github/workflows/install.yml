@@ -129,9 +129,9 @@ jobs:
     services:
       npminstall:
         image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/islandis-npm-proxy:1
-        credentials:
-          username: ${{ needs.get-ecr-password.outputs.ecr_username }}
-          password: ${{ needs.get-ecr-password.outputs.ecr_password }}
+        # credentials:
+         # username: ${{ needs.get-ecr-password.outputs.ecr_username }}
+         # password: ${{ needs.get-ecr-password.outputs.ecr_password }}
         ports:
           - 3000:3000
         env: 
