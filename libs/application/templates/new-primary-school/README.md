@@ -1,14 +1,18 @@
-# New Primary School - Directorate of Education and School Services (DESS) / (To be announced TBA - MMS)
+# New Primary School Application
+
+Directorate of Education and School Services (DESS) / Miðstöð menntunar og skólaþjónustu (MMS) *(To be announced)*
 
 ## About
 
-This application template enables applicants to apply for a new primary school or enrol their child in the first year of a new primary school.
+This application template enables parents or guardians to apply for a new primary school placement or enroll their 6-year-old child in the first year of primary school. It streamlines the process by integrating with national registries and school systems to retrieve relevant applicant and child data.
 
 ## URLs
 
-/umsoknir/grunnskoli/
+- `/umsoknir/grunnskoli/`
 
 ## Integrations
+
+This application integrates with the following systems to retrieve applicant and child data:
 
 - [Þjóðskrá](https://skra.is): Retrieves the applicant's information and the applicant's children's information.
 - [Frigg](https://island.is/s/midstod-menntunar-og-skolathjonustu): Retrieves the applicant's children's previous and current school information.
@@ -20,27 +24,27 @@ All localisation can be found on Contentful.
 - [New primary school application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/nps.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../../localization/README.md#message-extraction).
+When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../localization/README.md#message-extraction).
 
-### States
+## States
 
-#### Prerequisites
+The application process includes the following states:
 
-This state is a temporary status that all new applications will initially be created in. It has a short lifespan and remains unlisted.
+### Prerequisites
 
-The purpose of this state is to serve as a preliminary step before entering the actual application process. An external data step retrieves information from Þjóðskrá and Frigg about applicant children and their current school. In this state, the applicant selects the child they wish to apply for.
+Temporary initial state for all new applications. It remains unlisted and is used to retrieve data from Þjóðskrá and Frigg. The applicant selects the child they wish to apply for.
 
-#### Draft
+### Draft
 
-In this state, valid applicants will be able to advance and begin the actual application process, filling in all the relevant data.
+Applicants fill in the required information to complete the application.
 
-#### Approved
+### Approved
 
-To be announced (TBA)
+The application has been approved by the selected school.
 
-#### Rejected
+### Rejected
 
-To be announced (TBA)
+The application has been rejected by the selected school.
 
 ## Tests
 
