@@ -6,8 +6,8 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useFormContext } from 'react-hook-form'
 import {
   checkIfConvoyChanged,
-  checkIfExemptionTypeShortTerm,
   getUpdatedAxleSpacing,
+  getUpdatedConvoy,
   getUpdatedFreightPairingList,
   getUpdatedVehicleSpacing,
 } from '../../utils'
@@ -25,16 +25,16 @@ export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
       const newAnswers = getValues()
 
       // Make sure if this is short-term, that there is only one convoy
-      if (
-        checkIfExemptionTypeShortTerm(newAnswers) &&
-        Array.isArray(newAnswers.convoy?.items) &&
-        newAnswers.convoy.items.length > 0
-      ) {
-        newAnswers.convoy.items = [newAnswers.convoy.items[0]]
+      const updatedConvoy = getUpdatedConvoy(
+        newAnswers.exemptionPeriod,
+        newAnswers.convoy,
+      )
+      if (updatedConvoy) {
+        newAnswers.convoy = updatedConvoy
       }
 
-      // No need to do anything if nothing of importance changed
       if (!checkIfConvoyChanged(application.answers, newAnswers)) {
+        // No need to do anything if nothing of importance changed
         return [true, null]
       }
 
@@ -53,10 +53,12 @@ export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
       )
 
       if (
+        updatedConvoy ||
         updatedFreightPairing ||
         updatedVehicleSpacing ||
         updatedAxleSpacing
       ) {
+        if (updatedConvoy) setValue('convoy', updatedConvoy)
         if (updatedFreightPairing)
           setValue('freightPairing', updatedFreightPairing)
         if (updatedVehicleSpacing)
@@ -68,6 +70,7 @@ export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
             input: {
               id: application.id,
               answers: {
+                ...(updatedConvoy && { convoy: newAnswers.convoy }),
                 ...(updatedFreightPairing && {
                   freightPairing: updatedFreightPairing,
                 }),

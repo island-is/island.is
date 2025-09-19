@@ -1,6 +1,22 @@
 import { FormValue } from '@island.is/application/types'
-import { ExemptionForTransportationAnswers } from '../..'
+import { ExemptionForTransportationAnswers, ExemptionType } from '../..'
 import { getValueViaPath } from '@island.is/application/core'
+
+export const getUpdatedConvoy = (
+  exemptionPeriod: ExemptionForTransportationAnswers['exemptionPeriod'],
+  convoy: ExemptionForTransportationAnswers['convoy'],
+): ExemptionForTransportationAnswers['convoy'] | undefined => {
+  if (
+    exemptionPeriod.type === ExemptionType.SHORT_TERM &&
+    Array.isArray(convoy?.items) &&
+    convoy.items.length > 0
+  ) {
+    return {
+      ...convoy,
+      items: [convoy.items[0]],
+    }
+  }
+}
 
 export const checkIfConvoyChanged = (
   oldAnswers: FormValue,
@@ -37,6 +53,22 @@ export const checkIfConvoyChanged = (
   }
 
   return false
+}
+
+export const getUpdatedFreight = (
+  exemptionPeriod: ExemptionForTransportationAnswers['exemptionPeriod'],
+  freight: ExemptionForTransportationAnswers['freight'],
+): ExemptionForTransportationAnswers['freight'] | undefined => {
+  if (
+    exemptionPeriod.type === ExemptionType.SHORT_TERM &&
+    Array.isArray(freight?.items) &&
+    freight.items.length > 0
+  ) {
+    return {
+      ...freight,
+      items: [freight.items[0]],
+    }
+  }
 }
 
 export const checkIfFreightChanged = (

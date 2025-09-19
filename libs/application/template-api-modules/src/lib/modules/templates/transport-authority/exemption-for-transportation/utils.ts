@@ -153,6 +153,9 @@ export const mapResponsiblePerson = (
 }
 
 export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
+  const exemptionPeriodAnswers = getValueViaPath<
+    ExemptionForTransportationAnswers['exemptionPeriod']
+  >(application.answers, 'exemptionPeriod')
   const convoyAnswers = getValueViaPath<
     ExemptionForTransportationAnswers['convoy']
   >(application.answers, 'convoy')
@@ -166,8 +169,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
     ExemptionForTransportationAnswers['vehicleSpacing']
   >(application.answers, 'vehicleSpacing')
 
-  const isShortTerm =
-    vehicleSpacingAnswers?.exemptionPeriodType === ExemptionType.SHORT_TERM
+  const isShortTerm = exemptionPeriodAnswers?.type === ExemptionType.SHORT_TERM
   const hasExemptionForWeight =
     axleSpacingAnswers?.hasExemptionForWeight ?? false
 
