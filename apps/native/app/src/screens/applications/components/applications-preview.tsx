@@ -19,6 +19,7 @@ import { useBrowser } from '../../../lib/use-browser'
 import { getApplicationUrl } from '../../../utils/applications-utils'
 import { navigateTo } from '../../../lib/deep-linking'
 import { screenWidth } from '../../../utils/dimensions'
+import { testIDs } from '../../../utils/test-ids'
 
 interface ApplicationsPreviewProps {
   componentId: string
@@ -55,6 +56,7 @@ export const ApplicationsPreview = ({
       return (
         <StatusCard
           key={application.id}
+          testID={testIDs.APPLICATION_ITEM}
           title={application.name ?? ''}
           date={
             application.created ? new Date(application.created) : new Date()

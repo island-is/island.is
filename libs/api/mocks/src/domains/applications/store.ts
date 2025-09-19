@@ -5,7 +5,7 @@ export const store = createStore(() => {
   faker.seed(100)
 
   const applications = application
-    .list(10)
+    .list(30)
     .concat([application({ applicant: '0000000000' })])
     .concat([application({ applicant: '0000000000', typeId: 'ParentalLeave' })])
 

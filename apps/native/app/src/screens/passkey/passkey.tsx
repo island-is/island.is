@@ -27,6 +27,7 @@ import { useAuthenticatePasskey } from '../../lib/passkeys/useAuthenticatePasske
 import { authStore } from '../../stores/auth-store'
 import { useBrowser } from '../../lib/use-browser'
 import { addPasskeyAsLoginHint } from '../../lib/passkeys/helpers'
+import { testIDs } from '../../utils/test-ids'
 
 const Text = styled.View<{ isSmallDevice: boolean }>`
   margin-horizontal: ${({ theme }) => theme.spacing[7]}px;
@@ -110,7 +111,7 @@ export const PasskeyScreen: NavigationFunctionComponent<{
   }, [])
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} testID={testIDs.SCREEN_PASSKEY}>
       <NavigationBarSheet
         componentId={componentId}
         title={''}

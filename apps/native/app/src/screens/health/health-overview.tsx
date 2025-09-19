@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   useWindowDimensions,
+  View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
@@ -37,6 +38,7 @@ import {
   Problem,
   Typography,
 } from '../../ui'
+import { testIDs } from '../../utils/test-ids'
 
 const Host = styled(SafeAreaView)`
   flex: 1;
@@ -217,7 +219,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   ])
 
   return (
-    <Host>
+    <Host testID={testIDs.SCREEN_HEALTH_OVERVIEW}>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
@@ -251,6 +253,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               style={buttonStyle}
               ellipsis
               onPress={() => navigateTo('/vaccinations', componentId)}
+              testID={testIDs.BUTTON_VACCINATIONS}
             />
           )}
           <Button
@@ -296,7 +299,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           }
         />
         {(healthCenterRes.data || healthCenterRes.loading) && (
-          <>
+          <View testID={testIDs.HEALTH_CENTER}>
             <InputRow background>
               <Input
                 label={intl.formatMessage({
@@ -333,7 +336,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 noBorder
               />
             </InputRow>
-          </>
+          </View>
         )}
         {healthCenterRes.error &&
           !healthCenterRes.data &&

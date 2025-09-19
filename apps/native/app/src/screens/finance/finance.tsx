@@ -12,6 +12,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useBrowser } from '../../lib/use-browser'
 import { FinanceStatusCard } from './components/finance-status-card'
+import { testIDs } from '../../utils/test-ids'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -104,7 +105,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
   const showLoading = res.loading && !res.data
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_FINANCE}>
       <SafeAreaView style={{ marginHorizontal: 16 }}>
         <Heading>
           <FormattedMessage
