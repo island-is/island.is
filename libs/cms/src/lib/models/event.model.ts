@@ -32,6 +32,9 @@ class EventTime {
 
   @Field(() => String, { nullable: true })
   endTime?: string | null
+
+  @Field(() => String, { nullable: true })
+  endDate?: string | null
 }
 
 @ObjectType()
@@ -99,7 +102,11 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
     title: fields.title ?? '',
     startDate: fields.startDate ?? '',
     endDate,
-    time: (fields.time as Event['time']) ?? { startTime: '', endTime: '' },
+    time: (fields.time as Event['time']) ?? {
+      startTime: '',
+      endTime: '',
+      endDate: '',
+    },
     location: (fields.location as Event['location']) ?? {
       streetAddress: '',
       floor: '',
