@@ -39,6 +39,7 @@ import {
 } from '../case'
 import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
+import { EventService } from '../event'
 import { Case, Defendant, Verdict } from '../repository'
 import { VerdictService } from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
@@ -94,6 +95,7 @@ export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
     private readonly auditTrailService: AuditTrailService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -225,5 +227,29 @@ export class InternalVerdictController {
     return {
       serviceInformationForDefendant: verdict.serviceInformationForDefendant,
     }
+  }
+
+  @ApiOkResponse({
+    description:
+      'Delivers a service certificate to the police for all defendants where appeal deadline is expired',
+  })
+  @Post('verdict/deliverVerdictServiceCertificates')
+  async deliverVerdictServiceCertificatesToPolice(): Promise<
+    {
+      delivered: boolean
+    }[]
+  > {
+    this.logger.debug(
+      `Delivering verdict service certificates pdf to court for all verdict where appeal decision deadline has passed`,
+    )
+
+    const delivered =
+      await this.verdictService.deliverVerdictServiceCertificatesToPolice()
+
+    await this.eventService.postDailyVerdictServiceDeliveryEvent(
+      delivered.filter((d) => d.delivered).length,
+    )
+
+    return delivered
   }
 }

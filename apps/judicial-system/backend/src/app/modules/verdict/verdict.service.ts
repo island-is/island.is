@@ -17,14 +17,18 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  DefendantEventType,
   isVerdictInfoChanged,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
+import { InternalCaseService, PdfService } from '../case'
+import { DefendantService } from '../defendant'
 import { FileService } from '../file'
-import { PoliceService } from '../police'
+import { PoliceDocumentType, PoliceService } from '../police'
 import { Case, Defendant, Verdict } from '../repository'
+import { UserService } from '../user'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
@@ -44,10 +48,15 @@ export class VerdictService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Verdict) private readonly verdictModel: typeof Verdict,
+    private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
+    private readonly defendantService: DefendantService,
+    private readonly userService: UserService,
+    @Inject(forwardRef(() => InternalCaseService))
+    private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -325,6 +334,115 @@ export class VerdictService {
     return { delivered: true }
   }
 
+  private async getCourtCaseUser(theCase: Case): Promise<TUser | undefined> {
+    const judgeNationalId = theCase?.judge?.nationalId
+    const courtId = theCase.courtId
+    if (!judgeNationalId || !courtId) {
+      this.logger.warn(`Failed to get court case user`, {
+        reason: `${
+          !judgeNationalId ? 'Judge does not have national id.' : ''
+        } ${!courtId ? 'Court id is missing' : ''}`,
+      })
+      return undefined
+    }
+
+    const user = (
+      await this.userService.findByNationalId(judgeNationalId)
+    ).find((user) => user.institutionId === courtId)
+
+    if (!user) {
+      this.logger.warn(`Failed to get court case user`, {
+        reason: 'Case court user not found',
+      })
+      return undefined
+    }
+
+    return {
+      id: user.id,
+      created: user.created.toISOString(),
+      modified: user.modified.toISOString(),
+      nationalId: user.nationalId,
+      name: user.name,
+      title: user.title,
+      mobileNumber: user.mobileNumber,
+      email: user.email,
+      role: user.role,
+      active: user.active,
+      canConfirmIndictment: user.canConfirmIndictment,
+    }
+  }
+
+  async deliverVerdictServiceCertificatesToPolice(): Promise<
+    {
+      delivered: boolean
+    }[]
+  > {
+    const defendantsWithCases =
+      await this.internalCaseService.getIndictmentCaseDefendantsWithExpiredAppealDeadline()
+
+    const delivered = await Promise.all(
+      defendantsWithCases.map(async ({ defendant, theCase }) => {
+        // this delivery is not directly triggered by a user, thus specifically fetch the court judge here
+        // note this user is only used for our event error log where we log the name and institution
+        const user = await this.getCourtCaseUser(theCase)
+        if (!user) {
+          this.logger.warn(
+            `Failed to upload verdict service certificate pdf to police of defendant ${defendant.id} and case ${theCase.id}`,
+            {
+              reason: 'court case user not found',
+            },
+          )
+          return { delivered: false }
+        }
+
+        const { verdict } = defendant
+        if (!verdict) {
+          this.logger.warn(
+            `Failed to upload verdict service certificate pdf to police of defendant ${defendant.id} and case ${theCase.id}`,
+            {
+              reason: 'verdict not defined',
+            },
+          )
+          return { delivered: false }
+        }
+
+        return this.pdfService
+          .getVerdictServiceCertificatePdf(theCase, defendant, verdict)
+          .then(async (pdf) => {
+            return this.internalCaseService.deliverCaseToPoliceWithFiles(
+              theCase,
+              user,
+              [
+                {
+                  type: PoliceDocumentType.RVBD,
+                  courtDocument: Base64.btoa(pdf.toString('binary')),
+                },
+              ],
+            )
+          })
+          .then(async () => {
+            // write to the defendant event log
+            await this.defendantService.createDefendantEvent({
+              caseId: theCase.id,
+              defendantId: defendant.id,
+              eventType:
+                DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+            })
+            return { delivered: true }
+          })
+          .catch((reason) => {
+            // Tolerate failure, but log error
+            this.logger.warn(
+              `Failed to upload verdict service certificate pdf to police of defendant ${defendant.id} and case ${theCase.id}`,
+              { reason },
+            )
+
+            return { delivered: false }
+          })
+      }),
+    )
+    return delivered
+  }
   async getAndSyncVerdict(verdict: Verdict, user?: TUser) {
     // RLS: Remove boolean var when the getVerdictDocumentStatus is supported by RLS
     const isDocumentStatusImplemented = false
