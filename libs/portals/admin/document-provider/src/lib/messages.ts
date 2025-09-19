@@ -90,6 +90,16 @@ export const m = defineMessages({
     defaultMessage: 'Skoða tölfræði',
   },
 
+  //Charts
+  sentFilesAndErrors: {
+    id: 'portals-admin.document-provider:sent-files-and-errors',
+    defaultMessage: 'Skjöl afhend og villur',
+  },
+  sentErrors: {
+    id: 'portals-admin.document-provider:sent-errors',
+    defaultMessage: 'Villur',
+  },
+
   //DocumentProviders
   documentProvidersTitle: {
     id: 'portals-admin.document-provider:document-providers-title',
@@ -97,8 +107,7 @@ export const m = defineMessages({
   },
   documentProvidersDescription: {
     id: 'portals-admin.document-provider:document-providers-description',
-    defaultMessage:
-      'Hér getur þú fundið alla þá skjalaveitur sem nota pósthólf á island.is',
+    defaultMessage: 'Ítarlegar upplýsingar um skjalaveitu',
   },
   documentProvidersSearchPlaceholder: {
     id: 'portals-admin.document-provider:document-providers-search-placeholder',
@@ -737,6 +746,10 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:statistics-search-placeholder',
     defaultMessage: 'Leitaðu eftir skjalaveitanda',
   },
+  statisticsDescription6months: {
+    id: 'portals-admin.document-provider:statistics-description-6-months',
+    defaultMessage: 'Hér er tölfræði síðustu 6 mánuða',
+  },
 
   //Statistics boxes
   statisticsBoxOrganisationsCount: {
@@ -750,6 +763,10 @@ export const m = defineMessages({
   statisticsBoxOpenedDocuments: {
     id: 'portals-admin.document-provider:statistics-box-opened-documents',
     defaultMessage: 'Opnuð skjöl',
+  },
+  statisticsBoxUnopenedDocuments: {
+    id: 'portals-admin.document-provider:statistics-box-unopened-documents',
+    defaultMessage: 'Óopnuð skjöl',
   },
   statisticsBoxNotifications: {
     id: 'portals-admin.document-provider:statistics-box-notifications',
@@ -766,6 +783,10 @@ export const m = defineMessages({
   statisticsBoxNetworkError: {
     id: 'portals-admin.document-provider:statistics-box-network-error',
     defaultMessage: 'Ekki tókst að sækja tölfræði',
+  },
+  statisticsBoxFailures: {
+    id: 'portals-admin.document-provider:failures',
+    defaultMessage: 'Mistök við afhendingu',
   },
 
   // Paper

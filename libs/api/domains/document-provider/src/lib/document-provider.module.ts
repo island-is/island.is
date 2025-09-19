@@ -1,9 +1,13 @@
 import { DynamicModule } from '@nestjs/common'
 import { HttpModule } from '@nestjs/axios'
 import { Configuration, OrganisationsApi, ProvidersApi } from '../../gen/fetch'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { DocumentProviderResolver } from './document-provider/document-provider.resolver'
 import { DocumentProviderService } from './document-provider/document-provider.service'
+import { DocumentProviderDashboardResolver } from './document-provider-dashboard/document-provider-dashboard.resolver'
+import { DocumentProviderDashboardService } from './document-provider-dashboard/document-provider-dashboard.service'
 import { DocumentProviderClientProd } from './client/documentProviderClientProd'
+import { DocumentProviderDashboardClientModule } from '@island.is/clients/document-provider-dashboard'
 import {
   DocumentProviderConfig,
   DOCUMENT_PROVIDER_CLIENT_CONFIG_PROD,
@@ -23,13 +27,17 @@ export class DocumentProviderModule {
     return {
       module: DocumentProviderModule,
       imports: [
+        DocumentProviderDashboardClientModule,
         HttpModule.register({
           timeout: 10000,
         }),
+        FeatureFlagModule,
       ],
       providers: [
         AdminDocumentProviderService,
         AdminDocumentProviderResolver,
+        DocumentProviderDashboardService,
+        DocumentProviderDashboardResolver,
         DocumentProviderResolver,
         DocumentProviderService,
         DocumentProviderClientTest,
