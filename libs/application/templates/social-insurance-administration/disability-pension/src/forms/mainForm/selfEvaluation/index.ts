@@ -7,8 +7,5 @@ import { backgroundInfoSubSection } from './backgroundSubSection'
 export const selfEvaluationSection = buildSection({
   id: SectionRouteEnum.SELF_EVALUATION,
   title: m.selfEvaluation.title,
-  children: [
-    backgroundInfoSubSection,
-    capabilityImpairmentSubSection,
-  ],
+  children: [backgroundInfoSubSection, capabilityImpairmentSubSection],
 })
