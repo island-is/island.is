@@ -195,7 +195,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         set(
           application.answers,
           'applicationType',
-          getApplicationType(application.externalData),
+          getApplicationType(application.answers, application.externalData),
         )
 
         return context
