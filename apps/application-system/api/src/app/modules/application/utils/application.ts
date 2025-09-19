@@ -272,9 +272,6 @@ const hasContent = (value: unknown): boolean => {
  * - Gathers all values for each key (single or multiple, depending on wildcard).
  * - Keeps the original `key` with the `$` placeholder intact for readability in config.
  * - Returns values as a string array (`value`), even for single-value fields.
- * - If `isNationalId` is true in the adminDataConfig, values are formatted as
- *   "<name> (<nationalId>)" using the National Registry API. If the name is missing,
- *   only "<nationalId>" is used.
  *
  * Example 1:
  *   config = { key: 'coOwners.$.name' }
@@ -296,7 +293,6 @@ const hasContent = (value: unknown): boolean => {
  *     label: 'Co-owner'
  *   }
  */
-
 export const getAdminDataForAdminPortal = async (
   template: Template,
   application: Application,
