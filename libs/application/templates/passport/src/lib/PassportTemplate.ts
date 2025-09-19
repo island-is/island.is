@@ -52,9 +52,11 @@ const getCode = (application: Application): BasicChargeItem[] => {
     application.answers,
     'chargeItemCode',
   )
+
   if (!chargeItemCode) {
     throw new Error('chargeItemCode missing in request')
   }
+
   return [{ code: chargeItemCode }]
 }
 
@@ -82,7 +84,7 @@ const PassportTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: pruneAfter(twoDays),
           onExit: defineTemplateApi({
-            action: ApiActions.checkForDiscount,
+            action: ApiActions.verifyCode,
           }),
           roles: [
             {
