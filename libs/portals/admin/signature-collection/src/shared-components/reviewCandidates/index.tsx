@@ -13,7 +13,10 @@ import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
-import { SignatureCollectionCandidate } from '@island.is/api/schema'
+import {
+  SignatureCollectionCandidate,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 import { formatNationalId } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import { useRevalidator } from 'react-router-dom'
@@ -22,8 +25,10 @@ const { Table, Row, Head, HeadData, Body, Data } = T
 
 const ReviewCandidates = ({
   candidates,
+  collectionType,
 }: {
   candidates: Array<SignatureCollectionCandidate>
+  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
@@ -45,7 +50,7 @@ const ReviewCandidates = ({
   const removeFromList = async (candidateId: string) => {
     try {
       const { data } = await signatureCollectionAdminRemoveCandidateMutation({
-        variables: { input: { candidateId } },
+        variables: { input: { candidateId, collectionType } },
       })
 
       if (data?.signatureCollectionAdminRemoveCandidate?.success) {
