@@ -153,6 +153,9 @@ export const mapResponsiblePerson = (
 }
 
 export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
+  const exemptionPeriodAnswers = getValueViaPath<
+    ExemptionForTransportationAnswers['exemptionPeriod']
+  >(application.answers, 'exemptionPeriod')
   const convoyAnswers = getValueViaPath<
     ExemptionForTransportationAnswers['convoy']
   >(application.answers, 'convoy')
@@ -165,6 +168,10 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
   const vehicleSpacingAnswers = getValueViaPath<
     ExemptionForTransportationAnswers['vehicleSpacing']
   >(application.answers, 'vehicleSpacing')
+
+  const isShortTerm = exemptionPeriodAnswers?.type === ExemptionType.SHORT_TERM
+  const hasExemptionForWeight =
+    axleSpacingAnswers?.hasExemptionForWeight ?? false
 
   return (
     convoyAnswers?.items?.map((item) => {
@@ -185,13 +192,12 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
             permno: item.vehicle.permno,
             vehicleType: VehicleType.CAR,
             // Axle spacing
-            axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight
+            axleSpacing: (isShortTerm && hasExemptionForWeight
               ? vehicleAxleSpacing?.values || []
               : []
             ).map(mapStringToNumber),
           },
-          ...(axleSpacingAnswers?.exemptionPeriodType ===
-            ExemptionType.SHORT_TERM &&
+          ...(isShortTerm &&
           item.trailer?.permno &&
           (axleSpacingAnswers?.dolly?.type === DollyType.SINGLE ||
             axleSpacingAnswers?.dolly?.type === DollyType.DOUBLE)
@@ -199,7 +205,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
                 {
                   vehicleType: VehicleType.DOLLY,
                   // Axle spacing
-                  axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight &&
+                  axleSpacing: (hasExemptionForWeight &&
                   axleSpacingAnswers?.dolly?.type === DollyType.DOUBLE
                     ? [axleSpacingAnswers.dolly.value]
                     : []
@@ -213,7 +219,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
                   permno: item.trailer.permno,
                   vehicleType: VehicleType.TRAILER,
                   // Axle spacing
-                  axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight
+                  axleSpacing: (isShortTerm && hasExemptionForWeight
                     ? (trailerAxleSpacing?.useSameValues?.includes(YES)
                         ? Array(
                             Math.max(
@@ -229,12 +235,11 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
             : []),
         ],
         // Vehicle Spacing
-        vehicleSpacing: (vehicleSpacingAnswers?.hasExemptionForWeight &&
+        vehicleSpacing: (isShortTerm &&
+        hasExemptionForWeight &&
         vehicleSpacing?.hasTrailer
-          ? vehicleSpacingAnswers?.exemptionPeriodType ===
-              ExemptionType.SHORT_TERM &&
-            (vehicleSpacing.dollyType === DollyType.SINGLE ||
-              vehicleSpacing.dollyType === DollyType.DOUBLE)
+          ? vehicleSpacing.dollyType === DollyType.SINGLE ||
+            vehicleSpacing.dollyType === DollyType.DOUBLE
             ? [
                 vehicleSpacing.vehicleToDollyValue,
                 vehicleSpacing.dollyToTrailerValue,

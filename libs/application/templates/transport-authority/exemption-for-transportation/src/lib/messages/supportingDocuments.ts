@@ -16,7 +16,8 @@ export const supportingDocuments = {
   labels: defineMessages({
     fileUploadHeader: {
       id: 'ta.eft.application:supportingDocuments.labels.fileUploadHeader',
-      defaultMessage: 'Dragðu inn fylgiskjöl, sem dæmi umsögn byggingafulltrúa',
+      defaultMessage:
+        'Dragðu inn fylgiskjöl, sem dæmi staðfesting vegna flutnings á húsi (stöðuleyfi, flutningsheimild)',
       description: 'Supporting documents file upload header',
     },
     fileUploadDescription: {

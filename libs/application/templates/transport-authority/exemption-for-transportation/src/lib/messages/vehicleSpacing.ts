@@ -4,18 +4,18 @@ export const vehicleSpacing = {
   general: defineMessages({
     sectionTitle: {
       id: 'ta.eft.application:vehicleSpacing.general.sectionTitle',
-      defaultMessage: 'Bil milli vagna',
+      defaultMessage: 'Bil milli bíls og eftirvagns',
       description: 'Title of vehicle spacing section',
     },
     pageTitle: {
       id: 'ta.eft.application:vehicleSpacing.general.pageTitle',
-      defaultMessage: 'Bil milli vagna',
+      defaultMessage: 'Bil milli bíls og eftirvagns',
       description: 'Title of vehicle spacing page',
     },
     description: {
       id: 'ta.eft.application:vehicleSpacing.general.description',
       defaultMessage:
-        'Gefa þarf upp bil í metrum milli aftasta öxuls ökutækis í fremsta öxul næsta ökutækis fyrir hvert ökutæki í vagnlest',
+        'Gefa þarf upp bil í metrum milli aftasta öxuls bíls og fremsta öxul eftirvagns eða dollý (mælt frá miðju).',
       description: 'Description of vehicle spacing page',
     },
     convoySubtitle: {

@@ -40,8 +40,8 @@ import {
   checkHasSelectedConvoyInFreightPairing,
   getFreightItem,
   getFreightPairingItem,
-  getFreightPairingItemsByIndex,
   getAllFreightPairingItems,
+  getFreightPairingItemsByIndex,
 } from './freightUtils'
 import { format as formatKennitala } from 'kennitala'
 import {
@@ -356,6 +356,7 @@ export const getFreightOverviewLongTermItems = (
   freightIndex: number,
 ): Array<KeyValueItem> => {
   const pairingItems = getFreightPairingItemsByIndex(answers, freightIndex)
+  const nonNullPairingItem = pairingItems.find((item) => item !== null)
   return [
     {
       width: 'full',
@@ -363,13 +364,13 @@ export const getFreightOverviewLongTermItems = (
         {
           ...overview.freight.lengthLabel,
           values: {
-            length: formatNumberWithMeters(pairingItems?.[0]?.length),
+            length: formatNumberWithMeters(nonNullPairingItem?.length),
           },
         },
         {
           ...overview.freight.weightLabel,
           values: {
-            weight: formatNumberWithTons(pairingItems?.[0]?.weight),
+            weight: formatNumberWithTons(nonNullPairingItem?.weight),
           },
         },
       ],

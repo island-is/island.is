@@ -70,7 +70,7 @@ export const location = {
     regionsSubtitle: {
       id: 'ta.eft.application:location.longTerm.regionsSubtitle',
       defaultMessage:
-        'Veljið svæði, gefið leiðarlýsingu eða bæði sem undanþágan á að gilda á',
+        'Veljið svæði sem undanþágan á að gilda á. Ef það á ekki við er hægt að setja inn nákvæma lýsingu á því svæði eða þeim vegum sem óskað er eftir að undanþágan taki til',
       description: 'Location regions subtitle',
     },
     regions: {
@@ -85,7 +85,7 @@ export const location = {
     },
     directions: {
       id: 'ta.eft.application:location.longTerm.directions',
-      defaultMessage: 'Leiðarlýsing',
+      defaultMessage: 'Ósk um svæði',
       description: 'Location directions label',
     },
     directionsPlaceholder: {
@@ -96,7 +96,7 @@ export const location = {
     },
     fileUploadHeader: {
       id: 'ta.eft.application:location.longTerm.fileUploadHeader',
-      defaultMessage: 'Dragðu inn fylgiskjöl, sem dæmi umsögn byggingafulltrúa',
+      defaultMessage: 'Dragðu inn fylgiskjöl',
       description: 'Location file upload header',
     },
     fileUploadDescription: {
