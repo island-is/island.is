@@ -18,6 +18,7 @@ import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatt
 import {
   CaseFileCategory,
   isVerdictInfoChanged,
+  PoliceFileTypeCode,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
@@ -313,7 +314,7 @@ export class VerdictService {
           ? [{ code: 'RULING_DATE', value: theCase.rulingDate }]
           : []),
       ],
-      fileTypeCode: 'BRTNG_DOMUR',
+      fileTypeCode: PoliceFileTypeCode.VERDICT,
       caseSupplements: this.mapToPoliceSupplementCodes(theCase, defendant),
     })
     if (!createdDocument) {
@@ -326,15 +327,8 @@ export class VerdictService {
   }
 
   async getAndSyncVerdict(verdict: Verdict, user?: TUser) {
-    // RLS: Remove boolean var when the getVerdictDocumentStatus is supported by RLS
-    const isDocumentStatusImplemented = false
-
     // check specifically a verdict that is delivered and service status hasn't been updated
-    if (
-      isDocumentStatusImplemented &&
-      verdict.externalPoliceDocumentId &&
-      !verdict.serviceStatus
-    ) {
+    if (verdict.externalPoliceDocumentId && !verdict.serviceStatus) {
       const verdictInfo = await this.policeService.getVerdictDocumentStatus(
         verdict.externalPoliceDocumentId,
         user,
