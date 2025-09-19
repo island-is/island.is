@@ -92,7 +92,7 @@ export const getUpdatedFreightPairingList = (
   )
 
   return freight.items.map((freightItem) => {
-    const freightPairing = freightPairingMap.get(freightItem.freightId)
+    const freightPairing = freightPairingMap.get(freightItem.freightId ?? '')
     if (!freightPairing) return null
 
     if (freightPairing.items) {
@@ -103,7 +103,7 @@ export const getUpdatedFreightPairingList = (
       )
 
       freightPairing.items = convoy.items.map(
-        (convoyItem) => convoyItemMap.get(convoyItem.convoyId) ?? null,
+        (convoyItem) => convoyItemMap.get(convoyItem.convoyId ?? '') ?? null,
       )
     }
 
@@ -122,8 +122,8 @@ export const getUpdatedVehicleSpacing = (
 
   vehicleSpacing.convoyList = convoy.items.map(
     (convoyItem) =>
-      map.get(convoyItem.convoyId) ?? {
-        convoyId: convoyItem.convoyId,
+      map.get(convoyItem.convoyId ?? '') ?? {
+        convoyId: convoyItem.convoyId ?? '',
         hasTrailer: false,
       },
   )

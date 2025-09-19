@@ -4,7 +4,7 @@ export const specialProvisions = {
   subsection: defineMessages({
     name: {
       id: 'ra.application:specialProvisions.subSection.name',
-      defaultMessage: 'Sérákvæði',
+      defaultMessage: 'Lýsing',
       description: 'Special provisions sub section name',
     },
     pageTitle: {

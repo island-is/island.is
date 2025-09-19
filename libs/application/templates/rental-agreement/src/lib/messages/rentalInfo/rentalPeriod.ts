@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const rentalPeriod = defineMessages({
-  subSectionName: {
-    id: 'ra.application:rentalPeriodDetails.subSectionName',
-    defaultMessage: 'Tímabil',
-    description: 'Rental period sub section name',
-  },
   pageTitle: {
     id: 'ra.application:rentalPeriodDetails.pageTitle',
     defaultMessage: 'Tímabil',
@@ -79,5 +74,15 @@ export const rentalPeriod = defineMessages({
     defaultMessage:
       'Loka dagur samnings má ekki vera sami eða fyrir upphafsdag samnings',
     description: 'Error message when end date is before start date',
+  },
+  alertMessageTitle: {
+    id: 'ra.application:rentalPeriodDetails.alertMessageTitle',
+    defaultMessage: 'Valin dagsetning er meira en ár fram í tímann',
+    description: 'Alert message title',
+  },
+  alertMessage: {
+    id: 'ra.application:rentalPeriodDetails.alertMessage',
+    defaultMessage: 'Vinsamlegast athugið hvort að þetta sé rétt dagsetning.',
+    description: 'Alert message',
   },
 })

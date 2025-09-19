@@ -8,10 +8,7 @@ import {
 import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import {
-  NOT_APPLICABLE,
-  SelfAssessmentCurrentEmploymentStatus,
-} from '../utils/constants'
+import { NOT_APPLICABLE, OTHER } from '../utils/constants'
 import { errorMessages } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
@@ -258,7 +255,7 @@ export const dataSchema = z.object({
   unionSickPay: z
     .object({
       hasUtilizedUnionSickPayRights: z.string().optional().nullable(),
-      unionNationalId: z.string().optional().nullable(),
+      unionInfo: z.string().optional().nullable(),
       endDate: z.string().optional().nullable(),
       unionName: z.string().optional().nullable(),
     })
@@ -276,18 +273,18 @@ export const dataSchema = z.object({
       },
     )
     .refine(
-      ({ hasUtilizedUnionSickPayRights, unionNationalId, unionName }) => {
+      ({ hasUtilizedUnionSickPayRights, unionInfo, unionName }) => {
         // If the union name is set then we don't need to check the union
         if (unionName) {
           return true
         }
 
         return hasUtilizedUnionSickPayRights !== NOT_APPLICABLE
-          ? !!unionNationalId
+          ? !!unionInfo
           : true
       },
       {
-        path: ['unionNationalId'],
+        path: ['unionInfo'],
       },
     )
     .refine(
@@ -301,17 +298,26 @@ export const dataSchema = z.object({
   rehabilitationPlan: z.object({
     confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
   }),
+  confirmedTreatment: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
+  confirmationOfPendingResolution: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
+  confirmationOfIllHealth: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
   selfAssessment: z
     .object({
       hadAssistance: z.enum([YES, NO]).optional(),
       educationalLevel: z.string().optional(),
-      currentEmploymentStatus: z
-        .array(z.nativeEnum(SelfAssessmentCurrentEmploymentStatus))
-        .min(1)
-        .optional(),
-      currentEmploymentStatusAdditional: z.string().optional(),
-      lastEmploymentTitle: z.string().optional(),
-      lastEmploymentYear: z.string().optional().nullable(),
+      currentEmploymentStatuses: z.array(z.string()).min(1).optional(),
+      currentEmploymentStatusExplanation: z.string().optional(),
+      lastProfession: z.string().optional().nullable(),
+      lastProfessionDescription: z.string().optional(),
+      lastActivityOfProfession: z.string().optional().nullable(),
+      lastActivityOfProfessionDescription: z.string().optional(),
+      lastProfessionYear: z.string().optional().nullable(),
       mainProblem: z.string().min(1).optional(),
       hasPreviouslyReceivedRehabilitationOrTreatment: z
         .enum([YES, NO])
@@ -369,14 +375,26 @@ export const dataSchema = z.object({
       { path: ['previousRehabilitationSuccessfulFurtherExplanations'] },
     )
     .refine(
-      ({ currentEmploymentStatus, currentEmploymentStatusAdditional }) =>
-        currentEmploymentStatus &&
-        currentEmploymentStatus.includes(
-          SelfAssessmentCurrentEmploymentStatus.OTHER,
-        )
-          ? !!currentEmploymentStatusAdditional
+      ({ currentEmploymentStatuses, currentEmploymentStatusExplanation }) =>
+        Array.isArray(currentEmploymentStatuses) &&
+        currentEmploymentStatuses.includes(OTHER)
+          ? !!currentEmploymentStatusExplanation?.trim()
           : true,
-      { path: ['currentEmploymentStatusAdditional'] },
+      { path: ['currentEmploymentStatusExplanation'] },
+    )
+    .refine(
+      ({ lastProfession, lastProfessionDescription }) =>
+        lastProfession && lastProfession === OTHER
+          ? !!lastProfessionDescription?.trim()
+          : true,
+      { path: ['lastProfessionDescription'] },
+    )
+    .refine(
+      ({ lastActivityOfProfession, lastActivityOfProfessionDescription }) =>
+        lastActivityOfProfession && lastActivityOfProfession === OTHER
+          ? !!lastActivityOfProfessionDescription?.trim()
+          : true,
+      { path: ['lastActivityOfProfessionDescription'] },
     ),
 })
 

@@ -1,12 +1,9 @@
-import { ApolloClient } from '@apollo/client'
 import { NO, YES } from '@island.is/application/core'
-import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   formatBankAccount,
   getTaxLevelOption,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import {
   ExternalData,
   FormValue,
@@ -14,6 +11,7 @@ import {
   TableData,
 } from '@island.is/application/types'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
+import { Locale } from '@island.is/shared/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
@@ -21,14 +19,11 @@ import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import { isFirstApplication } from './conditionUtils'
-import {
-  NOT_APPLICABLE,
-  SelfAssessmentCurrentEmploymentStatus,
-} from './constants'
+import { NOT_APPLICABLE, OTHER } from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getSelfAssessmentCurrentEmploymentStatusOptions,
+  getEmploymentStatuses,
   getSickPayEndDateLabel,
   getYesNoNotApplicableTranslation,
 } from './medicalAndRehabilitationPaymentsUtils'
@@ -352,20 +347,11 @@ export const unionSickPayItems = async (
   answers: FormValue,
   _externalData: ExternalData,
   _userNationalId: string,
-  apolloClient: ApolloClient<object>,
 ): Promise<KeyValueItem[]> => {
-  const {
-    hasUtilizedUnionSickPayRights,
-    unionSickPayEndDate,
-    unionNationalId,
-  } = getApplicationAnswers(answers)
+  const { hasUtilizedUnionSickPayRights, unionSickPayEndDate, unionInfo } =
+    getApplicationAnswers(answers)
 
-  const { data } = await apolloClient.query<SiaUnionsQuery>({
-    query: siaUnionsQuery,
-  })
-  const unionName = data?.socialInsuranceGeneral?.unions?.find(
-    (union) => union?.nationalId === unionNationalId,
-  )?.name
+  const unionName = unionInfo.split('::')[1]
 
   const baseItems: Array<KeyValueItem> = [
     {
@@ -418,6 +404,42 @@ export const rehabilitationPlanItems = (): Array<KeyValueItem> => [
   },
 ]
 
+export const confirmedTreatmentItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.confirmedTreatment
+        .sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmedTreatmentConfirmed,
+  },
+]
+
+export const confirmationOfPendingResolutionItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage
+        .confirmationOfPendingResolution.sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmationOfPendingResolutionConfirmed,
+  },
+]
+
+export const confirmationOfIllHealthItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.confirmationOfIllHealth
+        .sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmationOfIllHealthConfirmed,
+  },
+]
+
 export const selfAssessmentQuestionsOneItems = (
   answers: FormValue,
   externalData: ExternalData,
@@ -451,22 +473,30 @@ export const selfAssessmentQuestionsOneItems = (
 
 export const selfAssessmentQuestionsTwoItems = (
   answers: FormValue,
+  externalData: ExternalData,
+  _userNationalId: string,
+  locale: Locale,
 ): Array<KeyValueItem> => {
   const {
-    currentEmploymentStatus,
-    currentEmploymentStatusAdditional,
-    lastEmploymentTitle,
-    lastEmploymentYear,
+    currentEmploymentStatuses,
+    currentEmploymentStatusExplanation,
+    lastProfession,
+    lastProfessionDescription,
+    lastActivityOfProfession,
+    lastActivityOfProfessionDescription,
+    lastProfessionYear,
   } = getApplicationAnswers(answers)
 
-  const currentEmploymentStatusOptions =
-    getSelfAssessmentCurrentEmploymentStatusOptions()
+  const employmentStatusesOptions = getEmploymentStatuses(externalData, locale)
 
-  const statuses = currentEmploymentStatus.map((status) => {
-    return currentEmploymentStatusOptions.find(
-      (option) => option.value === status,
-    )?.label
-  })
+  const { professions, activitiesOfProfessions } =
+    getApplicationExternalData(externalData)
+
+  const statuses = currentEmploymentStatuses.map(
+    (status) =>
+      employmentStatusesOptions.find((option) => option.value === status)
+        ?.displayName,
+  )
 
   const baseItems: Array<KeyValueItem> = [
     {
@@ -478,44 +508,90 @@ export const selfAssessmentQuestionsTwoItems = (
     },
   ]
 
-  const previousRehabilitationOrTreatmentItems: Array<KeyValueItem> =
-    currentEmploymentStatus?.includes(
-      SelfAssessmentCurrentEmploymentStatus.OTHER,
-    )
+  const currentEmploymentStatusItems: Array<KeyValueItem> =
+    currentEmploymentStatuses?.includes(OTHER)
       ? [
           {
             width: 'full',
             keyText:
               medicalAndRehabilitationPaymentsFormMessage.selfAssessment
                 .furtherExplanation,
-            valueText: currentEmploymentStatusAdditional,
+            valueText: currentEmploymentStatusExplanation,
           },
         ]
       : []
 
   const baseItems2: Array<KeyValueItem> = [
     {
-      width: 'half',
+      width: 'full',
       keyText:
         medicalAndRehabilitationPaymentsFormMessage.overview
-          .selfAssessmentLastEmploymentTitle,
-      valueText: lastEmploymentTitle,
+          .selfAssessmentLastProfessionTitle,
+      valueText: professions.find(
+        (profession) => profession.value === lastProfession,
+      )?.description,
       hideIfEmpty: true,
     },
+  ]
+
+  const lastProfessionDescriptionItem: Array<KeyValueItem> =
+    lastProfession === OTHER
+      ? [
+          {
+            width: 'full',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+                .furtherExplanation,
+            valueText: lastProfessionDescription,
+          },
+        ]
+      : []
+
+  const baseItems3: Array<KeyValueItem> = [
     {
-      width: 'half',
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .lastActivityOfProfession,
+      valueText: activitiesOfProfessions.find(
+        (activity) => activity.value === lastActivityOfProfession,
+      )?.description,
+      hideIfEmpty: true,
+    },
+  ]
+
+  const lastActivityOfProfessionDescriptionItem: Array<KeyValueItem> =
+    lastActivityOfProfession === OTHER
+      ? [
+          {
+            width: 'full',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+                .furtherExplanation,
+            valueText: lastActivityOfProfessionDescription,
+          },
+        ]
+      : []
+
+  const baseItems4: Array<KeyValueItem> = [
+    {
+      width: 'full',
       keyText:
         medicalAndRehabilitationPaymentsFormMessage.overview
-          .selfAssessmentLastEmploymentYear,
-      valueText: lastEmploymentYear,
+          .selfAssessmentLastProfessionYear,
+      valueText: lastProfessionYear,
       hideIfEmpty: true,
     },
   ]
 
   return [
     ...baseItems,
-    ...previousRehabilitationOrTreatmentItems,
+    ...currentEmploymentStatusItems,
     ...baseItems2,
+    ...lastProfessionDescriptionItem,
+    ...baseItems3,
+    ...lastActivityOfProfessionDescriptionItem,
+    ...baseItems4,
   ]
 }
 

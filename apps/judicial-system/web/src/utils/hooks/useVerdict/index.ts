@@ -5,11 +5,13 @@ import {
   Case,
   Defendant,
   UpdateVerdictInput,
+  Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useUpdateVerdictMutation } from './updateVerdict.generated'
+import { useVerdictQuery } from './verdict.generated'
 
-const useVerdict = () => {
+const useVerdict = (currentVerdict?: Verdict) => {
   const updateDefendantVerdictState = useCallback(
     (
       update: UpdateVerdictInput,
@@ -69,7 +71,30 @@ const useVerdict = () => {
     [updateDefendantVerdictState, updateVerdict],
   )
 
-  return { setAndSendVerdictToServer }
+  const skip =
+    !currentVerdict?.externalPoliceDocumentId ||
+    Boolean(currentVerdict?.serviceStatus)
+  const {
+    data,
+    loading: verdictLoading,
+    error,
+  } = useVerdictQuery({
+    skip,
+    variables: {
+      input: {
+        caseId: currentVerdict?.caseId ?? '',
+        defendantId: currentVerdict?.defendantId ?? '',
+      },
+    },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
+  return {
+    verdict: skip || error ? currentVerdict : data?.verdict,
+    verdictLoading: skip ? false : verdictLoading,
+    setAndSendVerdictToServer,
+  }
 }
 
 export default useVerdict

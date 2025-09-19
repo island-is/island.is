@@ -44,11 +44,48 @@ export const academicBackgroundSection = buildSection({
                   })) ?? []
                 )
               },
+              setOnChange: async (
+                optionValue,
+                application,
+                index,
+                _activeField,
+              ) => {
+                // This setOnChange is responsible for auto-filling degree and subject if there is only 1 option to select
+                const education =
+                  getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+                    application.externalData,
+                    'activityGrantApplication.data.activationGrant.supportData.educationPrograms',
+                  ) ?? []
+                const chosenLevelDegrees = education?.filter(
+                  (program) => program.id === optionValue,
+                )[0]?.degrees
+                if (chosenLevelDegrees && chosenLevelDegrees.length === 1) {
+                  const returnValues = [
+                    {
+                      key: `academicBackground.education[${index}].degree`,
+                      value: chosenLevelDegrees[0].id,
+                    },
+                  ]
+                  const chosenDegreeSubjects = chosenLevelDegrees[0].subjects
+                  if (
+                    chosenDegreeSubjects &&
+                    chosenDegreeSubjects.length === 1
+                  ) {
+                    returnValues.push({
+                      key: `academicBackground.education[${index}].subject`,
+                      value: chosenDegreeSubjects[0].id,
+                    })
+                  }
+                  return returnValues
+                }
+                return []
+              },
             },
             degree: {
               label: academicBackground.labels.degree,
               component: 'select',
               required: true,
+
               options: (application, activeField, locale) => {
                 const education =
                   getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(

@@ -12,7 +12,7 @@ export const rentalAmount = z
   .object({
     amount: z.string().optional(),
     rentalPeriodIsDefinite: z.string().array().optional(),
-    rentalPeriodStartDate: z.string().optional(),
+    rentalPeriodStartDate: z.string(),
     rentalPeriodEndDate: z.string().optional(),
     indexValue: z.string().optional(),
     isIndexConnected: z.string().array().optional(),
@@ -22,12 +22,32 @@ export const rentalAmount = z
     paymentDateOther: z.string().optional(),
     paymentMethodOptions: z.nativeEnum(RentalPaymentMethodOptions).optional(),
     paymentMethodNationalId: z.string().optional(),
-    paymentMethodBankAccountNumber: z.string().optional(),
+    paymentMethodBankAccountNumber: z
+      .object({
+        bankNumber: z.string().optional(),
+        ledger: z.string().optional(),
+        accountNumber: z.string().optional(),
+      })
+      .optional(),
     paymentMethodOtherTextField: z.string().optional(),
     securityDepositRequired: z.string().array().optional(),
   })
   .superRefine((data, ctx) => {
-    if (!data.amount || !data.amount.trim().length) {
+    const {
+      amount,
+      rentalPeriodStartDate,
+      rentalPeriodEndDate,
+      isIndexConnected,
+      paymentDateOptions,
+      paymentDateOther,
+      paymentMethodOptions,
+      paymentMethodNationalId,
+      paymentMethodBankAccountNumber,
+      paymentMethodOtherTextField,
+      rentalPeriodIsDefinite,
+    } = data
+
+    if (!amount || !amount?.trim().length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -37,18 +57,16 @@ export const rentalAmount = z
     }
 
     // Using hidden fields to check length of rental period and if it is definite
-    const startDate = data.rentalPeriodStartDate
-      ? new Date(data.rentalPeriodStartDate)
+    const startDate = rentalPeriodStartDate
+      ? new Date(rentalPeriodStartDate)
       : undefined
-    const endDate = data.rentalPeriodEndDate
-      ? new Date(data.rentalPeriodEndDate)
+    const endDate = rentalPeriodEndDate
+      ? new Date(rentalPeriodEndDate)
       : undefined
-    const rentalPeriodIsDefinite = data.rentalPeriodIsDefinite?.includes(
-      YesOrNoEnum.YES,
-    )
-    const indexIsConnected = data.isIndexConnected?.includes(YesOrNoEnum.YES)
+    const periodIsDefinite = rentalPeriodIsDefinite?.includes(YesOrNoEnum.YES)
+    const indexIsConnected = isIndexConnected?.includes(YesOrNoEnum.YES)
 
-    if (rentalPeriodIsDefinite && startDate && endDate && indexIsConnected) {
+    if (periodIsDefinite && startDate && endDate && indexIsConnected) {
       // Calculate the difference in milliseconds
       const diffTime = Math.abs(endDate.getTime() - startDate.getTime())
       // Convert milliseconds to days (1000ms * 60s * 60min * 24h)
@@ -66,7 +84,7 @@ export const rentalAmount = z
       }
     }
 
-    const numericAmount = parseCurrency(data.amount ?? '')
+    const numericAmount = parseCurrency(amount ?? '')
     if (numericAmount !== undefined && numericAmount < 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -93,8 +111,8 @@ export const rentalAmount = z
     }
 
     if (
-      data.paymentDateOptions?.includes(RentalAmountPaymentDateOptions.OTHER) &&
-      !data.paymentDateOther?.trim().length
+      paymentDateOptions === RentalAmountPaymentDateOptions.OTHER &&
+      !paymentDateOther?.trim().length
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -104,10 +122,8 @@ export const rentalAmount = z
       })
     }
 
-    if (
-      data.paymentMethodOptions === RentalPaymentMethodOptions.BANK_TRANSFER
-    ) {
-      if (!data.paymentMethodNationalId?.trim().length) {
+    if (paymentMethodOptions === RentalPaymentMethodOptions.BANK_TRANSFER) {
+      if (!paymentMethodNationalId?.trim().length) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
@@ -115,10 +131,11 @@ export const rentalAmount = z
           path: ['paymentMethodNationalId'],
         })
       }
+
       if (
-        data.paymentMethodNationalId &&
-        data.paymentMethodNationalId?.trim().length &&
-        !kennitala.isValid(data.paymentMethodNationalId)
+        paymentMethodNationalId &&
+        paymentMethodNationalId?.trim().length &&
+        !kennitala.isValid(paymentMethodNationalId)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -127,29 +144,47 @@ export const rentalAmount = z
           path: ['paymentMethodNationalId'],
         })
       }
-      if (!data.paymentMethodBankAccountNumber?.trim().length) {
+
+      // Validate bank account fields with proper length constraints
+      const bankNumber =
+        paymentMethodBankAccountNumber?.bankNumber?.trim() || ''
+      const ledger = paymentMethodBankAccountNumber?.ledger?.trim() || ''
+      const accountNumber =
+        paymentMethodBankAccountNumber?.accountNumber?.trim() || ''
+
+      // Bank number validation (required, 1-4 characters)
+      if (bankNumber.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.rentalAmount.paymentMethodBankAccountNumberRequiredError,
-          path: ['paymentMethodBankAccountNumber'],
+          params: m.rentalAmount.bankNumberError,
+          path: ['paymentMethodBankAccountNumber', 'bankNumber'],
         })
       }
-      if (
-        data.paymentMethodBankAccountNumber?.trim().length &&
-        data.paymentMethodBankAccountNumber.length < 7
-      ) {
+
+      // Ledger validation (required, 1-2 characters)
+      if (ledger.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.rentalAmount.paymentMethodBankAccountNumberInvalidError,
-          path: ['paymentMethodBankAccountNumber'],
+          params: m.rentalAmount.ledgerError,
+          path: ['paymentMethodBankAccountNumber', 'ledger'],
+        })
+      }
+
+      // Account number validation (required, 3-6 characters)
+      if (accountNumber.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.accountNumberError,
+          path: ['paymentMethodBankAccountNumber', 'accountNumber'],
         })
       }
     }
 
-    if (data.paymentMethodOptions === RentalPaymentMethodOptions.OTHER) {
-      if (!data.paymentMethodOtherTextField?.trim().length) {
+    if (paymentMethodOptions === RentalPaymentMethodOptions.OTHER) {
+      if (!paymentMethodOtherTextField?.trim().length) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',

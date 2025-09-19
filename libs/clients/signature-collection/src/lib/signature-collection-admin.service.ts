@@ -4,6 +4,7 @@ import {
   GetListInput,
   CreateListInput,
   BulkUploadInput,
+  ReasonKey,
 } from './signature-collection.types'
 import { Collection, CollectionType } from './types/collection.dto'
 import { getSlug, List, ListStatus, mapListBase } from './types/list.dto'
@@ -119,13 +120,20 @@ export class SignatureCollectionAdminClientService
   }
 
   async processCollection(collectionId: string, auth: Auth): Promise<Success> {
-    const collection = await this.getApiWithAuth(
-      this.adminApi,
-      auth,
-    ).adminMedmaelasofnunIDToggleSofnunPatch({
-      iD: parseInt(collectionId),
-    })
-    return { success: !!collection }
+    try {
+      const collection = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelasofnunIDToggleSofnunPatch({
+        iD: parseInt(collectionId),
+      })
+      return { success: !!collection }
+    } catch (error) {
+      return {
+        success: false,
+        reasons: error.body ? [error.body] : [],
+      }
+    }
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
@@ -204,6 +212,27 @@ export class SignatureCollectionAdminClientService
 
       let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
 
+      if (
+        collectionType === CollectionType.Parliamentary &&
+        !candidacy &&
+        !collectionName
+      ) {
+        // Fail safe for when we don't have the name of the candidacy
+        const user = await this.getApiWithAuth(
+          this.adminApi,
+          auth,
+        ).adminMedmaelasofnunIDEinsInfoKennitalaGet({
+          kennitala: owner.nationalId,
+          iD: parseInt(id),
+        })
+        collectionName = user.listabokstafur?.frambodNafn
+      }
+
+      const listName = (areaName: string) =>
+        collectionType === CollectionType.Parliamentary
+          ? candidacy?.nafn ?? collectionName
+          : `${owner.name} - ${areaName}`
+
       // If no candidacy exists, create one
       if (!candidacy) {
         candidacy = await adminApi.adminFrambodPost({
@@ -215,7 +244,7 @@ export class SignatureCollectionAdminClientService
             frambodNafn: collectionName,
             medmaelalistar: filteredAreas.map((area) => ({
               svaediID: parseInt(area.id),
-              listiNafn: `${owner.name} - ${area.name}`,
+              listiNafn: listName(area.name),
             })),
           },
         })
@@ -227,7 +256,7 @@ export class SignatureCollectionAdminClientService
             frambodID: candidacy.id,
             medmaelalistar: filteredAreas.map((area) => ({
               svaediID: parseInt(area.id),
-              listiNafn: `${owner.name} - ${area.name}`,
+              listiNafn: listName(area.name),
             })),
           },
         })
@@ -239,7 +268,7 @@ export class SignatureCollectionAdminClientService
       })
 
       return {
-        slug: getSlug(candidacy.id ?? '', votingType.kosningTegund),
+        slug: getSlug(candidacy.id ?? '', votingType.kosningTegund ?? ''),
         success: true,
       }
     } catch (error) {
@@ -496,15 +525,19 @@ export class SignatureCollectionAdminClientService
     }
   }
 
-  async lockList(auth: Auth, listId: string): Promise<Success> {
+  async lockList(
+    auth: Auth,
+    { listId, setLocked }: { listId: string; setLocked: boolean },
+  ): Promise<Success> {
     try {
       const res = await this.getApiWithAuth(
         this.adminApi,
         auth,
       ).adminMedmaelalistiIDLockListPatch({
         iD: parseInt(listId, 10),
+        shouldLock: setLocked,
       })
-      return { success: res.listaLokad ?? false }
+      return { success: res.listaLokad === setLocked }
     } catch (error) {
       return { success: false, reasons: error.body ? [error.body] : [] }
     }
@@ -543,7 +576,10 @@ export class SignatureCollectionAdminClientService
         success,
         reasons: success
           ? []
-          : getReasonKeyForPaperSignatureUpload(signature, nationalId),
+          : (getReasonKeyForPaperSignatureUpload(
+              signature,
+              nationalId,
+            ) as ReasonKey[]),
       }
     } catch (error) {
       return {

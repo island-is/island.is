@@ -1,11 +1,11 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button } from '@island.is/island-ui/core'
-import { usePDF } from '@react-pdf/renderer'
+import { Button } from '@island.is/island-ui/core'
+import { Document, pdf } from '@react-pdf/renderer'
 import MyPdfDocument from './Document'
-import { useEffect } from 'react'
 import { useGetPdfReport } from '../../../hooks'
 import { m } from '../../../lib/messages'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import { useEffect, useState } from 'react'
 
 export const PdfReport = ({
   listId,
@@ -15,31 +15,42 @@ export const PdfReport = ({
   collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
-  const { report } = useGetPdfReport(listId || '', collectionType)
+  const { report, refetch } = useGetPdfReport(listId || '', collectionType)
 
-  const [document, updateDocument] = usePDF({
-    document: report && <MyPdfDocument report={report} />,
-  })
+  const instance = pdf(<Document />)
+  const [openAfterUpdate, setOpenAfterUpdate] = useState(false)
 
-  // Update pdf document after data is fetched
   useEffect(() => {
     if (report) {
-      // @ts-expect-error - updateDocument should be called without arguments based on working examples
-      updateDocument()
+      instance.updateContainer(
+        <MyPdfDocument report={report} collectionType={collectionType} />,
+        async () => {
+          if (openAfterUpdate) {
+            const url = await instance
+              .toBlob()
+              .then((b) => URL.createObjectURL(b))
+            window.open(url, '_blank')
+            setOpenAfterUpdate(false)
+          }
+        },
+      )
     }
-  }, [report, updateDocument])
+  }, [report, instance, collectionType, openAfterUpdate])
+
+  const onClick = async () => {
+    await refetch()
+    setOpenAfterUpdate(true)
+  }
 
   return (
-    <Box>
-      <Button
-        icon="download"
-        iconType="outline"
-        variant="ghost"
-        onClick={() => window.open(document?.url?.toString(), '_blank')}
-      >
-        {formatMessage(m.downloadPdf)}
-      </Button>
-    </Box>
+    <Button
+      variant="text"
+      onClick={onClick}
+      disabled={openAfterUpdate}
+      loading={openAfterUpdate}
+    >
+      {formatMessage(m.downloadPdf)}
+    </Button>
   )
 }
 

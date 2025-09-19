@@ -23,16 +23,43 @@ export class HistoryBuilder {
     const result = []
 
     for (const entry of history) {
-      const { entryTimestamp, stateKey, exitEvent } = entry
+      const {
+        entryTimestamp,
+        stateKey,
+        exitEvent,
+        exitEventSubjectNationalId,
+        exitEventActorNationalId,
+      } = entry
 
       if (!exitEvent) continue
 
-      const entryLog = templateHelper.getHistoryLogs(stateKey, exitEvent)
+      const historyLog = templateHelper.getHistoryLog(stateKey, exitEvent)
 
-      if (entryLog) {
-        result.push(
-          new HistoryResponseDto(entryTimestamp, entryLog, formatMessage),
-        )
+      if (historyLog) {
+        if (typeof historyLog.logMessage === 'function') {
+          const values = {
+            subject: exitEventSubjectNationalId,
+            actor: exitEventActorNationalId,
+          }
+          const message = historyLog.logMessage(values)
+
+          result.push(
+            new HistoryResponseDto(
+              entryTimestamp,
+              message,
+              formatMessage,
+              values,
+            ),
+          )
+        } else {
+          result.push(
+            new HistoryResponseDto(
+              entryTimestamp,
+              historyLog.logMessage,
+              formatMessage,
+            ),
+          )
+        }
       }
     }
 

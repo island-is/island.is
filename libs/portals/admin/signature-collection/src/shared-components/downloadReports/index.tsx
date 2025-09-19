@@ -10,17 +10,19 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import {
   SignatureCollection,
-  SignatureCollectionAreaSummaryReport,
+  SignatureCollectionArea,
+  SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
-import { usePDF } from '@react-pdf/renderer'
+import { pdf } from '@react-pdf/renderer'
 import MyPdfDocument from './MyPdfDocument'
 import { SignatureCollectionAreaSummaryReportDocument } from './MyPdfDocument/areaSummary.generated'
 import { useLazyQuery } from '@apollo/client'
+import { useParams } from 'react-router-dom'
 
 export const DownloadReports = ({
   collection,
@@ -30,55 +32,58 @@ export const DownloadReports = ({
   const { formatMessage } = useLocale()
   const [modalDownloadReportsIsOpen, setModalDownloadReportsIsOpen] =
     useState(false)
-  const [pdfState, setPdfState] = useState({ areaId: '', pdfUrl: '' })
-
-  const [runGetSummaryReport, { data }] = useLazyQuery(
+  const [runGetSummaryReport, { loading }] = useLazyQuery(
     SignatureCollectionAreaSummaryReportDocument,
   )
+  const instance = pdf(undefined)
 
-  const [document, updateDocument] = usePDF({
-    document: data && (
-      <MyPdfDocument
-        report={
-          data?.signatureCollectionAreaSummaryReport as SignatureCollectionAreaSummaryReport
-        }
-      />
-    ),
-  })
+  const { municipality, constituencyName } = useParams<{
+    municipality?: string
+    constituencyName?: string
+  }>()
 
-  const handleDownloadClick = (area: string) => {
-    // Fetch the report if it has not been fetched yet
-    if (area !== pdfState.areaId) {
+  const collectionType = collection.collectionType
+  // area is used for LocalGovernmental and Parliamentary collections,
+  // to get the report for certain area
+  const areaName =
+    collectionType === SignatureCollectionCollectionType.LocalGovernmental
+      ? municipality
+      : collectionType === SignatureCollectionCollectionType.Parliamentary
+      ? constituencyName
+      : undefined
+
+  const area = areaName
+    ? collection.areas.find((a) => a.name === areaName)
+    : undefined
+
+  const handleDownloadClick = async (area: SignatureCollectionArea) => {
+    if (!loading) {
       runGetSummaryReport({
         variables: {
           input: {
-            areaId: area,
-            collectionId: collection?.id,
+            areaId: area.id,
+            collectionId:
+              collection.collectionType ===
+              SignatureCollectionCollectionType.LocalGovernmental
+                ? area.collectionId
+                : collection?.id,
           },
         },
+        onCompleted: (res) => {
+          instance.updateContainer(
+            <MyPdfDocument report={res.signatureCollectionAreaSummaryReport} />,
+            async () => {
+              const url = await instance
+                .toBlob()
+                .then((b) => URL.createObjectURL(b))
+              window.open(url, '_blank')
+            },
+          )
+        },
+        fetchPolicy: 'no-cache',
       })
-      setPdfState({ ...pdfState, areaId: area })
-    } else {
-      // Open the document in a new tab if it has already been fetched
-      window.open(document?.url?.toString(), '_blank')
     }
   }
-
-  // Update pdf document after correct data is fetched
-  useEffect(() => {
-    if (data?.signatureCollectionAreaSummaryReport?.id === pdfState.areaId) {
-      // @ts-expect-error - updateDocument should be called without arguments based on working examples
-      updateDocument()
-    }
-  }, [data, pdfState, updateDocument])
-
-  // Open the document in a new tab when it has been generated
-  useEffect(() => {
-    if (document.url && document.url !== pdfState.pdfUrl) {
-      window.open(document.url, '_blank')
-      setPdfState({ ...pdfState, pdfUrl: document?.url ?? '' })
-    }
-  }, [document.url, pdfState])
 
   return (
     <Box>
@@ -91,7 +96,7 @@ export const DownloadReports = ({
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">{formatMessage(m.downloadReports)}</Text>
+              <Text variant="h4">{formatMessage(m.downloadReport)}</Text>
               <Text marginBottom={2}>
                 {formatMessage(m.downloadReportsDescription)}
               </Text>
@@ -100,7 +105,7 @@ export const DownloadReports = ({
                 size="small"
                 onClick={() => setModalDownloadReportsIsOpen(true)}
               >
-                {formatMessage(m.downloadReports)}
+                {formatMessage(m.downloadReport)}
               </Button>
             </Box>
           </Box>
@@ -109,7 +114,7 @@ export const DownloadReports = ({
       <Modal
         id="downloadReports"
         isVisible={modalDownloadReportsIsOpen}
-        title={formatMessage(m.downloadReports)}
+        title={formatMessage(m.downloadReport)}
         label={''}
         onClose={() => {
           setModalDownloadReportsIsOpen(false)
@@ -119,10 +124,10 @@ export const DownloadReports = ({
         <Text>{formatMessage(m.downloadReportsDescription)}</Text>
         <Box marginY={5}>
           <Stack space={3}>
-            {collection?.areas.map((area) => (
+            {(area ? [area] : collection?.areas || []).map((area) => (
               <ActionCard
                 key={area.id}
-                heading={formatMessage(area.name)}
+                heading={formatMessage(area.name ?? '')}
                 headingVariant="h4"
                 backgroundColor="blue"
                 cta={{
@@ -130,7 +135,8 @@ export const DownloadReports = ({
                   variant: 'text',
                   icon: 'download',
                   iconType: 'outline',
-                  onClick: () => handleDownloadClick(area.id),
+                  onClick: () => handleDownloadClick(area),
+                  disabled: loading,
                 }}
               />
             ))}

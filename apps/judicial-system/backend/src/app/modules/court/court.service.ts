@@ -28,7 +28,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
-import { RobotLog } from './models/robotLog.model'
+import { RobotLog } from '../repository'
 import { courtModuleConfig } from './court.config'
 
 export enum CourtDocumentFolder {

@@ -4,7 +4,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
@@ -25,8 +24,9 @@ import {
   createFineSentToPrisonAdminPdf,
   createIndictment,
   createRulingSentToPrisonAdminPdf,
-  createServiceCertificate,
   createSubpoena,
+  createSubpoenaServiceCertificate,
+  createVerdictServiceCertificate,
   getCaseFileHash,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
@@ -34,11 +34,15 @@ import {
   getRulingPdfAsBuffer,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { Defendant } from '../defendant'
-import { EventLog } from '../event-log'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { UserService } from '../user'
-import { Case } from './models/case.model'
+import {
+  Case,
+  CaseRepositoryService,
+  Defendant,
+  EventLog,
+  Subpoena,
+  Verdict,
+} from '../repository'
+import { SubpoenaService } from '../subpoena'
 
 @Injectable()
 export class PdfService {
@@ -47,10 +51,9 @@ export class PdfService {
   constructor(
     private readonly awsS3Service: AwsS3Service,
     private readonly intlService: IntlService,
-    private readonly userService: UserService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -251,11 +254,11 @@ export class PdfService {
       const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
-      this.caseModel
-        .update(
-          { indictmentHash: hash, indictmentHashAlgorithm: hashAlgorithm },
-          { where: { id: theCase.id } },
-        )
+      this.caseRepositoryService
+        .update(theCase.id, {
+          indictmentHash: hash,
+          indictmentHashAlgorithm: hashAlgorithm,
+        })
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
@@ -352,17 +355,34 @@ export class PdfService {
     return generatedPdf
   }
 
-  async getServiceCertificatePdf(
+  async getSubpoenaServiceCertificatePdf(
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
   ): Promise<Buffer> {
     await this.refreshFormatMessage()
 
-    const generatedPdf = await createServiceCertificate(
+    const generatedPdf = await createSubpoenaServiceCertificate(
       theCase,
       defendant,
       subpoena,
+      this.formatMessage,
+    )
+
+    return generatedPdf
+  }
+
+  async getVerdictServiceCertificatePdf(
+    theCase: Case,
+    defendant: Defendant,
+    verdict: Verdict,
+  ): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    const generatedPdf = await createVerdictServiceCertificate(
+      theCase,
+      defendant,
+      verdict,
       this.formatMessage,
     )
 

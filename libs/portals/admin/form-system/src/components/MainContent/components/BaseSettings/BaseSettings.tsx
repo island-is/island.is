@@ -27,7 +27,6 @@ export const BaseSettings = () => {
   const { form } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
-
   return (
     <Stack space={2}>
       <Row>
@@ -247,14 +246,57 @@ export const BaseSettings = () => {
           <Checkbox
             label={formatMessage(m.allowProgress)}
             checked={
-              form.stopProgressOnValidatingScreen !== null &&
-              form.stopProgressOnValidatingScreen !== undefined
-                ? form.stopProgressOnValidatingScreen
+              form.allowProceedOnValidationFail !== null &&
+              form.allowProceedOnValidationFail !== undefined
+                ? form.allowProceedOnValidationFail
                 : false
             }
             onChange={(e) => {
               controlDispatch({
-                type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN',
+                type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate,
+                },
+              })
+            }}
+          />
+        </Column>
+      </Row>
+      <Row>
+        <Column>
+          <Checkbox
+            label={formatMessage(m.summaryScreen)}
+            checked={
+              form.hasSummaryScreen !== null &&
+              form.hasSummaryScreen !== undefined
+                ? form.hasSummaryScreen
+                : false
+            }
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_HAS_SUMMARY_SCREEN',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate,
+                },
+              })
+            }}
+          />
+        </Column>
+      </Row>
+      <Row>
+        <Column>
+          <Checkbox
+            label={formatMessage(m.payment)}
+            checked={
+              form.hasPayment !== null && form.hasPayment !== undefined
+                ? form.hasPayment
+                : false
+            }
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_HAS_PAYMENT',
                 payload: {
                   value: e.target.checked,
                   update: formUpdate,

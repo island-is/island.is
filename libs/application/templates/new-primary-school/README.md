@@ -6,7 +6,7 @@ This application template enables applicants to apply for a new primary school o
 
 ## URLs
 
-/umsoknir/nyr-grunnskoli/
+/umsoknir/grunnskoli/
 
 ## Integrations
 
