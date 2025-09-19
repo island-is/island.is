@@ -26,6 +26,8 @@ export const fireProtectionsSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'fireProtections.smokeDetectorsFireExtinguisherRequirements',
+          title: m.housingFireProtections.smokeDetectorsFireExtinguisherTitle,
+          titleVariant: 'h3',
           description:
             m.housingFireProtections.smokeDetectorsFireExtinguisherRequirements,
           space: 0,
