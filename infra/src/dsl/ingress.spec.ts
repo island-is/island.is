@@ -46,7 +46,13 @@ describe('Ingress definitions', () => {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
-        hosts: [{ host: 'a.staging01.devland.is', paths: ['/api'], pathTypeOverride: 'ImplementationSpecific' }],
+        hosts: [
+          {
+            host: 'a.staging01.devland.is',
+            paths: ['/api'],
+            pathTypeOverride: 'ImplementationSpecific',
+          },
+        ],
       },
       'internal-alb': {
         annotations: {
