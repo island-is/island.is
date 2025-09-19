@@ -177,7 +177,7 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/notEligible').then((module) =>
+                import('../forms/notEligibleForm').then((module) =>
                   Promise.resolve(module.NotEligible),
                 ),
               read: 'all',
