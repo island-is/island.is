@@ -489,12 +489,6 @@ export const m = defineMessages({
     defaultMessage: 'Aðgerðir',
     description: '',
   },
-  listActionsDescription: {
-    id: 'sp.signatureCollection:listActionsDescription',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu justo interdum, pharetra enim vel, ultrices augue.',
-    description: '',
-  },
   deleteCollectionCandidacy: {
     id: 'sp.signatureCollection:deleteCollectionCandidacy',
     defaultMessage: 'Eyða framboði',
