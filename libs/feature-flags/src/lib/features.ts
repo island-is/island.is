@@ -32,6 +32,7 @@ export enum Features {
   SeminarRegistrationEnabled = 'isSeminarRegistrationEnabled',
   TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
   medicalAndRehabilitationPayments = 'isMedicalAndRehabilitationPaymentsEnabled',
+  disabilityPension = 'isDisabilityPensionEnabled',
   PracticalExamEnabled = 'isPracticalExamEnabled',
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
   fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',

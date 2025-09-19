@@ -15,21 +15,17 @@ import {
   PaymentPlanApi,
   PensionCalculatorApi,
   QuestionnairesApi,
-  TrWebApiServicesCommonCountriesModelsCountryDto,
   TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
   TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto,
-  TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto,
-  TrWebApiServicesDomainProfessionsModelsProfessionDto,
   TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
-  TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
   TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto,
   TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto,
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
@@ -41,9 +37,31 @@ import {
   TrWebExternalModelsServicePortalConfirmedTreatment,
   TrWebExternalModelsServicePortalNationalRegistryAddress,
   TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebExternalModelsServicePortalDisabilityPensionCertificate,
+  TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
+  TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto,
+  TrWebApiServicesDomainProfessionsModelsProfessionDto,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
-import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
+import { EmploymentDto, mapEmploymentDto } from './dto/employment.dto'
+import {
+  ApplicationWriteApi,
+  MedicalDocumentApiForDisabilityPension,
+  QuestionnairesApiForDisabilityPension,
+} from './socialInsuranceAdministrationClient.type'
+import { ApplicationTypeEnum } from './enums'
+import { mapApplicationEnumToType } from './mapper'
+import { mapProfessionDto, ProfessionDto } from './dto/profession.dto'
+import {
+  mapProfessionActivityDto,
+  ProfessionActivityDto,
+} from './dto/professionActivity.dto'
+import { mapResidenceDto, ResidenceDto } from './dto/residence.dto'
+import { GenericLocaleInputDto } from './dto/genericLocale.dto.input'
+import { LanguageDto, mapLanguageDto } from './dto/language.dto'
+import { CountryDto, mapCountryDto } from './dto/country.dto'
+import { mapMaritalStatusDto, MaritalStatusDto } from './dto/maritalStatus.dto'
+import { DisabilityPensionDto } from './dto'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -59,6 +77,8 @@ export class SocialInsuranceAdministrationClientService {
     private readonly generalApi: GeneralApi,
     private readonly medicalDocumentsApi: MedicalDocumentsApi,
     private readonly questionnairesApi: QuestionnairesApi,
+    private readonly medicalDocumentsApiForDisabilityPension: MedicalDocumentApiForDisabilityPension,
+    private readonly questionnairesApiForDisabilityPension: QuestionnairesApiForDisabilityPension,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -90,6 +110,16 @@ export class SocialInsuranceAdministrationClientService {
 
   private questionnairesApiWithAuth = (user: User) =>
     this.questionnairesApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private medicalDocumentsApiForDisabilityPensionWithAuth = (user: User) =>
+    this.medicalDocumentsApiForDisabilityPension.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
+
+  private questionnairesApiForDisabilityPensionWithAuth = (user: User) =>
+    this.questionnairesApiForDisabilityPension.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
 
   getPaymentPlan(
     user: User,
@@ -127,15 +157,24 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1IncomePlanIncomePlanConditionsGet()
   }
 
+  sendDisabilityPensionApplication(
+    user: User,
+    input: DisabilityPensionDto,
+  ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
+    return this.sendApplication(user, input, 'disabilityPension', 'lightweight')
+  }
+
   sendApplication(
     user: User,
     applicationDTO: object,
     applicationType: string,
+    mode?: 'normal' | 'lightweight',
   ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
     return this.applicationWriteApiWithAuth(
       user,
     ).apiProtectedV1ApplicationApplicationTypePost({
       applicationType,
+      lightweightValidation: mode === 'lightweight',
       body: applicationDTO,
     })
   }
@@ -162,11 +201,13 @@ export class SocialInsuranceAdministrationClientService {
   async getIsEligible(
     user: User,
     applicationType: string,
+    mode?: 'normal' | 'lightweight',
   ): Promise<TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn> {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantApplicationTypeEligibleGet({
       applicationType,
+      lightweightValidation: mode === 'lightweight',
     })
   }
 
@@ -235,17 +276,27 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
   }
 
-  async getMARPSelfAssessmentQuestionnaire(
+  async getSelfAssessmentQuestionnaire(
     user: User,
     languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
+    applicationType: 'MARP' | 'DisabilityPension',
   ): Promise<
     Array<TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto>
   > {
-    return this.questionnairesApiWithAuth(
-      user,
-    ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
-      languages,
-    )
+    switch (applicationType) {
+      case 'MARP':
+        return this.questionnairesApiWithAuth(
+          user,
+        ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
+          languages,
+        )
+      case 'DisabilityPension':
+        return this.questionnairesApiForDisabilityPensionWithAuth(
+          user,
+        ).apiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGet(
+          languages,
+        )
+    }
   }
 
   async getCertificateForSicknessAndRehabilitation(
@@ -254,6 +305,14 @@ export class SocialInsuranceAdministrationClientService {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsBasecertificateGet()
+  }
+
+  async getCertificateForDisabilityPension(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalDisabilityPensionCertificate> {
+    return this.medicalDocumentsApiForDisabilityPensionWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsDisabilitypensioncertificateGet()
   }
 
   async getConfirmedTreatment(
@@ -282,8 +341,121 @@ export class SocialInsuranceAdministrationClientService {
 
   async getCountries(
     user: User,
-  ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
-    return this.generalApiWithAuth(user).apiProtectedV1GeneralCountriesGet()
+    { locale }: GenericLocaleInputDto,
+  ): Promise<Array<CountryDto> | null> {
+    const data = await this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralCountriesGet()
+
+    return (
+      data
+        .map((d) => mapCountryDto(d, locale))
+        .filter((i): i is CountryDto => Boolean(i)) ?? null
+    )
+  }
+
+  async getLanguages(
+    user: User,
+    { locale }: GenericLocaleInputDto,
+  ): Promise<Array<LanguageDto> | null> {
+    const data = await this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralLanguagesGet()
+
+    return (
+      data
+        .map((d) => mapLanguageDto(d, locale))
+        .filter((i): i is LanguageDto => Boolean(i)) ?? null
+    )
+  }
+
+  async getMaritalStatuses(user: User): Promise<Array<MaritalStatusDto>> {
+    const data = await this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralMaritalStatusesGet()
+
+    return (
+      data
+        .map((d) => mapMaritalStatusDto(d))
+        .filter((i): i is MaritalStatusDto => Boolean(i)) ?? null
+    )
+  }
+
+  async getEmploymentStatusesWithLocale(
+    user: User,
+    { locale }: GenericLocaleInputDto,
+  ): Promise<Array<EmploymentDto> | null> {
+    const data = await this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEmploymentStatusGet()
+
+    const filteredData = data.find(
+      (d) => d.languageCode === locale.toString().toUpperCase(),
+    )
+
+    if (!filteredData) {
+      throw new Error('Locale not supplied in response')
+    }
+
+    return (
+      filteredData.employmentStatuses
+        ?.map((es) => mapEmploymentDto(es))
+        .filter((i): i is EmploymentDto => Boolean(i)) ?? null
+    )
+  }
+
+  async getResidenceTypes(user: User): Promise<Array<ResidenceDto> | null> {
+    const data = await this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralHousingTypesGet()
+
+    return (
+      data
+        .map((d) => mapResidenceDto(d))
+        .filter((i): i is ResidenceDto => Boolean(i)) ?? null
+    )
+  }
+
+  async getProfessions(
+    user: User,
+  ): Promise<Array<TrWebApiServicesDomainProfessionsModelsProfessionDto>> {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralProfessionsGet()
+  }
+
+  async getActivitiesOfProfessions(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralProfessionsActivitiesGet()
+  }
+
+  async getProfessionsInDto(user: User): Promise<Array<ProfessionDto> | null> {
+    const data = await this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralProfessionsGet()
+
+    return (
+      data
+        .map((d) => mapProfessionDto(d))
+        .filter((i): i is ProfessionDto => Boolean(i)) ?? null
+    )
+  }
+
+  async getProfessionActivitiesInDto(
+    user: User,
+  ): Promise<Array<ProfessionActivityDto> | null> {
+    const data = await this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralProfessionsActivitiesGet()
+
+    return (
+      data
+        .map((d) => mapProfessionActivityDto(d))
+        .filter((i): i is ProfessionActivityDto => Boolean(i)) ?? null
+    )
   }
 
   async getEducationalInstitutions(
@@ -310,6 +482,23 @@ export class SocialInsuranceAdministrationClientService {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantResidenceInformationGet()
+  }
+
+  async getEducationLevelsWithEnum(
+    user: User,
+    applicationType: ApplicationTypeEnum,
+  ): Promise<Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto> | null> {
+    const applicationTypeMapped = mapApplicationEnumToType(applicationType)
+
+    if (!applicationTypeMapped) {
+      return Promise.resolve(null)
+    }
+
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationlevelsApplicationTypeGet({
+      applicationType: applicationTypeMapped,
+    })
   }
 
   async getEducationLevels(
@@ -341,21 +530,5 @@ export class SocialInsuranceAdministrationClientService {
     return this.generalApiWithAuth(
       user,
     ).apiProtectedV1GeneralEmploymentStatusGet()
-  }
-
-  async getProfessions(
-    user: User,
-  ): Promise<Array<TrWebApiServicesDomainProfessionsModelsProfessionDto>> {
-    return this.generalApiWithAuth(user).apiProtectedV1GeneralProfessionsGet()
-  }
-
-  async getActivitiesOfProfessions(
-    user: User,
-  ): Promise<
-    Array<TrWebApiServicesDomainProfessionsModelsActivityOfProfessionDto>
-  > {
-    return this.generalApiWithAuth(
-      user,
-    ).apiProtectedV1GeneralProfessionsActivitiesGet()
   }
 }

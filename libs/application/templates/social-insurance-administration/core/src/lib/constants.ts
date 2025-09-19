@@ -154,6 +154,16 @@ export enum RatioType {
   MONTHLY = 'monthly',
 }
 
+export enum OptionsValueEnum {
+  NONE = 'NONE',
+  LITTLE = 'LITTLE',
+  MODERATE = 'MODERATE',
+  SEVERE = 'SEVERE',
+  EXTREME = 'EXTREME',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
+  REFUSE_TO_ANSWER = 'REFUSE_TO_ANSWER',
+}
+
 export const defaultIncomeTypes = [
   {
     income: 'yearly',

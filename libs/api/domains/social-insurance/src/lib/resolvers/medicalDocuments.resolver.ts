@@ -15,6 +15,7 @@ import { ConfirmationOfPendingResolution } from '../models/medicalDocuments/conf
 import { ConfirmedTreatment } from '../models/medicalDocuments/confirmedTreatment.model'
 import { RehabilitationPlan } from '../models/medicalDocuments/rehabilitationPlan.model'
 import { SocialInsuranceService } from '../socialInsurance.service'
+import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -37,6 +38,13 @@ export class MedicalDocumentsResolver {
     @CurrentUser() user: User,
   ) {
     return this.service.getCertificateForSicknessAndRehabilitation(user)
+  }
+
+  @Query(() => DisabilityPensionCertificate, {
+    name: 'socialInsuranceDisabilityPensionCertificate',
+  })
+  async siaGetDisabilityPensionCertificate(@CurrentUser() user: User) {
+    return this.service.getDisabilityPensionCertificate(user)
   }
 
   @Query(() => ConfirmedTreatment, {
