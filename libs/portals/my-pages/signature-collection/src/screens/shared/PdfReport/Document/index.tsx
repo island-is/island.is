@@ -11,7 +11,7 @@ import logo from './logo.png'
 import { dark200 } from '@island.is/island-ui/theme'
 import {
   SignatureCollectionCollectionType,
-  SignatureCollectionListSummary,
+  SignatureCollectionSummaryReport,
 } from '@island.is/api/schema'
 import format from 'date-fns/format'
 
@@ -19,50 +19,51 @@ const PdfDocument = ({
   report,
   collectionType,
 }: {
-  report: SignatureCollectionListSummary
+  report: SignatureCollectionSummaryReport
   collectionType: SignatureCollectionCollectionType
 }) => {
   return (
     <Document>
-      {report && (
-        <Page style={styles.body} key={report.candidateName}>
-          <View>
-            <Text style={styles.pageTitle}>
-              {report.listName?.split(' - ')[1]}
-            </Text>
-            <View style={styles.dividerLineBox}>
-              <View style={styles.dividerLine} />
+      {report &&
+        report.lists?.map((list) => (
+          <Page style={styles.body} key={list.listName}>
+            <View>
+              <Text style={styles.pageTitle}>
+                {list.listName?.split(' - ')[1]}
+              </Text>
+              <View style={styles.dividerLineBox}>
+                <View style={styles.dividerLine} />
+              </View>
+
+              <Text style={styles.header}>Framboð:</Text>
+              <Text style={styles.text}>{list.candidateName}</Text>
+
+              <Text style={styles.header}>Dagsetning:</Text>
+              <Text style={styles.text}>
+                {format(new Date(), 'dd.MM.yyyy HH:mm')}
+              </Text>
+
+              {collectionType ===
+                SignatureCollectionCollectionType.Parliamentary && (
+                <>
+                  <Text style={styles.header}>Listabókstafur:</Text>
+                  <Text style={styles.text}>{list.partyBallotLetter}</Text>
+                </>
+              )}
+
+              <Text style={styles.header}>Rafræn meðmæli:</Text>
+              <Text style={styles.text}>{list.nrOfDigitalSignatures}</Text>
+
+              <Text style={styles.header}>Meðmæli af pappír:</Text>
+              <Text style={styles.text}>{list.nrOfPaperSignatures}</Text>
+
+              <Text style={styles.header}>Samtals fjöldi gildra meðmæla:</Text>
+              <Text style={styles.text}>{list.nrOfSignatures}</Text>
             </View>
 
-            <Text style={styles.header}>Framboð:</Text>
-            <Text style={styles.text}>{report.candidateName}</Text>
-
-            <Text style={styles.header}>Dagsetning:</Text>
-            <Text style={styles.text}>
-              {format(new Date(), 'dd.MM.yyyy HH:mm')}
-            </Text>
-
-            {collectionType ===
-              SignatureCollectionCollectionType.Parliamentary && (
-              <>
-                <Text style={styles.header}>Listabókstafur:</Text>
-                <Text style={styles.text}>{report.partyBallotLetter}</Text>
-              </>
-            )}
-
-            <Text style={styles.header}>Rafræn meðmæli:</Text>
-            <Text style={styles.text}>{report.nrOfDigitalSignatures}</Text>
-
-            <Text style={styles.header}>Meðmæli af pappír:</Text>
-            <Text style={styles.text}>{report.nrOfPaperSignatures}</Text>
-
-            <Text style={styles.header}>Samtals fjöldi gildra meðmæla:</Text>
-            <Text style={styles.text}>{report.nrOfSignatures}</Text>
-          </View>
-
-          <Image src={logo} style={styles.logo} fixed />
-        </Page>
-      )}
+            <Image src={logo} style={styles.logo} fixed />
+          </Page>
+        ))}
     </Document>
   )
 }

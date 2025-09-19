@@ -57,7 +57,9 @@ export const PdfReport = ({
 
   const onClick = async () => {
     if (collectionType === SignatureCollectionCollectionType.Presidential) {
-      await getCandidateReport({ variables: { input: { candidateId } } })
+      await getCandidateReport({
+        variables: { input: { candidateId, collectionType } },
+      })
     } else {
       await getAreaReport({ variables: { input: { listId, collectionType } } })
     }

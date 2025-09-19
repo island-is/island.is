@@ -56,6 +56,7 @@ export const DownloadReports = ({
         variables: {
           input: {
             candidateId: target?.id,
+            collectionType,
           },
         },
         onCompleted: (res) => {
