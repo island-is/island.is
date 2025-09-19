@@ -36,7 +36,7 @@ export const overviewAssetsAndDebts = [
     {
       cards: ({ answers }: Application) =>
         (
-          (answers.estate as unknown as EstateInfo).assets?.filter(
+          (answers.estate as unknown as EstateInfo)?.assets?.filter(
             (asset) => asset.enabled !== false,
           ) ?? []
         ).map((asset) => ({
@@ -226,7 +226,7 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).estate.bankAccounts ?? [])
+        ((answers as unknown as EstateSchema).estate?.bankAccounts ?? [])
           .filter((account) => account.enabled !== false)
           .map(
             (
@@ -413,7 +413,7 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).estate.otherAssets ?? [])
+        ((answers as unknown as EstateSchema).estate?.otherAssets ?? [])
           .filter((otherAsset) => otherAsset.enabled !== false)
           .map((otherAsset) => {
             return {
