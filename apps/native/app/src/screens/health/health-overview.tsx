@@ -96,7 +96,7 @@ const showErrorComponent = (error: ApolloError) => {
 }
 
 const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks((theme, intl) => ({
+  createNavigationOptionHooks((_, intl) => ({
     topBar: {
       title: {
         text: intl.formatMessage({ id: 'health.overview.screenTitle' }),
@@ -116,6 +116,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const { width } = useWindowDimensions()
   const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
+  const isPrescriptionsEnabled = useFeatureFlag('isPrescriptionsEnabled', false)
   const isOrganDonationEnabled = useFeatureFlag('isOrganDonationEnabled', false)
 
   const now = useMemo(() => new Date().toISOString(), [])
@@ -251,6 +252,19 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               style={buttonStyle}
               ellipsis
               onPress={() => navigateTo('/vaccinations', componentId)}
+            />
+          )}
+          {isPrescriptionsEnabled && (
+            <Button
+              title={intl.formatMessage({
+                id: 'health.overview.prescriptions',
+              })}
+              isOutlined
+              isUtilityButton
+              iconStyle={{ tintColor: theme.color.dark300 }}
+              style={buttonStyle}
+              ellipsis
+              onPress={() => navigateTo('/prescriptions', componentId)}
             />
           )}
           <Button

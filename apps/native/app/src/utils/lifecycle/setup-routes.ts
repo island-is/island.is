@@ -173,6 +173,17 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/prescriptions', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.PrescriptionsScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/personalinfo', async (passProps) => {
     Navigation.showModal({
       stack: {
