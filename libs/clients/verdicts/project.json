@@ -30,6 +30,7 @@
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
+      "cache": false,
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/verdicts/gen/fetch/gopro -i libs/clients/verdicts/src/goproClientConfig.json --skip-validate-spec",

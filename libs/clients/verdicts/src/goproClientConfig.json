@@ -8,6 +8,116 @@
   "basePath": "/domssm/services",
   "schemes": ["https"],
   "paths": {
+    "/Booking/PublishBooking": {
+      "post": {
+        "tags": ["Booking"],
+        "summary": "Register or update a room booking in public registry by court.\r\nIf room booking by specified court and external id is already published then it is updated",
+        "operationId": "PublishBooking",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/PublishRoomBookingRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Booking/GetPublishedBookings/{court}": {
+      "get": {
+        "tags": ["Booking"],
+        "summary": "Get published bookings by court",
+        "operationId": "GetPublishedBookings",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "court",
+            "in": "path",
+            "description": "Published bookings per court",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Number of pages (Default is 1)",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "Number of returned bookings per page(Default is 20)",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Booking start date and time. Example(2025-07-01T14:00:00)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Booking end date and time. Example(2025-07-01T14:30:00)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Allowed: StartDateTime, EndDateTime or PublishDate",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "orderDirection",
+            "in": "query",
+            "description": "Allowed: ASC or DESC",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetPublishedBookingsResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
     "/Case/GetCaseContacts": {
       "post": {
         "tags": ["Case"],
@@ -734,6 +844,79 @@
         "security": [{ "basic": [] }]
       }
     },
+    "/Case/PublishCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Register or update a case details in public registry by court.\r\nIf case by specified court and external id is already published then it is updated",
+        "operationId": "PublishCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/PublishCaseRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/GetPublishedCase/{court}/{id}": {
+      "get": {
+        "tags": ["Case"],
+        "summary": "Get a detailed case data specified by unique ID",
+        "operationId": "GetPublishedCase",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "court",
+            "in": "path",
+            "description": "Published case court",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique ID of the published case",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetPublishedCaseResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
     "/Clients/CreateCompany": {
       "post": {
         "tags": ["Clients"],
@@ -1394,6 +1577,65 @@
         "security": [{ "basic": [] }]
       }
     },
+    "/Lawyer/SyncLawyers": {
+      "post": {
+        "tags": ["Lawyer"],
+        "summary": "Adds or updates a list of active lawyers in the database.\r\nIf a lawyer with the specified identifier already exists, their information is updated; otherwise, a new lawyer is inserted.",
+        "operationId": "SyncLawyers",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "The request containing the list of lawyers to add or update.",
+            "required": true,
+            "schema": { "$ref": "#/definitions/SyncLawyersRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Lawyer/GetLawyers": {
+      "get": {
+        "tags": ["Lawyer"],
+        "summary": "Retrieves all active lawyers from the database.\r\nThis endpoint returns the list of lawyers currently registered in the system.",
+        "operationId": "GetLawyers",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetLawyersResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
     "/Memos/CreateMemo": {
       "post": {
         "tags": ["Memo"],
@@ -1728,6 +1970,158 @@
     }
   },
   "definitions": {
+    "PublishRoomBookingRequest": {
+      "type": "object",
+      "properties": {
+        "recordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalCaseID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "casePublicationID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "court": { "type": "string" },
+        "courtRoom": { "type": "string" },
+        "closedHearing": { "type": "boolean" },
+        "startDateTime": { "type": "string" },
+        "endDateTime": { "type": "string" },
+        "scheduleType": { "type": "string" },
+        "counselTime": { "type": "string" },
+        "publishDate": { "type": "string" },
+        "deleted": { "type": "boolean" }
+      }
+    },
+    "ReferenceResponse": {
+      "description": "General GoPro reference response",
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "description": "GoPro target record id",
+          "type": "string"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GetPublishedBookingsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/DetailedBookingData" }
+        },
+        "total": { "format": "int32", "type": "integer" },
+        "currentPage": { "format": "int32", "type": "integer" },
+        "itemsPerPage": { "format": "int32", "type": "integer" },
+        "identifier": { "type": "string" },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "DetailedBookingData": {
+      "type": "object",
+      "properties": {
+        "bookingId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "caseId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "caseNumber": { "$ref": "#/definitions/DetailedCaseNumber" },
+        "caseNumberRaw": { "type": "string" },
+        "caseTitle": { "$ref": "#/definitions/DetailedCaseTitle" },
+        "scheduleDate": { "format": "date-time", "type": "string" },
+        "scheduleToDate": { "format": "date-time", "type": "string" },
+        "courtRoom": { "type": "string" },
+        "bookingType": { "type": "string" },
+        "closedHearing": { "type": "boolean" },
+        "length": { "type": "string" },
+        "judges": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/JudgeModel" }
+        },
+        "lawyers": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/LawyerModel" }
+        }
+      }
+    },
+    "DetailedCaseNumber": {
+      "type": "object",
+      "properties": {
+        "caseTypeLetter": { "type": "string" },
+        "number": { "format": "int32", "type": "integer" },
+        "year": { "format": "int32", "type": "integer" }
+      }
+    },
+    "DetailedCaseTitle": {
+      "type": "object",
+      "properties": {
+        "html": { "type": "string" },
+        "raw": { "type": "string" }
+      }
+    },
+    "JudgeModel": {
+      "required": ["name"],
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "title": { "type": "string" },
+        "isPresident": { "type": "boolean" },
+        "placement": { "format": "int32", "type": "integer" },
+        "idNumber": { "type": "string" }
+      }
+    },
+    "LawyerModel": {
+      "required": ["name"],
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "title": { "type": "string" },
+        "placement": { "format": "int32", "type": "integer" },
+        "side": { "type": "string" },
+        "idNumber": { "type": "string" }
+      }
+    },
     "GetCaseContactsRequest": {
       "description": "GetCaseContacts method request structure",
       "type": "object",
@@ -1970,29 +2364,6 @@
         "primary": {
           "description": "Flag that shows whether this user is the primary responsible for the case. Can be either false/true or 0/1 or nei/já or no/yes",
           "type": "boolean"
-        }
-      }
-    },
-    "ReferenceResponse": {
-      "description": "General GoPro reference response",
-      "type": "object",
-      "properties": {
-        "identifier": {
-          "description": "GoPro target record id",
-          "type": "string"
-        },
-        "succeeded": {
-          "description": "General success indicator",
-          "type": "boolean"
-        },
-        "returnCode": {
-          "format": "int32",
-          "description": "HTTP response status code",
-          "type": "integer"
-        },
-        "message": {
-          "description": "Additional message containing information or error message",
-          "type": "string"
         }
       }
     },
@@ -2348,6 +2719,99 @@
         },
         "subject": { "description": "Folder name", "type": "string" },
         "body": { "description": "Description / comments", "type": "string" }
+      }
+    },
+    "PublishCaseRequest": {
+      "type": "object",
+      "properties": {
+        "recordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "court": { "type": "string" },
+        "caseNumber": { "type": "string" },
+        "caseType": { "type": "string" },
+        "caseTitleHtml": { "type": "string" },
+        "caseTitleRaw": { "type": "string" },
+        "publishDate": { "type": "string" },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "judges": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/JudgeModel" }
+        },
+        "attack": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PartyModel" }
+        },
+        "defense": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PartyModel" }
+        },
+        "links": { "type": "string" },
+        "status": { "type": "string" }
+      }
+    },
+    "PartyModel": {
+      "required": ["name"],
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "lawyers": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/LawyerModel" }
+        },
+        "placement": { "format": "int32", "type": "integer" }
+      }
+    },
+    "GetPublishedCaseResponse": {
+      "type": "object",
+      "properties": {
+        "item": { "$ref": "#/definitions/DetailedCaseData" },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "DetailedCaseData": {
+      "type": "object",
+      "properties": {
+        "recordId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "court": { "type": "string" },
+        "caseNumber": { "type": "string" },
+        "caseType": { "type": "string" },
+        "caseTitleHtml": { "type": "string" },
+        "caseTitleRaw": { "type": "string" },
+        "publishDate": { "format": "date-time", "type": "string" },
+        "keywords": { "type": "string" },
+        "judges": { "type": "string" },
+        "plaintiffs": { "type": "string" },
+        "defendants": { "type": "string" },
+        "status": { "type": "string" }
       }
     },
     "Company": {
@@ -2818,6 +3282,116 @@
           "type": "string"
         },
         "caseNumber": { "description": "Case number", "type": "string" }
+      }
+    },
+    "SyncLawyersRequest": {
+      "type": "object",
+      "properties": {
+        "lawyers": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/LawyerRequestModel" }
+        }
+      }
+    },
+    "LawyerRequestModel": {
+      "type": "object",
+      "properties": {
+        "recordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "idNumber": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "accountManager": { "type": "string" },
+        "statusName": { "type": "string" },
+        "statusFlag": { "format": "int32", "type": "integer" },
+        "recordType": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "lastName": { "type": "string" },
+        "countryName": { "type": "string" },
+        "streetName": { "type": "string" },
+        "streetNumber": { "type": "string" },
+        "floor": { "type": "string" },
+        "postCode": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "modifiedDate": { "type": "string" },
+        "relatedRecordCount": { "format": "int32", "type": "integer" },
+        "jobTitle": { "type": "string" },
+        "documentNumber": { "type": "string" },
+        "court": { "type": "string" },
+        "isRemovedFromLawyersList": { "type": "boolean" }
+      }
+    },
+    "GetLawyersResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/DetailedLawyerData" }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "DetailedLawyerData": {
+      "type": "object",
+      "properties": {
+        "recordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "externalRecordID": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "idNumber": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "accountManager": { "type": "string" },
+        "statusName": { "type": "string" },
+        "statusFlag": { "format": "int32", "type": "integer" },
+        "recordType": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "lastName": { "type": "string" },
+        "countryName": { "type": "string" },
+        "streetName": { "type": "string" },
+        "streetNumber": { "type": "string" },
+        "floor": { "type": "string" },
+        "postCode": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "modifiedDate": { "format": "date-time", "type": "string" },
+        "jobTitle": { "type": "string" },
+        "isRemovedFromLawyersList": { "type": "boolean" }
       }
     },
     "CreateMemoRequest": {
