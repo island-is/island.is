@@ -68,7 +68,6 @@ import {
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
-import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra/infra'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
@@ -174,8 +173,6 @@ const userNotificationCleanupWorkerService =
 const userNotificationBirthdayWorkerService =
   userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
 
-const unicornApp = unicornAppSetup()
-
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
@@ -219,7 +216,6 @@ export const Services: EnvironmentServices = {
     contentfulEntryTagger,
     bffAdminPortalService,
     bffServicePortalService,
-    unicornApp,
     paymentsWebApp,
     paymentsService,
     paymentFlowUpdateHandlerService,
@@ -262,7 +258,6 @@ export const Services: EnvironmentServices = {
     universityGatewayWorker,
     bffServicePortalService,
     bffAdminPortalService,
-    unicornApp,
     paymentsWebApp,
     paymentsService,
     paymentFlowUpdateHandlerService,
@@ -311,7 +306,6 @@ export const Services: EnvironmentServices = {
     paymentsWebApp,
     paymentsService,
     bffServicePortalService,
-    unicornApp,
     formSystemApi,
     formSystemWeb,
     paymentFlowUpdateHandlerService,
