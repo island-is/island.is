@@ -7,7 +7,7 @@
     "@aws-sdk/client-ses": "^3.145.0",
     "@formatjs/intl": "^1.8.1",
     "@playwright/test": "^1.29.2",
-    "axios": "^0.21.4",
+    "axios": "^1.12.2",
     "dd-trace": "5.14.1",
     "imap-simple": "^5.1.0",
     "mailparser": "^3.5.0",
