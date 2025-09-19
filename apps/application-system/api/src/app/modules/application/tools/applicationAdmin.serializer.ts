@@ -35,7 +35,6 @@ import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { PaymentService } from '@island.is/application/api/payment'
 import {
   getAdminDataForAdminPortal,
-  getApplicantName,
   getApplicationGenericNameTranslationString,
   getApplicationNameTranslationString,
   getApplicationStatisticsNameTranslationString,
@@ -164,7 +163,7 @@ export class ApplicationAdminSerializer
       )
       applicantName = applicant?.fullName
     } catch (e) {
-      applicantName = getApplicantName(application)
+      applicantName = ''
     }
 
     const dto = plainToInstance(ApplicationListAdminResponseDto, {

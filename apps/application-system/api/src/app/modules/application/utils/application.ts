@@ -145,31 +145,6 @@ export const getPaymentStatusForAdmin = (
   return null
 }
 
-export const getApplicantName = (
-  application: Application,
-): string | undefined | null => {
-  if (application.externalData.nationalRegistry) {
-    return getValueViaPath<string>(
-      application.externalData,
-      'nationalRegistry.data.fullName',
-    )
-  }
-  if (application.externalData.identity) {
-    return getValueViaPath<string>(
-      application.externalData,
-      'identity.data.name',
-    )
-  }
-  // special case for parental leave
-  if (application.externalData.person) {
-    return getValueViaPath<string>(
-      application.externalData,
-      'person.data.fullname',
-    )
-  }
-  return null
-}
-
 export const mockApplicationFromTypeId = (
   typeId: ApplicationTypes,
 ): Application => {
