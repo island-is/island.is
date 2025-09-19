@@ -161,13 +161,6 @@ export class ApplicationAdminSerializer
       application.id,
     )
 
-    const applicantName =
-      tryToGetNameFromNationalId(
-        application.applicant,
-        this.identityService,
-        false,
-      ) ?? ''
-
     const dto = plainToInstance(ApplicationListAdminResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
@@ -204,7 +197,12 @@ export class ApplicationAdminSerializer
       answers: [],
       externalData: [],
       paymentStatus: getPaymentStatusForAdmin(payment),
-      applicantName: applicantName,
+      applicantName:
+        tryToGetNameFromNationalId(
+          application.applicant,
+          this.identityService,
+          false,
+        ) ?? '',
       adminData: await getAdminDataForAdminPortal(
         template,
         application,
