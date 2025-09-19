@@ -5,6 +5,7 @@ import { join } from 'path'
 
 import { User } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
+import { ArgumentDto } from '../dto/createHnippNotification.dto'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 import {
   EinstaklingurDTONafnItar,
@@ -136,7 +137,7 @@ export class NotificationsWorkerService {
     formattedTemplate: HnippTemplate
     fullName: string
     subjectId?: string
-    processedArgs: any[]
+    processedArgs: ArgumentDto[]
   }): Message {
     if (!recipientEmail) {
       throw new Error('Missing recipient email address')
