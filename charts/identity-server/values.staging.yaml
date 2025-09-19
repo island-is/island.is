@@ -849,7 +849,7 @@ services-auth-public-api:
       hosts:
         - host: 'identity-server.staging01.devland.is'
           paths:
-            - '/api'
+            - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
