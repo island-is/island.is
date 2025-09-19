@@ -37,22 +37,19 @@ export const PdfReport = ({
 
   useEffect(() => {
     const report =
-      areaReport?.signatureCollectionAreaSummaryReport ??
+      areaReport?.signatureCollectionListOverview ??
       candidateReport?.signatureCollectionCandidateReport
 
     if (!report) return
 
-    instance.updateContainer(
-      <MyPdfDocument report={report} collectionType={collectionType} />,
-      async () => {
-        if (openAfterUpdate) {
-          const blob = await instance.toBlob()
-          const url = URL.createObjectURL(blob)
-          window.open(url, '_blank')
-          setOpenAfterUpdate(false)
-        }
-      },
-    )
+    instance.updateContainer(<MyPdfDocument report={report} />, async () => {
+      if (openAfterUpdate) {
+        const blob = await instance.toBlob()
+        const url = URL.createObjectURL(blob)
+        window.open(url, '_blank')
+        setOpenAfterUpdate(false)
+      }
+    })
   }, [areaReport, candidateReport, instance, collectionType, openAfterUpdate])
 
   const onClick = async () => {
