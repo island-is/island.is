@@ -9,9 +9,7 @@ import {
 } from '@react-pdf/renderer'
 import logo from './logo.png'
 import { dark200 } from '@island.is/island-ui/theme'
-import {
-  SignatureCollectionSummaryReport,
-} from '@island.is/api/schema'
+import { SignatureCollectionSummaryReport } from '@island.is/api/schema'
 import format from 'date-fns/format'
 
 const PdfDocument = ({
