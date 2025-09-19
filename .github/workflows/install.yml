@@ -91,12 +91,16 @@ jobs:
       ecr_username: ${{ steps.ecr-password.outputs.docker_username_821090935708_dkr_ecr_eu_west_1_amazonaws_com }}
       ecr_password: ${{ steps.ecr-password.outputs.docker_password_821090935708_dkr_ecr_eu_west_1_amazonaws_com }}
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
+        with:
+          role-to-assume: ${{ vars.AWS_ECR_ROLE }}
+          aws-region: eu-west-1
       - name: Get ECR password
         id: ecr-password
         uses: aws-actions/amazon-ecr-login@v2
         with: 
           mask-password: true
-          aws-region: eu-west-1
   install:
     needs:
       - get-ecr-password
