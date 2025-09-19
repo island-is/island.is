@@ -110,6 +110,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         },
         paths: ['/api(/|$)(.*)'],
         public: true,
+        pathTypeOverride: 'ImplementationSpecific',
         extraAnnotations: {
           dev: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
