@@ -14,9 +14,13 @@ import {
   NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
-import { AssetsXRoadService } from '@island.is/api/domains/assets'
+import {
+  NationalRegistryV3ApplicationsClientService,
+  CitizenshipDto,
+  CohabitationDto,
+  IndividualDto,
+  IndividualLiteDto,
+} from '@island.is/clients/national-registry-v3-applications'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
 import { EES } from './EES'
@@ -25,8 +29,6 @@ import { User } from '@island.is/auth-nest-tools'
 @Injectable()
 export class NationalRegistryService extends BaseTemplateApiService {
   constructor(
-    private readonly nationalRegistryApi: NationalRegistryClientService,
-    private readonly assetsXRoadService: AssetsXRoadService,
     private readonly nationalRegistryV3Api: NationalRegistryV3ApplicationsClientService,
   ) {
     super('NationalRegistry')
@@ -36,7 +38,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
-    const individual = await this.getIndividual(auth.nationalId)
+    const individual = await this.getIndividual(auth.nationalId, auth)
     //Check if individual is found in national registry
     if (!individual) {
       throw new TemplateApiError(
@@ -51,17 +53,17 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
     // Case when parent can apply for custody child without fulfilling some requirements
     if (params?.allowPassOnChild) {
-      const children = await this.nationalRegistryApi.getCustodyChildren(auth)
-      await this.validateChildren(params, children)
+      const children = await this.nationalRegistryV3Api.getCustodyChildren(auth)
+      await this.validateChildren(params, children, auth)
     }
 
     //allow parents whose children are icelandic citizenships in, but if no children, then check citizenship
     if (params?.allowIfChildHasCitizenship) {
-      const children = await this.nationalRegistryApi.getCustodyChildren(auth)
+      const children = await this.nationalRegistryV3Api.getCustodyChildren(auth)
       if (children.length > 0) {
         let foundChildWithIcelandicCitizenship = false
         for (const child of children) {
-          const individual = await this.getIndividual(child)
+          const individual = await this.getIndividual(child, auth)
           if (individual?.citizenship?.code === 'IS') {
             foundChildWithIcelandicCitizenship = true
             break
@@ -76,6 +78,11 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
     // Validate individual
     this.validateIndividual(individual, false, params)
+
+    console.log('--------------------------------')
+    console.log('validated individual')
+    console.dir(individual, { depth: null, colors: true })
+    console.log('--------------------------------')
 
     return individual
   }
@@ -105,9 +112,10 @@ export class NationalRegistryService extends BaseTemplateApiService {
   private async validateChildren(
     params: NationalRegistryParameters,
     childrenId: string[],
+    auth: User,
   ) {
     for (const id of childrenId) {
-      const individual = await this.getIndividual(id)
+      const individual = await this.getIndividual(id, auth)
       if (individual) {
         this.validateIndividual(individual, true, params)
       }
@@ -194,27 +202,91 @@ export class NationalRegistryService extends BaseTemplateApiService {
     return age
   }
 
+  private formatNationalRegistryIndividual(
+    person: IndividualDto | IndividualLiteDto,
+    cohabitationInfo: CohabitationDto | null,
+    citizenship: CitizenshipDto | null,
+  ): NationalRegistryIndividual {
+    const givenName = person.hasOwnProperty('givenName')
+      ? (person as IndividualDto).givenName
+      : null
+    const familyName = person.hasOwnProperty('familyName')
+      ? (person as IndividualDto).familyName
+      : null
+    const birthdate = person.hasOwnProperty('birthdate')
+      ? (person as IndividualDto).birthdate
+      : null
+    const genderCode = person.hasOwnProperty('genderCode')
+      ? (person as IndividualDto).genderCode
+      : ''
+    const genderDescription = person.hasOwnProperty('genderDescription')
+      ? (person as IndividualDto).genderDescription
+      : ''
+    const maritalTitle = cohabitationInfo
+      ? {
+          code: cohabitationInfo.cohabitationCode,
+          description: cohabitationInfo.cohabitationCodeDescription,
+        }
+      : null
+    const address = person.legalDomicile
+      ? {
+          streetAddress: person.legalDomicile.streetAddress,
+          postalCode: person.legalDomicile.postalCode,
+          locality: person.legalDomicile.locality,
+          city: person.legalDomicile.locality,
+          municipalityCode: person.legalDomicile.municipalityNumber,
+        }
+      : null
+    return (
+      person && {
+        nationalId: person.nationalId,
+        givenName,
+        familyName,
+        fullName: person.name,
+        age: this.getAgeFromDateOfBirth(birthdate ?? new Date()),
+        citizenship: citizenship
+          ? {
+              code: citizenship.countryCode,
+              name: citizenship.countryName,
+            }
+          : null,
+        address: address && {
+          streetAddress: address.streetAddress,
+          postalCode: address.postalCode,
+          locality: address.locality,
+          city: address.city,
+          municipalityCode: address.municipalityCode,
+        },
+        genderCode,
+        genderDescription,
+        maritalTitle,
+        birthDate: birthdate ?? new Date(),
+      }
+    )
+  }
+
   async getIndividual(
     nationalId: string,
-    auth?: User,
+    auth: User,
     params: NationalRegistryParameters | undefined = undefined,
   ): Promise<NationalRegistryIndividual | null> {
-    const person = await this.nationalRegistryApi.getIndividual(nationalId)
-    const citizenship = await this.nationalRegistryApi.getCitizenship(
+    console.log('--------------------------------')
+    console.log('getIndividual')
+    console.log('target nationalId: ', nationalId)
+    console.log('auth.nationalId: ', auth.nationalId)
+    console.log('--------------------------------')
+    const person = await this.nationalRegistryV3Api.getIndividual(
       nationalId,
+      auth,
+    )
+    const citizenship = await this.nationalRegistryV3Api.getCitizenship(
+      nationalId,
+      auth,
     )
 
     // get marital title
-    const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
-      nationalId,
-    )
-    const cohabitionCodeValue =
-      cohabitationInfo && person
-        ? await this.nationalRegistryApi.getCohabitionCodeValue(
-            cohabitationInfo.cohabitationCode,
-            person.genderCode,
-          )
-        : null
+    const cohabitationInfo =
+      await this.nationalRegistryV3Api.getCohabitationInfo(nationalId, auth)
 
     // validate if already has icelandic citizenship
     if (params?.validateAlreadyHasIcelandicCitizenship) {
@@ -232,40 +304,56 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
-    return (
-      person && {
-        nationalId: person.nationalId,
-        givenName: person.givenName,
-        familyName: person.familyName,
-        fullName: person.name,
-        age: this.getAgeFromDateOfBirth(person.birthdate),
-        citizenship: citizenship && {
-          code: citizenship.countryCode,
-          name: citizenship.countryName,
-        },
-        address: person.legalDomicile && {
-          streetAddress: person.legalDomicile.streetAddress,
-          postalCode: person.legalDomicile.postalCode,
-          locality: person.legalDomicile.locality,
-          city: person.legalDomicile.locality,
-          municipalityCode: person.legalDomicile.municipalityNumber,
-        },
-        genderCode: person.genderCode,
-        maritalTitle: {
-          code: cohabitionCodeValue?.code,
-          description: cohabitionCodeValue?.description,
-        },
-        birthDate: person.birthdate,
-      }
+    console.log('--------------------------------')
+    console.log('person')
+    console.dir(person, { depth: null, colors: true })
+    console.log('--------------------------------')
+    console.log('cohabitationInfo')
+    console.dir(cohabitationInfo, { depth: null, colors: true })
+    console.log('--------------------------------')
+    console.log('citizenship')
+    console.dir(citizenship, { depth: null, colors: true })
+    console.log('--------------------------------')
+    console.log('formatted individual')
+    person
+      ? console.dir(
+          this.formatNationalRegistryIndividual(
+            person,
+            cohabitationInfo,
+            citizenship,
+          ),
+          { depth: null, colors: true },
+        )
+      : console.log('null')
+    console.log('--------------------------------')
+    return person
+      ? this.formatNationalRegistryIndividual(
+          person,
+          cohabitationInfo,
+          citizenship,
+        )
+      : null
+  }
+
+  async getOtherIndividual(
+    nationalId: string,
+    auth: User,
+  ): Promise<NationalRegistryIndividual | null> {
+    const otherIndividual = await this.nationalRegistryV3Api.getOtherIndividual(
+      nationalId,
+      auth,
     )
+    return otherIndividual
+      ? this.formatNationalRegistryIndividual(otherIndividual, null, null)
+      : null
   }
 
   async getParents({
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistryParent[] | null> {
-    const parentUser = auth
-    const parentNationalIds = await this.nationalRegistryApi.getLegalParents(
-      parentUser,
+    const childUser = auth
+    const parentNationalIds = await this.nationalRegistryV3Api.getLegalParents(
+      childUser,
     )
 
     const parents = parentNationalIds.map((i) => {
@@ -274,10 +362,16 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
     const parentOneDetails =
       parents.length > 0 &&
-      (await this.nationalRegistryApi.getIndividual(parents[0].nationalId))
+      (await this.nationalRegistryV3Api.getIndividual(
+        parents[0].nationalId,
+        auth,
+      ))
     const parentTwoDetails =
       parents.length > 1 &&
-      (await this.nationalRegistryApi.getIndividual(parents[1].nationalId))
+      (await this.nationalRegistryV3Api.getIndividual(
+        parents[1].nationalId,
+        auth,
+      ))
 
     const parentOne: NationalRegistryParent | null = parentOneDetails
       ? {
@@ -316,7 +410,12 @@ export class NationalRegistryService extends BaseTemplateApiService {
   > {
     const parentUser = auth
     const childrenNationalIds =
-      await this.nationalRegistryApi.getCustodyChildren(parentUser)
+      await this.nationalRegistryV3Api.getCustodyChildren(parentUser)
+
+    console.log('--------------------------------')
+    console.log('childrenNationalIds')
+    console.dir(childrenNationalIds, { depth: null, colors: true })
+    console.log('--------------------------------')
 
     if (params?.validateHasChildren) {
       if (!childrenNationalIds || childrenNationalIds.length === 0) {
@@ -331,60 +430,93 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
 
     if (childrenNationalIds.length === 0) {
+      console.log('--------------------------------')
+      console.log('childrenNationalIds is empty')
+      console.log('--------------------------------')
       return []
     }
 
-    const parentAFamily = await this.nationalRegistryApi.getFamily(
-      parentUser.nationalId,
-    )
+    const parentAFamily = (await this.nationalRegistryV3Api.getFamily(
+      parentUser,
+    )) || {
+      individuals: [],
+    }
     const parentAFamilyMembers = parentAFamily?.individuals ?? []
 
     const children: Array<ApplicantChildCustodyInformation | null> =
       await Promise.all(
         childrenNationalIds.map(async (childNationalId) => {
-          const child = await this.getIndividual(childNationalId)
+          const childResidenceParent =
+            await this.nationalRegistryV3Api.getChildResidenceParent(
+              auth,
+              childNationalId,
+            )
+
+          console.log('--------------------------------')
+          console.log('childResidenceParent')
+          console.dir(childResidenceParent, { depth: null, colors: true })
+          console.log('--------------------------------')
+
+          const childPerson = parentAFamilyMembers.find(
+            (person) => person.nationalId === childNationalId,
+          )
+
+          if (!childPerson) {
+            console.log('--------------------------------')
+            console.log('childPerson not found')
+            console.log('--------------------------------')
+            return null
+          }
+
+          console.log('--------------------------------')
+          console.log('child')
+          console.dir(childPerson, { depth: null, colors: true })
+          console.log('--------------------------------')
+
+          const domicileCode = childPerson?.residence?.municipalityNumber
 
           let domicileInIceland = true
-          const domicileCode = child?.address?.municipalityCode
           if (!domicileCode || domicileCode.substring(0, 2) === '99') {
             domicileInIceland = false
           }
 
-          if (!child) {
-            return null
-          }
+          const parents =
+            await this.nationalRegistryV3Api.getOtherCustodyParents(
+              parentUser,
+              childPerson.nationalId,
+            )
 
-          const parents = await this.nationalRegistryApi.getOtherCustodyParents(
-            parentUser,
-            childNationalId,
-          )
+          console.log('--------------------------------')
+          console.log('other custody parents')
+          console.dir(parents, { depth: null, colors: true })
+          console.log('--------------------------------')
 
           const parentBNationalId = parents.find(
             (id) => id !== parentUser.nationalId,
           )
           const parentB = parentBNationalId
-            ? await this.getIndividual(parentBNationalId)
+            ? await this.getOtherIndividual(parentBNationalId, auth)
             : undefined
 
           const livesWithApplicant = parentAFamilyMembers.some(
-            (person) => person.nationalId === child?.nationalId,
+            (person) => person.nationalId === childPerson.nationalId,
           )
           const livesWithParentB =
             parentB &&
             parentAFamilyMembers.some(
-              (person) => person.nationalId === parentB.nationalId,
+              (person) => person.nationalId === parentBNationalId,
             )
 
           return {
-            nationalId: child.nationalId,
-            givenName: child.givenName,
-            familyName: child.familyName,
-            fullName: child.fullName,
-            genderCode: child.genderCode,
+            nationalId: childPerson.nationalId,
+            givenName: childPerson.givenName,
+            familyName: childPerson.familyName,
+            fullName: childPerson.name,
+            genderCode: childPerson.genderCode,
             livesWithApplicant,
             livesWithBothParents: livesWithParentB ?? livesWithApplicant,
             otherParent: parentB,
-            citizenship: child.citizenship,
+            citizenship: null, // No longer accessible from v3,
             domicileInIceland,
           }
         }),
@@ -413,10 +545,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
     return filteredChildren
   }
 
-  async getMyRealEstates({ auth }: TemplateApiModuleActionProps) {
-    return await this.assetsXRoadService.getRealEstatesWithDetail(auth, '1')
-  }
-
   async getSpouse({
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouseV3 | null> {
@@ -427,13 +555,13 @@ export class NationalRegistryService extends BaseTemplateApiService {
       )
 
     const spouseIndividual = cohabitationInfo
-      ? await this.getIndividual(cohabitationInfo.spouseNationalId, auth)
+      ? await this.getOtherIndividual(cohabitationInfo.spouseNationalId, auth)
       : undefined
-    const spouseBirthPlace = cohabitationInfo
-      ? await this.nationalRegistryApi.getBirthplace(
-          cohabitationInfo.spouseNationalId,
-        )
-      : undefined
+
+    console.log('--------------------------------')
+    console.log('spouseIndividual')
+    console.dir(spouseIndividual, { depth: null, colors: true })
+    console.log('--------------------------------')
     return (
       cohabitationInfo && {
         nationalId: cohabitationInfo.spouseNationalId,
@@ -441,12 +569,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
         maritalStatus: cohabitationInfo.cohabitationCode,
         maritalDescription: cohabitationInfo?.cohabitationCodeDescription,
         lastModified: cohabitationInfo.lastModified,
-        birthplace: spouseBirthPlace && {
-          dateOfBirth: spouseBirthPlace.birthdate,
-          location: spouseBirthPlace.locality,
-          municipalityCode: spouseBirthPlace.municipalityNumber,
-        },
-        citizenship: spouseIndividual?.citizenship,
+        birthplace: null, // No longer accessible from v3,
+        citizenship: null, // No longer accessible from v3,
         address: spouseIndividual?.address,
       }
     )
@@ -455,48 +579,31 @@ export class NationalRegistryService extends BaseTemplateApiService {
   async getMaritalTitle({
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistryMaritalTitle | null> {
-    const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
-      auth.nationalId,
-    )
-
-    const individual = await this.nationalRegistryApi.getIndividual(
-      auth.nationalId,
-    )
-
-    const cohabitionCodeValue =
-      cohabitationInfo && individual
-        ? await this.nationalRegistryApi.getCohabitionCodeValue(
-            cohabitationInfo.cohabitationCode,
-            individual.genderCode,
-          )
-        : null
-
+    const cohabitationInfo =
+      await this.nationalRegistryV3Api.getCohabitationInfo(
+        auth.nationalId,
+        auth,
+      )
     return (
-      cohabitionCodeValue && {
-        code: cohabitionCodeValue?.code,
-        description: cohabitionCodeValue?.description,
+      cohabitationInfo && {
+        code: cohabitationInfo?.cohabitationCode,
+        description: cohabitationInfo?.cohabitationCodeDescription,
       }
     )
-  }
-
-  async getBirthPlaceMunicipalityCode(
-    municipality?: string | null,
-  ): Promise<string | null> {
-    if (!municipality) {
-      return ''
-    }
-    const birthplace = await this.nationalRegistryApi.getMunicipalityCodeName(
-      municipality,
-    )
-    return birthplace
   }
 
   async getBirthplace({
     auth,
     params,
   }: TemplateApiModuleActionProps<BirthplaceParameters>): Promise<NationalRegistryBirthplace | null> {
-    const birthplace = await this.nationalRegistryApi.getBirthplace(
+    console.log('--------------------------------')
+    console.log('getBirthplace')
+    console.log('auth.nationalId: ', auth.nationalId)
+    console.log('params: ', params)
+    console.log('--------------------------------')
+    const birthplace = await this.nationalRegistryV3Api.getBirthplace(
       auth.nationalId,
+      auth,
     )
 
     if (params?.validateNotEmpty) {
@@ -511,16 +618,12 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
-    const municipalityName = await this.getBirthPlaceMunicipalityCode(
-      birthplace?.municipalityNumber,
-    )
-
     return (
       birthplace && {
         dateOfBirth: birthplace.birthdate,
         location: birthplace.locality,
         municipalityCode: birthplace.municipalityNumber,
-        municipalityName: municipalityName,
+        municipalityName: birthplace.locality,
       }
     )
   }
@@ -529,7 +632,10 @@ export class NationalRegistryService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistryResidenceHistory | null> {
     const residency: NationalRegistryResidenceHistory | null =
-      await this.nationalRegistryApi.getCurrentResidence(auth.nationalId)
+      await this.nationalRegistryV3Api.getCurrentResidence(
+        auth.nationalId,
+        auth,
+      )
 
     if (!residency) {
       throw new TemplateApiError(
@@ -550,7 +656,10 @@ export class NationalRegistryService extends BaseTemplateApiService {
     NationalRegistryResidenceHistory[] | null
   > {
     const residenceHistory: NationalRegistryResidenceHistory[] | null =
-      await this.nationalRegistryApi.getResidenceHistory(auth.nationalId)
+      await this.nationalRegistryV3Api.getResidenceHistory(
+        auth.nationalId,
+        auth,
+      )
 
     if (!residenceHistory) {
       throw new TemplateApiError(
@@ -569,7 +678,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<string[] | null> {
     const cohabitants: string[] | null =
-      await this.nationalRegistryApi.getCohabitants(auth.nationalId)
+      await this.nationalRegistryV3Api.getCohabitants(auth.nationalId, auth)
 
     if (!cohabitants) {
       throw new TemplateApiError(
@@ -588,6 +697,13 @@ export class NationalRegistryService extends BaseTemplateApiService {
     props: TemplateApiModuleActionProps,
   ): Promise<(NationalRegistryIndividual | null)[]> {
     const cohabitants = await this.getCohabitants(props)
+    const auth = props.auth
+
+    const detailedCohabitants =
+      await this.nationalRegistryV3Api.getCohabitantsDetailed(
+        auth.nationalId,
+        auth,
+      )
 
     if (!cohabitants) {
       throw new TemplateApiError(
@@ -600,10 +716,19 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
 
     const cohabitantsDetails = await Promise.all(
-      cohabitants.map(async (cohabitant) => {
-        const individual = await this.getIndividual(cohabitant)
-        return individual
-      }),
+      detailedCohabitants?.cohabitants
+        .filter((cohabitant) => cohabitant != null)
+        .map(async (cohabitant) => {
+          if (cohabitant) {
+            const individual = await this.formatNationalRegistryIndividual(
+              cohabitant,
+              null,
+              null,
+            )
+            return individual
+          }
+          return null
+        }) ?? [],
     )
 
     return cohabitantsDetails
@@ -615,10 +740,18 @@ export class NationalRegistryService extends BaseTemplateApiService {
     const custodianNationalIds =
       await this.nationalRegistryV3Api.getMyCustodians(auth)
 
+    console.log('--------------------------------')
+    console.log('custodianNationalIds')
+    console.dir(custodianNationalIds, { depth: null, colors: true })
+    console.log('--------------------------------')
+
     const custodians: NationalRegistryCustodian[] = []
 
     for (const nationalId of custodianNationalIds) {
-      const details = await this.nationalRegistryApi.getIndividual(nationalId)
+      const details = await this.nationalRegistryV3Api.getOtherIndividual(
+        nationalId,
+        auth,
+      )
       if (details) {
         custodians.push({
           nationalId: details.nationalId,
