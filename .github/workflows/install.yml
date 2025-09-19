@@ -88,23 +88,15 @@ jobs:
     name: Get ECR password
     runs-on: arc-shared
     outputs:
-      ecr_username: ${{ steps.ecr-password.outputs.docker_username_821090935708_dkr_ecr_eu_west_1_amazonaws_com }}
-      ecr_password: ${{ steps.ecr-password.outputs.docker_password_821090935708_dkr_ecr_eu_west_1_amazonaws_com }}
+      ecr_username: 'AWS'
+      ecr_password: ${{ steps.ecr-password.outputs.ECR_PASSWORD }}
     steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          role-to-assume: ${{ vars.AWS_ECR_ROLE }}
-          role-duration-seconds: 1200
-          role-skip-session-tagging: true
-          aws-region: eu-west-1
-      - name: Get ECR password
+      - shell: bash
         id: ecr-password
-        uses: aws-actions/amazon-ecr-login@v2
-        with: 
-          mask-password: true
+        run: |
+          ECR_PASSWORD=$(aws ecr get-login-password)
+          echo "::add-mask::$ECR_PASSWORD"
+          echo "ECR_PASSWORD=$ECR_PASSWORD" >> $GITHUB_OUTPUT
   install:
     needs:
       - get-ecr-password
