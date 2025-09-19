@@ -13,7 +13,10 @@
         "allowCircularSelfDependency": true,
         "allow": [],
         "depConstraints": [
-          { "sourceTag": "*", "onlyDependOnLibsWithTags": ["*"] }
+          {
+            "sourceTag": "*",
+            "onlyDependOnLibsWithTags": ["*"]
+          }
         ]
       }
     ],
@@ -27,11 +30,8 @@
       "error",
       {
         "groups": [
-          // Packages `react` related packages come first, followed by all external imports.
           ["^react", "^\\w", "^@(?!island).+"],
-          // Then island.is packages.
           ["^(@island.is).*"],
-          // Then all other imports in this order: "../", "./", "./strings", "./css"
           [
             "^\\.\\.(?!/?$)",
             "^\\.\\./?$",
@@ -47,10 +47,20 @@
   },
   "plugins": ["jsx-a11y", "simple-import-sort"],
   "overrides": [
-    { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {}
+    },
     {
       "files": ["*.spec.ts", "*.spec.tsx"],
-      "rules": { "@typescript-eslint/no-var-requires": "off" }
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    },
+    {
+      "files": ["e2e/**/*.{ts,js,tsx,jsx}"],
+      "extends": ["plugin:playwright/recommended"],
+      "rules": {}
     }
   ]
 }

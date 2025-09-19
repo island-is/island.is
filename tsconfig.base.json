@@ -249,11 +249,11 @@
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
       ],
-      "@island.is/api/domains/vmst-applications": [
-        "libs/api/domains/vmst-applications/src/index.ts"
-      ],
       "@island.is/api/domains/verdicts": [
         "libs/api/domains/verdicts/src/index.ts"
+      ],
+      "@island.is/api/domains/vmst-applications": [
+        "libs/api/domains/vmst-applications/src/index.ts"
       ],
       "@island.is/api/domains/watson-assistant-chat": [
         "libs/api/domains/watson-assistant-chat/src/index.ts"
@@ -972,6 +972,7 @@
         "libs/content-search-toolkit/src/index.ts"
       ],
       "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
+      "@island.is/e2e-shared": ["libs/e2e/shared/src/index.ts"],
       "@island.is/email-service": ["libs/email-service/src/index.ts"],
       "@island.is/feature-flags": ["libs/feature-flags/src/index.ts"],
       "@island.is/file-storage": ["libs/file-storage/src/index.ts"],
