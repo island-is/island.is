@@ -298,14 +298,32 @@ export const getAdminDataForAdminPortal = async (
   application: Application,
   formatMessage: FormatMessage,
   nationalRegistryApi: NationalRegistryClientService,
-) => {
+): Promise<Array<{ key: string; values: string[]; label: string }>> => {
   if (!template.adminDataConfig?.answers) return []
 
-  return await Promise.all(
+  // Simple per-request memoization to reduce duplicate NR calls
+  const nationalIdMap = new Map<string, string>()
+  const resolveWithNationalIdMap = async (nationalId: string) => {
+    const valueFromMap = nationalIdMap.get(nationalId)
+    if (valueFromMap) return valueFromMap
+    const valueFromApi = await tryToGetNameFromNationalId(
+      nationalId,
+      nationalRegistryApi,
+    )
+    nationalIdMap.set(nationalId, valueFromApi)
+    return valueFromApi
+  }
+
+  return Promise.all(
     template.adminDataConfig.answers
       .filter((config) => config.isListed)
       .map(async (config) => {
-        const expandedKeys = expandFieldKeys(application.answers, [config.key])
+        let expandedKeys: string[] = []
+        try {
+          expandedKeys = expandFieldKeys(application.answers, [config.key])
+        } catch {
+          expandedKeys = []
+        }
 
         let values: string[] = expandedKeys
           .map((expandedKey) =>
@@ -321,9 +339,7 @@ export const getAdminDataForAdminPortal = async (
         // If this field contains national IDs, fetch names and format them
         if (config.isNationalId) {
           values = await Promise.all(
-            values.map((nationalId) =>
-              tryToGetNameFromNationalId(nationalId, nationalRegistryApi),
-            ),
+            values.map((nationalId) => resolveWithNationalIdMap(nationalId)),
           )
         }
 
