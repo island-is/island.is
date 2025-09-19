@@ -205,8 +205,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
                 {
                   vehicleType: VehicleType.DOLLY,
                   // Axle spacing
-                  axleSpacing: (isShortTerm &&
-                  hasExemptionForWeight &&
+                  axleSpacing: (hasExemptionForWeight &&
                   axleSpacingAnswers?.dolly?.type === DollyType.DOUBLE
                     ? [axleSpacingAnswers.dolly.value]
                     : []
@@ -239,9 +238,8 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
         vehicleSpacing: (isShortTerm &&
         hasExemptionForWeight &&
         vehicleSpacing?.hasTrailer
-          ? isShortTerm &&
-            (vehicleSpacing.dollyType === DollyType.SINGLE ||
-              vehicleSpacing.dollyType === DollyType.DOUBLE)
+          ? vehicleSpacing.dollyType === DollyType.SINGLE ||
+            vehicleSpacing.dollyType === DollyType.DOUBLE
             ? [
                 vehicleSpacing.vehicleToDollyValue,
                 vehicleSpacing.dollyToTrailerValue,
