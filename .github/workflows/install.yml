@@ -89,14 +89,14 @@ jobs:
     runs-on: arc-shared
     outputs:
       ecr_username: 'AWS'
-      ecr_password: ${{ steps.ecr-password.outputs.ECR_PASSWORD }}
+      ecr_password: ${{ steps.ecr-password.outputs.password }}
     steps:
       - shell: bash
         id: ecr-password
         run: |
           ECR_PASSWORD=$(aws ecr get-login-password)
           echo "::add-mask::$ECR_PASSWORD"
-          echo "ECR_PASSWORD=$ECR_PASSWORD" >> $GITHUB_OUTPUT
+          echo "password=$ECR_PASSWORD" >> $GITHUB_OUTPUT
   install:
     needs:
       - get-ecr-password
