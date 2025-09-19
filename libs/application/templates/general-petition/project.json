@@ -48,13 +48,6 @@
         ],
         "parallel": true
       }
-    },
-    "codegen/frontend-client": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "graphql-codegen --config libs/application/templates/general-petition/codegen.yml"
-      },
-      "outputs": ["{projectRoot}/src/types/schema.ts"]
     }
   }
 }

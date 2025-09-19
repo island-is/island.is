@@ -10,7 +10,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { DefaultEvents, StaticText } from '@island.is/application/types'
-import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
+import { NationalRegistryUser, TeacherV4 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'

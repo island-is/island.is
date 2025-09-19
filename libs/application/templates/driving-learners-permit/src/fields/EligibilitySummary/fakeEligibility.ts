@@ -2,7 +2,7 @@ import {
   ApplicationEligibility,
   ApplicationEligibilityRequirement,
   RequirementKey,
-} from '../../types/schema'
+} from '@island.is/api/schema'
 
 interface FakeEligibilityInput {
   categoryType?: string
@@ -39,17 +39,17 @@ export const fakeEligibility = ({
 
   const requirements: ApplicationEligibilityRequirement[] = [
     {
-      key: RequirementKey.HasDeprivation,
+      key: RequirementKey.hasDeprivation,
       requirementMet: !(
         activeDisqualification || disqualificationInTheLastTwelveMonths
       ),
     },
     {
-      key: RequirementKey.PersonNotAtLeast24YearsOld,
+      key: RequirementKey.personNotAtLeast24YearsOld,
       requirementMet: parseInt(mentorAge, 10) >= 24,
     },
     {
-      key: RequirementKey.HasHadValidCategoryForFiveYearsOrMore,
+      key: RequirementKey.hasHadValidCategoryForFiveYearsOrMore,
       requirementMet: categoryB
         ? new Date(Date.parse(categoryIssued)) < fiveYearsAgo
         : false,

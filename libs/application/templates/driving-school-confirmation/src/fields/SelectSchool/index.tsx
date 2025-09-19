@@ -7,7 +7,10 @@ import {
 } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useFormContext } from 'react-hook-form'
-import { DrivingLicenseBookSchool, DrivingSchoolType } from '../../types/schema'
+import {
+  DrivingLicenseBookSchool,
+  DrivingSchoolType,
+} from '@island.is/api/schema'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'

@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 import { siaEducationalInstitutionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { SiaEducationalInstitutionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+import { Query } from '@island.is/api/schema'
 import { Application } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import {
@@ -103,10 +103,9 @@ export const questionsSubSection = buildSubSection({
           width: 'half',
           loadingError: coreErrorMessages.failedDataProvider,
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<SiaEducationalInstitutionsQuery>({
-                query: siaEducationalInstitutionsQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: siaEducationalInstitutionsQuery,
+            })
 
             return (
               data?.socialInsuranceGeneral?.educationalInstitutions

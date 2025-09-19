@@ -10,7 +10,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
-import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+import { Query } from '@island.is/api/schema'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import {
   isFirstApplication,
@@ -102,7 +102,7 @@ export const unionSickPaySubSection = buildSubSection({
           required: true,
           loadingError: coreErrorMessages.failedDataProvider,
           loadOptions: async ({ apolloClient }) => {
-            const { data } = await apolloClient.query<SiaUnionsQuery>({
+            const { data } = await apolloClient.query<Query>({
               query: siaUnionsQuery,
             })
 

@@ -31,7 +31,7 @@ import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaRehabilitationPlanQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
-import { SiaRehabilitationPlanQuery } from '../../types/schema'
+import { Query } from '@island.is/api/schema'
 import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPaymentsUtils'
 import { ManagedBy } from '../components/ManagedBy'
 
@@ -48,7 +48,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
     data,
     loading,
     error: rehabilitationPlanError,
-  } = useQuery<SiaRehabilitationPlanQuery>(siaRehabilitationPlanQuery)
+  } = useQuery<Query>(siaRehabilitationPlanQuery)
 
   setBeforeSubmitCallback?.(async () => {
     const { rehabilitationPlanConfirmation } = getApplicationAnswers(

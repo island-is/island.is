@@ -1,11 +1,12 @@
 import { useQuery } from '@apollo/client'
 
 import { GetPrivatePensionFunds } from '../graphql/queries'
-import { GetPrivatePensionFundsQuery } from '../types/schema'
+import { Query } from '@island.is/api/schema'
 
 export const usePrivatePensionFund = () => {
-  const { data: privatePensionFundData } =
-    useQuery<GetPrivatePensionFundsQuery>(GetPrivatePensionFunds)
+  const { data: privatePensionFundData } = useQuery<Query>(
+    GetPrivatePensionFunds,
+  )
 
   return (
     privatePensionFundData?.getPrivatePensionFunds?.map(({ id, name }) => ({

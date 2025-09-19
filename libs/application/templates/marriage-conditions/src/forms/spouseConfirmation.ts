@@ -24,7 +24,7 @@ import {
 } from '@island.is/application/types'
 import { Individual } from '../types'
 import { format as formatNationalId } from 'kennitala'
-import { UserProfile } from '../types/schema'
+import { UserProfile } from '@island.is/api/schema'
 import { fakeDataSection } from './fakeDataSection'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'

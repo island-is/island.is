@@ -27,7 +27,7 @@ import {
   DrivingLicenseBookStudentOverview,
   DrivingBookLesson,
   DrivingSchoolExam,
-} from '../../types/schema'
+} from '@island.is/api/schema'
 import { ViewSingleStudentQuery } from '../../graphql/queries'
 import {
   RegisterDrivingLesson,

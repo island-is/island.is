@@ -86,12 +86,7 @@ import {
   isParentWithoutBirthParent,
   requiresOtherParentApproval,
 } from '../lib/parentalLeaveUtils'
-import {
-  GetPensionFundsQuery,
-  GetPrivatePensionFundsQuery,
-  GetUnionsQuery,
-} from '../types/schema'
-
+import { Query } from '@island.is/api/schema'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { useLocale } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
@@ -335,10 +330,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder:
                     parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
                   loadOptions: async ({ apolloClient }) => {
-                    const { data } =
-                      await apolloClient.query<GetPensionFundsQuery>({
-                        query: GetPensionFunds,
-                      })
+                    const { data } = await apolloClient.query<Query>({
+                      query: GetPensionFunds,
+                    })
 
                     return (
                       data?.getPensionFunds?.map(({ id, name }) => ({
@@ -391,7 +385,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder:
                     parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
                   loadOptions: async ({ apolloClient }) => {
-                    const { data } = await apolloClient.query<GetUnionsQuery>({
+                    const { data } = await apolloClient.query<Query>({
                       query: GetUnions,
                     })
 
@@ -448,10 +442,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   dataTestId: 'private-pension-fund',
                   isSearchable: true,
                   loadOptions: async ({ apolloClient }) => {
-                    const { data } =
-                      await apolloClient.query<GetPrivatePensionFundsQuery>({
-                        query: GetPrivatePensionFunds,
-                      })
+                    const { data } = await apolloClient.query<Query>({
+                      query: GetPrivatePensionFunds,
+                    })
 
                     return (
                       data?.getPrivatePensionFunds

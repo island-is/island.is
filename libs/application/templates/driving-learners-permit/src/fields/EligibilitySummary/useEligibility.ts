@@ -1,6 +1,6 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { ApplicationEligibility } from '../../types/schema'
+import { ApplicationEligibility } from '@island.is/api/schema'
 import { useQuery } from '@apollo/client'
 import { LearnersPermitFakeData } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'

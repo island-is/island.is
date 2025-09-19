@@ -1,4 +1,4 @@
-import { Query } from './types/schema'
+import { Query } from '@island.is/api/schema'
 
 export type Student = {
   name: string

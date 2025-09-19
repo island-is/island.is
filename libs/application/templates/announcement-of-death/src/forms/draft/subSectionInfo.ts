@@ -6,9 +6,9 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { Application } from '../../types/schema'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { EstateMember } from '../../types'
+import { Application } from '@island.is/api/schema'
 
 export const subSectionInfo = buildSubSection({
   id: 'infoStep',
