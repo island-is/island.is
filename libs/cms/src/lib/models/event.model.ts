@@ -6,6 +6,7 @@ import { Image, mapImage } from './image.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SliceUnion, mapDocument } from '../unions/slice.union'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
+import addDays from 'date-fns/addDays'
 
 @ObjectType()
 class EventLocation {
@@ -57,6 +58,12 @@ export class Event {
   @CacheField(() => EventTime)
   time!: EventTime
 
+  @Field({ nullable: true, description: 'ISO8601' })
+  startDateTime?: string
+
+  @Field({ nullable: true, description: 'ISO8601' })
+  endDateTime?: string
+
   @CacheField(() => EventLocation)
   location!: EventLocation
 
@@ -93,6 +100,11 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
     endDate = date.getTime().toString()
   }
 
+  const startDateTime = new Date(new Date(fields.startDate).setHours(7, 37))
+  const endDateTime = addDays(startDateTime.setHours(23, 44), 3)
+
+  console.log('MAP SINGLE EVENT')
+
   return {
     typename: 'Event',
     id: sys.id,
@@ -100,6 +112,12 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
     startDate: fields.startDate ?? '',
     endDate,
     time: (fields.time as Event['time']) ?? { startTime: '', endTime: '' },
+    startDateTime: fields.startDateTime
+      ? fields.startDateTime
+      : startDateTime?.toISOString(),
+    endDateTime: fields.endDateTime
+      ? fields.endDateTime
+      : endDateTime?.toISOString(),
     location: (fields.location as Event['location']) ?? {
       streetAddress: '',
       floor: '',
