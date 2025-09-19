@@ -15,6 +15,9 @@ export class SignatureCollectionListSummary {
   @Field(() => String)
   listName!: string
 
+  @Field(() => String)
+  areaName!: string
+
   @Field(() => String, { nullable: true })
   partyBallotLetter?: string
 

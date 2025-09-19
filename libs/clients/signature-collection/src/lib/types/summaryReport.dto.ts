@@ -19,6 +19,7 @@ export interface ListSummary {
   nrOfSignatures: number
   nrOfDigitalSignatures: number
   nrOfPaperSignatures: number
+  areaName: string
 }
 
 export const mapListSummary = (list: MedmaelalistiExtendedDTO): ListSummary => {
@@ -29,6 +30,7 @@ export const mapListSummary = (list: MedmaelalistiExtendedDTO): ListSummary => {
     nrOfSignatures: list.fjoldiMedmaela || 0,
     nrOfDigitalSignatures: list.fjoldiMedmaelaRafraen || 0,
     nrOfPaperSignatures: list.fjoldiMedmaelaSkrifleg || 0,
+    areaName: list.svaedi?.nafn || '',
   }
 }
 
