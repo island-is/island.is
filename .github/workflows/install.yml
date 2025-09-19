@@ -97,6 +97,8 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           role-to-assume: ${{ vars.AWS_ECR_ROLE }}
+          role-duration-seconds: 1200
+          role-skip-session-tagging: true
           aws-region: eu-west-1
       - name: Get ECR password
         id: ecr-password
