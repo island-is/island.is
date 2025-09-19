@@ -118,12 +118,11 @@ export class NotificationsController {
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
-    // Validate required arguments and sanitize invalid ones
-    await this.notificationsService.validate(body.templateId, body.args)
-    const validArgs = await this.notificationsService.sanitize(
+    const template = await this.notificationsService.getTemplate(
       body.templateId,
-      body.args,
     )
+    this.notificationsService.validate(template, body.args)
+    const validArgs = this.notificationsService.sanitize(template, body.args)
 
     const sanitizedBody = {
       ...body,

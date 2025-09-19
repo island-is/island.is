@@ -160,8 +160,7 @@ export class NotificationsService {
    * Validates that all required arguments are provided for the template.
    * Throws BadRequestException if any required arguments are missing.
    */
-  async validate(templateId: string, args: ArgumentDto[]): Promise<void> {
-    const template = await this.getTemplate(templateId)
+  validate(template: HnippTemplate, args: ArgumentDto[]): void {
     const providedKeys = args.map((arg) => arg.key)
 
     const missingArgs = template.args.filter(
@@ -182,12 +181,7 @@ export class NotificationsService {
    * Sanitizes arguments by filtering out any that don't exist in the template.
    * Logs warnings for invalid args and returns only valid ones.
    */
-  async sanitize(
-    templateId: string,
-    args: ArgumentDto[],
-  ): Promise<ArgumentDto[]> {
-    const template = await this.getTemplate(templateId)
-
+  sanitize(template: HnippTemplate, args: ArgumentDto[]): ArgumentDto[] {
     const validArgs: ArgumentDto[] = []
 
     // Filter args and log warnings for invalid ones
