@@ -156,7 +156,7 @@ export interface Ingress {
   host: {
     [env in OpsEnv]: string | string[]
   }
-  pathTypeOverride?: string
+  pathTypeOverride?: 'Exact' | 'Prefix' | 'ImplementationSpecific'
   paths: string[]
   public?: boolean
   extraAnnotations?: Partial<{
@@ -168,7 +168,7 @@ export interface IngressForEnv {
   host: string | string[]
   paths: string[]
   public?: boolean
-  pathTypeOverride?: string
+  pathTypeOverride?: 'Exact' | 'Prefix' | 'ImplementationSpecific'
   serviceUpstream?: boolean
   extraAnnotations?: { [idx: string]: string | null }
 }

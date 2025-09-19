@@ -99,7 +99,7 @@ export interface HelmService {
       annotations: {
         [anntName: string]: string
       }
-      pathTypeOverride?: string
+      pathTypeOverride?: 'Exact' | 'Prefix' | 'ImplementationSpecific'
       hosts: { host: string; paths: string[] }[]
     }
   }
