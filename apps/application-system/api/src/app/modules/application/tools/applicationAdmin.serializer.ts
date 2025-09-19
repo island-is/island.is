@@ -129,12 +129,12 @@ export class ApplicationAdminSerializer
 
     const applicantActors = await Promise.all(
       application.applicantActors.map(
-        (actorNationalId) =>
-          tryToGetNameFromNationalId(
+        async (actorNationalId) =>
+          (await tryToGetNameFromNationalId(
             actorNationalId,
             this.identityService,
             true,
-          ) ?? actorNationalId,
+          )) ?? actorNationalId,
       ),
     )
     const actors =
