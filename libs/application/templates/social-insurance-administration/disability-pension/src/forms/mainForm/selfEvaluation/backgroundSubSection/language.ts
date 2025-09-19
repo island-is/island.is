@@ -29,31 +29,5 @@ export const languageField = buildMultiField({
         }))
       },
     }),
-    /*
-    buildTitleField({
-      title: m.questions.languageOtherSpecify,
-      titleVariant: 'h5',
-      marginTop: 2,
-      marginBottom: 0,
-      condition: (formValue) => {
-        const language = getValueViaPath<string>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.language`,
-        )
-        return language === 'other'
-      },
-    }),
-    buildTextField({
-      id: `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.other`,
-      condition: (formValue) => {
-        const language = getValueViaPath<string>(
-          formValue,
-          `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.language`,
-        )
-        return language === 'other'
-      },
-      variant: 'textarea',
-    }),
-    */
   ],
 })

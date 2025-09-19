@@ -45,11 +45,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'paymentInfo',
   ) ?? { bank: undefined }
+
   const paymentInfo: PaymentInfo | undefined = bankAccountType
     ? {
         ...rest,
         bankAccountType,
-        ...bank,
+        ...(bank ?? {}),
       }
     : undefined
 
@@ -290,8 +291,9 @@ export const getApplicationExternalData = (
     externalData,
     'nationalRegistry.data.address.locality',
   )
-
-  const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
+  const applicantMunicipality = [applicantPostalCode, applicantLocality]
+    .filter((v) => !!v && v.length > 0)
+    .join(', ')
 
   const bankInfo = getValueViaPath<BankInfo>(
     externalData,

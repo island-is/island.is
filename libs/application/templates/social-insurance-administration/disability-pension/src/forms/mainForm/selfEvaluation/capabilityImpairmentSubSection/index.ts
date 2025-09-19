@@ -6,9 +6,10 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
+import { Locale } from '@island.is/shared/types'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { MAX_QUESTIONNAIRE_QUESTIONS } from '../../../../types/constants'
-import { Application } from '@island.is/application/types'
+import { Application, Field } from '@island.is/application/types'
 import { getQuestionnaire } from '../../../../utils/getQuestionnaire'
 import { getApplicationExternalData } from '../../../../utils'
 
@@ -25,7 +26,7 @@ const buildQuestion = (index: number) => {
           ?.questions ?? []
 
       return {
-        ...m.capabilityImpairment.title,
+        ...m.capabilityImpairment.questionnaire,
         values: {
           index: index + 1,
           total: questions.length,
@@ -95,13 +96,13 @@ const buildQuestion = (index: number) => {
       }),
       buildHiddenInput({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers[${index}].id`,
-        defaultValue: (application: Application, locale: string) => {
+        defaultValue: (application: Application) => {
           const { questionnaire } = getApplicationExternalData(
             application.externalData,
           )
 
           const questions =
-            questionnaire?.find((q) => q.language.toLowerCase() === locale)
+            questionnaire?.find((q) => q.language.toLowerCase() === 'is')
               ?.questions ?? []
 
           return questions[index]?.questionCode

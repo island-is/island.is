@@ -8,9 +8,10 @@ export const capabilityImpairment = defineMessages({
   },
   title: {
     id: 'dp.application:capabilityImpairment.title',
-    defaultMessage: 'Færnisskerðing',
+    defaultMessage: 'Færni í daglegu lífi',
     description: 'Work capability impairment',
   },
+
   description: {
     id: 'dp.application:capabilityImpairment.description#markdown',
     defaultMessage:
@@ -18,12 +19,10 @@ export const capabilityImpairment = defineMessages({
     description:
       'Here you can describe in more detail the problem that affects your work capacity.',
   },
-
-  // Questionnaire
   questionnaire: {
-    id: 'dp.application:capabilityImpairment.question.number',
-    defaultMessage: 'Sjálfsmat (Spurning {index} af {total})',
-    description: 'Self-assessment (Question {index} of {total})',
+    id: 'dp.application:capabilityImpairment.questionnaire',
+    defaultMessage: 'Færni í daglegu lífi (Spurning {index} af {total})',
+    description: 'Work capability impairment with index variables',
   },
   completeSelfAssessment: {
     id: 'dp.application:capabilityImpairment.complete.self.assessment',
