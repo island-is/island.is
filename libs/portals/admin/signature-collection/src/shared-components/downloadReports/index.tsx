@@ -10,7 +10,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import {
   SignatureCollection,
@@ -18,7 +18,7 @@ import {
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
-import { usePDF } from '@react-pdf/renderer'
+import { pdf } from '@react-pdf/renderer'
 import MyPdfDocument from './MyPdfDocument'
 import { SignatureCollectionAreaSummaryReportDocument } from './MyPdfDocument/areaSummary.generated'
 import { useLazyQuery } from '@apollo/client'
@@ -32,11 +32,10 @@ export const DownloadReports = ({
   const { formatMessage } = useLocale()
   const [modalDownloadReportsIsOpen, setModalDownloadReportsIsOpen] =
     useState(false)
-  const [runGetSummaryReport, { data }] = useLazyQuery(
+  const [runGetSummaryReport, { loading }] = useLazyQuery(
     SignatureCollectionAreaSummaryReportDocument,
   )
-  const [instance, updateInstance] = usePDF({ document: undefined })
-  const lastOpenedRef = useRef<string | null>(null)
+  const instance = pdf(undefined)
 
   const { municipality, constituencyName } = useParams<{
     municipality?: string
@@ -58,36 +57,33 @@ export const DownloadReports = ({
     : undefined
 
   const handleDownloadClick = async (area: SignatureCollectionArea) => {
-    runGetSummaryReport({
-      variables: {
-        input: {
-          areaId: area.id,
-          collectionId:
-            collection.collectionType ===
-            SignatureCollectionCollectionType.LocalGovernmental
-              ? area.collectionId
-              : collection?.id,
+    if (!loading) {
+      runGetSummaryReport({
+        variables: {
+          input: {
+            areaId: area.id,
+            collectionId:
+              collection.collectionType ===
+              SignatureCollectionCollectionType.LocalGovernmental
+                ? area.collectionId
+                : collection?.id,
+          },
         },
-      },
-      onCompleted: (res) => {
-        updateInstance(
-          <MyPdfDocument report={res.signatureCollectionAreaSummaryReport} />,
-        )
-      },
-      fetchPolicy: 'no-cache',
-    })
-  }
-
-  useEffect(() => {
-    if (data?.signatureCollectionAreaSummaryReport && instance?.url) {
-      // Check if we already opened this report
-      if (lastOpenedRef.current !== instance.url) {
-        window.open(instance.url, '_blank')
-        // mark it as opened
-        lastOpenedRef.current = instance.url
-      }
+        onCompleted: (res) => {
+          instance.updateContainer(
+            <MyPdfDocument report={res.signatureCollectionAreaSummaryReport} />,
+            async () => {
+              const url = await instance
+                .toBlob()
+                .then((b) => URL.createObjectURL(b))
+              window.open(url, '_blank')
+            },
+          )
+        },
+        fetchPolicy: 'no-cache',
+      })
     }
-  }, [data?.signatureCollectionAreaSummaryReport, instance?.url])
+  }
 
   return (
     <Box>
@@ -140,6 +136,7 @@ export const DownloadReports = ({
                   icon: 'download',
                   iconType: 'outline',
                   onClick: () => handleDownloadClick(area),
+                  disabled: loading,
                 }}
               />
             ))}
