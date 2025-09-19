@@ -25,6 +25,7 @@ export const propertyInfoSubsection = buildSubSection({
     buildMultiField({
       id: Routes.PROPERTYINFORMATION,
       title: messagesCategory.pageTitle,
+      description: messagesCategory.pageDescription,
       children: [
         buildDescriptionField({
           id: 'propertyInfo.propertyInfoAddress',
