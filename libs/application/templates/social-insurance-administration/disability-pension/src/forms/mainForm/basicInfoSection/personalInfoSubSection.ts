@@ -5,7 +5,7 @@ import {
   buildTextField,
   buildTitleField,
 } from '@island.is/application/core'
-import { Application, Comparators } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { applicantInformationArray } from '@island.is/application/ui-forms'
 import * as m from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types/routes'

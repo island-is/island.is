@@ -28,7 +28,6 @@ import isEmpty from 'lodash/isEmpty'
 import { SectionRouteEnum } from '../../../types/routes'
 import {
   accountNationality,
-  getApplicationAnswers,
   getApplicationExternalData,
 } from '../../../utils'
 import { siaGeneralCurrenciesQuery } from '../../../graphql/queries'

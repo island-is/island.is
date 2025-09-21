@@ -22,12 +22,10 @@ import { isForeignCurrency } from './isForeignCurrency'
 import {
   equalIncomePerMonthCondition,
   incomePerYearCondition,
-  monthInputCondition,
   unevenIncomePerYearCondition,
 } from './conditions'
 import { watchIncomePerYearValue } from './valueWatchers'
-import { MONTH_NAMES_WITH_LABEL } from '../types'
-import { MessageDescriptor } from 'react-intl'
+import { generateMonthInput } from './generateMonthInput'
 
 export const generateIncomePlanFields = (): Record<string, RepeaterItem> => {
   return {
@@ -164,8 +162,17 @@ export const generateIncomePlanFields = (): Record<string, RepeaterItem> => {
       displayInTable: false,
       condition: (_, activeField) => unevenIncomePerYearCondition(activeField),
     },
-    ...MONTH_NAMES_WITH_LABEL.map((month) =>
-      generateMonthInput(month.value, month.label),
-    ),
+    january: generateMonthInput(sm.incomePlan.january),
+    february: generateMonthInput(sm.incomePlan.february),
+    march: generateMonthInput(sm.incomePlan.march),
+    april: generateMonthInput(sm.incomePlan.april),
+    may: generateMonthInput(sm.incomePlan.may),
+    june: generateMonthInput(sm.incomePlan.june),
+    july: generateMonthInput(sm.incomePlan.july),
+    august: generateMonthInput(sm.incomePlan.august),
+    september: generateMonthInput(sm.incomePlan.september),
+    october: generateMonthInput(sm.incomePlan.october),
+    november: generateMonthInput(sm.incomePlan.november),
+    december: generateMonthInput(sm.incomePlan.december),
   }
 }

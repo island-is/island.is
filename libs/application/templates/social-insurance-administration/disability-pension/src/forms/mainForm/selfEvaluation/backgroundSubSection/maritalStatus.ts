@@ -1,7 +1,6 @@
 import {
   buildMultiField,
   buildRadioField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'

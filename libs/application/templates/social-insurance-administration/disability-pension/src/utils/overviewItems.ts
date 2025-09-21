@@ -40,7 +40,6 @@ import {
   SocialInsuranceGeneralProfessionActivitiesQuery,
   SocialInsuranceGeneralProfessionsQuery,
 } from '../graphql/queries.generated'
-import { Locale } from '@island.is/shared/types'
 
 export const aboutApplicantItems = (
   answers: FormValue,
@@ -285,9 +284,8 @@ export const employmentItems = (answers: FormValue): Array<KeyValueItem> => {
 export const selfEvaluationItems = async (
   answers: FormValue,
   externalData: ExternalData,
-  userNationalId: string,
+  _: string,
   apolloClient: ApolloClient<object>,
-  locale: Locale,
 ): Promise<Array<KeyValueItem>> => {
   const {
     biggestIssue,
