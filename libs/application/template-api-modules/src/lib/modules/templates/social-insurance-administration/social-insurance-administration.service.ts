@@ -665,7 +665,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getDisabilityPensionSelfAssessmentQuestionnaire(
     { auth }: TemplateApiModuleActionProps,
-    languages: ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest = {},
+    languages: ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest  | ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest = {},
   ) {
     return await this.siaClientService.getSelfAssessmentQuestionnaire(
       auth,

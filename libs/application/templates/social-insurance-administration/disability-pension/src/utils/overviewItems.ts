@@ -159,7 +159,7 @@ export const livedAbroadItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.employmentParticipation.livedAbroadQuestion,
-      valueText: hasLivedAbroad ? coreMessages.radioYes : coreMessages.radioNo,
+      valueText: hasLivedAbroad === 'yes' ? coreMessages.radioYes : coreMessages.radioNo,
     },
   ]
 }
@@ -215,7 +215,7 @@ export const abroadPaymentsItems = (
     {
       width: 'full',
       keyText: m.employmentParticipation.abroadPaymentsTitle,
-      valueText: isReceivingBenefitsFromAnotherCountry
+      valueText: isReceivingBenefitsFromAnotherCountry === 'yes'
         ? coreMessages.radioYes
         : coreMessages.radioNo,
     },
@@ -253,7 +253,7 @@ export const appliedBeforeItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.disabilityEvaluation.appliedBeforeTitle,
-      valueText: hasAppliedForDisabilityBefore
+      valueText: hasAppliedForDisabilityBefore === 'yes'
         ? coreMessages.radioYes
         : coreMessages.radioNo,
     },
@@ -267,14 +267,14 @@ export const employmentItems = (answers: FormValue): Array<KeyValueItem> => {
       width: 'full',
       keyText: m.employmentParticipation.inPaidWorkTitle,
       valueText: () =>
-        inPaidWork
+        inPaidWork === 'yes'
           ? m.employmentParticipation.yes
           : m.employmentParticipation.no,
     },
     {
       width: 'full',
       keyText: m.employmentParticipation.continuedWorkTitle,
-      valueText: willContinueWorking
+      valueText: willContinueWorking  === 'yes'
         ? coreMessages.radioYes
         : coreMessages.radioNo,
     },
@@ -383,7 +383,7 @@ export const selfEvaluationItems = async (
     {
       width: 'full',
       keyText: m.questions.previousEmploymentTitle,
-      valueText: previousEmployment
+      valueText: previousEmployment?.hasEmployment === 'yes'
         ? coreMessages.radioYes
         : coreMessages.radioNo,
     },
@@ -433,7 +433,7 @@ export const selfEvaluationItems = async (
     {
       width: 'full',
       keyText: m.questions.rehabilitationOrTherapyTitle,
-      valueText: hasHadRehabilitationOrTherapy
+      valueText: hasHadRehabilitationOrTherapy === 'yes'
         ? coreMessages.radioYes
         : coreMessages.radioNo,
     },

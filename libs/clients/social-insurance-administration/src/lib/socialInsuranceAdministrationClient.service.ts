@@ -160,24 +160,36 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1IncomePlanIncomePlanConditionsGet()
   }
 
-  sendDisabilityPensionApplication(
+  async sendDisabilityPensionApplication(
     user: User,
     input: DisabilityPensionDto,
   ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
-    return this.sendApplication(user, input, 'disabilityPension', 'lightweight')
+    const enableLightweightMode = user
+      ? await this.featureFlagService.getValue(
+          Features.disabilityPensionLightweightModeEnabled,
+          false,
+          user,
+        )
+      : false
+
+    return this.applicationWriteApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicationApplicationTypePost({
+      applicationType: 'disabilitypension',
+      lightweightValidation: enableLightweightMode,
+      body: input,
+    })
   }
 
   sendApplication(
     user: User,
     applicationDTO: object,
     applicationType: string,
-    mode?: 'normal' | 'lightweight',
   ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
     return this.applicationWriteApiWithAuth(
       user,
     ).apiProtectedV1ApplicationApplicationTypePost({
       applicationType,
-      lightweightValidation: mode === 'lightweight',
       body: applicationDTO,
     })
   }
