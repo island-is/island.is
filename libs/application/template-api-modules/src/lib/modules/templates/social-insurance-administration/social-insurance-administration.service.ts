@@ -573,8 +573,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         return await this.siaClientService.getIsEligible(
           auth,
           'disabilitypension',
-          //TODO: REMOVE WHEN PROD
-          'lightweight',
         )
       }
       default: {

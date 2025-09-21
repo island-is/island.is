@@ -62,6 +62,8 @@ import { LanguageDto, mapLanguageDto } from './dto/language.dto'
 import { CountryDto, mapCountryDto } from './dto/country.dto'
 import { mapMaritalStatusDto, MaritalStatusDto } from './dto/maritalStatus.dto'
 import { DisabilityPensionDto } from './dto'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -79,6 +81,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly questionnairesApi: QuestionnairesApi,
     private readonly medicalDocumentsApiForDisabilityPension: MedicalDocumentApiForDisabilityPension,
     private readonly questionnairesApiForDisabilityPension: QuestionnairesApiForDisabilityPension,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -201,13 +204,29 @@ export class SocialInsuranceAdministrationClientService {
   async getIsEligible(
     user: User,
     applicationType: string,
-    mode?: 'normal' | 'lightweight',
   ): Promise<TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn> {
+
+    if (applicationType === 'disabilitypension') {
+      const enableLightweightMode = user
+        ? await this.featureFlagService.getValue(
+            Features.disabilityPensionLightweightModeEnabled,
+            false,
+            user,
+          )
+        : false
+
+      return this.applicantApiWithAuth(
+        user,
+      ).apiProtectedV1ApplicantApplicationTypeEligibleGet({
+        applicationType,
+        lightweightValidation: enableLightweightMode ?? false
+      })
+    }
+
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantApplicationTypeEligibleGet({
       applicationType,
-      lightweightValidation: mode === 'lightweight',
     })
   }
 
