@@ -26,10 +26,7 @@ import {
 import { Application, FormValue } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
 import { SectionRouteEnum } from '../../../types/routes'
-import {
-  accountNationality,
-  getApplicationExternalData,
-} from '../../../utils'
+import { accountNationality, getApplicationExternalData } from '../../../utils'
 import { siaGeneralCurrenciesQuery } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
 import { SocialInsuranceGeneralCurrenciesQuery } from '../../../graphql/queries.generated'

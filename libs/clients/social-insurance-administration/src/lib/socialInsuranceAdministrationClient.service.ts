@@ -64,7 +64,6 @@ import { mapMaritalStatusDto, MaritalStatusDto } from './dto/maritalStatus.dto'
 import { DisabilityPensionDto } from './dto'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
-
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
   constructor(
@@ -217,7 +216,6 @@ export class SocialInsuranceAdministrationClientService {
     user: User,
     applicationType: string,
   ): Promise<TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn> {
-
     if (applicationType === 'disabilitypension') {
       const enableLightweightMode = user
         ? await this.featureFlagService.getValue(
@@ -231,7 +229,7 @@ export class SocialInsuranceAdministrationClientService {
         user,
       ).apiProtectedV1ApplicantApplicationTypeEligibleGet({
         applicationType,
-        lightweightValidation: enableLightweightMode ?? false
+        lightweightValidation: enableLightweightMode ?? false,
       })
     }
 
