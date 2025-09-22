@@ -137,7 +137,7 @@ export class InvoicePaymentController {
       this.logger.info(`Ignoring callback because status is not paid`, {
         status: callbackInput.status,
       })
-      return
+      throw new BadRequestException(InvoiceErrorCode.UnsupportedCallbackStatus)
     }
 
     const { paymentFlowId } = await this.invoicePaymentService.validateCallback(
@@ -194,6 +194,9 @@ export class InvoicePaymentController {
       )
     } catch (e) {
       await this.refundPaymentAndLogError(paymentFlowId, e.message)
+      throw new BadRequestException(
+        InvoiceErrorCode.FailedToCreateInvoiceConfirmation,
+      )
     }
   }
 
