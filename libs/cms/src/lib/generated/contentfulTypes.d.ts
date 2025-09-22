@@ -1476,6 +1476,7 @@ export interface IFormFieldFields {
     | 'file'
     | 'nationalId (kennitala)'
     | 'information'
+    | 'numeric'
 
   /** Required */
   required?: boolean | undefined
