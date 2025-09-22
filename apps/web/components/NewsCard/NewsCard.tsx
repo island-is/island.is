@@ -21,7 +21,7 @@ interface NewsCardProps {
   readMoreText?: string
   href: string
   date?: string
-  date2?: string
+  dateTo?: string
   dateTextColor?: 'dark400' | 'purple400'
   titleVariant?: 'h2' | 'h3'
   titleAs?: 'h2' | 'h3' | 'h4'
@@ -36,7 +36,7 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
   readMoreText = 'Lesa nánar',
   href,
   date,
-  date2,
+  dateTo,
   dateTextColor = 'dark400',
   titleVariant = 'h2',
   titleAs = 'h3',
@@ -48,14 +48,13 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
 
   const showImage = width > 600
 
-  const sameYear =
-    date && date2
-      ? new Date(date).getFullYear() === new Date(date2).getFullYear()
+  const sameYear = (dateTo && date)
+      ? new Date(date).getFullYear() === new Date(dateTo).getFullYear()
       : false
 
   const formattedDate =
-    date && format(new Date(date), sameYear ? 'dd MMM' : 'dd MMM yyyy')
-  const formattedDate2 = date2 && format(new Date(date2), 'dd MMM yyyy')
+    date && format(new Date(date), (sameYear || !dateTo) ? 'dd MMM' : 'dd MMM yyyy')
+  const formattedDate2 = dateTo && format(new Date(dateTo), 'dd MMM yyyy')
 
   if (mini) {
     return (

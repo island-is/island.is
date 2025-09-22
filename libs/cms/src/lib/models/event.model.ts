@@ -100,11 +100,6 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
     endDate = date.getTime().toString()
   }
 
-  const startDateTime = new Date(new Date(fields.startDate).setHours(7, 37))
-  const endDateTime = addDays(startDateTime.setHours(23, 44), 3)
-
-  console.log('MAP SINGLE EVENT')
-
   return {
     typename: 'Event',
     id: sys.id,
@@ -112,12 +107,8 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
     startDate: fields.startDate ?? '',
     endDate,
     time: (fields.time as Event['time']) ?? { startTime: '', endTime: '' },
-    startDateTime: fields.startDateTime
-      ? fields.startDateTime
-      : startDateTime?.toISOString(),
-    endDateTime: fields.endDateTime
-      ? fields.endDateTime
-      : endDateTime?.toISOString(),
+    startDateTime: fields.startDateTime,
+    endDateTime: fields.endDateTime,
     location: (fields.location as Event['location']) ?? {
       streetAddress: '',
       floor: '',

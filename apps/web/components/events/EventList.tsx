@@ -131,7 +131,7 @@ export const EventList = ({
                   </Stack>
                 }
                 date={eventItem.startDateTime ?? undefined}
-                date2={eventItem.endDateTime ?? undefined}
+                dateTo={eventItem.endDateTime ?? undefined}
                 image={eventItem.thumbnailImage as ImageSchema}
                 titleAs="h2"
                 readMoreText=""
