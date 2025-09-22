@@ -1719,7 +1719,6 @@ namespaces:
     - 'services-sessions'
     - 'services-university-gateway'
     - 'portals-my-pages'
-    - 'unicorn-app'
     - 'payments'
     - 'services-payments'
     - 'services-payment-flow-update-handler'
