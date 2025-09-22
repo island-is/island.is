@@ -20,7 +20,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
         queryInterface.renameColumn(
-          'case',
+          'verdict',
           'delivered_to_defender_national_id',
           'defender_national_id',
           {
