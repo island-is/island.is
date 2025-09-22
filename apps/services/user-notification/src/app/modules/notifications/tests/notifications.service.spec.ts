@@ -96,46 +96,40 @@ describe('NotificationsService', () => {
     expect(template).toBeInstanceOf(Object)
   })
 
-  it('should validate true argument count match', () => {
-    const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto.args,
-      mockHnippTemplate,
-    )
-    expect(mockCreateHnippNotificationDto.args.length).toBe(2)
-    expect(counts).toBeTruthy()
+  it('should validate when all required arguments are provided', () => {
+    expect(() => {
+      service.validate(mockHnippTemplate, mockCreateHnippNotificationDto.args)
+    }).not.toThrow()
   })
 
-  it('should validate false on argument count mismatch +', () => {
-    mockCreateHnippNotificationDto.args = [
+  it('should throw error when required arguments are missing', () => {
+    const incompleteArgs = [{ key: 'arg1', value: 'hello' }] // Missing arg2
+    expect(() => {
+      service.validate(mockHnippTemplate, incompleteArgs)
+    }).toThrow('Missing required arguments')
+  })
+
+  it('should sanitize and return only valid arguments', () => {
+    const argsWithInvalid = [
       { key: 'arg1', value: 'hello' },
       { key: 'arg2', value: 'world' },
-      { key: 'arg3', value: 'extra' },
+      { key: 'invalidArg', value: 'should be filtered' },
     ]
-    const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto.args,
-      mockHnippTemplate,
-    )
-    expect(mockCreateHnippNotificationDto.args.length).toBe(3)
-    expect(counts).toBe(false)
-  })
-  it('should validate false on argument count mismatch -', () => {
-    mockCreateHnippNotificationDto.args = [{ key: 'arg2', value: 'world' }]
-    const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto.args,
-      mockHnippTemplate,
-    )
-    expect(mockCreateHnippNotificationDto.args.length).toBe(1)
-    expect(counts).toBe(false)
+    const validArgs = service.sanitize(mockHnippTemplate, argsWithInvalid)
+    expect(validArgs).toHaveLength(2)
+    expect(validArgs).toEqual([
+      { key: 'arg1', value: 'hello' },
+      { key: 'arg2', value: 'world' },
+    ])
   })
 
-  it('should validate false on argument count mismatch 0', () => {
-    mockCreateHnippNotificationDto.args = []
-    const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto.args,
-      mockHnippTemplate,
-    )
-    expect(mockCreateHnippNotificationDto.args.length).toBe(0)
-    expect(counts).toBe(false)
+  it('should sanitize and return empty array when no valid arguments', () => {
+    const invalidArgs = [
+      { key: 'invalidArg1', value: 'should be filtered' },
+      { key: 'invalidArg2', value: 'should be filtered' },
+    ]
+    const validArgs = service.sanitize(mockHnippTemplate, invalidArgs)
+    expect(validArgs).toHaveLength(0)
   })
 
   it('should replace template {{placeholders}} with args', async () => {
