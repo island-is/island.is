@@ -195,7 +195,6 @@ const Signees = ({
       )}
       <PaperSignees
         listId={id ?? ''}
-        refetchSignees={refetchListSignees}
         collectionType={collectionType}
       />
     </Box>
