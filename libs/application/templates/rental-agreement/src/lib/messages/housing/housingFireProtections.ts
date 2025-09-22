@@ -19,7 +19,7 @@ export const housingFireProtections = defineMessages({
   },
   smokeDetectorsFireExtinguisherTitle: {
     id: 'ra.application:housingFireProtections.smokeDetectorsFireExtinguisherTitle',
-    defaultMessage: 'Reykskynjarar og slökkvitæki',
+    defaultMessage: 'Reikskynjarar og slökkvitæki',
     description: 'Smoke detectors and fire extinguisher title',
   },
   smokeDetectorsFireExtinguisherRequirements: {
