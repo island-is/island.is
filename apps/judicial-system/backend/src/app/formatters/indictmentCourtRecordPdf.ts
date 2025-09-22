@@ -9,6 +9,7 @@ import {
   addCoatOfArms,
   addEmptyLines,
   addFooter,
+  addIndictmentCourtRecordConfirmation,
   addLargeHeading,
   addMediumHeading,
   addNormalCenteredText,
@@ -40,8 +41,14 @@ export const createIndictmentCourtRecordPdf = (
   doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, `Þingbók ${theCase.courtCaseNumber}`)
-  addCoatOfArms(doc)
-  addEmptyLines(doc, 4)
+
+  addCoatOfArms(doc, undefined, 90)
+
+  if (confirmation) {
+    addIndictmentCourtRecordConfirmation(doc, confirmation)
+  }
+
+  addEmptyLines(doc, 11, doc.page.margins.left)
   setLineGap(doc, 2)
   addLargeHeading(doc, theCase.court?.name ?? 'Héraðsdómur', 'Times-Roman')
   addMediumHeading(doc, 'Þingbók')
