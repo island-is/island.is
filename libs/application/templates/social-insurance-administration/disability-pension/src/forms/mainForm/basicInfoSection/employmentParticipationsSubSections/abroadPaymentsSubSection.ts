@@ -1,5 +1,5 @@
 import {
-    buildDescriptionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildTableRepeaterField,
@@ -33,10 +33,10 @@ export const abroadPaymentsSubSection = buildMultiField({
     }),
     buildDescriptionField({
       id: `${SectionRouteEnum.ABROAD_PAYMENT}.listTitle`,
-      title:m.employmentParticipation.abroadPaymentsTableTitle,
+      title: m.employmentParticipation.abroadPaymentsTableTitle,
       condition: abroadPaymentsCondition,
       titleVariant: 'h5',
-      space: 5
+      space: 5,
     }),
     buildTableRepeaterField({
       id: `${SectionRouteEnum.ABROAD_PAYMENT}.list`,

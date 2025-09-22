@@ -415,11 +415,9 @@ export class SocialInsuranceAdministrationClientService {
       user,
     ).apiProtectedV1GeneralMaritalStatusesGet()
 
-    return (
-      data
-        .map((d) => mapMaritalStatusDto(d))
-        .filter((i): i is MaritalStatusDto => Boolean(i))
-    )
+    return data
+      .map((d) => mapMaritalStatusDto(d))
+      .filter((i): i is MaritalStatusDto => Boolean(i))
   }
 
   async getEmploymentStatusesWithLocale(
