@@ -50,7 +50,13 @@ const ReviewCandidates = ({
   const removeFromList = async (candidateId: string) => {
     try {
       const { data } = await signatureCollectionAdminRemoveCandidateMutation({
-        variables: { input: { candidateId, collectionType } },
+        variables: {
+          input: {
+            candidateId,
+            collectionType:
+              collectionType ?? SignatureCollectionCollectionType.Presidential,
+          },
+        },
       })
 
       if (data?.signatureCollectionAdminRemoveCandidate?.success) {
