@@ -23,6 +23,8 @@ import {
   QueryGetSingleGrantArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -39,7 +41,14 @@ import DetailPanel from './GrantSidebar/DetailPanel'
 import ExtraPanel from './GrantSidebar/ExtraPanel'
 import { GrantSidebar } from './GrantSidebar/GrantSidebar'
 
-const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
+const GrantSinglePage: CustomScreen<GrantSingleProps> = ({
+  grant,
+  locale,
+  customPageData,
+}) => {
+  useContentfulId(customPageData?.id, grant?.id)
+  useLocalLinkTypeResolver()
+
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
