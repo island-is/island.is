@@ -17,6 +17,11 @@ export const housingFireProtections = defineMessages({
       'Leigusamningur þarf lögum samkvæmt að innihalda  úttekt á brunavörnum í húsnæðinu. Sú úttekt þarf að fara fram við samningsgerðina. Gott er að skoða húsnæðið gaumgæfilega út frá öryggismálum.',
     description: 'Fire protections page description',
   },
+  smokeDetectorsFireExtinguisherTitle: {
+    id: 'ra.application:housingFireProtections.smokeDetectorsFireExtinguisherTitle',
+    defaultMessage: 'Reykskynjarar og slökkvitæki',
+    description: 'Smoke detectors and fire extinguisher title',
+  },
   smokeDetectorsFireExtinguisherRequirements: {
     id: 'ra.application:housingFireProtections.smokeDetectorsFireExtinguisherRequirements#markdown',
     defaultMessage:
