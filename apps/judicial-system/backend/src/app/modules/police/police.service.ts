@@ -169,6 +169,8 @@ export class PoliceService {
     deliveredToLawyer: z.boolean().nullish(),
     defenderNationalId: z.string().nullish(),
     deliveredOnIslandis: z.boolean().nullish(),
+    // TODO: this is not supported atm
+    legalPaperRequestDate: z.string().nullish(),
   })
 
   constructor(
@@ -716,7 +718,6 @@ export class PoliceService {
           const response: z.infer<typeof this.documentStructure> =
             await res.json()
           this.documentStructure.parse(response)
-
           const servedAt =
             response.servedAt && !Number.isNaN(Date.parse(response.servedAt))
               ? new Date(response.servedAt)
@@ -728,6 +729,8 @@ export class PoliceService {
               deliveredOnPaper: response.deliveredOnPaper ?? false,
               deliveredOnIslandis: response.deliveredOnIslandis ?? false,
               deliveredToLawyer: response.deliveredToLawyer ?? false,
+              legalPaperRequestDate:
+                response.legalPaperRequestDate ?? undefined,
             }),
             deliveredToDefenderNationalId:
               response.defenderNationalId ?? undefined,
