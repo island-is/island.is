@@ -21,7 +21,10 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { formatEventDates, formatEventLocation } from '@island.is/web/utils/event'
+import {
+  formatEventDates,
+  formatEventLocation,
+} from '@island.is/web/utils/event'
 
 interface EventListProps {
   namespace: Record<string, string>
@@ -87,7 +90,14 @@ export const EventList = ({
             return (
               <InfoCard
                 key={event.id}
-                eyebrow={event.startDateTime ? formatEventDates(event.startDateTime, event.endDateTime ?? undefined) : ''}
+                eyebrow={
+                  event.startDateTime
+                    ? formatEventDates(
+                        event.startDateTime,
+                        event.endDateTime ?? undefined,
+                      )
+                    : ''
+                }
                 id={event.id}
                 link={{
                   href: link.href,

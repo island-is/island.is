@@ -28,7 +28,8 @@ export const formatEventTime = (eventTime: EventTime, separator = '-') => {
 }
 
 export const formatEventDates = (dateFrom: string, dateTo?: string) => {
-  const sameYear = (dateTo && dateFrom)
+  const sameYear =
+    dateTo && dateFrom
       ? new Date(dateFrom).getFullYear() === new Date(dateTo).getFullYear()
       : false
 

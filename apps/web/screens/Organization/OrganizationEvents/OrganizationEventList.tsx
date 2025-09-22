@@ -107,7 +107,7 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
     ),
   )*/
 
-  const isInfoCardVariant = true;
+  const isInfoCardVariant = true
 
   return (
     <OrganizationWrapper

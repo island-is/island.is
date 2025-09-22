@@ -11,7 +11,7 @@ import {
 import { BackgroundImage } from '@island.is/web/components'
 import { Image } from '@island.is/web/graphql/schema'
 
-import { formatEventDates} from '../../utils/event'
+import { formatEventDates } from '../../utils/event'
 import * as styles from './NewsCard.css'
 
 interface NewsCardProps {
