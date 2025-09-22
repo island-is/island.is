@@ -418,7 +418,7 @@ export class SocialInsuranceAdministrationClientService {
     return (
       data
         .map((d) => mapMaritalStatusDto(d))
-        .filter((i): i is MaritalStatusDto => Boolean(i)) ?? null
+        .filter((i): i is MaritalStatusDto => Boolean(i))
     )
   }
 
