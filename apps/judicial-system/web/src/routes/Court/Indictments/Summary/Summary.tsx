@@ -45,6 +45,10 @@ import {
 
 import { strings } from './Summary.strings'
 import * as styles from './Summary.css'
+import {
+  formatDate,
+  getHumanReadableCaseIndictmentRulingDecision,
+} from '@island.is/judicial-system/formatters'
 
 const Summary: FC = () => {
   const { formatMessage } = useIntl()
@@ -280,9 +284,40 @@ const Summary: FC = () => {
       </FormContentContainer>
       {modalVisible === 'CONFIRM_RULING' && (
         <Modal
-          title="Staðfesting dóms"
-          text={`Vinsamlegast rýnið skjal fyrir staðfestingu.            
-Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. Ef birta þarf dóminn verður hann sendur í rafræna birtingu í stafrænt pósthólf dómfellda á island.is.`}
+          title="Viltu staðfesta dómsúrlausn og ljúka máli?"
+          text={
+            <>
+              <Box>
+                <Text fontWeight="semiBold" as="span">
+                  Lyktir:
+                </Text>
+                <Text as="span">
+                  {` ${getHumanReadableCaseIndictmentRulingDecision(
+                    workingCase.indictmentRulingDecision,
+                  )}`}
+                </Text>
+              </Box>
+              <Box>
+                <Text fontWeight="semiBold" as="span">
+                  Dagsetning lykta:
+                </Text>
+                <Text as="span">
+                  {` ${formatDate(workingCase.courtEndTime)}`}
+                </Text>
+              </Box>
+              <Box>
+                <Text>• Vinsamlegast rýnið skjal fyrir staðfestingu.</Text>
+                <Text>
+                  • Staðfestur dómur verður aðgengilegur málflytjendum í
+                  Réttarvörslugátt.
+                </Text>
+                <Text>
+                  • Ef birta þarf dóminn verður hann sendur í rafræna birtingu í
+                  stafrænt pósthólf dómfellda á island.is á næsta skrefi.
+                </Text>
+              </Box>
+            </>
+          }
           primaryButton={{
             text: 'Staðfesta',
             onClick: async () => await handleModalPrimaryButtonClick(),
