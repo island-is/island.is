@@ -246,8 +246,18 @@ export class InternalCaseService {
     buffer?: Buffer,
   ): Promise<boolean> {
     try {
-      const pdf =
-        buffer || (await getCourtRecordPdfAsBuffer(theCase, this.formatMessage))
+      let pdf = buffer
+
+      if (!pdf) {
+        if (isIndictmentCase(theCase.type)) {
+          pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+            theCase,
+            user,
+          )
+        } else {
+          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+        }
+      }
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,

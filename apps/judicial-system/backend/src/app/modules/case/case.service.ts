@@ -46,6 +46,7 @@ import {
   defendantEventTypes,
   EventType,
   eventTypes,
+  hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isIndictmentCase,
   isInvestigationCase,
@@ -1115,6 +1116,21 @@ export class CaseService {
       caseId: theCase.id,
       body: { type: CaseNotificationType.RULING },
     })
+
+    if (
+      hasGeneratedCourtRecordPdf(
+        theCase.state,
+        theCase.indictmentRulingDecision,
+        theCase.courtSessions,
+        user,
+      )
+    ) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_COURT_RECORD,
+        user,
+        caseId: theCase.id,
+      })
+    }
 
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
