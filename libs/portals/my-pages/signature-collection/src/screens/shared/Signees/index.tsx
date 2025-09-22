@@ -13,7 +13,6 @@ import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
-  SignatureCollectionSignature as Signature,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import sortBy from 'lodash/sortBy'
@@ -110,7 +109,7 @@ const Signees = ({
               <T.Body>
                 {signees
                   .slice(pageSize * (page - 1), pageSize * page)
-                  .map((s: Signature) => {
+                  .map((s) => {
                     const textVariant = 'medium'
                     const bgColor = s.isDigital ? 'white' : 'blueberry100'
                     return (
