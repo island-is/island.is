@@ -24,8 +24,8 @@ import {
 import {
   AffiliationRole,
   ApplicationType,
-  FIRST_GRADE_AGE,
   CaseWorkerInputTypeEnum,
+  FIRST_GRADE_AGE,
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
@@ -578,30 +578,36 @@ export const getInternationalSchoolsIds = () => {
   return ['G-2250-A', 'G-2250-B', 'G-1157-A', 'G-1157-B'] //Alþjóðaskólinn G-2250-x & Landkotsskóli G-1157-x
 }
 
-export const getApplicationType = (externalData: ExternalData) => {
+export const getApplicationType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { childNationalId } = getApplicationAnswers(answers)
   const { childInformation } = getApplicationExternalData(externalData)
-
-  if (!childInformation?.nationalId) {
-    return ApplicationType.NEW_PRIMARY_SCHOOL
-  }
 
   const currentYear = new Date().getFullYear()
   const firstGradeYear = currentYear - FIRST_GRADE_AGE
+  const nationalId = childNationalId || ''
 
-  const nationalId = childInformation.nationalId
   if (!isValid(nationalId)) {
     return ApplicationType.NEW_PRIMARY_SCHOOL
   }
+
   const nationalIdInfo = info(nationalId)
-  if (!nationalIdInfo || !nationalIdInfo.birthday) {
+  const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
+
+  if (!yearOfBirth) {
     return ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
-  const yearOfBirth = nationalIdInfo.birthday.getFullYear()
+  // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
+  if (!childInformation?.primaryOrgId) {
+    return yearOfBirth === firstGradeYear
+      ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+      : ApplicationType.NEW_PRIMARY_SCHOOL
+  }
 
-  return yearOfBirth < firstGradeYear
-    ? ApplicationType.NEW_PRIMARY_SCHOOL
-    : ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  return ApplicationType.NEW_PRIMARY_SCHOOL
 }
 
 export const getGuardianByNationalId = (
