@@ -359,7 +359,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     merged.setHours(date.getHours(), date.getMinutes(), 0, 0)
 
     if (merged < startDate) {
-      toast.error('Upp kom villa við að uppfæra lokatíma')
+      toast.error('Þinghaldi slitið má ekki vera á undan Þinghald hófst')
     }
 
     patchSession(
