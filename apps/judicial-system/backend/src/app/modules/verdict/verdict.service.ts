@@ -36,6 +36,7 @@ import { DeliverResponse } from './models/deliver.response'
 type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   Verdict,
   | 'externalPoliceDocumentId'
+  | 'serviceStatus'
   | 'serviceRequirement'
   | 'servedBy'
   | 'deliveredToDefenderNationalId'
@@ -102,16 +103,16 @@ export class VerdictService {
     transaction: Transaction,
     rulingDate?: Date,
   ): Promise<UpdateVerdictDto> {
+    if (!update.serviceRequirement) {
+      return update
+    }
+
     // rulingDate should be set, but the case completed guard can not guarantee its presence
     // ensure that ruling date is present to prevent side effects in handle service requirement update
     if (!rulingDate) {
       throw new BadRequestException(
         'Missing rulingDate for service requirement update',
       )
-    }
-
-    if (!update.serviceRequirement) {
-      return update
     }
 
     const currentVerdict = await this.findById(verdictId, transaction)
@@ -202,13 +203,14 @@ export class VerdictService {
       normalizeAndFormatNationalId(defendant.nationalId)[0]
     const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
 
+    console.log({ receiverSsn, originalNationalId: defendant.nationalId })
     return [
       { code: 'RVG_CASE_ID', value: theCase.id },
       ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
       ...(theCase.courtCaseNumber
         ? [
             {
-              code: 'COURT_CASE_NUMBER',
+              code: 'VERDICT_COURT_CASE_NUMBER',
               value: theCase.courtCaseNumber,
             },
           ]
@@ -347,7 +349,7 @@ export class VerdictService {
       )
 
       if (isVerdictInfoChanged(verdictInfo, verdict)) {
-        return this.update(verdict, verdictInfo)
+        return this.updateVerdict(verdict, verdictInfo)
       }
     }
     return verdict
