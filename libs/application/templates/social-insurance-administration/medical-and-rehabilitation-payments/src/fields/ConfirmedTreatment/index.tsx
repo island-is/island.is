@@ -22,14 +22,16 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Markdown } from '@island.is/shared/components'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaConfirmedTreatmentQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 import { SiaConfirmedTreatmentQuery } from '../../types/schema'
 import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPaymentsUtils'
-import { Markdown } from '@island.is/shared/components'
+import { ManagedBy } from '../components/ManagedBy'
 
 export const ConfirmedTreatment: FC<FieldBaseProps> = ({
   application,
@@ -65,48 +67,6 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
     return [true, null]
   })
 
-  const managedBy = () => (
-    <Stack space={3}>
-      <GridRow rowGap={3}>
-        <GridColumn span="1/1">
-          <Text variant="h3">
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.managedBy,
-            )}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(socialInsuranceAdministrationMessage.confirm.name)}
-          </Label>
-          <Text>
-            {data?.socialInsuranceConfirmedTreatment?.caseManager?.name}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.jobTitle,
-            )}
-          </Label>
-          <Text>
-            {data?.socialInsuranceConfirmedTreatment?.caseManager?.jobTitle}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.location,
-            )}
-          </Label>
-          <Text>
-            {data?.socialInsuranceConfirmedTreatment?.caseManager?.workplace}
-          </Text>
-        </GridColumn>
-      </GridRow>
-    </Stack>
-  )
-
   const information = () => (
     <Stack space={3}>
       <GridRow rowGap={3}>
@@ -125,11 +85,9 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.socialInsuranceConfirmedTreatment?.confirmationDate
+            {data?.socialInsuranceConfirmedTreatment?.created
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmedTreatment.confirmationDate,
-                  ),
+                  parseISO(data.socialInsuranceConfirmedTreatment.created),
                   'dd.MM.yyyy',
                 )
               : '-'}
@@ -138,49 +96,63 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.confirmedTreatment
-                .informationFurtherExplanationOfPreviousTreatment,
-            )}
-          </Label>
-          <Text>
-            {/* If this value is empty, insert the text "Not applicable" */}
-            {data?.socialInsuranceConfirmedTreatment?.previousTreatment
-              ?.description
-              ? data.socialInsuranceConfirmedTreatment.previousTreatment
-                  .description
-              : formatMessage(
-                  medicalAndRehabilitationPaymentsFormMessage.shared
-                    .notApplicable,
-                )}
-          </Text>
-        </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.confirmedTreatment
-                .informationInformationRegardingTreatment,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceConfirmedTreatment?.previousTreatment?.type
-                ?.display
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.confirmedTreatment
-                .informationTreatmentType,
+              medicalAndRehabilitationPaymentsFormMessage.shared.treatmentTypes,
             )}
           </Label>
           <Markdown>
-            {data?.socialInsuranceConfirmedTreatment?.treatmentPlan?.treatmentType
-              ?.map((type) => '* ' + type.display)
+            {data?.socialInsuranceConfirmedTreatment?.requestedTreatment?.treatmentTypes
+              ?.map((value, index) => `${index + 1}. ${value.display}`)
               ?.join('\n\n') ?? ''}
           </Markdown>
         </GridColumn>
+        {data?.socialInsuranceConfirmedTreatment?.requestedTreatment
+          ?.otherTreatmentDescription && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.shared
+                  .otherTreatmentDescription,
+              )}
+            </Label>
+            <Text>
+              {
+                data?.socialInsuranceConfirmedTreatment?.requestedTreatment
+                  ?.otherTreatmentDescription
+              }
+            </Text>
+          </GridColumn>
+        )}
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.shared
+                .hasPreviousApproval,
+            )}
+          </Label>
+          <Text>
+            {data?.socialInsuranceConfirmedTreatment?.previousApplication
+              ?.hasPreviousApproval
+              ? formatMessage(socialInsuranceAdministrationMessage.shared.yes)
+              : formatMessage(socialInsuranceAdministrationMessage.shared.no)}
+          </Text>
+        </GridColumn>
+        {data?.socialInsuranceConfirmedTreatment?.previousApplication
+          ?.hasPreviousApproval && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.shared
+                  .previousApplicationDetails,
+              )}
+            </Label>
+            <Text>
+              {
+                data?.socialInsuranceConfirmedTreatment?.previousApplication
+                  ?.additionalDetails
+              }
+            </Text>
+          </GridColumn>
+        )}
       </GridRow>
     </Stack>
   )
@@ -195,6 +167,14 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
             )}
           </Text>
         </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.shared.applyingFor,
+            )}
+          </Label>
+          <Text>{data?.socialInsuranceConfirmedTreatment?.typeAppliedFor}</Text>
+        </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/3']}>
           <Label>
             {formatMessage(
@@ -203,10 +183,11 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.socialInsuranceConfirmedTreatment?.estimatedDuration?.start
+            {data?.socialInsuranceConfirmedTreatment?.requestedPeriod?.startDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmedTreatment.estimatedDuration.start,
+                  parseISO(
+                    data.socialInsuranceConfirmedTreatment.requestedPeriod
+                      .startDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -221,10 +202,11 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.socialInsuranceConfirmedTreatment?.estimatedDuration?.end
+            {data?.socialInsuranceConfirmedTreatment?.requestedPeriod?.endDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmedTreatment.estimatedDuration.end,
+                  parseISO(
+                    data.socialInsuranceConfirmedTreatment.requestedPeriod
+                      .endDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -246,8 +228,8 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
                 .estimatedTimeMonths,
               {
                 months:
-                  data?.socialInsuranceConfirmedTreatment?.estimatedDuration
-                    ?.months,
+                  data?.socialInsuranceConfirmedTreatment?.requestedPeriod
+                    ?.totalRequestedMonths,
               },
             )}
           </Text>
@@ -276,7 +258,11 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
 
   return (
     <Stack space={4}>
-      {managedBy()}
+      <ManagedBy
+        serviceProvider={
+          data?.socialInsuranceConfirmedTreatment?.serviceProvider
+        }
+      />
       <Divider />
       {information()}
       <Divider />

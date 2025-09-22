@@ -1,7 +1,8 @@
 export enum SignatureCollectionPaths {
   // Presidential
-  PresidentialLists = '/medmaelasofnun',
-  PresidentialList = '/medmaelasofnun/:listId',
+  PresidentialListOfCandidates = '/medmaelasofnun',
+  PresidentialCandidateLists = '/medmaelasofnun/:candidateId',
+  PresidentialList = '/medmaelasofnun/:candidateId/:listId',
 
   // Parliamentary
   ParliamentaryRoot = '/althingiskosningar',

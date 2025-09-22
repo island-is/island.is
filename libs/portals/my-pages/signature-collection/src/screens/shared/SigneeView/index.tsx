@@ -25,20 +25,19 @@ const SigneeView = ({
   return (
     <Box>
       {listsForUser?.length === 0 && signedLists?.length === 0 && (
-        <Box marginTop={10}>
-          <EmptyState
-            title={m.noCollectionIsActive}
-            description={m.noCollectionIsActiveDescription}
-          />
-        </Box>
+        <EmptyState
+          title={m.noCollectionIsActive}
+          description={m.noCollectionIsActiveDescription}
+        />
       )}
 
       <Box marginTop={[0, 5]}>
-        {/* Signed list(s) */}
-        <SignedLists
-          collectionType={collectionType}
-          signedLists={signedLists ?? []}
-        />
+        {signedLists && (
+          <SignedLists
+            collectionType={collectionType}
+            signedLists={signedLists ?? []}
+          />
+        )}
 
         {/* Other available lists */}
         <Box marginTop={[5, 10]}>
