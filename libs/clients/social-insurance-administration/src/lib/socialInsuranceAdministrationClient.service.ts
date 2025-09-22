@@ -1,6 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
@@ -63,6 +63,7 @@ import { CountryDto, mapCountryDto } from './dto/country.dto'
 import { mapMaritalStatusDto, MaritalStatusDto } from './dto/maritalStatus.dto'
 import { DisabilityPensionDto } from './dto'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -81,6 +82,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly medicalDocumentsApiForDisabilityPension: MedicalDocumentApiForDisabilityPension,
     private readonly questionnairesApiForDisabilityPension: QuestionnairesApiForDisabilityPension,
     private readonly featureFlagService: FeatureFlagService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -171,6 +173,10 @@ export class SocialInsuranceAdministrationClientService {
         )
       : false
 
+    if (enableLightweightMode) {
+      this.logger.info('lightweight mode enabled for post - ONLY DEV')
+    }
+
     return this.applicationWriteApiWithAuth(
       user,
     ).apiProtectedV1ApplicationApplicationTypePost({
@@ -224,6 +230,12 @@ export class SocialInsuranceAdministrationClientService {
             user,
           )
         : false
+
+      if (enableLightweightMode) {
+        this.logger.info('lightweight mode enabled - ONLY DEV', {
+          applicationType,
+        })
+      }
 
       return this.applicantApiWithAuth(
         user,
