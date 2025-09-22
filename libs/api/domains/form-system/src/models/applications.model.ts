@@ -58,7 +58,7 @@ export class Application {
   status?: string
 
   @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
 
   @Field(() => Boolean, { nullable: true })
   hasSummaryScreen?: boolean

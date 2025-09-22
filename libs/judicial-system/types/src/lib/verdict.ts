@@ -1,3 +1,5 @@
+import { VerdictServiceStatus } from './defendant'
+
 export enum ServiceRequirement {
   REQUIRED = 'REQUIRED', // Ruling must be served
   NOT_REQUIRED = 'NOT_REQUIRED', // Ruling does not need to be served
@@ -21,6 +23,32 @@ export enum InformationForDefendant {
   COMMUNITY_SERVICE = 'COMMUNITY_SERVICE',
   FINES_AND_COSTS = 'FINES_AND_COSTS',
   ITEM_CONFISCATION = 'ITEM_CONFISCATION',
+}
+
+export const mapPoliceVerdictDeliveryStatus = ({
+  delivered,
+  deliveredOnPaper,
+  deliveredOnIslandis,
+  deliveredToLawyer,
+}: {
+  delivered?: boolean
+  deliveredOnPaper?: boolean
+  deliveredOnIslandis?: boolean
+  deliveredToLawyer?: boolean
+}) => {
+  if (delivered) {
+    if (deliveredOnPaper) {
+      return VerdictServiceStatus.IN_PERSON
+    }
+    if (deliveredOnIslandis) {
+      return VerdictServiceStatus.ELECTRONICALLY
+    }
+    if (deliveredToLawyer) {
+      return VerdictServiceStatus.DEFENDER
+    }
+  }
+  // doesn't mean it has been served in legal paper, but probably requested on failure
+  return VerdictServiceStatus.LEGAL_PAPER
 }
 
 // information html descriptions

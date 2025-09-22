@@ -26,7 +26,7 @@ export class ApplicationMapper {
       modified: application.modified,
       slug: form.slug,
       formName: form.name,
-      stopProgressOnValidatingScreen: form.stopProgressOnValidatingScreen,
+      allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,
       hasSummaryScreen: form.hasSummaryScreen,
       submittedAt: application.submittedAt,
@@ -102,7 +102,6 @@ export class ApplicationMapper {
           }),
         } as SectionDto)
       })
-    console.log('sections', JSON.stringify(applicationDto.sections, null, 2))
     return applicationDto
   }
 
@@ -119,7 +118,7 @@ export class ApplicationMapper {
       formId: form?.id,
       slug: form?.slug,
       formName: form?.name,
-      stopProgressOnValidatingScreen: form?.stopProgressOnValidatingScreen,
+      allowProceedOnValidationFail: form?.allowProceedOnValidationFail,
       hasPayment: form?.hasPayment,
       hasSummaryScreen: form?.hasSummaryScreen,
       submittedAt: application.submittedAt,

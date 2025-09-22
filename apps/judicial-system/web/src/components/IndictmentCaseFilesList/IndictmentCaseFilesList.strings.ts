@@ -49,7 +49,7 @@ export const strings = defineMessages({
     id: 'judicial.system.indictments:indictment_case_files_list.service_certificate_button_text',
     defaultMessage: 'Birtingarvottorð {name}.pdf',
     description:
-      'Notaður sem texti á PDF takka til að sækja birtingarvottorð í ákærum.',
+      'Notaður sem texti á PDF takka til að sækja birtingarvottorð í ákærum og dómum.',
   },
   sentToPrisonAdmin: {
     id: 'judicial.system.core:indictment_case_files_list.sent_to_prison_admin',

@@ -43,8 +43,7 @@ export const updateFormFn = async (
                 : newForm.invalidationDate,
             isTranslated: newForm.isTranslated,
             applicationDaysToRemove: newForm.applicationDaysToRemove,
-            stopProgressOnValidatingScreen:
-              newForm.stopProgressOnValidatingScreen,
+            allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
             hasPayment: newForm.hasPayment,
             hasSummaryScreen: newForm.hasSummaryScreen,
             completedMessage: newForm.completedMessage,
