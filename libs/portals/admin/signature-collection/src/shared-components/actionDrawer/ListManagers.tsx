@@ -57,14 +57,18 @@ const ListManagers = () => {
           </Row>
         </Head>
         <Body>
-          {list.collectors?.map((collector, key) => {
-            return (
+          {list.collectors?.length ? (
+            list.collectors.map((collector, key) => (
               <Row key={key}>
                 <Data>{formatNationalId(collector.nationalId)}</Data>
                 <Data>{collector.name}</Data>
               </Row>
-            )
-          })}
+            ))
+          ) : (
+            <Row>
+              <Data colSpan={2}>{formatMessage(m.listNoSupervisors)}</Data>
+            </Row>
+          )}
         </Body>
       </Table>
     </Drawer>

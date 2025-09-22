@@ -22,7 +22,7 @@ describe('CaseController - Get court record pdf rules', () => {
   })
 
   it('should give permission to roles', () => {
-    expect(rules).toHaveLength(7)
+    expect(rules).toHaveLength(8)
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(districtCourtJudgeRule)
     expect(rules).toContain(districtCourtRegistrarRule)
