@@ -53,8 +53,7 @@ const ReviewCandidates = ({
         variables: {
           input: {
             candidateId,
-            collectionType:
-              collectionType ?? SignatureCollectionCollectionType.Presidential,
+            collectionType,
           },
         },
       })
