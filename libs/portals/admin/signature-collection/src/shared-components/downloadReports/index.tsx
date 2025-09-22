@@ -1,20 +1,15 @@
 import { useLocale } from '@island.is/localization'
 import {
-  ActionCard,
   Box,
   Button,
   GridColumn,
   GridRow,
   Icon,
-  Stack,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
-import { Modal } from '@island.is/react/components'
 import {
   SignatureCollection,
-  SignatureCollectionArea,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
@@ -23,49 +18,75 @@ import MyPdfDocument from './MyPdfDocument'
 import { SignatureCollectionAreaSummaryReportDocument } from './MyPdfDocument/areaSummary.generated'
 import { useLazyQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
+import { SignatureCollectionAdminCandidateReportDocument } from './MyPdfDocument/candidateSummary.generated'
 
 export const DownloadReports = ({
   collection,
 }: {
   collection: SignatureCollection
 }) => {
+  const { collectionType } = collection
   const { formatMessage } = useLocale()
-  const [modalDownloadReportsIsOpen, setModalDownloadReportsIsOpen] =
-    useState(false)
-  const [runGetSummaryReport, { loading }] = useLazyQuery(
+  const [getAreaReport, { loading: loadingSummary }] = useLazyQuery(
     SignatureCollectionAreaSummaryReportDocument,
+  )
+  const [getCandidateReport, { loading: loadingCandidate }] = useLazyQuery(
+    SignatureCollectionAdminCandidateReportDocument,
   )
   const instance = pdf(undefined)
 
-  const { municipality, constituencyName } = useParams<{
+  const { municipality, constituencyName, candidateId } = useParams<{
     municipality?: string
     constituencyName?: string
+    candidateId?: string
   }>()
 
-  const collectionType = collection.collectionType
   // area is used for LocalGovernmental and Parliamentary collections,
-  // to get the report for certain area
-  const areaName =
+  // candidate is used for Presidential collections
+  const target =
     collectionType === SignatureCollectionCollectionType.LocalGovernmental
-      ? municipality
+      ? collection.areas.find((a) => a.name === municipality)
       : collectionType === SignatureCollectionCollectionType.Parliamentary
-      ? constituencyName
-      : undefined
+      ? collection.areas.find((a) => a.name === constituencyName)
+      : collection.candidates.find((c) => c.id === candidateId)
 
-  const area = areaName
-    ? collection.areas.find((a) => a.name === areaName)
-    : undefined
-
-  const handleDownloadClick = async (area: SignatureCollectionArea) => {
-    if (!loading) {
-      runGetSummaryReport({
+  const handleDownloadCandidateReport = async () => {
+    if (!loadingCandidate) {
+      getCandidateReport({
         variables: {
           input: {
-            areaId: area.id,
+            candidateId: target?.id,
+            collectionType,
+          },
+        },
+        onCompleted: (res) => {
+          instance.updateContainer(
+            <MyPdfDocument
+              report={res.signatureCollectionAdminCandidateReport}
+            />,
+            async () => {
+              const url = await instance
+                .toBlob()
+                .then((b) => URL.createObjectURL(b))
+              window.open(url, '_blank')
+            },
+          )
+        },
+        fetchPolicy: 'no-cache',
+      })
+    }
+  }
+
+  const handleDownloadAreaReport = async () => {
+    if (!loadingSummary) {
+      getAreaReport({
+        variables: {
+          input: {
+            areaId: target?.id,
             collectionId:
-              collection.collectionType ===
+              collectionType ===
               SignatureCollectionCollectionType.LocalGovernmental
-                ? area.collectionId
+                ? target?.collectionId
                 : collection?.id,
           },
         },
@@ -86,64 +107,37 @@ export const DownloadReports = ({
   }
 
   return (
-    <Box>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
-          <Box display="flex">
-            <Tag>
-              <Box display="flex" justifyContent="center">
-                <Icon icon="document" type="outline" color="blue600" />
-              </Box>
-            </Tag>
-            <Box marginLeft={5}>
-              <Text variant="h4">{formatMessage(m.downloadReport)}</Text>
-              <Text marginBottom={2}>
-                {formatMessage(m.downloadReportsDescription)}
-              </Text>
-              <Button
-                variant="text"
-                size="small"
-                onClick={() => setModalDownloadReportsIsOpen(true)}
-              >
-                {formatMessage(m.downloadReport)}
-              </Button>
+    <GridRow>
+      <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+        <Box display="flex">
+          <Tag>
+            <Box display="flex" justifyContent="center">
+              <Icon icon="document" type="outline" color="blue600" />
             </Box>
+          </Tag>
+          <Box marginLeft={5}>
+            <Text variant="h4">{formatMessage(m.downloadReport)}</Text>
+            <Text marginBottom={2}>
+              {formatMessage(m.downloadReportsDescription)}
+            </Text>
+            <Button
+              variant="text"
+              size="small"
+              disabled={loadingSummary || loadingCandidate}
+              loading={loadingSummary || loadingCandidate}
+              onClick={() =>
+                collectionType ===
+                SignatureCollectionCollectionType.Presidential
+                  ? handleDownloadCandidateReport()
+                  : handleDownloadAreaReport()
+              }
+            >
+              {formatMessage(m.downloadReport)}
+            </Button>
           </Box>
-        </GridColumn>
-      </GridRow>
-      <Modal
-        id="downloadReports"
-        isVisible={modalDownloadReportsIsOpen}
-        title={formatMessage(m.downloadReport)}
-        label={''}
-        onClose={() => {
-          setModalDownloadReportsIsOpen(false)
-        }}
-        closeButtonLabel={''}
-      >
-        <Text>{formatMessage(m.downloadReportsDescription)}</Text>
-        <Box marginY={5}>
-          <Stack space={3}>
-            {(area ? [area] : collection?.areas || []).map((area) => (
-              <ActionCard
-                key={area.id}
-                heading={formatMessage(area.name ?? '')}
-                headingVariant="h4"
-                backgroundColor="blue"
-                cta={{
-                  label: formatMessage(m.downloadButton),
-                  variant: 'text',
-                  icon: 'download',
-                  iconType: 'outline',
-                  onClick: () => handleDownloadClick(area),
-                  disabled: loading,
-                }}
-              />
-            ))}
-          </Stack>
         </Box>
-      </Modal>
-    </Box>
+      </GridColumn>
+    </GridRow>
   )
 }
 

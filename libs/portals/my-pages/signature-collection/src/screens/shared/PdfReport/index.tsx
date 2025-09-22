@@ -1,53 +1,79 @@
 import { useLocale } from '@island.is/localization'
-import { Button } from '@island.is/island-ui/core'
+import { Button, toast } from '@island.is/island-ui/core'
 import { Document, pdf } from '@react-pdf/renderer'
 import MyPdfDocument from './Document'
-import { useGetPdfReport } from '../../../hooks'
 import { m } from '../../../lib/messages'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 import { useEffect, useState } from 'react'
+import { useLazyQuery } from '@apollo/client'
+import {
+  getPdfReport,
+  getPdfReportPresidentialCandidate,
+} from '../../../hooks/graphql/queries'
 
 export const PdfReport = ({
   listId,
   collectionType,
+  candidateId,
 }: {
-  listId: string
   collectionType: SignatureCollectionCollectionType
+  listId?: string
+  candidateId?: string
 }) => {
   const { formatMessage } = useLocale()
-  const { report, refetch } = useGetPdfReport(listId || '', collectionType)
+
+  // fetch LocalGovernmental or Parliamentary report
+  const [getAreaReport, { data: areaReport, loading: loadingSummary }] =
+    useLazyQuery(getPdfReport)
+
+  // fetch Presidential report
+  const [
+    getCandidateReport,
+    { data: candidateReport, loading: loadingCandidate },
+  ] = useLazyQuery(getPdfReportPresidentialCandidate)
 
   const instance = pdf(<Document />)
   const [openAfterUpdate, setOpenAfterUpdate] = useState(false)
 
   useEffect(() => {
-    if (report) {
-      instance.updateContainer(
-        <MyPdfDocument report={report} collectionType={collectionType} />,
-        async () => {
-          if (openAfterUpdate) {
-            const url = await instance
-              .toBlob()
-              .then((b) => URL.createObjectURL(b))
-            window.open(url, '_blank')
-            setOpenAfterUpdate(false)
-          }
-        },
-      )
-    }
-  }, [report, instance, collectionType, openAfterUpdate])
+    const report =
+      areaReport?.signatureCollectionListOverview ??
+      candidateReport?.signatureCollectionCandidateReport
+
+    if (!report) return
+
+    instance.updateContainer(<MyPdfDocument report={report} />, async () => {
+      if (openAfterUpdate) {
+        const blob = await instance.toBlob()
+        const url = URL.createObjectURL(blob)
+        window.open(url, '_blank')
+        setOpenAfterUpdate(false)
+      }
+    })
+  }, [areaReport, candidateReport, instance, collectionType, openAfterUpdate])
 
   const onClick = async () => {
-    await refetch()
+    try {
+      if (collectionType === SignatureCollectionCollectionType.Presidential) {
+        await getCandidateReport({
+          variables: { input: { candidateId, collectionType } },
+        })
+      } else {
+        await getAreaReport({
+          variables: { input: { listId, collectionType } },
+        })
+      }
+    } catch {
+      toast.error(formatMessage(m.pdfReportError))
+    }
+
     setOpenAfterUpdate(true)
   }
-
   return (
     <Button
       variant="text"
       onClick={onClick}
-      disabled={openAfterUpdate}
-      loading={openAfterUpdate}
+      loading={loadingCandidate || loadingSummary}
     >
       {formatMessage(m.downloadPdf)}
     </Button>

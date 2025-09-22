@@ -94,7 +94,6 @@ import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/co
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
-import { FineAndSpeedMeasurementCalculator } from '../components/connected/logreglan/FineAndSpeedMeasurementCalculator'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
@@ -111,7 +110,7 @@ interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
 }
 
-const TranslationNamespaceProvider = ({
+export const TranslationNamespaceProvider = ({
   messages,
   children,
 }: PropsWithChildren<TranslationNamespaceProviderProps>) => {
@@ -229,9 +228,6 @@ export const webRenderConnectedComponent = (
       break
     case 'Trufelog/Lifsskodunarfelog':
       connectedComponent = <ReligiousOrganizationList slice={slice} />
-      break
-    case 'Police/FineAndSpeedMeasurementCalculator':
-      connectedComponent = <FineAndSpeedMeasurementCalculator slice={slice} />
       break
     case 'Landspitali/MemorialCard':
       connectedComponent = <MemorialCard slice={slice} />
