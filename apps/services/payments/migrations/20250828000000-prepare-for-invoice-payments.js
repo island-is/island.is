@@ -43,7 +43,7 @@ module.exports = {
             'paid',
             'cancelled',
             'recreated',
-            'recreated_paid',
+            'recreatedAndPaid',
           ),
           allowNull: false,
           defaultValue: 'unpaid',

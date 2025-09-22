@@ -70,7 +70,7 @@ export class FjsCharge extends Model<
       'paid',
       'cancelled',
       'recreated',
-      'recreated_paid',
+      'recreatedAndPaid',
     ),
     allowNull: false,
     defaultValue: 'unpaid',
