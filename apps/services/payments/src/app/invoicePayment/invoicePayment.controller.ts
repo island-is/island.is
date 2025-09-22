@@ -152,7 +152,9 @@ export class InvoicePaymentController {
     const { paymentStatus } =
       await this.paymentFlowService.getPaymentFlowStatus(paymentFlow)
 
-    if (paymentStatus !== 'invoice_pending') {
+    if (paymentStatus === 'paid') {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+    } else if (paymentStatus !== 'invoice_pending') {
       throw new BadRequestException(
         'Payment flow is not in invoice_pending status',
       )

@@ -580,14 +580,14 @@ export class PaymentFlowService {
     try {
       return await retry(
         async () => {
-          const charge = await this.fjsChargeModel.findOne({
+          const fjsCharge = await this.fjsChargeModel.findOne({
             where: {
               receptionId,
               status: 'unpaid',
             },
           })
 
-          if (!charge) {
+          if (!fjsCharge) {
             throw new BadRequestException(
               PaymentServiceCode.PaymentFlowNotFound,
             )
@@ -596,8 +596,8 @@ export class PaymentFlowService {
           await this.paymentFulfillmentModel.create({
             paymentFlowId,
             paymentMethod: 'invoice',
-            confirmationRefId: charge.id,
-            fjsChargeId: charge.id,
+            confirmationRefId: fjsCharge.id,
+            fjsChargeId: fjsCharge.id,
           })
 
           const [affectedCount] = await this.fjsChargeModel.update(
@@ -605,7 +605,7 @@ export class PaymentFlowService {
               status: 'paid',
             },
             {
-              where: { id: charge.id },
+              where: { id: fjsCharge.id },
             },
           )
 
@@ -613,7 +613,7 @@ export class PaymentFlowService {
             this.logger.error(
               `[${paymentFlowId}] Failed to update FJS charge status to paid`,
               {
-                chargeId: charge.id,
+                chargeId: fjsCharge.id,
               },
             )
             // TODO: Should we throw an error here?
@@ -622,7 +622,7 @@ export class PaymentFlowService {
           this.logger.info(
             `[${paymentFlowId}] Successfully updated FJS charge status to paid`,
             {
-              chargeId: charge.id,
+              chargeId: fjsCharge.id,
             },
           )
         },
