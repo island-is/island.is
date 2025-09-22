@@ -109,7 +109,7 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
         fileTypeCode: PoliceFileTypeCode.VERDICT,
         caseSupplements: [
           { code: 'RVG_CASE_ID', value: caseId },
-          { code: 'COURT_CASE_NUMBER', value: courtCaseNumber },
+          { code: 'VERDICT_COURT_CASE_NUMBER', value: courtCaseNumber },
         ],
       })
     })
