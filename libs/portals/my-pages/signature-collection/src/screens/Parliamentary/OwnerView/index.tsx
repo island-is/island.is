@@ -61,6 +61,7 @@ const OwnerView = ({
           <Stack space={[3, 5]}>
             {listsForOwner.map((list) => (
               <ActionCard
+                key={list.id}
                 backgroundColor="white"
                 heading={list.area?.name}
                 progressMeter={{
