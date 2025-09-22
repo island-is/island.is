@@ -71,7 +71,10 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   }
 
   return (
-    <BlueBox dataTestId="multipleValueListContainer">
+    <BlueBox
+      dataTestId="multipleValueListContainer"
+      className={styles.container}
+    >
       <div className={styles.addCourtDocumentContainer}>
         {inputMask ? (
           <InputMask
