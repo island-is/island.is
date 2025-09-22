@@ -434,14 +434,22 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker__day:hover`, {
   borderColor: `${theme.color.blue400}`,
 })
 
+globalStyle(`${root}.island-ui-datepicker .react-datepicker__day--today`, {
+  background: `${theme.color.transparent} !important`,
+  color: `${theme.color.dark400} !important`,
+  border: `1px solid ${theme.color.blue200} !important`,
+  borderRadius: theme.border.radius.large,
+  outline: 'none !important',
+  transition: 'border-color 0.3s, color 0.3s',
+})
+
 globalStyle(
-  `${root}.island-ui-datepicker .react-datepicker__day--selected, .react-datepicker__day--selected:hover, .react-datepicker__month-text:hover, .react-datepicker__quarter-text:hover, .react-datepicker__year-text:hover, .react-datepicker__day--keyboard-selected`,
+  `${root}.island-ui-datepicker .react-datepicker__day--selected, .react-datepicker__day--selected:hover, .react-datepicker__month-text:hover, .react-datepicker__quarter-text:hover, .react-datepicker__year-text:hover`,
   {
     background: `${theme.color.blue400} !important`,
     color: `${theme.color.white} !important`,
   },
 )
-
 globalStyle(`${root}.island-ui-datepickerreact-datepicker__day--range-end`, {
   background: `${theme.color.blue400} !important`,
   color: `${theme.color.white} !important`,
