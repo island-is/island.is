@@ -1,7 +1,4 @@
-import {
-  buildMultiField,
-  buildRadioField,
-} from '@island.is/application/core'
+import { buildMultiField, buildRadioField } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { Application } from '@island.is/application/types'

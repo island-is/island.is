@@ -157,7 +157,8 @@ export const livedAbroadItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.employmentParticipation.livedAbroadQuestion,
-      valueText: hasLivedAbroad === 'yes' ? coreMessages.radioYes : coreMessages.radioNo,
+      valueText:
+        hasLivedAbroad === 'yes' ? coreMessages.radioYes : coreMessages.radioNo,
     },
   ]
 }
@@ -213,9 +214,10 @@ export const abroadPaymentsItems = (
     {
       width: 'full',
       keyText: m.employmentParticipation.abroadPaymentsTitle,
-      valueText: isReceivingBenefitsFromAnotherCountry === 'yes'
-        ? coreMessages.radioYes
-        : coreMessages.radioNo,
+      valueText:
+        isReceivingBenefitsFromAnotherCountry === 'yes'
+          ? coreMessages.radioYes
+          : coreMessages.radioNo,
     },
   ]
 }
@@ -251,9 +253,10 @@ export const appliedBeforeItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.disabilityEvaluation.appliedBeforeTitle,
-      valueText: hasAppliedForDisabilityBefore === 'yes'
-        ? coreMessages.radioYes
-        : coreMessages.radioNo,
+      valueText:
+        hasAppliedForDisabilityBefore === 'yes'
+          ? coreMessages.radioYes
+          : coreMessages.radioNo,
     },
   ]
 }
@@ -272,9 +275,10 @@ export const employmentItems = (answers: FormValue): Array<KeyValueItem> => {
     {
       width: 'full',
       keyText: m.employmentParticipation.continuedWorkTitle,
-      valueText: willContinueWorking  === 'yes'
-        ? coreMessages.radioYes
-        : coreMessages.radioNo,
+      valueText:
+        willContinueWorking === 'yes'
+          ? coreMessages.radioYes
+          : coreMessages.radioNo,
     },
   ]
 }
@@ -381,9 +385,10 @@ export const selfEvaluationItems = async (
     {
       width: 'full',
       keyText: m.questions.previousEmploymentTitle,
-      valueText: previousEmployment?.hasEmployment === 'yes'
-        ? coreMessages.radioYes
-        : coreMessages.radioNo,
+      valueText:
+        previousEmployment?.hasEmployment === 'yes'
+          ? coreMessages.radioYes
+          : coreMessages.radioNo,
     },
     {
       width: 'full',
@@ -431,9 +436,10 @@ export const selfEvaluationItems = async (
     {
       width: 'full',
       keyText: m.questions.rehabilitationOrTherapyTitle,
-      valueText: hasHadRehabilitationOrTherapy === 'yes'
-        ? coreMessages.radioYes
-        : coreMessages.radioNo,
+      valueText:
+        hasHadRehabilitationOrTherapy === 'yes'
+          ? coreMessages.radioYes
+          : coreMessages.radioNo,
     },
     {
       width: 'full',
