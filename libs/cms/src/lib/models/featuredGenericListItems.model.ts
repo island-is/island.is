@@ -41,16 +41,17 @@ export const mapFeaturedGenericListItems = ({
   const tagGroupsMap = new Map<string, string[]>()
 
   for (const tag of fields.filterTags ?? []) {
-    tags.push(tag.fields.slug)
-    if (tagGroupsMap.has(tag.fields.slug)) {
-      tagGroupsMap.get(tag.fields.slug)?.push(tag.fields.slug)
-    } else {
-      tagGroupsMap.set(tag.fields.slug, [tag.fields.slug])
+    const tagSlug = tag.fields.slug
+    const groupSlug = tag.fields.genericTagGroup?.fields?.slug
+    tags.push(tagSlug)
+    if (groupSlug) {
+      const arr = tagGroupsMap.get(groupSlug) ?? []
+      arr.push(tagSlug)
+      tagGroupsMap.set(groupSlug, arr)
     }
   }
 
   const tagGroups = Object.fromEntries(tagGroupsMap)
-
   let baseUrl = ''
 
   if (
