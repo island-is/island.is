@@ -390,7 +390,7 @@ export class CardPaymentController {
     paymentConfirmationId: string,
   ): Promise<FjsCharge | null> {
     const paymentFlowId = chargeCardInput.paymentFlowId
-    let createdFjsChargeConfirmation: FjsCharge | null = null
+    let createdFjsCharge: FjsCharge | null = null
     try {
       // TODO: look into paymentFlow.existingInvoiceId later when we use the existingInvoiceId
       // then we can reuse an existing charge and pay for it
@@ -404,7 +404,7 @@ export class CardPaymentController {
           systemId: environment.chargeFjs.systemId,
         })
 
-      createdFjsChargeConfirmation = await retry(
+      createdFjsCharge = await retry(
         () =>
           this.paymentFlowService.createFjsCharge(
             paymentFlow.id,
@@ -421,7 +421,7 @@ export class CardPaymentController {
         },
       )
 
-      return createdFjsChargeConfirmation
+      return createdFjsCharge
     } catch (e) {
       this.logger.error(
         `[${paymentFlowId}] Failed to create FJS charge information: ${e.message}`,
@@ -467,7 +467,7 @@ export class CardPaymentController {
           }
 
           // Also delete the FJS charge if it exists
-          if (createdFjsChargeConfirmation || isAlreadyPaidError) {
+          if (createdFjsCharge || isAlreadyPaidError) {
             this.logger.info(
               `[${paymentFlowId}] Attempting to delete FJS charge ${paymentFlow.id} after refund due to FJS charge creation/persistence issue.`,
             )
