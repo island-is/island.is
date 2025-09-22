@@ -203,7 +203,6 @@ export class VerdictService {
       normalizeAndFormatNationalId(defendant.nationalId)[0]
     const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
 
-    console.log({ receiverSsn, originalNationalId: defendant.nationalId })
     return [
       { code: 'RVG_CASE_ID', value: theCase.id },
       ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
