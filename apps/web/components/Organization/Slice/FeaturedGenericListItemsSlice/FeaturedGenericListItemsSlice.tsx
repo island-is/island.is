@@ -12,7 +12,6 @@ interface FeaturedGenericListItemsSliceProps {
 export const FeaturedGenericListItemsSlice = ({
   slice,
 }: FeaturedGenericListItemsSliceProps) => {
-  console.log(slice)
   return (
     <Stack space={2}>
       {slice.items.map((item) => {
