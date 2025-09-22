@@ -48,12 +48,14 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
 
   const showImage = width > 600
 
-  const sameYear = (dateTo && date)
+  const sameYear =
+    dateTo && date
       ? new Date(date).getFullYear() === new Date(dateTo).getFullYear()
       : false
 
   const formattedDate =
-    date && format(new Date(date), (sameYear || !dateTo) ? 'dd MMM' : 'dd MMM yyyy')
+    date &&
+    format(new Date(date), sameYear || !dateTo ? 'dd MMM' : 'dd MMM yyyy')
   const formattedDate2 = dateTo && format(new Date(dateTo), 'dd MMM yyyy')
 
   if (mini) {
