@@ -31,7 +31,7 @@ export const BaseInput = () => {
   const defaultValue = fieldTypes?.find(
     (fieldType) => fieldType?.id === currentItem.fieldType,
   )
-  console.log(selectList)
+  // console.log(selectList)
   const defaultOption: Option<string> | undefined = defaultValue
     ? { value: defaultValue.id ?? '', label: defaultValue.name?.is ?? '' }
     : undefined
@@ -120,7 +120,7 @@ export const BaseInput = () => {
         </Column>
       </Row>
       {/* Description  */}
-      {['Message'].includes(currentItem?.fieldType ?? '') && (
+      {['MESSAGE'].includes(currentItem?.fieldType ?? '') && (
         <>
           <Row>
             <Column span="10/10">

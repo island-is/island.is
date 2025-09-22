@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Inject,
   Param,
   Patch,
@@ -106,7 +107,7 @@ export class InternalVerdictController {
   @Post([
     `case/:caseId/${
       messageEndpoint[
-        MessageType.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT
+        MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT
       ]
     }/:defendantId`,
   ])
@@ -208,5 +209,21 @@ export class InternalVerdictController {
       appealDecision: verdictAppeal.appealDecision,
     })
     return updatedVerdict
+  }
+
+  @UseGuards(ExternalPoliceVerdictExistsGuard)
+  @Get('verdict/:policeDocumentId')
+  async getVerdictSupplements(
+    @Param('policeDocumentId') policeDocumentId: string,
+  ): Promise<Pick<Verdict, 'serviceInformationForDefendant'>> {
+    this.logger.debug(
+      `Get verdict supplements for police document id ${policeDocumentId}`,
+    )
+    const verdict = await this.verdictService.findByExternalPoliceDocumentId(
+      policeDocumentId,
+    )
+    return {
+      serviceInformationForDefendant: verdict.serviceInformationForDefendant,
+    }
   }
 }

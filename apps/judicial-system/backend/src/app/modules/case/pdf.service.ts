@@ -24,8 +24,9 @@ import {
   createFineSentToPrisonAdminPdf,
   createIndictment,
   createRulingSentToPrisonAdminPdf,
-  createServiceCertificate,
   createSubpoena,
+  createSubpoenaServiceCertificate,
+  createVerdictServiceCertificate,
   getCaseFileHash,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
@@ -39,6 +40,7 @@ import {
   Defendant,
   EventLog,
   Subpoena,
+  Verdict,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 
@@ -253,10 +255,10 @@ export class PdfService {
 
       // No need to wait for this to finish
       this.caseRepositoryService
-        .update(
-          { indictmentHash: hash, indictmentHashAlgorithm: hashAlgorithm },
-          { where: { id: theCase.id } },
-        )
+        .update(theCase.id, {
+          indictmentHash: hash,
+          indictmentHashAlgorithm: hashAlgorithm,
+        })
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
@@ -353,17 +355,34 @@ export class PdfService {
     return generatedPdf
   }
 
-  async getServiceCertificatePdf(
+  async getSubpoenaServiceCertificatePdf(
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
   ): Promise<Buffer> {
     await this.refreshFormatMessage()
 
-    const generatedPdf = await createServiceCertificate(
+    const generatedPdf = await createSubpoenaServiceCertificate(
       theCase,
       defendant,
       subpoena,
+      this.formatMessage,
+    )
+
+    return generatedPdf
+  }
+
+  async getVerdictServiceCertificatePdf(
+    theCase: Case,
+    defendant: Defendant,
+    verdict: Verdict,
+  ): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    const generatedPdf = await createVerdictServiceCertificate(
+      theCase,
+      defendant,
+      verdict,
       this.formatMessage,
     )
 

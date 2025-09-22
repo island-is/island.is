@@ -30,7 +30,6 @@ export const mapRentalApplicationData = (
 ) => {
   const {
     landlords,
-    landlordRepresentatives,
     tenants,
     searchResults,
     units,
@@ -56,7 +55,7 @@ export const mapRentalApplicationData = (
     paymentMethodOther,
     paymentDateOptions,
     paymentDayOther,
-    paymentMethodBankAccountNumber,
+    paymentMethodBankAccountNumber: bankAccount,
     paymentMethodNationalId,
     securityType,
     securityDepositAmount,
@@ -82,11 +81,6 @@ export const mapRentalApplicationData = (
   const landlordsArray = [
     ...(landlords?.map((person) => ({
       ...mapPersonToArray(person),
-      isRepresentative: false,
-    })) || []),
-    ...(landlordRepresentatives?.map((person) => ({
-      ...mapPersonToArray(person),
-      isRepresentative: true,
     })) || []),
   ]
   const tenantsArray = [
@@ -154,7 +148,7 @@ export const mapRentalApplicationData = (
           paymentDateOptions === PaymentDay.Other ? paymentDayOther : null,
         bankAccountNumber:
           paymentMethodOptions === PaymentMethod.BankTransfer
-            ? paymentMethodBankAccountNumber
+            ? `${bankAccount?.bankNumber}-${bankAccount?.ledger}-${bankAccount?.accountNumber}`
             : null,
         nationalIdOfAccountOwner:
           paymentMethodOptions === PaymentMethod.BankTransfer

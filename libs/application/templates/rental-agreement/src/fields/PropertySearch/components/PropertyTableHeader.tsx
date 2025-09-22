@@ -1,4 +1,4 @@
-import { Table as T } from '@island.is/island-ui/core'
+import { Table } from '@island.is/island-ui/core'
 import {
   tableHeadingCell,
   tableCellExpand,
@@ -13,14 +13,14 @@ import * as m from '../../../lib/messages'
 export const PropertyTableHeader = () => {
   const { formatMessage } = useLocale()
   return (
-    <T.Head>
-      <T.Row>
-        <T.HeadData
+    <Table.Head>
+      <Table.Row>
+        <Table.HeadData
           box={{
             className: `${tableHeadingCell} ${tableCellExpand}`,
           }}
-        ></T.HeadData>
-        <T.HeadData
+        ></Table.HeadData>
+        <Table.HeadData
           box={{
             className: `${tableHeadingCell} ${tableCellFastNum}`,
           }}
@@ -28,33 +28,29 @@ export const PropertyTableHeader = () => {
           {formatMessage(
             m.registerProperty.search.searchResultHeaderPropertyId,
           )}
-        </T.HeadData>
-        <T.HeadData
+        </Table.HeadData>
+        <Table.HeadData
           box={{
             className: `${tableHeadingCell} ${tableCellMerking}`,
           }}
         >
           {formatMessage(m.registerProperty.search.searchResultHeaderMarking)}
-        </T.HeadData>
-        <T.HeadData
+        </Table.HeadData>
+        <Table.HeadData
           box={{
             className: `${tableHeadingCell} ${tableCellSize}`,
           }}
         >
-          {formatMessage(
-            m.registerProperty.search.searchResultHeaderPropertySize,
-          )}
-        </T.HeadData>
-        <T.HeadData
+          {formatMessage(m.misc.size)}
+        </Table.HeadData>
+        <Table.HeadData
           box={{
             className: `${tableHeadingCell} ${tableCellNumOfRooms}`,
           }}
         >
-          {formatMessage(
-            m.registerProperty.search.searchResultsHeaderNumOfRooms,
-          )}
-        </T.HeadData>
-      </T.Row>
-    </T.Head>
+          {formatMessage(m.misc.rooms)}
+        </Table.HeadData>
+      </Table.Row>
+    </Table.Head>
   )
 }

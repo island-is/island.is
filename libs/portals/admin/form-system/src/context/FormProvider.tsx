@@ -169,8 +169,8 @@ export const FormProvider: React.FC<{
       selectStatus,
       control,
     })
-    console.log('dependencies:', control.form.dependencies)
-    console.log('form:', control.form)
+    // console.log('dependencies:', control.form.dependencies)
+    // console.log('form:', control.form)
   }, [
     control.form?.id,
     control.activeItem?.type,

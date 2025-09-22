@@ -41,15 +41,18 @@ export const Done: Form = buildForm({
             }),
             buildCopyLinkField({
               id: 'copyLink',
-              link: ({ externalData }) =>
-                getValueViaPath(externalData, 'createLists.data.slug') ??
-                'https://island.is/',
+              link: ({ externalData }) => {
+                const slug =
+                  getValueViaPath(externalData, 'submit.data.slug') ??
+                  'https://island.is/'
+                return `${document.location.origin}${slug}`
+              },
               semiBoldLink: true,
               marginBottom: 'none',
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
-              url: '/minarsidur/min-gogn/listar/',
+              url: '/minarsidur/min-gogn/listar/sveitarstjornar-medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
               messageColor: 'blue600',

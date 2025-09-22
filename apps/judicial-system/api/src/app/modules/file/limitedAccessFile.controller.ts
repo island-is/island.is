@@ -251,4 +251,28 @@ export class LimitedAccessFileController {
       'zip',
     )
   }
+
+  @Get('verdictServiceCertificate/:defendantId')
+  @Header('Content-Type', 'application/pdf')
+  getServiceCertificatePdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting service certificate for verdict of defendant ${defendantId} and case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_VERDICT_SERVICE_CERTIFICATE_PDF,
+      id,
+      `defendant/${defendantId}/verdict/serviceCertificate`,
+      req,
+      res,
+      'pdf',
+    )
+  }
 }

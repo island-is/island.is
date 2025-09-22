@@ -2,6 +2,12 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   info: defineMessages({
+    senderNationalIdDescription: {
+      id: 'web.landspitali.memorialCard:info.senderNationalIdDescription',
+      defaultMessage:
+        'Með því að skrá kennitölu er hægt að nýta styrkinn til skattafsláttar. Ef ekki er skráð kennitala fæst ekki endurgreiðsla.',
+      description: 'Upplýsingar um kennitölureitinn',
+    },
     fundLabel: {
       id: 'web.landspitali.memorialCard:info.fundLabel',
       defaultMessage: 'Veldu nafn minningarsjóðs úr listanum',
@@ -74,10 +80,20 @@ export const m = {
       defaultMessage: 'Nafn',
       description: 'Nafn',
     },
+    senderEmailLabel: {
+      id: 'web.landspitali.memorialCard:info.senderEmailLabel',
+      defaultMessage: 'Netfang',
+      description: 'Netfang',
+    },
     senderNationalIdLabel: {
       id: 'web.landspitali.memorialCard:info.senderNationalIdLabel',
       defaultMessage: 'Kennitala',
       description: 'Kennitala',
+    },
+    senderNationalIdSkippedLabel: {
+      id: 'web.landspitali.memorialCard:info.senderNationalIdSkippedLabel',
+      defaultMessage: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
+      description: 'Ég hef ekki kennitölu eða vil ekki gefa upp kennitölu',
     },
     senderAddressLabel: {
       id: 'web.landspitali.memorialCard:info.senderAddressLabel',
@@ -116,6 +132,16 @@ export const m = {
     },
   }),
   overview: defineMessages({
+    errorTitle: {
+      id: 'web.landspitali.memorialCard:overview.errorTitle',
+      defaultMessage: 'Villa',
+      description: 'Titill á villuskilaboðum',
+    },
+    errorMessage: {
+      id: 'web.landspitali.memorialCard:overview.errorMessage',
+      defaultMessage: 'Ekki tókst að áframsenda þig á greiðslusíðuna',
+      description: 'Villuskilaboð',
+    },
     title: {
       id: 'web.landspitali.memorialCard:overview.title',
       defaultMessage: 'Yfirlit',
@@ -208,10 +234,21 @@ export const m = {
     },
   }),
   validation: defineMessages({
-    invalidNationalId: {
-      id: 'web.landspitali.memorialCard:validation.invalidNationalId',
+    genericFormErrorMessage: {
+      id: 'web.landspitali.memorialCard:validation.genericFormErrorMessage',
+      defaultMessage:
+        'Það vantar upplýsingar í einn af reitunum hér fyrir ofan',
+      description: 'Villuskilaboð fyrir form',
+    },
+    invalidNationalIdLength: {
+      id: 'web.landspitali.memorialCard:validation.invalidNationalIdLength',
       defaultMessage: 'Kennitala verður að vera 10 tölustafir',
       description: 'Kennitala verður að vera 10 tölustafir',
+    },
+    invalidNationalIdFormat: {
+      id: 'web.landspitali.memorialCard:validation.invalidNationalIdFormat',
+      defaultMessage: 'Kennitala er ekki gild',
+      description: 'Kennitala er ekki gild',
     },
     required: {
       id: 'web.landspitali.memorialCard:validation.required',

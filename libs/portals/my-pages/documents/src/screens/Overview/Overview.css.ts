@@ -1,5 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/constants'
+import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
 import { globalStyle, style } from '@vanilla-extract/css'
 
 export const btn = style({})
@@ -25,12 +25,37 @@ export const bullet = style({
 export const loading = style({
   minHeight: 200,
 })
-
-export const documentList = style({
+export const gridContainer = style({
   ...themeUtils.responsiveStyle({
+    xs: {
+      position: 'absolute',
+      height: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_SM}px)`,
+    },
     md: {
-      position: 'sticky',
-      top: SERVICE_PORTAL_HEADER_HEIGHT_LG,
+      height: 'inherit',
+      position: 'unset',
+    },
+  }),
+})
+
+export const gridRow = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      height: '100%',
+    },
+    md: {
+      height: 'inherit',
+    },
+  }),
+})
+
+export const documentDisplayGridColumn = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      overflow: 'hidden',
+    },
+    md: {
+      overflow: 'visible',
     },
   }),
 })

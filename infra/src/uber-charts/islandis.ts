@@ -68,12 +68,12 @@ import {
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
-import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra/infra'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
 import { serviceSetup as formSystemWebSetup } from '../../../apps/form-system/web/infra/form-system-web'
+import { serviceSetup as paymentFlowUpdateHandlerSetup } from '../../../apps/services/payment-flow-update-handler/infra/payment-flow-update-handler'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -120,6 +120,8 @@ const universityGatewayWorker = universityGatewayWorkerSetup()
 const formSystemApi = formSystemApiSetup()
 const formSystemWeb = formSystemWebSetup()
 
+const paymentFlowUpdateHandlerService = paymentFlowUpdateHandlerSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -134,6 +136,7 @@ const api = apiSetup({
   userNotificationService,
   paymentsApi: paymentsService,
   formSystemService: formSystemApi,
+  paymentFlowUpdateHandlerService,
 })
 
 const adminPortal = adminPortalSetup()
@@ -169,8 +172,6 @@ const userNotificationCleanupWorkerService =
 
 const userNotificationBirthdayWorkerService =
   userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
-
-const unicornApp = unicornAppSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
@@ -215,9 +216,11 @@ export const Services: EnvironmentServices = {
     contentfulEntryTagger,
     bffAdminPortalService,
     bffServicePortalService,
-    unicornApp,
     paymentsWebApp,
     paymentsService,
+    paymentFlowUpdateHandlerService,
+    formSystemApi,
+    formSystemWeb,
   ],
   staging: [
     appSystemApi,
@@ -255,9 +258,11 @@ export const Services: EnvironmentServices = {
     universityGatewayWorker,
     bffServicePortalService,
     bffAdminPortalService,
-    unicornApp,
     paymentsWebApp,
     paymentsService,
+    paymentFlowUpdateHandlerService,
+    formSystemApi,
+    formSystemWeb,
   ],
   dev: [
     appSystemApi,
@@ -301,9 +306,9 @@ export const Services: EnvironmentServices = {
     paymentsWebApp,
     paymentsService,
     bffServicePortalService,
-    unicornApp,
     formSystemApi,
     formSystemWeb,
+    paymentFlowUpdateHandlerService,
   ],
 }
 
