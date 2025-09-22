@@ -1,28 +1,32 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import { FormSystemApplication } from '@island.is/api/schema'
 import {
   CREATE_APPLICATION,
   DELETE_APPLICATION,
   GET_ALL_APPLICATIONS,
 } from '@island.is/form-system/graphql'
-import { useLazyQuery, useMutation } from '@apollo/client'
-import { useEffect, useState, useCallback } from 'react'
-import { FormSystemApplication } from '@island.is/api/schema'
+import {
+  ApplicationList,
+  ApplicationLoading,
+  m,
+} from '@island.is/form-system/ui'
 import {
   Box,
-  Page,
-  GridContainer,
-  Text,
   Button,
+  GridContainer,
+  Page,
+  Text,
 } from '@island.is/island-ui/core'
-import { ApplicationList } from '@island.is/form-system/ui'
+import { useNamespaces } from '@island.is/localization'
+import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
-import { ApplicationLoading } from '@island.is/form-system/ui'
+import { useNavigate, useParams } from 'react-router-dom'
 interface Params {
   slug?: string
 }
 
 export const Applications = () => {
+  useNamespaces('form.system')
   const { slug } = useParams() as Params
   const navigate = useNavigate()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])

@@ -1,6 +1,6 @@
-import { m, webMessages } from '../../../lib/messages'
-import { GridColumn, GridRow, Input, Box } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
+import { Box, GridColumn, GridRow, Input } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 
 interface Props {
   nationalId?: string
@@ -9,7 +9,8 @@ interface Props {
 }
 
 export const NationalIdField = ({ nationalId, name, disabled }: Props) => {
-  const { formatMessage } = useIntl()
+  // const { formatMessage } = useIntl()
+  const { formatMessage } = useLocale()
   return (
     <GridRow>
       <GridColumn span={['12/12', '12/12', '4/12', '4/12']}>
@@ -25,10 +26,10 @@ export const NationalIdField = ({ nationalId, name, disabled }: Props) => {
       <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
         <Box marginTop={[2, 2, 0, 0]}>
           <Input
-            label={formatMessage(webMessages.fullName)}
+            label={formatMessage(m.fullName)}
             name="name"
             value={name}
-            placeholder={formatMessage(webMessages.fullName)}
+            placeholder={formatMessage(m.fullName)}
             disabled={true}
           />
         </Box>

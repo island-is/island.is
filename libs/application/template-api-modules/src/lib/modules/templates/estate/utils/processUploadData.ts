@@ -56,6 +56,26 @@ export const generateRawUploadData = (
     EstateSchema['estate']['guns']
   >(answers?.estate?.guns ?? [])
 
+  const processedClaims = filterAndRemoveRepeaterMetadata<
+    EstateSchema['estate']['claims']
+  >(answers?.estate?.claims ?? [])
+
+  const processedBankAccounts = filterAndRemoveRepeaterMetadata<
+    EstateSchema['estate']['bankAccounts']
+  >(answers?.estate?.bankAccounts ?? [])
+
+  const processedDebts = filterAndRemoveRepeaterMetadata<
+    NonNullable<EstateSchema['debts']>['data']
+  >(answers?.debts?.data ?? [])
+
+  const processedOtherAssets = filterAndRemoveRepeaterMetadata<
+    EstateSchema['estate']['otherAssets']
+  >(answers?.estate?.otherAssets ?? [])
+
+  const processedStocks = filterAndRemoveRepeaterMetadata<
+    EstateSchema['estate']['stocks']
+  >(answers?.estate?.stocks ?? [])
+
   const uploadData: UploadData = {
     deceased: {
       name: externalData.nameOfDeceased ?? '',
@@ -73,17 +93,17 @@ export const generateRawUploadData = (
     applicationType: answers.selectedEstate,
     caseNumber: externalData?.caseNumber ?? '',
     assets: expandAssetFrames(processedAssets),
-    claims: expandClaims(answers?.claims ?? []),
-    bankAccounts: expandBankAccounts(answers.bankAccounts ?? []),
-    debts: expandDebts(answers.debts ?? []),
+    claims: expandClaims(processedClaims),
+    bankAccounts: expandBankAccounts(processedBankAccounts),
+    debts: expandDebts(processedDebts),
     estateMembers: expandEstateMembers(processedEstateMembers),
     inventory: {
-      info: answers.inventory?.info ?? '',
-      value: answers.inventory?.value ?? '',
+      info: answers.estate?.inventory?.info ?? '',
+      value: answers.estate?.inventory?.value ?? '',
     },
     moneyAndDeposit: {
-      info: answers.moneyAndDeposit?.info ?? '',
-      value: answers.moneyAndDeposit?.value ?? '',
+      info: answers.estate?.moneyAndDeposit?.info ?? '',
+      value: answers.estate?.moneyAndDeposit?.value ?? '',
     },
     notifier: {
       email: answers.applicant.email ?? '',
@@ -93,8 +113,8 @@ export const generateRawUploadData = (
       ssn: answers.applicant.nationalId,
       autonomous: trueOrHasYes(answers.applicant.autonomous ?? 'false'),
     },
-    otherAssets: expandOtherAssets(answers.otherAssets ?? []),
-    stocks: expandStocks(answers.stocks ?? []),
+    otherAssets: expandOtherAssets(processedOtherAssets),
+    stocks: expandStocks(processedStocks),
     vehicles: expandAssetFrames(processedVehicles),
     estateWithoutAssetsInfo: {
       estateAssetsExist: trueOrHasYes(

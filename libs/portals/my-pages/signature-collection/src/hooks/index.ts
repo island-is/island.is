@@ -84,6 +84,7 @@ export const useGetSignedList = (
         collectionType,
       },
     },
+    skip: !collectionType,
   })
   const signedLists =
     (getSignedList?.signatureCollectionSignedList as SignatureCollectionSignedList[]) ??
@@ -165,6 +166,7 @@ export const useIsOwner = (
           collectionType,
         },
       },
+      skip: !collectionType,
     },
   )
 
@@ -247,18 +249,20 @@ export const useGetPdfReport = (
   listId: string,
   collectionType: SignatureCollectionCollectionType,
 ) => {
-  const { data: pdfReportData, loading: loadingReport } = useQuery(
-    getPdfReport,
-    {
-      variables: {
-        input: {
-          listId,
-          collectionType,
-        },
+  const {
+    data: pdfReportData,
+    loading: loadingReport,
+    refetch,
+  } = useQuery(getPdfReport, {
+    variables: {
+      input: {
+        listId,
+        collectionType,
       },
-      skip: !listId,
     },
-  )
+    skip: !listId,
+    fetchPolicy: 'no-cache',
+  })
   const report = pdfReportData?.signatureCollectionListOverview ?? {}
-  return { report, loadingReport }
+  return { report, loadingReport, refetch }
 }

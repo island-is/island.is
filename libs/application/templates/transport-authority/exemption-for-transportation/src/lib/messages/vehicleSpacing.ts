@@ -25,14 +25,14 @@ export const vehicleSpacing = {
     },
     convoyDescription: {
       id: 'ta.eft.application:vehicleSpacing.general.convoyDescription',
-      defaultMessage: 'Ökutæki - {vehiclePermno}, eftirvagn - {trailerPermno}',
+      defaultMessage: 'Bíll - {vehiclePermno}, eftirvagn - {trailerPermno}',
       description: 'Convoy description',
     },
   }),
   labels: defineMessages({
     vehicleToDolly: {
       id: 'ta.eft.application:vehicleSpacing.labels.vehicleToDolly',
-      defaultMessage: 'Ökutæki í dollý',
+      defaultMessage: 'Bíll í dollý',
       description: 'Vehicle space from vehicle to dolly label',
     },
     dollyToTrailer: {
@@ -42,7 +42,7 @@ export const vehicleSpacing = {
     },
     vehicleToTrailer: {
       id: 'ta.eft.application:vehicleSpacing.labels.vehicleToTrailer',
-      defaultMessage: 'Ökutæki í eftirvagn',
+      defaultMessage: 'Bíll í eftirvagn',
       description: 'Vehicle space from vehicle to trailer label',
     },
     metersSuffix: {

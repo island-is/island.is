@@ -37,9 +37,10 @@ import {
 } from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import {
-  AreaSummaryReport,
+  SummaryReport,
   mapAreaSummaryReport,
-} from './types/areaSummaryReport.dto'
+  mapCandidateSummaryReport,
+} from './types/summaryReport.dto'
 import { SignatureCollectionAdminClient } from './types/adminClient'
 
 type Api =
@@ -120,13 +121,20 @@ export class SignatureCollectionAdminClientService
   }
 
   async processCollection(collectionId: string, auth: Auth): Promise<Success> {
-    const collection = await this.getApiWithAuth(
-      this.adminApi,
-      auth,
-    ).adminMedmaelasofnunIDToggleSofnunPatch({
-      iD: parseInt(collectionId),
-    })
-    return { success: !!collection }
+    try {
+      const collection = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelasofnunIDToggleSofnunPatch({
+        iD: parseInt(collectionId),
+      })
+      return { success: !!collection }
+    } catch (error) {
+      return {
+        success: false,
+        reasons: error.body ? [error.body] : [],
+      }
+    }
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
@@ -205,6 +213,27 @@ export class SignatureCollectionAdminClientService
 
       let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
 
+      if (
+        collectionType === CollectionType.Parliamentary &&
+        !candidacy &&
+        !collectionName
+      ) {
+        // Fail safe for when we don't have the name of the candidacy
+        const user = await this.getApiWithAuth(
+          this.adminApi,
+          auth,
+        ).adminMedmaelasofnunIDEinsInfoKennitalaGet({
+          kennitala: owner.nationalId,
+          iD: parseInt(id),
+        })
+        collectionName = user.listabokstafur?.frambodNafn
+      }
+
+      const listName = (areaName: string) =>
+        collectionType === CollectionType.Parliamentary
+          ? candidacy?.nafn ?? collectionName
+          : `${owner.name} - ${areaName}`
+
       // If no candidacy exists, create one
       if (!candidacy) {
         candidacy = await adminApi.adminFrambodPost({
@@ -216,7 +245,7 @@ export class SignatureCollectionAdminClientService
             frambodNafn: collectionName,
             medmaelalistar: filteredAreas.map((area) => ({
               svaediID: parseInt(area.id),
-              listiNafn: `${owner.name} - ${area.name}`,
+              listiNafn: listName(area.name),
             })),
           },
         })
@@ -228,7 +257,7 @@ export class SignatureCollectionAdminClientService
             frambodID: candidacy.id,
             medmaelalistar: filteredAreas.map((area) => ({
               svaediID: parseInt(area.id),
-              listiNafn: `${owner.name} - ${area.name}`,
+              listiNafn: listName(area.name),
             })),
           },
         })
@@ -459,7 +488,7 @@ export class SignatureCollectionAdminClientService
     auth: Auth,
     collectionId: string,
     areaId: string,
-  ): Promise<AreaSummaryReport> {
+  ): Promise<SummaryReport> {
     try {
       const res = await this.getApiWithAuth(
         this.adminApi,
@@ -470,7 +499,24 @@ export class SignatureCollectionAdminClientService
       })
       return mapAreaSummaryReport(res)
     } catch {
-      return {} as AreaSummaryReport
+      return {} as SummaryReport
+    }
+  }
+
+  async getCandidateSummaryReport(
+    auth: Auth,
+    candidateId: string,
+  ): Promise<SummaryReport> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminFrambodIDInfoGet({
+        iD: parseInt(candidateId, 10),
+      })
+      return mapCandidateSummaryReport(res)
+    } catch {
+      return {} as SummaryReport
     }
   }
 

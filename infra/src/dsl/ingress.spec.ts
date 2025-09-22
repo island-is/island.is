@@ -26,6 +26,7 @@ describe('Ingress definitions', () => {
       primary: {
         host: { dev: 'a', staging: 'a', prod: 'a' },
         paths: ['/api'],
+        pathTypeOverride: 'ImplementationSpecific',
       },
       internal: {
         host: { dev: 'b', staging: 'b', prod: 'b' },
@@ -45,7 +46,13 @@ describe('Ingress definitions', () => {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
-        hosts: [{ host: 'a.staging01.devland.is', paths: ['/api'] }],
+        hosts: [
+          {
+            host: 'a.staging01.devland.is',
+            paths: ['/api'],
+            pathTypeOverride: 'ImplementationSpecific',
+          },
+        ],
       },
       'internal-alb': {
         annotations: {

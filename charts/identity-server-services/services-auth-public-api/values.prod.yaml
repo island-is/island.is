@@ -92,6 +92,7 @@ ingress:
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
       - host: 'innskra.island.is'
+        pathTypeOverride: 'ImplementationSpecific'
         paths:
           - '/api(/|$)(.*)'
 namespace: 'identity-server-admin'

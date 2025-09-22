@@ -10,6 +10,7 @@ export const GetListById = gql`
         name
         min
         max
+        collectionId
       }
       endTime
       startTime
@@ -28,6 +29,7 @@ export const GetListById = gql`
       collectionId
       slug
       numberOfSignatures
+      collectionType
     }
   }
 `
@@ -62,6 +64,7 @@ export const GetSignedList = gql`
         max
       }
       candidate {
+        name
         ownerName
         ownerBirthDate
       }
@@ -76,6 +79,7 @@ export const GetSignedList = gql`
       canUnsign
       slug
       signedDate
+      collectionType
     }
   }
 `
@@ -102,6 +106,7 @@ export const GetListsForUser = gql`
       candidate {
         ownerName
         ownerBirthDate
+        name
       }
       endTime
       startTime
@@ -109,6 +114,7 @@ export const GetListsForUser = gql`
       collectionId
       slug
       numberOfSignatures
+      collectionType
     }
   }
 `
@@ -143,6 +149,7 @@ export const GetListsForOwner = gql`
       slug
       numberOfSignatures
       maxReached
+      collectionType
     }
   }
 `
@@ -197,6 +204,25 @@ export const getPdfReport = gql`
       nrOfSignatures
       nrOfDigitalSignatures
       nrOfPaperSignatures
+      areaName
+    }
+  }
+`
+
+export const getPdfReportPresidentialCandidate = gql`
+  query signatureCollectionCandidateReport(
+    $input: SignatureCollectionCandidateIdInput!
+  ) {
+    signatureCollectionCandidateReport(input: $input) {
+      id
+      name
+      lists {
+        candidateName
+        listName
+        nrOfSignatures
+        nrOfDigitalSignatures
+        nrOfPaperSignatures
+      }
     }
   }
 `
