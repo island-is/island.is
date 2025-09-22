@@ -74,7 +74,10 @@ export const mapFeaturedGenericListItems = ({
         fields.automaticallyFetchItems && fields.genericList?.sys.id
           ? {
               genericListId: fields.genericList.sys.id,
-              lang: sys.locale === 'is-IS' ? 'is' : (sys.locale as ElasticsearchIndexLocale),
+              lang:
+                sys.locale === 'is-IS'
+                  ? 'is'
+                  : (sys.locale as ElasticsearchIndexLocale),
               tags,
               tagGroups,
             }
