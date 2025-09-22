@@ -11,8 +11,6 @@ import {
 import { m } from '../../lib/messages'
 import {
   ApplicationTypes,
-  Operation,
-  OpeningHours,
   OpeningHour,
 } from '../../lib/constants'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
