@@ -135,7 +135,8 @@ const template: ApplicationTemplate<
       {
         key: 'buyer.nationalId',
         isListed: true,
-        label: information.labels.buyer.nationalId,
+        isNationalId: true,
+        label: information.labels.buyer.title,
       },
       { key: 'buyer.approved', isListed: false },
       { key: 'buyerCoOwnerAndOperator.$.nationalId', isListed: false },
