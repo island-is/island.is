@@ -64,7 +64,7 @@ query Case($input: CaseQueryInput!) {
         externalPoliceDocumentId
         legalPaperRequestDate
         comment
-        defenderNationalId
+        deliveredToDefenderNationalId
         servedBy
       }
     }

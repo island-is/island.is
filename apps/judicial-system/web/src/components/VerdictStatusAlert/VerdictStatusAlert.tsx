@@ -132,7 +132,11 @@ const VerdictStatusAlertMessage = ({
     )
   }
 
-  if (!verdict.externalPoliceDocumentId) {
+  if (
+    verdict.verdictDeliveredToNationalCommissionersOffice &&
+    verdict.externalPoliceDocumentId &&
+    !verdict.serviceDate
+  ) {
     return (
       <AlertMessage
         type="info"
@@ -161,7 +165,6 @@ const VerdictStatusAlert = (props: {
 
   useEffect(() => {
     if (
-      !verdict?.defenderNationalId ||
       verdict?.serviceStatus !== VerdictServiceStatus.DEFENDER ||
       !lawyers ||
       lawyers.length === 0
@@ -169,37 +172,40 @@ const VerdictStatusAlert = (props: {
       return
     }
 
+    const deliveredToDefenderNationalId =
+      verdict.deliveredToDefenderNationalId ?? defendant.defenderNationalId
+
     setLawyer(
       lawyers.find(
-        (lawyer) => lawyer.nationalId === verdict.defenderNationalId,
+        (lawyer) => lawyer.nationalId === deliveredToDefenderNationalId,
       ),
     )
-  }, [lawyers, verdict?.defenderNationalId, verdict?.serviceStatus])
+  }, [
+    lawyers,
+    verdict?.deliveredToDefenderNationalId,
+    verdict?.serviceStatus,
+    defendant.defenderNationalId,
+  ])
 
-  console.log({
-    test: currentVerdict.verdictDeliveredToNationalCommissionersOffice,
-  })
-  return currentVerdict.verdictDeliveredToNationalCommissionersOffice ? (
-    verdictLoading ? (
-      <Box display="flex" justifyContent="center" paddingY={5}>
-        <LoadingDots />
-      </Box>
-    ) : !verdict ? (
-      <Box marginBottom={2}>
-        <AlertMessage
-          type="error"
-          title={'Ekki tókst að sækja stöðu birtingar'}
-          message={'Vinsamlegast reyndu aftur síðar'}
-        />
-      </Box>
-    ) : (
-      <VerdictStatusAlertMessage
-        verdict={verdict}
-        lawyer={lawyer}
-        defendantName={defendant.name ?? ''}
+  return verdictLoading ? (
+    <Box display="flex" justifyContent="center" paddingY={5}>
+      <LoadingDots />
+    </Box>
+  ) : !verdict ? (
+    <Box marginBottom={2}>
+      <AlertMessage
+        type="error"
+        title={'Ekki tókst að sækja stöðu birtingar'}
+        message={'Vinsamlegast reyndu aftur síðar'}
       />
-    )
-  ) : null
+    </Box>
+  ) : (
+    <VerdictStatusAlertMessage
+      verdict={verdict}
+      lawyer={lawyer}
+      defendantName={defendant.name ?? ''}
+    />
+  )
 }
 
 export default VerdictStatusAlert

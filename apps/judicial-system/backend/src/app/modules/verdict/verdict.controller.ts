@@ -41,6 +41,7 @@ import {
   PdfService,
 } from '../case'
 import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
+import { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
 import { Case, Defendant, Verdict } from '../repository'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
@@ -61,6 +62,7 @@ import { VerdictService } from './verdict.service'
 export class VerdictController {
   constructor(
     private readonly verdictService: VerdictService,
+    private readonly lawyerRegistryService: LawyerRegistryService,
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -114,10 +116,17 @@ export class VerdictController {
       `Getting verdict service certificate for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
+    const deliveredToDefender = verdict.deliveredToDefenderNationalId
+      ? await this.lawyerRegistryService.getByNationalId(
+          verdict.deliveredToDefenderNationalId,
+        )
+      : undefined
+
     const pdf = await this.pdfService.getVerdictServiceCertificatePdf(
       theCase,
       defendant,
       verdict,
+      deliveredToDefender?.name ?? defendant.defenderName,
     )
 
     res.end(pdf)

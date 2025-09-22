@@ -63,5 +63,5 @@ export class Verdict {
   comment?: string
 
   @Field(() => String, { nullable: true })
-  defenderNationalId?: string
+  deliveredToDefenderNationalId?: string
 }

@@ -38,6 +38,7 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   | 'externalPoliceDocumentId'
   | 'serviceRequirement'
   | 'servedBy'
+  | 'deliveredToDefenderNationalId'
   | 'appealDecision'
   | 'appealDate'
   | 'serviceInformationForDefendant'
