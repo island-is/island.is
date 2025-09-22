@@ -12,12 +12,17 @@ interface FeaturedGenericListItemsSliceProps {
 export const FeaturedGenericListItemsSlice = ({
   slice,
 }: FeaturedGenericListItemsSliceProps) => {
+  console.log(slice)
   return (
     <Stack space={2}>
       {slice.items.map((item) => {
-        if (item.genericList?.itemType === GenericListItemType.Clickable) {
-          // TODO: Figure out how we can know the baseUrl for the clickable items
-          return <ClickableItem item={item} key={item.id} />
+        if (
+          item.genericList?.itemType === GenericListItemType.Clickable &&
+          Boolean(slice.baseUrl)
+        ) {
+          return (
+            <ClickableItem item={item} key={item.id} baseUrl={slice.baseUrl} />
+          )
         }
         return <NonClickableItem item={item} key={item.id} />
       })}

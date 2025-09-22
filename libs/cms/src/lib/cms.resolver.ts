@@ -1030,7 +1030,7 @@ export class GenericListResolver {
 export class FeaturedGenericListItemsResolver {
   constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
-  @ResolveField(() => [GenericList])
+  @ResolveField(() => [GenericListItem])
   async items(
     @Parent()
     {

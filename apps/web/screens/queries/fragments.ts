@@ -1067,10 +1067,14 @@ export const slices = gql`
   fragment FeaturedGenericListItemsFields on FeaturedGenericListItems {
     __typename
     id
+    baseUrl
     items {
       id
       date
       title
+      genericList {
+        itemType
+      }
       cardIntro {
         ...HtmlFields
       }

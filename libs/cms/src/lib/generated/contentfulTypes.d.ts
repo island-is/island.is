@@ -1311,6 +1311,12 @@ export interface IFeaturedGenericListItemsFields {
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
+
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
+  /** Organization Subpage */
+  organizationSubpage: IOrganizationSubpage
 }
 
 export interface IFeaturedGenericListItems

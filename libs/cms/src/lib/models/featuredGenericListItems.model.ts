@@ -3,11 +3,13 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 
-import { IFeaturedGenericListItems } from '../generated/contentfulTypes'
+import type { IFeaturedGenericListItems } from '../generated/contentfulTypes'
 
 import { GenericListItem, mapGenericListItem } from './genericListItem.model'
 import { GetGenericListItemsInput } from '../dto/getGenericListItems.input'
+import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 
+@ObjectType()
 class FeaturedGenericListItemsField {
   @CacheField(() => [GenericListItem])
   items!: Array<GenericListItem>
@@ -23,6 +25,9 @@ export class FeaturedGenericListItems {
 
   @CacheField(() => [GenericListItem])
   items!: FeaturedGenericListItemsField
+
+  @Field(() => String)
+  baseUrl!: string
 
   @Field(() => Boolean, { nullable: true })
   automaticallyFetchItems!: boolean
@@ -46,10 +51,22 @@ export const mapFeaturedGenericListItems = ({
 
   const tagGroups = Object.fromEntries(tagGroupsMap)
 
+  let baseUrl = ''
+
+  if (
+    fields.organizationPage?.fields?.slug &&
+    fields.organizationSubpage?.fields?.slug
+  ) {
+    baseUrl = `/${getOrganizationPageUrlPrefix(sys.locale)}/${
+      fields.organizationPage.fields.slug
+    }/${fields.organizationSubpage.fields.slug}`
+  }
+
   return {
     typename: 'FeaturedGenericListItems',
     id: sys.id,
     automaticallyFetchItems: fields.automaticallyFetchItems ?? false,
+    baseUrl,
     items: {
       items: (fields.items ?? []).map(mapGenericListItem),
       input: fields.automaticallyFetchItems
