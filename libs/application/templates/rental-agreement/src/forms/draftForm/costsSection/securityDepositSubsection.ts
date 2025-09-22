@@ -32,6 +32,7 @@ import {
   getSecurityDepositTypeOptions,
 } from '../../../utils/options'
 import * as m from '../../../lib/messages'
+import { onlyCharacters } from '../../../utils/utils'
 
 export const securityDepositSubsection = buildSubSection({
   condition: securityDepositRequired,
@@ -89,6 +90,11 @@ export const securityDepositSubsection = buildSubSection({
           title: m.securityDeposit.thirdPartyGuaranteeInfoTitle,
           placeholder: m.securityDeposit.thirdPartyGuaranteeInfoPlaceholder,
           maxLength: 50,
+          setOnChange: (optionValue) =>
+            onlyCharacters(
+              optionValue,
+              'securityDeposit.thirdPartyGuaranteeInfo',
+            ),
         }),
 
         // Tegund tryggingar: Leigugreiðslu- og viðskilnaðartrygging
@@ -142,8 +148,6 @@ export const securityDepositSubsection = buildSubSection({
           title: m.misc.amount,
           placeholder: m.securityDeposit.securityAmountOtherPlaceholder,
           variant: 'currency',
-          condition: (answers) =>
-            !!securityDepositIsLandlordsMutualFundOrOther(answers),
           maxLength: 14, // 8 char number since the dots, spaces and "kr." counts to the limit
         }),
         buildHiddenInputWithWatchedValue({

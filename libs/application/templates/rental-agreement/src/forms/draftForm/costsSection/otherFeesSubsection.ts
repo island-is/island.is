@@ -158,6 +158,7 @@ export const otherFeesSubsection = buildSubSection({
               label: m.otherFees.otherCostsDescriptionLabel,
               width: 'half',
               type: 'text',
+              maxLength: 25,
             },
             amount: {
               component: 'input',

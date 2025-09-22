@@ -37,12 +37,6 @@ const personInfoSchema = z.object({
     .refine((val) => !!val && val.trim().length > 0 && isValidEmail(val), {
       params: m.landlordAndTenantDetails.emailInvalidError,
     }),
-  address: z
-    .string()
-    .optional()
-    .refine((x) => !!x && x.trim().length > 0, {
-      params: m.landlordAndTenantDetails.addressEmptyError,
-    }),
 })
 
 const landLordInfoSchema = z.object({

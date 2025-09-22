@@ -10,6 +10,7 @@ import { applicationAnswers } from '../../../shared'
 import { Routes, RentalHousingConditionInspector } from '../../../utils/enums'
 import { getInspectorOptions } from '../../../utils/options'
 import * as m from '../../../lib/messages'
+import { onlyCharacters } from '../../../utils/utils'
 
 export const conditionSubsection = buildSubSection({
   id: Routes.CONDITION,
@@ -35,16 +36,18 @@ export const conditionSubsection = buildSubSection({
           width: 'half',
         }),
         buildTextField({
-          id: 'condition.inspectorName',
-          title: m.misc.fullName,
-          placeholder: m.housingCondition.independentInspectorNamePlaceholder,
           condition: (answers) => {
             const { inspector } = applicationAnswers(answers)
             return (
               inspector === RentalHousingConditionInspector.INDEPENDENT_PARTY
             )
           },
+          id: 'condition.inspectorName',
+          title: m.misc.fullName,
+          placeholder: m.housingCondition.independentInspectorNamePlaceholder,
           required: true,
+          setOnChange: (optionValue) =>
+            onlyCharacters(optionValue, 'condition.inspectorName'),
         }),
         buildDescriptionField({
           id: 'condition.resultsTitle',
@@ -59,6 +62,7 @@ export const conditionSubsection = buildSubSection({
           placeholder: m.housingCondition.inspectionResultsInputPlaceholder,
           variant: 'textarea',
           rows: 8,
+          maxLength: 2000,
         }),
         buildFileUploadField({
           id: 'condition.resultsFiles',
