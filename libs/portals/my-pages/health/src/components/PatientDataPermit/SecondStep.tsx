@@ -79,13 +79,6 @@ const SecondStep: FC<SecondStepProps> = ({
           placeholderText={formatMessage(messages.choosePeriod)}
           size="xs"
         />
-        <DatePicker
-          backgroundColor="blue"
-          label={formatMessage(messages.period)}
-          highlightWeekends={false}
-          placeholderText={formatMessage(messages.choosePeriod)}
-          size="xs"
-        />
       </Box>
       <Box
         display="flex"
