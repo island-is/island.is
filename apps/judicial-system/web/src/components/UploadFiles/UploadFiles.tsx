@@ -99,7 +99,7 @@ const UploadFiles: FC<Props> = (props) => {
             caseFile={{
               ...file,
               id: file.id ?? '',
-              canEdit: file.percent === 0,
+              canEdit: file.percent === 0 ? ['fileName', 'displayDate'] : [],
               canOpen: true,
             }}
             onOpen={() => file.previewUrl && window.open(file.previewUrl)}
