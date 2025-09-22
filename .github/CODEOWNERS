@@ -498,7 +498,6 @@ codemagic.yaml                                                                  
 /.githooks/                                                                                                                 @island-is/devops
 /apps/reference-backend/                                                                                                    @island-is/devops
 /apps/github-actions-cache/                                                                                                 @island-is/devops
-/apps/unicorn-app/                                                                                                          @island-is/devops
 /infra/                                                                                                                     @island-is/devops
 **/infra/                                                                                                                   @island-is/devops
 /libs/logging/                                                                                                              @island-is/devops

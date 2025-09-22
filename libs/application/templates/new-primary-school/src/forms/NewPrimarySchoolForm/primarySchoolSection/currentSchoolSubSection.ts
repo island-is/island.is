@@ -21,10 +21,7 @@ import {
   getInternationalSchoolsIds,
   getMunicipalityCodeBySchoolUnitId,
 } from '../../../utils/newPrimarySchoolUtils'
-import {
-  FriggSchoolsByMunicipalityQuery,
-  OrganizationModelTypeEnum,
-} from '../../../types/schema'
+import { Query, OrganizationModelTypeEnum } from '@island.is/api/schema'
 import { isCurrentSchoolRegistered } from '../../../utils/conditionUtils'
 
 export const currentSchoolSubSection = buildSubSection({
@@ -99,10 +96,9 @@ export const currentSchoolSubSection = buildSubSection({
             return applicantMunicipalityCode
           },
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggSchoolsByMunicipalityQuery,
+            })
 
             return (
               data?.friggSchoolsByMunicipality
@@ -131,10 +127,9 @@ export const currentSchoolSubSection = buildSubSection({
           loadingError: coreErrorMessages.failedDataProvider,
           updateOnSelect: ['currentSchool.municipality'],
           loadOptions: async ({ apolloClient, selectedValues }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggSchoolsByMunicipalityQuery,
+            })
 
             const municipalityCode = selectedValues?.[0]
 

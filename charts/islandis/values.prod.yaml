@@ -1848,7 +1848,6 @@ namespaces:
     - 'contentful-apps'
     - 'contentful-entry-tagger'
     - 'portals-my-pages'
-    - 'unicorn-app'
     - 'payments'
     - 'services-payments'
     - 'services-payment-flow-update-handler'
