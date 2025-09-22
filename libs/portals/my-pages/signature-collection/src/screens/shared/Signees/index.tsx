@@ -12,9 +12,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import {
-  SignatureCollectionCollectionType,
-} from '@island.is/api/schema'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 import sortBy from 'lodash/sortBy'
 import EditPage from './EditPage'
 import { SkeletonTable } from '../../../lib/skeletons'
