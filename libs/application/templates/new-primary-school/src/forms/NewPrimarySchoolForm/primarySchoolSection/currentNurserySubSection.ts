@@ -8,7 +8,10 @@ import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
-import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
+import {
+  FriggSchoolsByMunicipalityQuery,
+  OrganizationModelTypeEnum,
+} from '../../../types/schema'
 
 export const currentNurserySubSection = buildSubSection({
   id: 'currentNurserySubSection',
@@ -36,12 +39,21 @@ export const currentNurserySubSection = buildSubSection({
                 query: friggSchoolsByMunicipalityQuery,
               })
 
-            return (
-              data?.friggSchoolsByMunicipality?.map(({ name }) => ({
-                value: name,
-                label: name,
-              })) ?? []
-            )
+            const options =
+              data?.friggSchoolsByMunicipality
+                ?.filter(
+                  ({ type, managing, unitId }) =>
+                    type === OrganizationModelTypeEnum.Municipality &&
+                    Boolean(unitId) &&
+                    Array.isArray(managing) &&
+                    managing.length > 0,
+                )
+                ?.map(({ name, unitId }) => ({
+                  value: unitId as string,
+                  label: name,
+                })) ?? []
+
+            return options.sort((a, b) => a.label.localeCompare(b.label))
           },
         }),
         buildAsyncSelectField({
@@ -58,14 +70,20 @@ export const currentNurserySubSection = buildSubSection({
                 query: friggSchoolsByMunicipalityQuery,
               })
 
-            return (
+            const selectedMunicipalityUnitId = selectedValues?.[0]
+
+            const nurseries =
               data?.friggSchoolsByMunicipality
-                ?.find(({ name }) => name === selectedValues?.[0])
-                ?.managing?.map((nursery) => ({
-                  value: nursery.id,
-                  label: nursery.name,
+                ?.find(({ unitId }) => unitId === selectedMunicipalityUnitId)
+                ?.managing?.filter(
+                  ({ type }) => type === OrganizationModelTypeEnum.ChildCare,
+                )
+                ?.map(({ id, name }) => ({
+                  value: id,
+                  label: name,
                 })) ?? []
-            )
+
+            return nurseries.sort((a, b) => a.label.localeCompare(b.label))
           },
           condition: (answers) => {
             const { currentNurseryMunicipality } =
