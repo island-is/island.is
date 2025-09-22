@@ -1,3 +1,4 @@
+import format from 'date-fns/format'
 import type { EventLocation, EventTime } from '../graphql/schema'
 
 export const formatEventLocation = (eventLocation: EventLocation) => {
@@ -24,4 +25,16 @@ export const formatEventTime = (eventTime: EventTime, separator = '-') => {
   return `${eventTime.startTime}${
     eventTime.endTime ? ` ${separator} ${eventTime.endTime}` : ''
   }`
+}
+
+export const formatEventDates = (dateFrom: string, dateTo?: string) => {
+  const sameYear = (dateTo && dateFrom)
+      ? new Date(dateFrom).getFullYear() === new Date(dateTo).getFullYear()
+      : false
+
+  const formattedDate =
+    dateFrom && format(new Date(dateFrom), sameYear ? 'dd MMM' : 'dd MMM yyyy')
+  const formattedDate2 = dateTo && format(new Date(dateTo), 'dd MMM yyyy')
+
+  return formattedDate2 ? `${formattedDate} - ${formattedDate2}` : formattedDate
 }

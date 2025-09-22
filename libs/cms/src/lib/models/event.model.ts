@@ -6,7 +6,6 @@ import { Image, mapImage } from './image.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SliceUnion, mapDocument } from '../unions/slice.union'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
-import addDays from 'date-fns/addDays'
 
 @ObjectType()
 class EventLocation {

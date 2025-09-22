@@ -101,11 +101,13 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
     organizationPage.slug,
   ]).href
 
-  const isInfoCardVariant = Boolean(
+  /*const isInfoCardVariant = Boolean(
     namespace?.organizationsWithInfoCardEventListVariant?.includes(
       organizationPage.slug,
     ),
-  )
+  )*/
+
+  const isInfoCardVariant = true;
 
   return (
     <OrganizationWrapper

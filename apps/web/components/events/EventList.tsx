@@ -21,7 +21,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { formatEventLocation } from '@island.is/web/utils/event'
+import { formatEventDates, formatEventLocation } from '@island.is/web/utils/event'
 
 interface EventListProps {
   namespace: Record<string, string>
@@ -66,13 +66,6 @@ export const EventList = ({
       {variant === 'InfoCard' && (
         <Stack space={4}>
           {eventList.map((event) => {
-            const formattedStartDate = event.startDateTime
-              ? format(new Date(event.startDateTime), 'do MMMM yyyy HH:mm')
-              : ''
-            const formattedEndDate = event.startDateTime
-              ? format(new Date(event.startDateTime), 'do MMMM yyyy HH:mm')
-              : ''
-
             const link = linkResolver('organizationevent', [
               parentPageSlug,
               event.slug,
@@ -94,7 +87,7 @@ export const EventList = ({
             return (
               <InfoCard
                 key={event.id}
-                eyebrow={`${formattedStartDate} - ${formattedEndDate}`}
+                eyebrow={event.startDateTime ? formatEventDates(event.startDateTime, event.endDateTime ?? undefined) : ''}
                 id={event.id}
                 link={{
                   href: link.href,
@@ -154,8 +147,8 @@ export const EventList = ({
                 location={eventItem.location}
                 namespace={namespace}
                 image={eventItem.thumbnailImage?.url || ''}
-                startTime={eventItem.time?.startTime ?? ''}
-                endTime={eventItem.time?.endTime ?? ''}
+                startTime={eventItem.startDateTime ?? ''}
+                endTime={eventItem.endDateTime ?? ''}
                 href={eventHref}
                 date={eventItem.startDate}
               />

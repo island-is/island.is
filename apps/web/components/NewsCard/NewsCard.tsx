@@ -10,8 +10,8 @@ import {
 } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
 import { Image } from '@island.is/web/graphql/schema'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
+import { formatEventDates} from '../../utils/event'
 import * as styles from './NewsCard.css'
 
 interface NewsCardProps {
@@ -44,17 +44,7 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
   mini,
 }) => {
   const [ref, { width }] = useMeasure()
-  const { format } = useDateUtils()
-
   const showImage = width > 600
-
-  const sameYear = (dateTo && date)
-      ? new Date(date).getFullYear() === new Date(dateTo).getFullYear()
-      : false
-
-  const formattedDate =
-    date && format(new Date(date), (sameYear || !dateTo) ? 'dd MMM' : 'dd MMM yyyy')
-  const formattedDate2 = dateTo && format(new Date(dateTo), 'dd MMM yyyy')
 
   if (mini) {
     return (
@@ -72,11 +62,9 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
           paddingX={[3, 3, 0]}
         >
           <Stack space={2}>
-            {!!formattedDate && (
+            {date !== undefined && (
               <Text variant="eyebrow" color={dateTextColor}>
-                {formattedDate2
-                  ? `${formattedDate} - ${formattedDate2}`
-                  : formattedDate}
+                {formatEventDates(date, dateTo)}
               </Text>
             )}
             <Text variant="h2" as={titleAs} color={titleTextColor}>
@@ -116,11 +104,11 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
             justifyContent="spaceBetween"
           >
             <Stack space={2}>
-              <Text variant="eyebrow" color={dateTextColor}>
-                {`${formattedDate} ${
-                  formattedDate2 ? '- ' + formattedDate2 : ''
-                }`}
-              </Text>
+              {date !== undefined && (
+                <Text variant="eyebrow" color={dateTextColor}>
+                  {formatEventDates(date, dateTo)}
+                </Text>
+              )}
               <Text variant={titleVariant} as={titleAs} color={titleTextColor}>
                 {title}
               </Text>
