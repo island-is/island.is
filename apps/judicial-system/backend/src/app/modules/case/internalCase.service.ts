@@ -28,6 +28,7 @@ import {
   CaseState,
   CaseType,
   EventType,
+  hasGeneratedCourtRecordPdf,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -1123,6 +1124,28 @@ export class InternalCaseService {
           }
         }) ?? [],
     )
+      .then(async (courtDocuments) => {
+        if (
+          hasGeneratedCourtRecordPdf(
+            theCase.state,
+            theCase.indictmentRulingDecision,
+            theCase.courtSessions,
+            user,
+          )
+        ) {
+          const pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+            theCase,
+            user,
+          )
+
+          courtDocuments.push({
+            type: PoliceDocumentType.RVTB,
+            courtDocument: Base64.btoa(pdf.toString('binary')),
+          })
+        }
+
+        return courtDocuments
+      })
       .then((courtDocuments) =>
         this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments),
       )
