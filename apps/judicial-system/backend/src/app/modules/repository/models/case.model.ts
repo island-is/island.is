@@ -1047,6 +1047,7 @@ export class Case extends Model {
 
   /**********
    * The hash of the confirmed generated indictment in indictment cases
+   * and the hash algorithm used to create the hash
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -1054,6 +1055,7 @@ export class Case extends Model {
 
   /**********
    * The hash of the confirmed generated court record in indictment cases
+   * and the hash algorithm used to create the hash
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
