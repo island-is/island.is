@@ -4,7 +4,7 @@ import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { EMAIL_REGEX } from '@island.is/application/core'
 import { RepeaterItem, StateLifeCycle } from '@island.is/application/types'
-import { ApplicantsInfo, PropertyUnit } from '../shared'
+import { ApplicantsInfo, BankAccount, PropertyUnit } from '../shared'
 
 import * as m from '../lib/messages'
 
@@ -56,12 +56,8 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   return phone?.formatNational() || phoneNumber
 }
 
-export const formatBankInfo = (bankInfo: string) => {
-  const formattedBankInfo = bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
-  if (formattedBankInfo && formattedBankInfo.length >= 6) {
-    return formattedBankInfo
-  }
-  return bankInfo
+export const formatBankInfo = (bankInfo: BankAccount) => {
+  return `${bankInfo.bankNumber}-${bankInfo.ledger}-${bankInfo.accountNumber}`
 }
 
 export const hasDuplicateApplicants = (
