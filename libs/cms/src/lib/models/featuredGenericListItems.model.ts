@@ -70,17 +70,15 @@ export const mapFeaturedGenericListItems = ({
     baseUrl,
     items: {
       items: (fields.items ?? []).map(mapGenericListItem),
-      input: fields.automaticallyFetchItems
-        ? {
-            genericListId: fields.genericList?.sys.id ?? '',
-            lang:
-              sys.locale === 'is-IS'
-                ? 'is'
-                : (sys.locale as ElasticsearchIndexLocale),
-            tags,
-            tagGroups,
-          }
-        : null,
+      input:
+        fields.automaticallyFetchItems && fields.genericList?.sys.id
+          ? {
+              genericListId: fields.genericList.sys.id,
+              lang: sys.locale === 'is-IS' ? 'is' : (sys.locale as ElasticsearchIndexLocale),
+              tags,
+              tagGroups,
+            }
+          : null,
     },
   }
 }
