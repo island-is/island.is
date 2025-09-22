@@ -10,17 +10,16 @@ import {
 } from '@island.is/api/schema'
 import { addConstituency } from '../../../../hooks/graphql/mutations'
 import { useMutation } from '@apollo/client'
+import { useIsOwner } from '../../../../hooks'
 
 const AddConstituencyModal = ({
   lists,
   collection,
   candidateId,
-  refetch,
 }: {
   lists: SignatureCollectionList[]
   collection: SignatureCollection
   candidateId: string
-  refetch: () => void
 }) => {
   const { formatMessage } = useLocale()
   const currentConstituencies = lists.map(
@@ -34,12 +33,19 @@ const AddConstituencyModal = ({
   const [selectedConstituencies, setSelectedConstituencies] = useState<
     string[]
   >([])
+  const { refetchIsOwner } = useIsOwner(collection?.collectionType)
 
   const [addNewConstituency, { loading }] = useMutation(addConstituency, {
-    onCompleted: () => {
-      setModalIsOpen(false)
-      refetch()
-      toast.success(formatMessage(m.addConstituencySuccess))
+    onCompleted: (res) => {
+      const success = res?.signatureCollectionAddAreas.success
+      if (success) {
+        setSelectedConstituencies([])
+        setModalIsOpen(false)
+        refetchIsOwner()
+        toast.success(formatMessage(m.addConstituencySuccess))
+      } else {
+        toast.error(formatMessage(m.addConstituencyError))
+      }
     },
     onError: () => {
       toast.error(formatMessage(m.addConstituencyError))

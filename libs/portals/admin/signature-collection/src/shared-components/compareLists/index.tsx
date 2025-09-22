@@ -34,6 +34,10 @@ const CompareLists = ({
 }) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
+  const [signatureInReview, setSignatureInReview] =
+    useState<SignatureCollectionSignature>()
+
   const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
   const [uploadResults, setUploadResults] =
     useState<Array<SignatureCollectionSignature>>()
@@ -187,7 +191,10 @@ const CompareLists = ({
                               variant="text"
                               size="small"
                               colorScheme="destructive"
-                              onClick={() => unSignFromList(result.id)}
+                              onClick={() => {
+                                setConfirmModalIsOpen(true)
+                                setSignatureInReview(result)
+                              }}
                             >
                               {formatMessage(m.unsignFromList)}
                             </Button>
@@ -202,6 +209,34 @@ const CompareLists = ({
               </Table>
             </Box>
           )}
+        </Box>
+      </Modal>
+      <Modal
+        id="confirmRemoveSignatureFromListModal"
+        isVisible={confirmModalIsOpen}
+        title={`${signatureInReview?.signee?.name ?? ''} - ${formatMessage(
+          m.removeSignatureFromListModalDescription,
+        )}`}
+        onClose={() => {
+          setConfirmModalIsOpen(false)
+        }}
+        hideOnClickOutside={false}
+        closeButtonLabel={''}
+        label={''}
+      >
+        <Text>{formatMessage(m.confirmRemoveSignatureFromList)}</Text>
+        <Box display="flex" justifyContent="center" marginY={5}>
+          <Button
+            colorScheme="destructive"
+            loading={loading}
+            onClick={() => {
+              signatureInReview?.id && unSignFromList(signatureInReview.id)
+              setSignatureInReview(undefined)
+              setConfirmModalIsOpen(false)
+            }}
+          >
+            {formatMessage(m.removeSignatureFromListButton)}
+          </Button>
         </Box>
       </Modal>
     </Box>

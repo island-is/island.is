@@ -12,5 +12,5 @@ export enum Roles {
 }
 
 export enum ApiActions {
-  submitApplication = 'submit',
+  submitApplication = 'createLists',
 }
