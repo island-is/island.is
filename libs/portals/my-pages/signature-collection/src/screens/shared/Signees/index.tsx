@@ -193,10 +193,7 @@ const Signees = ({
       ) : (
         <SkeletonTable />
       )}
-      <PaperSignees
-        listId={id ?? ''}
-        collectionType={collectionType}
-      />
+      <PaperSignees listId={id ?? ''} collectionType={collectionType} />
     </Box>
   )
 }
