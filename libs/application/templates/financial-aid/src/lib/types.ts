@@ -4,7 +4,7 @@ import {
   ApplicationAnswerFile,
   FieldBaseProps,
   NationalRegistryIndividual,
-  NationalRegistrySpouse,
+  NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 import {
   DirectTaxPayment,
@@ -29,7 +29,7 @@ export interface ExternalData {
     status: StatusProvider
   }
   nationalRegistrySpouse: {
-    data?: NationalRegistrySpouse
+    data?: NationalRegistrySpouseV3
     date: string
     status: StatusProvider
   }
