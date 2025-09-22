@@ -49,7 +49,7 @@ export const employmentParticipation = defineMessages({
   },
   livedAbroadQuestion: {
     id: 'dp.application:employmentParticipation.livedAbroadQuestion',
-    defaultMessage: 'Hvar hefur þú dvalið og hversu lengi?',
+    defaultMessage: 'Hvar og hversu lengi hefur þú verið búsettur erlendis eftir 16 ár aldur?',
     description: 'Have you lived abroad and how long?',
   },
   country: {

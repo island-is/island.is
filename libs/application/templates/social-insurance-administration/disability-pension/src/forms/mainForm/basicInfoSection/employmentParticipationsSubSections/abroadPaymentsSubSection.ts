@@ -1,4 +1,5 @@
 import {
+    buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildTableRepeaterField,
@@ -30,10 +31,17 @@ export const abroadPaymentsSubSection = buildMultiField({
       required: true,
       options: yesOrNoOptions,
     }),
+    buildDescriptionField({
+      id: `${SectionRouteEnum.ABROAD_PAYMENT}.listTitle`,
+      title:m.employmentParticipation.abroadPaymentsTableTitle,
+      condition: abroadPaymentsCondition,
+      titleVariant: 'h5',
+      space: 5
+    }),
     buildTableRepeaterField({
       id: `${SectionRouteEnum.ABROAD_PAYMENT}.list`,
       condition: abroadPaymentsCondition,
-      formTitle: m.employmentParticipation.abroadPaymentsTableTitle,
+      marginTop: 0,
       addItemButtonText: m.employmentParticipation.addCountry,
       saveItemButtonText: m.employmentParticipation.save,
       removeButtonTooltipText: m.employmentParticipation.remove,

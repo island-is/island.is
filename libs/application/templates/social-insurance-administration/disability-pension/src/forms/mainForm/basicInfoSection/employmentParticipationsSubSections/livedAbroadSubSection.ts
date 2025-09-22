@@ -5,6 +5,7 @@ import {
   getValueViaPath,
   YesOrNoEnum,
   buildTableRepeaterField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
@@ -35,10 +36,17 @@ export const livedAbroadSubSection = buildMultiField({
       required: true,
       options: yesOrNoOptions,
     }),
+    buildDescriptionField({
+      id: `${SectionRouteEnum.LIVED_ABROAD}.listTitle`,
+      title: m.employmentParticipation.livedAbroadQuestion,
+      condition: livedAbroadCondition,
+      titleVariant: 'h5',
+      space: 5,
+    }),
     buildTableRepeaterField({
       id: `${SectionRouteEnum.LIVED_ABROAD}.list`,
+      marginTop: 0,
       condition: livedAbroadCondition,
-      formTitle: m.employmentParticipation.livedAbroadTitle,
       addItemButtonText: m.employmentParticipation.addCountry,
       saveItemButtonText: m.employmentParticipation.save,
       removeButtonTooltipText: m.employmentParticipation.remove,

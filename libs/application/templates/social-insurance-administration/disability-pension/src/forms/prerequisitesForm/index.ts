@@ -37,7 +37,6 @@ import {
 
 export const Prerequisites = buildForm({
   id: 'disabilityPensionPrerequisites',
-  title: m.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
