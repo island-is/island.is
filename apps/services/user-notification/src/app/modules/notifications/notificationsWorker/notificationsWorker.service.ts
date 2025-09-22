@@ -5,6 +5,7 @@ import { join } from 'path'
 
 import { User } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
+import { ArgumentDto } from '../dto/createHnippNotification.dto'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 import {
   EinstaklingurDTONafnItar,
@@ -129,12 +130,14 @@ export class NotificationsWorkerService {
     formattedTemplate,
     fullName,
     subjectId,
+    processedArgs,
   }: {
     isEnglish: boolean
     recipientEmail: string | null
     formattedTemplate: HnippTemplate
     fullName: string
     subjectId?: string
+    processedArgs: ArgumentDto[]
   }): Message {
     if (!recipientEmail) {
       throw new Error('Missing recipient email address')
@@ -214,7 +217,9 @@ export class NotificationsWorkerService {
         name: fullName,
         address: recipientEmail,
       },
-      subject: formattedTemplate.title,
+      subject:
+        processedArgs.find((arg) => arg.key === 'subject')?.value ||
+        formattedTemplate.title,
       template: {
         title: formattedTemplate.title,
         body: generateBody(),
@@ -289,6 +294,7 @@ export class NotificationsWorkerService {
         recipientEmail: profile.email ?? null,
         fullName,
         subjectId: message.onBehalfOf?.subjectId,
+        processedArgs: message.args,
       })
 
       await this.emailService.sendEmail(emailContent)
