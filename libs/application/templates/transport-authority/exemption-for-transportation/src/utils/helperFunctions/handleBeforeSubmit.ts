@@ -181,9 +181,10 @@ export const getUpdatedAxleSpacing = (
     vehiclePermnoSet.has(v.permno),
   )
 
-  axleSpacing.trailerList = axleSpacing.trailerList.filter((t) =>
-    trailerPermnoSet.has(t.permno),
-  )
+  if (axleSpacing.trailerList)
+    axleSpacing.trailerList = axleSpacing.trailerList.filter((t) =>
+      trailerPermnoSet.has(t.permno),
+    )
 
   return axleSpacing
 }

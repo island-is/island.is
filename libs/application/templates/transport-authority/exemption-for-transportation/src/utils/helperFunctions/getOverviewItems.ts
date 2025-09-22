@@ -49,6 +49,14 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 
+const getAddressAndPostalCodeCityStr = (
+  address?: string,
+  postalCodeAndCity?: string,
+) => {
+  if (address && postalCodeAndCity) return `${address}, ${postalCodeAndCity}`
+  return address ?? postalCodeAndCity ?? ''
+}
+
 export const getUserInformationOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
@@ -63,20 +71,23 @@ export const getUserInformationOverviewItems = (
     ),
     ...(includeAddress
       ? [
-          `${getValueViaPath<string>(
-            externalData,
-            'nationalRegistry.data.address.streetAddress',
-          )}, ${
+          getAddressAndPostalCodeCityStr(
             getValueViaPath<string>(
               externalData,
-              'nationalRegistry.data.address.postalCode',
-            ) ?? ''
-          } ${
-            getValueViaPath<string>(
-              externalData,
-              'nationalRegistry.data.address.locality',
-            ) ?? ''
-          }`,
+              'nationalRegistry.data.address.streetAddress',
+            ),
+            `${
+              getValueViaPath<string>(
+                externalData,
+                'nationalRegistry.data.address.postalCode',
+              ) ?? ''
+            } ${
+              getValueViaPath<string>(
+                externalData,
+                'nationalRegistry.data.address.locality',
+              ) ?? ''
+            }`,
+          ),
         ]
       : []),
     formatPhoneNumber(
@@ -92,10 +103,10 @@ export const getUserInformationOverviewItems = (
     formatKennitala(
       getValueViaPath<string>(answers, 'transporter.nationalId') || '',
     ),
-    `${getValueViaPath<string>(
-      answers,
-      'transporter.address',
-    )}, ${getValueViaPath<string>(answers, 'transporter.postalCodeAndCity')}`,
+    getAddressAndPostalCodeCityStr(
+      getValueViaPath<string>(answers, 'transporter.address'),
+      getValueViaPath<string>(answers, 'transporter.postalCodeAndCity'),
+    ),
     formatPhoneNumber(
       removeCountryCode(
         getValueViaPath<string>(answers, 'transporter.phone') || '',
@@ -185,20 +196,20 @@ export const getShortTermLocationOverviewItems = (
       ],
       inlineKeyText: true,
       valueText: [
-        `${getValueViaPath<string>(
-          answers,
-          'location.shortTerm.addressFrom',
-        )}, ${getValueViaPath<string>(
-          answers,
-          'location.shortTerm.postalCodeAndCityFrom',
-        )}`,
-        `${getValueViaPath<string>(
-          answers,
-          'location.shortTerm.addressTo',
-        )}, ${getValueViaPath<string>(
-          answers,
-          'location.shortTerm.postalCodeAndCityTo',
-        )}`,
+        getAddressAndPostalCodeCityStr(
+          getValueViaPath<string>(answers, 'location.shortTerm.addressFrom'),
+          getValueViaPath<string>(
+            answers,
+            'location.shortTerm.postalCodeAndCityFrom',
+          ),
+        ),
+        getAddressAndPostalCodeCityStr(
+          getValueViaPath<string>(answers, 'location.shortTerm.addressTo'),
+          getValueViaPath<string>(
+            answers,
+            'location.shortTerm.postalCodeAndCityTo',
+          ),
+        ),
         getValueViaPath<string>(answers, 'location.shortTerm.directions'),
       ],
     },

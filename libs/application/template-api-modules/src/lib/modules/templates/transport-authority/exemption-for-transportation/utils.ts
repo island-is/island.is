@@ -118,7 +118,7 @@ export const mapTransporter = (
     ExemptionForTransportationAnswers['transporter']
   >(application.answers, 'transporter')
 
-  return transporterAnswers?.isSameAsApplicant
+  return transporterAnswers?.isSameAsApplicant?.includes(YES)
     ? applicant
     : {
         nationalId: transporterAnswers?.nationalId || '',
@@ -141,7 +141,7 @@ export const mapResponsiblePerson = (
   >(application.answers, 'responsiblePerson')
 
   return isCompany(transporter.nationalId)
-    ? responsiblePersonAnswers?.isSameAsApplicant
+    ? responsiblePersonAnswers?.isSameAsApplicant?.includes(YES)
       ? applicant
       : {
           nationalId: responsiblePersonAnswers?.nationalId || '',
@@ -178,7 +178,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
       const vehicleAxleSpacing = axleSpacingAnswers?.vehicleList.find(
         (x) => x.permno === item.vehicle.permno,
       )
-      const trailerAxleSpacing = axleSpacingAnswers?.trailerList.find(
+      const trailerAxleSpacing = axleSpacingAnswers?.trailerList?.find(
         (x) => x.permno === item.trailer?.permno,
       )
       const vehicleSpacing = vehicleSpacingAnswers?.convoyList?.find(

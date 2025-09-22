@@ -310,15 +310,17 @@ const AxleSpacingSchema = z
       type: z.nativeEnum(DollyType).optional(),
       value: z.string().optional(),
     }),
-    trailerList: z.array(
-      z.object({
-        useSameValues: z.array(z.enum([YES])).optional(),
-        permno: z.string(),
-        values: z.array(z.string().optional()),
-        singleValue: z.string().optional(),
-        axleCount: z.number().optional(),
-      }),
-    ),
+    trailerList: z
+      .array(
+        z.object({
+          useSameValues: z.array(z.enum([YES])).optional(),
+          permno: z.string(),
+          values: z.array(z.string().optional()),
+          singleValue: z.string().optional(),
+          axleCount: z.number().optional(),
+        }),
+      )
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (data.exemptionPeriodType !== ExemptionType.SHORT_TERM) return
@@ -342,7 +344,7 @@ const AxleSpacingSchema = z
     // Dolly validation
     if (
       data.exemptionPeriodType === ExemptionType.SHORT_TERM &&
-      data.trailerList.some((x) => !!x.permno) &&
+      data.trailerList?.some((x) => !!x.permno) &&
       data.dolly.type === DollyType.DOUBLE &&
       !data.dolly.value
     ) {
@@ -354,7 +356,7 @@ const AxleSpacingSchema = z
     }
 
     // Trailer validation
-    data.trailerList.forEach((trailer, index) => {
+    data.trailerList?.forEach((trailer, index) => {
       if (!trailer.permno) return
 
       const useSame = trailer.useSameValues?.includes(YES)
