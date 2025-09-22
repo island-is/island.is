@@ -11,6 +11,8 @@ interface CustomCalendarContainerProps {
   setDate: (startDate: Date | null, endDate?: Date | null) => void
   startDate: Date | null
   endDate: Date | null
+  highlightWeekends?: boolean
+  displaySelectInput?: boolean
   ranges?: { label: string; startDate: Date; endDate: Date }[]
 }
 
@@ -21,14 +23,15 @@ const CustomCalendarContainer: React.FC<CustomCalendarContainerProps> = ({
   ranges,
   startDate,
   endDate,
+  highlightWeekends,
+  displaySelectInput,
 }) => {
   const [weekCount, setWeekCount] = useState(0)
-
-  const [weekendWidth, setWeekendWidth] = useState(0)
+  const [weekendWidth, setWeekendWidth] = useState(82) // Default width for weekends
   const container = document.querySelector('.react-datepicker')
 
   useEffect(() => {
-    if (container) {
+    if (highlightWeekends && container) {
       const updateWidth = () => {
         setWeekendWidth(
           ((container.getBoundingClientRect().width - theme.spacing[4]) / 7) *
@@ -56,7 +59,11 @@ const CustomCalendarContainer: React.FC<CustomCalendarContainerProps> = ({
       <div className={styles.parentContainer}>
         <div
           style={
-            { '--weekend-width': `${weekendWidth}px` } as React.CSSProperties
+            highlightWeekends
+              ? ({
+                  '--weekend-width': `${weekendWidth}px`,
+                } as React.CSSProperties)
+              : undefined
           }
           className={cn(styles.calendarContainer, {
             [styles.weekendHeight[
@@ -66,6 +73,7 @@ const CustomCalendarContainer: React.FC<CustomCalendarContainerProps> = ({
                 ? 'fiveWeeks'
                 : 'sixWeeks'
             ]]: weekCount,
+            [styles.displaySelectInput]: displaySelectInput,
           })}
         >
           {children}

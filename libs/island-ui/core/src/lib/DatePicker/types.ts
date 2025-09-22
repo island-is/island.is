@@ -46,6 +46,9 @@ export interface DatePickerProps {
   icon?: { name: IconType; type?: Type }
   showTimeInput?: boolean
   timeInputLabel?: string
+  isClearable?: boolean
+  highlightWeekends?: boolean
+  displaySelectInput?: boolean // Whether month and year should be selectable via dropdowns
   /**
    * Minimum selectable year inside datepicker
    */
@@ -81,4 +84,5 @@ export interface DatePickerCustomHeaderProps {
   locale: Locale
   minYear?: number
   maxYear?: number
+  displaySelectInput?: boolean // Should the month and year be selectable via dropdowns
 }

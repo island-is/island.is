@@ -42,6 +42,7 @@ const PatientDataPermits: React.FC = () => {
       title={formatMessage(messages.patientDataPermitTitle)}
       intro={formatMessage(messages.patientDataPermitDescription)}
       serviceProviderSlug="landlaeknir"
+      loading={loading}
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirVaccinationsTooltip,
       )} // TODO: Update this tooltip message if needed

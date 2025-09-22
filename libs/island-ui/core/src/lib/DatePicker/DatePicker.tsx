@@ -77,6 +77,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   calendarStartDay = 1,
   range = false,
   ranges,
+  highlightWeekends = false,
+  isClearable = false,
+  displaySelectInput = false,
 }) => {
   const isValidDate = (d: unknown): d is Date =>
     d instanceof Date && !isNaN((d as Date).getTime())
@@ -210,7 +213,12 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               onInputClick={onInputClick}
               backgroundColor={backgroundColor}
               icon={icon}
+              isClearable={isClearable}
               size={size}
+              onClear={() => {
+                setStartDate(null)
+                setEndDate(null)
+              }}
             />
           }
           calendarStartDay={calendarStartDay}
@@ -223,6 +231,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               locale={currentLanguage.locale}
               minYear={minYear}
               maxYear={maxYear}
+              displaySelectInput={displaySelectInput}
               {...props}
             />
           )}
@@ -241,6 +250,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                   handleChange(startDay, endDay)
               }}
               ranges={ranges}
+              highlightWeekends={highlightWeekends}
+              displaySelectInput={displaySelectInput}
               children={props.children}
             />
           )}
@@ -258,6 +269,8 @@ const CustomInput = forwardRef<
   HTMLInputElement | HTMLTextAreaElement,
   InputProps & {
     placeholderText?: string
+    isClearable?: boolean
+    onClear?: () => void
     onInputClick?: ReactDatePickerProps['onInputClick']
   }
 >(
@@ -278,6 +291,19 @@ const CustomInput = forwardRef<
       ref={ref}
       fixedFocusState={fixedFocusState}
       placeholder={placeholderText}
+      buttons={
+        props.isClearable
+          ? [
+              {
+                name: 'close',
+                type: 'outline',
+                label: 'Closeit',
+                onClick: props.onClear,
+                disabled: props.disabled,
+              },
+            ]
+          : undefined
+      }
     />
   ),
 )
@@ -293,6 +319,7 @@ const CustomHeader = ({
   locale,
   minYear,
   maxYear,
+  displaySelectInput = false,
 }: DatePickerCustomHeaderProps) => {
   const monthRef = useRef<HTMLSpanElement>(null)
   const month = locale.localize ? locale.localize.month(date.getMonth()) : ''
@@ -324,54 +351,30 @@ const CustomHeader = ({
       >
         <Icon icon="chevronBack" type="outline" color="blue400" />
       </button>
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        columnGap={1}
-        flexWrap="wrap"
-        justifyContent="center"
-      >
-        <VisuallyHidden>
-          <Text variant="h4" as="span" ref={monthRef}>
-            {month}
-          </Text>
-        </VisuallyHidden>
-        <Select
-          size="xs"
-          aria-label="Select month"
-          className={styles.headerSelect}
-          value={{ label: shortMonth, value: month }}
-          onChange={(selectedOption) =>
-            changeMonth(months.indexOf(selectedOption?.value))
-          }
-          options={months.map((option) => ({
-            label: option.slice(0, 3),
-            value: option,
-          }))}
-          styles={{
-            control: (base) => ({
-              ...base,
-              textAlign: 'center',
-              width: 'auto',
-              marginRight: 4,
-            }),
-          }}
-        />
-        {years && years.length > 0 && (
+      {displaySelectInput ? (
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          columnGap={1}
+          flexWrap="wrap"
+          justifyContent="center"
+        >
+          <VisuallyHidden>
+            <Text variant="h4" as="span" ref={monthRef}>
+              {month}
+            </Text>
+          </VisuallyHidden>
           <Select
             size="xs"
-            aria-label="Select year"
+            aria-label="Select month"
             className={styles.headerSelect}
-            value={{
-              label: year.toString(),
-              value: year,
-            }}
+            value={{ label: shortMonth, value: month }}
             onChange={(selectedOption) =>
-              changeYear(Number(selectedOption?.value) ?? year)
+              changeMonth(months.indexOf(selectedOption?.value))
             }
-            options={years.map((option) => ({
-              label: option.toString(),
+            options={months.map((option) => ({
+              label: option.slice(0, 3),
               value: option,
             }))}
             styles={{
@@ -382,12 +385,87 @@ const CustomHeader = ({
                 marginRight: 4,
               }),
             }}
-            components={{
-              MenuList: ScrollToSelectedMenuList,
-            }}
           />
-        )}
-      </Box>
+          {years && years.length > 0 && (
+            <Select
+              size="xs"
+              aria-label="Select year"
+              className={styles.headerSelect}
+              value={{
+                label: year.toString(),
+                value: year,
+              }}
+              onChange={(selectedOption) =>
+                changeYear(Number(selectedOption?.value) ?? year)
+              }
+              options={years.map((option) => ({
+                label: option.toString(),
+                value: option,
+              }))}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  textAlign: 'center',
+                  width: 'auto',
+                  marginRight: 4,
+                }),
+              }}
+              components={{
+                MenuList: ScrollToSelectedMenuList,
+              }}
+            />
+          )}
+        </Box>
+      ) : (
+        <div>
+          <VisuallyHidden>
+            <Text variant="h4" as="span" ref={monthRef}>
+              {month}
+            </Text>
+          </VisuallyHidden>
+
+          <select
+            aria-label="Select month"
+            className={styles.headerSelect}
+            value={month}
+            onChange={({ target: { value } }) =>
+              changeMonth(months.indexOf(value))
+            }
+            style={{
+              textAlign: 'center',
+
+              width: 'auto',
+
+              marginRight: 8,
+            }}
+          >
+            {months.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+
+          {years && years.length > 0 ? (
+            <select
+              className={styles.headerSelect}
+              value={date.getFullYear()}
+              onChange={({ target: { value } }) => changeYear(parseInt(value))}
+            >
+              {years.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <Text variant="h4" as="span">
+              {getYear(date)}
+            </Text>
+          )}
+        </div>
+      )}
+
       <button
         data-testid="datepickerIncreaseMonth"
         type="button"

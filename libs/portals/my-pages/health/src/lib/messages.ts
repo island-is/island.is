@@ -1749,13 +1749,23 @@ export const messages = defineMessages({
       'Hvaða land eða lönd viltu að geti fengið aðgang að þínum gögnum?',
     id: 'sp.health:what-countries-should-permit-apply',
   },
+  countriesTooltip: {
+    defaultMessage:
+      'Í listanum eru þau lönd sem Ísland er með samkomulag við. Þegar fleiri lönd bætast við listann þarf að bæta við nýrri heimild til að virkja heimild í þeim löndum.',
+    id: 'sp.health:countries-tooltip',
+  },
   chooseAllCountries: {
     defaultMessage: 'Velja öll löndin á listanum',
     id: 'sp.health:choose-all-countries',
   },
   howLongShouldPermitApply: {
-    defaultMessage: 'Hversu lengi á heimildin að gilda?',
+    defaultMessage: 'Hve lengi viltu að aðgangurinn gildi?',
     id: 'sp.health:how-long-should-permit-apply',
+  },
+  howLongDescription: {
+    defaultMessage:
+      'Þú getur valið ákveðið tímabil eða allt að 3 ár fram í tímann.',
+    id: 'sp.health:how-long-description',
   },
   showExipredPermits: {
     defaultMessage: 'Sýna óvirkar',

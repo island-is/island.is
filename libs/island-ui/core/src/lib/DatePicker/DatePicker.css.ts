@@ -18,19 +18,21 @@ export const backgroundBlue = style({
 
 export const parentContainer = style({
   position: 'relative',
-  zIndex: 0,
 })
-export const calendarContainer = style({})
+export const calendarContainer = style({
+  position: 'relative',
+  zIndex: 1,
+})
+
+export const displaySelectInput = style({})
 
 const weekendBase: StyleWithSelectors = {
-  zIndex: -1,
+  zIndex: 0,
   content: '""',
   display: 'block',
   position: 'absolute',
-  top: 95,
   right: 0,
   bottom: 0,
-  height: 223,
   width: 'var(--weekend-width)',
   backgroundColor: 'rgba(204, 223, 255, 0.3)',
   pointerEvents: 'none',
@@ -48,18 +50,93 @@ globalStyle(`${calendarContainer}::before`, {
 
 globalStyle(`${calendarContainer}.${weekendHeight.fourWeeks}::before`, {
   ...weekendBase,
-  height: 188,
+  ...themeUtils.responsiveStyle({
+    xs: {
+      height: 195,
+      top: 57,
+    },
+    md: {
+      height: 196,
+    },
+  }),
 })
+
+globalStyle(
+  `${calendarContainer}.${weekendHeight.fourWeeks}.${displaySelectInput}::before`,
+  {
+    ...weekendBase,
+    ...themeUtils.responsiveStyle({
+      xs: {
+        height: 195,
+        top: 78,
+      },
+      md: {
+        height: 196,
+        top: 87,
+      },
+    }),
+  },
+)
 
 globalStyle(`${calendarContainer}.${weekendHeight.fiveWeeks}::before`, {
   ...weekendBase,
-  height: 223,
+  ...themeUtils.responsiveStyle({
+    xs: {
+      height: 230,
+      top: 57,
+    },
+    md: {
+      height: 231,
+    },
+  }),
 })
+
+globalStyle(
+  `${calendarContainer}.${weekendHeight.fiveWeeks}.${displaySelectInput}::before`,
+  {
+    ...weekendBase,
+    ...themeUtils.responsiveStyle({
+      xs: {
+        height: 230,
+        top: 78,
+      },
+      md: {
+        height: 231,
+        top: 87,
+      },
+    }),
+  },
+)
 
 globalStyle(`${calendarContainer}.${weekendHeight.sixWeeks}::before`, {
   ...weekendBase,
-  height: 258,
+  ...themeUtils.responsiveStyle({
+    xs: {
+      height: 265,
+      top: 57,
+    },
+    md: {
+      height: 266,
+    },
+  }),
 })
+
+globalStyle(
+  `${calendarContainer}.${weekendHeight.sixWeeks}.${displaySelectInput}::before`,
+  {
+    ...weekendBase,
+    ...themeUtils.responsiveStyle({
+      xs: {
+        height: 265,
+        top: 78,
+      },
+      md: {
+        height: 266,
+        top: 87,
+      },
+    }),
+  },
+)
 
 export const small = style({})
 export const extraSmall = style({})
@@ -141,18 +218,19 @@ export const customHeaderContainer = style({
   display: 'flex',
   justifyContent: 'space-between',
   borderBottom: `1px solid ${theme.color.blue200}`,
-  paddingTop: theme.spacing[2],
+  paddingTop: theme.spacing[1],
   paddingBottom: theme.spacing[2],
   marginBottom: theme.spacing[2],
   position: 'relative',
+  zIndex: 1,
   // '::before': {
   //   content: '""',
   //   display: 'block',
   //   position: 'absolute',
   //   top: 0,
   //   height: '1px',
-  //   left: `-${theme.spacing[3] - 3}px`,
-  //   right: `-${theme.spacing[3] - 3}px`,
+  //   left: -3,
+  //   right: -3,
   //   background: theme.color.blue200,
   // },
 })
@@ -253,6 +331,7 @@ export const rangeContainer = style({
     content: '""',
     display: 'block',
     position: 'absolute',
+    marginTop: theme.spacing[1],
     top: 0,
     height: '1px',
     left: 0,

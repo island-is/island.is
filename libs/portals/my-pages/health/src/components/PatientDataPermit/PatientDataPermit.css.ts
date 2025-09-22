@@ -15,9 +15,12 @@ export const forwardButton = style({
 export const countryCheckboxContainer = style({
   display: 'grid',
   gridTemplateColumns: '1fr',
-  gridGap: theme.spacing[3],
   ...themeUtils.responsiveStyle({
+    xs: {
+      gridGap: theme.spacing[2],
+    },
     md: {
+      gridGap: theme.spacing[3],
       gridTemplateColumns: 'repeat(2, 1fr)',
     },
     lg: {

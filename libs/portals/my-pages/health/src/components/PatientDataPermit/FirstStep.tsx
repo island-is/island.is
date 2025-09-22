@@ -1,70 +1,195 @@
 import {
+  HealthDirectoratePatientDataApprovalCountry,
+  HealthDirectoratePatientDataPermitInput,
+} from '@island.is/api/schema'
+import {
+  AlertMessage,
   Box,
   Button,
   Checkbox,
-  FocusableBox,
+  Input,
+  SkeletonLoader,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import React, { useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
-import { InfoModal } from './DataModal'
+import { useHealthDirectoratePatientDataPermitCountriesQuery } from './FirstStep.generated'
 import * as styles from './PatientDataPermit.css'
 
 interface FirstStepProps {
-  onClick?: () => void
+  onClick: () => void
+  formState?: HealthDirectoratePatientDataPermitInput
+  setFormState: Dispatch<
+    SetStateAction<HealthDirectoratePatientDataPermitInput | undefined>
+  >
 }
 
-const FirstStep: React.FC<FirstStepProps> = ({ onClick }) => {
-  const { formatMessage } = useLocale()
+// Countries
+const FirstStep: FC<FirstStepProps> = ({
+  onClick,
+  setFormState,
+  formState,
+}) => {
+  const { formatMessage, lang } = useLocale()
+  const navigate = useNavigate()
+  const [selectedCountries, setSelectedCountries] = useState<
+    Omit<HealthDirectoratePatientDataApprovalCountry, 'id'>[]
+  >([])
+  const [selectAll, setSelectAll] = useState<boolean>(false)
 
-  const [modalOpen, setModalOpen] = useState<boolean>(false)
-  const [accepted, setAccepted] = useState<boolean>(false)
+  const [searchTerm, setSearchTerm] = useState<string>('')
+
+  const { data, error, loading } =
+    useHealthDirectoratePatientDataPermitCountriesQuery({
+      variables: {
+        locale: lang,
+      },
+    })
+
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+  const countries = data?.healthDirectoratePatientDataPermitCountries.data || []
+
   return (
     <Box>
       <Text variant="eyebrow" color="purple400">
         {formatMessage(messages.step, { first: '1', second: '3' })}
       </Text>
-      <Text variant="h5" marginTop={1} marginBottom={2}>
-        {formatMessage(messages.chooseDataToShare)}
+      <Text variant="h5" marginTop={1} marginBottom={3}>
+        {formatMessage(messages.whatCountriesShouldPermitApply)}
+        <Tooltip
+          text={formatMessage(messages.countriesTooltip)}
+          placement={isMobile ? 'bottom' : 'right'}
+        />
       </Text>
-      <Box className={styles.linkText} marginBottom={2}>
-        <Text variant="default" fontWeight="light">
-          {formatMessage(messages.permitApprovalDescription, {
-            link: (parts: React.ReactNode[]) => (
-              <Button
-                variant="text"
-                size="medium"
-                onClick={() => setModalOpen(true)}
-              >
-                {parts}
-              </Button>
-            ),
-          })}
-        </Text>
-      </Box>
-      <FocusableBox
-        onClick={() => setAccepted(!accepted)}
-        role="checkbox"
-        aria-checked={accepted}
-        style={{ width: 'fit-content' }}
-      >
-        <Checkbox
-          backgroundColor="blue"
-          checked={accepted}
-          onChange={() => setAccepted(!accepted)}
-          large
-          label={formatMessage(messages.permitApproval)}
-        ></Checkbox>
-      </FocusableBox>
-      <Box display="flex" justifyContent="flexEnd" marginTop={3}>
-        <Box className={styles.forwardButton}>
-          <Button fluid size="small" disabled={!accepted} onClick={onClick}>
-            {formatMessage(messages.forward)}
-          </Button>
+      {loading && !error && (
+        <Box className={styles.countryCheckboxContainer}>
+          <Box marginBottom={3} marginRight={3}>
+            <SkeletonLoader height={80} />
+          </Box>
+          <Box marginBottom={3} marginRight={3}>
+            <SkeletonLoader height={80} />
+          </Box>
+          <Box marginBottom={3} marginRight={3}>
+            <SkeletonLoader height={80} />
+          </Box>
         </Box>
-      </Box>
-      <InfoModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      )}
+      {!loading && countries.length === 0 && (
+        <AlertMessage
+          type="warning"
+          title={formatMessage(messages.countriesError)}
+        />
+      )}
+
+      {countries.length > 0 && (
+        <>
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            flexWrap={['wrap', 'wrap', 'nowrap']}
+            rowGap={2}
+          >
+            <Box width={isMobile ? 'full' : undefined}>
+              <Input
+                name="countrySearch"
+                placeholder={formatMessage(messages.filterByCountry)}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                icon={{ type: 'outline', name: 'search' }}
+                size="xs"
+                backgroundColor="blue"
+              />
+            </Box>
+            <Box marginLeft={[0, 0, 2]} marginTop={[1, 1, 0]}>
+              <Checkbox
+                label={formatMessage(messages.chooseAllCountries)}
+                checked={selectAll}
+                onChange={() => {
+                  setSelectAll(!selectAll)
+                  if (!selectAll) {
+                    setSelectedCountries(countries)
+                  } else {
+                    setSelectedCountries([])
+                  }
+                }}
+              />
+            </Box>
+          </Box>
+          <Box marginY={3} className={styles.countryCheckboxContainer}>
+            {countries
+              .filter((country) =>
+                country.name.toLowerCase().includes(searchTerm.toLowerCase()),
+              )
+              .map((country, index) => (
+                <Box key={index}>
+                  <Checkbox
+                    large
+                    backgroundColor="blue"
+                    value={country.code}
+                    checked={selectedCountries.includes(country)}
+                    onChange={() => {
+                      if (selectedCountries.includes(country)) {
+                        setSelectedCountries(
+                          selectedCountries.filter((c) => c !== country),
+                        )
+                      } else {
+                        setSelectedCountries([...selectedCountries, country])
+                      }
+                    }}
+                    label={country.name}
+                  />
+                </Box>
+              ))}
+          </Box>
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            marginTop={[0, 0, 3]}
+            flexWrap="nowrap"
+            columnGap={2}
+          >
+            <Box className={styles.forwardButton} marginBottom={[1, 1, 0]}>
+              <Button
+                fluid
+                variant="ghost"
+                size="small"
+                onClick={() => navigate(-1)}
+                preTextIcon="arrowBack"
+              >
+                {formatMessage(messages.cancel)}
+              </Button>
+            </Box>
+            <Box className={styles.forwardButton}>
+              <Button
+                fluid
+                size="small"
+                disabled={selectedCountries.length === 0}
+                onClick={() => {
+                  selectedCountries.length > 0 &&
+                    setFormState?.({
+                      codes: formState?.codes ?? [],
+                      validFrom:
+                        formState?.validFrom ?? new Date().toISOString(),
+                      validTo: formState?.validTo ?? new Date().toISOString(),
+                      countryCodes: selectedCountries.map((x) => x.code),
+                    })
+                  onClick()
+                }}
+              >
+                {formatMessage(messages.forward)}
+              </Button>
+            </Box>
+          </Box>
+        </>
+      )}
     </Box>
   )
 }
