@@ -140,14 +140,12 @@ export const disabilityPeriodItems = (
     {
       width: 'full',
       keyText: m.disabilityPeriod.chosenDate,
-      valueText: format(
-        new Date(
-          +disabilityRenumerationDateYear,
-          +disabilityRenumerationDateMonth - 1,
-        ),
-        'MMMM yyyy',
-        { locale: is },
-      ),
+      valueText: () => {
+        const year = Number(disabilityRenumerationDateYear)
+        const month = Number(disabilityRenumerationDateYear)
+        const chosenDate = new Date(year, month)
+        return isValid(chosenDate) ? format(chosenDate, 'MMMM yyyy', { locale: is }) : ''
+      },
     },
   ]
 }
@@ -513,7 +511,7 @@ export const incomePlanItems = (answers: FormValue): TableData => {
     ],
     rows: incomePlan.map((e) => [
       e.incomeType,
-      formatCurrencyWithoutSuffix(e.incomePerYear),
+      formatCurrencyWithoutSuffix(e.incomePerYear) ?? 0,
       e.currency,
     ]),
   }
