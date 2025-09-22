@@ -144,7 +144,9 @@ export const disabilityPeriodItems = (
         const year = Number(disabilityRenumerationDateYear)
         const month = Number(disabilityRenumerationDateYear)
         const chosenDate = new Date(year, month)
-        return isValid(chosenDate) ? format(chosenDate, 'MMMM yyyy', { locale: is }) : ''
+        return isValid(chosenDate)
+          ? format(chosenDate, 'MMMM yyyy', { locale: is })
+          : ''
       },
     },
   ]
