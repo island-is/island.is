@@ -22,7 +22,7 @@ export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
 
   setBeforeSubmitCallback?.(async () => {
     try {
-      const newAnswers = getValues()
+      const newAnswers = { ...application.answers, ...getValues() }
 
       // Make sure if this is short-term, that there is only one convoy
       const updatedConvoy = getUpdatedConvoy(
