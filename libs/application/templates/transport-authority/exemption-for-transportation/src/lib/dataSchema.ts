@@ -297,12 +297,12 @@ const FreightPairingSchema = z
 
 const AxleSpacingSchema = z
   .object({
-    hasExemptionForWeight: z.boolean(),
     exemptionPeriodType: z.string(),
+    hasExemptionForWeight: z.boolean(),
     vehicleList: z.array(
       z.object({
         permno: z.string(),
-        values: z.array(z.string().min(1)),
+        values: z.array(z.string().optional()),
       }),
     ),
     // Note: Not array, since dolly is only allowed in short-term where there is max one convoy
@@ -310,38 +310,53 @@ const AxleSpacingSchema = z
       type: z.nativeEnum(DollyType).optional(),
       value: z.string().optional(),
     }),
-    trailerList: z.array(
-      z.object({
-        useSameValues: z.array(z.enum([YES])).optional(),
-        permno: z.string(),
-        values: z.array(z.string().optional()),
-        singleValue: z.string().optional(),
-        axleCount: z.number().optional(),
-      }),
-    ),
+    trailerList: z
+      .array(
+        z.object({
+          useSameValues: z.array(z.enum([YES])).optional(),
+          permno: z.string(),
+          values: z.array(z.string().optional()),
+          singleValue: z.string().optional(),
+          axleCount: z.number().optional(),
+        }),
+      )
+      .optional(),
   })
-  .refine(
-    ({ hasExemptionForWeight, exemptionPeriodType, dolly, trailerList }) => {
-      if (!hasExemptionForWeight) return true
-
-      // Since dolly is only allowed in short-term
-      if (exemptionPeriodType !== ExemptionType.SHORT_TERM) return true
-
-      // Since dolly can only be included if there is a trailer
-      const hasTrailer = trailerList.some((x) => !!x.permno)
-      if (!hasTrailer) return true
-
-      // Since there is only axle space for double dolly
-      if (dolly.type !== DollyType.DOUBLE) return true
-
-      return !!dolly?.value
-    },
-    { path: ['dolly', 'value'] },
-  )
   .superRefine((data, ctx) => {
+    if (data.exemptionPeriodType !== ExemptionType.SHORT_TERM) return
     if (!data.hasExemptionForWeight) return
 
-    data.trailerList.forEach((trailer, index) => {
+    // Vehicle validation
+    data.vehicleList.forEach((vehicle, index) => {
+      if (!vehicle.permno) return
+
+      vehicle.values.forEach((value, valueIndex) => {
+        if (!value) {
+          ctx.addIssue({
+            path: ['vehicleList', index, 'values', valueIndex],
+            code: z.ZodIssueCode.custom,
+            params: coreErrorMessages.defaultError,
+          })
+        }
+      })
+    })
+
+    // Dolly validation
+    if (
+      data.exemptionPeriodType === ExemptionType.SHORT_TERM &&
+      data.trailerList?.some((x) => !!x.permno) &&
+      data.dolly.type === DollyType.DOUBLE &&
+      !data.dolly.value
+    ) {
+      ctx.addIssue({
+        path: ['dolly', 'value'],
+        code: z.ZodIssueCode.custom,
+        params: coreErrorMessages.defaultError,
+      })
+    }
+
+    // Trailer validation
+    data.trailerList?.forEach((trailer, index) => {
       if (!trailer.permno) return
 
       const useSame = trailer.useSameValues?.includes(YES)
@@ -368,8 +383,8 @@ const AxleSpacingSchema = z
 
 const VehicleSpacingSchema = z
   .object({
-    hasExemptionForWeight: z.boolean(),
     exemptionPeriodType: z.string(),
+    hasExemptionForWeight: z.boolean(),
     convoyList: z.array(
       z.object({
         convoyId: z.string(),
@@ -382,6 +397,7 @@ const VehicleSpacingSchema = z
     ),
   })
   .superRefine((data, ctx) => {
+    if (data.exemptionPeriodType !== ExemptionType.SHORT_TERM) return
     if (!data.hasExemptionForWeight) return
 
     data.convoyList.forEach((convoy, index) => {

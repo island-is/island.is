@@ -121,7 +121,9 @@ export const overviewSection = buildSection({
           title: overview.axleSpacing.subtitle,
           backId: 'axleSpacingMultiField',
           items: getAxleSpacingOverviewItems,
-          condition: checkHasFreightPairingItemWithExemptionForWeight,
+          condition: (answers) =>
+            checkIfExemptionTypeShortTerm(answers) &&
+            checkHasFreightPairingItemWithExemptionForWeight(answers),
         }),
         buildOverviewField({
           id: 'overview.vehicleSpacing',
@@ -129,6 +131,7 @@ export const overviewSection = buildSection({
           backId: 'vehicleSpacingMultiField',
           items: getVehicleSpacingOverviewItems,
           condition: (answers) =>
+            checkIfExemptionTypeShortTerm(answers) &&
             checkHasAnyConvoyWithTrailer(answers) &&
             checkHasFreightPairingItemWithExemptionForWeight(answers),
         }),

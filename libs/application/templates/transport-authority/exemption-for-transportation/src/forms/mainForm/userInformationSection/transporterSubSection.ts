@@ -123,7 +123,13 @@ export const transporterSubSection = buildSubSection({
           readOnly: true,
           condition: (answers) => isSameAsApplicant(answers, 'transporter'),
           defaultValue: (application: Application) =>
-            `${application.externalData.nationalRegistry?.data?.address?.postalCode} ${application.externalData.nationalRegistry?.data?.address?.locality}`,
+            `${
+              application.externalData.nationalRegistry?.data?.address
+                ?.postalCode ?? ''
+            } ${
+              application.externalData.nationalRegistry?.data?.address
+                ?.locality ?? ''
+            }`,
         }),
         buildPhoneField({
           id: 'transporterReadonly.phoneNumber',

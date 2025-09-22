@@ -27,7 +27,7 @@ export const freight = {
     descriptionLongTerm: {
       id: 'ta.eft.application:freight.create.descriptionLongTerm',
       defaultMessage:
-        'Hér þarf að setja inn alla farma sem sótt er um langtímaundanþágu fyrir.',
+        'Hér þarf að setja inn alla farma sem sótt er um langtímaundanþágu fyrir. Farmar sem sótt er um undanþágu til langs tíma þurfa að vera innan eftirfarandi marka: Lengd 25,25 metrar, breidd 3,49 metrar, hæð 4,60 metrar og þyngd 60 tonn.',
       description: 'Description of create freight page for long-term',
     },
     policeEscortAlertTitle: {
@@ -71,8 +71,7 @@ export const freight = {
     },
     description: {
       id: 'ta.eft.application:freight.pairing.description',
-      defaultMessage:
-        'Hérna kemur útskýringartexti sem gerir þetta skýrt fyrir notandanum með mestu málin',
+      defaultMessage: ' ',
       description: 'Description of pairing freight with convoy page',
     },
     errorEmptyListAlertMessage: {

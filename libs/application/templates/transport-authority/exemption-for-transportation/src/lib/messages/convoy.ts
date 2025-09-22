@@ -15,13 +15,13 @@ export const convoy = {
     descriptionShortTerm: {
       id: 'ta.eft.application:convoy.general.descriptionShortTerm',
       defaultMessage:
-        'Veldu hér að neðan þau ökutæki sem verða notuð við flutninginn. Þú getur annaðhvort valið einn bíl eða bíl með eftirvagni.',
+        'Veldu hér að neðan þau ökutæki sem verða notuð við flutninginn. Þú getur annaðhvort valið bíl eða bíl með eftirvagni.',
       description: 'Description of convoy page for short-term',
     },
     descriptionLongTerm: {
       id: 'ta.eft.application:convoy.general.descriptionLongTerm',
       defaultMessage:
-        'Veldu hér að neðan þau ökutæki sem verða notuð við flutninginn. Þú getur annaðhvort valið einn bíl eða bíl með eftirvagni. Ef notast er við fleiri bíla eða vagnlestir er hægt að bæta því við með því að velja Bæta við vagnlest.',
+        'Veldu hér að neðan þau ökutæki sem verða notuð við flutninginn. Þú getur annaðhvort valið bíl eða bíl með eftirvagni. Ef notast er við fleiri bíla eða vagnlestir er hægt að bæta því við með því að velja Bæta við vagnlest.',
       description: 'Description of convoy page for long-term',
     },
   }),

@@ -6,6 +6,7 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useFormContext } from 'react-hook-form'
 import {
   checkIfFreightChanged,
+  getUpdatedFreight,
   getUpdatedFreightPairingList,
 } from '../../utils'
 
@@ -19,7 +20,16 @@ export const HandleBeforeSubmitFreight: FC<FieldBaseProps> = ({
 
   setBeforeSubmitCallback?.(async () => {
     try {
-      const newAnswers = getValues()
+      const newAnswers = { ...application.answers, ...getValues() }
+
+      // Make sure if this is short-term, that there is only one freight
+      const updatedFreight = getUpdatedFreight(
+        newAnswers.exemptionPeriod,
+        newAnswers.freight,
+      )
+      if (updatedFreight) {
+        newAnswers.freight = updatedFreight
+      }
 
       // No need to do anything if nothing of importance changed
       if (!checkIfFreightChanged(application.answers, newAnswers)) {
@@ -32,14 +42,17 @@ export const HandleBeforeSubmitFreight: FC<FieldBaseProps> = ({
         newAnswers.convoy,
       )
 
-      if (updatedFreightPairing) {
-        setValue('freightPairing', updatedFreightPairing)
+      if (updatedFreight || updatedFreightPairing) {
+        if (updatedFreight) setValue('freight', updatedFreight)
+        if (updatedFreightPairing)
+          setValue('freightPairing', updatedFreightPairing)
 
         await updateApplication({
           variables: {
             input: {
               id: application.id,
               answers: {
+                ...(updatedFreight && { freight: newAnswers.freight }),
                 ...(updatedFreightPairing && {
                   freightPairing: updatedFreightPairing,
                 }),
