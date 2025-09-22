@@ -167,6 +167,7 @@ export class PoliceService {
     delivered: z.boolean().nullish(),
     deliveredOnPaper: z.boolean().nullish(),
     deliveredToLawyer: z.boolean().nullish(),
+    defenderNationalId: z.string().nullish(),
     deliveredOnIslandis: z.boolean().nullish(),
   })
 
@@ -728,6 +729,8 @@ export class PoliceService {
               deliveredOnIslandis: response.deliveredOnIslandis ?? false,
               deliveredToLawyer: response.deliveredToLawyer ?? false,
             }),
+            deliveredToDefenderNationalId:
+              response.defenderNationalId ?? undefined,
             comment: response.comment ?? undefined,
             servedBy: response.servedBy ?? undefined,
             serviceDate: servedAt,
