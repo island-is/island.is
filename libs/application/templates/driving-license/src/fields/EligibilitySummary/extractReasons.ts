@@ -1,6 +1,6 @@
 import { MessageDescriptor } from 'react-intl'
 import { requirementsMessages } from '../../lib/messages'
-import { ApplicationEligibility, RequirementKey } from '../../types/schema'
+import { ApplicationEligibility, RequirementKey } from '@island.is/api/schema'
 import { ReviewSectionState, Step } from './ReviewSection'
 
 export const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
@@ -19,13 +19,13 @@ const getDeniedByServiceMessageDescription = (
   key: RequirementKey,
 ): MessageDescriptor => {
   switch (key) {
-    case RequirementKey.NoLicenseFound:
-    case RequirementKey.NoTempLicense:
+    case RequirementKey.noLicenseFound:
+    case RequirementKey.noTempLicense:
       return requirementsMessages.invalidLicense
-    case RequirementKey.HasDeprivation:
-    case RequirementKey.HasPoints:
+    case RequirementKey.hasDeprivation:
+    case RequirementKey.hasPoints:
       return requirementsMessages.hasPointsOrDeprivation
-    case RequirementKey.NoExtendedDrivingLicense:
+    case RequirementKey.noExtendedDrivingLicense:
       return requirementsMessages.noExtendedDrivingLicenseTitle
     default:
       return requirementsMessages.rlsDefaultDeniedDescription
@@ -41,53 +41,53 @@ const requirementKeyToStep = (
   requirementMet: boolean,
 ): Omit<Step, 'state'> => {
   switch (key) {
-    case RequirementKey.DrivingSchoolMissing:
+    case RequirementKey.drivingSchoolMissing:
       return {
         title: requirementsMessages.drivingSchoolTitle,
         description: requirementsMessages.drivingSchoolDescription,
       }
-    case RequirementKey.DrivingAssessmentMissing:
+    case RequirementKey.drivingAssessmentMissing:
       return {
         title: requirementsMessages.drivingAssessmentTitle,
         description: requirementsMessages.drivingAssessmentDescription,
       }
-    case RequirementKey.DeniedByService:
-    case RequirementKey.HasDeprivation:
-    case RequirementKey.HasNoSignature:
-    case RequirementKey.HasPoints:
-    case RequirementKey.NoLicenseFound:
-    case RequirementKey.PersonNot17YearsOld:
-    case RequirementKey.PersonNotFoundInNationalRegistry:
-    case RequirementKey.NoTempLicense:
+    case RequirementKey.deniedByService:
+    case RequirementKey.hasDeprivation:
+    case RequirementKey.hasNoSignature:
+    case RequirementKey.hasPoints:
+    case RequirementKey.noLicenseFound:
+    case RequirementKey.personNot17YearsOld:
+    case RequirementKey.personNotFoundInNationalRegistry:
+    case RequirementKey.noTempLicense:
       return {
         title: requirementsMessages.rlsTitle,
         description: requirementMet
           ? requirementsMessages.rlsAcceptedDescription
           : getDeniedByServiceMessageDescription(key),
       }
-    case RequirementKey.LocalResidency:
+    case RequirementKey.localResidency:
       return {
         title: requirementsMessages.localResidencyTitle,
         description: requirementsMessages.localResidencyDescription,
       }
-    case RequirementKey.CurrentLocalResidency:
+    case RequirementKey.currentLocalResidency:
       return {
         title: requirementsMessages.localResidencyTitle,
         description: requirementsMessages.currentLocalResidencyDescription,
       }
     //TODO: Remove when RLS/SGS supports health certificate in BE license
-    case RequirementKey.BeRequiresHealthCertificate:
+    case RequirementKey.beRequiresHealthCertificate:
       return {
         title: requirementsMessages.beLicenseRequiresHealthCertificateTitle,
         description:
           requirementsMessages.beLicenseRequiresHealthCertificateDescription,
       }
-    case RequirementKey.HasNoPhoto:
+    case RequirementKey.hasNoPhoto:
       return {
         title: requirementsMessages.beLicenseQualityPhotoTitle,
         description: requirementsMessages.beLicenseQualityPhotoDescription,
       }
-    case RequirementKey.NoExtendedDrivingLicense:
+    case RequirementKey.noExtendedDrivingLicense:
       return {
         title: requirementsMessages.noExtendedDrivingLicenseTitle,
         description: requirementsMessages.noExtendedDrivingLicenseDescription,

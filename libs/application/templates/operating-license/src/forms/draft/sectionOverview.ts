@@ -9,12 +9,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import {
-  ApplicationTypes,
-  Operation,
-  OpeningHours,
-  OpeningHour,
-} from '../../lib/constants'
+import { ApplicationTypes, OpeningHour } from '../../lib/constants'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { displayOpeningHours, get24HFormatTime } from '../../lib/utils'
 import { Application } from '@island.is/application/types'

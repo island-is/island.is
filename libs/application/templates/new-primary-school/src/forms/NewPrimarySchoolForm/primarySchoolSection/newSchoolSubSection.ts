@@ -17,9 +17,9 @@ import {
 } from '../../../utils/newPrimarySchoolUtils'
 import {
   Application,
-  FriggSchoolsByMunicipalityQuery,
   OrganizationModelTypeEnum,
-} from '../../../types/schema'
+  Query,
+} from '@island.is/api/schema'
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
@@ -55,10 +55,9 @@ export const newSchoolSubSection = buildSubSection({
               application.externalData,
             )
 
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggSchoolsByMunicipalityQuery,
+            })
 
             return (
               data?.friggSchoolsByMunicipality
@@ -92,10 +91,9 @@ export const newSchoolSubSection = buildSubSection({
             apolloClient,
             selectedValues,
           }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggSchoolsByMunicipalityQuery,
+            })
 
             const municipalityCode = selectedValues?.[0]
 

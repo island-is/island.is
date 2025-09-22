@@ -29,7 +29,7 @@ import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaConfirmationOfPendingResolutionQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
-import { SiaConfirmationOfPendingResolutionQuery } from '../../types/schema'
+import { Query } from '@island.is/api/schema'
 import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPaymentsUtils'
 import { ManagedBy } from '../components/ManagedBy'
 
@@ -46,9 +46,7 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
     data,
     loading,
     error: confirmationOfPendingResolutionError,
-  } = useQuery<SiaConfirmationOfPendingResolutionQuery>(
-    siaConfirmationOfPendingResolutionQuery,
-  )
+  } = useQuery<Query>(siaConfirmationOfPendingResolutionQuery)
 
   setBeforeSubmitCallback?.(async () => {
     const { confirmationOfPendingResolutionConfirmation } =

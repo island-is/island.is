@@ -26,7 +26,7 @@ import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaCertificateForSicknessAndRehabilitationQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
-import { SiaCertificateForSicknessAndRehabilitationQuery } from '../../types/schema'
+import { Query } from '@island.is/api/schema'
 import { AlertMessageFormField } from '@island.is/application/ui-fields'
 
 export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
@@ -37,10 +37,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
 
-  const { data, loading, error } =
-    useQuery<SiaCertificateForSicknessAndRehabilitationQuery>(
-      siaCertificateForSicknessAndRehabilitationQuery,
-    )
+  const { data, loading, error } = useQuery<Query>(
+    siaCertificateForSicknessAndRehabilitationQuery,
+  )
 
   setBeforeSubmitCallback?.(async () => {
     // If data is still loading, prevent submission
