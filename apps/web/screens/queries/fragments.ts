@@ -899,12 +899,6 @@ export const slices = gql`
     }
   }
 
-  fragment EmbedFields on Embed {
-    embedUrl
-    altText
-    aspectRatio
-  }
-
   fragment ChartFields on Chart {
     __typename
     id

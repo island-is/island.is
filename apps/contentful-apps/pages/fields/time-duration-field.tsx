@@ -72,7 +72,7 @@ const TimeDurationField = () => {
       .getForLocale(sdk.field.locale)
       .onValueChanged((value) => {
         setStartDateString(value)
-        updateTime('endDate', undefined)
+        updateTime('endDate', '')
       })
   }, [sdk.entry.fields.startDate, sdk.field.locale, updateTime])
 
