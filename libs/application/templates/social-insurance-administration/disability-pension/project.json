@@ -20,12 +20,6 @@
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/social-insurance-administration/disability-pension/src/**/*.{js,ts,tsx}'"
       }
-    },
-    "codegen/frontend-client": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "graphql-codegen --config libs/application/templates/social-insurance-administration/disability-pension/codegen.yml"
-      }
     }
   }
 }

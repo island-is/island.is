@@ -19,7 +19,6 @@ import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-component
 import { Application } from '@island.is/application/types'
 import { SectionRouteEnum } from '../../../types/routes'
 import { siaGeneralCurrenciesQuery } from '../../../graphql/queries'
-import { SocialInsuranceGeneralCurrenciesQuery } from '../../../graphql/queries.generated'
 import { generateMonthInput } from '../../../utils/generateMonthInput'
 import { getApplicationExternalData } from '../../../utils'
 import {
@@ -34,6 +33,7 @@ import {
   unevenIncomePerYearCondition,
 } from '../../../utils/conditions'
 import { watchIncomePerYearValue } from '../../../utils/valueWatchers'
+import { Query } from '@island.is/api/schema'
 
 export const incomePlanSubSection = buildSubSection({
   id: SectionRouteEnum.INCOME_PLAN,
@@ -112,7 +112,7 @@ export const incomePlanSubSection = buildSubSection({
           },
           loadOptions: async ({ apolloClient }, _, activeField) => {
             const { data } =
-              await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
+              await apolloClient.query<Query>({
                 query: siaGeneralCurrenciesQuery,
               })
 

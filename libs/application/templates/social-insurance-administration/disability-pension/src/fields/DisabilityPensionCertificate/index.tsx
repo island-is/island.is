@@ -17,14 +17,14 @@ import { useQuery } from '@apollo/client'
 import { siaDisabilityPensionCertificateQuery } from '../../graphql/queries'
 import format from 'date-fns/format'
 import * as m from '../../lib/messages'
-import { SiaDisabilityPensionCertificateQuery } from '../../graphql/queries.generated'
+import { Query } from '@island.is/api/schema'
 
 export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
 
-  const { data, loading } = useQuery<SiaDisabilityPensionCertificateQuery>(
+  const { data, loading } = useQuery<Query>(
     siaDisabilityPensionCertificateQuery,
   )
 

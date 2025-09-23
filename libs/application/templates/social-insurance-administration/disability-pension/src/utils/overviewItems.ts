@@ -35,12 +35,8 @@ import {
   siaGeneralProfessionActivitiesQuery,
   siaGeneralProfessionsQuery,
 } from '../graphql/queries'
-import {
-  SocialInsuranceGeneralLanguagesQuery,
-  SocialInsuranceGeneralProfessionActivitiesQuery,
-  SocialInsuranceGeneralProfessionsQuery,
-} from '../graphql/queries.generated'
 import { OTHER_RESIDENCE_STATUS_VALUE, OTHER_STATUS_VALUE } from '../types/constants'
+import { Query } from '@island.is/api/schema'
 
 export const aboutApplicantItems = (
   answers: FormValue,
@@ -323,13 +319,13 @@ export const selfEvaluationItems = async (
 
   const [languageData, employmentJobData, employmentFieldData] =
     await Promise.all([
-      apolloClient.query<SocialInsuranceGeneralLanguagesQuery>({
+      apolloClient.query<Query>({
         query: siaGeneralLanguagesQuery,
       }),
-      apolloClient.query<SocialInsuranceGeneralProfessionsQuery>({
+      apolloClient.query<Query>({
         query: siaGeneralProfessionsQuery,
       }),
-      apolloClient.query<SocialInsuranceGeneralProfessionActivitiesQuery>({
+      apolloClient.query<Query>({
         query: siaGeneralProfessionActivitiesQuery,
       }),
     ])

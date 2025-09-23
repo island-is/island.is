@@ -15,10 +15,7 @@ import {
   siaGeneralProfessionsQuery,
 } from '../../../../graphql/queries'
 import { getApplicationAnswers, yesOrNoOptions } from '../../../../utils'
-import {
-  SocialInsuranceGeneralProfessionsQuery,
-  SocialInsuranceGeneralProfessionActivitiesQuery,
-} from '../../../../graphql/queries.generated'
+import { Query } from '@island.is/api/schema'
 
 export const previousEmploymentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT,
@@ -75,7 +72,7 @@ export const previousEmploymentField = buildMultiField({
       },
       loadOptions: async ({ apolloClient }) => {
         const { data } =
-          await apolloClient.query<SocialInsuranceGeneralProfessionsQuery>({
+          await apolloClient.query<Query>({
             query: siaGeneralProfessionsQuery,
           })
 
@@ -107,7 +104,7 @@ export const previousEmploymentField = buildMultiField({
       },
       loadOptions: async ({ apolloClient }) => {
         const { data } =
-          await apolloClient.query<SocialInsuranceGeneralProfessionActivitiesQuery>(
+          await apolloClient.query<Query>(
             {
               query: siaGeneralProfessionActivitiesQuery,
             },

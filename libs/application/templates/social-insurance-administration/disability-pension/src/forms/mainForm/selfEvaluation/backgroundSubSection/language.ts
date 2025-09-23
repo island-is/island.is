@@ -5,7 +5,7 @@ import {
 import * as m from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { siaGeneralLanguagesQuery } from '../../../../graphql/queries'
-import { SocialInsuranceGeneralLanguagesQuery } from '../../../../graphql/queries.generated'
+import { Query } from '@island.is/api/schema'
 
 export const languageField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_LANGUAGE,
@@ -19,7 +19,7 @@ export const languageField = buildMultiField({
       placeholder: m.questions.chooseLanguage,
       loadOptions: async ({ apolloClient }) => {
         const { data } =
-          await apolloClient.query<SocialInsuranceGeneralLanguagesQuery>({
+          await apolloClient.query<Query>({
             query: siaGeneralLanguagesQuery,
           })
 

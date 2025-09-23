@@ -29,7 +29,7 @@ import { SectionRouteEnum } from '../../../types/routes'
 import { accountNationality, getApplicationExternalData } from '../../../utils'
 import { siaGeneralCurrenciesQuery } from '../../../graphql/queries'
 import * as m from '../../../lib/messages'
-import { SocialInsuranceGeneralCurrenciesQuery } from '../../../graphql/queries.generated'
+import { Query } from '@island.is/api/schema'
 
 export const paymentInfoSubSection = buildSubSection({
   id: SectionRouteEnum.PAYMENT_INFO,
@@ -119,7 +119,7 @@ export const paymentInfoSubSection = buildSubSection({
           placeholder: sm.payment.selectCurrency,
           loadOptions: async ({ apolloClient }) => {
             const { data } =
-              await apolloClient.query<SocialInsuranceGeneralCurrenciesQuery>({
+              await apolloClient.query<Query>({
                 query: siaGeneralCurrenciesQuery,
               })
             return getCurrencies(data.socialInsuranceGeneral.currencies ?? [])
