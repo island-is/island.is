@@ -268,7 +268,7 @@ export const onlyCharacters = async (
   }
 
   const filteredValue = optionValue?.replace(
-    /[^a-zA-ZáéíóúýþæðöÁÉÍÓÚÝÞÆÐÖ\s]/g,
+    /[^a-zA-ZáéíóúýþæðöÁÉÍÓÚÝÞÆÐÖ.\s]/g,
     '',
   )
 

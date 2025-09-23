@@ -108,6 +108,19 @@ const landlordInfo = z
         }
       })
     }
+
+    const onlyRepresentatives = table?.every(
+      (landlord) => (landlord?.isRepresentative?.length ?? 0) > 0,
+    )
+
+    if (onlyRepresentatives) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.partiesDetails.alertMessageDescription,
+        path: ['table'],
+      })
+    }
   })
 
 const tenantInfo = z

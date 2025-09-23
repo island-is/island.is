@@ -22,14 +22,27 @@ export const otherFees = z
     heatingCostMeterStatusDate: z.string().optional(),
     otherCosts: z.array(z.string()).optional(),
     otherCostItems: z
-      .array(
-        z.object({
-          description: z.string().optional(),
-          amount: z.string().optional(),
-        }),
-      )
+      .union([
+        z.array(
+          z.object({
+            description: z.string().optional(),
+            amount: z.string().optional(),
+          }),
+        ),
+        z.string(),
+      ])
       .optional()
-      .nullable(),
+      .nullable()
+      .transform((value) => {
+        // If value is an empty string (when checkbox unchecked), convert to undefined
+        if (value === '' || value === null || value === undefined) {
+          return undefined
+        }
+        if (Array.isArray(value)) {
+          return value
+        }
+        return undefined
+      }),
     otherCostsDescription: z.string().optional(),
     otherCostsAmount: z.string().optional(),
   })
@@ -54,6 +67,7 @@ export const otherFees = z
       electricityCost === OtherFeesPayeeOptions.TENANT
     const tenantPaysHeatingCost = heatingCost === OtherFeesPayeeOptions.TENANT
     const hasOtherCosts = otherCosts?.includes(YesOrNoEnum.YES)
+    console.log(otherCosts)
 
     // Housing fund
     if (housingFund && tenantPaysHousingFund) {
@@ -187,6 +201,8 @@ export const otherFees = z
 
     // Other costs
     if (hasOtherCosts) {
+      console.log('hér???')
+
       if (!otherCostItems || otherCostItems.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
