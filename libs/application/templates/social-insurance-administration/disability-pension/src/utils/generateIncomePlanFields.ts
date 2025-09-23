@@ -75,10 +75,9 @@ export const generateIncomePlanFields = (): Record<string, RepeaterItem> => {
         watchValues: 'incomeType',
       },
       loadOptions: async ({ apolloClient }, _, activeField) => {
-        const { data } =
-          await apolloClient.query<Query>({
-            query: siaGeneralCurrenciesQuery,
-          })
+        const { data } = await apolloClient.query<Query>({
+          query: siaGeneralCurrenciesQuery,
+        })
 
         return getCurrencies(
           data.socialInsuranceGeneral?.currencies ?? [],

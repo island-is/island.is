@@ -35,7 +35,10 @@ import {
   siaGeneralProfessionActivitiesQuery,
   siaGeneralProfessionsQuery,
 } from '../graphql/queries'
-import { OTHER_RESIDENCE_STATUS_VALUE, OTHER_STATUS_VALUE } from '../types/constants'
+import {
+  OTHER_RESIDENCE_STATUS_VALUE,
+  OTHER_STATUS_VALUE,
+} from '../types/constants'
 import { Query } from '@island.is/api/schema'
 
 export const aboutApplicantItems = (

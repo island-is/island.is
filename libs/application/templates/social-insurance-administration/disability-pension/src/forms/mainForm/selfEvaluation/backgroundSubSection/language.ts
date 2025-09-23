@@ -18,10 +18,9 @@ export const languageField = buildMultiField({
       isSearchable: true,
       placeholder: m.questions.chooseLanguage,
       loadOptions: async ({ apolloClient }) => {
-        const { data } =
-          await apolloClient.query<Query>({
-            query: siaGeneralLanguagesQuery,
-          })
+        const { data } = await apolloClient.query<Query>({
+          query: siaGeneralLanguagesQuery,
+        })
 
         return (
           data.socialInsuranceGeneral?.languages?.map(({ value, label }) => ({
