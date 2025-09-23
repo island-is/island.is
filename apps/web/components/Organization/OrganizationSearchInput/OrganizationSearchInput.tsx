@@ -1,5 +1,7 @@
-import { SearchInput } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
+
+import SearchInput from '../../SearchInput/SearchInput'
+
 
 interface Props {
   placeholder?: string
@@ -13,7 +15,7 @@ export const OrganizationSearchInput = ({
   const { activeLocale } = useI18n()
 
   const placeholderText =
-    placeholder ?? activeLocale === 'is' ? 'Leita' : 'Search'
+    placeholder ?? (activeLocale === 'is' ? 'Leita' : 'Search')
 
   return (
     <SearchInput
