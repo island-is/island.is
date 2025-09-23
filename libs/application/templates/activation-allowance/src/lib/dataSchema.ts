@@ -80,7 +80,7 @@ const academicBackgroundSchema = z.object({
 })
 
 const drivingLicensesSchema = z.object({
-  // Preproccessing to convert empty string to empty array because "onClearChange" turns values into empty strings
+  // Preproccessing to convert empty string to empty array because "onChangeClear" turns values into empty strings
   drivingLicenseType: z.preprocess(
     (val) => (val === '' ? [] : val),
     z.array(z.string()).optional(),
