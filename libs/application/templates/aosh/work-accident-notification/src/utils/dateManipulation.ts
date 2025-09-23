@@ -8,6 +8,8 @@ export const getMaxDate = (application: Application) => {
   const time =
     getValueViaPath<string>(application.answers, 'accident.time') ?? '00:00'
 
+  // Add 1 day if time is before noon, else add 2 days
+  // time.slice(0,2) -> hour part of "HH:MM"
   const maxDate = new Date(date)
   maxDate.setDate(
     maxDate.getDate() + (parseInt(time.slice(0, 2), 10) < 12 ? 1 : 2),
@@ -22,6 +24,9 @@ export const getMinDate = (application: Application) => {
   const time =
     getValueViaPath<string>(application.answers, 'accident.time') ?? '00:00'
   const minDate = new Date(date)
+
+  // Subtract 2 days if time is before noon, else subtract 1 day
+  // time.slice(0,2) -> hour part of "HH:MM"
   minDate.setDate(
     minDate.getDate() - (parseInt(time.slice(0, 2), 10) < 12 ? 2 : 1),
   )
