@@ -44,7 +44,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { formatEventLocation } from '@island.is/web/utils/event'
+import { formatEventDates, formatEventLocation } from '@island.is/web/utils/event'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -97,22 +97,17 @@ const EventInformationBox = ({
   hasEventOccurred: boolean
 }) => {
   const { activeLocale } = useI18n()
-  const { format } = useDateUtils()
   const n = useNamespace(namespace)
   const router = useRouter()
+
+  const eventTimeSpan = event.startDateTime ? formatEventDates(event.startDateTime, event.endDateTime ?? ''): undefined
 
   return (
     <Box background="blue100" borderRadius="large" padding={[3, 3, 3, 2, 3]}>
       <Stack space={3}>
         <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
           <Icon color="blue400" icon="calendar" type="outline" />
-          {event.startDateTime && (
-            <Text>{format(new Date(event.startDateTime), 'do MMMM yyyy')}</Text>
-          )}{' '}
-          -
-          {event.endDateTime && (
-            <Text>{format(new Date(event.endDateTime), 'do MMMM yyyy')}</Text>
-          )}
+          {eventTimeSpan}
         </Box>
         {Boolean(event.time?.startTime) && (
           <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
