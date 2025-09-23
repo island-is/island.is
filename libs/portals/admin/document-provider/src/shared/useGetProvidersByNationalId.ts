@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
-import { ApiV1StatisticsNationalIdProvidersGetRequest } from '@island.is/api/schema'
+import { GetStatisticsProvidersNationalId } from '@island.is/api/schema'
 import { GET_STATISTIC_PROVIDERS_BY_NATIONALID } from '../queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
@@ -13,10 +13,12 @@ export const useGetProvidersByNationalId = (
   fromDate?: Date,
   toDate?: Date,
 ): GetProvidersByNationalIdReturnType => {
-  const statisticsInput: ApiV1StatisticsNationalIdProvidersGetRequest = {
+  const statisticsInput: GetStatisticsProvidersNationalId = {
     nationalId: organisationId ?? '',
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
     to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
+    page: 1,
+    pageSize: 25,
   }
 
   const { data, loading, error } = useQuery(

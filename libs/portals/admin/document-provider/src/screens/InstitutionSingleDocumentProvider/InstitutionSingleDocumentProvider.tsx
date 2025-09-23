@@ -24,10 +24,10 @@ import { DocumentProvidersNavigation } from '../../components/DocumentProvidersN
 import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
 import {
   StatisticBoxList,
-  StatisticsBoxData,
 } from '../../components/StatisticBoxList/StatisticBoxList'
 import { CategoryStatisticsSortBy } from '@island.is/api/schema'
 import { DocumentProviderPaths } from '../../lib/paths'
+import { StatisticsBoxData } from '../../lib/types'
 
 const SingleDocumentProvider = () => {
   const today = new Date()
@@ -94,7 +94,7 @@ const SingleDocumentProvider = () => {
       pageSize,
     )
 
-  const statisticsBoxdata: StatisticsBoxData[] = [
+  const statisticsBox: StatisticsBoxData[] = [
     {
       name: formatMessage(m.statisticsBoxPublishedDocuments),
       value: statistics?.statistics?.published || 0,
@@ -195,7 +195,7 @@ const SingleDocumentProvider = () => {
 
             <StatisticBoxList
               loading={loading}
-              statistics={statisticsBoxdata || []}
+              statistics={statisticsBox || []}
             />
 
             <InstitutionDocumentProviderDashboard
@@ -204,7 +204,7 @@ const SingleDocumentProvider = () => {
             />
 
             {breakdown ? (
-              <DocumentProviderStatisticsTable {...breakdown} />
+              <DocumentProviderStatisticsTable statistics={breakdown} />
             ) : null}
 
             <Box marginTop={2} marginBottom={4}>

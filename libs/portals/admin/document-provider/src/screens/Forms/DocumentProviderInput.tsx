@@ -32,6 +32,7 @@ interface Props<T extends FieldValues> {
   label: string
   placeholder: string
   rules?: ControllerRules
+  loading?: boolean
 }
 
 export const DocumentProviderInput = <T extends FieldValues = FieldValues>({
@@ -43,8 +44,9 @@ export const DocumentProviderInput = <T extends FieldValues = FieldValues>({
   label,
   placeholder,
   rules,
+  loading
 }: Props<T>) => {
-  const loading = false
+  
   return (
     <Box marginBottom={2}>
       {loading ? (

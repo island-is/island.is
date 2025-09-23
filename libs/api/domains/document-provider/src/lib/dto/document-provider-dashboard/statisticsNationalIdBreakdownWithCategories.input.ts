@@ -2,8 +2,8 @@ import { Field, Int, InputType } from '@nestjs/graphql'
 import { TotalStatisticsSortBy } from './statisticsNationalIdBreakdown.input'
 import { Min } from 'class-validator'
 
-@InputType('ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest')
-export class ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest {
+@InputType('GetStatisticsBreakdownWithCategoriesByNationalId')
+export class GetStatisticsBreakdownWithCategoriesByNationalId {
   @Field()
   nationalId!: string
 

@@ -19,9 +19,9 @@ export const InstitutionDocumentProviderDashboard = ({
 }: Props) => {
   //Get the sum of opened and published from chartData
   const opened =
-    chartData?.reduce((acc, item) => acc + (item.opened || 0), 0) || 0
+    chartData?.reduce((acc, item) => acc + (item?.opened ?? 0), 0) ?? 0
   const published =
-    chartData?.reduce((acc, item) => acc + (item.published || 0), 0) || 0
+    chartData?.reduce((acc, item) => acc + (item?.published ?? 0), 0) ?? 0
 
   const openedPercentage =
     published > 0 ? Math.round((opened / published) * 100) : 0

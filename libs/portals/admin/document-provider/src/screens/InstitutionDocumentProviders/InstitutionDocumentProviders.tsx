@@ -20,12 +20,12 @@ import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoad
 import { useGetStatisticsByNationalId } from '../../shared/useGetStatisticsByNationalId'
 import {
   StatisticBoxList,
-  StatisticsBoxData,
 } from '../../components/StatisticBoxList/StatisticBoxList'
 import { TotalStatisticsSortBy } from '@island.is/api/schema'
 import startOfMonth from 'date-fns/startOfMonth'
 import subYears from 'date-fns/subYears'
 import { DocumentProviderPaths } from '../../lib/paths'
+import { StatisticsBoxData } from '../../lib/types'
 
 const InstitutionDocumentProviders = () => {
   const today = new Date()
@@ -62,7 +62,7 @@ const InstitutionDocumentProviders = () => {
       4,
     )
 
-  const statisticsBoxdata: StatisticsBoxData[] = [
+  const statisticsBox: StatisticsBoxData[] = [
     {
       name: formatMessage(m.statisticsBoxOrganisationsCount),
       value: statistics?.providerCount || 0,
@@ -159,7 +159,7 @@ const InstitutionDocumentProviders = () => {
 
             <StatisticBoxList
               loading={loadingStatistics}
-              statistics={statisticsBoxdata || []}
+              statistics={statisticsBox || []}
             />
 
             <InstitutionDocumentProvidersDashboard

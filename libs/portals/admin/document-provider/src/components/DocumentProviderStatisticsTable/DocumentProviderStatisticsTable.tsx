@@ -1,21 +1,26 @@
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { ProviderStatisticsBreakdownPaginationResponse } from '../../lib/types'
-import { DELIVERY_PRICE } from '../../lib/constants'
+import { DOCUMENT_DELIVERY_PRICE_ISK } from '../../lib/constants'
 import { formatNumber } from '../../lib/utils'
+import { format } from 'date-fns'
+import { is } from 'date-fns/locale'
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
-export const DocumentProviderStatisticsTable = (
-  statistics: ProviderStatisticsBreakdownPaginationResponse,
-) => {
+export const DocumentProviderStatisticsTable = ({
+  statistics,
+}: { statistics: ProviderStatisticsBreakdownPaginationResponse }) => {
+  const { formatMessage } = useLocale()
   return (
     <Box paddingTop={6}>
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>Dagsetning</T.HeadData>
-            <T.HeadData align="right">Send</T.HeadData>
-            <T.HeadData align="right">Opnuð</T.HeadData>
-            <T.HeadData align="right">Villur</T.HeadData>
-            <T.HeadData align="right">Ávinningur</T.HeadData>
+            <T.HeadData>{formatMessage(m.documentProvidersDateFromLabel)}</T.HeadData>
+            <T.HeadData align="right">{formatMessage(m.statisticsBoxPublishedDocuments)}</T.HeadData>
+            <T.HeadData align="right">{formatMessage(m.statisticsBoxOpenedDocuments)}</T.HeadData>
+            <T.HeadData align="right">{formatMessage(m.statisticsBoxFailures)}</T.HeadData>
+            <T.HeadData align="right">{formatMessage(m.statisticsBoxBenefit)}</T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>
@@ -23,27 +28,24 @@ export const DocumentProviderStatisticsTable = (
             statistics.items.map((item, idx) => (
               <T.Row key={idx}>
                 <T.Data>
-                  {new Date(item.year, item.month - 1, 1).toLocaleDateString(
-                    'is-IS',
-                    {
-                      day: '2-digit',
-                      month: 'long',
-                      year: 'numeric',
-                    },
+                  {format(
+                    new Date(item.year, item.month - 1, 1),
+                    'dd. MMMM yyyy',
+                    { locale: is },
                   )}
                 </T.Data>
                 <T.Data align="right">{item.statistics?.published}</T.Data>
                 <T.Data align="right">{item.statistics?.opened}</T.Data>
                 <T.Data align="right">{item.statistics?.failures}</T.Data>
                 <T.Data align="right">
-                  {formatNumber(item.statistics?.published * DELIVERY_PRICE)}
+                  {formatNumber((item.statistics?.published ?? 0) * DOCUMENT_DELIVERY_PRICE_ISK)}
                 </T.Data>
               </T.Row>
             ))
           ) : (
             <T.Row>
-              <T.Data colSpan={4}>
-                <Text>Engin gögn...</Text>
+              <T.Data colSpan={5}>
+                <Text>{formatMessage(m.documentProvidersNoData)}</Text>
               </T.Data>
             </T.Row>
           )}

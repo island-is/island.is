@@ -2,6 +2,9 @@ import { Box, Table as T, Text, Button } from '@island.is/island-ui/core'
 import { useNavigate } from 'react-router-dom'
 import { ProviderInfo } from '../../lib/types'
 import { formatNumber } from '../../lib/utils'
+import { DocumentProviderPaths } from '../../lib/paths'
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   providers: Array<ProviderInfo>
@@ -9,15 +12,16 @@ interface Props {
 
 export const ProvidersTable = ({ providers }: Props) => {
   const navigate = useNavigate()
+  const { formatMessage } = useLocale()
   return (
     <Box paddingTop={6}>
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>Skjalaveitendur</T.HeadData>
-            <T.HeadData align="right">Send skjöl</T.HeadData>
-            <T.HeadData align="right">Opnuð skjöl</T.HeadData>
-            <T.HeadData>Links</T.HeadData>
+            <T.HeadData>{formatMessage(m.documentProvidersTitle)}</T.HeadData>
+            <T.HeadData align="right">{formatMessage(m.statisticsBoxPublishedDocuments)}</T.HeadData>
+            <T.HeadData align="right">{formatMessage(m.statisticsBoxOpenedDocuments)}</T.HeadData>
+            <T.HeadData></T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>
@@ -36,12 +40,17 @@ export const ProvidersTable = ({ providers }: Props) => {
                     size="small"
                     icon="arrowForward"
                     variant="text"
-                    aria-label={`Skoða nánar: ${item.name}`}
+                    aria-label={`${formatMessage(m.documentProvidersSearchResultsActionCardLabel)}: ${item.name}`}
                     onClick={() =>
-                      navigate(`/skjalaveitur/yfirlit/${item.providerId}`)
+                      navigate(
+                        DocumentProviderPaths.DocumentProviderDocumentProvidersSingle.replace(
+                          ':providerId',
+                          item.providerId,
+                        ),
+                      )
                     }
                   >
-                    Skoða nánar
+                    {formatMessage(m.documentProvidersSearchResultsActionCardLabel)}
                   </Button>
                 </T.Data>
               </T.Row>
@@ -49,7 +58,7 @@ export const ProvidersTable = ({ providers }: Props) => {
           ) : (
             <T.Row>
               <T.Data colSpan={4}>
-                <Text>Engin gögn...</Text>
+                <Text>{formatMessage(m.documentProvidersNoData)}</Text>
               </T.Data>
             </T.Row>
           )}

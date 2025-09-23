@@ -3,7 +3,7 @@ import { ProviderStatisticInfo } from './providerStatisticInfo.model'
 
 @ObjectType('StatisticsOverview')
 export class StatisticsOverview {
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   providerCount?: number
 
   @Field(() => ProviderStatisticInfo, { nullable: true })

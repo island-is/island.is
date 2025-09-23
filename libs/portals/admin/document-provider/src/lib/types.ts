@@ -109,3 +109,9 @@ export interface StatisticsBoxData {
   name: string
   value: number
 }
+
+export interface SentFilesAndErrorsChartData {
+  name: string
+  failures: number
+  opened: number
+}

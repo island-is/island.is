@@ -12,15 +12,10 @@ import {
 import { formatYAxis } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-
-export interface ChartData {
-  name: string
-  failures: number
-  opened: number
-}
+import { SentFilesAndErrorsChartData } from '../../lib/types'
 
 interface Props {
-  data: Array<ChartData>
+  data: Array<SentFilesAndErrorsChartData>
 }
 
 const COLORS = ['#99C0FF', '#FF0050']

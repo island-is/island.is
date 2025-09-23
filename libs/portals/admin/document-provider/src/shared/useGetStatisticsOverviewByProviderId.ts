@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
-import { ApiV1StatisticsNationalIdProvidersProviderIdGetRequest } from '@island.is/api/schema'
+import { GetStatisticsBreakdownByProviderId } from '@island.is/api/schema'
 import { GET_STATISTICS_OVERVIEW_BY_PROVIDERID } from '../queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
@@ -17,7 +17,7 @@ export const useGetStatisticsOverviewByProviderId = (
   const shouldSkip = !nationalId || !providerId
 
   const statisticsInput:
-    | ApiV1StatisticsNationalIdProvidersProviderIdGetRequest
+    | GetStatisticsBreakdownByProviderId
     | undefined = !shouldSkip
     ? {
         nationalId,

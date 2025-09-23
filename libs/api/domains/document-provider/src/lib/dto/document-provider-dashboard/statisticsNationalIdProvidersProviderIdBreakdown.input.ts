@@ -1,8 +1,8 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { CategoryStatisticsSortBy } from './statisticsProvidersBreakdownWithCategories.input'
 
-@InputType('ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest')
-export class ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest {
+@InputType('GetStatisticsBreakdownByProviderId')
+export class GetStatisticsBreakdownByProviderId {
   @Field()
   nationalId!: string
 

@@ -16,20 +16,20 @@ import {
   FeatureFlagService,
 } from '@island.is/nest/feature-flags'
 import { DocumentProviderDashboardService } from './document-provider-dashboard.service'
-import { ApiV1StatisticsNationalIdProvidersGetRequest } from '../models/document-provider-dashboard/statisticsNationalIdProviders.input'
+import { GetStatisticsProvidersNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdProviders.input'
 import { ProviderStatisticsPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsPaginationResponse.model'
 import { CategoryStatistics } from '../models/document-provider-dashboard/categoryStatistics.model'
-import { ApiV1StatisticsNationalIdCategoriesGetRequest } from '../models/document-provider-dashboard/statisticsNationalIdCategories.input'
-import { ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest } from '../models/document-provider-dashboard/statisticsNationalIdProvidersProviderIdBreakdown.input'
-import { ApiV1StatisticsNationalIdGetRequest } from '../models/document-provider-dashboard/statisticsNationalId.input'
+import { GetStatisticsCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdCategories.input'
+import { GetStatisticsBreakdownByProviderId } from '../dto/document-provider-dashboard/statisticsNationalIdProvidersProviderIdBreakdown.input'
+import { GetStatisticsByNationalId } from '../dto/document-provider-dashboard/statisticsNationalId.input'
 import { StatisticsOverview } from '../models/document-provider-dashboard/statisticsOverview.model'
 import { ProviderStatisticsBreakdownPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsBreakdownPaginationResponse.model'
 import { DocumentProviderDashboardStatisticsOverview } from '../models/document-provider-dashboard/providerStatisticsOverview.model'
-import { ApiV1StatisticsNationalIdProvidersProviderIdGetRequest } from '../models/document-provider-dashboard/statisticsProviderId.input'
-import { ApiV1StatisticsNationalIdBreakdownGetRequest } from '../models/document-provider-dashboard/statisticsNationalIdBreakdown.input'
+import { GetStatisticsCategoriesByProviderId } from '../dto/document-provider-dashboard/statisticsProviderId.input'
+import { GetStatisticsBreakdownByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdown.input'
 import { ProviderStatisticsCategoryBreakdownPaginationResponse } from '../models/document-provider-dashboard/ProviderStatisticsCategoryBreakdownPaginationResponse.model'
-import { ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest } from '../models/document-provider-dashboard/statisticsProvidersBreakdownWithCategories.input'
-import { ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest } from '../models/document-provider-dashboard/statisticsNationalIdBreakdownWithCategories.input'
+import { GetStatisticsBreakdownWithCategoriesByProviderId } from '../dto/document-provider-dashboard/statisticsProvidersBreakdownWithCategories.input'
+import { GetStatisticsBreakdownWithCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdownWithCategories.input'
 
 const LOG_CATEGORY = 'document-provider-dashboard-resolver'
 
@@ -49,7 +49,7 @@ export class DocumentProviderDashboardResolver {
     name: 'statisticProvidersByNationalId',
   })
   async statisticProvidersByNationalId(
-    @Args('input') input: ApiV1StatisticsNationalIdProvidersGetRequest,
+    @Args('input') input: GetStatisticsProvidersNationalId,
     @CurrentUser() user: User,
   ): Promise<ProviderStatisticsPaginationResponse | null> {
     try {
@@ -85,7 +85,7 @@ export class DocumentProviderDashboardResolver {
     name: 'statisticsCategories',
   })
   async statisticsCategories(
-    @Args('input') input: ApiV1StatisticsNationalIdCategoriesGetRequest,
+    @Args('input') input: GetStatisticsCategoriesByNationalId,
     @CurrentUser() user: User,
   ): Promise<Array<CategoryStatistics> | null> {
     try {
@@ -134,7 +134,7 @@ export class DocumentProviderDashboardResolver {
     name: 'statisticsByNationalId',
   })
   async statisticsByNationalId(
-    @Args('input') input: ApiV1StatisticsNationalIdGetRequest,
+    @Args('input') input: GetStatisticsByNationalId,
     @CurrentUser() user: User,
   ): Promise<StatisticsOverview | null> {
     try {
@@ -175,7 +175,7 @@ export class DocumentProviderDashboardResolver {
   })
   async statisticsBreakdownByProviderId(
     @Args('input')
-    input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest,
+    input: GetStatisticsBreakdownByProviderId,
     @CurrentUser() user: User,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     try {
@@ -216,7 +216,7 @@ export class DocumentProviderDashboardResolver {
   })
   async statisticsOverviewByProviderId(
     @Args('input')
-    input: ApiV1StatisticsNationalIdProvidersProviderIdGetRequest,
+    input: GetStatisticsCategoriesByProviderId,
     @CurrentUser() user: User,
   ): Promise<DocumentProviderDashboardStatisticsOverview | null> {
     try {
@@ -258,7 +258,7 @@ export class DocumentProviderDashboardResolver {
     name: 'statisticsBreakdownByNationalId',
   })
   async statisticsBreakdownByNationalId(
-    @Args('input') input: ApiV1StatisticsNationalIdBreakdownGetRequest,
+    @Args('input') input: GetStatisticsBreakdownByNationalId,
     @CurrentUser() user: User,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     try {
@@ -299,7 +299,7 @@ export class DocumentProviderDashboardResolver {
   })
   async statisticsBreakdownWithCategoriesByNationalId(
     @Args('input')
-    input: ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest,
+    input: GetStatisticsBreakdownWithCategoriesByNationalId,
     @CurrentUser() user: User,
   ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     try {
@@ -343,7 +343,7 @@ export class DocumentProviderDashboardResolver {
   })
   async statisticsBreakdownWithCategoriesByProviderId(
     @Args('input')
-    input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest,
+    input: GetStatisticsBreakdownWithCategoriesByProviderId,
     @CurrentUser() user: User,
   ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     try {

@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import {
-  ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest,
+  GetStatisticsBreakdownWithCategoriesByNationalId,
   TotalStatisticsSortBy,
 } from '@island.is/api/schema'
 import { GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_NATIONALID } from '../queries'
@@ -26,7 +26,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
   page = 1,
   pageSize = 10,
 ): GetProviderStatisticsBreakdownWithCategoriesReturnType => {
-  const statisticsInput: ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest =
+  const statisticsInput: GetStatisticsBreakdownWithCategoriesByNationalId =
     {
       nationalId: nationalId ?? '',
       from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
@@ -44,6 +44,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
         input: statisticsInput,
       },
       fetchPolicy: 'cache-and-network',
+      skip: !nationalId,
     },
   )
 

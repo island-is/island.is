@@ -1,4 +1,5 @@
 import { Field, Int, InputType, registerEnumType } from '@nestjs/graphql'
+import { Min } from 'class-validator'
 
 export enum StatisticsSortBy {
   Name = 'Name',
@@ -9,8 +10,8 @@ export enum StatisticsSortBy {
 
 registerEnumType(StatisticsSortBy, { name: 'StatisticsSortBy' })
 
-@InputType('ApiV1StatisticsNationalIdProvidersGetRequest')
-export class ApiV1StatisticsNationalIdProvidersGetRequest {
+@InputType('GetStatisticsProvidersNationalId')
+export class GetStatisticsProvidersNationalId {
   @Field()
   nationalId!: string
 
@@ -27,8 +28,10 @@ export class ApiV1StatisticsNationalIdProvidersGetRequest {
   desc?: boolean
 
   @Field(() => Int, { nullable: true })
+  @Min(1)
   page?: number
 
   @Field(() => Int, { nullable: true })
+  @Min(1)
   pageSize?: number
 }

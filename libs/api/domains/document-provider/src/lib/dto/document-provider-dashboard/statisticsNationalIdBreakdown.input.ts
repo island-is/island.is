@@ -10,8 +10,8 @@ export enum TotalStatisticsSortBy {
 
 registerEnumType(TotalStatisticsSortBy, { name: 'TotalStatisticsSortBy' })
 
-@InputType('ApiV1StatisticsNationalIdBreakdownGetRequest')
-export class ApiV1StatisticsNationalIdBreakdownGetRequest {
+@InputType('GetStatisticsBreakdownByNationalId')
+export class GetStatisticsBreakdownByNationalId {
   @Field()
   nationalId!: string
 

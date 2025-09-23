@@ -30,7 +30,7 @@ export const getDocumentProviderNavigationItems = (
 
   let items: NavigationItem[] = [
     {
-      title: 'Yfirlit',
+      title: m.overview.defaultMessage,
       href: DocumentProviderPaths.DocumentProviderOverview,
       items: [],
     },

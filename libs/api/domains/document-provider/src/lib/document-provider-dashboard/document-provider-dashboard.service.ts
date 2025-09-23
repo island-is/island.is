@@ -1,47 +1,47 @@
 import {
-  ApiV1StatisticsNationalIdCategoriesGetRequest,
-  DocumentProviderDashboardClientService,
+  StatisticsApi
 } from '@island.is/clients/document-provider-dashboard'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { ApiV1StatisticsNationalIdProvidersGetRequest } from '../models/document-provider-dashboard/statisticsNationalIdProviders.input'
+import { GetStatisticsProvidersNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdProviders.input'
 import { ProviderStatisticsPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsPaginationResponse.model'
-import { StatisticsSortBy } from '../models/document-provider-dashboard/statisticsNationalIdProviders.input'
+import { StatisticsSortBy } from '../dto/document-provider-dashboard/statisticsNationalIdProviders.input'
 import { CategoryStatistics } from '../models/document-provider-dashboard/categoryStatistics.model'
-import { ApiV1StatisticsNationalIdGetRequest } from '../models/document-provider-dashboard/statisticsNationalId.input'
+import { GetStatisticsByNationalId } from '../dto/document-provider-dashboard/statisticsNationalId.input'
 import { StatisticsOverview } from '../models/document-provider-dashboard/statisticsOverview.model'
-import { ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest } from '../models/document-provider-dashboard/statisticsNationalIdProvidersProviderIdBreakdown.input'
+import { GetStatisticsBreakdownByProviderId } from '../dto/document-provider-dashboard/statisticsNationalIdProvidersProviderIdBreakdown.input'
 import { ProviderStatisticsBreakdownPaginationResponse } from '../models/document-provider-dashboard/providerStatisticsBreakdownPaginationResponse.model'
-import { ApiV1StatisticsNationalIdProvidersProviderIdGetRequest } from '../models/document-provider-dashboard/statisticsProviderId.input'
+import { GetStatisticsCategoriesByProviderId } from '../dto/document-provider-dashboard/statisticsProviderId.input'
 import { DocumentProviderDashboardStatisticsOverview } from '../models/document-provider-dashboard/providerStatisticsOverview.model'
 import {
-  ApiV1StatisticsNationalIdBreakdownGetRequest,
+  GetStatisticsBreakdownByNationalId,
   TotalStatisticsSortBy,
-} from '../models/document-provider-dashboard/statisticsNationalIdBreakdown.input'
-import { ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest } from '../models/document-provider-dashboard/statisticsNationalIdBreakdownWithCategories.input'
+} from '../dto/document-provider-dashboard/statisticsNationalIdBreakdown.input'
+import { GetStatisticsBreakdownWithCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdownWithCategories.input'
 import { ProviderStatisticsCategoryBreakdownPaginationResponse } from '../models/document-provider-dashboard/ProviderStatisticsCategoryBreakdownPaginationResponse.model'
 import {
-  ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest,
+  GetStatisticsBreakdownWithCategoriesByProviderId,
   CategoryStatisticsSortBy,
-} from '../models/document-provider-dashboard/statisticsProvidersBreakdownWithCategories.input'
+} from '../dto/document-provider-dashboard/statisticsProvidersBreakdownWithCategories.input'
 import {
   mapBreakdownItems,
   mapCategoryStatisticsItems,
   mapStatistics,
 } from '../utils/mappers'
+import { GetStatisticsCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdCategories.input'
 
 @Injectable()
 export class DocumentProviderDashboardService {
   constructor(
-    private documentDashboardClientService: DocumentProviderDashboardClientService,
+    private statisticsApi: StatisticsApi,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async getStatisticProvidersByNationalId(
-    input: ApiV1StatisticsNationalIdProvidersGetRequest,
+    input: GetStatisticsProvidersNationalId,
   ): Promise<ProviderStatisticsPaginationResponse | null> {
     const statisticProviders =
-      await this.documentDashboardClientService.getStatisticProvidersByNationalId(
+      await this.statisticsApi.apiV1StatisticsNationalIdProvidersGet(
         {
           ...input,
           sortBy: input.sortBy as StatisticsSortBy | undefined,
@@ -72,10 +72,10 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsCategories(
-    input: ApiV1StatisticsNationalIdCategoriesGetRequest,
+    input: GetStatisticsCategoriesByNationalId,
   ): Promise<Array<CategoryStatistics> | null> {
     const statisticCategories =
-      await this.documentDashboardClientService.getStatisticsCategories({
+      await this.statisticsApi.apiV1StatisticsNationalIdCategoriesGet({
         ...input,
       })
 
@@ -92,10 +92,10 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsByNationalId(
-    input: ApiV1StatisticsNationalIdGetRequest,
+    input: GetStatisticsByNationalId,
   ): Promise<StatisticsOverview | null> {
     const statistics =
-      await this.documentDashboardClientService.getStatisticsByNationalId({
+      await this.statisticsApi.apiV1StatisticsNationalIdGet({
         ...input,
       })
 
@@ -112,10 +112,10 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsBreakdownByProviderId(
-    input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest,
+    input: GetStatisticsBreakdownByProviderId,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     const breakdown =
-      await this.documentDashboardClientService.getStatisticsBreakdownByProviderId(
+      await this.statisticsApi.apiV1StatisticsNationalIdProvidersProviderIdBreakdownGet(
         {
           ...input,
           sortBy: input.sortBy as TotalStatisticsSortBy | undefined,
@@ -134,10 +134,10 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsByProviderId(
-    input: ApiV1StatisticsNationalIdProvidersProviderIdGetRequest,
+    input: GetStatisticsCategoriesByProviderId,
   ): Promise<DocumentProviderDashboardStatisticsOverview | null> {
     const statistic =
-      await this.documentDashboardClientService.getStatisticsByProviderId({
+      await this.statisticsApi.apiV1StatisticsNationalIdProvidersProviderIdGet({
         ...input,
       })
 
@@ -152,10 +152,10 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsBreakdownByNationalId(
-    input: ApiV1StatisticsNationalIdBreakdownGetRequest,
+    input: GetStatisticsBreakdownByNationalId,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     const breakdown =
-      await this.documentDashboardClientService.getStatisticsBreakdownByNationalId(
+      await this.statisticsApi.apiV1StatisticsNationalIdBreakdownGet(
         {
           ...input,
           sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
@@ -174,10 +174,10 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsBreakdownWithCategoriesByNationalId(
-    input: ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest,
+    input: GetStatisticsBreakdownWithCategoriesByNationalId,
   ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     const breakdown =
-      await this.documentDashboardClientService.getStatisticsBreakdownWithCategoriesByNationalId(
+      await this.statisticsApi.apiV1StatisticsNationalIdBreakdownCategoriesGet(
         {
           ...input,
           sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
@@ -196,10 +196,10 @@ export class DocumentProviderDashboardService {
   }
 
   async getStatisticsBreakdownWithCategoriesByProviderId(
-    input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest,
+    input: GetStatisticsBreakdownWithCategoriesByProviderId,
   ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     const breakdown =
-      await this.documentDashboardClientService.getStatisticsBreakdownWithCategoriesByProviderId(
+      await this.statisticsApi.apiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGet(
         {
           ...input,
           sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,

@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import {
-  ApiV1StatisticsNationalIdBreakdownGetRequest,
+  GetStatisticsBreakdownByNationalId,
   CategoryStatisticsSortBy,
 } from '@island.is/api/schema'
 import { GET_PROVIDER_STATISTICS_BREAKDOWN_BY_NATIONALID } from '../queries'
@@ -13,7 +13,7 @@ import {
   GetProviderStatisticsBreakdownReturnType,
   ProviderStatisticsBreakdown,
 } from '../lib/types'
-import { DELIVERY_PRICE } from '../lib/constants'
+import { DOCUMENT_DELIVERY_PRICE_ISK } from '../lib/constants'
 import format from 'date-fns/format'
 
 export const useGetProviderStatisticsBreakdownByNationalId = (
@@ -25,7 +25,7 @@ export const useGetProviderStatisticsBreakdownByNationalId = (
   page = 1,
   pageSize = 10,
 ): GetProviderStatisticsBreakdownReturnType => {
-  const statisticsInput: ApiV1StatisticsNationalIdBreakdownGetRequest = {
+  const statisticsInput: GetStatisticsBreakdownByNationalId = {
     nationalId: nationalId ?? '',
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
     to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
@@ -67,10 +67,10 @@ export const useGetProviderStatisticsBreakdownByNationalId = (
                 month: 'short',
               })
             : 'Unknown',
-        published: item.statistics.published,
-        winning: item.statistics.published * DELIVERY_PRICE,
-        opened: item.statistics.opened,
-        failures: item.statistics.failures,
+        published: item.statistics?.published ?? 0,
+        winning: (item.statistics?.published ?? 0) * DOCUMENT_DELIVERY_PRICE_ISK,
+        opened: item.statistics?.opened ?? 0,
+        failures: item.statistics?.failures ?? 0,
       }),
     )
 

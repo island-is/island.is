@@ -10,7 +10,6 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { IntroHeader } from '@island.is/portals/core'
-//import { documentProviderNavigation } from '../../lib/navigation'
 import DocumentCategories from './Categories'
 import DocumentTypes from './Types'
 import { AddTypeCategory } from '../../components/AddTypeCategory'

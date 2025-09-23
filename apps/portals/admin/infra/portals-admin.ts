@@ -22,8 +22,6 @@ export const serviceSetup = (): ServiceBuilder<'portals-admin'> =>
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
       SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
-      DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET:
-        '/k8s/portals-admin/DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET',
     })
     .ingress({
       primary: {

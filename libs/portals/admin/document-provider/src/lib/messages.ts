@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  documentProvidersNoData: {
+    id: 'portals-admin.document-provider:document-providers-no-data',
+    defaultMessage: 'Engin gögn...',
+  },
+  statisticsBoxBenefit: {
+    id: 'portals-admin.document-provider:statistics-box-benefit',
+    defaultMessage: 'Ávinningur',
+  },
   // navigation
   rootName: {
     id: 'portals-admin.document-provider:title',
@@ -107,7 +115,7 @@ export const m = defineMessages({
   },
   documentProvidersDescription: {
     id: 'portals-admin.document-provider:document-providers-description',
-    defaultMessage: 'Ítarlegar upplýsingar um skjalaveitu',
+    defaultMessage: 'Ítarlegar upplýsingar um skjalaveitur',
   },
   documentProvidersSearchPlaceholder: {
     id: 'portals-admin.document-provider:document-providers-search-placeholder',

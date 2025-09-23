@@ -2,15 +2,11 @@ import React, { FC } from 'react'
 import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { StatisticBox } from '../StatisticBox/StatisticBox'
 import { DocumentProvidersLoading } from '../DocumentProvidersLoading/DocumentProvidersLoading'
+import { StatisticsBoxData } from '../../lib/types'
 
 interface Props {
   statistics: Array<StatisticsBoxData>
   loading: boolean
-}
-
-export interface StatisticsBoxData {
-  name: string
-  value: number
 }
 
 export const StatisticBoxList: FC<React.PropsWithChildren<Props>> = ({

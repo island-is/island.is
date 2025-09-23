@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 
 export const GET_STATISTIC_PROVIDERS_BY_NATIONALID = gql`
   query StatisticProvidersByNationalId(
-    $input: ApiV1StatisticsNationalIdProvidersGetRequest!
+    $input: GetStatisticsProvidersNationalId!
   ) {
     statisticProvidersByNationalId(input: $input) {
       totalCount
@@ -22,7 +22,7 @@ export const GET_STATISTIC_PROVIDERS_BY_NATIONALID = gql`
 
 export const GET_STATISTIC_PROVIDER_CATEGORIES_BY_NATIONALID = gql`
   query StatisticProviderCategoriesByNationalId(
-    $input: ApiV1StatisticsNationalIdCategoriesGetRequest!
+    $input: GetStatisticsCategoriesByNationalId!
   ) {
     statisticsCategories(input: $input) {
       name
@@ -32,7 +32,7 @@ export const GET_STATISTIC_PROVIDER_CATEGORIES_BY_NATIONALID = gql`
 `
 
 export const GET_STATISTICS_BY_NATIONALID = gql`
-  query StatisticsByNationalId($input: ApiV1StatisticsNationalIdGetRequest!) {
+  query StatisticsByNationalId($input: GetStatisticsByNationalId!) {
     statisticsByNationalId(input: $input) {
       providerCount
       statistics {
@@ -47,7 +47,7 @@ export const GET_STATISTICS_BY_NATIONALID = gql`
 
 export const GET_PROVIDER_STATISTICS_BREAKDOWN_BY_PROVIDERID = gql`
   query ProviderStatisticsBreakdownByProviderId(
-    $input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownGetRequest!
+    $input: GetStatisticsBreakdownByProviderId!
   ) {
     statisticsBreakdownByProviderId(input: $input) {
       totalCount
@@ -66,8 +66,8 @@ export const GET_PROVIDER_STATISTICS_BREAKDOWN_BY_PROVIDERID = gql`
 `
 
 export const GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_PROVIDERID = gql`
-  query ProviderStatisticsBreakdownByProviderId(
-    $input: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest!
+  query ProviderStatisticsBreakdownWithCategoriesByProviderId(
+    $input: GetStatisticsBreakdownWithCategoriesByProviderId!
   ) {
     statisticsBreakdownWithCategoriesByProviderId(input: $input) {
       totalCount
@@ -84,8 +84,8 @@ export const GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_PROVIDERID = gql
 `
 
 export const GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_NATIONALID = gql`
-  query ProviderStatisticsBreakdownByNationalId(
-    $input: ApiV1StatisticsNationalIdBreakdownCategoriesGetRequest!
+  query ProviderStatisticsBreakdownWithCategoriesByNationalId(
+    $input: GetStatisticsBreakdownWithCategoriesByNationalId!
   ) {
     statisticsBreakdownWithCategoriesByNationalId(input: $input) {
       totalCount
@@ -103,7 +103,7 @@ export const GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_NATIONALID = gql
 
 export const GET_PROVIDER_STATISTICS_BREAKDOWN_BY_NATIONALID = gql`
   query ProviderStatisticsBreakdownByNationalId(
-    $input: ApiV1StatisticsNationalIdBreakdownGetRequest!
+    $input: GetStatisticsBreakdownByNationalId!
   ) {
     statisticsBreakdownByNationalId(input: $input) {
       totalCount
@@ -123,7 +123,7 @@ export const GET_PROVIDER_STATISTICS_BREAKDOWN_BY_NATIONALID = gql`
 
 export const GET_STATISTICS_OVERVIEW_BY_PROVIDERID = gql`
   query StatisticsOverviewByProviderId(
-    $input: ApiV1StatisticsNationalIdProvidersProviderIdGetRequest!
+    $input: GetStatisticsCategoriesByProviderId!
   ) {
     statisticsOverviewByProviderId(input: $input) {
       name

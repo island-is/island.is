@@ -1,11 +1,9 @@
 import { Field, Int, InputType } from '@nestjs/graphql'
 
-@InputType('ApiV1StatisticsNationalIdProvidersProviderIdGetRequest')
-export class ApiV1StatisticsNationalIdProvidersProviderIdGetRequest {
+@InputType('GetStatisticsByNationalId')
+export class GetStatisticsByNationalId {
   @Field()
   nationalId!: string
-  @Field()
-  providerId!: string
 
   @Field(() => [Int], { nullable: true })
   categories?: Array<number>

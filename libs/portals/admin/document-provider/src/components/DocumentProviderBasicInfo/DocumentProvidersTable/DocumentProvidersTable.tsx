@@ -1,5 +1,6 @@
 import { Box, Table as T, Text, Link } from '@island.is/island-ui/core'
 import { ProviderStatisticsPaginationResponse } from '@island.is/api/schema'
+import { DocumentProviderPaths } from '../../../lib/paths'
 
 type ProvidersTableProps = {
   providerStatistics: ProviderStatisticsPaginationResponse
@@ -26,7 +27,10 @@ export const ProvidersTable = ({ providerStatistics }: ProvidersTableProps) => {
                 <T.Data>{item.statistics?.opened}</T.Data>
                 <T.Data>
                   <Link
-                    href={`/stjornbord/skjalaveitur/yfirlit/${item.providerId}`}
+                    href={DocumentProviderPaths.DocumentProviderDocumentProvidersSingle.replace(
+                      ':providerId',
+                      item.providerId,
+                    )}
                     underline="normal"
                   >
                     Skoða nánar

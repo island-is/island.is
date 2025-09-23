@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import {
-  ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest,
+  GetStatisticsBreakdownWithCategoriesByProviderId,
   CategoryStatisticsSortBy,
 } from '@island.is/api/schema'
 import { GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_PROVIDERID } from '../queries'
@@ -27,7 +27,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
   page = 1,
   pageSize = 10,
 ): GetProviderStatisticsBreakdownWithCategoriesReturnType => {
-  const statisticsInput: ApiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGetRequest =
+  const statisticsInput: GetStatisticsBreakdownWithCategoriesByProviderId =
     {
       providerId: providerId ?? '',
       nationalId: nationalId ?? '',
@@ -87,7 +87,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
     chartData = breakdown.items.map(
       (item: ProviderStatisticsBreakdownWithCategories) => {
         const monthLabel =
-          item.year && item.month
+           item.year && item.month && item.month >= 1 && item.month <= 12
             ? new Date(item.year, item.month - 1).toLocaleString('is', {
                 month: 'short',
               })

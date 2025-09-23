@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
-import { ApiV1StatisticsNationalIdCategoriesGetRequest } from '@island.is/api/schema'
+import { GetStatisticsCategoriesByNationalId } from '@island.is/api/schema'
 import { GET_STATISTIC_PROVIDER_CATEGORIES_BY_NATIONALID } from '../queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
@@ -16,7 +16,7 @@ export const useGetProviderStatisticCategoriesByNationalId = (
   fromDate?: Date,
   toDate?: Date,
 ): GetProviderStatisticCategoriesReturnType => {
-  const statisticsInput: ApiV1StatisticsNationalIdCategoriesGetRequest = {
+  const statisticsInput: GetStatisticsCategoriesByNationalId = {
     nationalId: (nationalId ?? '') as string,
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
     to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
@@ -41,7 +41,6 @@ export const useGetProviderStatisticCategoriesByNationalId = (
   }, [error, loading, nationalId, fromDate, toDate, formatMessage])
 
   const rawCategories = (data?.statisticsCategories ?? []) as Array<{
-    categoryId: string
     name: string
     published: number
   }>
@@ -59,12 +58,9 @@ export const useGetProviderStatisticCategoriesByNationalId = (
     '#9966FF', // purple
   ]
 
-  const categories: Array<
-    ProviderStatisticCategory & { value: number; color: string }
-  > = rawCategories.map((item, idx) => ({
+  const categories: ProviderStatisticCategory[] = rawCategories.map((item, idx) => ({
     name: item.name,
     published: item.published,
-    categoryId: item.categoryId,
     color: COLORS[idx % COLORS.length],
     value:
       totalPublished > 0
