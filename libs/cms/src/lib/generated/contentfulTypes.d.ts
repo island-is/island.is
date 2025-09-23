@@ -4272,6 +4272,7 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'Personuvernd/SearchInput'
     | undefined
 
   /** Localized JSON */

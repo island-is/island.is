@@ -11,6 +11,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseTag,
@@ -25,6 +26,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   RenderFiles,
   SectionHeading,
   UserContext,
@@ -69,6 +71,13 @@ const Summary: FC = () => {
   const { onOpen, getFileUrl } = useFileList({
     caseId: workingCase.id,
   })
+
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
+    workingCase.courtSessions,
+    user,
+  )
 
   const initialize = useCallback(() => {
     if (!workingCase.courtEndTime) {
@@ -237,16 +246,27 @@ const Summary: FC = () => {
           </Accordion>
         )}
         <SectionHeading title={formatMessage(strings.caseFiles)} />
-        {(rulingFiles.length > 0 || courtRecordFiles.length > 0) && (
+        {(rulingFiles.length > 0 ||
+          courtRecordFiles.length > 0 ||
+          hasGeneratedCourtRecord) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4">
               {formatMessage(strings.caseFilesSubtitleRuling)}
             </Text>
-            {rulingFiles.length > 0 && (
-              <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
+            {hasGeneratedCourtRecord && (
+              <PdfButton
+                caseId={workingCase.id}
+                title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                pdfType="courtRecord"
+                renderAs="row"
+                elementId="Þingbók"
+              />
             )}
             {courtRecordFiles.length > 0 && (
               <RenderFiles caseFiles={courtRecordFiles} onOpenFile={onOpen} />
+            )}
+            {rulingFiles.length > 0 && (
+              <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
             )}
           </Box>
         )}
@@ -289,7 +309,7 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
             text: 'Staðfesta',
             onClick: async () => await handleModalPrimaryButtonClick(),
             isLoading: isTransitioningCase,
-            isDisabled: !hasReviewed || pdfError,
+            isDisabled: false, // !hasReviewed || pdfError, TODO FIX BUG ON PRD AND REVERT THIS
           }}
           secondaryButton={{
             text: 'Hætta við',

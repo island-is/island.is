@@ -27,21 +27,21 @@ const OwnerView = ({
 
   return (
     <Stack space={8}>
-      <Box marginTop={[0, 5]}>
-        {signedLists && (
-          <SignedLists
-            collectionType={collectionType}
-            signedLists={signedLists}
-          />
-        )}
+      {signedLists?.length > 0 && (
+        <SignedLists
+          collectionType={collectionType}
+          signedLists={signedLists}
+        />
+      )}
 
-        {/* Candidate created lists */}
-        <Text variant="h4" marginTop={[5, 7]} marginBottom={2}>
-          {formatMessage(m.myListsDescription)}
-        </Text>
-        <Stack space={[3, 5]}>
-          {listsForOwner.map((list) => {
-            return (
+      {/* Candidate created lists */}
+      {listsForOwner?.length > 0 && (
+        <Box>
+          <Text variant="h4" marginBottom={2}>
+            {formatMessage(m.myListsDescription)}
+          </Text>
+          <Stack space={[3, 5]}>
+            {listsForOwner.map((list) => (
               <ActionCard
                 key={list.id}
                 backgroundColor="white"
@@ -95,10 +95,10 @@ const OwnerView = ({
                   withLabel: true,
                 }}
               />
-            )
-          })}
-        </Stack>
-      </Box>
+            ))}
+          </Stack>
+        </Box>
+      )}
       <Managers collectionType={collectionType} />
     </Stack>
   )
