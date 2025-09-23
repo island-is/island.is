@@ -98,7 +98,7 @@ export const overview = {
     },
     directions: {
       id: 'ta.eft.application:overview.longTermlocation.directions',
-      defaultMessage: 'Leiðarlýsing',
+      defaultMessage: 'Ósk um svæði',
       description: 'Overview long-term location directions label',
     },
   }),

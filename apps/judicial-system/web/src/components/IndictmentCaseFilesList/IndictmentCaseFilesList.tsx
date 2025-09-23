@@ -88,7 +88,7 @@ const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
         heading="h4"
         variant="h4"
       />
-      {<RenderFiles caseFiles={files} onOpenFile={onOpenFile} />}
+      <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />
       {children}
     </Box>
   )

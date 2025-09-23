@@ -26,7 +26,7 @@ export enum CourtSessionClosedLegalBasis {
 
 export enum CourtSessionRulingType {
   NONE = 'NONE',
-  JUDGMENT = 'JUDGMENT',
+  JUDGEMENT = 'JUDGEMENT',
   ORDER = 'ORDER',
 }
 

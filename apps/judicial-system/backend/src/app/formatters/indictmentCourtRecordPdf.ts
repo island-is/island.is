@@ -118,7 +118,7 @@ export const createIndictmentCourtRecordPdf = (
       addEmptyLines(doc, 2)
       addNormalText(
         doc,
-        `Skjöl málsing nr. 1-${nrOfFiledDocuments} liggja frammi.`,
+        `Skjöl málsins nr. 1-${nrOfFiledDocuments} liggja frammi.`,
       )
     }
 
@@ -138,13 +138,13 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc, 2)
-    addNormalText(doc, courtSession.entries ?? 'Engar bóknari voru skráðar.')
+    addNormalText(doc, courtSession.entries ?? 'Engar bókanir voru skráðar.')
 
     if (courtSession.rulingType !== CourtSessionRulingType.NONE) {
       addEmptyLines(doc)
       addNormalCenteredText(
         doc,
-        courtSession.rulingType === CourtSessionRulingType.JUDGMENT
+        courtSession.rulingType === CourtSessionRulingType.JUDGEMENT
           ? 'DÓMSORÐ:'
           : 'ÚRSKURÐARORÐ:',
         'Times-Bold',

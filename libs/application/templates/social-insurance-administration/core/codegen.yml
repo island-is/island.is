@@ -4,8 +4,17 @@ documents: libs/application/templates/social-insurance-administration/core/src/g
 generates:
   libs/application/templates/social-insurance-administration/core/src/types/schema.ts:
     plugins:
-      - typescript
+      - add:
+          content: 'import { Exact } from "@island.is/api/schema";'
       - typescript-operations
+      - typescript-react-apollo
+    config:
+      skipTypename: false
+      onlyOperationTypes: true
+      preResolveTypes: true
+      namingConvention:
+        typeNames: pascal-case#pascalCase
+        enumValues: upper-case#upperCase
 hooks:
   afterAllFileWrite:
     - prettier --write
