@@ -15,6 +15,7 @@
     "apps/native/*"
   ],
   "scripts": {
+    "nx2": "nx",
     "nx": "nx",
     "start": "nx serve",
     "build": "nx build",
