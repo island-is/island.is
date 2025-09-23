@@ -58,7 +58,7 @@ const Summary: FC = () => {
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
     useCase()
   const [modalVisible, setModalVisible] = useState<
-    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING'
+    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING' | 'TODO:REMOVE'
   >()
   const [rulingUrl, setRulingUrl] = useState<string>()
   const [hasReviewed, setHasReviewed] = useState<boolean>(false)
@@ -278,7 +278,7 @@ const Summary: FC = () => {
           }
         />
       </FormContentContainer>
-      {modalVisible === 'CONFIRM_RULING' && (
+      {modalVisible === 'TODO:REMOVE' && (
         <Modal
           title="Staðfesting dóms"
           text={`Vinsamlegast rýnið skjal fyrir staðfestingu.            
@@ -320,7 +320,8 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
           )}
         </Modal>
       )}
-      {modalVisible === 'CONFIRM_INDICTMENT' && (
+      {(modalVisible === 'CONFIRM_INDICTMENT' ||
+        modalVisible === 'CONFIRM_RULING') && (
         <Modal
           title={formatMessage(strings.completeCaseModalTitle)}
           text={formatMessage(strings.completeCaseModalBody)}
