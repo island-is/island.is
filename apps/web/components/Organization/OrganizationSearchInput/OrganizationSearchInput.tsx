@@ -2,7 +2,6 @@ import { useI18n } from '@island.is/web/i18n'
 
 import SearchInput from '../../SearchInput/SearchInput'
 
-
 interface Props {
   placeholder?: string
   organizationSlug?: string
