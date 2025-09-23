@@ -603,20 +603,22 @@ export const getOverviewErrorMessage = (
   answers: FormValue,
 ): StaticText | undefined => {
   // Convoy missing in freight pairing error
-  const convoyItems = getConvoyItems(answers)
-  const freightPairingAllItems = getAllFreightPairingItems(answers)
-  for (let idx = 0; idx < convoyItems.length; idx++) {
-    const convoyItem = convoyItems[idx]
-    const isPaired = freightPairingAllItems.some(
-      (x) => x.convoyId === convoyItem.convoyId,
-    )
-    if (!isPaired) {
-      return {
-        ...overview.freight.convoyMissingErrorMessage,
-        values: {
-          convoyNumber: idx + 1,
-          vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
-        },
+  if (checkIfExemptionTypeLongTerm(answers)) {
+    const convoyItems = getConvoyItems(answers)
+    const freightPairingAllItems = getAllFreightPairingItems(answers)
+    for (let idx = 0; idx < convoyItems.length; idx++) {
+      const convoyItem = convoyItems[idx]
+      const isPaired = freightPairingAllItems.some(
+        (x) => x.convoyId === convoyItem.convoyId,
+      )
+      if (!isPaired) {
+        return {
+          ...overview.freight.convoyMissingErrorMessage,
+          values: {
+            convoyNumber: idx + 1,
+            vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
+          },
+        }
       }
     }
   }
