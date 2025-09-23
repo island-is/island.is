@@ -307,7 +307,7 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
             text: 'Staðfesta',
             onClick: async () => await handleModalPrimaryButtonClick(),
             isLoading: isTransitioningCase,
-            isDisabled: !hasReviewed || pdfError,
+            isDisabled: false, // !hasReviewed || pdfError, TODO FIX BUG ON PRD AND REVERT THIS
           }}
           secondaryButton={{
             text: 'Hætta við',
