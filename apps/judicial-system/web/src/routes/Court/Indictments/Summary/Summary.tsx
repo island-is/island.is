@@ -130,14 +130,16 @@ const Summary: FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    if (
-      workingCase.indictmentRulingDecision ===
-      CaseIndictmentRulingDecision.RULING
-    ) {
-      await handleRuling()
-    } else {
-      setModalVisible('CONFIRM_INDICTMENT')
-    }
+    // TODO: Uncomment when CORS bug is fixed
+    // if (
+    //   workingCase.indictmentRulingDecision ===
+    //   CaseIndictmentRulingDecision.RULING
+    // ) {
+    //   await handleRuling()
+    // } else {
+    //   setModalVisible('CONFIRM_INDICTMENT')
+    // }
+    setModalVisible('CONFIRM_INDICTMENT')
   }
 
   const handleCourtEndTimeChange = useCallback(
