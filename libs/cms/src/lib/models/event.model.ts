@@ -88,7 +88,15 @@ export class Event {
 export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
   let endDate = ''
 
-  if (fields.startDate && fields.time?.endTime) {
+  if (fields.time?.endDate) {
+    const date = new Date(fields.time.endDate)
+    if (fields.time.endTime) {
+      const [hours, minutes] = fields.time.endTime.split(':')
+      date.setHours(Number(hours))
+      date.setMinutes(Number(minutes))
+    }
+    endDate = date.getTime().toString()
+  } else if (fields.startDate && fields.time?.endTime) {
     const date = new Date(fields.startDate)
     const [hours, minutes] = fields.time.endTime.split(':')
     date.setHours(Number(hours))
