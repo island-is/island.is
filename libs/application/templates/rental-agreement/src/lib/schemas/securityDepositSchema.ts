@@ -139,7 +139,7 @@ export const securityDeposit = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
-        params: m.securityDeposit.amountOtherMutualFundError,
+        params: m.securityDeposit.amountOtherCapitalError,
         path: ['securityAmountOther'],
       })
     }
@@ -147,13 +147,15 @@ export const securityDeposit = z
     if (
       (securityType === SecurityDepositTypeOptions.CAPITAL ||
         securityType === SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE ||
-        securityType === SecurityDepositTypeOptions.BANK_GUARANTEE) &&
+        securityType === SecurityDepositTypeOptions.BANK_GUARANTEE ||
+        securityType === SecurityDepositTypeOptions.INSURANCE_COMPANY ||
+        securityType === SecurityDepositTypeOptions.OTHER) &&
       Number(rentalAmount) * 3 < Number(securityAmountOther)
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
-        params: m.securityDeposit.amountOtherCapitolError,
+        params: m.securityDeposit.amountOtherCapitalError,
         path: ['securityAmountOther'],
       })
     }

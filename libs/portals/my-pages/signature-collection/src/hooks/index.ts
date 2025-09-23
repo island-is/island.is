@@ -38,6 +38,7 @@ export const useGetSignatureList = (
           collectionType,
         },
       },
+      skip: !listId,
     },
   )
   const listInfo =
@@ -62,6 +63,7 @@ export const useGetListSignees = (
         collectionType,
       },
     },
+    skip: !listId,
   })
   const listSignees =
     (listSignatures?.signatureCollectionSignatures as SignatureCollectionSignature[]) ??
