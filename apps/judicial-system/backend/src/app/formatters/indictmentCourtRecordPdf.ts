@@ -135,7 +135,7 @@ export const createIndictmentCourtRecordPdf = (
       addEmptyLines(doc)
       addNormalCenteredText(
         doc,
-        courtSession.rulingType === CourtSessionRulingType.JUDGMENT
+        courtSession.rulingType === CourtSessionRulingType.JUDGEMENT
           ? 'DÓMSORÐ:'
           : 'ÚRSKURÐARORÐ:',
         'Times-Bold',
