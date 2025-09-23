@@ -1,4 +1,4 @@
-import { QuestionDisplayType } from '../models/question.model'
+import { QuestionDisplayType, AnswerOptionType } from '../models/question.model'
 import { QuestionnairesStatusEnum } from '../models/questionnaires.model'
 
 export const data = {
@@ -7,7 +7,7 @@ export const data = {
       id: '8f7e2a1d-4c9b-4e3f-9a2d-6b8c4f5e1a3d',
       title: 'DT - Mat á vanlíðan',
       description: '',
-      sentDate: '2025-09-09T12:37:21.272Z',
+      sentDate: '2025-09-23T11:38:24.939Z',
       status: QuestionnairesStatusEnum.notAnswered,
       organization: 'EL',
       questions: [
@@ -18,20 +18,15 @@ export const data = {
             'Vinsamlegast merktu við þá tölu (0-10) sem lýsir því best hversu mikilli vanlíðan þú hefur fundið fyrir síðastliðna viku, að meðtöldum deginum í dag.',
           display: QuestionDisplayType.required,
           answerOptions: {
-            id: '10_answer',
-            label: 'Vanlíðan',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerThermometer' as const,
-              id: '10_type',
-              label: 'Vanlíðan',
-              sublabel:
-                'Vinsamlegast merktu við þá tölu (0-10) sem lýsir því best hversu mikilli vanlíðan þú hefur fundið fyrir síðastliðna viku, að meðtöldum deginum í dag.',
-              display: QuestionDisplayType.required,
-              maxLabel: 'Gríðarleg vanlíðan',
-              minLabel: 'Engin vanlíðan',
-              minValue: 0,
-              maxValue: 10,
-            },
+            id: '10_type',
+            type: AnswerOptionType.thermometer,
+            sublabel:
+              'Vinsamlegast merktu við þá tölu (0-10) sem lýsir því best hversu mikilli vanlíðan þú hefur fundið fyrir síðastliðna viku, að meðtöldum deginum í dag.',
+            display: QuestionDisplayType.required,
+            maxLabel: 'Gríðarleg vanlíðan',
+            minLabel: 'Engin vanlíðan',
+            minValue: 0,
+            maxValue: 10,
           },
         },
         {
@@ -40,16 +35,9 @@ export const data = {
             'Vinsamlegast merktu við hvort eitthvað af eftirtöldu hefur valdið þér erfiðleikum síðastliðna viku að meðtöldum deginum í dag. Gættu þess að merkja annað hvort við JÁ eða NEI í hverju atriði.',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '20_answer',
-            label:
-              'Vinsamlegast merktu við hvort eitthvað af eftirtöldu hefur valdið þér erfiðleikum síðastliðna viku að meðtöldum deginum í dag. Gættu þess að merkja annað hvort við JÁ eða NEI í hverju atriði.',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerLabel' as const,
-              id: '20_type',
-              label:
-                'Vinsamlegast merktu við hvort eitthvað af eftirtöldu hefur valdið þér erfiðleikum síðastliðna viku að meðtöldum deginum í dag. Gættu þess að merkja annað hvort við JÁ eða NEI í hverju atriði.',
-              display: QuestionDisplayType.optional,
-            },
+            id: '20_type',
+            type: AnswerOptionType.label,
+            display: QuestionDisplayType.optional,
           },
         },
         {
@@ -57,15 +45,10 @@ export const data = {
           label: 'Barnagæsla',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '23_answer',
-            label: 'Barnagæsla',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '23_type',
-              label: 'Barnagæsla',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '23_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -73,15 +56,10 @@ export const data = {
           label: 'Húsnæði',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '24_answer',
-            label: 'Húsnæði',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '24_type',
-              label: 'Húsnæði',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '24_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -89,15 +67,10 @@ export const data = {
           label: 'Tryggingar',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '25_answer',
-            label: 'Tryggingar',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '25_type',
-              label: 'Tryggingar',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '25_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -105,15 +78,10 @@ export const data = {
           label: 'Fjármál',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '26_answer',
-            label: 'Fjármál',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '26_type',
-              label: 'Fjármál',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '26_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -121,15 +89,10 @@ export const data = {
           label: 'Ferðir',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '27_answer',
-            label: 'Ferðir',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '27_type',
-              label: 'Ferðir',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '27_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -137,15 +100,10 @@ export const data = {
           label: 'Vinna/Skóli',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '28_answer',
-            label: 'Vinna/Skóli',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '28_type',
-              label: 'Vinna/Skóli',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '28_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -153,15 +111,10 @@ export const data = {
           label: 'Ákvörðum um meðferð',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '29_answer',
-            label: 'Ákvörðum um meðferð',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '29_type',
-              label: 'Ákvörðum um meðferð',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '29_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -169,15 +122,10 @@ export const data = {
           label: 'Vegna barna',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '33_answer',
-            label: 'Vegna barna',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '33_type',
-              label: 'Vegna barna',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '33_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -185,15 +133,10 @@ export const data = {
           label: 'Vegna maka',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '34_answer',
-            label: 'Vegna maka',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '34_type',
-              label: 'Vegna maka',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '34_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -201,15 +144,10 @@ export const data = {
           label: 'Heilsufar nákominna',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '35_answer',
-            label: 'Heilsufar nákominna',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '35_type',
-              label: 'Heilsufar nákominna',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '35_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -217,15 +155,10 @@ export const data = {
           label: 'Möguleikar á barneignum',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '36_answer',
-            label: 'Möguleikar á barneignum',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '36_type',
-              label: 'Möguleikar á barneignum',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '36_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -233,15 +166,10 @@ export const data = {
           label: 'Þunglyndi',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '43_answer',
-            label: 'Þunglyndi',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '43_type',
-              label: 'Þunglyndi',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '43_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -249,15 +177,10 @@ export const data = {
           label: 'Ótti',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '44_answer',
-            label: 'Ótti',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '44_type',
-              label: 'Ótti',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '44_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -265,15 +188,10 @@ export const data = {
           label: 'Kvíði/taugaspenna',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '45_answer',
-            label: 'Kvíði/taugaspenna',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '45_type',
-              label: 'Kvíði/taugaspenna',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '45_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -281,15 +199,10 @@ export const data = {
           label: 'Depurð',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '46_answer',
-            label: 'Depurð',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '46_type',
-              label: 'Depurð',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '46_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -297,15 +210,10 @@ export const data = {
           label: 'Áhyggjur',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '47_answer',
-            label: 'Áhyggjur',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '47_type',
-              label: 'Áhyggjur',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '47_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -313,15 +221,10 @@ export const data = {
           label: 'Áhugaleysi á daglegum athöfnum',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '48_answer',
-            label: 'Áhugaleysi á daglegum athöfnum',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '48_type',
-              label: 'Áhugaleysi á daglegum athöfnum',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '48_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -329,15 +232,10 @@ export const data = {
           label: 'Áhyggjur af andlegum/trúarlegum toga',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '49_answer',
-            label: 'Áhyggjur af andlegum/trúarlegum toga',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '49_type',
-              label: 'Áhyggjur af andlegum/trúarlegum toga',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '49_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -345,15 +243,10 @@ export const data = {
           label: 'Útlit',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '53_answer',
-            label: 'Útlit',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '53_type',
-              label: 'Útlit',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '53_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -361,15 +254,10 @@ export const data = {
           label: 'Að baðast/klæðast',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '54_answer',
-            label: 'Að baðast/klæðast',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '54_type',
-              label: 'Að baðast/klæðast',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '54_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -377,15 +265,10 @@ export const data = {
           label: 'Öndun',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '55_answer',
-            label: 'Öndun',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '55_type',
-              label: 'Öndun',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '55_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -393,15 +276,10 @@ export const data = {
           label: 'Breytingar á þvaglátum',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '56_answer',
-            label: 'Breytingar á þvaglátum',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '56_type',
-              label: 'Breytingar á þvaglátum',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '56_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -409,15 +287,10 @@ export const data = {
           label: 'Hægðatregða',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '57_answer',
-            label: 'Hægðatregða',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '57_type',
-              label: 'Hægðatregða',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '57_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -425,15 +298,10 @@ export const data = {
           label: 'Niðurgangur',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '58_answer',
-            label: 'Niðurgangur',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '58_type',
-              label: 'Niðurgangur',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '58_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -441,15 +309,10 @@ export const data = {
           label: 'Að borða',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '59_answer',
-            label: 'Að borða',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '59_type',
-              label: 'Að borða',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '59_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -457,15 +320,10 @@ export const data = {
           label: 'Þreyta',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '60_answer',
-            label: 'Þreyta',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '60_type',
-              label: 'Þreyta',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '60_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -473,15 +331,10 @@ export const data = {
           label: 'Bjúgur',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '61_answer',
-            label: 'Bjúgur',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '61_type',
-              label: 'Bjúgur',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '61_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -489,15 +342,10 @@ export const data = {
           label: 'Hitakóf',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '62_answer',
-            label: 'Hitakóf',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '62_type',
-              label: 'Hitakóf',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '62_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -505,15 +353,10 @@ export const data = {
           label: 'Að komast á milli staða',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '63_answer',
-            label: 'Að komast á milli staða',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '63_type',
-              label: 'Að komast á milli staða',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '63_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -521,15 +364,10 @@ export const data = {
           label: 'Meltingartruflanir',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '64_answer',
-            label: 'Meltingartruflanir',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '64_type',
-              label: 'Meltingartruflanir',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '64_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -537,15 +375,10 @@ export const data = {
           label: 'Minni/einbeiting',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '65_answer',
-            label: 'Minni/einbeiting',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '65_type',
-              label: 'Minni/einbeiting',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '65_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -553,15 +386,10 @@ export const data = {
           label: 'Sár í munni',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '66_answer',
-            label: 'Sár í munni',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '66_type',
-              label: 'Sár í munni',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '66_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -569,15 +397,10 @@ export const data = {
           label: 'Ógleði',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '67_answer',
-            label: 'Ógleði',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '67_type',
-              label: 'Ógleði',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '67_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -585,15 +408,10 @@ export const data = {
           label: 'Þurrkur eða stífla í nefi',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '68_answer',
-            label: 'Þurrkur eða stífla í nefi',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '68_type',
-              label: 'Þurrkur eða stífla í nefi',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '68_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -601,15 +419,10 @@ export const data = {
           label: 'Verkir',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '69_answer',
-            label: 'Verkir',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '69_type',
-              label: 'Verkir',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '69_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -617,15 +430,10 @@ export const data = {
           label: 'Kynlíf/samlíf',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '70_answer',
-            label: 'Kynlíf/samlíf',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '70_type',
-              label: 'Kynlíf/samlíf',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '70_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -633,15 +441,10 @@ export const data = {
           label: 'Húðþurrkur/kláði',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '71_answer',
-            label: 'Húðþurrkur/kláði',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '71_type',
-              label: 'Húðþurrkur/kláði',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '71_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -649,15 +452,10 @@ export const data = {
           label: 'Svefn',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '72_answer',
-            label: 'Svefn',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '72_type',
-              label: 'Svefn',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '72_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -665,15 +463,10 @@ export const data = {
           label: 'Áfengi, fíkniefni eða lyf',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '73_answer',
-            label: 'Áfengi, fíkniefni eða lyf',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '73_type',
-              label: 'Áfengi, fíkniefni eða lyf',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '73_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -681,15 +474,10 @@ export const data = {
           label: 'Stingir í höndum/fótum',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '74_answer',
-            label: 'Stingir í höndum/fótum',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '74_type',
-              label: 'Stingir í höndum/fótum',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei'],
-            },
+            id: '74_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei'],
           },
         },
         {
@@ -697,15 +485,10 @@ export const data = {
           label: 'Önnur vandamál',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '80_answer',
-            label: 'Önnur vandamál',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerText' as const,
-              id: '80_type',
-              label: 'Önnur vandamál',
-              display: QuestionDisplayType.optional,
-              multiline: true,
-            },
+            id: '80_type',
+            type: AnswerOptionType.text,
+            display: QuestionDisplayType.optional,
+            multiline: true,
           },
         },
         {
@@ -713,15 +496,10 @@ export const data = {
           label: 'Myndir þú vilja tala við einhvern um vandamál þín?',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '90_answer',
-            label: 'Myndir þú vilja tala við einhvern um vandamál þín?',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerRadio' as const,
-              id: '90_type',
-              label: 'Myndir þú vilja tala við einhvern um vandamál þín?',
-              display: QuestionDisplayType.optional,
-              options: ['Já', 'Nei', 'Kannski'],
-            },
+            id: '90_type',
+            type: AnswerOptionType.radio,
+            display: QuestionDisplayType.optional,
+            options: ['Já', 'Nei', 'Kannski'],
           },
         },
         {
@@ -729,26 +507,21 @@ export const data = {
           label: 'Við hvern?',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '100_answer',
-            label: 'Við hvern?',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerCheckbox' as const,
-              id: '100_type',
-              label: 'Við hvern?',
-              display: QuestionDisplayType.optional,
-              options: [
-                'Hjúkrunarfræðing',
-                'Næringarfræðing',
-                'Lækni',
-                'Sálfræðing',
-                'Félagsráðgjafa',
-                'Sjúkraþjálfara',
-                'Prest eða djákna',
-                'Sjúklingafélag',
-                'Iðjuþjálfa',
-                'Annan',
-              ],
-            },
+            id: '100_type',
+            type: AnswerOptionType.checkbox,
+            display: QuestionDisplayType.optional,
+            options: [
+              'Hjúkrunarfræðing',
+              'Næringarfræðing',
+              'Lækni',
+              'Sálfræðing',
+              'Félagsráðgjafa',
+              'Sjúkraþjálfara',
+              'Prest eða djákna',
+              'Sjúklingafélag',
+              'Iðjuþjálfa',
+              'Annan',
+            ],
           },
           dependsOn: ['90'],
           visibilityCondition:
@@ -759,15 +532,10 @@ export const data = {
           label: 'Hvern?',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '120_answer',
-            label: 'Hvern?',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerText' as const,
-              id: '120_type',
-              label: 'Hvern?',
-              display: QuestionDisplayType.optional,
-              multiline: false,
-            },
+            id: '120_type',
+            type: AnswerOptionType.text,
+            display: QuestionDisplayType.optional,
+            multiline: false,
           },
           dependsOn: ['100'],
           visibilityCondition:
@@ -778,14 +546,9 @@ export const data = {
           label: 'Copyright © NCCN National Comprehensive Cancer Network',
           display: QuestionDisplayType.optional,
           answerOptions: {
-            id: '0_answer',
-            label: 'Copyright © NCCN National Comprehensive Cancer Network',
-            type: {
-              __typename: 'HealthQuestionnaireAnswerLabel' as const,
-              id: '0_type',
-              label: 'Copyright © NCCN National Comprehensive Cancer Network',
-              display: QuestionDisplayType.optional,
-            },
+            id: '0_type',
+            type: AnswerOptionType.label,
+            display: QuestionDisplayType.optional,
           },
         },
       ],

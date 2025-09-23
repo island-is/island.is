@@ -36,6 +36,10 @@ export const TextInput: React.FC<TextInputProps> = ({
   max,
   step: _step,
 }) => {
+  console.log('type', type)
+  console.log('min', min)
+  console.log('max', max)
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {

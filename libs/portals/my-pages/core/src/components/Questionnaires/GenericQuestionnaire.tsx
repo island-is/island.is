@@ -7,44 +7,10 @@ import { isQuestionVisible } from './utils/visibilityUtils'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
-import {
-  Question,
-  QuestionnaireQuestionDisplayType,
-} from '@island.is/api/schema'
-
-// Define the local types to match GraphQL response
-type AnswerOptionType = {
-  __typename: 'AnswerOption'
-  id: string
-  label: string
-  type?: unknown // The union type from GraphQL
-  value?: unknown
-}
-
-type QuestionType = {
-  __typename: 'Question'
-  id: string
-  label: string
-  sublabel?: string | null
-  display: QuestionnaireQuestionDisplayType
-  dependsOn?: Array<string> | null
-  visibilityCondition?: string | null
-  answerOptions?: AnswerOptionType | null
-}
-
-type QuestionnaireType = {
-  __typename?: 'Questionnaire'
-  id: string
-  title: string
-  sentDate: string
-  status?: unknown
-  description?: string | null
-  organization?: string | null
-  questions?: Array<QuestionType> | null
-}
+import { Question, Questionnaire } from '@island.is/api/schema'
 
 interface GenericQuestionnaireProps {
-  questionnaire: QuestionnaireType
+  questionnaire: Questionnaire
   onSubmit: (answers: { [key: string]: QuestionAnswer }) => void
   onCancel?: () => void
   enableStepper?: boolean
@@ -69,7 +35,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
 
   // Filter questions based on visibility conditions
   const visibleQuestions = useMemo(() => {
-    return questionnaire.questions?.filter((question: QuestionType) =>
+    return questionnaire.questions?.filter((question: Question) =>
       isQuestionVisible(
         question.id,
         question.dependsOn ?? undefined,
@@ -83,12 +49,12 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   const questionSteps = useMemo(() => {
     return enableStepper
       ? visibleQuestions?.reduce(
-          (steps: Question[][], question: QuestionType, index: number) => {
+          (steps: Question[][], question: Question, index: number) => {
             const stepIndex = Math.floor(index / questionsPerStep)
             if (!steps[stepIndex]) {
               steps[stepIndex] = []
             }
-            steps[stepIndex].push(question as Question)
+            steps[stepIndex].push(question)
             return steps
           },
           [],
@@ -178,7 +144,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     let allValid = true
     const allErrors: { [key: string]: string } = {}
 
-    visibleQuestions?.forEach((question: QuestionType) => {
+    visibleQuestions?.forEach((question: Question) => {
       if (question.display === 'required') {
         const answer = answers[question.id]
         if (

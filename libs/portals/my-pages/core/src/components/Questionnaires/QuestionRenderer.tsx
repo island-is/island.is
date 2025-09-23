@@ -5,7 +5,7 @@ import { Radio } from '../Questionnaires/QuestionsTypes/Radio'
 import { Multiple } from '../Questionnaires/QuestionsTypes/Multiple'
 import { Thermometer } from '../Questionnaires/QuestionsTypes/Thermometer'
 import { QuestionAnswer } from '../../types/questionnaire'
-import { Question } from '@island.is/api/schema'
+import { Question, QuestionnaireAnswerOptionType } from '@island.is/api/schema'
 import HtmlParser from 'react-html-parser'
 import { Scale } from './QuestionsTypes/Scale'
 
@@ -35,44 +35,37 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
     })
   }
 
-  // TODO: Fix with enum when graphql is ready
   const renderQuestionByType = () => {
-    switch (question.answerOptions?.type?.__typename) {
-      case 'HealthQuestionnaireAnswerText': {
-        const textType =
-          question.answerOptions?.type?.__typename ===
-          'HealthQuestionnaireAnswerText'
-            ? question.answerOptions.type
-            : null
+    if (!question.answerOptions) return null
+
+    const typename = question.answerOptions.type.toString()
+
+    switch (typename) {
+      case QuestionnaireAnswerOptionType.text: {
         return (
           <TextInput
             id={question.id}
             label={question.label}
-            placeholder={question.answerOptions.type.sublabel ?? undefined}
+            placeholder={question.answerOptions.placeholder ?? undefined}
             value={typeof answer?.value === 'string' ? answer.value : undefined}
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
             multiline
             required={question.display === 'required'}
-            maxLength={textType?.maxLength || undefined}
+            maxLength={question.answerOptions.maxLength || undefined}
           />
         )
       }
 
-      case 'HealthQuestionnaireAnswerNumber': {
-        const numberType =
-          question.answerOptions?.type?.__typename ===
-          'HealthQuestionnaireAnswerNumber'
-            ? question.answerOptions.type
-            : null
+      case QuestionnaireAnswerOptionType.number: {
         return (
           <TextInput
             id={question.id}
             label={question.label}
             placeholder={
-              numberType?.placeholder ||
-              question.answerOptions.type.sublabel ||
+              question.answerOptions.placeholder ||
+              question.answerOptions.sublabel ||
               ''
             }
             value={
@@ -87,24 +80,20 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             error={error}
             required={question.display === 'required'}
             type="number"
-            min={numberType?.min || undefined}
-            max={numberType?.max || undefined}
+            min={question.answerOptions.min || undefined}
+            max={question.answerOptions.max || undefined}
           />
         )
       }
 
-      case 'HealthQuestionnaireAnswerRadio':
-        if (
-          !question.answerOptions?.type ||
-          question.answerOptions.type.__typename !==
-            'HealthQuestionnaireAnswerRadio'
-        )
-          return null
+      case QuestionnaireAnswerOptionType.radio: {
+        const options = question.answerOptions.options
+        if (!options) return null
         return (
           <Radio
             id={question.id}
             label={question.label}
-            options={question.answerOptions.type.options.map((option) => ({
+            options={options.map((option: string) => ({
               value: option,
               label: option,
             }))}
@@ -118,19 +107,16 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             direction="vertical"
           />
         )
+      }
 
-      case 'HealthQuestionnaireAnswerCheckbox':
-        if (
-          !question.answerOptions?.type ||
-          question.answerOptions.type.__typename !==
-            'HealthQuestionnaireAnswerCheckbox'
-        )
-          return null
+      case QuestionnaireAnswerOptionType.checkbox: {
+        const options = question.answerOptions.options
+        if (!options) return null
         return (
           <Multiple
             id={question.id}
             label={question.label}
-            options={question.answerOptions.type.options.map((option) => ({
+            options={options.map((option: string) => ({
               value: option,
               label: option,
             }))}
@@ -142,14 +128,15 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             direction="vertical"
           />
         )
+      }
 
-      case 'HealthQuestionnaireAnswerScale': {
+      case QuestionnaireAnswerOptionType.scale: {
+        const answerOptions = question.answerOptions
         if (
-          !question.answerOptions?.type ||
-          question.answerOptions.type.minValue == null ||
-          question.answerOptions.type.maxValue == null ||
-          question.answerOptions.type.minLabel == null ||
-          question.answerOptions.type.maxLabel == null
+          answerOptions.minValue == null ||
+          answerOptions.maxValue == null ||
+          answerOptions.minLabel == null ||
+          answerOptions.maxLabel == null
         )
           return null
 
@@ -157,32 +144,22 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
           <Scale
             id={question.id}
             label={question.label}
-            min={question.answerOptions.type.minValue}
-            max={question.answerOptions.type.maxValue}
+            min={answerOptions.minValue}
+            max={answerOptions.maxValue}
             value={typeof answer?.value === 'number' ? answer.value : undefined}
             onChange={(value: number) => handleValueChange(value)}
             disabled={disabled}
             error={error}
             required={question.display === 'required'}
-            minLabel={question.answerOptions.type.minLabel}
-            maxLabel={question.answerOptions.type.maxLabel}
-            showLabels={
-              !!(
-                question.answerOptions.type.minLabel ||
-                question.answerOptions.type.maxLabel
-              )
-            }
+            minLabel={answerOptions.minLabel}
+            maxLabel={answerOptions.maxLabel}
+            showLabels={!!(answerOptions.minLabel || answerOptions.maxLabel)}
           />
         )
       }
 
-      case 'HealthQuestionnaireAnswerThermometer':
-        if (
-          !question.answerOptions?.type ||
-          question.answerOptions.type.__typename !==
-            'HealthQuestionnaireAnswerThermometer'
-        )
-          return null
+      case QuestionnaireAnswerOptionType.thermometer: {
+        const answerOptions = question.answerOptions
         return (
           <Thermometer
             id={question.id}
@@ -194,11 +171,12 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             disabled={disabled}
             error={error}
             required={question.display === 'required'}
-            minLabel={question.answerOptions.type.minLabel}
-            maxLabel={question.answerOptions.type.maxLabel}
+            minLabel={answerOptions.minLabel || 'Min'}
+            maxLabel={answerOptions.maxLabel || 'Max'}
             height={200}
           />
         )
+      }
 
       default:
         return (

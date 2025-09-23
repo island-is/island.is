@@ -1,10 +1,3 @@
-fragment HealthQuestionnaireAnswerBase on HealthQuestionnaireAnswerCheckbox {
-  id
-  label
-  sublabel
-  display
-}
-
 query GetQuestionnaires($locale: String!) {
   questionnairesList(locale: $locale) {
     questionnaires {
@@ -35,114 +28,26 @@ query GetQuestionnaire($id: String!, $locale: String!) {
       dependsOn
       visibilityCondition
       answerOptions {
-        __typename
+        type
         id
         label
-        type {
-          __typename
-          ... on HealthQuestionnaireAnswerRadio {
-            id
-            label
-            sublabel
-            display
-            options
-          }
-          ... on HealthQuestionnaireAnswerCheckbox {
-            id
-            label
-            sublabel
-            display
-            options
-          }
-          ... on HealthQuestionnaireAnswerThermometer {
-            id
-            label
-            sublabel
-            display
-            maxLabel
-            minLabel
-          }
-          ... on HealthQuestionnaireAnswerText {
-            id
-            label
-            sublabel
-            display
-            placeholder
-            maxLength
-          }
-          ... on HealthQuestionnaireAnswerNumber {
-            id
-            label
-            sublabel
-            display
-            placeholder
-            min
-            max
-          }
-          ... on HealthQuestionnaireAnswerScale {
-            id
-            label
-            sublabel
-            display
-            minLabel
-            maxLabel
-            minValue
-            maxValue
-          }
-        }
+        sublabel
+        display
+        # Text input fields
+        placeholder
+        maxLength
+        # Number input fields
+        min
+        max
+        # Thermometer/Scale fields
+        maxLabel
+        minLabel
+        minValue
+        maxValue
+        # Radio/Checkbox fields
+        options
         value {
-          extraQuestions {
-            __typename
-            ... on HealthQuestionnaireAnswerThermometer {
-              id
-              label
-              sublabel
-              display
-              maxLabel
-              minLabel
-            }
-            ... on HealthQuestionnaireAnswerText {
-              id
-              label
-              sublabel
-              display
-              placeholder
-              maxLength
-            }
-            ... on HealthQuestionnaireAnswerNumber {
-              id
-              label
-              sublabel
-              display
-              placeholder
-              min
-              max
-            }
-            ... on HealthQuestionnaireAnswerRadio {
-              id
-              label
-              sublabel
-              display
-              options
-            }
-            ... on HealthQuestionnaireAnswerCheckbox {
-              id
-              label
-              sublabel
-              display
-              options
-            }
-            ... on HealthQuestionnaireAnswerScale {
-              id
-              label
-              sublabel
-              display
-              minLabel
-              maxLabel
-              minValue
-              maxValue
-            }
-          }
+          extraQuestions
         }
       }
     }

@@ -10,6 +10,7 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
 import { useGetQuestionnaireQuery } from './questionnaires.generated'
+import { Questionnaire } from '@island.is/api/schema'
 
 const QuestionnaireDetail: React.FC = () => {
   const { id } = useParams<{ id?: string }>()
@@ -24,9 +25,13 @@ const QuestionnaireDetail: React.FC = () => {
     skip: !id,
   })
 
+  const questionnaire = data?.questionnairesDetail
+
   if (!id) {
     return <Problem type="not_found" noBorder={false} />
   }
+
+  console.log(questionnaire)
 
   const handleSubmit = (answers: { [key: string]: QuestionAnswer }) => {
     console.log('submitted:', answers)

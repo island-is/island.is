@@ -1906,7 +1906,9 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {}
+              "schema": {
+                "$ref": "#/components/schemas/FormAnswers"
+              }
             }
           }
         },
@@ -2841,6 +2843,24 @@
         },
         "additionalProperties": false,
         "description": "Class containing information about HG forms questions"
+      },
+      "FormAnswers": {
+        "required": ["FormGUID", "AnswersJSON"],
+        "type": "object",
+        "properties": {
+          "FormGUID": {
+            "minLength": 1,
+            "type": "string",
+            "description": "GUID used for tracking this form"
+          },
+          "AnswersJSON": {
+            "minLength": 1,
+            "type": "string",
+            "description": "JSON structure with answers to form"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Class containing answers to HG form"
       },
       "GenericIsPermittedResponse": {
         "type": "object",

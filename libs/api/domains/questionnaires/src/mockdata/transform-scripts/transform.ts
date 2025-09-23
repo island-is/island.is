@@ -3,6 +3,7 @@ import {
   QuestionDisplayType,
   Question,
   AnswerOption,
+  AnswerOptionType,
 } from '../../models/question.model'
 import {
   Questionnaire,
@@ -106,7 +107,6 @@ const createAnswerType = (
 ): Record<string, unknown> => {
   const baseProps = {
     id: `${originalQuestion.EntryID}_type`,
-    label: originalQuestion.Question,
     sublabel: originalQuestion.PostLabel || undefined,
     display: mapDisplayType(
       originalQuestion.Required,
@@ -117,26 +117,26 @@ const createAnswerType = (
   switch (originalQuestion.Type) {
     case 'SingleSelect':
       return {
-        __typename: 'HealthQuestionnaireAnswerRadio',
+        type: AnswerOptionType.radio,
         ...baseProps,
         options: originalQuestion.Options?.map((option) => option.Label) || [],
       }
     case 'MultiSelect':
       return {
-        __typename: 'HealthQuestionnaireAnswerCheckbox',
+        type: AnswerOptionType.checkbox,
         ...baseProps,
         options: originalQuestion.Options?.map((option) => option.Label) || [],
       }
     case 'TextBox':
       return {
-        __typename: 'HealthQuestionnaireAnswerText',
+        type: AnswerOptionType.text,
         ...baseProps,
         placeholder: originalQuestion.Instructions || undefined,
         maxLength: originalQuestion.MaxLength || undefined,
       }
     case 'NumBox':
       return {
-        __typename: 'HealthQuestionnaireAnswerNumber',
+        type: AnswerOptionType.number,
         ...baseProps,
         placeholder: originalQuestion.Instructions || undefined,
         min: originalQuestion.MinValue || undefined,
@@ -148,17 +148,17 @@ const createAnswerType = (
         originalQuestion.MaxValue !== null
       ) {
         return {
-          __typename: 'HealthQuestionnaireAnswerScale',
+          type: AnswerOptionType.number,
           ...baseProps,
           placeholder: originalQuestion.Instructions || undefined,
-          minValue: originalQuestion.MinValue || 0,
-          maxValue: originalQuestion.MaxValue || 100,
+          min: originalQuestion.MinValue || 0,
+          max: originalQuestion.MaxValue || 100,
           minLabel: 'Min',
           maxLabel: 'Max',
         }
       }
       return {
-        __typename: 'HealthQuestionnaireAnswerNumber',
+        type: AnswerOptionType.number,
         ...baseProps,
         placeholder: originalQuestion.Instructions || undefined,
         min: originalQuestion.MinValue || undefined,
@@ -170,7 +170,7 @@ const createAnswerType = (
         originalQuestion.MaxValue !== null
       ) {
         return {
-          __typename: 'HealthQuestionnaireAnswerScale',
+          type: AnswerOptionType.scale,
           ...baseProps,
           minLabel: 'Min',
           maxLabel: 'Max',
@@ -179,26 +179,26 @@ const createAnswerType = (
         }
       } else {
         return {
-          __typename: 'HealthQuestionnaireAnswerThermometer',
+          type: AnswerOptionType.thermometer,
           ...baseProps,
-          maxLabel: 'Høy',
-          minLabel: 'Lav',
+          maxLabel: 'High',
+          minLabel: 'Low',
         }
       }
     case 'Dropdown':
       return {
-        __typename: 'HealthQuestionnaireAnswerRadio',
+        type: AnswerOptionType.radio,
         ...baseProps,
         options: originalQuestion.Options?.map((option) => option.Label) || [],
       }
     case 'Label':
       return {
-        __typename: 'HealthQuestionnaireAnswerLabel',
+        type: AnswerOptionType.label,
         ...baseProps,
       }
     default:
       return {
-        __typename: 'HealthQuestionnaireAnswerText',
+        type: AnswerOptionType.text,
         ...baseProps,
         placeholder: originalQuestion.Instructions || undefined,
         maxLength: originalQuestion.MaxLength || undefined,
@@ -368,13 +368,15 @@ const transformQuestion = (
   // Create the answer type based on the question type
   const answerType = createAnswerType(originalQuestion)
 
-  // Create the answer option
+  // Create the flattened answer option - move all properties from answerType to top level
   const answerOption: AnswerOption = {
     id: `${originalQuestion.EntryID}_answer`,
-    label: originalQuestion.Question,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    type: answerType as any, // GraphQL union types need runtime resolution
     value: undefined, // Can be set later when user provides an answer
+    // Ensure type is always present
+    type: (answerType as { type: AnswerOptionType }).type,
+    // Spread all the answer type properties directly into answerOption
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...(answerType as any), // Cast to any for now since we have many different answer types
   }
 
   // Analyze dependencies for this question
@@ -484,6 +486,7 @@ export const transformJsonFile = (
 
 // Transform withou file reading/writing
 export const transformQuestionnaireData = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   jsonData: any,
 ): QuestionnairesList => {
   const data = JSON.parse(jsonData) as OriginalData
@@ -505,24 +508,44 @@ const generateTypeScriptContent = (data: QuestionnairesList): string => {
     /"QuestionnairesStatusEnum\.(\w+)"/g,
     'QuestionnairesStatusEnum.$1',
   )
-  jsonString = jsonString.replace(/"(\w+)"/g, (match, enumValue) => {
-    // Replace specific enum values
-    if (['required', 'optional', 'hidden'].includes(enumValue)) {
-      return `QuestionDisplayType.${enumValue}`
-    }
-    if (['answered', 'notAnswered', 'expired'].includes(enumValue)) {
-      return `QuestionnairesStatusEnum.${enumValue}`
-    }
-    return match
-  })
-
-  // Replace __typename references
   jsonString = jsonString.replace(
-    /"__typename":\s*"([^"]+)"/g,
-    '__typename: "$1" as const',
+    /"AnswerOptionType\.(\w+)"/g,
+    'AnswerOptionType.$1',
+  )
+  // Replace enum values only in specific contexts, not all quoted strings
+  jsonString = jsonString.replace(
+    /"display":\s*"(required|optional|hidden)"/g,
+    (match, enumValue) => `"display": QuestionDisplayType.${enumValue}`,
+  )
+  jsonString = jsonString.replace(
+    /"status":\s*"(answered|notAnswered|expired)"/g,
+    (match, enumValue) => `"status": QuestionnairesStatusEnum.${enumValue}`,
+  )
+  jsonString = jsonString.replace(
+    /"type":\s*"(text|radio|checkbox|thermometer|number|scale|label)"/g,
+    (match, enumValue) => `"type": AnswerOptionType.${enumValue}`,
   )
 
-  return `import { QuestionDisplayType } from '../models/question.model'
+  // Replace type references with type enum values
+  jsonString = jsonString.replace(
+    /"type":\s*"(HealthQuestionnaireAnswer\w+)"/g,
+    (match, typename) => {
+      // Map the old typename to the enum value
+      const enumMap: Record<string, string> = {
+        HealthQuestionnaireAnswerText: 'AnswerOptionType.text',
+        HealthQuestionnaireAnswerRadio: 'AnswerOptionType.radio',
+        HealthQuestionnaireAnswerCheckbox: 'AnswerOptionType.checkbox',
+        HealthQuestionnaireAnswerThermometer: 'AnswerOptionType.thermometer',
+        HealthQuestionnaireAnswerNumber: 'AnswerOptionType.number',
+        HealthQuestionnaireAnswerScale: 'AnswerOptionType.scale',
+        HealthQuestionnaireAnswerLabel: 'AnswerOptionType.label',
+      }
+      const enumValue = enumMap[typename]
+      return enumValue ? `"type": ${enumValue}` : match
+    },
+  )
+
+  return `import { QuestionDisplayType, AnswerOptionType } from '../models/question.model'
 import { QuestionnairesStatusEnum } from '../models/questionnaires.model'
 
 export const data = ${jsonString}

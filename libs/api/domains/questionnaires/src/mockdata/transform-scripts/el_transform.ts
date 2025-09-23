@@ -3,6 +3,7 @@ import {
   QuestionDisplayType,
   Question,
   AnswerOption,
+  AnswerOptionType,
 } from '../../models/question.model'
 import {
   Questionnaire,
@@ -69,7 +70,6 @@ interface ElData {
 const createAnswerType = (elItem: ElItem): Record<string, unknown> => {
   const baseProps = {
     id: `${elItem.id}_type`,
-    label: elItem.label,
     sublabel: elItem.htmlLabel || undefined,
     display: mapDisplayType(elItem.required || false),
   }
@@ -77,19 +77,19 @@ const createAnswerType = (elItem: ElItem): Record<string, unknown> => {
   switch (elItem.type) {
     case 'radio':
       return {
-        __typename: 'HealthQuestionnaireAnswerRadio',
+        type: AnswerOptionType.radio,
         ...baseProps,
         options: elItem.options?.map((option) => option.label) || [],
       }
     case 'checkbox':
       return {
-        __typename: 'HealthQuestionnaireAnswerCheckbox',
+        type: AnswerOptionType.checkbox,
         ...baseProps,
         options: elItem.options?.map((option) => option.label) || [],
       }
     case 'string':
       return {
-        __typename: 'HealthQuestionnaireAnswerText',
+        type: AnswerOptionType.text,
         ...baseProps,
         placeholder: undefined,
         maxLength: undefined,
@@ -97,13 +97,13 @@ const createAnswerType = (elItem: ElItem): Record<string, unknown> => {
       }
     case 'text':
       return {
-        __typename: 'HealthQuestionnaireAnswerLabel',
+        type: AnswerOptionType.label,
         ...baseProps,
       }
     case 'number':
       if (elItem.displayClass === 'thermometer') {
         return {
-          __typename: 'HealthQuestionnaireAnswerThermometer',
+          type: AnswerOptionType.thermometer,
           ...baseProps,
           maxLabel: elItem.maxDescription || 'Max',
           minLabel: elItem.minDescription || 'Min',
@@ -112,7 +112,7 @@ const createAnswerType = (elItem: ElItem): Record<string, unknown> => {
         }
       } else {
         return {
-          __typename: 'HealthQuestionnaireAnswerNumber',
+          type: AnswerOptionType.number,
           ...baseProps,
           placeholder: undefined,
           min: elItem.min || undefined,
@@ -121,7 +121,7 @@ const createAnswerType = (elItem: ElItem): Record<string, unknown> => {
       }
     case 'bool':
       return {
-        __typename: 'HealthQuestionnaireAnswerRadio',
+        type: AnswerOptionType.radio,
         ...baseProps,
         options: ['Já', 'Nei'],
       }
@@ -129,13 +129,13 @@ const createAnswerType = (elItem: ElItem): Record<string, unknown> => {
       const listOptions = elItem.values || elItem.options || []
       if (elItem.multiselect) {
         return {
-          __typename: 'HealthQuestionnaireAnswerCheckbox',
+          type: AnswerOptionType.checkbox,
           ...baseProps,
           options: listOptions.map((option) => option.label),
         }
       } else {
         return {
-          __typename: 'HealthQuestionnaireAnswerRadio',
+          type: AnswerOptionType.radio,
           ...baseProps,
           options: listOptions.map((option) => option.label),
         }
@@ -143,7 +143,7 @@ const createAnswerType = (elItem: ElItem): Record<string, unknown> => {
     }
     default:
       return {
-        __typename: 'HealthQuestionnaireAnswerText',
+        type: AnswerOptionType.text,
         ...baseProps,
         placeholder: undefined,
         maxLength: undefined,
@@ -247,14 +247,11 @@ const transformItem = (elItem: ElItem, elData: ElData): Question => {
   // Create the answer type based on the item type
   const answerType = createAnswerType(elItem)
 
-  // Create the answer option
+  // Create the flattened answer option (no nested type object)
   const answerOption: AnswerOption = {
     id: `${elItem.id}_answer`,
-    label: elItem.label,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    type: answerType as any, // GraphQL union types need runtime resolution
-    value: undefined, // Can be set later when user provides an answer
-  }
+    ...answerType,
+  } as AnswerOption
 
   // Analyze triggers (dependencies) for this item
   const dependencies = analyzeTriggers(elData, elItem.id)
@@ -368,6 +365,31 @@ const generateTypeScriptContent = (data: QuestionnairesList): string => {
     /"QuestionnairesStatusEnum\.(\w+)"/g,
     'QuestionnairesStatusEnum.$1',
   )
+  jsonString = jsonString.replace(
+    /"AnswerOptionType\.(\w+)"/g,
+    'AnswerOptionType.$1',
+  )
+
+  // Replace specific enum values more carefully to avoid replacing property names
+  jsonString = jsonString.replace(/"type":\s*"([^"]+)"/g, (match, value) => {
+    // Map full GraphQL type names to enum keys
+    const typeMap: { [key: string]: string } = {
+      HealthQuestionnaireAnswerText: 'text',
+      HealthQuestionnaireAnswerRadio: 'radio',
+      HealthQuestionnaireAnswerCheckbox: 'checkbox',
+      HealthQuestionnaireAnswerThermometer: 'thermometer',
+      HealthQuestionnaireAnswerNumber: 'number',
+      HealthQuestionnaireAnswerScale: 'scale',
+      HealthQuestionnaireAnswerLabel: 'label',
+    }
+
+    if (typeMap[value]) {
+      return `"type": AnswerOptionType.${typeMap[value]}`
+    }
+    return match
+  })
+
+  // Replace other enum values
   jsonString = jsonString.replace(/"(\w+)"/g, (match, enumValue) => {
     // Replace specific enum values
     if (['required', 'optional', 'hidden'].includes(enumValue)) {
@@ -379,13 +401,7 @@ const generateTypeScriptContent = (data: QuestionnairesList): string => {
     return match
   })
 
-  // Replace __typename references
-  jsonString = jsonString.replace(
-    /"__typename":\s*"([^"]+)"/g,
-    '__typename: "$1" as const',
-  )
-
-  return `import { QuestionDisplayType } from '../models/question.model'
+  return `import { QuestionDisplayType, AnswerOptionType } from '../models/question.model'
 import { QuestionnairesStatusEnum } from '../models/questionnaires.model'
 
 export const data = ${jsonString}
