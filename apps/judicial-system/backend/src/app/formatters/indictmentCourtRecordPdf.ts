@@ -129,7 +129,7 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc, 2)
-    addNormalText(doc, courtSession.entries ?? 'Engar bóknari voru skráðar.')
+    addNormalText(doc, courtSession.entries ?? 'Engar bókanir voru skráðar.')
 
     if (courtSession.rulingType !== CourtSessionRulingType.NONE) {
       addEmptyLines(doc)
