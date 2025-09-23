@@ -8,7 +8,7 @@ import {
 import { OtherFeesPayeeOptions } from '../../utils/enums'
 import * as m from '../messages'
 
-export const otherFees = z
+export const otherFeesSchema = z
   .object({
     housingFund: z.string().optional(),
     housingFundAmount: z.string().optional(),

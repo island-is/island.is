@@ -178,7 +178,7 @@ const checkforDuplicatesHelper = (
   return { hasDuplicates, duplicateIndex }
 }
 
-export const parties = z
+export const partiesSchema = z
   .object({
     landlordInfo,
     tenantInfo,

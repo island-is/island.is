@@ -1,7 +1,6 @@
 import { z } from 'zod'
-import * as m from '../../lib/messages'
 
-export const fireProtections = z.object({
+export const fireProtectionsSchema = z.object({
   smokeDetectors: z.string().min(1),
   fireExtinguisher: z.string().min(0),
   emergencyExits: z.string().optional(),
