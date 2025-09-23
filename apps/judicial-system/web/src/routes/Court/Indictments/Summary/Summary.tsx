@@ -115,6 +115,8 @@ const Summary: FC = () => {
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
   }
 
+  // TODO: REMOVE
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleRuling = async () => {
     const showError = () => toast.error('Dómur fannst ekki')
 
