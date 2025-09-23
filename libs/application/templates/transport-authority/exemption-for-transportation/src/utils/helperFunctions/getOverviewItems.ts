@@ -584,7 +584,6 @@ export const getSupportingDocumentsOverviewItems = (
 
 export const getSupportingDocumentsOverviewAttachments = (
   answers: FormValue,
-  _externalData: ExternalData,
 ): Array<AttachmentItem> => {
   const files = getValueViaPath<{ name: string; key: string }[]>(
     answers,
