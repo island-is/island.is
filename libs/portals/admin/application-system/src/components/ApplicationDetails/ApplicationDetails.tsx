@@ -104,7 +104,7 @@ export const ApplicationDetails = ({
         </GridRow>
       </Box>
 
-      {!!application.adminData?.length && (
+      {application.adminData?.some((item) => item.values?.length) && (
         <Box>
           <Box
             display="flex"
@@ -118,13 +118,24 @@ export const ApplicationDetails = ({
           </Box>
           <Box padding={4} background="purple100" borderRadius="large">
             <GridRow rowGap={3}>
-              {application.adminData?.map((item) => (
-                <GridColumn span={['2/2', '2/2', '1/2']} key={item.key}>
-                  <ValueLine title={formatMessage(item.label)}>
-                    {item.values?.join(', ') ?? ''}
-                  </ValueLine>
-                </GridColumn>
-              ))}
+              {application.adminData.map((item) =>
+                item.values?.map((value, index) => (
+                  <GridColumn
+                    span={['2/2', '2/2', '1/2']}
+                    key={`${item.key}-${index}`}
+                  >
+                    <ValueLine
+                      title={`${formatMessage(item.label)}${
+                        item.values && item.values.length > 1
+                          ? ` ${index + 1}`
+                          : ''
+                      }`}
+                    >
+                      {value}
+                    </ValueLine>
+                  </GridColumn>
+                )),
+              )}
             </GridRow>
           </Box>
         </Box>
