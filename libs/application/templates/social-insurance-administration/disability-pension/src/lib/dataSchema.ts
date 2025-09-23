@@ -12,7 +12,7 @@ import {
   validSWIFT,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
-import { z, ZodIssueCode } from 'zod'
+import { z } from 'zod'
 import * as m from './messages'
 import { OTHER_RESIDENCE_STATUS_VALUE, OTHER_STATUS_VALUE } from '../types/constants'
 
