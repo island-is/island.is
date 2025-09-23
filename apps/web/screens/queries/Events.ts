@@ -70,6 +70,7 @@ export const GET_EVENTS_QUERY = gql`
         time {
           startTime
           endTime
+          endDate
         }
         location {
           streetAddress

@@ -11,6 +11,7 @@ import { EventLocation as EventLocationSchema } from '@island.is/web/graphql/sch
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { formatEventDate } from '@island.is/web/utils/formatEventDate'
 
 import { EventLocation } from '../EventLocation'
 import { EventTime } from '../EventTime'
@@ -26,7 +27,7 @@ interface EventCardProps {
   href: string
   date?: string
   location?: EventLocationSchema
-  endDate?: string
+  endDate?: string | null
 }
 
 export const LatestEventSliceCard: React.FC<
@@ -42,10 +43,21 @@ export const LatestEventSliceCard: React.FC<
   date,
   endDate,
 }) => {
-  const { format } = useDateUtils()
-  const formattedDate = date && format(new Date(date), 'do MMMM yyyy')
-  const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
+  const { activeLocale } = useI18n()
+
+  const timeSuffix = n(
+    'timeSuffix',
+    activeLocale === 'is' ? 'til' : 'to',
+  ) as string
+
+  const { format } = useDateUtils()
+  const formattedDate = formatEventDate(
+    format,
+    ` ${timeSuffix} `,
+    date,
+    endDate,
+  )
 
   return (
     <LinkV2 href={href} className={styles.container}>
@@ -66,19 +78,13 @@ export const LatestEventSliceCard: React.FC<
                 <EventTime
                   startTime={startTime}
                   endTime={endTime}
-                  endDate={endDate}
                   timePrefix={
                     n(
                       'timePrefix',
                       activeLocale === 'is' ? 'kl.' : '',
                     ) as string
                   }
-                  timeSuffix={
-                    n(
-                      'timeSuffix',
-                      activeLocale === 'is' ? 'til' : 'to',
-                    ) as string
-                  }
+                  timeSuffix={timeSuffix}
                 />
               </Stack>
             </Box>

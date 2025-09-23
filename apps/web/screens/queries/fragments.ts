@@ -725,6 +725,7 @@ export const slices = gql`
         time {
           startTime
           endTime
+          endDate
         }
         location {
           streetAddress
@@ -879,6 +880,7 @@ export const slices = gql`
       time {
         startTime
         endTime
+        endDate
       }
       location {
         streetAddress

@@ -26,6 +26,7 @@ import {
   formatEventLocation,
   formatEventTime,
 } from '@island.is/web/utils/event'
+import { formatEventDate } from '@island.is/web/utils/formatEventDate'
 
 interface EventListProps {
   namespace: Record<string, string>
@@ -70,9 +71,18 @@ export const EventList = ({
       {variant === 'InfoCard' && (
         <Stack space={4}>
           {eventList.map((event) => {
-            const formattedDate = event.startDate
-              ? format(new Date(event.startDate), 'do MMMM yyyy')
-              : ''
+            const endDate = event.time?.endDate
+            const timeSuffix = n(
+              'timeSuffix',
+              activeLocale === 'is' ? 'til' : 'to',
+            ) as string
+            const formattedDate = formatEventDate(
+              format,
+              ` ${timeSuffix} `,
+              event.startDate,
+              endDate,
+            )
+
             const link = linkResolver('organizationevent', [
               parentPageSlug,
               event.slug,
@@ -83,10 +93,7 @@ export const EventList = ({
               text: string
             }> = []
 
-            const eventTime = formatEventTime(
-              event.time,
-              n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string,
-            )
+            const eventTime = formatEventTime(event.time, timeSuffix)
             if (eventTime) {
               detailLines.push({
                 icon: 'time',
@@ -125,6 +132,17 @@ export const EventList = ({
       {!isMobile && variant === 'NewsCard' && (
         <Stack space={4}>
           {eventList.map((eventItem) => {
+            const endDate = eventItem.time?.endDate
+            const timeSuffix = n(
+              'timeSuffix',
+              activeLocale === 'is' ? 'til' : 'to',
+            ) as string
+            const formattedDate = formatEventDate(
+              format,
+              ` ${timeSuffix} `,
+              eventItem.startDate,
+              endDate,
+            )
             const eventHref = linkResolver('organizationevent', [
               parentPageSlug,
               eventItem.slug,
@@ -136,6 +154,7 @@ export const EventList = ({
                 title={eventItem.title}
                 titleVariant="h3"
                 dateTextColor="purple400"
+                formattedDateString={formattedDate}
                 introduction={
                   <Stack space={4}>
                     <EventLocation location={eventItem.location} />
@@ -148,12 +167,7 @@ export const EventList = ({
                           activeLocale === 'is' ? 'kl.' : '',
                         ) as string
                       }
-                      timeSuffix={
-                        n(
-                          'timeSuffix',
-                          activeLocale === 'is' ? 'til' : 'to',
-                        ) as string
-                      }
+                      timeSuffix={timeSuffix}
                     />
                   </Stack>
                 }
@@ -169,6 +183,7 @@ export const EventList = ({
       {isMobile && variant === 'NewsCard' && (
         <Stack space={[3, 3, 4]}>
           {eventList.map((eventItem) => {
+            const endDate = eventItem.time?.endDate
             const eventHref = linkResolver('organizationevent', [
               parentPageSlug,
               eventItem.slug,
@@ -182,6 +197,7 @@ export const EventList = ({
                 image={eventItem.thumbnailImage?.url || ''}
                 startTime={eventItem.time?.startTime ?? ''}
                 endTime={eventItem.time?.endTime ?? ''}
+                endDate={endDate}
                 href={eventHref}
                 date={eventItem.startDate}
               />

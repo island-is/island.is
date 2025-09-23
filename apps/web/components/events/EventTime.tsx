@@ -4,7 +4,6 @@ interface EventTimeProps {
   startTime?: string
   endTime?: string
   startDate?: string
-  endDate?: string
   timePrefix?: string
   timeSuffix?: string
 }
@@ -12,7 +11,6 @@ interface EventTimeProps {
 export const EventTime = ({
   startTime,
   endTime,
-  endDate,
   timePrefix,
   timeSuffix,
 }: EventTimeProps) => {

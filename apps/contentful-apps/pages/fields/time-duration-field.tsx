@@ -87,7 +87,11 @@ const TimeDurationField = () => {
           id="starts-and-ends-on-the-same-day"
           isChecked={startDateIsSameAsEndDate}
           onChange={() => {
-            setStartDateIsSameAsEndDate(!startDateIsSameAsEndDate)
+            const newStartDateIsSameAsEndDate = !startDateIsSameAsEndDate
+            setStartDateIsSameAsEndDate(newStartDateIsSameAsEndDate)
+            if (newStartDateIsSameAsEndDate) {
+              updateTime('endDate', '')
+            }
           }}
         >
           Starts and ends on the same day
