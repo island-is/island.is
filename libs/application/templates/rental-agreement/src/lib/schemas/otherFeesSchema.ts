@@ -67,7 +67,6 @@ export const otherFees = z
       electricityCost === OtherFeesPayeeOptions.TENANT
     const tenantPaysHeatingCost = heatingCost === OtherFeesPayeeOptions.TENANT
     const hasOtherCosts = otherCosts?.includes(YesOrNoEnum.YES)
-    console.log(otherCosts)
 
     // Housing fund
     if (housingFund && tenantPaysHousingFund) {
@@ -201,8 +200,6 @@ export const otherFees = z
 
     // Other costs
     if (hasOtherCosts) {
-      console.log('hér???')
-
       if (!otherCostItems || otherCostItems.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
