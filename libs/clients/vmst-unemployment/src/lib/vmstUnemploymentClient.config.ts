@@ -20,7 +20,11 @@ export const VmstUnemploymentClientConfig = defineConfig({
         'IS-DEV/GOV/10003/VMST-Protected/XRoadDev-v1',
       ),
       fetch: {
+<<<<<<< HEAD
         timeout: 20000,
+=======
+        timeout: 35000,
+>>>>>>> 08871bed86 (changing to 35sec)
       },
       username: env.required('XROAD_VMST_UNEMPLOYMENT_USERNAME', ''),
       password: env.required('XROAD_VMST_UNEMPLOYMENT_PASSWORD', ''),
