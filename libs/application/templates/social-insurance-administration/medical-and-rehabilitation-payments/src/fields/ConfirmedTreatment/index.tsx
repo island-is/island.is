@@ -29,7 +29,7 @@ import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaConfirmedTreatmentQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
-import { SiaConfirmedTreatmentQuery } from '../../types/schema'
+import { Query } from '@island.is/api/schema'
 import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPaymentsUtils'
 import { ManagedBy } from '../components/ManagedBy'
 
@@ -46,7 +46,7 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
     data,
     loading,
     error: confirmedTreatmentError,
-  } = useQuery<SiaConfirmedTreatmentQuery>(siaConfirmedTreatmentQuery)
+  } = useQuery<Query>(siaConfirmedTreatmentQuery)
 
   setBeforeSubmitCallback?.(async () => {
     const { confirmedTreatmentConfirmation } = getApplicationAnswers(

@@ -137,6 +137,7 @@ export const securityDepositSubsection = buildSubSection({
           variant: 'currency',
           condition: (answers) =>
             !!securityDepositIsLandlordsMutualFundOrOther(answers),
+          maxLength: 14, // 8 char number since the dots, spaces and "kr." counts to the limit
         }),
         buildHiddenInputWithWatchedValue({
           id: 'securityDeposit.rentalAmount',
