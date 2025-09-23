@@ -21,14 +21,14 @@ export class CourtSessionResponse {
   @Field(() => ID)
   readonly id!: string
 
-  @Field(() => String)
-  readonly created!: string
+  @Field(() => String, { nullable: true })
+  readonly created?: string
 
-  @Field(() => String)
-  readonly modified!: string
+  @Field(() => String, { nullable: true })
+  readonly modified?: string
 
-  @Field(() => ID)
-  readonly caseId!: string
+  @Field(() => ID, { nullable: true })
+  readonly caseId?: string
 
   @Field(() => String, { nullable: true })
   readonly location?: string
