@@ -42,8 +42,11 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isPublicProsecutionOfficeUser,
+  isRequestCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -500,8 +503,13 @@ export class CaseController {
     JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -511,8 +519,12 @@ export class CaseController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
-  @Get('case/:caseId/courtRecord')
+  @Get([
+    'case/:caseId/courtRecord',
+    'case/:caseId/mergedCase/:mergedCaseId/courtRecord',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -528,7 +540,35 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    let pdf: Buffer
+
+    if (isRequestCase(theCase.type)) {
+      if (isPublicProsecutionOfficeUser(user)) {
+        throw new ForbiddenException(
+          'Public prosecution office users are not allowed to get court record pdfs for request cases',
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    } else {
+      if (
+        !hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.courtSessions,
+          user,
+        )
+      ) {
+        throw new BadRequestException(
+          `Case ${caseId} does not have a generated court record pdf document`,
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+        theCase,
+        user,
+      )
+    }
 
     res.end(pdf)
   }

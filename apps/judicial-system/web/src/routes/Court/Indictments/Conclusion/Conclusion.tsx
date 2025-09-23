@@ -12,7 +12,10 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { courtSessionTypeNames } from '@island.is/judicial-system/types'
+import {
+  courtSessionTypeNames,
+  hasGeneratedCourtRecordPdf,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -24,6 +27,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   SectionHeading,
   useCourtArrangements,
   UserContext,
@@ -117,6 +121,13 @@ const Conclusion: FC = () => {
   const [mergeCaseNumber, setMergeCaseNumber] = useState<string>()
   const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
     useState<string>()
+
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
+    workingCase.courtSessions,
+    user,
+  )
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -257,6 +268,17 @@ const Conclusion: FC = () => {
       return false
     }
 
+    const isCourtRecordValid = (): boolean =>
+      hasGeneratedCourtRecord
+        ? Boolean(
+            workingCase.courtSessions?.every((session) => session.endDate),
+          )
+        : uploadFiles.some(
+            (file) =>
+              file.category === CaseFileCategory.COURT_RECORD &&
+              file.status === FileUploadStatus.done,
+          )
+
     switch (selectedAction) {
       case IndictmentDecision.POSTPONING:
         return Boolean(postponementReason)
@@ -267,11 +289,7 @@ const Conclusion: FC = () => {
           case CaseIndictmentRulingDecision.RULING:
           case CaseIndictmentRulingDecision.DISMISSAL:
             return (
-              uploadFiles.some(
-                (file) =>
-                  file.category === CaseFileCategory.COURT_RECORD &&
-                  file.status === FileUploadStatus.done,
-              ) &&
+              isCourtRecordValid() &&
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.RULING &&
@@ -280,21 +298,15 @@ const Conclusion: FC = () => {
             )
           case CaseIndictmentRulingDecision.CANCELLATION:
           case CaseIndictmentRulingDecision.FINE:
-            return uploadFiles.some(
-              (file) =>
-                file.category === CaseFileCategory.COURT_RECORD &&
-                file.status === FileUploadStatus.done,
-            )
+            return isCourtRecordValid()
           case CaseIndictmentRulingDecision.MERGE:
-            return Boolean(
-              uploadFiles.some(
-                (file) =>
-                  file.category === CaseFileCategory.COURT_RECORD &&
-                  file.status === FileUploadStatus.done,
-              ) &&
-                (workingCase.mergeCase?.id ||
+            return (
+              isCourtRecordValid() &&
+              Boolean(
+                workingCase.mergeCase?.id ||
                   validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
-                    .isValid),
+                    .isValid,
+              )
             )
           default:
             return false
@@ -569,7 +581,7 @@ const Conclusion: FC = () => {
             )}
           </>
         )}
-        {selectedAction && (
+        {selectedAction && !hasGeneratedCourtRecord && (
           <Box
             component="section"
             marginBottom={selectedDecision === 'RULING' ? 5 : 10}
@@ -606,7 +618,10 @@ const Conclusion: FC = () => {
         {selectedAction === IndictmentDecision.COMPLETING &&
           (selectedDecision === CaseIndictmentRulingDecision.RULING ||
             selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
-            <Box component="section" marginBottom={10}>
+            <Box
+              component="section"
+              marginBottom={hasGeneratedCourtRecord ? 5 : 10}
+            >
               <SectionHeading
                 title={formatMessage(
                   selectedDecision === CaseIndictmentRulingDecision.RULING
@@ -640,6 +655,16 @@ const Conclusion: FC = () => {
               />
             </Box>
           )}
+        {selectedAction && hasGeneratedCourtRecord && (
+          <Box component="section" marginBottom={10}>
+            <PdfButton
+              caseId={workingCase.id}
+              title={'Þingbók - PDF'}
+              pdfType="courtRecord"
+              elementId="Þingbók"
+            />
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

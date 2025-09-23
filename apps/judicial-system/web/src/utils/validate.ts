@@ -592,24 +592,30 @@ export const isIndictmentCourtRecordStepValid = (
 }
 
 const isIndictmentRulingDecisionValid = (workingCase: Case) => {
-  switch (workingCase.indictmentRulingDecision) {
-    case CaseIndictmentRulingDecision.RULING:
-    case CaseIndictmentRulingDecision.DISMISSAL:
-      return Boolean(
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.COURT_RECORD,
-        ) &&
-          workingCase.caseFiles?.some(
-            (file) => file.category === CaseFileCategory.RULING,
-          ),
-      )
-    case CaseIndictmentRulingDecision.FINE:
-    case CaseIndictmentRulingDecision.CANCELLATION:
-      return Boolean(
+  const isCourtRecordValid = () =>
+    Boolean(
+      (workingCase.courtSessions &&
+        workingCase.courtSessions.length > 0 &&
+        workingCase.courtSessions.every((session) => session.endDate)) ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.COURT_RECORD,
         ),
+    )
+
+  switch (workingCase.indictmentRulingDecision) {
+    case CaseIndictmentRulingDecision.RULING:
+    case CaseIndictmentRulingDecision.DISMISSAL:
+      return (
+        isCourtRecordValid() &&
+        Boolean(
+          workingCase.caseFiles?.some(
+            (file) => file.category === CaseFileCategory.RULING,
+          ),
+        )
       )
+    case CaseIndictmentRulingDecision.FINE:
+    case CaseIndictmentRulingDecision.CANCELLATION:
+      return isCourtRecordValid()
     default:
       return false
   }

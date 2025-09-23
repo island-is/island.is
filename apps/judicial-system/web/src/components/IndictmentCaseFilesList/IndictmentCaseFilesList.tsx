@@ -5,6 +5,7 @@ import { AnimatePresence } from 'motion/react'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
@@ -48,7 +49,7 @@ interface RenderFilesProps {
 interface FileSectionProps {
   title: string
   onOpenFile: (fileId: string) => void
-  files?: CaseFile[]
+  files: CaseFile[]
   shouldRender?: boolean
 }
 
@@ -75,7 +76,7 @@ export const RenderFiles: FC<RenderFilesProps> = ({
 const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
   const { title, files, onOpenFile, shouldRender = true, children } = props
 
-  if ((!files?.length && !children) || !shouldRender) {
+  if ((files.length === 0 && !children) || !shouldRender) {
     return null
   }
 
@@ -87,7 +88,7 @@ const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
         heading="h4"
         variant="h4"
       />
-      {files && <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />}
+      <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />
       {children}
     </Box>
   )
@@ -217,6 +218,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const filteredFiles = useFilteredCaseFiles(workingCase.caseFiles)
   const permissions = useFilePermissions(workingCase, user)
   const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
+    workingCase.courtSessions,
+    user,
+  )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
@@ -356,9 +363,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
             onOpenFile={onOpen}
             shouldRender={permissions.canViewCivilClaims}
           />
-          {filteredFiles.courtRecords?.length ||
-          filteredFiles.rulings?.length ||
-          permissions.canViewVerdictServiceCertificate ? (
+          {(filteredFiles.courtRecords.length > 0 ||
+            hasGeneratedCourtRecord ||
+            (permissions.canViewRulings && filteredFiles.rulings.length > 0) ||
+            permissions.canViewVerdictServiceCertificate) && (
             <Box marginBottom={5}>
               <SectionHeading
                 title={formatMessage(strings.rulingAndCourtRecordsTitle)}
@@ -366,21 +374,26 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 heading="h4"
                 variant="h4"
               />
-              {filteredFiles.courtRecords &&
-                filteredFiles.courtRecords.length > 0 && (
-                  <RenderFiles
-                    caseFiles={filteredFiles.courtRecords}
-                    onOpenFile={onOpen}
-                  />
-                )}
-              {permissions.canViewRulings &&
-                filteredFiles.rulings &&
-                filteredFiles.rulings.length > 0 && (
-                  <RenderFiles
-                    caseFiles={filteredFiles.rulings}
-                    onOpenFile={onOpen}
-                  />
-                )}
+              {hasGeneratedCourtRecord && (
+                <PdfButton
+                  caseId={workingCase.id}
+                  connectedCaseParentId={connectedCaseParentId}
+                  title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                  pdfType="courtRecord"
+                  renderAs="row"
+                  elementId="Þingbók"
+                />
+              )}
+              <RenderFiles
+                caseFiles={filteredFiles.courtRecords}
+                onOpenFile={onOpen}
+              />
+              {permissions.canViewRulings && (
+                <RenderFiles
+                  caseFiles={filteredFiles.rulings}
+                  onOpenFile={onOpen}
+                />
+              )}
               {permissions.canViewVerdictServiceCertificate &&
                 workingCase.defendants?.map((defendant) => (
                   <PdfButton
@@ -395,7 +408,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   />
                 ))}
             </Box>
-          ) : null}
+          )}
           <FileSection
             title={formatMessage(caseFiles.criminalRecordUpdateSection)}
             files={filteredFiles.criminalRecordUpdate}
@@ -418,21 +431,20 @@ const IndictmentCaseFilesList: FC<Props> = ({
               />
             )}
           </FileSection>
-          {filteredFiles.uploadedCaseFiles &&
-            filteredFiles.uploadedCaseFiles.length > 0 && (
-              <Box marginBottom={5}>
-                <SectionHeading
-                  title={formatMessage(strings.uploadedCaseFiles)}
-                  marginBottom={3}
-                  heading="h4"
-                  variant="h4"
-                />
-                <CaseFileTable
-                  caseFiles={filteredFiles.uploadedCaseFiles}
-                  onOpenFile={onOpen}
-                />
-              </Box>
-            )}
+          {filteredFiles.uploadedCaseFiles.length > 0 && (
+            <Box marginBottom={5}>
+              <SectionHeading
+                title={formatMessage(strings.uploadedCaseFiles)}
+                marginBottom={3}
+                heading="h4"
+                variant="h4"
+              />
+              <CaseFileTable
+                caseFiles={filteredFiles.uploadedCaseFiles}
+                onOpenFile={onOpen}
+              />
+            </Box>
+          )}
           <AnimatePresence>
             {fileNotFound && (
               <FileNotFoundModal dismiss={dismissFileNotFound} />

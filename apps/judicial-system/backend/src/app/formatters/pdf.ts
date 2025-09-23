@@ -289,7 +289,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     getPageLink: (pageNumber: number) => rawDocument.getPage(pageNumber).ref,
 
     mergeDocument: async (buffer: Buffer) => {
-      const filePdfDoc = await PDFDocument.load(buffer)
+      const filePdfDoc = await PDFDocument.load(new Uint8Array(buffer))
 
       const pages = await rawDocument.copyPages(
         filePdfDoc,

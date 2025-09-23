@@ -1,0 +1,190 @@
+import PDFDocument from 'pdfkit'
+
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { CourtSessionRulingType } from '@island.is/judicial-system/types'
+
+import { nowFactory } from '../factories'
+import { Case } from '../modules/repository'
+import {
+  addCoatOfArms,
+  addEmptyLines,
+  addFooter,
+  addLargeHeading,
+  addMediumHeading,
+  addNormalCenteredText,
+  addNormalText,
+  addNumberedList,
+  setLineGap,
+  setTitle,
+} from './pdfHelpers'
+
+export const createIndictmentCourtRecordPdf = (
+  theCase: Case,
+  showOpenCourtSession: boolean,
+): Promise<Buffer> => {
+  const doc = new PDFDocument({
+    size: 'A4',
+    margins: {
+      top: 70,
+      bottom: 70,
+      left: 70,
+      right: 70,
+    },
+    bufferPages: true,
+  })
+
+  const sinc: Uint8Array[] = []
+
+  doc.on('data', (chunk) => sinc.push(chunk))
+
+  setTitle(doc, `Þingbók ${theCase.courtCaseNumber}`)
+  addCoatOfArms(doc)
+  addEmptyLines(doc, 4)
+  setLineGap(doc, 2)
+  addLargeHeading(doc, theCase.court?.name ?? 'Héraðsdómur', 'Times-Roman')
+  addMediumHeading(doc, 'Þingbók')
+  addMediumHeading(doc, `Mál nr. ${theCase.courtCaseNumber}`)
+
+  let nrOfFiledDocuments = 0
+
+  for (const courtSession of theCase.courtSessions ?? []) {
+    if (!courtSession.endDate && !showOpenCourtSession) {
+      break
+    }
+
+    addEmptyLines(doc, 2)
+    addNormalText(
+      doc,
+      `Þann ${formatDate(
+        courtSession.startDate ?? nowFactory(),
+        'PPP',
+      )} heldur ${theCase.judge?.name ?? 'óþekktur'} héraðsdómari dómþing ${
+        courtSession.location ?? 'á óþekktum stað'
+      }. Fyrir er tekið mál nr. ${
+        theCase.courtCaseNumber ?? 'S-xxxx/yyyy'
+      }. Þinghald hefst kl. ${formatDate(
+        courtSession.startDate ?? nowFactory(),
+        'p',
+      )}.`,
+    )
+
+    if (courtSession.isClosed) {
+      const subparagraphs =
+        courtSession.closedLegalProvisions &&
+        courtSession.closedLegalProvisions.length > 0
+          ? `${courtSession.closedLegalProvisions
+              ?.map((p) => p.slice(-1).toLowerCase())
+              .sort()
+              .join('-, ')
+              .replace(/-, (?!.*-, )/, '- og ')}-lið `
+          : ''
+
+      addEmptyLines(doc)
+      addNormalText(
+        doc,
+        `Þinghaldið er háð fyrir luktum dyrum sbr. ${subparagraphs}10. gr. laga um meðferð sakamála nr. 88/2008.`,
+      )
+    }
+
+    addEmptyLines(doc)
+    addNormalText(
+      doc,
+      `Sóknaraðili er ${theCase.prosecutorsOffice?.name ?? 'óþekktur'}.`,
+    )
+    addNormalText(
+      doc,
+      `Varnaraðili er ${theCase.defendants?.[0].name ?? 'óþekktur'}.`,
+    )
+
+    addEmptyLines(doc)
+    addNormalText(doc, 'Mættir eru:', 'Times-Bold')
+    addNormalText(
+      doc,
+      // Must use || here as we want to display a default message if the file has no content
+      courtSession.attendees?.trim() || 'Enginn er mættur í þinghaldið.',
+      'Times-Roman',
+    )
+
+    if (nrOfFiledDocuments > 0) {
+      addEmptyLines(doc, 2)
+      addNormalText(
+        doc,
+        `Skjöl málsins nr. 1-${nrOfFiledDocuments} liggja frammi.`,
+      )
+    }
+
+    if (courtSession.filedDocuments && courtSession.filedDocuments.length > 0) {
+      addEmptyLines(doc)
+      addNormalText(doc, 'Lagt er fram:', 'Times-Bold')
+      addNormalText(doc, 'Nr.', 'Times-Roman')
+      addNumberedList(
+        doc,
+        courtSession.filedDocuments.map((d) => d.name),
+        courtSession.filedDocuments[0].documentOrder,
+      )
+
+      nrOfFiledDocuments =
+        courtSession.filedDocuments[courtSession.filedDocuments.length - 1]
+          .documentOrder
+    }
+
+    addEmptyLines(doc, 2)
+    addNormalText(doc, courtSession.entries ?? 'Engar bókanir voru skráðar.')
+
+    if (courtSession.rulingType !== CourtSessionRulingType.NONE) {
+      addEmptyLines(doc)
+      addNormalCenteredText(
+        doc,
+        courtSession.rulingType === CourtSessionRulingType.JUDGEMENT
+          ? 'DÓMSORÐ:'
+          : 'ÚRSKURÐARORÐ:',
+        'Times-Bold',
+      )
+      addEmptyLines(doc)
+      addNormalText(
+        doc,
+        courtSession.ruling ?? 'Engin niðurstaða er skráð.',
+        'Times-Roman',
+      )
+      addEmptyLines(doc)
+      addNormalCenteredText(doc, theCase.judge?.name ?? 'Óþekktur héraðsdómari')
+
+      if (courtSession.closingEntries) {
+        addEmptyLines(doc)
+        addNormalText(doc, courtSession.closingEntries)
+      }
+    }
+
+    addEmptyLines(doc, 3)
+    addNormalCenteredText(
+      doc,
+      `Dómþingi slitið kl. ${formatDate(
+        courtSession.endDate ?? nowFactory(),
+        'p',
+      )}`,
+    )
+    addNormalCenteredText(doc, theCase.judge?.name ?? 'Óþekktur héraðsdómari')
+
+    if (courtSession.isAttestingWitness) {
+      const attestingWitnessName =
+        courtSession.attestingWitness?.name ?? 'óþekktur'
+      const attestingWitnessTitle = courtSession.attestingWitness?.title
+        ? ` ${courtSession.attestingWitness.title.toLocaleLowerCase()}`
+        : ''
+
+      addEmptyLines(doc)
+      addNormalText(
+        doc,
+        `Vottur að þinghaldi er ${attestingWitnessName}${attestingWitnessTitle}.`,
+      )
+    }
+  }
+
+  addFooter(doc)
+
+  doc.end()
+
+  return new Promise<Buffer>((resolve) =>
+    doc.on('end', () => resolve(Buffer.concat(sinc))),
+  )
+}

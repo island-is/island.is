@@ -49,7 +49,7 @@ export const createSubpoena = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
   const intro = getIntro(defendant.gender)
 
   doc.on('data', (chunk) => sinc.push(chunk))

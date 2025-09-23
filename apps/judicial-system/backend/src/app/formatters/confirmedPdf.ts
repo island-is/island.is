@@ -269,7 +269,7 @@ export const createConfirmedPdf = async (
   pdf: Buffer,
   fileType: ConfirmableCaseFileCategories,
 ) => {
-  const pdfDoc = await PDFDocument.load(pdf)
+  const pdfDoc = await PDFDocument.load(new Uint8Array(pdf))
 
   switch (fileType) {
     case CaseFileCategory.RULING: {

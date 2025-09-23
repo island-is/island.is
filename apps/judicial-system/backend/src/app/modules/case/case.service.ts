@@ -310,7 +310,19 @@ export const include: Includeable[] = [
     order: [['created', 'DESC']],
     separate: true,
   },
-  { model: Case, as: 'mergeCase' },
+  {
+    model: Case,
+    as: 'mergeCase',
+    include: [
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+  },
   {
     model: Case,
     as: 'mergedCases',

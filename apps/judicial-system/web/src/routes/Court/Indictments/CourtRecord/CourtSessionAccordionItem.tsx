@@ -110,9 +110,9 @@ const useCourtSessionUpdater = (
     })
 
     updateFn({
+      ...updates,
       caseId: workingCase.id,
       courtSessionId: sessionId,
-      ...updates,
     })
   }
 }
