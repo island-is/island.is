@@ -11,6 +11,10 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import {
+  formatDate,
+  getHumanReadableCaseIndictmentRulingDecision,
+} from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseTag,
@@ -45,10 +49,6 @@ import {
 
 import { strings } from './Summary.strings'
 import * as styles from './Summary.css'
-import {
-  formatDate,
-  getHumanReadableCaseIndictmentRulingDecision,
-} from '@island.is/judicial-system/formatters'
 
 const Summary: FC = () => {
   const { formatMessage } = useIntl()
@@ -286,16 +286,12 @@ const Summary: FC = () => {
         <Modal
           title="Viltu staðfesta dómsúrlausn og ljúka máli?"
           text={
-            <>
+            <Box display="flex" rowGap={2} flexDirection="column">
               <Box>
                 <Text fontWeight="semiBold" as="span">
                   Lyktir:
                 </Text>
-                <Text as="span">
-                  {` ${getHumanReadableCaseIndictmentRulingDecision(
-                    workingCase.indictmentRulingDecision,
-                  )}`}
-                </Text>
+                <Text as="span">{` Dómur`}</Text>
               </Box>
               <Box>
                 <Text fontWeight="semiBold" as="span">
@@ -305,18 +301,24 @@ const Summary: FC = () => {
                   {` ${formatDate(workingCase.courtEndTime)}`}
                 </Text>
               </Box>
-              <Box>
-                <Text>• Vinsamlegast rýnið skjal fyrir staðfestingu.</Text>
-                <Text>
-                  • Staðfestur dómur verður aðgengilegur málflytjendum í
-                  Réttarvörslugátt.
-                </Text>
-                <Text>
-                  • Ef birta þarf dóminn verður hann sendur í rafræna birtingu í
-                  stafrænt pósthólf dómfellda á island.is á næsta skrefi.
-                </Text>
+              <Box as="ul" marginLeft={2}>
+                <li>
+                  <Text>Vinsamlegast rýnið skjal fyrir staðfestingu.</Text>
+                </li>
+                <li>
+                  <Text>
+                    Staðfestur dómur verður aðgengilegur málflytjendum í
+                    Réttarvörslugátt.
+                  </Text>
+                </li>
+                <li>
+                  <Text>
+                    Ef birta þarf dóminn verður hann sendur í rafræna birtingu í
+                    stafrænt pósthólf dómfellda á island.is á næsta skrefi.
+                  </Text>
+                </li>
               </Box>
-            </>
+            </Box>
           }
           primaryButton={{
             text: 'Staðfesta',
@@ -358,7 +360,27 @@ const Summary: FC = () => {
       {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
           title={formatMessage(strings.completeCaseModalTitle)}
-          text={formatMessage(strings.completeCaseModalBody)}
+          text={
+            <Box display="flex" rowGap={2} flexDirection="column">
+              <Box>
+                <Text fontWeight="semiBold" as="span">
+                  Lyktir:
+                </Text>
+                <Text as="span">{` ${getHumanReadableCaseIndictmentRulingDecision(
+                  workingCase.indictmentRulingDecision,
+                )}`}</Text>
+              </Box>
+              <Box>
+                <Text fontWeight="semiBold" as="span">
+                  Dagsetning lykta:
+                </Text>
+                <Text as="span">
+                  {` ${formatDate(workingCase.courtEndTime)}`}
+                </Text>
+              </Box>
+              <Text>Niðurstaða málsins verður send ákæranda og verjanda.</Text>
+            </Box>
+          }
           primaryButton={{
             text: formatMessage(strings.completeCaseModalPrimaryButton),
             onClick: async () => await handleModalPrimaryButtonClick(),
