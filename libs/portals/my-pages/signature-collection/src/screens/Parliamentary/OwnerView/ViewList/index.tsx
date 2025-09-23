@@ -1,4 +1,4 @@
-import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
 import { useParams } from 'react-router-dom'
@@ -36,7 +36,6 @@ const ViewList = () => {
               )} - ${format(new Date(listInfo.endTime), 'dd.MM.yyyy')}`}
             </Text>
             <ListActions list={listInfo} />
-            <Divider />
           </Box>
           <Signees
             collectionType={collectionType}

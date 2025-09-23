@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Divider,
   Drawer,
   Icon,
   Stack,
@@ -23,7 +24,7 @@ const ActionDrawer = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginBottom={5}>
+    <Box>
       <Drawer
         ariaLabel="listActions"
         baseId="listActions"
@@ -59,6 +60,9 @@ const ActionDrawer = ({
           <CancelCandidacy />
         </Stack>
       </Drawer>
+      <Box marginTop={3}>
+        <Divider />
+      </Box>
     </Box>
   )
 }

@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { Box, Button, Text, Checkbox, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Text,
+  Checkbox,
+  toast,
+  Stack,
+} from '@island.is/island-ui/core'
 import { Modal } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
@@ -66,65 +73,64 @@ const AddConstituencyModal = ({
   }
 
   return (
-    <Box>
-      <Button
-        variant="utility"
-        icon="add"
-        onClick={() => {
-          setModalIsOpen(true)
-        }}
-      >
-        {formatMessage(m.addConstituency)}
-      </Button>
-      <Modal
-        id="addConstituency"
-        isVisible={modalIsOpen}
-        initialVisibility={false}
-        onCloseModal={() => {
-          setModalIsOpen(false)
-          setSelectedConstituencies([])
-        }}
-      >
-        <Box>
-          <Text marginBottom={2} variant="h2">
-            {formatMessage(m.addConstituency)}
-          </Text>
-          <Text marginBottom={5} variant="default">
-            {formatMessage(m.addConstituencyDescription)}
-          </Text>
+    <Modal
+      id="addConstituency"
+      isVisible={modalIsOpen}
+      initialVisibility={false}
+      onCloseModal={() => {
+        setModalIsOpen(false)
+        setSelectedConstituencies([])
+      }}
+      disclosure={
+        <Button
+          variant="utility"
+          icon="add"
+          onClick={() => {
+            setModalIsOpen(true)
+          }}
+        >
+          {formatMessage(m.addConstituency)}
+        </Button>
+      }
+    >
+      <Box display="block" width="full">
+        <Text variant="h2" marginBottom={2}>
+          {formatMessage(m.addConstituency)}
+        </Text>
+        <Text variant="default" marginBottom={5}>
+          {formatMessage(m.addConstituencyDescription)}
+        </Text>
+        <Stack space={3}>
           {filteredConstituencies.map((constituency) => (
-            <Box key={constituency.id} marginBottom={3}>
-              <Checkbox
-                large
-                backgroundColor="blue"
-                label={constituency.name}
-                value={constituency.id}
-                checked={selectedConstituencies.includes(constituency.id)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedConstituencies([
-                      ...selectedConstituencies,
-                      constituency.id,
-                    ])
-                  } else {
-                    setSelectedConstituencies(
-                      selectedConstituencies.filter(
-                        (c) => c !== constituency.id,
-                      ),
-                    )
-                  }
-                }}
-              />
-            </Box>
+            <Checkbox
+              key={constituency.id}
+              large
+              backgroundColor="blue"
+              label={constituency.name}
+              value={constituency.id}
+              checked={selectedConstituencies.includes(constituency.id)}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedConstituencies([
+                    ...selectedConstituencies,
+                    constituency.id,
+                  ])
+                } else {
+                  setSelectedConstituencies(
+                    selectedConstituencies.filter((c) => c !== constituency.id),
+                  )
+                }
+              }}
+            />
           ))}
-          <Box display="flex" justifyContent="center" marginTop={7}>
-            <Button onClick={() => onAddConstituency()} loading={loading}>
-              {formatMessage(m.add)}
-            </Button>
-          </Box>
+        </Stack>
+        <Box display="flex" justifyContent="center" marginTop={7}>
+          <Button onClick={() => onAddConstituency()} loading={loading}>
+            {formatMessage(m.add)}
+          </Button>
         </Box>
-      </Modal>
-    </Box>
+      </Box>
+    </Modal>
   )
 }
 

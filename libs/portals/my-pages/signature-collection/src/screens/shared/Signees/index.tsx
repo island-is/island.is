@@ -181,14 +181,14 @@ const Signees = ({
             </Box>
           </Box>
         ) : searchTerm.length > 0 ? (
-          <Box display="flex" marginTop={3}>
+          <Box display="flex" marginTop={2}>
             <Text>{formatMessage(m.noSigneesFoundBySearch)}</Text>
             <Box marginLeft={1}>
               <Text variant="h5">{searchTerm}</Text>
             </Box>
           </Box>
         ) : (
-          <Text marginTop={3}>{formatMessage(m.noSignees)}</Text>
+          <Text marginTop={2}>{formatMessage(m.noSignees)}</Text>
         )
       ) : (
         <SkeletonTable />

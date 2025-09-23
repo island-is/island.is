@@ -24,7 +24,7 @@ const ViewList = () => {
             {listInfo.candidate.name + ' - ' + listInfo.area.name}
           </Text>
           <Box>
-            <Text variant="h5">{formatMessage(m.listPeriod)}</Text>
+            <Text variant="h4">{formatMessage(m.listPeriod)}</Text>
             <Text>
               {`${format(
                 new Date(listInfo.startTime),

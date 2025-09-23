@@ -79,14 +79,14 @@ const CancelCandidacy = () => {
           }
         >
           <Box display="block" width="full">
-            <Text variant="h2" marginTop={[5, 0]}>
+            <Text variant="h2" marginBottom={2}>
               {formatMessage(m.cancelCollectionButton)}
             </Text>
-            <Text variant="default" marginTop={2}>
+            <Text variant="default">
               {formatMessage(m.cancelCollectionModalMessage)}
             </Text>
             <Box
-              marginTop={[7, 10]}
+              marginTop={[3, 5]}
               marginBottom={5}
               display="flex"
               justifyContent="center"

@@ -36,7 +36,7 @@ const OwnerView = ({
 
       {/* Candidate created lists */}
       {listsForOwner?.length > 0 && (
-        <Box>
+        <Box marginTop={8}>
           <Text variant="h4" marginBottom={2}>
             {formatMessage(m.myListsDescription)}
           </Text>
