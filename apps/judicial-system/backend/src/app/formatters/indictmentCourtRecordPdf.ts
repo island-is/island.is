@@ -109,7 +109,7 @@ export const createIndictmentCourtRecordPdf = (
       addEmptyLines(doc, 2)
       addNormalText(
         doc,
-        `Skjöl málsing nr. 1-${nrOfFiledDocuments} liggja frammi.`,
+        `Skjöl málsins nr. 1-${nrOfFiledDocuments} liggja frammi.`,
       )
     }
 
