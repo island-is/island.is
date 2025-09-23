@@ -14,7 +14,10 @@ import {
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z, ZodIssueCode } from 'zod'
 import * as m from './messages'
-import { OTHER_RESIDENCE_STATUS_VALUE, OTHER_STATUS_VALUE } from '../types/constants'
+import {
+  OTHER_RESIDENCE_STATUS_VALUE,
+  OTHER_STATUS_VALUE,
+} from '../types/constants'
 
 export const fileSchema = z.object({
   name: z.string(),
@@ -55,7 +58,7 @@ export const dataSchema = z.object({
   disabilityAppliedBefore: z.enum([YES, NO]),
   disabilityPeriod: z.object({
     year: z.coerce.number().int().min(1000),
-    month: z.coerce.number().int().min(0).max(11)
+    month: z.coerce.number().int().min(0).max(11),
   }),
   livedAbroad: livedAbroadSchema.refine(
     ({ list, hasLivedAbroad }) => {
@@ -217,11 +220,11 @@ export const dataSchema = z.object({
   backgroundInfoEmploymentCapability: z
     .object({
       capability: z.preprocess((val) => {
-        if (typeof val === "string" && val.length > 0) {
+        if (typeof val === 'string' && val.length > 0) {
           return Number(val)
         }
         return -1
-      }, z.number())
+      }, z.number()),
     })
     .refine(
       ({ capability }) => {

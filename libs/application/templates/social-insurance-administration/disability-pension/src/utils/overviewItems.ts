@@ -40,7 +40,10 @@ import {
   SocialInsuranceGeneralProfessionActivitiesQuery,
   SocialInsuranceGeneralProfessionsQuery,
 } from '../graphql/queries.generated'
-import { OTHER_RESIDENCE_STATUS_VALUE, OTHER_STATUS_VALUE } from '../types/constants'
+import {
+  OTHER_RESIDENCE_STATUS_VALUE,
+  OTHER_STATUS_VALUE,
+} from '../types/constants'
 
 export const aboutApplicantItems = (
   answers: FormValue,
@@ -334,8 +337,6 @@ export const selfEvaluationItems = async (
       }),
     ])
 
-
-
   return [
     {
       width: 'full',
@@ -361,7 +362,7 @@ export const selfEvaluationItems = async (
         }
         return residenceTypes.find((m) => m.value.toString() === residence)
           ?.label
-        }
+      },
     },
     {
       width: 'full',
@@ -388,17 +389,15 @@ export const selfEvaluationItems = async (
       keyText: m.questions.employmentStatusTitle,
       valueText: () => {
         return Array.isArray(employmentStatus)
-        ? employmentStatus.map(
-          (e) => {
-            if (e === OTHER_STATUS_VALUE) {
-              return employmentStatusOther
-            }
-            const label = employmentTypes.find((et) => et.value === e)?.label;
-            return label;
-          },
-        )
-        : undefined
-      }
+          ? employmentStatus.map((e) => {
+              if (e === OTHER_STATUS_VALUE) {
+                return employmentStatusOther
+              }
+              const label = employmentTypes.find((et) => et.value === e)?.label
+              return label
+            })
+          : undefined
+      },
     },
     {
       width: 'full',
@@ -483,20 +482,21 @@ export const selfEvaluationItems = async (
 export const capabilityImpairmentItems = (
   answers: FormValue,
 ): Array<KeyValueItem> => {
-  const { questionnaire } =
-    getApplicationAnswers(answers)
+  const { questionnaire } = getApplicationAnswers(answers)
 
   const hasCapabilityImpairment = questionnaire.find(
     (question) => question.answer !== undefined,
   )
 
-  return hasCapabilityImpairment ? [
-    {
-      width: 'full',
-      keyText: m.capabilityImpairment.title,
-      valueText: m.selfEvaluation.applicantHasAnsweredCapabilityImpairment,
-    },
-  ] : []
+  return hasCapabilityImpairment
+    ? [
+        {
+          width: 'full',
+          keyText: m.capabilityImpairment.title,
+          valueText: m.selfEvaluation.applicantHasAnsweredCapabilityImpairment,
+        },
+      ]
+    : []
 }
 
 export const extraInfoItems = (answers: FormValue): Array<KeyValueItem> => {

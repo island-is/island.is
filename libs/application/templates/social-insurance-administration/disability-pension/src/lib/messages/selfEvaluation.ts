@@ -38,7 +38,8 @@ export const selfEvaluation = defineMessages({
   },
   applicantHasAnsweredCapabilityImpairment: {
     id: 'dp.application:selfEvaluation.applicantHasAnsweredCapabilityImpairment#markdown',
-    defaultMessage: 'Þú hefur svarað öllum spurningum varðandi færni í daglegu lífi og starfi.',
+    defaultMessage:
+      'Þú hefur svarað öllum spurningum varðandi færni í daglegu lífi og starfi.',
     description: 'Capability impairment',
   },
   description: {
