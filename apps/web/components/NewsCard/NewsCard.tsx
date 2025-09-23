@@ -1,5 +1,6 @@
 import React from 'react'
 import { useMeasure } from 'react-use'
+import format from 'date-fns/format'
 
 import {
   Box,
@@ -46,6 +47,15 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
   const [ref, { width }] = useMeasure()
   const showImage = width > 600
 
+  let formattedDateString: string | undefined
+  if(!!date && !dateTo) {
+    //use old date format
+    formattedDateString = format(new Date(date), 'do MMMM yyyy')
+  } else if (date && dateTo) {
+    formattedDateString = formatEventDates(date, dateTo)
+  } else formattedDateString = undefined
+
+
   if (mini) {
     return (
       <FocusableBox
@@ -62,9 +72,9 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
           paddingX={[3, 3, 0]}
         >
           <Stack space={2}>
-            {date !== undefined && (
+            {formattedDateString && (
               <Text variant="eyebrow" color={dateTextColor}>
-                {formatEventDates(date, dateTo)}
+                {formattedDateString}
               </Text>
             )}
             <Text variant="h2" as={titleAs} color={titleTextColor}>
@@ -104,9 +114,9 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
             justifyContent="spaceBetween"
           >
             <Stack space={2}>
-              {date !== undefined && (
+              {formattedDateString && (
                 <Text variant="eyebrow" color={dateTextColor}>
-                  {formatEventDates(date, dateTo)}
+                  {formattedDateString}
                 </Text>
               )}
               <Text variant={titleVariant} as={titleAs} color={titleTextColor}>

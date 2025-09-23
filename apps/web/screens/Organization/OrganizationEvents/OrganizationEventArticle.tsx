@@ -55,6 +55,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_SINGLE_EVENT_QUERY } from '../../queries/Events'
 import * as styles from './OrganizationEventArticle.css'
+import addDays from 'date-fns/addDays'
 
 const LAYOUT_CHANGE_BREAKPOINT = 1120
 const ICON_TEXT_SPACE: ResponsiveSpace = [3, 3, 3, 2, 3]
@@ -100,6 +101,8 @@ const EventInformationBox = ({
   hasEventOccurred: boolean
 }) => {
   const { activeLocale } = useI18n()
+  const { format } = useDateUtils()
+  const formattedDate = event.startDate && format(new Date(event.startDate), 'do MMMM yyyy')
   const n = useNamespace(namespace)
   const router = useRouter()
 
@@ -107,12 +110,14 @@ const EventInformationBox = ({
     ? formatEventDates(event.startDateTime, event.endDateTime ?? '')
     : undefined
 
+  const useNewDateProcess  = !!event.startDateTime && !!event.endDateTime
+
   return (
     <Box background="blue100" borderRadius="large" padding={[3, 3, 3, 2, 3]}>
       <Stack space={3}>
         <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
           <Icon color="blue400" icon="calendar" type="outline" />
-          {eventTimeSpan}
+          {useNewDateProcess ? eventTimeSpan : <Text>{formattedDate}</Text>}
         </Box>
         {Boolean(event.time?.startTime) && (
           <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
@@ -406,10 +411,20 @@ OrganizationEventArticle.getProps = async ({
     )
   }
 
+  const useNewDateProcess  = !!event.startDateTime && !!event.endDateTime
+
   let hasEventOccurred = true
-  if (event.endDateTime && event.startDateTime) {
-    const today = new Date().getTime()
-    hasEventOccurred = new Date(event.endDateTime).getTime() < today
+  if (useNewDateProcess) {
+    if (event.endDateTime && event.startDateTime) {
+      const today = new Date().getTime()
+      hasEventOccurred = new Date(event.endDateTime).getTime() < today
+    }
+  }
+  else {
+    if (Boolean(event.endDate) || Boolean(event.startDate)) {
+      const dateString = event.endDate ? event.endDate : event.startDate
+      hasEventOccurred = addDays(new Date(dateString), 1) < new Date()
+    }
   }
 
   const organizationNamespace = extractNamespaceFromOrganization(
