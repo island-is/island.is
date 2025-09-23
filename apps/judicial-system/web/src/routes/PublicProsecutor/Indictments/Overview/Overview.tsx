@@ -157,24 +157,20 @@ export const Overview = () => {
         {workingCase.defendants?.map((defendant) => {
           const { verdict } = defendant
 
-          if (!verdict) {
-            return null
-          }
-
           const isFine =
             workingCase.indictmentRulingDecision ===
             CaseIndictmentRulingDecision.FINE
 
           const isServiceRequired =
-            verdict.serviceRequirement === ServiceRequirement.REQUIRED
+            verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
           const isServiceNotApplicable =
-            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+            verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
 
           return (
             <Fragment key={defendant.id}>
               <Box className={styles.container}>
-                {features?.includes(Feature.VERDICT_DELIVERY) && (
+                {features?.includes(Feature.VERDICT_DELIVERY) && verdict && (
                   <VerdictStatusAlert verdict={verdict} defendant={defendant} />
                 )}
                 <Box component="section">
