@@ -117,8 +117,7 @@ const buildQuestion = (index: number) => {
 
 export const capabilityImpairmentSubSection = buildSubSection({
   id: SectionRouteEnum.CAPABILITY_IMPAIRMENT,
-  title: m.capabilityImpairment.tabTitle,
-  tabTitle: m.capabilityImpairment.tabTitle,
+  title: m.capabilityImpairment.title,
   children: [
     buildDescriptionField({
       id: SectionRouteEnum.CAPABILITY_IMPAIRMENT,

@@ -8,6 +8,7 @@ export enum NotEligibleReasonCodes {
 }
 
 export const OTHER_STATUS_VALUE = 'ANNAD'
+export const OTHER_RESIDENCE_STATUS_VALUE = 6
 
 export const MAX_QUESTIONNAIRE_QUESTIONS = 5
 

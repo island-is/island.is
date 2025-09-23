@@ -13,7 +13,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { FC } from 'react'
-import { useFormContext } from 'react-hook-form'
 import { useQuery } from '@apollo/client'
 import { siaDisabilityPensionCertificateQuery } from '../../graphql/queries'
 import format from 'date-fns/format'
@@ -21,11 +20,9 @@ import * as m from '../../lib/messages'
 import { SiaDisabilityPensionCertificateQuery } from '../../graphql/queries.generated'
 
 export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
-  field,
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
 
   const { data, loading } = useQuery<SiaDisabilityPensionCertificateQuery>(
     siaDisabilityPensionCertificateQuery,
@@ -287,15 +284,6 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         {cognitiveImpairments()}
         {functionalAssessments()}
       </Accordion>
-      <input
-        type="hidden"
-        value={
-          data?.socialInsuranceDisabilityPensionCertificate?.referenceId
-            ? data.socialInsuranceDisabilityPensionCertificate.referenceId
-            : undefined
-        }
-        {...register(field.id)}
-      />
     </Stack>
   )
 }

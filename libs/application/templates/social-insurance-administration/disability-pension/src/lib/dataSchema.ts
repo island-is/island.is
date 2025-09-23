@@ -12,9 +12,9 @@ import {
   validSWIFT,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
-import { z } from 'zod'
+import { z, ZodIssueCode } from 'zod'
 import * as m from './messages'
-import { OTHER_STATUS_VALUE } from '../types/constants'
+import { OTHER_RESIDENCE_STATUS_VALUE, OTHER_STATUS_VALUE } from '../types/constants'
 
 export const fileSchema = z.object({
   name: z.string(),
@@ -54,8 +54,8 @@ export const dataSchema = z.object({
   }),
   disabilityAppliedBefore: z.enum([YES, NO]),
   disabilityPeriod: z.object({
-    year: z.coerce.number().int().min(1000).optional(),
-    month: z.coerce.number().int().min(0).max(11).optional(),
+    year: z.coerce.number().int().min(1000),
+    month: z.coerce.number().int().min(0).max(11)
   }),
   livedAbroad: livedAbroadSchema.refine(
     ({ list, hasLivedAbroad }) => {
@@ -120,7 +120,7 @@ export const dataSchema = z.object({
     })
     .refine(
       ({ status, other }) => {
-        if (status === 6) {
+        if (status === OTHER_RESIDENCE_STATUS_VALUE) {
           return other && other.length > 0
         }
         return true
@@ -216,7 +216,12 @@ export const dataSchema = z.object({
     ),
   backgroundInfoEmploymentCapability: z
     .object({
-      capability: z.coerce.number().int().min(0).max(100),
+      capability: z.preprocess((val) => {
+        if (typeof val === "string" && val.length > 0) {
+          return Number(val)
+        }
+        return -1
+      }, z.number())
     })
     .refine(
       ({ capability }) => {
