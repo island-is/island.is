@@ -48,13 +48,12 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
   const showImage = width > 600
 
   let formattedDateString: string | undefined
-  if(!!date && !dateTo) {
+  if (!!date && !dateTo) {
     //use old date format
     formattedDateString = format(new Date(date), 'do MMMM yyyy')
   } else if (date && dateTo) {
     formattedDateString = formatEventDates(date, dateTo)
   } else formattedDateString = undefined
-
 
   if (mini) {
     return (

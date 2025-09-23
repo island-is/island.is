@@ -102,7 +102,8 @@ const EventInformationBox = ({
 }) => {
   const { activeLocale } = useI18n()
   const { format } = useDateUtils()
-  const formattedDate = event.startDate && format(new Date(event.startDate), 'do MMMM yyyy')
+  const formattedDate =
+    event.startDate && format(new Date(event.startDate), 'do MMMM yyyy')
   const n = useNamespace(namespace)
   const router = useRouter()
 
@@ -110,7 +111,7 @@ const EventInformationBox = ({
     ? formatEventDates(event.startDateTime, event.endDateTime ?? '')
     : undefined
 
-  const useNewDateProcess  = !!event.startDateTime && !!event.endDateTime
+  const useNewDateProcess = !!event.startDateTime && !!event.endDateTime
 
   return (
     <Box background="blue100" borderRadius="large" padding={[3, 3, 3, 2, 3]}>
@@ -411,7 +412,7 @@ OrganizationEventArticle.getProps = async ({
     )
   }
 
-  const useNewDateProcess  = !!event.startDateTime && !!event.endDateTime
+  const useNewDateProcess = !!event.startDateTime && !!event.endDateTime
 
   let hasEventOccurred = true
   if (useNewDateProcess) {
@@ -419,8 +420,7 @@ OrganizationEventArticle.getProps = async ({
       const today = new Date().getTime()
       hasEventOccurred = new Date(event.endDateTime).getTime() < today
     }
-  }
-  else {
+  } else {
     if (Boolean(event.endDate) || Boolean(event.startDate)) {
       const dateString = event.endDate ? event.endDate : event.startDate
       hasEventOccurred = addDays(new Date(dateString), 1) < new Date()

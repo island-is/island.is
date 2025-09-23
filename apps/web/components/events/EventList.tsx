@@ -71,15 +71,17 @@ export const EventList = ({
       {variant === 'InfoCard' && (
         <Stack space={4}>
           {eventList.map((event) => {
-
             let formattedDateString: string | undefined
-            if(event.startDateTime && event.endDateTime) {
+            if (event.startDateTime && event.endDateTime) {
               //use old date format
-              formattedDateString = formatEventDates(event.startDateTime, event.endDateTime)
+              formattedDateString = formatEventDates(
+                event.startDateTime,
+                event.endDateTime,
+              )
             } else {
               formattedDateString = event.startDate
-                            ? format(new Date(event.startDate), 'do MMMM yyyy')
-                            : undefined
+                ? format(new Date(event.startDate), 'do MMMM yyyy')
+                : undefined
             }
 
             const link = linkResolver('organizationevent', [
@@ -92,10 +94,16 @@ export const EventList = ({
               text: string
             }> = []
 
-            const eventTime = (!!event.startDateTime && !!event.endDateTime) ? formatEventTime(
-              event.time,
-              n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string,
-            ) : ''
+            const eventTime =
+              !!event.startDateTime && !!event.endDateTime
+                ? formatEventTime(
+                    event.time,
+                    n(
+                      'timeSuffix',
+                      activeLocale === 'is' ? 'til' : 'to',
+                    ) as string,
+                  )
+                : ''
 
             if (eventTime) {
               detailLines.push({
@@ -167,7 +175,11 @@ export const EventList = ({
                     />
                   </Stack>
                 }
-                date={(!!eventItem.startDateTime && !!eventItem.endDateTime) ? eventItem.startDateTime : eventItem.startDate}
+                date={
+                  !!eventItem.startDateTime && !!eventItem.endDateTime
+                    ? eventItem.startDateTime
+                    : eventItem.startDate
+                }
                 dateTo={eventItem.endDateTime ?? undefined}
                 image={eventItem.thumbnailImage as ImageSchema}
                 titleAs="h2"
@@ -185,7 +197,8 @@ export const EventList = ({
               eventItem.slug,
             ]).href
 
-            const isNewDateProcess = (!!eventItem.startDateTime && !!eventItem.endDateTime)
+            const isNewDateProcess =
+              !!eventItem.startDateTime && !!eventItem.endDateTime
 
             return (
               <LatestEventSliceCard
@@ -194,10 +207,16 @@ export const EventList = ({
                 location={eventItem.location}
                 namespace={namespace}
                 image={eventItem.thumbnailImage?.url || ''}
-                startTime={isNewDateProcess ? '' : (eventItem.startDateTime ?? '')}
-                endTime={isNewDateProcess ? '' : (eventItem.endDateTime ?? '')}
+                startTime={
+                  isNewDateProcess ? '' : eventItem.startDateTime ?? ''
+                }
+                endTime={isNewDateProcess ? '' : eventItem.endDateTime ?? ''}
                 href={eventHref}
-                date={isNewDateProcess ? (eventItem.startDateTime ?? '') : eventItem.startDate}
+                date={
+                  isNewDateProcess
+                    ? eventItem.startDateTime ?? ''
+                    : eventItem.startDate
+                }
               />
             )
           })}
