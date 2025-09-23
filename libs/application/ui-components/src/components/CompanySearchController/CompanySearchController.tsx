@@ -14,7 +14,6 @@ import { useLocale } from '@island.is/localization'
 
 interface Props {
   id: string
-  defaultValue?: unknown
   name?: string
   label: string
   placeholder?: string
