@@ -60,7 +60,7 @@ const Summary: FC = () => {
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
     useCase()
   const [modalVisible, setModalVisible] = useState<
-    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING'
+    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING' | 'TODO:REMOVE'
   >()
   const [rulingUrl, setRulingUrl] = useState<string>()
   const [hasReviewed, setHasReviewed] = useState<boolean>(false)
@@ -115,6 +115,8 @@ const Summary: FC = () => {
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
   }
 
+  // TODO: REMOVE
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleRuling = async () => {
     const showError = () => toast.error('Dómur fannst ekki')
 
@@ -139,14 +141,16 @@ const Summary: FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    if (
-      workingCase.indictmentRulingDecision ===
-      CaseIndictmentRulingDecision.RULING
-    ) {
-      await handleRuling()
-    } else {
-      setModalVisible('CONFIRM_INDICTMENT')
-    }
+    // TODO: Uncomment when CORS bug is fixed
+    // if (
+    //   workingCase.indictmentRulingDecision ===
+    //   CaseIndictmentRulingDecision.RULING
+    // ) {
+    //   await handleRuling()
+    // } else {
+    //   setModalVisible('CONFIRM_INDICTMENT')
+    // }
+    setModalVisible('CONFIRM_INDICTMENT')
   }
 
   const handleCourtEndTimeChange = useCallback(
@@ -298,7 +302,7 @@ const Summary: FC = () => {
           }
         />
       </FormContentContainer>
-      {modalVisible === 'CONFIRM_RULING' && (
+      {modalVisible === 'TODO:REMOVE' && (
         <Modal
           title="Staðfesting dóms"
           text={`Vinsamlegast rýnið skjal fyrir staðfestingu.            
@@ -340,7 +344,8 @@ Staðfestur dómur verður aðgengilegur málflytjendum í Réttarvörslugátt. 
           )}
         </Modal>
       )}
-      {modalVisible === 'CONFIRM_INDICTMENT' && (
+      {(modalVisible === 'CONFIRM_INDICTMENT' ||
+        modalVisible === 'CONFIRM_RULING') && (
         <Modal
           title={formatMessage(strings.completeCaseModalTitle)}
           text={formatMessage(strings.completeCaseModalBody)}
