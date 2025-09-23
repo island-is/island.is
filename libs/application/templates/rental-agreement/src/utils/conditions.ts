@@ -112,7 +112,7 @@ export const shouldShowLandlordAlert = (answers: FormValue) => {
     return false
   }
 
-  let hasLandlord: boolean = false
+  let hasLandlord = false
   landlords?.forEach((landlord) => {
     const isRepresentative = landlord?.isRepresentative?.length > 0
 
