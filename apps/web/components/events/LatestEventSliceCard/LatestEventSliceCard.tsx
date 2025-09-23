@@ -51,10 +51,12 @@ export const LatestEventSliceCard: React.FC<
     activeLocale === 'is' ? 'til' : 'to',
   ) as string
 
+  const dateSuffix = n('dateSuffix', ' - ') as string
+
   const { format } = useDateUtils()
   const formattedDate = formatEventDate(
     format,
-    ` ${timeSuffix} `,
+    ` ${dateSuffix} `,
     date,
     endDate,
   )
@@ -78,12 +80,7 @@ export const LatestEventSliceCard: React.FC<
                 <EventTime
                   startTime={startTime}
                   endTime={endTime}
-                  timePrefix={
-                    n(
-                      'timePrefix',
-                      activeLocale === 'is' ? 'kl.' : '',
-                    ) as string
-                  }
+                  timePrefix={n('timePrefix', '') as string}
                   timeSuffix={timeSuffix}
                 />
               </Stack>

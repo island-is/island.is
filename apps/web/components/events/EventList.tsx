@@ -76,9 +76,10 @@ export const EventList = ({
               'timeSuffix',
               activeLocale === 'is' ? 'til' : 'to',
             ) as string
+            const dateSuffix = n('dateSuffix', ' - ') as string
             const formattedDate = formatEventDate(
               format,
-              ` ${timeSuffix} `,
+              ` ${dateSuffix} `,
               event.startDate,
               endDate,
             )
@@ -133,13 +134,14 @@ export const EventList = ({
         <Stack space={4}>
           {eventList.map((eventItem) => {
             const endDate = eventItem.time?.endDate
+            const dateSuffix = n('dateSuffix', ' - ') as string
             const timeSuffix = n(
               'timeSuffix',
               activeLocale === 'is' ? 'til' : 'to',
             ) as string
             const formattedDate = formatEventDate(
               format,
-              ` ${timeSuffix} `,
+              ` ${dateSuffix} `,
               eventItem.startDate,
               endDate,
             )
@@ -161,12 +163,7 @@ export const EventList = ({
                     <EventTime
                       startTime={eventItem.time?.startTime ?? ''}
                       endTime={eventItem.time?.endTime ?? ''}
-                      timePrefix={
-                        n(
-                          'timePrefix',
-                          activeLocale === 'is' ? 'kl.' : '',
-                        ) as string
-                      }
+                      timePrefix={n('timePrefix', '') as string}
                       timeSuffix={timeSuffix}
                     />
                   </Stack>
