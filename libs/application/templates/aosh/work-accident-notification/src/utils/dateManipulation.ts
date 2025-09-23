@@ -4,9 +4,16 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 export const getMaxDate = (application: Application) => {
   const date =
-    getValueViaPath<string>(application.answers, 'accident.date') ??
-    new Date().toString()
-  return new Date(date)
+    getValueViaPath<string>(application.answers, 'accident.date') ?? ''
+  const time =
+    getValueViaPath<string>(application.answers, 'accident.time') ?? '00:00'
+
+  const maxDate = new Date(date)
+  maxDate.setDate(
+    maxDate.getDate() + (parseInt(time.slice(0, 2), 10) < 12 ? 1 : 2),
+  )
+
+  return maxDate
 }
 
 export const getMinDate = (application: Application) => {
@@ -44,22 +51,26 @@ export const dateIsWithin36Hours = (
     new Date().toString()
   const accidentTime =
     getValueViaPath<string>(application.answers, 'accident.time') ?? '00:00'
-  const timeAllowed = 1000 * 60 * 60 * 36
+
+  const windowMs = 36 * 60 * 60 * 1000 // 36 hours in ms
+
   const accidentDateAndTime = getDateAndTime(
     accidentDate,
     accidentTime.slice(0, 2),
     accidentTime.slice(2, 4),
   )
+
   const employeeDateAndTime = getDateAndTime(
     date,
     time.slice(0, 2),
     time.slice(2, 4),
   )
 
-  return (
-    accidentDateAndTime.getTime() >= employeeDateAndTime.getTime() &&
-    accidentDateAndTime.getTime() - timeAllowed < employeeDateAndTime.getTime()
+  const diff = Math.abs(
+    employeeDateAndTime.getTime() - accidentDateAndTime.getTime(),
   )
+
+  return diff <= windowMs
 }
 
 export const isValid24HFormatTime = (value: string) => {
