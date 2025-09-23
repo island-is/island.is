@@ -12,10 +12,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import {
-  SignatureCollectionSignature as Signature,
-  SignatureCollectionCollectionType,
-} from '@island.is/api/schema'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 import sortBy from 'lodash/sortBy'
 import EditPage from './EditPage'
 import { SkeletonTable } from '../../../lib/skeletons'
@@ -110,7 +107,7 @@ const Signees = ({
               <T.Body>
                 {signees
                   .slice(pageSize * (page - 1), pageSize * page)
-                  .map((s: Signature) => {
+                  .map((s) => {
                     const textVariant = 'medium'
                     const bgColor = s.isDigital ? 'white' : 'blueberry100'
                     return (
@@ -196,11 +193,7 @@ const Signees = ({
       ) : (
         <SkeletonTable />
       )}
-      <PaperSignees
-        listId={id ?? ''}
-        refetchSignees={refetchListSignees}
-        collectionType={collectionType}
-      />
+      <PaperSignees listId={id ?? ''} collectionType={collectionType} />
     </Box>
   )
 }

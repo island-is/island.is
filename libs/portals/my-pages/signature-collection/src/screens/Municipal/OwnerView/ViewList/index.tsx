@@ -15,11 +15,14 @@ const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { id } = useParams() as { id: string }
-  const { listInfo } = useGetSignatureList(id || '', collectionType)
+  const { listInfo, loadingList } = useGetSignatureList(
+    id || '',
+    collectionType,
+  )
 
   return (
     <Box>
-      {listInfo ? (
+      {!loadingList && !!listInfo ? (
         <Stack space={5}>
           <Text variant="h3">{listInfo.title}</Text>
           <Box>
@@ -38,7 +41,7 @@ const ViewList = () => {
           </Box>
           <Signees
             collectionType={collectionType}
-            totalSignees={listInfo?.numberOfSignatures ?? 0}
+            totalSignees={listInfo.numberOfSignatures ?? 0}
           />
         </Stack>
       ) : (

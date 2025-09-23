@@ -32,70 +32,80 @@ const OwnerView = ({
 
   return (
     <Stack space={8}>
-      {signedLists && (
+      {signedLists?.length > 0 && (
         <SignedLists
           collectionType={collectionType}
           signedLists={signedLists}
         />
       )}
-      <Box>
-        <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
-          <Text variant="h4">{formatMessage(m.myListsDescription)}</Text>
-          {isListHolder &&
-            listsForOwner?.length < currentCollection?.areas.length && (
-              <AddConstituency
-                lists={listsForOwner}
-                collection={currentCollection}
-                candidateId={listsForOwner[0]?.candidate?.id}
-              />
-            )}
-        </Box>
-        {listsForOwner.map((list: SignatureCollectionList) => (
-          <Box key={list.id} marginTop={3}>
-            <ActionCard
-              backgroundColor="white"
-              heading={list.area?.name}
-              progressMeter={{
-                currentProgress: list.numberOfSignatures || 0,
-                maxProgress: list.area?.min || 0,
-                withLabel: true,
-              }}
-              eyebrow={`${formatMessage(m.endTime)} ${format(
-                new Date(list.endTime),
-                'dd.MM.yyyy',
-              )}`}
-              cta={
-                list.active
-                  ? {
-                      label: formatMessage(m.viewList),
-                      variant: 'text',
-                      icon: 'arrowForward',
-                      onClick: () => {
-                        const path = location.pathname.includes('fyrirtaeki')
-                          ? SignatureCollectionPaths.CompanyViewParliamentaryList
-                          : SignatureCollectionPaths.ViewParliamentaryList
-                        navigate(path.replace(':id', list.id), {
-                          state: {
-                            collectionId: currentCollection?.id || '',
-                          },
-                        })
-                      },
-                    }
-                  : undefined
-              }
-              tag={
-                !list.active
-                  ? {
-                      label: formatMessage(m.collectionClosed),
-                      variant: 'red',
-                      outlined: true,
-                    }
-                  : undefined
-              }
-            />
+
+      {/* Candidate created lists */}
+      {listsForOwner?.length > 0 && (
+        <Box>
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="baseline"
+            marginBottom={2}
+          >
+            <Text variant="h4">{formatMessage(m.myListsDescription)}</Text>
+            {isListHolder &&
+              listsForOwner?.length < currentCollection?.areas.length && (
+                <AddConstituency
+                  lists={listsForOwner}
+                  collection={currentCollection}
+                  candidateId={listsForOwner[0]?.candidate?.id}
+                />
+              )}
           </Box>
-        ))}
-      </Box>
+          <Stack space={[3, 5]}>
+            {listsForOwner.map((list) => (
+              <ActionCard
+                key={list.id}
+                backgroundColor="white"
+                heading={list.area?.name}
+                progressMeter={{
+                  currentProgress: list.numberOfSignatures || 0,
+                  maxProgress: list.area?.min || 0,
+                  withLabel: true,
+                }}
+                eyebrow={`${formatMessage(m.endTime)} ${format(
+                  new Date(list.endTime),
+                  'dd.MM.yyyy',
+                )}`}
+                cta={
+                  list.active
+                    ? {
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                        onClick: () => {
+                          const path = location.pathname.includes('fyrirtaeki')
+                            ? SignatureCollectionPaths.CompanyViewParliamentaryList
+                            : SignatureCollectionPaths.ViewParliamentaryList
+                          navigate(path.replace(':id', list.id), {
+                            state: {
+                              collectionId: currentCollection?.id || '',
+                            },
+                          })
+                        },
+                      }
+                    : undefined
+                }
+                tag={
+                  !list.active
+                    ? {
+                        label: formatMessage(m.collectionClosed),
+                        variant: 'red',
+                        outlined: true,
+                      }
+                    : undefined
+                }
+              />
+            ))}
+          </Stack>
+        </Box>
+      )}
       <Managers collectionType={collectionType} />
     </Stack>
   )
