@@ -50,8 +50,6 @@ export const EventList = ({
   const isMobile = width < theme.breakpoints.sm
   const { format } = useDateUtils()
 
-  console.log(eventList)
-
   return (
     <Box className="rs_read">
       {!eventList.length && (

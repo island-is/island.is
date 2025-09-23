@@ -219,37 +219,11 @@ export class CmsElasticsearchService {
       query,
     )
 
-    const items = eventsResponse.hits.hits
-      .map<EventModel>((response) =>
-        JSON.parse(response._source.response ?? '{}'),
-      )
-      .map((item) => {
-        let startDateTime: Date | undefined
-        let endDateTime: Date | undefined
-
-        if (item.startDate) {
-          const [hours, minutes] = item.time?.endTime
-            ? item.time.endTime.split(':')
-            : ['00', '00']
-          startDateTime = new Date(
-            new Date(item.startDate).setHours(
-              Number.parseInt(hours),
-              Number.parseInt(minutes),
-            ),
-          )
-          endDateTime = addDays(startDateTime.setHours(23, 44), 3)
-        }
-
-        return {
-          ...item,
-          startDateTime: startDateTime?.toISOString(),
-          endDateTime: endDateTime?.toISOString(),
-        }
-      })
-
     return {
       total: eventsResponse.hits.total.value,
-      items,
+      items: eventsResponse.hits.hits.map<EventModel>((response) =>
+        JSON.parse(response._source.response ?? '{}'),
+      ),
     }
   }
 
