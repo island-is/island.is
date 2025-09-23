@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Divider,
   Drawer,
   Icon,
   Stack,
@@ -53,6 +54,9 @@ const ListActions = ({ list }: { list: SignatureCollectionList }) => {
           <CancelCollection list={list} />
         </Stack>
       </Drawer>
+      <Box marginTop={3}>
+        <Divider />
+      </Box>
     </Box>
   )
 }
