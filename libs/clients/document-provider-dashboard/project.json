@@ -4,7 +4,6 @@
   "sourceRoot": "libs/clients/document-provider-dashboard/src",
   "projectType": "library",
   "tags": ["lib:client", "scope:client"],
-  "implicitDependencies": ["services-user-profile"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"

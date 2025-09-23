@@ -12,7 +12,7 @@ const schema = z.object({
 export const DocumentProviderDashboardClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
-  name: 'DocumentProviderDashboardApi',
+  name: 'DocumentProviderDashboardApiClient',
   schema,
   load: (env) => ({
     clientId: env.required('DOCUMENT_PROVIDER_DASHBOARD_CLIENTID'),
