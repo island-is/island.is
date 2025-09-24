@@ -160,7 +160,6 @@ export class PoliceService {
     deliveredToLawyer: z.boolean().nullish(),
   })
 
-  // TODO: Template - confirm with RLS
   private documentStructure = z.object({
     comment: z.string().nullish(),
     servedBy: z.string().nullish(),
@@ -169,7 +168,6 @@ export class PoliceService {
     deliveredOnPaper: z.boolean().nullish(),
     deliveredToLawyer: z.boolean().nullish(),
     deliveredOnIslandis: z.boolean().nullish(),
-    defenderNationalId: z.string().nullish(),
   })
 
   constructor(
@@ -678,6 +676,9 @@ export class PoliceService {
 
       if (res.ok) {
         const policeResponse = await res.json()
+        this.logger.debug(
+          `Verdict for defendant ${defendantId} with police document id ${policeResponse.id} and file type code ${fileTypeCode} delivered to national commissioners office `,
+        )
         return { externalPoliceDocumentId: policeResponse.id }
       }
     } catch (error) {
@@ -707,7 +708,7 @@ export class PoliceService {
     user?: User,
   ): Promise<VerdictPoliceDocumentInfo> {
     return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetDocumentStatus?id=${policeDocumentId}`,
+      `${this.xRoadPath}/GetDeliveryStatus?id=${policeDocumentId}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
@@ -730,7 +731,6 @@ export class PoliceService {
             comment: response.comment ?? undefined,
             servedBy: response.servedBy ?? undefined,
             serviceDate: servedAt,
-            defenderNationalId: response.defenderNationalId ?? undefined,
           }
         }
         const reason = await res.text()
