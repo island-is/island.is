@@ -22,21 +22,8 @@ import CourtSessionAccordionItem from './CourtSessionAccordionItem'
 const CourtRecord: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { createCourtSession } = useCourtSessions()
+  const { createCourtSession, updateCourtSession } = useCourtSessions()
   const [expandedIndex, setExpandedIndex] = useState<number>()
-
-  // useEffect(() => {
-  //   if (!workingCase.courtDocuments) {
-  //     return
-  //   }
-
-  //   setReorderableItems(
-  //     workingCase.courtDocuments.map((doc) => ({
-  //       id: doc.id,
-  //       name: doc.name,
-  //     })),
-  //   )
-  // }, [workingCase.courtDocuments])
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -46,6 +33,26 @@ const CourtRecord: FC = () => {
   const stepIsValid = isIndictmentCourtRecordStepValid(
     workingCase.courtSessions,
   )
+
+  const handleConfirmClick = (
+    courtSessionId: string,
+    isConfirmed: boolean | null = false,
+  ) => {
+    setWorkingCase((prev) => ({
+      ...prev,
+      courtSessions: prev.courtSessions?.map((session) =>
+        session.id === courtSessionId
+          ? { ...session, isConfirmed: !isConfirmed }
+          : session,
+      ),
+    }))
+
+    updateCourtSession({
+      courtSessionId,
+      caseId: workingCase.id,
+      isConfirmed: !isConfirmed,
+    })
+  }
 
   useEffect(() => {
     setExpandedIndex(
@@ -77,7 +84,9 @@ const CourtRecord: FC = () => {
               onToggle={() =>
                 setExpandedIndex(index === expandedIndex ? -1 : index)
               }
-              onConfirmClick={() => setExpandedIndex(undefined)}
+              onConfirmClick={() =>
+                handleConfirmClick(courtSession.id, courtSession.isConfirmed)
+              }
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
             />
@@ -111,7 +120,10 @@ const CourtRecord: FC = () => {
                 ],
               }))
             }}
-            disabled={!stepIsValid}
+            disabled={
+              !stepIsValid ||
+              workingCase.courtSessions?.some((c) => !c.isConfirmed)
+            }
             icon="add"
           >
             Bæta við þinghaldi
