@@ -269,6 +269,7 @@ query Case($input: CaseQueryInput!) {
         name
       }
       closingEntries
+      isConfirmed
       filedDocuments {
         id
         created

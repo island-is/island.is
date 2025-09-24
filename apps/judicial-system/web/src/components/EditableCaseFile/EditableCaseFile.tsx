@@ -32,6 +32,7 @@ export interface TEditableCaseFile {
   id: string
   category?: CaseFileCategory | null
   created?: string | null
+  name?: string | null
   displayText?: string | null
   userGeneratedFilename?: string | null
   displayDate?: string | null
@@ -48,11 +49,12 @@ interface Props {
   // Overwrites the default background color based on file status
   backgroundColor?: 'white'
   onOpen: (id: string) => void
+  disabled?: boolean
   onRename: (id: string, name: string, displayDate: string) => void
   onDelete: (file: TUploadFile) => void
   onRetry?: (file: TUploadFile) => void
-  onStartEditing: () => void
-  onStopEditing: () => void
+  onStartEditing?: () => void
+  onStopEditing?: () => void
 }
 
 const EditableCaseFile: FC<Props> = (props) => {
@@ -61,6 +63,7 @@ const EditableCaseFile: FC<Props> = (props) => {
     caseFile,
     backgroundColor,
     onOpen,
+    disabled,
     onRename,
     onDelete,
     onRetry,
@@ -91,27 +94,40 @@ const EditableCaseFile: FC<Props> = (props) => {
     const trimmedFilename = editedFilename?.trim()
     const trimmedDisplayDate = editedDisplayDate?.trim()
 
-    if (trimmedFilename === undefined || trimmedFilename.length === 0) {
-      toast.error(formatMessage(strings.invalidFilenameErrorMessage))
-      return
+    if (canEditName) {
+      if (trimmedFilename === undefined || trimmedFilename.length === 0) {
+        toast.error(formatMessage(strings.invalidFilenameErrorMessage))
+        return
+      }
     }
 
-    let newDate: Date | undefined
+    let isoDate: string | undefined
 
-    if (trimmedDisplayDate) {
+    if (canEditDate) {
+      if (!trimmedDisplayDate) {
+        toast.error(formatMessage(strings.invalidDateErrorMessage))
+        return
+      }
+
       const [day, month, year] = trimmedDisplayDate.split('.')
-      newDate = parseISO(`${year}-${month}-${day}`)
+      const parsedDate = parseISO(`${year}-${month}-${day}`)
+
+      if (!isValid(parsedDate)) {
+        toast.error(formatMessage(strings.invalidDateErrorMessage))
+        return
+      }
+
+      isoDate = parsedDate.toISOString()
     }
 
-    if (!newDate || !isValid(newDate)) {
-      toast.error(formatMessage(strings.invalidDateErrorMessage))
-      return
-    }
-
-    onRename(caseFile.id, trimmedFilename, newDate.toISOString())
+    onRename(
+      caseFile.id,
+      trimmedFilename ?? caseFile.userGeneratedFilename ?? '',
+      isoDate ?? caseFile.displayDate ?? '',
+    )
 
     setIsEditing(false)
-    onStopEditing()
+    onStopEditing?.()
   }
 
   const displayDate = useMemo(() => {
@@ -209,7 +225,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                     <button
                       onClick={() => {
                         onDelete(caseFile as TUploadFile)
-                        onStopEditing()
+                        onStopEditing?.()
                       }}
                       className={cn(styles.editCaseFileButton, {
                         [styles.background.primary]:
@@ -245,7 +261,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                 component={caseFile.canOpen ? 'button' : undefined}
                 onClick={() => {
                   if (caseFile.canOpen && caseFile.id) {
-                    onOpen(caseFile.id)
+                    onOpen?.(caseFile.id)
                   }
                 }}
               >
@@ -293,7 +309,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <button
                     onClick={() => {
                       setIsEditing(true)
-                      onStartEditing()
+                      onStartEditing?.()
                     }}
                     className={cn(styles.editCaseFileButton, {
                       [styles.background.primary]:
@@ -302,7 +318,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                       [styles.background.secondary]:
                         caseFile.status === FileUploadStatus.error || isEmpty,
                     })}
-                    disabled={!caseFile.canEdit?.length}
+                    disabled={!caseFile.canEdit?.length || disabled}
                     aria-label="Breyta skrá"
                   >
                     <Icon icon="pencil" color={color} />
