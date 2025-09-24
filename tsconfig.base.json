@@ -144,8 +144,8 @@
       "@island.is/api/domains/intellectual-properties": [
         "libs/api/domains/intellectual-properties/src/index.ts"
       ],
-      "@island.is/api/domains/islykill": [
-        "libs/api/domains/islykill/src/index.ts"
+      "@island.is/api/domains/landspitali": [
+        "libs/api/domains/landspitali/src/index.ts"
       ],
       "@island.is/api/domains/law-and-order": [
         "libs/api/domains/law-and-order/src/index.ts"
@@ -248,6 +248,9 @@
       ],
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
+      ],
+      "@island.is/api/domains/vmst-applications": [
+        "libs/api/domains/vmst-applications/src/index.ts"
       ],
       "@island.is/api/domains/verdicts": [
         "libs/api/domains/verdicts/src/index.ts"
@@ -736,6 +739,9 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
+      "@island.is/clients/fjs/bank-info": [
+        "libs/clients/fjs/bank-info/src/index.ts"
+      ],
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
       ],
@@ -774,7 +780,6 @@
       "@island.is/clients/intellectual-properties": [
         "libs/clients/intellectual-properties/src/index.ts"
       ],
-      "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
       ],
@@ -1239,7 +1244,6 @@
       "@island.is/testing/e2e": ["libs/testing/e2e/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
-      "@island.is/unicorn-app/*": ["apps/unicorn-app/*"],
       "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],

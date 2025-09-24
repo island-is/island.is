@@ -16,42 +16,41 @@ import {
   FireProtectionSection,
   ProvisionsAndConditionSection,
   Files,
+  LandlordInfo,
+  BankAccount,
 } from './types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
-const mapLandLordInfo = (landlord: ApplicantsInfo): ApplicantsInfo => {
+const mapLandLordInfo = (landlord: LandlordInfo): ApplicantsInfo => {
   return {
     nationalIdWithName: landlord.nationalIdWithName,
     phone: landlord.phone,
     email: landlord.email,
     address: '', // Intentionally blank as it is not used in the HMS Rental Agreement
+    isRepresentative: landlord.isRepresentative?.includes('✔️'),
   }
 }
 
 const extractParticipants = (
   answers: Application['answers'],
-): ParticipantsSection => ({
-  landlords: (
-    getValueViaPath<ApplicantsInfo[]>(
+): ParticipantsSection => {
+  const landlordsAndRepresentatives =
+    getValueViaPath<LandlordInfo[]>(
       answers,
       'parties.landlordInfo.table',
       [],
     ) ?? []
-  ).map(mapLandLordInfo),
-  landlordRepresentatives: (
-    getValueViaPath<ApplicantsInfo[]>(
-      answers,
-      'parties.landlordInfo.representativeTable',
-      [],
-    ) ?? []
-  ).map(mapLandLordInfo),
-  tenants:
-    getValueViaPath<ApplicantsInfo[]>(
-      answers,
-      'parties.tenantInfo.table',
-      [],
-    ) ?? [],
-})
+  const landlords = landlordsAndRepresentatives.map(mapLandLordInfo)
+  return {
+    landlords,
+    tenants:
+      getValueViaPath<ApplicantsInfo[]>(
+        answers,
+        'parties.tenantInfo.table',
+        [],
+      ) ?? [],
+  }
+}
 
 const extractPropertyInfo = (
   answers: Application['answers'],
@@ -146,7 +145,7 @@ const extractRentalAmount = (
     answers,
     'rentalAmount.paymentDateOther',
   ),
-  paymentMethodBankAccountNumber: getValueViaPath<string>(
+  paymentMethodBankAccountNumber: getValueViaPath<BankAccount>(
     answers,
     'rentalAmount.paymentMethodBankAccountNumber',
   ),

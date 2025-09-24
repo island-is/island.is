@@ -21,13 +21,11 @@ import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import FindSignature from '../../shared-components/findSignature'
 import EmptyState from '../../shared-components/emptyState'
 import StartAreaCollection from './startCollection'
 import { useStartCollectionMutation } from './startCollection/startCollection.generated'
 import sortBy from 'lodash/sortBy'
-import ActionDrawer from '../../shared-components/actionDrawer'
-import { Actions } from '../../shared-components/actionDrawer/ListActions'
+import { CollectionStatus } from '@island.is/api/schema'
 
 const AllMunicipalities = ({
   isProcurationHolder,
@@ -38,7 +36,6 @@ const AllMunicipalities = ({
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { revalidate } = useRevalidator()
-
   const [startCollectionMutation] = useStartCollectionMutation()
 
   const onStartCollection = (areaId: string) => {
@@ -49,15 +46,15 @@ const AllMunicipalities = ({
         },
       },
       onCompleted: (response) => {
-        if (
-          response.signatureCollectionAdminStartMunicipalityCollection.success
-        ) {
+        const { success, reasons } =
+          response.signatureCollectionAdminStartMunicipalityCollection
+
+        if (success) {
           toast.success(formatMessage(m.openMunicipalCollectionSuccess))
           revalidate()
         } else {
           toast.error(
-            response.signatureCollectionAdminStartMunicipalityCollection
-              .reasons?.[0] ?? formatMessage(m.openMunicipalCollectionError),
+            reasons?.[0] ?? formatMessage(m.openMunicipalCollectionError),
           )
         }
       },
@@ -97,21 +94,17 @@ const AllMunicipalities = ({
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
             marginBottom={4}
-            buttonGroup={
-              <ActionDrawer allowedActions={[Actions.DownloadReports]} />
-            }
           />
           <Divider />
           <Box marginTop={9} />
           {collection.areas.length > 0 ? (
             <Box>
-              <FindSignature collectionId={collection.id} />
               {collection.areas.length > 1 && (
                 <Box display="flex" justifyContent="flexEnd">
                   <Text marginBottom={2} variant="eyebrow">
-                    {formatMessage(m.totalListResults) +
-                      ': ' +
-                      collection.areas.length}
+                    {`${formatMessage(m.totalMunicipalities)}: ${
+                      collection.areas.length
+                    }`}
                   </Text>
                 </Box>
               )}
@@ -138,11 +131,9 @@ const AllMunicipalities = ({
                 <ActionCard
                   key={area.id}
                   heading={area.name}
-                  eyebrow={formatMessage(m.municipality)}
-                  text={
-                    formatMessage(m.totalListsPerMunicipality) +
+                  eyebrow={`${formatMessage(m.totalListsPerMunicipality)}: ${
                     allLists.filter((list) => list.area.id === area.id).length
-                  }
+                  }`}
                   cta={{
                     label: formatMessage(m.viewMunicipality),
                     variant: 'text',
@@ -192,6 +183,12 @@ const AllMunicipalities = ({
                               )}
                             />
                           ),
+                        }
+                      : area.collectionStatus === CollectionStatus.InReview
+                      ? {
+                          label: formatMessage(m.confirmListReviewed),
+                          variant: 'mint',
+                          outlined: true,
                         }
                       : area.isActive
                       ? {

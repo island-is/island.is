@@ -81,6 +81,7 @@ import {
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { PracticalExamsModule } from '@island.is/api/domains/practical-exams'
 import { SeminarsModule } from '@island.is/api/domains/seminars-ver'
+import { VmstApplicationsModule } from '@island.is/api/domains/vmst-applications'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
@@ -134,6 +135,8 @@ import {
   FirearmDigitalLicenseClientConfig,
   MachineDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
+import { BankInfoClientConfig } from '@island.is/clients/fjs/bank-info'
+
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
@@ -151,7 +154,7 @@ import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
-import { CmsModule, Form, PowerBiConfig } from '@island.is/cms'
+import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
@@ -229,6 +232,11 @@ import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-s
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { DocumentProviderDashboardClientConfig } from '@island.is/clients/document-provider-dashboard'
 import { DocumentProviderDashboardClientModule } from '@island.is/clients/document-provider-dashboard'
+import {
+  LandspitaliModule,
+  LandspitaliApiModuleConfig,
+} from '@island.is/api/domains/landspitali'
+
 
 const environment = getConfig
 
@@ -259,18 +267,18 @@ const environment = getConfig
     DrivingLicenseBookModule,
     EducationModule.register({
       xroad: {
-        baseUrl: environment.xroad.baseUrl!,
-        clientId: environment.xroad.clientId!,
+        baseUrl: environment.xroad.baseUrl as string,
+        clientId: environment.xroad.clientId as string,
         services: {
-          license: environment.education.xroadLicenseServiceId!,
-          grade: environment.education.xroadGradeServiceId!,
+          license: environment.education.xroadLicenseServiceId as string,
+          grade: environment.education.xroadGradeServiceId as string,
         },
       },
-      fileDownloadBucket: environment.education.fileDownloadBucket!,
+      fileDownloadBucket: environment.education.fileDownloadBucket as string,
     }),
     EducationV2Module,
     ApplicationModule.register({
-      baseApiUrl: environment.applicationSystem.baseApiUrl!,
+      baseApiUrl: environment.applicationSystem.baseApiUrl as string,
     }),
     LicenseServiceModule,
     DirectorateOfLabourModule,
@@ -278,32 +286,26 @@ const environment = getConfig
     DocumentModule,
     DocumentProviderModule.register({
       test: {
-        basePath: environment.documentProviderService.test.basePath!,
+        basePath: environment.documentProviderService.test.basePath as string,
         clientId: environment.documentProviderService.test.clientId,
         clientSecret: environment.documentProviderService.test.clientSecret,
         tokenUrl: environment.documentProviderService.test.tokenUrl,
       },
       prod: {
-        basePath: environment.documentProviderService.prod.basePath!,
+        basePath: environment.documentProviderService.prod.basePath as string,
         clientId: environment.documentProviderService.prod.clientId,
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
-      documentsServiceBasePath:
-        environment.documentProviderService.documentsServiceBasePath!,
-      documentProviderAdmins:
-        environment.documentProviderService.documentProviderAdmins!,
+      documentsServiceBasePath: environment.documentProviderService
+        .documentsServiceBasePath as string,
+      documentProviderAdmins: environment.documentProviderService
+        .documentProviderAdmins as string,
     }),
     CmsTranslationsModule,
     TerminusModule,
     HealthInsuranceModule,
-    UserProfileModule.register({
-      islykill: {
-        cert: environment.islykill.cert!,
-        passphrase: environment.islykill.passphrase!,
-        basePath: environment.islykill.basePath!,
-      },
-    }),
+    UserProfileModule,
     CommunicationsModule,
     EmailSignupModule,
     ApiCatalogueModule,
@@ -329,10 +331,10 @@ const environment = getConfig
     OfficialJournalOfIcelandApplicationModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
-      backendUrl: environment.icelandicNamesRegistry.backendUrl!,
+      backendUrl: environment.icelandicNamesRegistry.backendUrl as string,
     }),
     EndorsementSystemModule.register({
-      baseApiUrl: environment.endorsementSystem.baseApiUrl!,
+      baseApiUrl: environment.endorsementSystem.baseApiUrl as string,
     }),
     RegulationsModule,
     RegulationsAdminModule,
@@ -373,6 +375,8 @@ const environment = getConfig
     SecondarySchoolApiModule,
     VmstUnemploymentClientModule,
     PracticalExamsModule,
+    VmstApplicationsModule,
+    LandspitaliModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -485,7 +489,9 @@ const environment = getConfig
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
         PaymentsApiModuleConfig,
+        BankInfoClientConfig,
         VmstUnemploymentClientConfig,
+        LandspitaliApiModuleConfig,
       ],
     }),
   ],

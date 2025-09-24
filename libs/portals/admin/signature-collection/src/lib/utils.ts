@@ -66,12 +66,7 @@ export enum CollectionStatus {
 export const downloadFile = () => {
   const fileName = 'beraSaman.xlsx'
   const sheetName = 'Bera saman'
-
-  const rowCount = 200
-  const sheetData = [
-    ['Kennitala'],
-    ...Array.from({ length: rowCount - 1 }, () => ['']),
-  ]
+  const sheetData = [['Kennitala']]
 
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
 
@@ -83,7 +78,6 @@ export const downloadFile = () => {
     }
   })
 
-  // Set column width
   worksheet['!cols'] = [{ wch: 20 }]
 
   const workbook: XLSX.WorkBook = {

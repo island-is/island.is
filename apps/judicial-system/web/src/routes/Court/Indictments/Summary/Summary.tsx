@@ -1,9 +1,21 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
 import router from 'next/router'
 
-import { Accordion, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  Box,
+  PdfViewer,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import {
+  formatDate,
+  getHumanReadableCaseIndictmentRulingDecision,
+} from '@island.is/judicial-system/formatters'
+import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseTag,
@@ -18,6 +30,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   RenderFiles,
   SectionHeading,
   UserContext,
@@ -37,6 +50,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Summary.strings'
+import * as styles from './Summary.css'
 
 const Summary: FC = () => {
   const { formatMessage } = useIntl()
@@ -49,12 +63,25 @@ const Summary: FC = () => {
   } = useContext(FormContext)
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
     useCase()
-  const [modalVisible, setModalVisible] = useState<'CONFIRM_INDICTMENT'>()
+  const [modalVisible, setModalVisible] = useState<
+    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING' | 'TODO:REMOVE'
+  >()
+  const [rulingUrl, setRulingUrl] = useState<string>()
+  const [hasReviewed, setHasReviewed] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [pdfError, setPDFError] = useState(false)
   const { user } = useContext(UserContext)
 
-  const { onOpen } = useFileList({
+  const { onOpen, getFileUrl } = useFileList({
     caseId: workingCase.id,
   })
+
+  const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
+    workingCase.state,
+    workingCase.indictmentRulingDecision,
+    workingCase.courtSessions,
+    user,
+  )
 
   const initialize = useCallback(() => {
     if (!workingCase.courtEndTime) {
@@ -90,6 +117,44 @@ const Summary: FC = () => {
     }
 
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
+  }
+
+  // TODO: REMOVE
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleRuling = async () => {
+    const showError = () => toast.error('Dómur fannst ekki')
+
+    const rulings = workingCase.caseFiles?.filter(
+      (c) => c.category === CaseFileCategory.RULING,
+    )
+
+    if (!rulings || rulings.length === 0) {
+      showError()
+      return
+    }
+
+    const rulingId = rulings[0].id
+    const url = await getFileUrl(rulingId)
+
+    if (url) {
+      setRulingUrl(url)
+      setModalVisible('CONFIRM_RULING')
+    } else {
+      showError()
+    }
+  }
+
+  const handleNextButtonClick = async () => {
+    // TODO: Uncomment when CORS bug is fixed
+    // if (
+    //   workingCase.indictmentRulingDecision ===
+    //   CaseIndictmentRulingDecision.RULING
+    // ) {
+    //   await handleRuling()
+    // } else {
+    //   setModalVisible('CONFIRM_INDICTMENT')
+    // }
+    setModalVisible('CONFIRM_INDICTMENT')
   }
 
   const handleCourtEndTimeChange = useCallback(
@@ -149,11 +214,9 @@ const Summary: FC = () => {
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
-
       <FormContentContainer>
         <Box display="flex" justifyContent="spaceBetween">
           <PageTitle>{formatMessage(strings.title)}</PageTitle>
-
           {workingCase.indictmentRulingDecision && (
             <Box marginTop={2}>
               <CaseTag
@@ -189,16 +252,27 @@ const Summary: FC = () => {
           </Accordion>
         )}
         <SectionHeading title={formatMessage(strings.caseFiles)} />
-        {(rulingFiles.length > 0 || courtRecordFiles.length > 0) && (
+        {(rulingFiles.length > 0 ||
+          courtRecordFiles.length > 0 ||
+          hasGeneratedCourtRecord) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4">
               {formatMessage(strings.caseFilesSubtitleRuling)}
             </Text>
-            {rulingFiles.length > 0 && (
-              <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
+            {hasGeneratedCourtRecord && (
+              <PdfButton
+                caseId={workingCase.id}
+                title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                pdfType="courtRecord"
+                renderAs="row"
+                elementId="Þingbók"
+              />
             )}
             {courtRecordFiles.length > 0 && (
               <RenderFiles caseFiles={courtRecordFiles} onOpenFile={onOpen} />
+            )}
+            {rulingFiles.length > 0 && (
+              <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
             )}
           </Box>
         )}
@@ -223,7 +297,7 @@ const Summary: FC = () => {
           previousUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextButtonIcon="checkmark"
           nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
+          onNextButtonClick={handleNextButtonClick}
           hideNextButton={!canUserCompleteCase}
           infoBoxText={
             canUserCompleteCase
@@ -232,21 +306,115 @@ const Summary: FC = () => {
           }
         />
       </FormContentContainer>
-      {modalVisible === 'CONFIRM_INDICTMENT' && (
+      {modalVisible === 'TODO:REMOVE' && (
+        <Modal
+          title="Viltu staðfesta dómsúrlausn og ljúka máli?"
+          text={
+            <Box display="flex" rowGap={2} flexDirection="column">
+              <Box>
+                <Text fontWeight="semiBold" as="span">
+                  Lyktir:
+                </Text>
+                <Text as="span">{` Dómur`}</Text>
+              </Box>
+              <Box>
+                <Text fontWeight="semiBold" as="span">
+                  Dagsetning lykta:
+                </Text>
+                <Text as="span">
+                  {` ${formatDate(workingCase.courtEndTime)}`}
+                </Text>
+              </Box>
+              <Box as="ul" marginLeft={2}>
+                <li>
+                  <Text>Vinsamlegast rýnið skjal fyrir staðfestingu.</Text>
+                </li>
+                <li>
+                  <Text>
+                    Staðfestur dómur verður aðgengilegur málflytjendum í
+                    Réttarvörslugátt.
+                  </Text>
+                </li>
+                <li>
+                  <Text>
+                    Ef birta þarf dóminn verður hann sendur í rafræna birtingu í
+                    stafrænt pósthólf dómfellda á island.is á næsta skrefi.
+                  </Text>
+                </li>
+              </Box>
+            </Box>
+          }
+          primaryButton={{
+            text: 'Staðfesta',
+            onClick: async () => await handleModalPrimaryButtonClick(),
+            isLoading: isTransitioningCase,
+            isDisabled: false, // !hasReviewed || pdfError, TODO FIX BUG ON PRD AND REVERT THIS
+          }}
+          secondaryButton={{
+            text: 'Hætta við',
+            onClick: () => {
+              setIsLoading(true)
+              setModalVisible(undefined)
+              setHasReviewed(false)
+              setPDFError(false)
+            },
+          }}
+          footerCheckbox={{
+            label: 'Ég hef rýnt þetta dómskjal',
+            checked: hasReviewed,
+            onChange: () => setHasReviewed(!hasReviewed),
+            disabled: pdfError,
+          }}
+        >
+          {rulingUrl && (
+            <div className={cn(styles.ruling, { [styles.loading]: isLoading })}>
+              <PdfViewer
+                file={rulingUrl}
+                onLoadingSuccess={() => {
+                  setPDFError(false)
+                  setIsLoading(false)
+                }}
+                onLoadingError={() => setPDFError(true)}
+                showAllPages
+              />
+            </div>
+          )}
+        </Modal>
+      )}
+      {(modalVisible === 'CONFIRM_INDICTMENT' ||
+        modalVisible === 'CONFIRM_RULING') && (
         <Modal
           title={formatMessage(strings.completeCaseModalTitle)}
-          text={formatMessage(strings.completeCaseModalBody)}
-          primaryButtonText={formatMessage(
-            strings.completeCaseModalPrimaryButton,
-          )}
-          onPrimaryButtonClick={async () =>
-            await handleModalPrimaryButtonClick()
+          text={
+            <Box display="flex" rowGap={2} flexDirection="column">
+              <Box>
+                <Text fontWeight="semiBold" as="span">
+                  Lyktir:
+                </Text>
+                <Text as="span">{` ${getHumanReadableCaseIndictmentRulingDecision(
+                  workingCase.indictmentRulingDecision,
+                )}`}</Text>
+              </Box>
+              <Box>
+                <Text fontWeight="semiBold" as="span">
+                  Dagsetning lykta:
+                </Text>
+                <Text as="span">
+                  {` ${formatDate(workingCase.courtEndTime)}`}
+                </Text>
+              </Box>
+              <Text>Niðurstaða málsins verður send ákæranda og verjanda.</Text>
+            </Box>
           }
-          secondaryButtonText={formatMessage(
-            strings.completeCaseModalSecondaryButton,
-          )}
-          onSecondaryButtonClick={() => setModalVisible(undefined)}
-          isPrimaryButtonLoading={isTransitioningCase}
+          primaryButton={{
+            text: formatMessage(strings.completeCaseModalPrimaryButton),
+            onClick: async () => await handleModalPrimaryButtonClick(),
+            isLoading: isTransitioningCase,
+          }}
+          secondaryButton={{
+            text: formatMessage(strings.completeCaseModalSecondaryButton),
+            onClick: () => setModalVisible(undefined),
+          }}
         />
       )}
     </PageLayout>

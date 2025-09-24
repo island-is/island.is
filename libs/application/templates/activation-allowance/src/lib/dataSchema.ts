@@ -80,8 +80,15 @@ const academicBackgroundSchema = z.object({
 })
 
 const drivingLicensesSchema = z.object({
-  drivingLicenseType: z.array(z.string()).optional(),
-  heavyMachineryLicenses: z.array(z.string()).optional(),
+  // Preproccessing to convert empty string to empty array because "onChangeClear" turns values into empty strings
+  drivingLicenseType: z.preprocess(
+    (val) => (val === '' ? [] : val),
+    z.array(z.string()).optional(),
+  ),
+  heavyMachineryLicenses: z.preprocess(
+    (val) => (val === '' ? [] : val),
+    z.array(z.string()).nullish(),
+  ),
   hasDrivingLicense: z.array(z.enum([YES])).optional(),
   hasHeavyMachineryLicense: z.array(z.enum([YES])).optional(),
 })
@@ -165,17 +172,6 @@ const incomeSchema = z
       hasEmploymentEnded: z.enum([YES, NO]).optional(),
       endOfEmploymentDate: z.string().optional(),
       explanation: z.string().optional(),
-      hasLeaveDays: z.enum([YES, NO]).optional(),
-      numberOfLeaveDays: z.string().optional(),
-      leaveDates: z
-        .array(
-          z.object({
-            dateFrom: z.string(),
-            dateTo: z.string(),
-          }),
-        )
-        .optional()
-        .or(z.literal('')), // Explicitly allow empty strings since clearing this field turns it to an empty string
     }),
   )
   .optional()

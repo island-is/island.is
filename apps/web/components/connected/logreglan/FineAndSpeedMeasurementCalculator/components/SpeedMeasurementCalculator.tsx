@@ -134,6 +134,7 @@ export const SpeedMeasurementCalculator = ({
             setSpeedLimit(option.value)
           }
         }}
+        isSearchable={false}
       />
       <Stack space={2}>
         <Text

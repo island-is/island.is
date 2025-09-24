@@ -13,7 +13,7 @@ import {
   Application,
   NationalRegistryUser,
   TeacherV4,
-} from '../../types/schema'
+} from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import {
   B_TEMP,

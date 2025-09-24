@@ -78,6 +78,7 @@ export const serviceSetup = (services: {
   userNotificationService: ServiceBuilder<'services-user-notification'>
   paymentsApi: ServiceBuilder<'services-payments'>
   formSystemService: ServiceBuilder<'services-form-system-api'>
+  paymentFlowUpdateHandlerService: ServiceBuilder<'services-payment-flow-update-handler'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -280,6 +281,11 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
+      XROAD_FJS_BANKINFO_PATH: {
+        dev: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+        staging: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+        prod: 'IS/GOV/5402697509/FJS-Public/TBRBankMgrService_v1',
+      },
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
@@ -310,6 +316,9 @@ export const serviceSetup = (services: {
         staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
         prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
       },
+      LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
+        (h) => `http://${h.svc(services.paymentFlowUpdateHandlerService)}`,
+      ),
     })
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
@@ -379,8 +388,6 @@ export const serviceSetup = (services: {
       DISABILITY_LICENSE_FETCH_TIMEOUT:
         '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
       INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY',
-      ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
-      ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
       FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
@@ -436,6 +443,8 @@ export const serviceSetup = (services: {
       VERDICTS_GOPRO_PASSWORD: '/k8s/api/VERDICTS_GOPRO_PASSWORD',
       HMS_CONTRACTS_AUTH_CLIENT_SECRET:
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
+      LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK:
+        '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
     })
     .xroad(
       AdrAndMachine,
@@ -501,7 +510,6 @@ export const serviceSetup = (services: {
       PracticalExams,
       VMSTUnemployment,
     )
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
         host: {

@@ -9,13 +9,13 @@ import {
 } from '@react-pdf/renderer'
 import logo from './logo.png'
 import { dark200 } from '@island.is/island-ui/theme'
-import { SignatureCollectionAreaSummaryReport } from '@island.is/api/schema'
+import { SignatureCollectionSummaryReport } from '@island.is/api/schema'
 import format from 'date-fns/format'
 
 const MyPdfDocument = ({
   report,
 }: {
-  report: SignatureCollectionAreaSummaryReport
+  report: SignatureCollectionSummaryReport
 }) => {
   return (
     <Document>
@@ -28,16 +28,22 @@ const MyPdfDocument = ({
                   <View style={styles.dividerLine} />
                 </View>
 
-                <Text style={styles.header}>Flokkur:</Text>
-                <Text style={styles.text}>{list.candidateName}</Text>
+                <Text style={styles.header}>Framboð:</Text>
+                <Text style={styles.text}>
+                  {list.listName ?? list.candidateName}
+                </Text>
 
                 <Text style={styles.header}>Dagsetning:</Text>
                 <Text style={styles.text}>
                   {format(new Date(), 'dd.MM.yyyy HH:mm')}
                 </Text>
 
-                <Text style={styles.header}>Listabókstafur:</Text>
-                <Text style={styles.text}>{list.partyBallotLetter}</Text>
+                {list.partyBallotLetter && (
+                  <>
+                    <Text style={styles.header}>Listabókstafur:</Text>
+                    <Text style={styles.text}>{list.partyBallotLetter}</Text>
+                  </>
+                )}
 
                 <Text style={styles.header}>Rafræn meðmæli:</Text>
                 <Text style={styles.text}>{list.nrOfDigitalSignatures}</Text>

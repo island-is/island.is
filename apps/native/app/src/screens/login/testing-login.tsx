@@ -4,8 +4,6 @@ import {
   Alert,
   AlertButton,
   Image,
-  Linking,
-  NativeModules,
   Platform,
   SafeAreaView,
   TouchableOpacity,
@@ -66,21 +64,6 @@ const Text = styled.Text`
   }))};
 `
 
-function getChromeVersion(): Promise<number> {
-  return new Promise((resolve) => {
-    NativeModules.IslandModule.getAppVersion(
-      'com.android.chrome',
-      (version: string) => {
-        if (version) {
-          resolve(Number(version?.split('.')?.[0] || 0))
-        } else {
-          resolve(0)
-        }
-      },
-    )
-  })
-}
-
 export const TestingLoginScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
@@ -115,35 +98,6 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
         'Please authenticate with cognito before logging in.',
       )
       return
-    }
-
-    if (Platform.OS === 'android') {
-      const chromeVersion = await getChromeVersion()
-      if (chromeVersion < 55) {
-        // Show dialog on how to update.
-        Alert.alert(
-          intl.formatMessage({ id: 'login.outdatedBrowserTitle' }),
-          intl.formatMessage({ id: 'login.outdatedBrowserMessage' }),
-          [
-            {
-              text: intl.formatMessage({
-                id: 'login.outdatedBrowserUpdateButton',
-              }),
-              style: 'default',
-              onPress() {
-                Linking.openURL('market://details?id=com.android.chrome')
-              },
-            },
-            {
-              style: 'cancel',
-              text: intl.formatMessage({
-                id: 'login.outdatedBrowserCancelButton',
-              }),
-            },
-          ],
-        )
-        return
-      }
     }
 
     if (isLoggingIn) {
