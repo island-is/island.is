@@ -393,7 +393,6 @@ const Filters = ({
             <Stack space={2}>
               <Stack space={2} key={renderKey}>
                 <Select
-                  id="lawyer-select"
                   name="lawyer"
                   options={lawyerOptions}
                   size="sm"
@@ -544,11 +543,12 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
     }
 
     if (queryState[QueryParam.LAWYER]) {
+      const lawyer = lawyerOptions.find(
+        (option) => option.value === queryState[QueryParam.LAWYER],
+      )
       tags.push({
         label: `${formatMessage(m.listPage.selectedLawyerPrefix)}: ${
-          lawyerOptions.find(
-            (option) => option.value === queryState[QueryParam.LAWYER],
-          )?.label
+          lawyer?.label ?? '...'
         }`,
         onClick: () => {
           updateQueryState(QueryParam.LAWYER, null)
