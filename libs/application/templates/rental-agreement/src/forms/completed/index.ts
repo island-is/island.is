@@ -8,7 +8,6 @@ export const completedForm = buildForm({
   id: 'completedForm',
   logo: Logo,
   mode: FormModes.COMPLETED,
-  title: '',
   renderLastScreenBackButton: false,
   children: [
     buildFormConclusionSection({
