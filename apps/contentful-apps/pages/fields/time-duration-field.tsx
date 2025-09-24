@@ -173,7 +173,7 @@ const TimeDurationField = () => {
                 selected={time.endDate ? new Date(time.endDate) : fromDate}
                 fromDate={fromDate}
                 onSelect={(day) => {
-                  updateTime('endDate', day.toISOString())
+                  updateTime('endDate', day ? day.toISOString() : '')
                 }}
                 style={{ width: '267px' }}
               />
