@@ -127,7 +127,7 @@ export const laws = {
 }
 
 export const getHumanReadableCaseIndictmentRulingDecision = (
-  rulingDecision?: CaseIndictmentRulingDecision,
+  rulingDecision?: CaseIndictmentRulingDecision | null,
 ) => {
   switch (rulingDecision) {
     case CaseIndictmentRulingDecision.RULING:

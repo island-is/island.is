@@ -34,12 +34,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á staðfestingarglugga um að hvort eigi að ljúka máli.',
   },
-  completeCaseModalBody: {
-    id: 'judicial.system.core:indictments.summary.complete_case_modal_body',
-    defaultMessage: 'Niðurstaða málsins verður send ákæranda og verjanda.',
-    description:
-      'Notaður sem texti í staðfestingarglugga um hvort eigi að ljúka máli.',
-  },
   completeCaseModalPrimaryButton: {
     id: 'judicial.system.core:indictments.summary.complete_case_modal_primary_button',
     defaultMessage: 'Já, ljúka máli',
