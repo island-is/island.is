@@ -261,8 +261,6 @@ export const onlyCharacters = async (
   optionValue: RepeaterOptionValue,
   id: string,
 ) => {
-  console.log('optionValue', optionValue)
-
   if (typeof optionValue !== 'string') {
     return [{ key: id, value: optionValue }]
   }
