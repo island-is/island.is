@@ -70,15 +70,15 @@ const landLordInfoSchema = z.object({
     .refine((val) => !!val && val.trim().length > 0 && isValidEmail(val), {
       params: m.landlordAndTenantDetails.emailInvalidError,
     }),
-  isRepresentative: z.array(z.string().optional()).optional(),
 })
 
 const landlordInfo = z
   .object({
     table: z.array(landLordInfoSchema),
+    representativeTable: z.array(landLordInfoSchema),
   })
   .superRefine((data, ctx) => {
-    const { table } = data
+    const { table, representativeTable } = data
 
     if (table && table.length === 0) {
       ctx.addIssue({
@@ -109,16 +109,30 @@ const landlordInfo = z
       })
     }
 
-    const onlyRepresentatives = table?.every(
-      (landlord) => (landlord?.isRepresentative?.length ?? 0) > 0,
-    )
-
-    if (onlyRepresentatives) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.partiesDetails.alertMessageDescription,
-        path: ['table'],
+    // Check for duplicate national IDs in representative table
+    if (representativeTable && representativeTable.length > 1) {
+      const nationalIds = new Set<string>()
+      representativeTable.forEach((representative, index) => {
+        const nationalId = representative.nationalIdWithName?.nationalId
+        if (nationalId) {
+          if (nationalIds.has(nationalId)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Duplicate national ID found',
+              params: m.partiesDetails.duplicateNationalIdError,
+              path: [
+                'parties',
+                'landlordInfo',
+                'representativeTable',
+                index,
+                'nationalIdWithName',
+                'nationalId',
+              ],
+            })
+          } else {
+            nationalIds.add(nationalId)
+          }
+        }
       })
     }
   })
@@ -187,21 +201,59 @@ export const partiesSchema = z
     const { landlordInfo, tenantInfo } = data
 
     const landlordTable = landlordInfo.table || []
+    const representativeTable = landlordInfo.representativeTable || []
     const tenantTable = tenantInfo.table || []
 
-    // Create arrays of national IDs from landlord and tenant tables
+    // Create arrays of national IDs from representative and tenant tables
     const landlordNationalIds = landlordTable
       .map((rep) => rep.nationalIdWithName?.nationalId)
       .filter((id) => !!id) as string[]
+
+    const representativeNationalIds = representativeTable
+      .map((rep) => rep.nationalIdWithName?.nationalId)
+      .filter((id) => !!id) as string[]
+
     const tenantNationalIds = tenantTable
       .map((tenant) => tenant.nationalIdWithName?.nationalId)
       .filter((id) => !!id) as string[]
 
-    // Check landlordTable for duplicates in tenantTable
+    const representativeAndTenantNationalIds = [
+      ...representativeNationalIds,
+      ...tenantNationalIds,
+    ]
+    const landlordAndTenantNationalIds = [
+      ...landlordNationalIds,
+      ...tenantNationalIds,
+    ]
+    const landlordAndRepresentativeNationalIds = [
+      ...landlordNationalIds,
+      ...representativeNationalIds,
+    ]
+
+    // Check landlordTable for duplicates in representativeTable and tenantTable
     const {
       hasDuplicates: hasDuplicatesInLandlordTable,
       duplicateIndex: duplicateIndexInLandlordTable,
-    } = checkforDuplicatesHelper(landlordTable, tenantNationalIds)
+    } = checkforDuplicatesHelper(
+      landlordTable,
+      representativeAndTenantNationalIds,
+    )
+    // Check representativeTable for duplicates in landlordTable and tenantTable
+    const {
+      hasDuplicates: hasDuplicatesInRepresentativeTable,
+      duplicateIndex: duplicateIndexInRepresentativeTable,
+    } = checkforDuplicatesHelper(
+      representativeTable,
+      landlordAndTenantNationalIds,
+    )
+    // Check tenantTable for duplicates in landlordTable and representativeTable
+    const {
+      hasDuplicates: hasDuplicatesInTenantTable,
+      duplicateIndex: duplicateIndexInTenantTable,
+    } = checkforDuplicatesHelper(
+      tenantTable,
+      landlordAndRepresentativeNationalIds,
+    )
 
     if (
       hasDuplicatesInLandlordTable &&
@@ -220,11 +272,22 @@ export const partiesSchema = z
       })
     }
 
-    // Check tenantTable for duplicates in landlordTable and representativeTable
-    const {
-      hasDuplicates: hasDuplicatesInTenantTable,
-      duplicateIndex: duplicateIndexInTenantTable,
-    } = checkforDuplicatesHelper(tenantTable, landlordNationalIds)
+    if (
+      hasDuplicatesInRepresentativeTable &&
+      duplicateIndexInRepresentativeTable !== undefined
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        params: m.partiesDetails.duplicateNationalIdError,
+        path: [
+          'landlordInfo',
+          'representativeTable',
+          duplicateIndexInRepresentativeTable,
+          'nationalIdWithName',
+          'nationalId',
+        ],
+      })
+    }
 
     if (
       hasDuplicatesInTenantTable &&

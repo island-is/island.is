@@ -37,7 +37,16 @@ export const partiesSection = buildSection({
           marginTop: 1,
           maxRows: 10,
           fields: landLordInfoTableFields,
-          table: landlordTableConfig,
+          table: applicantTableConfig,
+        }),
+        buildTableRepeaterField({
+          id: 'parties.landlordInfo.representativeTable',
+          title: m.landlordAndTenantDetails.representativeTableTitle,
+          editField: true,
+          marginTop: 6,
+          maxRows: 10,
+          fields: landLordInfoTableFields,
+          table: applicantTableConfig,
         }),
         buildTableRepeaterField({
           id: 'parties.tenantInfo.table',

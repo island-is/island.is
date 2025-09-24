@@ -1,14 +1,14 @@
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
-import { ApplicantsInfo, LandlordInfo, PropertyUnit } from '../shared/types'
+import { ApplicantsInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
 
 export const singularOrPluralLandlordsTitle = (application: Application) => {
-  const landlords = getValueViaPath<Array<LandlordInfo>>(
+  const landlords = getValueViaPath<Array<ApplicantsInfo>>(
     application.answers,
     'parties.landlordInfo.table',
-  )?.filter((landlord) => !landlord.isRepresentative.includes('✔️'))
+  )
 
   if (!landlords) {
     return null
@@ -20,10 +20,10 @@ export const singularOrPluralLandlordsTitle = (application: Application) => {
 }
 
 export const shouldShowRepresentative = (answers: FormValue) => {
-  const representatives = getValueViaPath<Array<LandlordInfo>>(
+  const representatives = getValueViaPath<Array<ApplicantsInfo>>(
     answers,
-    'parties.landlordInfo.table',
-  )?.filter((landlord) => landlord.isRepresentative.includes('✔️'))
+    'parties.landlordInfo.representativeTable',
+  )
 
   if (!representatives || representatives.length === 0) {
     return false
@@ -35,10 +35,10 @@ export const shouldShowRepresentative = (answers: FormValue) => {
 export const singularOrPluralRepresentativeTitle = (
   application: Application,
 ) => {
-  const representatives = getValueViaPath<Array<LandlordInfo>>(
+  const representatives = getValueViaPath<Array<ApplicantsInfo>>(
     application.answers,
-    'parties.landlordInfo.table',
-  )?.filter((landlord) => landlord.isRepresentative.includes('✔️'))
+    'parties.landlordInfo.representativeTable',
+  )
 
   if (!representatives) {
     return null
