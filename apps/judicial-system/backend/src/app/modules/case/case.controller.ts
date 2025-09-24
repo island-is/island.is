@@ -42,8 +42,11 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isPublicProsecutionOfficeUser,
+  isRequestCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -64,6 +67,7 @@ import {
 import { CivilClaimantService } from '../defendant'
 import { EventService } from '../event'
 import { Case } from '../repository'
+import { UpdateCase } from '../repository'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -104,7 +108,7 @@ import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
-import { CaseService, UpdateCase } from './case.service'
+import { CaseService } from './case.service'
 import { PdfService } from './pdf.service'
 
 @Controller('api')
@@ -499,8 +503,13 @@ export class CaseController {
     JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -510,8 +519,12 @@ export class CaseController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
-  @Get('case/:caseId/courtRecord')
+  @Get([
+    'case/:caseId/courtRecord',
+    'case/:caseId/mergedCase/:mergedCaseId/courtRecord',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -527,7 +540,35 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    let pdf: Buffer
+
+    if (isRequestCase(theCase.type)) {
+      if (isPublicProsecutionOfficeUser(user)) {
+        throw new ForbiddenException(
+          'Public prosecution office users are not allowed to get court record pdfs for request cases',
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    } else {
+      if (
+        !hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.courtSessions,
+          user,
+        )
+      ) {
+        throw new BadRequestException(
+          `Case ${caseId} does not have a generated court record pdf document`,
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+        theCase,
+        user,
+      )
+    }
 
     res.end(pdf)
   }

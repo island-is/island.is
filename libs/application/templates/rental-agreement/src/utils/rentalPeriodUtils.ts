@@ -4,7 +4,11 @@ import is from 'date-fns/locale/is'
 import startOfDay from 'date-fns/startOfDay'
 import addYears from 'date-fns/addYears'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import {
   OtherFeesPayeeOptions,
   RentalAmountPaymentDateOptions,
@@ -21,18 +25,18 @@ export const rentalAmountConnectedToIndex = (answers: FormValue) => {
 }
 
 export const rentalPaymentDateIsOther = (answers: FormValue) => {
-  const { paymentDay } = applicationAnswers(answers)
-  return paymentDay === RentalAmountPaymentDateOptions.OTHER
+  const { paymentDateOptions } = applicationAnswers(answers)
+  return paymentDateOptions === RentalAmountPaymentDateOptions.OTHER
 }
 
 export const rentalPaymentMethodIsBankTransfer = (answers: FormValue) => {
-  const { paymentMethod } = applicationAnswers(answers)
-  return paymentMethod === RentalPaymentMethodOptions.BANK_TRANSFER
+  const { paymentMethodOptions } = applicationAnswers(answers)
+  return paymentMethodOptions === RentalPaymentMethodOptions.BANK_TRANSFER
 }
 
 export const rentalPaymentMethodIsOther = (answers: FormValue) => {
-  const { paymentMethod } = applicationAnswers(answers)
-  return paymentMethod === RentalPaymentMethodOptions.OTHER
+  const { paymentMethodOptions } = applicationAnswers(answers)
+  return paymentMethodOptions === RentalPaymentMethodOptions.OTHER
 }
 
 export const rentalInsuranceRequired = (answers: FormValue) => {
@@ -94,11 +98,11 @@ const checkSecurityDepositType = (
   typeToCheck: SecurityDepositTypeOptions,
 ): boolean => {
   const { securityDepositRequired } = applicationAnswers(answers)
-  const { securityDepositType } = applicationAnswers(answers)
+  const { securityType } = applicationAnswers(answers)
   return (
     Boolean(securityDepositRequired?.includes(YesOrNoEnum.YES)) &&
-    Boolean(securityDepositType) &&
-    securityDepositType === typeToCheck
+    Boolean(securityType) &&
+    securityType === typeToCheck
   )
 }
 
@@ -137,11 +141,11 @@ export const securityDepositIsLandlordsMutualFund = (
 
 export const securityDepositIsNotLandlordsMutualFund = (answers: FormValue) => {
   const securityDeposit = getValueViaPath<string[]>(answers, 'securityDeposit')
-  const { securityDepositType } = applicationAnswers(answers)
+  const { securityType } = applicationAnswers(answers)
   return (
     !securityDeposit ||
-    securityDepositType === undefined ||
-    securityDepositType !== SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND
+    securityType === undefined ||
+    securityType !== SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND
   )
 }
 
@@ -149,11 +153,11 @@ export const securityDepositIsLandlordsMutualFundOrOther = (
   answers: FormValue,
 ) => {
   const securityDeposit = getValueViaPath<string[]>(answers, 'securityDeposit')
-  const { securityDepositType } = applicationAnswers(answers)
+  const { securityType } = applicationAnswers(answers)
   const { securityDepositAmount } = applicationAnswers(answers)
   return (
     securityDeposit &&
-    (securityDepositType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
+    (securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
       securityDepositAmount === SecurityDepositAmountOptions.OTHER)
   )
 }
@@ -210,8 +214,8 @@ export const getConsumerIndexDateOptions = (
 }
 
 export const getIndexRateForConsumerIndexDate = (
-  answers: Application['answers'],
-  externalData: Application['externalData'],
+  answers: FormValue,
+  externalData: ExternalData,
 ): string | undefined => {
   const { isIndexConnected, indexDate } = applicationAnswers(answers)
 

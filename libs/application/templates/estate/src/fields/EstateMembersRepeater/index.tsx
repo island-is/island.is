@@ -166,6 +166,7 @@ export const EstateMembersRepeater: FC<
     if (!missingHeirsForUndividedEstate) {
       clearErrors(missingHeirUndividedEstateValidation)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,
@@ -181,6 +182,7 @@ export const EstateMembersRepeater: FC<
       // so now using "replace" instead, for the initial setup
       replace(estateData.estate.estateMembers)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -203,7 +205,7 @@ export const EstateMembersRepeater: FC<
         }
         return [
           ...acc,
-          <Box marginTop={index > 0 ? 7 : 0} key={index}>
+          <Box marginTop={index > 0 ? 7 : 0} key={member.id}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Text
                 color={member.enabled ? 'currentColor' : 'dark300'}
@@ -421,7 +423,7 @@ export const EstateMembersRepeater: FC<
       }, [] as JSX.Element[])}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
         return (
-          <Box>
+          <Box key={member.id}>
             {!member.initial && (
               <AdditionalEstateMember
                 application={application}

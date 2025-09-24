@@ -7,7 +7,9 @@ import {
   Action,
   ApplicationState,
   initializeField,
+  SectionTypes,
 } from '@island.is/form-system/ui'
+import { hasScreens } from '../utils/reducerHelpers'
 import {
   decrementWithoutScreens,
   decrementWithScreens,
@@ -17,8 +19,6 @@ import {
   incrementWithScreens,
   setCurrentScreen,
 } from './reducerUtils'
-import { hasScreens } from '../utils/reducerHelpers'
-import { SectionTypes } from '@island.is/form-system/ui'
 
 export const initialState = {
   application: {} as FormSystemApplication,
@@ -87,7 +87,7 @@ const getCurrentSectionAndScreen = (
     index: currentSectionIndex,
   }
 
-  if (currentSectionIndex < 2) {
+  if (currentSectionIndex < 1) {
     return {
       currentSection,
       currentScreen: undefined,
@@ -136,6 +136,7 @@ export const applicationReducer = (
       const { submitScreen, submitSection } = action.payload
       const { currentSectionData, currentScreenIndex } =
         getIncrementVariables(state)
+
       if (hasScreens(currentSectionData)) {
         return incrementWithScreens(
           state,
@@ -173,5 +174,12 @@ export const applicationReducer = (
     }
     default:
       return state
+
+    case 'SUBMITTED': {
+      return {
+        ...state,
+        submitted: action.payload,
+      }
+    }
   }
 }

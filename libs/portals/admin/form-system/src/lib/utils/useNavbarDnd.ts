@@ -7,6 +7,7 @@ import {
 } from '@dnd-kit/core'
 import { useContext } from 'react'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
+import { hasDependency } from './dependencyHelper'
 
 type DndAction =
   | 'SECTION_OVER_SECTION'
@@ -16,10 +17,11 @@ type DndAction =
   | 'FIELD_OVER_FIELD'
 
 export const useNavbarDnD = () => {
-  const { controlDispatch, updateDnD, control } = useContext(
+  const { controlDispatch, updateDnD, control, formUpdate } = useContext(
     ControlContext,
   ) as IControlContext
-  const { activeItem } = control
+  const { activeItem, form } = control
+  const { dependencies } = form
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -80,6 +82,13 @@ export const useNavbarDnD = () => {
       if (overField) {
         dispatchDragAction('FIELD_OVER_FIELD')
       }
+    }
+
+    if (hasDependency(dependencies, activeId as string)) {
+      controlDispatch({
+        type: 'REMOVE_DEPENDENCIES',
+        payload: { activeId, update: formUpdate },
+      })
     }
   }
 

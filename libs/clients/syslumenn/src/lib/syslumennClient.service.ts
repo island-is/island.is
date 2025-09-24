@@ -668,7 +668,8 @@ export class SyslumennService {
         kennitala: nationalId,
       },
     })
-    return res.yfirlit?.map(mapEstateInfo) ?? []
+
+    return res?.yfirlit?.map(mapEstateInfo) ?? []
   }
 
   async getMasterLicences() {

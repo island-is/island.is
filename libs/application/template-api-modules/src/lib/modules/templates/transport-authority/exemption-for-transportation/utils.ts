@@ -118,7 +118,7 @@ export const mapTransporter = (
     ExemptionForTransportationAnswers['transporter']
   >(application.answers, 'transporter')
 
-  return transporterAnswers?.isSameAsApplicant
+  return transporterAnswers?.isSameAsApplicant?.includes(YES)
     ? applicant
     : {
         nationalId: transporterAnswers?.nationalId || '',
@@ -141,7 +141,7 @@ export const mapResponsiblePerson = (
   >(application.answers, 'responsiblePerson')
 
   return isCompany(transporter.nationalId)
-    ? responsiblePersonAnswers?.isSameAsApplicant
+    ? responsiblePersonAnswers?.isSameAsApplicant?.includes(YES)
       ? applicant
       : {
           nationalId: responsiblePersonAnswers?.nationalId || '',
@@ -153,6 +153,9 @@ export const mapResponsiblePerson = (
 }
 
 export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
+  const exemptionPeriodAnswers = getValueViaPath<
+    ExemptionForTransportationAnswers['exemptionPeriod']
+  >(application.answers, 'exemptionPeriod')
   const convoyAnswers = getValueViaPath<
     ExemptionForTransportationAnswers['convoy']
   >(application.answers, 'convoy')
@@ -166,12 +169,16 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
     ExemptionForTransportationAnswers['vehicleSpacing']
   >(application.answers, 'vehicleSpacing')
 
+  const isShortTerm = exemptionPeriodAnswers?.type === ExemptionType.SHORT_TERM
+  const hasExemptionForWeight =
+    axleSpacingAnswers?.hasExemptionForWeight ?? false
+
   return (
     convoyAnswers?.items?.map((item) => {
       const vehicleAxleSpacing = axleSpacingAnswers?.vehicleList.find(
         (x) => x.permno === item.vehicle.permno,
       )
-      const trailerAxleSpacing = axleSpacingAnswers?.trailerList.find(
+      const trailerAxleSpacing = axleSpacingAnswers?.trailerList?.find(
         (x) => x.permno === item.trailer?.permno,
       )
       const vehicleSpacing = vehicleSpacingAnswers?.convoyList?.find(
@@ -185,13 +192,12 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
             permno: item.vehicle.permno,
             vehicleType: VehicleType.CAR,
             // Axle spacing
-            axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight
+            axleSpacing: (isShortTerm && hasExemptionForWeight
               ? vehicleAxleSpacing?.values || []
               : []
             ).map(mapStringToNumber),
           },
-          ...(axleSpacingAnswers?.exemptionPeriodType ===
-            ExemptionType.SHORT_TERM &&
+          ...(isShortTerm &&
           item.trailer?.permno &&
           (axleSpacingAnswers?.dolly?.type === DollyType.SINGLE ||
             axleSpacingAnswers?.dolly?.type === DollyType.DOUBLE)
@@ -199,7 +205,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
                 {
                   vehicleType: VehicleType.DOLLY,
                   // Axle spacing
-                  axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight &&
+                  axleSpacing: (hasExemptionForWeight &&
                   axleSpacingAnswers?.dolly?.type === DollyType.DOUBLE
                     ? [axleSpacingAnswers.dolly.value]
                     : []
@@ -213,7 +219,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
                   permno: item.trailer.permno,
                   vehicleType: VehicleType.TRAILER,
                   // Axle spacing
-                  axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight
+                  axleSpacing: (isShortTerm && hasExemptionForWeight
                     ? (trailerAxleSpacing?.useSameValues?.includes(YES)
                         ? Array(
                             Math.max(
@@ -229,12 +235,11 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
             : []),
         ],
         // Vehicle Spacing
-        vehicleSpacing: (vehicleSpacingAnswers?.hasExemptionForWeight &&
+        vehicleSpacing: (isShortTerm &&
+        hasExemptionForWeight &&
         vehicleSpacing?.hasTrailer
-          ? vehicleSpacingAnswers?.exemptionPeriodType ===
-              ExemptionType.SHORT_TERM &&
-            (vehicleSpacing.dollyType === DollyType.SINGLE ||
-              vehicleSpacing.dollyType === DollyType.DOUBLE)
+          ? vehicleSpacing.dollyType === DollyType.SINGLE ||
+            vehicleSpacing.dollyType === DollyType.DOUBLE
             ? [
                 vehicleSpacing.vehicleToDollyValue,
                 vehicleSpacing.dollyToTrailerValue,
@@ -245,7 +250,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
         // Freight pairing
         cargoAssignments: getAllFreightForConvoy(
           freightPairingAnswers || [],
-          item.convoyId,
+          item.convoyId ?? '',
         ).map((item) => ({
           cargoCode: item.freightId,
           height: Number(item.height),
@@ -314,6 +319,9 @@ export const mapApplicationToDto = async (
   const freightAnswers = getValueViaPath<
     ExemptionForTransportationAnswers['freight']
   >(application.answers, 'freight')
+  const freightPairingAnswers = getValueViaPath<
+    ExemptionForTransportationAnswers['freightPairing']
+  >(application.answers, 'freightPairing')
 
   // Map applicant, transporter + responsible person
   const applicant = mapApplicant(application)
@@ -411,12 +419,17 @@ export const mapApplicationToDto = async (
     })),
     comment: supportingDocumentsAnswers?.comments,
     cargoes:
-      freightAnswers?.items?.map((item) => ({
-        code: item.freightId,
-        name: item.name,
-        length: Number(item.length),
-        weight: Number(item.weight),
-      })) || [],
+      freightAnswers?.items?.map((item) => {
+        const freightPairing = freightPairingAnswers?.find(
+          (x) => x?.freightId === item.freightId,
+        )
+        return {
+          code: item.freightId ?? '',
+          name: item.name,
+          length: Number(freightPairing?.length ?? ''),
+          weight: Number(freightPairing?.weight ?? ''),
+        }
+      }) || [],
     haulUnits: mapHaulUnits(application),
   }
 }

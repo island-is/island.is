@@ -2,13 +2,7 @@ import archiver from 'archiver'
 import { Includeable, Op } from 'sequelize'
 import { Writable } from 'stream'
 
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -37,8 +31,11 @@ import { FileService, getDefenceUserCaseFileCategories } from '../file'
 import {
   Case,
   CaseFile,
+  CaseRepositoryService,
   CaseString,
   CivilClaimant,
+  CourtDocument,
+  CourtSession,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -214,11 +211,6 @@ export const include: Includeable[] = [
     separate: true,
   },
   {
-    model: Victim,
-    as: 'victims',
-    required: false,
-  },
-  {
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
@@ -229,6 +221,28 @@ export const include: Includeable[] = [
         as: 'offenses',
         required: false,
         order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  {
+    model: CourtSession,
+    as: 'courtSessions',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: User,
+        as: 'attestingWitness',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: CourtDocument,
+        as: 'filedDocuments',
+        required: false,
+        order: [['documentOrder', 'ASC']],
         separate: true,
       },
     ],
@@ -290,7 +304,20 @@ export const include: Includeable[] = [
     where: { stringType: stringTypes },
     separate: true,
   },
-  { model: Case, as: 'mergeCase', attributes },
+  {
+    model: Case,
+    as: 'mergeCase',
+    attributes,
+    include: [
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+  },
   {
     model: Case,
     as: 'mergedCases',
@@ -343,12 +370,12 @@ export class LimitedAccessCaseService {
     private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async findById(caseId: string): Promise<Case> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       attributes,
       include,
       where: {
@@ -370,21 +397,7 @@ export class LimitedAccessCaseService {
     update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
-    const [numberOfAffectedRows] = await this.caseModel.update(
-      { ...update },
-      { where: { id: theCase.id } },
-    )
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${theCase.id}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update case ${theCase.id}`,
-      )
-    }
+    await this.caseRepositoryService.update(theCase.id, update)
 
     const messages = []
 
@@ -473,7 +486,7 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
-    return this.caseModel
+    return this.caseRepositoryService
       .findOne({
         where: {
           defenderNationalId: normalizeAndFormatNationalId(nationalId),
@@ -527,16 +540,16 @@ export class LimitedAccessCaseService {
 
   private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
-      const buffs: Buffer[] = []
+      const sinc: Uint8Array[] = []
       const converter = new Writable()
 
       converter._write = (chunk, _encoding, cb) => {
-        buffs.push(chunk)
+        sinc.push(chunk)
         process.nextTick(cb)
       }
 
       converter.on('finish', () => {
-        resolve(Buffer.concat(buffs))
+        resolve(Buffer.concat(sinc))
       })
 
       const archive = archiver('zip')
@@ -688,6 +701,21 @@ export class LimitedAccessCaseService {
           ),
         ),
       )
+
+      if (
+        allowedCaseFileCategories.includes(CaseFileCategory.COURT_RECORD) &&
+        !theCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.COURT_RECORD,
+        )
+      ) {
+        promises.push(
+          this.tryAddGeneratedPdfToFilesToZip(
+            this.pdfService.getCourtRecordPdfForIndictmentCase(theCase, user),
+            'Þingbók.pdf',
+            filesToZip,
+          ),
+        )
+      }
     }
 
     await Promise.all(promises)

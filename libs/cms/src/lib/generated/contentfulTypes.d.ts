@@ -1441,6 +1441,9 @@ export interface IFormFields {
 
   /** Recipient List */
   recipientList?: string[] | undefined
+
+  /** Email subject */
+  emailSubject?: string | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
@@ -2940,6 +2943,9 @@ export interface INewsFields {
   /** Featured image */
   image: Asset
 
+  /** Image text */
+  imageText?: string | undefined
+
   /** Full Width Image In Content */
   fullWidthImageInContent?: boolean | undefined
 
@@ -4275,6 +4281,7 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'Personuvernd/SearchInput'
     | undefined
 
   /** Localized JSON */

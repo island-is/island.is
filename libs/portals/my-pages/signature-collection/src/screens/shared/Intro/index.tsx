@@ -9,14 +9,16 @@ const Intro = ({
   slug,
   title,
   intro,
+  withLessSpace = false,
 }: {
   slug: string
   title: string
   intro: string
+  withLessSpace?: boolean
 }) => {
-  console.log(slug)
   return (
-    <Box marginBottom={5}>
+    // Adjust margin bottom for presidential as it comes with the action drawer
+    <Box marginBottom={withLessSpace ? 3 : 8}>
       <IntroWrapper
         title={title}
         intro={intro}

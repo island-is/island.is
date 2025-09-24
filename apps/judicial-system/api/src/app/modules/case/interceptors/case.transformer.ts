@@ -1,13 +1,11 @@
 import {
-  getAppealDeadlineDate,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
-} from '@island.is/judicial-system/types'
-import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
+  getAppealDeadlineDate,
+  getIndictmentAppealDeadlineDate,
   getIndictmentVerdictAppealDeadlineStatus,
   getStatementDeadline,
+  hasDatePassed,
   isRequestCase,
   ServiceRequirement,
   UserRole,

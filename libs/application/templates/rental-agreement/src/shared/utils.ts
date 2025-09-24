@@ -16,31 +16,41 @@ import {
   FireProtectionSection,
   ProvisionsAndConditionSection,
   Files,
+  LandlordInfo,
+  BankAccount,
 } from './types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
+const mapLandLordInfo = (landlord: LandlordInfo): ApplicantsInfo => {
+  return {
+    nationalIdWithName: landlord.nationalIdWithName,
+    phone: landlord.phone,
+    email: landlord.email,
+    address: '', // Intentionally blank as it is not used in the HMS Rental Agreement
+    isRepresentative: landlord.isRepresentative?.includes('✔️'),
+  }
+}
+
 const extractParticipants = (
   answers: Application['answers'],
-): ParticipantsSection => ({
-  landlords:
-    getValueViaPath<ApplicantsInfo[]>(
+): ParticipantsSection => {
+  const landlordsAndRepresentatives =
+    getValueViaPath<LandlordInfo[]>(
       answers,
       'parties.landlordInfo.table',
       [],
-    ) ?? [],
-  landlordRepresentatives:
-    getValueViaPath<ApplicantsInfo[]>(
-      answers,
-      'parties.landlordInfo.representativeTable',
-      [],
-    ) ?? [],
-  tenants:
-    getValueViaPath<ApplicantsInfo[]>(
-      answers,
-      'parties.tenantInfo.table',
-      [],
-    ) ?? [],
-})
+    ) ?? []
+  const landlords = landlordsAndRepresentatives.map(mapLandLordInfo)
+  return {
+    landlords,
+    tenants:
+      getValueViaPath<ApplicantsInfo[]>(
+        answers,
+        'parties.tenantInfo.table',
+        [],
+      ) ?? [],
+  }
+}
 
 const extractPropertyInfo = (
   answers: Application['answers'],
@@ -112,14 +122,14 @@ const extractRentalPeriod = (
 const extractRentalAmount = (
   answers: Application['answers'],
 ): RentalAmountSection => ({
-  rentalAmount: getValueViaPath<string>(answers, 'rentalAmount.amount'),
-  isIndexConnected: getValueViaPath<YesOrNoEnum>(
+  amount: getValueViaPath<string>(answers, 'rentalAmount.amount'),
+  isIndexConnected: getValueViaPath<Array<YesOrNoEnum>>(
     answers,
     'rentalAmount.isIndexConnected',
   ),
   indexDate: getValueViaPath<string>(answers, 'rentalAmount.indexDate'),
   indexRate: getValueViaPath<string>(answers, 'rentalAmount.indexRate'),
-  paymentMethod: getValueViaPath<string>(
+  paymentMethodOptions: getValueViaPath<string>(
     answers,
     'rentalAmount.paymentMethodOptions',
   ),
@@ -127,7 +137,7 @@ const extractRentalAmount = (
     answers,
     'rentalAmount.paymentMethodOtherTextField',
   ),
-  paymentDay: getValueViaPath<string>(
+  paymentDateOptions: getValueViaPath<string>(
     answers,
     'rentalAmount.paymentDateOptions',
   ),
@@ -135,11 +145,11 @@ const extractRentalAmount = (
     answers,
     'rentalAmount.paymentDateOther',
   ),
-  bankAccountNumber: getValueViaPath<string>(
+  paymentMethodBankAccountNumber: getValueViaPath<BankAccount>(
     answers,
     'rentalAmount.paymentMethodBankAccountNumber',
   ),
-  nationalIdOfAccountOwner: getValueViaPath<string>(
+  paymentMethodNationalId: getValueViaPath<string>(
     answers,
     'rentalAmount.paymentMethodNationalId',
   ),
@@ -152,7 +162,7 @@ const extractRentalAmount = (
 const extractSecurityDeposit = (
   answers: Application['answers'],
 ): SecurityDepositSection => ({
-  securityDepositType: getValueViaPath<string>(
+  securityType: getValueViaPath<string>(
     answers,
     'securityDeposit.securityType',
   ),
@@ -177,7 +187,7 @@ const extractSecurityDeposit = (
     answers,
     'securityDeposit.securityAmount',
   ),
-  securityDepositAmountOther: getValueViaPath<string>(
+  securityAmountOther: getValueViaPath<string>(
     answers,
     'securityDeposit.securityAmountOther',
   ),

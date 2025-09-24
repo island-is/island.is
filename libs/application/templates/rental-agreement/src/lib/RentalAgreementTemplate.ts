@@ -32,7 +32,6 @@ import { dataSchema } from './dataSchema'
 import { application } from './messages'
 
 enum TemplateApiActions {
-  sendApplicationSummary = 'sendApplicationSummary',
   submitApplicationToHmsRentalService = 'submitApplicationToHmsRentalService',
   consumerIndex = 'consumerIndex',
 }
@@ -97,9 +96,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: TemplateApiActions.consumerIndex,
           }),
-          onExit: defineTemplateApi({
-            action: TemplateApiActions.sendApplicationSummary,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -138,7 +134,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/inReviewApplicantForm').then((module) =>
+                import('../forms/inReviewForm').then((module) =>
                   Promise.resolve(module.inReviewApplicantForm),
                 ),
               actions: [

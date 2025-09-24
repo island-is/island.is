@@ -53,4 +53,67 @@ export interface ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined
   answerValidators?: Record<string, AnswerValidator>
+  /**
+   * Configuration for retaining and displaying specific fields in the admin portal after pruning.
+   *
+   * After pruning, most data from `answers` and `externalData` is removed. This config allows
+   * certain fields to be temporarily retained for admin portal visibility. These fields will be
+   * fully removed during post-pruning.
+   */
+  readonly adminDataConfig?: {
+    /**
+     * Optional override for post-prune delay. The default is to post-prune applications 1 year after they are pruned.
+     * Post-pruning removes the last PIIs from an application so please be careful when using this override.
+     *
+     * Value given as the number of milliseconds after pruning, e.g., `2 * 365 * 24 * 3600 * 1000` for 2 years.
+     *
+     * At post-pruning, all remaining `answers` and `externalData` will be cleared.
+     * Additionally all nationalIds will be deleted from the state_history table
+     */
+    postPruneDelayOverride?: number
+
+    /**
+     * List of fields from the `answers` object to retain after pruning.
+     *
+     * Each item includes:
+     * - `key`: Path to a value in `answers`. Supports dot notation for nested fields.
+     * - `isListed`: If `true`, the field will be explicitly displayed in the admin portal.
+     *               If `false`, the field is only retained for internal display (e.g., pendingActionCard).
+     * - `label`: Optional. Only applies when `isListed` is `true`. This is the display label in the admin portal.
+     * - `isNationalId`: Optional. If `true`, the value is treated as a national ID. The admin portal will fetch
+     *                   the person's name from the national registry and display it as "<name> (<nationalId>)".
+     *                   If the name is unavailable, only "<nationalId>" is shown.
+     *
+     * **Array support**:
+     * Use `$` as a wildcard for array elements (single level only).
+     * For example:
+     *   - `coOwners.$.name` - Keeps `name` for each item in `coOwners`.
+     *
+     * Example:
+     * answers: [
+     *   { key: 'buyer.name', isListed: true, label: 'Buyer Name' },
+     *   { key: 'coOwners.$.name', isListed: false },
+     *   { key: 'coOwners.$.nationalId', isListed: false, isNationalId: true },
+     * ]
+     */
+    answers?: {
+      key: string
+      isListed: boolean
+      label?: StaticText
+      isNationalId?: boolean
+    }[]
+
+    /**
+     * List of fields from the `externalData` object to retain after pruning.
+     *
+     * Each item includes:
+     * - `key`: Path to a value in `externalData`.
+     *
+     * Example:
+     * externalData: [
+     *   { key: 'currentVehicle.data.permno' }
+     * ]
+     */
+    externalData?: { key: string }[]
+  }
 }

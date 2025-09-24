@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { Stack, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
@@ -7,7 +7,7 @@ import {
   DELETE_APPLICANT,
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
-import { FormSystemFormApplicant } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { m } from '@island.is/form-system/ui'
 import { removeTypename } from '../../../../lib/utils/removeTypename'
 import { applicantTypeGroups } from '../../../../lib/utils/applicantTypeGroups'
@@ -18,17 +18,13 @@ export const RelevantParties = () => {
   const [deleteApplicant] = useMutation(DELETE_APPLICANT)
   const { control, controlDispatch } = useContext(ControlContext)
   const { formatMessage } = useIntl()
-  const { id: formId, applicantTypes } = control.form
-  const [formApplicants, setFormApplicants] = useState<
-    FormSystemFormApplicant[]
-  >(applicantTypes?.filter((a): a is FormSystemFormApplicant => !!a) ?? [])
+  const { id: formId } = control.form
 
-  useEffect(() => {
-    controlDispatch({
-      type: 'UPDATE_APPLICANT_TYPES',
-      payload: { newValue: formApplicants },
-    })
-  }, [formApplicants])
+  const [applicantFields, setApplicantFields] = useState<FormSystemField[]>(
+    Array.isArray(control.form.fields)
+      ? control.form.fields.filter((f): f is FormSystemField => !!f)
+      : [],
+  )
 
   const handleCheckboxChange = async (
     typesArray: string[],
@@ -36,9 +32,9 @@ export const RelevantParties = () => {
   ) => {
     try {
       if (checked) {
-        const newApplicants = await Promise.all(
+        const createdScreens = await Promise.all(
           typesArray.map(async (applicantTypeId) => {
-            const newApplicant = await createApplicant({
+            const newScreen = await createApplicant({
               variables: {
                 input: {
                   createFormApplicantTypeDto: {
@@ -48,30 +44,67 @@ export const RelevantParties = () => {
                 },
               },
             })
-            return removeTypename(newApplicant.data.createFormSystemApplicant)
+            const maybeScreen = newScreen.data.createFormSystemApplicantType
+            return maybeScreen ? removeTypename(maybeScreen) : null
           }),
         )
-        setFormApplicants([...formApplicants, ...newApplicants])
-      } else {
-        await Promise.all(
-          typesArray.map(async (applicantType) => {
-            const applicant = formApplicants.find(
-              (a) => a.applicantTypeId === applicantType,
-            )
-            if (applicant) {
-              await deleteApplicant({
-                variables: { input: { id: applicant.id } },
+        if (createdScreens.length) {
+          createdScreens.forEach((screen) => {
+            controlDispatch({
+              type: 'ADD_SCREEN',
+              payload: { screen, isApplicant: true },
+            })
+            if (screen && screen.fields) {
+              screen.fields.forEach((field: FormSystemField) => {
+                if (field) {
+                  setApplicantFields((prev) => [...prev, field])
+                  controlDispatch({
+                    type: 'ADD_FIELD',
+                    payload: { field, isApplicant: true },
+                  })
+                }
               })
             }
+          })
+        }
+      } else {
+        const deletedScreens = await Promise.all(
+          typesArray.map(async (applicantTypeId) => {
+            const deletedScreen = await deleteApplicant({
+              variables: {
+                input: {
+                  deleteFormApplicantTypeDto: {
+                    formId,
+                    applicantTypeId,
+                  },
+                },
+              },
+            })
+            const maybeScreen = deletedScreen.data.deleteFormSystemApplicantType
+            return maybeScreen ? removeTypename(maybeScreen) : null
           }),
         )
-        const updatedApplicants = formApplicants.filter(
-          (applicant) =>
-            applicant.applicantTypeId !== undefined &&
-            applicant.applicantTypeId !== null &&
-            !typesArray.includes(applicant.applicantTypeId),
-        )
-        setFormApplicants(updatedApplicants)
+        if (deletedScreens.length) {
+          deletedScreens.forEach((screen) => {
+            controlDispatch({
+              type: 'REMOVE_SCREEN',
+              payload: { id: screen.id, isApplicant: true },
+            })
+            if (screen && screen.fields) {
+              screen.fields.forEach((field: FormSystemField) => {
+                if (field) {
+                  setApplicantFields((prev) =>
+                    prev.filter((f) => f.id !== field.id),
+                  )
+                  controlDispatch({
+                    type: 'REMOVE_FIELD',
+                    payload: { id: field.id, isApplicant: true },
+                  })
+                }
+              })
+            }
+          })
+        }
       }
     } catch (e) {
       console.error(e)
@@ -85,33 +118,37 @@ export const RelevantParties = () => {
       <PartyType
         groupApplicantTypes={applicantTypeGroups.individual}
         label={formatMessage(m.individual)}
-        formApplicants={formApplicants}
+        formApplicantFields={applicantFields.filter(
+          (f) => f.fieldType === 'APPLICANT',
+        )}
         handleCheckboxChange={handleCheckboxChange}
-        setFormApplicantTypes={setFormApplicants}
       />
 
       <PartyType
         groupApplicantTypes={applicantTypeGroups.individualDelegation}
         label={formatMessage(m.individualOnBehalfPerson)}
-        formApplicants={formApplicants}
+        formApplicantFields={applicantFields.filter(
+          (f) => f.fieldType === 'APPLICANT',
+        )}
         handleCheckboxChange={handleCheckboxChange}
-        setFormApplicantTypes={setFormApplicants}
       />
 
       <PartyType
         groupApplicantTypes={applicantTypeGroups.legalEntityDelegation}
         label={formatMessage(m.individualOnBehalfLegalEntity)}
-        formApplicants={formApplicants}
+        formApplicantFields={applicantFields.filter(
+          (f) => f.fieldType === 'APPLICANT',
+        )}
         handleCheckboxChange={handleCheckboxChange}
-        setFormApplicantTypes={setFormApplicants}
       />
 
       <PartyType
         groupApplicantTypes={applicantTypeGroups.procuration}
         label={formatMessage(m.individualWithPowerOfAttorney)}
-        formApplicants={formApplicants}
+        formApplicantFields={applicantFields.filter(
+          (f) => f.fieldType === 'APPLICANT',
+        )}
         handleCheckboxChange={handleCheckboxChange}
-        setFormApplicantTypes={setFormApplicants}
       />
     </Stack>
   )

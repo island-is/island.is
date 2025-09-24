@@ -8,11 +8,12 @@ import {
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import { useStartCollectionMutation } from './startCollection.generated'
+import { useRevalidator } from 'react-router-dom'
 
 const StartAreaCollection = ({ areaId }: { areaId: string }) => {
   const { formatMessage } = useLocale()
-
   const [startCollectionMutation, { loading }] = useStartCollectionMutation()
+  const { revalidate } = useRevalidator()
 
   const onStartCollection = () => {
     startCollectionMutation({
@@ -22,14 +23,15 @@ const StartAreaCollection = ({ areaId }: { areaId: string }) => {
         },
       },
       onCompleted: (response) => {
-        if (
-          response.signatureCollectionAdminStartMunicipalityCollection.success
-        )
+        const { success, reasons } =
+          response.signatureCollectionAdminStartMunicipalityCollection
+
+        if (success) {
           toast.success(formatMessage(m.openMunicipalCollectionSuccess))
-        else {
+          revalidate()
+        } else {
           toast.error(
-            response.signatureCollectionAdminStartMunicipalityCollection
-              .reasons?.[0] ?? formatMessage(m.openMunicipalCollectionError),
+            reasons?.[0] ?? formatMessage(m.openMunicipalCollectionError),
           )
         }
       },
