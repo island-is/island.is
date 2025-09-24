@@ -66,6 +66,7 @@ import {
   EmailSignup as EmailSignupSchema,
   Embed as EmbedSchema,
   FeaturedEvents as FeaturedEventsSchema,
+  FeaturedGenericListItems,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   Form as FormSchema,
   GenericList as GenericListSchema,
@@ -104,6 +105,7 @@ import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { GrantCardsList } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
+import { FeaturedGenericListItemsSlice } from '../components/Organization/Slice/FeaturedGenericListItemsSlice/FeaturedGenericListItemsSlice'
 import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 
 interface TranslationNamespaceProviderProps {
@@ -333,6 +335,9 @@ const defaultRenderComponent = {
   ),
   IntroLinkImage: (slice: IntroLinkImage) => (
     <IntroLinkImageSlice slice={slice} />
+  ),
+  FeaturedGenericListItems: (slice: FeaturedGenericListItems) => (
+    <FeaturedGenericListItemsSlice slice={slice} />
   ),
 }
 
