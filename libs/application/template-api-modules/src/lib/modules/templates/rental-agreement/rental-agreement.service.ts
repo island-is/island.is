@@ -33,9 +33,6 @@ export class RentalAgreementService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    console.log('------------------------------------------------------')
-    console.log('Submitting...')
-    console.log('------------------------------------------------------')
     const { id, applicant, answers } = application
 
     const mappedAnswers = applicationAnswers(answers)
@@ -51,9 +48,6 @@ export class RentalAgreementService extends BaseTemplateApiService {
         leaseApplication,
       })
       .catch((error) => {
-        console.log('------------------------------------------------------')
-        console.dir(error, { depth: null })
-        console.log('------------------------------------------------------')
         const errorMessage = `Error sending application ${id} to HMS Rental Service`
         console.error(errorMessage, error)
 
