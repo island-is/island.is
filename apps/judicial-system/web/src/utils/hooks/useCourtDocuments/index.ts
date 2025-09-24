@@ -60,7 +60,7 @@ const useCourtDocuments = () => {
           },
         })
 
-        return Boolean(data)
+        return Boolean(data?.updateCourtDocument)
       } catch (error) {
         toast.error('Upp kom villa við að uppfæra þingskjal')
 
@@ -79,7 +79,7 @@ const useCourtDocuments = () => {
           },
         })
 
-        return Boolean(data)
+        return Boolean(data?.deleteCourtDocument)
       } catch (error) {
         toast.error('Upp kom villa við að uppfæra þingskjal')
 
