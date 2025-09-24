@@ -91,6 +91,11 @@ export const shouldFireExtinguisherAlert = (answers: FormValue) => {
     answers,
     'fireProtections.fireExtinguisher',
   )
+
+  if (!fireExtinguisher) {
+    return false
+  }
+
   return Number(fireExtinguisher) < 1
 }
 
