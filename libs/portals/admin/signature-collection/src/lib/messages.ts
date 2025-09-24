@@ -654,7 +654,7 @@ export const m = defineMessages({
   },
   startCollection: {
     id: 'admin-portal.signature-collection:startCollection',
-    defaultMessage: 'Opna fyrir meðmælakerfi',
+    defaultMessage: 'Opna fyrir meðmælasöfnun',
     description: '',
   },
   startCollectionDescription: {
