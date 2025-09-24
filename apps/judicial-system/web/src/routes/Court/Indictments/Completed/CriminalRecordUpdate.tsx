@@ -13,19 +13,32 @@ import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
+  TUploadFile,
   useFileList,
   useS3Upload,
-  useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 
-export const CriminalRecordUpdate = () => {
+export const CriminalRecordUpdate = ({
+  uploadFiles,
+  addUploadFiles,
+  updateUploadFile,
+  removeUploadFile,
+}: {
+  uploadFiles: TUploadFile[]
+  addUploadFiles: (
+    files: FileWithPreviewURL[],
+    overRides?: Partial<TUploadFile>,
+    setUserGeneratedFilename?: boolean,
+  ) => TUploadFile[]
+  updateUploadFile: (file: TUploadFile, newId?: string) => void
+  removeUploadFile: (file: TUploadFile) => void
+}) => {
   const { formatMessage } = useIntl()
-
   const { workingCase } = useContext(FormContext)
-  const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
-    useUploadFiles(workingCase.caseFiles)
+
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
 

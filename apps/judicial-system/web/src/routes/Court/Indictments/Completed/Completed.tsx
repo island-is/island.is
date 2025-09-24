@@ -1,16 +1,13 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
-import { Accordion, Box, Checkbox, Text } from '@island.is/island-ui/core'
+import { Accordion, Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { informationForDefendantMap } from '@island.is/judicial-system/types'
 import { Feature } from '@island.is/judicial-system/types'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FeatureContext,
@@ -41,6 +38,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 
+import { ConfirmationInformation } from './ConfirmationInformation'
 import { CriminalRecordUpdate } from './CriminalRecordUpdate'
 import { DefendantServiceRequirement } from './DefendantServiceRequirement'
 import { InformationForDefendant } from './InformationForDefendant'
@@ -49,13 +47,14 @@ import strings from './Completed.strings'
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
 
+  const { features } = useContext(FeatureContext)
+
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { uploadFiles, updateUploadFile } = useUploadFiles(
-    workingCase.caseFiles,
-  )
+  const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
   const { handleUpload } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
 
@@ -67,10 +66,7 @@ const Completed: FC = () => {
     workingCase.indictmentSentToPublicProsecutorDate,
   )
 
-  const handleNextButtonClick = useCallback(async () => {
-    setModalVisible('CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR')
-
-    // Todo: logic when we send to public prosecutor
+  const handleCaseConfirmation = useCallback(async () => {
     const uploadResult = await handleUpload(
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
@@ -78,6 +74,9 @@ const Completed: FC = () => {
     if (uploadResult !== 'ALL_SUCCEEDED') {
       return
     }
+    // TODO: Deliver verdict to RLS
+    // transition case to 'Sent to public prosecutor'
+    // transitions handles event log + delivering verdict to RLS
 
     const eventLogCreated = createEventLog({
       caseId: workingCase.id,
@@ -86,15 +85,15 @@ const Completed: FC = () => {
     if (!eventLogCreated) {
       return
     }
+    router.push(getStandardUserDashboardRoute(user))
   }, [
     handleUpload,
     uploadFiles,
     updateUploadFile,
     createEventLog,
     workingCase.id,
+    user,
   ])
-
-  const { features } = useContext(FeatureContext)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -181,7 +180,12 @@ const Completed: FC = () => {
         </Box>
         {isRulingOrFine && (
           <Box marginBottom={isRuling ? 5 : 10} component="section">
-            <CriminalRecordUpdate />
+            <CriminalRecordUpdate
+              uploadFiles={uploadFiles}
+              addUploadFiles={addUploadFiles}
+              updateUploadFile={updateUploadFile}
+              removeUploadFile={removeUploadFile}
+            />
           </Box>
         )}
         {isRuling && (
@@ -231,16 +235,24 @@ const Completed: FC = () => {
           hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}
           nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
           nextIsDisabled={!stepIsValid()}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() => {
+            setModalVisible('CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR')
+          }}
         />
       </FormContentContainer>
       {modalVisible === 'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR' && (
         <Modal
-          title={formatMessage(strings.sentToPublicProsecutorModalTitle)}
-          text={formatMessage(strings.sentToPublicProsecutorModalMessage)}
+          title="Viltu senda mál til ákæruvalds?"
+          text={<ConfirmationInformation uploadFiles={uploadFiles} />}
           primaryButton={{
-            text: formatMessage(core.closeModal),
-            onClick: () => router.push(getStandardUserDashboardRoute(user)),
+            text: 'Staðfesta',
+            icon: 'checkmark',
+            isLoading: false, // TODO: delivering verdict to RLS
+            onClick: () => handleCaseConfirmation(),
+          }}
+          secondaryButton={{
+            text: 'Hætta við',
+            onClick: () => setModalVisible(undefined),
           }}
         />
       )}
