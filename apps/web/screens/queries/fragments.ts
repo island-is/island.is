@@ -725,6 +725,7 @@ export const slices = gql`
         time {
           startTime
           endTime
+          endDate
         }
         location {
           streetAddress
@@ -879,6 +880,7 @@ export const slices = gql`
       time {
         startTime
         endTime
+        endDate
       }
       location {
         streetAddress
@@ -895,12 +897,6 @@ export const slices = gql`
         description
       }
     }
-  }
-
-  fragment EmbedFields on Embed {
-    embedUrl
-    altText
-    aspectRatio
   }
 
   fragment ChartFields on Chart {
