@@ -158,6 +158,11 @@ export const m = defineMessages({
     defaultMessage: 'Skoða söfnun',
     description: '',
   },
+  viewCandidate: {
+    id: 'admin-portal.signature-collection:viewCandidate',
+    defaultMessage: 'Skoða framboð',
+    description: '',
+  },
   viewConstituency: {
     id: 'admin-portal.signature-collection:viewConstituency',
     defaultMessage: 'Skoða kjördæmi',
@@ -622,6 +627,11 @@ export const m = defineMessages({
     defaultMessage: 'Fjöldi gildra meðmæla',
     description: '',
   },
+  listOwner: {
+    id: 'admin-portal.signature-collection:listOwner',
+    defaultMessage: 'Stofnandi söfnunar',
+    description: '',
+  },
   totalListsPerConstituency: {
     id: 'admin-portal.signature-collection:totalListsPerConstituency',
     defaultMessage: 'Fjöldi lista',
@@ -639,7 +649,7 @@ export const m = defineMessages({
   },
   totalCandidates: {
     id: 'admin-portal.signature-collection:totalCandidates',
-    defaultMessage: 'Fjöldi frambjóðenda',
+    defaultMessage: 'Fjöldi framboða',
     description: '',
   },
   startCollection: {

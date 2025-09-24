@@ -45,13 +45,13 @@ const FindSignature = ({ collectionId }: { collectionId: string }) => {
         </GridRow>
       </GridContainer>
       {loading && (
-        <Box marginBottom={6}>
+        <Box marginBottom={5}>
           <SkeletonSingleRow />
         </Box>
       )}
       {data?.signatureCollectionSignatureLookup &&
         (data?.signatureCollectionSignatureLookup.length > 0 ? (
-          <Box marginBottom={6}>
+          <Box marginBottom={5}>
             <T.Table>
               <T.Head>
                 <T.Row>
@@ -60,6 +60,7 @@ const FindSignature = ({ collectionId }: { collectionId: string }) => {
                   <T.HeadData>
                     {formatMessage(m.signeeListSignedType)}
                   </T.HeadData>
+                  <T.HeadData>{formatMessage(m.signeePage)}</T.HeadData>
                   <T.HeadData>
                     {formatMessage(m.signeeListSignedStatus)}
                   </T.HeadData>
@@ -100,6 +101,13 @@ const FindSignature = ({ collectionId }: { collectionId: string }) => {
                         text={{ variant: 'medium' }}
                         box={{ background: bg }}
                       >
+                        {s.pageNumber ?? '-'}
+                      </T.Data>
+                      <T.Data
+                        span={3}
+                        text={{ variant: 'medium' }}
+                        box={{ background: bg }}
+                      >
                         {formatMessage(
                           s.valid
                             ? m.signeeSignatureValid
@@ -113,7 +121,7 @@ const FindSignature = ({ collectionId }: { collectionId: string }) => {
             </T.Table>
           </Box>
         ) : (
-          <Box marginBottom={6}>
+          <Box marginBottom={5}>
             <Text>{formatMessage(m.noSigneeFoundOverviewText)}</Text>
           </Box>
         ))}

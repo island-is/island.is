@@ -40,7 +40,7 @@ const ListActions = ({ list }: { list: SignatureCollectionList }) => {
                 </Box>
               </Tag>
             </Box>
-            <Box marginLeft={5}>
+            <Box marginLeft={3}>
               <Text variant="h4">{formatMessage(m.pdfReport)}</Text>
               <Text marginBottom={2}>
                 {formatMessage(m.pdfReportDescription)}
