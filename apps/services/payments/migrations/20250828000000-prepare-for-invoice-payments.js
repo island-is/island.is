@@ -158,7 +158,7 @@ module.exports = {
     })
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     return queryInterface.sequelize.transaction(async (t) => {
       // Remove the column that was added
       await queryInterface.removeColumn('fjs_charge', 'status', {

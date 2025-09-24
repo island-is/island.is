@@ -9,9 +9,8 @@ import { PaymentMethod, PaymentStatus } from '../../types'
 
 import { PaymentFlowService } from './paymentFlow.service'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
-import { PaymentFlow, PaymentFlowAttributes } from './models/paymentFlow.model'
+import { PaymentFlow } from './models/paymentFlow.model'
 import { getModelToken } from '@nestjs/sequelize'
-import { FjsChargeAttributes } from './models/fjsCharge.model'
 
 // A helper type to satisfy the linter for partial mocks.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
