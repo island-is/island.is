@@ -33,6 +33,7 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { VehicleMileagePostResponse } from '../models/v3/postVehicleMileageResponse.model'
 import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
 import { VehicleMileagePutResponse } from '../models/v3/putVehicleMileageResponse.model'
+import { ISLAND_IS_ORIGIN_CODE } from '../constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleMileageOverview)
@@ -86,6 +87,7 @@ export class VehiclesMileageResolver {
   ) {
     const res = await this.vehiclesService.putMileageReading(user, {
       ...input,
+      originCode: ISLAND_IS_ORIGIN_CODE,
       mileage: Number(input.mileage ?? input.mileageNumber),
     })
 
@@ -95,6 +97,7 @@ export class VehiclesMileageResolver {
 
     return mileageDetailConstructor({
       ...input,
+      originCode: ISLAND_IS_ORIGIN_CODE,
       mileage: Number(input.mileage ?? input.mileageNumber),
       internalId: res.internalId,
     })
@@ -132,6 +135,7 @@ export class VehiclesMileageResolver {
   ) {
     return this.vehiclesService.putMileageReadingV2(user, {
       ...input,
+      originCode: ISLAND_IS_ORIGIN_CODE,
       mileage: Number(input.mileage ?? input.mileageNumber),
     })
   }

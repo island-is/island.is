@@ -1,8 +1,8 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "SGS Rest API",
-    "description": "Mileage reading API developed in .Net8.0 - Release-24 : 20250306.1",
+    "description": "Mileage reading API developed in .Net8.0 - Release-28 : 20250915.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -248,6 +248,17 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                }
+              }
+            }
+          },
           "204": { "description": "No Content" },
           "400": {
             "description": "Bad Request",
@@ -357,6 +368,12 @@
             "description": "Vehicle permanent number",
             "required": true,
             "schema": { "type": "string" }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Include deleted records",
+            "schema": { "type": "boolean", "default": true }
           },
           {
             "name": "api-version",
@@ -947,7 +964,8 @@
           "warningSerial": {
             "type": "integer",
             "description": "Warning serial",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "errorText": {
             "type": "string",
@@ -996,7 +1014,7 @@
           },
           "dateFinished": {
             "type": "string",
-            "description": "When dd bulk request finish",
+            "description": "When did bulk request finish",
             "format": "date-time",
             "nullable": true
           }
@@ -1005,6 +1023,7 @@
         "description": "Dto for bulk mileage reading requests"
       },
       "BulkMileageReadingRequestResultDto": {
+        "required": ["guid"],
         "type": "object",
         "properties": {
           "guid": {
@@ -1062,18 +1081,30 @@
         "required": ["internalId", "permno"],
         "type": "object",
         "properties": {
-          "permno": { "maxLength": 5, "minLength": 5, "type": "string" },
+          "permno": {
+            "maxLength": 5,
+            "minLength": 5,
+            "type": "string",
+            "description": "Vehicle permno."
+          },
           "internalId": {
             "minimum": 0,
             "exclusiveMinimum": true,
             "type": "integer",
+            "description": "Internal record identifier for the mileage reading.",
             "format": "int32"
           },
-          "reportingPersidno": { "type": "string", "nullable": true }
+          "reportingPersidno": {
+            "type": "string",
+            "description": "Identifier for the reporting person.",
+            "nullable": true
+          }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Model for deleting a mileage reading without error checks."
       },
       "MileageReadingDto": {
+        "required": ["operation", "originCode", "permno"],
         "type": "object",
         "properties": {
           "permno": {
@@ -1089,8 +1120,7 @@
           "readDate": {
             "type": "string",
             "description": "Date of mileage reading",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           },
           "originCode": {
             "type": "string",
@@ -1109,7 +1139,7 @@
           },
           "reportingPersidno": {
             "type": "string",
-            "description": "If user registering this mileage is not owner/operator, the owner/operator social security number should be in here",
+            "description": "If not owner/operator, the owner/operator social security number",
             "nullable": true
           },
           "transactionDate": {
@@ -1123,6 +1153,7 @@
         "description": "Mileage data transfer object"
       },
       "MileageReadingModel": {
+        "required": ["permno"],
         "type": "object",
         "properties": {
           "permno": {
@@ -1140,6 +1171,7 @@
         "description": "One mileage entity"
       },
       "PostBulkMileageReadingModel": {
+        "required": ["originCode"],
         "type": "object",
         "properties": {
           "originCode": {
@@ -1218,7 +1250,7 @@
         "additionalProperties": false
       },
       "PutMileageReadingModel": {
-        "required": ["internalId", "mileage", "permno"],
+        "required": ["internalId", "mileage", "originCode", "permno"],
         "type": "object",
         "properties": {
           "permno": {
@@ -1229,6 +1261,7 @@
           },
           "readDate": {
             "type": "string",
+            "description": "Date of mileage reading, is always sysdate",
             "format": "date-time",
             "nullable": true,
             "readOnly": true
@@ -1246,13 +1279,24 @@
             "description": "Mileage reading",
             "format": "int32"
           },
-          "operation": { "type": "string", "nullable": true, "readOnly": true },
-          "originCode": { "type": "string", "nullable": true }
+          "operation": {
+            "type": "string",
+            "description": "Operation (I,U,D), is always U for Update",
+            "nullable": true,
+            "readOnly": true
+          },
+          "originCode": {
+            "maxLength": 10,
+            "type": "string",
+            "description": "Origin code, see /codetables/mileagereadingorigin",
+            "nullable": true
+          }
         },
         "additionalProperties": false,
-        "description": "Model to post mileage reading"
+        "description": "Model to correct mileage reading"
       },
       "ReturnTypeMessage": {
+        "required": ["errorMess", "warnSever"],
         "type": "object",
         "properties": {
           "lookupNo": {

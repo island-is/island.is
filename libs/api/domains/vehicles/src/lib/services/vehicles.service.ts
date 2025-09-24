@@ -317,6 +317,7 @@ export class VehiclesService {
 
     const res = await this.getMileageWithAuth(auth).getMileageReading({
       permno: input.permno,
+      includeDeleted: false,
     })
 
     const latestDate = res?.[0]?.readDate
@@ -423,6 +424,8 @@ export class VehiclesService {
         this.logger.debug('Successfully updated mileage reading')
         return {
           ...input,
+          operation: input.operation ?? null,
+          readDate: input.readDate ?? undefined,
           internalId: input.internalId + 1,
         }
       }
@@ -506,6 +509,8 @@ export class VehiclesService {
         this.logger.debug('mileage update successful')
         return {
           ...input,
+          operation: input.operation ?? null,
+          readDate: input.readDate ?? undefined,
           internalId: input.internalId + 1,
         }
       }
