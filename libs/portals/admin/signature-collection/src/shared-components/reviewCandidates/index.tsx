@@ -122,9 +122,9 @@ const ReviewCandidates = ({
             <Body>
               {allCandidates.map((candidate, key) => (
                 <Row key={candidate.id}>
-                  <Data span={3}>{key + 1}</Data>
-                  <Data span={3}>{candidate.name}</Data>
-                  <Data span={3}>{formatNationalId(candidate.nationalId)}</Data>
+                  <Data>{key + 1}</Data>
+                  <Data>{candidate.name}</Data>
+                  <Data>{formatNationalId(candidate.nationalId)}</Data>
                   <Data style={{ display: 'flex', justifyContent: 'end' }}>
                     <Button
                       variant="text"
