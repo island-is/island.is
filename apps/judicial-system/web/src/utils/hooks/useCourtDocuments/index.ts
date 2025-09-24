@@ -81,7 +81,7 @@ const useCourtDocuments = () => {
 
         return Boolean(data?.deleteCourtDocument)
       } catch (error) {
-        toast.error('Upp kom villa við að uppfæra þingskjal')
+        toast.error('Upp kom villa við að eyða þingskjali')
 
         return false
       }
