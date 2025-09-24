@@ -170,13 +170,6 @@ const FineCalculatorDetails = ({
 
   return (
     <Stack space={3}>
-      {jailTime > 0 && Boolean(slice.configJson?.showJailTime) && (
-        <Box display="flex" justifyContent="flexEnd">
-          <Text variant="small" fontWeight="semiBold">
-            {formatMessage(m.results.jailTime, { days: jailTime })}
-          </Text>
-        </Box>
-      )}
       <Table.Table>
         <Table.Head>
           <Table.HeadData>
@@ -233,6 +226,11 @@ const FineCalculatorDetails = ({
           </Table.Row>
         </Table.Foot>
       </Table.Table>
+      {jailTime > 0 && Boolean(slice.configJson?.showJailTime) && (
+        <Text variant="small" fontWeight="semiBold">
+          {formatMessage(m.results.jailTime, { days: jailTime })}
+        </Text>
+      )}
     </Stack>
   )
 }
