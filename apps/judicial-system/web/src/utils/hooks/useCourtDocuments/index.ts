@@ -116,10 +116,22 @@ const useCourtDocuments = () => {
 
   return {
     courtDocument: {
-      create: { fn: createCourtDocument, loading: createCourtDocumentLoading },
-      update: updateCourtDocument,
-      delete: deleteCourtDocument,
-      fileInCourtSession: fileCourtDocumentInCourtSession,
+      create: {
+        action: createCourtDocument,
+        loading: createCourtDocumentLoading,
+      },
+      update: {
+        action: updateCourtDocument,
+        loading: updateCourtDocumentLoading,
+      },
+      delete: {
+        action: deleteCourtDocument,
+        loading: deleteCourtDocumentLoading,
+      },
+      fileInCourtSession: {
+        action: fileCourtDocumentInCourtSession,
+        loading: fileCourtDocumentInCourtSessionLoading,
+      },
       isLoading:
         createCourtDocumentLoading ||
         updateCourtDocumentLoading ||

@@ -215,7 +215,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     }
     const id = file.id
 
-    const deleted = await courtDocument.delete({
+    const deleted = await courtDocument.delete.action({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
       courtDocumentId: id,
@@ -246,7 +246,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    courtDocument.update({
+    courtDocument.update.action({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
       courtDocumentId: draggedFileId,
@@ -271,7 +271,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    courtDocument.update({
+    courtDocument.update.action({
       caseId: workingCase.id,
       courtSessionId,
       courtDocumentId: fileId,
@@ -293,7 +293,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }
 
   const handleFileCourtDocument = async (file: ReorderableFile) => {
-    const res = await courtDocument.fileInCourtSession({
+    const res = await courtDocument.fileInCourtSession.action({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
       courtDocumentId: file.id,
@@ -370,7 +370,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     value: string,
     courtSessionId: string,
   ) => {
-    const res = await courtDocument.create.fn({
+    const res = await courtDocument.create.action({
       caseId: workingCase.id,
       courtSessionId,
       name: value,
