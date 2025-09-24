@@ -26,7 +26,7 @@ const mapLandLordInfo = (landlord: LandlordInfo): ApplicantsInfo => {
     nationalIdWithName: landlord.nationalIdWithName,
     phone: landlord.phone,
     email: landlord.email,
-    address: '',
+    address: '' // Intentionally blank as it is not used in the HMS Rental Agreement,
     isRepresentative: landlord.isRepresentative?.includes('✔️'),
   }
 }
