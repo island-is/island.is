@@ -189,7 +189,7 @@ export const basicVehicleInformationMapper = (
       mileage: data.latestMileageRegistration
         ? data.latestMileageRegistration.toString()
         : undefined,
-      mileageNumber: data.latestMileageRegistration,
+      mileageNumber: data.latestMileageRegistration ?? undefined,
       internalId: undefined,
     },
   }
