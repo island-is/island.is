@@ -160,12 +160,45 @@ module.exports = {
 
   down: async (queryInterface) => {
     return queryInterface.sequelize.transaction(async (t) => {
-      // Remove the column that was added
+      // Drop the payment fulfillment table
+      await queryInterface.dropTable('payment_fulfillment', { transaction: t })
+
+      // Drop the index that was added to fjs_charge
+      await queryInterface.removeIndex(
+        'fjs_charge',
+        'idx_fjs_charge_reception_id',
+        {
+          transaction: t,
+        },
+      )
+
+      // Remove the status column and its enum type from fjs_charge
       await queryInterface.removeColumn('fjs_charge', 'status', {
         transaction: t,
       })
 
-      // Revert the fjs charge table rename
+      // Drop the enum type for status
+      await queryInterface.sequelize.query(
+        `DROP TYPE IF EXISTS "enum_fjs_charge_status";`,
+        { transaction: t },
+      )
+
+      // Revert the fjs charge table rename and its index from fjs_charge
+      await queryInterface.sequelize.query(
+        `
+        DO $$ BEGIN
+          IF EXISTS (
+            SELECT 1 FROM pg_class c
+            WHERE c.relname = 'fjs_charge_payment_flow_id_idx'
+          ) THEN
+            ALTER INDEX fjs_charge_payment_flow_id_idx
+            RENAME TO payment_flow_fjs_charge_confirmation_payment_flow_id_idx;
+          END IF;
+        END $$;
+        `,
+        { transaction: t },
+      )
+
       await queryInterface.renameTable(
         'fjs_charge',
         'payment_flow_fjs_charge_confirmation',
@@ -179,8 +212,11 @@ module.exports = {
         { transaction: t },
       )
 
-      // Drop the payment fulfillment table
-      await queryInterface.dropTable('payment_fulfillment', { transaction: t })
+      // Drop the enum type for payment_method
+      await queryInterface.sequelize.query(
+        `DROP TYPE IF EXISTS "enum_payment_fulfillment_payment_method";`,
+        { transaction: t },
+      )
     })
   },
 }
