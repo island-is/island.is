@@ -121,7 +121,6 @@ const CompleteListReview = ({
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
-              variant="ghost"
               onClick={() => toggleListReview()}
               loading={loading}
               icon={listReviewed ? 'reload' : 'checkmark'}

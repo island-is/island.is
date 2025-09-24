@@ -250,7 +250,7 @@ export const m = defineMessages({
   },
   cancelCollectionModalConfirmButton: {
     id: 'admin-portal.signature-collection:modalConfirmButton',
-    defaultMessage: 'Já, eyða lista',
+    defaultMessage: 'Já, eyða söfnun',
     description: '',
   },
   cancelCollectionModalToastError: {

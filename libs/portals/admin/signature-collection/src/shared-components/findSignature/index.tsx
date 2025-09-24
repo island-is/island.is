@@ -69,6 +69,7 @@ const FindSignature = ({ collectionId }: { collectionId: string }) => {
               <T.Body>
                 {data?.signatureCollectionSignatureLookup?.map((s) => {
                   const bg = s.valid ? 'white' : 'red100'
+                  const fontWeight = s.valid ? 'regular' : 'semiBold'
                   return (
                     <T.Row key={s.id}>
                       <T.Data
@@ -105,7 +106,10 @@ const FindSignature = ({ collectionId }: { collectionId: string }) => {
                       </T.Data>
                       <T.Data
                         span={3}
-                        text={{ variant: 'medium' }}
+                        text={{
+                          variant: 'medium',
+                          fontWeight: fontWeight,
+                        }}
                         box={{ background: bg }}
                       >
                         {formatMessage(

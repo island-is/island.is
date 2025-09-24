@@ -108,6 +108,7 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               loading={loading}
+              icon='reload'
               onClick={() => {
                 extendDeadline(endDate)
                 setModalChangeDateIsOpen(false)

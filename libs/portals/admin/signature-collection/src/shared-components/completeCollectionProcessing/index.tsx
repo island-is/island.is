@@ -110,7 +110,6 @@ const ActionCompleteCollectionProcessing = ({
             <Button
               iconType="outline"
               icon="checkmark"
-              variant="ghost"
               colorScheme="default"
               onClick={() => completeProcessing()}
               loading={loading}

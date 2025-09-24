@@ -109,7 +109,6 @@ const ActionLockList = ({
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
-              variant="ghost"
               onClick={() => lockList()}
               loading={loadingLockList}
               icon={isLocked ? 'lockOpened' : 'lockClosed'}

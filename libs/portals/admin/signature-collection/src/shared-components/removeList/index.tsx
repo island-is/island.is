@@ -92,7 +92,6 @@ const RemoveList = ({ list }: { list: SignatureCollectionList }) => {
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
-              variant="ghost"
               onClick={() => removeList()}
               icon="trash"
               colorScheme="destructive"
