@@ -403,9 +403,13 @@ export class VerdictsClientService {
 
   async getLawyers() {
     const response = await this.goproLawyersApi.getLawyers({})
-    return (response.items ?? []).filter(this.isLawyerValid).map((lawyer) => ({
-      id: lawyer.recordID,
-      name: lawyer.name,
-    }))
+    const items = (response.items ?? [])
+      .filter(this.isLawyerValid)
+      .map((lawyer) => ({
+        id: lawyer.recordID,
+        name: lawyer.name,
+      }))
+    items.sort(sortAlpha('name'))
+    return items
   }
 }
