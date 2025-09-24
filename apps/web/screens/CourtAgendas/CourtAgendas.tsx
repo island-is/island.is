@@ -956,7 +956,7 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
       invisibleCourtAgendas: items.slice(ITEMS_PER_PAGE),
       total: CourtAgendasResponse.data.webCourtAgendas.total,
     },
-    lawyers: LawyersResponse.data.webVerdictLawyers.lawyers,
+    lawyers: LawyersResponse.data.webVerdictLawyers?.lawyers ?? [],
   }
 }
 
