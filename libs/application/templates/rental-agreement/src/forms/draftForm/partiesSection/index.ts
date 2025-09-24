@@ -1,17 +1,21 @@
 import {
   buildAlertMessageField,
+  buildCheckboxField,
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
+  YES,
 } from '@island.is/application/core'
 import {
   applicantTableConfig,
-  landlordTableConfig,
   applicantTableFields,
   landLordInfoTableFields,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
-import { shouldShowLandlordAlert } from '../../../utils/conditions'
+import {
+  shouldShowLandlordAlert,
+  shouldShowRepresentativeTable,
+} from '../../../utils/conditions'
 import * as m from '../../../lib/messages'
 
 export const partiesSection = buildSection({
@@ -39,7 +43,21 @@ export const partiesSection = buildSection({
           fields: landLordInfoTableFields,
           table: applicantTableConfig,
         }),
+        buildCheckboxField({
+          id: 'parties.landlordInfo.shouldShowRepresentativeTable',
+          marginTop: 6,
+          // large: false,
+          // backgroundColor: 'white',
+          options: [
+            {
+              label:
+                m.landlordAndTenantDetails.representativeTableCheckboxLabel,
+              value: YES,
+            },
+          ],
+        }),
         buildTableRepeaterField({
+          condition: shouldShowRepresentativeTable,
           id: 'parties.landlordInfo.representativeTable',
           title: m.landlordAndTenantDetails.representativeTableTitle,
           editField: true,

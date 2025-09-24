@@ -66,8 +66,13 @@ export const partiesDetails = defineMessages({
 export const landlordAndTenantDetails = defineMessages({
   representativeTableTitle: {
     id: 'ra.application:landlordAndTenantDetails.representativeTableTitle',
-    defaultMessage: 'Umboðsaðilar leigusala (ef við á)',
+    defaultMessage: 'Umboðsaðilar leigusala',
     description: 'Representative table title',
+  },
+  representativeTableCheckboxLabel: {
+    id: 'ra.application:landlordAndTenantDetails.representativeTableCheckboxLabel',
+    defaultMessage: 'Bæta við umboðsaðilum leigusala',
+    description: 'Representative table checkbox label',
   },
   representativeLabel: {
     id: 'ra.application:landlordAndTenantDetails.representativeLabel',

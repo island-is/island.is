@@ -1,6 +1,6 @@
-import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
-import { ApplicantsInfo, PropertyUnit } from '../shared/types'
+import { ApplicantsInfo, LandlordInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
 
@@ -127,4 +127,12 @@ export const shouldShowLandlordAlert = (answers: FormValue) => {
   })
 
   return !hasLandlord
+}
+
+export const shouldShowRepresentativeTable = (answers: FormValue) => {
+  const shouldShowRepresentativeTable = getValueViaPath<Array<string>>(
+    answers,
+    'parties.landlordInfo.shouldShowRepresentativeTable',
+  )
+  return shouldShowRepresentativeTable?.includes(YES) || false
 }
