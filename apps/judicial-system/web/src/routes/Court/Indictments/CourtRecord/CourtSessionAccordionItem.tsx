@@ -125,9 +125,9 @@ const useCourtSessionUpdater = (
     })
 
     updateFn({
-      caseId: workingCase.id,
-      courtSessionId: sessionId,
       ...updates,
+      courtSessionId: sessionId,
+      caseId: workingCase.id,
     })
   }
 }
@@ -142,12 +142,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     workingCase,
     setWorkingCase,
   } = props
-  const {
-    courtDocument,
-    updateCourtDocument,
-    deleteCourtDocument,
-    fileCourtDocumentInCourtSession,
-  } = useCourtDocuments()
+  const { courtDocument } = useCourtDocuments()
   const { updateCourtSession } = useCourtSessions()
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
@@ -220,7 +215,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     }
     const id = file.id
 
-    const deleted = await deleteCourtDocument({
+    const deleted = await courtDocument.delete({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
       courtDocumentId: id,
@@ -251,7 +246,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    updateCourtDocument({
+    courtDocument.update({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
       courtDocumentId: draggedFileId,
@@ -276,7 +271,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    updateCourtDocument({
+    courtDocument.update({
       caseId: workingCase.id,
       courtSessionId,
       courtDocumentId: fileId,
@@ -298,7 +293,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }
 
   const handleFileCourtDocument = async (file: ReorderableFile) => {
-    const res = await fileCourtDocumentInCourtSession({
+    const res = await courtDocument.fileInCourtSession({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
       courtDocumentId: file.id,
@@ -624,9 +619,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             buttonText="Bæta við skjali"
             name="indictmentCourtDocuments"
             isDisabled={() =>
-              courtDocument.isCreating || courtSession.isConfirmed || false
+              courtDocument.isLoading || courtSession.isConfirmed || false
             }
-            isLoading={courtDocument.isCreating}
+            isLoading={courtDocument.isLoading}
           >
             <Box display="flex" flexDirection="column" rowGap={2}>
               <Box
@@ -749,7 +744,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                               variant="darkerBlue"
                               onClick={() => handleFileCourtDocument(file)}
                               disabled={
-                                courtDocument.isCreating ||
+                                courtDocument.isLoading ||
                                 courtSession.isConfirmed ||
                                 false
                               }

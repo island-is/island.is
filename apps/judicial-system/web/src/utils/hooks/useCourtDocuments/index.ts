@@ -14,12 +14,16 @@ import { useFileCourtDocumentInCourtSessionMutation } from './fileCourtDocumentI
 import { useUpdateCourtDocumentMutation } from './updateCourtDocument.generated'
 
 const useCourtDocuments = () => {
-  const [updateCourtDocumentMutation] = useUpdateCourtDocumentMutation()
+  const [updateCourtDocumentMutation, { loading: updateCourtDocumentLoading }] =
+    useUpdateCourtDocumentMutation()
   const [createCourtDocumentMutation, { loading: createCourtDocumentLoading }] =
     useCreateCourtDocumentMutation()
-  const [deleteCourtDocumentMutation] = useDeleteCourtDocumentMutation()
-  const [fileCourtDocumentInCourtSessionMutation] =
-    useFileCourtDocumentInCourtSessionMutation()
+  const [deleteCourtDocumentMutation, { loading: deleteCourtDocumentLoading }] =
+    useDeleteCourtDocumentMutation()
+  const [
+    fileCourtDocumentInCourtSessionMutation,
+    { loading: fileCourtDocumentInCourtSessionLoading },
+  ] = useFileCourtDocumentInCourtSessionMutation()
 
   const createCourtDocument = useCallback(
     async (createCourtDocumentInput: CreateCourtDocumentInput) => {
@@ -109,14 +113,19 @@ const useCourtDocuments = () => {
     },
     [fileCourtDocumentInCourtSessionMutation],
   )
+
   return {
     courtDocument: {
       create: createCourtDocument,
-      isCreating: createCourtDocumentLoading,
+      update: updateCourtDocument,
+      delete: deleteCourtDocument,
+      fileInCourtSession: fileCourtDocumentInCourtSession,
+      isLoading:
+        createCourtDocumentLoading ||
+        updateCourtDocumentLoading ||
+        deleteCourtDocumentLoading ||
+        fileCourtDocumentInCourtSessionLoading,
     },
-    updateCourtDocument,
-    deleteCourtDocument,
-    fileCourtDocumentInCourtSession,
   }
 }
 
