@@ -88,9 +88,9 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     .ingress({
       primary: {
         host: {
-          dev: [`${serviceName}-xrd`],
-          staging: [`${serviceName}-xrd`],
-          prod: [`${serviceName}-xrd`],
+          dev: `${serviceName}-xrd`,
+          staging: `${serviceName}-xrd`,
+          prod: `${serviceName}-xrd`,
         },
         paths: ['/'],
         public: false,
