@@ -226,11 +226,15 @@ const FineCalculatorDetails = ({
           </Table.Row>
         </Table.Foot>
       </Table.Table>
-      {jailTime > 0 && Boolean(slice.configJson?.showJailTime) && (
-        <Text variant="small" fontWeight="semiBold">
-          {formatMessage(m.results.jailTime, { days: jailTime })}
-        </Text>
-      )}
+      {jailTime > 0 &&
+        Boolean(slice.configJson?.showJailTime) &&
+        (typeof slice.configJson?.stopDisplayingJailTimeAfterAmount === 'number'
+          ? totalFine > slice.configJson.stopDisplayingJailTimeAfterAmount
+          : true) && (
+          <Text variant="small" fontWeight="semiBold">
+            {formatMessage(m.results.jailTime, { days: jailTime })}
+          </Text>
+        )}
     </Stack>
   )
 }
