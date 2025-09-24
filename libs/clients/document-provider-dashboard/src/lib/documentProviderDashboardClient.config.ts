@@ -15,10 +15,13 @@ export const DocumentProviderDashboardClientConfig = defineConfig<
   name: 'DocumentProviderDashboardApiClient',
   schema,
   load: (env) => ({
-    clientId: env.required('DOCUMENT_PROVIDER_DASHBOARD_CLIENTID'),
-    clientSecret: env.required('DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET'),
-    scope: `${env.required('DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH')}/.default`,
+    clientId: env.required('DOCUMENT_PROVIDER_DASHBOARD_CLIENTID', ''),
+    clientSecret: env.required('DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET', ''),
+    scope: `${env.required(
+      'DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH',
+      '',
+    )}/.default`,
     tokenUrl: env.required('DOCUMENT_PROVIDER_DASHBOARD_TOKEN_URL'),
-    basePath: `${env.required('DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH')}/`,
+    basePath: `${env.required('DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH', '')}/`,
   }),
 })
