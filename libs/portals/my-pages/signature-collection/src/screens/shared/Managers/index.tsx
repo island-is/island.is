@@ -20,7 +20,7 @@ const Managers = ({
       <Text variant="h4" marginBottom={1}>
         {formatMessage(m.managers)}
       </Text>
-      <Box marginBottom={5}>
+      <Box marginBottom={3}>
         <Markdown>{formatMessage(m.managersDescription)}</Markdown>
       </Box>
       <T.Table>

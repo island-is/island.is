@@ -59,12 +59,12 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.REOPEN]: ':construction: Opnað aftur',
   [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
-  [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæru afturkallað',
+  [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæra afturkölluð',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   SUBPOENA_SERVICE_STATUS: ':page_with_curl: Staða fyrirkalls uppfærð',
   [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
   [CaseTransition.WITHDRAW_APPEAL]:
-    ':leftwards_arrow_with_hook: Kæru afturkallað',
+    ':leftwards_arrow_with_hook: Kæra afturkölluð',
   [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
 }
 
