@@ -229,7 +229,7 @@ const FineCalculatorDetails = ({
       {jailTime > 0 &&
         Boolean(slice.configJson?.showJailTime) &&
         (typeof slice.configJson?.stopDisplayingJailTimeAfterAmount === 'number'
-          ? totalFine > slice.configJson.stopDisplayingJailTimeAfterAmount
+          ? totalFine < slice.configJson.stopDisplayingJailTimeAfterAmount
           : true) && (
           <Text variant="small" fontWeight="semiBold">
             {formatMessage(m.results.jailTime, { days: jailTime })}
