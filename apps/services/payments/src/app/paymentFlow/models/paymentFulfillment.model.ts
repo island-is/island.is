@@ -19,6 +19,13 @@ import { FjsCharge } from './fjsCharge.model'
 
 @Table({
   tableName: 'payment_fulfillment',
+  indexes: [
+    {
+      name: 'uniq_payment_method_confirmation_ref',
+      unique: true,
+      fields: ['payment_method', 'confirmation_ref_id'],
+    },
+  ],
 })
 export class PaymentFulfillment extends Model<
   InferAttributes<PaymentFulfillment>,
