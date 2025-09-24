@@ -79,6 +79,11 @@ export const strings = {
       defaultMessage: 'metýlfenídat {amount} ng/ml',
       description: 'Notaður fyrir metýlfenídat í blóði.',
     },
+    [Substance.OLANZAPIN]: {
+      id: 'judicial.system.core:indictments_indictment.indictment_offense_count_enum.olanzapin',
+      defaultMessage: 'olanzapín {amount} ng/ml',
+      description: 'Notaður fyrir olanzapín í blóði.',
+    },
     [Substance.O_DESMETHYLTRAMADOL]: {
       id: 'judicial.system.core:indictments_indictment.indictment_offense_count_enum.o_desmethyltramadol',
       defaultMessage: 'o-Desmetýltramadól {amount} ng/ml',
