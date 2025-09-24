@@ -6,6 +6,7 @@ import {
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
@@ -21,7 +22,7 @@ describe('CaseController - Get court record pdf rules', () => {
   })
 
   it('should give permission to roles', () => {
-    expect(rules).toHaveLength(7)
+    expect(rules).toHaveLength(8)
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(districtCourtJudgeRule)
     expect(rules).toContain(districtCourtRegistrarRule)
@@ -29,5 +30,6 @@ describe('CaseController - Get court record pdf rules', () => {
     expect(rules).toContain(courtOfAppealsJudgeRule)
     expect(rules).toContain(courtOfAppealsRegistrarRule)
     expect(rules).toContain(courtOfAppealsAssistantRule)
+    expect(rules).toContain(publicProsecutorStaffRule)
   })
 })

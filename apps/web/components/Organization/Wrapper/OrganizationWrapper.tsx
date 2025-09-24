@@ -39,6 +39,7 @@ import {
   Footer as WebFooter,
   HeadWithSocialSharing,
   LiveChatIncChatPanel,
+  OrganizationSearchInput,
   SearchBox,
   SidebarShipSearchInput,
   Sticky,
@@ -957,6 +958,11 @@ const renderConnectedComponent = (slice) => {
       break
     case 'Fiskistofa/ShipSearchSidebarInput':
       connectedComponent = <SidebarShipSearchInput key={slice?.id} />
+      break
+    case 'Personuvernd/SearchInput':
+      connectedComponent = (
+        <OrganizationSearchInput key={slice?.id} {...slice?.json} />
+      )
       break
     case 'OrganizationSearchBox':
       connectedComponent = <SearchBox key={slice?.id} {...slice?.json} />
