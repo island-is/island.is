@@ -154,6 +154,7 @@ import {
   BloodDonationRestrictionList,
 } from './models/bloodDonationRestriction.model'
 import { GenericList } from './models/genericList.model'
+import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -1022,5 +1023,31 @@ export class GenericListResolver {
       tags.sort(sortAlpha('title'))
     }
     return tags
+  }
+}
+
+@Resolver(() => FeaturedGenericListItems)
+export class FeaturedGenericListItemsResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => [GenericListItem])
+  async items(
+    @Parent()
+    {
+      items: { items, input },
+      automaticallyFetchItems,
+    }: FeaturedGenericListItems,
+  ) {
+    if (!automaticallyFetchItems) {
+      return items
+    }
+    if (!input) {
+      return []
+    }
+
+    const response = await this.cmsElasticsearchService.getGenericListItems(
+      input,
+    )
+    return response.items
   }
 }
