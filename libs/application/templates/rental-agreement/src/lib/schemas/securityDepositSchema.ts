@@ -5,7 +5,7 @@ import {
 } from '../../utils/enums'
 import * as m from '../messages'
 
-export const securityDeposit = z
+export const securityDepositSchema = z
   .object({
     securityType: z
       .string()
