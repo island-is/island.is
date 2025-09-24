@@ -67,18 +67,22 @@ const CompleteListReview = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box display="flex">
-            <Tag>
-              <Box display="flex" justifyContent="center">
-                <Icon
-                  icon={
-                    listStatus === ListStatus.Reviewed ? 'reload' : 'checkmark'
-                  }
-                  type="outline"
-                  color="blue600"
-                />
-              </Box>
-            </Tag>
-            <Box marginLeft={5}>
+            <Box marginTop={1}>
+              <Tag>
+                <Box display="flex" justifyContent="center">
+                  <Icon
+                    icon={
+                      listStatus === ListStatus.Reviewed
+                        ? 'reload'
+                        : 'checkmark'
+                    }
+                    type="outline"
+                    color="blue600"
+                  />
+                </Box>
+              </Tag>
+            </Box>
+            <Box marginLeft={3}>
               <Text variant="h4">
                 {listStatus === ListStatus.Reviewed
                   ? formatMessage(m.confirmListReviewedToggleBack)
@@ -117,7 +121,6 @@ const CompleteListReview = ({
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
-              variant="ghost"
               onClick={() => toggleListReview()}
               loading={loading}
               icon={listReviewed ? 'reload' : 'checkmark'}

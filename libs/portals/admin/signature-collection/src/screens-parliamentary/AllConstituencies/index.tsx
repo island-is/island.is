@@ -67,7 +67,7 @@ const ParliamentaryRoot = () => {
                 allowedActions={[Actions.CompleteCollectionProcessing]}
               />
             }
-            marginBottom={4}
+            marginBottom={3}
           />
           {collectionStatus === CollectionStatus.Processed && (
             <Box marginY={3}>

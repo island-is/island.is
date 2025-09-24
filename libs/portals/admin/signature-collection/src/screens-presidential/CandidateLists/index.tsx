@@ -43,6 +43,8 @@ const CandidateLists = () => {
     skip: !candidateId,
   })
 
+  const candidateName = candidateLists?.[0]?.candidate.name || ''
+
   return (
     <GridContainer>
       <GridRow direction="row">
@@ -68,13 +70,13 @@ const CandidateLists = () => {
                   href: `/stjornbord${SignatureCollectionPaths.PresidentialListOfCandidates}`,
                 },
                 {
-                  title: candidateLists?.[0]?.candidate.name || '',
+                  title: candidateName,
                 },
               ]}
             />
           </Box>
           <IntroHeader
-            title={formatMessage(m.signatureListsTitlePresidential)}
+            title={candidateName}
             intro={formatMessage(m.signatureListsIntro)}
             img={nationalRegistryLogo}
             imgPosition="right"
@@ -82,7 +84,7 @@ const CandidateLists = () => {
             buttonGroup={
               <ActionDrawer allowedActions={[Actions.DownloadReports]} />
             }
-            marginBottom={4}
+            marginBottom={3}
           />
           <Divider />
           <Box marginTop={9} />

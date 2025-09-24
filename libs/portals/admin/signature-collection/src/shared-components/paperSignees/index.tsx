@@ -177,7 +177,6 @@ export const PaperSignees = ({
           </GridRow>
           <Box display="flex" justifyContent="flexEnd">
             <Button
-              variant="ghost"
               size="small"
               disabled={
                 !canSign?.signatureCollectionAdminCanSignInfo?.success || !page
