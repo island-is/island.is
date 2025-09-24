@@ -169,7 +169,6 @@ export const news = factory<News>({
   date: () => faker.date.past().toISOString(),
   intro: () => faker.lorem.paragraph(),
   subtitle: () => faker.lorem.sentence(),
-  imageText: () => faker.lorem.sentence(),
   image: () => image(),
   content: () => slice.list(3),
   genericTags: () => [],
