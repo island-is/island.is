@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   CreationOptional,
   InferAttributes,
@@ -21,7 +21,7 @@ import { FjsCharge } from './fjsCharge.model'
   tableName: 'payment_fulfillment',
   indexes: [
     {
-      name: 'uniq_payment_method_confirmation_ref',
+      name: 'unique_payment_method_confirmation_ref_id',
       unique: true,
       fields: ['payment_method', 'confirmation_ref_id'],
     },
@@ -66,7 +66,7 @@ export class PaymentFulfillment extends Model<
   })
   confirmationRefId!: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @ForeignKey(() => FjsCharge)
   @Column({
     type: DataType.UUID,

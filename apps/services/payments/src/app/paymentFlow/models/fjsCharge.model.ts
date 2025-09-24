@@ -77,7 +77,7 @@ export class FjsCharge extends Model<
     field: 'status',
   })
   status!: CreationOptional<
-    'unpaid' | 'paid' | 'cancelled' | 'recreated' | 'recreated_paid'
+    'unpaid' | 'paid' | 'cancelled' | 'recreated' | 'recreatedAndPaid'
   >
 
   @CreatedAt
