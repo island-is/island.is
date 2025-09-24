@@ -95,7 +95,7 @@ const EditableCaseFile: FC<Props> = (props) => {
     const trimmedDisplayDate = editedDisplayDate?.trim()
 
     if (canEditName) {
-      if (trimmedFilename === undefined || trimmedFilename.length === 0) {
+      if (trimmedFilename !== undefined && trimmedFilename.length === 0) {
         toast.error(formatMessage(strings.invalidFilenameErrorMessage))
         return
       }
@@ -122,7 +122,7 @@ const EditableCaseFile: FC<Props> = (props) => {
 
     onRename(
       caseFile.id,
-      trimmedFilename ?? caseFile.userGeneratedFilename ?? '',
+      trimmedFilename ?? displayName ?? caseFile.userGeneratedFilename ?? '',
       isoDate ?? caseFile.displayDate ?? '',
     )
 
