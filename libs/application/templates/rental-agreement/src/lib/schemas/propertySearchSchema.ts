@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { maxChangedUnitSize, minChangedUnitSize } from '../../utils/utils'
 import * as m from '../messages'
 
-export const registerProperty = z
+export const registerPropertySchema = z
   .object({
     searchresults: z
       .object({

@@ -44,6 +44,16 @@ export const housingFireProtections = defineMessages({
       'Húsnæðið er {propertySize}m2 og ætti að hafa að minnsta kosti {requiredSmokeDetectors} reykskynjara',
     description: 'Smoke detectors alert message',
   },
+  fireExtinguisherAlertTitle: {
+    id: 'ra.application:housingFireProtections.fireExtinguisherAlertTitle',
+    defaultMessage: 'Húsnæðið ætti að hafa slökkvitæki',
+    description: 'Fire extinguisher alert title',
+  },
+  fireExtinguisherAlertMessage: {
+    id: 'ra.application:housingFireProtections.fireExtinguisherAlertMessage',
+    defaultMessage: 'Leiguhúsnæði ættu að hafa að minnsta kosti 1 slökkvitæki',
+    description: 'Fire extinguisher alert message',
+  },
   fireExtinguisherLabel: {
     id: 'ra.application:housingFireProtections.fireExtinguisherLabel',
     defaultMessage: 'Slökkvitæki',

@@ -8,13 +8,17 @@ export const completedForm = buildForm({
   id: 'completedForm',
   logo: Logo,
   mode: FormModes.COMPLETED,
-  title: m.completed.pageTitle,
   renderLastScreenBackButton: false,
   children: [
     buildFormConclusionSection({
       alertTitle: m.completed.alertMessageSuccessTitle,
+      alertMessage: m.completed.alertMessageSuccessDescription,
       expandableHeader: m.completed.pageInfoTitle,
-      expandableIntro: m.completed.pageInfoDescription,
+      expandableIntro: m.completed.pageInfoBullet1,
+      expandableDescription: m.completed.pageInfoBullet2,
+      multiFieldTitle: m.completed.sectionName,
+      sectionTitle: '',
+      tabTitle: m.completed.sectionName,
     }),
   ],
 })

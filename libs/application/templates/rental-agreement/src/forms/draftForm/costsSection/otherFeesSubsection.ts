@@ -147,17 +147,18 @@ export const otherFeesSubsection = buildSubSection({
           clearOnChange: ['otherFees.otherCostItems'],
         }),
         buildFieldsRepeaterField({
+          condition: otherFeesPayedByTenant,
           id: 'otherFees.otherCostItems',
           formTitleNumbering: 'none',
           minRows: 0,
           maxRows: 3,
-          condition: otherFeesPayedByTenant,
           fields: {
             description: {
               component: 'input',
               label: m.otherFees.otherCostsDescriptionLabel,
               width: 'half',
               type: 'text',
+              maxLength: 25,
             },
             amount: {
               component: 'input',

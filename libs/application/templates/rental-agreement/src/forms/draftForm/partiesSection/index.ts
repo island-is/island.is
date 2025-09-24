@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
@@ -10,6 +11,7 @@ import {
   landLordInfoTableFields,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
+import { shouldShowLandlordAlert } from '../../../utils/conditions'
 import * as m from '../../../lib/messages'
 
 export const partiesSection = buildSection({
@@ -21,6 +23,13 @@ export const partiesSection = buildSection({
       title: m.partiesDetails.multiFieldTitle,
       description: m.partiesDetails.multiFieldDescription,
       children: [
+        buildAlertMessageField({
+          condition: shouldShowLandlordAlert,
+          id: 'parties.landlordInfo.alertMessage',
+          title: m.partiesDetails.alertMessageTitle,
+          message: m.partiesDetails.alertMessageDescription,
+          alertType: 'error',
+        }),
         buildTableRepeaterField({
           id: 'parties.landlordInfo.table',
           title: m.partiesDetails.landlordTableTitle,

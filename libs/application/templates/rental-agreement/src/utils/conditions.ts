@@ -86,10 +86,45 @@ export const shouldShowSmokeDetectorsAlert = (answers: FormValue) => {
   return Number(smokeDetectors) < requiredSmokeDetectors
 }
 
+export const shouldFireExtinguisherAlert = (answers: FormValue) => {
+  const fireExtinguisher = getValueViaPath<string>(
+    answers,
+    'fireProtections.fireExtinguisher',
+  )
+
+  if (!fireExtinguisher) {
+    return false
+  }
+
+  return Number(fireExtinguisher) < 1
+}
+
 export const securityDepositRequired = (answers: FormValue) => {
   const securityDepositRequired = getValueViaPath<Array<string>>(
     answers,
     'rentalAmount.securityDepositRequired',
   )
   return securityDepositRequired?.includes(YesOrNoEnum.YES) || false
+}
+
+export const shouldShowLandlordAlert = (answers: FormValue) => {
+  const landlords = getValueViaPath<Array<LandlordInfo>>(
+    answers,
+    'parties.landlordInfo.table',
+  )
+
+  if (landlords?.length === 0) {
+    return false
+  }
+
+  let hasLandlord = false
+  landlords?.forEach((landlord) => {
+    const isRepresentative = landlord?.isRepresentative?.length > 0
+
+    if (!isRepresentative) {
+      hasLandlord = true
+    }
+  })
+
+  return !hasLandlord
 }
