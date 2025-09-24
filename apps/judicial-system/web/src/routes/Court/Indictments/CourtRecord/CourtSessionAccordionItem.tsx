@@ -370,7 +370,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     value: string,
     courtSessionId: string,
   ) => {
-    const res = await courtDocument.create({
+    const res = await courtDocument.create.fn({
       caseId: workingCase.id,
       courtSessionId,
       name: value,
@@ -619,9 +619,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             buttonText="Bæta við skjali"
             name="indictmentCourtDocuments"
             isDisabled={() =>
-              courtDocument.isLoading || courtSession.isConfirmed || false
+              courtDocument.create.loading || courtSession.isConfirmed || false
             }
-            isLoading={courtDocument.isLoading}
+            isLoading={courtDocument.create.loading}
           >
             <Box display="flex" flexDirection="column" rowGap={2}>
               <Box

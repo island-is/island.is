@@ -116,7 +116,7 @@ const useCourtDocuments = () => {
 
   return {
     courtDocument: {
-      create: createCourtDocument,
+      create: { fn: createCourtDocument, loading: createCourtDocumentLoading },
       update: updateCourtDocument,
       delete: deleteCourtDocument,
       fileInCourtSession: fileCourtDocumentInCourtSession,
