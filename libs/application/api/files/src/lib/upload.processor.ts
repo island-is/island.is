@@ -81,16 +81,16 @@ export class UploadProcessor {
         if (
           (error?.$metadata?.httpStatusCode === 401 ||
             error?.$metadata?.httpStatusCode === 403) &&
-          attempt < maxRetries
+          attempt <= maxRetries
         ) {
           // Exponential backoff: 1s, 2s, 4s
           const delay = Math.pow(2, attempt) * 1000
-          await new Promise((resolve) => setTimeout(resolve, delay))
-
           this.logger.warn(
-            `Access denied on attempt ${attempt}/${maxRetries}, retrying in ${delay}ms`,
+            `Access denied on attempt ${attempt}/${maxRetries}, retrying in ${delay}ms with a new s3 client`,
             { applicationId, sourceKey, destinationKey, destinationBucket },
           )
+          await this.fileStorageService.refreshS3ClientCredentials()
+          await new Promise((resolve) => setTimeout(resolve, delay))
           continue
         }
 

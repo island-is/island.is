@@ -60,6 +60,14 @@ export class S3Service {
     return this.s3Client
   }
 
+  public async refreshS3ClientCredentials() {
+    this.s3Client = new S3Client({
+      credentials: defaultProvider(),
+      maxAttempts: 3,
+    })
+    this.lastCredentialTime = Date.now()
+  }
+
   public async getClientRegion(): Promise<string> {
     return this.getS3Client().config.region()
   }
