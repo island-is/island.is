@@ -186,10 +186,12 @@ export const basicVehicleInformationMapper = (
       permno: undefined,
       readDate: undefined,
       originCode: undefined,
-      mileage: data.latestMileageRegistration ? data.latestMileageRegistration.toString() : undefined,
+      mileage: data.latestMileageRegistration
+        ? data.latestMileageRegistration.toString()
+        : undefined,
       mileageNumber: data.latestMileageRegistration,
-      internalId: undefined
-    }
+      internalId: undefined,
+    },
   }
 
   return response
