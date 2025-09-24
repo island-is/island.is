@@ -71,10 +71,9 @@ export const previousEmploymentField = buildMultiField({
         return previousEmployment?.hasEmployment === YES
       },
       loadOptions: async ({ apolloClient }) => {
-        const { data } =
-          await apolloClient.query<Query>({
-            query: siaGeneralProfessionsQuery,
-          })
+        const { data } = await apolloClient.query<Query>({
+          query: siaGeneralProfessionsQuery,
+        })
 
         return (
           data.socialInsuranceGeneral?.professions?.map(({ value, label }) => ({
@@ -103,12 +102,9 @@ export const previousEmploymentField = buildMultiField({
         return previousEmployment?.hasEmployment === YES
       },
       loadOptions: async ({ apolloClient }) => {
-        const { data } =
-          await apolloClient.query<Query>(
-            {
-              query: siaGeneralProfessionActivitiesQuery,
-            },
-          )
+        const { data } = await apolloClient.query<Query>({
+          query: siaGeneralProfessionActivitiesQuery,
+        })
 
         return (
           data.socialInsuranceGeneral?.professionActivities?.map(
