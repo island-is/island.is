@@ -22,6 +22,7 @@ import {
   Schema,
   BeforeSubmitCallback,
   Section,
+  SetBeforeSubmitCallbackOptions,
 } from '@island.is/application/types'
 import {
   Box,
@@ -178,10 +179,41 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
 
   const setBeforeSubmitCallback = useCallback(
-    (callback: BeforeSubmitCallback | null) => {
-      beforeSubmitCallback.current = callback
+    (
+      callback: BeforeSubmitCallback | null,
+      options?: SetBeforeSubmitCallbackOptions,
+    ) => {
+      // If null is passed, clear the current beforeSubmit callback
+      if (callback === null) {
+        beforeSubmitCallback.current = null
+        return
+      }
+
+      // If allowMultiple is not set, replace any existing callback
+      if (!options?.allowMultiple) {
+        beforeSubmitCallback.current = callback
+        return
+      }
+
+      // Save reference to any existing callback that was previously registered
+      const existing = beforeSubmitCallback.current
+
+      // Compose a new callback that runs both the existing and the new one
+      // This allows multiple fields/components on the same screen to register their own beforeSubmit logic
+      beforeSubmitCallback.current = async (event) => {
+        // If there was an existing callback, run it first
+        if (existing) {
+          const [ok, message] = await existing(event)
+
+          // If the existing callback blocks submission, stop here and return its result
+          if (!ok) return [ok, message]
+        }
+
+        // Otherwise, run the new callback that was just passed
+        return callback(event)
+      }
     },
-    [beforeSubmitCallback],
+    [beforeSubmitCallback], // Only re-create this function if the ref changes
   )
 
   const parsedUpdateApplicationError = getServerValidationErrors(

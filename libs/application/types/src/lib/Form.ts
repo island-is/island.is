@@ -2,21 +2,25 @@ import { Dispatch, SetStateAction } from 'react'
 import { GraphQLError } from 'graphql'
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
-
-import type { BoxProps, ResponsiveProp } from '@island.is/island-ui/core/types'
-
+import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/shared/types'
+
 export type BeforeSubmitCallback = (
   event?: string,
 ) => Promise<[true, null] | [false, string]>
 
 export type SetBeforeSubmitCallback = (
   callback: BeforeSubmitCallback | null,
+  options?: SetBeforeSubmitCallbackOptions,
 ) => void
+
+export type SetBeforeSubmitCallbackOptions = {
+  allowMultiple?: boolean
+}
 
 export type SetFieldLoadingState = Dispatch<SetStateAction<boolean>>
 export type SetSubmitButtonDisabled = Dispatch<SetStateAction<boolean>>

@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
@@ -18,55 +18,68 @@ export const HandleBeforeSubmitFreight: FC<FieldBaseProps> = ({
   const { setValue, getValues } = useFormContext()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  setBeforeSubmitCallback?.(async () => {
-    try {
-      const newAnswers = { ...application.answers, ...getValues() }
+  useEffect(() => {
+    setBeforeSubmitCallback?.(
+      async () => {
+        try {
+          const newAnswers = { ...application.answers, ...getValues() }
 
-      // Make sure if this is short-term, that there is only one freight
-      const updatedFreight = getUpdatedFreight(
-        newAnswers.exemptionPeriod,
-        newAnswers.freight,
-      )
-      if (updatedFreight) {
-        newAnswers.freight = updatedFreight
-      }
+          // Make sure if this is short-term, that there is only one freight
+          const updatedFreight = getUpdatedFreight(
+            newAnswers.exemptionPeriod,
+            newAnswers.freight,
+          )
+          if (updatedFreight) {
+            newAnswers.freight = updatedFreight
+          }
 
-      // No need to do anything if nothing of importance changed
-      if (!checkIfFreightChanged(application.answers, newAnswers)) {
-        return [true, null]
-      }
+          // No need to do anything if nothing of importance changed
+          if (!checkIfFreightChanged(application.answers, newAnswers)) {
+            return [true, null]
+          }
 
-      const updatedFreightPairing = getUpdatedFreightPairingList(
-        newAnswers.freightPairing,
-        newAnswers.freight,
-        newAnswers.convoy,
-      )
+          const updatedFreightPairing = getUpdatedFreightPairingList(
+            newAnswers.freightPairing,
+            newAnswers.freight,
+            newAnswers.convoy,
+          )
 
-      if (updatedFreight || updatedFreightPairing) {
-        if (updatedFreight) setValue('freight', updatedFreight)
-        if (updatedFreightPairing)
-          setValue('freightPairing', updatedFreightPairing)
+          if (updatedFreight || updatedFreightPairing) {
+            if (updatedFreight) setValue('freight', updatedFreight)
+            if (updatedFreightPairing)
+              setValue('freightPairing', updatedFreightPairing)
 
-        await updateApplication({
-          variables: {
-            input: {
-              id: application.id,
-              answers: {
-                ...(updatedFreight && { freight: newAnswers.freight }),
-                ...(updatedFreightPairing && {
-                  freightPairing: updatedFreightPairing,
-                }),
+            await updateApplication({
+              variables: {
+                input: {
+                  id: application.id,
+                  answers: {
+                    ...(updatedFreight && { freight: newAnswers.freight }),
+                    ...(updatedFreightPairing && {
+                      freightPairing: updatedFreightPairing,
+                    }),
+                  },
+                },
+                locale,
               },
-            },
-            locale,
-          },
-        })
-      }
-    } catch (e) {
-      return [false, 'error occured']
-    }
-    return [true, null]
-  })
+            })
+          }
+        } catch (e) {
+          return [false, 'error occured']
+        }
+        return [true, null]
+      },
+      { allowMultiple: true },
+    )
+  }, [
+    application.answers,
+    application.id,
+    getValues,
+    locale,
+    setBeforeSubmitCallback,
+    setValue,
+    updateApplication,
+  ])
 
   return null
 }

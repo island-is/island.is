@@ -9,7 +9,7 @@ import {
   getTextStyles,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect } from 'react'
 import { Markdown } from '@island.is/shared/components'
 import { AlertMessageField, FieldBaseProps } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
@@ -29,30 +29,53 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage, lang: locale } = useLocale()
-  const { getValues } = useFormContext()
+  const { getValues, setValue, watch } = useFormContext()
   const user = useUserInfo()
-  const [showAlertMessage, setShowAlertMessage] = useState<boolean>(
+
+  // Use form state to control alert visibility instead of a local React state variable.
+  // This ensures the alert updates correctly when the beforeSubmit callback triggers
+  // and prevents React state from being out-of-sync with form values.
+  const showAlertMessage = watch(
+    'showAlertMessage',
     !field.shouldBlockInSetBeforeSubmitCallback,
   )
-  if (field.shouldBlockInSetBeforeSubmitCallback) {
-    setBeforeSubmitCallback?.(async () => {
-      const condition = shouldShowFormItem(
-        field,
-        {
-          ...application.answers,
-          ...getValues(),
-        },
-        application.externalData,
-        user,
-      )
-      if (condition) {
-        setShowAlertMessage(true)
-        return [false, ''] // Block submit
-      }
 
-      return [true, null] // Continue
-    })
-  }
+  // Register the beforeSubmit callback inside a useEffect to ensure it only runs
+  // once when the component mounts. Since `screen.tsx` now supports multiple
+  // callbacks, we don't want to register the same AlertMessage callback on
+  // every render and accidentally duplicate it.
+  useEffect(() => {
+    if (field.shouldBlockInSetBeforeSubmitCallback) {
+      setBeforeSubmitCallback?.(
+        async () => {
+          const condition = shouldShowFormItem(
+            field,
+            {
+              ...application.answers,
+              ...getValues(),
+            },
+            application.externalData,
+            user,
+          )
+          if (condition) {
+            setValue('showAlertMessage', true)
+            return [false, ''] // Block submit
+          }
+
+          return [true, null] // Continue
+        },
+        { allowMultiple: true },
+      )
+    }
+  }, [
+    field,
+    application.answers,
+    application.externalData,
+    getValues,
+    setBeforeSubmitCallback,
+    setValue,
+    user,
+  ])
 
   return (
     showAlertMessage && (
