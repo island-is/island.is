@@ -114,22 +114,22 @@ export const buildEmptyRepeaterRow = (
   const empty: Record<string, unknown> = {}
   items.forEach((it) => {
     const value = getEmptyValueForRepeaterItem(it)
-    if(value !== undefined) {
+    if (value !== undefined) {
       empty[it.id] = value
     }
   })
   return empty
 }
 
-export const getEmptyValueForRepeaterItem = (
-  item: RepeaterItem,
-) => {
+export const getEmptyValueForRepeaterItem = (item: RepeaterItem) => {
   // If the item has a defaultValue, use that
   if (item.defaultValue) {
-    return typeof item.defaultValue === 'function' ? undefined : item.defaultValue
+    return typeof item.defaultValue === 'function'
+      ? undefined
+      : item.defaultValue
   }
 
-  if(item.displayInTable === false) {
+  if (item.displayInTable === false) {
     return undefined
   }
 
