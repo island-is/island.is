@@ -130,15 +130,6 @@ module.exports = {
         },
       )
 
-      await queryInterface.addIndex(
-        'payment_fulfillment',
-        ['payment_flow_id'],
-        {
-          name: 'idx_payment_fulfillment_flow',
-          transaction: t,
-        },
-      )
-
       // Create payment fulfillments for existing card payments
       await queryInterface.sequelize.query(
         `
