@@ -169,10 +169,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     }
 
     const filedDocuments: FiledDocuments[] = workingCase.courtSessions.map(
-      (a) => ({
-        courtSessionId: a.id,
+      (courtSession) => ({
+        courtSessionId: courtSession.id,
         files:
-          a.filedDocuments?.filter((aa) => aa.courtSessionId === a.id) || [],
+          courtSession.filedDocuments?.filter(
+            (filedDocument) => filedDocument.courtSessionId === courtSession.id,
+          ) || [],
       }),
     )
 
