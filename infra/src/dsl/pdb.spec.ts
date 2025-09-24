@@ -56,4 +56,18 @@ describe('PodDisruptionBudget definitions', () => {
     const pdb = result.serviceDef[0].podDisruptionBudget
     expect(pdb?.maxUnavailable).toEqual(2)
   })
+
+   it('Service should have unhealthyPodEvictionPolicy: IfHealthyBudget, thus overriding the default', async () => {
+    const sut: ServiceBuilder<'api'> = service('api').podDisruption({
+      unhealthyPodEvictionPolicy: 'IfHealthyBudget',
+    })
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+    const pdb = result.serviceDef[0].podDisruptionBudget
+    expect(pdb?.maxUnavailable).toEqual(2)
+  })
 })
