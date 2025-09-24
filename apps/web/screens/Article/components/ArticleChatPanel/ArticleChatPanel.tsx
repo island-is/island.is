@@ -28,7 +28,7 @@ export const ArticleChatPanel = ({
   let Component = null
 
   if (
-    article?.body?.findIndex(
+    (article?.body ?? []).findIndex(
       (slice) =>
         slice.__typename === 'ConnectedComponent' &&
         slice.componentType === 'Police/FineAndSpeedMeasurementCalculator',
