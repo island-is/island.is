@@ -125,7 +125,7 @@ export const getEmptyValueForRepeaterItem = (
   item: RepeaterItem,
 ) => {
   // If the item has a defaultValue, use that
-  if (item.defaultValue) {
+  if (item.defaultValue !== undefined) {
     return typeof item.defaultValue === 'function' ? undefined : item.defaultValue
   }
 
@@ -137,6 +137,7 @@ export const getEmptyValueForRepeaterItem = (
     case 'checkbox':
       return []
     case 'select':
+    case 'selectAsync':
       return item?.isMulti ? [] : ''
     case 'nationalIdWithName':
       return { nationalId: '', name: '' }
