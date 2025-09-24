@@ -24,7 +24,7 @@ import {
   getApplicationExternalData,
 } from '../../lib/incomePlanUtils'
 import { incomePlanFormMessage } from '../../lib/messages'
-import { SocialInsuranceTemporaryCalculation } from '../../types/schema'
+import { SocialInsuranceTemporaryCalculation } from '@island.is/api/schema'
 
 export const TemporaryCalculationTable: FC<
   React.PropsWithChildren<FieldBaseProps>

@@ -1,4 +1,3 @@
-import CryptoJS from 'crypto-js'
 import format from 'date-fns/format'
 import { Base64 } from 'js-base64'
 import { Op } from 'sequelize'
@@ -28,6 +27,7 @@ import {
   CaseState,
   CaseType,
   EventType,
+  hasGeneratedCourtRecordPdf,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -38,7 +38,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory, uuidFactory } from '../../factories'
+import { nowFactory } from '../../factories'
 import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
@@ -58,7 +58,7 @@ import { IndictmentCountService } from '../indictment-count'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
-  CaseArchive,
+  CaseArchiveRepositoryService,
   CaseFile,
   CaseRepositoryService,
   CaseString,
@@ -159,8 +159,8 @@ export class InternalCaseService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,
-    @InjectModel(CaseArchive)
-    private readonly caseArchiveModel: typeof CaseArchive,
+    @Inject(forwardRef(() => CaseArchiveRepositoryService))
+    private readonly caseArchiveRepositoryService: CaseArchiveRepositoryService,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => CaseRepositoryService))
@@ -245,8 +245,18 @@ export class InternalCaseService {
     buffer?: Buffer,
   ): Promise<boolean> {
     try {
-      const pdf =
-        buffer || (await getCourtRecordPdfAsBuffer(theCase, this.formatMessage))
+      let pdf = buffer
+
+      if (!pdf) {
+        if (isIndictmentCase(theCase.type)) {
+          pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+            theCase,
+            user,
+          )
+        } else {
+          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+        }
+      }
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -534,29 +544,16 @@ export class InternalCaseService {
         })
       }
 
-      await this.caseArchiveModel.create(
+      await this.caseArchiveRepositoryService.create(
+        theCase.id,
         {
-          caseId: theCase.id,
-          archive: CryptoJS.AES.encrypt(
-            JSON.stringify({
-              ...caseArchive,
-              defendants: defendantsArchive,
-              caseFiles: caseFilesArchive,
-              indictmentCounts: indictmentCountsArchive,
-              caseStrings: caseStringsArchive,
-            }),
-            this.config.archiveEncryptionKey,
-            { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
-          ).toString(),
-          // To decrypt:
-          // JSON.parse(
-          //   Base64.fromBase64(
-          //     CryptoJS.AES.decrypt(
-          //       archive,
-          //       this.config.archiveEncryptionKey,
-          //     ).toString(CryptoJS.enc.Base64),
-          //   ),
-          // )
+          archiveJson: JSON.stringify({
+            ...caseArchive,
+            defendants: defendantsArchive,
+            caseFiles: caseFilesArchive,
+            indictmentCounts: indictmentCountsArchive,
+            caseStrings: caseStringsArchive,
+          }),
         },
         { transaction },
       )
@@ -1123,6 +1120,28 @@ export class InternalCaseService {
           }
         }) ?? [],
     )
+      .then(async (courtDocuments) => {
+        if (
+          hasGeneratedCourtRecordPdf(
+            theCase.state,
+            theCase.indictmentRulingDecision,
+            theCase.courtSessions,
+            user,
+          )
+        ) {
+          const pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+            theCase,
+            user,
+          )
+
+          courtDocuments.push({
+            type: PoliceDocumentType.RVTB,
+            courtDocument: Base64.btoa(pdf.toString('binary')),
+          })
+        }
+
+        return courtDocuments
+      })
       .then((courtDocuments) =>
         this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments),
       )

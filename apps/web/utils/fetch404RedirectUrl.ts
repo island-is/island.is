@@ -52,7 +52,7 @@ export const fetch404RedirectUrl = async (
     const page = redirectProps.data.getUrl.page
     const explicitRedirect = redirectProps.data.getUrl.explicitRedirect
     if (!page && explicitRedirect) {
-      return explicitRedirect
+      return encodeURI(explicitRedirect)
     } else if (page) {
       let url = linkResolver(page.type as LinkType, [page.slug], locale).href
 
@@ -65,7 +65,7 @@ export const fetch404RedirectUrl = async (
         ).href
       }
 
-      return url
+      return encodeURI(url)
     }
   }
 

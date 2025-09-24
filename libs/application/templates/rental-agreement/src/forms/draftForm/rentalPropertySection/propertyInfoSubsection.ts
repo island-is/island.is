@@ -15,23 +15,20 @@ import {
 } from '../../../utils/options'
 import * as m from '../../../lib/messages'
 
-const messagesInfo = m.registerProperty.info
-const messagesCategory = m.registerProperty.category
-
 export const propertyInfoSubsection = buildSubSection({
   id: Routes.PROPERTYINFORMATION,
-  title: messagesInfo.subsectionName,
+  title: m.registerProperty.info.subsectionName,
   children: [
     buildMultiField({
       id: Routes.PROPERTYINFORMATION,
-      title: messagesCategory.pageTitle,
+      title: m.registerProperty.category.pageTitle,
       children: [
         buildDescriptionField({
           id: 'propertyInfo.propertyInfoAddress',
           title: ({ answers }) => {
             const { searchResultLabel } = applicationAnswers(answers)
             return {
-              ...messagesInfo.propertyAddressAnswer,
+              ...m.registerProperty.info.propertyAddressAnswer,
               values: { propertyAddress: searchResultLabel },
             }
           },
@@ -42,8 +39,8 @@ export const propertyInfoSubsection = buildSubSection({
           condition: (answers) => Boolean(answers.registerProperty),
           marginBottom: 5,
           header: [
-            messagesInfo.tableHeaderUsablity,
-            messagesInfo.tableHeaderUnitId,
+            m.registerProperty.info.tableHeaderUsablity,
+            m.registerProperty.info.tableHeaderUnitId,
             m.misc.size,
             m.misc.rooms,
           ],
@@ -62,13 +59,13 @@ export const propertyInfoSubsection = buildSubSection({
 
         buildDescriptionField({
           id: 'propertyInfo.categoryTitle',
-          title: messagesCategory.typeTitle,
+          title: m.registerProperty.category.typeTitle,
           titleVariant: 'h3',
         }),
         buildSelectField({
           id: 'propertyInfo.categoryType',
-          title: messagesCategory.typeTitle,
-          description: messagesCategory.typeDescription,
+          title: m.registerProperty.category.typeTitle,
+          description: m.registerProperty.category.typeDescription,
           options: getPropertyTypeOptions(),
           defaultValue: RentalHousingCategoryTypes.ENTIRE_HOME,
           required: true,
@@ -76,12 +73,12 @@ export const propertyInfoSubsection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'propertyInfo.categoryClassTitle',
-          title: messagesCategory.classTitle,
+          title: m.registerProperty.category.classTitle,
           titleVariant: 'h3',
         }),
         buildRadioField({
           id: 'propertyInfo.categoryClass',
-          description: messagesCategory.classDescription,
+          description: m.registerProperty.category.classDescription,
           options: getPropertyClassOptions(),
           defaultValue: RentalHousingCategoryClass.GENERAL_MARKET,
           width: 'half',
@@ -89,8 +86,8 @@ export const propertyInfoSubsection = buildSubSection({
         }),
         buildSelectField({
           id: 'propertyInfo.categoryClassGroup',
-          title: messagesCategory.classGroupLabel,
-          placeholder: messagesCategory.classGroupPlaceholder,
+          title: m.registerProperty.category.classGroupLabel,
+          placeholder: m.registerProperty.category.classGroupPlaceholder,
           options: getPropertyClassGroupOptions(),
           condition: (answers) => {
             const { categoryClass } = applicationAnswers(answers)
