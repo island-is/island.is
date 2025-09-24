@@ -141,7 +141,7 @@ export class VerdictController {
     @CurrentHttpUser() user: User,
   ): Promise<Verdict> {
     this.logger.debug(
-      `Gets verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
+      `Get verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
     )
 
     return this.verdictService.getAndSyncVerdict(verdict, user)
