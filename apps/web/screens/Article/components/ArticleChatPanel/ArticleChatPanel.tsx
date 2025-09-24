@@ -27,6 +27,17 @@ export const ArticleChatPanel = ({
 
   let Component = null
 
+  if (
+    article?.body?.findIndex(
+      (slice) =>
+        slice.__typename === 'ConnectedComponent' &&
+        slice.componentType === 'Police/FineAndSpeedMeasurementCalculator',
+    ) !== -1
+  ) {
+    // Any article with the police fine calculator should not have a chat panel
+    return null
+  }
+
   // LiveChatInc
   if (
     article?.organization?.some((o) => o.id in liveChatIncConfig[activeLocale])
