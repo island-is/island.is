@@ -91,6 +91,11 @@ export const expandFieldKeys = (
       const [prefix, ...suffixParts] = key.split('.$.')
       const arrayValue = getValueViaPath(source, prefix)
 
+      // Skip if value is missing (no array to expand)
+      if (arrayValue === undefined) {
+        continue
+      }
+
       if (!Array.isArray(arrayValue)) {
         throw new Error(
           `Expected array at path "${prefix}" for key "${key}", got ${typeof arrayValue}`,

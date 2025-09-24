@@ -35,7 +35,7 @@ export const getTrailerAxleSpacing = (
     ExemptionForTransportationAnswers['axleSpacing']
   >(answers, 'axleSpacing')
 
-  const trailerAxleSpacing = axleSpacingAnswers?.trailerList.find(
+  const trailerAxleSpacing = axleSpacingAnswers?.trailerList?.find(
     (x) => x.permno === permno,
   )
 
