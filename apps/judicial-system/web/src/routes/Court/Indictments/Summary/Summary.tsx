@@ -403,7 +403,7 @@ const Summary: FC = () => {
                   {` ${formatDate(workingCase.courtEndTime)}`}
                 </Text>
               </Box>
-              <Text>Niðurstaða málsins verður send ákæranda og verjanda.</Text>
+              <Text>Niðurstaða málsins verður send málflytjendum.</Text>
             </Box>
           }
           primaryButton={{
