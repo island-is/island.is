@@ -259,7 +259,6 @@ export const addIndictmentConfirmation = (
       coatOfArmsX + coatOfArmsWidth + titleWidth - calculatePt(24),
       pageMargin + calculatePt(8),
     )
-
     .path(
       'M2.76356 11.8047H9.57201C9.85402 11.8047 10.0826 11.5761 10.0826 11.2941V5.50692C10.0826 5.22492 9.85402 4.99629 9.57201 4.99629H9.06138V3.46439C9.06138 1.86887 7.76331 0.570801 6.16779 0.570801C4.57226 0.570801 3.2742 1.86887 3.2742 3.46439V4.99629H2.76356C2.48156 4.99629 2.25293 5.22492 2.25293 5.50692V11.2941C2.25293 11.5761 2.48156 11.8047 2.76356 11.8047ZM7.61394 8.03817L6.16714 9.48496C6.06743 9.58467 5.93674 9.63455 5.80609 9.63455C5.67543 9.63455 5.54471 9.58467 5.44504 9.48496L4.72164 8.76157C4.52222 8.56215 4.52222 8.23888 4.72164 8.03943C4.92102 7.84001 5.24436 7.84001 5.44378 8.03943L5.80612 8.40174L6.89187 7.31603C7.09125 7.11661 7.41458 7.11661 7.614 7.31603C7.81339 7.51549 7.81339 7.83875 7.61394 8.03817ZM4.29546 3.46439C4.29546 2.43199 5.13539 1.59207 6.16779 1.59207C7.20019 1.59207 8.04011 2.43199 8.04011 3.46439V4.99629H4.29546V3.46439Z',
     )
@@ -290,6 +289,7 @@ export const addIndictmentConfirmation = (
     pageMargin + titleHeight + calculatePt(16),
   )
   doc.font('Times-Roman')
+
   drawTextWithEllipsis(
     doc,
     `${confirmation.actor}${
@@ -345,9 +345,85 @@ export const addIndictmentConfirmation = (
     formatDate(confirmation.date) ?? '',
     coatOfArmsX + coatOfArmsWidth + titleWidth - calculatePt(55),
     pageMargin + titleHeight + calculatePt(32),
-    {
-      lineBreak: false,
-    },
+    { lineBreak: false },
+  )
+}
+
+export const addIndictmentCourtRecordConfirmation = (
+  doc: PDFKit.PDFDocument,
+  confirmation: Confirmation,
+) => {
+  const pageMargin = calculatePt(18)
+  const shaddowHeight = calculatePt(90)
+  const coatOfArmsWidth = calculatePt(105)
+  const coatOfArmsHeight = calculatePt(90)
+  const coatOfArmsX = pageMargin + calculatePt(8)
+  const titleWidth = calculatePt(370)
+  const titleHeight = calculatePt(32)
+  const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
+
+  // Draw the shaddow
+  doc
+    .rect(
+      pageMargin,
+      pageMargin + calculatePt(8),
+      coatOfArmsWidth + titleWidth,
+      shaddowHeight,
+    )
+    .fill(lightGray)
+    .stroke()
+
+  // Draw the Coat of Arms
+  doc
+    .rect(coatOfArmsX, pageMargin, coatOfArmsWidth, coatOfArmsHeight)
+    .fillAndStroke('white', darkGray)
+
+  addCoatOfArms(doc, calculatePt(49), calculatePt(33))
+
+  // Draw the confirmation title
+  doc
+    .rect(coatOfArmsX + coatOfArmsWidth, pageMargin, titleWidth, titleHeight)
+    .fillAndStroke(lightGray, darkGray)
+  doc.fill('black')
+  doc.font('Times-Bold')
+  doc
+    .fontSize(calculatePt(smallFontSize))
+    .text('Réttarvörslugátt', titleX, pageMargin + calculatePt(12))
+  doc.font('Times-Roman')
+  doc.text(
+    'Rafræn staðfesting',
+    calculatePt(210),
+    pageMargin + calculatePt(12),
+    { lineBreak: false },
+  )
+
+  const date = formatDate(confirmation.date) ?? ''
+  const dateWidth = doc.widthOfString(date)
+
+  doc.text(
+    date,
+    coatOfArmsX + coatOfArmsWidth + titleWidth - dateWidth - calculatePt(8),
+  )
+
+  doc.lineWidth(1)
+
+  // Draw the "Institution" box
+  doc
+    .rect(
+      coatOfArmsX + coatOfArmsWidth,
+      pageMargin + titleHeight,
+      titleWidth,
+      shaddowHeight - titleHeight,
+    )
+    .fillAndStroke('white', darkGray)
+  doc.fill('black')
+  doc.font('Times-Bold')
+  doc.text('Dómstóll', titleX, pageMargin + titleHeight + calculatePt(16))
+  doc.font('Times-Roman')
+  doc.text(
+    confirmation.institution,
+    titleX,
+    pageMargin + titleHeight + calculatePt(32),
   )
 }
 

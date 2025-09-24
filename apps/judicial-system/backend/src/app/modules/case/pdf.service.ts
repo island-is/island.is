@@ -14,6 +14,7 @@ import {
   CaseIndictmentRulingDecision,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
+  isCompletedCase,
   isDistrictCourtUser,
   SubpoenaType,
   type User as TUser,
@@ -165,7 +166,59 @@ export class PdfService {
     theCase: Case,
     user: TUser,
   ): Promise<Buffer> {
-    return createIndictmentCourtRecordPdf(theCase, isDistrictCourtUser(user))
+    let confirmation: Confirmation | undefined = undefined
+
+    if (isCompletedCase(theCase.state)) {
+      if (theCase.courtRecordHash) {
+        const existingPdf = await this.tryGetPdfFromS3(
+          theCase,
+          `${theCase.id}/courtRecord.pdf`,
+        )
+
+        if (existingPdf) {
+          return existingPdf
+        }
+      }
+
+      const completionEvent = EventLog.getEventLogByEventType(
+        EventType.INDICTMENT_COMPLETED,
+        theCase.eventLogs,
+      )
+
+      if (completionEvent && completionEvent.institutionName) {
+        confirmation = {
+          actor: completionEvent.userName ?? '',
+          title: completionEvent.userTitle,
+          institution: completionEvent.institutionName,
+          date: completionEvent.created,
+        }
+      }
+    }
+
+    const generatedPdf = await createIndictmentCourtRecordPdf(
+      theCase,
+      isDistrictCourtUser(user),
+      confirmation,
+    )
+
+    if (isCompletedCase(theCase.state) && confirmation) {
+      const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
+
+      // No need to wait for this to finish
+      this.caseRepositoryService
+        .update(theCase.id, {
+          courtRecordHash: JSON.stringify({ hash, hashAlgorithm }),
+        })
+        .then(() =>
+          this.tryUploadPdfToS3(
+            theCase,
+            `${theCase.id}/courtRecord.pdf`,
+            generatedPdf,
+          ),
+        )
+    }
+
+    return generatedPdf
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
@@ -265,8 +318,7 @@ export class PdfService {
       // No need to wait for this to finish
       this.caseRepositoryService
         .update(theCase.id, {
-          indictmentHash: hash,
-          indictmentHashAlgorithm: hashAlgorithm,
+          indictmentHash: JSON.stringify({ hash, hashAlgorithm }),
         })
         .then(() =>
           this.tryUploadPdfToS3(
