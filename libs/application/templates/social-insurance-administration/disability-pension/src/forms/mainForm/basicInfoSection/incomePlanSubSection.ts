@@ -149,7 +149,7 @@ export const incomePlanSubSection = buildSubSection({
           updateValueObj: {
             valueModifier: (_, activeField) =>
               updateEqualIncomePerMonth(activeField, true),
-            watchValues: 'income',
+            watchValues: ['income', 'currency', 'unevenIncomePerYear'],
           },
           suffix: '',
           condition: (_, activeField) =>
@@ -165,7 +165,7 @@ export const incomePlanSubSection = buildSubSection({
           updateValueObj: {
             valueModifier: (_, activeField) =>
               updateEqualIncomePerMonth(activeField),
-            watchValues: 'income',
+            watchValues: ['income', 'currency', 'unevenIncomePerYear'],
           },
           suffix: '',
           condition: (_, activeField) =>
