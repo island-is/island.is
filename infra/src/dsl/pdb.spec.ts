@@ -57,7 +57,7 @@ describe('PodDisruptionBudget definitions', () => {
     expect(pdb?.maxUnavailable).toEqual(2)
   })
 
-   it('Service should have unhealthyPodEvictionPolicy: IfHealthyBudget, thus overriding the default', async () => {
+  it('Service should have unhealthyPodEvictionPolicy: IfHealthyBudget, thus overriding the default', async () => {
     const sut: ServiceBuilder<'api'> = service('api').podDisruption({
       unhealthyPodEvictionPolicy: 'IfHealthyBudget',
     })
