@@ -1,0 +1,6 @@
+mutation UpdateCourtDocument($input: UpdateCourtDocumentInput!) {
+  updateCourtDocument(input: $input) {
+    id
+    created
+  }
+}

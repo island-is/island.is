@@ -1,0 +1,5 @@
+mutation DeleteCourtDocument($input: DeleteCourtDocumentInput!) {
+  deleteCourtDocument(input: $input) {
+    deleted
+  }
+}

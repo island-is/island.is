@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
 import { AnimatePresence, motion } from 'motion/react'
 import { InputMask } from '@react-input/mask'
 
@@ -32,6 +31,7 @@ export interface TEditableCaseFile {
   id: string
   category?: CaseFileCategory | null
   created?: string | null
+  name?: string | null
   displayText?: string | null
   userGeneratedFilename?: string | null
   displayDate?: string | null
@@ -47,12 +47,13 @@ interface Props {
   caseFile: TEditableCaseFile
   // Overwrites the default background color based on file status
   backgroundColor?: 'white'
-  onOpen: (id: string) => void
+  disabled?: boolean
   onRename: (id: string, name: string, displayDate: string) => void
   onDelete: (file: TUploadFile) => void
+  onOpen?: (id: string) => void
   onRetry?: (file: TUploadFile) => void
-  onStartEditing: () => void
-  onStopEditing: () => void
+  onStartEditing?: () => void
+  onStopEditing?: () => void
 }
 
 const EditableCaseFile: FC<Props> = (props) => {
@@ -61,6 +62,7 @@ const EditableCaseFile: FC<Props> = (props) => {
     caseFile,
     backgroundColor,
     onOpen,
+    disabled,
     onRename,
     onDelete,
     onRetry,
@@ -91,27 +93,44 @@ const EditableCaseFile: FC<Props> = (props) => {
     const trimmedFilename = editedFilename?.trim()
     const trimmedDisplayDate = editedDisplayDate?.trim()
 
-    if (trimmedFilename === undefined || trimmedFilename.length === 0) {
-      toast.error(formatMessage(strings.invalidFilenameErrorMessage))
-      return
+    if (canEditName) {
+      if (trimmedFilename !== undefined && trimmedFilename.length === 0) {
+        toast.error(formatMessage(strings.invalidFilenameErrorMessage))
+        return
+      }
     }
 
-    let newDate: Date | undefined
+    let isoDate: string | undefined
 
-    if (trimmedDisplayDate) {
+    if (canEditDate) {
+      if (!trimmedDisplayDate) {
+        toast.error(formatMessage(strings.invalidDateErrorMessage))
+        return
+      }
+
       const [day, month, year] = trimmedDisplayDate.split('.')
-      newDate = parseISO(`${year}-${month}-${day}`)
+      const y = Number(year)
+      const m = Number(month)
+      const d = Number(day)
+      // Construct date at 00:00:00Z to avoid local timezone shifts
+      const parsedDateUtc = new Date(Date.UTC(y, m - 1, d))
+
+      if (!isValid(parsedDateUtc)) {
+        toast.error(formatMessage(strings.invalidDateErrorMessage))
+        return
+      }
+
+      isoDate = parsedDateUtc.toISOString()
     }
 
-    if (!newDate || !isValid(newDate)) {
-      toast.error(formatMessage(strings.invalidDateErrorMessage))
-      return
-    }
-
-    onRename(caseFile.id, trimmedFilename, newDate.toISOString())
+    onRename(
+      caseFile.id,
+      trimmedFilename ?? displayName ?? caseFile.userGeneratedFilename ?? '',
+      isoDate ?? caseFile.displayDate ?? '',
+    )
 
     setIsEditing(false)
-    onStopEditing()
+    onStopEditing?.()
   }
 
   const displayDate = useMemo(() => {
@@ -209,7 +228,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                     <button
                       onClick={() => {
                         onDelete(caseFile as TUploadFile)
-                        onStopEditing()
+                        onStopEditing?.()
                       }}
                       className={cn(styles.editCaseFileButton, {
                         [styles.background.primary]:
@@ -245,7 +264,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                 component={caseFile.canOpen ? 'button' : undefined}
                 onClick={() => {
                   if (caseFile.canOpen && caseFile.id) {
-                    onOpen(caseFile.id)
+                    onOpen?.(caseFile.id)
                   }
                 }}
               >
@@ -293,7 +312,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <button
                     onClick={() => {
                       setIsEditing(true)
-                      onStartEditing()
+                      onStartEditing?.()
                     }}
                     className={cn(styles.editCaseFileButton, {
                       [styles.background.primary]:
@@ -302,7 +321,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                       [styles.background.secondary]:
                         caseFile.status === FileUploadStatus.error || isEmpty,
                     })}
-                    disabled={!caseFile.canEdit?.length}
+                    disabled={!caseFile.canEdit?.length || disabled}
                     aria-label="Breyta skrá"
                   >
                     <Icon icon="pencil" color={color} />
