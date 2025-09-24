@@ -160,6 +160,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.SUBMITTED]: {
+        entry: ['assignOrganization'],
         meta: {
           name: States.SUBMITTED,
           status: FormModes.IN_PROGRESS,
@@ -376,6 +377,23 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         ) {
           unset(application.answers, 'startingSchool.expectedEndDate')
         }
+        return context
+      }),
+      assignOrganization: assign((context) => {
+        const { application } = context
+        const MMS_ID =
+          InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU ?? ''
+
+        const assignees = application.assignees
+        if (MMS_ID) {
+          if (Array.isArray(assignees) && !assignees.includes(MMS_ID)) {
+            assignees.push(MMS_ID)
+            set(application, 'assignees', assignees)
+          } else {
+            set(application, 'assignees', [MMS_ID])
+          }
+        }
+
         return context
       }),
     },

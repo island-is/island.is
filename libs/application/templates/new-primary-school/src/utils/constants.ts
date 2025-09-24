@@ -17,8 +17,6 @@ export type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.EDIT }
 
 export enum ApiModuleActions {
   getChildInformation = 'getChildInformation',
