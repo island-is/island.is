@@ -357,6 +357,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     if (merged < startDate) {
       toast.error('Þinghaldi slitið má ekki vera á undan Þinghald hófst')
+      return
     }
 
     patchSession(
