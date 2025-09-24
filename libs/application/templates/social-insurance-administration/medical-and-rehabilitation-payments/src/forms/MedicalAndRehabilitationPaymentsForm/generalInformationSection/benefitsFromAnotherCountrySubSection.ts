@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -12,6 +13,7 @@ import { Query } from '@island.is/api/schema'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import { isFirstApplication } from '../../../utils/conditionUtils'
 import { getApplicationAnswers } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const benefitsFromAnotherCountrySubSection = buildSubSection({
   id: 'benefitsFromAnotherCountrySubSection',
@@ -25,10 +27,16 @@ export const benefitsFromAnotherCountrySubSection = buildSubSection({
       title:
         medicalAndRehabilitationPaymentsFormMessage.generalInformation
           .benefitsFromAnotherCountryTitle,
-      description:
-        medicalAndRehabilitationPaymentsFormMessage.generalInformation
-          .benefitsFromAnotherCountryDescription,
       children: [
+        buildAlertMessageField({
+          id: 'benefitsFromAnotherCountry.alertMessage',
+          title: socialInsuranceAdministrationMessage.shared.alertTitle,
+          message:
+            medicalAndRehabilitationPaymentsFormMessage.generalInformation
+              .benefitsFromAnotherCountryDescription,
+          doesNotRequireAnswer: true,
+          alertType: 'warning',
+        }),
         buildRadioField({
           id: 'benefitsFromAnotherCountry.isReceivingBenefitsFromAnotherCountry',
           options: getYesNoOptions(),
