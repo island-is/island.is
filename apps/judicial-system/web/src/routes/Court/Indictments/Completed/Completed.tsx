@@ -20,6 +20,7 @@ import { Feature } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FeatureContext,
@@ -237,6 +238,22 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
+        {workingCase.indictmentRulingDecision &&
+          [
+            CaseIndictmentRulingDecision.RULING,
+            CaseIndictmentRulingDecision.FINE,
+          ].includes(workingCase.indictmentRulingDecision) && (
+            <Conclusion
+              title={`${
+                workingCase.indictmentRulingDecision ===
+                CaseIndictmentRulingDecision.RULING
+                  ? 'Dóms'
+                  : 'Úrskurðar'
+              }orð héraðsdóms`}
+              conclusionText={workingCase.conclusion}
+              judgeName={workingCase.judge?.name}
+            />
+          )}
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
             {/*
