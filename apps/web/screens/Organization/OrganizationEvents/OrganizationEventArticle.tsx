@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
+import addDays from 'date-fns/addDays'
 import { useRouter } from 'next/router'
 
 import { EmbeddedVideo, Image } from '@island.is/island-ui/contentful'
@@ -55,7 +56,6 @@ import { webRichText } from '@island.is/web/utils/richText'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_SINGLE_EVENT_QUERY } from '../../queries/Events'
 import * as styles from './OrganizationEventArticle.css'
-import addDays from 'date-fns/addDays'
 
 const LAYOUT_CHANGE_BREAKPOINT = 1120
 const ICON_TEXT_SPACE: ResponsiveSpace = [3, 3, 3, 2, 3]
@@ -108,8 +108,10 @@ const EventInformationBox = ({
   const router = useRouter()
 
   const eventTimeSpan = event.startDateTime
-    ? formatEventDates(event.startDateTime, event.endDateTime ?? '')
+    ? formatEventDates(event.startDateTime, event.endDateTime ?? '', activeLocale)
     : undefined
+
+  console.log(event)
 
   const useNewDateProcess = !!event.startDateTime && !!event.endDateTime
 
@@ -118,9 +120,9 @@ const EventInformationBox = ({
       <Stack space={3}>
         <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
           <Icon color="blue400" icon="calendar" type="outline" />
-          {useNewDateProcess ? eventTimeSpan : <Text>{formattedDate}</Text>}
+          <Text>{useNewDateProcess ? eventTimeSpan : formattedDate}</Text>
         </Box>
-        {Boolean(event.time?.startTime) && (
+        {!useNewDateProcess && Boolean(event.time?.startTime) && (
           <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
             <Icon color="blue400" icon="time" type="outline" />
             <EventTime
@@ -145,7 +147,7 @@ const EventInformationBox = ({
             <EventLocation location={event.location} />
           </Box>
         )}
-        {!hasEventOccurred && (
+        {!!hasEventOccurred && (
           <Box
             display="flex"
             flexWrap="nowrap"
@@ -165,7 +167,8 @@ const EventInformationBox = ({
                     : 'https://island.is'
                 }${router.asPath}`,
                 location: formatEventLocation(event.location),
-                startDate: event.startDate,
+                startDate: (useNewDateProcess && event.startDateTime) ? event.startDateTime : event.startDate ?? event.startDate,
+                endDate: useNewDateProcess && event.endDateTime ? event.endDateTime : undefined,
                 startTime: event.time?.startTime,
                 endTime: event.time?.endTime,
               }}

@@ -1,6 +1,5 @@
 import React from 'react'
 import { useMeasure } from 'react-use'
-import format from 'date-fns/format'
 
 import {
   Box,
@@ -11,6 +10,8 @@ import {
 } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
 import { Image } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import { formatEventDates } from '../../utils/event'
 import * as styles from './NewsCard.css'
@@ -45,6 +46,8 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
   mini,
 }) => {
   const [ref, { width }] = useMeasure()
+  const { format } = useDateUtils()
+  const { activeLocale } = useI18n()
   const showImage = width > 600
 
   let formattedDateString: string | undefined
@@ -52,7 +55,7 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
     //use old date format
     formattedDateString = format(new Date(date), 'do MMMM yyyy')
   } else if (date && dateTo) {
-    formattedDateString = formatEventDates(date, dateTo)
+    formattedDateString = formatEventDates(date, dateTo, activeLocale)
   } else formattedDateString = undefined
 
   if (mini) {

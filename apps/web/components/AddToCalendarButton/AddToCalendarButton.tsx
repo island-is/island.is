@@ -7,6 +7,7 @@ interface CalendarEvent {
   location: string
   pageUrl?: string
   startDate: string
+  endDate?: string
   startTime?: string | null
   endTime?: string | null
 }
@@ -28,17 +29,19 @@ const downloadICSFile = ({
   location,
   pageUrl,
   startDate,
+  endDate,
   startTime,
   endTime,
 }: CalendarEvent): void => {
   const isAllDay = !startTime
-  const startDateTime = isAllDay ? startDate : `${startDate}T${startTime}`
-  const endDateTime = endTime ? `${startDate}T${endTime}` : null
+  const spansMultipleDays = endDate && endDate !== startDate
+  const startDateTime = spansMultipleDays || isAllDay ? startDate : `${startDate}T${startTime}`
+  const endDateTime = spansMultipleDays ? endDate : endTime ? `${startDate}T${endTime}` : null
 
   const fullDescription = `${pageUrl ? `${pageUrl}\n\n` : ''}${description}`
 
   // Use the correct time format for ICS
-  const formattedStartDate = formatDate(startDateTime, isAllDay)
+  const formattedStartDate = spansMultipleDays ? formatDate(startDateTime, true) : formatDate(startDateTime, isAllDay)
   const formattedEndDate = endDateTime ? formatDate(endDateTime) : ''
 
   const icsContent = `BEGIN:VCALENDAR
@@ -66,13 +69,16 @@ END:VCALENDAR`
 const generateGoogleCalendarLink = (props: CalendarEvent) => {
   const baseUrl = 'https://www.google.com/calendar/render'
   const isAllDay = !props.startTime || !props.endTime
+  const spansMultipleDays = !!props.endDate
+
 
   // Construct start and end date-time strings in the correct format
-  const startDateTime = isAllDay
+  const startDateTime = isAllDay || spansMultipleDays
     ? formatDate(props.startDate, true) // YYYYMMDD
     : formatDate(`${props.startDate}T${props.startTime}`) // Full UTC format
 
-  const endDateTime = props.endTime
+  const endDateTime = props.endDate ? formatDate(props.endDate, true)
+    : props.endTime
     ? formatDate(`${props.startDate}T${props.endTime}`)
     : isAllDay
     ? formatDate(props.startDate, true) // Keep YYYYMMDD for all-day

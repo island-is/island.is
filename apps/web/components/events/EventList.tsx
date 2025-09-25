@@ -77,6 +77,7 @@ export const EventList = ({
               formattedDateString = formatEventDates(
                 event.startDateTime,
                 event.endDateTime,
+                activeLocale
               )
             } else {
               formattedDateString = event.startDate
@@ -197,8 +198,12 @@ export const EventList = ({
               eventItem.slug,
             ]).href
 
+
+            const startDateTime = eventItem.id === '1h7wcG9GRzYCHfeMLKJn0N' ? '2023-01-01' : eventItem.startDateTime
+            const endDateTime = eventItem.id === '1h7wcG9GRzYCHfeMLKJn0N' ? '2023-03-01' : eventItem.endDateTime
+
             const isNewDateProcess =
-              !!eventItem.startDateTime && !!eventItem.endDateTime
+              !!startDateTime && !!endDateTime
 
             return (
               <LatestEventSliceCard
@@ -208,14 +213,17 @@ export const EventList = ({
                 namespace={namespace}
                 image={eventItem.thumbnailImage?.url || ''}
                 startTime={
-                  isNewDateProcess ? '' : eventItem.startDateTime ?? ''
+                  isNewDateProcess ? '' : eventItem.time?.startTime ?? ''
                 }
-                endTime={isNewDateProcess ? '' : eventItem.endDateTime ?? ''}
+                endTime={isNewDateProcess ? '' : eventItem.time?.endTime ?? ''}
                 href={eventHref}
                 date={
                   isNewDateProcess
-                    ? eventItem.startDateTime ?? ''
+                    ? (startDateTime ?? '')
                     : eventItem.startDate
+                }
+                dateTo={
+                  (isNewDateProcess && endDateTime) ? endDateTime : undefined
                 }
               />
             )

@@ -11,6 +11,7 @@ import { EventLocation as EventLocationSchema } from '@island.is/web/graphql/sch
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { formatEventDates } from '@island.is/web/utils/event'
 
 import { EventLocation } from '../EventLocation'
 import { EventTime } from '../EventTime'
@@ -25,16 +26,24 @@ interface EventCardProps {
   endTime: string
   href: string
   date?: string
+  dateTo?: string
   location?: EventLocationSchema
 }
 
 export const LatestEventSliceCard: React.FC<
   React.PropsWithChildren<EventCardProps>
-> = ({ title, image, namespace, location, startTime, endTime, href, date }) => {
+> = ({ title, image, namespace, location, startTime, endTime, href, date, dateTo }) => {
   const { format } = useDateUtils()
-  const formattedDate = date && format(new Date(date), 'do MMMM yyyy')
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
+
+  let formattedDate: string | undefined
+
+ if (dateTo && date) {
+   formattedDate = formatEventDates(date, dateTo, activeLocale)
+ } else if (date) {
+   formattedDate = format(new Date(date), 'do MMMM yyyy')
+ }
 
   return (
     <LinkV2 href={href} className={styles.container}>

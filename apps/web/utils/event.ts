@@ -1,4 +1,10 @@
 import format from 'date-fns/format'
+import isSameDay from 'date-fns/isSameDay'
+import localeEN from 'date-fns/locale/en-GB'
+import localeIS from 'date-fns/locale/is'
+
+import type { Locale } from '@island.is/shared/types'
+
 import type { EventLocation, EventTime } from '../graphql/schema'
 
 export const formatEventLocation = (eventLocation: EventLocation) => {
@@ -27,15 +33,15 @@ export const formatEventTime = (eventTime: EventTime, separator = '-') => {
   }`
 }
 
-export const formatEventDates = (dateFrom: string, dateTo?: string) => {
-  const sameYear =
-    dateTo && dateFrom
-      ? new Date(dateFrom).getFullYear() === new Date(dateTo).getFullYear()
-      : false
+export const formatEventDates = (dateFrom: string, dateTo: string, locale?: Locale) => {
+  const from = new Date(dateFrom)
+  const to = new Date(dateTo)
 
-  const formattedDate =
-    dateFrom && format(new Date(dateFrom), sameYear ? 'dd MMM' : 'dd MMM yyyy')
-  const formattedDate2 = dateTo && format(new Date(dateTo), 'dd MMM yyyy')
-
-  return formattedDate2 ? `${formattedDate} - ${formattedDate2}` : formattedDate
+  // same date
+  if (isSameDay(from,to)) {
+    return format(new Date(dateFrom), 'dd MMM yyyy', {locale: locale === 'en' ? localeEN : localeIS})
+  }
+  const formattedDateFrom = format(from, from.getFullYear() === to.getFullYear() ? 'dd MMM' : 'dd MMM yyyy', {locale: locale === 'en' ? localeEN : localeIS})
+  const formattedDateTo = format(to, 'dd MMM yyyy', {locale: locale === 'en' ? localeEN : localeIS})
+  return `${formattedDateFrom} - ${formattedDateTo}`
 }
