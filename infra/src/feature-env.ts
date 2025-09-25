@@ -444,4 +444,3 @@ yargs(process.argv.slice(2))
     },
   })
   .demandCommand().argv
-// Deploy all
