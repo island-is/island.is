@@ -143,15 +143,17 @@ module.exports = {
             ORDER BY c.payment_flow_id, c.created DESC, c.id DESC
           )
           INSERT INTO payment_fulfillment
-            (id, payment_flow_id, payment_method, confirmation_ref_id, created, modified)
+            (id, payment_flow_id, payment_method, confirmation_ref_id, fjs_charge_id, created, modified)
           SELECT
             gen_random_uuid(),
             p.payment_flow_id,
             'card',
             p.confirmation_id,
+            f.id,
             COALESCE(p.created, NOW()),
             COALESCE(p.modified, NOW())
           FROM picked p
+          LEFT JOIN fjs_charge f ON f.payment_flow_id = p.payment_flow_id
           ON CONFLICT (payment_flow_id) DO NOTHING;
         `,
         { transaction: t },
