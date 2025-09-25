@@ -503,6 +503,7 @@
     "webpack-bundle-analyzer": "4.5.0"
   },
   "resolutions": {
+    "tar-fs": "2.1.4",
     "dottie": "2.0.4",
     "marked": "2.0.0",
     "elliptic": "6.5.4",
