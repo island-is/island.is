@@ -224,7 +224,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     courtSessions {
       id
       startDate
-      endDate
+      isConfirmed
     }
     mergedCases {
       id

@@ -38,7 +38,7 @@ export enum CourtDocumentType {
 
 interface CourtSession {
   startDate?: string | Date | null
-  endDate?: string | Date | null
+  isConfirmed?: boolean | null
 }
 
 export const hasGeneratedCourtRecordPdf = (
@@ -52,7 +52,7 @@ export const hasGeneratedCourtRecordPdf = (
   }
 
   if (isDistrictCourtUser(user)) {
-    return Boolean(courtSessions[0].startDate) // TODO: May want to rethink this later
+    return Boolean(courtSessions[0].startDate)
   }
 
   if (
@@ -60,7 +60,7 @@ export const hasGeneratedCourtRecordPdf = (
     isPublicProsecutionOfficeUser(user) ||
     isDefenceUser(user)
   ) {
-    return Boolean(courtSessions[0].endDate)
+    return Boolean(courtSessions[0].isConfirmed)
   }
 
   if (
@@ -68,7 +68,7 @@ export const hasGeneratedCourtRecordPdf = (
     isCompletedCase(caseState) &&
     indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
   ) {
-    return Boolean(courtSessions[0].endDate)
+    return Boolean(courtSessions[0].isConfirmed)
   }
 
   return false
