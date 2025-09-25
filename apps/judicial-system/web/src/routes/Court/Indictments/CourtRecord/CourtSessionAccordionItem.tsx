@@ -126,8 +126,8 @@ const useCourtSessionUpdater = (
 
     updateFn({
       ...updates,
-      caseId: workingCase.id,
       courtSessionId: sessionId,
+      caseId: workingCase.id,
     })
   }
 }
@@ -142,12 +142,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     workingCase,
     setWorkingCase,
   } = props
-  const {
-    courtDocument,
-    updateCourtDocument,
-    deleteCourtDocument,
-    fileCourtDocumentInCourtSession,
-  } = useCourtDocuments()
+  const { courtDocument } = useCourtDocuments()
   const { updateCourtSession } = useCourtSessions()
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
@@ -174,10 +169,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     }
 
     const filedDocuments: FiledDocuments[] = workingCase.courtSessions.map(
-      (a) => ({
-        courtSessionId: a.id,
+      (courtSession) => ({
+        courtSessionId: courtSession.id,
         files:
-          a.filedDocuments?.filter((aa) => aa.courtSessionId === a.id) || [],
+          courtSession.filedDocuments?.filter(
+            (filedDocument) => filedDocument.courtSessionId === courtSession.id,
+          ) || [],
       }),
     )
 
@@ -220,7 +217,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     }
     const id = file.id
 
-    const deleted = await deleteCourtDocument({
+    const deleted = await courtDocument.delete.action({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
       courtDocumentId: id,
@@ -251,7 +248,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    updateCourtDocument({
+    courtDocument.update.action({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
       courtDocumentId: draggedFileId,
@@ -276,7 +273,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    updateCourtDocument({
+    courtDocument.update.action({
       caseId: workingCase.id,
       courtSessionId,
       courtDocumentId: fileId,
@@ -298,7 +295,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }
 
   const handleFileCourtDocument = async (file: ReorderableFile) => {
-    const res = await fileCourtDocumentInCourtSession({
+    const res = await courtDocument.fileInCourtSession.action({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
       courtDocumentId: file.id,
@@ -360,6 +357,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     if (merged < startDate) {
       toast.error('Þinghaldi slitið má ekki vera á undan Þinghald hófst')
+      return
     }
 
     patchSession(
@@ -375,7 +373,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     value: string,
     courtSessionId: string,
   ) => {
-    const res = await courtDocument.create({
+    const res = await courtDocument.create.action({
       caseId: workingCase.id,
       courtSessionId,
       name: value,
@@ -624,9 +622,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             buttonText="Bæta við skjali"
             name="indictmentCourtDocuments"
             isDisabled={() =>
-              courtDocument.isCreating || courtSession.isConfirmed || false
+              courtDocument.create.loading || courtSession.isConfirmed || false
             }
-            isLoading={courtDocument.isCreating}
+            isLoading={courtDocument.create.loading}
           >
             <Box display="flex" flexDirection="column" rowGap={2}>
               <Box
@@ -749,7 +747,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                               variant="darkerBlue"
                               onClick={() => handleFileCourtDocument(file)}
                               disabled={
-                                courtDocument.isCreating ||
+                                courtDocument.isLoading ||
                                 courtSession.isConfirmed ||
                                 false
                               }

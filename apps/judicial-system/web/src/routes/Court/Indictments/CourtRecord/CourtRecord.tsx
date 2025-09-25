@@ -120,7 +120,10 @@ const CourtRecord: FC = () => {
                 ],
               }))
             }}
-            disabled={!stepIsValid}
+            disabled={
+              !stepIsValid ||
+              workingCase.courtSessions?.some((c) => !c.isConfirmed)
+            }
             icon="add"
           >
             Bæta við þinghaldi

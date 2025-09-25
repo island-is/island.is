@@ -4,6 +4,8 @@ import {
   Button,
   DialogPrompt,
   toast,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
@@ -51,12 +53,17 @@ const StartAreaCollection = ({ areaId }: { areaId: string }) => {
           display={['block', 'flex', 'flex']}
           justifyContent="spaceBetween"
           alignItems="center"
-          padding={3}
+          paddingY={5}
+          paddingX={3}
           marginY={5}
         >
-          <Text marginBottom={[2, 0, 0]} variant="medium" color="blue600">
-            {formatMessage(m.startCollectionDescriptionInBox)}
-          </Text>
+          <GridRow>
+            <GridColumn span={['12/12', '8/12']}>
+              <Text marginBottom={[2, 0, 0]} variant="medium" color="blue600">
+                {formatMessage(m.startCollectionDescriptionInBox)}
+              </Text>
+            </GridColumn>
+          </GridRow>
           <Button
             icon="lockOpened"
             iconType="outline"
@@ -69,6 +76,7 @@ const StartAreaCollection = ({ areaId }: { areaId: string }) => {
         </Box>
       }
       onConfirm={() => onStartCollection()}
+      buttonPropsConfirm={{ variant: 'primary' }}
       buttonTextConfirm={formatMessage(m.startCollectionButtonModal)}
     />
   )
