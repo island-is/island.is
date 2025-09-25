@@ -12,10 +12,7 @@ import { IdentityClientService } from '@island.is/clients/identity'
 
 @Injectable()
 export class HistoryBuilder {
-
-  constructor(
-    private identityService: IdentityClientService,
-  ) {}
+  constructor(private identityService: IdentityClientService) {}
   async buildApplicationHistory<
     TContext extends ApplicationContext,
     TStateSchema extends ApplicationStateSchema<TEvents>,
@@ -44,16 +41,19 @@ export class HistoryBuilder {
         if (typeof historyLog.logMessage === 'function') {
           const [subject, actor] = await Promise.all([
             exitEventSubjectNationalId
-              ? this.identityService.tryToGetNameFromNationalId(exitEventSubjectNationalId)
+              ? this.identityService.tryToGetNameFromNationalId(
+                  exitEventSubjectNationalId,
+                )
               : Promise.resolve(undefined),
 
             exitEventActorNationalId
-              ? this.identityService.tryToGetNameFromNationalId(exitEventActorNationalId)
+              ? this.identityService.tryToGetNameFromNationalId(
+                  exitEventActorNationalId,
+                )
               : Promise.resolve(undefined),
-          ]);
+          ])
 
-          const values = { subject, actor };
-
+          const values = { subject, actor }
 
           const message = historyLog.logMessage(values)
 
