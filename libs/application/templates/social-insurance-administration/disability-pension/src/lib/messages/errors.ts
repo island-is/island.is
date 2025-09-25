@@ -78,8 +78,10 @@ export const errors = defineMessages({
   },
   emptyPreviousEmploymentJobOther: {
     id: 'dp.application:errors.previousEmploymentJobOtherRequired',
-    defaultMessage: 'Nauðsynlegt er að taka fram hvað aðalstarf þitt var ef "Annað" er valið',
-    description: 'You must specify in what your previous job was if "Other" is selected',
+    defaultMessage:
+      'Nauðsynlegt er að taka fram hvað aðalstarf þitt var ef "Annað" er valið',
+    description:
+      'You must specify in what your previous job was if "Other" is selected',
   },
   emptyPreviousEmploymentField: {
     id: 'dp.application:errors.previousEmploymentFieldRequired',
@@ -89,8 +91,10 @@ export const errors = defineMessages({
   },
   emptyPreviousEmploymentFieldOther: {
     id: 'dp.application:errors.previousEmploymentFieldOtherRequired',
-    defaultMessage: 'Nauðsynlegt er að taka fram hvaða starfssemi þú vannst við ef "Annað" er valið',
-    description: 'You must specify in what industry you worked in if "Other" is selected',
+    defaultMessage:
+      'Nauðsynlegt er að taka fram hvaða starfssemi þú vannst við ef "Annað" er valið',
+    description:
+      'You must specify in what industry you worked in if "Other" is selected',
   },
   emptyEmploymentStatus: {
     id: 'dp.application:errors.employmentStatusRequired',
