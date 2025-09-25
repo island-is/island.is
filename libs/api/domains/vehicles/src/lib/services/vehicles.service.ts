@@ -248,7 +248,10 @@ export class VehiclesService {
     return this.isAllowedMileageRegistrationNoFetch(auth, res ?? undefined)
   }
 
-  private isAllowedMileageRegistrationNoFetch( auth: User, res?: VehiclesDetail ): boolean {
+  private isAllowedMileageRegistrationNoFetch(
+    auth: User,
+    res?: VehiclesDetail,
+  ): boolean {
     // String of owners where owner can delegate registration.
     const allowedCoOwners = process.env.VEHICLES_ALLOW_CO_OWNERS?.split(
       ',',
@@ -342,7 +345,8 @@ export class VehiclesService {
     const isEditing =
       isReadDateToday(latestDate ?? undefined) && isIslandIsReading
 
-    const canUserRegisterVehicleMileage = this.isAllowedMileageRegistrationNoFetch(auth, basicData ?? undefined)
+    const canUserRegisterVehicleMileage =
+      this.isAllowedMileageRegistrationNoFetch(auth, basicData ?? undefined)
 
     const returnData = (res ?? []).map((item) => {
       return mileageDetailConstructor(item)
@@ -354,7 +358,8 @@ export class VehiclesService {
       editing: isEditing,
       canUserRegisterVehicleMileage,
       canRegisterMileage: basicData?.mainInfo?.canRegisterMileage,
-      requiresMileageRegistration: basicData?.mainInfo?.requiresMileageRegistration
+      requiresMileageRegistration:
+        basicData?.mainInfo?.requiresMileageRegistration,
     }
   }
 
