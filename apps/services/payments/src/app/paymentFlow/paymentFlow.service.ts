@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
-import { WhereOptions } from 'sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { Sequelize, WhereOptions } from 'sequelize'
 import { ConfigType } from '@nestjs/config'
 import { isCompany, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
@@ -73,6 +73,8 @@ interface PaymentFlowUpdateConfig {
 @Injectable()
 export class PaymentFlowService {
   constructor(
+    @InjectConnection()
+    private readonly sequelize: Sequelize,
     @InjectModel(PaymentFlow)
     private readonly paymentFlowModel: typeof PaymentFlow,
     @InjectModel(PaymentFlowCharge)
@@ -580,11 +582,9 @@ export class PaymentFlowService {
     try {
       return await retry(
         async () => {
+          // Find the FJS charge by receptionId
           const fjsCharge = await this.fjsChargeModel.findOne({
-            where: {
-              receptionId,
-              status: 'unpaid',
-            },
+            where: { receptionId },
           })
 
           if (!fjsCharge) {
@@ -593,37 +593,76 @@ export class PaymentFlowService {
             )
           }
 
-          await this.paymentFulfillmentModel.create({
-            paymentFlowId,
-            paymentMethod: 'invoice',
-            confirmationRefId: fjsCharge.id,
-            fjsChargeId: fjsCharge.id,
+          return await this.sequelize.transaction(async (transaction) => {
+            // Check if already processed (idempotency)
+            const existingFulfillment =
+              await this.paymentFulfillmentModel.findOne({
+                where: {
+                  paymentFlowId,
+                  paymentMethod: 'invoice',
+                },
+                transaction,
+              })
+
+            if (existingFulfillment) {
+              this.logger.info(
+                `[${paymentFlowId}] Payment fulfillment already exists, ensuring charge is marked as paid`,
+              )
+
+              // Ensure the charge status is set to paid
+              await this.fjsChargeModel.update(
+                { status: 'paid' },
+                {
+                  where: { id: fjsCharge.id },
+                  transaction,
+                },
+              )
+
+              return
+            }
+
+            // Create fulfillment and update charge status atomically
+            try {
+              await this.paymentFulfillmentModel.create(
+                {
+                  paymentFlowId,
+                  paymentMethod: 'invoice',
+                  confirmationRefId: fjsCharge.id,
+                  fjsChargeId: fjsCharge.id,
+                },
+                { transaction },
+              )
+
+              await this.fjsChargeModel.update(
+                { status: 'paid' },
+                {
+                  where: { id: fjsCharge.id },
+                  transaction,
+                },
+              )
+
+              this.logger.info(
+                `[${paymentFlowId}] Successfully created invoice payment fulfillment and updated FJS charge status to paid`,
+                { chargeId: fjsCharge.id },
+              )
+            } catch (error) {
+              // Handle unique constraint violations (race condition)
+              if (error.name === 'SequelizeUniqueConstraintError') {
+                this.logger.info(
+                  `[${paymentFlowId}] Payment fulfillment already exists (race condition), ensuring charge is paid`,
+                )
+
+                await this.fjsChargeModel.update(
+                  { status: 'paid' },
+                  {
+                    where: { id: fjsCharge.id },
+                    transaction,
+                  },
+                )
+              }
+              throw error
+            }
           })
-
-          const [affectedCount] = await this.fjsChargeModel.update(
-            {
-              status: 'paid',
-            },
-            {
-              where: { id: fjsCharge.id },
-            },
-          )
-
-          if (affectedCount === 0) {
-            this.logger.error(
-              `[${paymentFlowId}] Failed to update FJS charge status to paid`,
-              {
-                chargeId: fjsCharge.id,
-              },
-            )
-          }
-
-          this.logger.info(
-            `[${paymentFlowId}] Successfully updated FJS charge status to paid`,
-            {
-              chargeId: fjsCharge.id,
-            },
-          )
         },
         {
           maxRetries: 3,
