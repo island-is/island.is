@@ -25,12 +25,8 @@ describe('PodDisruptionBudget definitions', () => {
     const sut: ServiceBuilder<'api'> = service('api')
     const serviceDef: Awaited<ReturnType<typeof renderHelmServiceFile>> =
       await renderHelmServiceFile(Staging, [sut], [sut], 'no-mocks')
-    expect(serviceDef.services.api.podDisruptionBudget?.maxUnavailable).toEqual(
-      1,
-    )
-    expect(
-      serviceDef.services.api.podDisruptionBudget?.unhealthyPodEvictionPolicy,
-    ).toEqual('IfHealthyBudget')
+    expect(serviceDef.services.api.podDisruptionBudget?.maxUnavailable).toEqual(1)
+    expect(serviceDef.services.api.podDisruptionBudget?.unhealthyPodEvictionPolicy).toEqual('AlwaysAllow')
   })
   it('Service should have minAvailable: 2, thus overriding the default', async () => {
     const sut: ServiceBuilder<'api'> = service('api').podDisruption({
@@ -58,10 +54,9 @@ describe('PodDisruptionBudget definitions', () => {
     const pdb = result.serviceDef[0].podDisruptionBudget
     expect(pdb?.maxUnavailable).toEqual(2)
   })
-
-  it('Service should have unhealthyPodEvictionPolicy: AlwaysAllow, thus overriding the default', async () => {
+   it('Service should have unhealthyPodEvictionPolicy: IfHealthyBudget, thus overriding the default', async () => {
     const sut: ServiceBuilder<'api'> = service('api').podDisruption({
-      unhealthyPodEvictionPolicy: 'AlwaysAllow',
+      unhealthyPodEvictionPolicy: 'IfHealthyBudget',
     })
     const result = (await generateOutputOne({
       outputFormat: renderers.helm,
@@ -70,6 +65,7 @@ describe('PodDisruptionBudget definitions', () => {
       env: Staging,
     })) as SerializeSuccess<HelmService>
     const pdb = result.serviceDef[0].podDisruptionBudget
-    expect(pdb?.maxUnavailable).toEqual('AlwaysAllow')
+    expect(pdb?.unhealthyPodEvictionPolicy).toEqual('IfHealthyBudget')
+
   })
 })
