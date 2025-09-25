@@ -99,8 +99,15 @@ export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
       },
       { customCallbackId: callbackIdRef.current, allowMultiple: true },
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [
+    application.answers,
+    application.id,
+    getValues,
+    locale,
+    setBeforeSubmitCallback,
+    setValue,
+    updateApplication,
+  ])
 
   return null
 }
