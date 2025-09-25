@@ -19,6 +19,7 @@ import {
   CaseFileCategory,
   DefendantEventType,
   isVerdictInfoChanged,
+  PoliceFileTypeCode,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
@@ -37,6 +38,7 @@ import { DeliverResponse } from './models/deliver.response'
 type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   Verdict,
   | 'externalPoliceDocumentId'
+  | 'serviceStatus'
   | 'serviceRequirement'
   | 'servedBy'
   | 'appealDecision'
@@ -106,16 +108,16 @@ export class VerdictService {
     transaction: Transaction,
     rulingDate?: Date,
   ): Promise<UpdateVerdictDto> {
+    if (!update.serviceRequirement) {
+      return update
+    }
+
     // rulingDate should be set, but the case completed guard can not guarantee its presence
     // ensure that ruling date is present to prevent side effects in handle service requirement update
     if (!rulingDate) {
       throw new BadRequestException(
         'Missing rulingDate for service requirement update',
       )
-    }
-
-    if (!update.serviceRequirement) {
-      return update
     }
 
     const currentVerdict = await this.findById(verdictId, transaction)
@@ -212,7 +214,7 @@ export class VerdictService {
       ...(theCase.courtCaseNumber
         ? [
             {
-              code: 'COURT_CASE_NUMBER',
+              code: 'VERDICT_COURT_CASE_NUMBER',
               value: theCase.courtCaseNumber,
             },
           ]
@@ -322,7 +324,7 @@ export class VerdictService {
           ? [{ code: 'RULING_DATE', value: theCase.rulingDate }]
           : []),
       ],
-      fileTypeCode: 'BRTNG_DOMUR',
+      fileTypeCode: PoliceFileTypeCode.VERDICT,
       caseSupplements: this.mapToPoliceSupplementCodes(theCase, defendant),
     })
     if (!createdDocument) {
@@ -418,22 +420,15 @@ export class VerdictService {
     return delivered
   }
   async getAndSyncVerdict(verdict: Verdict, user?: TUser) {
-    // RLS: Remove boolean var when the getVerdictDocumentStatus is supported by RLS
-    const isDocumentStatusImplemented = false
-
     // check specifically a verdict that is delivered and service status hasn't been updated
-    if (
-      isDocumentStatusImplemented &&
-      verdict.externalPoliceDocumentId &&
-      !verdict.serviceStatus
-    ) {
+    if (verdict.externalPoliceDocumentId && !verdict.serviceStatus) {
       const verdictInfo = await this.policeService.getVerdictDocumentStatus(
         verdict.externalPoliceDocumentId,
         user,
       )
 
       if (isVerdictInfoChanged(verdictInfo, verdict)) {
-        return this.update(verdict, verdictInfo)
+        return this.updateVerdict(verdict, verdictInfo)
       }
     }
     return verdict

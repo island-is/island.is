@@ -845,8 +845,9 @@ services-auth-public-api:
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'innskra.island.is'
+          pathTypeOverride: 'ImplementationSpecific'
           paths:
-            - '/api'
+            - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1

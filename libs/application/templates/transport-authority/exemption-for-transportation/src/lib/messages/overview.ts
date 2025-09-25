@@ -98,7 +98,7 @@ export const overview = {
     },
     directions: {
       id: 'ta.eft.application:overview.longTermlocation.directions',
-      defaultMessage: 'Leiðarlýsing',
+      defaultMessage: 'Ósk um svæði',
       description: 'Overview long-term location directions label',
     },
   }),
@@ -142,7 +142,7 @@ export const overview = {
     },
     label: {
       id: 'ta.eft.application:overview.freight.label',
-      defaultMessage: 'Farmur {freightNumber}: {freightName} {length}/{weight}',
+      defaultMessage: 'Farmur {freightNumber}: {freightName}',
       description: 'Overview freight label',
     },
     convoyLabel: {

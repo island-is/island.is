@@ -147,6 +147,7 @@ export {
   getIndictmentAppealDeadlineDate,
   getAppealDeadlineDate,
   hasDatePassed,
+  hasTimestamp,
 } from './lib/dates'
 
 export type {
@@ -179,6 +180,7 @@ export {
   CourtSessionClosedLegalBasis,
   CourtSessionRulingType,
   CourtDocumentType,
+  hasGeneratedCourtRecordPdf,
 } from './lib/courtSession'
 
 export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'

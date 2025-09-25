@@ -1,4 +1,11 @@
-import { ActionCard, Box, Button, Text, toast } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  Button,
+  Stack,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import { Modal } from '@island.is/portals/my-pages/core'
@@ -14,8 +21,10 @@ import {
 } from '@island.is/api/schema'
 
 const SignedLists = ({
+  collectionType,
   signedLists,
 }: {
+  collectionType: SignatureCollectionCollectionType
   signedLists: SignatureCollectionSignedList[]
 }) => {
   useNamespaces('sp.signatureCollection')
@@ -24,7 +33,6 @@ const SignedLists = ({
   const [listIdToUnsign, setListIdToUnsign] = useState<string | undefined>(
     undefined,
   )
-  const collectionType = signedLists?.[0]?.collectionType ?? ''
   const { refetchSignedLists } = useGetSignedList(collectionType)
 
   const [unSign, { loading }] = useMutation<{
@@ -56,16 +64,17 @@ const SignedLists = ({
   }
 
   return (
-    <Box marginTop={[5, 7]}>
+    <Box>
       {signedLists?.length > 0 && (
-        <Text marginBottom={2} variant="h4">
+        <Text variant="h4" marginBottom={2}>
           {formatMessage(m.mySigneeListsHeader)}
         </Text>
       )}
-      {signedLists?.map((list) => {
-        return (
-          <Box marginBottom={3} key={list.id}>
+      <Stack space={[3, 5]}>
+        {signedLists?.map((list) => {
+          return (
             <ActionCard
+              key={list.id}
               heading={
                 collectionType ===
                 SignatureCollectionCollectionType.LocalGovernmental
@@ -137,9 +146,9 @@ const SignedLists = ({
                   : undefined
               }
             />
-          </Box>
-        )
-      })}
+          )
+        })}
+      </Stack>
       <Modal
         id="unSignList"
         isVisible={modalIsOpen}
@@ -150,15 +159,13 @@ const SignedLists = ({
           setModalIsOpen(false)
         }}
       >
-        <Box display="block" width="full">
-          <Text variant="h2" marginTop={[5, 0]}>
+        <Box>
+          <Text variant="h2" marginBottom={2}>
             {formatMessage(m.unSignList)}
           </Text>
-          <Text variant="default" marginTop={2}>
-            {formatMessage(m.unSignModalMessage)}
-          </Text>
+          <Text variant="default">{formatMessage(m.unSignModalMessage)}</Text>
           <Box
-            marginTop={[7, 10]}
+            marginTop={[3, 5]}
             marginBottom={5}
             display="flex"
             justifyContent="center"

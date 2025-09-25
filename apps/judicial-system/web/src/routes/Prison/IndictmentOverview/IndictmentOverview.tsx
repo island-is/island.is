@@ -11,9 +11,12 @@ import {
 } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
+import { Feature } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -47,6 +50,7 @@ const IndictmentOverview = () => {
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { features } = useContext(FeatureContext)
 
   const { updateCase, isUpdatingCase } = useCase()
 
@@ -100,6 +104,15 @@ const IndictmentOverview = () => {
   const fileCategory = hasRuling
     ? CaseFileCategory.RULING
     : CaseFileCategory.COURT_RECORD
+
+  const showGeneratedCourtRecord =
+    !hasRuling &&
+    hasGeneratedCourtRecordPdf(
+      workingCase.state,
+      workingCase.indictmentRulingDecision,
+      workingCase.courtSessions,
+      user,
+    )
 
   const savePunishmentType = async () => {
     const updatedCase = await updateCase(workingCase.id, {
@@ -199,6 +212,15 @@ const IndictmentOverview = () => {
               hasRuling ? strings.verdictTitle : strings.courtRecordTitle,
             )}
           </Text>
+          {showGeneratedCourtRecord && (
+            <PdfButton
+              caseId={workingCase.id}
+              title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+              pdfType="courtRecord"
+              renderAs="row"
+              elementId="Þingbók"
+            />
+          )}
           <RenderFiles
             onOpenFile={onOpen}
             caseFiles={
@@ -207,19 +229,20 @@ const IndictmentOverview = () => {
               ) ?? []
             }
           />
-          {workingCase.defendants?.map(
-            (defendant) =>
-              defendant.verdict?.serviceDate && (
-                <PdfButton
-                  key={defendant.id}
-                  caseId={workingCase.id}
-                  title={`Birtingarvottorð ${defendant.name}.pdf`}
-                  pdfType="verdictServiceCertificate"
-                  elementId={[defendant.id]}
-                  renderAs="row"
-                />
-              ),
-          )}
+          {features?.includes(Feature.VERDICT_DELIVERY) &&
+            workingCase.defendants?.map(
+              (defendant) =>
+                defendant.verdict?.serviceDate && (
+                  <PdfButton
+                    key={defendant.id}
+                    caseId={workingCase.id}
+                    title={`Birtingarvottorð ${defendant.name}.pdf`}
+                    pdfType="verdictServiceCertificate"
+                    elementId={[defendant.id]}
+                    renderAs="row"
+                  />
+                ),
+            )}
         </Box>
         {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>

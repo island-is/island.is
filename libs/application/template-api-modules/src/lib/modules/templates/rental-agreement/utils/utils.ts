@@ -20,7 +20,6 @@ export const formatPhoneNumber = (phone: string) => {
 export const mapApplicantsInfo = (applicants: Array<ApplicantsInfo> = []) => {
   return applicants.map((applicant) => ({
     name: applicant.nationalIdWithName.name,
-    address: applicant.email,
   }))
 }
 
@@ -29,8 +28,8 @@ export const mapPersonToArray = (person: ApplicantsInfo) => {
     nationalId: person.nationalIdWithName.nationalId,
     name: person.nationalIdWithName.name,
     email: person.email,
+    address: '', // Intentionally blank as it is not used in the HMS Rental Agreement
     phone: formatPhoneNumber(person.phone),
-    address: person.address,
     isRepresentative: person.isRepresentative,
   }
 }

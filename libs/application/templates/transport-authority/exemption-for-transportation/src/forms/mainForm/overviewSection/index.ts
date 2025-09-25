@@ -22,8 +22,6 @@ import {
   getVehicleSpacingOverviewItems,
   MAX_CNT_FREIGHT,
   getFreightItem,
-  formatNumberWithMeters,
-  formatNumberWithTons,
   getFreightOverviewShortTermItems,
   getFreightOverviewLongTermItems,
   getOverviewErrorMessage,
@@ -104,8 +102,6 @@ export const overviewSection = buildSection({
                     values: {
                       freightNumber: freightIndex + 1,
                       freightName: freightItem?.name,
-                      length: formatNumberWithMeters(freightItem?.length),
-                      weight: formatNumberWithTons(freightItem?.weight),
                     },
                   }
                 },
@@ -125,7 +121,9 @@ export const overviewSection = buildSection({
           title: overview.axleSpacing.subtitle,
           backId: 'axleSpacingMultiField',
           items: getAxleSpacingOverviewItems,
-          condition: checkHasFreightPairingItemWithExemptionForWeight,
+          condition: (answers) =>
+            checkIfExemptionTypeShortTerm(answers) &&
+            checkHasFreightPairingItemWithExemptionForWeight(answers),
         }),
         buildOverviewField({
           id: 'overview.vehicleSpacing',
@@ -133,6 +131,7 @@ export const overviewSection = buildSection({
           backId: 'vehicleSpacingMultiField',
           items: getVehicleSpacingOverviewItems,
           condition: (answers) =>
+            checkIfExemptionTypeShortTerm(answers) &&
             checkHasAnyConvoyWithTrailer(answers) &&
             checkHasFreightPairingItemWithExemptionForWeight(answers),
         }),

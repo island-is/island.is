@@ -190,27 +190,22 @@ export class VehicleController {
     return res.end()
   }
 
-  @Post('/ownership/pdf/:ssn')
+  @Post('/ownership/pdf')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description: 'Get a pdf ownership document from the Vehicle service',
   })
   async getVehicleOwnershipPdf(
-    @Param('ssn') ssn: string,
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    const documentResponse = await this.vehicleService.ownershipReportPdf(
-      user,
-      { personNationalId: ssn },
-    )
+    const documentResponse = await this.vehicleService.ownershipReportPdf(user)
 
     if (documentResponse) {
       this.auditService.audit({
         action: 'getVehicleOwnershipPdf',
         auth: user,
-        resources: ssn,
       })
 
       const contentArrayBuffer = await documentResponse.arrayBuffer()
