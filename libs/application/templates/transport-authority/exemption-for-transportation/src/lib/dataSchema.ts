@@ -82,36 +82,19 @@ const ResponsiblePersonSchema = z
     { path: ['phone'] },
   )
 
-const TransporterSchema = z
-  .object({
-    isSameAsApplicant: z.array(z.enum([YES])).optional(),
-    nationalId: z.string().optional(),
-    name: z.string().optional(),
-    email: z
-      .string()
-      .optional()
-      .refine((v) => !v || isValidEmail(v)),
-    phone: z
-      .string()
-      .optional()
-      .refine((v) => !v || isValidPhoneNumber(v)),
-    address: z.string().max(100).optional(),
-    postalCodeAndCity: z.string().optional(),
-  })
-  .refine(
-    ({ isSameAsApplicant, address }) => {
-      if (isSameAsApplicant?.includes(YES)) return true
-      return !!address
-    },
-    { path: ['address'] },
-  )
-  .refine(
-    ({ isSameAsApplicant, postalCodeAndCity }) => {
-      if (isSameAsApplicant?.includes(YES)) return true
-      return !!postalCodeAndCity
-    },
-    { path: ['postalCodeAndCity'] },
-  )
+const TransporterSchema = z.object({
+  isSameAsApplicant: z.array(z.enum([YES])).optional(),
+  nationalId: z.string().optional(),
+  name: z.string().optional(),
+  email: z
+    .string()
+    .optional()
+    .refine((v) => !v || isValidEmail(v)),
+  phone: z
+    .string()
+    .optional()
+    .refine((v) => !v || isValidPhoneNumber(v)),
+})
 
 const ConvoySchema = z.object({
   items: z.array(

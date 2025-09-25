@@ -61,7 +61,7 @@ export const getUserInformationOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const getApplicant = (includeAddress: boolean) => [
+  const applicant = [
     getValueViaPath<string>(externalData, 'nationalRegistry.data.fullName'),
     formatKennitala(
       getValueViaPath<string>(
@@ -69,27 +69,6 @@ export const getUserInformationOverviewItems = (
         'nationalRegistry.data.nationalId',
       ) || '',
     ),
-    ...(includeAddress
-      ? [
-          getAddressAndPostalCodeCityStr(
-            getValueViaPath<string>(
-              externalData,
-              'nationalRegistry.data.address.streetAddress',
-            ),
-            `${
-              getValueViaPath<string>(
-                externalData,
-                'nationalRegistry.data.address.postalCode',
-              ) ?? ''
-            } ${
-              getValueViaPath<string>(
-                externalData,
-                'nationalRegistry.data.address.locality',
-              ) ?? ''
-            }`,
-          ),
-        ]
-      : []),
     formatPhoneNumber(
       removeCountryCode(
         getValueViaPath<string>(answers, 'applicant.phoneNumber') || '',
@@ -102,10 +81,6 @@ export const getUserInformationOverviewItems = (
     getValueViaPath<string>(answers, 'transporter.name'),
     formatKennitala(
       getValueViaPath<string>(answers, 'transporter.nationalId') || '',
-    ),
-    getAddressAndPostalCodeCityStr(
-      getValueViaPath<string>(answers, 'transporter.address'),
-      getValueViaPath<string>(answers, 'transporter.postalCodeAndCity'),
     ),
     formatPhoneNumber(
       removeCountryCode(
@@ -132,13 +107,13 @@ export const getUserInformationOverviewItems = (
     {
       width: 'half',
       keyText: overview.userInformation.applicantSubtitle,
-      valueText: getApplicant(false),
+      valueText: applicant,
     },
     {
       width: 'half',
       keyText: overview.userInformation.transporterSubtitle,
       valueText: isSameAsApplicant(answers, 'transporter')
-        ? getApplicant(true)
+        ? applicant
         : transporter,
     },
     {
@@ -146,7 +121,7 @@ export const getUserInformationOverviewItems = (
       keyText: overview.userInformation.responsiblePersonSubtitle,
       valueText: shouldShowResponsiblePerson(answers)
         ? isSameAsApplicant(answers, 'responsiblePerson')
-          ? getApplicant(false)
+          ? applicant
           : responsiblePerson
         : '',
       hideIfEmpty: true,
