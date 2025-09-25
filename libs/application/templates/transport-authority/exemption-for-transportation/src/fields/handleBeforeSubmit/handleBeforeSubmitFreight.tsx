@@ -73,7 +73,7 @@ export const HandleBeforeSubmitFreight: FC<FieldBaseProps> = ({
         }
         return [true, null]
       },
-      { customCallbackId: callbackIdRef.current, allowMultiple: true },
+      { allowMultiple: true, customCallbackId: callbackIdRef.current },
     )
   }, [
     application.answers,

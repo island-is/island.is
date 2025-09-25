@@ -59,10 +59,12 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
           showAlertMessage.current = false
           return [true, null] // Continue
         },
-        {
-          customCallbackId: callbackIdRef.current,
-          allowMultiple: field.allowMultipleSetBeforeSubmitCallbacks,
-        },
+        field.allowMultipleSetBeforeSubmitCallbacks
+          ? {
+              allowMultiple: true,
+              customCallbackId: callbackIdRef.current,
+            }
+          : undefined,
       )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
