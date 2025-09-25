@@ -245,6 +245,10 @@ export class VehiclesService {
       permno,
     })
 
+    return this.isAllowedMileageRegistrationNoFetch(auth, res ?? undefined)
+  }
+
+  private isAllowedMileageRegistrationNoFetch( auth: User, res?: VehiclesDetail ): boolean {
     // String of owners where owner can delegate registration.
     const allowedCoOwners = process.env.VEHICLES_ALLOW_CO_OWNERS?.split(
       ',',
@@ -313,7 +317,20 @@ export class VehiclesService {
     auth: User,
     input: GetMileageReadingRequest,
   ): Promise<VehicleMileageOverview | null> {
-    await this.hasVehicleServiceAuth(auth, input.permno)
+    //need to auth check
+    const basicData = await this.getVehicleDetail(auth, {
+      clientPersidno: auth.nationalId,
+      permno: input.permno,
+    }).catch((e) => {
+      if (e.status === 401 || e.status === 403) {
+        this.logger.error(UNAUTHORIZED_LOG, {
+          category: LOG_CATEGORY,
+          error: e,
+        })
+        throw new UnauthorizedException(UNAUTHORIZED_LOG)
+      }
+      throw e as Error
+    })
 
     const res = await this.getMileageWithAuth(auth).getMileageReading({
       permno: input.permno,
@@ -325,6 +342,8 @@ export class VehiclesService {
     const isEditing =
       isReadDateToday(latestDate ?? undefined) && isIslandIsReading
 
+    const canUserRegisterVehicleMileage = this.isAllowedMileageRegistrationNoFetch(auth, basicData ?? undefined)
+
     const returnData = res.map((item) => {
       return mileageDetailConstructor(item)
     })
@@ -333,6 +352,9 @@ export class VehiclesService {
       data: returnData,
       permno: input.permno,
       editing: isEditing,
+      canUserRegisterVehicleMileage,
+      canRegisterMileage: basicData?.mainInfo?.canRegisterMileage,
+      requiresMileageRegistration: basicData?.mainInfo?.requiresMileageRegistration
     }
   }
 
