@@ -80,6 +80,7 @@ export function prepareServiceForEnv(
           : {
               [name]: {
                 host: ingress.host[envType],
+                pathTypeOverride: ingress.pathTypeOverride,
                 paths: ingress.paths,
                 public: ingress.public,
                 extraAnnotations: ingress.extraAnnotations?.[envType],
