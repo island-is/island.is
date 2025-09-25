@@ -196,7 +196,7 @@ export class ApplicationAdminSerializer
       externalData: [],
       paymentStatus: getPaymentStatusForAdmin(payment),
       applicantName:
-        this.identityService.tryToGetNameFromNationalId(
+        await this.identityService.tryToGetNameFromNationalId(
           application.applicant,
           false,
         ) ?? '',
