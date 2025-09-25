@@ -14,12 +14,16 @@ import { useFileCourtDocumentInCourtSessionMutation } from './fileCourtDocumentI
 import { useUpdateCourtDocumentMutation } from './updateCourtDocument.generated'
 
 const useCourtDocuments = () => {
-  const [updateCourtDocumentMutation] = useUpdateCourtDocumentMutation()
+  const [updateCourtDocumentMutation, { loading: updateCourtDocumentLoading }] =
+    useUpdateCourtDocumentMutation()
   const [createCourtDocumentMutation, { loading: createCourtDocumentLoading }] =
     useCreateCourtDocumentMutation()
-  const [deleteCourtDocumentMutation] = useDeleteCourtDocumentMutation()
-  const [fileCourtDocumentInCourtSessionMutation] =
-    useFileCourtDocumentInCourtSessionMutation()
+  const [deleteCourtDocumentMutation, { loading: deleteCourtDocumentLoading }] =
+    useDeleteCourtDocumentMutation()
+  const [
+    fileCourtDocumentInCourtSessionMutation,
+    { loading: fileCourtDocumentInCourtSessionLoading },
+  ] = useFileCourtDocumentInCourtSessionMutation()
 
   const createCourtDocument = useCallback(
     async (createCourtDocumentInput: CreateCourtDocumentInput) => {
@@ -56,7 +60,7 @@ const useCourtDocuments = () => {
           },
         })
 
-        return Boolean(data)
+        return Boolean(data?.updateCourtDocument)
       } catch (error) {
         toast.error('Upp kom villa við að uppfæra þingskjal')
 
@@ -75,9 +79,9 @@ const useCourtDocuments = () => {
           },
         })
 
-        return Boolean(data)
+        return Boolean(data?.deleteCourtDocument)
       } catch (error) {
-        toast.error('Upp kom villa við að uppfæra þingskjal')
+        toast.error('Upp kom villa við að eyða þingskjali')
 
         return false
       }
@@ -111,12 +115,28 @@ const useCourtDocuments = () => {
   )
   return {
     courtDocument: {
-      create: createCourtDocument,
-      isCreating: createCourtDocumentLoading,
+      create: {
+        action: createCourtDocument,
+        loading: createCourtDocumentLoading,
+      },
+      update: {
+        action: updateCourtDocument,
+        loading: updateCourtDocumentLoading,
+      },
+      delete: {
+        action: deleteCourtDocument,
+        loading: deleteCourtDocumentLoading,
+      },
+      fileInCourtSession: {
+        action: fileCourtDocumentInCourtSession,
+        loading: fileCourtDocumentInCourtSessionLoading,
+      },
+      isLoading:
+        createCourtDocumentLoading ||
+        updateCourtDocumentLoading ||
+        deleteCourtDocumentLoading ||
+        fileCourtDocumentInCourtSessionLoading,
     },
-    updateCourtDocument,
-    deleteCourtDocument,
-    fileCourtDocumentInCourtSession,
   }
 }
 
