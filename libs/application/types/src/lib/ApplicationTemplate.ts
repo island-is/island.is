@@ -80,6 +80,9 @@ export interface ApplicationTemplate<
      * - `isListed`: If `true`, the field will be explicitly displayed in the admin portal.
      *               If `false`, the field is only retained for internal display (e.g., pendingActionCard).
      * - `label`: Optional. Only applies when `isListed` is `true`. This is the display label in the admin portal.
+     * - `isNationalId`: Optional. If `true`, the value is treated as a national ID. The admin portal will fetch
+     *                   the person's name from the national registry and display it as "<name> (<nationalId>)".
+     *                   If the name is unavailable, only "<nationalId>" is shown.
      *
      * **Array support**:
      * Use `$` as a wildcard for array elements (single level only).
@@ -90,10 +93,15 @@ export interface ApplicationTemplate<
      * answers: [
      *   { key: 'buyer.name', isListed: true, label: 'Buyer Name' },
      *   { key: 'coOwners.$.name', isListed: false },
-     *   { key: 'coOwners.$.nationalId', isListed: false },
+     *   { key: 'coOwners.$.nationalId', isListed: false, isNationalId: true },
      * ]
      */
-    answers?: { key: string; isListed: boolean; label?: StaticText }[]
+    answers?: {
+      key: string
+      isListed: boolean
+      label?: StaticText
+      isNationalId?: boolean
+    }[]
 
     /**
      * List of fields from the `externalData` object to retain after pruning.
