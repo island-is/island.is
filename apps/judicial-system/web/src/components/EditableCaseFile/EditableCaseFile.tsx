@@ -14,13 +14,11 @@ import {
   LoadingDots,
   Text,
   toast,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { CaseFileCategory } from '../../graphql/schema'
-import { TUploadFile } from '../../utils/hooks'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
 
@@ -49,9 +47,9 @@ interface Props {
   backgroundColor?: 'white'
   disabled?: boolean
   onRename: (id: string, name: string, displayDate: string) => void
-  onDelete: (file: TUploadFile) => void
+  onDelete: (id: string) => void
   onOpen?: (id: string) => void
-  onRetry?: (file: TUploadFile) => void
+  onRetry?: (id: string) => void
   onStartEditing?: () => void
   onStopEditing?: () => void
 }
@@ -227,7 +225,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <Box marginLeft={1}>
                     <button
                       onClick={() => {
-                        onDelete(caseFile as TUploadFile)
+                        onDelete(caseFile.id)
                         onStopEditing?.()
                       }}
                       className={cn(styles.editCaseFileButton, {
@@ -299,7 +297,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                 ) : (caseFile.status === FileUploadStatus.error || isEmpty) &&
                   onRetry ? (
                   <button
-                    onClick={() => onRetry(caseFile as UploadFile)}
+                    onClick={() => onRetry(caseFile.id)}
                     className={cn(
                       styles.editCaseFileButton,
                       styles.background.secondary,
