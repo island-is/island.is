@@ -256,23 +256,19 @@ export class VerdictService {
             },
           ]
         : []),
-      ...(theCase.prosecutor?.nationalId
+      ...(theCase.prosecutor?.name
         ? [
             {
-              code: 'PROSECUTOR_SSN',
-              value: normalizeAndFormatNationalId(
-                theCase.prosecutor?.nationalId,
-              )[0],
+              code: 'PROSECUTOR_NAME',
+              value: theCase.prosecutor.name,
             },
           ]
         : []),
-      ...(defendant.defenderNationalId
+      ...(defendant.defenderName
         ? [
             {
-              code: 'DEFENDER_SSN',
-              value: normalizeAndFormatNationalId(
-                defendant.defenderNationalId,
-              )[0],
+              code: 'DEFENDER_NAME',
+              value: defendant.defenderName,
             },
           ]
         : []),
