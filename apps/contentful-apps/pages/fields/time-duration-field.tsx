@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import addDays from 'date-fns/addDays'
+import format from 'date-fns/format'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
   Checkbox,
@@ -20,7 +21,9 @@ interface TimeDuration {
 const TimeDurationField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const [time, setTime] = useState<TimeDuration>(sdk.field.getValue() ?? {})
-  const [startDateIsSameAsEndDate, setStartDateIsSameAsEndDate] = useState(true)
+  const [startDateIsSameAsEndDate, setStartDateIsSameAsEndDate] = useState(
+    Boolean(time.endDate),
+  )
   const [startDateString, setStartDateString] = useState<string | undefined>(
     sdk.entry.fields.startDate.getForLocale(sdk.field.locale)?.getValue(),
   )
@@ -131,10 +134,7 @@ const TimeDurationField = () => {
         <Flex gap="spacingS" flexDirection="column">
           <Flex flexDirection="column">
             <FormControl.Label>Start date</FormControl.Label>
-            <Text>
-              {startDate.getDate()}.{startDate.getMonth() + 1}.
-              {startDate.getFullYear()}
-            </Text>
+            <Text>{format(startDate, 'dd MMM yyyy')}</Text>
           </Flex>
           <Flex gap="spacingS" flexDirection="column">
             <Flex flexDirection="column">
