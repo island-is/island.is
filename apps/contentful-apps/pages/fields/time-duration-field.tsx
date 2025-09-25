@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
@@ -22,11 +22,12 @@ const TimeDurationField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const [time, setTime] = useState<TimeDuration>(sdk.field.getValue() ?? {})
   const [startDateIsSameAsEndDate, setStartDateIsSameAsEndDate] = useState(
-    Boolean(time.endDate),
+    !time.endDate,
   )
   const [startDateString, setStartDateString] = useState<string | undefined>(
     sdk.entry.fields.startDate.getForLocale(sdk.field.locale)?.getValue(),
   )
+  const initialRender = useRef(true)
 
   useEffect(() => {
     if (startDateIsSameAsEndDate) {
@@ -36,7 +37,7 @@ const TimeDurationField = () => {
       }
     }
     sdk.window.stopAutoResizer()
-    sdk.window.updateHeight(540)
+    sdk.window.updateHeight(610)
   }, [sdk.window, startDateIsSameAsEndDate])
 
   const updateTime = useCallback(
@@ -74,6 +75,10 @@ const TimeDurationField = () => {
     return sdk.entry.fields.startDate
       .getForLocale(sdk.field.locale)
       .onValueChanged((value) => {
+        if (initialRender.current) {
+          initialRender.current = false
+          return
+        }
         setStartDateString(value)
         updateTime('endDate', '')
       })
@@ -94,6 +99,8 @@ const TimeDurationField = () => {
             setStartDateIsSameAsEndDate(newStartDateIsSameAsEndDate)
             if (newStartDateIsSameAsEndDate) {
               updateTime('endDate', '')
+            } else {
+              updateTime('endDate', fromDate.toISOString())
             }
           }}
         >
