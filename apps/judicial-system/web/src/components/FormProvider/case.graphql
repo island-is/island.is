@@ -282,7 +282,6 @@ query Case($input: CaseQueryInput!) {
         caseFileId
         generatedPdfUri
       }
-      isConfirmed
     }
     unfiledCourtDocuments {
       id
