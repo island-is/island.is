@@ -196,10 +196,10 @@ export class ApplicationAdminSerializer
       externalData: [],
       paymentStatus: getPaymentStatusForAdmin(payment),
       applicantName:
-        await this.identityService.tryToGetNameFromNationalId(
+        (await this.identityService.tryToGetNameFromNationalId(
           application.applicant,
           false,
-        ) ?? '',
+        )) ?? '',
       adminData: await getAdminDataForAdminPortal(
         template,
         application,
