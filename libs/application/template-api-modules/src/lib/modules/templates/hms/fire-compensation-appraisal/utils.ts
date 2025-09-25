@@ -69,11 +69,13 @@ export const mapAnswersToApplicationDto = (
   )?.find((realEstate) => realEstate.fasteignanumer === selectedRealEstateId)
 
   const parsedFiles = files?.map((file) => {
-    const ending = file.key.split('.').pop()
+    const nameArray = file.key.split('.')
+    const ending = nameArray.pop()
+    const heiti = nameArray.join('.').replace(/^[^_]*_/, '')
     const tegund = ending === 'pdf' ? 'application/pdf' : 'image/jpeg'
     return {
       flokkur: ending === 'pdf' ? 5 : 2,
-      heiti: file.key.replace(/^[^_]*_/, ''),
+      heiti,
       dags: new Date(),
       tegund,
       fileID: hashToLength20(file.key.split('_')[0]),
