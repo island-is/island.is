@@ -89,7 +89,7 @@ export const certificate = defineMessages({
     id: 'dp.application:disability.pension.certificate.information.medical.impairment.cause',
     defaultMessage:
       'Vandi sem veldur skerðingu á getu einstaklings til atvinnuþátttöku',
-    description: 'TODO',
+    description: 'Certificate cause',
   },
   informationMedicalImpairmentStability: {
     id: 'dp.application:disability.pension.certificate.information.medical.impairment.stability',
