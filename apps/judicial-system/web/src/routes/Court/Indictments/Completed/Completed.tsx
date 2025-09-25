@@ -241,7 +241,7 @@ const Completed: FC = () => {
         {workingCase.indictmentRulingDecision &&
           [
             CaseIndictmentRulingDecision.RULING,
-            CaseIndictmentRulingDecision.FINE,
+            CaseIndictmentRulingDecision.DISMISSAL,
           ].includes(workingCase.indictmentRulingDecision) && (
             <Conclusion
               title={`${
@@ -250,7 +250,7 @@ const Completed: FC = () => {
                   ? 'Dóms'
                   : 'Úrskurðar'
               }orð héraðsdóms`}
-              conclusionText={workingCase.conclusion}
+              conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
               judgeName={workingCase.judge?.name}
             />
           )}
