@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildRadioField,
   buildSelectField,
+  buildTextField,
   buildTitleField,
   YES,
 } from '@island.is/application/core'
@@ -16,6 +17,7 @@ import {
 } from '../../../../graphql/queries'
 import { getApplicationAnswers, yesOrNoOptions } from '../../../../utils'
 import { Query } from '@island.is/api/schema'
+import { OTHER_STATUS_VALUE } from '../../../../types/constants'
 
 export const previousEmploymentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT,
@@ -83,6 +85,25 @@ export const previousEmploymentField = buildMultiField({
         )
       },
     }),
+    buildTitleField({
+      title: m.questions.previousEmploymentJobOther,
+      titleVariant: 'h5',
+      marginTop: 2,
+      marginBottom: 0,
+      condition: (formValue) => {
+        const { previousEmployment } = getApplicationAnswers(formValue)
+        return previousEmployment?.job === OTHER_STATUS_VALUE
+      },
+    }),
+    buildTextField({
+      id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.jobOther`,
+      variant: 'textarea',
+      rows: 3,
+      condition: (formValue) => {
+        const { previousEmployment } = getApplicationAnswers(formValue)
+        return previousEmployment?.job === OTHER_STATUS_VALUE
+      },
+    }),
 
     buildTitleField({
       title: m.questions.previousEmploymentField,
@@ -114,6 +135,25 @@ export const previousEmploymentField = buildMultiField({
             }),
           ) ?? []
         )
+      },
+    }),
+    buildTitleField({
+      title: m.questions.previousEmploymentFieldOther,
+      titleVariant: 'h5',
+      marginTop: 2,
+      marginBottom: 0,
+      condition: (formValue) => {
+        const { previousEmployment } = getApplicationAnswers(formValue)
+        return previousEmployment?.field === OTHER_STATUS_VALUE
+      },
+    }),
+    buildTextField({
+      id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.fieldOther`,
+      variant: 'textarea',
+      rows: 3,
+      condition: (formValue) => {
+        const { previousEmployment } = getApplicationAnswers(formValue)
+        return previousEmployment?.field === OTHER_STATUS_VALUE
       },
     }),
   ],

@@ -179,7 +179,9 @@ export const dataSchema = z.object({
       hasEmployment: z.enum([YES, NO]),
       when: z.coerce.number().int().nullable().optional(),
       job: z.string().nullable().optional(),
+      jobOther: z.string().nullable().optional(),
       field: z.string().nullable().optional(),
+      fieldOther: z.string().nullable().optional(),
     })
     .refine(
       ({ hasEmployment, when }) => {
@@ -215,6 +217,30 @@ export const dataSchema = z.object({
       {
         path: ['field'],
         params: m.errors.emptyPreviousEmploymentField,
+      },
+    )
+    .refine(
+      (data) => {
+        if (data.hasEmployment === YES && data.job === OTHER_STATUS_VALUE) {
+          return data.jobOther && data.jobOther.length > 0
+        }
+        return true
+      },
+      {
+        path: ['jobOther'],
+        params: m.errors.emptyPreviousEmploymentJobOther,
+      },
+    )
+    .refine(
+      ({ hasEmployment, field, fieldOther }) => {
+        if (hasEmployment === YES && field === OTHER_STATUS_VALUE) {
+          return fieldOther && fieldOther.length > 0
+        }
+        return true
+      },
+      {
+        path: ['fieldOther'],
+        params: m.errors.emptyPreviousEmploymentFieldOther,
       },
     ),
   backgroundInfoEmploymentCapability: z

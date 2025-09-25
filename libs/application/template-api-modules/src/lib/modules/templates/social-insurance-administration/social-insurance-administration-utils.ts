@@ -690,9 +690,9 @@ export const transformApplicationToDisabilityPensionDTO = (
     lastProfessionYear: previousEmployment?.when
       ? Number.parseInt(previousEmployment.when)
       : undefined,
-    lastProfessionDescription: undefined,
+    lastProfessionDescription: previousEmployment?.jobOther,
     lastActivityOfProfession: previousEmployment?.field,
-    lastActivityOfProfessionDescription: undefined,
+    lastActivityOfProfessionDescription: previousEmployment?.fieldOther,
     educationalLevel: educationLevel ?? '',
     workCapacityAssessment: employmentCapability
       ? Number.parseInt(employmentCapability)

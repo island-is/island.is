@@ -35,7 +35,9 @@ export interface PreviousEmployment {
   hasEmployment: YesOrNo
   when: string
   job: string
+  jobOther?: string
   field: string
+  fieldOther?: string
 }
 
 export interface SelfAssessmentQuestionnaireAnswers {

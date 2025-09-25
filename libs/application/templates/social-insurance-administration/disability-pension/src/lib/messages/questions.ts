@@ -139,10 +139,20 @@ export const questions = defineMessages({
     description:
       'What is/was your main job where you previously worked/currently work?',
   },
+  previousEmploymentJobOther: {
+    id: 'dp.application:selfEvaluation.questions.previousEmployment.jobOther',
+    defaultMessage: 'Hvað?',
+    description: 'What was the other job?',
+  },
   previousEmploymentField: {
     id: 'dp.application:selfEvaluation.questions.previousEmployment.field',
     defaultMessage: 'Hvers konar starfsemi fer aðallega fram þar?',
     description: 'What kind of industry?',
+  },
+  previousEmploymentFieldOther: {
+    id: 'dp.application:selfEvaluation.questions.previousEmployment.fieldOther',
+    defaultMessage: 'Hvaða?',
+    description: 'What was the other industry?',
   },
   chooseLanguage: {
     id: 'dp.application:selfEvaluation.questions.chooseLanguage',
