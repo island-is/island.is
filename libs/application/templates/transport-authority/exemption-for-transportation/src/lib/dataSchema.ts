@@ -82,19 +82,48 @@ const ResponsiblePersonSchema = z
     { path: ['phone'] },
   )
 
-const TransporterSchema = z.object({
-  isSameAsApplicant: z.array(z.enum([YES])).optional(),
-  nationalId: z.string().optional(),
-  name: z.string().optional(),
-  email: z
-    .string()
-    .optional()
-    .refine((v) => !v || isValidEmail(v)),
-  phone: z
-    .string()
-    .optional()
-    .refine((v) => !v || isValidPhoneNumber(v)),
-})
+const TransporterSchema = z
+  .object({
+    isSameAsApplicant: z.array(z.enum([YES])).optional(),
+    nationalId: z.string().optional(),
+    name: z.string().optional(),
+    email: z
+      .string()
+      .optional()
+      .refine((v) => !v || isValidEmail(v)),
+    phone: z
+      .string()
+      .optional()
+      .refine((v) => !v || isValidPhoneNumber(v)),
+  })
+  .refine(
+    ({ isSameAsApplicant, nationalId }) => {
+      if (isSameAsApplicant?.includes(YES)) return true
+      return nationalId && kennitala.isValid(nationalId)
+    },
+    { path: ['nationalId'] },
+  )
+  .refine(
+    ({ isSameAsApplicant, name }) => {
+      if (isSameAsApplicant?.includes(YES)) return true
+      return !!name
+    },
+    { path: ['name'] },
+  )
+  .refine(
+    ({ isSameAsApplicant, email }) => {
+      if (isSameAsApplicant?.includes(YES)) return true
+      return !!email
+    },
+    { path: ['email'] },
+  )
+  .refine(
+    ({ isSameAsApplicant, phone }) => {
+      if (isSameAsApplicant?.includes(YES)) return true
+      return !!phone
+    },
+    { path: ['phone'] },
+  )
 
 const ConvoySchema = z.object({
   items: z.array(
