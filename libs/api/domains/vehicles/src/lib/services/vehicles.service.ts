@@ -344,7 +344,7 @@ export class VehiclesService {
 
     const canUserRegisterVehicleMileage = this.isAllowedMileageRegistrationNoFetch(auth, basicData ?? undefined)
 
-    const returnData = res.map((item) => {
+    const returnData = (res ?? []).map((item) => {
       return mileageDetailConstructor(item)
     })
 
