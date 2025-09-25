@@ -19,6 +19,7 @@ import { CaseService, PdfService } from '../../case'
 import { DefendantService } from '../../defendant'
 import { FileService } from '../../file'
 import { LawyerRegistryModule } from '../../lawyer-registry/lawyerRegistry.module'
+import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
 import { PoliceService } from '../../police'
 import { Verdict } from '../../repository'
 import { InternalVerdictController } from '../internalVerdict.controller'
@@ -30,7 +31,7 @@ jest.mock('../../police/police.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/pdf.service')
 jest.mock('../../defendant/defendant.service')
-jest.mock('../../lawyerRegistry/lawyerRegistry.service')
+jest.mock('../../lawyer-registry/lawyerRegistry.service')
 
 export const createTestingVerdictModule = async () => {
   const verdictModule = await Test.createTestingModule({
@@ -47,7 +48,7 @@ export const createTestingVerdictModule = async () => {
       FileService,
       PdfService,
       DefendantService,
-      LawyerRegistryModule,
+      LawyerRegistryService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
