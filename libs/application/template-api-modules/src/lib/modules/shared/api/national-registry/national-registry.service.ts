@@ -207,21 +207,11 @@ export class NationalRegistryService extends BaseTemplateApiService {
     cohabitationInfo: CohabitationDto | null,
     citizenship: CitizenshipDto | null,
   ): NationalRegistryIndividual {
-    const givenName = person.hasOwnProperty('givenName')
-      ? (person as IndividualDto).givenName
-      : null
-    const familyName = person.hasOwnProperty('familyName')
-      ? (person as IndividualDto).familyName
-      : null
-    const birthdate = person.hasOwnProperty('birthdate')
-      ? (person as IndividualDto).birthdate
-      : null
-    const genderCode = person.hasOwnProperty('genderCode')
-      ? (person as IndividualDto).genderCode
-      : ''
-    const genderDescription = person.hasOwnProperty('genderDescription')
-      ? (person as IndividualDto).genderDescription
-      : ''
+    const givenName = (person as IndividualDto).givenName ?? null
+    const familyName = (person as IndividualDto).familyName ?? null
+    const birthdate = (person as IndividualDto).birthdate ?? null
+    const genderCode = (person as IndividualDto).genderCode ?? ''
+    const genderDescription = (person as IndividualDto).genderDescription ?? ''
     const maritalTitle = cohabitationInfo
       ? {
           code: cohabitationInfo.cohabitationCode,
