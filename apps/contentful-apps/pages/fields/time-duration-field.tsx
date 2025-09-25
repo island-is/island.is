@@ -100,7 +100,7 @@ const TimeDurationField = () => {
             if (newStartDateIsSameAsEndDate) {
               updateTime('endDate', '')
             } else {
-              updateTime('endDate', fromDate.toISOString())
+              updateTime('endDate', fromDate?.toISOString() ?? '')
             }
           }}
         >
