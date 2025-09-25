@@ -56,6 +56,23 @@ export class IdentityClientService {
     )
   }
 
+  async tryToGetNameFromNationalId(
+    nationalId: string,
+    returnWithNationalId?: boolean,
+  ): Promise<string | undefined> {
+    const identity = await this.getIdentity(nationalId)
+
+    try {
+      return identity?.name
+        ? returnWithNationalId
+          ? `${identity?.name} (${nationalId})`
+          : identity?.name
+        : undefined
+    } catch (e) {
+      return undefined
+    }
+  }
+
   private async getCompanyIdentity(
     nationalId: string,
     actorNationalId?: string,
