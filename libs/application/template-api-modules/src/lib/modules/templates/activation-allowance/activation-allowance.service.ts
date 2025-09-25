@@ -123,6 +123,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
       application.id,
       this.config.templateApi.attachmentBucket,
     )
+    const additionalCVInfo = getValueViaPath<string>(answers, 'cv.other')
     const canStartAt = getCanStartAt(answers)
     const hasCV = getValueViaPath<string | undefined>(answers, 'cv.haveCV')
     const emptyApplicationOriginal =
@@ -186,7 +187,9 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
                 emptyApplication?.applicationInformation?.created || '',
               ),
               applicationLanguage: startingLocale?.toUpperCase() || 'IS',
-              additionalInformation: cvInfo?.other,
+              additionalInformation: additionalCVInfo
+                ? additionalCVInfo
+                : undefined,
               contactConnection: contact?.connection,
               contactEmail: contact?.email,
               contactName: contact?.name,

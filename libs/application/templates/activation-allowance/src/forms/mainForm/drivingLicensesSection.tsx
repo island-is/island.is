@@ -40,7 +40,14 @@ export const drivingLicensesSection = buildSection({
               label: drivingLicenses.labels.hasDrivingLicenseLabel,
             },
           ],
-          clearOnChange: ['drivingLicense.drivingLicenseType'],
+          setOnChange: async () => {
+            return [
+              {
+                key: 'drivingLicense.drivingLicenseType',
+                value: [],
+              },
+            ]
+          },
         }),
         buildCheckboxField({
           id: 'drivingLicense.drivingLicenseType',
@@ -96,7 +103,14 @@ export const drivingLicensesSection = buildSection({
               label: drivingLicenses.labels.hasHeavyMachineryLicenseLabel,
             },
           ],
-          clearOnChange: ['drivingLicense.heavyMachineryLicenses'],
+          setOnChange: async () => {
+            return [
+              {
+                key: 'drivingLicense.heavyMachineryLicenses',
+                value: [],
+              },
+            ]
+          },
         }),
         buildSelectField({
           id: 'drivingLicense.heavyMachineryLicenses',
