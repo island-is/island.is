@@ -28,6 +28,7 @@ export class VehiclesMileageClientService {
   ): Promise<MileageHistoryDto | null> => {
     const res = await this.getMileageWithAuth(user).getMileageReading({
       permno: input.vehicleId,
+      includeDeleted: false,
     })
 
     const samplePermno = res.length > 0 ? res[0].permno : undefined

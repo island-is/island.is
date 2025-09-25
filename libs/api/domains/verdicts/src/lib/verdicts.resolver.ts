@@ -10,6 +10,7 @@ import { CaseTypesResponse } from './dto/caseTypes.response'
 import { CaseCategoriesResponse } from './dto/caseCategories.response'
 import { CourtAgendasResponse } from './dto/courtAgendas.response'
 import { CourtAgendasInput } from './dto/courtAgendas.input'
+import { LawyersResponse } from './dto/lawyers.response'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -70,5 +71,13 @@ export class VerdictsResolver {
     @Args('input') input: CourtAgendasInput,
   ): Promise<CourtAgendasResponse> {
     return this.verdictsService.getCourtAgendas(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => LawyersResponse, {
+    name: 'webVerdictLawyers',
+  })
+  async lawyers(): Promise<LawyersResponse> {
+    return this.verdictsService.getLawyers()
   }
 }

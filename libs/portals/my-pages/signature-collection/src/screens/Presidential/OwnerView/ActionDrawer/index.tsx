@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Divider,
   Drawer,
   Icon,
   Stack,
@@ -23,7 +24,7 @@ const ActionDrawer = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginBottom={5}>
+    <Box>
       <Drawer
         ariaLabel="listActions"
         baseId="listActions"
@@ -45,7 +46,7 @@ const ActionDrawer = ({
                 </Box>
               </Tag>
             </Box>
-            <Box marginLeft={5}>
+            <Box marginLeft={3}>
               <Text variant="h4">{formatMessage(m.pdfReport)}</Text>
               <Text marginBottom={2}>
                 {formatMessage(m.pdfReportDescription)}
@@ -59,6 +60,9 @@ const ActionDrawer = ({
           <CancelCandidacy />
         </Stack>
       </Drawer>
+      <Box marginTop={3}>
+        <Divider />
+      </Box>
     </Box>
   )
 }
