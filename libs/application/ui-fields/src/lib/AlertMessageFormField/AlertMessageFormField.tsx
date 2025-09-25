@@ -9,13 +9,14 @@ import {
   getTextStyles,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useRef } from 'react'
 import { Markdown } from '@island.is/shared/components'
 import { AlertMessageField, FieldBaseProps } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { useFormContext } from 'react-hook-form'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import cn from 'classnames'
+import { uuid } from 'uuidv4'
 
 interface Props extends FieldBaseProps {
   field: AlertMessageField
@@ -29,21 +30,14 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage, lang: locale } = useLocale()
-  const { getValues, setValue, watch } = useFormContext()
+  const { getValues } = useFormContext()
   const user = useUserInfo()
 
-  // Use form state to control alert visibility instead of a local React state variable.
-  // This ensures the alert updates correctly when the beforeSubmit callback triggers
-  // and prevents React state from being out-of-sync with form values.
-  const showAlertMessage = watch(
-    'showAlertMessage',
-    !field.shouldBlockInSetBeforeSubmitCallback,
-  )
+  // Persist callback ID across renders to prevent duplicate registration
+  const callbackIdRef = useRef(`AlertMessageFormField-${uuid()}`)
 
-  // Register the beforeSubmit callback inside a useEffect to ensure it only runs
-  // once when the component mounts. Since `screen.tsx` now supports multiple
-  // callbacks, we don't want to register the same AlertMessage callback on
-  // every render and accidentally duplicate it.
+  const showAlertMessage = useRef(!field.shouldBlockInSetBeforeSubmitCallback)
+
   useEffect(() => {
     if (field.shouldBlockInSetBeforeSubmitCallback) {
       setBeforeSubmitCallback?.(
@@ -58,27 +52,24 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
             user,
           )
           if (condition) {
-            setValue('showAlertMessage', true)
+            showAlertMessage.current = true
             return [false, ''] // Block submit
           }
 
+          showAlertMessage.current = false
           return [true, null] // Continue
         },
-        { allowMultiple: true },
+        {
+          customCallbackId: callbackIdRef.current,
+          allowMultiple: field.allowMultipleSetBeforeSubmitCallbacks,
+        },
       )
     }
-  }, [
-    field,
-    application.answers,
-    application.externalData,
-    getValues,
-    setBeforeSubmitCallback,
-    setValue,
-    user,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
-    showAlertMessage && (
+    showAlertMessage.current && (
       <Box
         marginTop={field.marginTop ?? 2}
         marginBottom={field.marginBottom ?? 2}

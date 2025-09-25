@@ -44,7 +44,6 @@ import {
   ProblemType,
 } from '@island.is/shared/problem'
 import { handleServerError } from '@island.is/application/ui-components'
-
 import { FormScreen, ResolverContext } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
@@ -56,6 +55,7 @@ import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
 import { Locale } from '@island.is/shared/types'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { uuid } from 'uuidv4'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -177,40 +177,40 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
+  const beforeSubmitCallbacksMap = useRef<Map<string, BeforeSubmitCallback>>(
+    new Map(),
+  )
 
   const setBeforeSubmitCallback = useCallback(
     (
       callback: BeforeSubmitCallback | null,
       options?: SetBeforeSubmitCallbackOptions,
     ) => {
+      // Unique ID for this callback to prevent registering the same callback when using multiple
+      const id = options?.customCallbackId ?? uuid()
+
       // If null is passed, clear the current beforeSubmit callback
       if (callback === null) {
+        beforeSubmitCallbacksMap.current.clear()
         beforeSubmitCallback.current = null
         return
       }
 
-      // If allowMultiple is not set, replace any existing callback
       if (!options?.allowMultiple) {
-        beforeSubmitCallback.current = callback
-        return
+        // Replace all existing callbacks with just this one
+        beforeSubmitCallbacksMap.current = new Map([[id, callback]])
+      } else {
+        // Deduplicate by id
+        beforeSubmitCallbacksMap.current.set(id, callback)
       }
 
-      // Save reference to any existing callback that was previously registered
-      const existing = beforeSubmitCallback.current
-
-      // Compose a new callback that runs both the existing and the new one
-      // This allows multiple fields/components on the same screen to register their own beforeSubmit logic
+      // Rebuild a single composed callback from all callbacks in the map
       beforeSubmitCallback.current = async (event) => {
-        // If there was an existing callback, run it first
-        if (existing) {
-          const [ok, message] = await existing(event)
-
-          // If the existing callback blocks submission, stop here and return its result
+        for (const [_id, cb] of beforeSubmitCallbacksMap.current.entries()) {
+          const [ok, message] = await cb(event)
           if (!ok) return [ok, message]
         }
-
-        // Otherwise, run the new callback that was just passed
-        return callback(event)
+        return [true, null]
       }
     },
     [beforeSubmitCallback], // Only re-create this function if the ref changes

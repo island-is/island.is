@@ -19,6 +19,7 @@ export type SetBeforeSubmitCallback = (
 ) => void
 
 export type SetBeforeSubmitCallbackOptions = {
+  customCallbackId?: string
   allowMultiple?: boolean
 }
 

@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
@@ -11,14 +11,18 @@ import {
   getUpdatedFreightPairingList,
   getUpdatedVehicleSpacing,
 } from '../../utils'
+import { uuid } from 'uuidv4'
 
 export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
   application,
   setBeforeSubmitCallback,
 }) => {
   const { locale } = useLocale()
-  const { setValue, getValues } = useFormContext()
+  const { getValues, setValue } = useFormContext()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
+
+  // Persist callback ID across renders to prevent duplicate registration
+  const callbackIdRef = useRef(`HandleBeforeSubmitConvoy-${uuid()}`)
 
   useEffect(() => {
     setBeforeSubmitCallback?.(
@@ -89,21 +93,14 @@ export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
             })
           }
         } catch (e) {
-          return [false, 'error occured']
+          return [false, 'error occurred']
         }
         return [true, null]
       },
-      { allowMultiple: true },
+      { customCallbackId: callbackIdRef.current, allowMultiple: true },
     )
-  }, [
-    application.answers,
-    application.id,
-    getValues,
-    locale,
-    setBeforeSubmitCallback,
-    setValue,
-    updateApplication,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return null
 }
