@@ -87,7 +87,7 @@ const CaseFileTable: FC<Props> = ({
                 <Text color="blue400" variant="h5">
                   {prefixUploadedDocumentNameWithDocumentOrder(
                     file.id,
-                    file.userGeneratedFilename,
+                    file.userGeneratedFilename ?? '',
                   )}
                 </Text>
               </Box>
