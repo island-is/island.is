@@ -121,7 +121,7 @@ export class PaymentFlowService {
           charges: chargeDetails.catalogItems,
           totalPrice: chargeDetails.totalPrice,
           systemId: environment.chargeFjs.systemId,
-          returnUrl: '', // TODO
+          returnUrl: paymentInfo.returnUrl,
         }),
       )
 
@@ -616,7 +616,6 @@ export class PaymentFlowService {
                 chargeId: fjsCharge.id,
               },
             )
-            // TODO: Should we throw an error here?
           }
 
           this.logger.info(
