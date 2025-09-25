@@ -18,7 +18,6 @@ import {
 import { CaseService, PdfService } from '../../case'
 import { DefendantService } from '../../defendant'
 import { FileService } from '../../file'
-import { LawyerRegistryModule } from '../../lawyer-registry/lawyerRegistry.module'
 import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
 import { PoliceService } from '../../police'
 import { Verdict } from '../../repository'
