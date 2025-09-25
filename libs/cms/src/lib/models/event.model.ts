@@ -95,13 +95,13 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
       date.setHours(Number(hours))
       date.setMinutes(Number(minutes))
     }
-    endDate = date.getTime().toString()
+    endDate = date.toISOString()
   } else if (fields.startDate && fields.time?.endTime) {
     const date = new Date(fields.startDate)
     const [hours, minutes] = fields.time.endTime.split(':')
     date.setHours(Number(hours))
     date.setMinutes(Number(minutes))
-    endDate = date.getTime().toString()
+    endDate = date.toISOString()
   }
 
   return {
