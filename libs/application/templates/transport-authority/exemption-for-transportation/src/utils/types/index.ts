@@ -14,14 +14,14 @@ export type Convoy = {
 }
 
 export type Freight = {
-  length: string
-  name: string
   freightId: string
-  weight: string
+  name: string
 }
 
 export type FreightPairing = {
   convoyId: string
+  length: string
+  weight: string
   height: string
   width: string
   totalLength: string
