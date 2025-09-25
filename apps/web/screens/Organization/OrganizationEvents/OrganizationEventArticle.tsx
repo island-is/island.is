@@ -47,6 +47,7 @@ import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { formatEventLocation } from '@island.is/web/utils/event'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
+import { formatEventDate } from '@island.is/web/utils/formatEventDate'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -98,10 +99,20 @@ const EventInformationBox = ({
   hasEventOccurred: boolean
 }) => {
   const { activeLocale } = useI18n()
-  const { format } = useDateUtils()
-  const formattedDate =
-    event.startDate && format(new Date(event.startDate), 'do MMMM yyyy')
   const n = useNamespace(namespace)
+  const { format } = useDateUtils()
+  const timeSuffix = n(
+    'timeSuffix',
+    activeLocale === 'is' ? 'til' : 'to',
+  ) as string
+  const dateSuffix = n('dateSuffix', ' - ') as string
+  const formattedDate = formatEventDate(
+    format,
+    ` ${dateSuffix} `,
+    event.startDate,
+    event.time?.endDate,
+  )
+
   const router = useRouter()
 
   return (
@@ -117,12 +128,8 @@ const EventInformationBox = ({
             <EventTime
               startTime={event.time?.startTime ?? ''}
               endTime={event.time?.endTime ?? ''}
-              timePrefix={
-                n('timePrefix', activeLocale === 'is' ? 'kl.' : '') as string
-              }
-              timeSuffix={
-                n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string
-              }
+              timePrefix={n('timePrefix', '') as string}
+              timeSuffix={timeSuffix}
             />
           </Box>
         )}

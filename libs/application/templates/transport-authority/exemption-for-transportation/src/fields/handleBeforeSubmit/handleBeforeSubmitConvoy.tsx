@@ -7,6 +7,7 @@ import { useFormContext } from 'react-hook-form'
 import {
   checkIfConvoyChanged,
   getUpdatedAxleSpacing,
+  getUpdatedConvoy,
   getUpdatedFreightPairingList,
   getUpdatedVehicleSpacing,
 } from '../../utils'
@@ -21,10 +22,19 @@ export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
 
   setBeforeSubmitCallback?.(async () => {
     try {
-      const newAnswers = getValues()
+      const newAnswers = { ...application.answers, ...getValues() }
 
-      // No need to do anything if nothing of importance changed
+      // Make sure if this is short-term, that there is only one convoy
+      const updatedConvoy = getUpdatedConvoy(
+        newAnswers.exemptionPeriod,
+        newAnswers.convoy,
+      )
+      if (updatedConvoy) {
+        newAnswers.convoy = updatedConvoy
+      }
+
       if (!checkIfConvoyChanged(application.answers, newAnswers)) {
+        // No need to do anything if nothing of importance changed
         return [true, null]
       }
 
@@ -43,10 +53,12 @@ export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
       )
 
       if (
+        updatedConvoy ||
         updatedFreightPairing ||
         updatedVehicleSpacing ||
         updatedAxleSpacing
       ) {
+        if (updatedConvoy) setValue('convoy', updatedConvoy)
         if (updatedFreightPairing)
           setValue('freightPairing', updatedFreightPairing)
         if (updatedVehicleSpacing)
@@ -58,6 +70,7 @@ export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
             input: {
               id: application.id,
               answers: {
+                ...(updatedConvoy && { convoy: newAnswers.convoy }),
                 ...(updatedFreightPairing && {
                   freightPairing: updatedFreightPairing,
                 }),

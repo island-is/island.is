@@ -37,12 +37,6 @@ const personInfoSchema = z.object({
     .refine((val) => !!val && val.trim().length > 0 && isValidEmail(val), {
       params: m.landlordAndTenantDetails.emailInvalidError,
     }),
-  address: z
-    .string()
-    .optional()
-    .refine((x) => !!x && x.trim().length > 0, {
-      params: m.landlordAndTenantDetails.addressEmptyError,
-    }),
 })
 
 const landLordInfoSchema = z.object({
@@ -114,6 +108,19 @@ const landlordInfo = z
         }
       })
     }
+
+    const onlyRepresentatives = table?.every(
+      (landlord) => (landlord?.isRepresentative?.length ?? 0) > 0,
+    )
+
+    if (onlyRepresentatives) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.partiesDetails.alertMessageDescription,
+        path: ['table'],
+      })
+    }
   })
 
 const tenantInfo = z
@@ -171,7 +178,7 @@ const checkforDuplicatesHelper = (
   return { hasDuplicates, duplicateIndex }
 }
 
-export const parties = z
+export const partiesSchema = z
   .object({
     landlordInfo,
     tenantInfo,
