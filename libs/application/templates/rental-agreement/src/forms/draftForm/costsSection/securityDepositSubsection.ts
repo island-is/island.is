@@ -32,6 +32,7 @@ import {
   getSecurityDepositTypeOptions,
 } from '../../../utils/options'
 import * as m from '../../../lib/messages'
+import { onlyCharacters } from '../../../utils/utils'
 
 export const securityDepositSubsection = buildSubSection({
   condition: securityDepositRequired,
@@ -67,50 +68,60 @@ export const securityDepositSubsection = buildSubSection({
 
         // Tegund tryggingar: Bankaábyrgð
         buildTextField({
+          condition: securityDepositIsBankGuarantee,
           id: 'securityDeposit.bankGuaranteeInfo',
           title: m.securityDeposit.bankGuaranteeInfoTitle,
           placeholder: m.securityDeposit.bankGuaranteeInfoPlaceholder,
-          condition: securityDepositIsBankGuarantee,
+          maxLength: 50,
         }),
 
         // Tegund tryggingar: Tryggingarfé
         buildDescriptionField({
+          condition: securityDepositIsCapital,
           id: 'securityDeposit.typeCapitalInfo',
           description: m.securityDeposit.capitalBulletPoints,
-          condition: securityDepositIsCapital,
           space: 2,
         }),
 
         // Tegund tryggingar: Sjálfskuldarábyrgð þriðja aðila
         buildTextField({
+          condition: securityDepositIsThirdPartyGuarantee,
           id: 'securityDeposit.thirdPartyGuaranteeInfo',
           title: m.securityDeposit.thirdPartyGuaranteeInfoTitle,
           placeholder: m.securityDeposit.thirdPartyGuaranteeInfoPlaceholder,
-          condition: securityDepositIsThirdPartyGuarantee,
+          maxLength: 50,
+          setOnChange: (optionValue) =>
+            onlyCharacters(
+              optionValue,
+              'securityDeposit.thirdPartyGuaranteeInfo',
+            ),
         }),
 
         // Tegund tryggingar: Leigugreiðslu- og viðskilnaðartrygging
         buildTextField({
+          condition: securityDepositIsInsuranceCompany,
           id: 'securityDeposit.insuranceCompanyInfo',
           title: m.securityDeposit.insuranceCompanyInfoTitle,
           placeholder: m.securityDeposit.insuranceCompanyInfoPlaceholder,
-          condition: securityDepositIsInsuranceCompany,
+          maxLength: 50,
         }),
 
         // Tegund tryggingar: Gjald í samtryggingarsjóð leigusala
         buildTextField({
+          condition: securityDepositIsLandlordsMutualFund,
           id: 'securityDeposit.mutualFundInfo',
           title: m.securityDeposit.mutualFundInfoTitle,
           placeholder: m.securityDeposit.mutualFundInfoPlaceholder,
-          condition: securityDepositIsLandlordsMutualFund,
+          maxLength: 50,
         }),
 
         // Tegund tryggingar: annað
         buildTextField({
+          condition: securityDepositIsOther,
           id: 'securityDeposit.otherInfo',
           title: m.securityDeposit.otherInfoTitle,
           placeholder: m.securityDeposit.otherInfoPlaceholder,
-          condition: securityDepositIsOther,
+          maxLength: 50,
         }),
         buildRadioField({
           id: 'securityDeposit.securityAmount',
@@ -124,19 +135,19 @@ export const securityDepositSubsection = buildSubSection({
 
         // Tegund tryggingar: Gjald í samtryggingarsjóð leigusala
         buildAlertMessageField({
+          condition: securityDepositIsLandlordsMutualFund,
           id: 'securityDeposit.mutualFundAmountInfo',
           title: m.securityDeposit.mutualFundAmountInfoTitle,
           alertType: 'info',
           message: m.securityDeposit.mutualFundAmountInfoMessage,
-          condition: securityDepositIsLandlordsMutualFund,
         }),
         buildTextField({
+          condition: (answers) =>
+            !!securityDepositIsLandlordsMutualFundOrOther(answers),
           id: 'securityDeposit.securityAmountOther',
           title: m.misc.amount,
           placeholder: m.securityDeposit.securityAmountOtherPlaceholder,
           variant: 'currency',
-          condition: (answers) =>
-            !!securityDepositIsLandlordsMutualFundOrOther(answers),
           maxLength: 14, // 8 char number since the dots, spaces and "kr." counts to the limit
         }),
         buildHiddenInputWithWatchedValue({

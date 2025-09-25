@@ -23,6 +23,18 @@ export const GET_COURT_AGENDAS_QUERY = gql`
         dateFrom
         dateTo
         court
+        lawyer
+      }
+    }
+  }
+`
+
+export const GET_VERDICT_LAWYERS_QUERY = gql`
+  query GetVerdictLawyers {
+    webVerdictLawyers {
+      lawyers {
+        id
+        name
       }
     }
   }

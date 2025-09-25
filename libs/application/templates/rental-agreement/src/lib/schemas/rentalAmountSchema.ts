@@ -8,7 +8,7 @@ import {
 } from '../../utils/enums'
 import * as m from '../messages'
 
-export const rentalAmount = z
+export const rentalAmountSchema = z
   .object({
     amount: z.string().optional(),
     rentalPeriodIsDefinite: z.string().array().optional(),
