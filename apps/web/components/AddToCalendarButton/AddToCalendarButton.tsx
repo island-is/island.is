@@ -5,7 +5,7 @@ interface CalendarEvent {
   title: string
   description: string
   location: string
-  pageUrl: string
+  pageUrl?: string
   startDate: string
   startTime?: string | null
   endTime?: string | null
@@ -35,7 +35,7 @@ const downloadICSFile = ({
   const startDateTime = isAllDay ? startDate : `${startDate}T${startTime}`
   const endDateTime = endTime ? `${startDate}T${endTime}` : null
 
-  const fullDescription = `${pageUrl}\n\n${description}`
+  const fullDescription = `${pageUrl ? `${pageUrl}\n\n` : ''}${description}`
 
   // Use the correct time format for ICS
   const formattedStartDate = formatDate(startDateTime, isAllDay)
@@ -79,7 +79,9 @@ const generateGoogleCalendarLink = (props: CalendarEvent) => {
     : null // No end time for time-based events if not provided
 
   // Prepend event page link to the description
-  const fullDescription = `${props.pageUrl}\n\n${props.description}`
+  const fullDescription = `${props.pageUrl ? `${props.pageUrl}\n\n` : ''}${
+    props.description
+  }`
 
   const params = new URLSearchParams({
     action: 'TEMPLATE',
