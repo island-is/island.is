@@ -198,6 +198,7 @@ const IndictmentOverview = () => {
           <InfoCardClosedIndictment displayVerdictViewDate />
         </Box>
         {workingCase.state === CaseState.COMPLETED &&
+          workingCase.courtSessions?.at(-1)?.ruling &&
           workingCase.indictmentRulingDecision &&
           [
             CaseIndictmentRulingDecision.RULING,

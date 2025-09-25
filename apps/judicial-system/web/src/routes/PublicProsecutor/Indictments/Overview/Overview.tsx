@@ -276,7 +276,8 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
         </Box>
-        {workingCase.indictmentRulingDecision &&
+        {workingCase.courtSessions?.at(-1)?.ruling &&
+          workingCase.indictmentRulingDecision &&
           [
             CaseIndictmentRulingDecision.RULING,
             CaseIndictmentRulingDecision.DISMISSAL,
