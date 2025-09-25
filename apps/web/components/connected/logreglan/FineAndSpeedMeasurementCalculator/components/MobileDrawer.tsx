@@ -32,7 +32,7 @@ export const MobileDrawer = ({
         justifyContent="spaceBetween"
         alignItems="center"
       >
-        <Inline alignY="center" space={2}>
+        <Inline alignY="top" space={2}>
           <Text variant="eyebrow" fontWeight="semiBold">
             {totalText}
           </Text>

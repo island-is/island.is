@@ -26,6 +26,7 @@ import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import EmptyState from '../../shared-components/emptyState'
 import { CollectionStatus } from '@island.is/api/schema'
 import FindSignature from '../../shared-components/findSignature'
+import format from 'date-fns/format'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
@@ -71,7 +72,7 @@ export const Municipality = () => {
             />
           </Box>
           <IntroHeader
-            title={formatMessage(m.municipalCollectionTitle)}
+            title={municipality}
             intro={formatMessage(m.municipalCollectionIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
@@ -85,7 +86,7 @@ export const Municipality = () => {
                 ]}
               />
             }
-            marginBottom={4}
+            marginBottom={3}
           />
           {municipalityArea?.collectionStatus ===
             CollectionStatus.Processed && (
@@ -132,9 +133,17 @@ export const Municipality = () => {
                       key={list.id}
                       eyebrow={municipality}
                       heading={list.candidate.name}
-                      text={`${formatMessage(m.totalValidSignatures)}: ${
-                        list.numberOfSignatures
-                      }`}
+                      text={`${formatMessage(m.listOwner)}: ${
+                        list.candidate.ownerName ?? ''
+                      } (${format(
+                        new Date(list.candidate.ownerBirthDate),
+                        'dd.MM.yyyy',
+                      )})`}
+                      progressMeter={{
+                        currentProgress: list.numberOfSignatures ?? 0,
+                        maxProgress: list.area.min,
+                        withLabel: true,
+                      }}
                       cta={{
                         label: formatMessage(m.viewList),
                         variant: 'text',

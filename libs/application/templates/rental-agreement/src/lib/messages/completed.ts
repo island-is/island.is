@@ -15,7 +15,13 @@ export const completed = defineMessages({
     id: 'ra.application:completedForm.alertMessageSuccess',
     defaultMessage: 'Samningurinn hefur verið skráður í leiguskrá HMS',
     description:
-      'Success message when the agreement has been sent HMS rental registry',
+      'Success message title when the agreement has been sent HMS rental registry',
+  },
+  alertMessageSuccessDescription: {
+    id: 'ra.application:completedForm.alertMessageSuccessDescription',
+    defaultMessage: ' ',
+    description:
+      'Success message desctioption when the agreement has been sent HMS rental registry',
   },
   alertMessageErrorTitle: {
     id: 'ra.application:completedForm.alertMessageFailed',
@@ -27,10 +33,16 @@ export const completed = defineMessages({
     defaultMessage: 'Hvað gerist næst?',
     description: 'Title for the completed page info',
   },
-  pageInfoDescription: {
-    id: 'ra.application:completedForm.pageInfoDescription#markdown',
-    defaultMessage:
-      '- Umsóknin er nú skráð í leiguskrá HMS.\n- Þú getur nálgast samninginn þinn á Mínum síðum.',
-    description: 'Description for what comes next in the process',
+  pageInfoBullet1: {
+    id: 'ra.application:completedForm.pageInfoBullet1#markdown',
+    defaultMessage: '- Umsóknin er nú skráð í leiguskrá HMS.',
+    description:
+      'Description for what comes next in the process, furst bullet point',
+  },
+  pageInfoBullet2: {
+    id: 'ra.application:completedForm.pageInfoBullet2#markdown',
+    defaultMessage: '- Þú getur nálgast samninginn þinn á Mínum síðum.',
+    description:
+      'Description for what comes next in the process, second bullet point',
   },
 })
