@@ -592,6 +592,15 @@ export class InternalCaseService {
           include: [{ model: Institution, as: 'institution' }],
         },
         {
+          model: EventLog,
+          as: 'eventLogs',
+          required: false,
+          separate: true,
+          where: {
+            type: 'VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED',
+          },
+        },
+        {
           model: Defendant,
           as: 'defendants',
           required: false,
@@ -616,9 +625,12 @@ export class InternalCaseService {
         state: { [Op.eq]: CaseState.COMPLETED },
         type: CaseType.INDICTMENT,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        // exclude cases which don't have the target event log.
+        '$eventLogs.id$': null,
       },
     })
 
+    console.log({ cases })
     const isRuling = true // we iterate through cases completed with ruling
     return cases.flatMap((theCase) =>
       pipe(

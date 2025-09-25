@@ -334,44 +334,6 @@ export class VerdictService {
     return { delivered: true }
   }
 
-  private async getCourtCaseUser(theCase: Case): Promise<TUser | undefined> {
-    const judgeNationalId = theCase?.judge?.nationalId
-    const courtId = theCase.courtId
-    if (!judgeNationalId || !courtId) {
-      this.logger.warn(`Failed to get court case user`, {
-        reason: `${
-          !judgeNationalId ? 'Judge does not have national id.' : ''
-        } ${!courtId ? 'Court id is missing' : ''}`,
-      })
-      return undefined
-    }
-
-    const user = (
-      await this.userService.findByNationalId(judgeNationalId)
-    ).find((user) => user.institutionId === courtId)
-
-    if (!user) {
-      this.logger.warn(`Failed to get court case user`, {
-        reason: 'Case court user not found',
-      })
-      return undefined
-    }
-
-    return {
-      id: user.id,
-      created: user.created.toISOString(),
-      modified: user.modified.toISOString(),
-      nationalId: user.nationalId,
-      name: user.name,
-      title: user.title,
-      mobileNumber: user.mobileNumber,
-      email: user.email,
-      role: user.role,
-      active: user.active,
-      canConfirmIndictment: user.canConfirmIndictment,
-    }
-  }
-
   async deliverVerdictServiceCertificatesToPolice(): Promise<
     {
       delivered: boolean
@@ -382,9 +344,17 @@ export class VerdictService {
 
     const delivered = await Promise.all(
       defendantsWithCases.map(async ({ defendant, theCase }) => {
-        // this delivery is not directly triggered by a user, thus specifically fetch the court judge here
-        // note this user is only used for our event error log where we log the name and institution
-        const user = await this.getCourtCaseUser(theCase)
+        if (!theCase) {
+          this.logger.warn(
+            `Failed to upload verdict service certificate pdf to police`,
+            {
+              reason: 'case is undefined',
+            },
+          )
+          return { delivered: false }
+        }
+
+        const user = theCase.judge
         if (!user) {
           this.logger.warn(
             `Failed to upload verdict service certificate pdf to police of defendant ${defendant.id} and case ${theCase.id}`,
@@ -400,7 +370,7 @@ export class VerdictService {
           this.logger.warn(
             `Failed to upload verdict service certificate pdf to police of defendant ${defendant.id} and case ${theCase.id}`,
             {
-              reason: 'verdict not defined',
+              reason: 'verdict is undefined',
             },
           )
           return { delivered: false }
@@ -411,7 +381,11 @@ export class VerdictService {
           .then(async (pdf) => {
             return this.internalCaseService.deliverCaseToPoliceWithFiles(
               theCase,
-              user,
+              {
+                ...user,
+                created: user.created.toISOString(),
+                modified: user.modified.toISOString(),
+              } as TUser,
               [
                 {
                   type: PoliceDocumentType.RVBD,

@@ -19,6 +19,7 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseIndictmentRulingDecision,
   CaseNotificationType,
   CaseState,
   CaseType,
@@ -29,7 +30,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../court'
-import { Case, Defendant, DefendantEventLog } from '../repository'
+import { Case, Defendant, DefendantEventLog, Verdict } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
