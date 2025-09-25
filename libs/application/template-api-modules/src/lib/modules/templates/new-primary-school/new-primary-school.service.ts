@@ -1,9 +1,11 @@
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import {
   errorMessages,
+  FIRST_GRADE_AGE,
   getApplicationAnswers,
   getOtherGuardian,
   getSelectedChild,
+  TENTH_GRADE_AGE,
 } from '@island.is/application/templates/new-primary-school'
 import { ApplicationTypes } from '@island.is/application/types'
 import { FriggClientService } from '@island.is/clients/mms/frigg'
@@ -39,8 +41,8 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
 
   async getChildren({ auth }: TemplateApiModuleActionProps) {
     const currentYear = new Date().getFullYear()
-    const maxYear = currentYear - 7 // 2nd grade
-    const minYear = currentYear - 16 // 10th grade
+    const firstGradeYear = currentYear - FIRST_GRADE_AGE
+    const tenthGradeYear = currentYear - TENTH_GRADE_AGE
 
     const children =
       await this.nationalRegistryService.getChildrenCustodyInformation(auth)
@@ -71,8 +73,8 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
 
       return (
         child.livesWithApplicant &&
-        yearOfBirth >= minYear &&
-        yearOfBirth <= maxYear
+        yearOfBirth >= tenthGradeYear &&
+        yearOfBirth <= firstGradeYear
       )
     })
 
