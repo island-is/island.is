@@ -143,8 +143,9 @@ module.exports = {
             ORDER BY c.payment_flow_id, c.created DESC, c.id DESC
           )
           INSERT INTO payment_fulfillment
-            (payment_flow_id, payment_method, confirmation_ref_id, created, modified)
+            (id, payment_flow_id, payment_method, confirmation_ref_id, created, modified)
           SELECT
+            gen_random_uuid(),
             p.payment_flow_id,
             'card',
             p.confirmation_id,
