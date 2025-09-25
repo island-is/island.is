@@ -46,8 +46,6 @@ export const FixedNav = ({ organizationSearchFilter }: Props) => {
     150,
   )
 
-  console.log(organizationSearchFilter)
-
   return (
     <div className={cn(styles.wrapper, { [styles.show]: show })}>
       <GridContainer className={styles.container}>
