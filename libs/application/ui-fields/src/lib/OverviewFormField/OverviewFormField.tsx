@@ -26,6 +26,7 @@ import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useEffect, useState } from 'react'
 import { FileItem } from './FileItem'
+import { Markdown } from '@island.is/shared/components'
 
 interface Props extends FieldBaseProps {
   field: OverviewField
@@ -156,6 +157,29 @@ export const OverviewFormField = ({
       )
     }
 
+    const keyTextValue = formatTextWithLocale(
+      item?.keyText ?? '',
+      application,
+      locale,
+      formatMessage,
+    )
+
+    const createFormattedKeyText = (
+      item: KeyValueItem,
+      index: number,
+    ): string => {
+      if (Array.isArray(item?.keyText)) {
+        const x = `${item?.boldValueText ? '**' : ''}${formatTextWithLocale(
+          item?.keyText?.[index] ?? '',
+          application,
+          locale,
+          formatMessage,
+        )}: ${item?.boldValueText ? '**' : ''}`
+        return x
+      }
+      return ''
+    }
+
     return (
       <GridColumn key={i} span={span}>
         {item.lineAboveKeyText && (
@@ -164,61 +188,54 @@ export const OverviewFormField = ({
           </Box>
         )}
         {!item.inlineKeyText && (
-          <Text variant="h5">
-            {formatTextWithLocale(
-              item?.keyText ?? '',
-              application,
-              locale,
-              formatMessage,
-            )}
-          </Text>
+          <Markdown>
+            {`#### **${
+              Array.isArray(keyTextValue) //H5 markdown and bold
+                ? keyTextValue.join(', ')
+                : keyTextValue
+            }**`}
+          </Markdown>
         )}
         {Array.isArray(item?.valueText) ? (
-          item?.valueText.map((value, index) => (
-            <Text
-              key={`${value}-${index}`}
-              fontWeight={item.boldValueText ? 'semiBold' : 'light'}
-            >
-              {item.inlineKeyText &&
-                Array.isArray(item?.keyText) &&
-                `${formatTextWithLocale(
-                  item?.keyText?.[index] ?? '',
+          item.valueText.map((value, index) => {
+            const prefix =
+              item.inlineKeyText && Array.isArray(item?.keyText)
+                ? createFormattedKeyText(item, index)
+                : ''
+
+            const valueStr = Array.isArray(value)
+              ? formatTextWithLocale(
+                  value,
                   application,
                   locale,
                   formatMessage,
-                )}: `}
-              {Array.isArray(value)
-                ? formatTextWithLocale(
-                    value,
-                    application,
-                    locale,
-                    formatMessage,
-                  ).join(', ')
-                : formatTextWithLocale(
-                    value,
-                    application,
-                    locale,
-                    formatMessage,
-                  )}
-            </Text>
-          ))
+                ).join(', ')
+              : formatTextWithLocale(value, application, locale, formatMessage)
+
+            return (
+              <Markdown key={`${value}-${index}`}>
+                {`${prefix}${valueStr}`}
+              </Markdown>
+            )
+          })
         ) : (
-          <Text fontWeight={item.boldValueText ? 'semiBold' : 'light'}>
-            {item.inlineKeyText &&
-              !Array.isArray(item?.keyText) &&
-              `${formatTextWithLocale(
-                item?.keyText ?? '',
-                application,
-                locale,
-                formatMessage,
-              )}: `}
-            {formatTextWithLocale(
+          <Markdown>
+            {`${
+              item.inlineKeyText && !Array.isArray(item?.keyText)
+                ? `${formatTextWithLocale(
+                    item?.keyText ?? '',
+                    application,
+                    locale,
+                    formatMessage,
+                  )}: `
+                : ''
+            }${formatTextWithLocale(
               item?.valueText ?? '',
               application,
               locale,
               formatMessage,
-            )}
-          </Text>
+            )}`}
+          </Markdown>
         )}
       </GridColumn>
     )
