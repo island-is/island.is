@@ -48,7 +48,7 @@ interface Props {
   // Overwrites the default background color based on file status
   backgroundColor?: 'white'
   disabled?: boolean
-  onOpen: (id: string) => void
+  onOpen?: (id: string) => void
   onRename: (id: string, name: string, displayDate: string) => void
   onDelete: (file: TUploadFile) => void
   onRetry?: (file: TUploadFile) => void
@@ -61,8 +61,8 @@ const EditableCaseFile: FC<Props> = (props) => {
     enableDrag,
     caseFile,
     backgroundColor,
-    onOpen,
     disabled,
+    onOpen,
     onRename,
     onDelete,
     onRetry,
