@@ -17,10 +17,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
-import {
-  TUploadFile,
-  useUploadFiles,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const ConfirmationInformation = ({
   uploadFiles,

@@ -37,6 +37,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 
 import { ConfirmationInformation } from './ConfirmationInformation'
 import { CriminalRecordUpdate } from './CriminalRecordUpdate'
@@ -50,6 +51,9 @@ const Completed: FC = () => {
   const { features } = useContext(FeatureContext)
 
   const { formatMessage } = useIntl()
+  const { deliverCaseVerdict } = useVerdict()
+  const [isLoading, setIsLoading] = useState(false)
+
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
@@ -67,6 +71,7 @@ const Completed: FC = () => {
   )
 
   const handleCaseConfirmation = useCallback(async () => {
+    setIsLoading(true)
     const uploadResult = await handleUpload(
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
@@ -74,25 +79,39 @@ const Completed: FC = () => {
     if (uploadResult !== 'ALL_SUCCEEDED') {
       return
     }
-    // TODO: Deliver verdict to RLS
-    // transition case to 'Sent to public prosecutor'
-    // transitions handles event log + delivering verdict to RLS
+
+    const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
+      ({ verdict }) =>
+        verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+    )
+    if (requiresVerdictDeliveryToDefendants) {
+      const results = await deliverCaseVerdict(workingCase.id)
+      if (!results) {
+        setIsLoading(false)
+        return
+      }
+    }
 
     const eventLogCreated = createEventLog({
       caseId: workingCase.id,
       eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
     })
     if (!eventLogCreated) {
+      setIsLoading(false)
       return
     }
     router.push(getStandardUserDashboardRoute(user))
+    setIsLoading(false)
   }, [
+    deliverCaseVerdict,
     handleUpload,
     uploadFiles,
     updateUploadFile,
     createEventLog,
     workingCase.id,
+    workingCase.defendants,
     user,
+    setIsLoading,
   ])
 
   const handleNavigationTo = useCallback(
@@ -113,7 +132,7 @@ const Completed: FC = () => {
           ServiceRequirement.NOT_APPLICABLE
             ? Boolean(defendant.verdict?.appealDecision)
             : Boolean(defendant.verdict?.serviceRequirement),
-        )
+        ) && workingCase.ruling?.trim() !== ''
       : true
 
     return isValidDefendants
@@ -198,18 +217,26 @@ const Completed: FC = () => {
               const { verdict } = defendant
               if (!verdict) return null
 
+              const isLastDefendantElement =
+                workingCase.defendants &&
+                workingCase.defendants.length - 1 === index
               return (
-                <React.Fragment key={defendant.id}>
-                  <DefendantServiceRequirement
-                    defendant={defendant}
-                    defendantIndex={index}
-                  />
-                  {features?.includes(Feature.VERDICT_DELIVERY) &&
-                    verdict.serviceRequirement ===
-                      ServiceRequirement.REQUIRED && (
-                      <InformationForDefendant defendant={defendant} />
-                    )}
-                </React.Fragment>
+                <Box
+                  marginBottom={isLastDefendantElement ? 0 : 4}
+                  key={defendant.id}
+                >
+                  <React.Fragment key={defendant.id}>
+                    <DefendantServiceRequirement
+                      defendant={defendant}
+                      defendantIndex={index}
+                    />
+                    {features?.includes(Feature.VERDICT_DELIVERY) &&
+                      verdict.serviceRequirement ===
+                        ServiceRequirement.REQUIRED && (
+                        <InformationForDefendant defendant={defendant} />
+                      )}
+                  </React.Fragment>
+                </Box>
               )
             })}
           </Box>
@@ -247,7 +274,7 @@ const Completed: FC = () => {
           primaryButton={{
             text: 'Staðfesta',
             icon: 'checkmark',
-            isLoading: false, // TODO: delivering verdict to RLS
+            isLoading: isLoading,
             onClick: () => handleCaseConfirmation(),
           }}
           secondaryButton={{

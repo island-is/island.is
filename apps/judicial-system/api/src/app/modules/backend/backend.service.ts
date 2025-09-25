@@ -62,6 +62,7 @@ import {
 } from '../statistics'
 import { Subpoena } from '../subpoena'
 import { Verdict } from '../verdict'
+import { DeliverCaseVerdictResponse } from '../verdict/models/deliverCaseVerdict.response'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
 
@@ -372,6 +373,12 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/court`,
       undefined,
       caseTransformer,
+    )
+  }
+
+  deliverCaseVerdict(caseId: string) {
+    return this.post<unknown, DeliverCaseVerdictResponse>(
+      `case/${caseId}/deliverVerdict`,
     )
   }
 
