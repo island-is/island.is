@@ -17,7 +17,7 @@ import SearchInput from '../SearchInput/SearchInput'
 import * as styles from './FixedNav.css'
 
 interface Props {
-  organizationSearchFilter?: string;
+  organizationSearchFilter?: string
 }
 
 export const FixedNav = ({ organizationSearchFilter }: Props) => {
