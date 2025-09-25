@@ -47,7 +47,6 @@ import strings from './Completed.strings'
 
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
-
   const { features } = useContext(FeatureContext)
 
   const { formatMessage } = useIntl()
@@ -79,16 +78,17 @@ const Completed: FC = () => {
     if (uploadResult !== 'ALL_SUCCEEDED') {
       return
     }
-
-    const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
-      ({ verdict }) =>
-        verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
-    )
-    if (requiresVerdictDeliveryToDefendants) {
-      const results = await deliverCaseVerdict(workingCase.id)
-      if (!results) {
-        setIsLoading(false)
-        return
+    if (features?.includes(Feature.VERDICT_DELIVERY)) {
+      const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
+        ({ verdict }) =>
+          verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+      )
+      if (requiresVerdictDeliveryToDefendants) {
+        const results = await deliverCaseVerdict(workingCase.id)
+        if (!results) {
+          setIsLoading(false)
+          return
+        }
       }
     }
 
@@ -112,6 +112,7 @@ const Completed: FC = () => {
     workingCase.defendants,
     user,
     setIsLoading,
+    features,
   ])
 
   const handleNavigationTo = useCallback(
@@ -132,7 +133,9 @@ const Completed: FC = () => {
           ServiceRequirement.NOT_APPLICABLE
             ? Boolean(defendant.verdict?.appealDecision)
             : Boolean(defendant.verdict?.serviceRequirement),
-        ) && workingCase.ruling?.trim() !== ''
+        ) &&
+        workingCase.ruling &&
+        workingCase.ruling?.trim() !== ''
       : true
 
     return isValidDefendants
