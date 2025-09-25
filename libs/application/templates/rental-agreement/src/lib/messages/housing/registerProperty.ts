@@ -126,7 +126,6 @@ export const registerProperty = {
       defaultMessage: 'Skráning húsnæðis',
       description: 'Property category page title',
     },
-
     typeTitle: {
       id: 'ra.application:registerProperty.category.typeTitle',
       defaultMessage: 'Tegund húsnæðis',

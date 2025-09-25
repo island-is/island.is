@@ -175,7 +175,7 @@ export class BulkMileageService {
               return {
                 code: e.errorCode ?? undefined,
                 message: e.errorText ?? undefined,
-                warningSerialCode: e.warningSerial,
+                warningSerialCode: e.warningSerial ?? undefined,
                 warningText: warningSerial
                   ? formatMessage(errorCodeMessageMap[warningSerial])
                   : undefined,
