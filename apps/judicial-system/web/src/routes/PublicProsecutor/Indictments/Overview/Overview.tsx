@@ -12,6 +12,7 @@ import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   BlueBoxWithDate,
+  Conclusion,
   CourtCaseInfo,
   FeatureContext,
   FormContentContainer,
@@ -275,6 +276,24 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
         </Box>
+        {workingCase.indictmentRulingDecision &&
+          [
+            CaseIndictmentRulingDecision.RULING,
+            CaseIndictmentRulingDecision.DISMISSAL,
+          ].includes(workingCase.indictmentRulingDecision) && (
+            <Box marginBottom={5} component="section">
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            </Box>
+          )}
         {/* 
         NOTE: Temporarily hidden while list of laws broken is not complete in
         indictment cases

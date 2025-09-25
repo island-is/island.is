@@ -34,7 +34,6 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  RulingInput,
   SectionHeading,
   useIndictmentsLawsBroken,
   UserContext,
@@ -525,21 +524,6 @@ const Completed: FC = () => {
             })}
           </Box>
         )}
-        {features?.includes(Feature.SERVICE_PORTAL) &&
-          workingCase.indictmentRulingDecision ===
-            CaseIndictmentRulingDecision.RULING && (
-            <Box>
-              <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
-              <RulingInput
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                rows={8}
-                label="Dómsorð"
-                placeholder="Hvert er dómsorðið?"
-                required
-              />
-            </Box>
-          )}
       </FormContentContainer>
       <Box marginBottom={10} />
       <FormContentContainer isFooter>

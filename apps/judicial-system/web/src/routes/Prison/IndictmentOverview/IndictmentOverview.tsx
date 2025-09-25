@@ -16,6 +16,7 @@ import { Feature } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  Conclusion,
   FeatureContext,
   FormContentContainer,
   FormContext,
@@ -35,6 +36,7 @@ import {
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  CaseState,
   PunishmentType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
@@ -195,6 +197,25 @@ const IndictmentOverview = () => {
         <Box marginBottom={5}>
           <InfoCardClosedIndictment displayVerdictViewDate />
         </Box>
+        {workingCase.state === CaseState.COMPLETED &&
+          workingCase.indictmentRulingDecision &&
+          [
+            CaseIndictmentRulingDecision.RULING,
+            CaseIndictmentRulingDecision.DISMISSAL,
+          ].includes(workingCase.indictmentRulingDecision) && (
+            <Box component="section" marginBottom={5}>
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            </Box>
+          )}
         {isNonEmptyArray(criminalRecordUpdateFile) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
