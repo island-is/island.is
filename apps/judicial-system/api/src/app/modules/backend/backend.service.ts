@@ -61,8 +61,7 @@ import {
   SubpoenaStatisticsInput,
 } from '../statistics'
 import { Subpoena } from '../subpoena'
-import { Verdict } from '../verdict'
-import { DeliverCaseVerdictResponse } from '../verdict/models/deliverCaseVerdict.response'
+import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
 

@@ -161,7 +161,6 @@ const VerdictStatusAlert = (props: {
   defendant: Defendant
 }) => {
   const { verdict: currentVerdict, defendant } = props
-  const { verdictDeliveredToNationalCommissionersOffice } = currentVerdict
 
   const [lawyer, setLawyer] = useState<Lawyer>()
   const { lawyers } = useContext(LawyerRegistryContext)
