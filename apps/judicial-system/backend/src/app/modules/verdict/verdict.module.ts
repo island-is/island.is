@@ -1,17 +1,31 @@
 import { forwardRef, Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { CaseModule } from '../case/case.module'
-import { Verdict } from './models/verdict.model'
+import {
+  AuditTrailModule,
+  auditTrailModuleConfig,
+} from '@island.is/judicial-system/audit-trail'
+
+import { Verdict } from '../repository'
+import { CaseModule, FileModule, PoliceModule } from '..'
+import { InternalVerdictController } from './internalVerdict.controller'
 import { VerdictController } from './verdict.controller'
 import { VerdictService } from './verdict.service'
 
 @Module({
   imports: [
+    AuditTrailModule,
     forwardRef(() => CaseModule),
+    forwardRef(() => PoliceModule),
+    forwardRef(() => FileModule),
     SequelizeModule.forFeature([Verdict]),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [auditTrailModuleConfig],
+    }),
   ],
-  controllers: [VerdictController],
+  controllers: [VerdictController, InternalVerdictController],
   providers: [VerdictService],
   exports: [VerdictService],
 })

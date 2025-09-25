@@ -22,6 +22,7 @@ export const FieldTypesEnum = {
   TIME_INPUT: 'TIME_INPUT',
   FILE: 'FILE',
   PAYMENT: 'PAYMENT',
+  APPLICANT: 'APPLICANT',
 } as const
 
 export const CertificationTypesEnum = {
@@ -61,6 +62,8 @@ export const SectionTypes = {
   PARTIES: 'PARTIES',
   INPUT: 'INPUT',
   PAYMENT: 'PAYMENT',
+  SUMMARY: 'SUMMARY',
+  COMPLETED: 'COMPLETED',
 } as const
 
 export const UrlMethods = {

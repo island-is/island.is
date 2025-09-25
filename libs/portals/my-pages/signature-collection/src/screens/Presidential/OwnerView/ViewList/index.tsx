@@ -6,6 +6,7 @@ import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
 import Signees from '../../../shared/Signees'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import { Skeleton } from '../../../../lib/skeletons'
 
 const collectionType = SignatureCollectionCollectionType.Presidential
 
@@ -17,48 +18,27 @@ const ViewList = () => {
 
   return (
     <Box>
-      {!loadingList && !!listInfo && (
+      {!loadingList && !!listInfo ? (
         <Stack space={5}>
+          <Text variant="h3">
+            {listInfo.candidate.name + ' - ' + listInfo.area.name}
+          </Text>
           <Box>
-            <Text variant="h3">
-              {listInfo.candidate.name + ' - ' + listInfo.area.name}
+            <Text variant="h4">{formatMessage(m.listPeriod)}</Text>
+            <Text>
+              {`${format(
+                new Date(listInfo.startTime),
+                'dd.MM.yyyy',
+              )} - ${format(new Date(listInfo.endTime), 'dd.MM.yyyy')}`}
             </Text>
           </Box>
-          <Box display={['block', 'flex']} justifyContent="spaceBetween">
-            <Box>
-              <Text variant="h5">{formatMessage(m.listPeriod)}</Text>
-              <Text>
-                {format(new Date(listInfo.startTime), 'dd.MM.yyyy') +
-                  ' - ' +
-                  format(new Date(listInfo.endTime), 'dd.MM.yyyy')}
-              </Text>
-            </Box>
-            <Box marginTop={[2, 0]}>
-              <Text variant="h5">{formatMessage(m.numberOfSigns)}</Text>
-              <Text>{listInfo.numberOfSignatures}</Text>
-            </Box>
-            <Box marginTop={[2, 0]}>
-              {!!listInfo.collectors?.length && (
-                <>
-                  <Text marginTop={[2, 0]} variant="h5">
-                    {formatMessage(m.coOwners)}
-                  </Text>
-                  {listInfo.collectors?.map((collector) => (
-                    <Box
-                      key={collector.name}
-                      width="half"
-                      display={['block', 'flex']}
-                      justifyContent="spaceBetween"
-                    >
-                      <Text>{collector.name}</Text>
-                    </Box>
-                  ))}
-                </>
-              )}
-            </Box>
-          </Box>
-          <Signees collectionType={collectionType} />
+          <Signees
+            collectionType={collectionType}
+            totalSignees={listInfo.numberOfSignatures ?? 0}
+          />
         </Stack>
+      ) : (
+        <Skeleton />
       )}
     </Box>
   )

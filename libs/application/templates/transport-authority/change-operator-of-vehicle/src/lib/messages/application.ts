@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const application = defineMessages({
   name: {
     id: 'ta.cov.application:name',
-    defaultMessage: 'Bæta við umráðamanni á ökutæki',
+    defaultMessage: 'Bæta við umráðamanni á ökutæki {value}',
     description: `Application's name`,
   },
   institutionName: {
@@ -34,10 +34,5 @@ export const application = defineMessages({
     defaultMessage: 'Afgreidd',
     description:
       'Description of application state/status when application is done',
-  },
-  historyLogApprovedByReviewer: {
-    id: 'ta.cov.application:historyLogApprovedByReviewer',
-    defaultMessage: 'Samþykkt af öllum aðilum',
-    description: 'History log approved by reviewer',
   },
 })

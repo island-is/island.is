@@ -161,6 +161,8 @@ import {
   IOrganizationParentSubpage,
   IOrganizationSubpage,
 } from './generated/contentfulTypes'
+import { GenericList } from './models/genericList.model'
+import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -1064,5 +1066,45 @@ export class OrganizationPageResolver {
       ...organizationPage.topLevelNavigation,
       links,
     }
+  }
+}
+
+@Resolver(() => GenericList)
+export class GenericListResolver {
+  @ResolveField(() => [GenericTag])
+  async filterTags(
+    @Parent() { filterTags, alphabeticallyOrderFilterTags }: GenericList,
+  ) {
+    const tags = filterTags ?? []
+    if (alphabeticallyOrderFilterTags) {
+      tags.sort(sortAlpha('title'))
+    }
+    return tags
+  }
+}
+
+@Resolver(() => FeaturedGenericListItems)
+export class FeaturedGenericListItemsResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => [GenericListItem])
+  async items(
+    @Parent()
+    {
+      items: { items, input },
+      automaticallyFetchItems,
+    }: FeaturedGenericListItems,
+  ) {
+    if (!automaticallyFetchItems) {
+      return items
+    }
+    if (!input) {
+      return []
+    }
+
+    const response = await this.cmsElasticsearchService.getGenericListItems(
+      input,
+    )
+    return response.items
   }
 }

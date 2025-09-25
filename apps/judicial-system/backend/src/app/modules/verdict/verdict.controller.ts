@@ -1,9 +1,14 @@
+import { Response } from 'express'
+
 import {
   Body,
   Controller,
+  Get,
+  Header,
   Inject,
   Param,
   Patch,
+  Res,
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -12,73 +17,133 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CurrentHttpUser,
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { ServiceRequirement } from '@island.is/judicial-system/types'
+import { indictmentCases } from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
+  prisonSystemStaffRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
 import {
-  Case,
+  CaseCompletedGuard,
+  CaseExistsGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
   CurrentCase,
-  MinimalCaseAccessGuard,
-  MinimalCaseExistsGuard,
+  PdfService,
 } from '../case'
+import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
+import { Case, Defendant, Verdict } from '../repository'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
-import { ValidateVerdictGuard } from './guards/validateVerdict.guard'
 import { CurrentVerdict } from './guards/verdict.decorator'
-import { VerdictWriteGuard } from './guards/verdictWrite.guard'
-import { Verdict } from './models/verdict.model'
+import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { VerdictService } from './verdict.service'
-
-@Controller('api/case/:caseId/defendant/:defendantId/verdict')
+@Controller('api/case/:caseId')
 @ApiTags('verdicts')
 @UseGuards(
   JwtAuthUserGuard,
   RolesGuard,
-  MinimalCaseExistsGuard,
-  MinimalCaseAccessGuard,
-  ValidateVerdictGuard,
+  CaseExistsGuard,
+  new CaseTypeGuard(indictmentCases),
+  CaseWriteGuard,
+  CaseCompletedGuard,
+  DefendantExistsGuard,
+  VerdictExistsGuard,
 )
 export class VerdictController {
   constructor(
     private readonly verdictService: VerdictService,
+    private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(VerdictWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    publicProsecutorStaffRule,
   )
-  @Patch(':verdictId')
+  @Patch('defendant/:defendantId/verdict')
   @ApiOkResponse({
     type: Verdict,
     description: 'Updates a verdict',
   })
-  update(
+  async update(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
-    @Param('verdictId') verdictId: string,
     @CurrentCase() theCase: Case,
     @CurrentVerdict() verdict: Verdict,
     @Body() verdictToUpdate: UpdateVerdictDto,
   ): Promise<Verdict> {
-    this.logger.debug(`Updating verdict for ${verdictId} of ${caseId}`)
+    this.logger.debug(
+      `Updating verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
+    )
 
-    // when defendant is present in court hearing, we set the service date as the ruling date
-    if (
-      verdictToUpdate.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-    ) {
-      verdictToUpdate = { ...verdictToUpdate, serviceDate: theCase.rulingDate }
-    }
+    return this.verdictService.update(
+      verdict,
+      verdictToUpdate,
+      theCase.rulingDate,
+    )
+  }
 
-    return this.verdictService.updateVerdict(verdict, verdictToUpdate)
+  @RolesRules(publicProsecutorStaffRule, prisonSystemStaffRule)
+  @Get('defendant/:defendantId/verdict/serviceCertificate')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets the verdict service certificate for a given defendant as a pdf document',
+  })
+  async getServiceCertificatePdf(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentVerdict() verdict: Verdict,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting verdict service certificate for defendant ${defendantId} of case ${caseId} as a pdf document`,
+    )
+
+    const pdf = await this.pdfService.getVerdictServiceCertificatePdf(
+      theCase,
+      defendant,
+      verdict,
+    )
+
+    res.end(pdf)
+  }
+
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    publicProsecutorStaffRule,
+  )
+  @Get('defendant/:defendantId/verdict')
+  @ApiOkResponse({
+    type: Verdict,
+    description: 'Gets verdict and fetches the current state from the police',
+  })
+  async getVerdict(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentVerdict() verdict: Verdict,
+    @CurrentHttpUser() user: User,
+  ): Promise<Verdict> {
+    this.logger.debug(
+      `Get verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
+    )
+
+    return this.verdictService.getAndSyncVerdict(verdict, user)
   }
 }

@@ -8,6 +8,7 @@ query allLists($input: SignatureCollectionIdInput!) {
       min
       max
       isActive
+      collectionId
     }
     endTime
     startTime
@@ -17,6 +18,9 @@ query allLists($input: SignatureCollectionIdInput!) {
       name
       phone
       email
+      ownerName
+      ownerBirthDate
+      hasActiveLists
     }
     collectors {
       nationalId

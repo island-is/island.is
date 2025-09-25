@@ -5,14 +5,29 @@ export {
   DefenderChoice,
   SubpoenaType,
   DefendantPlea,
-  ServiceRequirement,
   ServiceStatus,
+  VerdictServiceStatus,
   PunishmentType,
-  VerdictAppealDecision,
-  InformationForDefendant,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
+
+export {
+  ServiceRequirement,
+  VerdictAppealDecision,
+  InformationForDefendant,
+  informationForDefendantMap,
+  mapPoliceVerdictDeliveryStatus,
+} from './lib/verdict'
+
+export {
+  isSubpoenaInfoChanged,
+  isVerdictInfoChanged,
+} from './lib/policeDocument'
+export type {
+  SubpoenaPoliceDocumentInfo,
+  VerdictPoliceDocumentInfo,
+} from './lib/policeDocument'
 
 export {
   InstitutionType,
@@ -45,7 +60,12 @@ export { DateType, dateTypes } from './lib/dateLog'
 
 export { StringType, stringTypes } from './lib/caseString'
 
-export { CaseFileState, CaseFileCategory, HashAlgorithm } from './lib/file'
+export {
+  CaseFileState,
+  CaseFileCategory,
+  HashAlgorithm,
+  PoliceFileTypeCode,
+} from './lib/file'
 
 export {
   UserRole,
@@ -74,6 +94,8 @@ export {
   getAdminUserInstitutionUserRoles,
 } from './lib/user'
 export type { User, UserDescriptor, InstitutionUser } from './lib/user'
+
+export { DataGroups } from './lib/statistics'
 
 export {
   CaseOrigin,
@@ -105,8 +127,6 @@ export {
   isInvestigationCase,
   isRequestCase,
   isAcceptingCaseDecision,
-  isTrafficViolationCase,
-  hasTrafficViolationSubtype,
   completedRequestCaseStates,
   completedIndictmentCaseStates,
   completedCaseStates,
@@ -127,6 +147,7 @@ export {
   getIndictmentAppealDeadlineDate,
   getAppealDeadlineDate,
   hasDatePassed,
+  hasTimestamp,
 } from './lib/dates'
 
 export type {
@@ -138,6 +159,8 @@ export type {
 export {
   IndictmentCountOffense,
   offenseSubstances,
+  isTrafficViolationIndictmentCount,
+  getIndictmentCountCompare,
 } from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 
@@ -152,6 +175,13 @@ export {
 } from './lib/lawyer'
 
 export { type CourtDocument } from './lib/courtDocument'
+
+export {
+  CourtSessionClosedLegalBasis,
+  CourtSessionRulingType,
+  CourtDocumentType,
+  hasGeneratedCourtRecordPdf,
+} from './lib/courtSession'
 
 export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'
 export { getCaseTableType, caseTables } from './lib/tables/caseTable'

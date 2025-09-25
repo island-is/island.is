@@ -15,9 +15,7 @@ import { SubpoenaType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories/date.factory'
 import { subpoena as strings } from '../messages'
-import { Case } from '../modules/case'
-import { Defendant } from '../modules/defendant'
-import { Subpoena } from '../modules/subpoena'
+import { Case, Defendant, Subpoena } from '../modules/repository'
 import {
   addConfirmation,
   addEmptyLines,
@@ -51,7 +49,7 @@ export const createSubpoena = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
   const intro = getIntro(defendant.gender)
 
   doc.on('data', (chunk) => sinc.push(chunk))

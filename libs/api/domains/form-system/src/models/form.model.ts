@@ -76,7 +76,13 @@ export class Form {
   applicationDaysToRemove!: number
 
   @Field(() => Boolean)
-  stopProgressOnValidatingScreen!: boolean
+  allowProceedOnValidationFail!: boolean
+
+  @Field(() => Boolean)
+  hasSummaryScreen!: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isZendeskEnabled?: boolean
 
   @Field(() => LanguageType, { nullable: true })
   completedMessage?: LanguageType

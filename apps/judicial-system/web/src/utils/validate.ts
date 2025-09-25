@@ -1,7 +1,7 @@
 // TODO: Add tests
 import {
   isIndictmentCase,
-  isTrafficViolationCase,
+  isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 import {
   Case,
@@ -10,13 +10,14 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
+  CourtSessionResponse,
+  CourtSessionRulingType,
   DateLog,
   Defendant,
   DefenderChoice,
   IndictmentCount,
   IndictmentCountOffense,
   IndictmentDecision,
-  IndictmentSubtype,
   SessionArrangements,
   User,
   Victim,
@@ -348,14 +349,11 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
     Boolean(indictmentCount.legalArguments)
 
   const isTrafficViolation = (indictmentCount: IndictmentCount) =>
-    indictmentCount.indictmentCountSubtypes?.includes(
-      IndictmentSubtype.TRAFFIC_VIOLATION,
+    isTrafficViolationIndictmentCount(
+      indictmentCount.indictmentCountSubtypes,
+      indictmentCount.policeCaseNumber &&
+        workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber],
     )
-
-  // All indictment counts are traffic violations
-  if (isTrafficViolationCase(workingCase)) {
-    return workingCase.indictmentCounts?.every(isValidTrafficViolation) ?? false
-  }
 
   if (!workingCase.indictmentCounts?.length) {
     return false
@@ -464,6 +462,10 @@ export const isRulingValidRC = (workingCase: Case): boolean => {
 }
 
 export const isRulingValidIC = (workingCase: Case): boolean => {
+  if (workingCase.isCompletedWithoutRuling) {
+    return true
+  }
+
   return validate([
     [workingCase.prosecutorDemands, ['empty']],
     [workingCase.courtCaseFacts, ['empty']],
@@ -488,13 +490,19 @@ export const isCourtRecordStepValidRC = (workingCase: Case): boolean => {
 }
 
 export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
+  const validationsWithRuling = !workingCase.isCompletedWithoutRuling
+    ? [
+        [workingCase.conclusion, ['empty']],
+        [workingCase.ruling, ['empty']],
+      ]
+    : []
+
   const validations = [
     [workingCase.courtStartDate, ['empty', 'date-format']],
     [workingCase.courtLocation, ['empty']],
     [workingCase.courtEndTime, ['empty', 'date-format']],
     [workingCase.decision, ['empty']],
-    [workingCase.conclusion, ['empty']],
-    [workingCase.ruling, ['empty']],
+    ...validationsWithRuling,
   ] as ValidateItem[]
 
   if (workingCase.sessionArrangements !== SessionArrangements.NONE_PRESENT) {
@@ -550,25 +558,64 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }
 
+export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
+  return (
+    (courtSession.isClosed
+      ? courtSession.closedLegalProvisions &&
+        courtSession.closedLegalProvisions.length > 0
+      : true) &&
+    (courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
+    courtSession.rulingType === CourtSessionRulingType.ORDER
+      ? !!courtSession.ruling
+      : true) &&
+    (courtSession.isAttestingWitness
+      ? courtSession.attestingWitnessId
+      : true) &&
+    validate([
+      [courtSession.startDate, ['empty', 'date-format']],
+      [courtSession.location, ['empty']],
+      [courtSession.entries, ['empty']],
+      [courtSession.rulingType, ['empty']],
+      [courtSession.endDate, ['empty', 'date-format']],
+    ]).isValid
+  )
+}
+
+export const isIndictmentCourtRecordStepValid = (
+  courtSessions?: CourtSessionResponse[] | null,
+) => {
+  if (!Array.isArray(courtSessions) || courtSessions.length === 0) {
+    return false
+  }
+
+  return courtSessions.every(isCourtSessionValid)
+}
+
 const isIndictmentRulingDecisionValid = (workingCase: Case) => {
-  switch (workingCase.indictmentRulingDecision) {
-    case CaseIndictmentRulingDecision.RULING:
-    case CaseIndictmentRulingDecision.DISMISSAL:
-      return Boolean(
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.COURT_RECORD,
-        ) &&
-          workingCase.caseFiles?.some(
-            (file) => file.category === CaseFileCategory.RULING,
-          ),
-      )
-    case CaseIndictmentRulingDecision.FINE:
-    case CaseIndictmentRulingDecision.CANCELLATION:
-      return Boolean(
+  const isCourtRecordValid = () =>
+    Boolean(
+      (workingCase.courtSessions &&
+        workingCase.courtSessions.length > 0 &&
+        workingCase.courtSessions.every((session) => session.endDate)) ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.COURT_RECORD,
         ),
+    )
+
+  switch (workingCase.indictmentRulingDecision) {
+    case CaseIndictmentRulingDecision.RULING:
+    case CaseIndictmentRulingDecision.DISMISSAL:
+      return (
+        isCourtRecordValid() &&
+        Boolean(
+          workingCase.caseFiles?.some(
+            (file) => file.category === CaseFileCategory.RULING,
+          ),
+        )
       )
+    case CaseIndictmentRulingDecision.FINE:
+    case CaseIndictmentRulingDecision.CANCELLATION:
+      return isCourtRecordValid()
     default:
       return false
   }

@@ -1,5 +1,4 @@
-import { Field, GraphQLISODateTime, ObjectType, Int } from '@nestjs/graphql'
-import { EnumType } from './enumType.model'
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('SocialInsuranceMedicalDocumentsDoctor')
 class Doctor {
@@ -46,39 +45,6 @@ class Difficulty {
   explanation?: string
 }
 
-@ObjectType('SocialInsuranceMedicalDocumentsEstimatedDuration')
-class EstimatedDuration {
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  start?: Date
-
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  end?: Date
-
-  @Field(() => Int, { nullable: true })
-  months?: number
-}
-
-@ObjectType('SocialInsuranceMedicalDocumentsConfirmation')
-class Confirmation {
-  @Field(() => EnumType, { nullable: true })
-  type?: EnumType
-
-  @Field({ nullable: true })
-  typeName?: string
-
-  @Field(() => [String], { nullable: true })
-  treatmentMeasures?: Array<string>
-
-  @Field({ nullable: true })
-  explanation?: string
-
-  @Field({ nullable: true })
-  progress?: string
-
-  @Field(() => EstimatedDuration, { nullable: true })
-  estimatedDuration?: EstimatedDuration
-}
-
 @ObjectType(
   'SocialInsuranceMedicalDocumentsCertificateForSicknessAndRehabilitation',
 )
@@ -89,13 +55,13 @@ export class CertificateForSicknessAndRehabilitation {
   @Field(() => Doctor, { nullable: true })
   doctor?: Doctor
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastExaminationDate?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   certificateDate?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   disabilityDate?: Date
 
   @Field(() => Diagnosis, { nullable: true })
@@ -119,6 +85,6 @@ export class CertificateForSicknessAndRehabilitation {
   @Field({ nullable: true })
   other?: string
 
-  @Field(() => Confirmation, { nullable: true })
-  confirmation?: Confirmation
+  @Field({ nullable: true })
+  isAlmaCertificate?: boolean
 }

@@ -11,18 +11,20 @@
       "executor": "@nx/eslint:lint"
     },
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/external-contracts-tests",
         "main": "apps/external-contracts-tests/main.spec.ts",
-        "tsConfig": "apps/external-contracts-tests/tsconfig.json"
+        "tsConfig": "apps/external-contracts-tests/tsconfig.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       }
     },

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Inject,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -24,17 +25,15 @@ import {
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
-import { Case } from '../case/models/case.model'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
-import { Defendant } from '../defendant/models/defendant.model'
+import { Case, Defendant, Subpoena } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { PoliceSubpoenaExistsGuard } from './guards/policeSubpoenaExists.guard'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
 import { DeliverResponse } from './models/deliver.response'
-import { Subpoena } from './models/subpoena.model'
 import { SubpoenaService } from './subpoena.service'
 
 @Controller('api/internal')
@@ -58,7 +57,19 @@ export class InternalSubpoenaController {
       `Updating subpoena by police subpoena id ${policeSubpoenaId}`,
     )
 
-    return this.subpoenaService.update(subpoena, update)
+    if (!subpoena.case || !subpoena.defendant) {
+      // This should never happen because of the PoliceSubpoenaExistsGuard
+      throw new InternalServerErrorException(
+        `Cannot update subpoena with police subpoena id ${policeSubpoenaId} because it is not linked to a case and/or a defendant`,
+      )
+    }
+
+    return this.subpoenaService.update(
+      subpoena.case,
+      subpoena.defendant,
+      subpoena,
+      update,
+    )
   }
 
   @UseGuards(
@@ -67,11 +78,7 @@ export class InternalSubpoenaController {
     DefendantExistsGuard,
     SubpoenaExistsGuard,
   )
-  // TODO: Remove DELIVERY_TO_POLICE_SUBPOENA endpoint later
   @Post([
-    `case/:caseId/${
-      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA]
-    }/:defendantId/:subpoenaId`,
     `case/:caseId/${
       messageEndpoint[
         MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA
@@ -245,9 +252,6 @@ export class InternalSubpoenaController {
         MessageType
           .DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION
       ]
-    }/:defendantId/:subpoenaId`,
-    `case/:caseId/${
-      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION]
     }/:defendantId/:subpoenaId`,
   ])
   @ApiOkResponse({

@@ -5,11 +5,13 @@ import {
   Case,
   Defendant,
   UpdateVerdictInput,
+  Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useUpdateVerdictMutation } from './updateVerdict.generated'
+import { useVerdictQuery } from './verdict.generated'
 
-const useVerdict = () => {
+const useVerdict = (currentVerdict?: Verdict) => {
   const updateDefendantVerdictState = useCallback(
     (
       update: UpdateVerdictInput,
@@ -19,15 +21,17 @@ const useVerdict = () => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }
+        const { defendantId, ...verdictFields } = update
         const indexOfDefendantToUpdate = prevWorkingCase.defendants.findIndex(
-          (defendant) => defendant.id === update.defendantId,
+          (defendant) => defendant.id === defendantId,
         )
 
         const newDefendants = [...prevWorkingCase.defendants]
 
+        const currentVerdict = newDefendants[indexOfDefendantToUpdate].verdict
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
-          verdict: update,
+          verdict: { ...currentVerdict, ...verdictFields },
         } as Defendant
 
         return { ...prevWorkingCase, defendants: newDefendants }
@@ -67,7 +71,31 @@ const useVerdict = () => {
     [updateDefendantVerdictState, updateVerdict],
   )
 
-  return { setAndSendVerdictToServer }
+  const skip =
+    !currentVerdict ||
+    !currentVerdict?.externalPoliceDocumentId ||
+    Boolean(currentVerdict?.serviceStatus)
+  const {
+    data,
+    loading: verdictLoading,
+    error,
+  } = useVerdictQuery({
+    skip,
+    variables: {
+      input: {
+        caseId: currentVerdict?.caseId ?? '',
+        defendantId: currentVerdict?.defendantId ?? '',
+      },
+    },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
+  return {
+    verdict: skip || error ? currentVerdict : data?.verdict,
+    verdictLoading: skip ? false : verdictLoading,
+    setAndSendVerdictToServer,
+  }
 }
 
 export default useVerdict

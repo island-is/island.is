@@ -4,7 +4,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
@@ -15,6 +14,8 @@ import {
   CaseIndictmentRulingDecision,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
+  isCompletedCase,
+  isDistrictCourtUser,
   SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
@@ -24,9 +25,11 @@ import {
   createCaseFilesRecord,
   createFineSentToPrisonAdminPdf,
   createIndictment,
+  createIndictmentCourtRecordPdf,
   createRulingSentToPrisonAdminPdf,
-  createServiceCertificate,
   createSubpoena,
+  createSubpoenaServiceCertificate,
+  createVerdictServiceCertificate,
   getCaseFileHash,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
@@ -34,11 +37,15 @@ import {
   getRulingPdfAsBuffer,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { Defendant } from '../defendant'
-import { EventLog } from '../event-log'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { UserService } from '../user'
-import { Case } from './models/case.model'
+import {
+  Case,
+  CaseRepositoryService,
+  Defendant,
+  EventLog,
+  Subpoena,
+  Verdict,
+} from '../repository'
+import { SubpoenaService } from '../subpoena'
 
 @Injectable()
 export class PdfService {
@@ -47,10 +54,9 @@ export class PdfService {
   constructor(
     private readonly awsS3Service: AwsS3Service,
     private readonly intlService: IntlService,
-    private readonly userService: UserService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -156,6 +162,65 @@ export class PdfService {
     return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
   }
 
+  async getCourtRecordPdfForIndictmentCase(
+    theCase: Case,
+    user: TUser,
+  ): Promise<Buffer> {
+    let confirmation: Confirmation | undefined = undefined
+
+    if (isCompletedCase(theCase.state)) {
+      if (theCase.courtRecordHash) {
+        const existingPdf = await this.tryGetPdfFromS3(
+          theCase,
+          `${theCase.id}/courtRecord.pdf`,
+        )
+
+        if (existingPdf) {
+          return existingPdf
+        }
+      }
+
+      const completionEvent = EventLog.getEventLogByEventType(
+        EventType.INDICTMENT_COMPLETED,
+        theCase.eventLogs,
+      )
+
+      if (completionEvent && completionEvent.institutionName) {
+        confirmation = {
+          actor: completionEvent.userName ?? '',
+          title: completionEvent.userTitle,
+          institution: completionEvent.institutionName,
+          date: completionEvent.created,
+        }
+      }
+    }
+
+    const generatedPdf = await createIndictmentCourtRecordPdf(
+      theCase,
+      isDistrictCourtUser(user),
+      confirmation,
+    )
+
+    if (isCompletedCase(theCase.state) && confirmation) {
+      const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
+
+      // No need to wait for this to finish
+      this.caseRepositoryService
+        .update(theCase.id, {
+          courtRecordHash: JSON.stringify({ hash, hashAlgorithm }),
+        })
+        .then(() =>
+          this.tryUploadPdfToS3(
+            theCase,
+            `${theCase.id}/courtRecord.pdf`,
+            generatedPdf,
+          ),
+        )
+    }
+
+    return generatedPdf
+  }
+
   async getRequestPdf(theCase: Case): Promise<Buffer> {
     await this.refreshFormatMessage()
 
@@ -251,11 +316,10 @@ export class PdfService {
       const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
-      this.caseModel
-        .update(
-          { indictmentHash: hash, indictmentHashAlgorithm: hashAlgorithm },
-          { where: { id: theCase.id } },
-        )
+      this.caseRepositoryService
+        .update(theCase.id, {
+          indictmentHash: JSON.stringify({ hash, hashAlgorithm }),
+        })
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
@@ -352,17 +416,34 @@ export class PdfService {
     return generatedPdf
   }
 
-  async getServiceCertificatePdf(
+  async getSubpoenaServiceCertificatePdf(
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
   ): Promise<Buffer> {
     await this.refreshFormatMessage()
 
-    const generatedPdf = await createServiceCertificate(
+    const generatedPdf = await createSubpoenaServiceCertificate(
       theCase,
       defendant,
       subpoena,
+      this.formatMessage,
+    )
+
+    return generatedPdf
+  }
+
+  async getVerdictServiceCertificatePdf(
+    theCase: Case,
+    defendant: Defendant,
+    verdict: Verdict,
+  ): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    const generatedPdf = await createVerdictServiceCertificate(
+      theCase,
+      defendant,
+      verdict,
       this.formatMessage,
     )
 

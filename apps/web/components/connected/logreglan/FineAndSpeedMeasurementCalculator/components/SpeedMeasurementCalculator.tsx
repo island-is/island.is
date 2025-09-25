@@ -3,8 +3,6 @@ import { useIntl } from 'react-intl'
 
 import {
   Box,
-  GridColumn,
-  GridRow,
   Inline,
   Input,
   RadioButton,
@@ -89,52 +87,40 @@ export const SpeedMeasurementCalculator = ({
 
   return (
     <Stack space={3}>
-      <GridRow rowGap={2}>
-        <GridColumn span={['6/12', '6/12', '1/1', '6/12']}>
-          <Input
-            label={formatMessage(
-              m.speedMeasurementCalculator.measuredSpeedInputLabel,
-            )}
-            name="measured-speed-input"
-            size="xs"
-            type="number"
-            inputMode="numeric"
-            value={measuredSpeed}
-            onChange={(e) => {
-              if (Number.isNaN(Number(e.target.value))) {
-                return
-              }
-              setMeasuredSpeed(e.target.value)
-            }}
-          />
-        </GridColumn>
-        <GridColumn span={['3/12', '3/12', '1/2', '3/12']}>
-          <Input
-            label={formatMessage(
-              m.speedMeasurementCalculator.vikmorkInputLabel,
-            )}
-            name="vikmork"
-            size="xs"
-            type="number"
-            inputMode="numeric"
-            value={vikmork}
-            readOnly={true}
-          />
-        </GridColumn>
-        <GridColumn span={['3/12', '3/12', '1/2', '3/12']}>
-          <Input
-            label={formatMessage(
-              m.speedMeasurementCalculator.nidurstadaInputLabel,
-            )}
-            name="nidurstada"
-            size="xs"
-            type="number"
-            inputMode="numeric"
-            value={nidurstada}
-            readOnly={true}
-          />
-        </GridColumn>
-      </GridRow>
+      <Stack space={2}>
+        <Input
+          label={formatMessage(
+            m.speedMeasurementCalculator.measuredSpeedInputLabel,
+          )}
+          name="measured-speed-input"
+          size="xs"
+          type="number"
+          inputMode="numeric"
+          value={measuredSpeed}
+          onChange={(e) => {
+            if (Number.isNaN(Number(e.target.value))) {
+              return
+            }
+            setMeasuredSpeed(e.target.value)
+          }}
+        />
+
+        <Box display="flex" columnGap={5}>
+          <Stack space={1}>
+            <Text variant="eyebrow">
+              {formatMessage(m.speedMeasurementCalculator.vikmorkInputLabel)}
+            </Text>
+            <Text fontWeight="semiBold">{vikmork}</Text>
+          </Stack>
+          <Stack space={1}>
+            <Text variant="eyebrow">
+              {formatMessage(m.speedMeasurementCalculator.nidurstadaInputLabel)}
+            </Text>
+            <Text fontWeight="semiBold">{nidurstada}</Text>
+          </Stack>
+        </Box>
+      </Stack>
+
       <Select
         label={formatMessage(
           m.speedMeasurementCalculator.speedLimitSelectLabel,
@@ -148,6 +134,7 @@ export const SpeedMeasurementCalculator = ({
             setSpeedLimit(option.value)
           }
         }}
+        isSearchable={false}
       />
       <Stack space={2}>
         <Text

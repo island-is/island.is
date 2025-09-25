@@ -16,7 +16,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { core, request as m } from '../messages'
-import { Case } from '../modules/case'
+import { Case } from '../modules/repository'
 import { formatLegalProvisions } from './formatters'
 import {
   addCoatOfArms,
@@ -49,7 +49,7 @@ const constructRestrictionRequestPdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
@@ -224,7 +224,7 @@ const constructInvestigationRequestPdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 

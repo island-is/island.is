@@ -144,8 +144,8 @@
       "@island.is/api/domains/intellectual-properties": [
         "libs/api/domains/intellectual-properties/src/index.ts"
       ],
-      "@island.is/api/domains/islykill": [
-        "libs/api/domains/islykill/src/index.ts"
+      "@island.is/api/domains/landspitali": [
+        "libs/api/domains/landspitali/src/index.ts"
       ],
       "@island.is/api/domains/law-and-order": [
         "libs/api/domains/law-and-order/src/index.ts"
@@ -249,6 +249,9 @@
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
       ],
+      "@island.is/api/domains/vmst-applications": [
+        "libs/api/domains/vmst-applications/src/index.ts"
+      ],
       "@island.is/api/domains/verdicts": [
         "libs/api/domains/verdicts/src/index.ts"
       ],
@@ -292,6 +295,9 @@
       ],
       "@island.is/application/templates/accident-notification": [
         "libs/application/templates/accident-notification/src/index.ts"
+      ],
+      "@island.is/application/templates/activation-allowance": [
+        "libs/application/templates/activation-allowance/src/index.ts"
       ],
       "@island.is/application/templates/alcohol-tax-redemption": [
         "libs/application/templates/alcohol-tax-redemption/src/index.ts"
@@ -673,7 +679,6 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
-      "@island.is/clients/blood": ["libs/clients/blood/src/index.ts"],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
@@ -731,6 +736,9 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
+      "@island.is/clients/fjs/bank-info": [
+        "libs/clients/fjs/bank-info/src/index.ts"
+      ],
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
       ],
@@ -769,7 +777,6 @@
       "@island.is/clients/intellectual-properties": [
         "libs/clients/intellectual-properties/src/index.ts"
       ],
-      "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
       ],
@@ -782,6 +789,7 @@
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
+      "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -929,6 +937,9 @@
       ],
       "@island.is/clients/verdicts": ["libs/clients/verdicts/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
+      "@island.is/clients/vmst-unemployment": [
+        "libs/clients/vmst-unemployment/src/index.ts"
+      ],
       "@island.is/clients/work-accident-ver": [
         "libs/clients/work-accident-ver/src/index.ts"
       ],
@@ -1066,6 +1077,9 @@
       ],
       "@island.is/portals/admin/ids-admin": [
         "libs/portals/admin/ids-admin/src/index.ts"
+      ],
+      "@island.is/portals/admin/payments": [
+        "libs/portals/admin/payments/src/index.ts"
       ],
       "@island.is/portals/admin/petition": [
         "libs/portals/admin/petition/src/index.ts"
@@ -1224,7 +1238,6 @@
       "@island.is/testing/e2e": ["libs/testing/e2e/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
-      "@island.is/unicorn-app/*": ["apps/unicorn-app/*"],
       "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],

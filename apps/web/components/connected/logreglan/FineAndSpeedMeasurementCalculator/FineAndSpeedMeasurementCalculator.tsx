@@ -1,17 +1,20 @@
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
   Box,
+  Button,
+  Hidden,
+  Hyphen,
   Stack,
   Table,
-  TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import type { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
 import { FineCalculator } from './components/FineCalculator'
+import { MobileDrawer } from './components/MobileDrawer'
 import { SpeedMeasurementCalculator } from './components/SpeedMeasurementCalculator'
 import { m } from './translation.strings'
 import { calculateSpeedMeasurementFine } from './utils'
@@ -77,7 +80,6 @@ interface FineState extends Fine {
 
 interface FineCalculatorDetailsProps {
   fines: FineState[]
-  goBack: () => void
   slice: ConnectedComponent
   speedMeasurementData?: {
     points: number
@@ -168,13 +170,6 @@ const FineCalculatorDetails = ({
 
   return (
     <Stack space={3}>
-      {jailTime > 0 && Boolean(slice.configJson?.showJailTime) && (
-        <Box display="flex" justifyContent="flexEnd">
-          <Text variant="small" fontWeight="semiBold">
-            {formatMessage(m.results.jailTime, { days: jailTime })}
-          </Text>
-        </Box>
-      )}
       <Table.Table>
         <Table.Head>
           <Table.HeadData>
@@ -231,34 +226,38 @@ const FineCalculatorDetails = ({
           </Table.Row>
         </Table.Foot>
       </Table.Table>
+      {jailTime > 0 &&
+        Boolean(slice.configJson?.showJailTime) &&
+        (typeof slice.configJson?.stopDisplayingJailTimeAfterAmount === 'number'
+          ? totalFine < slice.configJson.stopDisplayingJailTimeAfterAmount
+          : true) && (
+          <Text variant="small" fontWeight="semiBold">
+            {formatMessage(m.results.jailTime, { days: jailTime })}
+          </Text>
+        )}
     </Stack>
   )
 }
 
-enum HeadingId {
-  Fine = 'fine',
-  SpeedMeasurement = 'speed-measurement',
-  Results = 'results',
-}
-
 interface FineAndSpeedMeasurementCalculatorProps {
   slice: ConnectedComponent
+  chatBubbleIsPushedUp?: boolean
 }
 
 export const FineAndSpeedMeasurementCalculator = ({
   slice,
+  chatBubbleIsPushedUp = false,
 }: FineAndSpeedMeasurementCalculatorProps) => {
-  const [selectedHeadingId, setSelectedHeadingId] = useState<HeadingId>(
-    HeadingId.Fine,
-  )
-
   const { formatMessage } = useIntl()
+  const breakdownRef = useRef<HTMLDivElement>(null)
 
   const speedLimitOptions: typeof DEFAULT_SPEED_LIMIT_OPTIONS =
     slice.json?.speedLimitOptions ?? DEFAULT_SPEED_LIMIT_OPTIONS
 
   const [measuredSpeed, setMeasuredSpeed] = useState('')
-  const [speedLimit, setSpeedLimit] = useState(speedLimitOptions[0].value)
+  const [speedLimit, setSpeedLimit] = useState(
+    slice.configJson?.defaultSpeedLimitValue ?? speedLimitOptions[0]?.value,
+  )
   const [over3500kgOrWithTrailer, setOver3500kgOrWithTrailer] = useState(false)
 
   const [fines, setFines] = useState<FineState[]>(
@@ -288,86 +287,127 @@ export const FineAndSpeedMeasurementCalculator = ({
 
   const points = finePoints + (speedMeasurementPoints ?? 0)
 
+  const onSeeBreakdownClick = useCallback(() => {
+    breakdownRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }, [])
+
   return (
-    <Stack space={3}>
-      <TableOfContents
-        headings={[
-          {
-            headingId: HeadingId.Fine,
-            headingTitle: formatMessage(m.fines.fineTableOfContentHeading),
-          },
-          {
-            headingId: HeadingId.SpeedMeasurement,
-            headingTitle: formatMessage(
-              m.fines.speedMeasurementTableOfContentHeading,
-            ),
-          },
-          {
-            headingId: HeadingId.Results,
-            headingTitle: formatMessage(m.fines.resultsTableOfContentHeading),
-          },
-        ]}
-        onClick={(headingId) => {
-          setSelectedHeadingId(headingId as HeadingId)
-        }}
-        tableOfContentsTitle={formatMessage(m.fines.tableOfContentsTitle)}
-        selectedHeadingId={selectedHeadingId}
-      />
+    <>
       <Stack space={3}>
-        <Box display="flex" justifyContent="flexEnd">
-          <Box
-            borderRadius="standard"
-            background="purple100"
-            padding={2}
-            className={styles.totalContainer}
-          >
-            <Stack space={0}>
-              <Text variant="eyebrow" fontWeight="semiBold">
-                {formatMessage(m.fines.total)}
-              </Text>
-              <Text textAlign="right" variant="small" fontWeight="semiBold">
-                {formatCurrency(price)}
-              </Text>
-              <Text textAlign="right" variant="small" fontWeight="semiBold">
-                {points}
-                {points === 1
-                  ? formatMessage(m.fines.pointsPostfixSingular)
-                  : formatMessage(m.fines.pointsPostfixPlural)}
-              </Text>
+        <Box display="flex" flexDirection="rowReverse" columnGap={[1, 3, 3, 5]}>
+          <Box position="relative" display={['none', 'none', 'block', 'block']}>
+            <Box className={styles.totalOuterContainer}>
+              <Box display="flex" justifyContent="flexEnd">
+                <Box
+                  borderRadius="standard"
+                  background="purple100"
+                  padding={[1, 2]}
+                  className={styles.totalContainer}
+                >
+                  <Stack space={2}>
+                    <Stack space={0}>
+                      <Text variant="eyebrow" fontWeight="semiBold">
+                        {formatMessage(m.fines.total)}
+                      </Text>
+                      <Text
+                        textAlign="right"
+                        variant="small"
+                        fontWeight="semiBold"
+                      >
+                        {formatCurrency(price)}
+                      </Text>
+                      <Text
+                        textAlign="right"
+                        variant="small"
+                        fontWeight="semiBold"
+                      >
+                        {points}
+                        {points === 1
+                          ? formatMessage(m.fines.pointsPostfixSingular)
+                          : formatMessage(m.fines.pointsPostfixPlural)}
+                      </Text>
+                    </Stack>
+                    <Box display="flex" justifyContent="flexEnd">
+                      <Button
+                        onClick={onSeeBreakdownClick}
+                        variant="text"
+                        size="small"
+                      >
+                        <Hyphen>
+                          {formatMessage(m.results.showBreakdown)}
+                        </Hyphen>
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+
+          <Box width="full">
+            <Stack space={3}>
+              <Stack space={2}>
+                <Text variant="h2" as="h2">
+                  {formatMessage(m.speedMeasurementCalculator.heading)}
+                </Text>
+                <SpeedMeasurementCalculator
+                  measuredSpeed={measuredSpeed}
+                  speedLimit={speedLimit}
+                  over3500kgOrWithTrailer={over3500kgOrWithTrailer}
+                  setMeasuredSpeed={setMeasuredSpeed}
+                  setSpeedLimit={setSpeedLimit}
+                  setOver3500kgOrWithTrailer={setOver3500kgOrWithTrailer}
+                  speedLimitOptions={speedLimitOptions}
+                />
+              </Stack>
+              <Stack space={2}>
+                <Text variant="h2" as="h2">
+                  {formatMessage(m.fines.heading)}
+                </Text>
+                <FineCalculator fines={fines} setFines={setFines} />
+              </Stack>
             </Stack>
           </Box>
         </Box>
+        <Box ref={breakdownRef}>
+          <Stack space={2}>
+            <Text variant="h2" as="h2">
+              {formatMessage(m.results.heading)}
+            </Text>
+            <FineCalculatorDetails
+              fines={fines}
+              slice={slice}
+              speedMeasurementData={{
+                points: speedMeasurementPoints ?? 0,
+                price: speedMeasurementPrice ?? 0,
+                measuredSpeed: Number(measuredSpeed),
+                vikmork,
+                speedLimit,
+                over3500kgOrWithTrailer,
+                akaera,
+              }}
+            />
+          </Stack>
+        </Box>
       </Stack>
-      {selectedHeadingId === HeadingId.Fine && (
-        <FineCalculator fines={fines} setFines={setFines} />
-      )}
-      {selectedHeadingId === HeadingId.SpeedMeasurement && (
-        <SpeedMeasurementCalculator
-          measuredSpeed={measuredSpeed}
-          speedLimit={speedLimit}
-          over3500kgOrWithTrailer={over3500kgOrWithTrailer}
-          setMeasuredSpeed={setMeasuredSpeed}
-          setSpeedLimit={setSpeedLimit}
-          setOver3500kgOrWithTrailer={setOver3500kgOrWithTrailer}
-          speedLimitOptions={speedLimitOptions}
+      <Hidden above="sm">
+        <MobileDrawer
+          chatBubbleIsPushedUp={chatBubbleIsPushedUp}
+          totalText={formatMessage(m.fines.totalMobileDrawer)}
+          seeBreakdownText={formatMessage(m.results.showBreakdown)}
+          priceText={formatCurrency(price) ?? ''}
+          pointsText={`${points}
+                        ${
+                          points === 1
+                            ? formatMessage(m.fines.pointsPostfixSingular)
+                            : formatMessage(m.fines.pointsPostfixPlural)
+                        }`}
+          onSeeBreakdownClick={onSeeBreakdownClick}
         />
-      )}
-      {selectedHeadingId === HeadingId.Results && (
-        <FineCalculatorDetails
-          fines={fines}
-          goBack={() => setSelectedHeadingId(HeadingId.Fine)}
-          slice={slice}
-          speedMeasurementData={{
-            points: speedMeasurementPoints ?? 0,
-            price: speedMeasurementPrice ?? 0,
-            measuredSpeed: Number(measuredSpeed),
-            vikmork,
-            speedLimit,
-            over3500kgOrWithTrailer,
-            akaera,
-          }}
-        />
-      )}
-    </Stack>
+      </Hidden>
+    </>
   )
 }

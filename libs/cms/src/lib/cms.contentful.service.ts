@@ -557,7 +557,7 @@ export class CmsContentfulService {
       ['content_type']: 'article',
       'sys.id[in]': articles.map((a) => a.sys.id).join(','),
       select: ArticleFields,
-      include: 10,
+      include: 5,
     }
 
     const relatedResult = await this.contentfulRepository

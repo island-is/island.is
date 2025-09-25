@@ -19,7 +19,9 @@ export const ApplicationFragment = gql`
       ...Section
     }
     status
-    stopProgressOnValidatingScreen
+    allowProceedOnValidationFail
+    hasPayment
+    hasSummaryScreen
     certificationTypes {
       id
       certificationTypeId
@@ -30,6 +32,11 @@ export const ApplicationFragment = gql`
     modified
     submittedAt
     completed
+    dependencies {
+      parentProp
+      childProps
+      isSelected
+    }
   }
   ${ApplicantTypeDtoFragment}
   ${LanguageFields}

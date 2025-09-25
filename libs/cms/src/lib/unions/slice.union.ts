@@ -52,6 +52,7 @@ import {
   IGrantCardsList,
   IOrganizationParentSubpageList,
   IIntroLinkImage,
+  IFeaturedGenericListItems,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -162,6 +163,10 @@ import {
   IntroLinkImage,
   mapIntroLinkImage,
 } from '../models/introLinkImage.model'
+import {
+  FeaturedGenericListItems,
+  mapFeaturedGenericListItems,
+} from '../models/featuredGenericListItems.model'
 
 export type SliceTypes =
   | ITimeline
@@ -213,6 +218,7 @@ export type SliceTypes =
   | IFeaturedLinks
   | IOrganizationParentSubpageList
   | IIntroLinkImage
+  | IFeaturedGenericListItems
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -269,6 +275,7 @@ export const SliceUnion = createUnionType({
     GrantCardsList,
     OrganizationParentSubpageList,
     IntroLinkImage,
+    FeaturedGenericListItems,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -376,6 +383,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       )
     case 'introLinkImage':
       return mapIntroLinkImage(slice as IIntroLinkImage)
+    case 'featuredGenericListItems':
+      return mapFeaturedGenericListItems(slice as IFeaturedGenericListItems)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

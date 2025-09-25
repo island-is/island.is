@@ -99,6 +99,7 @@ export interface HelmService {
       annotations: {
         [anntName: string]: string
       }
+      pathTypeOverride?: 'Exact' | 'Prefix' | 'ImplementationSpecific'
       hosts: { host: string; paths: string[] }[]
     }
   }
@@ -148,7 +149,11 @@ export interface LocalrunService {
 export interface FeatureKubeJob {
   apiVersion: 'batch/v1'
   kind: 'Job'
-  metadata: { name: string; labels?: { [name: string]: string } }
+  metadata: {
+    name: string
+    labels?: { [name: string]: string }
+    annotations?: { [name: string]: string }
+  }
   spec: {
     template: {
       spec: {

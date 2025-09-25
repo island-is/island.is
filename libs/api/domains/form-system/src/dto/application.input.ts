@@ -103,7 +103,7 @@ export class ApplicationInput {
   status?: string
 
   @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
 
   @Field(() => [ApplicationEventDtoInput], { nullable: 'itemsAndList' })
   events?: ApplicationEventDtoInput[]
@@ -130,22 +130,13 @@ export class UpdateApplicationDependenciesInput {
   completed?: string[]
 }
 
-@InputType('UpdateFormSystemApplicationDtoInput')
-export class UpdateApplicationDtoInput {
-  @Field(() => [DependencyInput], { nullable: true })
-  dependencies?: DependencyInput[]
-
-  @Field(() => [String], { nullable: true })
-  completed?: string[]
-}
-
 @InputType('UpdateFormSystemApplicationInput')
 export class UpdateApplicationInput {
   @Field(() => String, { nullable: true })
   id?: string
 
-  @Field(() => UpdateApplicationDtoInput, { nullable: true })
-  updateApplicationDto?: UpdateApplicationDtoInput
+  @Field(() => UpdateApplicationDependenciesInput, { nullable: true })
+  updateApplicationDto?: UpdateApplicationDependenciesInput
 }
 
 @InputType('SaveFormSystemScreenInput')
@@ -159,11 +150,6 @@ export class SubmitScreenDtoInput {
 
 @InputType('SubmitFormSystemScreenInput')
 export class SubmitScreenInput {
-  // @Field(() => String, { nullable: true })
-  // screenId?: string
-
-  // @Field(() => ApplicationInput, { nullable: true })
-  // applicationDto?: ApplicationInput
   @Field(() => String, { nullable: true })
   screenId?: string
 

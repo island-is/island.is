@@ -559,7 +559,7 @@ services-auth-ids-api:
     privileged: false
 services-auth-ids-api-cleanup:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -848,6 +848,7 @@ services-auth-public-api:
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'identity-server.staging01.devland.is'
+          pathTypeOverride: 'ImplementationSpecific'
           paths:
             - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'

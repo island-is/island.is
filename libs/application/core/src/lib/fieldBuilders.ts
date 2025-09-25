@@ -1188,16 +1188,19 @@ export const buildBankAccountField = (
     marginBottom,
     marginTop,
     titleVariant,
+    required,
     defaultValue,
   } = data
 
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,
     marginBottom,
     marginTop,
     titleVariant,
+    required,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
     defaultValue,

@@ -453,6 +453,7 @@ export interface DescriptionField extends BaseField {
   space?: BoxProps['paddingTop']
   titleVariant?: TitleVariants
   showFieldName?: boolean
+  showRequiredStar?: boolean
 }
 
 export interface RadioField extends InputField {
@@ -835,7 +836,7 @@ export interface AccordionField extends BaseField {
     | ((application: Application) => Array<AccordionItem>)
   titleVariant?: TitleVariants
 }
-export interface BankAccountField extends BaseField {
+export interface BankAccountField extends InputField {
   readonly type: FieldTypes.BANK_ACCOUNT
   component: FieldComponents.BANK_ACCOUNT
   titleVariant?: TitleVariants
@@ -1000,7 +1001,7 @@ export type TableData = {
 export interface OverviewField extends BaseField {
   readonly type: FieldTypes.OVERVIEW
   component: FieldComponents.OVERVIEW
-  title?: FormText
+  title?: FormTextWithLocale
   titleVariant?: TitleVariants
   description?: FormText
   backId?:

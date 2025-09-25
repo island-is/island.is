@@ -3,7 +3,7 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
-  List,
+  CollectionType,
   ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
@@ -24,8 +24,9 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
   )
   async signList({ auth, application }: TemplateApiModuleActionProps) {
     const listId = application.answers.listId
-      ? (application.answers.listId as string)
-      : (application.externalData.getList.data as List[])[0].id
+    if (!listId || typeof listId !== 'string' || listId.trim() === '') {
+      throw new TemplateApiError(errorMessages.submitFailure, 400)
+    }
 
     const signature = await this.signatureCollectionClientService.signList(
       listId,
@@ -83,7 +84,14 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
   }
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
-    // Returns the list user is trying to sign, in the apporiate area
+    const canSignStatus = application.externalData?.canSign?.status
+    if (canSignStatus !== 'success') {
+      // If canSign failed, the user will be stopped by the error there
+      // We return an empty array to not add redundant errors to the response
+      return []
+    }
+
+    // Returns the list user is trying to sign, in the appropriate area
     const areaId = (
       application.externalData.canSign.data as {
         area: { id: string }
@@ -92,12 +100,16 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
 
     if (!areaId) {
       // If no area user will be stopped by can sign above
-      return new TemplateApiError(errorMessages.areaId, 400)
+      throw new TemplateApiError(errorMessages.areaId, 400)
     }
     const ownerId = application.answers.initialQuery as string
-    // Check if user got correct ownerId, if not user has to pick list
+    // Check if user got correct ownerId
     const isCandidateId =
       await this.signatureCollectionClientService.isCandidateId(ownerId, auth)
+
+    if (ownerId && !isCandidateId) {
+      throw new TemplateApiError(errorMessages.candidateNotFound, 400)
+    }
 
     // If initialQuery is not defined return all list for area
     const lists = await this.signatureCollectionClientService.getLists({
@@ -105,7 +117,13 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
       candidateId: isCandidateId ? ownerId : undefined,
       areaId,
       onlyActive: true,
+      collectionType: CollectionType.Parliamentary,
     })
+
+    if (isCandidateId && !lists.some((list) => list.candidate.id === ownerId)) {
+      throw new TemplateApiError(errorMessages.candidateListActive, 400)
+    }
+
     // If candidateId existed or if there is only one list, check if maxReached
     if (lists.length === 1) {
       const { maxReached } = lists[0]

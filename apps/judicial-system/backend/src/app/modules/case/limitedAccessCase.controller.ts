@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Header,
   Inject,
@@ -30,8 +31,11 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isCompletedCase,
+  isRequestCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -39,7 +43,7 @@ import {
 import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import { EventService } from '../event'
-import { User } from '../user'
+import { Case, User } from '../repository'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
@@ -62,7 +66,6 @@ import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { DefendantIndictmentAccessedInterceptor } from './interceptors/defendantIndictmentAccessed.interceptor'
 import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
-import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
 import {
   LimitedAccessCaseService,
@@ -277,12 +280,19 @@ export class LimitedAccessCaseController {
     JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseReadGuard,
-    CaseCompletedGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)
-  @Get('case/:caseId/limitedAccess/courtRecord')
+  @Get([
+    'case/:caseId/limitedAccess/courtRecord',
+    'case/:caseId/limitedAccess/mergedCase/:mergedCaseId/courtRecord',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -298,7 +308,33 @@ export class LimitedAccessCaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    let pdf: Buffer
+
+    if (isRequestCase(theCase.type)) {
+      if (!isCompletedCase(theCase.state)) {
+        throw new ForbiddenException(`Case ${caseId} is not completed`)
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    } else {
+      if (
+        !hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.courtSessions,
+          user,
+        )
+      ) {
+        throw new BadRequestException(
+          `Case ${caseId} does not have a generated court record pdf document`,
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+        theCase,
+        user,
+      )
+    }
 
     res.end(pdf)
   }

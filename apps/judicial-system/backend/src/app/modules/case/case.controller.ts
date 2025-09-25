@@ -17,12 +17,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import {
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
   DokobitError,
@@ -47,15 +42,17 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isPublicProsecutionOfficeUser,
+  isRequestCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import {
-  adminRule,
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
@@ -69,6 +66,8 @@ import {
 } from '../../guards'
 import { CivilClaimantService } from '../defendant'
 import { EventService } from '../event'
+import { Case } from '../repository'
+import { UpdateCase } from '../repository'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -107,11 +106,9 @@ import {
 } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
-import { Case } from './models/case.model'
-import { CaseStatistics } from './models/caseStatistics.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
-import { CaseService, UpdateCase } from './case.service'
+import { CaseService } from './case.service'
 import { PdfService } from './pdf.service'
 
 @Controller('api')
@@ -506,8 +503,13 @@ export class CaseController {
     JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -517,8 +519,12 @@ export class CaseController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
-  @Get('case/:caseId/courtRecord')
+  @Get([
+    'case/:caseId/courtRecord',
+    'case/:caseId/mergedCase/:mergedCaseId/courtRecord',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -534,7 +540,35 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    let pdf: Buffer
+
+    if (isRequestCase(theCase.type)) {
+      if (isPublicProsecutionOfficeUser(user)) {
+        throw new ForbiddenException(
+          'Public prosecution office users are not allowed to get court record pdfs for request cases',
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    } else {
+      if (
+        !hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.courtSessions,
+          user,
+        )
+      ) {
+        throw new BadRequestException(
+          `Case ${caseId} does not have a generated court record pdf document`,
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+        theCase,
+        user,
+      )
+    }
 
     res.end(pdf)
   }
@@ -896,25 +930,5 @@ export class CaseController {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
     return this.caseService.createCourtCase(theCase, user)
-  }
-
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(adminRule)
-  @Get('cases/statistics')
-  @ApiOkResponse({
-    type: CaseStatistics,
-    description: 'Gets court centered statistics for cases',
-  })
-  @ApiQuery({ name: 'fromDate', required: false, type: String })
-  @ApiQuery({ name: 'toDate', required: false, type: String })
-  @ApiQuery({ name: 'institutionId', required: false, type: String })
-  getStatistics(
-    @Query('fromDate') fromDate?: Date,
-    @Query('toDate') toDate?: Date,
-    @Query('institutionId') institutionId?: string,
-  ): Promise<CaseStatistics> {
-    this.logger.debug('Getting statistics for all cases')
-
-    return this.caseService.getCaseStatistics(fromDate, toDate, institutionId)
   }
 }

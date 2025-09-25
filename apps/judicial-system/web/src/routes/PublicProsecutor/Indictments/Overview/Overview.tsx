@@ -7,11 +7,13 @@ import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { Feature } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   BlueBoxWithDate,
   CourtCaseInfo,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -26,6 +28,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
+import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
   Defendant,
@@ -36,6 +39,7 @@ import {
   useCase,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 
 import { ReviewDecision } from '../../components/ReviewDecision/ReviewDecision'
 import {
@@ -46,6 +50,7 @@ import {
 } from '../../components/utils'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
+import * as styles from './Overview.css'
 
 type VisibleModal = {
   type: 'REVOKE_SEND_TO_PRISON_ADMIN'
@@ -58,8 +63,11 @@ export const Overview = () => {
   const { formatMessage: fm } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
+  const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { features } = useContext(FeatureContext)
+
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
   const [isReviewedDecisionChanged, setIsReviewedDecisionChanged] =
@@ -93,11 +101,11 @@ export const Overview = () => {
   }
 
   const handleRevokeAppeal = (defendant: Defendant) => {
-    setAndSendDefendantToServer(
+    setAndSendVerdictToServer(
       {
         caseId: workingCase.id,
         defendantId: defendant.id,
-        verdictAppealDate: null,
+        appealDate: null,
       },
       setWorkingCase,
     )
@@ -147,45 +155,55 @@ export const Overview = () => {
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) => {
+          const { verdict } = defendant
+
           const isFine =
             workingCase.indictmentRulingDecision ===
             CaseIndictmentRulingDecision.FINE
 
-          const serviceRequired =
-            defendant.serviceRequirement === ServiceRequirement.REQUIRED
+          const isServiceRequired =
+            verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
-          const serviceNotApplicable =
-            defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+          const isServiceNotApplicable =
+            verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
 
           return (
             <Fragment key={defendant.id}>
-              <Box component="section" marginBottom={2}>
-                <BlueBoxWithDate defendant={defendant} icon="calendar" />
-              </Box>
-              {(serviceNotApplicable ||
-                (serviceRequired && defendant.verdictViewDate)) && (
-                <Box component="section" marginBottom={2}>
-                  <BlueBox>
-                    <SectionHeading
-                      title="Afstaða dómfellda til dóms"
-                      heading="h4"
-                      marginBottom={2}
-                      required
-                    />
-                    <Box marginBottom={2}>
-                      <Text variant="eyebrow">{defendant.name}</Text>
-                    </Box>
-                    <VerdictAppealDecisionChoice
-                      defendant={defendant}
-                      disabled={!!defendant.isSentToPrisonAdmin}
-                    />
-                  </BlueBox>
+              <Box className={styles.container}>
+                {features?.includes(Feature.VERDICT_DELIVERY) && verdict && (
+                  <VerdictStatusAlert verdict={verdict} defendant={defendant} />
+                )}
+                <Box component="section">
+                  <BlueBoxWithDate defendant={defendant} icon="calendar" />
                 </Box>
-              )}
+                {verdict &&
+                  (isServiceNotApplicable ||
+                    (isServiceRequired && verdict.serviceDate)) && (
+                    <Box component="section">
+                      <BlueBox>
+                        <SectionHeading
+                          title="Afstaða dómfellda til dóms"
+                          heading="h4"
+                          marginBottom={2}
+                          required
+                        />
+                        <Box marginBottom={2}>
+                          <Text variant="eyebrow">{defendant.name}</Text>
+                        </Box>
+                        <VerdictAppealDecisionChoice
+                          defendant={defendant}
+                          verdict={verdict}
+                          disabled={!!defendant.isSentToPrisonAdmin}
+                        />
+                      </BlueBox>
+                    </Box>
+                  )}
+              </Box>
               <Box
                 display="flex"
                 justifyContent="flexEnd"
                 marginBottom={5}
+                marginTop={1}
                 columnGap={2}
               >
                 <Button
@@ -214,7 +232,7 @@ export const Overview = () => {
                     ? 'Afskrá í LÖKE'
                     : 'Skráð í LÖKE'}
                 </Button>
-                {defendant.verdictAppealDate ? (
+                {verdict?.appealDate ? (
                   <Button
                     variant="text"
                     onClick={() => handleRevokeAppeal(defendant)}
@@ -244,7 +262,7 @@ export const Overview = () => {
                     size="small"
                     disabled={
                       !workingCase.indictmentReviewDecision ||
-                      (!isFine && !defendant.verdictViewDate && serviceRequired)
+                      (!isFine && !verdict?.serviceDate && isServiceRequired)
                     }
                   >
                     Senda til fullnustu
@@ -331,23 +349,26 @@ export const Overview = () => {
             caseNumber: workingCase.courtCaseNumber,
             reviewer: selectedIndictmentReviewer?.label,
           })}
-          secondaryButtonText={fm(core.back)}
-          onSecondaryButtonClick={() =>
-            router.push(getStandardUserDashboardRoute(user))
-          }
+          secondaryButton={{
+            text: fm(core.back),
+            onClick: () => router.push(getStandardUserDashboardRoute(user)),
+          }}
         />
       )}
       {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
         <Modal
           title="Afturkalla úr fullnustu"
           text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
-          onPrimaryButtonClick={() =>
-            handleRevokeSendToPrisonAdmin(modalVisible.defendant)
-          }
-          primaryButtonText="Afturkalla"
-          isPrimaryButtonLoading={isUpdatingDefendant}
-          secondaryButtonText={fm(core.cancel)}
-          onSecondaryButtonClick={() => setModalVisible(undefined)}
+          primaryButton={{
+            text: 'Afturkalla',
+            onClick: () =>
+              handleRevokeSendToPrisonAdmin(modalVisible.defendant),
+            isLoading: isUpdatingDefendant,
+          }}
+          secondaryButton={{
+            text: fm(core.cancel),
+            onClick: () => setModalVisible(undefined),
+          }}
         />
       )}
     </PageLayout>

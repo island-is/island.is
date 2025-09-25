@@ -1,6 +1,5 @@
 import { Base64 } from 'js-base64'
-import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
-import { Transaction } from 'sequelize/types'
+import { Includeable, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -23,8 +22,10 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  CourtDocumentType,
   HashAlgorithm,
   isFailedServiceStatus,
+  isSubpoenaInfoChanged,
   isSuccessfulServiceStatus,
   ServiceStatus,
   SubpoenaNotificationType,
@@ -33,23 +34,16 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseService } from '../case/internalCase.service'
-import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
+import { CourtDocumentService } from '../court-session'
 import { DefendantService } from '../defendant/defendant.service'
-import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { Institution } from '../institution'
-import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
-import { User } from '../user'
+import { PoliceDocumentType, PoliceService } from '../police'
+import { Case, Defendant, Institution, Subpoena, User } from '../repository'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
-import { Subpoena } from './models/subpoena.model'
-import {
-  ServiceStatusStatistics,
-  SubpoenaStatistics,
-} from './models/subpoenaStatistics.response'
 
 export const include: Includeable[] = [
   {
@@ -77,27 +71,6 @@ export const include: Includeable[] = [
   { model: Defendant, as: 'defendant' },
 ]
 
-const subpoenaInfoKeys: Array<keyof SubpoenaInfo> = [
-  'serviceStatus',
-  'comment',
-  'servedBy',
-  'defenderNationalId',
-  'serviceDate',
-]
-
-const isNewValueSetAndDifferent = (
-  newValue: unknown,
-  oldValue: unknown,
-): boolean => Boolean(newValue) && newValue !== oldValue
-
-export const isSubpoenaInfoChanged = (
-  newSubpoenaInfo: SubpoenaInfo,
-  oldSubpoenaInfo: SubpoenaInfo,
-) =>
-  subpoenaInfoKeys.some((key) =>
-    isNewValueSetAndDifferent(newSubpoenaInfo[key], oldSubpoenaInfo[key]),
-  )
-
 @Injectable()
 export class SubpoenaService {
   constructor(
@@ -111,6 +84,7 @@ export class SubpoenaService {
     private readonly policeService: PoliceService,
     private readonly eventService: EventService,
     private readonly defendantService: DefendantService,
+    private readonly courtDocumentService: CourtDocumentService,
     private readonly courtService: CourtService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
@@ -193,6 +167,8 @@ export class SubpoenaService {
   }
 
   async update(
+    theCase: Case,
+    defendant: Defendant,
     subpoena: Subpoena,
     update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
@@ -223,21 +199,19 @@ export class SubpoenaService {
       }
 
       if (
-        subpoena.case &&
-        subpoena.defendant &&
-        (defenderChoice ||
-          defenderNationalId ||
-          defenderName ||
-          defenderEmail ||
-          defenderPhoneNumber ||
-          requestedDefenderChoice ||
-          requestedDefenderNationalId ||
-          requestedDefenderName)
+        defenderChoice ||
+        defenderNationalId ||
+        defenderName ||
+        defenderEmail ||
+        defenderPhoneNumber ||
+        requestedDefenderChoice ||
+        requestedDefenderNationalId ||
+        requestedDefenderName
       ) {
         // Færa message handling í defendant service
         await this.defendantService.updateRestricted(
-          subpoena.case,
-          subpoena.defendant,
+          theCase,
+          defendant,
           {
             defenderChoice,
             defenderNationalId,
@@ -251,6 +225,33 @@ export class SubpoenaService {
           transaction,
         )
       }
+
+      // Are we observing a successful service for the first time?
+      // We assume that a successful service status will never be
+      // replaced by another successful service status
+      const wasSubpoenaSuccessfullyServed =
+        serviceStatus &&
+        serviceStatus !== subpoena.serviceStatus &&
+        [
+          ServiceStatus.DEFENDER,
+          ServiceStatus.ELECTRONICALLY,
+          ServiceStatus.IN_PERSON,
+        ].includes(serviceStatus)
+
+      // File the service certificate as a court document
+      if (wasSubpoenaSuccessfullyServed) {
+        const name = `Birtingarvottorð ${defendant.name}`
+
+        return this.courtDocumentService.create(
+          theCase.id,
+          {
+            documentType: CourtDocumentType.GENERATED_DOCUMENT,
+            name,
+            generatedPdfUri: `/api/case/${theCase.id}/serviceCertificate/${defendant.id}/${subpoena.id}`,
+          },
+          transaction,
+        )
+      }
     })
 
     // No need to wait for this to finish
@@ -258,15 +259,11 @@ export class SubpoenaService {
 
     if (
       update.serviceStatus &&
-      update.serviceStatus !== subpoena.serviceStatus &&
-      subpoena.case
+      update.serviceStatus !== subpoena.serviceStatus
     ) {
-      this.eventService.postEvent(
-        'SUBPOENA_SERVICE_STATUS',
-        subpoena.case,
-        false,
-        { Staða: getServiceStatusText(update.serviceStatus) },
-      )
+      this.eventService.postEvent('SUBPOENA_SERVICE_STATUS', theCase, false, {
+        Staða: getServiceStatusText(update.serviceStatus),
+      })
     }
 
     return this.findById(subpoena.id)
@@ -452,7 +449,7 @@ export class SubpoenaService {
     user: TUser,
   ): Promise<DeliverResponse> {
     return this.pdfService
-      .getServiceCertificatePdf(theCase, defendant, subpoena)
+      .getSubpoenaServiceCertificatePdf(theCase, defendant, subpoena)
       .then(async (pdf) => {
         const fileName = `Birtingarvottorð - ${defendant.name}`
 
@@ -508,7 +505,12 @@ export class SubpoenaService {
     }
   }
 
-  async getSubpoena(subpoena: Subpoena, user?: TUser): Promise<Subpoena> {
+  async getSubpoena(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user?: TUser,
+  ): Promise<Subpoena> {
     if (!subpoena.policeSubpoenaId) {
       // The subpoena has not been delivered to the police
       return subpoena
@@ -531,88 +533,6 @@ export class SubpoenaService {
       return subpoena
     }
 
-    return this.update(subpoena, subpoenaInfo)
-  }
-
-  async getStatistics(
-    from?: Date,
-    to?: Date,
-    institutionId?: string,
-  ): Promise<SubpoenaStatistics> {
-    const where: WhereOptions = {
-      policeSubpoenaId: {
-        [Op.ne]: null,
-      },
-    }
-
-    if (from || to) {
-      where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
-      }
-      if (to) {
-        where.created[Op.lte] = to
-      }
-    }
-
-    const include: Includeable[] = []
-
-    if (institutionId) {
-      include.push({
-        model: Case,
-        required: true,
-        attributes: [],
-        where: {
-          [Op.or]: [
-            { courtId: institutionId },
-            { prosecutorsOfficeId: institutionId },
-          ],
-        },
-      })
-    }
-
-    const count = await this.subpoenaModel.count({
-      where,
-      include,
-    })
-
-    const grouped = (await this.subpoenaModel.findAll({
-      where,
-      include,
-      attributes: [
-        'serviceStatus',
-        [fn('COUNT', col('Subpoena.id')), 'count'],
-        [
-          literal(
-            'AVG(EXTRACT(EPOCH FROM "Subpoena"."service_date" - "Subpoena"."created") * 1000)',
-          ),
-          'averageServiceTimeMs',
-        ],
-      ],
-      group: ['serviceStatus'],
-      raw: true,
-    })) as unknown as {
-      serviceStatus: ServiceStatus | null
-      count: string
-      averageServiceTimeMs: string | null
-    }[]
-
-    const serviceStatusStatistics: ServiceStatusStatistics[] = grouped.map(
-      (row) => ({
-        serviceStatus: row.serviceStatus,
-        count: Number(row.count),
-        averageServiceTimeMs: Math.round(Number(row.averageServiceTimeMs) || 0),
-        averageServiceTimeDays:
-          Math.round(Number(row.averageServiceTimeMs) / 1000 / 60 / 60 / 24) ||
-          0,
-      }),
-    )
-
-    const stats: SubpoenaStatistics = {
-      count,
-      serviceStatusStatistics,
-    }
-
-    return stats
+    return this.update(theCase, defendant, subpoena, subpoenaInfo)
   }
 }

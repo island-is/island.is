@@ -16,12 +16,14 @@ import {
   ApplicationTypes,
   DefaultEvents,
   FormModes,
+  InstitutionNationalIds,
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
+import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import { ChildrenApi } from '../dataProviders'
@@ -37,9 +39,10 @@ import {
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
+  getApplicationType,
 } from '../utils/newPrimarySchoolUtils'
 import { dataSchema } from './dataSchema'
-import { newPrimarySchoolMessages } from './messages'
+import { newPrimarySchoolMessages, statesMessages } from './messages'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -107,6 +110,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: ['setApplicationType'],
         exit: [
           'clearApplicationIfReasonForApplication',
           'clearPlaceOfResidence',
@@ -156,20 +160,42 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.SUBMITTED]: {
+        entry: ['assignOrganization'],
         meta: {
           name: States.SUBMITTED,
-          status: FormModes.COMPLETED,
+          status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
+            tag: {
+              label: statesMessages.applicationReceivedTitle,
+            },
             pendingAction: {
               title: corePendingActionMessages.applicationReceivedTitle,
               content: corePendingActionMessages.applicationReceivedDescription,
-              displayStatus: 'success',
+              displayStatus: 'info',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: statesMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: statesMessages.applicationRejected,
+              },
+            ],
           },
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION_REVIEWER,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
@@ -179,13 +205,73 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: States.APPROVED,
+          status: FormModes.APPROVED,
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.applicationApproved,
+              content: statesMessages.applicationApprovedDescription,
+              displayStatus: 'success',
+            },
+          },
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.REJECTED]: {
+        meta: {
+          name: States.REJECTED,
+          status: FormModes.REJECTED,
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.applicationRejected,
+              content: statesMessages.applicationRejectedDescription,
+              displayStatus: 'error',
+            },
+          },
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
     },
   },
   stateMachineOptions: {
     actions: {
+      setApplicationType: assign((context) => {
+        const { application } = context
+
+        set(
+          application.answers,
+          'applicationType',
+          getApplicationType(application.answers, application.externalData),
+        )
+
+        return context
+      }),
       // Clear answers depending on what is selected as reason for application
       clearApplicationIfReasonForApplication: assign((context) => {
         const { application } = context
@@ -293,16 +379,40 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         }
         return context
       }),
+      assignOrganization: assign((context) => {
+        const { application } = context
+        const MMS_ID =
+          InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU ?? ''
+
+        const assignees = application.assignees
+        if (MMS_ID) {
+          if (Array.isArray(assignees) && !assignees.includes(MMS_ID)) {
+            assignees.push(MMS_ID)
+            set(application, 'assignees', assignees)
+          } else {
+            set(application, 'assignees', [MMS_ID])
+          }
+        }
+
+        return context
+      }),
     },
   },
 
   mapUserToRole(
-    id: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (id === application.applicant) {
+    if (nationalId === application.applicant) {
       return Roles.APPLICANT
     }
+
+    if (
+      nationalId === InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU
+    ) {
+      return Roles.ORGANIZATION_REVIEWER
+    }
+
     return undefined
   },
 }

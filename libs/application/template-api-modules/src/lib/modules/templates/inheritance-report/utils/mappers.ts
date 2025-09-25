@@ -1,85 +1,12 @@
-import {
-  EstateAsset,
-  EstateInfo,
-  EstateMember,
-} from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 
 type InheritanceReportSchema = zinfer<typeof inheritanceReportSchema>
-type InheritanceData = InheritanceReportSchema['assets']
-
-const initialMapper = <T>(element: T) => {
-  return {
-    ...element,
-    initial: true,
-    enabled: true,
-    propertyValuation: '0',
-    share: '0',
-    deceasedShare: '0',
-    deceasedShareEnabled: [],
-    deceasedShareAmount: 0,
-  }
-}
 
 export const trueOrHasYes = (element: string | boolean): string => {
   const elementString = element.toString().toLowerCase()
   const value = elementString === 'yes' || elementString === 'true'
   return value.toString()
-}
-
-const estateMemberMapper = (element: EstateMember) => {
-  return {
-    ...element,
-    initial: true,
-    enabled: true,
-    heirsPercentage: '',
-    inheritance: '',
-    inheritanceTax: '',
-    taxableInheritance: '',
-    taxFreeInheritance: '',
-    phone: '',
-    email: '',
-    advocate: element.advocate
-      ? {
-          ...element.advocate,
-          phone: '',
-          email: '',
-        }
-      : undefined,
-    advocate2: element.advocate2
-      ? {
-          ...element.advocate2,
-          phone: '',
-          email: '',
-        }
-      : undefined,
-  }
-}
-
-export const estateTransformer = (estate: EstateInfo): InheritanceData => {
-  const realEstate = estate.assets.map((el) => initialMapper<EstateAsset>(el))
-  const vehicles = estate.vehicles.map((el) => initialMapper<EstateAsset>(el))
-  const guns = estate.guns.map((el) => initialMapper<EstateAsset>(el))
-  const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
-
-  const data = {
-    ...estate,
-    estateMembers,
-    realEstate: {
-      data: realEstate,
-      hasModified: false,
-    },
-    vehicles: {
-      data: vehicles,
-      hasModified: false,
-    },
-    guns: {
-      data: guns,
-    },
-  }
-
-  return data
 }
 
 // -----------------------------------------------------------------

@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildRadioField,
   buildHiddenInput,
+  buildCustomField,
 } from '@island.is/application/core'
 import { convoy } from '../../../lib/messages'
 import {
@@ -20,7 +21,7 @@ export const ConvoyShortTermMultiField = buildMultiField({
   id: 'convoyShortTermMultiField',
   condition: checkIfExemptionTypeShortTerm,
   title: convoy.general.pageTitle,
-  description: convoy.general.description,
+  description: convoy.general.descriptionShortTerm,
   children: [
     buildHiddenInput({
       id: `convoy.items.${convoyIndex}.convoyId`,
@@ -76,6 +77,11 @@ export const ConvoyShortTermMultiField = buildMultiField({
       id: `convoy.items.${convoyIndex}.dollyType`,
       condition: (answers) => !checkIsConvoyWithTrailer(answers, convoyIndex),
       defaultValue: DollyType.NONE,
+    }),
+    buildCustomField({
+      component: 'HandleBeforeSubmitConvoy',
+      id: 'handleBeforeSubmitConvoy',
+      description: '',
     }),
   ],
 })

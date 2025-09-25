@@ -7,28 +7,41 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule } from '@island.is/nest/config'
 
 import {
+  auditTrailModuleConfig,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
+import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
 
-import { CaseService } from '../../case'
-import { Verdict } from '../models/verdict.model'
+import { CaseService, PdfService } from '../../case'
+import { FileService } from '../../file'
+import { PoliceService } from '../../police'
+import { Verdict } from '../../repository'
+import { InternalVerdictController } from '../internalVerdict.controller'
 import { VerdictController } from '../verdict.controller'
 import { VerdictService } from '../verdict.service'
 
 jest.mock('../../case/case.service')
+jest.mock('../../police/police.service')
+jest.mock('../../file/file.service')
+jest.mock('../../case/pdf.service')
 
 export const createTestingVerdictModule = async () => {
   const verdictModule = await Test.createTestingModule({
     imports: [
       ConfigModule.forRoot({
-        load: [sharedAuthModuleConfig],
+        load: [sharedAuthModuleConfig, auditTrailModuleConfig],
       }),
     ],
-    controllers: [VerdictController],
+    controllers: [VerdictController, InternalVerdictController],
     providers: [
       SharedAuthModule,
       CaseService,
+      PoliceService,
+      FileService,
+      PdfService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -37,6 +50,7 @@ export const createTestingVerdictModule = async () => {
           error: jest.fn(),
         },
       },
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
         provide: getModelToken(Verdict),
         useValue: {
@@ -49,6 +63,7 @@ export const createTestingVerdictModule = async () => {
         },
       },
       VerdictService,
+      AuditTrailService,
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
     ],
   }).compile()
@@ -57,13 +72,29 @@ export const createTestingVerdictModule = async () => {
     getModelToken(Verdict),
   )
 
+  const verdictService = verdictModule.get<VerdictService>(VerdictService)
+
+  const policeService = verdictModule.get<PoliceService>(PoliceService)
+
+  const fileService = verdictModule.get<FileService>(FileService)
+
   const verdictController =
     verdictModule.get<VerdictController>(VerdictController)
+
+  const internalVerdictController =
+    verdictModule.get<InternalVerdictController>(InternalVerdictController)
+
+  const sequelize = verdictModule.get<Sequelize>(Sequelize)
 
   verdictModule.close()
 
   return {
     verdictController,
+    internalVerdictController,
+    verdictService,
+    policeService,
+    fileService,
     verdictModel,
+    sequelize,
   }
 }

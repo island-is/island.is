@@ -20,7 +20,7 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
     },
     {
       name: m.collectionTitle,
-      path: SignatureCollectionPaths.PresidentialLists,
+      path: SignatureCollectionPaths.PresidentialListOfCandidates,
     },
   ],
 }

@@ -6,17 +6,16 @@ import { VehiclesResolver } from './resolvers/vehicles.resolver'
 import { VehiclesMileageResolver } from './resolvers/mileage.resolver'
 import { VehiclesService } from './services/vehicles.service'
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { VehiclesSharedResolver } from './resolvers/shared.resolver'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { BulkMileageService } from './services/bulkMileage.service'
 import { VehiclesV3Resolver } from './resolvers/vehicleV3.resolver'
 import { VehiclesBulkMileageResolver } from './resolvers/bulkMileage.resolver'
+import { FileStorageModule } from '@island.is/file-storage'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 @Module({
   providers: [
     VehiclesResolver,
-    VehiclesSharedResolver,
     VehiclesMileageResolver,
     VehiclesBulkMileageResolver,
     VehiclesV3Resolver,
@@ -29,6 +28,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
     AuthModule,
     CmsTranslationsModule,
     FeatureFlagModule,
+    FileStorageModule,
   ],
   exports: [VehiclesService],
 })

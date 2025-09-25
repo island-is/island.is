@@ -10,7 +10,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
-import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+import { Query } from '@island.is/api/schema'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import {
   isFirstApplication,
@@ -82,7 +82,7 @@ export const unionSickPaySubSection = buildSubSection({
           required: true,
         }),
         buildDescriptionField({
-          id: 'unionSickPay.unionNationalId.description',
+          id: 'unionSickPay.unionInfo.description',
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionDescriptionTitle,
@@ -92,7 +92,7 @@ export const unionSickPaySubSection = buildSubSection({
             shouldShowUnionSickPayUnionAndEndDate(answers),
         }),
         buildAsyncSelectField({
-          id: 'unionSickPay.unionNationalId',
+          id: 'unionSickPay.unionInfo',
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionSelectTitle,
@@ -102,14 +102,14 @@ export const unionSickPaySubSection = buildSubSection({
           required: true,
           loadingError: coreErrorMessages.failedDataProvider,
           loadOptions: async ({ apolloClient }) => {
-            const { data } = await apolloClient.query<SiaUnionsQuery>({
+            const { data } = await apolloClient.query<Query>({
               query: siaUnionsQuery,
             })
 
             return (
               data?.socialInsuranceGeneral?.unions
                 ?.map(({ name, nationalId }) => ({
-                  value: nationalId || '',
+                  value: `${nationalId}::${name}` || '',
                   label: name || '',
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []

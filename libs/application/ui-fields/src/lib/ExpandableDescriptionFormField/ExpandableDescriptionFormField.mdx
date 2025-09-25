@@ -2,11 +2,12 @@ import {
   Meta,
   Story,
   Canvas,
-  ArgsTable,
+  Controls,
   Description,
   Source,
-} from '@storybook/addon-docs'
+} from '@storybook/blocks'
 import { dedent } from 'ts-dedent'
+import * as ExpandableDescriptionFormFieldStories from './ExpandableDescriptionFormField.stories'
 
 import { ExpandableDescriptionFormField } from './ExpandableDescriptionFormField'
 
@@ -23,10 +24,7 @@ export const createMockApplication = (data = {}) => ({
   externalData: data.externalData || {},
 })
 
-<Meta
-  title="Application System/ExpandableDescriptionFormField"
-  component={ExpandableDescriptionFormField}
-/>
+<Meta of={ExpandableDescriptionFormFieldStories} />
 
 # ExpandableDescriptionFormField
 
@@ -48,17 +46,7 @@ You can create a ExpandableDescriptionFormField using the following function `Ex
 The previous configuration object will result in the following component:
 
 <Canvas>
-  <Story name="Default">
-    <ExpandableDescriptionFormField
-      application={createMockApplication()}
-      field={{
-        id: 'field.id',
-        title: 'Field title',
-        introText: 'Field introText',
-        description: '* bullet1\n * bullet2',
-      }}
-    />
-  </Story>
+  <Story of={ExpandableDescriptionFormFieldStories.Default} />
 </Canvas>
 
 You can also use this field into a custom component by using `<ExpandableDescriptionFormField field={...} />` with the configuration object defined above.
@@ -67,4 +55,4 @@ You can also use this field into a custom component by using `<ExpandableDescrip
 
 ## ExpandableDescriptionFormField
 
-<ArgsTable of={ExpandableDescriptionFormField} />
+<Controls />

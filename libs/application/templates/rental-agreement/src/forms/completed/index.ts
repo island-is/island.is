@@ -2,19 +2,23 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { buildForm } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import { FormModes } from '@island.is/application/types'
-import { completed } from '../../lib/messages'
+import * as m from '../../lib/messages'
 
 export const completedForm = buildForm({
   id: 'completedForm',
   logo: Logo,
   mode: FormModes.COMPLETED,
-  title: completed.pageTitle,
   renderLastScreenBackButton: false,
   children: [
     buildFormConclusionSection({
-      alertTitle: completed.alertMessageSuccessTitle,
-      expandableHeader: completed.pageInfoTitle,
-      expandableIntro: completed.pageInfoDescription,
+      alertTitle: m.completed.alertMessageSuccessTitle,
+      alertMessage: m.completed.alertMessageSuccessDescription,
+      expandableHeader: m.completed.pageInfoTitle,
+      expandableIntro: m.completed.pageInfoBullet1,
+      expandableDescription: m.completed.pageInfoBullet2,
+      multiFieldTitle: m.completed.sectionName,
+      sectionTitle: '',
+      tabTitle: m.completed.sectionName,
     }),
   ],
 })

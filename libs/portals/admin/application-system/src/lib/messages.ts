@@ -18,6 +18,11 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:applications',
     defaultMessage: 'Umsóknir',
   },
+  applicationSystemApplicationsDescription: {
+    id: 'admin-portal.application-system:applicationsDescription',
+    defaultMessage:
+      'Athugið að til að fá nákvæmari leitarniðurstöður er gott að velja tegund umsóknar. Eingöngu er hægt að leita í kennitölu umsækjanda þegar leitað er í öllum umsóknarflokkum í einu.',
+  },
   pleaseEnterValueToBeingSearch: {
     id: 'admin-portal.application-system:pleaseEnterValueToBeingSearch',
     defaultMessage: 'Sláðu inn kennitölu til að byrja leit',
@@ -54,6 +59,10 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:procurer',
     defaultMessage: 'Umboðshafi',
   },
+  otherData: {
+    id: 'admin-portal.application-system:otherData',
+    defaultMessage: 'Önnur gögn',
+  },
   name: {
     id: 'admin-portal.application-system:name',
     defaultMessage: 'Nafn',
@@ -61,6 +70,10 @@ export const m = defineMessages({
   nationalId: {
     id: 'admin-portal.application-system:nationalId',
     defaultMessage: 'Kennitala',
+  },
+  applicantNationalId: {
+    id: 'admin-portal.application-system:applicantNationalId',
+    defaultMessage: 'Kennitala umsækjanda',
   },
   email: {
     id: 'admin-portal.application-system:email',
@@ -183,9 +196,25 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:clearSelected',
     defaultMessage: 'Hreinsa val',
   },
+  applicationType: {
+    id: 'admin-portal.application-system:applicationType',
+    defaultMessage: 'Tegund umsóknar',
+  },
   searchPlaceholder: {
     id: 'admin-portal.application-system:searchPlaceholder',
     defaultMessage: 'Sláðu inn kennitölu',
+  },
+  searchApplicantPlaceholder: {
+    id: 'admin-portal.application-system:searchApplicantPlaceholder',
+    defaultMessage: 'Kennitala umsækjanda',
+  },
+  searchApplicantError: {
+    id: 'admin-portal.application-system:searchApplicantError',
+    defaultMessage: 'Kennitala verður að vera 10 tölustafir',
+  },
+  searchStrPlaceholder: {
+    id: 'admin-portal.application-system:searchStrPlaceholder',
+    defaultMessage: 'Sláðu inn leitarorð',
   },
   filterFrom: {
     id: 'admin-portal.application-system:filterFrom',

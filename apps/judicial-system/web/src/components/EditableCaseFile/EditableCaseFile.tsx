@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
 import { AnimatePresence, motion } from 'motion/react'
 import { InputMask } from '@react-input/mask'
 
@@ -25,15 +24,19 @@ import { TUploadFile } from '../../utils/hooks'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
 
+export const editableFields = ['fileName', 'displayDate'] as const
+export type EditableFields = typeof editableFields[number]
+
 export interface TEditableCaseFile {
   id: string
   category?: CaseFileCategory | null
   created?: string | null
+  name?: string | null
   displayText?: string | null
   userGeneratedFilename?: string | null
   displayDate?: string | null
   canOpen?: boolean
-  canEdit?: boolean
+  canEdit?: readonly EditableFields[]
   status?: FileUploadStatus
   size?: number | null
   submissionDate?: string | null
@@ -42,19 +45,24 @@ export interface TEditableCaseFile {
 interface Props {
   enableDrag: boolean
   caseFile: TEditableCaseFile
-  onOpen: (id: string) => void
+  // Overwrites the default background color based on file status
+  backgroundColor?: 'white'
+  disabled?: boolean
   onRename: (id: string, name: string, displayDate: string) => void
   onDelete: (file: TUploadFile) => void
+  onOpen?: (id: string) => void
   onRetry?: (file: TUploadFile) => void
-  onStartEditing: () => void
-  onStopEditing: () => void
+  onStartEditing?: () => void
+  onStopEditing?: () => void
 }
 
 const EditableCaseFile: FC<Props> = (props) => {
   const {
-    caseFile,
     enableDrag,
+    caseFile,
+    backgroundColor,
     onOpen,
+    disabled,
     onRename,
     onDelete,
     onRetry,
@@ -78,31 +86,51 @@ const EditableCaseFile: FC<Props> = (props) => {
     string | undefined | null
   >(caseFile.userGeneratedFilename)
 
+  const canEditName = caseFile.canEdit?.includes('fileName') ?? false
+  const canEditDate = caseFile.canEdit?.includes('displayDate') ?? false
+
   const handleEditFileButtonClick = () => {
     const trimmedFilename = editedFilename?.trim()
     const trimmedDisplayDate = editedDisplayDate?.trim()
 
-    if (trimmedFilename === undefined || trimmedFilename.length === 0) {
-      toast.error(formatMessage(strings.invalidFilenameErrorMessage))
-      return
+    if (canEditName) {
+      if (trimmedFilename !== undefined && trimmedFilename.length === 0) {
+        toast.error(formatMessage(strings.invalidFilenameErrorMessage))
+        return
+      }
     }
 
-    let newDate: Date | undefined
+    let isoDate: string | undefined
 
-    if (trimmedDisplayDate) {
+    if (canEditDate) {
+      if (!trimmedDisplayDate) {
+        toast.error(formatMessage(strings.invalidDateErrorMessage))
+        return
+      }
+
       const [day, month, year] = trimmedDisplayDate.split('.')
-      newDate = parseISO(`${year}-${month}-${day}`)
+      const y = Number(year)
+      const m = Number(month)
+      const d = Number(day)
+      // Construct date at 00:00:00Z to avoid local timezone shifts
+      const parsedDateUtc = new Date(Date.UTC(y, m - 1, d))
+
+      if (!isValid(parsedDateUtc)) {
+        toast.error(formatMessage(strings.invalidDateErrorMessage))
+        return
+      }
+
+      isoDate = parsedDateUtc.toISOString()
     }
 
-    if (!newDate || !isValid(newDate)) {
-      toast.error(formatMessage(strings.invalidDateErrorMessage))
-      return
-    }
-
-    onRename(caseFile.id, trimmedFilename, newDate.toISOString())
+    onRename(
+      caseFile.id,
+      trimmedFilename ?? displayName ?? caseFile.userGeneratedFilename ?? '',
+      isoDate ?? caseFile.displayDate ?? '',
+    )
 
     setIsEditing(false)
-    onStopEditing()
+    onStopEditing?.()
   }
 
   const displayDate = useMemo(() => {
@@ -120,9 +148,13 @@ const EditableCaseFile: FC<Props> = (props) => {
   return (
     <div
       className={cn(styles.caseFileWrapper, {
-        [styles.error]: styleIndex === FileUploadStatus.error,
-        [styles.done]: styleIndex === FileUploadStatus.done,
-        [styles.uploading]: styleIndex === FileUploadStatus.uploading,
+        [styles.caseFileWrapperBackground['white']]:
+          backgroundColor === 'white',
+        [styles.error]:
+          !backgroundColor && styleIndex === FileUploadStatus.error,
+        [styles.done]: !backgroundColor && styleIndex === FileUploadStatus.done,
+        [styles.uploading]:
+          !backgroundColor && styleIndex === FileUploadStatus.uploading,
       })}
     >
       {enableDrag && (
@@ -148,32 +180,36 @@ const EditableCaseFile: FC<Props> = (props) => {
             >
               <Box display="flex">
                 <Box className={styles.editCaseFileInputContainer}>
-                  <Box className={styles.editCaseFileName}>
-                    <Input
-                      name="fileName"
-                      size="xs"
-                      placeholder={formatMessage(
-                        strings.simpleInputPlaceholder,
-                      )}
-                      defaultValue={displayName ?? undefined}
-                      onChange={(evt) => setEditedFilename(evt.target.value)}
-                    />
-                  </Box>
-                  <Box className={styles.editCaseFileDisplayDate}>
-                    <InputMask
-                      component={Input}
-                      mask={EDITABLE_DATE}
-                      replacement={{ _: /\d/ }}
-                      value={editedDisplayDate || ''}
-                      onChange={(evt) => {
-                        setEditedDisplayDate(evt.target.value)
-                      }}
-                      name="fileDisplayDate"
-                      size="xs"
-                      placeholder={formatDate(new Date())}
-                      autoComplete="off"
-                    />
-                  </Box>
+                  {canEditName && (
+                    <Box className={styles.editCaseFileName}>
+                      <Input
+                        name="fileName"
+                        size="xs"
+                        placeholder={formatMessage(
+                          strings.simpleInputPlaceholder,
+                        )}
+                        defaultValue={displayName ?? undefined}
+                        onChange={(evt) => setEditedFilename(evt.target.value)}
+                      />
+                    </Box>
+                  )}
+                  {canEditDate && (
+                    <Box className={styles.editCaseFileDisplayDate}>
+                      <InputMask
+                        component={Input}
+                        mask={EDITABLE_DATE}
+                        replacement={{ _: /\d/ }}
+                        value={editedDisplayDate || ''}
+                        onChange={(evt) => {
+                          setEditedDisplayDate(evt.target.value)
+                        }}
+                        name="fileDisplayDate"
+                        size="xs"
+                        placeholder={formatDate(new Date())}
+                        autoComplete="off"
+                      />
+                    </Box>
+                  )}
                 </Box>
                 <Box display="flex" alignItems="center">
                   <button
@@ -192,7 +228,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                     <button
                       onClick={() => {
                         onDelete(caseFile as TUploadFile)
-                        onStopEditing()
+                        onStopEditing?.()
                       }}
                       className={cn(styles.editCaseFileButton, {
                         [styles.background.primary]:
@@ -228,7 +264,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                 component={caseFile.canOpen ? 'button' : undefined}
                 onClick={() => {
                   if (caseFile.canOpen && caseFile.id) {
-                    onOpen(caseFile.id)
+                    onOpen?.(caseFile.id)
                   }
                 }}
               >
@@ -276,16 +312,16 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <button
                     onClick={() => {
                       setIsEditing(true)
-                      onStartEditing()
+                      onStartEditing?.()
                     }}
                     className={cn(styles.editCaseFileButton, {
                       [styles.background.primary]:
-                        caseFile.canEdit &&
+                        !!caseFile.canEdit?.length &&
                         caseFile.status !== FileUploadStatus.error,
                       [styles.background.secondary]:
                         caseFile.status === FileUploadStatus.error || isEmpty,
                     })}
-                    disabled={!caseFile.canEdit}
+                    disabled={!caseFile.canEdit?.length || disabled}
                     aria-label="Breyta skrá"
                   >
                     <Icon icon="pencil" color={color} />

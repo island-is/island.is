@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import {
@@ -15,8 +22,7 @@ import {
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
-  hasTrafficViolationSubtype,
-  isTrafficViolationCase,
+  isTrafficViolationIndictmentCount,
   SubstanceMap,
 } from '@island.is/judicial-system/types'
 import {
@@ -33,7 +39,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
-  isTrafficViolationIndictmentCount,
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -41,8 +46,10 @@ import {
   UpdateIndictmentCount,
   useLawTag,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
-import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  getDefaultDefendantGender,
+  isPartiallyVisible,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { getIncidentDescription } from './lib/getIncidentDescription'
 import { Offenses } from './Offenses/Offenses'
@@ -221,10 +228,10 @@ export const IndictmentCount: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const lawTag = useLawTag()
-  const { deleteOffense } = useOffenses()
 
-  const gender = getDefaultDefendantGender(workingCase.defendants)
-
+  const [originalPoliceCaseNumber, setOriginalPoliceCaseNumber] = useState(
+    indictmentCount.policeCaseNumber,
+  )
   const [
     vehicleRegistrationNumberErrorMessage,
     setVehicleRegistrationNumberErrorMessage,
@@ -237,6 +244,11 @@ export const IndictmentCount: FC<Props> = ({
   const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
     : []
+
+  const gender = useMemo(
+    () => getDefaultDefendantGender(workingCase.defendants),
+    [workingCase.defendants],
+  )
 
   const lawsBrokenOptions: LawsBrokenOption[] = useMemo(
     () =>
@@ -252,6 +264,24 @@ export const IndictmentCount: FC<Props> = ({
       })),
     [lawTag, indictmentCount.lawsBroken],
   )
+
+  useEffect(() => {
+    if (indictmentCount.policeCaseNumber !== originalPoliceCaseNumber) {
+      // Our position in the list may have changed because we changed the police case number
+      const dateElement = document.getElementById(indictmentCount.id)
+
+      // Make sure the indictment count is visible
+      if (dateElement && !isPartiallyVisible(dateElement)) {
+        dateElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+
+      setOriginalPoliceCaseNumber(indictmentCount.policeCaseNumber)
+    }
+  }, [
+    indictmentCount.id,
+    indictmentCount.policeCaseNumber,
+    originalPoliceCaseNumber,
+  ])
 
   const showLegalArticleSelection = indictmentCount.offenses?.some(
     ({ offense }) => offense !== IndictmentCountOffense.OTHER,
@@ -321,11 +351,6 @@ export const IndictmentCount: FC<Props> = ({
       IndictmentSubtype.TRAFFIC_VIOLATION,
     )
     if (!hasTrafficViolationSubType) {
-      indictmentCount.offenses?.forEach(
-        async (o) =>
-          await deleteOffense(workingCase.id, indictmentCount.id, o.id),
-      )
-      const updatedOffenses: Offense[] = []
       handleIndictmentCountChanges(
         {
           indictmentCountSubtypes: Array.from(currentSubtypes),
@@ -333,7 +358,7 @@ export const IndictmentCount: FC<Props> = ({
           recordedSpeed: null,
           speedLimit: null,
         },
-        updatedOffenses,
+        [],
       )
     } else {
       handleIndictmentCountChanges({
@@ -342,29 +367,10 @@ export const IndictmentCount: FC<Props> = ({
     }
   }
 
-  const shouldShowTrafficViolationFields = () => {
-    if (isTrafficViolationCase(workingCase)) {
-      return true
-    }
-
-    const policeCaseNumber = indictmentCount.policeCaseNumber
-
-    if (
-      isTrafficViolationIndictmentCount(
-        policeCaseNumber,
-        workingCase.indictmentSubtypes,
-      )
-    ) {
-      return true
-    }
-
-    if (
-      hasTrafficViolationSubtype(indictmentCount?.indictmentCountSubtypes ?? [])
-    ) {
-      return true
-    }
-    return false
-  }
+  const shouldShowTrafficViolationFields = isTrafficViolationIndictmentCount(
+    indictmentCount.indictmentCountSubtypes,
+    subtypes,
+  )
 
   return (
     <BlueBox>
@@ -388,6 +394,7 @@ export const IndictmentCount: FC<Props> = ({
       <Box marginBottom={1}>
         <Select
           name="policeCaseNumber"
+          id={indictmentCount.id}
           options={workingCase.policeCaseNumbers?.map((val) => ({
             value: val,
             label: val,
@@ -456,7 +463,7 @@ export const IndictmentCount: FC<Props> = ({
           </Box>
         )}
       </Box>
-      {shouldShowTrafficViolationFields() && (
+      {shouldShowTrafficViolationFields && (
         <>
           <SectionHeading
             heading="h4"
