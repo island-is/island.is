@@ -70,7 +70,7 @@ export const mapAnswersToApplicationDto = (
 
   const parsedFiles = files?.map((file) => {
     const parts = file.key.split('.')
-    const ending = (parts.length > 1 ? parts.pop()! : '').toLowerCase()
+    const ending = (parts.length > 1 ? parts.pop() ?? '' : '').toLowerCase()
     const heiti = parts.join('.').replace(/^[^_]*_/, '')
     const tegund = ending === 'pdf' ? 'application/pdf' : 'image/jpeg'
     return {
