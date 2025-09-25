@@ -97,12 +97,6 @@ export const education = {
       defaultMessage: 'Staðfesting á námi/prófgráðu',
       description: 'School degree file name label',
     },
-    currentSchoolDegreeFileNameDescription: {
-      id: 'vmst.ub.application:education.labels.currentSchoolDegreeFileNameDescription',
-      defaultMessage:
-        'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .png, .jpg, .jpeg',
-      description: 'Upload description for school degree file',
-    },
     lastSemesterQuestion: {
       id: 'vmst.ub.application:education.labels.lastSemesterQuestion',
       defaultMessage: 'Lauk því námi með prófgráðu?',

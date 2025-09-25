@@ -121,7 +121,6 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
     return foundOption
   }
 
-  console.log('defaultValue', defaultValue)
   if (readOnly) {
     return (
       <Controller

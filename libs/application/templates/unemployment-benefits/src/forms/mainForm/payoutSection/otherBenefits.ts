@@ -10,11 +10,19 @@ import {
   YES,
   YesOrNoEnum,
 } from '@island.is/application/core'
-import { payout as payoutMessages } from '../../../lib/messages'
 import {
-  GaldurDomainModelsSettingsIncomeTypesIncomeTypeDTO,
+  payout as payoutMessages,
+  application as applicationMessages,
+} from '../../../lib/messages'
+import {
+  GaldurDomainModelsSettingsIncomeTypesIncomeTypeCategoryDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
 } from '@island.is/clients/vmst-unemployment'
+import {
+  SICKNESS_PAYMENTS_TYPE_ID,
+  SUPPLEMENTARY_FUND_TYPE_ID,
+  INSURANCE_PAYMENTS_TYPE_ID,
+} from '../../../shared/constants'
 
 export const otherBenefitsSubSection = buildSubSection({
   id: 'otherBenefitsSubSection',
@@ -63,14 +71,16 @@ export const otherBenefitsSubSection = buildSubSection({
             typeOfPayment: {
               component: 'select',
               label: payoutMessages.otherBenefits.typeOfPayment,
+              required: true,
               options: (application, _, locale) => {
                 const incomeTypes =
                   getValueViaPath<
-                    GaldurDomainModelsSettingsIncomeTypesIncomeTypeDTO[]
+                    GaldurDomainModelsSettingsIncomeTypesIncomeTypeCategoryDTO[]
                   >(
                     application.externalData,
-                    'unemploymentApplication.data.supportData.incomeTypes',
+                    'unemploymentApplication.data.supportData.incomeTypeCategories',
                   ) ?? []
+                console.log('incomeTypes', incomeTypes)
                 return incomeTypes?.map((incomeTypes) => ({
                   value: incomeTypes.id ?? '',
                   label:
@@ -80,9 +90,65 @@ export const otherBenefitsSubSection = buildSubSection({
                 }))
               },
             },
+            subType: {
+              component: 'select',
+              label: payoutMessages.otherBenefits.typeOfPayment,
+              required: true,
+              condition: (application, activeField, _) => {
+                if (!activeField) {
+                  return false
+                }
+                const incomeTypes =
+                  getValueViaPath<
+                    GaldurDomainModelsSettingsIncomeTypesIncomeTypeCategoryDTO[]
+                  >(
+                    application.externalData,
+                    'unemploymentApplication.data.supportData.incomeTypeCategories',
+                  ) ?? []
+                const subTypes = incomeTypes.find(
+                  (x) => x.id === activeField.typeOfPayment,
+                )?.incomeTypes
+
+                return !!subTypes && subTypes.length > 0
+              },
+              options: (application, activeField, locale) => {
+                if (!activeField) {
+                  return []
+                }
+                const incomeTypes =
+                  getValueViaPath<
+                    GaldurDomainModelsSettingsIncomeTypesIncomeTypeCategoryDTO[]
+                  >(
+                    application.externalData,
+                    'unemploymentApplication.data.supportData.incomeTypeCategories',
+                  ) ?? []
+                return (
+                  incomeTypes
+                    ?.find((x) => x.id === activeField.typeOfPayment)
+                    ?.incomeTypes?.map((subType) => ({
+                      value: subType.id ?? '',
+                      label:
+                        (locale === 'is'
+                          ? subType.name
+                          : subType.english ?? subType.name) ?? '',
+                    })) ?? []
+                )
+              },
+            },
             payer: {
               component: 'select',
               label: payoutMessages.otherBenefits.payer,
+              required: true,
+              condition: (application, activeField, _) => {
+                if (!activeField) {
+                  return false
+                }
+
+                return (
+                  activeField.typeOfPayment === SUPPLEMENTARY_FUND_TYPE_ID ||
+                  activeField.typeOfPayment === SICKNESS_PAYMENTS_TYPE_ID
+                )
+              },
               options: (application) => {
                 const incomeTypes =
                   getValueViaPath<
@@ -92,11 +158,24 @@ export const otherBenefitsSubSection = buildSubSection({
                     'unemploymentApplication.data.supportData.privatePensionFunds',
                   ) ?? []
 
-                // TODO get other payment types and mix together in one list
                 return incomeTypes?.map((incomeTypes) => ({
                   value: incomeTypes.id ?? '',
                   label: incomeTypes.name ?? '',
                 }))
+              },
+            },
+            privatePensionAlert: {
+              component: 'alertMessage',
+              alertType: 'info',
+              message:
+                payoutMessages.otherBenefits
+                  .payedFromPrivatePensionFundAlertMessage,
+              condition: (application, activeField, _) => {
+                if (!activeField) {
+                  return false
+                }
+
+                return activeField.typeOfPayment === SUPPLEMENTARY_FUND_TYPE_ID
               },
             },
             paymentAmount: {
@@ -104,37 +183,65 @@ export const otherBenefitsSubSection = buildSubSection({
               label: payoutMessages.otherBenefits.paymentAmount,
               currency: true,
               type: 'number',
+              required: true,
+            },
+            dateFrom: {
+              component: 'date',
+              required: true,
+              label: payoutMessages.otherBenefits.dateFrom,
+              width: 'half',
+              condition: (application, activeField, _) => {
+                if (!activeField) {
+                  return false
+                }
+
+                return activeField.typeOfPayment === SICKNESS_PAYMENTS_TYPE_ID
+              },
+            },
+            dateTo: {
+              component: 'date',
+              required: true,
+              label: payoutMessages.otherBenefits.dateFrom,
+              width: 'half',
+              condition: (application, activeField, _) => {
+                if (!activeField) {
+                  return false
+                }
+
+                return activeField.typeOfPayment === SICKNESS_PAYMENTS_TYPE_ID
+              },
+            },
+            sicknessAllowanceFile: {
+              component: 'fileUpload',
+              required: true,
+              uploadHeader:
+                payoutMessages.otherBenefits.sickessAllowanceFileHeader,
+              uploadDescription: applicationMessages.fileUploadAcceptFiles,
+              uploadMultiple: true,
+              condition: (application, activeField, _) => {
+                if (!activeField) {
+                  return false
+                }
+
+                return activeField.typeOfPayment === SICKNESS_PAYMENTS_TYPE_ID
+              },
+            },
+            paymentPlanFile: {
+              component: 'fileUpload',
+              required: true,
+              uploadHeader: payoutMessages.otherBenefits.paymentPlanFileHeader,
+              uploadDescription: applicationMessages.fileUploadAcceptFiles,
+              uploadMultiple: true,
+              condition: (application, activeField, _) => {
+                if (!activeField) {
+                  return false
+                }
+
+                return activeField.typeOfPayment === INSURANCE_PAYMENTS_TYPE_ID
+              },
             },
           },
         }),
-
-        //TODO move this into repeater field when api is ready
-        // buildDateField({
-        //   id: 'otherBenefits.paymentsFromSicknessAllowance.dateFrom',
-        //   title: payoutMessages.otherBenefits.dateFrom,
-        //   width: 'half',
-        // }),
-        // buildDateField({
-        //   id: 'otherBenefits.paymentsFromSicknessAllowance.dateTo',
-        //   title: payoutMessages.otherBenefits.dateTo,
-        //   width: 'half',
-        // }),
-        // buildFileUploadField({
-        //   id: 'otherBenefits.paymentsFromSicknessAllowance.file',
-        //   uploadHeader: payoutMessages.otherBenefits.fileHeader,
-        //   uploadDescription: payoutMessages.otherBenefits.fileDescription,
-        //   uploadAccept: UPLOAD_ACCEPT,
-        //   maxSize: FILE_SIZE_LIMIT,
-        // }),
-        // buildAlertMessageField({
-        //   id: 'otherBenefits.payedFromPrivatePensionFundAlertMessage',
-        //   message:
-        //     payoutMessages.otherBenefits
-        //       .payedFromPrivatePensionFundAlertMessage,
-        //   alertType: 'info',
-        //   doesNotRequireAnswer: true,
-        //   marginBottom: 0,
-        // }),
       ],
     }),
   ],

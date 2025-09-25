@@ -6,10 +6,13 @@ import {
   buildSelectField,
   buildSubSection,
 } from '@island.is/application/core'
-import { employment as employmentMessages } from '../../../lib/messages'
+import {
+  employment as employmentMessages,
+  application as applicationMessages,
+} from '../../../lib/messages'
 import { WorkingAbility } from '../../../shared'
 import { needsMedicalReport } from '../../../utils/needsMedicalReport'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../utils/constants'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../shared/constants'
 
 export const workingAbilitySubSection = buildSubSection({
   id: 'workingAbilitySubSection',
@@ -58,9 +61,7 @@ export const workingAbilitySubSection = buildSubSection({
             employmentMessages.workingAbility.labels.partTimeFileUploadLabel,
           uploadHeader:
             employmentMessages.workingAbility.labels.partTimeFileUploadLabel,
-          uploadDescription:
-            employmentMessages.workingAbility.labels
-              .partTimeFileUploadDescription,
+          uploadDescription: applicationMessages.fileUploadAcceptFiles,
           uploadAccept: UPLOAD_ACCEPT,
           maxSize: FILE_SIZE_LIMIT,
           condition: needsMedicalReport,

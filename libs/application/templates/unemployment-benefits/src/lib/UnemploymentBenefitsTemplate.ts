@@ -13,7 +13,7 @@ import {
   ChildrenCustodyInformationApi,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { Events, Roles, States } from '../utils/constants'
+import { Events, Roles, States } from '../shared/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { UnemploymentBenefitsSchema } from './dataSchema'
 import {
@@ -22,7 +22,7 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { application as applicationMessages } from './messages'
-import { UnemploymentApi, UserProfileApi } from '../dataProviders'
+import { LocaleApi, UnemploymentApi, UserProfileApi } from '../dataProviders'
 import { ApiActions } from '../shared/constants'
 
 const UnemploymentBenefitsTemplate: ApplicationTemplate<
@@ -65,6 +65,7 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 ChildrenCustodyInformationApi,
                 UnemploymentApi,
+                LocaleApi,
               ],
               delete: true,
             },

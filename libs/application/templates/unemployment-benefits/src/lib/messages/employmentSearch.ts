@@ -252,12 +252,6 @@ gerðar aðgengilegar atvinnurekendum innan EES sem leita að starfsfólki með 
       defaultMessage: 'Ferilskrá',
       description: 'Ferilskrá upload header',
     },
-    uploadDescription: {
-      id: 'vmst.ub.application:employmentSearch.resume.uploadDescription',
-      defaultMessage:
-        'Tekið er við skjölum með endingu: .pdf, .png, .jpg, .jpeg',
-      description: 'Ferilskrá upload description',
-    },
   }),
   employmentSearchConfirmationAgreement: defineMessages({
     sectionTitle: {

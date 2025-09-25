@@ -31,8 +31,7 @@ export const externalData = {
     },
     subTitle: {
       id: 'vmst.ub.application:externalData.nationalRegistry.subTitle',
-      defaultMessage:
-        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+      defaultMessage: 'Upplýsingar um þig, maka og börn.',
       description: 'We will fetch name, national id and address',
     },
   }),
@@ -45,7 +44,7 @@ export const externalData = {
     subTitle: {
       id: 'vmst.ub.application:externalData.userProfile.subTitle',
       defaultMessage:
-        'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
+        'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
       description:
         'In order to apply for this application we need your email and phone number',
     },
@@ -63,17 +62,28 @@ export const externalData = {
       description: 'To make stuff easier',
     },
   }),
-  stateInsuranceAcency: defineMessages({
-    title: {
-      id: 'vmst.ub.application:externalData.stateInsuranceAgency.title',
-      defaultMessage: 'Tryggingastofnun ríkisins',
-      description: 'Your information from the State Insurance Agency',
+  vmst: defineMessages({
+    rskTitle: {
+      id: 'vmst.ub.application:externalData.vmst.rskTitle',
+      defaultMessage: 'Upplýsingar frá Skattinum',
+      description: 'Rsk information from VMST title',
     },
-    subTitle: {
-      id: 'vmst.ub.application:externalData.stateInsuranceAgency.subTitle',
+    rskSubTitle: {
+      id: 'vmst.ub.application:externalData.vmst.rskSubTitle',
+      defaultMessage:
+        'Vinnumálastofnun sækir upplýsingar um launagreiðslur síðustu 36 mánaða, sbr. 4 mgr. 9. gr. laga nr. 54/2006 um atvinnuleysisbætur og ákvæði laga nr. 90/2018 um persónuvernd og vinnslu persónuupplýsinga.',
+      description: 'Rsk information from VMST description',
+    },
+    insuranceTitle: {
+      id: 'vmst.ub.application:externalData.vmst.insuranceTitle',
+      defaultMessage: 'Tryggingastofnun ríkisins',
+      description: 'Rsk information from VMST title',
+    },
+    insuranceSubTitle: {
+      id: 'vmst.ub.application:externalData.vmst.insuranceSubTitle',
       defaultMessage:
         ' Við framkvæmd laga um atvinnuleysisbætur er VMST nauðsynlegt að afla upplýsinga um örorku, mæðra- og feðralaun og meðlag.',
-      description: 'To make stuff easier',
+      description: 'Rsk information from VMST description',
     },
   }),
 }

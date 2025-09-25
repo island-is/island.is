@@ -14,9 +14,12 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { education as educationMessages } from '../../../lib/messages'
+import {
+  education as educationMessages,
+  application as applicationMessages,
+} from '../../../lib/messages'
 import { EducationType } from '../../../shared'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../utils/constants'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../shared/constants'
 import {
   appliedForNextSemester,
   didYouFinishLastSemester,
@@ -291,6 +294,7 @@ export const educationSection = buildSection({
                 appliedForNextSemester(answers) !== NO)),
         }),
         buildHiddenInputWithWatchedValue({
+          // TODO what is this doing?
           id: 'education.currentEducation.id',
           watchValue: 'education.currentEducation.courseOfStudy',
           valueModifier: (value) => {
@@ -372,8 +376,7 @@ export const educationSection = buildSection({
           title: educationMessages.labels.currentSchoolDegreeFileNameLabel,
           uploadHeader:
             educationMessages.labels.currentSchoolDegreeFileNameLabel,
-          uploadDescription:
-            educationMessages.labels.currentSchoolDegreeFileNameDescription,
+          uploadDescription: applicationMessages.fileUploadAcceptFiles,
           uploadAccept: UPLOAD_ACCEPT,
           maxSize: FILE_SIZE_LIMIT,
           doesNotRequireAnswer: true,

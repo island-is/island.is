@@ -13,3 +13,8 @@ export const UserProfileApi = defineTemplateApi({
     validateBankInformation: true,
   },
 })
+
+export const LocaleApi = defineTemplateApi({
+  action: 'getStartingLocale',
+  externalDataId: 'startingLocale',
+})

@@ -92,6 +92,7 @@ export type RepeaterFields =
   | 'alertMessage'
   | 'vehiclePermnoWithInfo'
   | 'description'
+  | 'fileUpload'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -284,6 +285,22 @@ export type RepeaterItem = {
       component: 'description'
       title: StaticText
       titleVariant?: TitleVariants
+    }
+  | {
+      component: 'fileUpload'
+      title?: StaticText
+      introduction?: FormText
+      titleVariant?: TitleVariants
+      uploadHeader?: FormText
+      uploadDescription?: FormText
+      uploadButtonLabel?: FormText
+      uploadMultiple?: boolean
+      uploadAccept?: string
+      maxSize?: number
+      maxSizeErrorText?: FormText
+      totalMaxSize?: number
+      maxFileCount?: number
+      forImageUpload?: boolean
     }
 )
 
@@ -917,7 +934,7 @@ export interface HiddenInputWithWatchedValueField extends BaseField {
   watchValue: string
   type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
   component: FieldComponents.HIDDEN_INPUT
-  valueModifier?: (value: unknown) => unknown
+  valueModifier?: (value: unknown, application?: Application) => unknown
 }
 
 export interface HiddenInputField extends BaseField {

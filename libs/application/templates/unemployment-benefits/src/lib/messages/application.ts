@@ -68,4 +68,10 @@ export const application = defineMessages({
     defaultMessage: 'Ég skil',
     description: 'Agree checkbox label',
   },
+  fileUploadAcceptFiles: {
+    id: 'vmst.ub.application:fileUploadAcceptFiles',
+    defaultMessage:
+      'Tekið er við skjölum með endingu: pdf, .doc, .docx, .png, .jpg, .jpeg',
+    description: 'description for file uploads',
+  },
 })

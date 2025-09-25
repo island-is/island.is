@@ -239,15 +239,15 @@ export const payout = {
       defaultMessage: 'Tímabil til',
       description: 'Other benefits date to label',
     },
-    fileHeader: {
-      id: 'vmst.ub.application:payout.otherBenefits.fileHeader',
+    sickessAllowanceFileHeader: {
+      id: 'vmst.ub.application:payout.otherBenefits.sickessFileHeader',
       defaultMessage: 'Staðfesting á sjúkradagpeningum',
-      description: 'Other benefits file header',
+      description: 'Other benefits sickess allowance file header',
     },
-    fileDescription: {
-      id: 'vmst.ub.application:payout.otherBenefits.fileDescription',
-      defaultMessage: `Tekið er við skjölum með endingu: .pdf, .docx, .rtf`,
-      description: 'Other benefits file description',
+    paymentPlanFileHeader: {
+      id: 'vmst.ub.application:payout.otherBenefits.paymentPlanFileHeader',
+      defaultMessage: 'Staðfesting á greiðsluáætlun',
+      description: 'Other benefits payment plan file header',
     },
     payedFromPrivatePensionFundAlertMessage: {
       id: 'vmst.ub.application:payout.otherBenefits.payedFromPrivatePensionFundAlertMessage#markdown',

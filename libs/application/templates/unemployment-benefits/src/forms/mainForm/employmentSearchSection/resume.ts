@@ -8,8 +8,11 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../utils/constants'
+import {
+  employmentSearch as employmentSearchMessages,
+  application as applicationMessages,
+} from '../../../lib/messages'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../shared/constants'
 import { doesOwnResume } from '../../../utils'
 
 export const resumeSubSection = buildSubSection({
@@ -52,7 +55,7 @@ export const resumeSubSection = buildSubSection({
         buildFileUploadField({
           id: 'resume.resumeFile.file',
           uploadHeader: employmentSearchMessages.resume.uploadHeader,
-          uploadDescription: employmentSearchMessages.resume.uploadDescription,
+          uploadDescription: applicationMessages.fileUploadAcceptFiles,
           maxSize: FILE_SIZE_LIMIT,
           uploadAccept: UPLOAD_ACCEPT,
           condition: doesOwnResume,

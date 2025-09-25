@@ -2,12 +2,23 @@ import {
   buildAlertMessageField,
   buildCheckboxField,
   buildDescriptionField,
+  buildFileUploadField,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildSelectField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
+  YES,
 } from '@island.is/application/core'
-import { employment as employmentMessages } from '../../../lib/messages'
+import {
+  employment as employmentMessages,
+  application as applicationMessages,
+} from '../../../lib/messages'
+import { GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO } from '@island.is/clients/vmst-unemployment'
+import { getReasonBasedOnChoice, getReasonsBasedOnChoice } from '../../../utils'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../shared/constants'
+import { Application } from '@island.is/application/types'
 
 export const reasonForJobSearchSubSection = buildSubSection({
   id: 'reasonForJobSearchSubSection',
@@ -17,7 +28,6 @@ export const reasonForJobSearchSubSection = buildSubSection({
       id: 'reasonForJobSearchSubSection',
       title: employmentMessages.reasonForJobSearch.general.pageTitle,
       children: [
-        // TODO: add all of this into answers when we know how it's supposed to be like
         buildDescriptionField({
           id: 'reasonForJobSearch.description',
           title:
@@ -33,16 +43,27 @@ export const reasonForJobSearchSubSection = buildSubSection({
           placeholder:
             employmentMessages.reasonForJobSearch.labels
               .reasonForJobSearchPlaceholder,
-          options: [
-            {
-              value: 'jobSearch',
-              label: 'Bla',
-            },
-            {
-              value: 'other',
-              label: 'Bla 2',
-            },
-          ],
+
+          options: (application, _, locale) => {
+            const unemploymentReasonCategories =
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.supportData.unemploymentReasonCategories',
+                [],
+              ) || []
+
+            return unemploymentReasonCategories.map((category) => {
+              return {
+                label:
+                  locale === 'is'
+                    ? category.name || ''
+                    : category.english || '',
+                value: category.id || '',
+              }
+            })
+          },
         }),
         buildSelectField({
           id: 'reasonForJobSearch.additionalReason',
@@ -52,31 +73,65 @@ export const reasonForJobSearchSubSection = buildSubSection({
           placeholder:
             employmentMessages.reasonForJobSearch.labels
               .reasonForJobSearchPlaceholder,
-          options: [
-            {
-              value: 'jobSearch',
-              label: 'Bla',
-            },
-            {
-              value: 'other',
-              label: 'Bla 2',
-            },
-          ],
-          condition: (_answers) => {
-            // TODO: only show if reason for job search requires additional reason
-            return true
+          options: (application, _, locale) => {
+            const reasons = getReasonsBasedOnChoice(
+              application.answers,
+              application.externalData,
+            )
+
+            return (
+              reasons?.map((reason) => {
+                return {
+                  label:
+                    locale === 'is' ? reason.name || '' : reason.english || '',
+                  value: reason.id || '',
+                }
+              }) || []
+            )
           },
         }),
-        // TODO: add doctors note in file uploader if required by api
         buildDescriptionField({
           id: 'reasonForJobSearch.additionalReasonDescription',
           title:
             employmentMessages.reasonForJobSearch.labels
               .additionalReasonForJobSearchDescription,
           titleVariant: 'h5',
-          condition: (_answers) => {
-            // TODO: only show if reason for job search requires additional reason
-            return true
+          condition: (answers, externalData) => {
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              answers,
+              externalData,
+            )
+            return (
+              !!reasonBasedOnChoice &&
+              !!reasonBasedOnChoice.requiresAdditonalDetails
+            )
+          },
+        }),
+        buildHiddenInputWithWatchedValue({
+          id: 'reasonForJobSearch.additionalReasonTextRequired',
+          watchValue: 'reasonForJobSearch.additionalReason',
+          valueModifier: (value, application: Application | undefined) => {
+            if (!application) {
+              return ''
+            }
+            const unemploymentReasonCategories =
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.supportData.unemploymentReasonCategories',
+                [],
+              ) || []
+            let required: boolean | undefined
+            unemploymentReasonCategories.map((cat) => {
+              cat.unemploymentReasons?.map((reason) => {
+                if (reason.id === value) {
+                  required = reason.requiresAdditonalDetails
+                }
+              })
+            })
+
+            return required
           },
         }),
         buildTextField({
@@ -86,33 +141,96 @@ export const reasonForJobSearchSubSection = buildSubSection({
               .additionalReasonForJobSearchLabel,
           variant: 'textarea',
           rows: 6,
-          condition: (_answers) => {
-            // TODO: only show if reason for job search requires additional reason
-            return true
+          condition: (answers, externalData) => {
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              answers,
+              externalData,
+            )
+            return (
+              !!reasonBasedOnChoice &&
+              !!reasonBasedOnChoice.requiresAdditonalDetails
+            )
+          },
+        }),
+
+        buildHiddenInputWithWatchedValue({
+          id: 'reasonForJobSearch.healthReasonRequired',
+          watchValue: 'reasonForJobSearch.additionalReason',
+          valueModifier: (value, application: Application | undefined) => {
+            if (!application) {
+              return ''
+            }
+            const unemploymentReasonCategories =
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.supportData.unemploymentReasonCategories',
+                [],
+              ) || []
+            let required: boolean | undefined
+            unemploymentReasonCategories.map((cat) => {
+              cat.unemploymentReasons?.map((reason) => {
+                if (reason.id === value) {
+                  required = reason.healthReason
+                }
+              })
+            })
+
+            return required
+          },
+        }),
+        buildFileUploadField({
+          id: 'reasonForJobSearch.healthReason',
+          uploadHeader:
+            employmentMessages.reasonForJobSearch.labels.healthReasonFileLabel,
+          maxSize: FILE_SIZE_LIMIT,
+          uploadAccept: UPLOAD_ACCEPT,
+          uploadDescription: applicationMessages.fileUploadAcceptFiles,
+          condition: (answers, externalData) => {
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              answers,
+              externalData,
+            )
+            return !!reasonBasedOnChoice && !!reasonBasedOnChoice.healthReason
           },
         }),
         buildAlertMessageField({
           id: 'reasonForJobSearch.alertMessage',
-          message: 'Fá þetta frá þjónustu',
+          message: employmentMessages.reasonForJobSearch.labels.informationBox,
           alertType: 'info',
           doesNotRequireAnswer: true,
-          condition: (_answers) => {
-            // TODO: only show if reason for job search requires additional reason
-            return true
+        }),
+        buildCheckboxField({
+          id: 'reasonForJobSearch.bankruptsyReason',
+          options: [
+            {
+              value: YES,
+              label:
+                employmentMessages.reasonForJobSearch.labels
+                  .bankruptsyReasonLabel,
+            },
+          ],
+          condition: (answers, externalData) => {
+            const reasonBasedOnChoice = getReasonBasedOnChoice(
+              answers,
+              externalData,
+            )
+            return (
+              !!reasonBasedOnChoice && !!reasonBasedOnChoice.bankruptcyReason
+            )
           },
         }),
         buildCheckboxField({
-          id: 'reasonForJobSearch.checkboxReason',
+          id: 'reasonForJobSearch.agreementConfirmation',
           options: [
             {
-              value: 'jobSearch',
-              label: 'Fá frá þjónustu?',
+              value: YES,
+              label:
+                employmentMessages.reasonForJobSearch.labels
+                  .agreementConfirmationLabel,
             },
           ],
-          condition: (_answers) => {
-            // TODO: only show if reason for job search requires additional reason
-            return true
-          },
         }),
       ],
     }),

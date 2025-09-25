@@ -19,6 +19,7 @@ import {
   isOccasionallyEmployed,
 } from '../../../utils'
 import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
+import { Application } from '@island.is/application/types'
 
 export const currentSituationSubSection = buildSubSection({
   id: 'currentSituationSubSection',
@@ -176,9 +177,17 @@ export const currentSituationSubSection = buildSubSection({
               width: 'half',
               condition: (application) => isEmployed(application.answers),
               minDate: new Date(),
-              maxDate: new Date(
-                new Date().getTime() + 14 * 24 * 60 * 60 * 1000,
-              ),
+              maxDate: (application: Application, _) => {
+                const maxDays =
+                  getValueViaPath<string>(
+                    application.externalData,
+                    'unemploymentApplication.data.supportData.maxCanStartDate',
+                  ) ?? '14'
+                return new Date(
+                  new Date().getTime() +
+                    parseInt(maxDays) * 24 * 60 * 60 * 1000,
+                )
+              },
               required: true,
             },
             workHours: {

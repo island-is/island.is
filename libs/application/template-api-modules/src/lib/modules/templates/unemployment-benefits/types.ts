@@ -3,3 +3,8 @@ export type FileResponse = {
   data: string
   fileType: string
 }
+
+export type FileResponseWithType = {
+  type: string
+  file: FileResponse
+}

@@ -13,7 +13,7 @@ import {
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
-import { UnemploymentApi, UserProfileApi } from '../../dataProviders'
+import { LocaleApi, UnemploymentApi, UserProfileApi } from '../../dataProviders'
 import Logo from '../../assets/Logo'
 import { externalData } from '../../lib/messages'
 
@@ -33,12 +33,15 @@ export const Prerequisites = buildForm({
           checkboxLabel: externalData.dataProvider.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+            }),
+            buildDataProviderItem({
+              provider: ChildrenCustodyInformationApi,
+            }),
+            buildDataProviderItem({
               provider: NationalRegistrySpouseApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
@@ -46,22 +49,17 @@ export const Prerequisites = buildForm({
               subTitle: externalData.userProfile.subTitle,
             }),
             buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
-              // TODO: I'm guessing that the tax is suppose to be somewhere else?
-              title: externalData.tax.title,
-              subTitle: externalData.tax.subTitle,
+              provider: UnemploymentApi,
+              title: externalData.vmst.rskTitle,
+              subTitle: externalData.vmst.rskSubTitle,
             }),
             buildDataProviderItem({
-              provider: UnemploymentApi,
-              title: externalData.stateInsuranceAcency.title,
-              subTitle: externalData.stateInsuranceAcency.subTitle,
+              title: externalData.vmst.insuranceTitle,
+              subTitle: externalData.vmst.insuranceSubTitle,
             }),
-
-            // buildDataProviderItem({
-            //   provider: DrivingLicenseApi,
-            //   title: 'DrivingLicenseApi',
-            //   subTitle: 'DrivingLicenseApi',
-            // }),
+            buildDataProviderItem({
+              provider: LocaleApi,
+            }),
           ],
           submitField: buildSubmitField({
             id: 'submit',

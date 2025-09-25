@@ -54,6 +54,29 @@ export const employment = {
         defaultMessage: 'Skýringar á atvinnuleysi',
         description: 'Additional reason for job search textarea description',
       },
+      informationBox: {
+        id: 'vmst.ub.application:employment.labels.informationBox',
+        defaultMessage:
+          '  Samkvæmt lögum um atvinnuleysisbætur getur atvinnuleitandi þurft að sæta biðtíma eftir greiðslum atvinnuleysisbóta eða verið neitað um greiðslur atvinnuleysisbóta hafi hann sagt starfi sínu lausu án gildra ástæðna eða misst starfið vegna ástæðna sem hann sjálfur á sök á. Berist Vinnumálastofnun ekki umbeðin gögn eða skýringar til staðfestingar á ástæðum starfsloka mun ákvörðun verða tekin á grundvelli þeirra upplýsinga sem liggja fyrir.',
+        description: 'Information box about reasons for unemployment',
+      },
+      bankruptsyReasonLabel: {
+        id: 'vmst.ub.application:employment.labels.bankruptsyReasonLabel',
+        defaultMessage:
+          'Með því að haka hér framselur þú Atvinnuleysistryggingasjóði skv. 40 gr. laga nr. 54/2006 um atvinnuleysisbætur, þann hluta kröfunnar, sem þú kannt að fá greiddan úr þrotabúinu eða úr ríkissjóði vegna ógreiddra launa og launa í uppsagnarfresti, að því marki sem sjóðurinn kann að greiða mér í atvinnuleysisbætur.',
+        description: 'Bankruptsy reason checkbox label',
+      },
+      agreementConfirmationLabel: {
+        id: 'vmst.ub.application:employment.labels.agreementConfirmationLabel',
+        defaultMessage:
+          'Ég staðfesti að hafa fengið upplýsingar um hugsanleg viðurlög sem ég kann að þurfa að sæta vegna starfsloka og að í ofangreindum skýringum megi finna fullnægjandi skýringar.',
+        description: 'Agreement label checkbox label',
+      },
+      healthReasonFileLabel: {
+        id: 'vmst.ub.application:employment.labels.agreementConfirmationLabel',
+        defaultMessage: 'Læknisvottorð',
+        description: 'Health reason file upload label',
+      },
     }),
   },
   yourRightsAgreement: defineMessages({
@@ -286,12 +309,6 @@ export const employment = {
         id: 'vmst.ub.application:employment.workingAbility.labels.partTimeFileUploadLabel',
         defaultMessage: 'Starfshæfnisvottorð',
         description: 'Working ability part time file upload label',
-      },
-      partTimeFileUploadDescription: {
-        id: 'vmst.ub.application:employment.workingAbility.labels.partTimeFileUploadDescription',
-        defaultMessage:
-          'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .png, .jpg, .jpeg',
-        description: 'Working ability part time file upload description',
       },
     }),
   },

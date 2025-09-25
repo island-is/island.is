@@ -19,6 +19,7 @@ import {
   LanguagesInAnswers,
   LicensesInAnswers,
   PayoutInAnswers,
+  ReasonsForJobSearchInAnswers,
   TaxDiscountInAnswers,
   VacationInAnswers,
   errorMsgs,
@@ -28,9 +29,13 @@ import {
   GaldurDomainModelsSelectItem,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
+  GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
   GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
 
+export const getStartingLocale = (externalData: ExternalData) => {
+  return getValueViaPath<Locale>(externalData, 'startingLocale.data')
+}
 export const getPersonalInformation = (answers: FormValue) => {
   const applicant = getValueViaPath<ApplicantInAnswers>(answers, 'applicant')
 
@@ -77,7 +82,7 @@ export const getEducationInformation = (answers: FormValue) => {
     getValueViaPath<Array<EducationHistoryInAnswers>>(
       answers,
       'educationHistory.educationHistory',
-    ) || [] // TODO check if this works
+    ) || []
   const currentEducation = {
     educationId: currentEducationAnswers?.levelOfStudy,
     educationSubCategoryId: currentEducationAnswers?.degree,
@@ -356,15 +361,58 @@ export const getEducationalQuestions = (answers: FormValue) => {
   }
 }
 
-export const getFileInfo = async (
+export const getPreviousOccupationInformation = (
   answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const unemploymentReasons = getValueViaPath<ReasonsForJobSearchInAnswers>(
+    answers,
+    'reasonForJobSearch',
+  )
+  const employmentHistory = getValueViaPath<EmploymentHistoryInAnswers>(
+    answers,
+    'employmentHistory',
+  )
+  const unemploymentReasonCategories =
+    getValueViaPath<
+      Array<GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO>
+    >(
+      externalData,
+      'unemploymentApplication.data.supportData.unemploymentReasonCategories',
+      [],
+    ) || []
+  return {
+    hasOwnBusinessPast36Months: employmentHistory?.isIndependent === YES,
+    workedUnderOwnSSN: employmentHistory?.independentOwnSsn === YES,
+    unemploymentReasonCodeId:
+      unemploymentReasons?.additionalReason ?? unemploymentReasons?.mainReason,
+    unemploymentReasonCodeName: unemploymentReasons?.additionalReason
+      ? unemploymentReasonCategories
+          .find((x) => x.id === unemploymentReasons?.mainReason)
+          ?.unemploymentReasons?.find(
+            (y) => y.id === unemploymentReasons.additionalReason,
+          )?.name
+      : unemploymentReasonCategories.find(
+          (x) => x.id === unemploymentReasons?.mainReason,
+        )?.name,
+    additionalDetails: unemploymentReasons?.additionalReasonText,
+    agreementConfirmation:
+      unemploymentReasons?.agreementConfirmation?.includes(YES),
+    bankruptcyConfirmation:
+      unemploymentReasons?.bankruptsyReason?.includes(YES),
+  }
+}
+
+export const getAttachmentObjects = (attachments: Array<FileResponse>) => {
+  return ''
+}
+
+export const getFileInfo = async (
   s3Service: S3Service,
   applicationId: string,
   bucket: string,
   fileObject: FileSchemaInAnswers,
 ): Promise<FileResponse | undefined> => {
-  //   const CV = getValueViaPath<CVAnswers>(answers, 'cv')
-  //   if (!fileObject || CV.haveCV !== YES) return undefined
   const fileName = fileObject?.name || ''
   const fileType = getFileExtension(fileName) || ''
   const mimeType = getMimeType(fileType)

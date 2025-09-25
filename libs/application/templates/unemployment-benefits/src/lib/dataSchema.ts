@@ -17,6 +17,7 @@ import {
   currentSituationSchema,
 } from './schemas'
 import { WorkingAbility } from '../shared'
+import { reasonForJobSearchSchema } from './schemas/reasonForJobSearchSchema'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -66,6 +67,7 @@ export const UnemploymentBenefitsSchema = z.object({
   workingAbility: workingAbilitySchema,
   resume: resumeSchema,
   employmentHistory: employmentHistorySchema,
+  reasonForJobSearch: reasonForJobSearchSchema,
   payout: payoutSchema,
   taxDiscount: taxDiscountSchema,
   vacation: vacationSchema,

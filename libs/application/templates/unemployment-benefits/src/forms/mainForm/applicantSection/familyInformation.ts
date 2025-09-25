@@ -8,6 +8,7 @@ import { applicant as applicantMessages } from '../../../lib/messages'
 import {
   ApplicantChildCustodyInformation,
   Application,
+  ExternalData,
 } from '@island.is/application/types'
 
 export const familyInformationSubSection = buildSubSection({
@@ -20,7 +21,15 @@ export const familyInformationSubSection = buildSubSection({
       children: [
         buildFieldsRepeaterField({
           id: 'familyInformation.children',
-          minRows: 2, // TODO check this
+          minRows: (_, externalData: ExternalData) => {
+            const children =
+              getValueViaPath<ApplicantChildCustodyInformation[]>(
+                externalData,
+                'childrenCustodyInformation.data',
+              ) ?? []
+
+            return children.length
+          },
           title: applicantMessages.labels.dependentChildren,
           titleVariant: 'h5',
           marginTop: 0,

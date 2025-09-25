@@ -22,6 +22,7 @@ import {
   languageSkillsSchema,
 } from '../lib/dataSchema'
 import { FileSchema } from '../lib/schemas/fileSchema'
+import { reasonForJobSearchSchema } from '../lib/schemas/reasonForJobSearchSchema'
 
 export enum EmploymentStatus {
   UNEMPLOYED = 'unemployed',
@@ -66,6 +67,9 @@ export type CurrentEducationInAnswers = z.infer<typeof currentEducationSchema>
 export type EducationInAnswers = z.TypeOf<typeof educationSchema>
 export type PreviousEducationInAnswers = z.TypeOf<
   typeof previousEducationSchema
+>
+export type ReasonsForJobSearchInAnswers = z.TypeOf<
+  typeof reasonForJobSearchSchema
 >
 export type FileSchemaInAnswers = z.TypeOf<typeof FileSchema>
 export type LanguagesInAnswers = z.TypeOf<typeof languageSkillsSchema>

@@ -1,13 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
 import { NotificationsService } from '../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  EducationType,
-  EmploymentStatus,
-} from '@island.is/application/templates/unemployment-benefits'
 import {
   GaldurDomainModelsApplicantsApplicantProfileDTOsElectronicCommunication,
   GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation,
@@ -15,19 +11,21 @@ import {
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationAccess,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto,
-  GaldurDomainModelsSelectItem,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
-  GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
-  GaldurDomainModelsSettingsUnionsUnionDTO,
   UnemploymentApplicationCreateUnemploymentApplicationRequest,
   VmstUnemploymentClientService,
 } from '@island.is/clients/vmst-unemployment'
-import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import { Locale } from '@island.is/shared/types'
+import { sharedModuleConfig } from '../../shared'
+import { getValueViaPath, YES } from '@island.is/application/core'
+import { ConfigType } from '@nestjs/config'
 import {
+  getAttachmentObjects,
   getBankinPensionUnion,
   getEducationalQuestions,
   getEducationInformation,
   getEmployerSettlement,
+  getFileInfo,
   getJobCareer,
   getJobWishes,
   getJobWishList,
@@ -35,31 +33,64 @@ import {
   getLicenseInformation,
   getPersonalInformation,
   getPersonalTaxCredit,
+  getPreviousOccupationInformation,
   getSupportedChildren,
 } from './unemployment-benefits.utils'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  errorMsgs,
+  FileSchemaInAnswers,
+} from '@island.is/application/templates/unemployment-benefits'
+import type { Logger } from '@island.is/logging'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { S3Service } from '@island.is/nest/aws'
+import { FileResponse, FileResponseWithType } from './types'
 
 @Injectable()
 export class UnemploymentBenefitsService extends BaseTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
-    private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
+    private readonly s3Service: S3Service,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
   ) {
     super(ApplicationTypes.UNEMPLOYMENT_BENEFITS)
   }
 
+  getStartingLocale({
+    currentUserLocale,
+  }: TemplateApiModuleActionProps): Locale {
+    return currentUserLocale
+  }
+
   async getEmptyApplication({
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto | null> {
     const results =
       await this.vmstUnemploymentClientService.getEmptyApplication(auth)
 
-    // This also comes from result, might want to do something with this!
-    // canApply: true
-    // errorMessage: ""
-    // hasApplicationInLast4Weeks: false
-    // reopenApplication: false
-    // success: true
+    const types = this.vmstUnemploymentClientService.getAttachmentTypes()
+    console.log('types', types)
+    if (!results.canApply) {
+      this.logger.warn(
+        '[VMST-ActivationAllowance]: User cannot apply, creating application returned canApply: False',
+        results.errorMessage,
+      )
+      throw new TemplateApiError(
+        {
+          title: errorMsgs.cannotApplyErrorTitle,
+          summary:
+            currentUserLocale === 'en'
+              ? results.userMessageEN || errorMsgs.cannotApplyErrorSummary
+              : results.userMessageIS || errorMsgs.cannotApplyErrorSummary,
+        },
+        400,
+      )
+    }
     return results.unemploymentApplication || null
   }
 
@@ -141,12 +172,27 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const licenseInformation = getLicenseInformation(answers)
 
     //attachments
+    const attachmentList: Array<FileResponseWithType> = []
     // Læknistvottorð - ástæða atvinnuleitar
-    // starfhæfnisvottorð - vinnufærni - answers.
-
+    const medicalCertificateFile =
+      getValueViaPath<Array<FileSchemaInAnswers>>(
+        answers,
+        'reasonForJobSearch.healthReason',
+        [],
+      ) ?? []
+    medicalCertificateFile.map(async (file) => {
+      const attachment = await getFileInfo(
+        this.s3Service,
+        application.id,
+        this.config.templateApi.attachmentBucket,
+        file,
+      )
+      if (attachment) attachmentList.push({ type: '', file: attachment })
+    })
     // Staðfesting á námi/prófgráðu - menntun
+    // starfhæfnisvottorð - vinnufærni - answers.
     // staðfsting á sjúkradagpeningum - aðrar bætur og lífeyrir
-    // fleiri dálkar úr þjónustu - aðrar bætur og lífeyrir
+    // staðfesting á greiðsluáætlun - aðrar bætur og lífeyrir
     // ferilskrá - ferilskrá
 
     //childrenSupported
@@ -177,15 +223,10 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     }
 
     //previousOccupation
-    const previousOccupation = {
-      // hasOwnBusinessPast36Months:
-      //   answers.employmentHistory.isIndependent === YES, // TODO
-      unemploymentReasonCodeId: '', // TODO
-      unemploymentReasonCodeName: '', // TODO
-      additionalDetails: '', //TODO
-      agreementConfirmation: false, //TODO
-      bankruptcyConfirmation: false, //TODO
-    }
+    const previousOccupation = getPreviousOccupationInformation(
+      answers,
+      externalData,
+    )
 
     //jobStatus
     const jobStatus = {
@@ -202,6 +243,9 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const educationalQuestions = getEducationalQuestions(answers)
 
     // throw new Error('dont work please')
+
+    //submit attachments
+    // const attachmentObjectsWithType = getAttachmentObjects(attachmentList)
 
     const submitResponse: UnemploymentApplicationCreateUnemploymentApplicationRequest =
       {

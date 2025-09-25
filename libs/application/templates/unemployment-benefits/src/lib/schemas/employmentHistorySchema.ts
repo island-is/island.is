@@ -22,6 +22,7 @@ export const employmentHistorySchema = z
     isIndependent: z
       .nativeEnum(YesOrNoEnum)
       .refine((v) => Object.values(YesOrNoEnum).includes(v)),
+    independentOwnSsn: z.nativeEnum(YesOrNoEnum).optional(),
     ownSSNJob: z
       .object({
         title: z.string().optional(),
