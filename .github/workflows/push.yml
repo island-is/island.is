@@ -205,7 +205,7 @@ jobs:
         run: |
           set -euo pipefail
           AFFECTED_TARGETS="$(yarn nx show projects --affected --base "$NX_BASE" --head "$NX_HEAD" --json | jq -r 'join(",")')"
-          ADDITIONAL_PROJECTS="$( (cd infra && yarn feature-env downstream --feature tmp --images "$AFFECTED_TARGETS" --chart islandis) )"
+          ADDITIONAL_PROJECTS="$( (cd infra && yarn feature-env downstream --feature ${{ needs.pre-checks.outputs.FEATURE_NAME }} --images "$AFFECTED_TARGETS" --chart islandis) )"
           echo "Additional Projects: $ADDITIONAL_PROJECTS"
           export ADDITIONAL_PROJECTS # Export for use in generate-docker-chunks.sh
 
