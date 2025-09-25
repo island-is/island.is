@@ -19,8 +19,20 @@ export type SetBeforeSubmitCallback = (
 ) => void
 
 export type SetBeforeSubmitCallbackOptions = {
-  customCallbackId?: string
+  /**
+   * Allows multiple callbacks to be composed together.
+   * If `true`, make sure to set `customCallbackId`.
+   */
   allowMultiple?: boolean
+
+  /**
+   * A custom identifier for this callback.
+   *
+   * If `allowMultiple` is `true`, this **should be set** and remain
+   * consistent for the component instance. This ensures that the same
+   * callback from a component is not registered multiple times.
+   */
+  customCallbackId?: string
 }
 
 export type SetFieldLoadingState = Dispatch<SetStateAction<boolean>>
