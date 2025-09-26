@@ -27,7 +27,7 @@ runs:
     - name: Configure Datadog Test Optimization
       uses: datadog/test-visibility-github-action@v2
       with:
-        languages: 'javascript'
+        languages: 'js'
         api_key: ${{ inputs.dd-api-key }}
         site: datadoghq.eu
 
