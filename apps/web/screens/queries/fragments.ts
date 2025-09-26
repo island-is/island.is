@@ -1016,6 +1016,7 @@ export const slices = gql`
         }
         slug
         assetUrl
+        externalUrl
         image {
           url
           title
@@ -1081,6 +1082,7 @@ export const slices = gql`
       }
       slug
       assetUrl
+      externalUrl
       image {
         url
         title
