@@ -176,6 +176,8 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
+  const lastSubmissionTime = useRef<number>(0)
+  const submissionCount = useRef<number>(0)
 
   const setBeforeSubmitCallback = useCallback(
     (callback: BeforeSubmitCallback | null) => {
@@ -202,6 +204,29 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   }, [formValue, prevScreen, reset])
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
+    const now = Date.now()
+
+    if (isSubmitting) {
+      console.warn(
+        `[SUBMIT] Blocked duplicate submission for application ${applicationId} - already submitting`,
+      )
+      return
+    }
+
+    const timeSinceLastSubmission = now - lastSubmissionTime.current
+    const isWithinDebounceWindow =
+      timeSinceLastSubmission < 1000 && timeSinceLastSubmission > 0
+
+    if (isWithinDebounceWindow) {
+      submissionCount.current++
+      console.warn(
+        `[SUBMIT] Blocked rapid submission #${submissionCount.current} for application ${applicationId} - debounce active (${timeSinceLastSubmission}ms since last)`,
+      )
+      return
+    }
+
+    submissionCount.current = 0
+    lastSubmissionTime.current = now
     let response
 
     setIsSubmitting(true)
@@ -239,56 +264,74 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       }
     }
 
-    if (submitField !== undefined) {
-      const finalAnswers = { ...formValue, ...data }
+    try {
+      if (submitField !== undefined) {
+        const finalAnswers = { ...formValue, ...data }
 
-      response = await submitApplication({
-        variables: {
-          input: {
-            id: applicationId,
-            event,
-            answers: finalAnswers,
-          },
-        },
-      })
+        const requestId = `${applicationId}-${event}-${now}`
 
-      if (response?.data) {
-        addExternalData(response.data?.submitApplication.externalData)
-
-        if (
-          submitField.refetchApplicationAfterSubmit === true ||
-          (typeof submitField.refetchApplicationAfterSubmit === 'function' &&
-            submitField.refetchApplicationAfterSubmit(event))
-        ) {
-          refetch()
-        }
-      }
-    } else {
-      const extractedAnswers = extractAnswersToSubmitFromScreen(
-        mergeAnswers(formValue, data),
-        screen,
-      )
-
-      response = await updateApplication({
-        variables: {
-          input: {
-            id: applicationId,
-            answers: extractedAnswers,
-            draftProgress: {
-              stepsFinished: currentDraftScreen ?? screen.sectionIndex,
-              totalSteps: totalDraftScreens ?? sections.length - 1,
+        response = await submitApplication({
+          variables: {
+            input: {
+              id: applicationId,
+              event,
+              answers: finalAnswers,
             },
           },
-          locale,
-        },
-      })
-    }
+          context: {
+            headers: {
+              'X-Request-ID': requestId,
+            },
+          },
+        })
 
-    if (response?.data) {
-      answerAndGoToNextScreen(data)
-    }
+        if (response?.data) {
+          addExternalData(response.data?.submitApplication.externalData)
 
-    setIsSubmitting(false)
+          if (
+            submitField.refetchApplicationAfterSubmit === true ||
+            (typeof submitField.refetchApplicationAfterSubmit === 'function' &&
+              submitField.refetchApplicationAfterSubmit(event))
+          ) {
+            refetch()
+          }
+        } else {
+          console.warn(
+            `[SUBMIT] No data received for application ${applicationId} with requestId ${requestId}`,
+          )
+        }
+      } else {
+        const extractedAnswers = extractAnswersToSubmitFromScreen(
+          mergeAnswers(formValue, data),
+          screen,
+        )
+
+        response = await updateApplication({
+          variables: {
+            input: {
+              id: applicationId,
+              answers: extractedAnswers,
+              draftProgress: {
+                stepsFinished: currentDraftScreen ?? screen.sectionIndex,
+                totalSteps: totalDraftScreens ?? sections.length - 1,
+              },
+            },
+            locale,
+          },
+        })
+      }
+
+      if (response?.data) {
+        answerAndGoToNextScreen(data)
+      }
+    } catch (error) {
+      console.error(
+        `[SUBMIT] Submission error for application ${applicationId}:`,
+        error,
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const [isMobile, setIsMobile] = useState(false)
@@ -439,7 +482,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
         <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
         <ScreenFooter
-          submitButtonDisabled={submitButtonDisabled}
+          submitButtonDisabled={submitButtonDisabled || isSubmitting}
           application={application}
           renderLastScreenButton={renderLastScreenButton}
           renderLastScreenBackButton={renderLastScreenBackButton}
@@ -449,7 +492,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           goBack={goBack}
           canGoBack={canGoBack}
           submitField={submitField}
-          loading={loading}
+          loading={loading || isSubmitting}
           canProceed={!isLoadingOrPending}
           nextButtonText={nextButtonText}
         />
