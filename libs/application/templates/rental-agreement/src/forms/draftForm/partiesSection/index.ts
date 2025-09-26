@@ -90,10 +90,6 @@ export const partiesSection = buildSection({
           required: true,
         }),
         buildTableRepeaterField({
-          condition: (answers) => {
-            console.log(answers)
-            return true
-          },
           id: 'parties.tenantInfo.table',
           title: m.partiesDetails.tenantTableTitle,
           editField: true,
