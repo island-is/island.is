@@ -579,111 +579,73 @@ export class PaymentFlowService {
     paymentFlowId: string,
     receptionId: string,
   ) {
+    const fjsCharge = await this.fjsChargeModel.findOne({
+      where: { paymentFlowId, receptionId },
+    })
+
+    if (!fjsCharge) {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowNotFound)
+    }
+
     try {
       return await retry(
-        async () => {
-          // Find the FJS charge by receptionId
-          const fjsCharge = await this.fjsChargeModel.findOne({
-            where: { receptionId },
-          })
-
-          if (!fjsCharge) {
-            throw new BadRequestException(
-              PaymentServiceCode.PaymentFlowNotFound,
-            )
-          }
-
-          return await this.sequelize.transaction(async (transaction) => {
-            // Check if already processed (idempotency)
+        () =>
+          this.sequelize.transaction(async (transaction) => {
+            // Check if already processed
             const existingFulfillment =
               await this.paymentFulfillmentModel.findOne({
-                where: {
-                  paymentFlowId,
-                  paymentMethod: 'invoice',
-                },
+                where: { paymentFlowId, paymentMethod: 'invoice' },
                 transaction,
               })
 
             if (existingFulfillment) {
-              this.logger.info(
-                `[${paymentFlowId}] Payment fulfillment already exists, ensuring charge is marked as paid`,
-              )
-
-              // Ensure the charge status is set to paid
-              await this.fjsChargeModel.update(
-                { status: 'paid' },
-                {
-                  where: { id: fjsCharge.id },
-                  transaction,
-                },
-              )
-
               return
             }
 
-            // Create fulfillment and update charge status atomically
-            try {
-              await this.paymentFulfillmentModel.create(
-                {
-                  paymentFlowId,
-                  paymentMethod: 'invoice',
-                  confirmationRefId: fjsCharge.id,
-                  fjsChargeId: fjsCharge.id,
-                },
-                { transaction },
-              )
+            // Create fulfillment and update charge
+            await this.paymentFulfillmentModel.create(
+              {
+                paymentFlowId,
+                paymentMethod: 'invoice',
+                confirmationRefId: fjsCharge.id,
+                fjsChargeId: fjsCharge.id,
+              },
+              { transaction },
+            )
 
-              await this.fjsChargeModel.update(
-                { status: 'paid' },
-                {
-                  where: { id: fjsCharge.id },
-                  transaction,
-                },
-              )
-
-              this.logger.info(
-                `[${paymentFlowId}] Successfully created invoice payment fulfillment and updated FJS charge status to paid`,
-                { chargeId: fjsCharge.id },
-              )
-            } catch (error) {
-              // Handle unique constraint violations (race condition)
-              if (error.name === 'SequelizeUniqueConstraintError') {
-                this.logger.info(
-                  `[${paymentFlowId}] Payment fulfillment already exists (race condition), ensuring charge is paid`,
-                )
-
-                await this.fjsChargeModel.update(
-                  { status: 'paid' },
-                  {
-                    where: { id: fjsCharge.id },
-                    transaction,
-                  },
-                )
-              }
-              throw error
-            }
-          })
-        },
+            await this.fjsChargeModel.update(
+              { status: 'paid' },
+              { where: { id: fjsCharge.id }, transaction },
+            )
+          }),
         {
           maxRetries: 3,
           retryDelayMs: 1000,
+          logger: this.logger,
+          logPrefix: 'Failed to create invoice payment confirmation',
           shouldRetryOnError: (error) => {
-            if (error.message === PaymentServiceCode.PaymentFlowNotFound) {
+            if (error?.message === 'SequelizeUniqueConstraintError') {
               return false
             }
 
             return true
           },
-          logger: this.logger,
-          logPrefix: 'Failed to persist invoice payment confirmation',
         },
       )
     } catch (e) {
       this.logger.error(
-        `[${paymentFlowId}] Failed to create invoice payment confirmation`,
-        { error: e },
+        `Failed to create invoice payment confirmation (${paymentFlowId})`,
+        e,
       )
-      throw new BadRequestException(InvoiceErrorCode.FailedToCreateInvoice)
+
+      if (e?.message === 'SequelizeUniqueConstraintError') {
+        // Already processed
+        return
+      }
+
+      throw new BadRequestException(
+        InvoiceErrorCode.FailedToCreateInvoiceConfirmation,
+      )
     }
   }
 
