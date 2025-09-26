@@ -8,9 +8,7 @@ import {
 import { Box, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { User } from '@island.is/shared/types'
-import { Dispatch } from 'react'
 import { useIntl } from 'react-intl'
-import { Action } from '../../lib'
 import { ApplicantTypesEnum } from '../../lib/enums'
 import { m } from '../../lib/messages'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
@@ -20,15 +18,12 @@ interface Props {
   applicant: FormSystemField
   user: User
   nationalId: string
-  dispatch: Dispatch<Action>
 }
 
-export const Agent = ({ applicant, user, nationalId, dispatch }: Props) => {
+export const Agent = ({ applicant, nationalId }: Props) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
   const shouldQuery = !!nationalId
-
-  console.log('user', user)
 
   const isIndividualDelegation =
     applicant?.fieldSettings?.applicantType ===
