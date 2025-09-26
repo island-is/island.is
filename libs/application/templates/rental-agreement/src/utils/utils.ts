@@ -2,15 +2,18 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { EMAIL_REGEX } from '@island.is/application/core'
+import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
 import {
+  Application,
   RepeaterItem,
   RepeaterOptionValue,
   StateLifeCycle,
+  UserProfile,
 } from '@island.is/application/types'
 import { ApplicantsInfo, BankAccount, PropertyUnit } from '../shared'
 
 import * as m from '../lib/messages'
+import { ApplicantsRole } from './enums'
 
 export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
 export const minChangedUnitSize = 3
@@ -263,4 +266,39 @@ export const onlyCharacters = async (
   )
 
   return [{ key: id, value: filteredValue }]
+}
+
+export const staticPartyTableData = (
+  application: Application,
+  role: ApplicantsRole,
+) => {
+  const aplicantRole = getValueViaPath<string>(
+    application.answers,
+    'assignApplicantParty.applicantsRole',
+  )
+  const fullName = getValueViaPath<string>(
+    application.externalData,
+    'nationalRegistry.data.fullName',
+  )
+  const nationalId = getValueViaPath<string>(
+    application.externalData,
+    'nationalRegistry.data.nationalId',
+  )
+  const userProfile = getValueViaPath<UserProfile>(
+    application.externalData,
+    'userProfile.data',
+  )
+
+  if (aplicantRole !== role) {
+    return []
+  }
+
+  return [
+    {
+      name: fullName ?? '',
+      nationalId: formatNationalId(nationalId ?? ''),
+      phone: formatPhoneNumber(userProfile?.mobilePhoneNumber ?? ''),
+      email: userProfile?.email ?? '',
+    },
+  ]
 }

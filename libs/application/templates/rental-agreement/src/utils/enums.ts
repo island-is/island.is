@@ -100,3 +100,9 @@ export enum EmergencyExitOptions {
   YES = '1',
   NO = '0',
 }
+
+export enum ApplicantsRole {
+  LANDLORD = 'landlord',
+  REPRESENTATIVE = 'representative',
+  TENANT = 'tenant',
+}

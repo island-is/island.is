@@ -130,27 +130,29 @@ const landlordInfo = z
       typeof representativeTable[0] === 'object'
     ) {
       const nationalIds = new Set<string>()
-      representativeTable.forEach((representative, index) => {
-        const nationalId = representative.nationalIdWithName?.nationalId
-        if (nationalId) {
-          if (nationalIds.has(nationalId)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: 'Duplicate national ID found',
-              params: m.partiesDetails.duplicateNationalIdError,
-              path: [
-                'landlordInfo',
-                'representativeTable',
-                index,
-                'nationalIdWithName',
-                'nationalId',
-              ],
-            })
-          } else {
-            nationalIds.add(nationalId)
+      ;(representativeTable as any[]).forEach(
+        (representative: any, index: number) => {
+          const nationalId = representative.nationalIdWithName?.nationalId
+          if (nationalId) {
+            if (nationalIds.has(nationalId)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Duplicate national ID found',
+                params: m.partiesDetails.duplicateNationalIdError,
+                path: [
+                  'landlordInfo',
+                  'representativeTable',
+                  index,
+                  'nationalIdWithName',
+                  'nationalId',
+                ],
+              })
+            } else {
+              nationalIds.add(nationalId)
+            }
           }
-        }
-      })
+        },
+      )
     }
   })
 

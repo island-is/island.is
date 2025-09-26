@@ -3,6 +3,7 @@ import { Application, FormValue } from '@island.is/application/types'
 import { ApplicantsInfo, LandlordInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
+import { ApplicantsRole } from './enums'
 
 export const singularOrPluralLandlordsTitle = (application: Application) => {
   const landlords = getValueViaPath<Array<ApplicantsInfo>>(
@@ -111,32 +112,19 @@ export const securityDepositRequired = (answers: FormValue) => {
   return securityDepositRequired?.includes(YesOrNoEnum.YES) || false
 }
 
-export const shouldShowLandlordAlert = (answers: FormValue) => {
-  const landlords = getValueViaPath<Array<LandlordInfo>>(
-    answers,
-    'parties.landlordInfo.table',
-  )
-
-  if (landlords?.length === 0) {
-    return false
-  }
-
-  let hasLandlord = false
-  landlords?.forEach((landlord) => {
-    const isRepresentative = landlord?.isRepresentative?.length > 0
-
-    if (!isRepresentative) {
-      hasLandlord = true
-    }
-  })
-
-  return !hasLandlord
-}
-
 export const shouldShowRepresentativeTable = (answers: FormValue) => {
   const shouldShowRepresentativeTable = getValueViaPath<Array<string>>(
     answers,
     'parties.landlordInfo.shouldShowRepresentativeTable',
   )
   return shouldShowRepresentativeTable?.includes(YES) || false
+}
+
+export const shouldShowRepresentativeStaticTable = (answers: FormValue) => {
+  const aplicantRole = getValueViaPath<string>(
+    answers,
+    'assignApplicantParty.applicantsRole',
+  )
+
+  return aplicantRole === ApplicantsRole.REPRESENTATIVE
 }
