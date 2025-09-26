@@ -6,24 +6,32 @@ import {
   GET_NAME_BY_NATIONALID,
 } from '@island.is/form-system/graphql'
 import { Box, Input, Stack, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { User } from '@island.is/shared/types'
+import { Dispatch } from 'react'
 import { useIntl } from 'react-intl'
+import { Action } from '../../lib'
 import { ApplicantTypesEnum } from '../../lib/enums'
 import { m } from '../../lib/messages'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 import { NationalIdField } from './components/nationalIdField'
 
 interface Props {
-  applicantType: FormSystemField
-  lang: 'is' | 'en'
+  applicant: FormSystemField
+  user: User
   nationalId: string
+  dispatch: Dispatch<Action>
 }
 
-export const Agent = ({ applicantType, lang, nationalId }: Props) => {
+export const Agent = ({ applicant, user, nationalId, dispatch }: Props) => {
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
   const shouldQuery = !!nationalId
 
+  console.log('user', user)
+
   const isIndividualDelegation =
-    applicantType?.fieldSettings?.applicantType ===
+    applicant?.fieldSettings?.applicantType ===
     ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL
 
   const nameQuery = useQuery(GET_NAME_BY_NATIONALID, {
@@ -63,7 +71,7 @@ export const Agent = ({ applicantType, lang, nationalId }: Props) => {
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
-        {applicantType?.name?.[lang]}
+        {applicant?.name?.[lang]}
       </Text>
       <Stack space={2}>
         {isLoading ? (

@@ -1,11 +1,11 @@
+import { m } from '@island.is/form-system/ui'
 import { Box, Breadcrumbs } from '@island.is/island-ui/core'
 import { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { FormsContext } from '../../context/FormsContext'
 import { Admin } from '../Admin/Admin'
 import { Forms } from '../Forms/Forms'
 import { FormsHeader } from './components/FormsHeader'
-import { m } from '@island.is/form-system/ui'
-import { useIntl } from 'react-intl'
 
 export const FormsLayout = () => {
   const { location } = useContext(FormsContext)
@@ -24,9 +24,7 @@ export const FormsLayout = () => {
       <FormsHeader />
       {location === 'forms' ? (
         <Forms />
-      ) : // ) : location === 'applications' ? (
-      //   <Applications />
-      location === 'admin' ? (
+      ) : location === 'admin' ? (
         <Admin />
       ) : null}
     </>
