@@ -157,7 +157,7 @@ function addHotReloading(config) {
   if (isDev) {
     // Configure devServer for hot reloading
     config.devServer = {
-      ...config.devServer,
+      ...(config.devServer ?? {}),
       hot: true,
       liveReload: true,
     }
