@@ -29,6 +29,7 @@ import {
   mapStatistics,
 } from '../utils/mappers'
 import { GetStatisticsCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdCategories.input'
+import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class DocumentProviderDashboardService {
@@ -39,11 +40,13 @@ export class DocumentProviderDashboardService {
 
   async getStatisticProvidersByNationalId(
     input: GetStatisticsProvidersNationalId,
+    user: User,
   ): Promise<ProviderStatisticsPaginationResponse | null> {
     const statisticProviders =
       await this.statisticsApi.apiV1StatisticsNationalIdProvidersGet(
         {
           ...input,
+          nationalId: user.nationalId,
           sortBy: input.sortBy as StatisticsSortBy | undefined,
         },
       )
@@ -73,10 +76,12 @@ export class DocumentProviderDashboardService {
 
   async getStatisticsCategories(
     input: GetStatisticsCategoriesByNationalId,
+    user: User,
   ): Promise<Array<CategoryStatistics> | null> {
     const statisticCategories =
       await this.statisticsApi.apiV1StatisticsNationalIdCategoriesGet({
         ...input,
+        nationalId: user.nationalId,
       })
 
     if (!statisticCategories) {
@@ -93,10 +98,12 @@ export class DocumentProviderDashboardService {
 
   async getStatisticsByNationalId(
     input: GetStatisticsByNationalId,
+    user: User,
   ): Promise<StatisticsOverview | null> {
     const statistics =
       await this.statisticsApi.apiV1StatisticsNationalIdGet({
         ...input,
+        nationalId: user.nationalId,
       })
 
     if (!statistics) {
@@ -113,11 +120,13 @@ export class DocumentProviderDashboardService {
 
   async getStatisticsBreakdownByProviderId(
     input: GetStatisticsBreakdownByProviderId,
+    user: User,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     const breakdown =
       await this.statisticsApi.apiV1StatisticsNationalIdProvidersProviderIdBreakdownGet(
         {
           ...input,
+          nationalId: user.nationalId,
           sortBy: input.sortBy as TotalStatisticsSortBy | undefined,
         },
       )
@@ -135,10 +144,12 @@ export class DocumentProviderDashboardService {
 
   async getStatisticsByProviderId(
     input: GetStatisticsCategoriesByProviderId,
+    user: User,
   ): Promise<DocumentProviderDashboardStatisticsOverview | null> {
     const statistic =
       await this.statisticsApi.apiV1StatisticsNationalIdProvidersProviderIdGet({
         ...input,
+        nationalId: user.nationalId,
       })
 
     if (!statistic) {
@@ -153,11 +164,13 @@ export class DocumentProviderDashboardService {
 
   async getStatisticsBreakdownByNationalId(
     input: GetStatisticsBreakdownByNationalId,
+    user: User,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     const breakdown =
       await this.statisticsApi.apiV1StatisticsNationalIdBreakdownGet(
         {
           ...input,
+          nationalId: user.nationalId,
           sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
         },
       )
@@ -175,11 +188,13 @@ export class DocumentProviderDashboardService {
 
   async getStatisticsBreakdownWithCategoriesByNationalId(
     input: GetStatisticsBreakdownWithCategoriesByNationalId,
+    user: User,
   ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     const breakdown =
       await this.statisticsApi.apiV1StatisticsNationalIdBreakdownCategoriesGet(
         {
           ...input,
+          nationalId: user.nationalId,
           sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
         },
       )
@@ -197,11 +212,13 @@ export class DocumentProviderDashboardService {
 
   async getStatisticsBreakdownWithCategoriesByProviderId(
     input: GetStatisticsBreakdownWithCategoriesByProviderId,
+    user: User,
   ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     const breakdown =
       await this.statisticsApi.apiV1StatisticsNationalIdProvidersProviderIdBreakdownCategoriesGet(
         {
           ...input,
+          nationalId: user.nationalId,
           sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
         },
       )

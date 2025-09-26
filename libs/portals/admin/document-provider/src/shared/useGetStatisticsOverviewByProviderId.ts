@@ -9,18 +9,16 @@ import { GetStatisticsByNationalIdReturnType } from '../lib/types'
 import format from 'date-fns/format'
 
 export const useGetStatisticsOverviewByProviderId = (
-  nationalId?: string,
   providerId?: string,
   fromDate?: Date,
   toDate?: Date,
 ): GetStatisticsByNationalIdReturnType => {
-  const shouldSkip = !nationalId || !providerId
+  const shouldSkip = !providerId
 
   const statisticsInput:
     | GetStatisticsBreakdownByProviderId
     | undefined = !shouldSkip
     ? {
-        nationalId,
         providerId,
         from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
         to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
@@ -41,7 +39,7 @@ export const useGetStatisticsOverviewByProviderId = (
     if (!loading && error) {
       toast.error(formatMessage(m.statisticsBoxNetworkError))
     }
-  }, [error, loading, nationalId, fromDate, toDate, formatMessage])
+  }, [error, loading, fromDate, toDate, formatMessage])
 
   const statistics = data?.statisticsOverviewByProviderId ?? null
 

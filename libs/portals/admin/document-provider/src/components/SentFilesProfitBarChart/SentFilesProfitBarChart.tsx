@@ -10,6 +10,8 @@ import {
   CartesianGrid,
 } from 'recharts'
 import { formatYAxis } from '../../lib/utils'
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 export interface ChartData {
   name: string
@@ -21,11 +23,13 @@ interface Props {
 }
 
 const COLORS = ['#00B39E', '#FF0050']
-const TITLES = ['Ávinningur']
+
 
 export const SentFilesProfitBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
+  const { formatMessage } = useLocale()
+  const TITLES = [formatMessage(m.statisticsBoxBenefit)]
   return (
     <GridColumn span={['12/12', '12/12', '6/12']}>
       <Box
@@ -37,7 +41,7 @@ export const SentFilesProfitBarChart: FC<React.PropsWithChildren<Props>> = ({
         alignItems={'center'}
       >
         <Text variant="h3" marginBottom={2} color="blue400">
-          Ávinningur í krónum
+          {formatMessage(m.statisticsBoxBenefitInCrowns)}
         </Text>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={data} margin={{ left: 0 }}>
@@ -62,7 +66,7 @@ export const SentFilesProfitBarChart: FC<React.PropsWithChildren<Props>> = ({
             <Bar
               dataKey="winning"
               fill={COLORS[0]}
-              name="Ávinningur"
+              name={formatMessage(m.statisticsBoxBenefit)}
               radius={[8, 8, 0, 0]}
             />
           </BarChart>

@@ -18,7 +18,6 @@ import {
 import format from 'date-fns/format'
 
 export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
-  nationalId?: string,
   fromDate?: Date,
   toDate?: Date,
   sortBy?: TotalStatisticsSortBy,
@@ -28,7 +27,6 @@ export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
 ): GetProviderStatisticsBreakdownWithCategoriesReturnType => {
   const statisticsInput: GetStatisticsBreakdownWithCategoriesByNationalId =
     {
-      nationalId: nationalId ?? '',
       from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
       to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
       sortBy: sortBy ?? TotalStatisticsSortBy.Date,
@@ -44,7 +42,6 @@ export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
         input: statisticsInput,
       },
       fetchPolicy: 'cache-and-network',
-      skip: !nationalId,
     },
   )
 
@@ -53,7 +50,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
     if (!loading && error) {
       toast.error(formatMessage(m.statisticsBoxNetworkError))
     }
-  }, [error, loading, nationalId, fromDate, toDate, formatMessage])
+  }, [error, loading, fromDate, toDate, formatMessage])
 
   const breakdown = data?.statisticsBreakdownWithCategoriesByNationalId ?? {
     totalCount: 0,

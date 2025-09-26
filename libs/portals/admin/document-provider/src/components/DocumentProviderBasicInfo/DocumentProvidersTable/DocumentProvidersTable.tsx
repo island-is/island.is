@@ -1,5 +1,7 @@
 import { Box, Table as T, Text, Link } from '@island.is/island-ui/core'
 import { ProviderStatisticsPaginationResponse } from '@island.is/api/schema'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 import { DocumentProviderPaths } from '../../../lib/paths'
 
 type ProvidersTableProps = {
@@ -7,15 +9,17 @@ type ProvidersTableProps = {
 }
 
 export const ProvidersTable = ({ providerStatistics }: ProvidersTableProps) => {
+  const { formatMessage } = useLocale()
+  
   return (
     <Box paddingTop={6}>
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>Skjalaveitendur</T.HeadData>
-            <T.HeadData>Send skjöl</T.HeadData>
-            <T.HeadData>Opnuð skjöl</T.HeadData>
-            <T.HeadData>Links</T.HeadData>
+            <T.HeadData>{formatMessage(m.documentProvidersList)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.statisticsBoxPublishedDocuments)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.openedDocuments)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.links)}</T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>
@@ -33,7 +37,7 @@ export const ProvidersTable = ({ providerStatistics }: ProvidersTableProps) => {
                     )}
                     underline="normal"
                   >
-                    Skoða nánar
+                    {formatMessage(m.documentProvidersSearchResultsActionCardLabel)}
                   </Link>
                 </T.Data>
               </T.Row>
@@ -41,7 +45,7 @@ export const ProvidersTable = ({ providerStatistics }: ProvidersTableProps) => {
           ) : (
             <T.Row>
               <T.Data colSpan={4}>
-                <Text>Engin gögn...</Text>
+                <Text>{formatMessage(m.documentProvidersNoData)}</Text>
               </T.Data>
             </T.Row>
           )}

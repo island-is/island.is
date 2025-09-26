@@ -47,13 +47,11 @@ const InstitutionDocumentProviders = () => {
   const { loading: loadingStatistics, statistics } =
     useGetStatisticsByNationalId(user.profile.nationalId, fromDate, toDate)
   const { loading, items: providers } = useGetProvidersByNationalId(
-    user.profile.nationalId,
     fromDate,
     toDate,
   )
   const { loading: loadingSentFiles, chartData: sentFilesChartData } =
     useGetProviderStatisticsBreakdownWCategoriesByNationalId(
-      user.profile.nationalId,
       fromDate,
       toDate,
       TotalStatisticsSortBy.Date,

@@ -9,6 +9,10 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:statistics-box-benefit',
     defaultMessage: 'Ávinningur',
   },
+  statisticsBoxBenefitInCrowns: {
+    id: 'portals-admin.document-provider:statistics-box-benefit-in-crowns',
+    defaultMessage: 'Ávinningur í krónum',
+  },
   // navigation
   rootName: {
     id: 'portals-admin.document-provider:title',
@@ -775,6 +779,18 @@ export const m = defineMessages({
   statisticsBoxUnopenedDocuments: {
     id: 'portals-admin.document-provider:statistics-box-unopened-documents',
     defaultMessage: 'Óopnuð skjöl',
+  },
+  openedDocuments: {
+    id: 'portals-admin.document-provider:opened-documents',
+    defaultMessage: 'Opnuð skjöl',
+  },
+  documentProvidersList: {
+    id: 'portals-admin.document-provider:document-providers-list',
+    defaultMessage: 'Skjalaveitendur',
+  },
+  links: {
+    id: 'portals-admin.document-provider:links',
+    defaultMessage: 'Links',
   },
   statisticsBoxNotifications: {
     id: 'portals-admin.document-provider:statistics-box-notifications',

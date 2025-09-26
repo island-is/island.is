@@ -14,7 +14,6 @@ export const useGetStatisticsByNationalId = (
   toDate?: Date,
 ): GetStatisticsByNationalIdReturnType => {
   const statisticsInput: GetStatisticsByNationalId  = {
-    nationalId: nationalId ?? '',
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
     to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
   }
@@ -24,7 +23,6 @@ export const useGetStatisticsByNationalId = (
       input: statisticsInput,
     },
     fetchPolicy: 'cache-and-network',
-    skip: !nationalId,
   })
 
   const { formatMessage } = useLocale()
@@ -32,7 +30,7 @@ export const useGetStatisticsByNationalId = (
     if (!loading && error) {
       toast.error(formatMessage(m.statisticsBoxNetworkError))
     }
-  }, [error, loading, nationalId, fromDate, toDate, formatMessage])
+  }, [error, loading, fromDate, toDate, formatMessage])
 
   const statistics = data?.statisticsByNationalId ?? null
 

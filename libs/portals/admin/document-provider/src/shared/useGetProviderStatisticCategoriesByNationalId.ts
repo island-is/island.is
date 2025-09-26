@@ -12,12 +12,10 @@ import {
 import format from 'date-fns/format'
 
 export const useGetProviderStatisticCategoriesByNationalId = (
-  nationalId?: string,
   fromDate?: Date,
   toDate?: Date,
 ): GetProviderStatisticCategoriesReturnType => {
   const statisticsInput: GetStatisticsCategoriesByNationalId = {
-    nationalId: (nationalId ?? '') as string,
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
     to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
   }
@@ -29,7 +27,6 @@ export const useGetProviderStatisticCategoriesByNationalId = (
         input: statisticsInput,
       },
       fetchPolicy: 'cache-and-network',
-      skip: !nationalId,
     },
   )
 
@@ -38,7 +35,7 @@ export const useGetProviderStatisticCategoriesByNationalId = (
     if (!loading && error) {
       toast.error(formatMessage(m.statisticsBoxNetworkError))
     }
-  }, [error, loading, nationalId, fromDate, toDate, formatMessage])
+  }, [error, loading, fromDate, toDate, formatMessage])
 
   const rawCategories = (data?.statisticsCategories ?? []) as Array<{
     name: string

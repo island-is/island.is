@@ -30,7 +30,6 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
   const statisticsInput: GetStatisticsBreakdownWithCategoriesByProviderId =
     {
       providerId: providerId ?? '',
-      nationalId: nationalId ?? '',
       from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
       to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
       sortBy: sortBy ?? CategoryStatisticsSortBy.Date,
@@ -46,7 +45,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
         input: statisticsInput,
       },
       fetchPolicy: 'cache-and-network',
-      skip: !providerId || !nationalId,
+      skip: !providerId,
     },
   )
 
@@ -55,7 +54,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
     if (!loading && error) {
       toast.error(formatMessage(m.statisticsBoxNetworkError))
     }
-  }, [error, loading, nationalId, fromDate, toDate, formatMessage])
+  }, [error, loading, fromDate, toDate, formatMessage])
 
   const breakdown = data?.statisticsBreakdownWithCategoriesByProviderId ?? {
     totalCount: 0,

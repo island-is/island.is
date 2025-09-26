@@ -13,10 +13,6 @@ registerEnumType(CategoryStatisticsSortBy, { name: 'CategoryStatisticsSortBy' })
 )
 export class GetStatisticsBreakdownWithCategoriesByProviderId {
   @Field()
-  @Matches(/^\d{10}$/, { message: 'nationalId must be 10 digits' })
-  nationalId!: string
-
-  @Field()
   @IsUUID('4', { message: 'providerId must be a UUID v4' })
   providerId!: string
 

@@ -130,7 +130,6 @@ export const DocumentProviderHelpDeskForm: FC<
             marginTop={2}
           >
             <Box marginTop={[1, 0]}>
-              {/* Breytt úr DocumentProviderDocumentProviders -> DocumentProviderRoot tímabundið*/}
               <Link to={DocumentProviderPaths.DocumentProviderRoot}>
                 <Button variant="ghost">
                   {formatMessage(m.SingleProviderBackButton)}

@@ -53,17 +53,15 @@ const SingleDocumentProvider = () => {
   const user = useUserInfo()
 
   const { loading, statistics } = useGetStatisticsOverviewByProviderId(
-    user.profile.nationalId,
     providerId,
     fromDate,
     toDate,
   )
   const { loading: loadingProviders, items: providers } =
-    useGetProvidersByNationalId(user.profile.nationalId, undefined, undefined)
+    useGetProvidersByNationalId(undefined, undefined)
 
   const { chartData } = useGetProviderStatisticsBreakdownByProviderId(
     providerId,
-    user.profile.nationalId,
     undefined,
     undefined,
     'Date',
@@ -85,7 +83,6 @@ const SingleDocumentProvider = () => {
   const { loading: loadingBreakdown, breakdown } =
     useGetProviderStatisticsBreakdownByProviderId(
       providerId,
-      user.profile.nationalId,
       undefined,
       undefined,
       'Date',
@@ -137,7 +134,7 @@ const SingleDocumentProvider = () => {
         >
           <Breadcrumbs
             items={[
-              { title: 'Skjalaveitur' },
+              { title: formatMessage(m.documentProviders) },
               {
                 title: user.profile.name,
                 href: DocumentProviderPaths.DocumentProviderOverview,
@@ -147,7 +144,7 @@ const SingleDocumentProvider = () => {
           />
           <Box marginTop={1} marginBottom={[2, 3, 5]}>
             <IntroHeader
-              title={statistics?.name ? String(statistics.name) : 'Skjalaveita'}
+              title={statistics?.name ? String(statistics.name) : formatMessage(m.rootName)}
               intro={formatMessage(m.documentProvidersDescription)}
             />
             <Box marginBottom={[2, 3]}>

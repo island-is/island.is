@@ -19,12 +19,16 @@ interface Props {
 }
 
 const COLORS = ['#99C0FF', '#FF0050']
-const TITLES = ['Send skjöl', 'Villur']
+
 
 export const SentFilesAndErrorsBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
   const { formatMessage } = useLocale()
+  const TITLES = [
+    formatMessage(m.statisticsBoxPublishedDocuments),
+    formatMessage(m.sentErrors)
+  ]
 
   return (
     <GridColumn span={['12/12', '12/12', '6/12']}>

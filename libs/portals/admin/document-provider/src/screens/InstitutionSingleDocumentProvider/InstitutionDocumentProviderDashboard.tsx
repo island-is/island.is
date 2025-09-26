@@ -1,4 +1,6 @@
 import { GridRow, Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/OpenedFilesDonutChart'
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
 import { SentFilesAndErrorsBarChart } from '../../components/SentFilesAndErrorsBarChart/SentFilesAndErrorsBarChart'
@@ -17,6 +19,7 @@ export const InstitutionDocumentProviderDashboard = ({
   sentFilesData,
   chartData,
 }: Props) => {
+  const { formatMessage } = useLocale()
   //Get the sum of opened and published from chartData
   const opened =
     chartData?.reduce((acc, item) => acc + (item?.opened ?? 0), 0) ?? 0
@@ -27,23 +30,23 @@ export const InstitutionDocumentProviderDashboard = ({
     published > 0 ? Math.round((opened / published) * 100) : 0
 
   const openedFilesData = [
-    { name: 'Opnuð skjöl', value: openedPercentage || 0, color: '#007bff' },
-    { name: 'Óopnuð skjöl', value: 100 - openedPercentage, color: '#d6b3ff' },
+    { name: formatMessage(m.openedDocuments), value: openedPercentage || 0, color: '#007bff' },
+    { name: formatMessage(m.statisticsBoxUnopenedDocuments), value: 100 - openedPercentage, color: '#d6b3ff' },
   ]
 
   return (
     <Box marginBottom={2}>
       <Text variant="h4" marginBottom={1} marginTop={4}>
-        Tölfræði
+        {formatMessage(m.StatisticsTitle)}
       </Text>
-      <Text marginBottom={2}>Hér er tölfræði síðustu 6 mánuða</Text>
+      <Text marginBottom={2}>{formatMessage(m.statisticsDescription6months)}</Text>
 
       <GridRow>
         <SentFilesBarChart data={sentFilesData || []} />
 
         <OpenedFilesDonutChart
           valueIndex={0}
-          title="Opnuð skjöl"
+          title={formatMessage(m.openedDocuments)}
           data={openedFilesData}
         />
 

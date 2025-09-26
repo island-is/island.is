@@ -12,8 +12,6 @@ registerEnumType(TotalStatisticsSortBy, { name: 'TotalStatisticsSortBy' })
 
 @InputType('GetStatisticsBreakdownByNationalId')
 export class GetStatisticsBreakdownByNationalId {
-  @Field()
-  nationalId!: string
 
   @Field(() => Date, { nullable: true })
   from?: Date

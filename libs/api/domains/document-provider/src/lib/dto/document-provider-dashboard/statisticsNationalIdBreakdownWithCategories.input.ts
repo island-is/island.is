@@ -4,8 +4,6 @@ import { Min } from 'class-validator'
 
 @InputType('GetStatisticsBreakdownWithCategoriesByNationalId')
 export class GetStatisticsBreakdownWithCategoriesByNationalId {
-  @Field()
-  nationalId!: string
 
   @Field(() => Date, { nullable: true })
   from?: Date

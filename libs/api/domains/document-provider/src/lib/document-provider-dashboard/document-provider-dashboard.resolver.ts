@@ -1,5 +1,6 @@
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Query } from '@nestjs/graphql'
+import { ApolloError } from '@apollo/client'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -58,24 +59,19 @@ export class DocumentProviderDashboardResolver {
           auth: user,
           namespace: '@island.is/api/document-provider-dashboard',
           action: 'getStatisticProvidersByNationalId',
-          resources: input.nationalId,
+          resources: user.nationalId,
           meta: {
-            nationalId: input.nationalId,
+            nationalId: user.nationalId,
           },
         },
         this.documentProviderDashboardService.getStatisticProvidersByNationalId(
           { ...input },
+          user,
         ),
       )
-
       return data
     } catch (e) {
-      this.logger.warn('Failed to get statistic Providers By National Id', {
-        category: LOG_CATEGORY,
-        nationalId: input.nationalId,
-        error: e,
-      })
-      throw e
+      throw new ApolloError(e.message)
     }
   }
 
@@ -94,19 +90,15 @@ export class DocumentProviderDashboardResolver {
           auth: user,
           namespace: '@island.is/api/document-provider-dashboard',
           action: 'getStatisticsCategories',
-          resources: input.nationalId,
+          resources: user.nationalId,
           meta: {
-            nationalId: input.nationalId,
+            nationalId: user.nationalId,
           },
         },
-        this.documentProviderDashboardService.getStatisticsCategories({
-          ...input,
-        }),
+        this.documentProviderDashboardService.getStatisticsCategories(
+          {...input, }, 
+          user),
       )
-
-      if (!data) {
-        return null
-      }
 
       // Ensure categoryId is always a number and not undefined
       return Array.isArray(data)
@@ -119,12 +111,7 @@ export class DocumentProviderDashboardResolver {
           }))
         : data
     } catch (e) {
-      this.logger.warn('Failed to getStatisticsCategories', {
-        category: LOG_CATEGORY,
-        nationalId: input.nationalId,
-        error: e,
-      })
-      throw e
+      throw new ApolloError(e.message)
     }
   }
 
@@ -143,28 +130,19 @@ export class DocumentProviderDashboardResolver {
           auth: user,
           namespace: '@island.is/api/document-provider-dashboard',
           action: 'getStatisticsByNationalId',
-          resources: input.nationalId,
+          resources: user.nationalId,
           meta: {
-            nationalId: input.nationalId,
+            nationalId: user.nationalId,
           },
         },
         this.documentProviderDashboardService.getStatisticsByNationalId({
           ...input,
-        }),
+        }, user),
       )
-      // Check if data is null or undefined
-      if (!data) {
-        return null
-      }
 
       return data
     } catch (e) {
-      this.logger.warn('Failed to getStatisticsByNationalId', {
-        category: LOG_CATEGORY,
-        nationalId: input.nationalId,
-        error: e,
-      })
-      throw e
+      throw new ApolloError(e.message)
     }
   }
 
@@ -184,28 +162,19 @@ export class DocumentProviderDashboardResolver {
           auth: user,
           namespace: '@island.is/api/document-provider-dashboard',
           action: 'getStatisticsBreakdownByProviderId',
-          resources: input.nationalId,
+          resources: user.nationalId,
           meta: {
-            nationalId: input.nationalId,
+            nationalId: user.nationalId,
           },
         },
         this.documentProviderDashboardService.getStatisticsBreakdownByProviderId(
-          { ...input },
+          { ...input }, user
         ),
       )
 
-      if (!data) {
-        return null
-      }
-
       return data
     } catch (e) {
-      this.logger.warn('Failed to getStatisticsBreakdownByProviderId', {
-        category: LOG_CATEGORY,
-        nationalId: input.nationalId,
-        error: e,
-      })
-      throw e
+      throw new ApolloError(e.message)
     }
   }
 
@@ -227,28 +196,18 @@ export class DocumentProviderDashboardResolver {
           action: 'getStatisticsOverviewByProviderId',
           resources: input.providerId,
           meta: {
-            nationalId: input.nationalId,
+            nationalId: user.nationalId,
             providerId: input.providerId,
           },
         },
         this.documentProviderDashboardService.getStatisticsByProviderId({
           ...input,
-        }),
+        }, user),
       )
-
-      if (!data) {
-        return null
-      }
 
       return data
     } catch (e) {
-      this.logger.warn('Failed to getStatisticsOverviewByProviderId', {
-        category: LOG_CATEGORY,
-        nationalId: input.nationalId,
-        providerId: input.providerId,
-        error: e,
-      })
-      throw e
+      throw new ApolloError(e.message)
     }
   }
 
@@ -267,28 +226,20 @@ export class DocumentProviderDashboardResolver {
           auth: user,
           namespace: '@island.is/api/document-provider-dashboard',
           action: 'getStatisticsBreakdownByNationalId',
-          resources: input.nationalId,
+          resources: user.nationalId,
           meta: {
-            nationalId: input.nationalId,
+            nationalId: user.nationalId,
           },
         },
         this.documentProviderDashboardService.getStatisticsBreakdownByNationalId(
           { ...input },
+          user
         ),
       )
 
-      if (!data) {
-        return null
-      }
-
       return data
-    } catch (e) {
-      this.logger.warn('Failed to getStatisticsBreakdownByNationalId', {
-        category: LOG_CATEGORY,
-        nationalId: input.nationalId,
-        error: e,
-      })
-      throw e
+   } catch (e) {
+      throw new ApolloError(e.message)
     }
   }
 
@@ -308,31 +259,19 @@ export class DocumentProviderDashboardResolver {
           auth: user,
           namespace: '@island.is/api/document-provider-dashboard',
           action: 'getStatisticsBreakdownWithCategoriesByNationalId',
-          resources: input.nationalId,
+          resources: user.nationalId,
           meta: {
-            nationalId: input.nationalId,
+            nationalId: user.nationalId,
           },
         },
         this.documentProviderDashboardService.getStatisticsBreakdownWithCategoriesByNationalId(
           { ...input },
+          user
         ),
       )
-
-      if (!data) {
-        return null
-      }
-
       return data
     } catch (e) {
-      this.logger.warn(
-        'Failed to getStatisticsBreakdownWithCategoriesByNationalId',
-        {
-          category: LOG_CATEGORY,
-          nationalId: input.nationalId,
-          error: e,
-        },
-      )
-      throw e
+      throw new ApolloError(e.message)
     }
   }
 
@@ -354,30 +293,19 @@ export class DocumentProviderDashboardResolver {
           action: 'getStatisticsBreakdownWithCategoriesByProviderId',
           resources: input.providerId,
           meta: {
-            nationalId: input.nationalId,
+            nationalId: user.nationalId,
             providerId: input.providerId,
           },
         },
         this.documentProviderDashboardService.getStatisticsBreakdownWithCategoriesByProviderId(
           { ...input },
+          user
         ),
       )
-
-      if (!data) {
-        return null
-      }
-
+      
       return data
     } catch (e) {
-      this.logger.warn(
-        'Failed to getStatisticsBreakdownWithCategoriesByProviderId',
-        {
-          category: LOG_CATEGORY,
-          nationalId: input.nationalId,
-          error: e,
-        },
-      )
-      throw e
+      throw new ApolloError(e.message)
     }
   }
 }

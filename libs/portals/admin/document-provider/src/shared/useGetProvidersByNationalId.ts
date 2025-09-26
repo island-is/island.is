@@ -9,12 +9,10 @@ import { GetProvidersByNationalIdReturnType } from '../lib/types'
 import format from 'date-fns/format'
 
 export const useGetProvidersByNationalId = (
-  organisationId?: string,
   fromDate?: Date,
   toDate?: Date,
 ): GetProvidersByNationalIdReturnType => {
   const statisticsInput: GetStatisticsProvidersNationalId = {
-    nationalId: organisationId ?? '',
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
     to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
     page: 1,
@@ -28,7 +26,6 @@ export const useGetProvidersByNationalId = (
         input: statisticsInput,
       },
       fetchPolicy: 'cache-and-network',
-      skip: !organisationId,
     },
   )
 
@@ -37,7 +34,7 @@ export const useGetProvidersByNationalId = (
     if (!loading && error) {
       toast.error(formatMessage(m.statisticsBoxNetworkError))
     }
-  }, [error, loading, organisationId, fromDate, toDate, formatMessage])
+  }, [error, loading, fromDate, toDate, formatMessage])
 
   const statistics = data?.statisticProvidersByNationalId ?? null
 

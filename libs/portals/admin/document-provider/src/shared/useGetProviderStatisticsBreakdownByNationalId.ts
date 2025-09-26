@@ -17,7 +17,6 @@ import { DOCUMENT_DELIVERY_PRICE_ISK } from '../lib/constants'
 import format from 'date-fns/format'
 
 export const useGetProviderStatisticsBreakdownByNationalId = (
-  nationalId?: string,
   fromDate?: Date,
   toDate?: Date,
   sortBy?: string,
@@ -26,7 +25,6 @@ export const useGetProviderStatisticsBreakdownByNationalId = (
   pageSize = 10,
 ): GetProviderStatisticsBreakdownReturnType => {
   const statisticsInput: GetStatisticsBreakdownByNationalId = {
-    nationalId: nationalId ?? '',
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
     to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
     sortBy: (sortBy as CategoryStatisticsSortBy) ?? 'Date',
@@ -50,7 +48,7 @@ export const useGetProviderStatisticsBreakdownByNationalId = (
     if (!loading && error) {
       toast.error(formatMessage(m.statisticsBoxNetworkError))
     }
-  }, [error, loading, nationalId, fromDate, toDate, formatMessage])
+  }, [error, loading, fromDate, toDate, formatMessage])
 
   const breakdown = data?.statisticsBreakdownByNationalId ?? null
 

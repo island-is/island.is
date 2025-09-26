@@ -2,8 +2,7 @@ import { Field, Int, InputType } from '@nestjs/graphql'
 
 @InputType('GetStatisticsCategoriesByProviderId')
 export class GetStatisticsCategoriesByProviderId {
-  @Field()
-  nationalId!: string
+  
   @Field()
   providerId!: string
 

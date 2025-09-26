@@ -31,7 +31,6 @@ const CategoriesAndTypes = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const user = useUserInfo()
   const { loading, items: providers } = useGetProvidersByNationalId(
-    user.profile.nationalId,
     undefined,
     undefined,
   )

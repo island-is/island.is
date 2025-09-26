@@ -4,9 +4,6 @@ import { CategoryStatisticsSortBy } from './statisticsProvidersBreakdownWithCate
 @InputType('GetStatisticsBreakdownByProviderId')
 export class GetStatisticsBreakdownByProviderId {
   @Field()
-  nationalId!: string
-
-  @Field()
   providerId!: string
 
   @Field(() => Date, { nullable: true })

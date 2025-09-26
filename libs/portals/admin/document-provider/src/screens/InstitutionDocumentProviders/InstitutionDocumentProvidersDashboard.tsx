@@ -24,7 +24,6 @@ export const InstitutionDocumentProvidersDashboard = ({
   const { formatMessage } = useLocale()
 
   const { categories } = useGetProviderStatisticCategoriesByNationalId(
-    nationalId,
     fromDate,
     toDate,
   )
