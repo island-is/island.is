@@ -96,6 +96,7 @@ export class OfficialJournalOfIcelandApplicationService {
         id: input.id,
         postApplicationComment: {
           comment: input.comment,
+          applicationUserName: input.applicationUserName,
         },
       },
       user,
@@ -229,6 +230,7 @@ export class OfficialJournalOfIcelandApplicationService {
     return this.ojoiApplicationService.getUserInvolvedParties(
       {
         id: input.applicationId,
+        partyName: input.partyName,
       },
       user,
     )
