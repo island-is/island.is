@@ -93,6 +93,10 @@ export class LandspitaliService {
               value: input.recipientName,
             },
             {
+              name: 'recipientEmail',
+              value: input.recipientEmail,
+            },
+            {
               name: 'recipientAddress',
               value: input.recipientAddress,
             },
@@ -103,6 +107,10 @@ export class LandspitaliService {
             {
               name: 'recipientPlace',
               value: input.recipientPlace,
+            },
+            {
+              name: 'sendType',
+              value: input.sendType,
             },
             {
               name: 'payerName',

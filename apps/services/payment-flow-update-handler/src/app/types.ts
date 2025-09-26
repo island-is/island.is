@@ -1,4 +1,5 @@
 import type { ApiClientCallback } from '@island.is/api/domains/payment'
+import { WebLandspitaliCreateMemorialCardPaymentUrlInputSendType } from '@island.is/shared/types'
 
 export enum PaymentFlowType {
   MemorialCard = 'LandspitaliMemorialCard',
@@ -32,6 +33,8 @@ export type WebLandspitaliCreateMemorialCardPaymentUrlInput = {
   recipientName: string
   recipientPlace: string
   recipientPostalCode: string
+  recipientEmail: string
+  sendType: WebLandspitaliCreateMemorialCardPaymentUrlInputSendType
   senderSignature: string
 }
 
