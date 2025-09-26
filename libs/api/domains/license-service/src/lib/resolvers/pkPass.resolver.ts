@@ -22,20 +22,10 @@ import { VerifyPkPassInput } from '../dto/VerifyPkPass.input'
 export class PkPassResolver {
   constructor(private readonly licenseServiceService: LicenseService) {}
 
-<<<<<<< HEAD
   @Directive('@deprecated(reason: "Permanently closed. Not removed for backwards compatibility")')
   @Mutation(() => GenericPkPass, {
     name: 'generatePkPass',
     deprecationReason: 'Permanently closed. Not removed for backwards compatibility'
-=======
-  @Directive(
-    '@deprecated(reason: "Permanently closed. Not removed for backwards compability")',
-  )
-  @Mutation(() => GenericPkPass, {
-    name: 'generatePkPass',
-    deprecationReason:
-      'Permanently closed. Not removed for backwards compability',
->>>>>>> refs/remotes/origin/chore/disable-generate-pkpass
   })
   @Audit()
   async generatePkPass(
@@ -44,20 +34,10 @@ export class PkPassResolver {
     throw new GoneException('Permanently closed')
   }
 
-<<<<<<< HEAD
   @Directive('@deprecated(reason: "Permanently closed. Not removed for backwards compatibility")')
   @Mutation(() => GenericPkPassQrCode, {
     name: 'generatePkPassQrCode',
     deprecationReason: 'Permanently closed. Not removed for backwards compatibility'
-=======
-  @Directive(
-    '@deprecated(reason: "Permanently closed. Not removed for backwards compability")',
-  )
-  @Mutation(() => GenericPkPassQrCode, {
-    name: 'generatePkPassQrCode',
-    deprecationReason:
-      'Permanently closed. Not removed for backwards compability',
->>>>>>> refs/remotes/origin/chore/disable-generate-pkpass
   })
   @Audit()
   async generatePkPassQrCode(
