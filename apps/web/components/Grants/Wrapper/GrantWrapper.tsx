@@ -1,4 +1,8 @@
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
+
+import { BreadCrumbItem } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 
 import { HeadWithSocialSharing } from '../../HeadWithSocialSharing/HeadWithSocialSharing'
 

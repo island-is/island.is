@@ -39,7 +39,6 @@ export const GET_CUSTOM_SUBPAGE_QUERY = gql`
   query GetCustomSubpage($input: GetCustomSubpageInput!) {
     getCustomSubpage(input: $input) {
       configJson
-      id
       translationStrings
       content {
         ...AllSlices
