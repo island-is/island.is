@@ -139,7 +139,6 @@ const landlordInfo = z
               message: 'Duplicate national ID found',
               params: m.partiesDetails.duplicateNationalIdError,
               path: [
-                'parties',
                 'landlordInfo',
                 'representativeTable',
                 index,
