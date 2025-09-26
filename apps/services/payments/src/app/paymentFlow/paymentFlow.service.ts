@@ -37,7 +37,10 @@ import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { GetPaymentFlowsPaginatedDTO } from './dtos/getPaymentFlow.dto'
 
 import { environment } from '../../environments'
-import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
+import {
+  PaymentFlowEvent,
+  PaymentFlowEventAttributes,
+} from './models/paymentFlowEvent.model'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
 import { FjsCharge } from './models/fjsCharge.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
@@ -439,58 +442,98 @@ export class PaymentFlowService {
     }
 
     const notifyUpdateUrl = async (attempt?: number) => {
-      // Generate the JWT
-      const token = generateWebhookJwt(
-        { id: paymentFlow.id, onUpdateUrl: paymentFlow.onUpdateUrl },
-        { type: update.type },
-        updateBody,
-        {
-          ...this.jwksConfig,
-          privateKey: this.jwksConfigService.getPrivateKey(),
-        },
-        this.logger,
-      )
-
-      const response = await fetch(paymentFlow.onUpdateUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updateBody),
-      })
-      if (!response.ok) {
-        const errorBody = await response
-          .text()
-          .catch(() => 'Could not read error body')
-        this.logger.warn(
-          `[${update.paymentFlowId}] Failed to notify onUpdateUrl [${
-            update.type
-          }]${attempt ? ` (attempt ${attempt})` : ''}: ${response.status} ${
-            response.statusText
-          }`,
+      try {
+        // Generate the JWT
+        const token = generateWebhookJwt(
+          { id: paymentFlow.id, onUpdateUrl: paymentFlow.onUpdateUrl },
+          { type: update.type },
+          updateBody,
           {
-            url: paymentFlow.onUpdateUrl,
-            responseBody: errorBody,
+            ...this.jwksConfig,
+            privateKey: this.jwksConfigService.getPrivateKey(),
           },
+          this.logger,
         )
-        if (config.throwOnError) {
-          throw new Error(
-            `Failed to notify onUpdateUrl: ${response.status} ${response.statusText}, body: ${errorBody}`,
+
+        const response = await fetch(paymentFlow.onUpdateUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updateBody),
+        })
+
+        if (!response.ok) {
+          const errorBody = await response
+            .text()
+            .catch(() => 'Could not read error body')
+          const errorMessage = `Failed to notify onUpdateUrl: ${response.status} ${response.statusText}, body: ${errorBody}`
+
+          this.logger.warn(
+            `[${update.paymentFlowId}] Failed to notify onUpdateUrl [${
+              update.type
+            }]${attempt ? ` (attempt ${attempt})` : ''}: ${response.status} ${
+              response.statusText
+            }`,
+            {
+              url: paymentFlow.onUpdateUrl,
+              responseBody: errorBody,
+            },
+          )
+
+          // Update delivery status to failed
+          await this.updateEventDeliveryStatus(
+            eventRecord.id,
+            false,
+            errorMessage,
+          )
+
+          if (config.throwOnError) {
+            throw new Error(errorMessage)
+          }
+        } else {
+          // Update delivery status to successful
+          await this.updateEventDeliveryStatus(eventRecord.id, true)
+
+          this.logger.info(
+            `[${update.paymentFlowId}] Successfully notified onUpdateUrl`,
+            {
+              url: paymentFlow.onUpdateUrl,
+              type: update.type,
+              reason: update.reason,
+            },
           )
         }
-      } else {
-        this.logger.info(
-          `[${update.paymentFlowId}] Successfully notified onUpdateUrl`,
-          {
-            url: paymentFlow.onUpdateUrl,
-            type: update.type,
-            reason: update.reason,
-          },
+      } catch (error) {
+        // Update delivery status to failed
+        await this.updateEventDeliveryStatus(
+          eventRecord.id,
+          false,
+          error.message,
         )
+        throw error
       }
     }
 
+    // Save event to database first, then attempt delivery
+    let eventRecord: PaymentFlowEventAttributes
+    try {
+      eventRecord = await this.paymentFlowEventModel.create({
+        ...update,
+        deliveredToUpstream: null, // Will be updated after delivery attempt
+        deliveredAt: null,
+        deliveryError: null,
+      })
+    } catch (e) {
+      this.logger.error(
+        `[${update.paymentFlowId}] Failed to create payment flow event record`,
+        { error: e },
+      )
+      throw e // Don't proceed if we can't create the record
+    }
+
+    // Now attempt delivery with the event record already saved
     if (config.useRetry) {
       await retry(notifyUpdateUrl, {
         maxRetries: 3,
@@ -501,16 +544,88 @@ export class PaymentFlowService {
     } else {
       await notifyUpdateUrl()
     }
+  }
 
+  /**
+   * Updates the delivery status of a payment flow event.
+   * This allows tracking which events were successfully delivered to upstream systems.
+   */
+  private async updateEventDeliveryStatus(
+    eventId: string,
+    delivered: boolean,
+    error?: string,
+  ): Promise<void> {
     try {
-      await this.paymentFlowEventModel.create(update)
-    } catch (e) {
-      this.logger.error(
-        `[${update.paymentFlowId}] Failed to log payment flow update event to database`,
-        { error: e },
+      await this.paymentFlowEventModel.update(
+        {
+          deliveredToUpstream: delivered,
+          deliveredAt: delivered ? new Date() : null,
+          deliveryError: delivered ? null : error,
+        },
+        {
+          where: { id: eventId },
+        },
       )
-      // Depending on requirements, we might not want to stop the onUpdateUrl notification if DB log fails
-      // For now, it continues.
+    } catch (updateError) {
+      this.logger.error(
+        `Failed to update delivery status for event ${eventId}`,
+        { error: updateError },
+      )
+      // Don't throw - this is not critical enough to fail the main operation
+    }
+  }
+
+  /**
+   * Gets all events that failed to deliver to upstream systems.
+   * Useful for retry mechanisms and monitoring.
+   */
+  async getFailedDeliveryEvents(): Promise<PaymentFlowEventAttributes[]> {
+    return await this.paymentFlowEventModel.findAll({
+      where: {
+        deliveredToUpstream: false,
+      },
+      order: [['created', 'ASC']],
+    })
+  }
+
+  /**
+   * Retries delivery of failed events.
+   * This can be called by a background job or admin interface.
+   */
+  async retryFailedDeliveries(eventIds: string[]): Promise<void> {
+    for (const eventId of eventIds) {
+      try {
+        const event = await this.paymentFlowEventModel.findByPk(eventId)
+        if (!event) continue
+
+        // Reset delivery status and retry
+        await this.paymentFlowEventModel.update(
+          {
+            deliveredToUpstream: null,
+            deliveredAt: null,
+            deliveryError: null,
+          },
+          { where: { id: eventId } },
+        )
+
+        // Retry the delivery
+        await this.logPaymentFlowUpdate(
+          {
+            paymentFlowId: event.paymentFlowId,
+            type: event.type,
+            occurredAt: event.occurredAt,
+            paymentMethod: event.paymentMethod as PaymentMethod,
+            reason: event.reason,
+            message: event.message,
+            metadata: event.metadata,
+          },
+          { useRetry: true, throwOnError: false },
+        )
+      } catch (error) {
+        this.logger.error(`Failed to retry delivery for event ${eventId}`, {
+          error,
+        })
+      }
     }
   }
 
@@ -575,7 +690,33 @@ export class PaymentFlowService {
     }
   }
 
+  /**
+   * Creates an invoice payment confirmation for a completed FJS charge.
+   * This method is idempotent - calling it multiple times with the same parameters
+   * will not create duplicate fulfillments.
+   *
+   * @param paymentFlowId - The payment flow ID
+   * @param receptionId - The FJS reception ID from the callback
+   * @returns Promise<void>
+   * @throws BadRequestException if FJS charge not found or processing fails
+   */
   async createInvoicePaymentConfirmation(
+    paymentFlowId: string,
+    receptionId: string,
+  ): Promise<void> {
+    const fjsCharge = await this.findFjsChargeByReceptionId(
+      paymentFlowId,
+      receptionId,
+    )
+
+    await this.processInvoicePaymentWithRetry(paymentFlowId, fjsCharge)
+  }
+
+  /**
+   * Finds an FJS charge by reception ID and validates it belongs to the payment flow.
+   * This provides an additional security check in case of token issues.
+   */
+  private async findFjsChargeByReceptionId(
     paymentFlowId: string,
     receptionId: string,
   ) {
@@ -587,70 +728,115 @@ export class PaymentFlowService {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowNotFound)
     }
 
+    return fjsCharge
+  }
+
+  /**
+   * Processes the invoice payment with retry logic for transient failures.
+   * Handles race conditions gracefully by treating duplicate fulfillments as success.
+   */
+  private async processInvoicePaymentWithRetry(
+    paymentFlowId: string,
+    fjsCharge: { id: string },
+  ): Promise<void> {
     try {
-      return await retry(
-        () =>
-          this.sequelize.transaction(async (transaction) => {
-            // Check if already processed
-            const existingFulfillment =
-              await this.paymentFulfillmentModel.findOne({
-                where: { paymentFlowId, paymentMethod: 'invoice' },
-                transaction,
-              })
-
-            if (existingFulfillment) {
-              return
-            }
-
-            // Create fulfillment and update charge
-            await this.paymentFulfillmentModel.create(
-              {
-                paymentFlowId,
-                paymentMethod: 'invoice',
-                confirmationRefId: fjsCharge.id,
-                fjsChargeId: fjsCharge.id,
-              },
-              { transaction },
-            )
-
-            await this.fjsChargeModel.update(
-              { status: 'paid' },
-              { where: { id: fjsCharge.id }, transaction },
-            )
-          }),
+      await retry(
+        () => this.createInvoicePaymentFulfillment(paymentFlowId, fjsCharge),
         {
           maxRetries: 3,
           retryDelayMs: 1000,
           logger: this.logger,
           logPrefix: 'Failed to create invoice payment confirmation',
-          shouldRetryOnError: (error) => {
-            if (error?.message === 'SequelizeUniqueConstraintError') {
-              return false
-            }
-
-            return true
-          },
+          shouldRetryOnError: this.shouldRetryInvoicePayment,
         },
       )
-    } catch (e) {
-      if (e?.message === 'SequelizeUniqueConstraintError') {
-        this.logger.info(
-          `[${paymentFlowId}] Invoice payment confirmation already processed`,
-        )
+    } catch (error) {
+      this.handleInvoicePaymentError(paymentFlowId, error)
+    }
+  }
 
-        // Already processed
+  /**
+   * Creates the payment fulfillment and updates the FJS charge status atomically.
+   * This method is idempotent - if a fulfillment already exists, it returns early.
+   */
+  private async createInvoicePaymentFulfillment(
+    paymentFlowId: string,
+    fjsCharge: { id: string },
+  ): Promise<void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      // Check if already processed (idempotency)
+      const existingFulfillment = await this.paymentFulfillmentModel.findOne({
+        where: { paymentFlowId, paymentMethod: 'invoice' },
+        transaction,
+      })
+
+      if (existingFulfillment) {
+        this.logger.info(
+          `[${paymentFlowId}] Invoice payment fulfillment already exists`,
+        )
         return
       }
 
-      this.logger.error(
-        `[${paymentFlowId}] Failed to create invoice payment confirmation`,
-        e,
+      // Create fulfillment and update charge status atomically
+      await this.paymentFulfillmentModel.create(
+        {
+          paymentFlowId,
+          paymentMethod: 'invoice',
+          confirmationRefId: fjsCharge.id,
+          fjsChargeId: fjsCharge.id,
+        },
+        { transaction },
       )
 
-      throw new BadRequestException(
-        InvoiceErrorCode.FailedToCreateInvoiceConfirmation,
+      await this.fjsChargeModel.update(
+        { status: 'paid' },
+        { where: { id: fjsCharge.id }, transaction },
       )
+
+      this.logger.info(
+        `[${paymentFlowId}] Successfully created invoice payment fulfillment`,
+        { chargeId: fjsCharge.id },
+      )
+    })
+  }
+
+  /**
+   * Determines whether an error should trigger a retry.
+   * Race conditions (unique constraint errors) are treated as success.
+   */
+  private shouldRetryInvoicePayment = (error: Error): boolean => {
+    // Don't retry on race conditions - they indicate success
+    if (error?.name === 'SequelizeUniqueConstraintError') {
+      return false
     }
+
+    // Retry on transient database errors
+    return true
+  }
+
+  /**
+   * Handles errors from invoice payment processing.
+   * Race conditions are treated as success since the payment was already processed.
+   */
+  private handleInvoicePaymentError(
+    paymentFlowId: string,
+    error: Error,
+  ): never {
+    if (error?.name === 'SequelizeUniqueConstraintError') {
+      this.logger.info(
+        `[${paymentFlowId}] Invoice payment already processed (race condition)`,
+      )
+      return undefined as never // Success - don't throw
+    }
+
+    this.logger.error(
+      `[${paymentFlowId}] Failed to create invoice payment confirmation`,
+      error,
+    )
+
+    throw new BadRequestException(
+      InvoiceErrorCode.FailedToCreateInvoiceConfirmation,
+    )
   }
 
   async createFjsCharge(paymentFlowId: string, chargePayload: Charge) {

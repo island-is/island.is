@@ -160,22 +160,45 @@ export class InvoicePaymentController {
       )
     }
 
+    await this.processInvoicePaymentConfirmation(paymentFlowId, callbackInput)
+
+    await this.logInvoicePaymentSuccess(paymentFlowId, callbackInput)
+  }
+
+  /**
+   * Processes the invoice payment confirmation with proper error handling.
+   * This method handles the core business logic of creating the payment fulfillment.
+   */
+  private async processInvoicePaymentConfirmation(
+    paymentFlowId: string,
+    callbackInput: { receptionID: string },
+  ): Promise<void> {
     try {
       await this.paymentFlowService.createInvoicePaymentConfirmation(
         paymentFlowId,
         callbackInput.receptionID,
       )
-    } catch (e) {
-      if (e.message === InvoiceErrorCode.FailedToCreateInvoice) {
-        // log?
-      }
+    } catch (error) {
+      this.logger.error(
+        `[${paymentFlowId}] Failed to create invoice payment confirmation`,
+        { error: error.message },
+      )
 
       throw new BadRequestException(
         InvoiceErrorCode.FailedToCreateInvoiceConfirmation,
       )
     }
+  }
 
-    // TODO extract this to a method
+  /**
+   * Logs the successful invoice payment event.
+   * This is separate from the core payment processing to allow for better error handling.
+   * If logging fails, we still want the payment to be considered successful.
+   */
+  private async logInvoicePaymentSuccess(
+    paymentFlowId: string,
+    callbackInput: { receptionID: string },
+  ): Promise<void> {
     try {
       await this.paymentFlowService.logPaymentFlowUpdate(
         {
@@ -194,11 +217,17 @@ export class InvoicePaymentController {
           throwOnError: true,
         },
       )
-    } catch (e) {
-      await this.refundPaymentAndLogError(paymentFlowId, e.message)
-      throw new BadRequestException(
-        InvoiceErrorCode.FailedToCreateInvoiceConfirmation,
+    } catch (error) {
+      this.logger.error(
+        `[${paymentFlowId}] CRITICAL: Failed to log payment success event. Payment is confirmed but upstream notification failed.`,
+        {
+          error: error.message,
+          stack: error.stack,
+        },
       )
+
+      // Failed notification event is already stored in the database with a failed delivery status
+      // No additional storage needed, can be queried later for retry
     }
   }
 
