@@ -81,7 +81,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
     console.log('--------------------------------')
     console.log('validated individual')
-    console.dir(individual, { depth: null, colors: true })
+    console.dir(individual, { depth: null })
     console.log('--------------------------------')
 
     return individual
@@ -296,13 +296,13 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
     console.log('--------------------------------')
     console.log('person')
-    console.dir(person, { depth: null, colors: true })
+    console.dir(person, { depth: null })
     console.log('--------------------------------')
     console.log('cohabitationInfo')
-    console.dir(cohabitationInfo, { depth: null, colors: true })
+    console.dir(cohabitationInfo, { depth: null })
     console.log('--------------------------------')
     console.log('citizenship')
-    console.dir(citizenship, { depth: null, colors: true })
+    console.dir(citizenship, { depth: null })
     console.log('--------------------------------')
     console.log('formatted individual')
     person
@@ -312,7 +312,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
             cohabitationInfo,
             citizenship,
           ),
-          { depth: null, colors: true },
+          { depth: null },
         )
       : console.log('null')
     console.log('--------------------------------')
@@ -404,7 +404,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
     console.log('--------------------------------')
     console.log('childrenNationalIds')
-    console.dir(childrenNationalIds, { depth: null, colors: true })
+    console.dir(childrenNationalIds, { depth: null })
     console.log('--------------------------------')
 
     if (params?.validateHasChildren) {
@@ -444,7 +444,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
           console.log('--------------------------------')
           console.log('childResidenceParent')
-          console.dir(childResidenceParent, { depth: null, colors: true })
+          console.dir(childResidenceParent, { depth: null })
           console.log('--------------------------------')
 
           const childPerson = parentAFamilyMembers.find(
@@ -460,7 +460,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
           console.log('--------------------------------')
           console.log('child')
-          console.dir(childPerson, { depth: null, colors: true })
+          console.dir(childPerson, { depth: null })
           console.log('--------------------------------')
 
           const domicileCode = childPerson?.residence?.municipalityNumber
@@ -478,7 +478,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
           console.log('--------------------------------')
           console.log('other custody parents')
-          console.dir(parents, { depth: null, colors: true })
+          console.dir(parents, { depth: null })
           console.log('--------------------------------')
 
           const parentBNationalId = parents.find(
@@ -550,7 +550,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
     console.log('--------------------------------')
     console.log('spouseIndividual')
-    console.dir(spouseIndividual, { depth: null, colors: true })
+    console.dir(spouseIndividual, { depth: null })
     console.log('--------------------------------')
     return (
       cohabitationInfo && {
@@ -732,7 +732,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
     console.log('--------------------------------')
     console.log('custodianNationalIds')
-    console.dir(custodianNationalIds, { depth: null, colors: true })
+    console.dir(custodianNationalIds, { depth: null })
     console.log('--------------------------------')
 
     const custodians: NationalRegistryCustodian[] = []
