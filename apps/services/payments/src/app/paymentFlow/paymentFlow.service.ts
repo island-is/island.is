@@ -585,47 +585,6 @@ export class PaymentFlowService {
     })
   }
 
-  /**
-   * Retries delivery of failed events.
-   * This can be called by a background job or admin interface.
-   */
-  async retryFailedDeliveries(eventIds: string[]): Promise<void> {
-    for (const eventId of eventIds) {
-      try {
-        const event = await this.paymentFlowEventModel.findByPk(eventId)
-        if (!event) continue
-
-        // Reset delivery status and retry
-        await this.paymentFlowEventModel.update(
-          {
-            deliveredToUpstream: null,
-            deliveredAt: null,
-            deliveryError: null,
-          },
-          { where: { id: eventId } },
-        )
-
-        // Retry the delivery
-        await this.logPaymentFlowUpdate(
-          {
-            paymentFlowId: event.paymentFlowId,
-            type: event.type,
-            occurredAt: event.occurredAt,
-            paymentMethod: event.paymentMethod as PaymentMethod,
-            reason: event.reason,
-            message: event.message,
-            metadata: event.metadata,
-          },
-          { useRetry: true, throwOnError: false },
-        )
-      } catch (error) {
-        this.logger.error(`Failed to retry delivery for event ${eventId}`, {
-          error,
-        })
-      }
-    }
-  }
-
   async createCardPaymentConfirmation({
     paymentResult,
     paymentFlowId,
