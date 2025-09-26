@@ -61,11 +61,7 @@ const QuestionnaireDetail: React.FC = () => {
 
   return (
     <Box display={'flex'} justifyContent={'center'} background={'blue100'}>
-      <Box
-        style={{ maxWidth: theme.breakpoints.xl }}
-        background={'blue100'}
-        padding={8}
-      >
+      <Box style={{ width: theme.breakpoints.xl }} background={'blue100'}>
         {loading && !error && <SkeletonLoader repeat={16} space={4} />}
         {error && !loading && (
           <Problem type="internal_service_error" noBorder />
