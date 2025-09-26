@@ -1,12 +1,4 @@
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import {
   IdsUserGuard,
@@ -137,42 +129,6 @@ export class VehiclesMileageResolver {
       ...input,
       originCode: ISLAND_IS_ORIGIN_CODE,
       mileage: Number(input.mileage ?? input.mileageNumber),
-    })
-  }
-
-  @ResolveField('canRegisterMileage', () => Boolean, {
-    nullable: true,
-  })
-  resolveCanRegisterMileage(
-    @Context('req') { user }: { user: User },
-    @Parent() overview: VehicleMileageOverview,
-  ): Promise<boolean> {
-    return this.vehiclesService.canRegisterMileage(user, {
-      permno: overview.permno ?? '',
-    })
-  }
-
-  @ResolveField('requiresMileageRegistration', () => Boolean, {
-    nullable: true,
-  })
-  resolveRequiresMileageRegistration(
-    @Context('req') { user }: { user: User },
-    @Parent() overview: VehicleMileageOverview,
-  ): Promise<boolean> {
-    return this.vehiclesService.requiresMileageRegistration(user, {
-      permno: overview?.permno ?? '',
-    })
-  }
-
-  @ResolveField('canUserRegisterVehicleMileage', () => Boolean, {
-    nullable: true,
-  })
-  resolveCanUserRegisterMileage(
-    @Context('req') { user }: { user: User },
-    @Parent() overview: VehicleMileageOverview,
-  ): Promise<boolean> {
-    return this.vehiclesService.canUserRegisterMileage(user, {
-      permno: overview?.permno ?? '',
     })
   }
 }
