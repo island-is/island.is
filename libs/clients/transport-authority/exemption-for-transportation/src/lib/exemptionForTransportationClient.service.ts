@@ -30,7 +30,7 @@ export class ExemptionForTransportationClient {
       policeEscort: {
         maxHeight: result.policeEscort?.height || 0,
         maxWidth: result.policeEscort?.width || 0,
-        maxLength: result.policeEscort?.length || 0,
+        maxTotalLength: result.policeEscort?.length || 0,
       },
       shortTermMeasurementLimitations: {
         maxHeight: result.measurementLimitations?.maxHeight || 0,
