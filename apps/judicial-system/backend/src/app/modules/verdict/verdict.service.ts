@@ -1,4 +1,5 @@
 import { Base64 } from 'js-base64'
+import _uniqBy from 'lodash/uniqBy'
 import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -18,6 +19,7 @@ import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatt
 import {
   CaseFileCategory,
   DefendantEventType,
+  EventType,
   isVerdictInfoChanged,
   PoliceFileTypeCode,
   type User as TUser,
@@ -26,10 +28,10 @@ import { ServiceRequirement } from '@island.is/judicial-system/types'
 
 import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
+import { EventLogService } from '../event-log'
 import { FileService } from '../file'
 import { PoliceDocumentType, PoliceService } from '../police'
-import { Case, Defendant, Verdict } from '../repository'
-import { UserService } from '../user'
+import { Case, Defendant, DefendantEventLog, Verdict } from '../repository'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
@@ -56,7 +58,7 @@ export class VerdictService {
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     private readonly defendantService: DefendantService,
-    private readonly userService: UserService,
+    private readonly eventLogService: EventLogService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -366,6 +368,11 @@ export class VerdictService {
           )
           return { delivered: false }
         }
+        const tUser = {
+          ...user,
+          created: user.created.toISOString(),
+          modified: user.modified.toISOString(),
+        } as TUser
 
         const { verdict } = defendant
         if (!verdict) {
@@ -383,11 +390,7 @@ export class VerdictService {
           .then(async (pdf) => {
             return this.internalCaseService.deliverCaseToPoliceWithFiles(
               theCase,
-              {
-                ...user,
-                created: user.created.toISOString(),
-                modified: user.modified.toISOString(),
-              } as TUser,
+              tUser,
               [
                 {
                   type: PoliceDocumentType.RVBD,
@@ -404,6 +407,24 @@ export class VerdictService {
               eventType:
                 DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
             })
+            // TODO: this wouldn't include the latest defendant events - We have to get it from the database
+            // const deliveredServiceCertificates = theCase.defendants?.filter(
+            //   (defendant) =>
+            //     !!DefendantEventLog.getEventLogByEventType(
+            //       DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+            //       defendant.eventLogs,
+            //     ),
+            // )
+            // const allServiceCertificatesDelivered =
+            //   deliveredServiceCertificates?.length ===
+            //   theCase.defendants?.length
+            // if (allServiceCertificatesDelivered) {
+            //   await this.eventLogService.createWithUser(
+            //     EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
+            //     theCase.id,
+            //     tUser,
+            //   )
+            // }
             return { delivered: true }
           })
           .catch((reason) => {
@@ -417,8 +438,41 @@ export class VerdictService {
           })
       }),
     )
+    if (delivered) {
+      // prepare to fetch updated case defendants
+      const caseIds = _uniqBy(
+        defendantsWithCases.map(({ theCase }) => theCase.id),
+        (c) => c,
+      )
+      const latestCases = await this.internalCaseService.getCasesWithDefendants(
+        caseIds,
+      )
+      latestCases.forEach(async (c) => {
+        const deliveredServiceCertificates = c.defendants?.filter(
+          (defendant) =>
+            !!DefendantEventLog.getEventLogByEventType(
+              DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+              defendant.eventLogs,
+            ),
+        )
+
+        const allServiceCertificatesDelivered =
+          deliveredServiceCertificates?.length === c.defendants?.length
+        if (allServiceCertificatesDelivered) {
+          await this.eventLogService.createWithUser(
+            EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
+            c.id,
+            tUser,
+          )
+        }
+      })
+    }
+
+    // TODO: get all cases with all defendants from the database
+    // check
     return delivered
   }
+
   async getAndSyncVerdict(verdict: Verdict, user?: TUser) {
     // check specifically a verdict that is delivered and service status hasn't been updated
     if (verdict.externalPoliceDocumentId && !verdict.serviceStatus) {

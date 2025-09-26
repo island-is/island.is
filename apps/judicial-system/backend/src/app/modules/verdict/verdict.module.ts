@@ -14,7 +14,6 @@ import {
   EventModule,
   FileModule,
   PoliceModule,
-  UserModule,
 } from '..'
 import { InternalVerdictController } from './internalVerdict.controller'
 import { VerdictController } from './verdict.controller'
@@ -28,7 +27,6 @@ import { VerdictService } from './verdict.service'
     forwardRef(() => PoliceModule),
     forwardRef(() => FileModule),
     forwardRef(() => DefendantModule),
-    forwardRef(() => UserModule),
     SequelizeModule.forFeature([Verdict]),
     ConfigModule.forRoot({
       isGlobal: true,

@@ -593,9 +593,6 @@ export class InternalCaseService {
           as: 'eventLogs',
           required: false,
           separate: true,
-          where: {
-            type: 'VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED',
-          },
         },
         {
           model: Defendant,
@@ -622,12 +619,17 @@ export class InternalCaseService {
         state: { [Op.eq]: CaseState.COMPLETED },
         type: CaseType.INDICTMENT,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-        // exclude cases which don't have the target event log.
-        '$eventLogs.id$': null,
+        id: {
+          [Op.notIn]: Sequelize.literal(`
+            (SELECT case_id
+            FROM event_log
+            WHERE event_type = 'VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED')
+          `),
+        },
       },
     })
 
-    console.log({ cases })
+    console.log({ caseCount: cases.length })
     const isRuling = true // we iterate through cases completed with ruling
     return cases.flatMap((theCase) =>
       pipe(
@@ -655,6 +657,39 @@ export class InternalCaseService {
         }),
       ),
     )
+  }
+
+  async getCasesWithDefendants(caseIds: string[]) {
+    return this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: EventLog,
+          as: 'eventLogs',
+          required: false,
+          separate: true,
+        },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: false,
+          order: [['created', 'ASC']],
+          include: [
+            {
+              model: DefendantEventLog,
+              as: 'eventLogs',
+              required: false,
+              separate: true,
+            },
+          ],
+          separate: true,
+        },
+      ],
+      where: {
+        id: {
+          [Op.in]: caseIds,
+        },
+      },
+    })
   }
 
   async getCaseHearingArrangements(date: Date): Promise<Case[]> {
