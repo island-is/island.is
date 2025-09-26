@@ -5,12 +5,13 @@ import {
   PoliceFileTypeCode,
 } from '@island.is/judicial-system/types'
 
+import { createTestingVerdictModule } from '../createTestingVerdictModule'
+
 import { FileService } from '../../../file'
 import { PoliceService } from '../../../police'
 import { Case, Defendant, Verdict } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { createTestingVerdictModule } from '../creatingTestingVerdictModule'
 
 interface Then {
   result: DeliverResponse

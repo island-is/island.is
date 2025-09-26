@@ -19,7 +19,9 @@ import {
   InformationForDefendant,
   informationForDefendantMap,
   isRestrictionCase,
+  ServiceRequirement,
   ServiceStatus,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -547,3 +549,30 @@ export const getRulingInstructionItems = (
       })
     }),
   )
+
+export const getServiceRequirementText = (
+  serviceRequirement?: ServiceRequirement,
+) => {
+  switch (serviceRequirement) {
+    case ServiceRequirement.REQUIRED:
+      return 'Birta skal dómfellda dóminn'
+    case ServiceRequirement.NOT_REQUIRED:
+      return 'Birting dóms ekki þörf'
+    case ServiceRequirement.NOT_APPLICABLE:
+      return 'Dómfelldi var viðstaddur dómsuppkvaðningu'
+    default:
+      return null
+  }
+}
+
+export const getDefendantVerdictAppealDecisionLabel = (
+  appealDecision: VerdictAppealDecision,
+) => {
+  if (appealDecision === VerdictAppealDecision.POSTPONE) {
+    return 'Dómfelldi tekur áfrýjunarfrest'
+  }
+  if (appealDecision === VerdictAppealDecision.ACCEPT) {
+    return 'Dómfelldi unir'
+  }
+  return ''
+}
