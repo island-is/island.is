@@ -144,14 +144,16 @@ export const Applicants = ({ applicantField }: Props) => {
             label={formatMessage(m.address)}
             name="address"
             placeholder={formatMessage(m.address)}
-            backgroundColor="blue"
+            backgroundColor="white"
+            disabled
             value={getValue(applicantField, 'address') || ''}
           />
           <Input
             label={formatMessage(m.postalCode)}
             name="postalCode"
             placeholder={formatMessage(m.postalCode)}
-            backgroundColor="blue"
+            backgroundColor="white"
+            disabled
             value={getValue(applicantField, 'postalCode') || ''}
           />
         </Stack>
