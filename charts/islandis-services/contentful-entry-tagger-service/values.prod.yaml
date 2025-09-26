@@ -55,6 +55,7 @@ ingress:
 namespace: 'contentful-entry-tagger'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

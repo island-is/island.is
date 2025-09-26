@@ -61,6 +61,7 @@ ingress:
 namespace: 'portals-admin'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 pvcs: []
 replicaCount:
   default: 1
