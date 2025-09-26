@@ -14,8 +14,8 @@ export type Scalars = {
 export type ApplicantsInfo = {
   nationalIdWithName: { name: string; nationalId: string }
   phone: string
-  address: string
   email: string
+  address: string
   isRepresentative?: boolean
 }
 
@@ -159,6 +159,12 @@ export interface ConsumerIndexItem {
   value: string
 }
 
+export interface BankAccount {
+  bankNumber: string
+  ledger: string
+  accountNumber: string
+}
+
 export interface RentalAmountSection {
   amount: string | undefined
   isIndexConnected: Array<YesOrNoEnum> | undefined
@@ -168,7 +174,7 @@ export interface RentalAmountSection {
   paymentMethodOther: string | undefined
   paymentDateOptions: string | undefined
   paymentDayOther: string | undefined
-  paymentMethodBankAccountNumber: string | undefined
+  paymentMethodBankAccountNumber: BankAccount | undefined
   paymentMethodNationalId: string | undefined
   securityDepositRequired: YesOrNoEnum | undefined
 }

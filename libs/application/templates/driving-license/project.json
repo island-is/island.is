@@ -23,12 +23,6 @@
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-license/src/**/*.{js,ts,tsx}'"
       }
-    },
-    "codegen/frontend-client": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "graphql-codegen --config libs/application/templates/driving-license/codegen.yml"
-      }
     }
   }
 }

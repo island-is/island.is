@@ -21,7 +21,7 @@ export const certificateForSicknessAndRehabilitationSection = buildSection({
           .certificateForSicknessAndRehabilitation.description,
       children: [
         buildCustomField({
-          id: 'certificateForSicknessAndRehabilitationReferenceId',
+          id: 'certificateForSicknessAndRehabilitation',
           component: 'CertificateForSicknessAndRehabilitation',
         }),
       ],

@@ -575,6 +575,9 @@
       "@island.is/application/templates/social-insurance-administration/death-benefits": [
         "libs/application/templates/social-insurance-administration/death-benefits/src/index.ts"
       ],
+      "@island.is/application/templates/social-insurance-administration/disability-pension": [
+        "libs/application/templates/social-insurance-administration/disability-pension/src/index.ts"
+      ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
       ],
@@ -1238,7 +1241,6 @@
       "@island.is/testing/e2e": ["libs/testing/e2e/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
-      "@island.is/unicorn-app/*": ["apps/unicorn-app/*"],
       "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],

@@ -19,7 +19,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -43,6 +46,7 @@ import {
   defendantEventTypes,
   EventType,
   eventTypes,
+  hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isIndictmentCase,
   isInvestigationCase,
@@ -307,7 +311,19 @@ export const include: Includeable[] = [
     order: [['created', 'DESC']],
     separate: true,
   },
-  { model: Case, as: 'mergeCase' },
+  {
+    model: Case,
+    as: 'mergeCase',
+    include: [
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+  },
   {
     model: Case,
     as: 'mergedCases',
@@ -1100,6 +1116,21 @@ export class CaseService {
       caseId: theCase.id,
       body: { type: CaseNotificationType.RULING },
     })
+
+    if (
+      hasGeneratedCourtRecordPdf(
+        theCase.state,
+        theCase.indictmentRulingDecision,
+        theCase.courtSessions,
+        user,
+      )
+    ) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_COURT_RECORD,
+        user,
+        caseId: theCase.id,
+      })
+    }
 
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
@@ -2238,16 +2269,30 @@ export class CaseService {
           await Promise.all(
             theCase.defendants
               .filter((defendant) => !defendant.isAlternativeService)
-              .map((defendant) =>
-                this.subpoenaService.createSubpoena(
+              .map(async (defendant) => {
+                const subpoena = await this.subpoenaService.createSubpoena(
                   defendant.id,
                   theCase.id,
                   transaction,
                   updatedArraignmentDate?.date,
                   updatedArraignmentDate?.location,
                   defendant.subpoenaType,
-                ),
-              ),
+                )
+
+                const name = `Fyrirkall ${defendant.name} ${formatDate(
+                  subpoena.created,
+                )}`
+
+                return this.courtDocumentService.create(
+                  theCase.id,
+                  {
+                    documentType: CourtDocumentType.GENERATED_DOCUMENT,
+                    name,
+                    generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
+                  },
+                  transaction,
+                )
+              }),
           )
         }
 

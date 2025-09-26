@@ -191,11 +191,7 @@ const Completed: FC = () => {
           )
         : true
 
-    if (features?.includes(Feature.SERVICE_PORTAL)) {
-      return Boolean(workingCase.ruling) && isValidDefendants
-    } else {
-      return isValidDefendants
-    }
+    return isValidDefendants
   }
 
   const hasLawsBroken = lawsBroken.size > 0
@@ -225,7 +221,7 @@ const Completed: FC = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map(
           (defendant) =>
-            features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) &&
+            features?.includes(Feature.VERDICT_DELIVERY) &&
             defendant.verdict && (
               <Box
                 key={`${defendant.id}${defendant.verdict.id}`}

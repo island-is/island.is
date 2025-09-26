@@ -22,11 +22,6 @@ export const partiesDetails = defineMessages({
     defaultMessage: 'Leigusalar',
     description: 'Parties details page title',
   },
-  landlordTitle: {
-    id: 'ra.application:partiesDetails.landlordTitle',
-    defaultMessage: 'Leigusali',
-    description: 'Parties details table title',
-  },
 
   // DataSchema errors
   partiesEmptyTableError: {
@@ -34,13 +29,6 @@ export const partiesDetails = defineMessages({
     defaultMessage:
       'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn.',
     description: 'Parties details no parties in table',
-  },
-  uniqueApplicantsError: {
-    id: 'ra.application:partiesDetails.uniqueApplicantsError',
-    defaultMessage:
-      'Sami aðili má ekki vera skráður oftar en einu sinni á leigusamninginn.',
-
-    description: 'Applicant already exists on application error',
   },
   duplicateNationalIdError: {
     id: 'ra.application:partiesDetails.duplicateNationalIdError',
@@ -61,6 +49,18 @@ export const partiesDetails = defineMessages({
       'Að minnsta kosti einn leigutaki þarf að vera skráður á leigusamninginn.',
     description: 'Tenant details no tenants in table',
   },
+
+  alertMessageTitle: {
+    id: 'ra.application:partiesDetails.alertMessageTitle',
+    defaultMessage: 'Leigusala vantar',
+    description: 'Alert message title',
+  },
+  alertMessageDescription: {
+    id: 'ra.application:partiesDetails.alertMessageDescription',
+    defaultMessage:
+      'Fylla verður út að minnsta kosti einn leigusala sem ekki er umboðsaðili',
+    description: 'Alert message description',
+  },
 })
 
 export const landlordAndTenantDetails = defineMessages({
@@ -68,36 +68,6 @@ export const landlordAndTenantDetails = defineMessages({
     id: 'ra.application:landlordAndTenantDetails.representativeTableTitle',
     defaultMessage: 'Umboðsaðilar leigusala (ef við á)',
     description: 'Representative table title',
-  },
-  nationalIdHeaderLabel: {
-    id: 'ra.application:landlordAndTenantDetails.nationalIdHeaderLabel',
-    defaultMessage: 'Kennitala',
-    description: 'National id header label',
-  },
-  nameInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.nameLabel',
-    defaultMessage: 'Fullt nafn',
-    description: 'Name input label',
-  },
-  emailInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.emailLabel',
-    defaultMessage: 'Netfang',
-    description: 'Email input label',
-  },
-  phoneInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.phoneLabel',
-    defaultMessage: 'Símanúmer',
-    description: 'Phone input label',
-  },
-  addressInputLabel: {
-    id: 'ra.application:landlordAndTenantDetails.addressInputLabel',
-    defaultMessage: 'Heimilisfang',
-    description: 'Address input label',
-  },
-  cancelButtonText: {
-    id: 'ra.application:landlordAndTenantDetails.cancelButtonText',
-    defaultMessage: 'Hætta við',
-    description: 'Cancel button text',
   },
   representativeLabel: {
     id: 'ra.application:landlordAndTenantDetails.representativeLabel',
