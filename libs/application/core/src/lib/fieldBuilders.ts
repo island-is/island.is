@@ -254,6 +254,7 @@ export const buildAsyncSelectField = (
     isMulti,
     updateOnSelect,
     isClearable,
+    required,
   } = data
 
   return {
@@ -270,6 +271,7 @@ export const buildAsyncSelectField = (
     isMulti,
     updateOnSelect,
     isClearable,
+    required,
   }
 }
 
