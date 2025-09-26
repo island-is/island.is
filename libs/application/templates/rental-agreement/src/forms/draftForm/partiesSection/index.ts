@@ -48,10 +48,6 @@ export const partiesSection = buildSection({
           table: applicantTableConfig,
         }),
         buildCheckboxField({
-          condition: (answers) => {
-            console.log(answers)
-            return true
-          },
           id: 'parties.landlordInfo.shouldShowRepresentativeTable',
           marginTop: 6,
           large: false,
