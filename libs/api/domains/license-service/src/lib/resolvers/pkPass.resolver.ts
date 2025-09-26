@@ -1,8 +1,4 @@
-import {
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { CodeOwner } from '@island.is/nest/core'
@@ -26,28 +22,48 @@ import { VerifyPkPassInput } from '../dto/VerifyPkPass.input'
 export class PkPassResolver {
   constructor(private readonly licenseServiceService: LicenseService) {}
 
+<<<<<<< HEAD
   @Directive('@deprecated(reason: "Permanently closed. Not removed for backwards compatibility")')
   @Mutation(() => GenericPkPass, {
     name: 'generatePkPass',
     deprecationReason: 'Permanently closed. Not removed for backwards compatibility'
+=======
+  @Directive(
+    '@deprecated(reason: "Permanently closed. Not removed for backwards compability")',
+  )
+  @Mutation(() => GenericPkPass, {
+    name: 'generatePkPass',
+    deprecationReason:
+      'Permanently closed. Not removed for backwards compability',
+>>>>>>> refs/remotes/origin/chore/disable-generate-pkpass
   })
   @Audit()
   async generatePkPass(
     @Args('input') _: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
-   throw new GoneException("Permanently closed")
+    throw new GoneException('Permanently closed')
   }
 
+<<<<<<< HEAD
   @Directive('@deprecated(reason: "Permanently closed. Not removed for backwards compatibility")')
   @Mutation(() => GenericPkPassQrCode, {
     name: 'generatePkPassQrCode',
     deprecationReason: 'Permanently closed. Not removed for backwards compatibility'
+=======
+  @Directive(
+    '@deprecated(reason: "Permanently closed. Not removed for backwards compability")',
+  )
+  @Mutation(() => GenericPkPassQrCode, {
+    name: 'generatePkPassQrCode',
+    deprecationReason:
+      'Permanently closed. Not removed for backwards compability',
+>>>>>>> refs/remotes/origin/chore/disable-generate-pkpass
   })
   @Audit()
   async generatePkPassQrCode(
     @Args('input') _: GeneratePkPassInput,
   ): Promise<GenericPkPassQrCode> {
-    throw new GoneException("Permanently closed")
+    throw new GoneException('Permanently closed')
   }
 
   @Scopes(ApiScope.internal, ApiScope.licensesVerify)
