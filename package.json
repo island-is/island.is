@@ -262,7 +262,7 @@
     "react-alice-carousel": "1.19.3",
     "react-animate-height": "3.1.2",
     "react-csv": "2.0.3",
-    "react-datepicker": "5.1.0",
+    "react-datepicker": "^6.9.0",
     "react-dom": "18.3.1",
     "react-dropzone": "11.7.1",
     "react-focus-lock": "2.9.4",
@@ -503,6 +503,7 @@
     "webpack-bundle-analyzer": "4.5.0"
   },
   "resolutions": {
+    "tar-fs": "2.1.4",
     "dottie": "2.0.4",
     "marked": "2.0.0",
     "elliptic": "6.5.4",
