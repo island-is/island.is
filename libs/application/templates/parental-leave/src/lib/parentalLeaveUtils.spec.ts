@@ -178,10 +178,7 @@ describe('getExpectedDateOfBirthOrAdoptionDateOrBirthDate', () => {
       },
     })
 
-    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(
-      application,
-      true,
-    )
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
     expect(res).toEqual('2021-05-10')
   })
@@ -220,10 +217,7 @@ describe('getExpectedDateOfBirthOrAdoptionDateOrBirthDate', () => {
       },
     })
 
-    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(
-      application,
-      true,
-    )
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
     expect(res).toEqual('2021-05-17')
   })
