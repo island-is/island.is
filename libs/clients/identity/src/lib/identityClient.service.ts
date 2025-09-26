@@ -65,7 +65,7 @@ export class IdentityClientService {
     try {
       return identity?.name
         ? returnWithNationalId
-          ? `${identity?.name} (${nationalId})`
+          ? `${identity?.name} (${kennitala.format(nationalId)})`
           : identity?.name
         : undefined
     } catch (e) {
