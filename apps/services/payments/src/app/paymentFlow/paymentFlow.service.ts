@@ -37,10 +37,7 @@ import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { GetPaymentFlowsPaginatedDTO } from './dtos/getPaymentFlow.dto'
 
 import { environment } from '../../environments'
-import {
-  PaymentFlowEvent,
-  PaymentFlowEventAttributes,
-} from './models/paymentFlowEvent.model'
+import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
 import { FjsCharge } from './models/fjsCharge.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
@@ -517,7 +514,7 @@ export class PaymentFlowService {
     }
 
     // Save event to database first, then attempt delivery
-    let eventRecord: PaymentFlowEventAttributes
+    let eventRecord: PaymentFlowEvent
     try {
       eventRecord = await this.paymentFlowEventModel.create({
         ...update,
@@ -579,7 +576,7 @@ export class PaymentFlowService {
    * Gets all events that failed to deliver to upstream systems.
    * Useful for retry mechanisms and monitoring.
    */
-  async getFailedDeliveryEvents(): Promise<PaymentFlowEventAttributes[]> {
+  async getFailedDeliveryEvents(): Promise<PaymentFlowEvent[]> {
     return await this.paymentFlowEventModel.findAll({
       where: {
         deliveredToUpstream: false,
@@ -818,15 +815,12 @@ export class PaymentFlowService {
    * Handles errors from invoice payment processing.
    * Race conditions are treated as success since the payment was already processed.
    */
-  private handleInvoicePaymentError(
-    paymentFlowId: string,
-    error: Error,
-  ): never {
+  private handleInvoicePaymentError(paymentFlowId: string, error: Error) {
     if (error?.name === 'SequelizeUniqueConstraintError') {
       this.logger.info(
         `[${paymentFlowId}] Invoice payment already processed (race condition)`,
       )
-      return undefined as never // Success - don't throw
+      return
     }
 
     this.logger.error(

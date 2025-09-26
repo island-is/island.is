@@ -62,7 +62,7 @@ module.exports = {
         },
       )
 
-      // Mark FJS charges as paid when there is an card payment found for the same payment flow id
+      // Mark FJS charges as paid when there is a card payment found for the same payment flow id
       await queryInterface.sequelize.query(
         `
         UPDATE fjs_charge f
