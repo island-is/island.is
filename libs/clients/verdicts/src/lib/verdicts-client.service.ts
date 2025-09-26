@@ -4,7 +4,7 @@ import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 import { isValidDate, sortAlpha } from '@island.is/shared/utils'
 
-import { BookingApi, VerdictApi } from '../../gen/fetch/gopro'
+import { BookingApi, VerdictApi, LawyerApi } from '../../gen/fetch/gopro'
 import {
   type ApiV2VerdictGetAgendasPostRequest,
   DefaultApi,
@@ -49,6 +49,7 @@ export class VerdictsClientService {
     private readonly goproVerdictApi: VerdictApi,
     private readonly supremeCourtApi: DefaultApi,
     private readonly goproCourtAgendasApi: BookingApi,
+    private readonly goproLawyersApi: LawyerApi,
   ) {}
 
   async getVerdicts(input: {
@@ -382,5 +383,33 @@ export class VerdictsClientService {
       items,
       total,
     }
+  }
+
+  private isLawyerValid(lawyer: {
+    isRemovedFromLawyersList?: boolean
+    recordID?: string
+    name?: string
+  }): lawyer is {
+    isRemovedFromLawyersList?: boolean
+    recordID: string
+    name: string
+  } {
+    return (
+      !lawyer?.isRemovedFromLawyersList &&
+      Boolean(lawyer?.recordID) &&
+      Boolean(lawyer.name)
+    )
+  }
+
+  async getLawyers() {
+    const response = await this.goproLawyersApi.getLawyers({})
+    const items = (response.items ?? [])
+      .filter(this.isLawyerValid)
+      .map((lawyer) => ({
+        id: lawyer.recordID,
+        name: lawyer.name,
+      }))
+    items.sort(sortAlpha('name'))
+    return items
   }
 }

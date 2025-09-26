@@ -10,7 +10,10 @@ import {
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
 import { getRentalPropertySize } from '../../../utils/utils'
-import { shouldShowSmokeDetectorsAlert } from '../../../utils/conditions'
+import {
+  shouldFireExtinguisherAlert,
+  shouldShowSmokeDetectorsAlert,
+} from '../../../utils/conditions'
 import { PropertyUnit } from '../../../shared/types'
 import { getYesNoOptions } from '../../../utils/options'
 import * as m from '../../../lib/messages'
@@ -53,6 +56,13 @@ export const fireProtectionsSubsection = buildSubSection({
               },
             }
           },
+          alertType: 'warning',
+        }),
+        buildAlertMessageField({
+          id: 'fireProtections.fireExtinguisherRequirements',
+          condition: shouldFireExtinguisherAlert,
+          title: m.housingFireProtections.fireExtinguisherAlertTitle,
+          message: m.housingFireProtections.fireExtinguisherAlertMessage,
           alertType: 'warning',
         }),
         buildTextField({

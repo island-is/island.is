@@ -15,7 +15,7 @@ export const exemptionPeriod = {
     description: {
       id: 'ta.eft.application:exemptionPeriod.general.description',
       defaultMessage:
-        'Vinsamlega veldu hvers eðlis umsóknin er. Skammtímaundanþága er ætluð fyrir [ ... ]. Langtímaundanþága gildir um 32 daga og lengur.',
+        'Skammtímaundanþágur eru ætlaðar fyrir staka flutninga til skemmri tíma. Langtímaundanþágur eru ætlaðar fyrir tíða flutninga innan ákveðins svæðis til lengri tíma. ',
       description: 'Description of exemption period page',
     },
   }),

@@ -130,7 +130,7 @@ export const rentalAmountSubsection = buildSubSection({
           id: 'rentalAmount.paymentDateOther',
           title: m.rentalAmount.paymentDateOtherOptionLabel,
           placeholder: m.rentalAmount.paymentDateOtherOptionPlaceholder,
-          maxLength: 100,
+          maxLength: 50,
         }),
 
         // Payment method

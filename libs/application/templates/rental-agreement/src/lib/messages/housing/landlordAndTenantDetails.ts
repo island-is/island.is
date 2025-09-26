@@ -49,6 +49,18 @@ export const partiesDetails = defineMessages({
       'Að minnsta kosti einn leigutaki þarf að vera skráður á leigusamninginn.',
     description: 'Tenant details no tenants in table',
   },
+
+  alertMessageTitle: {
+    id: 'ra.application:partiesDetails.alertMessageTitle',
+    defaultMessage: 'Leigusala vantar',
+    description: 'Alert message title',
+  },
+  alertMessageDescription: {
+    id: 'ra.application:partiesDetails.alertMessageDescription',
+    defaultMessage:
+      'Fylla verður út að minnsta kosti einn leigusala sem ekki er umboðsaðili',
+    description: 'Alert message description',
+  },
 })
 
 export const landlordAndTenantDetails = defineMessages({
