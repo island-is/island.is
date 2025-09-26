@@ -15,7 +15,7 @@ export const vehicleSpacing = {
     description: {
       id: 'ta.eft.application:vehicleSpacing.general.description',
       defaultMessage:
-        'Gefa þarf upp bil í metrum milli aftasta öxuls bíls og fremsta öxul eftirvagns eða dollý (mælt frá miðju).',
+        'Gefa þarf upp bil í metrum milli aftasta öxuls bíls og fremsta öxul eftirvagns eða dollý.',
       description: 'Description of vehicle spacing page',
     },
     convoySubtitle: {
