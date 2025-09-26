@@ -249,11 +249,11 @@
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
       ],
-      "@island.is/api/domains/vmst-applications": [
-        "libs/api/domains/vmst-applications/src/index.ts"
-      ],
       "@island.is/api/domains/verdicts": [
         "libs/api/domains/verdicts/src/index.ts"
+      ],
+      "@island.is/api/domains/vmst-applications": [
+        "libs/api/domains/vmst-applications/src/index.ts"
       ],
       "@island.is/api/domains/watson-assistant-chat": [
         "libs/api/domains/watson-assistant-chat/src/index.ts"
