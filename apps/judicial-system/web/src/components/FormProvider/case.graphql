@@ -270,6 +270,7 @@ query Case($input: CaseQueryInput!) {
         name
       }
       closingEntries
+      isConfirmed
       filedDocuments {
         id
         created
@@ -282,7 +283,6 @@ query Case($input: CaseQueryInput!) {
         caseFileId
         generatedPdfUri
       }
-      isConfirmed
     }
     unfiledCourtDocuments {
       id
