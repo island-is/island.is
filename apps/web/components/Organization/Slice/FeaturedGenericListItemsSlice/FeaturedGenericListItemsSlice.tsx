@@ -31,7 +31,7 @@ export const FeaturedGenericListItemsSlice = ({
           return <NonClickableItem item={item} key={item.id} />
         })}
       </Stack>
-      {Boolean(slice.baseUrl) && (
+      {Boolean(slice.baseUrl) && slice.items.length > 0 && (
         <Box display="flex" justifyContent="flexEnd">
           <LinkV2 href={slice.baseUrl}>
             <Button
