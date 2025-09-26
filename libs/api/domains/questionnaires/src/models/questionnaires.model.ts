@@ -10,6 +10,15 @@ registerEnumType(QuestionnairesStatusEnum, {
   name: 'questionnairesStatusEnum',
 })
 
+@ObjectType('QuestionnaireSection')
+export class QuestionnaireSection {
+  @Field({ nullable: true })
+  sectionTitle?: string
+
+  @Field(() => [Question], { nullable: true })
+  questions?: Question[]
+}
+
 @ObjectType('Questionnaire')
 export class Questionnaire {
   @Field()
@@ -30,8 +39,8 @@ export class Questionnaire {
   @Field({ nullable: true })
   organization?: string
 
-  @Field(() => [Question], { nullable: true })
-  questions?: Question[]
+  @Field(() => [QuestionnaireSection], { nullable: true })
+  sections?: QuestionnaireSection[]
 }
 
 @ObjectType('QuestionnairesList')

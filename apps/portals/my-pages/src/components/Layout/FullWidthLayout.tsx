@@ -1,31 +1,29 @@
-import React, { FC, useEffect, useState, ReactNode } from 'react'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import {
   Box,
-  GridContainer,
-  GridRow,
-  GridColumn,
   BreadcrumbsDeprecated as Breadcrumbs,
   Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
 } from '@island.is/island-ui/core'
-import {
-  m,
-  ModuleAlertBannerSection,
-  SearchPaths,
-  TabNavigation,
-} from '@island.is/portals/my-pages/core'
-import * as styles from './Layout.css'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import {
   IntroHeader,
+  m,
+  ModuleAlertBannerSection,
+  SearchPaths,
   ServicePortalPaths,
+  TabNavigation,
 } from '@island.is/portals/my-pages/core'
-import { Link, matchPath, useNavigate } from 'react-router-dom'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
-import { theme } from '@island.is/island-ui/theme'
-import { DocumentsScope } from '@island.is/auth/scopes'
 import { FinancePaths } from '@island.is/portals/my-pages/finance'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { FC, ReactNode, useEffect, useState } from 'react'
+import { Link, matchPath, useNavigate } from 'react-router-dom'
+import * as styles from './Layout.css'
 
 interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem
@@ -38,6 +36,7 @@ type FullWidthLayoutProps = {
   isDocuments: boolean
   isFinance: boolean
   isSearch: boolean
+  isQuestionnaireDetail: boolean
 } & FullWidthLayoutWrapperProps
 
 export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
@@ -49,6 +48,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   isDocuments,
   isFinance,
   isSearch,
+  isQuestionnaireDetail,
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
@@ -74,8 +74,13 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
           ? styles.fullWidthSplit
           : undefined
       }
+      background={isQuestionnaireDetail ? 'blue100' : 'white'}
       paddingTop={
-        isDocuments || isDashboard ? undefined : isFinance ? [0, 0, 9] : 9
+        isDocuments || isDashboard || isQuestionnaireDetail
+          ? undefined
+          : isFinance
+          ? [0, 0, 9]
+          : 9
       }
       style={{
         marginTop: height,
@@ -83,7 +88,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
       }}
     >
       <Box>
-        {!isDashboard && !isDocuments && !isSearch && (
+        {!isDashboard && !isDocuments && !isSearch && !isQuestionnaireDetail && (
           <>
             <Box paddingBottom={[3, 4]} paddingTop={[4, 4, 0]}>
               <GridContainer className={styles.wrap} position="none">
@@ -130,7 +135,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
             </Box>
           </>
         )}
-        {navItems && navItems?.length > 0 ? (
+        {navItems && navItems?.length > 0 && !isQuestionnaireDetail ? (
           <Box>
             <GridContainer position="none">
               <GridRow>
@@ -177,12 +182,15 @@ const FullWidthLayoutWrapper: FC<FullWidthLayoutWrapperProps> = (props) => {
 
   const isSpecialView = !!isDashboard || !!isDocuments
 
+  const isQuestionnaireDetail =
+    matchPath('/heilsa/spurningalistar/:id', props.pathname) !== null
   return (
     <FullWidthLayout
       isDashboard={!!isDashboard}
       isDocuments={!!isDocuments}
       isFinance={!!isFinance}
       isSearch={!!isSearch}
+      isQuestionnaireDetail={isQuestionnaireDetail}
       {...props}
     >
       <ModuleAlertBannerSection paddingTop={isSpecialView ? 0 : 2} />

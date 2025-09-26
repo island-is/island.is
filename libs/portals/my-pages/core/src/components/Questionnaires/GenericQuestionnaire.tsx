@@ -1,66 +1,92 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react'
-import { Box, Text, Stack, Button } from '@island.is/island-ui/core'
+import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { QuestionRenderer } from '../Questionnaires/QuestionRenderer'
-import { Stepper, Step } from '../Questionnaires/Stepper'
+import { Stepper } from '../Questionnaires/Stepper'
 import { isQuestionVisible } from './utils/visibilityUtils'
 
+import { Question, Questionnaire } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
-import { Question, Questionnaire } from '@island.is/api/schema'
 
 interface GenericQuestionnaireProps {
   questionnaire: Questionnaire
   onSubmit: (answers: { [key: string]: QuestionAnswer }) => void
   onCancel?: () => void
+  backLink?: string
   enableStepper?: boolean
   questionsPerStep?: number
   submitLabel?: string
   cancelLabel?: string
+  img?: string
 }
 
 export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   questionnaire,
   onSubmit,
-  onCancel,
+  onCancel: _onCancel,
   enableStepper = false,
-  questionsPerStep = 3,
+  questionsPerStep: _questionsPerStep = 3,
   submitLabel = 'Staðfesta',
-  cancelLabel = 'Hætta við',
+  cancelLabel: _cancelLabel = 'Hætta við',
+  backLink,
+  img,
 }) => {
   const { formatMessage } = useLocale()
   const [answers, setAnswers] = useState<{ [key: string]: QuestionAnswer }>({})
   const [currentStep, setCurrentStep] = useState(0)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
-  // Filter questions based on visibility conditions
-  const visibleQuestions = useMemo(() => {
-    return questionnaire.questions?.filter((question: Question) =>
-      isQuestionVisible(
-        question.id,
-        question.dependsOn ?? undefined,
-        question.visibilityCondition ?? undefined,
-        answers,
-      ),
-    )
-  }, [questionnaire.questions, answers])
+  // Process sections into visible questions with section-aware filtering
+  const processedSections = useMemo(() => {
+    if (!questionnaire.sections?.length) return []
 
-  // Split questions into steps if stepper is enabled
+    return questionnaire.sections
+      .map((section) => {
+        if (!section.questions?.length) return { ...section, questions: [] }
+
+        const filteredQuestions = section.questions.filter((question) => {
+          if (!question.answerOptions?.type) return false
+
+          return isQuestionVisible(
+            question.id,
+            question.dependsOn || undefined,
+            question.visibilityCondition || undefined,
+            answers,
+          )
+        })
+
+        return { ...section, questions: filteredQuestions }
+      })
+      .filter((section) => section.questions?.length > 0)
+  }, [questionnaire.sections, answers])
+
+  // Get all visible questions for backwards compatibility
+  const visibleQuestions = useMemo(() => {
+    return processedSections.flatMap((section) => section.questions || [])
+  }, [processedSections])
+
+  // Create stepper steps from sections if stepper is enabled
   const questionSteps = useMemo(() => {
-    return enableStepper
-      ? visibleQuestions?.reduce(
-          (steps: Question[][], question: Question, index: number) => {
-            const stepIndex = Math.floor(index / questionsPerStep)
-            if (!steps[stepIndex]) {
-              steps[stepIndex] = []
-            }
-            steps[stepIndex].push(question)
-            return steps
-          },
-          [],
-        )
-      : [visibleQuestions as Question[]]
-  }, [visibleQuestions, enableStepper, questionsPerStep])
+    if (enableStepper && processedSections.length > 1) {
+      return processedSections.map((section) => section.questions || [])
+    }
+    return [visibleQuestions]
+  }, [enableStepper, processedSections, visibleQuestions])
+
+  // Create stepper steps
+  const stepperSteps = useMemo(() => {
+    if (!enableStepper || !questionSteps || questionSteps.length <= 1) {
+      return undefined
+    }
+
+    return questionSteps.map((_, index) => ({
+      id: `step-${index}`,
+      title: processedSections[index]?.sectionTitle || `Step ${index + 1}`,
+      completed: index < currentStep,
+      disabled: false,
+    }))
+  }, [enableStepper, questionSteps, currentStep, processedSections])
 
   useEffect(() => {
     if (questionSteps && questionSteps.length > 0) {
@@ -69,19 +95,6 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
       )
     }
   }, [questionSteps])
-
-  // Create stepper steps
-  const steps: Step[] | undefined = questionSteps?.map(
-    (_: Question[], index: number) => ({
-      id: `step-${index}`,
-      title: `Step ${index + 1}`,
-      description: `Questions ${index * questionsPerStep + 1}-${Math.min(
-        (index + 1) * questionsPerStep,
-        visibleQuestions?.length ?? 0,
-      )}`,
-      completed: false,
-    }),
-  )
 
   const handleAnswerChange = useCallback((answer: QuestionAnswer) => {
     setAnswers((prev) => ({
@@ -173,96 +186,124 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   const canGoPrevious = currentStep > 0
 
   return (
-    <Stack space={6}>
+    <Box display="flex" flexDirection="row" background="blue100">
       {/* Header */}
-      <Box>
-        <Text variant="h2" marginBottom={2}>
-          {questionnaire.title}
-        </Text>
-        <Text variant="intro">
-          {questionnaire.description
-            ?.split('\\n')
-            .map((line: string, index: number) => (
-              <React.Fragment key={index}>
-                <Text>{line}</Text>
-                {index <
-                  (questionnaire.description?.split('\\n').length ?? 0) - 1 && (
-                  <br />
-                )}
-              </React.Fragment>
-            ))}
-        </Text>
-      </Box>
-
       {/* Stepper (if enabled and multiple steps) */}
       {/* TODO: Move to sidenav */}
       {enableStepper && questionSteps && questionSteps.length > 1 && (
-        <Stepper
-          steps={steps}
-          currentStepIndex={currentStep}
-          onStepChange={handleStepChange}
-          onNext={handleNext}
-          onPrevious={handlePrevious}
-          nextLabel={isLastStep ? 'Review' : 'Next'}
-          previousLabel="Back"
-          showProgress={true}
-          orientation="horizontal"
-          allowClickableSteps={false}
-        />
+        <Box
+          background={'blue100'}
+          padding={3}
+          marginRight={4}
+          style={{ minWidth: '312px', maxWidth: '400px' }}
+        >
+          <Stepper
+            steps={stepperSteps}
+            currentStepIndex={currentStep}
+            onStepChange={handleStepChange}
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+            nextLabel={isLastStep ? 'Review' : 'Next'}
+            previousLabel="Back"
+            allowClickableSteps={false}
+            backLink={backLink}
+          />
+        </Box>
       )}
 
-      {/* Questions */}
-      <Box style={{ minHeight: '400px' }}>
-        <Stack space={4}>
-          {currentQuestions.map((question: Question) => (
-            <QuestionRenderer
-              key={question.id}
-              question={question}
-              answer={answers[question.id]}
-              onAnswerChange={handleAnswerChange}
-              error={errors[question.id]}
-            />
-          ))}
-        </Stack>
-      </Box>
-
-      {/* Navigation/Submit buttons */}
-      <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-        <Box>
-          {onCancel && (
-            <Button variant="ghost" onClick={onCancel}>
-              {cancelLabel}
-            </Button>
+      <Box background="white" borderRadius="standard">
+        <Box
+          borderBottomWidth="standard"
+          borderColor="blue200"
+          padding={3}
+          display="flex"
+          flexDirection="row"
+          columnGap={3}
+        >
+          {img && (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              background={'blue100'}
+              borderRadius="full"
+              padding={1}
+              style={{ maxWidth: 48, maxHeight: 48 }}
+            >
+              <img src={img} alt="" style={{ height: '100%' }} />
+            </Box>
           )}
+          <Box display={'flex'} flexDirection={'column'}>
+            <Text variant="small">{formatMessage(m.questionnaires)}</Text>
+            <Text variant="h5" as="h1" marginBottom={2}>
+              {questionnaire.title}
+            </Text>
+          </Box>
+          {/* <Text variant="intro">
+            {questionnaire.description
+              ?.split('\\n')
+              .map((line: string, index: number) => (
+                <React.Fragment key={index}>
+                  <Text>{line}</Text>
+                  {index <
+                    (questionnaire.description?.split('\\n').length ?? 0) -
+                      1 && <br />}
+                </React.Fragment>
+              ))}
+          </Text> */}
         </Box>
 
-        <Box display="flex" alignItems="center">
-          {enableStepper && questionSteps && questionSteps.length > 1 ? (
-            <>
+        {/* Questions */}
+        <Box style={{ minHeight: '400px' }} marginX={10} marginY={6}>
+          <Stack space={4}>
+            {currentQuestions.map((question: Question) => (
+              <QuestionRenderer
+                key={question.id}
+                question={question}
+                answer={answers[question.id]}
+                onAnswerChange={handleAnswerChange}
+                error={errors[question.id]}
+              />
+            ))}
+          </Stack>
+        </Box>
+
+        {/* Navigation/Submit buttons */}
+        {enableStepper && questionSteps && questionSteps.length > 1 ? (
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            paddingX={10}
+            paddingBottom={4}
+          >
+            <Box>
               {canGoPrevious && (
-                <Box marginRight={2}>
-                  <Button variant="ghost" onClick={handlePrevious}>
-                    {formatMessage(m.lastQuestion)}
-                  </Button>
-                </Box>
+                <Button variant="ghost" onClick={handlePrevious}>
+                  Go back
+                </Button>
               )}
+            </Box>
+            <Box>
               {canGoNext ? (
                 <Button variant="primary" onClick={handleNext}>
-                  {formatMessage(m.nextQuestion)}
+                  Continue
                 </Button>
               ) : (
                 <Button variant="primary" onClick={handleSubmit}>
                   {submitLabel}
                 </Button>
               )}
-            </>
-          ) : (
+            </Box>
+          </Box>
+        ) : (
+          <Box display="flex" justifyContent="flexEnd">
             <Button variant="primary" onClick={handleSubmit}>
               {submitLabel}
             </Button>
-          )}
-        </Box>
+          </Box>
+        )}
       </Box>
-    </Stack>
+    </Box>
   )
 }

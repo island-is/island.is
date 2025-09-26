@@ -19,35 +19,39 @@ query GetQuestionnaire($id: String!, $locale: String!) {
     status
     description
     organization
-    questions {
+    sections {
       __typename
-      id
-      label
-      sublabel
-      display
-      dependsOn
-      visibilityCondition
-      answerOptions {
-        type
+      sectionTitle
+      questions {
+        __typename
         id
         label
         sublabel
         display
-        # Text input fields
-        placeholder
-        maxLength
-        # Number input fields
-        min
-        max
-        # Thermometer/Scale fields
-        maxLabel
-        minLabel
-        minValue
-        maxValue
-        # Radio/Checkbox fields
-        options
-        value {
-          extraQuestions
+        dependsOn
+        visibilityCondition
+        answerOptions {
+          type
+          id
+          label
+          sublabel
+          display
+          # Text input fields
+          placeholder
+          maxLength
+          # Number input fields
+          min
+          max
+          # Thermometer/Scale fields
+          maxLabel
+          minLabel
+          minValue
+          maxValue
+          # Radio/Checkbox fields
+          options
+          value {
+            extraQuestions
+          }
         }
       }
     }

@@ -105,6 +105,7 @@ export const healthModule: PortalModule = {
     {
       name: m.health,
       path: HealthPaths.HealthRoot,
+
       enabled: [
         ApiScope.healthPayments,
         ApiScope.healthMedicines,

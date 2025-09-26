@@ -29,12 +29,17 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
     const hasActiveChild = item.children?.find((child) => child.active)
     return currentItemIsActive || hasActiveChild
   })
+
+  // TODO: Fix and find better solution
+  const isQuestionnaireDetail =
+    matchPath('/heilsa/spurningalistar/:id', pathname) !== null
+
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()
   const globalBanners = banners.filter((banner) =>
     banner.servicePortalPaths?.includes('*'),
   )
-  const isFullwidth = activeModule?.layout === 'full'
+  const isFullwidth = activeModule?.layout === 'full' || isQuestionnaireDetail
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
 

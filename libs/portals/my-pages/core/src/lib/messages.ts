@@ -1986,6 +1986,14 @@ export const m = defineMessages({
     id: 'service.portal:max-selections',
     defaultMessage: 'Hámark {count} valkostir',
   },
+  questionnaires: {
+    id: 'service.portal:questionnaires',
+    defaultMessage: 'Spurningalistar',
+  },
+  questionnaire: {
+    id: 'service.portal:questionnaire',
+    defaultMessage: 'Spurningalisti',
+  },
 })
 
 export const searchTagsMessages = defineMessages({
