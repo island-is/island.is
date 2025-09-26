@@ -586,6 +586,7 @@ export class InternalCaseService {
         {
           model: User,
           as: 'judge',
+          required: false,
           include: [{ model: Institution, as: 'institution' }],
         },
         {
@@ -598,7 +599,6 @@ export class InternalCaseService {
           model: Defendant,
           as: 'defendants',
           required: false,
-          order: [['created', 'ASC']],
           include: [
             {
               model: DefendantEventLog,
@@ -616,20 +616,32 @@ export class InternalCaseService {
         },
       ],
       where: {
+        [Op.and]: [
+          {
+            id: {
+              [Op.notIn]: Sequelize.literal(`
+                (SELECT case_id
+                FROM event_log
+                WHERE event_type = 'VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED')
+              `),
+            },
+          },
+          {
+            id: {
+              [Op.in]: Sequelize.literal(`
+              (SELECT case_id
+              FROM verdict
+              WHERE service_date IS NOT NULL)
+            `),
+            },
+          },
+        ],
         state: { [Op.eq]: CaseState.COMPLETED },
         type: CaseType.INDICTMENT,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-        id: {
-          [Op.notIn]: Sequelize.literal(`
-            (SELECT case_id
-            FROM event_log
-            WHERE event_type = 'VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED')
-          `),
-        },
       },
     })
 
-    console.log({ caseCount: cases.length })
     const isRuling = true // we iterate through cases completed with ruling
     return cases.flatMap((theCase) =>
       pipe(
@@ -659,7 +671,7 @@ export class InternalCaseService {
     )
   }
 
-  async getCasesWithDefendants(caseIds: string[]) {
+  async getSelectedCases(caseIds: string[]) {
     return this.caseRepositoryService.findAll({
       include: [
         {

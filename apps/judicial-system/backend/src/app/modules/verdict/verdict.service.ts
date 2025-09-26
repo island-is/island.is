@@ -338,6 +338,38 @@ export class VerdictService {
     return { delivered: true }
   }
 
+  private async checkVerdictCertificateDeliveryCompletion(caseIds: string[]) {
+    const latestCases = await this.internalCaseService.getSelectedCases(caseIds)
+    latestCases.forEach(async (c) => {
+      const deliveredServiceCertificates = c.defendants?.filter(
+        (defendant) =>
+          !!DefendantEventLog.getEventLogByEventType(
+            DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+            defendant.eventLogs,
+          ),
+      )
+
+      const user = c.judge
+      if (!user) {
+        return
+      }
+
+      const allServiceCertificatesDelivered =
+        deliveredServiceCertificates?.length === c.defendants?.length
+      if (allServiceCertificatesDelivered) {
+        await this.eventLogService.createWithUser(
+          EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
+          c.id,
+          {
+            ...user,
+            created: user.created.toISOString(),
+            modified: user.modified.toISOString(),
+          } as TUser,
+        )
+      }
+    })
+  }
+
   async deliverVerdictServiceCertificatesToPolice(): Promise<
     {
       delivered: boolean
@@ -345,6 +377,7 @@ export class VerdictService {
   > {
     const defendantsWithCases =
       await this.internalCaseService.getIndictmentCaseDefendantsWithExpiredAppealDeadline()
+    console.log({ defendantsWithCasesCount: defendantsWithCases.length })
 
     const delivered = await Promise.all(
       defendantsWithCases.map(async ({ defendant, theCase }) => {
@@ -368,11 +401,6 @@ export class VerdictService {
           )
           return { delivered: false }
         }
-        const tUser = {
-          ...user,
-          created: user.created.toISOString(),
-          modified: user.modified.toISOString(),
-        } as TUser
 
         const { verdict } = defendant
         if (!verdict) {
@@ -390,7 +418,11 @@ export class VerdictService {
           .then(async (pdf) => {
             return this.internalCaseService.deliverCaseToPoliceWithFiles(
               theCase,
-              tUser,
+              {
+                ...user,
+                created: user.created.toISOString(),
+                modified: user.modified.toISOString(),
+              } as TUser,
               [
                 {
                   type: PoliceDocumentType.RVBD,
@@ -399,33 +431,17 @@ export class VerdictService {
               ],
             )
           })
-          .then(async () => {
-            // write to the defendant event log
-            await this.defendantService.createDefendantEvent({
-              caseId: theCase.id,
-              defendantId: defendant.id,
-              eventType:
-                DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
-            })
-            // TODO: this wouldn't include the latest defendant events - We have to get it from the database
-            // const deliveredServiceCertificates = theCase.defendants?.filter(
-            //   (defendant) =>
-            //     !!DefendantEventLog.getEventLogByEventType(
-            //       DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
-            //       defendant.eventLogs,
-            //     ),
-            // )
-            // const allServiceCertificatesDelivered =
-            //   deliveredServiceCertificates?.length ===
-            //   theCase.defendants?.length
-            // if (allServiceCertificatesDelivered) {
-            //   await this.eventLogService.createWithUser(
-            //     EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
-            //     theCase.id,
-            //     tUser,
-            //   )
-            // }
-            return { delivered: true }
+          .then(async (delivered) => {
+            // write to a defendant event log
+            if (delivered) {
+              await this.defendantService.createDefendantEvent({
+                caseId: theCase.id,
+                defendantId: defendant.id,
+                eventType:
+                  DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+              })
+            }
+            return { delivered }
           })
           .catch((reason) => {
             // Tolerate failure, but log error
@@ -438,38 +454,16 @@ export class VerdictService {
           })
       }),
     )
-    if (delivered) {
-      // prepare to fetch updated case defendants
+
+    if (delivered.length > 0) {
       const caseIds = _uniqBy(
         defendantsWithCases.map(({ theCase }) => theCase.id),
         (c) => c,
       )
-      const latestCases = await this.internalCaseService.getCasesWithDefendants(
-        caseIds,
-      )
-      latestCases.forEach(async (c) => {
-        const deliveredServiceCertificates = c.defendants?.filter(
-          (defendant) =>
-            !!DefendantEventLog.getEventLogByEventType(
-              DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
-              defendant.eventLogs,
-            ),
-        )
 
-        const allServiceCertificatesDelivered =
-          deliveredServiceCertificates?.length === c.defendants?.length
-        if (allServiceCertificatesDelivered) {
-          await this.eventLogService.createWithUser(
-            EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
-            c.id,
-            tUser,
-          )
-        }
-      })
+      await this.checkVerdictCertificateDeliveryCompletion(caseIds)
     }
 
-    // TODO: get all cases with all defendants from the database
-    // check
     return delivered
   }
 
