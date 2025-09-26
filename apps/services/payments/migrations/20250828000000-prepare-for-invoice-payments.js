@@ -57,6 +57,17 @@ module.exports = {
         transaction: t,
       })
 
+      // Composite index for payment_flow_id + reception_id lookups
+      await queryInterface.addIndex(
+        'fjs_charge',
+        ['payment_flow_id', 'reception_id'],
+        {
+          name: 'idx_fjs_charge_payment_flow_reception',
+          unique: true, // This combination should be unique
+          transaction: t,
+        },
+      )
+
       // Mark FJS charges as paid when there is an card payment found for the same payment flow id
       await queryInterface.sequelize.query(
         `
@@ -166,7 +177,15 @@ module.exports = {
       // Drop the payment fulfillment table
       await queryInterface.dropTable('payment_fulfillment', { transaction: t })
 
-      // Drop the index that was added to fjs_charge
+      // Drop the indexes that were added to fjs_charge
+      await queryInterface.removeIndex(
+        'fjs_charge',
+        'idx_fjs_charge_payment_flow_reception',
+        {
+          transaction: t,
+        },
+      )
+
       await queryInterface.removeIndex(
         'fjs_charge',
         'idx_fjs_charge_reception_id',
