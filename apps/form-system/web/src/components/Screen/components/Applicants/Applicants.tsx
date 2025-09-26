@@ -8,7 +8,7 @@ import {
   m,
   NationalIdField,
 } from '@island.is/form-system/ui'
-import { Input, Stack } from '@island.is/island-ui/core'
+import { Box, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -26,6 +26,7 @@ const individuals: ApplicantTypesEnum[] = [
   ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
   ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
 ]
+
 // This needs to be reworked!!!!
 const getNationalId = (
   userNationalId: string,
@@ -62,7 +63,7 @@ const getNationalId = (
 
 export const Applicants = ({ applicantField }: Props) => {
   const { dispatch } = useApplicationContext()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const userInfo = useUserInfo()
   const { applicantType } = applicantField.fieldSettings ?? {}
   const isLegalEntity =
@@ -124,6 +125,10 @@ export const Applicants = ({ applicantField }: Props) => {
     })
   }, [dispatch, applicantField.id, nationalId])
 
+  useEffect(() => {
+    console.log('applicantField', applicantField)
+  }, [applicantField])
+
   return (
     <>
       {isIndividualType && (
@@ -134,29 +139,34 @@ export const Applicants = ({ applicantField }: Props) => {
         />
       )}
       {isLegalEntity && (
-        <Stack space={2}>
-          <NationalIdField
-            disabled
-            nationalId={nationalId}
-            name={getValue(applicantField, 'name')}
-          />
-          <Input
-            label={formatMessage(m.address)}
-            name="address"
-            placeholder={formatMessage(m.address)}
-            backgroundColor="white"
-            disabled
-            value={getValue(applicantField, 'address') || ''}
-          />
-          <Input
-            label={formatMessage(m.postalCode)}
-            name="postalCode"
-            placeholder={formatMessage(m.postalCode)}
-            backgroundColor="white"
-            disabled
-            value={getValue(applicantField, 'postalCode') || ''}
-          />
-        </Stack>
+        <Box marginTop={4}>
+          <Text variant="h2" as="h2" marginBottom={3}>
+            {applicantField?.name?.[lang]}
+          </Text>
+          <Stack space={2}>
+            <NationalIdField
+              disabled
+              nationalId={nationalId}
+              name={getValue(applicantField, 'name')}
+            />
+            <Input
+              label={formatMessage(m.address)}
+              name="address"
+              placeholder={formatMessage(m.address)}
+              backgroundColor="white"
+              disabled
+              value={getValue(applicantField, 'address') || ''}
+            />
+            <Input
+              label={formatMessage(m.postalCode)}
+              name="postalCode"
+              placeholder={formatMessage(m.postalCode)}
+              backgroundColor="white"
+              disabled
+              value={getValue(applicantField, 'postalCode') || ''}
+            />
+          </Stack>
+        </Box>
       )}
     </>
   )
