@@ -154,11 +154,8 @@ import {
   BloodDonationRestrictionList,
 } from './models/bloodDonationRestriction.model'
 import { GenericList } from './models/genericList.model'
-<<<<<<< HEAD
 import { LastCallsForGrants } from './models/lastCallsForGrants.model'
-=======
 import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
->>>>>>> main
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
