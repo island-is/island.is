@@ -51,6 +51,7 @@ image:
 namespace: 'cms-importer'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 pvcs: []
 replicaCount:
   default: 3

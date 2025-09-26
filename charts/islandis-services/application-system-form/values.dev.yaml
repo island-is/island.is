@@ -62,6 +62,7 @@ ingress:
 namespace: 'application-system'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 pvcs: []
 replicaCount:
   default: 1
