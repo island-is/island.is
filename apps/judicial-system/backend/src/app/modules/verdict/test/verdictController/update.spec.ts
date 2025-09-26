@@ -5,7 +5,7 @@ import { ServiceRequirement } from '@island.is/judicial-system/types'
 
 import { Case, Defendant, Verdict } from '../../../repository'
 import { UpdateVerdictDto } from '../../dto/updateVerdict.dto'
-import { createTestingVerdictModule } from '../creatingTestingVerdictModule'
+import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
 interface Then {
   result: Verdict

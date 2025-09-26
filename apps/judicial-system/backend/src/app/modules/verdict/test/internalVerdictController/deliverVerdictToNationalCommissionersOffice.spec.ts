@@ -10,7 +10,7 @@ import { PoliceService } from '../../../police'
 import { Case, Defendant, Verdict } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { createTestingVerdictModule } from '../creatingTestingVerdictModule'
+import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
 interface Then {
   result: DeliverResponse

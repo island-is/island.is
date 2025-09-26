@@ -4,7 +4,7 @@ import { InformationForDefendant } from '@island.is/judicial-system/types'
 
 import { Verdict } from '../../../repository'
 import { VerdictService } from '../../verdict.service'
-import { createTestingVerdictModule } from '../creatingTestingVerdictModule'
+import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
 interface Then {
   result: Pick<Verdict, 'serviceInformationForDefendant'>
