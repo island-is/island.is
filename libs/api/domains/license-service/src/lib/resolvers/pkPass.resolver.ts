@@ -1,6 +1,4 @@
-import type { User } from '@island.is/auth-nest-tools'
 import {
-  CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
