@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client'
 import { OjoiaGetCommentsResponse } from '@island.is/api/schema'
 import { POST_COMMENT_MUTATION, GET_COMMENTS_QUERY } from '../graphql/queries'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 type Props = {
   applicationId: string
@@ -21,6 +22,7 @@ type PostCommentResponse = {
 }
 
 export const useComments = ({ applicationId }: Props) => {
+  const userInfo = useUserInfo()
   const { data, loading, error, refetch } = useQuery<CommentsResponse>(
     GET_COMMENTS_QUERY,
     {
@@ -52,6 +54,7 @@ export const useComments = ({ applicationId }: Props) => {
         input: {
           id: applicationId,
           comment: variables.comment,
+          applicationUserName: userInfo?.profile.actor?.name ?? undefined,
         },
       },
     })
