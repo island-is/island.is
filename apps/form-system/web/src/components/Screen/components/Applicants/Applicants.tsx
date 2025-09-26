@@ -10,6 +10,7 @@ import {
 } from '@island.is/form-system/ui'
 import { Input, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useEffect } from 'react'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
@@ -60,11 +61,9 @@ const getNationalId = (
 }
 
 export const Applicants = ({ applicantField }: Props) => {
-  const { formatMessage } = useLocale()
-
-  const userInfo = useUserInfo()
-
   const { dispatch } = useApplicationContext()
+  const { formatMessage } = useLocale()
+  const userInfo = useUserInfo()
   const { applicantType } = applicantField.fieldSettings ?? {}
   const isLegalEntity =
     applicantType === ApplicantTypesEnum.LEGAL_ENTITY ||
@@ -74,6 +73,21 @@ export const Applicants = ({ applicantField }: Props) => {
     userInfo?.profile?.actor?.nationalId,
     applicantType as ApplicantTypesEnum,
   )
+
+  useQuery(USER_PROFILE, {
+    fetchPolicy: 'cache-first',
+    onCompleted: (data) => {
+      const { mobilePhoneNumber, email } = data.getUserProfile
+      dispatch({
+        type: 'SET_PHONE_NUMBER',
+        payload: { id: applicantField.id, value: mobilePhoneNumber },
+      })
+      dispatch({
+        type: 'SET_EMAIL',
+        payload: { id: applicantField.id, value: email },
+      })
+    },
+  })
 
   useQuery(IDENTITY_QUERY, {
     variables: { input: { nationalId } },
