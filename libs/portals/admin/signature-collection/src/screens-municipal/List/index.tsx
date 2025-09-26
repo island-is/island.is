@@ -73,12 +73,12 @@ const List = () => {
                   Actions.LockList,
                   Actions.ReviewComplete,
                   Actions.ExtendDeadline,
-                  Actions.RemoveCandidate,
+                  Actions.RemoveList,
                 ]}
                 withManagers
               />
             }
-            marginBottom={4}
+            marginBottom={3}
           />
           <Divider />
           <Box marginTop={9} />

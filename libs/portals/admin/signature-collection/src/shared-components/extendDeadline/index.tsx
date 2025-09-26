@@ -20,10 +20,11 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 
 const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
+  const { revalidate } = useRevalidator()
+
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)
   const [endDate, setEndDate] = useState(list?.endTime)
   const [extendDeadlineMutation, { loading }] = useExtendDeadlineMutation()
-  const { revalidate } = useRevalidator()
 
   useEffect(() => {
     setEndDate(endDate)
@@ -31,7 +32,7 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
 
   const extendDeadline = async (newEndDate: string) => {
     try {
-      const res = await extendDeadlineMutation({
+      const { data } = await extendDeadlineMutation({
         variables: {
           input: {
             listId: list.id,
@@ -40,14 +41,16 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
           },
         },
       })
-      if (res.data?.signatureCollectionAdminExtendDeadline.success) {
+
+      const res = data?.signatureCollectionAdminExtendDeadline
+
+      if (res?.success) {
         toast.success(formatMessage(m.updateListEndTimeSuccess))
         revalidate()
       } else {
-        const message =
-          res.data?.signatureCollectionAdminExtendDeadline?.reasons?.[0] ??
-          formatMessage(m.updateListEndTimeError)
-        toast.error(message)
+        toast.error(
+          res?.reasons?.[0] ?? formatMessage(m.updateListEndTimeError),
+        )
       }
     } catch (e) {
       toast.error(e.message)
@@ -59,12 +62,14 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box display="flex">
-            <Tag>
-              <Box display="flex" justifyContent="center">
-                <Icon icon="calendar" type="outline" color="blue600" />
-              </Box>
-            </Tag>
-            <Box marginLeft={5}>
+            <Box marginTop={1}>
+              <Tag>
+                <Box display="flex" justifyContent="center">
+                  <Icon icon="calendar" type="outline" color="blue600" />
+                </Box>
+              </Tag>
+            </Box>
+            <Box marginLeft={3}>
               <Text variant="h4">{formatMessage(m.updateListEndTime)}</Text>
               <Text color="blue600" variant="eyebrow" marginY={1}>
                 {endDate ? format(new Date(endDate), 'dd.MM.yyyy - HH:mm') : ''}
@@ -89,9 +94,9 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
         title={formatMessage(m.updateListEndTime)}
         label={formatMessage(m.updateListEndTime)}
         onClose={() => setModalChangeDateIsOpen(false)}
-        closeButtonLabel={''}
+        closeButtonLabel=""
       >
-        <Box marginTop={5}>
+        <Box>
           <DatePicker
             locale="is"
             label={formatMessage(m.listEndTime)}
@@ -103,6 +108,7 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               loading={loading}
+              icon="reload"
               onClick={() => {
                 extendDeadline(endDate)
                 setModalChangeDateIsOpen(false)

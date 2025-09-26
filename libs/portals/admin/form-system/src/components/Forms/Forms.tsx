@@ -86,7 +86,7 @@ export const Forms = () => {
                 {formatMessage(m.newForm)}
               </Button>
             </Box>
-            <OrganizationSelect />
+            {isAdmin && <OrganizationSelect />}
           </Box>
         </Box>
       </GridRow>
@@ -104,6 +104,7 @@ export const Forms = () => {
               slug={f?.slug ?? ''}
               beenPublished={f?.beenPublished ?? false}
               setFormsState={setForms}
+              status={f?.status}
             />
           )
         })}

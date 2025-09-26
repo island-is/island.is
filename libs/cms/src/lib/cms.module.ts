@@ -17,6 +17,7 @@ import {
   LatestGenericListItemsResolver,
   IntroLinkImageResolver,
   GenericListResolver,
+  FeaturedGenericListItemsResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -70,6 +71,7 @@ import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByE
     LatestGenericListItemsResolver,
     IntroLinkImageResolver,
     GenericListResolver,
+    FeaturedGenericListItemsResolver,
   ],
   exports: [
     ContentfulRepository,

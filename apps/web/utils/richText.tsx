@@ -66,6 +66,7 @@ import {
   EmailSignup as EmailSignupSchema,
   Embed as EmbedSchema,
   FeaturedEvents as FeaturedEventsSchema,
+  FeaturedGenericListItems,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   Form as FormSchema,
   GenericList as GenericListSchema,
@@ -95,7 +96,6 @@ import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/co
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
-import { FineAndSpeedMeasurementCalculator } from '../components/connected/logreglan/FineAndSpeedMeasurementCalculator'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
@@ -109,13 +109,14 @@ import {
   LastCallsForGrantsList,
 } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
+import { FeaturedGenericListItemsSlice } from '../components/Organization/Slice/FeaturedGenericListItemsSlice/FeaturedGenericListItemsSlice'
 import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
 }
 
-const TranslationNamespaceProvider = ({
+export const TranslationNamespaceProvider = ({
   messages,
   children,
 }: PropsWithChildren<TranslationNamespaceProviderProps>) => {
@@ -234,9 +235,6 @@ export const webRenderConnectedComponent = (
     case 'Trufelog/Lifsskodunarfelog':
       connectedComponent = <ReligiousOrganizationList slice={slice} />
       break
-    case 'Police/FineAndSpeedMeasurementCalculator':
-      connectedComponent = <FineAndSpeedMeasurementCalculator slice={slice} />
-      break
     case 'Landspitali/MemorialCard':
       connectedComponent = <MemorialCard slice={slice} />
       break
@@ -344,6 +342,9 @@ const defaultRenderComponent = {
   ),
   IntroLinkImage: (slice: IntroLinkImage) => (
     <IntroLinkImageSlice slice={slice} />
+  ),
+  FeaturedGenericListItems: (slice: FeaturedGenericListItems) => (
+    <FeaturedGenericListItemsSlice slice={slice} />
   ),
 }
 

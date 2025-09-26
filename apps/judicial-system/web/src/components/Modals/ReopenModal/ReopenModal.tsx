@@ -28,6 +28,25 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
   const { user } = useContext(UserContext)
   const { transitionCase, isTransitioningCase } = useCase()
 
+  const handlePrimaryButtonClick = async () => {
+    const caseTransitioned = await transitionCase(
+      workingCase.id,
+      isCourtOfAppealsUser(user)
+        ? CaseTransition.REOPEN_APPEAL
+        : CaseTransition.REOPEN,
+    )
+
+    if (caseTransitioned) {
+      router.push(
+        isCourtOfAppealsUser(user)
+          ? `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`
+          : isRestrictionCase(workingCase.type)
+          ? `${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
+          : `${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
+      )
+    }
+  }
+
   return (
     <Modal
       title={
@@ -40,28 +59,15 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
           ? 'Með því að halda áfram opnast ferlið aftur og hægt er að leiðrétta úrskurðinn. Til að breytingarnar skili sér til aðila máls þarf að ljúka málinu aftur.'
           : 'Að lokinni leiðréttingu er hægt að velja að undirrita leiðréttan úrskurð eigi það við.'
       }
-      primaryButtonText="Halda áfram"
-      isPrimaryButtonLoading={isTransitioningCase}
-      onPrimaryButtonClick={async () => {
-        const caseTransitioned = await transitionCase(
-          workingCase.id,
-          isCourtOfAppealsUser(user)
-            ? CaseTransition.REOPEN_APPEAL
-            : CaseTransition.REOPEN,
-        )
-
-        if (caseTransitioned) {
-          router.push(
-            isCourtOfAppealsUser(user)
-              ? `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`
-              : isRestrictionCase(workingCase.type)
-              ? `${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
-              : `${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
-          )
-        }
+      primaryButton={{
+        text: 'Halda áfram',
+        onClick: handlePrimaryButtonClick,
+        isLoading: isTransitioningCase,
       }}
-      secondaryButtonText="Hætta við"
-      onSecondaryButtonClick={onClose}
+      secondaryButton={{
+        text: 'Hætta við',
+        onClick: onClose,
+      }}
     />
   )
 }

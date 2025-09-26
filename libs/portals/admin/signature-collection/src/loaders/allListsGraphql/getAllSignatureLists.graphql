@@ -19,6 +19,8 @@ query allLists($input: SignatureCollectionIdInput!) {
       phone
       email
       ownerName
+      ownerBirthDate
+      hasActiveLists
     }
     collectors {
       nationalId

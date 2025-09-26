@@ -1,14 +1,11 @@
 import { Button, Drawer, Stack, Text } from '@island.is/island-ui/core'
 import { useLoaderData } from 'react-router-dom'
-import {
-  SignatureCollectionCollectionType,
-  SignatureCollectionList,
-} from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import ActionExtendDeadline from '../extendDeadline'
 import ActionLockList from '../lockList'
 import CompleteListReview from '../completeListReview'
 import DownloadReports from '../downloadReports'
-import RemoveCandidate from '../removeCandidate'
+import RemoveList from '../removeList'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import CreateCollection from '../createCollection'
@@ -22,7 +19,7 @@ export enum Actions {
   LockList = 'lockList',
   ReviewComplete = 'reviewComplete',
   ExtendDeadline = 'extendDeadline',
-  RemoveCandidate = 'removeCandidate',
+  RemoveList = 'removeList',
   ReviewCandidates = 'reviewCandidates',
   CompleteCollectionProcessing = 'completeCollectionProcessing',
 }
@@ -32,12 +29,12 @@ interface ListActionsProps {
 }
 
 const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
+  const { formatMessage } = useLocale()
+  const { collection } = useLoaderData() as ListsLoaderReturn
   const { list, listStatus } = useLoaderData() as {
     list: SignatureCollectionList
     listStatus: string
   }
-  const { collection } = useLoaderData() as ListsLoaderReturn
-  const { formatMessage } = useLocale()
 
   return (
     <Drawer
@@ -52,7 +49,6 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
       <Text variant="h2" marginTop={2} marginBottom={6}>
         {formatMessage(m.listActionsTitle)}
       </Text>
-
       <Stack space={8}>
         {allowedActions?.includes(Actions.DownloadReports) && (
           <DownloadReports collection={collection} />
@@ -77,22 +73,17 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
         {allowedActions?.includes(Actions.ExtendDeadline) && (
           <ActionExtendDeadline list={list} />
         )}
-        {allowedActions?.includes(Actions.RemoveCandidate) && (
-          <RemoveCandidate list={list} />
+        {allowedActions?.includes(Actions.RemoveList) && (
+          <RemoveList list={list} />
         )}
         {allowedActions?.includes(Actions.ReviewCandidates) && (
-          <ReviewCandidates candidates={collection.candidates} />
+          <ReviewCandidates
+            candidates={collection.candidates}
+            collectionType={collection.collectionType}
+          />
         )}
         {allowedActions?.includes(Actions.CompleteCollectionProcessing) && (
-          <CompleteCollectionProcessing
-            collection={collection}
-            areaId={
-              collection.collectionType ===
-              SignatureCollectionCollectionType.LocalGovernmental
-                ? list?.area?.collectionId ?? undefined
-                : undefined
-            }
-          />
+          <CompleteCollectionProcessing collection={collection} />
         )}
       </Stack>
     </Drawer>

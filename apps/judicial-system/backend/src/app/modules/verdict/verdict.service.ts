@@ -1,5 +1,6 @@
 import { Base64 } from 'js-base64'
-import { Sequelize, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -16,6 +17,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  isVerdictInfoChanged,
+  PoliceFileTypeCode,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
@@ -31,6 +34,7 @@ import { DeliverResponse } from './models/deliver.response'
 type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   Verdict,
   | 'externalPoliceDocumentId'
+  | 'serviceStatus'
   | 'serviceRequirement'
   | 'servedBy'
   | 'appealDecision'
@@ -95,16 +99,16 @@ export class VerdictService {
     transaction: Transaction,
     rulingDate?: Date,
   ): Promise<UpdateVerdictDto> {
+    if (!update.serviceRequirement) {
+      return update
+    }
+
     // rulingDate should be set, but the case completed guard can not guarantee its presence
     // ensure that ruling date is present to prevent side effects in handle service requirement update
     if (!rulingDate) {
       throw new BadRequestException(
         'Missing rulingDate for service requirement update',
       )
-    }
-
-    if (!update.serviceRequirement) {
-      return update
     }
 
     const currentVerdict = await this.findById(verdictId, transaction)
@@ -186,6 +190,89 @@ export class VerdictService {
     return updatedVerdict
   }
 
+  private mapToPoliceSupplementCodes(
+    theCase: Case,
+    defendant: Defendant,
+  ): { code: string; value: string }[] {
+    const receiverSsn =
+      defendant.nationalId &&
+      normalizeAndFormatNationalId(defendant.nationalId)[0]
+    const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
+
+    return [
+      { code: 'RVG_CASE_ID', value: theCase.id },
+      ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
+      ...(theCase.courtCaseNumber
+        ? [
+            {
+              code: 'VERDICT_COURT_CASE_NUMBER',
+              value: theCase.courtCaseNumber,
+            },
+          ]
+        : []),
+      ...(policeNumbers.length
+        ? [
+            {
+              code: 'POLICE_CASE_NUMBERS',
+              value: policeNumbers.join(','),
+            },
+          ]
+        : []),
+      ...(theCase.ruling
+        ? [
+            {
+              code: 'RULING',
+              value: theCase.ruling,
+            },
+          ]
+        : []),
+      ...(theCase.court?.name
+        ? [
+            {
+              code: 'COURT_INSTITUTION',
+              value: theCase.court.name,
+            },
+          ]
+        : []),
+      ...(theCase.court?.address
+        ? [
+            {
+              code: 'COURT_ADDRESS',
+              value: theCase.court.address,
+            },
+          ]
+        : []),
+      ...(theCase.prosecutorsOffice?.name
+        ? [
+            {
+              code: 'PROSECUTOR_OFFICE',
+              value: theCase.prosecutorsOffice.name,
+            },
+          ]
+        : []),
+      ...(theCase.prosecutor?.nationalId
+        ? [
+            {
+              code: 'PROSECUTOR_SSN',
+              value: normalizeAndFormatNationalId(
+                theCase.prosecutor?.nationalId,
+              )[0],
+            },
+          ]
+        : []),
+      ...(defendant.defenderNationalId
+        ? [
+            {
+              code: 'DEFENDER_SSN',
+              value: normalizeAndFormatNationalId(
+                defendant.defenderNationalId,
+              )[0],
+            },
+          ]
+        : []),
+    ]
+  }
+
   async deliverVerdictToNationalCommissionersOffice(
     theCase: Case,
     defendant: Defendant,
@@ -208,17 +295,12 @@ export class VerdictService {
       verdictFile,
     )
 
-    const normalizedNationalId = normalizeAndFormatNationalId(
-      defendant.nationalId,
-    )[0]
     const documentName = `Dómur í máli ${theCase.courtCaseNumber}`
 
     // deliver the verdict by creating the document at the police
-    // TODO: Adjust the document in collaboration with RLS
     const createdDocument = await this.policeService.createDocument({
       caseId: theCase.id,
       defendantId: defendant.id,
-      defendantNationalId: normalizedNationalId,
       user,
       documentName,
       documentFiles: [
@@ -227,8 +309,14 @@ export class VerdictService {
           documentBase64: Base64.btoa(verdictPdf.toString('binary')),
         },
       ],
-      documentDates: [{ code: 'ORDER_BY_DATE', value: verdictFile.created }],
-      fileTypeCode: 'BRTNG_DOMUR',
+      documentDates: [
+        { code: 'ORDER_BY_DATE', value: verdictFile.created },
+        ...(theCase.rulingDate
+          ? [{ code: 'RULING_DATE', value: theCase.rulingDate }]
+          : []),
+      ],
+      fileTypeCode: PoliceFileTypeCode.VERDICT,
+      caseSupplements: this.mapToPoliceSupplementCodes(theCase, defendant),
     })
     if (!createdDocument) {
       return { delivered: false }
@@ -237,5 +325,20 @@ export class VerdictService {
     await this.updateVerdict(verdict, createdDocument)
 
     return { delivered: true }
+  }
+
+  async getAndSyncVerdict(verdict: Verdict, user?: TUser) {
+    // check specifically a verdict that is delivered and service status hasn't been updated
+    if (verdict.externalPoliceDocumentId && !verdict.serviceStatus) {
+      const verdictInfo = await this.policeService.getVerdictDocumentStatus(
+        verdict.externalPoliceDocumentId,
+        user,
+      )
+
+      if (isVerdictInfoChanged(verdictInfo, verdict)) {
+        return this.updateVerdict(verdict, verdictInfo)
+      }
+    }
+    return verdict
   }
 }

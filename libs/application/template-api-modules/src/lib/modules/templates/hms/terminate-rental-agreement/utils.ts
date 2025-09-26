@@ -52,15 +52,25 @@ export const parseTerminateContract = (
       'unboundTermination.unboundTerminationReason',
     ) ?? ''
 
+  const boundTerminationDate =
+    getValueViaPath<string>(
+      application.answers,
+      'boundTermination.boundTerminationDate',
+    ) ?? null
+  const unboundTerminationDate =
+    getValueViaPath<string>(
+      application.answers,
+      'unboundTermination.unboundTerminationDate',
+    ) ?? null
+
+  const terminateOn =
+    (boundTerminationDate || unboundTerminationDate) ?? new Date()
+
   const obj = {
     contractId:
       getValueViaPath<string>(application.answers, 'rentalAgreement.answer') ??
       '',
-    terminateOn:
-      getValueViaPath<Date>(
-        application.answers,
-        'boundTermination.boundTerminationDate',
-      ) ?? new Date(),
+    terminateOn: new Date(terminateOn),
     reasonUseCode:
       (terminationReason as TerminationReason) ??
       TerminationReason.OWNERINBUILDING,
@@ -68,7 +78,6 @@ export const parseTerminateContract = (
     documentMime: files[0].fileName.split('.').pop() ?? 'pdf',
     documentFilename: truncateMiddle(files[0].fileName, 40),
   }
-
   return obj
 }
 

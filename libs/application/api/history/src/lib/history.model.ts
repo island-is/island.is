@@ -5,7 +5,7 @@ import {
   Table,
   ForeignKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Application } from '@island.is/application/api/core'
 @Table({
   tableName: 'state_history',
@@ -67,4 +67,18 @@ export class History extends Model {
     allowNull: true,
   })
   previousState!: string
+
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  exitEventSubjectNationalId?: string
+
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  exitEventActorNationalId?: string
 }

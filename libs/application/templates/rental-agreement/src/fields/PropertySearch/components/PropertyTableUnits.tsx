@@ -1,4 +1,4 @@
-import { Checkbox, Table as T } from '@island.is/island-ui/core'
+import { Checkbox, Table } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   hiddenTableRow,
@@ -15,14 +15,8 @@ import {
   noInputArrows,
 } from '../propertySearch.css'
 import * as m from '../../../lib/messages'
+import { isValidDecimal, isValidInteger } from '../../../utils/utils'
 
-const isValidInteger = (value: string): boolean => {
-  return /^\d*$/.test(value)
-}
-
-const isValidDecimal = (value: string): boolean => {
-  return /^\d*\.?\d*$/.test(value)
-}
 interface PropertyUnitsProps {
   unitCode?: string
   propertyUsageDescription?: string
@@ -74,7 +68,7 @@ export const PropertyTableUnits = ({
 
   return (
     <tr key={unitCode}>
-      <T.Data
+      <Table.Data
         colSpan={5}
         box={{
           paddingLeft: 0,
@@ -90,12 +84,12 @@ export const PropertyTableUnits = ({
             isTableExpanded && hiddenTableRowExpanded
           }`}
         >
-          <T.Data
+          <Table.Data
             box={{
               className: `${dropdownTableCell} ${tableCellExpand}`,
             }}
-          ></T.Data>
-          <T.Data
+          ></Table.Data>
+          <Table.Data
             box={{
               className: `${dropdownTableCell} ${tableCellFastNum}`,
             }}
@@ -107,15 +101,15 @@ export const PropertyTableUnits = ({
               checked={checkedUnits ?? false}
               onChange={onCheckboxChange}
             />
-          </T.Data>
-          <T.Data
+          </Table.Data>
+          <Table.Data
             box={{
               className: `${dropdownTableCell} ${tableCellMerking}`,
             }}
           >
             {unitCode ?? ''}
-          </T.Data>
-          <T.Data
+          </Table.Data>
+          <Table.Data
             box={{
               className: `${dropdownTableCell} ${tableCellSize}`,
             }}
@@ -145,8 +139,8 @@ export const PropertyTableUnits = ({
               />
               <span>{sizeUnit}</span>
             </div>
-          </T.Data>
-          <T.Data
+          </Table.Data>
+          <Table.Data
             box={{
               className: `${dropdownTableCell} ${tableCellNumOfRooms}`,
             }}
@@ -167,9 +161,9 @@ export const PropertyTableUnits = ({
               onWheel={preventScrollChange}
               disabled={isNumOfRoomsDisabled}
             />
-          </T.Data>
+          </Table.Data>
         </div>
-      </T.Data>
+      </Table.Data>
     </tr>
   )
 }

@@ -92,11 +92,13 @@ ingress:
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
       - host: 'innskra.island.is'
+        pathTypeOverride: 'ImplementationSpecific'
         paths:
           - '/api(/|$)(.*)'
 namespace: 'identity-server-admin'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 pvcs: []
 replicaCount:
   default: 2

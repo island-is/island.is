@@ -17,7 +17,6 @@ import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { HashAlgorithm } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
@@ -29,7 +28,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  CourtDocument,
+  CourtDocument as TCourtDocument,
   CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
@@ -41,6 +40,8 @@ import {
 import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
 import { CivilClaimant } from './civilClaimant.model'
+import { CourtDocument } from './courtDocument.model'
+import { CourtSession } from './courtSession.model'
 import { DateLog } from './dateLog.model'
 import { Defendant } from './defendant.model'
 import { EventLog } from './eventLog.model'
@@ -451,7 +452,7 @@ export class Case extends Model {
    **********/
   @Column({ type: DataType.ARRAY(DataType.JSON), allowNull: true })
   @ApiPropertyOptional({ type: Object, isArray: true })
-  courtDocuments?: CourtDocument[]
+  courtDocuments?: TCourtDocument[]
 
   /**********
    * Bookings during court session
@@ -759,6 +760,20 @@ export class Case extends Model {
   indictmentCounts?: IndictmentCount[]
 
   /**********
+   * The case's court sessions
+   **********/
+  @HasMany(() => CourtSession, 'caseId')
+  @ApiPropertyOptional({ type: () => CourtSession, isArray: true })
+  courtSessions?: CourtSession[]
+
+  /**********
+   * The case's unfiled court documents
+   **********/
+  @HasMany(() => CourtDocument, 'caseId')
+  @ApiPropertyOptional({ type: () => CourtDocument, isArray: true })
+  unfiledCourtDocuments?: CourtDocument[]
+
+  /**********
    * Indicates whether the prosecutor requests a drivers license suspension
    **********/
   @Column({ type: DataType.BOOLEAN, allowNull: true })
@@ -1031,22 +1046,20 @@ export class Case extends Model {
   indictmentDecision?: IndictmentDecision
 
   /**********
-   * The hash of the confirmed generated indictment
+   * The hash of the confirmed generated indictment in indictment cases
+   * and the hash algorithm used to create the hash
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   indictmentHash?: string
 
   /**********
-   * The hash algorithm of the confirmed generated indictment
+   * The hash of the confirmed generated court record in indictment cases
+   * and the hash algorithm used to create the hash
    **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(HashAlgorithm),
-  })
-  @ApiPropertyOptional({ enum: HashAlgorithm })
-  indictmentHashAlgorithm?: HashAlgorithm
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  courtRecordHash?: string
 
   /**********
    * The court session type in indictment cases - example: MAIN_HEARING

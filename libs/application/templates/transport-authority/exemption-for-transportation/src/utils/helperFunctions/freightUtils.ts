@@ -10,6 +10,7 @@ import { ExemptionFor } from '../../shared'
 import { getConvoyItem, getConvoyShortName } from './convoyUtils'
 import { freight } from '../../lib/messages'
 import { getExemptionRules } from './getExemptionRules'
+import { formatNumber } from './format'
 
 export const getFreightItems = (answers: FormValue): Freight[] => {
   const items =
@@ -18,7 +19,10 @@ export const getFreightItems = (answers: FormValue): Freight[] => {
       'freight.items',
     ) || []
 
-  return items
+  return items.map((item) => ({
+    ...item,
+    freightId: item.freightId ?? '',
+  }))
 }
 
 export const getFreightItem = (
@@ -28,7 +32,7 @@ export const getFreightItem = (
   return getFreightItems(answers)[freightIndex]
 }
 
-export const getFreightPairingItems = (
+export const getFreightPairingItemsByIndex = (
   answers: FormValue,
   freightIndex: number,
 ): (FreightPairing | null)[] => {
@@ -37,55 +41,58 @@ export const getFreightPairingItems = (
   >(answers, 'freightPairing')
 
   const items = freightPairing?.[freightIndex]?.items || []
+  const convoyIdList = freightPairing?.[freightIndex]?.convoyIdList || []
 
   return items.map((item) => {
-    if (item?.convoyId)
-      return {
-        convoyId: item.convoyId,
-        height: item.height || '',
-        width: item.width || '',
-        totalLength: item.totalLength || '',
-        exemptionFor:
-          item.exemptionFor?.filter((x): x is ExemptionFor => !!x) || [],
-      }
-    else return null
+    if (!item?.convoyId || !convoyIdList.includes(item.convoyId)) return null
+
+    return {
+      convoyId: item.convoyId,
+      length: freightPairing?.[freightIndex]?.length ?? '',
+      weight: freightPairing?.[freightIndex]?.weight ?? '',
+      height: item.height ?? '',
+      width: item.width ?? '',
+      totalLength: item.totalLength ?? '',
+      exemptionFor:
+        item.exemptionFor?.filter((x): x is ExemptionFor => !!x) || [],
+    }
   })
 }
 
-export const getFilteredFreightPairingItems = (
+export const getNonNullFreightPairingItemsByIndex = (
   answers: FormValue,
-  freightIndex?: number,
+  freightIndex: number,
+): FreightPairing[] => {
+  return getFreightPairingItemsByIndex(answers, freightIndex).filter(
+    (item): item is FreightPairing => !!item,
+  )
+}
+
+export const getAllFreightPairingItems = (
+  answers: FormValue,
 ): FreightPairing[] => {
   const freightPairing = getValueViaPath<
     ExemptionForTransportationAnswers['freightPairing']
   >(answers, 'freightPairing')
 
-  const items =
-    freightIndex !== undefined && freightIndex > -1
-      ? freightPairing?.[freightIndex]?.items || []
-      : freightPairing?.flatMap((x) => x?.items || []) || []
-
-  return items
-    .filter((item): item is FreightPairing => !!item)
-    .map((item) => ({
-      ...item,
-      exemptionFor: item.exemptionFor?.filter((x) => !!x) || [],
-    }))
+  return (freightPairing || []).flatMap((_, index) =>
+    getNonNullFreightPairingItemsByIndex(answers, index),
+  )
 }
 
 export const getFreightPairingItem = (
   answers: FormValue,
   freightIndex: number,
   convoyIndex: number,
-): FreightPairing | undefined => {
-  const pairingItems = getFilteredFreightPairingItems(answers, freightIndex)
-  return pairingItems[convoyIndex]
+): FreightPairing | null => {
+  const pairingItems = getFreightPairingItemsByIndex(answers, freightIndex)
+  return pairingItems[convoyIndex] ?? null
 }
 
 export const checkHasFreightPairingItemWithExemptionForWeight = (
   answers: FormValue,
 ): boolean => {
-  const freightPairingAllItems = getFilteredFreightPairingItems(answers)
+  const freightPairingAllItems = getAllFreightPairingItems(answers)
   return freightPairingAllItems.some((item) =>
     item?.exemptionFor?.includes(ExemptionFor.WEIGHT),
   )
@@ -116,34 +123,60 @@ export const checkHasSelectedConvoyInFreightPairing = (
   const convoyItem = getConvoyItem(answers, convoyIndex)
   if (!convoyItem) return false
 
-  return convoyIdList.indexOf(convoyItem.convoyId) !== -1
+  return convoyIdList.includes(convoyItem.convoyId)
 }
 
-export const getFreightLongTermErrorMessage = (
+export const getFreightShortTermErrorMessage = (
   externalData: ExternalData,
+  answers: FormValue,
+  freightIndex: number,
+  convoyIndex: number,
+): StaticText | undefined => {
+  // Police escort error
+  const rules = getExemptionRules(externalData)
+  const maxTotalLength = rules?.policeEscort.maxTotalLength
+  const maxHeight = rules?.policeEscort.maxHeight
+  const maxWidth = rules?.policeEscort.maxWidth
+  const totalLength = getValueViaPath<string>(
+    answers,
+    `freightPairing.${freightIndex}.totalLength`,
+  )
+  const height = getValueViaPath<string>(
+    answers,
+    `freightPairing.${freightIndex}.items.${convoyIndex}.height`,
+  )
+  const width = getValueViaPath<string>(
+    answers,
+    `freightPairing.${freightIndex}.items.${convoyIndex}.width`,
+  )
+  if (
+    (totalLength && maxTotalLength
+      ? Number(totalLength) > maxTotalLength
+      : false) ||
+    (height && maxHeight ? Number(height) > maxHeight : false) ||
+    (width && maxWidth ? Number(width) > maxWidth : false)
+  ) {
+    return {
+      ...freight.create.warningPoliceEscortAlertMessage,
+      values: {
+        maxHeight: formatNumber(rules?.policeEscort.maxHeight),
+        maxWidth: formatNumber(rules?.policeEscort.maxWidth),
+        maxTotalLength: formatNumber(rules?.policeEscort.maxTotalLength),
+      },
+    }
+  }
+}
+
+export const getFreightCreateLongTermErrorMessage = (
+  _: ExternalData,
   answers: FormValue,
 ): StaticText | undefined => {
   // Empty list error
   const freightItems = getFreightItems(answers)
   if (!freightItems?.length) return freight.create.errorEmptyListAlertMessage
-
-  // Police escort error
-  const maxLength = getExemptionRules(externalData)?.policeEscort.maxLength
-  const invalidFreightIndex = freightItems.findIndex(
-    (x) => x.length && maxLength && Number(x.length) > maxLength,
-  )
-  if (invalidFreightIndex !== -1)
-    return {
-      ...freight.create.errorPoliceEscortAlertMessage,
-      values: {
-        maxLength,
-        freightNumber: invalidFreightIndex + 1,
-        freightName: freightItems[invalidFreightIndex]?.name,
-      },
-    }
 }
 
-export const getFreightPairingErrorMessage = (
+export const getFreightPairingLongTermErrorMessage = (
   externalData: ExternalData,
   answers: FormValue,
   freightIndex: number,
@@ -155,19 +188,24 @@ export const getFreightPairingErrorMessage = (
   )
   if (!convoyIdList?.length) return freight.pairing.errorEmptyListAlertMessage
 
-  // Police escort error
-  const freightPairingItems = getFilteredFreightPairingItems(
-    answers,
-    freightIndex,
-  )
   const rules = getExemptionRules(externalData)
   const maxHeight = rules?.policeEscort.maxHeight
   const maxWidth = rules?.policeEscort.maxWidth
+  const maxTotalLength = rules?.policeEscort.maxTotalLength
+
+  // Police escort error
+  const freightPairingItems = getNonNullFreightPairingItemsByIndex(
+    answers,
+    freightIndex,
+  )
   const invalidConvoyIndex = freightPairingItems
     ? freightPairingItems.findIndex(
         (x) =>
           (x?.height && maxHeight && Number(x.height) > maxHeight) ||
-          (x?.width && maxWidth && Number(x.width) > maxWidth),
+          (x?.width && maxWidth && Number(x.width) > maxWidth) ||
+          (x?.totalLength &&
+            maxTotalLength &&
+            Number(x.totalLength) > maxTotalLength),
       )
     : -1
   const invalidConvoyItem =
@@ -180,6 +218,7 @@ export const getFreightPairingErrorMessage = (
       values: {
         maxHeight,
         maxWidth,
+        maxTotalLength,
         convoyNumber: invalidConvoyIndex + 1,
         vehicleAndTrailerPermno: getConvoyShortName(invalidConvoyItem),
       },

@@ -12,10 +12,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import {
-  SignatureCollectionSignature as Signature,
-  SignatureCollectionCollectionType,
-} from '@island.is/api/schema'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 import sortBy from 'lodash/sortBy'
 import EditPage from './EditPage'
 import { SkeletonTable } from '../../../lib/skeletons'
@@ -26,8 +23,10 @@ import { formatNationalId } from '@island.is/portals/core'
 
 const Signees = ({
   collectionType,
+  totalSignees,
 }: {
   collectionType: SignatureCollectionCollectionType
+  totalSignees: number
 }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
@@ -93,7 +92,7 @@ const Signees = ({
           <Box marginTop={3}>
             <Box display="flex" justifyContent="flexEnd">
               <Text variant="eyebrow" marginBottom={2}>
-                {formatMessage(m.numberOfSigns) + ' ' + signees.length}
+                {`${formatMessage(m.numberOfValidSigns)} ${totalSignees}`}
               </Text>
             </Box>
             <T.Table>
@@ -108,19 +107,40 @@ const Signees = ({
               <T.Body>
                 {signees
                   .slice(pageSize * (page - 1), pageSize * page)
-                  .map((s: Signature) => {
+                  .map((s) => {
+                    const textVariant = 'medium'
+                    const bgColor = s.isDigital ? 'white' : 'blueberry100'
                     return (
                       <T.Row key={s.id}>
-                        <T.Data text={{ variant: 'medium' }} width="20%">
-                          {format(new Date(), 'dd.MM.yyyy')}
+                        <T.Data
+                          text={{ variant: textVariant }}
+                          box={{ background: bgColor }}
+                          width="20%"
+                        >
+                          {format(new Date(s.created), 'dd.MM.yyyy')}
                         </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
+                        <T.Data
+                          text={{ variant: textVariant }}
+                          box={{
+                            background: bgColor,
+                          }}
+                        >
                           {s.signee.name}
                         </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
+                        <T.Data
+                          text={{ variant: textVariant }}
+                          box={{
+                            background: bgColor,
+                          }}
+                        >
                           {formatNationalId(s.signee.nationalId)}
                         </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
+                        <T.Data
+                          text={{ variant: textVariant }}
+                          box={{
+                            background: bgColor,
+                          }}
+                        >
                           {!s.isDigital && (
                             <Box display="flex">
                               <Text>{s.pageNumber}</Text>
@@ -142,7 +162,6 @@ const Signees = ({
                   })}
               </T.Body>
             </T.Table>
-
             <Box marginTop={3}>
               <Pagination
                 totalItems={signees.length}
@@ -162,23 +181,19 @@ const Signees = ({
             </Box>
           </Box>
         ) : searchTerm.length > 0 ? (
-          <Box display="flex" marginTop={3}>
+          <Box display="flex" marginTop={2}>
             <Text>{formatMessage(m.noSigneesFoundBySearch)}</Text>
             <Box marginLeft={1}>
               <Text variant="h5">{searchTerm}</Text>
             </Box>
           </Box>
         ) : (
-          <Text marginTop={3}>{formatMessage(m.noSignees)}</Text>
+          <Text marginTop={2}>{formatMessage(m.noSignees)}</Text>
         )
       ) : (
         <SkeletonTable />
       )}
-      <PaperSignees
-        listId={id ?? ''}
-        refetchSignees={refetchListSignees}
-        collectionType={collectionType}
-      />
+      <PaperSignees listId={id ?? ''} collectionType={collectionType} />
     </Box>
   )
 }

@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize/types'
+import { Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
@@ -33,6 +33,7 @@ import {
   CaseString,
   DateLog,
 } from '../../../repository'
+import { SubpoenaService } from '../../../subpoena'
 import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 
@@ -77,6 +78,7 @@ describe('CaseController - Update', () => {
   let mockUserService: UserService
   let mockFileService: FileService
   let transaction: Transaction
+  let mockSubpoenaService: SubpoenaService
   let mockCaseRepositoryService: CaseRepositoryService
   let mockDateLogModel: typeof DateLog
   let mockCaseStringModel: typeof CaseString
@@ -89,6 +91,7 @@ describe('CaseController - Update', () => {
       userService,
       fileService,
       sequelize,
+      subpoenaService,
       caseRepositoryService,
       dateLogModel,
       caseStringModel,
@@ -99,6 +102,7 @@ describe('CaseController - Update', () => {
     mockEventLogService = eventLogService
     mockUserService = userService
     mockFileService = fileService
+    mockSubpoenaService = subpoenaService
     mockCaseRepositoryService = caseRepositoryService
     mockDateLogModel = dateLogModel
     mockCaseStringModel = caseStringModel
@@ -109,10 +113,12 @@ describe('CaseController - Update', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
+    const mockCreateSubpoena = mockSubpoenaService.createSubpoena as jest.Mock
+    mockCreateSubpoena.mockRejectedValue('Failed to create subpoena')
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
+    mockUpdate.mockResolvedValue(theCase)
     const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
     mockFindOne.mockResolvedValue(theCase)
 
@@ -156,9 +162,9 @@ describe('CaseController - Update', () => {
 
     it('should update the case', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         caseToUpdate,
         {
-          where: { id: caseId },
           transaction,
         },
       )
@@ -181,11 +187,12 @@ describe('CaseController - Update', () => {
 
     it('should transition the case from SUBMITTED to RECEIVED', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         {
           courtCaseNumber: caseToUpdate.courtCaseNumber,
           state: CaseState.RECEIVED,
         },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -243,12 +250,13 @@ describe('CaseController - Update', () => {
 
     it('should update court case facts and court legal arguments', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         {
           caseResentExplanation: 'Endursending',
           courtCaseFacts: `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`,
           courtLegalArguments: `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`,
         },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -266,13 +274,14 @@ describe('CaseController - Update', () => {
 
     it('should update prosecutor demands and valid to date', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         expect.objectContaining({
           demands: 'Updated demands',
           prosecutorDemands: 'Updated demands',
           requestedValidToDate: caseToUpdate.requestedValidToDate,
           validToDate: caseToUpdate.requestedValidToDate,
         }),
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -295,12 +304,13 @@ describe('CaseController - Update', () => {
 
     it('should update prosecutor demands but not valid to date', () => {
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         expect.objectContaining({
           demands: 'Updated demands',
           prosecutorDemands: 'Updated demands',
           requestedValidToDate: caseToUpdate.requestedValidToDate,
         }),
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -573,8 +583,9 @@ describe('CaseController - Update', () => {
 
       it('should update the case', () => {
         expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
           { prosecutorStatementDate: date },
-          { where: { id: caseId }, transaction },
+          { transaction },
         )
       })
 
@@ -863,18 +874,20 @@ describe('CaseController - Update', () => {
     const caseToUpdate = { arraignmentDate }
     const subpoenaId1 = uuid()
     const subpoenaId2 = uuid()
+    const subpoena1 = { id: defendantId1, subpoenas: [{ id: subpoenaId1 }] }
+    const subpoena2 = { id: defendantId2, subpoenas: [{ id: subpoenaId2 }] }
     const updatedCase = {
       ...theCase,
       type: CaseType.INDICTMENT,
       origin: CaseOrigin.LOKE,
       dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
-      defendants: [
-        { id: defendantId1, subpoenas: [{ id: subpoenaId1 }] },
-        { id: defendantId2, subpoenas: [{ id: subpoenaId2 }] },
-      ],
+      defendants: [subpoena1, subpoena2],
     }
 
     beforeEach(async () => {
+      const mockCreateSubpoena = mockSubpoenaService.createSubpoena as jest.Mock
+      mockCreateSubpoena.mockResolvedValueOnce(subpoena2)
+      mockCreateSubpoena.mockResolvedValueOnce(subpoena1)
       const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 

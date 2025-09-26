@@ -157,9 +157,9 @@ export class SignatureCollectionSharedClientService {
       const electionIds = elections
         .filter(
           (election) =>
-            getCollectionTypeFromNumber(election.kosningTegundNr) ===
+            getCollectionTypeFromNumber(election.kosningTegundNr ?? 0) ===
               CollectionType.LocalGovernmental ||
-            getCollectionTypeFromNumber(election.kosningTegundNr) ===
+            getCollectionTypeFromNumber(election.kosningTegundNr ?? 0) ===
               CollectionType.SpecialLocalGovernmental,
         )
         .map((election) => election.id)
@@ -176,7 +176,7 @@ export class SignatureCollectionSharedClientService {
       const eId = elections
         .filter(
           (election) =>
-            getCollectionTypeFromNumber(election.kosningTegundNr) ===
+            getCollectionTypeFromNumber(election.kosningTegundNr ?? 0) ===
             collectionType,
         )
         .map((election) => election.id)[0]
@@ -193,7 +193,9 @@ export class SignatureCollectionSharedClientService {
       ? await this.getParticipatingAreas(electionId, electionApi)
       : []
 
-    const listsMapped = lists.map((list) => mapList(list, participatingAreas))
+    const listsMapped = lists.map((list) =>
+      mapList(list, participatingAreas, collectionType),
+    )
     return onlyActive ? listsMapped.filter((list) => list.active) : listsMapped
   }
 

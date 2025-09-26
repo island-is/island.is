@@ -70,7 +70,7 @@ export const m = defineMessages({
   },
   collectionClosed: {
     id: 'sp.signatureCollection:collectionClosed',
-    defaultMessage: 'Söfnuninni lokið',
+    defaultMessage: 'Söfnun lokið',
     description: '',
   },
   collectionMaxReached: {
@@ -225,9 +225,9 @@ export const m = defineMessages({
     defaultMessage: 'Tímabil lista:',
     description: '',
   },
-  numberOfSigns: {
-    id: 'sp.signatureCollection:numberOfSigns',
-    defaultMessage: 'Fjöldi meðmæla:',
+  numberOfValidSigns: {
+    id: 'sp.signatureCollection:numberOfValidSigns',
+    defaultMessage: 'Fjöldi gildra meðmæla:',
     description: '',
   },
   coOwners: {
@@ -237,7 +237,7 @@ export const m = defineMessages({
   },
   pdfReport: {
     id: 'sp.signatureCollection:pdfReport',
-    defaultMessage: 'Skýrsla',
+    defaultMessage: 'Sækja skýrslu',
     description: '',
   },
   pdfReportDescription: {
@@ -248,6 +248,11 @@ export const m = defineMessages({
   downloadPdf: {
     id: 'sp.signatureCollection:downloadPdf',
     defaultMessage: 'Hlaða niður skýrslu',
+    description: '',
+  },
+  pdfReportError: {
+    id: 'sp.signatureCollection:pdfReportError',
+    defaultMessage: 'Ekki tókst að sækja skýrslu',
     description: '',
   },
   downloadPdfDescription: {
@@ -436,6 +441,11 @@ export const m = defineMessages({
     defaultMessage: 'Sveitarstjórnarkosningar',
     description: '',
   },
+  collectionMunicipalListOwner: {
+    id: 'sp.signatureCollection:collectionMunicipalListOwner',
+    defaultMessage: 'Stofnandi söfnunar',
+    description: '',
+  },
   pageTitleMunicipal: {
     id: 'sp.signatureCollection:pageTitleMunicipal',
     defaultMessage: 'Meðmælasafnanir fyrir sveitarstjórnarkosningar',
@@ -445,6 +455,12 @@ export const m = defineMessages({
     id: 'sp.signatureCollection:pageIntro',
     defaultMessage:
       'Hér eru upplýsingar um hlekk á söfnunina, stöðuna og yfirlit yfir umsjónaraðila.',
+    description: '',
+  },
+  pageIntroSignee: {
+    id: 'sp.signatureCollection:pageIntroSignee',
+    defaultMessage:
+      'Hægt er að draga meðmæli til baka og mæla með öðru framboði.',
     description: '',
   },
   collectionIsActive: {
@@ -473,15 +489,14 @@ export const m = defineMessages({
     defaultMessage: 'Aðgerðir',
     description: '',
   },
-  listActionsDescription: {
-    id: 'sp.signatureCollection:listActionsDescription',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu justo interdum, pharetra enim vel, ultrices augue.',
+  deleteCollectionCandidacy: {
+    id: 'sp.signatureCollection:deleteCollectionCandidacy',
+    defaultMessage: 'Eyða framboði',
     description: '',
   },
   deleteCollection: {
     id: 'sp.signatureCollection:deleteCollection',
-    defaultMessage: 'Eyða frambooði',
+    defaultMessage: 'Eyða söfnun',
     description: '',
   },
   deleteCollectionDescription: {

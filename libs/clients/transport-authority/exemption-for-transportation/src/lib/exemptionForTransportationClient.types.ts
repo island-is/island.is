@@ -1,7 +1,7 @@
 interface ExemptionRulesPoliceEscort {
   maxHeight: number
   maxWidth: number
-  maxLength: number
+  maxTotalLength: number
 }
 
 export interface ExemptionRulesLimitations {

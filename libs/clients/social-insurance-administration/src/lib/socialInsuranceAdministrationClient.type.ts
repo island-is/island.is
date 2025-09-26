@@ -23,6 +23,7 @@ export type Scope =
   | '@tr.is/fylgiskjol:write'
   | '@tr.is/danarbaetur:read'
   | '@tr.is/sjukraogendurhaefingargreidslur:read'
+  | '@tr.is/ororkulifeyrir:read'
 
 export type Api =
   | typeof ApplicationApi
@@ -39,6 +40,8 @@ export type Api =
   | typeof QuestionnairesApi
 
 export class ApplicationWriteApi extends ApplicationApi {}
+export class MedicalDocumentApiForDisabilityPension extends MedicalDocumentsApi {}
+export class QuestionnairesApiForDisabilityPension extends QuestionnairesApi {}
 
 export interface Period {
   year: number
@@ -180,15 +183,26 @@ export interface SelfAssessment {
   answers: Answer[]
 }
 
+export interface EmploymentStatus {
+  employmentStatus: string
+  explanation: string | null
+}
+
 export interface PreQuestionnaire {
   highestEducation: string
-  currentEmploymentStatus: string // TODO: Smári needs to change to an array
-  currentEmploymentStatusExplanation?: string
-  lastJobTitle?: string
-  lastJobYear?: number
+  employmentStatuses: EmploymentStatus[]
+  lastProfession?: string
+  lastProfessionDescription?: string
+  lastActivityOfProfession?: string
+  lastActivityOfProfessionDescription?: string
+  lastProfessionYear?: number
   disabilityReason: string
   hasParticipatedInRehabilitationBefore: boolean
   rehabilitationDetails?: string
   previousRehabilitationSuccessful?: boolean
   additionalRehabilitationInformation?: string
 }
+
+const APPLICATION_TYPES = ['ORORKA'] as const
+
+export type ApplicationType = typeof APPLICATION_TYPES[number]
