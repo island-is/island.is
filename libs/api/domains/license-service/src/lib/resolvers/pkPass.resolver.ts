@@ -1,8 +1,4 @@
-import {
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { CodeOwner } from '@island.is/nest/core'
@@ -26,28 +22,34 @@ import { VerifyPkPassInput } from '../dto/VerifyPkPass.input'
 export class PkPassResolver {
   constructor(private readonly licenseServiceService: LicenseService) {}
 
-  @Directive('@deprecated(reason: "Permanently closed. Not removed for backwards compability")')
+  @Directive(
+    '@deprecated(reason: "Permanently closed. Not removed for backwards compability")',
+  )
   @Mutation(() => GenericPkPass, {
     name: 'generatePkPass',
-    deprecationReason: 'Permanently closed. Not removed for backwards compability'
+    deprecationReason:
+      'Permanently closed. Not removed for backwards compability',
   })
   @Audit()
   async generatePkPass(
     @Args('input') _: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
-   throw new GoneException("Permanently closed")
+    throw new GoneException('Permanently closed')
   }
 
-  @Directive('@deprecated(reason: "Permanently closed. Not removed for backwards compability")')
+  @Directive(
+    '@deprecated(reason: "Permanently closed. Not removed for backwards compability")',
+  )
   @Mutation(() => GenericPkPassQrCode, {
     name: 'generatePkPassQrCode',
-    deprecationReason: 'Permanently closed. Not removed for backwards compability'
+    deprecationReason:
+      'Permanently closed. Not removed for backwards compability',
   })
   @Audit()
   async generatePkPassQrCode(
     @Args('input') _: GeneratePkPassInput,
   ): Promise<GenericPkPassQrCode> {
-    throw new GoneException("Permanently closed")
+    throw new GoneException('Permanently closed')
   }
 
   @Scopes(ApiScope.internal, ApiScope.licensesVerify)
