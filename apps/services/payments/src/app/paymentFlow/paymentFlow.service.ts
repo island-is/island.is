@@ -633,15 +633,19 @@ export class PaymentFlowService {
         },
       )
     } catch (e) {
-      this.logger.error(
-        `Failed to create invoice payment confirmation (${paymentFlowId})`,
-        e,
-      )
-
       if (e?.message === 'SequelizeUniqueConstraintError') {
+        this.logger.info(
+          `[${paymentFlowId}] Invoice payment confirmation already processed`,
+        )
+
         // Already processed
         return
       }
+
+      this.logger.error(
+        `[${paymentFlowId}] Failed to create invoice payment confirmation`,
+        e,
+      )
 
       throw new BadRequestException(
         InvoiceErrorCode.FailedToCreateInvoiceConfirmation,
