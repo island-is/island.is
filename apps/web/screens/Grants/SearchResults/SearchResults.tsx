@@ -422,12 +422,8 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
   )
 }
 
-GrantsSearchResults.getProps = async ({
-  apolloClient,
-  locale,
-  query,
-  customPageData,
-}) => {
+
+GrantsSearchResults.getProps = async ({ apolloClient, locale, query, customPageData }) => {
   const arrayParser = parseAsArrayOf<string>(parseAsString)
 
   const filterArray = <T,>(array: Array<T> | null | undefined) => {
@@ -489,10 +485,7 @@ GrantsSearchResults.getProps = async ({
       query: GET_CUSTOM_SUBPAGE_QUERY,
       variables: {
         input: {
-          slug:
-            (locale as ContentLanguage) === ContentLanguage.Is
-              ? 'styrkir'
-              : 'grants',
+          slug: locale as ContentLanguage === ContentLanguage.Is ? 'styrkir' : 'grants',
           parentPageId: customPageData?.id ?? '',
           lang: locale as ContentLanguage,
         },
