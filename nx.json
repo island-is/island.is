@@ -171,10 +171,7 @@
     }
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "forceRebuild": [
       {
         "runtime": "node .github/actions/force-build.mjs"
@@ -185,11 +182,7 @@
         "runtime": "node --version"
       }
     ],
-    "DevOps": [
-      "CI",
-      "Dockerfiles",
-      "{workspaceRoot}/scripts/**/*"
-    ],
+    "DevOps": ["CI", "Dockerfiles", "{workspaceRoot}/scripts/**/*"],
     "CI": [
       "{workspaceRoot}/.github/actions/",
       "{workspaceRoot}/.github/workflows/",
