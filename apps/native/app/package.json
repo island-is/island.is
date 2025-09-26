@@ -59,7 +59,7 @@
     "intl": "1.2.5",
     "lodash": "4.17.21",
     "metro-config": "0.81.0",
-    "path-to-regexp": "6.2.2",
+    "path-to-regexp": "6.3.0",
     "react": "18.3.1",
     "react-intl": "7.1.11",
     "react-native": "patch:react-native@npm%3A0.77.3#~/.yarn/patches/react-native-npm-0.77.3-74a62e73d7.patch",
