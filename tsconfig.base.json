@@ -575,6 +575,9 @@
       "@island.is/application/templates/social-insurance-administration/death-benefits": [
         "libs/application/templates/social-insurance-administration/death-benefits/src/index.ts"
       ],
+      "@island.is/application/templates/social-insurance-administration/disability-pension": [
+        "libs/application/templates/social-insurance-administration/disability-pension/src/index.ts"
+      ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
       ],

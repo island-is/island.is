@@ -1,0 +1,28 @@
+import { MessageDescriptor } from 'react-intl'
+
+export type MessageDir = Record<string, Record<string, MessageDescriptor>>
+
+// Export all individual message sections
+export { basicInfo } from './basicInfo'
+export { capabilityImpairment } from './capabilityImpairment'
+export { certificate } from './certificate'
+export { confirmation } from './confirmation'
+export { customFields } from './customFields'
+export { disabilityCertificate } from './disabilityCertificate'
+export { disabilityEvaluation } from './disabilityEvaluation'
+export { disabilityPeriod } from './disabilityPeriod'
+export { employmentParticipation } from './employmentParticipation'
+export { errors } from './errors'
+export { extraInfo } from './extraInfo'
+export { incomePlan } from './incomePlan'
+export { notEligible } from './notEligible'
+export { overview } from './overview'
+export { paymentInfo } from './paymentInfo'
+export { personalInfo } from './personalInfo'
+export { prerequisite } from './prerequisites'
+export { questions } from './questions'
+export { selfEvaluation } from './selfEvaluation'
+export { shared } from './shared'
+export { states } from './states'
+export { externalData } from './externalData'
+export { dataHandling } from './dataHandling'
