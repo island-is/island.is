@@ -509,7 +509,10 @@ export class PaymentFlowService {
           false,
           error.message,
         )
-        throw error
+
+        if (config.throwOnError) {
+          throw error
+        }
       }
     }
 
