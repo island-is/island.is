@@ -83,6 +83,7 @@ export const FreightLongTermCreateSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           alertType: 'error',
           shouldBlockInSetBeforeSubmitCallback: true,
+          allowMultipleSetBeforeSubmitCallbacks: true,
         }),
         buildCustomField({
           component: 'HandleBeforeSubmitFreight',

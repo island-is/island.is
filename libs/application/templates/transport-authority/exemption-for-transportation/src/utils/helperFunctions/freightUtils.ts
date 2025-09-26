@@ -134,12 +134,12 @@ export const getFreightShortTermErrorMessage = (
 ): StaticText | undefined => {
   // Police escort error
   const rules = getExemptionRules(externalData)
-  const maxLength = rules?.policeEscort.maxLength
+  const maxTotalLength = rules?.policeEscort.maxTotalLength
   const maxHeight = rules?.policeEscort.maxHeight
   const maxWidth = rules?.policeEscort.maxWidth
-  const length = getValueViaPath<string>(
+  const totalLength = getValueViaPath<string>(
     answers,
-    `freightPairing.${freightIndex}.length`,
+    `freightPairing.${freightIndex}.totalLength`,
   )
   const height = getValueViaPath<string>(
     answers,
@@ -150,16 +150,18 @@ export const getFreightShortTermErrorMessage = (
     `freightPairing.${freightIndex}.items.${convoyIndex}.width`,
   )
   if (
-    (length && maxLength ? Number(length) > maxLength : false) ||
+    (totalLength && maxTotalLength
+      ? Number(totalLength) > maxTotalLength
+      : false) ||
     (height && maxHeight ? Number(height) > maxHeight : false) ||
     (width && maxWidth ? Number(width) > maxWidth : false)
   ) {
     return {
       ...freight.create.warningPoliceEscortAlertMessage,
       values: {
-        maxLength: formatNumber(rules?.policeEscort.maxLength),
         maxHeight: formatNumber(rules?.policeEscort.maxHeight),
         maxWidth: formatNumber(rules?.policeEscort.maxWidth),
+        maxTotalLength: formatNumber(rules?.policeEscort.maxTotalLength),
       },
     }
   }
@@ -187,24 +189,11 @@ export const getFreightPairingLongTermErrorMessage = (
   if (!convoyIdList?.length) return freight.pairing.errorEmptyListAlertMessage
 
   const rules = getExemptionRules(externalData)
-  const maxLength = rules?.policeEscort.maxLength
   const maxHeight = rules?.policeEscort.maxHeight
   const maxWidth = rules?.policeEscort.maxWidth
+  const maxTotalLength = rules?.policeEscort.maxTotalLength
 
-  // Police escort error (freight)
-  const length = getValueViaPath<string>(
-    answers,
-    `freightPairing.${freightIndex}.length`,
-  )
-  if (length && maxLength ? Number(length) > maxLength : false) {
-    return {
-      ...freight.create.errorPoliceEscortAlertMessage,
-      values: {
-        maxLength,
-      },
-    }
-  }
-  // Police escort error (freight-convoy pairing)
+  // Police escort error
   const freightPairingItems = getNonNullFreightPairingItemsByIndex(
     answers,
     freightIndex,
@@ -213,7 +202,10 @@ export const getFreightPairingLongTermErrorMessage = (
     ? freightPairingItems.findIndex(
         (x) =>
           (x?.height && maxHeight && Number(x.height) > maxHeight) ||
-          (x?.width && maxWidth && Number(x.width) > maxWidth),
+          (x?.width && maxWidth && Number(x.width) > maxWidth) ||
+          (x?.totalLength &&
+            maxTotalLength &&
+            Number(x.totalLength) > maxTotalLength),
       )
     : -1
   const invalidConvoyItem =
@@ -226,6 +218,7 @@ export const getFreightPairingLongTermErrorMessage = (
       values: {
         maxHeight,
         maxWidth,
+        maxTotalLength,
         convoyNumber: invalidConvoyIndex + 1,
         vehicleAndTrailerPermno: getConvoyShortName(invalidConvoyItem),
       },

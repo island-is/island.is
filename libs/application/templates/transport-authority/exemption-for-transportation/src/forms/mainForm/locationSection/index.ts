@@ -16,7 +16,7 @@ import {
   checkIfExemptionTypeLongTerm,
   checkIfExemptionTypeShortTerm,
 } from '../../../utils'
-import { ExemptionType, RegionArea } from '../../../shared'
+import { RegionArea } from '../../../shared'
 import { Application } from '@island.is/application/types'
 
 export const locationSection = buildSection({
@@ -30,8 +30,7 @@ export const locationSection = buildSection({
     buildMultiField({
       id: 'locationMultiField',
       title: (application: Application) => {
-        return getExemptionType(application.answers) ===
-          ExemptionType.SHORT_TERM
+        return checkIfExemptionTypeShortTerm(application.answers)
           ? location.general.pageTitleShortTerm
           : location.general.pageTitleLongTerm
       },
