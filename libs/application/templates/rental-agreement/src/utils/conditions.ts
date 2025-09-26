@@ -20,12 +20,16 @@ export const singularOrPluralLandlordsTitle = (application: Application) => {
 }
 
 export const shouldShowRepresentative = (answers: FormValue) => {
-  const representatives = getValueViaPath<Array<ApplicantsInfo>>(
+  const representatives = getValueViaPath<Array<ApplicantsInfo | string>>(
     answers,
     'parties.landlordInfo.representativeTable',
   )
 
-  if (!representatives || representatives.length === 0) {
+  if (
+    !representatives ||
+    representatives.length === 0 ||
+    representatives[0] === ''
+  ) {
     return false
   }
 

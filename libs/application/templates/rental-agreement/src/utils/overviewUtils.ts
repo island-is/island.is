@@ -49,8 +49,6 @@ const formatPartyItems = (
   return (
     items
       ?.map((party) => {
-        console.log(party)
-
         return [
           {
             width: 'full' as const,

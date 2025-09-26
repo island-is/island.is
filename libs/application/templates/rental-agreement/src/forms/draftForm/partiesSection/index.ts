@@ -4,7 +4,11 @@ import {
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
+  buildNationalIdWithNameField,
   YES,
+  buildPhoneField,
+  buildTextField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import {
   applicantTableConfig,
@@ -44,10 +48,15 @@ export const partiesSection = buildSection({
           table: applicantTableConfig,
         }),
         buildCheckboxField({
+          condition: (answers) => {
+            console.log(answers)
+            return true
+          },
           id: 'parties.landlordInfo.shouldShowRepresentativeTable',
           marginTop: 6,
-          // large: false,
-          // backgroundColor: 'white',
+          large: false,
+          backgroundColor: 'white',
+          clearOnChange: ['parties.landlordInfo.representativeTable.0'],
           options: [
             {
               label:
@@ -56,17 +65,39 @@ export const partiesSection = buildSection({
             },
           ],
         }),
-        buildTableRepeaterField({
+        buildDescriptionField({
           condition: shouldShowRepresentativeTable,
-          id: 'parties.landlordInfo.representativeTable',
-          title: m.landlordAndTenantDetails.representativeTableTitle,
-          editField: true,
-          marginTop: 6,
-          maxRows: 10,
-          fields: landLordInfoTableFields,
-          table: applicantTableConfig,
+          id: 'parties.landlordInfo.representativeTableDesctiption',
+          description:
+            m.landlordAndTenantDetails.representativeTableDescription,
+          marginBottom: 2,
+        }),
+        buildNationalIdWithNameField({
+          condition: shouldShowRepresentativeTable,
+          id: 'parties.landlordInfo.representativeTable.0.nationalIdWithName',
+          marginBottom: 2,
+        }),
+        buildPhoneField({
+          condition: shouldShowRepresentativeTable,
+          id: 'parties.landlordInfo.representativeTable.0.phone',
+          enableCountrySelector: true,
+          required: true,
+          title: 'Símanúmer',
+          width: 'half',
+        }),
+        buildTextField({
+          condition: shouldShowRepresentativeTable,
+          id: 'parties.landlordInfo.representativeTable.0.email',
+          variant: 'email',
+          title: 'Netfang',
+          width: 'half',
+          required: true,
         }),
         buildTableRepeaterField({
+          condition: (answers) => {
+            console.log(answers)
+            return true
+          },
           id: 'parties.tenantInfo.table',
           title: m.partiesDetails.tenantTableTitle,
           editField: true,
