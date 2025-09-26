@@ -80,6 +80,7 @@ export const unionSickPaySubSection = buildSubSection({
           id: 'unionSickPay.hasUtilizedUnionSickPayRights',
           options: getYesNoNotApplicableOptions(),
           required: true,
+          clearOnChange: [`unionSickPay.endDate`],
         }),
         buildDescriptionField({
           id: 'unionSickPay.unionInfo.description',

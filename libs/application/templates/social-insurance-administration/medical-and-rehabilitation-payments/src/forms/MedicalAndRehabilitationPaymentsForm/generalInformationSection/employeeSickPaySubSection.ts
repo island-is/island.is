@@ -35,6 +35,7 @@ export const employeeSickPaySubSection = buildSubSection({
           id: 'employeeSickPay.hasUtilizedEmployeeSickPayRights',
           options: getYesNoNotApplicableOptions(),
           required: true,
+          clearOnChange: [`employeeSickPay.endDate`],
         }),
         buildDescriptionField({
           id: 'employeeSickPay.endDate.description',
