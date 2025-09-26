@@ -16,6 +16,8 @@ module.exports = composePlugins(withNx(), withReact(), nrwlConfig, (config) => {
     // Add proxy configuration for development
     config.devServer = {
       ...config.devServer,
+      hot: true,
+      liveReload: true,
       proxy: [
         {
           context: ['/stjornbord/bff'],
@@ -24,6 +26,10 @@ module.exports = composePlugins(withNx(), withReact(), nrwlConfig, (config) => {
           changeOrigin: true,
         },
       ],
+    }
+
+    config.watchOptions = {
+      ignored: /node_modules/,
     }
   }
 
