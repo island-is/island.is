@@ -19,7 +19,7 @@ import { buildNationalIdWithNameField } from '@island.is/application/core'
 import { buildPhoneField } from '@island.is/application/core'
 import { buildTextField } from '@island.is/application/core'
 import { YES } from '@island.is/application/core'
-import { Application } from '@island.is/application/types';
+import { Application } from '@island.is/application/types'
 import * as m from '../../../lib/messages'
 
 export const partiesSubsection = buildSubSection({
