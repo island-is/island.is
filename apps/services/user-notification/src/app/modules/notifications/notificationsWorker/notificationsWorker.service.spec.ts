@@ -225,12 +225,12 @@ describe('NotificationsWorkerService', () => {
 
     expect(emailService.sendEmail).toHaveBeenCalledTimes(2)
 
-    // should write the messages to db
+    // should write only the primary recipient message to db (delegation notifications are not saved)
     const messages = await notificationModel.findAll()
     const recipientMessage = messages.find(
       (message) => message.recipient === userWithDelegations.nationalId,
     )
-    expect(messages).toHaveLength(2)
+    expect(messages).toHaveLength(1)
     expect(recipientMessage).toBeDefined()
 
     // should only send push notification for primary recipient
