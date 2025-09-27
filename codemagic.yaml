@@ -104,6 +104,41 @@ definitions:
         fi
         cd android
         ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
+    - &build_ios_unsigned_app
+      name: Build unsigned .app
+      script: |
+        xcodebuild \
+        -workspace "ios/$XCODE_WORKSPACE" \
+        -scheme "Ísland.dev" \
+        -configuration "Debug" \
+        -sdk iphonesimulator \
+        -derivedDataPath ios/output
+    - &run_ios_tests_on_maestro_cloud
+      name: Run tests on Maestro cloud
+      script: |
+        # Install Maestro CLI first
+        curl -Ls "https://get.maestro.mobile.dev" | bash
+
+        # Add to PATH
+        export PATH="$PATH":"$HOME/.maestro/bin"
+
+        # Verify installation
+        maestro --version
+
+        # Find the built app
+        iosAppPath=$(find ios/output -name "*.app" | head -1)
+        if [ -z "$iosAppPath" ]; then
+          echo "No .app file found in ios/output"
+          exit 1
+        fi
+
+        # Run Maestro Cloud
+        maestro cloud \
+        --apiKey $MDEV_API_KEY \
+        --projectId $MAESTRO_PROJECT_ID \
+        --name "Ísland.dev" \
+        $iosAppPath \
+        .maestro/
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -261,3 +296,31 @@ workflows:
     publishing:
       <<: *android_publishing
       <<: *slack_errors
+
+  e2e-tests-ios:
+    <<: *base
+    name: Island.is E2E Tests iOS
+    instance_type: mac_mini_m2
+    cache: *ios_cache
+    environment:
+      <<: *environment
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app.dev
+      vars:
+        <<: *shared_envs
+        BUNDLE_ID: 'is.island.app.dev'
+        XCODE_SCHEME: 'Ísland.dev'
+        APP_STORE_APPLE_ID: 1570427360
+        MDEV_API_KEY: $MDEV_API_KEY
+        MAESTRO_PROJECT_ID: proj_01k57043b8e7vvkd20k4epgh44
+    scripts:
+      - *check_changes
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *cocoapods
+      - *build_ios_unsigned_app
+      - *run_ios_tests_on_maestro_cloud
+    artifacts: &ios_artifacts_e2e_tests
+      - /tmp/xcodebuild_logs/*.log
