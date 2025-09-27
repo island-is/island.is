@@ -122,7 +122,7 @@ export const validateLatestPeriodValidationSection = (
   const latestPeriodIndex = periods.length - 1
   const latestPeriod = periods[latestPeriodIndex]
   const expectedDateOfBirthOrAdoptionDateOrBirthDate =
-    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
   if (!expectedDateOfBirthOrAdoptionDateOrBirthDate) {
     return {
