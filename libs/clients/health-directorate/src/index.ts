@@ -21,3 +21,4 @@ export {
   PrescriptionRenewalRequestDto,
 } from './lib/clients'
 export { DispensationHistoryItemDto } from './lib/clients/health/gen/fetch/models/DispensationHistoryItemDto'
+export * from './lib/clients/lsh-dev'
