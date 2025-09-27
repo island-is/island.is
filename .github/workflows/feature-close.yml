@@ -32,7 +32,7 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
+        
       - name: Generate feature name
         id: git-feature-name
         run: |
