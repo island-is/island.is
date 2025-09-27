@@ -89,6 +89,10 @@ export class FileStorageService {
     })
   }
 
+  async refreshS3ClientCredentials() {
+    await this.s3Service.refreshS3ClientCredentials()
+  }
+
   async getFileTags(filename: string): Promise<Tag[]> {
     if (!this.config.uploadBucket) {
       throw new Error('Upload bucket not configured.')

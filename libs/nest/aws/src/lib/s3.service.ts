@@ -50,14 +50,38 @@ export class S3Service {
       !this.s3Client ||
       now - this.lastCredentialTime > this.CREDENTIAL_REFRESH_INTERVAL
     ) {
-      this.s3Client = new S3Client({
-        credentials: defaultProvider(),
-        maxAttempts: 3,
-      })
+      try {
+        this.s3Client = new S3Client({
+          credentials: defaultProvider(),
+          maxAttempts: 3,
+        })
+      } catch (error) {
+        this.logger.error(
+          'Error creating new s3 client based on time interval',
+          error,
+        )
+        throw error
+      }
       this.lastCredentialTime = now
     }
 
     return this.s3Client
+  }
+
+  public async refreshS3ClientCredentials() {
+    try {
+      this.s3Client = new S3Client({
+        credentials: defaultProvider(),
+        maxAttempts: 3,
+      })
+    } catch (error) {
+      this.logger.error(
+        'Error creating new s3 client based on manual refresh',
+        error,
+      )
+      throw error
+    }
+    this.lastCredentialTime = Date.now()
   }
 
   public async getClientRegion(): Promise<string> {
