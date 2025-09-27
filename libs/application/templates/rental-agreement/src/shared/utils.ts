@@ -16,41 +16,43 @@ import {
   FireProtectionSection,
   ProvisionsAndConditionSection,
   Files,
-  LandlordInfo,
   BankAccount,
 } from './types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
-const mapLandLordInfo = (landlord: LandlordInfo): ApplicantsInfo => {
+const mapLandLordInfo = (landlord: ApplicantsInfo): ApplicantsInfo => {
   return {
     nationalIdWithName: landlord.nationalIdWithName,
     phone: landlord.phone,
     email: landlord.email,
     address: '', // Intentionally blank as it is not used in the HMS Rental Agreement
-    isRepresentative: landlord.isRepresentative?.includes('✔️'),
   }
 }
 
 const extractParticipants = (
   answers: Application['answers'],
-): ParticipantsSection => {
-  const landlordsAndRepresentatives =
-    getValueViaPath<LandlordInfo[]>(
+): ParticipantsSection => ({
+  landlords: (
+    getValueViaPath<ApplicantsInfo[]>(
       answers,
       'parties.landlordInfo.table',
       [],
     ) ?? []
-  const landlords = landlordsAndRepresentatives.map(mapLandLordInfo)
-  return {
-    landlords,
-    tenants:
-      getValueViaPath<ApplicantsInfo[]>(
-        answers,
-        'parties.tenantInfo.table',
-        [],
-      ) ?? [],
-  }
-}
+  ).map(mapLandLordInfo),
+  landlordRepresentatives: (
+    getValueViaPath<ApplicantsInfo[]>(
+      answers,
+      'parties.landlordInfo.representativeTable',
+      [],
+    ) ?? []
+  ).map(mapLandLordInfo),
+  tenants:
+    getValueViaPath<ApplicantsInfo[]>(
+      answers,
+      'parties.tenantInfo.table',
+      [],
+    ) ?? [],
+})
 
 const extractPropertyInfo = (
   answers: Application['answers'],
