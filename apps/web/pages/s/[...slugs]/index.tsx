@@ -13,6 +13,9 @@ import OrganizationSubPageGenericListItem, {
 import Home, {
   type HomeProps,
 } from '@island.is/web/screens/Organization/Home/Home'
+import NavigationCategory, {
+  type NavigationCategoryProps,
+} from '@island.is/web/screens/Organization/NavigationCategory/NavigationCategory'
 import OrganizationEventArticle, {
   type OrganizationEventArticleProps,
 } from '@island.is/web/screens/Organization/OrganizationEvents/OrganizationEventArticle'
@@ -58,6 +61,7 @@ enum PageType {
   STANDALONE_LEVEL1_SITEMAP = 'standalone-level1-sitemap',
   STANDALONE_LEVEL2_SITEMAP = 'standalone-level2-sitemap',
   PARENT_SUBPAGE = 'parent-subpage',
+  NAVIGATION_CATEGORY = 'navigation-category',
   SUBPAGE = 'subpage',
   ALL_NEWS = 'news',
   PUBLISHED_MATERIAL = 'published-material',
@@ -92,6 +96,7 @@ const pageMap: Record<PageType, FC<any>> = {
   [PageType.GENERIC_LIST_ITEM]: (props) => (
     <OrganizationSubPageGenericListItem {...props} />
   ),
+  [PageType.NAVIGATION_CATEGORY]: (props) => <NavigationCategory {...props} />,
 }
 
 interface Props {
@@ -171,6 +176,13 @@ interface Props {
     | {
         type: PageType.GENERIC_LIST_ITEM
         props: OrganizationSubPageGenericListItemProps
+      }
+    | {
+        type: PageType.NAVIGATION_CATEGORY
+        props: {
+          layoutProps: LayoutProps
+          componentProps: NavigationCategoryProps
+        }
       }
 }
 
@@ -281,20 +293,6 @@ Component.getProps = async (context) => {
       }
     }
 
-    if (
-      isStandaloneTheme &&
-      organizationPage.topLevelNavigation?.links.some(
-        (link) => slugs[1] === link.href.split('/').pop(),
-      )
-    ) {
-      return {
-        page: {
-          type: PageType.STANDALONE_LEVEL1_SITEMAP,
-          props: await StandaloneLevel1Sitemap.getProps(modifiedContext),
-        },
-      }
-    }
-
     try {
       if (isStandaloneTheme) {
         return {
@@ -316,12 +314,45 @@ Component.getProps = async (context) => {
       }
     }
 
-    return {
-      page: {
-        type: PageType.SUBPAGE,
-        props: await SubPage.getProps(modifiedContext),
-      },
+    try {
+      return {
+        page: {
+          type: PageType.SUBPAGE,
+          props: await SubPage.getProps(modifiedContext),
+        },
+      }
+    } catch (error) {
+      if (!(error instanceof CustomNextError)) {
+        throw error
+      }
     }
+
+    const navigationCategory = organizationPage.topLevelNavigation?.links.find(
+      (link) => slugs[1] === link.href.split('/').pop(),
+    )
+
+    if (navigationCategory) {
+      if (isStandaloneTheme) {
+        return {
+          page: {
+            type: PageType.STANDALONE_LEVEL1_SITEMAP,
+            props: await StandaloneLevel1Sitemap.getProps(modifiedContext),
+          },
+        }
+      }
+      return {
+        page: {
+          type: PageType.NAVIGATION_CATEGORY,
+          props: await NavigationCategory.getProps({
+            ...modifiedContext,
+            navigationCategory,
+            navigationCategorySlug: slugs[1],
+          }),
+        },
+      }
+    }
+
+    throw new CustomNextError(404)
   }
 
   if (slugs.length === 3) {
@@ -361,26 +392,6 @@ Component.getProps = async (context) => {
       }
     }
 
-    if (
-      isStandaloneTheme &&
-      organizationPage.topLevelNavigation?.links.some(
-        (link) => slugs[1] === link.href.split('/').pop(),
-      )
-    ) {
-      try {
-        return {
-          page: {
-            type: PageType.STANDALONE_LEVEL2_SITEMAP,
-            props: await StandaloneLevel2Sitemap.getProps(modifiedContext),
-          },
-        }
-      } catch (error) {
-        if (!(error instanceof CustomNextError)) {
-          throw error
-        }
-      }
-    }
-
     try {
       if (isStandaloneTheme) {
         return {
@@ -402,13 +413,44 @@ Component.getProps = async (context) => {
       }
     }
 
-    return {
-      page: {
-        type: PageType.GENERIC_LIST_ITEM,
-        props: await OrganizationSubPageGenericListItem.getProps(
-          modifiedContext,
-        ),
-      },
+    try {
+      return {
+        page: {
+          type: PageType.GENERIC_LIST_ITEM,
+          props: await OrganizationSubPageGenericListItem.getProps(
+            modifiedContext,
+          ),
+        },
+      }
+    } catch (error) {
+      if (!(error instanceof CustomNextError)) {
+        throw error
+      }
+    }
+
+    const navigationCategory = organizationPage.topLevelNavigation?.links.find(
+      (link) => slugs[1] === link.href.split('/').pop(),
+    )
+
+    if (navigationCategory) {
+      if (isStandaloneTheme) {
+        return {
+          page: {
+            type: PageType.STANDALONE_LEVEL2_SITEMAP,
+            props: await StandaloneLevel2Sitemap.getProps(modifiedContext),
+          },
+        }
+      }
+      return {
+        page: {
+          type: PageType.NAVIGATION_CATEGORY,
+          props: await NavigationCategory.getProps({
+            ...modifiedContext,
+            navigationCategory,
+            navigationCategorySlug: slugs[2],
+          }),
+        },
+      }
     }
   }
 

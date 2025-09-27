@@ -15,6 +15,7 @@ import {
   TeamListResolver,
   LatestGenericListItemsResolver,
   IntroLinkImageResolver,
+  OrganizationPageResolver,
   GenericListResolver,
   FeaturedGenericListItemsResolver,
 } from './cms.resolver'
@@ -68,6 +69,7 @@ import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByE
     TeamListResolver,
     LatestGenericListItemsResolver,
     IntroLinkImageResolver,
+    OrganizationPageResolver,
     GenericListResolver,
     FeaturedGenericListItemsResolver,
   ],
