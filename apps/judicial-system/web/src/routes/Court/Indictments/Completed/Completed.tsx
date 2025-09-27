@@ -20,6 +20,7 @@ import { Feature } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FeatureContext,
@@ -33,7 +34,6 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  RulingInput,
   SectionHeading,
   useIndictmentsLawsBroken,
   UserContext,
@@ -237,6 +237,22 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
+        {workingCase.indictmentRulingDecision &&
+          [
+            CaseIndictmentRulingDecision.RULING,
+            CaseIndictmentRulingDecision.DISMISSAL,
+          ].includes(workingCase.indictmentRulingDecision) && (
+            <Conclusion
+              title={`${
+                workingCase.indictmentRulingDecision ===
+                CaseIndictmentRulingDecision.RULING
+                  ? 'Dóms'
+                  : 'Úrskurðar'
+              }orð héraðsdóms`}
+              conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+              judgeName={workingCase.judge?.name}
+            />
+          )}
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
             {/*
@@ -508,21 +524,6 @@ const Completed: FC = () => {
             })}
           </Box>
         )}
-        {features?.includes(Feature.SERVICE_PORTAL) &&
-          workingCase.indictmentRulingDecision ===
-            CaseIndictmentRulingDecision.RULING && (
-            <Box>
-              <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
-              <RulingInput
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                rows={8}
-                label="Dómsorð"
-                placeholder="Hvert er dómsorðið?"
-                required
-              />
-            </Box>
-          )}
       </FormContentContainer>
       <Box marginBottom={10} />
       <FormContentContainer isFooter>

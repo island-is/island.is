@@ -15,6 +15,7 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlternativeServiceAnnouncement,
+  Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FeatureContext,
@@ -147,6 +148,7 @@ const IndictmentOverview: FC = () => {
     [router, workingCase.id],
   )
 
+  console.log(workingCase.state, workingCase.indictmentRulingDecision)
   return (
     <PageLayout
       workingCase={workingCase}
@@ -247,6 +249,23 @@ const IndictmentOverview: FC = () => {
               <InfoCardActiveIndictment displayVerdictViewDate />
             )}
           </Box>
+          {workingCase.state === CaseState.COMPLETED &&
+            workingCase.indictmentRulingDecision &&
+            [
+              CaseIndictmentRulingDecision.RULING,
+              CaseIndictmentRulingDecision.DISMISSAL,
+            ].includes(workingCase.indictmentRulingDecision) && (
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            )}
           {(hasLawsBroken || hasMergeCases) && (
             <Box marginBottom={5}>
               {/* 
