@@ -73,9 +73,11 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
     default:
       return [
         `Dómur fór í birtingu ${
-          verdict.created
-            ? ` - ${formatDate(verdict.created)} kl. ${formatDate(
-                verdict.created,
+          verdict.verdictDeliveredToNationalCommissionersOffice
+            ? ` - ${formatDate(
+                verdict.verdictDeliveredToNationalCommissionersOffice,
+              )} kl. ${formatDate(
+                verdict.verdictDeliveredToNationalCommissionersOffice,
                 TIME_FORMAT,
               )}`
             : ''
@@ -130,14 +132,21 @@ const VerdictStatusAlertMessage = ({
     )
   }
 
-  if (!verdict.externalPoliceDocumentId) {
+  if (
+    verdict.verdictDeliveredToNationalCommissionersOffice &&
+    verdict.externalPoliceDocumentId &&
+    !verdict.serviceDate
+  ) {
     return (
       <AlertMessage
         type="info"
         title="Dómur er í birtingarferli"
         message={`Dómur fór í birtingu ${formatDate(
-          verdict.created, // TODO: replace this date with a correct delivery date
-        )} kl. ${formatDate(verdict.created, TIME_FORMAT)}`}
+          verdict.verdictDeliveredToNationalCommissionersOffice,
+        )} kl. ${formatDate(
+          verdict.verdictDeliveredToNationalCommissionersOffice,
+          TIME_FORMAT,
+        )}`}
       />
     )
   }
@@ -156,7 +165,6 @@ const VerdictStatusAlert = (props: {
 
   useEffect(() => {
     if (
-      !verdict?.defenderNationalId ||
       verdict?.serviceStatus !== VerdictServiceStatus.DEFENDER ||
       !lawyers ||
       lawyers.length === 0
@@ -164,12 +172,20 @@ const VerdictStatusAlert = (props: {
       return
     }
 
+    const deliveredToDefenderNationalId =
+      verdict.deliveredToDefenderNationalId ?? defendant.defenderNationalId
+
     setLawyer(
       lawyers.find(
-        (lawyer) => lawyer.nationalId === verdict.defenderNationalId,
+        (lawyer) => lawyer.nationalId === deliveredToDefenderNationalId,
       ),
     )
-  }, [lawyers, verdict?.defenderNationalId, verdict?.serviceStatus])
+  }, [
+    lawyers,
+    verdict?.deliveredToDefenderNationalId,
+    verdict?.serviceStatus,
+    defendant.defenderNationalId,
+  ])
 
   return verdictLoading ? (
     <Box display="flex" justifyContent="center" paddingY={5}>
