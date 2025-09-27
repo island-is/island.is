@@ -1,4 +1,7 @@
 import format from 'date-fns/format'
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
 import { Base64 } from 'js-base64'
 import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -23,10 +26,14 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseType,
+  DefendantEventType,
   EventType,
+  getIndictmentAppealDeadlineDate,
+  hasDatePassed,
   hasGeneratedCourtRecordPdf,
   isIndictmentCase,
   isProsecutionUser,
@@ -64,6 +71,7 @@ import {
   CaseString,
   DateLog,
   Defendant,
+  DefendantEventLog,
   EventLog,
   IndictmentCount,
   Institution,
@@ -568,6 +576,132 @@ export class InternalCaseService {
     this.eventService.postEvent('ARCHIVE', theCase)
 
     return { caseArchived: true }
+  }
+
+  async getIndictmentCaseDefendantsWithExpiredAppealDeadline(): Promise<
+    { theCase: Case; defendant: Defendant }[]
+  > {
+    const cases = await this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: User,
+          as: 'judge',
+          required: false,
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: EventLog,
+          as: 'eventLogs',
+          required: false,
+          separate: true,
+        },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: false,
+          include: [
+            {
+              model: DefendantEventLog,
+              as: 'eventLogs',
+              required: false,
+              separate: true,
+            },
+            {
+              model: Verdict,
+              as: 'verdict',
+              required: false,
+            },
+          ],
+          separate: true,
+        },
+      ],
+      where: {
+        [Op.and]: [
+          {
+            id: {
+              [Op.notIn]: Sequelize.literal(`
+                (SELECT case_id
+                FROM event_log
+                WHERE event_type = 'VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED')
+              `),
+            },
+          },
+          {
+            id: {
+              [Op.in]: Sequelize.literal(`
+              (SELECT case_id
+              FROM verdict
+              WHERE service_date IS NOT NULL)
+            `),
+            },
+          },
+        ],
+        state: { [Op.eq]: CaseState.COMPLETED },
+        type: CaseType.INDICTMENT,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      },
+    })
+
+    const isRuling = true // we iterate through cases completed with ruling
+    return cases.flatMap((theCase) =>
+      pipe(
+        theCase.defendants ?? [],
+        filterMap((defendant) => {
+          const isVerdictServiceCertificateDelivered =
+            DefendantEventLog.getEventLogByEventType(
+              DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+              defendant.eventLogs,
+            )
+          if (
+            !isVerdictServiceCertificateDelivered &&
+            defendant.verdict?.serviceDate
+          ) {
+            const appealDeadline = getIndictmentAppealDeadlineDate(
+              defendant.verdict?.serviceDate,
+              isRuling,
+            )
+            const isAppealDeadlineExpired = hasDatePassed(appealDeadline)
+            if (isAppealDeadlineExpired) {
+              return option.some({ theCase, defendant })
+            }
+          }
+          return option.none
+        }),
+      ),
+    )
+  }
+
+  async getSelectedCases(caseIds: string[]) {
+    return this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: EventLog,
+          as: 'eventLogs',
+          required: false,
+          separate: true,
+        },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: false,
+          order: [['created', 'ASC']],
+          include: [
+            {
+              model: DefendantEventLog,
+              as: 'eventLogs',
+              required: false,
+              separate: true,
+            },
+          ],
+          separate: true,
+        },
+      ],
+      where: {
+        id: {
+          [Op.in]: caseIds,
+        },
+      },
+    })
   }
 
   async getCaseHearingArrangements(date: Date): Promise<Case[]> {
