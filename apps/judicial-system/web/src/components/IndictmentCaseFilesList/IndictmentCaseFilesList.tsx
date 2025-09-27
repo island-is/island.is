@@ -28,7 +28,10 @@ import {
   CaseIndictmentRulingDecision,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useFiledCourtDocuments,
+  useFileList,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
@@ -44,6 +47,7 @@ interface Props {
 interface RenderFilesProps {
   caseFiles: CaseFile[]
   onOpenFile: (fileId: string) => void
+  showFiledDocumentNumber?: boolean
 }
 
 interface FileSectionProps {
@@ -56,13 +60,25 @@ interface FileSectionProps {
 export const RenderFiles: FC<RenderFilesProps> = ({
   caseFiles,
   onOpenFile,
+  showFiledDocumentNumber = false,
 }) => {
+  const { prefixUploadedDocumentNameWithDocumentOrder } =
+    useFiledCourtDocuments()
+
+  const getFileName = (file: CaseFile) => {
+    if (!showFiledDocumentNumber) {
+      return file.name
+    }
+
+    return prefixUploadedDocumentNameWithDocumentOrder(file.id, file.name ?? '')
+  }
+
   return (
     <>
       {caseFiles.map((file) => (
         <Box key={file.id} marginBottom={2}>
           <PdfButton
-            title={file.name}
+            title={getFileName(file)}
             renderAs="row"
             disabled={!file.key}
             handleClick={() => onOpenFile(file.id)}
@@ -88,7 +104,11 @@ const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
         heading="h4"
         variant="h4"
       />
-      <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />
+      <RenderFiles
+        caseFiles={files}
+        onOpenFile={onOpenFile}
+        showFiledDocumentNumber
+      />
       {children}
     </Box>
   )
@@ -208,6 +228,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
     caseId: workingCase.id,
     connectedCaseParentId,
   })
+  const { prefixGeneratedDocumentNameWithDocumentOrder } =
+    useFiledCourtDocuments()
 
   const showSubpoenaPdf =
     displayGeneratedPDFs &&
@@ -252,7 +274,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <PdfButton
               caseId={workingCase.id}
               connectedCaseParentId={connectedCaseParentId}
-              title={formatMessage(caseFiles.indictmentTitle)}
+              title={prefixGeneratedDocumentNameWithDocumentOrder(
+                'indictment',
+                formatMessage(caseFiles.indictmentTitle),
+              )}
               pdfType="indictment"
               renderAs="row"
               elementId="Ákæra"
@@ -293,9 +318,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 <PdfButton
                   caseId={workingCase.id}
                   connectedCaseParentId={connectedCaseParentId}
-                  title={formatMessage(strings.caseFileButtonText, {
-                    policeCaseNumber,
-                  })}
+                  title={prefixGeneratedDocumentNameWithDocumentOrder(
+                    `caseFilesRecord/${policeCaseNumber}`,
+                    formatMessage(strings.caseFileButtonText, {
+                      policeCaseNumber,
+                    }),
+                  )}
                   pdfType="caseFilesRecord"
                   elementId={policeCaseNumber}
                   renderAs="row"
@@ -325,7 +353,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     <Box key={`subpoena-${subpoena.id}`} marginBottom={2}>
                       <PdfButton
                         caseId={workingCase.id}
-                        title={subpoenaFileName}
+                        title={prefixGeneratedDocumentNameWithDocumentOrder(
+                          `subpoena/${defendant.id}/${subpoena.id}`,
+                          subpoenaFileName,
+                        )}
                         pdfType="subpoena"
                         elementId={[
                           defendant.id,
@@ -338,9 +369,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
                         isSuccessfulServiceStatus(subpoena.serviceStatus) && (
                           <PdfButton
                             caseId={workingCase.id}
-                            title={formatMessage(
-                              strings.serviceCertificateButtonText,
-                              { name: defendant.name },
+                            title={prefixGeneratedDocumentNameWithDocumentOrder(
+                              `subpoenaServiceCertificate/${defendant.id}/${subpoena.id}`,
+                              formatMessage(
+                                strings.serviceCertificateButtonText,
+                                { name: defendant.name },
+                              ),
                             )}
                             pdfType="subpoenaServiceCertificate"
                             elementId={[defendant.id, subpoena.id]}
