@@ -1,12 +1,5 @@
-import {
-  DefenderInfoDefenderChoiceEnum,
-  StateTagColorEnum,
-  SubpoenaDataDefaultDefenderChoiceEnum,
-  UpdateSubpoenaDtoDefenderChoiceEnum,
-} from '@island.is/clients/judicial-system-sp'
-import { CourtCaseStateTagColorEnum } from '../../models/courtCases.model'
-import { DefenseChoiceEnum } from '../../models/defenseChoiceEnum.model'
-import { m } from '../messages'
+import { DefenderInfoDefenderChoiceEnum, SubpoenaDataDefaultDefenderChoiceEnum, UpdateSubpoenaDtoDefenderChoiceEnum } from "@island.is/clients/judicial-system-sp"
+import { DefenseChoiceEnum } from "../models/law-and-order/defenseChoiceEnum.model"
 
 // Maps the application's internal representation of defense choices to the judicial system's representation.
 export const mapDefenseChoice = (
@@ -66,64 +59,4 @@ export const mapDefenseChoiceForSummonDefaultChoice = (
       // Provides a default mapping if the input doesn't match any known value.
       return DefenseChoiceEnum.DELAY
   }
-}
-
-export const mapTagTypes = (
-  color?: StateTagColorEnum,
-): CourtCaseStateTagColorEnum => {
-  switch (color) {
-    case StateTagColorEnum.Blue:
-      return CourtCaseStateTagColorEnum.blue
-    case StateTagColorEnum.Blueberry:
-      return CourtCaseStateTagColorEnum.blueberry
-    case StateTagColorEnum.DarkerBlue:
-      return CourtCaseStateTagColorEnum.darkerBlue
-    case StateTagColorEnum.Disabled:
-      return CourtCaseStateTagColorEnum.disabled
-    case StateTagColorEnum.Dark:
-      return CourtCaseStateTagColorEnum.dark
-    case StateTagColorEnum.Mint:
-      return CourtCaseStateTagColorEnum.mint
-    case StateTagColorEnum.Purple:
-      return CourtCaseStateTagColorEnum.purple
-    case StateTagColorEnum.Red:
-      return CourtCaseStateTagColorEnum.red
-    case StateTagColorEnum.Rose:
-      return CourtCaseStateTagColorEnum.rose
-    case StateTagColorEnum.Warn:
-      return CourtCaseStateTagColorEnum.warn
-    case StateTagColorEnum.White:
-      return CourtCaseStateTagColorEnum.white
-    case StateTagColorEnum.Yellow:
-      return CourtCaseStateTagColorEnum.yellow
-
-    default:
-      return CourtCaseStateTagColorEnum.blue
-  }
-}
-
-interface Choice {
-  message: {
-    id: string
-    defaultMessage: string
-  }
-}
-
-// Get localized messages for defense choices in Subpoena
-export const DefenseChoices: Record<DefenseChoiceEnum, Choice> = {
-  WAIVE: {
-    message: m.waiveMessage,
-  },
-  CHOOSE: {
-    message: m.chooseMessage,
-  },
-  DELAY: {
-    message: m.delayMessage,
-  },
-  DELEGATE: {
-    message: {
-      id: 'api.law-and-order:choose-for-me',
-      defaultMessage: 'Ég fel dómara málsins að tilnefna og skipa mér verjanda',
-    },
-  },
 }
