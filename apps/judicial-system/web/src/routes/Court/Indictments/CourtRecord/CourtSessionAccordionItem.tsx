@@ -32,6 +32,7 @@ import {
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
   Case,
+  CourtDocumentType,
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
@@ -40,7 +41,6 @@ import {
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
-  TUploadFile,
   useCourtDocuments,
   useCourtSessions,
   useUsers,
@@ -67,6 +67,7 @@ interface FiledDocuments {
 interface ReorderableFile {
   id: string
   name: string
+  documentType: CourtDocumentType
 }
 
 const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
@@ -190,6 +191,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       workingCase.unfiledCourtDocuments.map((doc) => ({
         id: doc.id,
         name: doc.name,
+        documentType: doc.documentType,
       })),
     )
   }, [workingCase.unfiledCourtDocuments])
@@ -211,11 +213,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     }
   }
 
-  const handleDeleteFile = async (file: TUploadFile) => {
-    if (!file.id) {
+  const handleDeleteFile = async (id: string) => {
+    const file = reorderableFiles
+      .flatMap((fd) => fd.files)
+      .find((f) => f.id === id)
+
+    if (!file) {
       return
     }
-    const id = file.id
 
     const deleted = await courtDocument.delete.action({
       caseId: workingCase.id,
@@ -227,12 +232,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    setUnfiledFiles((prev) => [{ id, name: file.name }, ...prev])
+    if (file.documentType !== CourtDocumentType.EXTERNAL_DOCUMENT) {
+      setUnfiledFiles((prev) => [file, ...prev])
+    }
 
     setReorderableFiles((prev) =>
       prev.map((session) =>
         session.courtSessionId === courtSession.id
-          ? { ...session, files: session.files.filter((i) => i.id !== file.id) }
+          ? { ...session, files: session.files.filter((i) => i.id !== id) }
           : session,
       ),
     )
@@ -310,10 +317,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         session.courtSessionId === courtSession.id
           ? {
               ...session,
-              files: [
-                ...session.files,
-                { id: res.fileCourtDocumentInCourtSession.id, name: file.name },
-              ],
+              files: [...session.files, file],
             }
           : session,
       ),
@@ -386,7 +390,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         session.courtSessionId === courtSession.id
           ? {
               ...session,
-              files: [...session.files, { id: res.id, name: value }],
+              files: [
+                ...session.files,
+                {
+                  id: res.id,
+                  name: value,
+                  documentType: CourtDocumentType.EXTERNAL_DOCUMENT,
+                },
+              ],
             }
           : session,
       ),
