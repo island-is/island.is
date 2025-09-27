@@ -9,6 +9,7 @@ interface CalendarEvent {
   startDate: string
   startTime?: string | null
   endTime?: string | null
+  endDate?: string | null
 }
 
 const formatDate = (dateTime: string, isAllDay = false): string => {
@@ -30,10 +31,13 @@ const downloadICSFile = ({
   startDate,
   startTime,
   endTime,
+  endDate,
 }: CalendarEvent): void => {
   const isAllDay = !startTime
   const startDateTime = isAllDay ? startDate : `${startDate}T${startTime}`
-  const endDateTime = endTime ? `${startDate}T${endTime}` : null
+  const endDateTime = endTime
+    ? `${endDate ? endDate : startDate}T${endTime}`
+    : null
 
   const fullDescription = `${pageUrl ? `${pageUrl}\n\n` : ''}${description}`
 
@@ -66,6 +70,7 @@ END:VCALENDAR`
 const generateGoogleCalendarLink = (props: CalendarEvent) => {
   const baseUrl = 'https://www.google.com/calendar/render'
   const isAllDay = !props.startTime || !props.endTime
+  const endDate = props.endDate ? props.endDate : props.startDate
 
   // Construct start and end date-time strings in the correct format
   const startDateTime = isAllDay
@@ -73,9 +78,9 @@ const generateGoogleCalendarLink = (props: CalendarEvent) => {
     : formatDate(`${props.startDate}T${props.startTime}`) // Full UTC format
 
   const endDateTime = props.endTime
-    ? formatDate(`${props.startDate}T${props.endTime}`)
+    ? formatDate(`${endDate}T${props.endTime}`)
     : isAllDay
-    ? formatDate(props.startDate, true) // Keep YYYYMMDD for all-day
+    ? formatDate(endDate, true) // Keep YYYYMMDD for all-day
     : null // No end time for time-based events if not provided
 
   // Prepend event page link to the description
