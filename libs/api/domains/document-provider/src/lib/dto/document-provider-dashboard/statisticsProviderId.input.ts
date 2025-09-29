@@ -1,4 +1,4 @@
-import { Field, Int, InputType } from '@nestjs/graphql'
+import { Field, Int, InputType, GraphQLISODateTime } from '@nestjs/graphql'
 
 @InputType('GetStatisticsCategoriesByProviderId')
 export class GetStatisticsCategoriesByProviderId {
@@ -9,9 +9,9 @@ export class GetStatisticsCategoriesByProviderId {
   @Field(() => [Int], { nullable: true })
   categories?: Array<number>
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   from?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   to?: Date
 }

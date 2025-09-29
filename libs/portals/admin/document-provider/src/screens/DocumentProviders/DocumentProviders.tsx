@@ -51,7 +51,7 @@ const DocumentProviders = () => {
 
   useEffect(() => {
     if (
-      user.scopes.includes(
+      user?.scopes?.includes(
         AdminPortalScope.documentProviderInstitution,
       )
     ) {

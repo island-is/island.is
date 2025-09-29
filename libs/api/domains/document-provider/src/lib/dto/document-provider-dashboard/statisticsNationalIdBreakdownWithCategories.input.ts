@@ -1,14 +1,14 @@
-import { Field, Int, InputType } from '@nestjs/graphql'
+import { Field, Int, InputType, GraphQLISODateTime } from '@nestjs/graphql'
 import { TotalStatisticsSortBy } from './statisticsNationalIdBreakdown.input'
 import { Min } from 'class-validator'
 
 @InputType('GetStatisticsBreakdownWithCategoriesByNationalId')
 export class GetStatisticsBreakdownWithCategoriesByNationalId {
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   from?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   to?: Date
 
   @Field(() => TotalStatisticsSortBy, { nullable: true })

@@ -1,6 +1,6 @@
-import { Inject, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { Args, Query } from '@nestjs/graphql'
-import { ApolloError } from '@apollo/client'
+import { GraphQLError } from 'graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -10,8 +10,6 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import {
   FeatureFlagGuard,
   FeatureFlagService,
@@ -32,8 +30,6 @@ import { ProviderStatisticsCategoryBreakdownPaginationResponse } from '../models
 import { GetStatisticsBreakdownWithCategoriesByProviderId } from '../dto/document-provider-dashboard/statisticsProvidersBreakdownWithCategories.input'
 import { GetStatisticsBreakdownWithCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdownWithCategories.input'
 
-const LOG_CATEGORY = 'document-provider-dashboard-resolver'
-
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/document-provider-dashboard' })
 export class DocumentProviderDashboardResolver {
@@ -41,7 +37,6 @@ export class DocumentProviderDashboardResolver {
     private documentProviderDashboardService: DocumentProviderDashboardService,
     private readonly auditService: AuditService,
     private readonly featureFlagService: FeatureFlagService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Scopes(AdminPortalScope.documentProvider)
@@ -71,7 +66,7 @@ export class DocumentProviderDashboardResolver {
       )
       return data
     } catch (e) {
-      throw new ApolloError(e.message)
+      throw new GraphQLError(e.message)
     }
   }
 
@@ -111,7 +106,7 @@ export class DocumentProviderDashboardResolver {
           }))
         : data
     } catch (e) {
-      throw new ApolloError(e.message)
+      throw new GraphQLError(e.message)
     }
   }
 
@@ -142,7 +137,7 @@ export class DocumentProviderDashboardResolver {
 
       return data
     } catch (e) {
-      throw new ApolloError(e.message)
+      throw new GraphQLError(e.message)
     }
   }
 
@@ -165,6 +160,7 @@ export class DocumentProviderDashboardResolver {
           resources: user.nationalId,
           meta: {
             nationalId: user.nationalId,
+            providerId: input.providerId,
           },
         },
         this.documentProviderDashboardService.getStatisticsBreakdownByProviderId(
@@ -174,7 +170,7 @@ export class DocumentProviderDashboardResolver {
 
       return data
     } catch (e) {
-      throw new ApolloError(e.message)
+      throw new GraphQLError(e.message)
     }
   }
 
@@ -207,7 +203,7 @@ export class DocumentProviderDashboardResolver {
 
       return data
     } catch (e) {
-      throw new ApolloError(e.message)
+      throw new GraphQLError(e.message)
     }
   }
 
@@ -239,7 +235,7 @@ export class DocumentProviderDashboardResolver {
 
       return data
    } catch (e) {
-      throw new ApolloError(e.message)
+      throw new GraphQLError(e.message)
     }
   }
 
@@ -271,7 +267,7 @@ export class DocumentProviderDashboardResolver {
       )
       return data
     } catch (e) {
-      throw new ApolloError(e.message)
+      throw new GraphQLError(e.message)
     }
   }
 
@@ -302,10 +298,10 @@ export class DocumentProviderDashboardResolver {
           user
         ),
       )
-      
+
       return data
     } catch (e) {
-      throw new ApolloError(e.message)
+      throw new GraphQLError(e.message)
     }
   }
 }

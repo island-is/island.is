@@ -1,4 +1,4 @@
-import { Field, Int, InputType, registerEnumType } from '@nestjs/graphql'
+import { Field, Int, InputType, registerEnumType, GraphQLISODateTime } from '@nestjs/graphql'
 import { Min } from 'class-validator'
 
 export enum StatisticsSortBy {
@@ -12,10 +12,10 @@ registerEnumType(StatisticsSortBy, { name: 'StatisticsSortBy' })
 
 @InputType('GetStatisticsProvidersNationalId')
 export class GetStatisticsProvidersNationalId {
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   from?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   to?: Date
 
   @Field(() => StatisticsSortBy, { nullable: true })

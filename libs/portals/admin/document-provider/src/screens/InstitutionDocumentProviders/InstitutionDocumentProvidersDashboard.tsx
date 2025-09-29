@@ -16,7 +16,6 @@ interface Props {
 
 export const InstitutionDocumentProvidersDashboard = ({
   statistics,
-  nationalId,
   sentFilesData,
   fromDate,
   toDate,

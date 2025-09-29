@@ -29,7 +29,7 @@ export type ProviderStatisticsBreakdown = {
 }
 
 export type GetProviderStatisticsBreakdownReturnType = {
-  breakdown: ProviderStatisticsBreakdownPaginationResponse
+  breakdown: ProviderStatisticsBreakdownPaginationResponse | null
   chartData?: Array<DocumentProviderDashboardChartData>
   loading: boolean
 }

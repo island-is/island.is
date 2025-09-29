@@ -18,7 +18,6 @@ import {
   TabOptions,
   TypeCategoryContext,
 } from './TypeCategoryContext'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { DocumentProvidersNavigation } from '../../components/DocumentProvidersNavigation/DocumentProvidersNavigation'
 import { useGetProvidersByNationalId } from '../../shared/useGetProvidersByNationalId'
 import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
@@ -29,7 +28,6 @@ const CategoriesAndTypes = () => {
     useState<CategoryAndType>()
   const [activeTab, setActiveTab] = useState<TabOptions>('categories')
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const user = useUserInfo()
   const { loading, items: providers } = useGetProvidersByNationalId(
     undefined,
     undefined,

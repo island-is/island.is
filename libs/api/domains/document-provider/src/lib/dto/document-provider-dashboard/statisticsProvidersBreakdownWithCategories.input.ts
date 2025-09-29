@@ -1,5 +1,5 @@
 import { Field, GraphQLISODateTime, InputType, Int, registerEnumType } from '@nestjs/graphql'
-import { IsBoolean, IsOptional, IsUUID, Matches, Max, Min } from 'class-validator'
+import { IsBoolean, IsOptional, IsUUID, Max, Min } from 'class-validator'
 
 export enum CategoryStatisticsSortBy {
   Date = 'Date',

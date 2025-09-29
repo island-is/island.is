@@ -1,10 +1,10 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, InputType } from '@nestjs/graphql'
 
 @InputType('GetStatisticsCategoriesByNationalId')
 export class GetStatisticsCategoriesByNationalId {
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   from?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   to?: Date
 }
