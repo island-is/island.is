@@ -6,14 +6,15 @@ paths:
   /api/getcases/{socialsecuritynumber}:
     get:
       tags: [MittLogreglan.API]
-      parameters: [
-        {
-          name: socialsecuritynumber,
-          in: path,
-          required: true,
-          schema: { type: string }
-        }
-      ]
+      parameters:
+        [
+          {
+            name: socialsecuritynumber,
+            in: path,
+            required: true,
+            schema: { type: string },
+          },
+        ]
       responses:
         '200':
           description: Success
@@ -69,4 +70,4 @@ components:
       description: 'X-API-KEY: apikey12345'
       name: X-API-KEY
       in: header
-security: [ ApiKey: [] ]
+security: [ApiKey: []]

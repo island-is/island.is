@@ -5,10 +5,10 @@ export class Case {
   @Field()
   number!: string
 
-  @Field({nullable: true})
+  @Field({ nullable: true })
   type?: string
 
-  @Field({nullable: true})
+  @Field({ nullable: true })
   status?: string
 
   @Field({ nullable: true })
@@ -20,12 +20,12 @@ export class Case {
   @Field({ nullable: true })
   department?: string
 
-  @Field({nullable: true, description: 'ISO8601'})
+  @Field({ nullable: true, description: 'ISO8601' })
   received?: string
 
   @Field({ nullable: true })
   receivedLocation?: string
 
-  @Field({nullable: true, description: 'ISO8601'})
+  @Field({ nullable: true, description: 'ISO8601' })
   modified?: string
 }

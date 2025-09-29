@@ -11,7 +11,11 @@ import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Injectable } from '@nestjs/common'
 import { PostDefenseChoiceInput } from '../../dto/postDefenseChoiceInput.model'
-import { mapDefenseChoiceForSummon, mapDefenseChoiceForSummonDefaultChoice, mapDefenseChoice } from '../mappers/defenseChoiceMapper'
+import {
+  mapDefenseChoiceForSummon,
+  mapDefenseChoiceForSummonDefaultChoice,
+  mapDefenseChoice,
+} from '../mappers/defenseChoiceMapper'
 import { DefenseChoices } from '../mappers/messageMapper'
 import { mapTagTypes } from '../mappers/tagTypeMapper'
 import { m } from '../messages'

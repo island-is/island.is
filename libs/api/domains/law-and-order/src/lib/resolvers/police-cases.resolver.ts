@@ -7,9 +7,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import {
-  FeatureFlagGuard,
-} from '@island.is/nest/feature-flags'
+import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
@@ -18,24 +16,19 @@ import { PaginantedCaseCollection } from '../models/police-cases/paginatedCaseCo
 import { Case } from '../models/police-cases/case.model'
 import { GetPoliceCaseInput } from '../../dto/getPoliceCaseInput'
 
-
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/police-cases' })
 @Scopes(ApiScope.lawAndOrder)
 export class PoliceCasesResolver {
-  constructor(
-    private readonly policeCasesService: PoliceCasesService,
-  ) {}
+  constructor(private readonly policeCasesService: PoliceCasesService) {}
 
   @Query(() => PaginantedCaseCollection, {
     name: 'lawAndOrderPoliceCasesPaginatedCollection',
     nullable: true,
   })
   @Audit()
-  getCasesList(
-    @CurrentUser() user: User,
-  ) {
+  getCasesList(@CurrentUser() user: User) {
     return this.policeCasesService.getCases(user)
   }
 
@@ -44,12 +37,7 @@ export class PoliceCasesResolver {
     nullable: true,
   })
   @Audit()
-  getCase(
-    @CurrentUser() user: User,
-    @Args('input') input: GetPoliceCaseInput,
-
-  ) {
+  getCase(@CurrentUser() user: User, @Args('input') input: GetPoliceCaseInput) {
     return this.policeCasesService.getCase(user, input.caseNumber)
   }
-
 }

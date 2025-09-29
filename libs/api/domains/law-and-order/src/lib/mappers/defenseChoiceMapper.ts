@@ -1,5 +1,9 @@
-import { DefenderInfoDefenderChoiceEnum, SubpoenaDataDefaultDefenderChoiceEnum, UpdateSubpoenaDtoDefenderChoiceEnum } from "@island.is/clients/judicial-system-sp"
-import { DefenseChoiceEnum } from "../models/law-and-order/defenseChoiceEnum.model"
+import {
+  DefenderInfoDefenderChoiceEnum,
+  SubpoenaDataDefaultDefenderChoiceEnum,
+  UpdateSubpoenaDtoDefenderChoiceEnum,
+} from '@island.is/clients/judicial-system-sp'
+import { DefenseChoiceEnum } from '../models/law-and-order/defenseChoiceEnum.model'
 
 // Maps the application's internal representation of defense choices to the judicial system's representation.
 export const mapDefenseChoice = (

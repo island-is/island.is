@@ -401,8 +401,6 @@ export const Firearm = new XroadConf({
   },
 })
 
-
-
 export const PoliceCases = new XroadConf({
   env: {
     XROAD_POLICE_CASES_PATH: {

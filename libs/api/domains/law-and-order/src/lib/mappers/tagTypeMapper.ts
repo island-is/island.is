@@ -1,6 +1,5 @@
-import { StateTagColorEnum } from "@island.is/clients/judicial-system-sp"
-import { CourtCaseStateTagColorEnum } from "../models/law-and-order/courtCases.model"
-
+import { StateTagColorEnum } from '@island.is/clients/judicial-system-sp'
+import { CourtCaseStateTagColorEnum } from '../models/law-and-order/courtCases.model'
 
 export const mapTagTypes = (
   color?: StateTagColorEnum,

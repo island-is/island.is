@@ -1,7 +1,7 @@
-import { CaseDto } from "@island.is/clients/police-cases"
-import { Case } from "../models/police-cases/case.model"
+import { CaseDto } from '@island.is/clients/police-cases'
+import { Case } from '../models/police-cases/case.model'
 
-export const mapPoliceCase = (data: CaseDto): Case | null   => {
+export const mapPoliceCase = (data: CaseDto): Case | null => {
   if (!data.caseNumber) {
     return null
   }
