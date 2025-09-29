@@ -229,13 +229,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     setUnfiledFiles((prev) => [{ id, name: file.name }, ...prev])
 
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? { ...session, files: session.files.filter((i) => i.id !== file.id) }
-          : session,
+    patchSession(courtSession.id, {
+      filedDocuments: courtSession.filedDocuments?.filter(
+        (i) => i.id !== file.id,
       ),
-    )
+    })
   }
 
   const handleReorder = (newOrder: ReorderableFile[]) => {
@@ -283,18 +281,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       name: newName,
     })
 
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSessionId
-          ? {
-              ...session,
-              files: session.files.map((file) =>
-                file.id === fileId ? { ...file, name: newName } : file,
-              ),
-            }
-          : session,
+    patchSession(courtSession.id, {
+      filedDocuments: courtSession.filedDocuments?.map((file) =>
+        file.id === fileId ? { ...file, name: newName } : file,
       ),
-    )
+    })
   }
 
   const handleFileCourtDocument = async (file: ReorderableFile) => {
@@ -309,20 +300,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     setUnfiledFiles((prev) => prev.filter((item) => item.id !== file.id))
 
     patchSession(courtSession.id, {
-      ...courtSession,
       filedDocuments: [...(courtSession.filedDocuments || []), res],
     })
-
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? {
-              ...session,
-              files: [...session.files, { id: res.id, name: file.name }],
-            }
-          : session,
-      ),
-    )
   }
 
   const handleChangeWitness = (value?: string | null) => {
@@ -387,20 +366,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     if (!res) return
 
     patchSession(courtSession.id, {
-      ...courtSession,
       filedDocuments: [...(courtSession.filedDocuments || []), res],
     })
-
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? {
-              ...session,
-              files: [...session.files, { id: res.id, name: value }],
-            }
-          : session,
-      ),
-    )
   }
 
   const containerVariants = {
