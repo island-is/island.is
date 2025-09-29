@@ -69,10 +69,7 @@ export class IdentityClientService {
           : identity?.name
         : undefined
     } catch (error) {
-      this.logger.error(
-        'Error getting identity',
-        error,
-      )
+      this.logger.error('Error getting identity', error)
       return undefined
     }
   }
