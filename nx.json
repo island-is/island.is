@@ -143,10 +143,7 @@
       "cache": true,
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
       "options": {
-        "passWithNoTests": true,
-        "jestConfig": "jest.config.ts",
-        "coverage": true,
-        "ci": true
+        "passWithNoTests": true
       },
       "configurations": {
         "ci": {
