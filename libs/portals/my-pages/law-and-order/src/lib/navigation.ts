@@ -41,5 +41,17 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: m.myPoliceCases,
+      description: m.myPoliceCasesIntro,
+      path: LawAndOrderPaths.PoliceCases,
+      children: [
+        {
+          name: m.policeCases,
+          path: LawAndOrderPaths.PoliceCasesDetail,
+          navHide: true,
+        },
+      ],
+    },
   ],
 }

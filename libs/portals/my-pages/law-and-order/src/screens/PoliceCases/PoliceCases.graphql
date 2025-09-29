@@ -1,0 +1,20 @@
+query GetPoliceCases {
+  lawAndOrderPoliceCasesPaginatedCollection {
+    data {
+      number
+      type
+      status
+      contact
+      courtAdvocate
+      department
+      received
+      receivedLocation
+      modified
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+    }
+
+  }
+}
