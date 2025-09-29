@@ -26,8 +26,6 @@ export const shouldShowRepresentative = (answers: FormValue) => {
     'parties.landlordInfo.representativeTable',
   )
 
-  console.log(representatives)
-
   if (
     !representatives ||
     representatives.length === 0 ||
@@ -131,4 +129,12 @@ export const shouldShowRepresentativeStaticTable = (answers: FormValue) => {
   )
 
   return aplicantRole === ApplicantsRole.REPRESENTATIVE
+}
+
+export const shouldShowRepresentativeTable = (answers: FormValue) => {
+  const shouldShowRepresentativeTable = getValueViaPath<Array<string>>(
+    answers,
+    'parties.landlordInfo.shouldShowRepresentativeTable',
+  )
+  return shouldShowRepresentativeTable?.includes(YES) || false
 }
