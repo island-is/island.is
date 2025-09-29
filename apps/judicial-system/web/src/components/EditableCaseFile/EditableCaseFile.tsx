@@ -19,6 +19,7 @@ import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { CaseFileCategory } from '../../graphql/schema'
+import { TUploadFile } from '../../utils/hooks'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
 
@@ -48,8 +49,8 @@ interface Props {
   disabled?: boolean
   onOpen?: (id: string) => void
   onRename: (id: string, name: string, displayDate: string) => void
-  onDelete: (id: string) => void
-  onRetry?: (id: string) => void
+  onDelete: (file: TUploadFile) => void
+  onRetry?: (file: TUploadFile) => void
   onStartEditing?: () => void
   onStopEditing?: () => void
 }
@@ -225,7 +226,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <Box marginLeft={1}>
                     <button
                       onClick={() => {
-                        onDelete(caseFile.id)
+                        onDelete(caseFile as TUploadFile)
                         onStopEditing?.()
                       }}
                       className={cn(styles.editCaseFileButton, {
@@ -297,7 +298,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                 ) : (caseFile.status === FileUploadStatus.error || isEmpty) &&
                   onRetry ? (
                   <button
-                    onClick={() => onRetry(caseFile.id)}
+                    onClick={() => onRetry(caseFile as TUploadFile)}
                     className={cn(
                       styles.editCaseFileButton,
                       styles.background.secondary,

@@ -165,7 +165,6 @@ const Statement = () => {
                 title={formatMessage(strings.uploadStatementTitle)}
                 required
               />
-
               <InputFileUpload
                 name="appealStatement"
                 files={uploadFiles.filter(
