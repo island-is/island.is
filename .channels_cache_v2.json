@@ -1,0 +1,5912 @@
+[
+  {
+    "id": "C07LZ73HWCW",
+    "name": "@mpdm-johannes--levy--brynjar807--roberta--johannes-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, Brynjar Örn Grétarsson, U04DDP4R51R, ",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07P5M00V2N",
+    "name": "@mpdm-roberta--una--ivaro-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ívar Oddsson, Una Kristín Benediktsdóttir",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07LR9DK6DV",
+    "name": "@mpdm-roberta--levy--johannes-2",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, U04DDP4R51R",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07AZRQ2YAZ",
+    "name": "@mpdm-roberta--levy--johannes-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, ",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08GBFLGD1P",
+    "name": "@mpdm-roberta--saevar--eirikur--levy-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Jón Levy, Sævar Már Atlason",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07NZJWS5UH",
+    "name": "@mpdm-roberta--anna786--johannes--levy-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, , Anna Zuchowicz",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08GS5FC49E",
+    "name": "@mpdm-rgudlaugsson--roberta--saevar--ragnhildur.ragnarsdot--bkristmundsson-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Rúnar S. Guðlaugsson, Sævar Már Atlason, Ragnhildur Helga Ragnarsdóttir, Birkir Þ. Kristmundsson",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08VD2CGNHX",
+    "name": "@mpdm-hrafnkell--emil--anna.zuchowicz--sigurdur--roberta_si101-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, U067Y7XH8JZ, U068Q5GQS2U, U077G50HPT3, U07U9HHV7C5",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06DGLQUNSK",
+    "name": "@mpdm-jonorn--petur426--roberta-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Pétur Neisti Erlingsson, Jón Örn Arnarson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06UQJK66MQ",
+    "name": "@mpdm-jonorn--levy--roberta-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, Jón Örn Arnarson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C093TU72ZFV",
+    "name": "@mpdm-roberta_si101--brynjar_si101--olafur.ingthorsson_si--andres.mar.hardarson-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, , Brynjar Örn Grétarsson, Olafur Ingthorsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C091FJ3UZKJ",
+    "name": "@mpdm-roberta_si101--olafur.ingthorsson_si--ragnhildur.ragnarsdot--brynjar_si101-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ragnhildur Helga Ragnarsdóttir, Brynjar Örn Grétarsson, Olafur Ingthorsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07517XC0AF",
+    "name": "@mpdm-roberta--margret--olafur-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ólafur Björn Magnússon, Margrét Finnbogadóttir",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08G62R36PN",
+    "name": "@mpdm-rgudlaugsson--roberta--saevar--ragnhildur.ragnarsdot--bkristmundsson--vesigurdardottir-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Rúnar S. Guðlaugsson, Sævar Már Atlason, Ragnhildur Helga Ragnarsdóttir, Verónika Sif Sigurðardóttir, Birkir Þ. Kristmundsson",
+    "memberCount": 6,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08J1GHNQ90",
+    "name": "@mpdm-eirikur_si--olafur.ingthorsson_si--ragnhildur.ragnarsdot--levy_si--roberta_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Jón Levy, Ragnhildur Helga Ragnarsdóttir, Olafur Ingthorsson",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08J5LS8Q05",
+    "name": "@mpdm-ragnhildur.ragnarsdot--eirikur_si--roberta_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Ragnhildur Helga Ragnarsdóttir",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06MEQVTW02",
+    "name": "@mpdm-roberta--gunnar194--hrafnkell-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, U01AG5U3FV5, ",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C0777N885B3",
+    "name": "@mpdm-roberta--brynjar807--jonorn-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Brynjar Örn Grétarsson, Jón Örn Arnarson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08PL08UGEB",
+    "name": "@mpdm-magnea_si--eirikur_si--saevar_si--ragnhildur.ragnarsdot--brynjar_si101--roberta_si101-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Magnea Rún Vignisdóttir, Sævar Már Atlason, Ragnhildur Helga Ragnarsdóttir, Brynjar Örn Grétarsson",
+    "memberCount": 6,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06UR1QB1M0",
+    "name": "@mpdm-roberta--olafur.ingthorsson--ragnhildur.ragnarsdot-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ragnhildur Helga Ragnarsdóttir, Olafur Ingthorsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08GJG4KNUX",
+    "name": "@mpdm-stefan.ingi.arnason--andres.mar.hardarson--brynjar_si--olafur.ingthorsson_si--roberta_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, , Brynjar Örn Grétarsson, Olafur Ingthorsson, U06M9QDHHKQ",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06P6TW5GFN",
+    "name": "@mpdm-roberta--eirikur--jon.arnar.briem-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Jón Arnar Briem",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08G40LUQ11",
+    "name": "@mpdm-rgudlaugsson--roberta--saevar--ragnhildur.ragnarsdot--bkristmundsson--vesigurdardottir--kolbrun.oskarsdottir-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Rúnar S. Guðlaugsson, Sævar Már Atlason, Kolbrun Oskarsdottir, Ragnhildur Helga Ragnarsdóttir, Verónika Sif Sigurðardóttir, Birkir Þ. Kristmundsson",
+    "memberCount": 7,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08FTEXG44W",
+    "name": "@mpdm-roberta--saevar--eirikur-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Sævar Már Atlason",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07HFAMJP1P",
+    "name": "@mpdm-khalldorsdottir--rgudlaugsson--levy--ragnhildur.ragnarsdot--kristofer306--olafur.ingthorsson--roberta-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Rúnar S. Guðlaugsson, Jón Levy, Karen Björg, Ragnhildur Helga Ragnarsdóttir, , Olafur Ingthorsson",
+    "memberCount": 7,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07047PV1T7",
+    "name": "@mpdm-roberta--brynjar807--kristofer306-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Brynjar Örn Grétarsson, ",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C09GCCB6WAH",
+    "name": "@mpdm-olafur.ingthorsson_si--roberta_si101--brynjar_si101--eirikur_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Brynjar Örn Grétarsson, Olafur Ingthorsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C080V2RJMFU",
+    "name": "@mpdm-roberta--eirikur--levy-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Jón Levy",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06P4EFN16E",
+    "name": "@mpdm-roberta--eirikur--jon.arnar.briem--levy-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Jón Levy, Jón Arnar Briem",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07UUQXF8MT",
+    "name": "@mpdm-baering--eirikur--levy--saevar--roberta-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Bæring Gunnar Steinþórsson, Jón Levy, Sævar Már Atlason",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C091TB7LUHL",
+    "name": "@mpdm-roberta_si101--agust.petursson--bjarni.rafn.gunnarsso-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Bjarni Rafn Gunnarsson, Ágúst Logi Pétursson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07NVTHLKUM",
+    "name": "@mpdm-roberta--jon.arnar.briem--svanhildur-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Arnar Briem, Svana",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08G6JRUM8V",
+    "name": "@mpdm-ragnhildur.ragnarsdot--roberta--saevar-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Sævar Már Atlason, Ragnhildur Helga Ragnarsdóttir",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07J59VADSQ",
+    "name": "@mpdm-johannes--hjalmar--roberta--johannes-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Hjálmar Leó Einarsson, U04DDP4R51R, ",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C080F39R7P1",
+    "name": "@mpdm-roberta--levy--ragnhildur.ragnarsdot--olafur.ingthorsson-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, Ragnhildur Helga Ragnarsdóttir, Olafur Ingthorsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08G3U0NX26",
+    "name": "@mpdm-rgudlaugsson--roberta--saevar-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Rúnar S. Guðlaugsson, Sævar Már Atlason",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07PUCTLU6S",
+    "name": "@mpdm-roberta--hrafnkell--gunnar-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, U067UGEAY14, U067Y7XH8JZ",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C09D7TCQD0C",
+    "name": "@mpdm-ragnhildur.ragnarsdot--eirikur_si--roberta_si101--olafur.ingthorsson_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Ragnhildur Helga Ragnarsdóttir, Olafur Ingthorsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08HT439M0W",
+    "name": "@mpdm-roberta_si--eirikur_si--brynjar_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Brynjar Örn Grétarsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07S5LWE8PQ",
+    "name": "@mpdm-ragnhildur.ragnarsdot--roberta--anna786-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ragnhildur Helga Ragnarsdóttir, Anna Zuchowicz",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C090VN3NFF1",
+    "name": "@mpdm-roberta_si101--agust.olafsson_si--asta.andresdottir_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ágúst Leó Ólafsson, Ásta Andrésdóttir",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08T8EE98DS",
+    "name": "@mpdm-roberta_si101--ingvar_si--jonorn_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ingvar Sigurðsson, Jón Örn Arnarson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07AJ6Z1EGY",
+    "name": "@mpdm-brynjar807--ragnhildur.ragnarsdot--roberta--jonni-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ragnhildur Helga Ragnarsdóttir, Brynjar Örn Grétarsson, Jónas G. Sigurðsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06ELFZ5Z3J",
+    "name": "@mpdm-roberta--olafur.ingthorsson--brynjar807-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Brynjar Örn Grétarsson, Olafur Ingthorsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C09CNK5Q2FR",
+    "name": "@mpdm-roberta_si101--ingvar_si--igor_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ingvar Sigurðsson, Igor Churmeev",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08V223T7H8",
+    "name": "@mpdm-hrafnkell--emil--anna.zuchowicz--roberta_si101-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, U067Y7XH8JZ, U077G50HPT3, U07U9HHV7C5",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08PSGXRS06",
+    "name": "@mpdm-roberta_si101--eirikur_si--saevar_si--brynjar_si101-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Sævar Már Atlason, Brynjar Örn Grétarsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08189AUA73",
+    "name": "@mpdm-roberta--levy--olafur.ingthorsson-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, Olafur Ingthorsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07SBLQ2YGK",
+    "name": "@mpdm-roberta--tryggvi--brynjar807-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Brynjar Örn Grétarsson, Tryggvi",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07H1UACJDD",
+    "name": "@mpdm-roberta--brynjar807--levy-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, Brynjar Örn Grétarsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08KBK6PFBP",
+    "name": "@mpdm-roberta_si101--andri_si--benedikt_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Andri Mar Björgvinsson, Benedikt Óskarsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "D08JW9DEJGL",
+    "name": "@andres.mar.hardarson",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D087Y0A92NT",
+    "name": "@bjorn.thor.gudmundsso",
+    "topic": "",
+    "purpose": "DM with Björn Þór Guðmundsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06PH46GD0R",
+    "name": "@eirikur_si",
+    "topic": "",
+    "purpose": "DM with Eirikur Nilsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07G3MR5RFZ",
+    "name": "@U0652CJQ0CU",
+    "topic": "",
+    "purpose": "DM with U0652CJQ0CU",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06DR4MC7HC",
+    "name": "@una_si",
+    "topic": "",
+    "purpose": "DM with Una Kristín Benediktsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D091VN0Q588",
+    "name": "@anton.k.jakobsson",
+    "topic": "",
+    "purpose": "DM with Anton Karl Jakobsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06LMUFRXUN",
+    "name": "@devbot",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07HQBB1J57",
+    "name": "@U07GCKM4K6U",
+    "topic": "",
+    "purpose": "DM with U07GCKM4K6U",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D0706JLP3NF",
+    "name": "@yhafsteinsdottir_si",
+    "topic": "",
+    "purpose": "DM with Ylfa Hafsteinsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D08DBMDS7L3",
+    "name": "@ingvar_si",
+    "topic": "",
+    "purpose": "DM with Ingvar Sigurðsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06U74JDCRK",
+    "name": "@aft01_si",
+    "topic": "",
+    "purpose": "DM with Árni Freyr Þorsteinsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06JE7Q5YAD",
+    "name": "@kal664",
+    "topic": "",
+    "purpose": "DM with kal",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D09FJQ91ZB2",
+    "name": "@olafur.georg.gylfason",
+    "topic": "",
+    "purpose": "DM with Ólafur Georg Gylfason",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D08MALWNYHE",
+    "name": "@anna.zuchowicz_si",
+    "topic": "",
+    "purpose": "DM with Anna Zuchowicz",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06RP807PBN",
+    "name": "@bergvin_si",
+    "topic": "",
+    "purpose": "DM with Bergvin Fannar Gunnarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CV2CB1NF",
+    "name": "@karl.arnar.aegisson",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D079377V3T6",
+    "name": "@david.snorrason",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D0703JFEPHT",
+    "name": "@runar_si",
+    "topic": "",
+    "purpose": "DM with Rúnar Vestmann",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07AEG26VTR",
+    "name": "@U04DDP4R51R",
+    "topic": "",
+    "purpose": "DM with U04DDP4R51R",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CEK4S62K",
+    "name": "@valure_si",
+    "topic": "",
+    "purpose": "DM with Valur Einarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CS7PD9EH",
+    "name": "@saevar_si",
+    "topic": "",
+    "purpose": "DM with Sævar Már Atlason",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D08CGPFDMSM",
+    "name": "@ci",
+    "topic": "",
+    "purpose": "DM with ci",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06UQ7LKKT2",
+    "name": "@rgudlaugsson_si",
+    "topic": "",
+    "purpose": "DM with Rúnar S. Guðlaugsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D0920B59KDF",
+    "name": "@U06812WNAD9",
+    "topic": "",
+    "purpose": "DM with U06812WNAD9",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06TU5LNVJ5",
+    "name": "@arni.gudmundsson_si",
+    "topic": "",
+    "purpose": "DM with Árni - TR",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06ERD4P06B",
+    "name": "@steini_si",
+    "topic": "",
+    "purpose": "DM with Steini",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CNG91K62",
+    "name": "@gudjon_si101",
+    "topic": "",
+    "purpose": "DM with Guðjón Guðjónsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D08489F4VB5",
+    "name": "@gunnar_si",
+    "topic": "",
+    "purpose": "DM with Gunnar Vilbergsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07GJD5UV0T",
+    "name": "@aleksandr.beliakov",
+    "topic": "",
+    "purpose": "DM with Aleksandr Beliakov",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06TVDNDHJ6",
+    "name": "@gunnar194",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D090F859EDN",
+    "name": "@workik-ai",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CV5NMNGJ",
+    "name": "@kolbrun.oskarsdottir",
+    "topic": "",
+    "purpose": "DM with Kolbrun Oskarsdottir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D076XD0L21H",
+    "name": "@svanhildur",
+    "topic": "",
+    "purpose": "DM with Svana",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D086W9RSM0E",
+    "name": "@magnea_si",
+    "topic": "",
+    "purpose": "DM with Magnea Rún Vignisdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06E9S6GTCH",
+    "name": "@khalldorsdottir",
+    "topic": "",
+    "purpose": "DM with Karen Björg",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D08B6P9J6BD",
+    "name": "@baering_si",
+    "topic": "",
+    "purpose": "DM with Bæring Gunnar Steinþórsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D09D3JXG0BW",
+    "name": "@vidir",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D078M9QQ2F2",
+    "name": "@U055YEQ4JQ4",
+    "topic": "",
+    "purpose": "DM with U055YEQ4JQ4",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D075ZBLCB34",
+    "name": "@andri_si",
+    "topic": "",
+    "purpose": "DM with Andri Mar Björgvinsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D09C77GPGQ0",
+    "name": "@asa_si",
+    "topic": "",
+    "purpose": "DM with Ása Bryndís Gunnarsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D09167HRLL9",
+    "name": "@mani_si",
+    "topic": "",
+    "purpose": "DM with Þorkell Máni Þorkelsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D0914G1RJV9",
+    "name": "@asta.andresdottir_si",
+    "topic": "",
+    "purpose": "DM with Ásta Andrésdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06D7Q8UDB3",
+    "name": "@mariamist99_si",
+    "topic": "",
+    "purpose": "DM with María Jóhannsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07PU2NSXQW",
+    "name": "@brynjar",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06E3NM0PAS",
+    "name": "@petur_si",
+    "topic": "",
+    "purpose": "DM with Pétur Neisti Erlingsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D09CZ248HC3",
+    "name": "@U077G50HPT3",
+    "topic": "",
+    "purpose": "DM with U077G50HPT3",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D091TP7LB2S",
+    "name": "@asgeir.asgeirsson_si",
+    "topic": "",
+    "purpose": "DM with Ásgeir Helgi Ásgeirsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06EK70NM8F",
+    "name": "@baldur.oli.barkarson",
+    "topic": "",
+    "purpose": "DM with Baldur Barkarson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06D7Q8U5U1",
+    "name": "@olafur.ingthorsson_si",
+    "topic": "",
+    "purpose": "DM with Olafur Ingthorsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07NLTW8E06",
+    "name": "@benedikt_si",
+    "topic": "",
+    "purpose": "DM with Benedikt Óskarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07J2MBPB43",
+    "name": "@hjalmar_si",
+    "topic": "",
+    "purpose": "DM with Hjálmar Leó Einarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D071H3Z1W7K",
+    "name": "@oli_si",
+    "topic": "",
+    "purpose": "DM with Ólafur Sverrir Kjartansson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07ST4ZFPML",
+    "name": "@sigrun.tinna.gissurar",
+    "topic": "",
+    "purpose": "DM with Sigrún Tinna Gissurardóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07NLUFDAG2",
+    "name": "@anna_si101",
+    "topic": "",
+    "purpose": "DM with Anna Zuchowicz",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D0773RD3WFL",
+    "name": "@frida.hallgrimsdottir",
+    "topic": "",
+    "purpose": "DM with Fríða Rut Hallgrímsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CV5NGC90",
+    "name": "@kristofer_si",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06NF5YF22K",
+    "name": "@jon.arnar.briem_si",
+    "topic": "",
+    "purpose": "DM with Jón Arnar Briem",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06KZ70H0TE",
+    "name": "@rafn",
+    "topic": "",
+    "purpose": "DM with Rafn Árnason",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D0808KM2HSB",
+    "name": "@ivaro_si",
+    "topic": "",
+    "purpose": "DM with Ívar Oddsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D08K4R2G0MR",
+    "name": "@bjorn.breki.thorbjorn",
+    "topic": "",
+    "purpose": "DM with Björn Breki Þorbjörnsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D077RU30L56",
+    "name": "@jonas_si",
+    "topic": "",
+    "purpose": "DM with Jónas G. Sigurðsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D092198JWG4",
+    "name": "@dadi_si",
+    "topic": "",
+    "purpose": "DM with Daði Ingólfsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06DHQWLG3S",
+    "name": "@slackbot",
+    "topic": "",
+    "purpose": "DM with Slackbot",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CXJXR1TN",
+    "name": "@johannes",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06EAAR2ZMX",
+    "name": "@asana",
+    "topic": "",
+    "purpose": "DM with Asana",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07PUCT65FG",
+    "name": "@U067Y7XH8JZ",
+    "topic": "",
+    "purpose": "DM with U067Y7XH8JZ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06EB75PMQW",
+    "name": "@snaer_si",
+    "topic": "",
+    "purpose": "DM with Snær Seljan Þóroddson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CXF9AWLU",
+    "name": "@roberta_si101",
+    "topic": "",
+    "purpose": "DM with Róberta Andersen",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D09C36YEGJE",
+    "name": "@igor_si",
+    "topic": "",
+    "purpose": "DM with Igor Churmeev",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D092N4RPJNL",
+    "name": "@agust.petursson_si",
+    "topic": "",
+    "purpose": "DM with Ágúst Logi Pétursson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06EG9AQTM0",
+    "name": "@sigurbjorn.oskarsson",
+    "topic": "",
+    "purpose": "DM with Sigurbjörn Óskarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D083G92MMGA",
+    "name": "@jirabot",
+    "topic": "",
+    "purpose": "DM with Jira",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D080NN3V2E7",
+    "name": "@hjortur_si",
+    "topic": "",
+    "purpose": "DM with Hjörtur Jóhann",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06DXMG6DGT",
+    "name": "@gudlaug.thorhallsdott",
+    "topic": "",
+    "purpose": "DM with Guðlaug Dröfn Þórhallsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CNG91BJA",
+    "name": "@jonorn_si",
+    "topic": "",
+    "purpose": "DM with Jón Örn Arnarson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06G5DE1ZS8",
+    "name": "@halldor",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D08EAD2UC95",
+    "name": "@github",
+    "topic": "",
+    "purpose": "DM with GitHub",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06TFJ82JSE",
+    "name": "@ragnhildur.ragnarsdot",
+    "topic": "",
+    "purpose": "DM with Ragnhildur Helga Ragnarsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D077NFRRVPX",
+    "name": "@db_write_approve",
+    "topic": "",
+    "purpose": "DM with [DEV]DB Write Approve",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06V2GPF1R6",
+    "name": "@fridrik_si",
+    "topic": "",
+    "purpose": "DM with Friðrik Magnússon",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06DHUK5C80",
+    "name": "@brynjar_si101",
+    "topic": "",
+    "purpose": "DM with Brynjar Örn Grétarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07517UV6QK",
+    "name": "@margret_si",
+    "topic": "",
+    "purpose": "DM with Margrét Finnbogadóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D09CL1L6V4M",
+    "name": "@asgeir.kristinsson_si",
+    "topic": "",
+    "purpose": "DM with Ásgeir Freyr Kristinsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07QPQZCYE4",
+    "name": "@hrafnkell_si",
+    "topic": "",
+    "purpose": "DM with Hrafnkell Brimar Hallmundsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CV2CB8UT",
+    "name": "@levy_si",
+    "topic": "",
+    "purpose": "DM with Jón Levy",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D08TMJX0ZB9",
+    "name": "@hyo-sam.nandkisore_si",
+    "topic": "",
+    "purpose": "DM with Hyo-sam Nandkisore",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D084YDTA9J4",
+    "name": "@ragnar.helgason_si",
+    "topic": "",
+    "purpose": "DM with Ragnar Smári Helgason",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07STAKVAUQ",
+    "name": "@gunnlaugur_si",
+    "topic": "",
+    "purpose": "DM with Gunnlaugur Guðmundsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07S7EF6L9J",
+    "name": "@tryggvi_si",
+    "topic": "",
+    "purpose": "DM with Tryggvi",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D08FFDTFRQ8",
+    "name": "@thorhildur_si",
+    "topic": "",
+    "purpose": "DM with Þórhildur Þorleiksdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06LFSUDVNV",
+    "name": "@bkristmundsson_si",
+    "topic": "",
+    "purpose": "DM with Birkir Þ. Kristmundsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D0965F431A8",
+    "name": "@johannes.je",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D080FQA16H4",
+    "name": "@google_calendar",
+    "topic": "",
+    "purpose": "DM with Google Calendar",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C0156DPMVFW",
+    "name": "#reglugerðasafn",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01BNT0HZ1T",
+    "name": "#oldchannel_usertesting",
+    "topic": "",
+    "purpose": "For everyone interested in user testing on the \u003chttp://island.is|island.is\u003e website and related services.",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C021XH6KJNS",
+    "name": "#ids_support",
+    "topic": "",
+    "purpose": "Channel for general IDS support: integration recommendations, request for new scopes or clients, issues, bugs or any other IDS related topic.",
+    "memberCount": 69,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C05SVJKNFH8",
+    "name": "#devbot-sandbox",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CAK1AUPP",
+    "name": "#service-skilavottord-web",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08HN169LKF",
+    "name": "#service-contentful-type-generator",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D090F859EDN",
+    "name": "@workik-ai",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C08D8CMKLA0",
+    "name": "#service-judicial-system-backend",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08EA5JTN4U",
+    "name": "#service-services-auth-ids-api-cleanup",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08PTR1UYAF",
+    "name": "#service-payments",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01BDL655B2",
+    "name": "#gitiquette",
+    "topic": "\u003chttps://xkcd.com/1597/\u003e",
+    "purpose": "Talk about how we use git",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01RD98LXDH",
+    "name": "#web_pr",
+    "topic": "",
+    "purpose": "Rás fyrir kóðarýni á \u003chttp://Ísland.is|Ísland.is\u003e vefnum",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D06CV5NMNGJ",
+    "name": "@kolbrun.oskarsdottir",
+    "topic": "",
+    "purpose": "DM with Kolbrun Oskarsdottir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C04MHV7GUNS",
+    "name": "#undirskriftarlistar",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 8,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08FC2W3SH0",
+    "name": "#team-aranja-app",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 4,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C019LNRM6LE",
+    "name": "#devops_support",
+    "topic": "\u003chttps://islandis.slack.com/archives/C04R5PKH8TZ/p1702043707593619\u003e",
+    "purpose": "Channel to get support around devops related things.",
+    "memberCount": 146,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01BWBRP1Q9",
+    "name": "#island-ui",
+    "topic": "\u003chttps://ui.devland.is/?path=/story/welcome--page\u003e",
+    "purpose": "Code owners for Island-UI on GitHub",
+    "memberCount": 49,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D076XD0L21H",
+    "name": "@svanhildur",
+    "topic": "",
+    "purpose": "DM with Svana",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D086W9RSM0E",
+    "name": "@magnea_si",
+    "topic": "",
+    "purpose": "DM with Magnea Rún Vignisdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C08NU6JGQP6",
+    "name": "#service-aws",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08TNN65WG5",
+    "name": "#dev_incident_notification",
+    "topic": "",
+    "purpose": "Similar to \u003c#C01J3ANCF55|\u003e except for the dev and staging environments.",
+    "memberCount": 29,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D06E9S6GTCH",
+    "name": "@khalldorsdottir",
+    "topic": "",
+    "purpose": "DM with Karen Björg",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01MBH56Y5D",
+    "name": "#syslumanna-askur",
+    "topic": "",
+    "purpose": "Innleiðing á snjallmenni fyrir sýslumenn",
+    "memberCount": 9,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C071T6JU4DB",
+    "name": "#minar-sidur-dmr-dev",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07PRNMQ97F",
+    "name": "#organization-rls",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 8,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CRLKG36U",
+    "name": "#service-controller",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D08B6P9J6BD",
+    "name": "@baering_si",
+    "topic": "",
+    "purpose": "DM with Bæring Gunnar Steinþórsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C018RC88B8V",
+    "name": "#air-discount-scheme-bots",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01RBHZ8E8G",
+    "name": "#application-design-system",
+    "topic": "",
+    "purpose": "Discussion group about the components needed in the application system",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C04CRKTR1FU",
+    "name": "#atvikatilkynningar",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C04MBRTHT9V",
+    "name": "#dev_onboarding",
+    "topic": "Best er að byrja á því að lesa þróunarhandbókina:\n\u003chttps://island.is/s/stafraent-island/throunarhandbok\u003e",
+    "purpose": "To help developers get started on projects in the monorepo. A safe space to ask questions and get guidance.",
+    "memberCount": 29,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08DJQFV8NR",
+    "name": "#external-services-feed",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 8,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01QS4UPHMZ",
+    "name": "#team-stefna",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 51,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C054FM4NM2L",
+    "name": "#minar-sidur-hugverkastofa",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 9,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C034E9V5SLQ",
+    "name": "#release-images",
+    "topic": "",
+    "purpose": "Slack bot channel for release images",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08APMGJSUB",
+    "name": "#service-judicial-system-digital-mailbox-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CQTF03EC",
+    "name": "#service-services-auth-admin-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D09D3JXG0BW",
+    "name": "@vidir",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D078M9QQ2F2",
+    "name": "@U055YEQ4JQ4",
+    "topic": "",
+    "purpose": "DM with U055YEQ4JQ4",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D075ZBLCB34",
+    "name": "@andri_si",
+    "topic": "",
+    "purpose": "DM with Andri Mar Björgvinsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C034PFXG2MU",
+    "name": "#gha-issues",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C075X96F32R",
+    "name": "#testchannel-zendesk",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D09C77GPGQ0",
+    "name": "@asa_si",
+    "topic": "",
+    "purpose": "DM with Ása Bryndís Gunnarsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D09167HRLL9",
+    "name": "@mani_si",
+    "topic": "",
+    "purpose": "DM with Þorkell Máni Þorkelsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D0914G1RJV9",
+    "name": "@asta.andresdottir_si",
+    "topic": "",
+    "purpose": "DM with Ásta Andrésdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06D7Q8UDB3",
+    "name": "@mariamist99_si",
+    "topic": "",
+    "purpose": "DM with María Jóhannsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C02P06N03T3",
+    "name": "#team-juni",
+    "topic": "Code owners island-is/juni",
+    "purpose": "",
+    "memberCount": 61,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C05845YRP6Z",
+    "name": "#proj-hms-mannvirkjaskra",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C05J57ZDDCH",
+    "name": "#status-sida",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C080DKES8CC",
+    "name": "#ui-lib-update",
+    "topic": "",
+    "purpose": "UI lib update after design refresh in 2024.\nNotion: \u003chttps://www.notion.so/UI-lib-update-2024-13b5a76701d680d2be60f2582de00f9c\u003e",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D07PU2NSXQW",
+    "name": "@brynjar",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06E3NM0PAS",
+    "name": "@petur_si",
+    "topic": "",
+    "purpose": "DM with Pétur Neisti Erlingsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C019RHV3WES",
+    "name": "#islandis-bots",
+    "topic": "",
+    "purpose": "Bots for CI/CD of islandis",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01PK2AB9H7",
+    "name": "#serviceportal_support",
+    "topic": "",
+    "purpose": "Discussion and info about the service portal and it's development.",
+    "memberCount": 16,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C03KSTJPHQS",
+    "name": "#acceptance-tests-status",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07HV7CE1K3",
+    "name": "#error-services-sessions",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C081GSK4279",
+    "name": "#service-endorsement-system-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D09CZ248HC3",
+    "name": "@U077G50HPT3",
+    "topic": "",
+    "purpose": "DM with U077G50HPT3",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D091TP7LB2S",
+    "name": "@asgeir.asgeirsson_si",
+    "topic": "",
+    "purpose": "DM with Ásgeir Helgi Ásgeirsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06EK70NM8F",
+    "name": "@baldur.oli.barkarson",
+    "topic": "",
+    "purpose": "DM with Baldur Barkarson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01GMC08TK5",
+    "name": "#omniheader",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01Q74J7Y0P",
+    "name": "#team-core",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 77,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01QKJX80ES",
+    "name": "#team-fuglar",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 34,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0624P5AD6J",
+    "name": "#team-aranja_pr",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06J5445CCW",
+    "name": "#minar-sidur-dmr",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 25,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C014XDY229Z",
+    "name": "#efni",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C024KBCBPEV",
+    "name": "#fasteigna-api",
+    "topic": "",
+    "purpose": "Þessi rás er búin til í kring um verkefnið að birta fasteingaupplýsingar  einstaklinga og fyrirtækja inni á mínum síðum.",
+    "memberCount": 10,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C02571F0M96",
+    "name": "#utl-vefur",
+    "topic": "",
+    "purpose": "Samskipti vegna færslu efnis yfir á \u003chttp://Ísland.is|Ísland.is\u003e",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C044EE1AJCX",
+    "name": "#syslumenn-umferð",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C04UC3A9M5M",
+    "name": "#contentful-article-published",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C04VDLFCHJT",
+    "name": "#minar-siður-inna",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 12,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08D0UFSL0Y",
+    "name": "#service-services-sessions",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D06D7Q8U5U1",
+    "name": "@olafur.ingthorsson_si",
+    "topic": "",
+    "purpose": "DM with Olafur Ingthorsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C080KSA2X60",
+    "name": "#skil-a-arsreikningum",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CJGW9WKB",
+    "name": "#service-service-portal-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08D25UCDMW",
+    "name": "#service-services-sessions-cleanup",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08DMTHS8F4",
+    "name": "#service-judicial-system-message-handler",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C09G4C25K34",
+    "name": "#terraform-shared-drift-detection",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D07NLTW8E06",
+    "name": "@benedikt_si",
+    "topic": "",
+    "purpose": "DM with Benedikt Óskarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07J2MBPB43",
+    "name": "@hjalmar_si",
+    "topic": "",
+    "purpose": "DM with Hjálmar Leó Einarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D071H3Z1W7K",
+    "name": "@oli_si",
+    "topic": "",
+    "purpose": "DM with Ólafur Sverrir Kjartansson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C022SSADFKJ",
+    "name": "#minar-sidur-fjarmal",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 12,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C02QN5S43DF",
+    "name": "#brothers-in-arm",
+    "topic": "",
+    "purpose": "Support group for people running on Arm-based systems",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08C5LE6C11",
+    "name": "#unicorn-prs",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08F2R23LVB",
+    "name": "#service-services-auth-personal-representative-public",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D07ST4ZFPML",
+    "name": "@sigrun.tinna.gissurar",
+    "topic": "",
+    "purpose": "DM with Sigrún Tinna Gissurardóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07NLUFDAG2",
+    "name": "@anna_si101",
+    "topic": "",
+    "purpose": "DM with Anna Zuchowicz",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D0773RD3WFL",
+    "name": "@frida.hallgrimsdottir",
+    "topic": "",
+    "purpose": "DM with Fríða Rut Hallgrímsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C036B4U32SX",
+    "name": "#team-programm",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 17,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06DX4KDD0A",
+    "name": "#devops-core",
+    "topic": "",
+    "purpose": "A fast-lane channel for priority issues and discussions between core and devops",
+    "memberCount": 21,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C090U2Z15FY",
+    "name": "#terraform-dev-drift-detection",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D06CV5NGC90",
+    "name": "@kristofer_si",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C0197MXSPPF",
+    "name": "#ads-monitoring",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C019VN1KG04",
+    "name": "#dev_support",
+    "topic": "",
+    "purpose": "Stuck on something? Want another pair of eyes? You’ve come to the right place!",
+    "memberCount": 129,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01QUBMEYQ4",
+    "name": "#team-norda",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 72,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C070D2SVDJ4",
+    "name": "#error-github-actions-cache",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08B6218MT6",
+    "name": "#service-identity-server",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08GQFPS23U",
+    "name": "#mailbox-admin",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0209A6MXRR",
+    "name": "#admin-webs",
+    "topic": "",
+    "purpose": "Rás til að skiptast á skoðunum um admin kerfi",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0727T1QTUM",
+    "name": "#minar-siður-og-postholf-með-dmr",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C082RAGADEG",
+    "name": "#service-user-notification-worker",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08AT1HB51Q",
+    "name": "#service-external-contracts-tests",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08HZ48SZ2T",
+    "name": "#service-cms-importer-worker",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D06NF5YF22K",
+    "name": "@jon.arnar.briem_si",
+    "topic": "",
+    "purpose": "DM with Jón Arnar Briem",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06KZ70H0TE",
+    "name": "@rafn",
+    "topic": "",
+    "purpose": "DM with Rafn Árnason",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C04R5PKH8TZ",
+    "name": "#devops_announcements",
+    "topic": "",
+    "purpose": "Infrastructure or build system announcements",
+    "memberCount": 101,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C05TM860S2C",
+    "name": "#profile-collection",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06V45M2TGB",
+    "name": "#error-nginx-ingress-internal-alb",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08C5ESF754",
+    "name": "#service-services-sessions-worker",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06JKFE9THN",
+    "name": "#umsoknarsmidur-utgafa",
+    "topic": "",
+    "purpose": "Hér er hægt að setja inn beiðni um að gefa út umsókn á raunumhverið.\nTil þess að fá umsókn útgefna þarf að vera búið að þýða umsókn og testa á móti vefþjónustum á prófun.\nSetjið inn númer umsóknar á prófun og þá vefþjónustu sem á að senda umsókn á.",
+    "memberCount": 30,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C070B5PTVM3",
+    "name": "#team-app-builds",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07V91K3QMB",
+    "name": "#service-application-system-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 12,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08AMCVBBMM",
+    "name": "#service-application-system-form",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08JC43S4UE",
+    "name": "#service-aws-ebs-csi-driver",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D0808KM2HSB",
+    "name": "@ivaro_si",
+    "topic": "",
+    "purpose": "DM with Ívar Oddsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01HE9ZNSH2",
+    "name": "#analytics",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01R33Z2D3N",
+    "name": "#application_system_support",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 80,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07PZJEA98D",
+    "name": "#rannis-styrkjatorg",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 9,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07QDKHJMFD",
+    "name": "#umsoknir-i-zendesk",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08AR7CAS0J",
+    "name": "#service-xroad-collector",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D08K4R2G0MR",
+    "name": "@bjorn.breki.thorbjorn",
+    "topic": "",
+    "purpose": "DM with Björn Breki Þorbjörnsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C06V41EE999",
+    "name": "#error-dss",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0800GBPWAY",
+    "name": "#service-services-auth-public-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08BB3KAGD6",
+    "name": "#service-undefined",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C013A6RBD34",
+    "name": "#devops_faghopur",
+    "topic": "\u003chttps://islandis.slack.com/archives/C013A6RBD34/p1613513112020500\u003e",
+    "purpose": "Devops faghópur",
+    "memberCount": 31,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08C9GJR20M",
+    "name": "#service-services-university-gateway-worker",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D077RU30L56",
+    "name": "@jonas_si",
+    "topic": "",
+    "purpose": "DM with Jónas G. Sigurðsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C020LSF6CF7",
+    "name": "#feature-toggle-requests",
+    "topic": "ConfigCat URL: \u003chttps://app.configcat.com/08d8c761-01ec-474d-88d3-8996396a4f74\u003e",
+    "purpose": "A place to request and stay informed about requests to enable feature in Production",
+    "memberCount": 61,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06KE13BKKJ",
+    "name": "#postgres-upgrade",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06V4962NE6",
+    "name": "#error-personal-representative",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0702UKG63T",
+    "name": "#error-identity-server-admin",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C075V3AD71P",
+    "name": "#error-identity-server",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D092198JWG4",
+    "name": "@dadi_si",
+    "topic": "",
+    "purpose": "DM with Daði Ingólfsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06DHQWLG3S",
+    "name": "@slackbot",
+    "topic": "",
+    "purpose": "DM with Slackbot",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CXJXR1TN",
+    "name": "@johannes",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01A16BHNKY",
+    "name": "#efnis-abendingar",
+    "topic": "",
+    "purpose": "Ábendingar um efni sem þarfnast uppfærslu á \u003chttp://Ísland.is|Ísland.is\u003e. Efni sem er úrelt, þarfnast uppfærslu, vantar eiganda osfrv.",
+    "memberCount": 28,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C02EPG8593N",
+    "name": "#team-kolibri-robin-hood",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 18,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0658RXVD40",
+    "name": "#minar-siður-app-sameiginlegt",
+    "topic": "",
+    "purpose": "Sameiginleg virkni á mínum síðum og í appi",
+    "memberCount": 15,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C077C3NF7S6",
+    "name": "#contentful-asset-urls",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 0,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D06EAAR2ZMX",
+    "name": "@asana",
+    "topic": "",
+    "purpose": "DM with Asana",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C070D1KK1LY",
+    "name": "#error-islandis",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08180QCFGF",
+    "name": "#service-web",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08GEKUCQTD",
+    "name": "#service-cloudfront",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08GF0JLY73",
+    "name": "#error-contentful-translation-extension",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08GHJR1QN6",
+    "name": "#service-user-notification-cleanup-worker",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D07PUCT65FG",
+    "name": "@U067Y7XH8JZ",
+    "topic": "",
+    "purpose": "DM with U067Y7XH8JZ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06EB75PMQW",
+    "name": "@snaer_si",
+    "topic": "",
+    "purpose": "DM with Snær Seljan Þóroddson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CXF9AWLU",
+    "name": "@roberta_si101",
+    "topic": "",
+    "purpose": "DM with Róberta Andersen",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01J3ANCF55",
+    "name": "#incident_notification",
+    "topic": "For production incidents where end users are possibly affected.",
+    "purpose": "Tilkynningar af hálfu rekstraraðila kerfa \u003chttp://island.is|island.is\u003e um alvarlegar rekstrartruflanir og atvik.",
+    "memberCount": 185,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08BR59N7BN",
+    "name": "#service-services-documents",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08NFFZDM45",
+    "name": "#service-user-notification",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C09GJCTS2N5",
+    "name": "#terraform-ids-dev-drift-detection",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01A9AS14MT",
+    "name": "#deployments",
+    "topic": "",
+    "purpose": "Notifications from Spinnaker",
+    "memberCount": 20,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C039KKVPQH0",
+    "name": "#minar-sidur-samgongustofa",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 10,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C052Z0SJ68M",
+    "name": "#minar-sidur-landlaeknir",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 10,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CC7PUAGJ",
+    "name": "#service-application-system-api-worker",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C09GXU0AL1W",
+    "name": "#terraform-ids-prod-drift-detection",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D09C36YEGJE",
+    "name": "@igor_si",
+    "topic": "",
+    "purpose": "DM with Igor Churmeev",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C012ZLPD3T9",
+    "name": "#data_faghopur",
+    "topic": "",
+    "purpose": "Faghópur um gögn og vefþjónustur",
+    "memberCount": 16,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01AYPB8H3M",
+    "name": "#dev_reviews",
+    "topic": "",
+    "purpose": "Code review requests and reminders",
+    "memberCount": 19,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01C7C3M2J3",
+    "name": "#bug-reports",
+    "topic": "",
+    "purpose": "Bug reports and suggestions for anything on \u003chttp://Island.is|Island.is\u003e",
+    "memberCount": 434,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01RD92NA4T",
+    "name": "#web",
+    "topic": "",
+    "purpose": "Rás varðandi \u003chttp://Ísland.is|Ísland.is\u003e og allt sem fellur þar undir",
+    "memberCount": 17,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08K1B8CE48",
+    "name": "#error-cms-importer",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C098X63MW4B",
+    "name": "#argo-events",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C09EM91GYLD",
+    "name": "#error-services-payment-flow-update-handler",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C02QB1CPCCR",
+    "name": "#loftbru-issue-resolution",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 0,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C04SYKWHAVC",
+    "name": "#umsoknarsmiður-stuðningshopur",
+    "topic": "",
+    "purpose": "Stuðningshópur fyrir þá sem nota umsóknarsmið \u003chttp://Ísland.is|Ísland.is\u003e",
+    "memberCount": 28,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08AN3SU002",
+    "name": "#service-icelandic-names-registry-backend",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08K659RCRW",
+    "name": "#service-external-attacher",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D092N4RPJNL",
+    "name": "@agust.petursson_si",
+    "topic": "",
+    "purpose": "DM with Ágúst Logi Pétursson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06EG9AQTM0",
+    "name": "@sigurbjorn.oskarsson",
+    "topic": "",
+    "purpose": "DM with Sigurbjörn Óskarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01DYFKH2FK",
+    "name": "#efni-fyrir-minar-sidur",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C02HV0XHEQL",
+    "name": "#team-miracle",
+    "topic": "",
+    "purpose": "Kraftaverkafólkið",
+    "memberCount": 0,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C030C091G1J",
+    "name": "#tr-verk",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C03HC3VTY12",
+    "name": "#qa-support",
+    "topic": "",
+    "purpose": "Channel for discussing system testing \u0026amp; QA issues.\n\nNotion document on all test cases:\n\u003chttps://www.notion.so/Automatic-system-test-cases-614db5994f7f4460be57726a3891fc30\u003e",
+    "memberCount": 36,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C051C7T54RW",
+    "name": "#license-api-atvr",
+    "topic": "",
+    "purpose": "Tímabundin rás fyrir verkefnið að tengja ÁTVR við skilríkja API til staðfestingar á ökuskírteinum",
+    "memberCount": 8,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06UXNU7R7G",
+    "name": "#error-license-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0253N32B5E",
+    "name": "#xroad-monitoring-alerts",
+    "topic": "",
+    "purpose": "Test channel for X-Road monitoring",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D083G92MMGA",
+    "name": "@jirabot",
+    "topic": "",
+    "purpose": "DM with Jira",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D080NN3V2E7",
+    "name": "@hjortur_si",
+    "topic": "",
+    "purpose": "DM with Hjörtur Jóhann",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06DXMG6DGT",
+    "name": "@gudlaug.thorhallsdott",
+    "topic": "",
+    "purpose": "DM with Guðlaug Dröfn Þórhallsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CNG91BJA",
+    "name": "@jonorn_si",
+    "topic": "",
+    "purpose": "DM with Jón Örn Arnarson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01EDEZBMV5",
+    "name": "#hotfixes",
+    "topic": "",
+    "purpose": "Discuss :fire: fixes before the next release",
+    "memberCount": 61,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D06G5DE1ZS8",
+    "name": "@halldor",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01DBPEN7B3",
+    "name": "#viskuausan-to-dev",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01QF6MU5UN",
+    "name": "#team-kolibri-justice-league",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 29,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01RBP8DA00",
+    "name": "#team-vice-versa",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0358QF2Z0F",
+    "name": "#app-feedback",
+    "topic": "",
+    "purpose": "Feedback for the IOS and Android apps. Please include info about your device etc. when reporting issues.",
+    "memberCount": 28,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C052WEN9MTL",
+    "name": "#minar-sidur-vinnueftirlitið",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 9,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C05FFMM95B4",
+    "name": "#oskalisti-þjoðarinnar",
+    "topic": "\u003chttps://island.is/oskalisti-thjodarinnar\u003e",
+    "purpose": "",
+    "memberCount": 10,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06V496255G",
+    "name": "#error-air-discount-scheme",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D08EAD2UC95",
+    "name": "@github",
+    "topic": "",
+    "purpose": "DM with GitHub",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06TFJ82JSE",
+    "name": "@ragnhildur.ragnarsdot",
+    "topic": "",
+    "purpose": "DM with Ragnhildur Helga Ragnarsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C0702UKHAQH",
+    "name": "#error-service-portal",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07614DBJ1X",
+    "name": "#error-storybook",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07H3F3CS1F",
+    "name": "#error-services-form-system",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07TNM3GPB2",
+    "name": "#minar-sidur-loftbru",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0800G83420",
+    "name": "#service-services-auth-personal-representative",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01BQD2F1AP",
+    "name": "#island-ui_pr",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 21,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01Q74ETW4X",
+    "name": "#team-aranja",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 50,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D077NFRRVPX",
+    "name": "@db_write_approve",
+    "topic": "",
+    "purpose": "DM with [DEV]DB Write Approve",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06V2GPF1R6",
+    "name": "@fridrik_si",
+    "topic": "",
+    "purpose": "DM with Friðrik Magnússon",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06DHUK5C80",
+    "name": "@brynjar_si101",
+    "topic": "",
+    "purpose": "DM with Brynjar Örn Grétarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01549CCUNS",
+    "name": "#gjafakort-web-monitoring",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0195HSENSC",
+    "name": "#master-builds",
+    "topic": "",
+    "purpose": "Announcements of broken CI builds",
+    "memberCount": 15,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0125M9DHAP",
+    "name": "#general",
+    "topic": "Company-wide announcements and work-based matters",
+    "purpose": "This channel is for workspace-wide communication and announcements. All members are in this channel.",
+    "memberCount": 443,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C026U6H7HC5",
+    "name": "#team-apro",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 78,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C02DD6SDZLL",
+    "name": "#alagsprofanir-einstaklingur",
+    "topic": "",
+    "purpose": "Samtöl, umræður, niðurstöður á álagsprófununum á Einstaklingur vefþjónustunni, bestun og úrlausnir vegna tiltækileika og svar hraða.",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D07517UV6QK",
+    "name": "@margret_si",
+    "topic": "",
+    "purpose": "DM with Margrét Finnbogadóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D09CL1L6V4M",
+    "name": "@asgeir.kristinsson_si",
+    "topic": "",
+    "purpose": "DM with Ásgeir Freyr Kristinsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07QPQZCYE4",
+    "name": "@hrafnkell_si",
+    "topic": "",
+    "purpose": "DM with Hrafnkell Brimar Hallmundsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CV2CB8UT",
+    "name": "@levy_si",
+    "topic": "",
+    "purpose": "DM with Jón Levy",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C03QXNFCPFW",
+    "name": "#dev-db-write",
+    "topic": "Use the /query command to write a query,\nexample:\n/query application_system_api update something set something=somethingelse",
+    "purpose": "Check the status of your db-write requests.",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C056X6YLMT8",
+    "name": "#loftbru-handover",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C076X57EXU7",
+    "name": "#summer-freeze-2024",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07BU7WSHMG",
+    "name": "#error-identity-server-delegation",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07HDR9FCHH",
+    "name": "#error-icelandic-names-registry",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C080QAC8D08",
+    "name": "#service-judicial-system-web",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08ASA4327N",
+    "name": "#service-judicial-system-xrd-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D08TMJX0ZB9",
+    "name": "@hyo-sam.nandkisore_si",
+    "topic": "",
+    "purpose": "DM with Hyo-sam Nandkisore",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D084YDTA9J4",
+    "name": "@ragnar.helgason_si",
+    "topic": "",
+    "purpose": "DM with Ragnar Smári Helgason",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01MUE6UN12",
+    "name": "#es-migration",
+    "topic": "",
+    "purpose": "Discuss ES migration development",
+    "memberCount": 0,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08C31EHB8V",
+    "name": "#service-regulations-admin-backend",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08JN2C8K24",
+    "name": "#minar-siður-lsh",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 11,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08LDGZFYSW",
+    "name": "#service-services-form-system-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D07STAKVAUQ",
+    "name": "@gunnlaugur_si",
+    "topic": "",
+    "purpose": "DM with Gunnlaugur Guðmundsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07S7EF6L9J",
+    "name": "@tryggvi_si",
+    "topic": "",
+    "purpose": "DM with Tryggvi",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C076HJPS0RL",
+    "name": "#form-system-bakendi",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 16,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07FXED6SUS",
+    "name": "#organization-hms",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 4,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08GUCJ09RN",
+    "name": "#service-contentful-entry-tagger-service",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08M1GSH4CD",
+    "name": "#error-services-payments",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0920A1RS1K",
+    "name": "#hugsmiðjan_unicorn",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07MH8TRC6B",
+    "name": "#dmr_apro",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 4,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D08FFDTFRQ8",
+    "name": "@thorhildur_si",
+    "topic": "",
+    "purpose": "DM with Þórhildur Þorleiksdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06LFSUDVNV",
+    "name": "@bkristmundsson_si",
+    "topic": "",
+    "purpose": "DM with Birkir Þ. Kristmundsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C017PSL29GQ",
+    "name": "#rannsoknir-profanir-faghopur",
+    "topic": "",
+    "purpose": "Notendarannsóknir, prófanir og aðgengi",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01CZSWSSM6",
+    "name": "#xroad_support",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 88,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01F5B7AMGA",
+    "name": "#hotfix-covid-adgerdir",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 0,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08G61NMV6X",
+    "name": "#service-island-ui-storybook",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08GF36124R",
+    "name": "#service-judicial-system-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01G47QPSBA",
+    "name": "#ecr-scan-results",
+    "topic": "",
+    "purpose": "Scan results from ECR",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06V4963Q4S",
+    "name": "#error-skilavottord",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C071P8XTG6P",
+    "name": "#error-search-indexer",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CC15NQCB",
+    "name": "#service-air-discount-scheme-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CJGWA1Q9",
+    "name": "#service-skilavottord-ws",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CNC362P3",
+    "name": "#service-argocd",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08GX8NLNFR",
+    "name": "#university-gateway-stream",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08R16QQZ08",
+    "name": "#sso-support",
+    "topic": "",
+    "purpose": "\u003chttps://islandis.slack.com/files/U03AQLBPJCT/F095QR15WV9/innskraningarportall__1_.pdf\u003e",
+    "memberCount": 54,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D0965F431A8",
+    "name": "@johannes.je",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D080FQA16H4",
+    "name": "@google_calendar",
+    "topic": "",
+    "purpose": "DM with Google Calendar",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C02QC34DZN0",
+    "name": "#talsmannagrunnur",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06UPN3JWT1",
+    "name": "#error-services-documents",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08KD0H7FKK",
+    "name": "#service-contentful-apps",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C094EJH03U1",
+    "name": "#team-hms-notifications",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 9,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D08JW9DEJGL",
+    "name": "@andres.mar.hardarson",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D087Y0A92NT",
+    "name": "@bjorn.thor.gudmundsso",
+    "topic": "",
+    "purpose": "DM with Björn Þór Guðmundsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06PH46GD0R",
+    "name": "@eirikur_si",
+    "topic": "",
+    "purpose": "DM with Eirikur Nilsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C019QK0S9A8",
+    "name": "#tollhusid",
+    "topic": "",
+    "purpose": "Rásin er fyrir þá sem vinna í Tollhúsinu í dag og koma til með að bætast við.",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01LUPSB9GU",
+    "name": "#feature-flags-stream",
+    "topic": "",
+    "purpose": "All changes from configcat",
+    "memberCount": 9,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06V1BMFBPX",
+    "name": "#error-gatekeeper-system",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06V6L7DLKE",
+    "name": "#error-tigera-operator",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C019PGR751Q",
+    "name": "#dev_references",
+    "topic": "",
+    "purpose": "Share and discuss links and references with the dev discipline.",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01R8C8UF7G",
+    "name": "#team-hugsmidjan",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 56,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C05FGC5HXPC",
+    "name": "#strict-typescript-villur",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06DUHMMLLF",
+    "name": "#syndis-utekt-medmaelakerfi",
+    "topic": "",
+    "purpose": "Slack rás til samskipta vegna Syndis öryggisúttektar á meðmælakerfi Þjóðskrár",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07HDR9G3FV",
+    "name": "#error-consultation-portal",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C080AJJRBS5",
+    "name": "#service-services-auth-delegation-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C054T2F4291",
+    "name": "#third_party_notifications",
+    "topic": "",
+    "purpose": "Notifications from 3rd party vendors: Advania, Contenful",
+    "memberCount": 4,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06UULL56BU",
+    "name": "#server-side-auth",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0834F51UN9",
+    "name": "#incident_notifications_automated",
+    "topic": "",
+    "purpose": "Automated incident notifications from Apró",
+    "memberCount": 10,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08SS68L6LS",
+    "name": "#brunabotamat",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 13,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D07G3MR5RFZ",
+    "name": "@U0652CJQ0CU",
+    "topic": "",
+    "purpose": "DM with U0652CJQ0CU",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06DR4MC7HC",
+    "name": "@una_si",
+    "topic": "",
+    "purpose": "DM with Una Kristín Benediktsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01R3NK9B27",
+    "name": "#elasticsearch-issues",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 0,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06UXKW57HU",
+    "name": "#error-nginx-ingress-external-alb",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C080LF0NN9J",
+    "name": "#service-services-auth-ids-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C089ZD4RB5G",
+    "name": "#error-portals-my-pages",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08GH2NT4KC",
+    "name": "#service-elb",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C070A1BJTJ8",
+    "name": "#error-endorsement-system",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07HGDCU4VA",
+    "name": "#error-services-university-gateway",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07UR6W62H1",
+    "name": "#cd-project",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08FWUSE97Y",
+    "name": "#error-socat",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D091VN0Q588",
+    "name": "@anton.k.jakobsson",
+    "topic": "",
+    "purpose": "DM with Anton Karl Jakobsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06LMUFRXUN",
+    "name": "@devbot",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C013CQR5VN1",
+    "name": "#honnun_faghopur",
+    "topic": "",
+    "purpose": "Hönnun fyrir stafrænt Íslands og fleira skemmtilegt",
+    "memberCount": 51,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01CNHXDD4H",
+    "name": "#efni-aðgengismal_faghopur",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 8,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0702UKK2SV",
+    "name": "#error-prometheus",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C076P10LJJW",
+    "name": "#stafraent-postholf_innleiðing",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08GTNKBA73",
+    "name": "#error-xroad-collector",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08JVA2SM2M",
+    "name": "#service-external-provisioner",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D07HQBB1J57",
+    "name": "@U07GCKM4K6U",
+    "topic": "",
+    "purpose": "DM with U07GCKM4K6U",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D0706JLP3NF",
+    "name": "@yhafsteinsdottir_si",
+    "topic": "",
+    "purpose": "DM with Ylfa Hafsteinsdóttir",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01FT6D29FY",
+    "name": "#contentful-dashboards",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01RHP6D0S2",
+    "name": "#team-deloitte",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 31,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0564SAB6CQ",
+    "name": "#contentful-elastic",
+    "topic": "",
+    "purpose": "Ræðum hvernig við viljum taka áfram gagnaflæði okkar á vef og vörum",
+    "memberCount": 8,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08C98FJCUD",
+    "name": "#service-services-bff-portals-my-pages",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08DH0XLDQE",
+    "name": "#error-services-form-system-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08JFD0DJQ3",
+    "name": "#service-unicorn-app",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D08DBMDS7L3",
+    "name": "@ingvar_si",
+    "topic": "",
+    "purpose": "DM with Ingvar Sigurðsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06U74JDCRK",
+    "name": "@aft01_si",
+    "topic": "",
+    "purpose": "DM with Árni Freyr Þorsteinsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06JE7Q5YAD",
+    "name": "@kal664",
+    "topic": "",
+    "purpose": "DM with kal",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C0438UM2M24",
+    "name": "#leit",
+    "topic": "",
+    "purpose": "Umbætur á leitarvélinni á \u003chttp://Ísland.is|Ísland.is\u003e",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C05PCK4GENP",
+    "name": "#okunam-og-okuskirteini",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 19,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CJGWAB4Z",
+    "name": "#service-air-discount-scheme-backend",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D09FJQ91ZB2",
+    "name": "@olafur.georg.gylfason",
+    "topic": "",
+    "purpose": "DM with Ólafur Georg Gylfason",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D08MALWNYHE",
+    "name": "@anna.zuchowicz_si",
+    "topic": "",
+    "purpose": "DM with Anna Zuchowicz",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06RP807PBN",
+    "name": "@bergvin_si",
+    "topic": "",
+    "purpose": "DM with Bergvin Fannar Gunnarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CV2CB1NF",
+    "name": "@karl.arnar.aegisson",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C025MAQA9AT",
+    "name": "#okuskirteini-þjonusta",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C04CQG0GFK3",
+    "name": "#hjonavigsla",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 8,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06LVK5AKJS",
+    "name": "#design_support",
+    "topic": "",
+    "purpose": "Support for designers, front end devs and others working with the \u003chttp://Ísland.is|Ísland.is\u003e design system.",
+    "memberCount": 17,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D079377V3T6",
+    "name": "@david.snorrason",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D0703JFEPHT",
+    "name": "@runar_si",
+    "topic": "",
+    "purpose": "DM with Rúnar Vestmann",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07AEG26VTR",
+    "name": "@U04DDP4R51R",
+    "topic": "",
+    "purpose": "DM with U04DDP4R51R",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CEK4S62K",
+    "name": "@valure_si",
+    "topic": "",
+    "purpose": "DM with Valur Einarsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01Q72L6JJ3",
+    "name": "#team-kolibri-modern-family",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C09187BQ3JB",
+    "name": "#error-form-system-web",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C09DHMUPFL3",
+    "name": "#error-payments",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D06CS7PD9EH",
+    "name": "@saevar_si",
+    "topic": "",
+    "purpose": "DM with Sævar Már Atlason",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C0134BF9WG6",
+    "name": "#dev_faghopur",
+    "topic": "",
+    "purpose": "The place to discuss things that matter to the whole dev discipline. E.g. discipline meetings, architecture and decisions. Check out the other #dev channels for other discussions.",
+    "memberCount": 74,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C02HQAL2UAV",
+    "name": "#exposed-secrets",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 13,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C03SRJBA0RX",
+    "name": "#pre-release-bot",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01KG13SGUF",
+    "name": "#organizational-access-changes",
+    "topic": "A place to request changes to access to organizational assets - GitHub and AWS accounts.\n\nAccess requests to Slack, Datadog (and more coming) should go through the IdP portal, \u003chttp://apps.stafraentisland.is|apps.stafraentisland.is\u003e",
+    "purpose": "A place to request changes to access to organizational assets - GitHub and AWS accounts.",
+    "memberCount": 140,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C02MW4LUCKW",
+    "name": "#rekstur-og-þjonusta-advania",
+    "topic": "",
+    "purpose": "Samskipti vegna rekstrar- og þjónustusamning afurða í hýsingu, rekstri og þjónustu Advania. eIDAS nóða, Innskráninga- og umboðskerfi, Leyfisveitingagátt, Pósthólfsbakendi, gömlu MínarSíður, OpinGögn, Samráðskerfi og Undirskriftalistar",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C030TKFAP9B",
+    "name": "#github-releases",
+    "topic": "",
+    "purpose": "RSS Feeds to track releases in infrastructure",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C04CNHQQAPR",
+    "name": "#minar-sidur-sjukratryggingar",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 17,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C085JTTQ89H",
+    "name": "#service-license-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CC15NQ75",
+    "name": "#service-download-service",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D08CGPFDMSM",
+    "name": "@ci",
+    "topic": "",
+    "purpose": "DM with ci",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C0307997T1D",
+    "name": "#team-origo",
+    "topic": "",
+    "purpose": "Teymi Origo",
+    "memberCount": 36,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06FFTAAQKE",
+    "name": "#minar-siður-starfsleyfi-syslumanna",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 10,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D06UQ7LKKT2",
+    "name": "@rgudlaugsson_si",
+    "topic": "",
+    "purpose": "DM with Rúnar S. Guðlaugsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C07PB2V0BLM",
+    "name": "#bff",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08DMLTT7C6",
+    "name": "#postholf-2way-samskipti",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 12,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08LJKPR4UQ",
+    "name": "#service-air-discount-scheme-web",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D0920B59KDF",
+    "name": "@U06812WNAD9",
+    "topic": "",
+    "purpose": "DM with U06812WNAD9",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06TU5LNVJ5",
+    "name": "@arni.gudmundsson_si",
+    "topic": "",
+    "purpose": "DM with Árni - TR",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06ERD4P06B",
+    "name": "@steini_si",
+    "topic": "",
+    "purpose": "DM with Steini",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D06CNG91K62",
+    "name": "@gudjon_si101",
+    "topic": "",
+    "purpose": "DM with Guðjón Guðjónsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01389KMZ60",
+    "name": "#stefna_parallel",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D08489F4VB5",
+    "name": "@gunnar_si",
+    "topic": "",
+    "purpose": "DM with Gunnar Vilbergsson",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "D07GJD5UV0T",
+    "name": "@aleksandr.beliakov",
+    "topic": "",
+    "purpose": "DM with Aleksandr Beliakov",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C01DKAZV1ST",
+    "name": "#rfc-islandis-web-aggregration",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 0,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01MCG8J69E",
+    "name": "#datadog",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 17,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C04QP42GVAT",
+    "name": "#team-advania",
+    "topic": "We are not the owners of university-gateway!!!",
+    "purpose": "",
+    "memberCount": 20,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06V6NUA20L",
+    "name": "#error-portals-admin",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07J2N8JY48",
+    "name": "#error-regulations-admin",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0811ABSBGB",
+    "name": "#service-services-university-gateway",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C015PKVMN8Z",
+    "name": "#gjafakort-api-monitoring",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C04A5A2NJ2V",
+    "name": "#xroad-connection-debug",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C05UXPHV4FM",
+    "name": "#kilometrastada-i-appi-og-minum-siðum",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 22,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0602M55T8T",
+    "name": "#minar-sidur-tr-og-umsoknir",
+    "topic": "",
+    "purpose": "Samskipti vegna útfærslu á einingum sem tengist TR og Framfærslu kubbi",
+    "memberCount": 16,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0628K33V6H",
+    "name": "#team-core_pr",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C070D2SV5C0",
+    "name": "#error-download-service",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C070D35JD16",
+    "name": "#error-contentful-entry-tagger",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08BCMS9K0Q",
+    "name": "#service-services-bff-portals-admin",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "D06TVDNDHJ6",
+    "name": "@gunnar194",
+    "topic": "",
+    "purpose": "DM with ",
+    "memberCount": 2,
+    "mpim": false,
+    "im": true,
+    "private": false
+  },
+  {
+    "id": "C023M9C44US",
+    "name": "#opin-gogn",
+    "topic": "",
+    "purpose": "Rás fyrir þá sem hafa áhuga á að opna gögn íslenska ríkisins",
+    "memberCount": 0,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C05RJHQTNQ3",
+    "name": "#minar-sidur-matvaelaraduneyti",
+    "topic": "",
+    "purpose": "Jarðabók á Mínum síðum",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0702PXDUPK",
+    "name": "#error-calico-system",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07LC5P81NW",
+    "name": "#error-contentful-apps",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C07PXND6SNQ",
+    "name": "#vegabrefsumsokn",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 10,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C080L1YDUR3",
+    "name": "#service-api",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C01LR03JWUC",
+    "name": "#menntamalastofnun_taekniteymi",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C03V4U9TQBY",
+    "name": "#staging-db-write",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C081XLLB604",
+    "name": "#service-search-indexer-service",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CHLVRSMB",
+    "name": "#service-xroad",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08ED3R0HMX",
+    "name": "#error-unicorn-app",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C09C6NY9QG7",
+    "name": "#error-calico-apiserver",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C09GXT7F0DN",
+    "name": "#terraform-prod-drift-detection",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 2,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C017N845M2Q",
+    "name": "#ops-issues",
+    "topic": "During business hours, please use \u003c#C019LNRM6LE|\u003e\nFor emergency support outside of business hours, please call tel://+3545785994",
+    "purpose": "Place to announce ongoing operational issues",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06U1H4CZQA",
+    "name": "#soffia-eol",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 8,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06V4C43H98",
+    "name": "#error-user-notification",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06V6NUAFJQ",
+    "name": "#error-judicial-system",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08CFA2NDCZ",
+    "name": "#service-portals-admin",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08H9V44W7R",
+    "name": "#service-auth-admin-web",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08HVFFRAU9",
+    "name": "#service-dss",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C022HAFM067",
+    "name": "#organization_pages",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08D2UQJ3GQ",
+    "name": "#service-consultation-portal",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08FLTUJS9J",
+    "name": "#minar-sidur-mms",
+    "topic": "",
+    "purpose": "Channel fyrir MMS / FRIGG á mínum síðum",
+    "memberCount": 9,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C5A99MF4L",
+    "name": "#holmasloð",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 0,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C0401AUAP9T",
+    "name": "#prod-db-write",
+    "topic": "/query-prod mydatabase myquery\nIf you are on a Mac and encounter weird issues with quotation marks, turn off this \"feature\":  System Preferences -\u0026gt; Keyboard -\u0026gt; Text -\u0026gt; [_] Use smart quotes and dashes",
+    "purpose": "/query-prod my_database my_query",
+    "memberCount": 26,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C06V6RSBPGU",
+    "name": "#error-application-system",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 1,
+    "mpim": false,
+    "im": false,
+    "private": false
+  },
+  {
+    "id": "C08PL08UGEB",
+    "name": "@mpdm-magnea_si--eirikur_si--saevar_si--ragnhildur.ragnarsdot--brynjar_si101--roberta_si101-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Magnea Rún Vignisdóttir, Sævar Már Atlason, Ragnhildur Helga Ragnarsdóttir, Brynjar Örn Grétarsson",
+    "memberCount": 6,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06UR1QB1M0",
+    "name": "@mpdm-roberta--olafur.ingthorsson--ragnhildur.ragnarsdot-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ragnhildur Helga Ragnarsdóttir, Olafur Ingthorsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C09H2S659T4",
+    "name": "#sso-github",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 4,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C03R6F2D3K2",
+    "name": "#dev-db-write-approvals",
+    "topic": "",
+    "purpose": "Approve or reject db-write requests.",
+    "memberCount": 5,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08GJG4KNUX",
+    "name": "@mpdm-stefan.ingi.arnason--andres.mar.hardarson--brynjar_si--olafur.ingthorsson_si--roberta_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, , Brynjar Örn Grétarsson, Olafur Ingthorsson, U06M9QDHHKQ",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06P6TW5GFN",
+    "name": "@mpdm-roberta--eirikur--jon.arnar.briem-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Jón Arnar Briem",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08G40LUQ11",
+    "name": "@mpdm-rgudlaugsson--roberta--saevar--ragnhildur.ragnarsdot--bkristmundsson--vesigurdardottir--kolbrun.oskarsdottir-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Rúnar S. Guðlaugsson, Sævar Már Atlason, Kolbrun Oskarsdottir, Ragnhildur Helga Ragnarsdóttir, Verónika Sif Sigurðardóttir, Birkir Þ. Kristmundsson",
+    "memberCount": 7,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08FTEXG44W",
+    "name": "@mpdm-roberta--saevar--eirikur-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Sævar Már Atlason",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C09FQGLN1TJ",
+    "name": "#devops-core-digitaliceland",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 7,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07HFAMJP1P",
+    "name": "@mpdm-khalldorsdottir--rgudlaugsson--levy--ragnhildur.ragnarsdot--kristofer306--olafur.ingthorsson--roberta-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Rúnar S. Guðlaugsson, Jón Levy, Karen Björg, Ragnhildur Helga Ragnarsdóttir, , Olafur Ingthorsson",
+    "memberCount": 7,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07047PV1T7",
+    "name": "@mpdm-roberta--brynjar807--kristofer306-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Brynjar Örn Grétarsson, ",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C09GCCB6WAH",
+    "name": "@mpdm-olafur.ingthorsson_si--roberta_si101--brynjar_si101--eirikur_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Brynjar Örn Grétarsson, Olafur Ingthorsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C080V2RJMFU",
+    "name": "@mpdm-roberta--eirikur--levy-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Jón Levy",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06P4EFN16E",
+    "name": "@mpdm-roberta--eirikur--jon.arnar.briem--levy-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Jón Levy, Jón Arnar Briem",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07UUQXF8MT",
+    "name": "@mpdm-baering--eirikur--levy--saevar--roberta-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Bæring Gunnar Steinþórsson, Jón Levy, Sævar Már Atlason",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C01BSP7RGBY",
+    "name": "#apro",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 13,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C039KL0LC8J",
+    "name": "#dev-ops-stafraent-island",
+    "topic": "",
+    "purpose": "Close Channel for discussing Dev Ops matters",
+    "memberCount": 17,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C091TB7LUHL",
+    "name": "@mpdm-roberta_si101--agust.petursson--bjarni.rafn.gunnarsso-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Bjarni Rafn Gunnarsson, Ágúst Logi Pétursson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07NVTHLKUM",
+    "name": "@mpdm-roberta--jon.arnar.briem--svanhildur-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Arnar Briem, Svana",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08G6JRUM8V",
+    "name": "@mpdm-ragnhildur.ragnarsdot--roberta--saevar-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Sævar Már Atlason, Ragnhildur Helga Ragnarsdóttir",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07J59VADSQ",
+    "name": "@mpdm-johannes--hjalmar--roberta--johannes-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Hjálmar Leó Einarsson, U04DDP4R51R, ",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C080F39R7P1",
+    "name": "@mpdm-roberta--levy--ragnhildur.ragnarsdot--olafur.ingthorsson-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, Ragnhildur Helga Ragnarsdóttir, Olafur Ingthorsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08G3U0NX26",
+    "name": "@mpdm-rgudlaugsson--roberta--saevar-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Rúnar S. Guðlaugsson, Sævar Már Atlason",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07PUCTLU6S",
+    "name": "@mpdm-roberta--hrafnkell--gunnar-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, U067UGEAY14, U067Y7XH8JZ",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C09D7TCQD0C",
+    "name": "@mpdm-ragnhildur.ragnarsdot--eirikur_si--roberta_si101--olafur.ingthorsson_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Ragnhildur Helga Ragnarsdóttir, Olafur Ingthorsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07QPKS04CF",
+    "name": "#devops-project-management",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08HT439M0W",
+    "name": "@mpdm-roberta_si--eirikur_si--brynjar_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Brynjar Örn Grétarsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07S5LWE8PQ",
+    "name": "@mpdm-ragnhildur.ragnarsdot--roberta--anna786-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ragnhildur Helga Ragnarsdóttir, Anna Zuchowicz",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C090VN3NFF1",
+    "name": "@mpdm-roberta_si101--agust.olafsson_si--asta.andresdottir_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ágúst Leó Ólafsson, Ásta Andrésdóttir",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08T8EE98DS",
+    "name": "@mpdm-roberta_si101--ingvar_si--jonorn_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ingvar Sigurðsson, Jón Örn Arnarson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C0328C2SJDD",
+    "name": "#dss-support",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 18,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07AJ6Z1EGY",
+    "name": "@mpdm-brynjar807--ragnhildur.ragnarsdot--roberta--jonni-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ragnhildur Helga Ragnarsdóttir, Brynjar Örn Grétarsson, Jónas G. Sigurðsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06ELFZ5Z3J",
+    "name": "@mpdm-roberta--olafur.ingthorsson--brynjar807-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Brynjar Örn Grétarsson, Olafur Ingthorsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C09CNK5Q2FR",
+    "name": "@mpdm-roberta_si101--ingvar_si--igor_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ingvar Sigurðsson, Igor Churmeev",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08V223T7H8",
+    "name": "@mpdm-hrafnkell--emil--anna.zuchowicz--roberta_si101-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, U067Y7XH8JZ, U077G50HPT3, U07U9HHV7C5",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08PSGXRS06",
+    "name": "@mpdm-roberta_si101--eirikur_si--saevar_si--brynjar_si101-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Sævar Már Atlason, Brynjar Örn Grétarsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08189AUA73",
+    "name": "@mpdm-roberta--levy--olafur.ingthorsson-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, Olafur Ingthorsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C087DH7JEG6",
+    "name": "#security-apro-digitaliceland",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 4,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07SBLQ2YGK",
+    "name": "@mpdm-roberta--tryggvi--brynjar807-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Brynjar Örn Grétarsson, Tryggvi",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07616X1SKF",
+    "name": "#andes-kosningar",
+    "topic": "",
+    "purpose": "Kosningavakt Andes!\n\n\u003chttps://app.datadoghq.eu/dashboard/nnv-eae-886/kjrdagur\u003e\n\n\u003c#C06TXH52R5J|\u003e\n\nLögboðinn playlisti kosninga:\n\u003chttps://open.spotify.com/playlist/6L53NLvuvHDgHKhFCeQ5J6?si=de0f0dcd9d854e89\u003e",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07H1UACJDD",
+    "name": "@mpdm-roberta--brynjar807--levy-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, Brynjar Örn Grétarsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08KBK6PFBP",
+    "name": "@mpdm-roberta_si101--andri_si--benedikt_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Andri Mar Björgvinsson, Benedikt Óskarsson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07LZ73HWCW",
+    "name": "@mpdm-johannes--levy--brynjar807--roberta--johannes-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, Brynjar Örn Grétarsson, U04DDP4R51R, ",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07P5M00V2N",
+    "name": "@mpdm-roberta--una--ivaro-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ívar Oddsson, Una Kristín Benediktsdóttir",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07LR9DK6DV",
+    "name": "@mpdm-roberta--levy--johannes-2",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, U04DDP4R51R",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C093CQ7FNBC",
+    "name": "#xroad-incident-june-2025",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 9,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07AZRQ2YAZ",
+    "name": "@mpdm-roberta--levy--johannes-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, ",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08GBFLGD1P",
+    "name": "@mpdm-roberta--saevar--eirikur--levy-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Jón Levy, Sævar Már Atlason",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07NZJWS5UH",
+    "name": "@mpdm-roberta--anna786--johannes--levy-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, , Anna Zuchowicz",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08GS5FC49E",
+    "name": "@mpdm-rgudlaugsson--roberta--saevar--ragnhildur.ragnarsdot--bkristmundsson-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Rúnar S. Guðlaugsson, Sævar Már Atlason, Ragnhildur Helga Ragnarsdóttir, Birkir Þ. Kristmundsson",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C081BPVUYBA",
+    "name": "#cd-project-apro",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 3,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08VD2CGNHX",
+    "name": "@mpdm-hrafnkell--emil--anna.zuchowicz--sigurdur--roberta_si101-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, U067Y7XH8JZ, U068Q5GQS2U, U077G50HPT3, U07U9HHV7C5",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06DGLQUNSK",
+    "name": "@mpdm-jonorn--petur426--roberta-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Pétur Neisti Erlingsson, Jón Örn Arnarson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06UQJK66MQ",
+    "name": "@mpdm-jonorn--levy--roberta-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Jón Levy, Jón Örn Arnarson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C093TU72ZFV",
+    "name": "@mpdm-roberta_si101--brynjar_si101--olafur.ingthorsson_si--andres.mar.hardarson-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, , Brynjar Örn Grétarsson, Olafur Ingthorsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08HQ8U3P89",
+    "name": "#drm2",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 8,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C091FJ3UZKJ",
+    "name": "@mpdm-roberta_si101--olafur.ingthorsson_si--ragnhildur.ragnarsdot--brynjar_si101-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ragnhildur Helga Ragnarsdóttir, Brynjar Örn Grétarsson, Olafur Ingthorsson",
+    "memberCount": 4,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07517XC0AF",
+    "name": "@mpdm-roberta--margret--olafur-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Ólafur Björn Magnússon, Margrét Finnbogadóttir",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08G62R36PN",
+    "name": "@mpdm-rgudlaugsson--roberta--saevar--ragnhildur.ragnarsdot--bkristmundsson--vesigurdardottir-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Rúnar S. Guðlaugsson, Sævar Már Atlason, Ragnhildur Helga Ragnarsdóttir, Verónika Sif Sigurðardóttir, Birkir Þ. Kristmundsson",
+    "memberCount": 6,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C07APUYSVV4",
+    "name": "#cloud2-aws-infra-review",
+    "topic": "",
+    "purpose": "",
+    "memberCount": 6,
+    "mpim": false,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08J1GHNQ90",
+    "name": "@mpdm-eirikur_si--olafur.ingthorsson_si--ragnhildur.ragnarsdot--levy_si--roberta_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Jón Levy, Ragnhildur Helga Ragnarsdóttir, Olafur Ingthorsson",
+    "memberCount": 5,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C08J5LS8Q05",
+    "name": "@mpdm-ragnhildur.ragnarsdot--eirikur_si--roberta_si-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Eirikur Nilsson, Ragnhildur Helga Ragnarsdóttir",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C06MEQVTW02",
+    "name": "@mpdm-roberta--gunnar194--hrafnkell-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, U01AG5U3FV5, ",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  },
+  {
+    "id": "C0777N885B3",
+    "name": "@mpdm-roberta--brynjar807--jonorn-1",
+    "topic": "",
+    "purpose": "Group DM with Róberta Andersen, Brynjar Örn Grétarsson, Jón Örn Arnarson",
+    "memberCount": 3,
+    "mpim": true,
+    "im": false,
+    "private": true
+  }
+]
