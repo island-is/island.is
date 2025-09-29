@@ -35,6 +35,7 @@ export const PoliceCasesApiProvider: Provider<MittLogreglanAPIApi> = {
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {
           'X-Road-Client': xroadConfig.xRoadClient,
+          'x-api-key': config.xRoadPoliceCasesApiKey,
           Accept: 'application/json',
         },
       }),

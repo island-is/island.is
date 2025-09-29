@@ -2,9 +2,7 @@ import { Box } from '@island.is/island-ui/core'
 import {
   ActionCard,
   CardLoader,
-  IntroWrapper,
   m as coreMessages,
-  RIKISLOGREGLUSTJORI_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -23,14 +21,6 @@ const PoliceCases = () => {
 
   return (
     <>
-      <IntroWrapper
-        title={messages.policeCasesTitle}
-        intro={messages.policeCasesDescription}
-        serviceProviderSlug={RIKISLOGREGLUSTJORI_SLUG}
-        serviceProviderTooltip={formatMessage(
-          coreMessages.nationalPoliceCommissionerTooltip,
-        )}
-      />
       {loading && !error && (
         <Box width="full">
           <CardLoader />

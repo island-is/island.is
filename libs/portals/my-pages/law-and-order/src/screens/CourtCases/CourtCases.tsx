@@ -2,8 +2,6 @@ import { Box, TagVariant } from '@island.is/island-ui/core'
 import {
   ActionCard,
   CardLoader,
-  DOMSMALARADUNEYTID_SLUG,
-  IntroHeader,
   m,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
@@ -32,12 +30,6 @@ const CourtCases = () => {
 
   return (
     <>
-      <IntroHeader
-        title={messages.courtCases}
-        intro={messages.courtCasesDescription}
-        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
-      />
       {loading && !error && (
         <Box width="full">
           <CardLoader />

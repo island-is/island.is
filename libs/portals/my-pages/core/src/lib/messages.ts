@@ -1914,6 +1914,14 @@ export const m = defineMessages({
     id: 'service.portal:court-cases',
     defaultMessage: 'Dómsmál',
   },
+  myCases: {
+    id: 'service.portal:my-cases',
+    defaultMessage: 'Mín mál',
+  },
+  myCasesIntro: {
+    id: 'service.portal:my-cases-intro',
+    defaultMessage: 'Lorem ipsum etc',
+  },
   myPoliceCases: {
     id: 'service.portal:my-police-cases',
     defaultMessage: 'Mín lögreglumál',
