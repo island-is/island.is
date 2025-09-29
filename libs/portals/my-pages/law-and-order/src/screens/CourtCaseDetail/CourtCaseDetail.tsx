@@ -22,7 +22,6 @@ const CourtCaseDetail = () => {
   const { formatMessage, lang } = useLocale()
 
   const { id } = useParams() as UseParams
-
   const { data, error, loading } = useGetCourtCaseQuery({
     variables: {
       input: {

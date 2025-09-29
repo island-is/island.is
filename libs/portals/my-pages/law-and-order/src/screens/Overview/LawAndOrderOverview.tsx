@@ -39,6 +39,9 @@ const LawAndOrderOverview = ({ defaultTab = RIKISLOGREGLUSTJORI_SLUG }: Props) =
       content: <Box marginTop={5}><CourtCases /></Box>
     },
   ]
+
+
+
   return (
     <IntroWrapper
       title={m.myCases}
@@ -55,7 +58,7 @@ const LawAndOrderOverview = ({ defaultTab = RIKISLOGREGLUSTJORI_SLUG }: Props) =
         tabs={tabs}
         contentBackground="transparent"
         selected={selectedTab}
-        onChange={(index) => {setSelectedTab(index as CaseTabType)}}
+        onChange={(index) => { console.log(index);  setSelectedTab(index as CaseTabType)}}
         onlyRenderSelectedTab
       />
     </IntroWrapper>

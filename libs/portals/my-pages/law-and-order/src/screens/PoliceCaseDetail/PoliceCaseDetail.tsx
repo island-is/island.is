@@ -21,7 +21,6 @@ type UseParams = {
 const PoliceCaseDetail = () => {
   useNamespaces('sp.law-and-order')
   const { formatMessage } = useLocale()
-
   const { id } = useParams() as UseParams
 
   const { data, loading, error } = useGetPoliceCaseQuery({
@@ -50,7 +49,7 @@ const PoliceCaseDetail = () => {
     return <Problem error={error} noBorder={false} />
   }
 
-  const policeCaseNumber = policeCase?.number ?? ''
+  const policeCaseNumber = id
 
   return (
     <>

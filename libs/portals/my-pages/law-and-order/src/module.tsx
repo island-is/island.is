@@ -4,6 +4,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Navigate } from 'react-router-dom'
 import { DOMSMALARADUNEYTID_SLUG, m, RIKISLOGREGLUSTJORI_SLUG } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
+import PoliceCaseDetail from './screens/PoliceCaseDetail/PoliceCaseDetail'
 
 const Overview = lazy(() => import('./screens/Overview/LawAndOrderOverview'))
 const CourtCaseDetail = lazy(() =>
@@ -51,10 +52,10 @@ export const lawAndOrderModule: PortalModule = {
       element:<Overview defaultTab={RIKISLOGREGLUSTJORI_SLUG} />,
     },
     {
-      name: m.courtCases,
+      name: m.policeCases,
       path: LawAndOrderPaths.PoliceCasesDetail,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <CourtCaseDetail />,
+      element: <PoliceCaseDetail />,
     },
   ],
 }
