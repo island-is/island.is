@@ -25,6 +25,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
+    "@datadog/datadog-ci": "3.21.4",
     "@fluffy-spoon/substitute": "^1.208.0",
     "@octokit/rest": "19.0.4",
     "@types/debug": "4.1.7",
