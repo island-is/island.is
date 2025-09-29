@@ -363,9 +363,11 @@ export class VerdictService {
         continue
       }
 
-      const allServiceCertificatesDelivered =
-        deliveredServiceCertificates?.length === targetDefendants?.length
-      if (allServiceCertificatesDelivered) {
+      const targetCount = targetDefendants?.length ?? 0
+      const deliveredCount = deliveredServiceCertificates?.length ?? 0
+      const areAllServiceCertificatesDelivered =
+        targetCount > 0 && deliveredCount === targetCount
+      if (areAllServiceCertificatesDelivered) {
         await this.eventLogService.createWithUser(
           EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
           c.id,
@@ -391,7 +393,6 @@ export class VerdictService {
 
     const delivered = await Promise.all(
       defendantsWithCases.map(async ({ defendant, theCase }) => {
-        const result = { caseId: theCase.id, defendantId: defendant.id }
         if (!theCase) {
           this.logger.warn(
             `Failed to upload verdict service certificate pdf to police`,
@@ -399,9 +400,14 @@ export class VerdictService {
               reason: 'case is undefined',
             },
           )
-          return { ...result, delivered: false }
+          return {
+            caseId: '',
+            defendantId: '',
+            delivered: false,
+          }
         }
 
+        const result = { caseId: theCase.id, defendantId: defendant.id }
         const user = theCase.judge
         if (!user) {
           this.logger.warn(
