@@ -340,7 +340,7 @@ export class VerdictService {
 
   private async checkVerdictCertificateDeliveryCompletion(caseIds: string[]) {
     const latestCases = await this.internalCaseService.getSelectedCases(caseIds)
-    latestCases.forEach(async (c) => {
+    for (const c of latestCases) {
       const targetDefendants = c.defendants?.filter(
         (defendant) =>
           defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
@@ -371,7 +371,7 @@ export class VerdictService {
           } as TUser,
         )
       }
-    })
+    }
   }
 
   async deliverVerdictServiceCertificatesToPolice(): Promise<
