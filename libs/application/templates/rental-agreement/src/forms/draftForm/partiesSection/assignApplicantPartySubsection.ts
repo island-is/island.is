@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/core'
 import { ApplicantsRole } from '../../../utils/enums'
 
-export const assignApplicantPatySubsection = buildSubSection({
+export const assignApplicantPartySubsection = buildSubSection({
   id: 'assignApplicantPartySubsection',
   title: 'Hlutverk',
   children: [
