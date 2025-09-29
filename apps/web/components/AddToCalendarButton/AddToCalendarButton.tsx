@@ -33,17 +33,26 @@ const downloadICSFile = ({
   endTime,
   endDate,
 }: CalendarEvent): void => {
-  const isAllDay = !startTime
+  const isAllDay = !startTime || !endTime
   const startDateTime = isAllDay ? startDate : `${startDate}T${startTime}`
-  const endDateTime = endTime
-    ? `${endDate ? endDate : startDate}T${endTime}`
-    : null
+  let endDateTime: string | null = null
+  if (endTime) {
+    endDateTime = `${endDate ?? startDate}T${endTime}`
+  } else if (isAllDay && (endDate ?? startDate)) {
+    const endBase = endDate ?? startDate
+    const exclusiveEnd = new Date(endBase)
+    exclusiveEnd.setDate(exclusiveEnd.getDate() + 1) // ICS all-day DTEND is exclusive
+    // Pass a date-only string; formatDate(..., true) will emit YYYYMMDD
+    endDateTime = exclusiveEnd.toISOString().split('T')[0]
+  }
 
   const fullDescription = `${pageUrl ? `${pageUrl}\n\n` : ''}${description}`
 
   // Use the correct time format for ICS
   const formattedStartDate = formatDate(startDateTime, isAllDay)
-  const formattedEndDate = endDateTime ? formatDate(endDateTime) : ''
+  const formattedEndDate = endDateTime
+    ? formatDate(endDateTime, isAllDay && !endTime)
+    : ''
 
   const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
