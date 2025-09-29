@@ -38,12 +38,12 @@ runs:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
         DD_API_KEY: ${{ inputs.dd-api-key }}
 
-  - name: Upload coverage reports to Datadog
-      shell: bash
-      run: datadog-ci coverage upload .
-      env:
-        DD_API_KEY: ${{ inputs.dd-api-key }}
-        DD_SITE: datadoghq.eu
+    - name: Upload coverage reports to Datadog
+        shell: bash
+        run: datadog-ci coverage upload .
+        env:
+          DD_API_KEY: ${{ inputs.dd-api-key }}
+          DD_SITE: datadoghq.eu
 
     - name: Set RUNS_ON_S3_BUCKET_CACHE
       shell: bash
