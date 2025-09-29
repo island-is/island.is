@@ -6,11 +6,10 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
-import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetCourtCaseInput } from '../../dto/getCourtCaseInput'
 import { GetSubpoenaInput } from '../../dto/getSubpoenaInput'
 import { PostDefenseChoiceInput } from '../../dto/postDefenseChoiceInput.model'
@@ -21,6 +20,7 @@ import { Lawyers } from '../models/law-and-order/lawyers.model'
 import { Subpoena } from '../models/law-and-order/summon.model'
 import { LawAndOrderService } from '../services/law-and-order.service'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 const LOG_CATEGORY = 'law-and-order-resolver'
 

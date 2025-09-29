@@ -8,7 +8,6 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
-import type { Locale } from '@island.is/shared/types'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { PoliceCasesService } from '../services/police-cases.service'
