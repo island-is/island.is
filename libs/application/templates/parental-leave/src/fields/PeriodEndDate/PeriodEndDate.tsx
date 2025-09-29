@@ -56,7 +56,7 @@ export const PeriodEndDate: FC<
   ) as StartDateOptions
   const error = getErrorViaPath(errors as FieldErrors<FieldValues>, fieldId)
   const expectedDateOfBirthOrAdoptionDateOrBirthDate =
-    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
   const dob = expectedDateOfBirthOrAdoptionDateOrBirthDate
     ? parseISO(expectedDateOfBirthOrAdoptionDateOrBirthDate)
     : null

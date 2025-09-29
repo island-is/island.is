@@ -2,6 +2,21 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   info: defineMessages({
+    sendTypePostalMailLabel: {
+      id: 'web.landspitali.memorialCard:info.sendTypePostalMailLabel',
+      defaultMessage: 'Senda kort með bréfpósti',
+      description: 'Senda kort með bréfpósti',
+    },
+    sendTypeEmailLabel: {
+      id: 'web.landspitali.memorialCard:info.sendTypeEmailLabel',
+      defaultMessage: 'Senda kort með tölvupósti',
+      description: 'Senda kort með tölvupósti',
+    },
+    recipientEmailLabel: {
+      id: 'web.landspitali.memorialCard:info.recipientEmailLabel',
+      defaultMessage: 'Netfang viðtakanda',
+      description: 'Netfang viðtakanda',
+    },
     senderNationalIdDescription: {
       id: 'web.landspitali.memorialCard:info.senderNationalIdDescription',
       defaultMessage:
