@@ -32,6 +32,7 @@ import {
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
   Case,
+  CourtDocumentType,
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
@@ -381,6 +382,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     if (!res) return
 
+    patchSession(courtSession.id, {
+      ...courtSession,
+      filedDocuments: [...(courtSession.filedDocuments || []), res],
+    })
+
     setReorderableFiles((prev) =>
       prev.map((session) =>
         session.courtSessionId === courtSession.id
@@ -627,6 +633,17 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             isLoading={courtDocument.create.loading}
           >
             <Box display="flex" flexDirection="column" rowGap={2}>
+              {index > 0 && (
+                <Box
+                  background="white"
+                  paddingX={3}
+                  paddingY={2}
+                  marginTop={2}
+                  borderRadius="large"
+                >
+                  <Text variant="h5">{`Skjöl málsins nr. 1-5 liggja frammi`}</Text>
+                </Box>
+              )}
               <Box
                 display="flex"
                 rowGap={2}

@@ -38,10 +38,7 @@ const useCourtDocuments = () => {
           throw new Error()
         }
 
-        return {
-          id: data.createCourtDocument.id,
-          created: data.createCourtDocument.created,
-        }
+        return data.createCourtDocument
       } catch (error) {
         toast.error('Upp kom villa við að búa til þingskjal')
 
