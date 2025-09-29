@@ -14,6 +14,7 @@ import {
   LoadingDots,
   Text,
   toast,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -298,7 +299,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                 ) : (caseFile.status === FileUploadStatus.error || isEmpty) &&
                   onRetry ? (
                   <button
-                    onClick={() => onRetry(caseFile as TUploadFile)}
+                    onClick={() => onRetry(caseFile as UploadFile)}
                     className={cn(
                       styles.editCaseFileButton,
                       styles.background.secondary,
