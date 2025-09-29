@@ -143,7 +143,7 @@ const EventInformationBox = ({
             <EventLocation location={event.location} />
           </Box>
         )}
-        {!hasEventOccurred && (
+        {!hasEventOccurred && Boolean(event.startDate) && (
           <Box
             display="flex"
             flexWrap="nowrap"
@@ -163,9 +163,12 @@ const EventInformationBox = ({
                     : 'https://island.is'
                 }${router.asPath}`,
                 location: formatEventLocation(event.location),
-                startDate: event.startDate,
+                startDate: format(new Date(event.startDate), 'yyyy-MM-dd'),
                 startTime: event.time?.startTime,
                 endTime: event.time?.endTime,
+                endDate: event.time?.endDate
+                  ? format(new Date(event.time.endDate), 'yyyy-MM-dd')
+                  : undefined,
               }}
             />
           </Box>
