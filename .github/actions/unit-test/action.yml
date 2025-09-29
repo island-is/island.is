@@ -24,7 +24,7 @@ runs:
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
 
-   - name: Configure Datadog Test Optimization
+    - name: Configure Datadog Test Optimization
       uses: datadog/test-visibility-github-action@v2
       with:
         languages: 'js'
@@ -39,11 +39,11 @@ runs:
         DD_API_KEY: ${{ inputs.dd-api-key }}
 
     - name: Upload coverage reports to Datadog
-        shell: bash
-        run: datadog-ci coverage upload .
-        env:
-          DD_API_KEY: ${{ inputs.dd-api-key }}
-          DD_SITE: datadoghq.eu
+      shell: bash
+      run: datadog-ci coverage upload .
+      env:
+        DD_API_KEY: ${{ inputs.dd-api-key }}
+        DD_SITE: datadoghq.eu
 
     - name: Set RUNS_ON_S3_BUCKET_CACHE
       shell: bash
