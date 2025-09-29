@@ -1016,6 +1016,7 @@ export const slices = gql`
         }
         slug
         assetUrl
+        externalUrl
         image {
           url
           title
@@ -1064,6 +1065,7 @@ export const slices = gql`
     __typename
     id
     baseUrl
+    seeMoreLinkTextString
     items {
       id
       date
@@ -1081,6 +1083,7 @@ export const slices = gql`
       }
       slug
       assetUrl
+      externalUrl
       image {
         url
         title
