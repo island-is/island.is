@@ -618,10 +618,10 @@ export class InternalCaseService {
               required: true,
               where: {
                 serviceRequirement: ServiceRequirement.REQUIRED,
-                service_status: {
+                serviceStatus: {
                   [Op.not]: VerdictServiceStatus.NOT_APPLICABLE,
                 },
-                service_date: {
+                serviceDate: {
                   [Op.not]: null,
                 },
               },
@@ -667,6 +667,12 @@ export class InternalCaseService {
   async getSelectedCases(caseIds: string[]) {
     return this.caseRepositoryService.findAll({
       include: [
+        {
+          model: User,
+          as: 'judge',
+          required: false,
+          include: [{ model: Institution, as: 'institution' }],
+        },
         {
           model: EventLog,
           as: 'eventLogs',

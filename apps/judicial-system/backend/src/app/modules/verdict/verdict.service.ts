@@ -355,7 +355,13 @@ export class VerdictService {
 
       const user = c.judge
       if (!user) {
-        return
+        this.logger.warn(
+          `Failed to verify verdict service certificate delivery completion for case ${c.id}`,
+          {
+            reason: 'court case user not found',
+          },
+        )
+        continue
       }
 
       const allServiceCertificatesDelivered =

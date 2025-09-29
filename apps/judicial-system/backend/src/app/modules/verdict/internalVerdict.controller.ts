@@ -240,7 +240,7 @@ export class InternalVerdictController {
     }[]
   > {
     this.logger.debug(
-      `Delivering verdict service certificates pdf to court for all verdict where appeal decision deadline has passed`,
+      `Delivering verdict service certificates pdf to police for all verdicts where appeal decision deadline has passed`,
     )
 
     const delivered =
