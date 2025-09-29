@@ -32,6 +32,9 @@ export class Case {
   @Field(() => ID)
   id!: string
 
+  @Field()
+  caseId!: string
+
   @Field({ nullable: true })
   caseNumberTitle?: string
 

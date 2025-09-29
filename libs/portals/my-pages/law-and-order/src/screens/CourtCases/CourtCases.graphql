@@ -1,7 +1,10 @@
 query GetCourtCases($locale: String!) {
   lawAndOrderCourtCasesList(locale: $locale) {
+    __typename
     cases {
+      __typename
       id
+      caseId
       caseNumberTitle
       type
       state {

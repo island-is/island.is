@@ -9,12 +9,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { LawAndOrderPaths } from '../../lib/paths'
 import { useGetCourtCasesQuery } from './CourtCases.generated'
 import { Problem } from '@island.is/react-spa/shared'
-import { useEffect } from 'react'
 
 const CourtCases = () => {
   useNamespaces('sp.law-and-order')
-  const { lang } = useLocale()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   const { data, loading, error } = useGetCourtCasesQuery({
     variables: {
@@ -40,7 +38,6 @@ const CourtCases = () => {
         cases.map((x) => (
           <Box marginTop={2}>
             <ActionCard
-              translateLabel="no"
               heading={x.caseNumberTitle ?? ''}
               text={x.type ?? ''}
               tag={{
@@ -53,7 +50,7 @@ const CourtCases = () => {
                 variant: 'text',
                 url: LawAndOrderPaths.CourtCaseDetail.replace(
                   ':id',
-                  x.id ?? '',
+                  x.caseId ?? '',
                 ),
               }}
             />

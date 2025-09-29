@@ -45,7 +45,8 @@ export class LawAndOrderService {
       cases:
         cases?.map((x: CasesResponse) => {
           return {
-            id: x.id,
+            id: `${x.id}${locale.toString()}`,
+            caseId: x.id,
             caseNumber: x.caseNumber,
             caseNumberTitle: x.caseNumber,
             state: { label: x.state.label, color: mapTagTypes(x.state.color) },

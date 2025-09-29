@@ -14,11 +14,15 @@ import CourtCases from '../CourtCases/CourtCases'
 const CASE_TAB_TYPES = [RIKISLOGREGLUSTJORI_SLUG, DOMSMALARADUNEYTID_SLUG] as const
 type CaseTabType = typeof CASE_TAB_TYPES[number]
 
-const LawAndOrderOverview = () => {
+interface Props {
+  defaultTab?: CaseTabType
+}
+
+const LawAndOrderOverview = ({ defaultTab = RIKISLOGREGLUSTJORI_SLUG }: Props) => {
   useNamespaces('sp.law-and-order')
   const { formatMessage } = useLocale()
 
-  const [selectedTab, setSelectedTab] = useState<CaseTabType>(RIKISLOGREGLUSTJORI_SLUG)
+  const [selectedTab, setSelectedTab] = useState<CaseTabType>(defaultTab)
 
   const tabs: Array<TabType> = [
     {
@@ -40,7 +44,7 @@ const LawAndOrderOverview = () => {
         serviceProviderTooltip={formatMessage(selectedTab === RIKISLOGREGLUSTJORI_SLUG ? m.nationalPoliceCommissionerTooltip : m.domsmalaraduneytidTooltip)}
       >
       <Tabs
-        label={formatMessage(messages.cancel)}
+        label={formatMessage(messages.myData)}
         tabs={tabs}
         contentBackground="transparent"
         selected={selectedTab}

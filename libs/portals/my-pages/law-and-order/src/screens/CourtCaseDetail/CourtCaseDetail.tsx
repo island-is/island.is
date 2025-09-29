@@ -1,7 +1,7 @@
 import { Box } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
-  IntroHeader,
+  IntroWrapper,
   LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
@@ -10,7 +10,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import { LawAndOrderPaths } from '../../lib/paths'
 import InfoLines from '../../components/InfoLines/InfoLines'
-import { useEffect } from 'react'
 import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -24,7 +23,7 @@ const CourtCaseDetail = () => {
 
   const { id } = useParams() as UseParams
 
-  const { data, error, loading, refetch } = useGetCourtCaseQuery({
+  const { data, error, loading } = useGetCourtCaseQuery({
     variables: {
       input: {
         id,
@@ -35,13 +34,8 @@ const CourtCaseDetail = () => {
 
   const courtCase = data?.lawAndOrderCourtCaseDetail
 
-  useEffect(() => {
-    refetch()
-  }, [lang])
-
   return (
-    <>
-      <IntroHeader
+      <IntroWrapper
         loading={loading}
         title={
           courtCase?.data?.caseNumberTitle ??
@@ -50,7 +44,7 @@ const CourtCaseDetail = () => {
         intro={messages.courtCasesDescription}
         serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
-      />
+      >
       <Box marginBottom={3} display="flex" flexWrap="wrap">
         {data?.lawAndOrderCourtCaseDetail && !loading && (
           <Box paddingRight={2} marginBottom={[1]}>
@@ -86,7 +80,7 @@ const CourtCaseDetail = () => {
             imgSrc="./assets/images/sofa.svg"
           />
         )}
-    </>
+      </IntroWrapper>
   )
 }
 export default CourtCaseDetail

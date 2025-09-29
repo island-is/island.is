@@ -2,17 +2,15 @@ import { PortalModule } from '@island.is/portals/core'
 import { LawAndOrderPaths } from './lib/paths'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Navigate } from 'react-router-dom'
-import { m } from '@island.is/portals/my-pages/core'
+import { DOMSMALARADUNEYTID_SLUG, m, RIKISLOGREGLUSTJORI_SLUG } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
-import { Features } from '@island.is/feature-flags'
-import PoliceCases from './screens/PoliceCases/PoliceCases'
 
 const Overview = lazy(() => import('./screens/Overview/LawAndOrderOverview'))
-const CourtCases = lazy(() => import('./screens/CourtCases/CourtCases'))
 const CourtCaseDetail = lazy(() =>
   import('./screens/CourtCaseDetail/CourtCaseDetail'),
 )
 const Subpoena = lazy(() => import('./screens/Subpoena/Subpoena'))
+
 export const lawAndOrderModule: PortalModule = {
   name: m.lawAndOrder,
   routes: ({ userInfo }) => [
@@ -26,13 +24,13 @@ export const lawAndOrderModule: PortalModule = {
       name: m.overview,
       path: LawAndOrderPaths.Overview,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <Overview />,
+      element: <Overview/>
     },
     {
       name: m.courtCases,
       path: LawAndOrderPaths.CourtCases,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <CourtCases />,
+      element: <Overview defaultTab={DOMSMALARADUNEYTID_SLUG} />,
     },
     {
       name: m.courtCases,
@@ -50,7 +48,7 @@ export const lawAndOrderModule: PortalModule = {
       name: m.policeCases,
       path: LawAndOrderPaths.PoliceCases,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <PoliceCases />,
+      element:<Overview defaultTab={RIKISLOGREGLUSTJORI_SLUG} />,
     },
     {
       name: m.courtCases,
