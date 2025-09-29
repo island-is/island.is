@@ -34,6 +34,7 @@ yarn nx run-many \
   --parallel="${NX_PARALLEL}" \
   --no-watchman \
   --ci \
+  --coverage \
   --detectLeaks=false \
   --passWithNoTests \
   --exclude="${services_to_skip[*]}" \

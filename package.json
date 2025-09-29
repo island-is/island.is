@@ -347,6 +347,7 @@
     "@babel/preset-env": "7.22.5",
     "@babel/preset-react": "7.22.5",
     "@babel/preset-typescript": "7.22.5",
+    "@datadog/datadog-ci": "3.21.4",
     "@formatjs/cli": "6.3.11",
     "@gperdomor/nx-docker": "0.2.3",
     "@graphql-codegen/cli": "2.12.0",
