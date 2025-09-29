@@ -60,15 +60,19 @@ export class IdentityClientService {
     nationalId: string,
     returnWithNationalId?: boolean,
   ): Promise<string | undefined> {
-    const identity = await this.getIdentity(nationalId)
-
     try {
+      const identity = await this.getIdentity(nationalId)
+
       return identity?.name
         ? returnWithNationalId
           ? `${identity?.name} (${kennitala.format(nationalId)})`
           : identity?.name
         : undefined
-    } catch (e) {
+    } catch (error) {
+      this.logger.error(
+        'Error getting identity',
+        error,
+      )
       return undefined
     }
   }
