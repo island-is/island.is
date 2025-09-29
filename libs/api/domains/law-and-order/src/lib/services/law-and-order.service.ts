@@ -10,21 +10,17 @@ import { IntlService } from '@island.is/cms-translations'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Injectable } from '@nestjs/common'
-import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
-import { ActionTypeEnum } from '../models/actions.model'
-import { CourtCase } from '../models/courtCase.model'
-import { CourtCases } from '../models/courtCases.model'
-import { Item } from '../models/item.model'
-import { Lawyers } from '../models/lawyers.model'
-import { Subpoena } from '../models/summon.model'
-import {
-  DefenseChoices,
-  mapDefenseChoice,
-  mapDefenseChoiceForSummon,
-  mapDefenseChoiceForSummonDefaultChoice,
-  mapTagTypes,
-} from './helpers/mappers'
-import { m } from './messages'
+import { PostDefenseChoiceInput } from '../../dto/postDefenseChoiceInput.model'
+import { mapDefenseChoiceForSummon, mapDefenseChoiceForSummonDefaultChoice, mapDefenseChoice } from '../mappers/defenseChoiceMapper'
+import { DefenseChoices } from '../mappers/messageMapper'
+import { mapTagTypes } from '../mappers/tagTypeMapper'
+import { m } from '../messages'
+import { ActionTypeEnum } from '../models/law-and-order/actions.model'
+import { CourtCase } from '../models/law-and-order/courtCase.model'
+import { CourtCases } from '../models/law-and-order/courtCases.model'
+import { Lawyers } from '../models/law-and-order/lawyers.model'
+import { Subpoena } from '../models/law-and-order/summon.model'
+import { Item } from '../models/law-and-order/item.model'
 
 const namespaces = ['api.law-and-order']
 
