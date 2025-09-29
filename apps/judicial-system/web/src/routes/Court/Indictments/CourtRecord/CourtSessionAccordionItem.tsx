@@ -308,15 +308,17 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     setUnfiledFiles((prev) => prev.filter((item) => item.id !== file.id))
 
+    patchSession(courtSession.id, {
+      ...courtSession,
+      filedDocuments: [...(courtSession.filedDocuments || []), res],
+    })
+
     setReorderableFiles((prev) =>
       prev.map((session) =>
         session.courtSessionId === courtSession.id
           ? {
               ...session,
-              files: [
-                ...session.files,
-                { id: res.fileCourtDocumentInCourtSession.id, name: file.name },
-              ],
+              files: [...session.files, { id: res.id, name: file.name }],
             }
           : session,
       ),

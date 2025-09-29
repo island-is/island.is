@@ -101,11 +101,11 @@ const useCourtDocuments = () => {
           throw new Error()
         }
 
-        return data
+        return data.fileCourtDocumentInCourtSession
       } catch (error) {
         toast.error('Upp kom villa við að leggja fram þingskjal')
 
-        return false
+        return
       }
     },
     [fileCourtDocumentInCourtSessionMutation],
