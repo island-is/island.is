@@ -17,6 +17,11 @@ export const housingFireProtections = defineMessages({
       'Leigusamningur þarf lögum samkvæmt að innihalda  úttekt á brunavörnum í húsnæðinu. Sú úttekt þarf að fara fram við samningsgerðina. Gott er að skoða húsnæðið gaumgæfilega út frá öryggismálum.',
     description: 'Fire protections page description',
   },
+  smokeDetectorsFireExtinguisherTitle: {
+    id: 'ra.application:housingFireProtections.smokeDetectorsFireExtinguisherTitle',
+    defaultMessage: 'Reikskynjarar og slökkvitæki',
+    description: 'Smoke detectors and fire extinguisher title',
+  },
   smokeDetectorsFireExtinguisherRequirements: {
     id: 'ra.application:housingFireProtections.smokeDetectorsFireExtinguisherRequirements#markdown',
     defaultMessage:
@@ -38,6 +43,16 @@ export const housingFireProtections = defineMessages({
     defaultMessage:
       'Húsnæðið er {propertySize}m2 og ætti að hafa að minnsta kosti {requiredSmokeDetectors} reykskynjara',
     description: 'Smoke detectors alert message',
+  },
+  fireExtinguisherAlertTitle: {
+    id: 'ra.application:housingFireProtections.fireExtinguisherAlertTitle',
+    defaultMessage: 'Húsnæðið ætti að hafa slökkvitæki',
+    description: 'Fire extinguisher alert title',
+  },
+  fireExtinguisherAlertMessage: {
+    id: 'ra.application:housingFireProtections.fireExtinguisherAlertMessage',
+    defaultMessage: 'Leiguhúsnæði ættu að hafa að minnsta kosti 1 slökkvitæki',
+    description: 'Fire extinguisher alert message',
   },
   fireExtinguisherLabel: {
     id: 'ra.application:housingFireProtections.fireExtinguisherLabel',

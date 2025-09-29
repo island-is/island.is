@@ -28,6 +28,7 @@ export class FormField {
     | 'file'
     | 'nationalId (kennitala)'
     | 'information'
+    | 'numeric'
 
   @Field()
   required!: boolean

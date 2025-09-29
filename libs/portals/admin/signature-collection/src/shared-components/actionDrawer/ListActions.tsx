@@ -77,7 +77,10 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
           <RemoveList list={list} />
         )}
         {allowedActions?.includes(Actions.ReviewCandidates) && (
-          <ReviewCandidates candidates={collection.candidates} />
+          <ReviewCandidates
+            candidates={collection.candidates}
+            collectionType={collection.collectionType}
+          />
         )}
         {allowedActions?.includes(Actions.CompleteCollectionProcessing) && (
           <CompleteCollectionProcessing collection={collection} />

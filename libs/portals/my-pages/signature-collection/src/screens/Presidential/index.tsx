@@ -1,4 +1,4 @@
-import { Box, Divider } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import OwnerView from './OwnerView'
 import {
@@ -53,12 +53,15 @@ const SignatureCollectionPresidential = () => {
         title={formatMessage(m.pageTitlePresidential)}
         intro={formatMessage(m.pageIntro)}
         slug={listsForOwner?.[0]?.slug}
+        withLessSpace={isOwner?.success}
       />
       {isOwner?.success || user?.profile.actor ? (
         isOwner?.success ? (
           <>
-            <ActionDrawer />
-            <Divider />
+            <ActionDrawer
+              candidateId={listsForOwner?.[0]?.candidate?.id}
+              collectionType={collectionType}
+            />
             <OwnerView
               collectionType={collectionType}
               listsForOwner={listsForOwner}

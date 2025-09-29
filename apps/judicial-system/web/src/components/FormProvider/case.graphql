@@ -51,6 +51,8 @@ query Case($input: CaseQueryInput!) {
       }
       verdict {
         id
+        caseId
+        defendantId
         created
         appealDate
         appealDecision
@@ -267,6 +269,7 @@ query Case($input: CaseQueryInput!) {
         name
       }
       closingEntries
+      isConfirmed
       filedDocuments {
         id
         created
@@ -351,8 +354,8 @@ query Case($input: CaseQueryInput!) {
       name
     }
     indictmentAppealDeadline
-    indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadlineExpired
+    indictmentVerdictViewedByAll
     indictmentDecision
     indictmentReviewDecision
     courtSessionType
@@ -364,6 +367,13 @@ query Case($input: CaseQueryInput!) {
       id
       courtCaseNumber
       type
+      state
+      indictmentRulingDecision
+      courtSessions {
+        id
+        startDate
+        endDate
+      }
       court {
         id
         name

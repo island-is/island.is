@@ -9,6 +9,9 @@ import {
   Box,
   Button,
   Checkbox,
+  GridColumn,
+  GridContainer,
+  GridRow,
   type Option,
   RadioButton,
   Stack,
@@ -19,12 +22,13 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { isDefined, sortAlpha } from '@island.is/shared/utils'
-import type {
-  ConnectedComponent,
-  WebLandspitaliCatalogQuery,
-  WebLandspitaliCatalogQueryVariables,
-  WebLandspitaliCreateMemorialCardPaymentUrlMutation,
-  WebLandspitaliCreateMemorialCardPaymentUrlMutationVariables,
+import {
+  type ConnectedComponent,
+  type WebLandspitaliCatalogQuery,
+  type WebLandspitaliCatalogQueryVariables,
+  WebLandspitaliCreateMemorialCardPaymentUrlInputSendType,
+  type WebLandspitaliCreateMemorialCardPaymentUrlMutation,
+  type WebLandspitaliCreateMemorialCardPaymentUrlMutationVariables,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 import {
@@ -44,6 +48,7 @@ interface MemorialCard {
   amountISK: string
   senderSignature: string
   recipientName: string
+  recipientEmail: string
   recipientAddress: string
   recipientPostalCode: string
   recipientPlace: string
@@ -54,6 +59,7 @@ interface MemorialCard {
   senderPostalCode: string
   senderPlace: string
   amountISKCustom: string
+  sendType: WebLandspitaliCreateMemorialCardPaymentUrlInputSendType
 }
 
 const DEFAULT_FUND_OPTIONS: Option<string>[] = [
@@ -142,6 +148,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
       amountISK: '',
       senderSignature: '',
       recipientName: '',
+      recipientEmail: '',
       recipientAddress: '',
       recipientPostalCode: '',
       recipientPlace: '',
@@ -152,6 +159,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
       senderPostalCode: '',
       senderPlace: '',
       amountISKCustom: '',
+      sendType:
+        WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail,
     },
   })
 
@@ -307,6 +316,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                       senderSignature: data.senderSignature,
                       locale: activeLocale,
                       inMemoryOf: data.inMemoryOf,
+                      recipientEmail: data.recipientEmail,
+                      sendType: data.sendType,
                     },
                   },
                 })
@@ -345,6 +356,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
     },
   }
 
+  const sendType = watch('sendType')
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -361,6 +374,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             onSelect={(opt) => setValue('fund', (opt?.value as string) || '')}
             error={errors.fund?.message}
             rules={requiredRule}
+            required
           />
 
           <InputController
@@ -370,6 +384,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             size="xs"
             error={errors.inMemoryOf?.message}
             rules={requiredRule}
+            required
           />
 
           <InputController
@@ -379,6 +394,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             size="xs"
             error={errors.senderSignature?.message}
             rules={requiredRule}
+            required
           />
 
           <Text variant="h2">{formatMessage(m.info.amountOfMoneyTitle)}</Text>
@@ -389,7 +405,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               <RadioButton
                 key={amount}
                 id={`amount-${amount}`}
-                name="amountISK"
+                name={`amount-${amount}`}
                 label={amount}
                 checked={selectedAmount === amount}
                 onChange={() =>
@@ -426,12 +442,15 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               inputMode="numeric"
               maxLength={14}
               currency={true}
-              error={
-                parseInt(watch('amountISKCustom') || '0') < 1000
-                  ? formatMessage(m.validation.minimumAmount)
-                  : undefined
-              }
-              rules={requiredRule}
+              rules={{
+                required: requiredRule.required,
+                min: {
+                  value: 1000,
+                  message: formatMessage(m.validation.minimumAmount),
+                },
+              }}
+              error={errors.amountISKCustom?.message}
+              required
             />
           )}
 
@@ -444,31 +463,96 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.recipientName?.message}
               rules={requiredRule}
               control={control}
+              required
             />
-            <InputController
-              id="recipientAddress"
-              label={formatMessage(m.info.recipientAddressLabel)}
-              size="xs"
-              error={errors.recipientAddress?.message}
-              rules={requiredRule}
-              control={control}
-            />
-            <InputController
-              id="recipientPostalCode"
-              label={formatMessage(m.info.recipientPostalCodeLabel)}
-              size="xs"
-              error={errors.recipientPostalCode?.message}
-              rules={requiredRule}
-              control={control}
-            />
-            <InputController
-              id="recipientPlace"
-              label={formatMessage(m.info.recipientPlaceLabel)}
-              size="xs"
-              error={errors.recipientPlace?.message}
-              rules={requiredRule}
-              control={control}
-            />
+
+            <Box paddingY={2}>
+              <Stack space={1}>
+                <RadioButton
+                  id="sendTypePostalMail"
+                  name="sendTypePostalMail"
+                  value={
+                    WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail
+                  }
+                  label={formatMessage(m.info.sendTypePostalMailLabel)}
+                  onChange={() =>
+                    setValue(
+                      'sendType',
+                      WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail,
+                    )
+                  }
+                  checked={
+                    sendType ===
+                    WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail
+                  }
+                />
+                <RadioButton
+                  id="sendTypeEmail"
+                  name="sendTypeEmail"
+                  value={
+                    WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email
+                  }
+                  label={formatMessage(m.info.sendTypeEmailLabel)}
+                  onChange={() =>
+                    setValue(
+                      'sendType',
+                      WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email,
+                    )
+                  }
+                  checked={
+                    sendType ===
+                    WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email
+                  }
+                />
+              </Stack>
+            </Box>
+
+            {sendType ===
+              WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.Email && (
+              <InputController
+                id="recipientEmail"
+                type="email"
+                label={formatMessage(m.info.recipientEmailLabel)}
+                size="xs"
+                error={errors.recipientEmail?.message}
+                rules={requiredRule}
+                control={control}
+                required
+              />
+            )}
+
+            {sendType ===
+              WebLandspitaliCreateMemorialCardPaymentUrlInputSendType.PostalMail && (
+              <>
+                <InputController
+                  id="recipientAddress"
+                  label={formatMessage(m.info.recipientAddressLabel)}
+                  size="xs"
+                  error={errors.recipientAddress?.message}
+                  rules={requiredRule}
+                  control={control}
+                  required
+                />
+                <InputController
+                  id="recipientPostalCode"
+                  label={formatMessage(m.info.recipientPostalCodeLabel)}
+                  size="xs"
+                  error={errors.recipientPostalCode?.message}
+                  rules={requiredRule}
+                  control={control}
+                  required
+                />
+                <InputController
+                  id="recipientPlace"
+                  label={formatMessage(m.info.recipientPlaceLabel)}
+                  size="xs"
+                  error={errors.recipientPlace?.message}
+                  rules={requiredRule}
+                  control={control}
+                  required
+                />
+              </>
+            )}
           </Stack>
 
           <Stack space={2}>
@@ -480,6 +564,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderName?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderEmail"
@@ -489,49 +574,62 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderEmail?.message}
               rules={requiredRule}
               control={control}
+              required
             />
-
-            <Stack space={1}>
-              <InputController
-                id="senderNationalId"
-                label={formatMessage(m.info.senderNationalIdLabel)}
-                size="xs"
-                error={
-                  nationalIdSkipped
-                    ? undefined
-                    : errors.senderNationalId?.message
-                }
-                type="text"
-                inputMode="numeric"
-                format="######-####"
-                disabled={nationalIdSkipped}
-                rules={{
-                  validate: (value) => {
-                    if (nationalIdSkipped) {
-                      return true
-                    }
-                    if (!isValidKennitala(value)) {
-                      return formatMessage(m.validation.invalidNationalIdFormat)
-                    }
-                    return true
-                  },
-                }}
-                control={control}
-              />
-              <Checkbox
-                id="senderNationalIdSkipped"
-                label={formatMessage(m.info.senderNationalIdSkippedLabel)}
-                checked={nationalIdSkipped}
-                onChange={() => {
-                  const newValue = !nationalIdSkipped
-                  setNationalIdSkipped(newValue)
-                  if (newValue) {
-                    setValue('senderNationalId', '')
-                  }
-                }}
-                labelVariant="small"
-              />
-            </Stack>
+            <GridContainer>
+              <GridRow alignItems="center" rowGap={2}>
+                <GridColumn span={['1/1', '1/1', '1/1', '1/1', '2/3']}>
+                  <Stack space={1}>
+                    <InputController
+                      id="senderNationalId"
+                      label={formatMessage(m.info.senderNationalIdLabel)}
+                      size="xs"
+                      error={
+                        nationalIdSkipped
+                          ? undefined
+                          : errors.senderNationalId?.message
+                      }
+                      type="text"
+                      inputMode="numeric"
+                      format="######-####"
+                      disabled={nationalIdSkipped}
+                      rules={{
+                        validate: (value) => {
+                          if (nationalIdSkipped) {
+                            return true
+                          }
+                          if (!isValidKennitala(value)) {
+                            return formatMessage(
+                              m.validation.invalidNationalIdFormat,
+                            )
+                          }
+                          return true
+                        },
+                      }}
+                      control={control}
+                    />
+                    <Checkbox
+                      id="senderNationalIdSkipped"
+                      label={formatMessage(m.info.senderNationalIdSkippedLabel)}
+                      checked={nationalIdSkipped}
+                      onChange={() => {
+                        const newValue = !nationalIdSkipped
+                        setNationalIdSkipped(newValue)
+                        if (newValue) {
+                          setValue('senderNationalId', '')
+                        }
+                      }}
+                      labelVariant="small"
+                    />
+                  </Stack>
+                </GridColumn>
+                <GridColumn span={['1/1', '1/1', '1/1', '1/1', '1/3']}>
+                  <Text variant="small">
+                    {formatMessage(m.info.senderNationalIdDescription)}
+                  </Text>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
 
             <InputController
               id="senderAddress"
@@ -540,6 +638,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderAddress?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderPostalCode"
@@ -548,6 +647,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderPostalCode?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderPlace"
@@ -556,6 +656,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderPlace?.message}
               rules={requiredRule}
               control={control}
+              required
             />
           </Stack>
           <Box>
@@ -569,9 +670,18 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             <Text>{formatMessage(m.info.amountISKExtra)}</Text>
           </Box>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
-            <Button type="submit" icon="arrowForward">
-              {formatMessage(m.info.continue)}
-            </Button>
+            <Stack space={2}>
+              <Box display="flex" justifyContent="flexEnd">
+                <Button type="submit" icon="arrowForward">
+                  {formatMessage(m.info.continue)}
+                </Button>
+              </Box>
+              {Object.keys(errors).length > 0 && (
+                <Text variant="small" color="red600" fontWeight="medium">
+                  {formatMessage(m.validation.genericFormErrorMessage)}
+                </Text>
+              )}
+            </Stack>
           </Box>
         </Stack>
       </form>

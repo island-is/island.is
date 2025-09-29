@@ -75,6 +75,7 @@ image:
 namespace: 'services-university-gateway'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []
