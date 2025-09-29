@@ -14,7 +14,7 @@ describe('getIndictmentAppealDeadlineDate', () => {
     const isFine = true
 
     // Act
-    const actualDate = getIndictmentAppealDeadlineDate(baseDate, isFine)
+    const actualDate = getIndictmentAppealDeadlineDate({ baseDate, isFine })
 
     // Assert
     expect(actualDate).toStrictEqual(endOfDay(new Date(2024, 1, 4)))
@@ -26,7 +26,7 @@ describe('getIndictmentAppealDeadlineDate', () => {
     const isFine = false
 
     // Act
-    const actualDate = getIndictmentAppealDeadlineDate(baseDate, isFine)
+    const actualDate = getIndictmentAppealDeadlineDate({ baseDate, isFine })
 
     // Assert
     expect(actualDate).toStrictEqual(endOfDay(new Date(2024, 1, 29)))
