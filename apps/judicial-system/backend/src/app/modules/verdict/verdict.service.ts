@@ -1,5 +1,4 @@
 import { Base64 } from 'js-base64'
-import _uniqBy from 'lodash/uniqBy'
 import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -472,7 +471,7 @@ export class VerdictService {
       .filter((result) => result.delivered)
       .map((result) => result.caseId)
     if (deliveredCases.length > 0) {
-      const caseIds = _uniqBy(deliveredCases, (c) => c)
+      const caseIds = Array.from(new Set(deliveredCases))
       await this.checkVerdictCertificateDeliveryCompletion(caseIds)
     }
 

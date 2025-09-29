@@ -44,6 +44,7 @@ import {
   ServiceRequirement,
   type User as TUser,
   UserRole,
+  VERDICT_APPEAL_WINDOW_DAYS,
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
@@ -583,6 +584,7 @@ export class InternalCaseService {
   async getIndictmentCaseDefendantsWithExpiredAppealDeadline(): Promise<
     { theCase: Case; defendant: Defendant }[]
   > {
+    const minDate = new Date(Date.now() - VERDICT_APPEAL_WINDOW_DAYS)
     const cases = await this.caseRepositoryService.findAll({
       include: [
         {
@@ -619,7 +621,7 @@ export class InternalCaseService {
                   [Op.not]: VerdictServiceStatus.NOT_APPLICABLE,
                 },
                 serviceDate: {
-                  [Op.not]: null,
+                  [Op.lte]: minDate,
                 },
               },
             },

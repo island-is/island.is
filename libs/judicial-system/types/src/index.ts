@@ -148,6 +148,7 @@ export {
   getAppealDeadlineDate,
   hasDatePassed,
   hasTimestamp,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from './lib/dates'
 
 export type {

@@ -237,6 +237,8 @@ export class InternalVerdictController {
   async deliverVerdictServiceCertificatesToPolice(): Promise<
     {
       delivered: boolean
+      caseId: string
+      defendantId: string
     }[]
   > {
     this.logger.debug(

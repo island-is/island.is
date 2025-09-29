@@ -1,7 +1,7 @@
 import addDays from 'date-fns/addDays'
 import endOfDay from 'date-fns/endOfDay'
 
-const VERDICT_APPEAL_WINDOW_DAYS = 28
+export const VERDICT_APPEAL_WINDOW_DAYS = 28
 const FINE_APPEAL_WINDOW_DAYS = 3
 
 const APPEAL_WINDOW_DAYS = 3
