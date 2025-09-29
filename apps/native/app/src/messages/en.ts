@@ -426,6 +426,7 @@ export const en: TranslatedMessages = {
     'Vehicles registered to you will appear here.',
   'vehicles.nextInspectionLabel': 'Next inspection {date}',
   'vehicles.mileageRequired': 'Kilometre fee',
+  'vehicles.registerMileage': 'Register mileage',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',

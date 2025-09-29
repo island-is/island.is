@@ -306,6 +306,7 @@ export const is = {
     'Ökutæki sem eru skráð á þig munu birtast hér.',
   'vehicles.nextInspectionLabel': 'Næsta skoðun {date}',
   'vehicles.mileageRequired': 'Kílómetragjald',
+  'vehicles.registerMileage': 'Skrá kílómetrastöðu',
 
   // vehicles detail
   'vehicleDetail.regno': 'Skráningarnúmer',

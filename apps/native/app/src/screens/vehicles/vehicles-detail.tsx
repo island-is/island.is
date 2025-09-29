@@ -7,7 +7,7 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 
-import { Button, Divider, Input, InputRow, Problem } from '../../ui'
+import { Button, Divider, Input, InputRow, Problem, theme } from '../../ui'
 import { useGetVehicleQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -157,6 +157,53 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
       <ScrollView style={{ flex: 1 }}>
         <View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              margin: theme.spacing.p4,
+              gap: theme.spacing.p4,
+            }}
+          >
+            <Button
+              style={{ flex: 1 }}
+              iconStyle={{ tintColor: theme.color.dark300 }}
+              isOutlined
+              title={intl.formatMessage({
+                id: 'vehicles.registerMileage',
+              })}
+              iconPosition="end"
+              icon={require('../../assets/icons/edit.png')}
+              isUtilityButton
+              onPress={() => {
+                navigateTo(`/vehicle-change-ownership/`, {
+                  id,
+                  title: {
+                    type: title,
+                  },
+                })
+              }}
+            />
+            <Button
+              style={{ flex: 1 }}
+              isOutlined
+              iconPosition="end"
+              iconStyle={{ tintColor: theme.color.dark300 }}
+              icon={require('../../assets/icons/external-link.png')}
+              isUtilityButton
+              title={intl.formatMessage({
+                id: 'vehicle.links.reportOwnerChange',
+              })}
+              onPress={() => {
+                navigateTo(`/vehicle-change-ownership/`, {
+                  id,
+                  title: {
+                    type: title,
+                  },
+                })
+              }}
+            />
+          </View>
           <InputRow>
             <Input
               loading={inputLoading}
