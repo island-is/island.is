@@ -27,7 +27,9 @@ const PoliceCases = () => {
         title={messages.policeCasesTitle}
         intro={messages.policeCasesDescription}
         serviceProviderSlug={RIKISLOGREGLUSTJORI_SLUG}
-        serviceProviderTooltip={formatMessage(coreMessages.nationalPoliceCommissionerTooltip)}
+        serviceProviderTooltip={formatMessage(
+          coreMessages.nationalPoliceCommissionerTooltip,
+        )}
       />
       {loading && !error && (
         <Box width="full">
@@ -42,7 +44,7 @@ const PoliceCases = () => {
         cases.map((c) => (
           <Box marginTop={2}>
             <ActionCard
-              heading={formatMessage(m.policeCaseTitle, {arg: c.number})}
+              heading={formatMessage(m.policeCaseTitle, { arg: c.number })}
               text={c.type ?? 'no type'}
               tag={{
                 label: c.status ?? 'no status',
