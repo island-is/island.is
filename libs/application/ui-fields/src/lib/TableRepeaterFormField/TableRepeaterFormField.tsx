@@ -46,6 +46,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   field: data,
   showFieldName,
   error,
+  errors,
 }) => {
   const {
     fields: rawItems,
@@ -339,6 +340,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                     key={`${data.id}[${activeIndex}].${item.id}`}
                     application={application}
                     error={error}
+                    errors={errors}
                     item={item}
                     dataId={data.id}
                     activeIndex={activeIndex}
