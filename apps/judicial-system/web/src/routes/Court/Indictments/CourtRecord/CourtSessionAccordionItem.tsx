@@ -32,7 +32,6 @@ import {
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
   Case,
-  CourtDocumentType,
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
