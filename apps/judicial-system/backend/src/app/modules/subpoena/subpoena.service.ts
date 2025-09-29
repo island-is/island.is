@@ -247,7 +247,7 @@ export class SubpoenaService {
           {
             documentType: CourtDocumentType.GENERATED_DOCUMENT,
             name,
-            generatedPdfUri: `/api/case/${theCase.id}/serviceCertificate/${defendant.id}/${subpoena.id}`,
+            generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}`,
           },
           transaction,
         )
