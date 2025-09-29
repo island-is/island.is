@@ -449,6 +449,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     [courtSession.id, reorderableFiles],
   )
 
+  const countDocumentsBeforeSession = (index: number) => {
+    const sessionsBefore = workingCase.courtSessions?.slice(0, index)
+
+    return sessionsBefore?.reduce((acc, session) => {
+      return (acc += session.filedDocuments?.length || 0)
+    }, 0)
+  }
+
   return (
     <AccordionItem
       id={`courtRecordAccordionItem-${courtSession.id}`}
@@ -632,95 +640,94 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             }
             isLoading={courtDocument.create.loading}
           >
-            <Box display="flex" flexDirection="column" rowGap={2}>
+            <Box display="flex" flexDirection="column" rowGap={2} marginTop={2}>
               {index > 0 && (
                 <Box
                   background="white"
                   paddingX={3}
                   paddingY={2}
-                  marginTop={2}
                   borderRadius="large"
                 >
-                  <Text variant="h5">{`Skjöl málsins nr. 1-5 liggja frammi`}</Text>
+                  <Text variant="h5">{`Skjöl málsins nr. 1-${countDocumentsBeforeSession(
+                    index,
+                  )} liggja frammi`}</Text>
                 </Box>
               )}
-              <Box
-                display="flex"
-                rowGap={2}
-                justifyContent="spaceBetween"
-                className={styles.reorderGroup}
-              >
-                <Reorder.Group
-                  axis="y"
-                  values={filedDocuments}
-                  onReorder={handleReorder}
-                  className={styles.grid}
-                >
-                  <AnimatePresence>
-                    {filedDocuments.map((item) => (
-                      <Reorder.Item
-                        key={item.id}
-                        value={item}
-                        data-reorder-item
-                        onDragStart={() => {
-                          setDraggedFileId(item.id)
-                        }}
-                        onDragEnd={() => {
-                          setDraggedFileId(null)
-                        }}
-                        initial={{ opacity: 0, y: -10, height: 'auto' }}
-                        animate={{ opacity: 1, y: 0, height: 'auto' }}
-                        exit={{ opacity: 0, y: 10, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <EditableCaseFile
-                          enableDrag
-                          caseFile={{
-                            id: item.id,
-                            displayText: item.name,
-                            name: item.name,
-                            canEdit: ['fileName'],
+              {filedDocuments && filedDocuments.length > 0 && (
+                <Box display="flex" columnGap={2} justifyContent="spaceBetween">
+                  <Reorder.Group
+                    axis="y"
+                    values={filedDocuments}
+                    onReorder={handleReorder}
+                    className={styles.grid}
+                  >
+                    <AnimatePresence>
+                      {filedDocuments.map((item) => (
+                        <Reorder.Item
+                          key={item.id}
+                          value={item}
+                          data-reorder-item
+                          onDragStart={() => {
+                            setDraggedFileId(item.id)
                           }}
-                          backgroundColor="white"
-                          onRename={(id: string, newName: string) => {
-                            handleRename(courtSession.id, id, newName)
+                          onDragEnd={() => {
+                            setDraggedFileId(null)
                           }}
-                          onDelete={handleDeleteFile}
-                          disabled={courtSession.isConfirmed || false}
-                        />
-                      </Reorder.Item>
-                    ))}
-                  </AnimatePresence>
-                </Reorder.Group>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="spaceAround"
-                  rowGap={2}
-                >
-                  <AnimatePresence>
-                    {filedDocuments.map((_item, i) => {
-                      const currentIndex =
-                        reorderableFiles.slice(0, index).flatMap((a) => a.files)
-                          .length + i
-
-                      return (
-                        <motion.div
                           initial={{ opacity: 0, y: -10, height: 'auto' }}
                           animate={{ opacity: 1, y: 0, height: 'auto' }}
                           exit={{ opacity: 0, y: 10, height: 0 }}
                           transition={{ duration: 0.2 }}
-                          key={`þingmerkt_nr_${currentIndex + 1}`}
                         >
-                          <Tag variant="darkerBlue" outlined disabled>
-                            Þingmerkt nr. {currentIndex + 1}
-                          </Tag>
-                        </motion.div>
-                      )
-                    })}
-                  </AnimatePresence>
+                          <EditableCaseFile
+                            enableDrag
+                            caseFile={{
+                              id: item.id,
+                              displayText: item.name,
+                              name: item.name,
+                              canEdit: ['fileName'],
+                            }}
+                            backgroundColor="white"
+                            onRename={(id: string, newName: string) => {
+                              handleRename(courtSession.id, id, newName)
+                            }}
+                            onDelete={handleDeleteFile}
+                            disabled={courtSession.isConfirmed || false}
+                          />
+                        </Reorder.Item>
+                      ))}
+                    </AnimatePresence>
+                  </Reorder.Group>
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="spaceAround"
+                    rowGap={2}
+                  >
+                    <AnimatePresence>
+                      {filedDocuments.map((_item, i) => {
+                        const currentIndex =
+                          reorderableFiles
+                            .slice(0, index)
+                            .flatMap((a) => a.files).length + i
+
+                        return (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10, height: 'auto' }}
+                            animate={{ opacity: 1, y: 0, height: 'auto' }}
+                            exit={{ opacity: 0, y: 10, height: 0 }}
+                            transition={{ duration: 0.2 }}
+                            key={`þingmerkt_nr_${currentIndex + 1}`}
+                          >
+                            <Tag variant="darkerBlue" outlined disabled>
+                              Þingmerkt nr. {currentIndex + 1}
+                            </Tag>
+                          </motion.div>
+                        )
+                      })}
+                    </AnimatePresence>
+                  </Box>
                 </Box>
-              </Box>
+              )}
               <Box borderRadius="large" background="white" paddingX={2}>
                 <Accordion dividerOnBottom={false} dividerOnTop={false}>
                   <AccordionItem
