@@ -8,7 +8,6 @@ import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import {
   AddressProps,
   ApplicantsInfo,
-  LandlordInfo,
   Files,
   PropertyUnit,
   RentalAmountSection,
@@ -45,7 +44,7 @@ import {
 } from './options'
 
 const formatPartyItems = (
-  items: Array<ApplicantsInfo | LandlordInfo>,
+  items: Array<ApplicantsInfo>,
 ): Array<KeyValueItem> => {
   return (
     items
@@ -81,10 +80,10 @@ export const landlordOverview = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const landlords = getValueViaPath<Array<LandlordInfo>>(
+  const landlords = getValueViaPath<Array<ApplicantsInfo>>(
     answers,
     'parties.landlordInfo.table',
-  )?.filter((landlord) => !landlord.isRepresentative.includes('✔️'))
+  )
 
   if (!landlords) {
     return []
@@ -99,10 +98,10 @@ export const landlordRepresentativeOverview = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const landlordsRepresentatives = getValueViaPath<Array<LandlordInfo>>(
+  const landlordsRepresentatives = getValueViaPath<Array<ApplicantsInfo>>(
     answers,
-    'parties.landlordInfo.table',
-  )?.filter((landlord) => landlord.isRepresentative.includes('✔️'))
+    'parties.landlordInfo.representativeTable',
+  )
 
   if (!landlordsRepresentatives) {
     return []

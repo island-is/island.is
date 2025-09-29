@@ -120,6 +120,7 @@ export interface AddressProps {
 
 export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
+  landlordRepresentatives: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
 }
 

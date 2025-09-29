@@ -139,14 +139,6 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
     type: 'email',
     width: 'half',
   },
-  isRepresentative: {
-    component: 'checkbox',
-    label: m.landlordAndTenantDetails.representativeLabel,
-    width: 'half',
-    options: [
-      { label: m.landlordAndTenantDetails.representativeLabel, value: '✔️' },
-    ],
-  },
 }
 
 export const applicantTableConfig = {
