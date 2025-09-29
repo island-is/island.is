@@ -107,8 +107,12 @@ export const VehiclePermnoWithInfoFormField: FC<
     }
   }
 
-  const onChangePermno = (permnoVal: string) => {
+  const onChangePermno = (rawValue: string) => {
+    // Clean input: only letters/numbers + uppercase
+    const permnoVal = rawValue.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()
     setPermnoInput(permnoVal)
+    setValue(permnoField, permnoVal)
+
     if (permnoVal.length !== INPUT_MAX_LENGTH) {
       setValue(makeAndColorField, '')
       setValue(numberOfAxlesField, 0)
@@ -139,7 +143,7 @@ export const VehiclePermnoWithInfoFormField: FC<
             required={buildFieldRequired(application, field.required)}
             maxLength={INPUT_MAX_LENGTH}
             onChange={(v) => {
-              onChangePermno(v.target.value.replace(/\W/g, ''))
+              onChangePermno(v.target.value)
             }}
             loading={isLoadingDetails || isLoadingValidation}
             error={errors && getErrorViaPath(errors, permnoField)}
