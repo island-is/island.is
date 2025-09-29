@@ -3,6 +3,7 @@ import {
   ExternalData,
   FormValue,
   KeyValueItem,
+  UserProfile,
 } from '@island.is/application/types'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import {
@@ -27,6 +28,7 @@ import { OtherFees, PropertyInfo } from './types'
 import { RentalHousingCategoryClass } from '../shared/enums'
 import { getOptionLabel } from './summaryUtils'
 import {
+  ApplicantsRole,
   OtherFeesPayeeOptions,
   RentalHousingConditionInspector,
   RentalPaymentMethodOptions,
@@ -56,7 +58,9 @@ const formatPartyItems = (
             valueText: {
               ...m.summary.nationalIdPrefix,
               values: {
-                nationalId: party.nationalIdWithName?.nationalId ?? '',
+                nationalId: formatNationalId(
+                  party.nationalIdWithName?.nationalId ?? '',
+                ),
               },
             },
           },
@@ -76,58 +80,131 @@ const formatPartyItems = (
   )
 }
 
+const getApplicantsItem = (
+  answers: FormValue,
+  externalData: ExternalData,
+  role: ApplicantsRole,
+) => {
+  const applicantsRole = getValueViaPath<string>(
+    answers,
+    'assignApplicantParty.applicantsRole',
+  )
+
+  if (applicantsRole !== role) {
+    return []
+  }
+
+  const fullName = getValueViaPath<string>(
+    externalData,
+    'nationalRegistry.data.fullName',
+  )
+  const nationalId = getValueViaPath<string>(
+    externalData,
+    'nationalRegistry.data.nationalId',
+  )
+  const userProfile = getValueViaPath<UserProfile>(
+    externalData,
+    'userProfile.data',
+  )
+
+  return [
+    {
+      width: 'full' as const,
+      keyText: fullName ?? '',
+      valueText: {
+        ...m.summary.nationalIdPrefix,
+        values: {
+          nationalId: formatNationalId(nationalId ?? ''),
+        },
+      },
+    },
+    {
+      width: 'half' as const,
+      keyText: m.misc.email,
+      valueText: userProfile?.email ?? '',
+    },
+    {
+      width: 'half' as const,
+      keyText: m.misc.phoneNumber,
+      valueText: formatPhoneNumber(userProfile?.mobilePhoneNumber ?? ''),
+    },
+  ]
+}
+
 export const landlordOverview = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const landlords = getValueViaPath<Array<ApplicantsInfo>>(
     answers,
     'parties.landlordInfo.table',
   )
 
-  if (!landlords) {
+  const applicantLandlords = getApplicantsItem(
+    answers,
+    externalData,
+    ApplicantsRole.LANDLORD,
+  )
+
+  if (!landlords && applicantLandlords.length === 0) {
     return []
   }
 
-  const items: Array<KeyValueItem> = formatPartyItems(landlords)
+  const items: Array<KeyValueItem> = landlords
+    ? formatPartyItems(landlords)
+    : []
 
-  return items
+  return [...applicantLandlords, ...items]
 }
 
 export const landlordRepresentativeOverview = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const landlordsRepresentatives = getValueViaPath<Array<ApplicantsInfo>>(
     answers,
     'parties.landlordInfo.representativeTable',
   )
 
-  if (!landlordsRepresentatives) {
+  const applicantRepresentative = getApplicantsItem(
+    answers,
+    externalData,
+    ApplicantsRole.REPRESENTATIVE,
+  )
+
+  if (!landlordsRepresentatives && applicantRepresentative.length === 0) {
     return []
   }
 
-  const items: Array<KeyValueItem> = formatPartyItems(landlordsRepresentatives)
+  const items: Array<KeyValueItem> = landlordsRepresentatives
+    ? formatPartyItems(landlordsRepresentatives)
+    : []
 
-  return items
+  return [...applicantRepresentative, ...items]
 }
 
 export const tenantOverview = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const tenants = getValueViaPath<Array<ApplicantsInfo>>(
     answers,
     'parties.tenantInfo.table',
   )
 
-  if (!tenants) {
+  const applicantTenant = getApplicantsItem(
+    answers,
+    externalData,
+    ApplicantsRole.TENANT,
+  )
+
+  if (!tenants && applicantTenant.length === 0) {
     return []
   }
 
-  const items: Array<KeyValueItem> = formatPartyItems(tenants)
+  const items: Array<KeyValueItem> = tenants ? formatPartyItems(tenants) : []
 
-  return items
+  return [...applicantTenant, ...items]
 }
 
 export const rentalInfoOverview = (

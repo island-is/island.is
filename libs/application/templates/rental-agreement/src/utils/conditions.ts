@@ -1,6 +1,6 @@
 import { getValueViaPath, YES, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
-import { ApplicantsInfo, LandlordInfo, PropertyUnit } from '../shared/types'
+import { ApplicantsInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
 import { ApplicantsRole } from './enums'
@@ -26,10 +26,14 @@ export const shouldShowRepresentative = (answers: FormValue) => {
     'parties.landlordInfo.representativeTable',
   )
 
+  console.log(representatives)
+
   if (
     !representatives ||
     representatives.length === 0 ||
-    representatives[0] === ''
+    representatives[0] === '' ||
+    (typeof representatives[0] === 'object' &&
+      representatives[0]?.nationalIdWithName?.nationalId === '')
   ) {
     return false
   }
