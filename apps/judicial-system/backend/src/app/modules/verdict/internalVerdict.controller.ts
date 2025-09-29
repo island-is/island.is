@@ -77,10 +77,10 @@ const validateVerdictAppealUpdate = ({
       `Cannot register appeal – Service date not set for case ${caseId}`,
     )
   }
-  const appealDeadline = getIndictmentAppealDeadlineDate(
-    new Date(baseDate),
+  const appealDeadline = getIndictmentAppealDeadlineDate({
+    baseDate: new Date(baseDate),
     isFine,
-  )
+  })
   if (hasDatePassed(appealDeadline)) {
     throw new BadRequestException(
       `Appeal deadline has passed for case ${caseId}. Deadline was ${appealDeadline.toISOString()}`,

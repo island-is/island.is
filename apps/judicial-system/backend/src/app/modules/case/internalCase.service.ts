@@ -636,7 +636,6 @@ export class InternalCaseService {
       },
     })
 
-    const isRuling = true // we iterate through cases completed with ruling
     return cases.flatMap((theCase) =>
       pipe(
         theCase.defendants ?? [],
@@ -650,10 +649,10 @@ export class InternalCaseService {
             !isVerdictServiceCertificateDelivered &&
             defendant.verdict?.serviceDate
           ) {
-            const appealDeadline = getIndictmentAppealDeadlineDate(
-              defendant.verdict?.serviceDate,
-              isRuling,
-            )
+            const appealDeadline = getIndictmentAppealDeadlineDate({
+              baseDate: defendant.verdict?.serviceDate,
+              isFine: false,
+            })
             const isAppealDeadlineExpired = hasDatePassed(appealDeadline)
             if (isAppealDeadlineExpired) {
               return option.some({ theCase, defendant })

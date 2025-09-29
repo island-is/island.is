@@ -951,56 +951,12 @@ const indictmentAppealDeadline: CaseTableCellGenerator<StringValue> = {
       return generateCell()
     }
 
-    const deadlineDate = getIndictmentAppealDeadlineDate(
-      c.rulingDate,
-      c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
-    )
+    const deadlineDate = getIndictmentAppealDeadlineDate({
+      baseDate: c.rulingDate,
+      isFine: c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
+    })
 
     return generateDate(deadlineDate)
-  },
-}
-
-const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
-  attributes: ['rulingDate', 'indictmentRulingDecision'],
-  includes: {
-    defendants: {
-      model: Defendant,
-      order: [['created', 'ASC']],
-      separate: true,
-      includes: {
-        verdict: {
-          model: Verdict,
-          attributes: ['serviceRequirement', 'serviceDate'],
-        },
-      },
-    },
-  },
-  generate: (c: Case): CaseTableCell<TagValue> => {
-    if (c.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING) {
-      return generateCell()
-    }
-
-    // TODO: fix this in the database so we can always fetch the service date
-    const verdictInfo = c.defendants?.map<[boolean, Date | undefined]>((d) => [
-      true,
-      d.verdict?.serviceRequirement === ServiceRequirement.NOT_REQUIRED
-        ? c.rulingDate
-        : d.verdict?.serviceDate,
-    ])
-    const [
-      indictmentVerdictViewedByAll,
-      indictmentVerdictAppealDeadlineExpired,
-    ] = getIndictmentVerdictAppealDeadlineStatus(verdictInfo, false)
-
-    if (!indictmentVerdictViewedByAll) {
-      return generateCell({ color: 'red', text: 'Óbirt' }, 'A')
-    }
-
-    if (indictmentVerdictAppealDeadlineExpired) {
-      return generateCell({ color: 'mint', text: 'Frestur liðinn' }, 'B')
-    }
-
-    return generateCell({ color: 'blue', text: 'Á fresti' }, 'C')
   },
 }
 
