@@ -1,9 +1,5 @@
 import { Box, TagVariant } from '@island.is/island-ui/core'
-import {
-  ActionCard,
-  CardLoader,
-  m,
-} from '@island.is/portals/my-pages/core'
+import { ActionCard, CardLoader, m } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LawAndOrderPaths } from '../../lib/paths'
