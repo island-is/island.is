@@ -72,6 +72,7 @@ ingress:
 namespace: 'islandis'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 pvcs: []
 replicaCount:
   default: 2

@@ -18,6 +18,7 @@ import { Application, ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
+  ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
   ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
@@ -37,12 +38,14 @@ import {
   getApplicationType,
   transformApplicationToAdditionalSupportForTheElderlyDTO,
   transformApplicationToDeathBenefitsDTO,
+  transformApplicationToDisabilityPensionDTO,
   transformApplicationToHouseholdSupplementDTO,
   transformApplicationToIncomePlanDTO,
   transformApplicationToMedicalAndRehabilitationPaymentsDTO,
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
+import { ApplicationTypeEnum } from '@island.is/clients/social-insurance-administration'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -505,6 +508,19 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
       return response
     }
+
+    if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
+      const disabilityPensionDTO =
+        transformApplicationToDisabilityPensionDTO(application)
+
+      const response =
+        await this.siaClientService.sendDisabilityPensionApplication(
+          auth,
+          disabilityPensionDTO,
+        )
+
+      return response
+    }
   }
 
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
@@ -542,23 +558,38 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
-    if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
-      const { applicationType } = getOAPApplicationAnswers(application.answers)
+    switch (application.typeId) {
+      case ApplicationTypes.OLD_AGE_PENSION: {
+        const { applicationType } = getOAPApplicationAnswers(
+          application.answers,
+        )
 
-      return await this.siaClientService.getIsEligible(
-        auth,
-        applicationType.toLowerCase(),
-      )
-    } else {
-      return await this.siaClientService.getIsEligible(
-        auth,
-        application.typeId.toLowerCase(),
-      )
+        return await this.siaClientService.getIsEligible(
+          auth,
+          applicationType.toLowerCase(),
+        )
+      }
+      case ApplicationTypes.DISABILITY_PENSION: {
+        return await this.siaClientService.getIsEligible(
+          auth,
+          'disabilitypension',
+        )
+      }
+      default: {
+        return await this.siaClientService.getIsEligible(
+          auth,
+          application.typeId.toLowerCase(),
+        )
+      }
     }
   }
 
   async getCurrencies({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getCurrencies(auth)
+  }
+
+  async getResidenceTypes({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getResidenceTypes(auth)
   }
 
   async getChildrenWithSameDomicile({ auth }: TemplateApiModuleActionProps) {
@@ -625,9 +656,23 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     { auth }: TemplateApiModuleActionProps,
     languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest = {},
   ) {
-    return await this.siaClientService.getMARPSelfAssessmentQuestionnaire(
+    return await this.siaClientService.getSelfAssessmentQuestionnaire(
       auth,
       languages,
+      'MARP',
+    )
+  }
+
+  async getDisabilityPensionSelfAssessmentQuestionnaire(
+    { auth }: TemplateApiModuleActionProps,
+    languages:
+      | ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest
+      | ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest = {},
+  ) {
+    return await this.siaClientService.getSelfAssessmentQuestionnaire(
+      auth,
+      languages,
+      'DisabilityPension',
     )
   }
 
@@ -657,6 +702,48 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     )
   }
 
+  async getEducationLevelsWithEnum({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
+      return await this.siaClientService.getEducationLevelsWithEnum(
+        auth,
+        ApplicationTypeEnum.DISABILITY_PENSION,
+      )
+    }
+  }
+
+  async getCertificate({ application, auth }: TemplateApiModuleActionProps) {
+    if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
+      return await this.siaClientService.getCertificateForDisabilityPension(
+        auth,
+      )
+    }
+  }
+
+  async getCountries({
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getCountries(auth, {
+      locale: currentUserLocale,
+    })
+  }
+
+  async getMaritalStatuses({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getMaritalStatuses(auth)
+  }
+
+  async getLanguages({
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getLanguages(auth, {
+      locale: currentUserLocale,
+    })
+  }
+
   async getMedicalAndRehabilitationApplicationType({
     application,
     auth,
@@ -674,8 +761,21 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     )
   }
 
-  async getEmploymentStatuses({ auth }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getEmploymentStatuses(auth)
+  async getEmploymentStatusesWithLocale({
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getEmploymentStatusesWithLocale(auth, {
+      locale: currentUserLocale,
+    })
+  }
+
+  async getProfessionsInDto({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getProfessionsInDto(auth)
+  }
+
+  async getProfessionActivitiesInDto({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getProfessionActivitiesInDto(auth)
   }
 
   async getProfessions({ auth }: TemplateApiModuleActionProps) {
@@ -684,5 +784,9 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getActivitiesOfProfessions({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getActivitiesOfProfessions(auth)
+  }
+
+  async getEmploymentStatuses({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getEmploymentStatuses(auth)
   }
 }

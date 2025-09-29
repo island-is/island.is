@@ -128,12 +128,12 @@ export const location = {
     },
     NORTH_WEST: {
       id: 'ta.eft.application:location.regionOptions.NORTH_WEST',
-      defaultMessage: 'Norðurlandvestra',
+      defaultMessage: 'Norðurland vestra',
       description: 'North west option',
     },
     NORTH_EAST: {
       id: 'ta.eft.application:location.regionOptions.NORTH_EAST',
-      defaultMessage: 'Norðurlandeystra',
+      defaultMessage: 'Norðurland eystra',
       description: 'North east option',
     },
     EAST: {

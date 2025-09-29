@@ -133,6 +133,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/social-insurance-administration/old-age-pension'
     ),
+  [ApplicationTypes.DISABILITY_PENSION]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/disability-pension'
+    ),
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: () =>
     import(
       '@island.is/application/templates/social-insurance-administration/household-supplement'
