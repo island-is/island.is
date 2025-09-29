@@ -244,7 +244,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    const newIndex = newOrder.findIndex((f) => f.id === draggedFileId)
+    const newIndex =
+      newOrder.findIndex((f) => f.id === draggedFileId) +
+      countDocumentsBeforeSession(index)
+
     if (!draggedFileId || newIndex === -1) {
       return
     }
@@ -450,9 +453,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   )
 
   const countDocumentsBeforeSession = (index: number) => {
-    const sessionsBefore = workingCase.courtSessions?.slice(0, index)
+    const sessionsBefore = workingCase.courtSessions?.slice(0, index) || []
 
-    return sessionsBefore?.reduce((acc, session) => {
+    return sessionsBefore.reduce((acc, session) => {
       return (acc += session.filedDocuments?.length || 0)
     }, 0)
   }
