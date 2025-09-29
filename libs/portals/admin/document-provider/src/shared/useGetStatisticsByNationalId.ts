@@ -13,7 +13,7 @@ export const useGetStatisticsByNationalId = (
   fromDate?: Date,
   toDate?: Date,
 ): GetStatisticsByNationalIdReturnType => {
-  const statisticsInput: GetStatisticsByNationalId  = {
+  const statisticsInput: GetStatisticsByNationalId = {
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
     to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
   }

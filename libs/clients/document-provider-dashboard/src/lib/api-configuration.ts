@@ -6,19 +6,21 @@ import { DocumentProviderDashboardClientConfig } from './documentProviderDashboa
 
 export const ApiConfiguration = {
   provide: 'DocumentProviderDashboardApiClientConfiguration',
-  useFactory: (config: ConfigType<typeof DocumentProviderDashboardClientConfig>) => {
+  useFactory: (
+    config: ConfigType<typeof DocumentProviderDashboardClientConfig>,
+  ) => {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-document-provider-dashboard-api',
         organizationSlug: 'stafraent-island',
         autoAuth: {
-            mode: 'token',
-            clientId: config.clientId,
-            clientSecret: config.clientSecret,
-            scope: [config.scope],
-            issuer: '',
-            tokenEndpoint: config.tokenUrl,
-          },
+          mode: 'token',
+          clientId: config.clientId,
+          clientSecret: config.clientSecret,
+          scope: [config.scope],
+          issuer: '',
+          tokenEndpoint: config.tokenUrl,
+        },
       }),
       basePath: config.basePath,
       headers: {

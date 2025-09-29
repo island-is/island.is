@@ -19,8 +19,12 @@ export const ProvidersTable = ({ providers }: Props) => {
         <T.Head>
           <T.Row>
             <T.HeadData>{formatMessage(m.documentProvidersTitle)}</T.HeadData>
-            <T.HeadData align="right">{formatMessage(m.statisticsBoxPublishedDocuments)}</T.HeadData>
-            <T.HeadData align="right">{formatMessage(m.statisticsBoxOpenedDocuments)}</T.HeadData>
+            <T.HeadData align="right">
+              {formatMessage(m.statisticsBoxPublishedDocuments)}
+            </T.HeadData>
+            <T.HeadData align="right">
+              {formatMessage(m.statisticsBoxOpenedDocuments)}
+            </T.HeadData>
             <T.HeadData></T.HeadData>
           </T.Row>
         </T.Head>
@@ -40,7 +44,9 @@ export const ProvidersTable = ({ providers }: Props) => {
                     size="small"
                     icon="arrowForward"
                     variant="text"
-                    aria-label={`${formatMessage(m.documentProvidersSearchResultsActionCardLabel)}: ${item.name}`}
+                    aria-label={`${formatMessage(
+                      m.documentProvidersSearchResultsActionCardLabel,
+                    )}: ${item.name}`}
                     onClick={() =>
                       navigate(
                         DocumentProviderPaths.DocumentProviderDocumentProvidersSingle.replace(
@@ -50,7 +56,9 @@ export const ProvidersTable = ({ providers }: Props) => {
                       )
                     }
                   >
-                    {formatMessage(m.documentProvidersSearchResultsActionCardLabel)}
+                    {formatMessage(
+                      m.documentProvidersSearchResultsActionCardLabel,
+                    )}
                   </Button>
                 </T.Data>
               </T.Row>

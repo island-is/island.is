@@ -1,6 +1,4 @@
-import {
-  StatisticsApi
-} from '@island.is/clients/document-provider-dashboard'
+import { StatisticsApi } from '@island.is/clients/document-provider-dashboard'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { GetStatisticsProvidersNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdProviders.input'
@@ -43,13 +41,11 @@ export class DocumentProviderDashboardService {
     user: User,
   ): Promise<ProviderStatisticsPaginationResponse | null> {
     const statisticProviders =
-      await this.statisticsApi.apiV1StatisticsNationalIdProvidersGet(
-        {
-          ...input,
-          nationalId: user.nationalId,
-          sortBy: input.sortBy as StatisticsSortBy | undefined,
-        },
-      )
+      await this.statisticsApi.apiV1StatisticsNationalIdProvidersGet({
+        ...input,
+        nationalId: user.nationalId,
+        sortBy: input.sortBy as StatisticsSortBy | undefined,
+      })
 
     if (!statisticProviders) {
       return null
@@ -100,11 +96,10 @@ export class DocumentProviderDashboardService {
     input: GetStatisticsByNationalId,
     user: User,
   ): Promise<StatisticsOverview | null> {
-    const statistics =
-      await this.statisticsApi.apiV1StatisticsNationalIdGet({
-        ...input,
-        nationalId: user.nationalId,
-      })
+    const statistics = await this.statisticsApi.apiV1StatisticsNationalIdGet({
+      ...input,
+      nationalId: user.nationalId,
+    })
 
     if (!statistics) {
       return null
@@ -167,13 +162,11 @@ export class DocumentProviderDashboardService {
     user: User,
   ): Promise<ProviderStatisticsBreakdownPaginationResponse | null> {
     const breakdown =
-      await this.statisticsApi.apiV1StatisticsNationalIdBreakdownGet(
-        {
-          ...input,
-          nationalId: user.nationalId,
-          sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
-        },
-      )
+      await this.statisticsApi.apiV1StatisticsNationalIdBreakdownGet({
+        ...input,
+        nationalId: user.nationalId,
+        sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
+      })
 
     if (!breakdown) {
       return null
@@ -191,13 +184,11 @@ export class DocumentProviderDashboardService {
     user: User,
   ): Promise<ProviderStatisticsCategoryBreakdownPaginationResponse | null> {
     const breakdown =
-      await this.statisticsApi.apiV1StatisticsNationalIdBreakdownCategoriesGet(
-        {
-          ...input,
-          nationalId: user.nationalId,
-          sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
-        },
-      )
+      await this.statisticsApi.apiV1StatisticsNationalIdBreakdownCategoriesGet({
+        ...input,
+        nationalId: user.nationalId,
+        sortBy: input.sortBy as CategoryStatisticsSortBy | undefined,
+      })
 
     if (!breakdown) {
       return null

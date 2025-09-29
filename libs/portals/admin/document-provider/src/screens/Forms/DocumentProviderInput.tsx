@@ -44,9 +44,8 @@ export const DocumentProviderInput = <T extends FieldValues = FieldValues>({
   label,
   placeholder,
   rules,
-  loading
+  loading,
 }: Props<T>) => {
-  
   return (
     <Box marginBottom={2}>
       {loading ? (

@@ -27,16 +27,15 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
   page = 1,
   pageSize = 10,
 ): GetProviderStatisticsBreakdownWithCategoriesReturnType => {
-  const statisticsInput: GetStatisticsBreakdownWithCategoriesByProviderId =
-    {
-      providerId: providerId ?? '',
-      from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
-      to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
-      sortBy: sortBy ?? CategoryStatisticsSortBy.Date,
-      desc,
-      page,
-      pageSize,
-    }
+  const statisticsInput: GetStatisticsBreakdownWithCategoriesByProviderId = {
+    providerId: providerId ?? '',
+    from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+    to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
+    sortBy: sortBy ?? CategoryStatisticsSortBy.Date,
+    desc,
+    page,
+    pageSize,
+  }
 
   const { data, loading, error } = useQuery(
     GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_PROVIDERID,
@@ -86,7 +85,7 @@ export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
     chartData = breakdown.items.map(
       (item: ProviderStatisticsBreakdownWithCategories) => {
         const monthLabel =
-           item.year && item.month && item.month >= 1 && item.month <= 12
+          item.year && item.month && item.month >= 1 && item.month <= 12
             ? new Date(item.year, item.month - 1).toLocaleString('is', {
                 month: 'short',
               })

@@ -91,8 +91,9 @@ export class DocumentProviderDashboardResolver {
           },
         },
         this.documentProviderDashboardService.getStatisticsCategories(
-          {...input, }, 
-          user),
+          { ...input },
+          user,
+        ),
       )
 
       // Ensure categoryId is always a number and not undefined
@@ -130,9 +131,12 @@ export class DocumentProviderDashboardResolver {
             nationalId: user.nationalId,
           },
         },
-        this.documentProviderDashboardService.getStatisticsByNationalId({
-          ...input,
-        }, user),
+        this.documentProviderDashboardService.getStatisticsByNationalId(
+          {
+            ...input,
+          },
+          user,
+        ),
       )
 
       return data
@@ -164,7 +168,8 @@ export class DocumentProviderDashboardResolver {
           },
         },
         this.documentProviderDashboardService.getStatisticsBreakdownByProviderId(
-          { ...input }, user
+          { ...input },
+          user,
         ),
       )
 
@@ -196,9 +201,12 @@ export class DocumentProviderDashboardResolver {
             providerId: input.providerId,
           },
         },
-        this.documentProviderDashboardService.getStatisticsByProviderId({
-          ...input,
-        }, user),
+        this.documentProviderDashboardService.getStatisticsByProviderId(
+          {
+            ...input,
+          },
+          user,
+        ),
       )
 
       return data
@@ -229,12 +237,12 @@ export class DocumentProviderDashboardResolver {
         },
         this.documentProviderDashboardService.getStatisticsBreakdownByNationalId(
           { ...input },
-          user
+          user,
         ),
       )
 
       return data
-   } catch (e) {
+    } catch (e) {
       throw new GraphQLError(e.message)
     }
   }
@@ -262,7 +270,7 @@ export class DocumentProviderDashboardResolver {
         },
         this.documentProviderDashboardService.getStatisticsBreakdownWithCategoriesByNationalId(
           { ...input },
-          user
+          user,
         ),
       )
       return data
@@ -295,7 +303,7 @@ export class DocumentProviderDashboardResolver {
         },
         this.documentProviderDashboardService.getStatisticsBreakdownWithCategoriesByProviderId(
           { ...input },
-          user
+          user,
         ),
       )
 

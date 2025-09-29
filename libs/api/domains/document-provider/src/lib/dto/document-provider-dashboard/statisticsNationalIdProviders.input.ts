@@ -1,4 +1,10 @@
-import { Field, Int, InputType, registerEnumType, GraphQLISODateTime } from '@nestjs/graphql'
+import {
+  Field,
+  Int,
+  InputType,
+  registerEnumType,
+  GraphQLISODateTime,
+} from '@nestjs/graphql'
 import { Min } from 'class-validator'
 
 export enum StatisticsSortBy {

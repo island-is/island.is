@@ -24,7 +24,6 @@ interface Props {
 
 const COLORS = ['#00B39E', '#FF0050']
 
-
 export const SentFilesProfitBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {

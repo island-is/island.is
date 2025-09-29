@@ -1,4 +1,10 @@
-import { Field, GraphQLISODateTime, InputType, Int, registerEnumType } from '@nestjs/graphql'
+import {
+  Field,
+  GraphQLISODateTime,
+  InputType,
+  Int,
+  registerEnumType,
+} from '@nestjs/graphql'
 import { IsBoolean, IsOptional, IsUUID, Max, Min } from 'class-validator'
 
 export enum CategoryStatisticsSortBy {
@@ -8,9 +14,7 @@ export enum CategoryStatisticsSortBy {
 
 registerEnumType(CategoryStatisticsSortBy, { name: 'CategoryStatisticsSortBy' })
 
-@InputType(
-  'GetStatisticsBreakdownWithCategoriesByProviderId',
-)
+@InputType('GetStatisticsBreakdownWithCategoriesByProviderId')
 export class GetStatisticsBreakdownWithCategoriesByProviderId {
   @Field()
   @IsUUID('4', { message: 'providerId must be a UUID v4' })

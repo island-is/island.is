@@ -1,4 +1,10 @@
-import { Field, Int, InputType, registerEnumType, GraphQLISODateTime } from '@nestjs/graphql'
+import {
+  Field,
+  Int,
+  InputType,
+  registerEnumType,
+  GraphQLISODateTime,
+} from '@nestjs/graphql'
 import { CategoryStatisticsSortBy } from './statisticsProvidersBreakdownWithCategories.input'
 
 export enum TotalStatisticsSortBy {
@@ -12,7 +18,6 @@ registerEnumType(TotalStatisticsSortBy, { name: 'TotalStatisticsSortBy' })
 
 @InputType('GetStatisticsBreakdownByNationalId')
 export class GetStatisticsBreakdownByNationalId {
-
   @Field(() => GraphQLISODateTime, { nullable: true })
   from?: Date
 

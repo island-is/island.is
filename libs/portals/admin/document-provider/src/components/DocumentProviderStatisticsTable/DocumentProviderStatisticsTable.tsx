@@ -9,18 +9,30 @@ import { useLocale } from '@island.is/localization'
 
 export const DocumentProviderStatisticsTable = ({
   statistics,
-}: { statistics: ProviderStatisticsBreakdownPaginationResponse }) => {
+}: {
+  statistics: ProviderStatisticsBreakdownPaginationResponse
+}) => {
   const { formatMessage } = useLocale()
   return (
     <Box paddingTop={6}>
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>{formatMessage(m.documentProvidersDateFromLabel)}</T.HeadData>
-            <T.HeadData align="right">{formatMessage(m.statisticsBoxPublishedDocuments)}</T.HeadData>
-            <T.HeadData align="right">{formatMessage(m.statisticsBoxOpenedDocuments)}</T.HeadData>
-            <T.HeadData align="right">{formatMessage(m.statisticsBoxFailures)}</T.HeadData>
-            <T.HeadData align="right">{formatMessage(m.statisticsBoxBenefit)}</T.HeadData>
+            <T.HeadData>
+              {formatMessage(m.documentProvidersDateFromLabel)}
+            </T.HeadData>
+            <T.HeadData align="right">
+              {formatMessage(m.statisticsBoxPublishedDocuments)}
+            </T.HeadData>
+            <T.HeadData align="right">
+              {formatMessage(m.statisticsBoxOpenedDocuments)}
+            </T.HeadData>
+            <T.HeadData align="right">
+              {formatMessage(m.statisticsBoxFailures)}
+            </T.HeadData>
+            <T.HeadData align="right">
+              {formatMessage(m.statisticsBoxBenefit)}
+            </T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>
@@ -38,7 +50,10 @@ export const DocumentProviderStatisticsTable = ({
                 <T.Data align="right">{item.statistics?.opened}</T.Data>
                 <T.Data align="right">{item.statistics?.failures}</T.Data>
                 <T.Data align="right">
-                  {formatNumber((item.statistics?.published ?? 0) * DOCUMENT_DELIVERY_PRICE_ISK)}
+                  {formatNumber(
+                    (item.statistics?.published ?? 0) *
+                      DOCUMENT_DELIVERY_PRICE_ISK,
+                  )}
                 </T.Data>
               </T.Row>
             ))

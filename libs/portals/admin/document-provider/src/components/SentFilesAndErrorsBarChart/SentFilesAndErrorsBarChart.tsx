@@ -20,14 +20,13 @@ interface Props {
 
 const COLORS = ['#99C0FF', '#FF0050']
 
-
 export const SentFilesAndErrorsBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
   const { formatMessage } = useLocale()
   const TITLES = [
     formatMessage(m.statisticsBoxPublishedDocuments),
-    formatMessage(m.sentErrors)
+    formatMessage(m.sentErrors),
   ]
 
   return (

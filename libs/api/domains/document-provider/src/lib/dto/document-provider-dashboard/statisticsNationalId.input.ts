@@ -2,7 +2,6 @@ import { Field, Int, InputType, GraphQLISODateTime } from '@nestjs/graphql'
 
 @InputType('GetStatisticsByNationalId')
 export class GetStatisticsByNationalId {
-
   @Field(() => [Int], { nullable: true })
   categories?: Array<number>
 

@@ -66,7 +66,8 @@ export const useGetProviderStatisticsBreakdownByNationalId = (
               })
             : 'Unknown',
         published: item.statistics?.published ?? 0,
-        winning: (item.statistics?.published ?? 0) * DOCUMENT_DELIVERY_PRICE_ISK,
+        winning:
+          (item.statistics?.published ?? 0) * DOCUMENT_DELIVERY_PRICE_ISK,
         opened: item.statistics?.opened ?? 0,
         failures: item.statistics?.failures ?? 0,
       }),

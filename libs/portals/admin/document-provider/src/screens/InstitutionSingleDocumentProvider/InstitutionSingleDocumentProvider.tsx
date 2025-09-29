@@ -22,9 +22,7 @@ import { useGetProvidersByNationalId } from '../../shared/useGetProvidersByNatio
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { DocumentProvidersNavigation } from '../../components/DocumentProvidersNavigation/DocumentProvidersNavigation'
 import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
-import {
-  StatisticBoxList,
-} from '../../components/StatisticBoxList/StatisticBoxList'
+import { StatisticBoxList } from '../../components/StatisticBoxList/StatisticBoxList'
 import { CategoryStatisticsSortBy } from '@island.is/api/schema'
 import { DocumentProviderPaths } from '../../lib/paths'
 import { StatisticsBoxData } from '../../lib/types'
@@ -144,7 +142,11 @@ const SingleDocumentProvider = () => {
           />
           <Box marginTop={1} marginBottom={[2, 3, 5]}>
             <IntroHeader
-              title={statistics?.name ? String(statistics.name) : formatMessage(m.rootName)}
+              title={
+                statistics?.name
+                  ? String(statistics.name)
+                  : formatMessage(m.rootName)
+              }
               intro={formatMessage(m.documentProvidersDescription)}
             />
             <Box marginBottom={[2, 3]}>

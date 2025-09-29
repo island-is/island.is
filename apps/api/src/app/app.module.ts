@@ -237,7 +237,6 @@ import {
   LandspitaliApiModuleConfig,
 } from '@island.is/api/domains/landspitali'
 
-
 const environment = getConfig
 
 @Module({

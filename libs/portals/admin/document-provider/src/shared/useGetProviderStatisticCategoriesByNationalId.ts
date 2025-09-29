@@ -55,15 +55,17 @@ export const useGetProviderStatisticCategoriesByNationalId = (
     '#9966FF', // purple
   ]
 
-  const categories: ProviderStatisticCategory[] = rawCategories.map((item, idx) => ({
-    name: item.name,
-    published: item.published,
-    color: COLORS[idx % COLORS.length],
-    value:
-      totalPublished > 0
-        ? Math.round((item.published / totalPublished) * 100)
-        : 0,
-  }))
+  const categories: ProviderStatisticCategory[] = rawCategories.map(
+    (item, idx) => ({
+      name: item.name,
+      published: item.published,
+      color: COLORS[idx % COLORS.length],
+      value:
+        totalPublished > 0
+          ? Math.round((item.published / totalPublished) * 100)
+          : 0,
+    }),
+  )
 
   return {
     categories,

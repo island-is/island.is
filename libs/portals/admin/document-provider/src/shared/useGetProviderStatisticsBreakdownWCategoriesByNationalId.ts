@@ -25,15 +25,14 @@ export const useGetProviderStatisticsBreakdownWCategoriesByNationalId = (
   page = 1,
   pageSize = 10,
 ): GetProviderStatisticsBreakdownWithCategoriesReturnType => {
-  const statisticsInput: GetStatisticsBreakdownWithCategoriesByNationalId =
-    {
-      from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
-      to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
-      sortBy: sortBy ?? TotalStatisticsSortBy.Date,
-      desc,
-      page,
-      pageSize,
-    }
+  const statisticsInput: GetStatisticsBreakdownWithCategoriesByNationalId = {
+    from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
+    to: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
+    sortBy: sortBy ?? TotalStatisticsSortBy.Date,
+    desc,
+    page,
+    pageSize,
+  }
 
   const { data, loading, error } = useQuery(
     GET_PROVIDER_STATISTICS_BREAKDOWN_WITH_CATEGORY_BY_NATIONALID,

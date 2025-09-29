@@ -10,14 +10,16 @@ type ProvidersTableProps = {
 
 export const ProvidersTable = ({ providerStatistics }: ProvidersTableProps) => {
   const { formatMessage } = useLocale()
-  
+
   return (
     <Box paddingTop={6}>
       <T.Table>
         <T.Head>
           <T.Row>
             <T.HeadData>{formatMessage(m.documentProvidersList)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.statisticsBoxPublishedDocuments)}</T.HeadData>
+            <T.HeadData>
+              {formatMessage(m.statisticsBoxPublishedDocuments)}
+            </T.HeadData>
             <T.HeadData>{formatMessage(m.openedDocuments)}</T.HeadData>
             <T.HeadData>{formatMessage(m.links)}</T.HeadData>
           </T.Row>
@@ -37,7 +39,9 @@ export const ProvidersTable = ({ providerStatistics }: ProvidersTableProps) => {
                     )}
                     underline="normal"
                   >
-                    {formatMessage(m.documentProvidersSearchResultsActionCardLabel)}
+                    {formatMessage(
+                      m.documentProvidersSearchResultsActionCardLabel,
+                    )}
                   </Link>
                 </T.Data>
               </T.Row>

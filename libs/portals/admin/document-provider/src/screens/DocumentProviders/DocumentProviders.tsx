@@ -50,11 +50,7 @@ const DocumentProviders = () => {
     data?.getProviderOrganisations || []
 
   useEffect(() => {
-    if (
-      user?.scopes?.includes(
-        AdminPortalScope.documentProviderInstitution,
-      )
-    ) {
+    if (user?.scopes?.includes(AdminPortalScope.documentProviderInstitution)) {
       navigate(DocumentProviderPaths.InstitutionDocumentProviderOverview)
     }
   }, [user, navigate])

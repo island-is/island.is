@@ -18,9 +18,7 @@ import { useGetProviderStatisticsBreakdownWCategoriesByNationalId } from '../../
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
 import { useGetStatisticsByNationalId } from '../../shared/useGetStatisticsByNationalId'
-import {
-  StatisticBoxList,
-} from '../../components/StatisticBoxList/StatisticBoxList'
+import { StatisticBoxList } from '../../components/StatisticBoxList/StatisticBoxList'
 import { TotalStatisticsSortBy } from '@island.is/api/schema'
 import startOfMonth from 'date-fns/startOfMonth'
 import subYears from 'date-fns/subYears'
