@@ -90,7 +90,7 @@ const validateVerdictAppealUpdate = ({
 
 @Controller('api/internal')
 @ApiTags('internal verdict')
-// @UseGuards(TokenGuard)
+@UseGuards(TokenGuard)
 export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
@@ -246,9 +246,7 @@ export class InternalVerdictController {
     const delivered =
       await this.verdictService.deliverVerdictServiceCertificatesToPolice()
 
-    await this.eventService.postDailyVerdictServiceDeliveryEvent(
-      delivered.filter((d) => d.delivered).length,
-    )
+    await this.eventService.postDailyVerdictServiceDeliveryEvent(delivered)
 
     return delivered
   }

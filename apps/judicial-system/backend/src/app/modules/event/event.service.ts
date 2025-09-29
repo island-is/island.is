@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+import partition from 'lodash/partition'
 
 import { Inject, Injectable } from '@nestjs/common'
 
@@ -204,9 +205,35 @@ export class EventService {
     }
   }
 
-  async postDailyVerdictServiceDeliveryEvent(count: number) {
+  async postDailyVerdictServiceDeliveryEvent(
+    delivered: {
+      delivered: boolean
+      caseId: string
+      defendantId: string
+    }[],
+  ) {
+    const [success, failure] = partition(
+      delivered,
+      (result) => result.delivered,
+    )
     const title = ':outbox_tray: Birtingarvottorð dóma'
-    const message = `Alls ${count} birtingarvottorð send í LÖKE.`
+    const hasFailedDeliveries = failure.length > 0
+
+    const successList = success.map((result) => {
+      return `>Dómfelldi: ${result.defendantId}, Mál: ${result.caseId}`
+    })
+    const successText = `Alls ${
+      success.length
+    } birtingarvottorð send í LÖKE: \n${successList.join('\n')}`
+
+    const failureList = failure.map((result) => {
+      return `>Dómfelldi: ${result.defendantId}, Mál: ${result.caseId}`
+    })
+    const failureText = hasFailedDeliveries
+      ? `Tókst ekki að senda ${
+          failure.length
+        } birtingarvottorð í LÖKE: \n${failureList.join('\n')}`
+      : ''
 
     try {
       if (!this.config.url) {
@@ -222,7 +249,7 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*${title}*\n${message}`,
+                text: `*${title}*\n${successText}\n${failureText}`,
               },
             },
           ],

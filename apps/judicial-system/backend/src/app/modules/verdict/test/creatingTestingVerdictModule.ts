@@ -18,6 +18,7 @@ import {
 import { CaseService, InternalCaseService, PdfService } from '../../case'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
+import { EventLogService } from '../../event-log'
 import { FileService } from '../../file'
 import { PoliceService } from '../../police'
 import { Verdict } from '../../repository'
@@ -31,6 +32,7 @@ jest.mock('../../police/police.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/pdf.service')
 jest.mock('../../event/event.service')
+jest.mock('../../event-log/eventLog.service')
 jest.mock('../../defendant/defendant.service')
 jest.mock('../../user/user.service')
 jest.mock('../../case/internalCase.service')
@@ -53,6 +55,7 @@ export const createTestingVerdictModule = async () => {
       EventService,
       DefendantService,
       UserService,
+      EventLogService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {

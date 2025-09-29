@@ -341,7 +341,11 @@ export class VerdictService {
   private async checkVerdictCertificateDeliveryCompletion(caseIds: string[]) {
     const latestCases = await this.internalCaseService.getSelectedCases(caseIds)
     latestCases.forEach(async (c) => {
-      const deliveredServiceCertificates = c.defendants?.filter(
+      const targetDefendants = c.defendants?.filter(
+        (defendant) =>
+          defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+      )
+      const deliveredServiceCertificates = targetDefendants?.filter(
         (defendant) =>
           !!DefendantEventLog.getEventLogByEventType(
             DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
@@ -355,7 +359,7 @@ export class VerdictService {
       }
 
       const allServiceCertificatesDelivered =
-        deliveredServiceCertificates?.length === c.defendants?.length
+        deliveredServiceCertificates?.length === targetDefendants?.length
       if (allServiceCertificatesDelivered) {
         await this.eventLogService.createWithUser(
           EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
@@ -373,14 +377,16 @@ export class VerdictService {
   async deliverVerdictServiceCertificatesToPolice(): Promise<
     {
       delivered: boolean
+      caseId: string
+      defendantId: string
     }[]
   > {
     const defendantsWithCases =
       await this.internalCaseService.getIndictmentCaseDefendantsWithExpiredAppealDeadline()
-    console.log({ defendantsWithCasesCount: defendantsWithCases.length })
 
     const delivered = await Promise.all(
       defendantsWithCases.map(async ({ defendant, theCase }) => {
+        const result = { caseId: theCase.id, defendantId: defendant.id }
         if (!theCase) {
           this.logger.warn(
             `Failed to upload verdict service certificate pdf to police`,
@@ -388,7 +394,7 @@ export class VerdictService {
               reason: 'case is undefined',
             },
           )
-          return { delivered: false }
+          return { ...result, delivered: false }
         }
 
         const user = theCase.judge
@@ -399,7 +405,7 @@ export class VerdictService {
               reason: 'court case user not found',
             },
           )
-          return { delivered: false }
+          return { ...result, delivered: false }
         }
 
         const { verdict } = defendant
@@ -410,29 +416,28 @@ export class VerdictService {
               reason: 'verdict is undefined',
             },
           )
-          return { delivered: false }
+          return { ...result, delivered: false }
         }
 
         return this.pdfService
           .getVerdictServiceCertificatePdf(theCase, defendant, verdict)
           .then(async (pdf) => {
-            return this.internalCaseService.deliverCaseToPoliceWithFiles(
-              theCase,
-              {
-                ...user,
-                created: user.created.toISOString(),
-                modified: user.modified.toISOString(),
-              } as TUser,
-              [
+            const delivered =
+              await this.internalCaseService.deliverCaseToPoliceWithFiles(
+                theCase,
                 {
-                  type: PoliceDocumentType.RVBD,
-                  courtDocument: Base64.btoa(pdf.toString('binary')),
-                },
-              ],
-            )
-          })
-          .then(async (delivered) => {
-            // write to a defendant event log
+                  ...user,
+                  created: user.created.toISOString(),
+                  modified: user.modified.toISOString(),
+                } as TUser,
+                [
+                  {
+                    type: PoliceDocumentType.RVBD,
+                    courtDocument: Base64.btoa(pdf.toString('binary')),
+                  },
+                ],
+              )
+
             if (delivered) {
               await this.defendantService.createDefendantEvent({
                 caseId: theCase.id,
@@ -441,7 +446,7 @@ export class VerdictService {
                   DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
               })
             }
-            return { delivered }
+            return { ...result, delivered }
           })
           .catch((reason) => {
             // Tolerate failure, but log error
@@ -450,17 +455,18 @@ export class VerdictService {
               { reason },
             )
 
-            return { delivered: false }
+            return { ...result, delivered: false }
           })
       }),
     )
 
-    if (delivered.length > 0) {
-      const caseIds = _uniqBy(
-        defendantsWithCases.map(({ theCase }) => theCase.id),
-        (c) => c,
-      )
-
+    // assess newly delivered cases, we specifically write in the event log when
+    // all relevant defendants have had their verdict service certificate delivered to police
+    const deliveredCases = delivered
+      .filter((result) => result.delivered)
+      .map((result) => result.caseId)
+    if (deliveredCases.length > 0) {
+      const caseIds = _uniqBy(deliveredCases, (c) => c)
       await this.checkVerdictCertificateDeliveryCompletion(caseIds)
     }
 

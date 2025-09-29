@@ -41,8 +41,10 @@ import {
   isRestrictionCase,
   NotificationType,
   restrictionCases,
+  ServiceRequirement,
   type User as TUser,
   UserRole,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -592,50 +594,42 @@ export class InternalCaseService {
         {
           model: EventLog,
           as: 'eventLogs',
-          required: false,
-          separate: true,
+          required: true,
+          where: {
+            eventType: {
+              [Op.not]:
+                EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
+            },
+          },
         },
         {
           model: Defendant,
           as: 'defendants',
-          required: false,
+          required: true,
           include: [
             {
               model: DefendantEventLog,
               as: 'eventLogs',
               required: false,
-              separate: true,
             },
             {
               model: Verdict,
               as: 'verdict',
-              required: false,
+              required: true,
+              where: {
+                serviceRequirement: ServiceRequirement.REQUIRED,
+                service_status: {
+                  [Op.not]: VerdictServiceStatus.NOT_APPLICABLE,
+                },
+                service_date: {
+                  [Op.not]: null,
+                },
+              },
             },
           ],
-          separate: true,
         },
       ],
       where: {
-        [Op.and]: [
-          {
-            id: {
-              [Op.notIn]: Sequelize.literal(`
-                (SELECT case_id
-                FROM event_log
-                WHERE event_type = 'VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED')
-              `),
-            },
-          },
-          {
-            id: {
-              [Op.in]: Sequelize.literal(`
-              (SELECT case_id
-              FROM verdict
-              WHERE service_date IS NOT NULL)
-            `),
-            },
-          },
-        ],
         state: { [Op.eq]: CaseState.COMPLETED },
         type: CaseType.INDICTMENT,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
@@ -691,6 +685,11 @@ export class InternalCaseService {
               as: 'eventLogs',
               required: false,
               separate: true,
+            },
+            {
+              model: Verdict,
+              as: 'verdict',
+              required: false,
             },
           ],
           separate: true,
