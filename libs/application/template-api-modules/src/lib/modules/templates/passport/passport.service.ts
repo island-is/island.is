@@ -149,6 +149,9 @@ export class PassportService extends BaseTemplateApiService {
     const applicationId = {
       guid: application.id,
     }
+    const sixMonthsFromNow = new Date(
+      new Date().setMonth(new Date().getMonth() + 6),
+    )
     this.logger.info('submitPassportApplication', applicationId)
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth,
@@ -177,7 +180,11 @@ export class PassportService extends BaseTemplateApiService {
       const PASSPORT_TYPE = 'P'
       const PASSPORT_SUBTYPE = 'A'
       if (forUser) {
-        if (!fetchedPassport.userPassport?.expiresWithinNoticeTime) {
+        if (
+          !fetchedPassport.userPassport?.expiresWithinNoticeTime ||
+          new Date(fetchedPassport.userPassport.expirationDate ?? new Date()) < // check that the passport expires within 6 months
+            sixMonthsFromNow
+        ) {
           throw new TemplateApiError(
             'Ekki er hægt að skila inn umsókn af því að of langt er þar til núverandi vegabréf rennur út.',
             400,
@@ -203,7 +210,10 @@ export class PassportService extends BaseTemplateApiService {
         )
         if (fetchedChildPassports) {
           const expiringChildPassport = fetchedChildPassports?.passports?.find(
-            (passport) => passport.expiresWithinNoticeTime,
+            (passport) =>
+              passport.expiresWithinNoticeTime &&
+              new Date(passport.expirationDate ?? new Date()) <
+                sixMonthsFromNow, // check that the passport expires within 6 months
           )
           if (!expiringChildPassport) {
             throw new TemplateApiError(
