@@ -16,10 +16,7 @@ import { ConfigModule } from '@island.is/nest/config'
     IdentityClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        NationalRegistryV3ClientConfig,
-        CompanyRegistryConfig,
-      ],
+      load: [NationalRegistryV3ClientConfig, CompanyRegistryConfig],
     }),
   ],
   providers: [HistoryService, HistoryBuilder],
