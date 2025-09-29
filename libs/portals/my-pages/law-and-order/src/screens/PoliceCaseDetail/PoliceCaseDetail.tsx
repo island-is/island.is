@@ -27,34 +27,40 @@ const PoliceCaseDetail = () => {
   const { data, loading, error } = useGetPoliceCaseQuery({
     variables: {
       input: {
-        caseNumber: id
-      }
-    }
+        caseNumber: id,
+      },
+    },
   })
 
   const policeCase = data?.lawAndOrderPoliceCase ?? null
 
   if (!loading && !error && !policeCase) {
-    return <Problem
-      type="no_data"
-      noBorder={false}
-      title={formatMessage(coreMessages.noData)}
-      message={formatMessage(coreMessages.noDataFoundDetail)}
-      imgSrc="./assets/images/sofa.svg"
-    />
+    return (
+      <Problem
+        type="no_data"
+        noBorder={false}
+        title={formatMessage(coreMessages.noData)}
+        message={formatMessage(coreMessages.noDataFoundDetail)}
+        imgSrc="./assets/images/sofa.svg"
+      />
+    )
   }
 
-  if (error && !loading) {return <Problem error={error} noBorder={false} />}
+  if (error && !loading) {
+    return <Problem error={error} noBorder={false} />
+  }
 
   const policeCaseNumber = policeCase?.number ?? ''
 
   return (
     <>
       <IntroWrapper
-        title={formatMessage(m.policeCaseTitle, {arg: policeCaseNumber})}
+        title={formatMessage(m.policeCaseTitle, { arg: policeCaseNumber })}
         intro={messages.policeCasesDescription}
         serviceProviderSlug={RIKISLOGREGLUSTJORI_SLUG}
-        serviceProviderTooltip={formatMessage(coreMessages.nationalPoliceCommissionerTooltip)}
+        serviceProviderTooltip={formatMessage(
+          coreMessages.nationalPoliceCommissionerTooltip,
+        )}
       />
       {loading && !error && (
         <Box width="full">
@@ -69,42 +75,42 @@ const PoliceCaseDetail = () => {
           loading={loading}
           label={m.caseNumber}
           content={policeCase?.number}
-          />
+        />
         <InfoLine
           loading={loading}
           label={coreMessages.type}
           content={policeCase?.type ?? ''}
-          />
+        />
         <InfoLine
           loading={loading}
           label={m.caseNumber}
           content={policeCase?.number}
-          />
+        />
         <InfoLine
           loading={loading}
           label={m.receivedDate}
           content={policeCase?.received ?? ''}
-          />
+        />
         <InfoLine
           loading={loading}
           label={m.contact}
           content={policeCase?.contact ?? ''}
-          />
+        />
         <InfoLine
           loading={loading}
           label={m.receivedDate}
           content={policeCase?.received ?? ''}
-          />
+        />
         <InfoLine
           loading={loading}
           label={m.legalAdvisor}
           content={policeCase?.courtAdvocate ?? ''}
-          />
+        />
         <InfoLine
           loading={loading}
           label={m.caseStatus}
           content={policeCase?.status ?? ''}
-          />
+        />
       </InfoLineStack>
     </>
   )

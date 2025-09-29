@@ -15,6 +15,5 @@ query GetPoliceCases {
     pageInfo {
       hasNextPage
     }
-
   }
 }

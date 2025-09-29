@@ -19,7 +19,8 @@ export const messages = defineMessages({
   },
   policeCasesDescription: {
     id: 'sp.law-and-order:police-cases-description',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.',
   },
   policeCaseTitle: {
     id: 'sp.law-and-order:police-case-title',
@@ -149,7 +150,7 @@ export const messages = defineMessages({
   caseStatus: {
     id: 'sp.law-and-order:case-status',
     defaultMessage: 'Staða máls',
-  }
+  },
 })
 export const tagMessages = defineMessages({
   sent: {
