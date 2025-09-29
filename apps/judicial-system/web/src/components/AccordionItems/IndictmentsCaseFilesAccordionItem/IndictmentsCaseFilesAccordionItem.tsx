@@ -63,7 +63,7 @@ interface CaseFileProps {
   onReorder: (id?: string) => void
   onOpen: (id: string) => void
   onRename: (id: string, name: string, displayDate: string) => void
-  onDelete: (file: TUploadFile) => void
+  onDelete: (id: string) => void
   setEditCount: Dispatch<SetStateAction<number>>
 }
 
@@ -444,8 +444,8 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     }
   }
 
-  const handleDelete = (file: TUploadFile) => {
-    handleRemove({ id: file.id } as TUploadFile, (file) =>
+  const handleDelete = (id: string) => {
+    handleRemove({ id } as TUploadFile, (file) =>
       setReorderableItems((prev) => prev.filter((item) => item.id !== file.id)),
     )
   }
