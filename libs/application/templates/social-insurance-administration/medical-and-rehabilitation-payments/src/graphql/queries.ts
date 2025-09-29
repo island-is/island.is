@@ -6,7 +6,6 @@ export const siaRehabilitationPlanQuery = gql`
       referenceId
       serviceProvider {
         serviceProviderName
-        coordinatorName
         coordinatorTitle
         workplace
         phoneNumber
@@ -132,7 +131,6 @@ export const siaConfirmedTreatmentQuery = gql`
       created
       serviceProvider {
         serviceProviderName
-        coordinatorName
         coordinatorTitle
         workplace
         phoneNumber
@@ -166,7 +164,6 @@ export const siaConfirmationOfPendingResolutionQuery = gql`
       created
       serviceProvider {
         serviceProviderName
-        coordinatorName
         coordinatorTitle
         workplace
         phoneNumber
@@ -201,7 +198,6 @@ export const siaConfirmationOfIllHealthQuery = gql`
       created
       serviceProvider {
         serviceProviderName
-        coordinatorName
         coordinatorTitle
         workplace
         phoneNumber
