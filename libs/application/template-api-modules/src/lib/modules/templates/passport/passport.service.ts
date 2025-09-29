@@ -171,11 +171,18 @@ export class PassportService extends BaseTemplateApiService {
         service,
       }: PassportSchema = application.answers as PassportSchema
 
+      const fetchedPassport = await this.passportApi.getCurrentPassport(auth)
       const forUser = !!passport.userPassport
       let result
       const PASSPORT_TYPE = 'P'
       const PASSPORT_SUBTYPE = 'A'
       if (forUser) {
+        if (!fetchedPassport.userPassport?.expiresWithinNoticeTime) {
+          throw new TemplateApiError(
+            'Ekki er hægt að skila inn umsókn af því að of langt er þar til núverandi vegabréf rennur út.',
+            400,
+          )
+        }
         result = await this.passportApi.preregisterIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: auth.nationalId,
@@ -191,6 +198,20 @@ export class PassportService extends BaseTemplateApiService {
           subType: PASSPORT_SUBTYPE,
         })
       } else {
+        const fetchedChildPassports = fetchedPassport.childPassports?.find(
+          (child) => child.childNationalId === childsPersonalInfo.nationalId,
+        )
+        if (fetchedChildPassports) {
+          const expiringChildPassport = fetchedChildPassports?.passports?.find(
+            (passport) => passport.expiresWithinNoticeTime,
+          )
+          if (!expiringChildPassport) {
+            throw new TemplateApiError(
+              'Ekki er hægt að skila inn umsókn af því að of langt er þar til núverandi vegabréf rennur út.',
+              400,
+            )
+          }
+        }
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: childsPersonalInfo.nationalId,
