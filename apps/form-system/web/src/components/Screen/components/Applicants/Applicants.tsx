@@ -125,10 +125,6 @@ export const Applicants = ({ applicantField }: Props) => {
     })
   }, [dispatch, applicantField.id, nationalId])
 
-  useEffect(() => {
-    console.log('applicantField', applicantField)
-  }, [applicantField])
-
   return (
     <>
       {isIndividualType && (
