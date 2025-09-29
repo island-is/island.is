@@ -1,15 +1,15 @@
-import { Box, DialogPrompt } from '@island.is/island-ui/core'
-import { MainContent } from '../../MainContent/MainContent'
-import { useContext } from 'react'
-import { ControlContext } from '../../../context/ControlContext'
-import { m } from '@island.is/form-system/ui'
-import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 import {
-  DELETE_SCREEN,
   DELETE_FIELD,
+  DELETE_SCREEN,
   DELETE_SECTION,
 } from '@island.is/form-system/graphql'
+import { m } from '@island.is/form-system/ui'
+import { Box, DialogPrompt } from '@island.is/island-ui/core'
+import { useContext } from 'react'
+import { useIntl } from 'react-intl'
+import { ControlContext } from '../../../context/ControlContext'
+import { MainContent } from '../../MainContent/MainContent'
 import { DeleteButton } from './DeleteButton'
 
 export const MainContentColumn = () => {
@@ -97,8 +97,8 @@ export const MainContentColumn = () => {
             onConfirm={remove}
             disclosureElement={
               <DeleteButton
-                onClick={() => {}}
                 label={formatMessage(m.delete)}
+                onClick={() => null}
               />
             }
           />
