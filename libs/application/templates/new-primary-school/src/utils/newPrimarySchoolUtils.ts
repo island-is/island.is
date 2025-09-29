@@ -361,16 +361,6 @@ export const getApplicationExternalData = (
     'childInformation.data.socialProfile',
   )
 
-  const childCitizenshipCode = getValueViaPath<string>(
-    externalData,
-    'citizenship.data.childCitizenshipCode',
-  )
-
-  const otherGuardianCitizenshipCode = getValueViaPath<string>(
-    externalData,
-    'citizenship.data.otherGuardianCitizenshipCode',
-  )
-
   return {
     children,
     applicantName,
@@ -388,8 +378,6 @@ export const getApplicationExternalData = (
     childAffiliations,
     healthProfile,
     socialProfile,
-    childCitizenshipCode,
-    otherGuardianCitizenshipCode,
   }
 }
 
