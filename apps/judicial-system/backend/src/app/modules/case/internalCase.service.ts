@@ -1,3 +1,4 @@
+import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
@@ -584,7 +585,7 @@ export class InternalCaseService {
   async getIndictmentCaseDefendantsWithExpiredAppealDeadline(): Promise<
     { theCase: Case; defendant: Defendant }[]
   > {
-    const minDate = new Date(Date.now() - VERDICT_APPEAL_WINDOW_DAYS)
+    const minDate = addDays(Date.now(), -VERDICT_APPEAL_WINDOW_DAYS)
     const cases = await this.caseRepositoryService.findAll({
       include: [
         {
