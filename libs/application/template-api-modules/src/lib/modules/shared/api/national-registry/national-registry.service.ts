@@ -436,11 +436,11 @@ export class NationalRegistryService extends BaseTemplateApiService {
     const children: Array<ApplicantChildCustodyInformation | null> =
       await Promise.all(
         childrenNationalIds.map(async (childNationalId) => {
-          const childResidenceParent =
-            await this.nationalRegistryV3Api.getChildResidenceParent(
-              auth,
-              childNationalId,
-            )
+          // const childResidenceParent =
+          //   await this.nationalRegistryV3Api.getChildResidenceParent(
+          //     auth,
+          //     childNationalId,
+          //   )
 
           // console.log('--------------------------------')
           // console.log('childResidenceParent')
