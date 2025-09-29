@@ -1,4 +1,4 @@
-import { Tabs, TabType } from '@island.is/island-ui/core'
+import { Box, Tabs, TabType } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
   m,
@@ -24,12 +24,12 @@ const LawAndOrderOverview = () => {
     {
       id: RIKISLOGREGLUSTJORI_SLUG,
       label: formatMessage(m.policeCases),
-      content: <PoliceCases />
+      content: <Box marginTop={5}><PoliceCases /></Box>
     },
     {
       id: DOMSMALARADUNEYTID_SLUG,
       label: formatMessage(m.courtCases),
-      content: <CourtCases />
+      content: <Box marginTop={5}><CourtCases /></Box>
     },
   ]
   return (
@@ -43,12 +43,11 @@ const LawAndOrderOverview = () => {
         label={formatMessage(messages.cancel)}
         tabs={tabs}
         contentBackground="transparent"
-        selected="0"
+        selected={selectedTab}
         onChange={(index) => {setSelectedTab(index as CaseTabType)}}
         onlyRenderSelectedTab
-        size="xs"
       />
-      </IntroWrapper>
+    </IntroWrapper>
   )
 }
 export default LawAndOrderOverview

@@ -16,17 +16,13 @@ const CourtCases = () => {
   const { lang } = useLocale()
   const { formatMessage } = useLocale()
 
-  const { data, loading, error, refetch } = useGetCourtCasesQuery({
+  const { data, loading, error } = useGetCourtCasesQuery({
     variables: {
       locale: lang,
     },
   })
 
   const cases = data?.lawAndOrderCourtCasesList?.cases
-
-  useEffect(() => {
-    refetch()
-  }, [lang])
 
   return (
     <>
