@@ -32,6 +32,7 @@ import {
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
   Case,
+  CourtDocumentResponse,
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
@@ -61,7 +62,7 @@ interface Props {
 
 interface FiledDocuments {
   courtSessionId: string
-  files: ReorderableFile[]
+  files: CourtDocumentResponse[]
 }
 
 interface ReorderableFile {
@@ -148,8 +149,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
-  const [unfiledFiles, setUnfiledFiles] = useState<ReorderableFile[]>([])
-  const [reorderableFiles, setReorderableFiles] = useState<FiledDocuments[]>([])
+  const [unfiledFiles, setUnfiledFiles] = useState<CourtDocumentResponse[]>([])
 
   const {
     judges,
@@ -164,34 +164,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   )
 
   useEffect(() => {
-    if (!workingCase.courtSessions) {
-      return
-    }
-
-    const filedDocuments: FiledDocuments[] = workingCase.courtSessions.map(
-      (courtSession) => ({
-        courtSessionId: courtSession.id,
-        files:
-          courtSession.filedDocuments?.filter(
-            (filedDocument) => filedDocument.courtSessionId === courtSession.id,
-          ) || [],
-      }),
-    )
-
-    setReorderableFiles(filedDocuments)
-  }, [workingCase.courtSessions])
-
-  useEffect(() => {
     if (!workingCase.unfiledCourtDocuments) {
       return
     }
 
-    setUnfiledFiles(
-      workingCase.unfiledCourtDocuments.map((doc) => ({
-        id: doc.id,
-        name: doc.name,
-      })),
-    )
+    setUnfiledFiles(workingCase.unfiledCourtDocuments.map((doc) => doc))
   }, [workingCase.unfiledCourtDocuments])
 
   const patchSession = (
@@ -215,7 +192,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     if (!file.id) {
       return
     }
+
     const id = file.id
+    const fileInSession = courtSession.filedDocuments?.find(
+      (doc) => doc.id === file.id,
+    )
+
+    if (!fileInSession) {
+      return
+    }
 
     const deleted = await courtDocument.delete.action({
       caseId: workingCase.id,
@@ -227,7 +212,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    setUnfiledFiles((prev) => [{ id, name: file.name }, ...prev])
+    setUnfiledFiles((prev) => [fileInSession, ...prev])
 
     patchSession(courtSession.id, {
       filedDocuments: courtSession.filedDocuments?.filter(
@@ -236,7 +221,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     })
   }
 
-  const handleReorder = (newOrder: ReorderableFile[]) => {
+  const handleReorder = (newOrder: CourtDocumentResponse[]) => {
     if (courtSession.isConfirmed) {
       return
     }
@@ -256,13 +241,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       documentOrder: newIndex + 1, // +1 because index starts at 0 and the order at 1
     })
 
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? { ...session, files: newOrder }
-          : session,
-      ),
-    )
+    patchSession(courtSession.id, {
+      filedDocuments: newOrder,
+    })
   }
 
   const handleRename = (
@@ -415,9 +396,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
   const filedDocuments = useMemo(
     () =>
-      reorderableFiles.find((d) => d.courtSessionId === courtSession.id)
-        ?.files || [],
-    [courtSession.id, reorderableFiles],
+      workingCase.courtSessions?.find((d) => d.id === courtSession.id)
+        ?.filedDocuments || [],
+    [courtSession.id, workingCase.courtSessions],
   )
 
   const countDocumentsBeforeSession = (index: number) => {
@@ -677,9 +658,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     <AnimatePresence>
                       {filedDocuments.map((_item, i) => {
                         const currentIndex =
-                          reorderableFiles
-                            .slice(0, index)
-                            .flatMap((a) => a.files).length + i
+                          (workingCase.courtSessions &&
+                            workingCase.courtSessions
+                              ?.slice(0, index)
+                              .flatMap((a) => a.filedDocuments).length + i) ||
+                          0
 
                         return (
                           <motion.div
