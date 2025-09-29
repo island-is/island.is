@@ -594,12 +594,9 @@ export class InternalCaseService {
         {
           model: EventLog,
           as: 'eventLogs',
-          required: true,
+          required: false,
           where: {
-            eventType: {
-              [Op.not]:
-                EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
-            },
+            eventType: EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
           },
         },
         {
@@ -633,6 +630,8 @@ export class InternalCaseService {
         state: { [Op.eq]: CaseState.COMPLETED },
         type: CaseType.INDICTMENT,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        // excludes cases that already have delivered all applicable verdict service certificates
+        '$eventLogs.id$': { [Op.is]: null },
       },
     })
 
