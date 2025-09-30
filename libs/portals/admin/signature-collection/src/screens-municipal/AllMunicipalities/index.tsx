@@ -27,11 +27,7 @@ import { useStartCollectionMutation } from './startCollection/startCollection.ge
 import sortBy from 'lodash/sortBy'
 import { CollectionStatus } from '@island.is/api/schema'
 
-const AllMunicipalities = ({
-  isMunicipality,
-}: {
-  isMunicipality: boolean
-}) => {
+const AllMunicipalities = ({ isMunicipality }: { isMunicipality: boolean }) => {
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
