@@ -169,15 +169,21 @@ export const OverviewFormField = ({
       index: number,
     ): string => {
       if (Array.isArray(item?.keyText)) {
-        const x = `${item?.boldValueText ? '**' : ''}${formatTextWithLocale(
+        return `${item?.boldValueText ? '**' : ''}${formatTextWithLocale(
           item?.keyText?.[index] ?? '',
           application,
           locale,
           formatMessage,
         )}: ${item?.boldValueText ? '**' : ''}`
-        return x
       }
-      return ''
+      else {
+        return `${item?.boldValueText ? '**' : ''}${formatTextWithLocale(
+          item?.keyText ?? '',
+          application,
+          locale,
+          formatMessage,
+        )}: ${item?.boldValueText ? '**' : ''}`
+      }
     }
 
     return (
