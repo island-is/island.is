@@ -182,7 +182,7 @@ export class PassportService extends BaseTemplateApiService {
       if (forUser) {
         if (
           !fetchedPassport.userPassport?.expiresWithinNoticeTime ||
-          new Date(fetchedPassport.userPassport.expirationDate ?? new Date()) < // check that the passport expires within 6 months
+          new Date(fetchedPassport.userPassport.expirationDate ?? new Date()) > // check whether the passport after more than 6 months
             sixMonthsFromNow
         ) {
           throw new TemplateApiError(
@@ -213,7 +213,7 @@ export class PassportService extends BaseTemplateApiService {
             (passport) =>
               passport.expiresWithinNoticeTime &&
               new Date(passport.expirationDate ?? new Date()) <
-                sixMonthsFromNow, // check that the passport expires within 6 months
+                sixMonthsFromNow, // check that the passport expires after less than 6 months
           )
           if (!expiringChildPassport) {
             throw new TemplateApiError(
