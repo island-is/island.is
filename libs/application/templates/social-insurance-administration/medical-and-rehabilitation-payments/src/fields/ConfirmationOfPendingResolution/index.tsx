@@ -97,12 +97,13 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.treatmentTypes,
+              medicalAndRehabilitationPaymentsFormMessage
+                .confirmationOfPendingResolution.informationResources,
             )}
           </Label>
           <Markdown>
             {data?.socialInsuranceConfirmationOfPendingResolution?.requestedTreatment?.treatmentTypes
-              ?.map((value, index) => `${index + 1}. ${value.display}`)
+              ?.map((value) => `* ${value.display}`)
               ?.join('\n\n') ?? ''}
           </Markdown>
         </GridColumn>

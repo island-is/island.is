@@ -29,7 +29,7 @@ export const conclusion = {
     },
     accordionText: {
       id: 'ta.eft.application:conclusion.general.accordionText#markdown',
-      defaultMessage: `* Undanþágan verður yfirfarin af Samgöngustofu og Vegagerð og eftir atvikum öðrum hagsmunaaðilum. Niðurstaðan verður síðan send á umbeðin netföng. \n* Vakin er athygli á því að ekki er hægt að ábyrgjast að beiðnir um undanþágur vegna stærðar og þyngdar sem berast eftir kl. 13.00 verði afgreiddar samdægurs. Vegagerðin gefur sér allt að tíu virka daga til að afgreiða undanþágur ef skoða þarf sérstaklega brú eða önnur umferðarmannvirki á flutningsleið.`,
+      defaultMessage: `* Undanþágan verður yfirfarin af Samgöngustofu og Vegagerð og eftir atvikum öðrum hagsmunaaðilum. Niðurstaðan verður síðan send á umbeðin netföng. \n* Vakin er athygli á því að ekki er hægt að ábyrgjast að beiðnir um undanþágur vegna stærðar og þyngdar sem berast eftir kl. 13.00 verði afgreiddar samdægurs. \n* Vegagerðin gefur sér allt að tíu virka daga til að afgreiða undanþágur ef skoða þarf sérstaklega brú eða önnur umferðarmannvirki á flutningsleið.`,
       description: 'Conclusion accordion text',
     },
   }),

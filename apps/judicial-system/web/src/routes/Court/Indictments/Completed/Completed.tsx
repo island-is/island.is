@@ -21,7 +21,6 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  RulingInput,
   SectionHeading,
   useIndictmentsLawsBroken,
   UserContext,
@@ -174,6 +173,18 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
+        {isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+          <Conclusion
+            title={`${
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.RULING
+                ? 'Dóms'
+                : 'Úrskurðar'
+            }orð héraðsdóms`}
+            conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+            judgeName={workingCase.judge?.name}
+          />
+        )}
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
             {/*
@@ -242,19 +253,6 @@ const Completed: FC = () => {
                 </Box>
               )
             })}
-          </Box>
-        )}
-        {features?.includes(Feature.VERDICT_DELIVERY) && isRuling && (
-          <Box>
-            <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
-            <RulingInput
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              rows={8}
-              label="Dómsorð"
-              placeholder="Hvert er dómsorðið?"
-              required
-            />
           </Box>
         )}
       </FormContentContainer>
