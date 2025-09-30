@@ -2,6 +2,15 @@ mutation FileCourtDocumentInCourtSession(
   $input: FileCourtDocumentInCourtSessionInput!
 ) {
   fileCourtDocumentInCourtSession(input: $input) {
+    caseFileId
+    caseId
+    courtSessionId
+    created
+    documentOrder
+    documentType
+    generatedPdfUri
     id
+    modified
+    name
   }
 }
