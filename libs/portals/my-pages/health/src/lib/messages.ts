@@ -1626,9 +1626,21 @@ export const messages = defineMessages({
     id: 'sp.health:read-about-bloodtypes',
     defaultMessage: 'Lesa um blóðflokka',
   },
+  contactBloodbank: {
+    id: 'sp.health:contact-bloodbank',
+    defaultMessage: 'Hafa samband',
+  },
   bloodtypeLink: {
     id: 'sp.health:bloodtype-link',
     defaultMessage: 'https://island.is/s/blodbankinn/blodflokkar',
+  },
+  bloodbankPageLink: {
+    id: 'sp.health:bloodbank-page-link',
+    defaultMessage: 'https://island.is/s/blodbankinn/',
+  },
+  contactBloodbankLink: {
+    id: 'sp.health:contact-bloodbank-page-link',
+    defaultMessage: 'https://island.is/s/blodbankinn/hafdu-samband',
   },
   registered: {
     id: 'sp.health:registered',

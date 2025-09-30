@@ -137,5 +137,5 @@ export class Verdict extends Model {
     allowNull: true,
   })
   @ApiPropertyOptional({ type: String })
-  defenderNationalId?: string
+  deliveredToDefenderNationalId?: string
 }
