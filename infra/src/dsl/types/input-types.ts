@@ -176,6 +176,7 @@ export interface IngressForEnv {
 export type PodDisruptionBudget = {
   minAvailable?: number
   maxUnavailable?: number
+  unhealthyPodEvictionPolicy?: 'IfHealthyBudget' | 'AlwaysAllow'
 }
 export type PersistentVolumeClaim = {
   name?: string

@@ -29,7 +29,7 @@ import {
   checkHasAnyConvoyWithTrailer,
 } from '../../../utils'
 import { overview } from '../../../lib/messages'
-import { DefaultEvents } from '@island.is/application/types'
+import { Application, DefaultEvents } from '@island.is/application/types'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -137,10 +137,17 @@ export const overviewSection = buildSection({
         }),
         buildOverviewField({
           id: 'overview.supportingDocuments',
-          title: overview.supportingDocuments.subtitle,
+          title: (application: Application) => {
+            return checkIfExemptionTypeShortTerm(application.answers)
+              ? overview.supportingDocuments.subtitleShortTerm
+              : overview.supportingDocuments.subtitleLongTerm
+          },
           backId: 'supportingDocumentsMultiField',
           items: getSupportingDocumentsOverviewItems,
-          attachments: getSupportingDocumentsOverviewAttachments,
+          attachments: (answers) =>
+            checkIfExemptionTypeShortTerm(answers)
+              ? getSupportingDocumentsOverviewAttachments(answers)
+              : [],
           hideIfEmpty: true,
         }),
         buildCheckboxField({
