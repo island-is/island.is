@@ -299,5 +299,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     indictmentReviewedDate
     indictmentSentToPublicProsecutorDate
     isRegisteredInPrisonSystem
+    courtSessions {
+      ruling
+    }
   }
 }

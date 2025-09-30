@@ -131,6 +131,7 @@ export {
   completedIndictmentCaseStates,
   completedCaseStates,
   isCompletedCase,
+  isRulingOrDismissalCase,
   hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
   isIndictmentCaseState,
