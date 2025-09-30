@@ -28,9 +28,9 @@ import sortBy from 'lodash/sortBy'
 import { CollectionStatus } from '@island.is/api/schema'
 
 const AllMunicipalities = ({
-  isProcurationHolder,
+  isMunicipality,
 }: {
-  isProcurationHolder: boolean
+  isMunicipality: boolean
 }) => {
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
@@ -115,7 +115,7 @@ const AllMunicipalities = ({
           )}
           {/* For municipalities to start their collection if its not already active.
               Note: municipalities only see their own area. */}
-          {isProcurationHolder &&
+          {isMunicipality &&
             collection.areas?.length > 0 &&
             !collection.areas[0]?.isActive && (
               <StartAreaCollection areaId={collection.areas[0]?.id} />
@@ -146,7 +146,7 @@ const AllMunicipalities = ({
                 }}
                 tag={
                   // This action is only available for the Admins (LKS and ÞÍ)
-                  !isProcurationHolder && !area.isActive
+                  !isMunicipality && !area.isActive
                     ? {
                         label: 'Open collection',
                         renderTag: () => (
