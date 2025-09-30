@@ -175,6 +175,12 @@ export class PassportService extends BaseTemplateApiService {
       }: PassportSchema = application.answers as PassportSchema
 
       const fetchedPassport = await this.passportApi.getCurrentPassport(auth)
+      if (!fetchedPassport) {
+        throw new TemplateApiError(
+          'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að sækja núverandi vegabréf.',
+          400,
+        )
+      }
       const forUser = !!passport.userPassport
       let result
       const PASSPORT_TYPE = 'P'
