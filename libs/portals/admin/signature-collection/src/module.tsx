@@ -15,8 +15,8 @@ import {
 import {
   allowedScopesAdmin,
   allowedScopesAdminAndMunicipality,
+  allowedScopesMunicipality,
 } from './lib/utils'
-import { AuthDelegationType } from '@island.is/api/schema'
 
 /* Parliamentary */
 const ParliamentaryRoot = lazy(() =>
@@ -55,14 +55,13 @@ export const signatureCollectionModule: PortalModule = {
       path: SignatureCollectionPaths.MunicipalRoot,
       element: (
         <AllMunicipalities
-          // If the user is NOT an admin (LKS or ÞÍ) & have a procuration holder delegation type
-          isProcurationHolder={
-            !props.userInfo.scopes.some(
-              (scope) =>
-                allowedScopesAdmin.includes(scope) &&
-                props.userInfo.profile.delegationType?.includes(
-                  AuthDelegationType.ProcurationHolder,
-                ),
+          // If the user is NOT an admin (LKS or ÞÍ) but a municipality
+          isMunicipality={
+            !props.userInfo.scopes.some((scope) =>
+              allowedScopesAdmin.includes(scope),
+            ) &&
+            props.userInfo.scopes.some((scope) =>
+              allowedScopesMunicipality.includes(scope),
             )
           }
         />
