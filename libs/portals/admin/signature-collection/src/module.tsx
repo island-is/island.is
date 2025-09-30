@@ -56,11 +56,14 @@ export const signatureCollectionModule: PortalModule = {
       element: (
         <AllMunicipalities
           // If the user is NOT an admin (LKS or ÞÍ) but a municipality
-          isMunicipality={props.userInfo.scopes.some(
-            (scope) =>
-              !allowedScopesAdmin.includes(scope) &&
+          isMunicipality={
+            !props.userInfo.scopes.some((scope) =>
+              allowedScopesAdmin.includes(scope),
+            ) &&
+            props.userInfo.scopes.some((scope) =>
               allowedScopesMunicipality.includes(scope),
-          )}
+            )
+          }
         />
       ),
       loader: municipalListsLoader(props),
