@@ -59,7 +59,11 @@ export class LandspitaliService {
     }
     try {
       const url = new URL(input.cancelUrl)
-      if (url.hostname !== this.config.webDomain) {
+      const allowedHosts = new Set([
+        this.config.webDomain,
+        `www.${this.config.webDomain}`,
+      ])
+      if (!allowedHosts.has(url.hostname)) {
         this.logger.warn(
           'Landspitali web payment cancel URL domain is not the same as the web domain',
           {
@@ -69,7 +73,7 @@ export class LandspitaliService {
         )
         return defaultUrl
       }
-      return input.cancelUrl
+      return url.toString()
     } catch (error) {
       return defaultUrl
     }
