@@ -48,10 +48,14 @@ export class LandspitaliService {
     )
   }
 
+  private getProtocol() {
+    return 'https'
+  }
+
   private extractValidCancelUrl(
     input: CreateMemorialCardPaymentUrlInput | CreateDirectGrantPaymentUrlInput,
   ): string {
-    const defaultUrl = `https://${this.config.webDomain}${
+    const defaultUrl = `${this.getProtocol()}://${this.config.webDomain}${
       LANDSPITALI_BASE_PATH[input.locale === 'en' ? 'en' : 'is']
     }`
     if (!input.cancelUrl) {
@@ -63,7 +67,7 @@ export class LandspitaliService {
         this.config.webDomain,
         `www.${this.config.webDomain}`,
       ])
-      if (!allowedHosts.has(url.hostname)) {
+      if (!allowedHosts.has(url.host)) {
         this.logger.warn(
           'Landspitali web payment cancel URL domain is not the same as the web domain',
           {
@@ -75,8 +79,20 @@ export class LandspitaliService {
       }
       return url.toString()
     } catch (error) {
+      this.logger.warn('Landspitali web payment cancel URL is not valid', {
+        cancelUrl: input.cancelUrl,
+        error,
+      })
       return defaultUrl
     }
+  }
+
+  private extractValidReturnUrl(
+    input: CreateMemorialCardPaymentUrlInput | CreateDirectGrantPaymentUrlInput,
+  ): string {
+    return `${this.getProtocol()}://${this.config.webDomain}${
+      LANDSPITALI_RETURN_PATH[input.locale === 'en' ? 'en' : 'is']
+    }`
   }
 
   async createMemorialCardPaymentUrl(
@@ -95,6 +111,7 @@ export class LandspitaliService {
     }
 
     const locale = input.locale !== 'en' ? 'is' : 'en'
+
     const { urls } =
       await this.paymentsClient.paymentFlowControllerCreatePaymentUrl({
         createPaymentFlowInput: {
@@ -106,9 +123,7 @@ export class LandspitaliService {
             CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
           ],
           cancelUrl: this.extractValidCancelUrl(input),
-          returnUrl: `https://${this.config.webDomain}${
-            LANDSPITALI_RETURN_PATH[input.locale === 'en' ? 'en' : 'is']
-          }`,
+          returnUrl: this.extractValidReturnUrl(input),
           redirectToReturnUrlOnSuccess: true,
           charges: [
             {
@@ -234,9 +249,7 @@ export class LandspitaliService {
               quantity: 1,
             },
           ],
-          returnUrl: `https://${this.config.webDomain}${
-            LANDSPITALI_RETURN_PATH[input.locale === 'en' ? 'en' : 'is']
-          }`,
+          returnUrl: this.extractValidReturnUrl(input),
           redirectToReturnUrlOnSuccess: true,
           cancelUrl: this.extractValidCancelUrl(input),
           payerNationalId:
