@@ -214,9 +214,10 @@ export const OverviewFormField = ({
                 ).join(', ')
               : formatTextWithLocale(value, application, locale, formatMessage)
 
+            const renderedValue = item.boldValueText ? `**${valueStr}**` : valueStr
             return (
               <Markdown key={`${value}-${index}`}>
-                {`${prefix}${valueStr}`}
+                {`${prefix}${renderedValue}`}
               </Markdown>
             )
           })
@@ -224,12 +225,7 @@ export const OverviewFormField = ({
           <Markdown>
             {`${
               item.inlineKeyText && !Array.isArray(item?.keyText)
-                ? `${formatTextWithLocale(
-                    item?.keyText ?? '',
-                    application,
-                    locale,
-                    formatMessage,
-                  )}: `
+                ? `${keyTextValue}: `
                 : ''
             }${formatTextWithLocale(
               item?.valueText ?? '',
