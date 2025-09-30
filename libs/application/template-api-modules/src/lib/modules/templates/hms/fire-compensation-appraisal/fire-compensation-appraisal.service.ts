@@ -131,17 +131,6 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       // Map the application to the dto interface
       const applicationDto = mapAnswersToApplicationDto(application, files)
 
-      // Send the application to HMS
-      const res = await this.hmsApplicationSystemService.apiApplicationPost({
-        applicationDto,
-      })
-
-      if (res.status !== 200) {
-        throw new TemplateApiError(
-          'Failed to submit application, non 200 status',
-          500,
-        )
-      }
       // Map the photos to the dto interface
       const applicationFilesContentDtoArray =
         mapAnswersToApplicationFilesContentDto(application, files)
@@ -162,6 +151,18 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       if (photoResults.some((result) => result.status !== 200)) {
         throw new TemplateApiError(
           'Failed to upload photos, non 200 status',
+          500,
+        )
+      }
+
+      // Send the application to HMS
+      const res = await this.hmsApplicationSystemService.apiApplicationPost({
+        applicationDto,
+      })
+
+      if (res.status !== 200) {
+        throw new TemplateApiError(
+          'Failed to submit application, non 200 status',
           500,
         )
       }
