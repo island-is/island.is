@@ -1,19 +1,21 @@
 import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
-import CourtSessionAccordionItem from './CourtSessionAccordionItem'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
+import { toast } from '@island.is/island-ui/core'
 import {
-  CourtSessionResponse,
-  CourtSessionClosedLegalBasis,
-  CourtSessionRulingType,
   Case,
   CourtDocumentResponse,
+  CourtSessionClosedLegalBasis,
+  CourtSessionResponse,
+  CourtSessionRulingType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as useCourtDocumentsHook from '@island.is/judicial-system-web/src/utils/hooks/useCourtDocuments'
 import * as useCourtSessionsHook from '@island.is/judicial-system-web/src/utils/hooks/useCourtSessions'
 import * as useUsersHook from '@island.is/judicial-system-web/src/utils/hooks/useUsers'
-import { toast } from '@island.is/island-ui/core'
+
+import CourtSessionAccordionItem from './CourtSessionAccordionItem'
 
 // Mock dependencies
 jest.mock('@island.is/judicial-system-web/src/utils/hooks/useCourtDocuments')
