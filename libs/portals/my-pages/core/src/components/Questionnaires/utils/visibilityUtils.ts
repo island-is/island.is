@@ -25,7 +25,7 @@ export const evaluateVisibilityCondition = (
   try {
     const cleanCondition = condition.trim()
 
-    // Try to parse as JSON (both legacy EL format and new unified format)
+    // Try to parse as JSON
     if (cleanCondition.startsWith('{')) {
       return evaluateJsonCondition(cleanCondition, answers)
     }
@@ -134,7 +134,7 @@ const checkIsSelected = (
 ): boolean => {
   const answer = answers[questionId]
 
-  if (!answer) {
+  if (!answer || answer.value === undefined || answer.value === null) {
     return false
   }
   const answerValue = answer.value
@@ -206,7 +206,6 @@ export const isQuestionVisible = (
   // If has dependencies but no visibility condition, check if dependencies are answered
   if (!visibilityCondition) {
     const result = dependsOn.every((depId) => answers[depId] !== undefined)
-
     return result
   }
 

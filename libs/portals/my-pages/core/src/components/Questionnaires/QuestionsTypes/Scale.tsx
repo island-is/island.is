@@ -12,10 +12,10 @@ import * as styles from './QuestionTypes.css'
 export interface ScaleProps {
   id: string
   label?: string
-  min: number
-  max: number
-  value?: number
-  onChange: (value: number) => void
+  min: string
+  max: string
+  value?: string | null
+  onChange: (value: string) => void
   error?: string
   disabled?: boolean
   required?: boolean
@@ -43,7 +43,7 @@ export const Scale: React.FC<ScaleProps> = ({
     const s = typeof step === 'number' && step > 0 ? step : 1
     const values = []
     for (let i = min; i <= max; i += s) {
-      values.push(i)
+      values.push(i.toString())
       if (i === max) break
     }
     return values

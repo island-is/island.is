@@ -1,20 +1,16 @@
-import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { Injectable } from '@nestjs/common'
 import {
   AppInfoApi,
+  AppointmentList,
+  AvailableResources,
   BookAppointmentApi,
   FeedbackApi,
   FoodApi,
-  PatientPropertiesApi,
-  AppVersionInfo,
-  PatientProperties,
-  AvailableResources,
-  AppointmentList,
-  PatientFeedback,
-  Menu,
-  MessageCategory,
-  TableReport,
   Form,
+  PatientProperties,
+  PatientPropertiesApi,
+  TableReport,
 } from './gen/fetch'
 
 @Injectable()
@@ -44,9 +40,10 @@ export class LshDevService {
     this.patientPropertiesApi.withMiddleware(new AuthMiddleware(auth))
 
   async getPatientForms(auth: Auth): Promise<Form[]> {
-    return this.patientPropertiesApiWithAuth(
+    const data = await this.patientPropertiesApiWithAuth(
       auth,
     ).apiV2PatientPropertiesGetFormListGet()
+    return data
   }
 
   /**

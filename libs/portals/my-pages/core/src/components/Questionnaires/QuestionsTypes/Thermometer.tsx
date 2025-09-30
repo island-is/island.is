@@ -5,10 +5,10 @@ import { theme } from '@island.is/island-ui/theme'
 export interface ThermometerProps {
   id: string
   label?: string
-  min: number
-  max: number
-  value?: number
-  onChange: (value: number) => void
+  min: string
+  max: string
+  value?: string | null
+  onChange: (value: string) => void
   error?: string
   disabled?: boolean
   required?: boolean
@@ -38,14 +38,24 @@ export const Thermometer: React.FC<ThermometerProps> = ({
 
   // Calculate display values (show every 10th if range is large)
   const getDisplayValues = () => {
+    const minNum = parseFloat(min)
+    const maxNum = parseFloat(max)
+    const stepNum = step || 1
+
+    // Safety checks to prevent infinite loops
+    if (isNaN(minNum) || isNaN(maxNum) || stepNum <= 0 || minNum > maxNum) {
+      console.warn('Invalid thermometer values:', { min, max, step })
+      return ['0', '50', '100'] // Fallback values
+    }
+
     const allValues = []
-    for (let i = min; i <= max; i += step) {
-      allValues.push(i)
+    for (let i = minNum; i <= maxNum; i += stepNum) {
+      allValues.push(i.toString())
     }
 
     // If we have more than 20 values, show only every 10th
     if (allValues.length > 20) {
-      return allValues.filter((val) => val % 10 === 0)
+      return allValues.filter((val) => parseFloat(val) % 10 === 0)
     }
     return allValues
   }
@@ -56,7 +66,7 @@ export const Thermometer: React.FC<ThermometerProps> = ({
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (disabled) return
 
-      const currentIndex = displayValues.indexOf(value)
+      const currentIndex = value ? displayValues.indexOf(value) : -1
       let nextIndex = currentIndex
 
       if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
@@ -69,7 +79,7 @@ export const Thermometer: React.FC<ThermometerProps> = ({
         nextIndex = displayValues.length - 1
       }
 
-      if (nextIndex !== currentIndex) {
+      if (nextIndex !== currentIndex && nextIndex >= 0) {
         onChange(displayValues[nextIndex])
         e.preventDefault()
       }
@@ -173,9 +183,11 @@ export const Thermometer: React.FC<ThermometerProps> = ({
             ref={thermometerRef}
             role="slider"
             aria-labelledby={`${label}-label`}
-            aria-valuemin={min}
-            aria-valuemax={max}
-            aria-valuenow={value}
+            aria-valuemin={parseFloat(min)}
+            aria-valuemax={parseFloat(max)}
+            aria-valuenow={
+              value && typeof value === 'string' ? parseFloat(value) : undefined
+            }
             aria-disabled={disabled}
             tabIndex={disabled ? -1 : 0}
             onKeyDown={handleKeyDown}

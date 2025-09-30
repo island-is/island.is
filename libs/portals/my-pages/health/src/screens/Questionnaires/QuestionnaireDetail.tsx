@@ -29,8 +29,6 @@ const QuestionnaireDetail: React.FC = () => {
     skip: !id,
   })
 
-  const questionnaire = data?.questionnairesDetail
-
   if (!id) {
     return <Problem type="not_found" noBorder={false} />
   }
@@ -61,7 +59,11 @@ const QuestionnaireDetail: React.FC = () => {
 
   return (
     <Box display={'flex'} justifyContent={'center'} background={'blue100'}>
-      <Box style={{ width: theme.breakpoints.xl }} background={'blue100'}>
+      <Box
+        style={{ maxWidth: theme.breakpoints.xl }}
+        background={'blue100'}
+        width="full"
+      >
         {loading && !error && <SkeletonLoader repeat={16} space={4} />}
         {error && !loading && (
           <Problem type="internal_service_error" noBorder />
@@ -71,8 +73,6 @@ const QuestionnaireDetail: React.FC = () => {
             questionnaire={data.questionnairesDetail}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
-            cancelLabel={formatMessage(m.buttonCancel)}
-            submitLabel={formatMessage(m.submit)}
             enableStepper={true}
             backLink={HealthPaths.HealthQuestionnaires}
             img={getOrganizationLogoUrl(

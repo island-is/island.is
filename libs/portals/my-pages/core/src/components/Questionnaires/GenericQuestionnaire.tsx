@@ -1,4 +1,12 @@
-import { Box, Button, GridColumn, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { QuestionRenderer } from '../Questionnaires/QuestionRenderer'
 import { Stepper } from '../Questionnaires/Stepper'
@@ -16,8 +24,6 @@ interface GenericQuestionnaireProps {
   backLink?: string
   enableStepper?: boolean
   questionsPerStep?: number
-  submitLabel?: string
-  cancelLabel?: string
   img?: string
 }
 
@@ -27,8 +33,6 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   onCancel: _onCancel,
   enableStepper = false,
   questionsPerStep: _questionsPerStep = 3,
-  submitLabel = 'Staðfesta',
-  cancelLabel: _cancelLabel = 'Hætta við',
   backLink,
   img,
 }) => {
@@ -68,7 +72,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
 
   // Create stepper steps from sections if stepper is enabled
   const questionSteps = useMemo(() => {
-    if (enableStepper && processedSections.length > 1) {
+    if (enableStepper) {
       return processedSections.map((section) => section.questions || [])
     }
     return [visibleQuestions]
@@ -76,7 +80,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
 
   // Create stepper steps
   const stepperSteps = useMemo(() => {
-    if (!enableStepper || !questionSteps || questionSteps.length <= 1) {
+    if (!enableStepper || !questionSteps) {
       return undefined
     }
 
@@ -139,6 +143,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     if (validateCurrentStep()) {
       if (questionSteps && currentStep < questionSteps.length - 1) {
         setCurrentStep((prev) => prev + 1)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       }
     }
   }
@@ -146,6 +151,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   const handlePrevious = () => {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -186,130 +192,127 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   const canGoPrevious = currentStep > 0
 
   return (
-    <Box display="flex" flexDirection="row" background="blue100">
+    <Box marginTop={[8, 8, 8, 4]}>
       {/* Header */}
       {/* Stepper (if enabled and multiple steps) */}
-      {/* TODO: Move to sidenav */}
-
-      {enableStepper && questionSteps && questionSteps.length > 1 && (
-        <GridColumn span="3/12">
-          <Box
-            background={'blue100'}
-            paddingBottom={3}
-            paddingX={3}
-            marginRight={4}
-            style={{ minWidth: '312px', maxWidth: '400px' }}
-          >
-            <Stepper
-              steps={stepperSteps}
-              currentStepIndex={currentStep}
-              onStepChange={handleStepChange}
-              onNext={handleNext}
-              onPrevious={handlePrevious}
-              nextLabel={isLastStep ? 'Review' : 'Next'}
-              previousLabel="Back"
-              allowClickableSteps={false}
-              backLink={backLink}
-            />
-          </Box>
-        </GridColumn>
-      )}
-
-      <GridColumn span={enableStepper ? '9/12' : '12/12'}>
-        <Box background="white" borderRadius="standard" width="full">
-          <Box
-            borderBottomWidth="standard"
-            borderColor="blue200"
-            padding={3}
-            display="flex"
-            flexDirection="row"
-            columnGap={3}
-          >
-            {img && (
+      <GridContainer>
+        <GridRow>
+          {enableStepper && questionSteps && (
+            <GridColumn span={['12/12', '12/12', '3/12']}>
               <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
                 background={'blue100'}
-                borderRadius="full"
-                padding={1}
-                style={{ maxWidth: 48, maxHeight: 48 }}
+                paddingBottom={3}
+                paddingX={3}
+                marginRight={4}
+                overflow="hidden"
               >
-                <img src={img} alt="" style={{ height: '100%' }} />
-              </Box>
-            )}
-            <Box display={'flex'} flexDirection={'column'}>
-              <Text variant="small">{formatMessage(m.questionnaires)}</Text>
-              <Text variant="h5" as="h1" marginBottom={2}>
-                {questionnaire.title}
-              </Text>
-            </Box>
-            {/* <Text variant="intro">
-            {questionnaire.description
-              ?.split('\\n')
-              .map((line: string, index: number) => (
-                <React.Fragment key={index}>
-                  <Text>{line}</Text>
-                  {index <
-                    (questionnaire.description?.split('\\n').length ?? 0) -
-                      1 && <br />}
-                </React.Fragment>
-              ))}
-          </Text> */}
-          </Box>
-
-          {/* Questions */}
-          <Box style={{ minHeight: '400px' }} marginX={10} marginY={6}>
-            <Stack space={4}>
-              {currentQuestions.map((question: Question) => (
-                <QuestionRenderer
-                  key={question.id}
-                  question={question}
-                  answer={answers[question.id]}
-                  onAnswerChange={handleAnswerChange}
-                  error={errors[question.id]}
+                <Stepper
+                  steps={stepperSteps}
+                  currentStepIndex={currentStep}
+                  onStepChange={handleStepChange}
+                  onNext={handleNext}
+                  onPrevious={handlePrevious}
+                  nextLabel={isLastStep ? 'Review' : 'Next'}
+                  previousLabel="Back"
+                  allowClickableSteps={false}
+                  backLink={backLink}
                 />
-              ))}
-            </Stack>
-          </Box>
-
-          {/* Navigation/Submit buttons */}
-          {enableStepper && questionSteps && questionSteps.length > 1 ? (
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              paddingX={10}
-              paddingBottom={4}
-            >
-              <Box>
-                {canGoPrevious && (
-                  <Button variant="ghost" onClick={handlePrevious}>
-                    Go back
-                  </Button>
-                )}
               </Box>
-              <Box>
-                {canGoNext ? (
-                  <Button variant="primary" onClick={handleNext}>
-                    Continue
-                  </Button>
-                ) : (
-                  <Button variant="primary" onClick={handleSubmit}>
-                    {submitLabel}
-                  </Button>
-                )}
-              </Box>
-            </Box>
-          ) : (
-            <Box display="flex" justifyContent="flexEnd">
-              <Button variant="primary" onClick={handleSubmit}>
-                {submitLabel}
-              </Button>
-            </Box>
+            </GridColumn>
           )}
-        </Box>
-      </GridColumn>
+
+          <GridColumn
+            span={enableStepper ? ['12/12', '12/12', '9/12'] : '12/12'}
+          >
+            <Box background="white" borderRadius="standard">
+              <Box
+                borderBottomWidth="standard"
+                borderColor="blue200"
+                padding={3}
+                display="flex"
+                flexDirection="row"
+                columnGap={3}
+              >
+                {img && (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    background={'blue100'}
+                    borderRadius="full"
+                    padding={1}
+                    style={{ maxWidth: 48, maxHeight: 48 }}
+                  >
+                    <img src={img} alt="" style={{ height: '100%' }} />
+                  </Box>
+                )}
+                <Box display={'flex'} flexDirection={'column'}>
+                  <Text variant="small">{formatMessage(m.questionnaires)}</Text>
+                  <Text variant="h5" as="h1" marginBottom={2}>
+                    {questionnaire.title}
+                  </Text>
+                </Box>
+              </Box>
+
+              {/* Questions */}
+              <Box style={{ minHeight: '400px' }} marginX={10} marginY={6}>
+                <Stack space={4}>
+                  {currentQuestions.map((question: Question) => (
+                    <QuestionRenderer
+                      key={question.id}
+                      question={question}
+                      answer={answers[question.id]}
+                      onAnswerChange={handleAnswerChange}
+                      error={errors[question.id]}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+
+              {/* Navigation/Submit buttons */}
+              {enableStepper && questionSteps ? (
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                  paddingX={10}
+                  paddingBottom={4}
+                >
+                  <Box>
+                    {canGoPrevious && (
+                      <Button variant="ghost" onClick={handlePrevious}>
+                        {formatMessage(m.lastQuestion)}
+                      </Button>
+                    )}
+                  </Box>
+                  <Box>
+                    {canGoNext ? (
+                      <Button variant="primary" onClick={handleNext}>
+                        {formatMessage(m.nextQuestion)}
+                      </Button>
+                    ) : (
+                      <Button variant="primary" onClick={handleSubmit}>
+                        {formatMessage(m.submit)}
+                      </Button>
+                    )}
+                  </Box>
+                </Box>
+              ) : (
+                <Box
+                  display="flex"
+                  justifyContent="flexEnd"
+                  paddingX={10}
+                  paddingBottom={4}
+                >
+                  <Button variant="primary" onClick={handleSubmit}>
+                    {formatMessage(m.submit)}
+                  </Button>
+                </Box>
+              )}
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </Box>
   )
 }

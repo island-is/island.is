@@ -19,6 +19,9 @@ export enum AnswerOptionType {
   number = 'HealthQuestionnaireAnswerNumber',
   scale = 'HealthQuestionnaireAnswerScale',
   label = 'HealthQuestionnaireAnswerLabel',
+  slider = 'slider',
+  date = 'date',
+  datetime = 'datetime',
 }
 
 registerEnumType(AnswerOptionType, {
@@ -45,12 +48,12 @@ export class AnswerOption {
   @Field({ nullable: true })
   label?: string
 
+  @Field({ nullable: true })
+  sublabel?: string
+
   // Common fields from HealthQuestionnaireAnswerBase
   @Field(() => AnswerOptionType)
   type!: AnswerOptionType
-
-  @Field({ nullable: true })
-  sublabel?: string
 
   @Field(() => QuestionDisplayType)
   display!: QuestionDisplayType
@@ -64,10 +67,10 @@ export class AnswerOption {
 
   // Number input specific fields
   @Field({ nullable: true })
-  min?: number
+  min?: string
 
   @Field({ nullable: true })
-  max?: number
+  max?: string
 
   // Thermometer/Scale specific fields
   @Field({ nullable: true })
@@ -75,12 +78,6 @@ export class AnswerOption {
 
   @Field({ nullable: true })
   minLabel?: string
-
-  @Field({ nullable: true })
-  minValue?: number
-
-  @Field({ nullable: true })
-  maxValue?: number
 
   // Radio/Checkbox specific fields
   @Field(() => [String], { nullable: true })

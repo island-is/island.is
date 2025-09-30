@@ -45,8 +45,6 @@ query GetQuestionnaire($id: String!, $locale: String!) {
           # Thermometer/Scale fields
           maxLabel
           minLabel
-          minValue
-          maxValue
           # Radio/Checkbox fields
           options
           value {

@@ -10,6 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   ActionCard,
+  CardLoader,
   formatDate,
   IntroWrapper,
   m,
@@ -80,6 +81,7 @@ const Questionnaires: React.FC = () => {
     <IntroWrapper
       title={formatMessage(messages.questionnaires)}
       intro={formatMessage(messages.questionnairesIntro)}
+      loading={loading}
     >
       <Filter
         variant="popover"
@@ -148,6 +150,7 @@ const Questionnaires: React.FC = () => {
       </Filter>
       <Box marginTop={5}>
         <Stack space={3}>
+          {loading && <CardLoader />}
           {data?.questionnairesList?.questionnaires?.map((questionnaire) => (
             <ActionCard
               key={questionnaire.id}

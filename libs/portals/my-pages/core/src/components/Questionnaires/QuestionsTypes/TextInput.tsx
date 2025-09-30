@@ -1,5 +1,5 @@
-import React from 'react'
 import { Box, Input, Text } from '@island.is/island-ui/core'
+import React from 'react'
 
 export interface TextInputProps {
   id: string
@@ -14,8 +14,8 @@ export interface TextInputProps {
   rows?: number
   maxLength?: number
   type?: 'text' | 'number'
-  min?: number
-  max?: number
+  min?: string
+  max?: string
   step?: number
 }
 
@@ -57,9 +57,9 @@ export const TextInput: React.FC<TextInputProps> = ({
 
       const numValue = parseFloat(newValue)
       if (!isNaN(numValue)) {
-        if (min !== undefined && numValue < min) {
+        if (min !== undefined && numValue < parseFloat(min)) {
           newValue = min.toString()
-        } else if (max !== undefined && numValue > max) {
+        } else if (max !== undefined && numValue > parseFloat(max)) {
           newValue = max.toString()
         }
       }
@@ -72,6 +72,7 @@ export const TextInput: React.FC<TextInputProps> = ({
     <>
       <Text variant="h5" marginBottom={2}>
         {label}
+        {type === 'number' && min && max && ' ' + min + ' - ' + max + ' '}
       </Text>
       <Box width={type === 'number' ? 'half' : 'full'}>
         <Input
@@ -89,7 +90,7 @@ export const TextInput: React.FC<TextInputProps> = ({
           maxLength={maxLength}
           textarea={multiline}
           rows={multiline ? rows : undefined}
-          type={multiline ? undefined : type}
+          type={multiline ? 'text' : type}
         />
       </Box>
     </>

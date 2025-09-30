@@ -9,6 +9,7 @@ import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { m } from '../../lib/messages'
+import capitalize from 'lodash/capitalize'
 
 export interface Step {
   id: string
@@ -68,24 +69,26 @@ export const Stepper: React.FC<StepperProps> = ({
           {formatMessage(m.goBack)}
         </Button>
       </Box>
-      <FormStepperV2
-        sections={steps?.map((step, index) => {
-          const isActive = index === currentStepIndex
-          const isPast = index < currentStepIndex
-          const isClickable = allowClickableSteps && !step.disabled
+      {steps && steps.length > 1 && (
+        <FormStepperV2
+          sections={steps?.map((step, index) => {
+            const isActive = index === currentStepIndex
+            const isPast = index < currentStepIndex
+            const isClickable = allowClickableSteps && !step.disabled
 
-          return (
-            <Section
-              key={step.id}
-              section={step.title}
-              sectionIndex={index}
-              isActive={isActive}
-              theme={FormStepperThemes.BLUE}
-              isComplete={step.completed || isPast}
-            />
-          )
-        })}
-      ></FormStepperV2>
+            return (
+              <Section
+                key={step.id}
+                section={capitalize(step.title)}
+                sectionIndex={index}
+                isActive={isActive}
+                theme={FormStepperThemes.BLUE}
+                isComplete={step.completed || isPast}
+              />
+            )
+          })}
+        />
+      )}
     </Box>
   )
 }
