@@ -10,6 +10,7 @@ import {
   Feature,
   isCompletedCase,
   isDefenceUser,
+  isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -248,12 +249,8 @@ const IndictmentOverview: FC = () => {
               <InfoCardActiveIndictment displayVerdictViewDate />
             )}
           </Box>
-          {workingCase.state === CaseState.COMPLETED &&
-            workingCase.indictmentRulingDecision &&
-            [
-              CaseIndictmentRulingDecision.RULING,
-              CaseIndictmentRulingDecision.DISMISSAL,
-            ].includes(workingCase.indictmentRulingDecision) && (
+          {isCompletedCase(workingCase.state) &&
+            isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
               <Conclusion
                 title={`${
                   workingCase.indictmentRulingDecision ===

@@ -11,7 +11,11 @@ import {
 } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
+import {
+  hasGeneratedCourtRecordPdf,
+  isCompletedCase,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { Feature } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -197,13 +201,9 @@ const IndictmentOverview = () => {
         <Box marginBottom={5}>
           <InfoCardClosedIndictment displayVerdictViewDate />
         </Box>
-        {workingCase.state === CaseState.COMPLETED &&
-          workingCase.courtSessions?.at(-1)?.ruling &&
-          workingCase.indictmentRulingDecision &&
-          [
-            CaseIndictmentRulingDecision.RULING,
-            CaseIndictmentRulingDecision.DISMISSAL,
-          ].includes(workingCase.indictmentRulingDecision) && (
+        {isCompletedCase(workingCase.state) &&
+          isRulingOrDismissalCase(workingCase.indictmentRulingDecision) &&
+          workingCase.courtSessions?.at(-1)?.ruling && (
             <Box component="section" marginBottom={5}>
               <Conclusion
                 title={`${

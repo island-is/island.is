@@ -15,7 +15,10 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { informationForDefendantMap } from '@island.is/judicial-system/types'
+import {
+  informationForDefendantMap,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { Feature } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -237,22 +240,18 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
-        {workingCase.indictmentRulingDecision &&
-          [
-            CaseIndictmentRulingDecision.RULING,
-            CaseIndictmentRulingDecision.DISMISSAL,
-          ].includes(workingCase.indictmentRulingDecision) && (
-            <Conclusion
-              title={`${
-                workingCase.indictmentRulingDecision ===
-                CaseIndictmentRulingDecision.RULING
-                  ? 'Dóms'
-                  : 'Úrskurðar'
-              }orð héraðsdóms`}
-              conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
-              judgeName={workingCase.judge?.name}
-            />
-          )}
+        {isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+          <Conclusion
+            title={`${
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.RULING
+                ? 'Dóms'
+                : 'Úrskurðar'
+            }orð héraðsdóms`}
+            conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+            judgeName={workingCase.judge?.name}
+          />
+        )}
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
             {/*

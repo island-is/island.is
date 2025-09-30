@@ -7,7 +7,10 @@ import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Feature } from '@island.is/judicial-system/types'
+import {
+  Feature,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -277,11 +280,7 @@ export const Overview = () => {
           <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
         </Box>
         {workingCase.courtSessions?.at(-1)?.ruling &&
-          workingCase.indictmentRulingDecision &&
-          [
-            CaseIndictmentRulingDecision.RULING,
-            CaseIndictmentRulingDecision.DISMISSAL,
-          ].includes(workingCase.indictmentRulingDecision) && (
+          isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
             <Box marginBottom={5} component="section">
               <Conclusion
                 title={`${
