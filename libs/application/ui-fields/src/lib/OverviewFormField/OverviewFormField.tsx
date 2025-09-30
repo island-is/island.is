@@ -161,20 +161,23 @@ export const OverviewFormField = ({
       item: KeyValueItem,
       index?: number,
     ): string => {
-      const keyText = (Array.isArray(item?.keyText) && index !== undefined)
-      ? item?.keyText?.[index] ?? '' 
-      : item?.keyText ?? ''
-      
+      const keyText =
+        Array.isArray(item?.keyText) && index !== undefined
+          ? item?.keyText?.[index] ?? ''
+          : item?.keyText ?? ''
+
       const formattedKey = formatTextWithLocale(
         keyText,
         application,
         locale,
         formatMessage,
       )
-      
-      return `${item?.boldValueText ? '**' : ''}${formattedKey}: ${item?.boldValueText ? '**' : ''}`
+
+      return `${item?.boldValueText ? '**' : ''}${formattedKey}: ${
+        item?.boldValueText ? '**' : ''
+      }`
     }
-    
+
     const keyTextValue = formatTextWithLocale(
       item?.keyText ?? '',
       application,
