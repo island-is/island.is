@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 
 import {
@@ -36,7 +29,6 @@ import {
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
-  UpdateCourtSessionInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -98,31 +90,6 @@ const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
   ],
 ]
 
-const useCourtSessionUpdater = (
-  workingCase: Case,
-  setWorkingCase: Dispatch<SetStateAction<Case>>,
-  updateFn: (updateCourtSession: UpdateCourtSessionInput) => Promise<boolean>,
-) => {
-  return (sessionId: string, updates: Partial<CourtSessionResponse>) => {
-    setWorkingCase((prev) => {
-      if (!prev.courtSessions) return prev
-
-      return {
-        ...prev,
-        courtSessions: prev.courtSessions?.map((item) =>
-          item.id === sessionId ? { ...item, ...updates } : item,
-        ),
-      }
-    })
-
-    updateFn({
-      ...updates,
-      courtSessionId: sessionId,
-      caseId: workingCase.id,
-    })
-  }
-}
-
 const CourtSessionAccordionItem: FC<Props> = (props) => {
   const {
     index,
@@ -146,26 +113,20 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     loading: usersLoading,
   } = useUsers(workingCase.court?.id)
 
-  const updateSession = useCourtSessionUpdater(
-    workingCase,
-    setWorkingCase,
-    updateCourtSession,
-  )
-
   const patchSession = (
-    id: string,
+    courtSessionId: string,
     updates: Partial<CourtSessionResponse>,
     { persist = false } = {},
   ) => {
     setWorkingCase((prev) => ({
       ...prev,
       courtSessions: prev.courtSessions?.map((session) =>
-        session.id === id ? { ...session, ...updates } : session,
+        session.id === courtSessionId ? { ...session, ...updates } : session,
       ),
     }))
 
     if (persist) {
-      updateSession(id, updates)
+      updateCourtSession({ ...updates, courtSessionId, caseId: workingCase.id })
     }
   }
 
