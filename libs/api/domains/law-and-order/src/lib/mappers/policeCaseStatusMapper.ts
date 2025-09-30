@@ -1,54 +1,73 @@
-import { PoliceCaseStatus } from '../types/enums';
+import { FormatMessage } from '@island.is/cms-translations';
+import { CaseStatus } from '../models/police-cases/caseStatus.model';
+import { POLICE_CASE_STATUS_INFO } from '../types/constants';
+import { PoliceCaseStatusValue } from '../types/enums';
 
-export const mapPoliceCaseStatus = (status?: string): PoliceCaseStatus => {
-  if (!status) return PoliceCaseStatus.UNKNOWN;
+export const mapPoliceCaseStatusValue = (status?: string): PoliceCaseStatusValue => {
+  if (!status) return PoliceCaseStatusValue.UNKNOWN;
 
   switch (status) {
     case 'Mál móttekið':
-      return PoliceCaseStatus.RECEIVED;
+      return PoliceCaseStatusValue.RECEIVED;
     case 'Aftur í rannsókn':
-      return PoliceCaseStatus.BACK_TO_INVESTIGATION;
+      return PoliceCaseStatusValue.BACK_TO_INVESTIGATION;
     case 'Í rannsókn':
-      return PoliceCaseStatus.UNDER_INVESTIGATION;
+      return PoliceCaseStatusValue.UNDER_INVESTIGATION;
     case 'Mál í bið':
-      return PoliceCaseStatus.CASE_ON_HOLD;
+      return PoliceCaseStatusValue.CASE_ON_HOLD;
     case 'Mál sent til annars embættis':
-      return PoliceCaseStatus.CASE_SENT_TO_OTHER_DEPARTMENT;
+      return PoliceCaseStatusValue.CASE_SENT_TO_OTHER_DEPARTMENT;
     case 'Yfirferð ákæranda':
-      return PoliceCaseStatus.PROSECUTOR_REVIEW;
+      return PoliceCaseStatusValue.PROSECUTOR_REVIEW;
     case 'Rannsókn hætt':
-      return PoliceCaseStatus.INVESTIGATION_STOPPED;
+      return PoliceCaseStatusValue.INVESTIGATION_STOPPED;
     case 'Mál fellt niður':
-      return PoliceCaseStatus.CASE_DISMISSED;
+      return PoliceCaseStatusValue.CASE_DISMISSED;
     case 'Ákvörðun kærð':
-      return PoliceCaseStatus.DECISION_APPEALED;
+      return PoliceCaseStatusValue.DECISION_APPEALED;
     case 'Ákvörðun staðfest':
-      return PoliceCaseStatus.DECISION_CONFIRMED;
+      return PoliceCaseStatusValue.DECISION_CONFIRMED;
     case 'Ákvörðun felld úr gildi':
-      return PoliceCaseStatus.DECISION_OVERTURNED;
+      return PoliceCaseStatusValue.DECISION_OVERTURNED;
     case 'Máli lokið':
-      return PoliceCaseStatus.CASE_CLOSED;
+      return PoliceCaseStatusValue.CASE_CLOSED;
     case 'Fallið frá saksókn':
-      return PoliceCaseStatus.PROSECUTION_DROPPED;
+      return PoliceCaseStatusValue.PROSECUTION_DROPPED;
     case 'Yfirferð héraðssaksóknara':
-      return PoliceCaseStatus.DISTRICT_PROSECUTOR_REVIEW;
+      return PoliceCaseStatusValue.DISTRICT_PROSECUTOR_REVIEW;
     case 'Ákæra':
-      return PoliceCaseStatus.INDICTMENT;
+      return PoliceCaseStatusValue.INDICTMENT;
     case 'Þingfesting':
-      return PoliceCaseStatus.COURT_SCHEDULING;
+      return PoliceCaseStatusValue.COURT_SCHEDULING;
     case 'Dómur birtur':
-      return PoliceCaseStatus.RULING_ANNOUNCED;
+      return PoliceCaseStatusValue.RULING_ANNOUNCED;
     case 'Málsmeðferð fyrir héraðsdómi':
-      return PoliceCaseStatus.DISTRICT_COURT_PROCEEDINGS;
+      return PoliceCaseStatusValue.DISTRICT_COURT_PROCEEDINGS;
     case 'Máli lokið með héraðsdómi':
-      return PoliceCaseStatus.CLOSED_BY_DISTRICT_COURT;
+      return PoliceCaseStatusValue.CLOSED_BY_DISTRICT_COURT;
     case 'Áfrýjun':
-      return PoliceCaseStatus.APPEAL;
+      return PoliceCaseStatusValue.APPEAL;
     case 'Sáttarmiðlun':
-      return PoliceCaseStatus.MEDIATION;
+      return PoliceCaseStatusValue.MEDIATION;
     case 'Beiðni um áfrýjunarleyfi sent til hæstaréttar':
-      return PoliceCaseStatus.SUPREME_COURT_APPEAL_REQUEST;
+      return PoliceCaseStatusValue.SUPREME_COURT_APPEAL_REQUEST;
     default:
-      return PoliceCaseStatus.UNKNOWN;
+      return PoliceCaseStatusValue.UNKNOWN;
+  }
+};
+
+export const mapPoliceCaseStatus = (statusValue: PoliceCaseStatusValue, formatMessage: FormatMessage): CaseStatus => {
+  if (statusValue === PoliceCaseStatusValue.UNKNOWN) {
+    return {
+      value: statusValue,
+    };
+  }
+
+  const { header, description} = POLICE_CASE_STATUS_INFO[statusValue];
+
+  return {
+    value: statusValue,
+    headerDisplayString: header ? formatMessage(header) : undefined,
+    descriptionDisplayString: description ? formatMessage(description) : undefined,
   }
 };

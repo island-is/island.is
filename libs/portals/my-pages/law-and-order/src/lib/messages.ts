@@ -22,6 +22,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.',
   },
+  policeCases: {
+    id: 'sp.law-and-order:police-cases',
+    defaultMessage: 'Lögreglumál',
+  },
   policeCaseTitle: {
     id: 'sp.law-and-order:police-case-title',
     defaultMessage: 'Málsnúmer {arg}',

@@ -10,7 +10,6 @@ import { IntlService } from '@island.is/cms-translations'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Injectable } from '@nestjs/common'
-import { PostDefenseChoiceInput } from '../../dto/postDefenseChoiceInput.model'
 import {
   mapDefenseChoiceForSummon,
   mapDefenseChoiceForSummonDefaultChoice,
@@ -25,8 +24,8 @@ import { CourtCases } from '../models/law-and-order/courtCases.model'
 import { Lawyers } from '../models/law-and-order/lawyers.model'
 import { Subpoena } from '../models/law-and-order/summon.model'
 import { Item } from '../models/law-and-order/item.model'
-
-const namespaces = ['api.law-and-order']
+import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
+import { NAMESPACE } from '../types/constants'
 
 @Injectable()
 export class LawAndOrderService {
@@ -59,7 +58,7 @@ export class LawAndOrderService {
   }
 
   async getCourtCase(user: User, id: string, locale: Locale) {
-    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
+    const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
     const singleCase = await this.api.getCase(id, user, locale)
     const hasBeenServed = singleCase?.data.hasBeenServed
 
@@ -83,7 +82,8 @@ export class LawAndOrderService {
 
     const data: CourtCase = {
       data: {
-        id: singleCase?.caseId ?? id,
+        id: `${singleCase?.caseId ?? id}${locale}`,
+        caseId: singleCase?.caseId ?? id,
         hasBeenServed: hasBeenServed,
         caseNumberTitle: singleCase?.data.caseNumber,
         groups: (singleCase?.data.groups ?? []).map((group, groupIndex) => {
@@ -109,7 +109,7 @@ export class LawAndOrderService {
   }
 
   async getSummon(user: User, id: string, locale: Locale) {
-    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
+    const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
 
     const summon: SubpoenaResponse | null = await this.api.getSummon(
       id,
@@ -157,7 +157,7 @@ export class LawAndOrderService {
   }
 
   async getLawyers(user: User, locale: Locale) {
-    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
+    const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
 
     const answer: Array<Defender> | undefined | null =
       await this.api.getLawyers(user)

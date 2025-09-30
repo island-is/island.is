@@ -1,0 +1,19 @@
+query GetPoliceCaseDetail($input: LawAndOrderPoliceCaseInput!) {
+  lawAndOrderPoliceCase(input: $input) {
+    __typename
+    number
+    type
+    status {
+      __typename
+      value
+      headerDisplayString
+      descriptionDisplayString
+    }
+    contact
+    courtAdvocate
+    department
+    received
+    receivedLocation
+    modified
+  }
+}

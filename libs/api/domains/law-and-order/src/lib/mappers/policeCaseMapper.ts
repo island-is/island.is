@@ -1,15 +1,17 @@
 import { PoliceCaseDto } from '@island.is/clients/police-cases'
 import { Case } from '../models/police-cases/case.model'
-import { mapPoliceCaseStatus } from './policeCaseStatusMapper'
+import { mapPoliceCaseStatus, mapPoliceCaseStatusValue } from './policeCaseStatusMapper'
+import { FormatMessage } from '@island.is/cms-translations'
 
-export const mapPoliceCase = (data: PoliceCaseDto): Case | null => {
+export const mapPoliceCase = (data: PoliceCaseDto, formatMessage: FormatMessage): Case | null => {
   if (!data.caseNumber) {
     return null
   }
+
   return {
     number: data.caseNumber,
     type: data.type,
-    status: mapPoliceCaseStatus(data.status),
+    status: mapPoliceCaseStatus(mapPoliceCaseStatusValue(data.status), formatMessage),
     contact: data.contact,
     courtAdvocate: data.courtAdvocate,
     department: data.department,

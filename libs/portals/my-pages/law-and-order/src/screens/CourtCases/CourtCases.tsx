@@ -1,5 +1,11 @@
 import { Box, TagVariant } from '@island.is/island-ui/core'
-import { ActionCard, CardLoader, m } from '@island.is/portals/my-pages/core'
+import {
+  ActionCard,
+  CardLoader,
+  DOMSMALARADUNEYTID_SLUG,
+  IntroWrapper,
+  m,
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LawAndOrderPaths } from '../../lib/paths'
@@ -8,7 +14,8 @@ import { Problem } from '@island.is/react-spa/shared'
 
 const CourtCases = () => {
   useNamespaces('sp.law-and-order')
-  const { formatMessage, lang } = useLocale()
+  const { lang } = useLocale()
+  const { formatMessage } = useLocale()
 
   const { data, loading, error } = useGetCourtCasesQuery({
     variables: {
@@ -19,7 +26,12 @@ const CourtCases = () => {
   const cases = data?.lawAndOrderCourtCasesList?.cases
 
   return (
-    <>
+      <IntroWrapper
+        title={messages.courtCases}
+        intro={messages.courtCasesDescription}
+        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
+        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+      >
       {loading && !error && (
         <Box width="full">
           <CardLoader />
@@ -34,6 +46,7 @@ const CourtCases = () => {
         cases.map((x) => (
           <Box marginTop={2}>
             <ActionCard
+              translateLabel="no"
               heading={x.caseNumberTitle ?? ''}
               text={x.type ?? ''}
               tag={{
@@ -61,7 +74,7 @@ const CourtCases = () => {
           imgSrc="./assets/images/sofa.svg"
         />
       )}
-    </>
+    </IntroWrapper>
   )
 }
 export default CourtCases

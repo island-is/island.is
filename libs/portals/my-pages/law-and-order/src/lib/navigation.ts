@@ -24,20 +24,36 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
     },
     {
       name: m.courtCases,
-      path: LawAndOrderPaths.CourtCaseDetail,
-      navHide: true,
+      description: m.myCourtCasesIntro,
+      path: LawAndOrderPaths.CourtCases,
       children: [
         {
-          name: m.subpoena,
-          path: LawAndOrderPaths.SubpoenaDetail,
+          name: m.courtCases,
+          path: LawAndOrderPaths.CourtCaseDetail,
           navHide: true,
+          breadcrumbHide: true,
+          children: [
+            {
+              name: m.subpoena,
+              path: LawAndOrderPaths.SubpoenaDetail,
+              navHide: true,
+            },
+          ],
         },
       ],
     },
     {
       name: m.policeCases,
-      path: LawAndOrderPaths.PoliceCasesDetail,
-      navHide: true,
+      description: m.myPoliceCasesIntro,
+      path: LawAndOrderPaths.PoliceCases,
+      children: [
+        {
+          name: m.policeCases,
+          breadcrumbHide: true,
+          path: LawAndOrderPaths.PoliceCasesDetail,
+          navHide: true,
+        },
+      ],
     },
   ],
 }

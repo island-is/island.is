@@ -10,10 +10,12 @@ import { Audit } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { PoliceCasesService } from '../services/police-cases.service'
 import { PaginantedCaseCollection } from '../models/police-cases/paginatedCaseCollection.model'
 import { Case } from '../models/police-cases/case.model'
-import { GetPoliceCaseInput } from '../../dto/getPoliceCaseInput'
+import { GetPoliceCaseInput } from '../dto/getPoliceCaseInput'
+import type { Locale } from '@island.is/shared/types'
+import { PoliceCasesService } from '../services/police-cases.service'
+
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -27,8 +29,12 @@ export class PoliceCasesResolver {
     nullable: true,
   })
   @Audit()
-  getCasesList(@CurrentUser() user: User) {
-    return this.policeCasesService.getCases(user)
+  getCasesList(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ) {
+    return this.policeCasesService.getCases(user, locale)
   }
 
   @Query(() => Case, {
@@ -36,7 +42,13 @@ export class PoliceCasesResolver {
     nullable: true,
   })
   @Audit()
-  getCase(@CurrentUser() user: User, @Args('input') input: GetPoliceCaseInput) {
-    return this.policeCasesService.getCase(user, input.caseNumber)
+  getCase(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input')
+    input: GetPoliceCaseInput
+  ) {
+    return this.policeCasesService.getCase(user, input.caseNumber, locale)
   }
 }

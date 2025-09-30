@@ -3,6 +3,8 @@ import {
   ActionCard,
   CardLoader,
   m as coreMessages,
+  IntroWrapper,
+  RIKISLOGREGLUSTJORI_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -20,7 +22,13 @@ const PoliceCases = () => {
   const cases = data?.lawAndOrderPoliceCasesPaginatedCollection?.data ?? []
 
   return (
-    <>
+    <IntroWrapper
+      loading={loading}
+      title={messages.policeCasesTitle}
+      intro={messages.policeCasesDescription}
+      serviceProviderSlug={RIKISLOGREGLUSTJORI_SLUG}
+      serviceProviderTooltip={formatMessage(coreMessages.nationalPoliceCommissionerTooltip)}
+    >
       {loading && !error && (
         <Box width="full">
           <CardLoader />
@@ -37,7 +45,7 @@ const PoliceCases = () => {
               heading={formatMessage(m.policeCaseTitle, { arg: c.number })}
               text={c.type ?? 'no type'}
               tag={{
-                label: c.status ?? 'no status',
+                label: c.status?.headerDisplayString ?? 'no status',
                 variant: 'blue',
                 outlined: false,
               }}
@@ -61,7 +69,7 @@ const PoliceCases = () => {
           imgSrc="./assets/images/sofa.svg"
         />
       )}
-    </>
+    </IntroWrapper>
   )
 }
 export default PoliceCases

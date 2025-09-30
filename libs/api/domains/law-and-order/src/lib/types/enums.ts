@@ -1,6 +1,6 @@
 import { registerEnumType } from "@nestjs/graphql";
 
-export enum PoliceCaseStatus {
+export enum PoliceCaseStatusValue {
   RECEIVED = 'RECEIVED', // Mál móttekið
   BACK_TO_INVESTIGATION = 'BACK_TO_INVESTIGATION', // Aftur í rannsókn
   UNDER_INVESTIGATION = 'UNDER_INVESTIGATION', // Í rannsókn
@@ -28,4 +28,4 @@ export enum PoliceCaseStatus {
 
 /* REGISTERS */
 
-registerEnumType(PoliceCaseStatus, { name: 'LawAndOrderPoliceCaseStatus' })
+registerEnumType(PoliceCaseStatusValue, { name: 'LawAndOrderPoliceCaseStatusValue' })

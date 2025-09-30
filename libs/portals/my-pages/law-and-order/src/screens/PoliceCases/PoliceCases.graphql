@@ -1,9 +1,16 @@
 query GetPoliceCases {
   lawAndOrderPoliceCasesPaginatedCollection {
+    __typename
     data {
+      __typename
       number
       type
-      status
+      status {
+        __typename
+        value
+        headerDisplayString
+        descriptionDisplayString
+      }
       contact
       courtAdvocate
       department

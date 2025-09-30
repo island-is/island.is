@@ -1,6 +1,6 @@
 import { m } from '../messages'
 import { DefenseChoiceEnum } from '../models/law-and-order/defenseChoiceEnum.model'
-import { Choice } from '../types'
+import { Choice } from '../types/types'
 
 // Get localized messages for defense choices in Subpoena
 export const DefenseChoices: Record<DefenseChoiceEnum, Choice> = {

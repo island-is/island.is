@@ -11,7 +11,7 @@ import {
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
-import { useGetPoliceCaseQuery } from './PoliceCase.generated'
+import { useGetPoliceCaseDetailQuery } from './PoliceCaseDetail.generated'
 import { messages as m } from '../../lib/messages'
 import { useParams } from 'react-router-dom'
 import Timeline from '../../components/Timeline/Timeline'
@@ -25,7 +25,7 @@ const PoliceCaseDetail = () => {
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data, loading, error } = useGetPoliceCaseQuery({
+  const { data, loading, error } = useGetPoliceCaseDetailQuery({
     variables: {
       input: {
         caseNumber: id,
@@ -117,7 +117,7 @@ const PoliceCaseDetail = () => {
           <InfoLine
             loading={loading}
             label={m.caseStatus}
-            content={policeCase?.status ?? ''}
+            content={policeCase?.status?.headerDisplayString ?? ''}
           />
         </InfoLineStack>
       </Stack>

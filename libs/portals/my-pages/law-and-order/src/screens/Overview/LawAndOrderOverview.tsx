@@ -1,66 +1,47 @@
-import { Box, Tabs, TabType } from '@island.is/island-ui/core'
+import { Divider, Text } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
   m,
+  InfoLine,
   IntroWrapper,
-  RIKISLOGREGLUSTJORI_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import PoliceCases from '../PoliceCases/PoliceCases'
-import { useState } from 'react'
-import CourtCases from '../CourtCases/CourtCases'
+import { LawAndOrderPaths } from '../../lib/paths'
 
-const CASE_TAB_TYPES = [
-  RIKISLOGREGLUSTJORI_SLUG,
-  DOMSMALARADUNEYTID_SLUG,
-] as const
-type CaseTabType = typeof CASE_TAB_TYPES[number]
-
-interface Props {
-  defaultTab?: CaseTabType
-}
-
-const LawAndOrderOverview = ({ defaultTab = RIKISLOGREGLUSTJORI_SLUG }: Props) => {
+const LawAndOrderOverview = () => {
   useNamespaces('sp.law-and-order')
   const { formatMessage } = useLocale()
-
-  const [selectedTab, setSelectedTab] = useState<CaseTabType>(defaultTab)
-
-  const tabs: Array<TabType> = [
-    {
-      id: RIKISLOGREGLUSTJORI_SLUG,
-      label: formatMessage(m.policeCases),
-      content: <Box marginTop={5}><PoliceCases /></Box>
-    },
-    {
-      id: DOMSMALARADUNEYTID_SLUG,
-      label: formatMessage(m.courtCases),
-      content: <Box marginTop={5}><CourtCases /></Box>
-    },
-  ]
-
-
-
   return (
-    <IntroWrapper
-      title={m.myCases}
-      intro={m.myCasesIntro}
-      serviceProviderSlug={selectedTab}
-      serviceProviderTooltip={formatMessage(
-        selectedTab === RIKISLOGREGLUSTJORI_SLUG
-          ? m.nationalPoliceCommissionerTooltip
-          : m.domsmalaraduneytidTooltip,
-      )}
-    >
-      <Tabs
-        label={formatMessage(messages.myData)}
-        tabs={tabs}
-        contentBackground="transparent"
-        selected={selectedTab}
-        onChange={(index) => { console.log(index);  setSelectedTab(index as CaseTabType)}}
-        onlyRenderSelectedTab
+      <IntroWrapper
+        title={m.overview}
+        intro={m.lawAndOrderDescription}
+        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
+        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+      >
+      <Text variant="eyebrow" color="purple400" marginBottom={2}>
+        {formatMessage(messages.myData)}
+      </Text>
+      <InfoLine
+        label={formatMessage(messages.courtCases)}
+        button={{
+          type: 'link',
+          to: LawAndOrderPaths.CourtCases,
+          label: formatMessage(messages.seeInfo),
+          icon: 'arrowForward',
+        }}
       />
+      <Divider />
+      <InfoLine
+        label={formatMessage(messages.policeCases)}
+        button={{
+          type: 'link',
+          to: LawAndOrderPaths.PoliceCases,
+          label: formatMessage(messages.seeInfo),
+          icon: 'arrowForward',
+        }}
+      />
+      <Divider />
     </IntroWrapper>
   )
 }
