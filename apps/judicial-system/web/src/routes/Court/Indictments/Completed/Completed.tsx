@@ -5,9 +5,13 @@ import router from 'next/router'
 
 import { Accordion, Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { Feature } from '@island.is/judicial-system/types'
+import {
+  Feature,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FeatureContext,
@@ -52,7 +56,7 @@ const Completed: FC = () => {
   const { deliverCaseVerdict } = useVerdict()
   const [isLoading, setIsLoading] = useState(false)
 
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
