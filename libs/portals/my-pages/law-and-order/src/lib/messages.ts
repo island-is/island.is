@@ -131,6 +131,10 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:subpoena-info-text2',
     defaultMessage: 'Birtingarfrestur er þrír sólarhringar.',
   },
+  timeline: {
+    id: 'sp.law-and-order:timeline',
+    defaultMessage: 'Ferill',
+  },
   caseData: {
     id: 'sp.law-and-order:case-data',
     defaultMessage: 'Málsgögn',
@@ -155,18 +159,28 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:case-status',
     defaultMessage: 'Staða máls',
   },
-})
-export const tagMessages = defineMessages({
-  sent: {
-    id: 'sp.law-and-order:tag-sent',
-    defaultMessage: 'Sent',
+  analysis: {
+    id: 'sp.law-and-order:analysis',
+    defaultMessage: 'Greining',
   },
-  scheduled: {
-    id: 'sp.law-and-order:tag-scheduled',
-    defaultMessage: 'Á dagskrá',
+  investigation: {
+    id: 'sp.law-and-order:investigation',
+    defaultMessage: 'Rannsókn',
   },
-  resolved: {
-    id: 'sp.law-and-order:tag-resolved',
-    defaultMessage: 'Lokið',
+  investigationFinished: {
+    id: 'sp.law-and-order:investigationFinished',
+    defaultMessage: 'Rannsókn lokið',
+  },
+  indictment: {
+    id: 'sp.law-and-order:indictment',
+    defaultMessage: 'Ákæra',
+  },
+  caseForwarded: {
+    id: 'sp.law-and-order:caseForwarded',
+    defaultMessage: 'Mál sent',
+  },
+  updated: {
+    id: 'sp.law-and-order:updated',
+    defaultMessage: 'Uppfært',
   },
 })

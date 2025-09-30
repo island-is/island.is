@@ -26,6 +26,16 @@ export enum PoliceCaseStatusValue {
   UNKNOWN = 'UNKNOWN', // Unknown or unrecognized status
 }
 
+export enum PoliceCaseStatusValueGroup {
+  POLICE_ANALYSIS = 'POLICE_ANALYSIS', //Greining lögreglu
+  CRIMINAL_INVESTIGATION = 'CRIMINAL_INVESTIGATION', //Rannsókn sakamáls
+  POST_INVESTIGATION = 'POST_INVESTIGATION', //Að lokinni rannsókn
+  INDICTMENT = 'INDICTMENT', //Ákæra
+  SENT_TO_COURT = 'SENT_TO_COURT', // Sent til dómstóla
+  UNKNOWN = 'UNKNOWN', // Unknown or unrecognized status
+}
+
 /* REGISTERS */
 
 registerEnumType(PoliceCaseStatusValue, { name: 'LawAndOrderPoliceCaseStatusValue' })
+registerEnumType(PoliceCaseStatusValueGroup, { name: 'LawAndOrderPoliceCaseStatusValueGroup' })

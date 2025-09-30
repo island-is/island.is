@@ -6,6 +6,7 @@ query GetPoliceCaseDetail($input: LawAndOrderPoliceCaseInput!) {
     status {
       __typename
       value
+      statusGroup
       headerDisplayString
       descriptionDisplayString
     }

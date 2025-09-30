@@ -1,4 +1,4 @@
-import { Box, Stack, Text} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Icon, Stack, Text} from '@island.is/island-ui/core'
 import {
   CardLoader,
   IntroWrapper,
@@ -9,12 +9,53 @@ import {
   formatDate,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { FormatMessage, useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetPoliceCaseDetailQuery } from './PoliceCaseDetail.generated'
 import { messages as m } from '../../lib/messages'
 import { useParams } from 'react-router-dom'
 import Timeline from '../../components/Timeline/Timeline'
+import { LawAndOrderPoliceCase, LawAndOrderPoliceCaseStatusValueGroup } from '@island.is/api/schema'
+
+const POLICE_CASE_STATUS_TIMELINE_MILESTONES = [
+  { group: LawAndOrderPoliceCaseStatusValueGroup.POLICE_ANALYSIS, label: m.analysis },
+  { group: LawAndOrderPoliceCaseStatusValueGroup.CRIMINAL_INVESTIGATION, label: m.investigation },
+  { group: LawAndOrderPoliceCaseStatusValueGroup.POST_INVESTIGATION, label: m.investigationFinished },
+  { group: LawAndOrderPoliceCaseStatusValueGroup.INDICTMENT, label: m.indictment },
+  { group: LawAndOrderPoliceCaseStatusValueGroup.SENT_TO_COURT, label: m.caseForwarded }
+
+]
+
+const generateTimeline = (data: LawAndOrderPoliceCase, formatMessage: FormatMessage): React.ReactNode | null => {
+  const { status, received, modified } = data
+  const currentProgress = POLICE_CASE_STATUS_TIMELINE_MILESTONES.findIndex(m => m.group === status?.statusGroup)
+
+  if (currentProgress < 0) {
+    return null
+  }
+
+  const receivedDate: string | undefined = received ? formatDate(data.received) : undefined
+  const mostRecentDate: string | undefined = modified ? formatDate(data.modified): undefined
+
+  const milestones = POLICE_CASE_STATUS_TIMELINE_MILESTONES.map((milestone, index) => {
+    if (index === 0 && receivedDate) {
+      return <Stack key={index} space={0}><Text variant="small" fontWeight='medium'>{formatMessage(milestone.label)}</Text><Text variant="small">{receivedDate}</Text></Stack>
+    }
+    if (index === currentProgress && mostRecentDate) {
+      return <Stack key={index} space={0}><Text variant="small" fontWeight='medium'>{formatMessage(milestone.label)}</Text><Text variant="small">{mostRecentDate}</Text></Stack>
+    }
+    return <Text variant="small" fontWeight='medium'>{formatMessage(milestone.label)}</Text>
+  })
+
+  if (milestones.length > 0) {
+    return (
+      <Timeline title={formatMessage(m.timeline)} progress={currentProgress}>
+        {milestones}
+      </Timeline>
+    )
+  }
+  return null
+}
 
 type UseParams = {
   id: string
@@ -53,6 +94,9 @@ const PoliceCaseDetail = () => {
 
   const policeCaseNumber = id
 
+  const timeline = policeCase ? generateTimeline(policeCase, formatMessage) : null
+  const {headerDisplayString , descriptionDisplayString} = policeCase?.status ?? {}
+
   return (
     <>
       <IntroWrapper
@@ -71,14 +115,13 @@ const PoliceCaseDetail = () => {
 
       {error && !loading && <Problem error={error} noBorder={false} />}
 
-      <Stack space={2}>
-        <Timeline title="ferill" progress={3}>
-          <Text>test</Text>
-          <Text>test</Text>
-          <Text>test</Text>
-          <Text>test</Text>
-        </Timeline>
-        <InfoLineStack label={m.caseData}>
+      <Stack space={3}>
+        {timeline}
+        {headerDisplayString &&
+          descriptionDisplayString &&
+          policeCase?.modified &&
+          <AlertMessage type="info" title={`${formatMessage(m.updated)}: ${formatDate(policeCase.modified)} - ${headerDisplayString}`} message={policeCase?.status?.descriptionDisplayString} />}
+        <InfoLineStack>
           <InfoLine
             loading={loading}
             label={m.caseNumber}
@@ -88,11 +131,6 @@ const PoliceCaseDetail = () => {
             loading={loading}
             label={coreMessages.type}
             content={policeCase?.type ?? ''}
-          />
-          <InfoLine
-            loading={loading}
-            label={m.caseNumber}
-            content={policeCase?.number}
           />
           <InfoLine
             loading={loading}
@@ -106,19 +144,21 @@ const PoliceCaseDetail = () => {
           />
           <InfoLine
             loading={loading}
-            label={m.receivedDate}
-            content={policeCase?.received ?? ''}
-          />
-          <InfoLine
-            loading={loading}
             label={m.legalAdvisor}
             content={policeCase?.courtAdvocate ?? ''}
           />
-          <InfoLine
-            loading={loading}
-            label={m.caseStatus}
-            content={policeCase?.status?.headerDisplayString ?? ''}
-          />
+          {policeCase?.status?.headerDisplayString &&
+            <InfoLine
+              loading={loading}
+              label={m.caseStatus}
+              content={
+                <Box display="flex"
+                alignItems="center"
+                justifyContent="center" >
+                  <Box marginRight={1}><Icon icon="checkmarkCircle" color="blue400" type="filled" /></Box>
+                  <Text variant="small" fontWeight='medium'>{policeCase.status.headerDisplayString}</Text>
+              </Box>
+          } />}
         </InfoLineStack>
       </Stack>
     </>

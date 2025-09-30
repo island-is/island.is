@@ -1,7 +1,7 @@
 import { FormatMessage } from '@island.is/cms-translations';
 import { CaseStatus } from '../models/police-cases/caseStatus.model';
 import { POLICE_CASE_STATUS_INFO } from '../types/constants';
-import { PoliceCaseStatusValue } from '../types/enums';
+import { PoliceCaseStatusValue, PoliceCaseStatusValueGroup } from '../types/enums';
 
 export const mapPoliceCaseStatusValue = (status?: string): PoliceCaseStatusValue => {
   if (!status) return PoliceCaseStatusValue.UNKNOWN;
@@ -60,13 +60,15 @@ export const mapPoliceCaseStatus = (statusValue: PoliceCaseStatusValue, formatMe
   if (statusValue === PoliceCaseStatusValue.UNKNOWN) {
     return {
       value: statusValue,
+      statusGroup: PoliceCaseStatusValueGroup.UNKNOWN,
     };
   }
 
-  const { header, description} = POLICE_CASE_STATUS_INFO[statusValue];
+  const { header, description, group} = POLICE_CASE_STATUS_INFO[statusValue];
 
   return {
     value: statusValue,
+    statusGroup: group,
     headerDisplayString: header ? formatMessage(header) : undefined,
     descriptionDisplayString: description ? formatMessage(description) : undefined,
   }

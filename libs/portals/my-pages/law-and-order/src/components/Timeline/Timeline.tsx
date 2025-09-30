@@ -34,8 +34,19 @@ export const Timeline: FC<Props> = ({
     return null
   }
 
+  const milestoneCount = children.length - 1
+
+  const milestoneHalfStep = (1 / milestoneCount) / 2
+  const milestoneQuarterStep = milestoneHalfStep / 2
+
   //get current progress as ratio of total milestones
-  const currentProgress = (Math.min(Math.max(progress || 0, 0), children.length)) / children.length
+  let currentProgress = (Math.min(Math.max(progress || 0, 0), milestoneCount)) / milestoneCount
+
+  if (currentProgress > 0 && currentProgress > milestoneHalfStep && currentProgress < 1) {
+    //more than half
+    currentProgress += milestoneQuarterStep
+  }
+
 
   return (
     <Box {...box}>
@@ -44,7 +55,7 @@ export const Timeline: FC<Props> = ({
           {title}
         </Text>
       )}
-      {isMobile && currentProgress && (
+      {isMobile && (
         <Box display="flex">
           <ProgressBar progress={currentProgress} vertical />
           <Box marginLeft="gutter">
@@ -65,31 +76,28 @@ export const Timeline: FC<Props> = ({
             borderRadius="large"
             width="full"
           >
-            {currentProgress && (
-              <>
-                <ProgressBar progress={currentProgress} />
-                {tooltipText && (
-                  <Tooltip text={tooltipText} placement="top">
-                    <Box
-                      position="absolute"
-                      className={styles.tooltip}
-                      style={{
-                        left: `${currentProgress * 100}%`,
-                      }}
-                    />
-                  </Tooltip>
-                )}
-              </>
+            <ProgressBar progress={currentProgress} />
+            {tooltipText && (
+              <Tooltip text={tooltipText} placement="top">
+                <Box
+                  position="absolute"
+                  className={styles.tooltip}
+                  style={{
+                    left: `${currentProgress * 100}%`,
+                  }}
+                />
+              </Tooltip>
             )}
           </Box>
           <Columns>
-            {children?.map((child, index) => (
-              <Column key={`step-item-${index}`}>
-                <Box>
+            {children?.map((child, index) => {
+              const middleIndex = milestoneCount / 2
+              return <Column key={`step-item-${index}`}>
+                <Box textAlign={index < middleIndex ? 'left' : index === middleIndex ? 'center' : 'right'}>
                   {child}
                 </Box>
               </Column>
-            ))}
+            })}
           </Columns>
         </Stack>
       )}
