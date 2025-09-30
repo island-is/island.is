@@ -60,16 +60,6 @@ interface Props {
   setWorkingCase: Dispatch<SetStateAction<Case>>
 }
 
-interface FiledDocuments {
-  courtSessionId: string
-  files: CourtDocumentResponse[]
-}
-
-interface ReorderableFile {
-  id: string
-  name: string
-}
-
 const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
   [
     'a-lið 10. gr. sml nr. 88/2008',
@@ -149,7 +139,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
-  const [unfiledFiles, setUnfiledFiles] = useState<CourtDocumentResponse[]>([])
 
   const {
     judges,
@@ -162,14 +151,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     setWorkingCase,
     updateCourtSession,
   )
-
-  useEffect(() => {
-    if (!workingCase.unfiledCourtDocuments) {
-      return
-    }
-
-    setUnfiledFiles(workingCase.unfiledCourtDocuments.map((doc) => doc))
-  }, [workingCase.unfiledCourtDocuments])
 
   const patchSession = (
     id: string,
@@ -212,7 +193,13 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    setUnfiledFiles((prev) => [fileInSession, ...prev])
+    setWorkingCase((prev) => ({
+      ...prev,
+      unfiledCourtDocuments: [
+        fileInSession,
+        ...(prev.unfiledCourtDocuments || []),
+      ],
+    }))
 
     patchSession(courtSession.id, {
       filedDocuments: courtSession.filedDocuments?.filter(
@@ -269,7 +256,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     })
   }
 
-  const handleFileCourtDocument = async (file: ReorderableFile) => {
+  const handleFileCourtDocument = async (file: CourtDocumentResponse) => {
     const res = await courtDocument.fileInCourtSession.action({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
@@ -278,7 +265,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     if (!res) return
 
-    setUnfiledFiles((prev) => prev.filter((item) => item.id !== file.id))
+    setWorkingCase((prev) => ({
+      ...prev,
+      unfiledCourtDocuments: prev.unfiledCourtDocuments?.filter(
+        (item) => item.id !== file.id,
+      ),
+    }))
 
     patchSession(courtSession.id, {
       filedDocuments: [...(courtSession.filedDocuments || []), res],
@@ -686,10 +678,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 <Accordion dividerOnBottom={false} dividerOnTop={false}>
                   <AccordionItem
                     id={`unfiled-files-${courtSession.id}`}
-                    label={`Önnur skjöl (${unfiledFiles.length})`}
+                    label={`Önnur skjöl ${
+                      workingCase.unfiledCourtDocuments
+                        ? `(${workingCase.unfiledCourtDocuments.length})`
+                        : ''
+                    }`}
                     labelVariant="h5"
                   >
-                    {unfiledFiles.length === 0 ? (
+                    {workingCase.unfiledCourtDocuments?.length === 0 ? (
                       <AlertMessage
                         title="Engin óþingmerkt skjöl"
                         message="Öll skjöl málsins hafa verið lögð fram"
@@ -702,7 +698,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         columnGap={2}
                         rowGap={2}
                       >
-                        {unfiledFiles.map((file) => (
+                        {workingCase.unfiledCourtDocuments?.map((file) => (
                           <Box
                             display="flex"
                             alignItems="center"
