@@ -32,6 +32,11 @@ export class UpdatePoliceDocumentDeliveryDto {
   comment?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String, required: false })
+  defenderNationalId?: string
+
+  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean, required: false })
   delivered?: boolean

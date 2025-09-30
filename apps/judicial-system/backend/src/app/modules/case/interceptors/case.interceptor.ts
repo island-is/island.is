@@ -23,19 +23,34 @@ import {
 } from '../../repository'
 
 export const transformDefendants = (defendants?: Defendant[]) => {
-  return defendants?.map((defendant) => ({
-    ...defendant.toJSON(),
-    sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
-      ? DefendantEventLog.getEventLogDateByEventType(
-          DefendantEventType.SENT_TO_PRISON_ADMIN,
-          defendant.eventLogs,
-        )
-      : undefined,
-    openedByPrisonAdminDate: DefendantEventLog.getEventLogDateByEventType(
-      DefendantEventType.OPENED_BY_PRISON_ADMIN,
-      defendant.eventLogs,
-    ),
-  }))
+  return defendants?.map((defendant) => {
+    const { verdict } = defendant
+    return {
+      ...defendant.toJSON(),
+      ...(verdict
+        ? {
+            verdict: {
+              ...verdict.toJSON(),
+              verdictDeliveredToNationalCommissionersOffice:
+                DefendantEventLog.getEventLogDateByEventType(
+                  DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
+                  defendant.eventLogs,
+                ),
+            },
+          }
+        : {}),
+      sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
+        ? DefendantEventLog.getEventLogDateByEventType(
+            DefendantEventType.SENT_TO_PRISON_ADMIN,
+            defendant.eventLogs,
+          )
+        : undefined,
+      openedByPrisonAdminDate: DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.OPENED_BY_PRISON_ADMIN,
+        defendant.eventLogs,
+      ),
+    }
+  })
 }
 
 const transformCaseRepresentatives = (theCase: Case) => {

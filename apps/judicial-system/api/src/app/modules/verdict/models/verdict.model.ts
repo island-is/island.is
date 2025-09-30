@@ -24,6 +24,9 @@ export class Verdict {
   modified?: string
 
   @Field(() => String, { nullable: true })
+  verdictDeliveredToNationalCommissionersOffice?: string
+
+  @Field(() => String, { nullable: true })
   defendantId?: string
 
   @Field(() => String, { nullable: true })
@@ -60,5 +63,5 @@ export class Verdict {
   comment?: string
 
   @Field(() => String, { nullable: true })
-  defenderNationalId?: string
+  deliveredToDefenderNationalId?: string
 }
