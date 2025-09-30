@@ -10,7 +10,7 @@ export class PoliceCasesService {
   constructor(private policeApi: PoliceCasesClientService) {}
 
   async getCases(user: User): Promise<PaginantedCaseCollection> {
-    const { cases } = await this.policeApi.getCases(user)
+    const cases = await this.policeApi.getCases(user)
 
     if (!cases || cases.length <= 0) {
       return {

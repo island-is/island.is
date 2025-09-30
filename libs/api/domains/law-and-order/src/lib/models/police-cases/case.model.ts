@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { PoliceCaseStatus } from '../../types/enums'
 
 @ObjectType('LawAndOrderPoliceCase')
 export class Case {
@@ -8,8 +9,8 @@ export class Case {
   @Field({ nullable: true })
   type?: string
 
-  @Field({ nullable: true })
-  status?: string
+  @Field(() => PoliceCaseStatus,{ nullable: true })
+  status?: PoliceCaseStatus
 
   @Field({ nullable: true })
   contact?: string

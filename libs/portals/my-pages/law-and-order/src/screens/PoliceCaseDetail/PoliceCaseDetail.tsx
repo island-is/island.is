@@ -1,4 +1,4 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, Stack, Text} from '@island.is/island-ui/core'
 import {
   CardLoader,
   IntroWrapper,
@@ -6,6 +6,7 @@ import {
   RIKISLOGREGLUSTJORI_SLUG,
   InfoLineStack,
   InfoLine,
+  formatDate,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -13,6 +14,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useGetPoliceCaseQuery } from './PoliceCase.generated'
 import { messages as m } from '../../lib/messages'
 import { useParams } from 'react-router-dom'
+import Timeline from '../../components/Timeline/Timeline'
 
 type UseParams = {
   id: string
@@ -69,48 +71,56 @@ const PoliceCaseDetail = () => {
 
       {error && !loading && <Problem error={error} noBorder={false} />}
 
-      <InfoLineStack label={m.caseData}>
-        <InfoLine
-          loading={loading}
-          label={m.caseNumber}
-          content={policeCase?.number}
-        />
-        <InfoLine
-          loading={loading}
-          label={coreMessages.type}
-          content={policeCase?.type ?? ''}
-        />
-        <InfoLine
-          loading={loading}
-          label={m.caseNumber}
-          content={policeCase?.number}
-        />
-        <InfoLine
-          loading={loading}
-          label={m.receivedDate}
-          content={policeCase?.received ?? ''}
-        />
-        <InfoLine
-          loading={loading}
-          label={m.contact}
-          content={policeCase?.contact ?? ''}
-        />
-        <InfoLine
-          loading={loading}
-          label={m.receivedDate}
-          content={policeCase?.received ?? ''}
-        />
-        <InfoLine
-          loading={loading}
-          label={m.legalAdvisor}
-          content={policeCase?.courtAdvocate ?? ''}
-        />
-        <InfoLine
-          loading={loading}
-          label={m.caseStatus}
-          content={policeCase?.status ?? ''}
-        />
-      </InfoLineStack>
+      <Stack space={2}>
+        <Timeline title="ferill" progress={3}>
+          <Text>test</Text>
+          <Text>test</Text>
+          <Text>test</Text>
+          <Text>test</Text>
+        </Timeline>
+        <InfoLineStack label={m.caseData}>
+          <InfoLine
+            loading={loading}
+            label={m.caseNumber}
+            content={policeCase?.number}
+          />
+          <InfoLine
+            loading={loading}
+            label={coreMessages.type}
+            content={policeCase?.type ?? ''}
+          />
+          <InfoLine
+            loading={loading}
+            label={m.caseNumber}
+            content={policeCase?.number}
+          />
+          <InfoLine
+            loading={loading}
+            label={m.receivedDate}
+            content={formatDate(policeCase?.received)}
+          />
+          <InfoLine
+            loading={loading}
+            label={m.contact}
+            content={policeCase?.contact ?? ''}
+          />
+          <InfoLine
+            loading={loading}
+            label={m.receivedDate}
+            content={policeCase?.received ?? ''}
+          />
+          <InfoLine
+            loading={loading}
+            label={m.legalAdvisor}
+            content={policeCase?.courtAdvocate ?? ''}
+          />
+          <InfoLine
+            loading={loading}
+            label={m.caseStatus}
+            content={policeCase?.status ?? ''}
+          />
+        </InfoLineStack>
+      </Stack>
     </>
   )
 }
