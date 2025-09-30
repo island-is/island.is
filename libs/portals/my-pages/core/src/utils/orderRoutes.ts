@@ -1,14 +1,24 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 
-function toOrderArray(input?: string | string[]): string[] {
+type MenuConfig = { menu: string[] }
+
+const isStringArray = (v: unknown): v is string[] =>
+  Array.isArray(v) && v.every((x) => typeof x === 'string')
+
+const isMenuConfig = (v: unknown): v is MenuConfig =>
+  typeof v === 'object' &&
+  v !== null &&
+  'menu' in v &&
+  isStringArray((v as Record<string, unknown>).menu)
+
+const toOrderArray = (input?: string | string[]): string[] => {
   if (!input) return []
   if (Array.isArray(input)) return input
 
   try {
-    const parsed = JSON.parse(input)
-    if (Array.isArray(parsed)) return parsed as string[]
-    if (parsed && Array.isArray((parsed as any).menu))
-      return (parsed as any).menu as string[]
+    const parsed: unknown = JSON.parse(input)
+    if (isStringArray(parsed)) return parsed
+    if (isMenuConfig(parsed)) return parsed.menu
   } catch {
     return input
       .split(/[,\n;]/)
@@ -23,10 +33,7 @@ export const orderRoutes = (
   orderInput?: string | string[],
 ): PortalNavigationItem => {
   const orderedArray = toOrderArray(orderInput)
-
-  if (!nav.children || orderedArray.length === 0) {
-    return nav
-  }
+  if (!nav.children || orderedArray.length === 0) return nav
 
   const sorted = [...nav.children].sort((a, b) => {
     const ia = orderedArray.indexOf(a.path ?? '')

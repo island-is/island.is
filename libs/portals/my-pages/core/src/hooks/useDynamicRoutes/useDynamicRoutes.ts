@@ -5,7 +5,7 @@ import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import uniq from 'lodash/uniq'
 import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 import { DynamicPaths } from './paths'
-import { orderRoutes } from '../../utils/oderRoutes'
+import { orderRoutes } from '../../utils/orderRoutes'
 
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
