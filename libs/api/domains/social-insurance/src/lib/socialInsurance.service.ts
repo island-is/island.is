@@ -3,7 +3,6 @@ import { handle404 } from '@island.is/clients/middlewares'
 import {
   IncomePlanStatus as IncomeStatus,
   SocialInsuranceAdministrationClientService,
-  TrWebApiServicesCommonCountriesModelsCountryDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   TrWebExternalModelsServicePortalBaseCertificate,
@@ -35,6 +34,9 @@ import {
   groupPensionCalculationItems,
   mapPensionCalculationInput,
 } from './utils'
+import { Locale } from '@island.is/shared/types'
+import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertificate'
+import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -253,6 +255,15 @@ export class SocialInsuranceService {
     )
   }
 
+  async getDisabilityPensionCertificate(
+    user: User,
+  ): Promise<DisabilityPensionCertificate | null> {
+    const data = await this.socialInsuranceApi
+      .getCertificateForDisabilityPension(user)
+      .catch(handle404)
+    return data ? mapDisabilityPensionCertificate(data) : null
+  }
+
   async getConfirmedTreatment(
     user: User,
   ): Promise<TrWebExternalModelsServicePortalConfirmedTreatment> {
@@ -273,10 +284,17 @@ export class SocialInsuranceService {
     return await this.socialInsuranceApi.getConfirmationOfIllHealth(user)
   }
 
-  async getCountries(
-    user: User,
-  ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
-    return await this.socialInsuranceApi.getCountries(user)
+  async getCountries(user: User, locale: Locale) {
+    const data =
+      (await this.socialInsuranceApi.getCountries(user, { locale })) ?? []
+    return data.map((data) => ({
+      code: data.value,
+      name: data.label,
+    }))
+  }
+
+  async getCurrencies(user: User): Promise<Array<string>> {
+    return await this.socialInsuranceApi.getCurrencies(user)
   }
 
   async getEducationalInstitutions(
@@ -285,5 +303,31 @@ export class SocialInsuranceService {
     Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto>
   > {
     return await this.socialInsuranceApi.getEducationalInstitutions(user)
+  }
+
+  async getLanguages(user: User, locale: Locale) {
+    return await this.socialInsuranceApi.getLanguages(user, { locale })
+  }
+
+  async getMaritalStatuses(user: User) {
+    return await this.socialInsuranceApi.getMaritalStatuses(user)
+  }
+
+  async getEmploymentStatusesWithLocale(user: User, locale: Locale) {
+    return await this.socialInsuranceApi.getEmploymentStatusesWithLocale(user, {
+      locale,
+    })
+  }
+
+  async getProfessions(user: User) {
+    return await this.socialInsuranceApi.getProfessionsInDto(user)
+  }
+
+  async getResidenceTypes(user: User) {
+    return await this.socialInsuranceApi.getResidenceTypes(user)
+  }
+
+  async getProfessionActivities(user: User) {
+    return await this.socialInsuranceApi.getProfessionActivitiesInDto(user)
   }
 }

@@ -1,0 +1,7 @@
+mutation FileCourtDocumentInCourtSession(
+  $input: FileCourtDocumentInCourtSessionInput!
+) {
+  fileCourtDocumentInCourtSession(input: $input) {
+    id
+  }
+}

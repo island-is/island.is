@@ -121,22 +121,14 @@ export const validatePeriod = (
     values?: Record<string, unknown>,
   ) => AnswerValidationError,
 ) => {
-  const expectedDateOfBirthOrAdoptionDate =
-    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
   const expectedDateOfBirthOrAdoptionDateOrBirthDate =
-    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
-  if (
-    !expectedDateOfBirthOrAdoptionDate ||
-    !expectedDateOfBirthOrAdoptionDateOrBirthDate
-  ) {
+  if (!expectedDateOfBirthOrAdoptionDateOrBirthDate) {
     return buildError(null, errorMessages.dateOfBirth)
   }
 
-  const dob =
-    period.firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
-      ? parseISO(expectedDateOfBirthOrAdoptionDateOrBirthDate)
-      : parseISO(expectedDateOfBirthOrAdoptionDate)
+  const dob = parseISO(expectedDateOfBirthOrAdoptionDateOrBirthDate)
   const today = new Date()
   const minimumStartDate = addMonths(
     dob,

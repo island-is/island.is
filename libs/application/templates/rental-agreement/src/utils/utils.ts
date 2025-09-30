@@ -3,7 +3,11 @@ import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { EMAIL_REGEX } from '@island.is/application/core'
-import { RepeaterItem, StateLifeCycle } from '@island.is/application/types'
+import {
+  RepeaterItem,
+  RepeaterOptionValue,
+  StateLifeCycle,
+} from '@island.is/application/types'
 import { ApplicantsInfo, BankAccount, PropertyUnit } from '../shared'
 
 import * as m from '../lib/messages'
@@ -113,12 +117,6 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
     type: 'email',
     width: 'half',
   },
-  address: {
-    component: 'input',
-    required: true,
-    label: m.misc.address,
-    maxLength: 100,
-  },
 }
 
 export const landLordInfoTableFields: Record<string, RepeaterItem> = {
@@ -140,14 +138,6 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
     label: m.misc.email,
     type: 'email',
     width: 'half',
-  },
-  isRepresentative: {
-    component: 'checkbox',
-    label: m.landlordAndTenantDetails.representativeLabel,
-    width: 'half',
-    options: [
-      { label: m.landlordAndTenantDetails.representativeLabel, value: '✔️' },
-    ],
   },
 }
 
@@ -257,4 +247,20 @@ export const isValidInteger = (value: string): boolean => {
 
 export const isValidDecimal = (value: string): boolean => {
   return /^\d*\.?\d*$/.test(value)
+}
+
+export const onlyCharacters = async (
+  optionValue: RepeaterOptionValue,
+  id: string,
+) => {
+  if (typeof optionValue !== 'string') {
+    return [{ key: id, value: optionValue }]
+  }
+
+  const filteredValue = optionValue?.replace(
+    /[^a-zA-ZáéíóúýþæðöÁÉÍÓÚÝÞÆÐÖ.\s]/g,
+    '',
+  )
+
+  return [{ key: id, value: filteredValue }]
 }

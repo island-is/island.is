@@ -69,3 +69,8 @@ export type SitemapTree = {
   id: number
   childNodes: SitemapTreeNode[]
 }
+
+export enum WebLandspitaliCreateMemorialCardPaymentUrlInputSendType {
+  PostalMail = 'PostalMail',
+  Email = 'Email',
+}

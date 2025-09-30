@@ -16,7 +16,10 @@ import {
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
 import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useSort } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useFiledCourtDocuments,
+  useSort,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as tableStyles from '../Table.css'
 import * as styles from './CaseFileTable.css'
@@ -33,7 +36,8 @@ const CaseFileTable: FC<Props> = ({
   onOpenFile,
 }) => {
   const { formatMessage } = useIntl()
-
+  const { prefixUploadedDocumentNameWithDocumentOrder } =
+    useFiledCourtDocuments()
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } = useSort(
     'created',
     'descending',
@@ -81,7 +85,10 @@ const CaseFileTable: FC<Props> = ({
                 className={styles.linkButton}
               >
                 <Text color="blue400" variant="h5">
-                  {file.userGeneratedFilename}
+                  {prefixUploadedDocumentNameWithDocumentOrder(
+                    file.id,
+                    file.userGeneratedFilename ?? '',
+                  )}
                 </Text>
               </Box>
             </td>
