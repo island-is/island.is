@@ -175,8 +175,7 @@ export const OverviewFormField = ({
           locale,
           formatMessage,
         )}: ${item?.boldValueText ? '**' : ''}`
-      }
-      else {
+      } else {
         return `${item?.boldValueText ? '**' : ''}${formatTextWithLocale(
           item?.keyText ?? '',
           application,
