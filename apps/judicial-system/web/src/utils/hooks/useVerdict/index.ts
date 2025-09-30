@@ -100,7 +100,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
         const result = await deliverCaseVerdictMutation({
           variables: { input: { caseId } },
         })
-        return result.data?.deliverCaseVerdict?.queued
+        return result.data?.deliverCaseVerdict?.queued ?? false
       } catch (error) {
         toast.error('Upp kom villa við senda dóm í birtingu')
         return false

@@ -142,7 +142,7 @@ const VerdictStatusAlertMessage = ({
     return (
       <AlertMessage
         type="info"
-        title={`Dómur er í birtingarferli  - ${defendantName}`}
+        title={`Dómur er í birtingarferli - ${defendantName}`}
         message={`Dómur fór í birtingu ${formatDate(
           verdictDeliveredToNationalCommissionersOffice,
         )} kl. ${formatDate(

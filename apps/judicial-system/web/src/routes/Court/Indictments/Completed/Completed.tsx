@@ -79,6 +79,7 @@ const Completed: FC = () => {
       updateUploadFile,
     )
     if (uploadResult !== 'ALL_SUCCEEDED') {
+      setIsLoading(false)
       return
     }
     if (features?.includes(Feature.VERDICT_DELIVERY)) {
@@ -136,9 +137,7 @@ const Completed: FC = () => {
           ServiceRequirement.NOT_APPLICABLE
             ? Boolean(defendant.verdict?.appealDecision)
             : Boolean(defendant.verdict?.serviceRequirement),
-        ) &&
-        workingCase.ruling &&
-        workingCase.ruling?.trim() !== ''
+        )
       : true
 
     return isValidDefendants
