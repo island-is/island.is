@@ -214,7 +214,6 @@ export class LawAndOrderService {
       locale,
     )
 
-    console.log(verdictsResponse)
     if (!isDefined(verdictsResponse)) return null
 
     const verdicts: VerdictResponse = verdictsResponse
@@ -245,14 +244,25 @@ export class LawAndOrderService {
     user: User,
     input: PostAppealDecisionInput,
     locale: Locale,
-  ) {
+  ): Promise<Omit<Verdict, 'groups' | 'subtitle'> | null> {
     if (!input || !input.choice) return null
-    return await this.api.patchVerdict(
-      input.caseId,
-      user,
-      locale,
-      mapAppealDecisionReverse(input.choice),
-    )
+    let data: VerdictResponse
+    try {
+      data = await this.api.patchVerdict(
+        input.caseId,
+        user,
+        locale,
+        mapAppealDecisionReverse(input.choice),
+      )
+    } catch (error) {
+      return null
+    }
+
+    return {
+      caseId: data.caseId,
+      title: data.title,
+      appealDecision: mapAppealDecision(data.appealDecision),
+    }
   }
 
   async postDefenseChoice(

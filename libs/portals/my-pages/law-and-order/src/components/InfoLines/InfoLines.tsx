@@ -1,6 +1,10 @@
 import React from 'react'
 
-import { LawAndOrderGroup, LawAndOrderItemType } from '@island.is/api/schema'
+import {
+  LawAndOrderAppealDecision,
+  LawAndOrderGroup,
+  LawAndOrderItemType,
+} from '@island.is/api/schema'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { RadioFormGroup } from './RadioButtonType'
@@ -11,6 +15,7 @@ interface Props {
   groups: Array<LawAndOrderGroup>
   onFormSubmit?: SubmitHandler
   loading?: boolean
+  appealDecision?: LawAndOrderAppealDecision
 }
 
 const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
@@ -23,7 +28,13 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
           (y) => y.type === LawAndOrderItemType.RadioButton,
         )
         if (hasRadioButtons)
-          return <RadioFormGroup group={x} onFormSubmit={props.onFormSubmit} />
+          return (
+            <RadioFormGroup
+              group={x}
+              onFormSubmit={props.onFormSubmit}
+              appealDecision={props.appealDecision}
+            />
+          )
         return (
           <>
             <Box marginTop={4} />

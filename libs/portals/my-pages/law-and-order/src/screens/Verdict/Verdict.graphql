@@ -18,5 +18,6 @@ mutation SubmitVerdictAppealDecision(
 ) {
   lawAndOrderVerdictPost(input: $input, locale: $locale) {
     caseId
+    appealDecision
   }
 }

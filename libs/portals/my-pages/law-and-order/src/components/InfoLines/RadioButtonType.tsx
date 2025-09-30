@@ -5,6 +5,7 @@ import { RenderItem } from './RenderItem'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { SubmitHandler } from '../../utils/types'
+import { useEffect } from 'react'
 
 type RadioFormValues = {
   [key: string]: string
@@ -14,27 +15,38 @@ type RadioFormValues = {
 interface Props {
   group: LawAndOrderGroup
   onFormSubmit?: SubmitHandler
+  appealDecision?: string
 }
 
-export const RadioFormGroup = ({ group, onFormSubmit }: Props) => {
+export const RadioFormGroup = ({
+  group,
+  onFormSubmit,
+  appealDecision,
+}: Props) => {
   const { formatMessage } = useLocale()
-  const { control, handleSubmit, formState } = useForm<RadioFormValues>({
-    defaultValues: {
-      [(group.label ?? 'radio-button-group') as string]: '',
-    },
-  })
-
-  const { isDirty } = formState
-
-  console.log(formState)
-  const onSubmit = (data: RadioFormValues) => {
-    console.log('Selected radio:', data)
-    onFormSubmit?.(data)
-    control._reset()
-  }
 
   // Use group.label or group.id as the field name
   const radioFieldName = group.label ?? 'radio-button-group'
+
+  const { control, handleSubmit, formState, setValue } =
+    useForm<RadioFormValues>({
+      defaultValues: {
+        [radioFieldName]: appealDecision || '',
+      },
+    })
+
+  const { isDirty } = formState
+
+  useEffect(() => {
+    // Only set the value if appealDecision exists and form hasn't been interacted with yet
+    if (appealDecision && !isDirty) {
+      setValue(radioFieldName, appealDecision, { shouldDirty: false })
+    }
+  }, [appealDecision, radioFieldName, setValue, isDirty])
+
+  const onSubmit = (data: RadioFormValues) => {
+    onFormSubmit?.(data)
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -71,11 +83,7 @@ export const RadioFormGroup = ({ group, onFormSubmit }: Props) => {
         )}
       />
       <Box marginY={3}>
-        <Button
-          size="small"
-          type="submit"
-          disabled={!isDirty || formState.isSubmitting}
-        >
+        <Button size="small" type="submit" disabled={formState.isSubmitting}>
           {formatMessage(messages.confirm)}
         </Button>
       </Box>

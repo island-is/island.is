@@ -5,7 +5,7 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import { messages } from '../../lib/messages'
@@ -14,6 +14,7 @@ import {
   useSubmitVerdictAppealDecisionMutation,
 } from './Verdict.generated'
 import { LawAndOrderAppealDecision } from '@island.is/api/schema'
+import { toast } from '@island.is/island-ui/core'
 
 type UseParams = {
   id: string
@@ -22,7 +23,8 @@ type UseParams = {
 const CourtCaseDetail = () => {
   useNamespaces('sp.law-and-order')
   const { formatMessage, lang } = useLocale()
-
+  const [appealDecision, setAppealDecision] =
+    useState<LawAndOrderAppealDecision>()
   const { id } = useParams() as UseParams
 
   const { data, loading, error, refetch } = useGetCourtCaseVerdictQuery({
@@ -36,25 +38,31 @@ const CourtCaseDetail = () => {
   })
   const verdict = data?.lawAndOrderVerdict
 
-  const [submitVerdictAppealDecision, { loading: postLoading }] =
-    useSubmitVerdictAppealDecisionMutation()
-
-  useEffect(() => {
-    refetch()
-  }, [lang])
+  const [submitVerdictAppealDecision] = useSubmitVerdictAppealDecisionMutation()
 
   const handleSubmit = async (data: Record<string, unknown>) => {
     const choice = Object.values(data)[0] as LawAndOrderAppealDecision
 
-    console.log('Submitting appeal decision:', choice)
     await submitVerdictAppealDecision({
       variables: {
         locale: lang,
         input: { caseId: id, choice },
       },
-    }).catch((error) => {
-      console.error('Error submitting appeal decision:', error)
     })
+      .then((response) => {
+        if (response.data?.lawAndOrderVerdictPost?.appealDecision) {
+          setAppealDecision(
+            response.data?.lawAndOrderVerdictPost?.appealDecision,
+          )
+          toast.success(formatMessage(messages.registrationCompleted))
+        } else {
+          // catch null response or missing appealDecision
+          toast.error(formatMessage(messages.registrationError))
+        }
+      })
+      .catch(() => {
+        toast.error(formatMessage(messages.registrationError))
+      })
   }
 
   return (
@@ -71,6 +79,7 @@ const CourtCaseDetail = () => {
       {!error && verdict && verdict?.groups && (
         <InfoLines
           groups={verdict?.groups}
+          appealDecision={appealDecision ?? verdict.appealDecision}
           loading={loading}
           onFormSubmit={handleSubmit}
         />

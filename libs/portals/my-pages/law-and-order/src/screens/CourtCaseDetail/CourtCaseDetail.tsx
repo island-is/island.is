@@ -1,4 +1,4 @@
-import { Box, Text, ToggleSwitchButton } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
@@ -10,7 +10,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import { LawAndOrderPaths } from '../../lib/paths'
 import InfoLines from '../../components/InfoLines/InfoLines'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -21,9 +21,6 @@ type UseParams = {
 const CourtCaseDetail = () => {
   useNamespaces('sp.law-and-order')
   const { formatMessage, lang } = useLocale()
-  const [hasVerdictTemp, setHasVerdictTemp] = useState(false)
-  const [hasVerdictBeenServedTemp, setHasVerdictBeenServedTemp] =
-    useState(false)
 
   const { id } = useParams() as UseParams
 
@@ -37,9 +34,7 @@ const CourtCaseDetail = () => {
   })
 
   const courtCase = data?.lawAndOrderCourtCaseDetail
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const hasVerdict = courtCase?.data?.hasVerdict
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const hasVerdictBeenServed = courtCase?.data?.hasVerdictBeenServed
 
   useEffect(() => {
@@ -77,11 +72,11 @@ const CourtCaseDetail = () => {
               />
             </Box>
           )}
-        {hasVerdictTemp && (
+        {hasVerdict && (
           <Box paddingRight={2} marginBottom={[1]}>
             <LinkButton
               to={
-                hasVerdictBeenServedTemp
+                hasVerdictBeenServed
                   ? LawAndOrderPaths.VerdictDetail.replace(
                       ':id',
                       courtCase?.data?.id?.toString() || '',
@@ -89,7 +84,7 @@ const CourtCaseDetail = () => {
                   : formatMessage(messages.mailboxLink)
               }
               text={
-                hasVerdictBeenServedTemp
+                hasVerdictBeenServed
                   ? formatMessage(messages.verdict)
                   : formatMessage(messages.openVerdictInMailbox)
               }
@@ -100,25 +95,6 @@ const CourtCaseDetail = () => {
           </Box>
         )}
       </Box>
-      {/* TODO: REMOVE BEFORE MERGE -> FOR TESTING PURPOSES ONLY */}
-      <Box display="flex" flexDirection="column">
-        <Text marginBottom={2}>EINGÖNGU FYRIR PRÓFANIR</Text>
-        <ToggleSwitchButton
-          checked={hasVerdictTemp}
-          label={'Dómur er til staðar'}
-          onChange={function (newChecked: boolean): void {
-            setHasVerdictTemp(newChecked)
-          }}
-        />
-        <ToggleSwitchButton
-          checked={hasVerdictBeenServedTemp}
-          label={'Dómur hefur verið birtur'}
-          onChange={function (newChecked: boolean): void {
-            setHasVerdictBeenServedTemp(newChecked)
-          }}
-        />
-      </Box>
-      {/* ---------------------------------------------------- */}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && courtCase && courtCase?.data?.groups && (
         <InfoLines groups={courtCase?.data?.groups} loading={loading} />
