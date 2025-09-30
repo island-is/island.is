@@ -14,6 +14,7 @@ export enum Roles {
 }
 
 export enum Routes {
+  PERSONALINFORMATION = 'personalInformation',
   PARTIESINFORMATION = 'partiesInfo',
   REGISTERPROPERTY = 'registerProperty',
   PROPERTYINFORMATION = 'propertyInfo',

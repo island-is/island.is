@@ -1,5 +1,6 @@
 import { ApplicantsRole, Routes } from '../../../utils/enums'
 import {
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildStaticTableField,
   buildSubSection,
@@ -31,11 +32,18 @@ export const partiesSubsection = buildSubSection({
       title: m.partiesDetails.multiFieldTitle,
       description: m.partiesDetails.multiFieldDescription,
       children: [
+        buildHiddenInputWithWatchedValue({
+          id: 'parties.applicantsRole',
+          watchValue: 'assignApplicantParty.applicantsRole',
+        }),
+        buildHiddenInputWithWatchedValue({
+          id: 'parties.applicant',
+          watchValue: 'applicant',
+        }),
         buildTableRepeaterField({
           id: 'parties.landlordInfo.table',
           title: m.partiesDetails.landlordTableTitle,
           editField: true,
-          marginTop: 1,
           maxRows: 10,
           fields: landLordInfoTableFields,
           table: applicantTableConfig,
@@ -78,7 +86,7 @@ export const partiesSubsection = buildSubSection({
         }),
         buildDescriptionField({
           condition: shouldShowRepresentativeTable,
-          id: 'parties.landlordInfo.representativeTableDesctiption',
+          id: 'parties.landlordInfo.representativeTableDescription',
           title: m.landlordAndTenantDetails.representativeTableTitle,
           titleVariant: 'h4',
           description:

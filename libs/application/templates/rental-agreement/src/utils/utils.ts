@@ -8,7 +8,6 @@ import {
   RepeaterItem,
   RepeaterOptionValue,
   StateLifeCycle,
-  UserProfile,
 } from '@island.is/application/types'
 import { ApplicantsInfo, BankAccount, PropertyUnit } from '../shared'
 
@@ -272,22 +271,15 @@ export const staticPartyTableData = (
   application: Application,
   role: ApplicantsRole,
 ) => {
+  const { answers } = application
   const aplicantRole = getValueViaPath<string>(
-    application.answers,
+    answers,
     'assignApplicantParty.applicantsRole',
   )
-  const fullName = getValueViaPath<string>(
-    application.externalData,
-    'nationalRegistry.data.fullName',
-  )
-  const nationalId = getValueViaPath<string>(
-    application.externalData,
-    'nationalRegistry.data.nationalId',
-  )
-  const userProfile = getValueViaPath<UserProfile>(
-    application.externalData,
-    'userProfile.data',
-  )
+  const fullName = getValueViaPath<string>(answers, 'applicant.name')
+  const nationalId = getValueViaPath<string>(answers, 'applicant.nationalId')
+  const email = getValueViaPath<string>(answers, 'applicant.email')
+  const phone = getValueViaPath<string>(answers, 'applicant.phoneNumber')
 
   if (aplicantRole !== role) {
     return []
@@ -296,9 +288,9 @@ export const staticPartyTableData = (
   return [
     {
       name: fullName ?? '',
+      phone: formatPhoneNumber(phone ?? ''),
       nationalId: formatNationalId(nationalId ?? ''),
-      phone: formatPhoneNumber(userProfile?.mobilePhoneNumber ?? ''),
-      email: userProfile?.email ?? '',
+      email: email ?? '',
     },
   ]
 }
