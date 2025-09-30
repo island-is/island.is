@@ -14,4 +14,7 @@ export class CourtAgendasInput {
 
   @Field(() => String, { nullable: true })
   dateTo?: string
+
+  @Field(() => String, { nullable: true })
+  lawyer?: string
 }

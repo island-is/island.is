@@ -99,6 +99,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
       doesNotRequireAnswer: true,
       alertType: 'error',
       shouldBlockInSetBeforeSubmitCallback: true,
+      allowMultipleSetBeforeSubmitCallbacks: true,
     }),
     buildCustomField({
       component: 'HandleBeforeSubmitConvoy',

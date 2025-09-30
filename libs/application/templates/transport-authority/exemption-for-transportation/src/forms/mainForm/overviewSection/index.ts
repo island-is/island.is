@@ -29,7 +29,7 @@ import {
   checkHasAnyConvoyWithTrailer,
 } from '../../../utils'
 import { overview } from '../../../lib/messages'
-import { DefaultEvents } from '@island.is/application/types'
+import { Application, DefaultEvents } from '@island.is/application/types'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -121,7 +121,9 @@ export const overviewSection = buildSection({
           title: overview.axleSpacing.subtitle,
           backId: 'axleSpacingMultiField',
           items: getAxleSpacingOverviewItems,
-          condition: checkHasFreightPairingItemWithExemptionForWeight,
+          condition: (answers) =>
+            checkIfExemptionTypeShortTerm(answers) &&
+            checkHasFreightPairingItemWithExemptionForWeight(answers),
         }),
         buildOverviewField({
           id: 'overview.vehicleSpacing',
@@ -129,15 +131,23 @@ export const overviewSection = buildSection({
           backId: 'vehicleSpacingMultiField',
           items: getVehicleSpacingOverviewItems,
           condition: (answers) =>
+            checkIfExemptionTypeShortTerm(answers) &&
             checkHasAnyConvoyWithTrailer(answers) &&
             checkHasFreightPairingItemWithExemptionForWeight(answers),
         }),
         buildOverviewField({
           id: 'overview.supportingDocuments',
-          title: overview.supportingDocuments.subtitle,
+          title: (application: Application) => {
+            return checkIfExemptionTypeShortTerm(application.answers)
+              ? overview.supportingDocuments.subtitleShortTerm
+              : overview.supportingDocuments.subtitleLongTerm
+          },
           backId: 'supportingDocumentsMultiField',
           items: getSupportingDocumentsOverviewItems,
-          attachments: getSupportingDocumentsOverviewAttachments,
+          attachments: (answers) =>
+            checkIfExemptionTypeShortTerm(answers)
+              ? getSupportingDocumentsOverviewAttachments(answers)
+              : [],
           hideIfEmpty: true,
         }),
         buildCheckboxField({

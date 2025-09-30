@@ -14,8 +14,8 @@ export type Scalars = {
 export type ApplicantsInfo = {
   nationalIdWithName: { name: string; nationalId: string }
   phone: string
-  address: string
   email: string
+  address: string
   isRepresentative?: boolean
 }
 
@@ -120,6 +120,7 @@ export interface AddressProps {
 
 export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
+  landlordRepresentatives: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
 }
 

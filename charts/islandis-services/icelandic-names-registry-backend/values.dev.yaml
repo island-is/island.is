@@ -88,6 +88,7 @@ initContainer:
 namespace: 'icelandic-names-registry'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 pvcs: []
 replicaCount:
   default: 1

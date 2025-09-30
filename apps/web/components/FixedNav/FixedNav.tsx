@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
 import cn from 'classnames'
 
 import {
@@ -16,7 +16,11 @@ import { useScrollPosition } from '../../hooks/useScrollPosition'
 import SearchInput from '../SearchInput/SearchInput'
 import * as styles from './FixedNav.css'
 
-export const FixedNav: FC<React.PropsWithChildren<unknown>> = () => {
+interface Props {
+  organizationSearchFilter?: string
+}
+
+export const FixedNav = ({ organizationSearchFilter }: Props) => {
   const [show, setShow] = useState<boolean>(false)
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -98,6 +102,7 @@ export const FixedNav: FC<React.PropsWithChildren<unknown>> = () => {
                 placeholder={t.searchPlaceholder}
                 autocomplete={true}
                 autosuggest={false}
+                organization={organizationSearchFilter}
               />
             </Box>
             <Box marginLeft={[1, 1, 1, 2]}>

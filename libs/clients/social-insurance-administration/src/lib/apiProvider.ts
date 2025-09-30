@@ -22,6 +22,8 @@ import { SocialInsuranceAdministrationClientConfig } from './socialInsuranceAdmi
 import {
   Api,
   ApplicationWriteApi,
+  MedicalDocumentApiForDisabilityPension,
+  QuestionnairesApiForDisabilityPension,
   Scope,
 } from './socialInsuranceAdministrationClient.type'
 
@@ -83,6 +85,16 @@ const apiCollection: Array<{
   {
     api: QuestionnairesApi,
     scopes: ['@tr.is/sjukraogendurhaefingargreidslur:read'],
+    autoAuth: true,
+  },
+  {
+    api: MedicalDocumentApiForDisabilityPension,
+    scopes: ['@tr.is/ororkulifeyrir:read'],
+    autoAuth: true,
+  },
+  {
+    api: QuestionnairesApiForDisabilityPension,
+    scopes: ['@tr.is/ororkulifeyrir:read'],
     autoAuth: true,
   },
 ]

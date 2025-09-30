@@ -1,5 +1,4 @@
 import {
-  getApplicantName,
   getApplicationNameTranslationString,
   getApplicationStatisticsNameTranslationString,
   getPaymentStatusForAdmin,
@@ -26,72 +25,6 @@ describe('Testing utility functions for applications', () => {
 
     it('Should return null when payment object is not defined', () => {
       expect(getPaymentStatusForAdmin(null)).toEqual(null)
-    })
-  })
-
-  describe('getApplicantName', () => {
-    it('Should return the applicant name  when nationalRegistry has a fullName', () => {
-      expect(
-        getApplicantName(
-          createApplication({
-            externalData: {
-              nationalRegistry: {
-                data: {
-                  fullName: 'Test User',
-                },
-                date: new Date(),
-                status: 'success',
-              },
-            },
-          }),
-        ),
-      ).toEqual('Test User')
-    })
-
-    it('Should return name of the applicant when identity external data is defined', () => {
-      expect(
-        getApplicantName(
-          createApplication({
-            externalData: {
-              identity: {
-                data: {
-                  name: 'Test User',
-                },
-                date: new Date(),
-                status: 'success',
-              },
-            },
-          }),
-        ),
-      ).toEqual('Test User')
-    })
-
-    it('Should return name of the applicant when person external data is defined', () => {
-      expect(
-        getApplicantName(
-          createApplication({
-            externalData: {
-              person: {
-                data: {
-                  fullname: 'Test User',
-                },
-                date: new Date(),
-                status: 'success',
-              },
-            },
-          }),
-        ),
-      ).toEqual('Test User')
-    })
-
-    it('Should return null when no external data is defined', () => {
-      expect(
-        getApplicantName(
-          createApplication({
-            externalData: {},
-          }),
-        ),
-      ).toBeNull()
     })
   })
 

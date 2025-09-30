@@ -49,13 +49,36 @@ export const partiesDetails = defineMessages({
       'Að minnsta kosti einn leigutaki þarf að vera skráður á leigusamninginn.',
     description: 'Tenant details no tenants in table',
   },
+
+  alertMessageTitle: {
+    id: 'ra.application:partiesDetails.alertMessageTitle',
+    defaultMessage: 'Leigusala vantar',
+    description: 'Alert message title',
+  },
+  alertMessageDescription: {
+    id: 'ra.application:partiesDetails.alertMessageDescription',
+    defaultMessage:
+      'Fylla verður út að minnsta kosti einn leigusala sem ekki er umboðsaðili',
+    description: 'Alert message description',
+  },
 })
 
 export const landlordAndTenantDetails = defineMessages({
   representativeTableTitle: {
     id: 'ra.application:landlordAndTenantDetails.representativeTableTitle',
-    defaultMessage: 'Umboðsaðilar leigusala (ef við á)',
+    defaultMessage: 'Umboðsaðilar leigusala',
     description: 'Representative table title',
+  },
+  representativeTableDescription: {
+    id: 'ra.application:landlordAndTenantDetails.representativeTableDescription',
+    defaultMessage:
+      'Leigusalar geta skráð einn umboðsmann. Umboðsmaður leigusala verður tengiliður leigjanda á meðan leigutíma stendur.',
+    description: 'Representative table description',
+  },
+  representativeTableCheckboxLabel: {
+    id: 'ra.application:landlordAndTenantDetails.representativeTableCheckboxLabel',
+    defaultMessage: 'Bæta við umboðsaðilum leigusala',
+    description: 'Representative table checkbox label',
   },
   representativeLabel: {
     id: 'ra.application:landlordAndTenantDetails.representativeLabel',
