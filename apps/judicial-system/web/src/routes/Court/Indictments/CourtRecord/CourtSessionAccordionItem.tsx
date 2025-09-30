@@ -357,9 +357,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const countDocumentsBeforeSession = (index: number) => {
     const sessionsBefore = workingCase.courtSessions?.slice(0, index) || []
 
-    return sessionsBefore.reduce((acc, session) => {
-      return (acc += session.filedDocuments?.length || 0)
-    }, 0)
+    return sessionsBefore.reduce(
+      (acc, session) => (acc += session.filedDocuments?.length || 0),
+      0,
+    )
   }
 
   return (
