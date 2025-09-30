@@ -76,7 +76,6 @@ describe('CourtSessionAccordionItem', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    
     ;(useCourtDocumentsHook.useCourtDocuments as jest.Mock).mockReturnValue({
       courtDocument: {
         delete: { action: mockCourtDocumentDelete },
@@ -86,18 +85,12 @@ describe('CourtSessionAccordionItem', () => {
         isLoading: false,
       },
     })
-    
     ;(useCourtSessionsHook.useCourtSessions as jest.Mock).mockReturnValue({
       updateCourtSession: mockUpdateCourtSession,
     })
-    
     ;(useUsersHook.useUsers as jest.Mock).mockReturnValue({
-      districtCourtAssistants: [
-        { value: 'user-1', label: 'Assistant 1' },
-      ],
-      registrars: [
-        { value: 'user-2', label: 'Registrar 1' },
-      ],
+      districtCourtAssistants: [{ value: 'user-1', label: 'Assistant 1' }],
+      registrars: [{ value: 'user-2', label: 'Registrar 1' }],
       loading: false,
     })
   })
@@ -126,7 +119,7 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={confirmedSession}
-        />
+        />,
       )
       expect(screen.getByTestId('courtLocation')).toBeDisabled()
       expect(screen.getByTestId('courtAttendees')).toBeDisabled()
@@ -141,17 +134,18 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={closedSession}
-        />
+        />,
       )
       const checkboxes = screen.getAllByRole('checkbox')
-      const closureCheckboxes = checkboxes.filter(cb => 
-        cb.getAttribute('name')?.includes('a-lið') ||
-        cb.getAttribute('name')?.includes('b-lið') ||
-        cb.getAttribute('name')?.includes('c-lið') ||
-        cb.getAttribute('name')?.includes('d-lið') ||
-        cb.getAttribute('name')?.includes('e-lið') ||
-        cb.getAttribute('name')?.includes('f-lið') ||
-        cb.getAttribute('name')?.includes('g-lið')
+      const closureCheckboxes = checkboxes.filter(
+        (cb) =>
+          cb.getAttribute('name')?.includes('a-lið') ||
+          cb.getAttribute('name')?.includes('b-lið') ||
+          cb.getAttribute('name')?.includes('c-lið') ||
+          cb.getAttribute('name')?.includes('d-lið') ||
+          cb.getAttribute('name')?.includes('e-lið') ||
+          cb.getAttribute('name')?.includes('f-lið') ||
+          cb.getAttribute('name')?.includes('g-lið'),
       )
       expect(closureCheckboxes).toHaveLength(7)
     })
@@ -166,9 +160,11 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={closedSession}
-        />
+        />,
       )
-      expect(screen.getByText('a-lið 10. gr. sml nr. 88/2008')).toBeInTheDocument()
+      expect(
+        screen.getByText('a-lið 10. gr. sml nr. 88/2008'),
+      ).toBeInTheDocument()
     })
   })
 
@@ -176,28 +172,28 @@ describe('CourtSessionAccordionItem', () => {
     it('should update location on change', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const input = screen.getByTestId('courtLocation')
-      
+
       fireEvent.change(input, { target: { value: 'í Héraðsdómi Akureyrar' } })
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
     it('should persist location on blur', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const input = screen.getByTestId('courtLocation')
-      
+
       fireEvent.blur(input, { target: { value: 'í Héraðsdómi Akureyrar' } })
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
     it('should clear error message on change', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const input = screen.getByTestId('courtLocation')
-      
+
       fireEvent.blur(input, { target: { value: '' } })
       fireEvent.change(input, { target: { value: 'New location' } })
-      
+
       expect(input).not.toHaveClass('hasError')
     })
   })
@@ -206,9 +202,9 @@ describe('CourtSessionAccordionItem', () => {
     it('should toggle closed proceeding state', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const checkbox = screen.getByLabelText('Þinghaldið er lokað')
-      
+
       fireEvent.click(checkbox)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
@@ -218,16 +214,20 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={closedSession}
-        />
+        />,
       )
-      
-      expect(screen.getByText('Lagaákvæði sem lokun þinghalds byggir á')).toBeInTheDocument()
+
+      expect(
+        screen.getByText('Lagaákvæði sem lokun þinghalds byggir á'),
+      ).toBeInTheDocument()
     })
 
     it('should hide closure grounds when proceeding is open', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
-      expect(screen.queryByText('Lagaákvæði sem lokun þinghalds byggir á')).not.toBeInTheDocument()
+
+      expect(
+        screen.queryByText('Lagaákvæði sem lokun þinghalds byggir á'),
+      ).not.toBeInTheDocument()
     })
 
     it('should clear legal provisions when unchecking closed proceeding', () => {
@@ -240,12 +240,12 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={closedSession}
-        />
+        />,
       )
-      
+
       const checkbox = screen.getByLabelText('Þinghaldið er lokað')
       fireEvent.click(checkbox)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
   })
@@ -257,12 +257,12 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={closedSession}
-        />
+        />,
       )
-      
+
       const checkbox = screen.getByLabelText('a-lið 10. gr. sml nr. 88/2008')
       fireEvent.click(checkbox)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
@@ -276,12 +276,12 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={closedSession}
-        />
+        />,
       )
-      
+
       const checkbox = screen.getByLabelText('a-lið 10. gr. sml nr. 88/2008')
       fireEvent.click(checkbox)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
@@ -298,12 +298,12 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={closedSession}
-        />
+        />,
       )
-      
+
       const checkboxA = screen.getByLabelText('a-lið 10. gr. sml nr. 88/2008')
       const checkboxB = screen.getByLabelText('b-lið 10. gr. sml nr. 88/2008')
-      
+
       expect(checkboxA).toBeChecked()
       expect(checkboxB).toBeChecked()
     })
@@ -313,18 +313,18 @@ describe('CourtSessionAccordionItem', () => {
     it('should update attendees on change', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const input = screen.getByTestId('courtAttendees')
-      
+
       fireEvent.change(input, { target: { value: 'New attendees' } })
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
     it('should persist attendees on blur', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const input = screen.getByTestId('courtAttendees')
-      
+
       fireEvent.blur(input, { target: { value: 'Persisted attendees' } })
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
   })
@@ -335,15 +335,15 @@ describe('CourtSessionAccordionItem', () => {
         id: 'doc-1',
         name: 'New Document',
       })
-      
+
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       const input = screen.getByPlaceholderText('Skrá inn heiti á skjali hér')
       const button = screen.getByText('Bæta við skjali')
-      
+
       fireEvent.change(input, { target: { value: 'New Document' } })
       fireEvent.click(button)
-      
+
       await waitFor(() => {
         expect(mockCourtDocumentCreate).toHaveBeenCalledWith({
           caseId: 'case-1',
@@ -355,15 +355,15 @@ describe('CourtSessionAccordionItem', () => {
 
     it('should not add document if creation fails', async () => {
       mockCourtDocumentCreate.mockResolvedValue(null)
-      
+
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       const input = screen.getByPlaceholderText('Skrá inn heiti á skjali hér')
       const button = screen.getByText('Bæta við skjali')
-      
+
       fireEvent.change(input, { target: { value: 'Failed Document' } })
       fireEvent.click(button)
-      
+
       await waitFor(() => {
         expect(mockCourtDocumentCreate).toHaveBeenCalled()
       })
@@ -382,29 +382,29 @@ describe('CourtSessionAccordionItem', () => {
         ...baseWorkingCase,
         courtSessions: [sessionWithFiles],
       }
-      
+
       mockCourtDocumentDelete.mockResolvedValue(true)
-      
+
       render(
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithFiles}
           workingCase={caseWithFiles}
-        />
+        />,
       )
-      
+
       // Deletion would be triggered through EditableCaseFile component
       expect(mockSetWorkingCase).toBeDefined()
     })
 
     it('should not delete file if deletion fails', async () => {
       mockCourtDocumentDelete.mockResolvedValue(false)
-      
+
       const fileToDelete: CourtDocumentResponse = {
         id: 'doc-1',
         name: 'Document',
       }
-      
+
       // Test would require triggering deletion through UI
       expect(mockCourtDocumentDelete).toBeDefined()
     })
@@ -418,14 +418,14 @@ describe('CourtSessionAccordionItem', () => {
         ...baseCourtSession,
         filedDocuments: [file],
       }
-      
+
       render(
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithFiles}
-        />
+        />,
       )
-      
+
       // Renaming would be triggered through EditableCaseFile component
       expect(mockCourtDocumentUpdate).toBeDefined()
     })
@@ -433,7 +433,7 @@ describe('CourtSessionAccordionItem', () => {
     it('should not rename file if name is empty', () => {
       // Test the handleRename function logic
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       // The function checks for empty names and returns early
       expect(mockCourtDocumentUpdate).toBeDefined()
     })
@@ -453,15 +453,15 @@ describe('CourtSessionAccordionItem', () => {
         ...baseWorkingCase,
         courtSessions: [sessionWithFiles],
       }
-      
+
       render(
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithFiles}
           workingCase={caseWithFiles}
-        />
+        />,
       )
-      
+
       // Reordering would be triggered through Reorder.Group component
       expect(mockCourtDocumentUpdate).toBeDefined()
     })
@@ -476,14 +476,14 @@ describe('CourtSessionAccordionItem', () => {
         isConfirmed: true,
         filedDocuments: files,
       }
-      
+
       render(
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={confirmedSession}
-        />
+        />,
       )
-      
+
       // Reordering should be prevented when confirmed
       expect(confirmedSession.isConfirmed).toBe(true)
     })
@@ -500,26 +500,26 @@ describe('CourtSessionAccordionItem', () => {
       const session2 = {
         ...baseCourtSession,
         id: 'session-2',
-        filedDocuments: [
-          { id: 'doc-3', name: 'File 3' },
-        ],
+        filedDocuments: [{ id: 'doc-3', name: 'File 3' }],
       }
       const caseWithMultipleSessions = {
         ...baseWorkingCase,
         courtSessions: [session1, session2],
       }
-      
+
       render(
         <CourtSessionAccordionItem
           {...defaultProps}
           index={1}
           courtSession={session2}
           workingCase={caseWithMultipleSessions}
-        />
+        />,
       )
-      
+
       // Should show "Skjöl málsins nr. 1-2 liggja frammi"
-      expect(screen.getByText('Skjöl málsins nr. 1-2 liggja frammi')).toBeInTheDocument()
+      expect(
+        screen.getByText('Skjöl málsins nr. 1-2 liggja frammi'),
+      ).toBeInTheDocument()
     })
   })
 
@@ -533,30 +533,30 @@ describe('CourtSessionAccordionItem', () => {
         ...baseWorkingCase,
         unfiledCourtDocuments: [unfiledDoc],
       }
-      
+
       mockCourtDocumentFileInSession.mockResolvedValue({
         id: 'doc-unfiled',
         name: 'Unfiled Document',
       })
-      
+
       render(
         <CourtSessionAccordionItem
           {...defaultProps}
           workingCase={caseWithUnfiled}
-        />
+        />,
       )
-      
+
       // Open accordion for unfiled documents
       const accordionButton = screen.getByText(/Önnur skjöl/)
       fireEvent.click(accordionButton)
-      
+
       await waitFor(() => {
         expect(screen.getByText('Unfiled Document')).toBeInTheDocument()
       })
-      
+
       const fileButton = screen.getByText('Leggja fram')
       fireEvent.click(fileButton)
-      
+
       await waitFor(() => {
         expect(mockCourtDocumentFileInSession).toHaveBeenCalledWith({
           caseId: 'case-1',
@@ -575,25 +575,25 @@ describe('CourtSessionAccordionItem', () => {
         ...baseWorkingCase,
         unfiledCourtDocuments: [unfiledDoc],
       }
-      
+
       mockCourtDocumentFileInSession.mockResolvedValue(null)
-      
+
       render(
         <CourtSessionAccordionItem
           {...defaultProps}
           workingCase={caseWithUnfiled}
-        />
+        />,
       )
-      
+
       // Open accordion and click file button
       const accordionButton = screen.getByText(/Önnur skjöl/)
       fireEvent.click(accordionButton)
-      
+
       await waitFor(() => {
         const fileButton = screen.getByText('Leggja fram')
         fireEvent.click(fileButton)
       })
-      
+
       await waitFor(() => {
         expect(mockCourtDocumentFileInSession).toHaveBeenCalled()
       })
@@ -604,17 +604,17 @@ describe('CourtSessionAccordionItem', () => {
         ...baseWorkingCase,
         unfiledCourtDocuments: [],
       }
-      
+
       render(
         <CourtSessionAccordionItem
           {...defaultProps}
           workingCase={caseWithNoUnfiled}
-        />
+        />,
       )
-      
+
       const accordionButton = screen.getByText(/Önnur skjöl/)
       fireEvent.click(accordionButton)
-      
+
       await waitFor(() => {
         expect(screen.getByText('Engin óþingmerkt skjöl')).toBeInTheDocument()
       })
@@ -625,28 +625,28 @@ describe('CourtSessionAccordionItem', () => {
     it('should update entries on change', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const input = screen.getByTestId('entries')
-      
+
       fireEvent.change(input, { target: { value: 'New entries' } })
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
     it('should clear error message on change', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const input = screen.getByTestId('entries')
-      
+
       fireEvent.blur(input, { target: { value: '' } })
       fireEvent.change(input, { target: { value: 'Valid entries' } })
-      
+
       expect(input).not.toHaveClass('hasError')
     })
 
     it('should persist entries on blur', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const input = screen.getByTestId('entries')
-      
+
       fireEvent.blur(input, { target: { value: 'Persisted entries' } })
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
   })
@@ -655,27 +655,27 @@ describe('CourtSessionAccordionItem', () => {
     it('should select NONE ruling type', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const radio = screen.getByLabelText('Nei')
-      
+
       fireEvent.click(radio)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
     it('should select JUDGEMENT ruling type', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const radio = screen.getByLabelText('Dómur kveðinn upp')
-      
+
       fireEvent.click(radio)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
     it('should select ORDER ruling type', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const radio = screen.getByLabelText('Úrskurður kveðinn upp')
-      
+
       fireEvent.click(radio)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
@@ -688,9 +688,9 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithJudgement}
-        />
+        />,
       )
-      
+
       expect(screen.getByTestId('ruling')).toBeInTheDocument()
       expect(screen.getByText('Dómsorð')).toBeInTheDocument()
     })
@@ -704,16 +704,16 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithOrder}
-        />
+        />,
       )
-      
+
       expect(screen.getByTestId('ruling')).toBeInTheDocument()
       expect(screen.getByText('Úrskurðarorð')).toBeInTheDocument()
     })
 
     it('should hide ruling input when NONE is selected', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       expect(screen.queryByTestId('ruling')).not.toBeInTheDocument()
     })
 
@@ -727,12 +727,12 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithRuling}
-        />
+        />,
       )
-      
+
       const radio = screen.getByLabelText('Nei')
       fireEvent.click(radio)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
   })
@@ -747,12 +747,12 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithJudgement}
-        />
+        />,
       )
-      
+
       const input = screen.getByTestId('ruling')
       fireEvent.change(input, { target: { value: 'New ruling' } })
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
@@ -765,13 +765,13 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithJudgement}
-        />
+        />,
       )
-      
+
       const input = screen.getByTestId('ruling')
       fireEvent.blur(input, { target: { value: '' } })
       fireEvent.change(input, { target: { value: 'Valid ruling' } })
-      
+
       expect(input).not.toHaveClass('hasError')
     })
 
@@ -784,12 +784,12 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithJudgement}
-        />
+        />,
       )
-      
+
       const input = screen.getByTestId('ruling')
       fireEvent.blur(input, { target: { value: 'Persisted ruling' } })
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
   })
@@ -804,9 +804,9 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithJudgement}
-        />
+        />,
       )
-      
+
       expect(screen.getByTestId('closingEntries')).toBeInTheDocument()
     })
 
@@ -819,9 +819,9 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithOrder}
-        />
+        />,
       )
-      
+
       expect(screen.getByTestId('closingEntries')).toBeInTheDocument()
     })
 
@@ -834,12 +834,12 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithJudgement}
-        />
+        />,
       )
-      
+
       const input = screen.getByTestId('closingEntries')
       fireEvent.change(input, { target: { value: 'New closing entries' } })
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
@@ -852,12 +852,12 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithJudgement}
-        />
+        />,
       )
-      
+
       const input = screen.getByTestId('closingEntries')
       fireEvent.blur(input, { target: { value: 'Persisted closing' } })
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
   })
@@ -866,9 +866,9 @@ describe('CourtSessionAccordionItem', () => {
     it('should enable witness checkbox', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
       const checkbox = screen.getByLabelText('Skrá vott að þinghaldi')
-      
+
       fireEvent.click(checkbox)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
 
@@ -881,16 +881,16 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithWitness}
-        />
+        />,
       )
-      
+
       const select = screen.getByLabelText('Veldu vott')
       expect(select).not.toBeDisabled()
     })
 
     it('should disable witness select when checkbox is unchecked', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       const select = screen.getByLabelText('Veldu vott')
       expect(select).toBeDisabled()
     })
@@ -904,9 +904,9 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithWitness}
-        />
+        />,
       )
-      
+
       // Selecting a witness would trigger handleChangeWitness
       expect(mockSetWorkingCase).toBeDefined()
     })
@@ -920,9 +920,9 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithWitness}
-        />
+        />,
       )
-      
+
       // Both assistants and registrars should be available
       expect(screen.getByLabelText('Veldu vott')).toBeInTheDocument()
     })
@@ -938,12 +938,12 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithWitness}
-        />
+        />,
       )
-      
+
       const checkbox = screen.getByLabelText('Skrá vott að þinghaldi')
       fireEvent.click(checkbox)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
     })
   })
@@ -951,14 +951,14 @@ describe('CourtSessionAccordionItem', () => {
   describe('End Time Handling', () => {
     it('should update end time', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       // End time update would be triggered through DateTime component
       expect(mockSetWorkingCase).toBeDefined()
     })
 
     it('should show error if end time is before start time', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       // This would require simulating DateTime change with invalid time
       expect(toast.error).toBeDefined()
     })
@@ -972,9 +972,9 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithoutEnd}
-        />
+        />,
       )
-      
+
       // Component should render with startDate as default
       expect(screen.getByText('Þinghald 1')).toBeInTheDocument()
     })
@@ -983,7 +983,7 @@ describe('CourtSessionAccordionItem', () => {
   describe('Confirm Button', () => {
     it('should render confirm button', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       expect(screen.getByText(/Staðfesta þingbók/)).toBeInTheDocument()
     })
 
@@ -993,24 +993,24 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={confirmedSession}
-        />
+        />,
       )
-      
+
       expect(screen.getByText(/Leiðrétta þingbók/)).toBeInTheDocument()
     })
 
     it('should call onConfirmClick when clicked', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       const button = screen.getByText(/Staðfesta þingbók/)
       fireEvent.click(button)
-      
+
       expect(mockOnConfirmClick).toHaveBeenCalled()
     })
 
     it('should show checkmark icon when not confirmed', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       const button = screen.getByText(/Staðfesta þingbók/)
       expect(button).toBeInTheDocument()
     })
@@ -1021,9 +1021,9 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={confirmedSession}
-        />
+        />,
       )
-      
+
       const button = screen.getByText(/Leiðrétta þingbók/)
       expect(button).toBeInTheDocument()
     })
@@ -1032,16 +1032,16 @@ describe('CourtSessionAccordionItem', () => {
   describe('Accordion Toggle', () => {
     it('should call onToggle when accordion is clicked', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       const accordionHeader = screen.getByText('Þinghald 1')
       fireEvent.click(accordionHeader)
-      
+
       expect(mockOnToggle).toHaveBeenCalled()
     })
 
     it('should expand when isExpanded is true', () => {
       render(<CourtSessionAccordionItem {...defaultProps} isExpanded={true} />)
-      
+
       expect(screen.getByTestId('courtLocation')).toBeVisible()
     })
   })
@@ -1059,9 +1059,9 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithNulls as any}
-        />
+        />,
       )
-      
+
       expect(screen.getByTestId('courtLocation')).toHaveValue('')
       expect(screen.getByTestId('courtAttendees')).toHaveValue('')
       expect(screen.getByTestId('entries')).toHaveValue('')
@@ -1076,9 +1076,9 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithoutDocs}
-        />
+        />,
       )
-      
+
       expect(screen.getByText('Þinghald 1')).toBeInTheDocument()
     })
 
@@ -1091,9 +1091,9 @@ describe('CourtSessionAccordionItem', () => {
         <CourtSessionAccordionItem
           {...defaultProps}
           workingCase={caseWithoutCourt as any}
-        />
+        />,
       )
-      
+
       expect(screen.getByText('Þinghald 1')).toBeInTheDocument()
     })
 
@@ -1103,9 +1103,9 @@ describe('CourtSessionAccordionItem', () => {
         registrars: [],
         loading: true,
       })
-      
+
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       expect(screen.getByText('Þinghald 1')).toBeInTheDocument()
     })
 
@@ -1119,9 +1119,9 @@ describe('CourtSessionAccordionItem', () => {
           isLoading: true,
         },
       })
-      
+
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       expect(screen.getByText('Þinghald 1')).toBeInTheDocument()
     })
   })
@@ -1146,22 +1146,24 @@ describe('CourtSessionAccordionItem', () => {
         ...baseWorkingCase,
         courtSessions: [session1, session2],
       }
-      
+
       render(
         <CourtSessionAccordionItem
           {...defaultProps}
           index={1}
           courtSession={session2}
           workingCase={caseWithMultipleSessions}
-        />
+        />,
       )
-      
-      expect(screen.getByText('Skjöl málsins nr. 1-3 liggja frammi')).toBeInTheDocument()
+
+      expect(
+        screen.getByText('Skjöl málsins nr. 1-3 liggja frammi'),
+      ).toBeInTheDocument()
     })
 
     it('should not show previous documents message for first session', () => {
       render(<CourtSessionAccordionItem {...defaultProps} index={0} />)
-      
+
       expect(screen.queryByText(/Skjöl málsins nr\./)).not.toBeInTheDocument()
     })
 
@@ -1190,17 +1192,19 @@ describe('CourtSessionAccordionItem', () => {
         ...baseWorkingCase,
         courtSessions: sessions,
       }
-      
+
       render(
         <CourtSessionAccordionItem
           {...defaultProps}
           index={2}
           courtSession={sessions[2]}
           workingCase={caseWithThreeSessions}
-        />
+        />,
       )
-      
-      expect(screen.getByText('Skjöl málsins nr. 1-3 liggja frammi')).toBeInTheDocument()
+
+      expect(
+        screen.getByText('Skjöl málsins nr. 1-3 liggja frammi'),
+      ).toBeInTheDocument()
     })
   })
 
@@ -1210,66 +1214,68 @@ describe('CourtSessionAccordionItem', () => {
         id: 'new-doc',
         name: 'New Document',
       }
-      
+
       mockCourtDocumentCreate.mockResolvedValue(newDoc)
       mockCourtDocumentFileInSession.mockResolvedValue(newDoc)
-      
+
       const caseWithUnfiled = {
         ...baseWorkingCase,
         unfiledCourtDocuments: [],
       }
-      
+
       render(
         <CourtSessionAccordionItem
           {...defaultProps}
           workingCase={caseWithUnfiled}
-        />
+        />,
       )
-      
+
       // Add document
       const input = screen.getByPlaceholderText('Skrá inn heiti á skjali hér')
       const button = screen.getByText('Bæta við skjali')
-      
+
       fireEvent.change(input, { target: { value: 'New Document' } })
       fireEvent.click(button)
-      
+
       await waitFor(() => {
         expect(mockCourtDocumentCreate).toHaveBeenCalled()
       })
     })
 
     it('should update state correctly when switching ruling types', () => {
-      const { rerender } = render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+      const { rerender } = render(
+        <CourtSessionAccordionItem {...defaultProps} />,
+      )
+
       // Select JUDGEMENT
       const judgementRadio = screen.getByLabelText('Dómur kveðinn upp')
       fireEvent.click(judgementRadio)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalled()
-      
+
       // Now select NONE
       const noneRadio = screen.getByLabelText('Nei')
       fireEvent.click(noneRadio)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalledTimes(2)
     })
 
     it('should persist multiple field changes in sequence', () => {
       render(<CourtSessionAccordionItem {...defaultProps} />)
-      
+
       const locationInput = screen.getByTestId('courtLocation')
       const attendeesInput = screen.getByTestId('courtAttendees')
       const entriesInput = screen.getByTestId('entries')
-      
+
       fireEvent.change(locationInput, { target: { value: 'New location' } })
       fireEvent.blur(locationInput)
-      
+
       fireEvent.change(attendeesInput, { target: { value: 'New attendees' } })
       fireEvent.blur(attendeesInput)
-      
+
       fireEvent.change(entriesInput, { target: { value: 'New entries' } })
       fireEvent.blur(entriesInput)
-      
+
       expect(mockSetWorkingCase).toHaveBeenCalledTimes(6) // 3 changes + 3 blurs
     })
   })
@@ -1278,32 +1284,30 @@ describe('CourtSessionAccordionItem', () => {
     it('should memoize filed documents correctly', () => {
       const sessionWithDocs = {
         ...baseCourtSession,
-        filedDocuments: [
-          { id: 'doc-1', name: 'File 1' },
-        ],
+        filedDocuments: [{ id: 'doc-1', name: 'File 1' }],
       }
       const caseWithDocs = {
         ...baseWorkingCase,
         courtSessions: [sessionWithDocs],
       }
-      
+
       const { rerender } = render(
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithDocs}
           workingCase={caseWithDocs}
-        />
+        />,
       )
-      
+
       // Rerender with same props
       rerender(
         <CourtSessionAccordionItem
           {...defaultProps}
           courtSession={sessionWithDocs}
           workingCase={caseWithDocs}
-        />
+        />,
       )
-      
+
       // Filed documents should be memoized
       expect(screen.getByText('File 1')).toBeInTheDocument()
     })
