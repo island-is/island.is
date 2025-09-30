@@ -36,6 +36,13 @@ const Bloodtype: React.FC = () => {
           variant="utility"
           icon="open"
         />,
+        <LinkButton
+          key={'bloodbank-page-link'}
+          to={formatMessage(messages.contactBloodbankLink)}
+          text={formatMessage(messages.contactBloodbank)}
+          variant="utility"
+          icon="open"
+        />,
       ]}
     >
       {!loading && !bloodType && !error && (
