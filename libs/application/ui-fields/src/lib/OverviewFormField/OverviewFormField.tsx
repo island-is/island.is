@@ -217,7 +217,9 @@ export const OverviewFormField = ({
                 ).join(', ')
               : formatTextWithLocale(value, application, locale, formatMessage)
 
-            const renderedValue = item.boldValueText ? `**${valueStr}**` : valueStr
+            const renderedValue = item.boldValueText
+              ? `**${valueStr}**`
+              : valueStr
             return (
               <Markdown key={`${value}-${index}`}>
                 {`${prefix}${renderedValue}`}
