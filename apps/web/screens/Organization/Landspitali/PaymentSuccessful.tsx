@@ -72,7 +72,10 @@ const Wrapper = ({
           activeLocale === 'is' ? 3 : 4,
         ),
       }}
-      pageTitle={n('pageTitle', 'Greidsla tokst')}
+      pageTitle={n(
+        'pageTitle',
+        activeLocale === 'is' ? 'Greiðsla tókst' : 'Payment successful',
+      )}
       isSubpage={true}
     >
       {children}
