@@ -157,33 +157,30 @@ export const OverviewFormField = ({
       )
     }
 
+    const createFormattedKeyTextWithIndex = (
+      item: KeyValueItem,
+      index?: number,
+    ): string => {
+      const keyText = (Array.isArray(item?.keyText) && index !== undefined)
+      ? item?.keyText?.[index] ?? '' 
+      : item?.keyText ?? ''
+      
+      const formattedKey = formatTextWithLocale(
+        keyText,
+        application,
+        locale,
+        formatMessage,
+      )
+      
+      return `${item?.boldValueText ? '**' : ''}${formattedKey}: ${item?.boldValueText ? '**' : ''}`
+    }
+    
     const keyTextValue = formatTextWithLocale(
       item?.keyText ?? '',
       application,
       locale,
       formatMessage,
     )
-
-    const createFormattedKeyText = (
-      item: KeyValueItem,
-      index: number,
-    ): string => {
-      if (Array.isArray(item?.keyText)) {
-        return `${item?.boldValueText ? '**' : ''}${formatTextWithLocale(
-          item?.keyText?.[index] ?? '',
-          application,
-          locale,
-          formatMessage,
-        )}: ${item?.boldValueText ? '**' : ''}`
-      } else {
-        return `${item?.boldValueText ? '**' : ''}${formatTextWithLocale(
-          item?.keyText ?? '',
-          application,
-          locale,
-          formatMessage,
-        )}: ${item?.boldValueText ? '**' : ''}`
-      }
-    }
 
     return (
       <GridColumn key={i} span={span}>
@@ -195,7 +192,7 @@ export const OverviewFormField = ({
         {!item.inlineKeyText && (
           <Markdown>
             {`#### **${
-              Array.isArray(keyTextValue) //H5 markdown and bold
+              Array.isArray(keyTextValue) //H4 markdown and bold
                 ? keyTextValue.join(', ')
                 : keyTextValue
             }**`}
@@ -205,7 +202,7 @@ export const OverviewFormField = ({
           item.valueText.map((value, index) => {
             const prefix =
               item.inlineKeyText && Array.isArray(item?.keyText)
-                ? createFormattedKeyText(item, index)
+                ? createFormattedKeyTextWithIndex(item, index)
                 : ''
 
             const valueStr = Array.isArray(value)
