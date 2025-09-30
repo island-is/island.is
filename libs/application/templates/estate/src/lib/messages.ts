@@ -923,6 +923,26 @@ export const m = defineMessages({
     defaultMessage: 'Beiðni móttekin',
     description: '',
   },
+  privateDivisionDoneTitle: {
+    id: 'es.application:privateDivisionDoneTitle',
+    defaultMessage: 'Beiðni um einkaskipti móttekin',
+    description: '',
+  },
+  undividedEstateDoneTitle: {
+    id: 'es.application:undividedEstateDoneTitle',
+    defaultMessage: 'Beiðni um leyfi til setu í óskiptu búi móttekin',
+    description: '',
+  },
+  estateWithoutAssetsDoneTitle: {
+    id: 'es.application:estateWithoutAssetsDoneTitle',
+    defaultMessage: 'Yfirlýsing um eignaleysi dánarbús móttekin',
+    description: '',
+  },
+  officialDivisionDoneTitle: {
+    id: 'es.application:officialDivisionDoneTitle',
+    defaultMessage: 'Yfirlýsing um opinber skipti móttekin',
+    description: '',
+  },
   divisionOfEstateDoneSubtitle: {
     id: 'es.application:divisionOfEstateDoneSubtitle#markdown',
     defaultMessage:
