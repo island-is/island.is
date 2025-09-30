@@ -2,7 +2,6 @@ mutation FileCourtDocumentInCourtSession(
   $input: FileCourtDocumentInCourtSessionInput!
 ) {
   fileCourtDocumentInCourtSession(input: $input) {
-    created
     caseFileId
     caseId
     courtSessionId
