@@ -95,6 +95,7 @@ export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
     variables: {
       input: {
         namespace: 'Mínar síður Ísland.is',
+        lang: 'is-IS', // No translation needed.
       },
     },
   })
