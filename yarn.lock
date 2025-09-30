@@ -23683,7 +23683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^2.0.0, clsx@npm:^2.1.0, clsx@npm:^2.1.1":
+"clsx@npm:^2.0.0, clsx@npm:^2.1.1":
   version: 2.1.1
   resolution: "clsx@npm:2.1.1"
   checksum: 10/cdfb57fa6c7649bbff98d9028c2f0de2f91c86f551179541cf784b1cfdc1562dcb951955f46d54d930a3879931a980e32a46b598acaea274728dbe068deca919
@@ -33810,7 +33810,7 @@ __metadata:
     react-alice-carousel: "npm:1.19.3"
     react-animate-height: "npm:3.1.2"
     react-csv: "npm:2.0.3"
-    react-datepicker: "npm:^6.9.0"
+    react-datepicker: "npm:6.1.0"
     react-dom: "npm:18.3.1"
     react-dropzone: "npm:11.7.1"
     react-focus-lock: "npm:2.9.4"
@@ -43311,19 +43311,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-datepicker@npm:^6.9.0":
-  version: 6.9.0
-  resolution: "react-datepicker@npm:6.9.0"
+"react-datepicker@npm:6.1.0":
+  version: 6.1.0
+  resolution: "react-datepicker@npm:6.1.0"
   dependencies:
     "@floating-ui/react": "npm:^0.26.2"
-    clsx: "npm:^2.1.0"
+    classnames: "npm:^2.2.6"
     date-fns: "npm:^3.3.1"
     prop-types: "npm:^15.7.2"
     react-onclickoutside: "npm:^6.13.0"
   peerDependencies:
     react: ^16.9.0 || ^17 || ^18
     react-dom: ^16.9.0 || ^17 || ^18
-  checksum: 10/7effd81e0e00e77d691c552bed77e2b08f7abc377528ae67727de9cc08eb05f7ec021f3daa40748dd7d32b12dd6cf2833eac0cbc2d9f3026fa8c606100752d32
+  checksum: 10/4e3147808e962c9643f6ef777904cd67cfe4ad3ae937f78746672ff961ffeaa8dc849307e03d6925111db03f66f40fe3622ed147f0b0991c678cc7be58807b7f
   languageName: node
   linkType: hard
 
