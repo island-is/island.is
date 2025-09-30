@@ -614,7 +614,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           (workingCase.courtSessions &&
                             workingCase.courtSessions
                               ?.slice(0, index)
-                              .flatMap((a) => a.filedDocuments).length + i) ||
+                              .flatMap((a) => a.filedDocuments || []).length +
+                              i) ||
                           0
 
                         return (
