@@ -318,6 +318,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                       inMemoryOf: data.inMemoryOf,
                       recipientEmail: data.recipientEmail,
                       sendType: data.sendType,
+                      cancelUrl: window.location.href,
                     },
                   },
                 })
