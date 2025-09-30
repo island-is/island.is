@@ -24,4 +24,4 @@ const CASE_STATUSES = [
   'UNKNOWN', // Unknown or unrecognized status
 ] as const
 
-export type CaseStatus = typeof CASE_STATUSES[number];
+export type CaseStatus = typeof CASE_STATUSES[number]

@@ -13,12 +13,12 @@ const LawAndOrderOverview = () => {
   useNamespaces('sp.law-and-order')
   const { formatMessage } = useLocale()
   return (
-      <IntroWrapper
-        title={m.overview}
-        intro={m.lawAndOrderDescription}
-        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
-      >
+    <IntroWrapper
+      title={m.overview}
+      intro={m.lawAndOrderDescription}
+      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
+      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+    >
       <Text variant="eyebrow" color="purple400" marginBottom={2}>
         {formatMessage(messages.myData)}
       </Text>

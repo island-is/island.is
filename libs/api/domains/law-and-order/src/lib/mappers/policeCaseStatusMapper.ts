@@ -3,60 +3,65 @@ import { CaseStatus } from '../models/police-cases/caseStatus.model';
 import { POLICE_CASE_STATUS_INFO } from '../types/constants';
 import { PoliceCaseStatusValue, PoliceCaseStatusValueGroup } from '../types/enums';
 
-export const mapPoliceCaseStatusValue = (status?: string): PoliceCaseStatusValue => {
-  if (!status) return PoliceCaseStatusValue.UNKNOWN;
+export const mapPoliceCaseStatusValue = (
+  status?: string,
+): PoliceCaseStatusValue => {
+  if (!status) return PoliceCaseStatusValue.UNKNOWN
 
   switch (status) {
     case 'Mál móttekið':
-      return PoliceCaseStatusValue.RECEIVED;
+      return PoliceCaseStatusValue.RECEIVED
     case 'Aftur í rannsókn':
-      return PoliceCaseStatusValue.BACK_TO_INVESTIGATION;
+      return PoliceCaseStatusValue.BACK_TO_INVESTIGATION
     case 'Í rannsókn':
-      return PoliceCaseStatusValue.UNDER_INVESTIGATION;
+      return PoliceCaseStatusValue.UNDER_INVESTIGATION
     case 'Mál í bið':
-      return PoliceCaseStatusValue.CASE_ON_HOLD;
+      return PoliceCaseStatusValue.CASE_ON_HOLD
     case 'Mál sent til annars embættis':
-      return PoliceCaseStatusValue.CASE_SENT_TO_OTHER_DEPARTMENT;
+      return PoliceCaseStatusValue.CASE_SENT_TO_OTHER_DEPARTMENT
     case 'Yfirferð ákæranda':
-      return PoliceCaseStatusValue.PROSECUTOR_REVIEW;
+      return PoliceCaseStatusValue.PROSECUTOR_REVIEW
     case 'Rannsókn hætt':
-      return PoliceCaseStatusValue.INVESTIGATION_STOPPED;
+      return PoliceCaseStatusValue.INVESTIGATION_STOPPED
     case 'Mál fellt niður':
-      return PoliceCaseStatusValue.CASE_DISMISSED;
+      return PoliceCaseStatusValue.CASE_DISMISSED
     case 'Ákvörðun kærð':
-      return PoliceCaseStatusValue.DECISION_APPEALED;
+      return PoliceCaseStatusValue.DECISION_APPEALED
     case 'Ákvörðun staðfest':
-      return PoliceCaseStatusValue.DECISION_CONFIRMED;
+      return PoliceCaseStatusValue.DECISION_CONFIRMED
     case 'Ákvörðun felld úr gildi':
-      return PoliceCaseStatusValue.DECISION_OVERTURNED;
+      return PoliceCaseStatusValue.DECISION_OVERTURNED
     case 'Máli lokið':
-      return PoliceCaseStatusValue.CASE_CLOSED;
+      return PoliceCaseStatusValue.CASE_CLOSED
     case 'Fallið frá saksókn':
-      return PoliceCaseStatusValue.PROSECUTION_DROPPED;
+      return PoliceCaseStatusValue.PROSECUTION_DROPPED
     case 'Yfirferð héraðssaksóknara':
-      return PoliceCaseStatusValue.DISTRICT_PROSECUTOR_REVIEW;
+      return PoliceCaseStatusValue.DISTRICT_PROSECUTOR_REVIEW
     case 'Ákæra':
-      return PoliceCaseStatusValue.INDICTMENT;
+      return PoliceCaseStatusValue.INDICTMENT
     case 'Þingfesting':
-      return PoliceCaseStatusValue.COURT_SCHEDULING;
+      return PoliceCaseStatusValue.COURT_SCHEDULING
     case 'Dómur birtur':
-      return PoliceCaseStatusValue.RULING_ANNOUNCED;
+      return PoliceCaseStatusValue.RULING_ANNOUNCED
     case 'Málsmeðferð fyrir héraðsdómi':
-      return PoliceCaseStatusValue.DISTRICT_COURT_PROCEEDINGS;
+      return PoliceCaseStatusValue.DISTRICT_COURT_PROCEEDINGS
     case 'Máli lokið með héraðsdómi':
-      return PoliceCaseStatusValue.CLOSED_BY_DISTRICT_COURT;
+      return PoliceCaseStatusValue.CLOSED_BY_DISTRICT_COURT
     case 'Áfrýjun':
-      return PoliceCaseStatusValue.APPEAL;
+      return PoliceCaseStatusValue.APPEAL
     case 'Sáttarmiðlun':
-      return PoliceCaseStatusValue.MEDIATION;
+      return PoliceCaseStatusValue.MEDIATION
     case 'Beiðni um áfrýjunarleyfi sent til hæstaréttar':
-      return PoliceCaseStatusValue.SUPREME_COURT_APPEAL_REQUEST;
+      return PoliceCaseStatusValue.SUPREME_COURT_APPEAL_REQUEST
     default:
-      return PoliceCaseStatusValue.UNKNOWN;
+      return PoliceCaseStatusValue.UNKNOWN
   }
-};
+}
 
-export const mapPoliceCaseStatus = (statusValue: PoliceCaseStatusValue, formatMessage: FormatMessage): CaseStatus => {
+export const mapPoliceCaseStatus = (
+  statusValue: PoliceCaseStatusValue,
+  formatMessage: FormatMessage,
+): CaseStatus => {
   if (statusValue === PoliceCaseStatusValue.UNKNOWN) {
     return {
       value: statusValue,
@@ -70,6 +75,8 @@ export const mapPoliceCaseStatus = (statusValue: PoliceCaseStatusValue, formatMe
     value: statusValue,
     statusGroup: group,
     headerDisplayString: header ? formatMessage(header) : undefined,
-    descriptionDisplayString: description ? formatMessage(description) : undefined,
+    descriptionDisplayString: description
+      ? formatMessage(description)
+      : undefined,
   }
-};
+}

@@ -34,16 +34,16 @@ const CourtCaseDetail = () => {
   const courtCase = data?.lawAndOrderCourtCaseDetail
 
   return (
-      <IntroWrapper
-        loading={loading}
-        title={
-          courtCase?.data?.caseNumberTitle ??
-          formatMessage(messages.courtCaseNumberNotRegistered)
-        }
-        intro={messages.courtCasesDescription}
-        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
-      >
+    <IntroWrapper
+      loading={loading}
+      title={
+        courtCase?.data?.caseNumberTitle ??
+        formatMessage(messages.courtCaseNumberNotRegistered)
+      }
+      intro={messages.courtCasesDescription}
+      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
+      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+    >
       <Box marginBottom={3} display="flex" flexWrap="wrap">
         {data?.lawAndOrderCourtCaseDetail && !loading && (
           <Box paddingRight={2} marginBottom={[1]}>
@@ -79,7 +79,7 @@ const CourtCaseDetail = () => {
             imgSrc="./assets/images/sofa.svg"
           />
         )}
-      </IntroWrapper>
+    </IntroWrapper>
   )
 }
 export default CourtCaseDetail

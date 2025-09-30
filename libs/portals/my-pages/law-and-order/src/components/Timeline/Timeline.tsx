@@ -15,7 +15,7 @@ import { ProgressBar, useIsMobile } from '@island.is/portals/my-pages/core'
 interface Props {
   children?: Array<ReactElement>
   title?: string
-  progress?: number,
+  progress?: number
   className?: string
   tooltipText?: string
   box?: Omit<UseBoxStylesProps, 'component'>

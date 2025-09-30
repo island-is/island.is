@@ -15,7 +15,10 @@ export class PoliceCasesService {
     private readonly intlService: IntlService,
   ) {}
 
-  async getCases(user: User, locale: Locale): Promise<PaginantedCaseCollection> {
+  async getCases(
+    user: User,
+    locale: Locale,
+  ): Promise<PaginantedCaseCollection> {
     const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
 
     const cases = await this.policeApi.getCases(user)
@@ -32,7 +35,10 @@ export class PoliceCasesService {
     }
 
     return {
-      data: cases.map(item => mapPoliceCase(item, formatMessage)).filter(isDefined) ?? [],
+      data:
+        cases
+          .map((item) => mapPoliceCase(item, formatMessage))
+          .filter(isDefined) ?? [],
       totalCount: cases.length,
       pageInfo: {
         //temporary

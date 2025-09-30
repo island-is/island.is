@@ -15,5 +15,8 @@ export interface PoliceCaseStatusInfo{
 };
 
 export type PoliceCaseStatusInfoMap = {
-  [K in Exclude<PoliceCaseStatusValue, PoliceCaseStatusValue.UNKNOWN>]: PoliceCaseStatusInfo;
-};
+  [K in Exclude<
+    PoliceCaseStatusValue,
+    PoliceCaseStatusValue.UNKNOWN
+  >]: PoliceCaseStatusInfo
+}
