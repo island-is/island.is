@@ -1,6 +1,14 @@
 mutation CreateCourtDocument($input: CreateCourtDocumentInput!) {
   createCourtDocument(input: $input) {
-    id
+    caseFileId
+    caseId
+    courtSessionId
     created
+    documentOrder
+    documentType
+    generatedPdfUri
+    id
+    modified
+    name
   }
 }

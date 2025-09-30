@@ -38,10 +38,7 @@ const useCourtDocuments = () => {
           throw new Error()
         }
 
-        return {
-          id: data.createCourtDocument.id,
-          created: data.createCourtDocument.created,
-        }
+        return data.createCourtDocument
       } catch (error) {
         toast.error('Upp kom villa við að búa til þingskjal')
 
@@ -104,11 +101,11 @@ const useCourtDocuments = () => {
           throw new Error()
         }
 
-        return data
+        return data.fileCourtDocumentInCourtSession
       } catch (error) {
         toast.error('Upp kom villa við að leggja fram þingskjal')
 
-        return false
+        return
       }
     },
     [fileCourtDocumentInCourtSessionMutation],
