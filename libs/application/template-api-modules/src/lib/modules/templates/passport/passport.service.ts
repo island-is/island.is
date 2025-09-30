@@ -218,8 +218,8 @@ export class PassportService extends BaseTemplateApiService {
           const expiringChildPassport = fetchedChildPassports?.passports?.find(
             (passport) =>
               passport.expiresWithinNoticeTime &&
-              new Date(passport.expirationDate ?? new Date()) <
-                sixMonthsFromNow, // check that the passport expires after less than 6 months
+              passport.expirationDate &&
+              new Date(passport.expirationDate) < sixMonthsFromNow, // check that the passport expires after less than 6 months
           )
           if (!expiringChildPassport) {
             throw new TemplateApiError(
@@ -227,6 +227,11 @@ export class PassportService extends BaseTemplateApiService {
               400,
             )
           }
+        } else {
+          throw new TemplateApiError(
+            'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að sækja núverandi vegabréf.',
+            400,
+          )
         }
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
           guid: application.id,
