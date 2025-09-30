@@ -146,7 +146,7 @@ export const OverviewFormField = ({
 
     if (!item.keyText && !item.valueText) {
       return (
-        <GridColumn span={span}>
+        <GridColumn key={`renderItems-${i}`} span={span}>
           {item.lineAboveKeyText && (
             <Box paddingBottom={3}>
               <Divider weight="black" thickness="thick" />
