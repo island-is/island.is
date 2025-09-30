@@ -148,7 +148,6 @@ const IndictmentOverview: FC = () => {
     [router, workingCase.id],
   )
 
-  console.log(workingCase.state, workingCase.indictmentRulingDecision)
   return (
     <PageLayout
       workingCase={workingCase}
