@@ -14,6 +14,7 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
+import { MessageService } from '@island.is/judicial-system/message'
 
 import { CaseService, PdfService } from '../../case'
 import { DefendantService } from '../../defendant'
@@ -25,6 +26,7 @@ import { InternalVerdictController } from '../internalVerdict.controller'
 import { VerdictController } from '../verdict.controller'
 import { VerdictService } from '../verdict.service'
 
+jest.mock('@island.is/judicial-system/message')
 jest.mock('../../case/case.service')
 jest.mock('../../police/police.service')
 jest.mock('../../file/file.service')
@@ -42,6 +44,7 @@ export const createTestingVerdictModule = async () => {
     controllers: [VerdictController, InternalVerdictController],
     providers: [
       SharedAuthModule,
+      MessageService,
       CaseService,
       PoliceService,
       FileService,
