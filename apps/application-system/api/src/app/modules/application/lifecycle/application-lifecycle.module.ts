@@ -23,8 +23,8 @@ import {
 } from '@island.is/clients/user-notification'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
-import { NationalRegistryV3ClientConfig } from "@island.is/clients/national-registry-v3";
-import { CompanyRegistryConfig } from "@island.is/clients/rsk/company-registry";
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 
 @Module({
   imports: [
