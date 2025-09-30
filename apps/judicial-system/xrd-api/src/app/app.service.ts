@@ -296,8 +296,10 @@ export class AppService {
         if (deliveredToLawyer) {
           return ServiceStatus.DEFENDER
         }
+        return ServiceStatus.FAILED
       }
-      return ServiceStatus.FAILED
+
+      return undefined
     }
 
     if (updatePoliceDocumentDelivery.deliverySupplements?.appeal_decision) {
