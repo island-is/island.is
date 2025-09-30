@@ -66,8 +66,19 @@ export const partiesDetails = defineMessages({
 export const landlordAndTenantDetails = defineMessages({
   representativeTableTitle: {
     id: 'ra.application:landlordAndTenantDetails.representativeTableTitle',
-    defaultMessage: 'Umboðsaðilar leigusala (ef við á)',
+    defaultMessage: 'Umboðsaðilar leigusala',
     description: 'Representative table title',
+  },
+  representativeTableDescription: {
+    id: 'ra.application:landlordAndTenantDetails.representativeTableDescription',
+    defaultMessage:
+      'Leigusalar geta skráð einn umboðsmann. Umboðsmaður leigusala verður tengiliður leigjanda á meðan leigutíma stendur.',
+    description: 'Representative table description',
+  },
+  representativeTableCheckboxLabel: {
+    id: 'ra.application:landlordAndTenantDetails.representativeTableCheckboxLabel',
+    defaultMessage: 'Bæta við umboðsaðilum leigusala',
+    description: 'Representative table checkbox label',
   },
   representativeLabel: {
     id: 'ra.application:landlordAndTenantDetails.representativeLabel',

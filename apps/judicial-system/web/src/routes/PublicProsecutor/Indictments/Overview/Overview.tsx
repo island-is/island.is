@@ -7,11 +7,15 @@ import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Feature } from '@island.is/judicial-system/types'
+import {
+  Feature,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   BlueBoxWithDate,
+  Conclusion,
   CourtCaseInfo,
   FeatureContext,
   FormContentContainer,
@@ -275,6 +279,21 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
         </Box>
+        {workingCase.courtSessions?.at(-1)?.ruling &&
+          isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+            <Box marginBottom={5} component="section">
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            </Box>
+          )}
         {/* 
         NOTE: Temporarily hidden while list of laws broken is not complete in
         indictment cases
