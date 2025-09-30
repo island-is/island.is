@@ -17,15 +17,20 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  DefendantEventType,
+  EventType,
   isVerdictInfoChanged,
   PoliceFileTypeCode,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
+import { InternalCaseService, PdfService } from '../case'
+import { DefendantService } from '../defendant'
+import { EventLogService } from '../event-log'
 import { FileService } from '../file'
-import { PoliceService } from '../police'
-import { Case, Defendant, Verdict } from '../repository'
+import { PoliceDocumentType, PoliceService } from '../police'
+import { Case, Defendant, DefendantEventLog, Verdict } from '../repository'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
@@ -46,10 +51,15 @@ export class VerdictService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Verdict) private readonly verdictModel: typeof Verdict,
+    private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
+    private readonly defendantService: DefendantService,
+    private readonly eventLogService: EventLogService,
+    @Inject(forwardRef(() => InternalCaseService))
+    private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -325,6 +335,153 @@ export class VerdictService {
     await this.updateVerdict(verdict, createdDocument)
 
     return { delivered: true }
+  }
+
+  private async checkVerdictCertificateDeliveryCompletion(caseIds: string[]) {
+    const latestCases = await this.internalCaseService.getSelectedCases(caseIds)
+    for (const c of latestCases) {
+      const targetDefendants = c.defendants?.filter(
+        (defendant) =>
+          defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+      )
+      const deliveredServiceCertificates = targetDefendants?.filter(
+        (defendant) =>
+          !!DefendantEventLog.getEventLogByEventType(
+            DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+            defendant.eventLogs,
+          ),
+      )
+
+      const user = c.judge
+      if (!user) {
+        this.logger.warn(
+          `Failed to verify verdict service certificate delivery completion for case ${c.id}`,
+          {
+            reason: 'court case user not found',
+          },
+        )
+        continue
+      }
+
+      const targetCount = targetDefendants?.length ?? 0
+      const deliveredCount = deliveredServiceCertificates?.length ?? 0
+      const areAllServiceCertificatesDelivered =
+        targetCount > 0 && deliveredCount === targetCount
+      if (areAllServiceCertificatesDelivered) {
+        await this.eventLogService.createWithUser(
+          EventType.VERDICT_SERVICE_CERTIFICATE_DELIVERY_COMPLETED,
+          c.id,
+          {
+            ...user,
+            created: user.created.toISOString(),
+            modified: user.modified.toISOString(),
+          } as TUser,
+        )
+      }
+    }
+  }
+
+  async deliverVerdictServiceCertificatesToPolice(): Promise<
+    {
+      delivered: boolean
+      caseId: string
+      defendantId: string
+    }[]
+  > {
+    const defendantsWithCases =
+      await this.internalCaseService.getIndictmentCaseDefendantsWithExpiredAppealDeadline()
+
+    const delivered = await Promise.all(
+      defendantsWithCases.map(async ({ defendant, theCase }) => {
+        if (!theCase) {
+          this.logger.warn(
+            `Failed to upload verdict service certificate pdf to police`,
+            {
+              reason: 'case is undefined',
+            },
+          )
+          return {
+            caseId: '',
+            defendantId: '',
+            delivered: false,
+          }
+        }
+
+        const result = { caseId: theCase.id, defendantId: defendant.id }
+        const user = theCase.judge
+        if (!user) {
+          this.logger.warn(
+            `Failed to upload verdict service certificate pdf to police of defendant ${defendant.id} and case ${theCase.id}`,
+            {
+              reason: 'court case user not found',
+            },
+          )
+          return { ...result, delivered: false }
+        }
+
+        const { verdict } = defendant
+        if (!verdict) {
+          this.logger.warn(
+            `Failed to upload verdict service certificate pdf to police of defendant ${defendant.id} and case ${theCase.id}`,
+            {
+              reason: 'verdict is undefined',
+            },
+          )
+          return { ...result, delivered: false }
+        }
+
+        return this.pdfService
+          .getVerdictServiceCertificatePdf(theCase, defendant, verdict)
+          .then(async (pdf) => {
+            const delivered =
+              await this.internalCaseService.deliverCaseToPoliceWithFiles(
+                theCase,
+                {
+                  ...user,
+                  created: user.created.toISOString(),
+                  modified: user.modified.toISOString(),
+                } as TUser,
+                [
+                  {
+                    type: PoliceDocumentType.RVBD,
+                    courtDocument: Base64.btoa(pdf.toString('binary')),
+                  },
+                ],
+              )
+
+            if (delivered) {
+              await this.defendantService.createDefendantEvent({
+                caseId: theCase.id,
+                defendantId: defendant.id,
+                eventType:
+                  DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+              })
+            }
+            return { ...result, delivered }
+          })
+          .catch((reason) => {
+            // Tolerate failure, but log error
+            this.logger.warn(
+              `Failed to upload verdict service certificate pdf to police of defendant ${defendant.id} and case ${theCase.id}`,
+              { reason },
+            )
+
+            return { ...result, delivered: false }
+          })
+      }),
+    )
+
+    // assess newly delivered cases, we specifically write in the event log when
+    // all relevant defendants have had their verdict service certificate delivered to police
+    const deliveredCases = delivered
+      .filter((result) => result.delivered)
+      .map((result) => result.caseId)
+    if (deliveredCases.length > 0) {
+      const caseIds = Array.from(new Set(deliveredCases))
+      await this.checkVerdictCertificateDeliveryCompletion(caseIds)
+    }
+
+    return delivered
   }
 
   async getAndSyncVerdict(verdict: Verdict, user?: TUser) {

@@ -2,6 +2,8 @@ import {
   BadRequestException,
   CanActivate,
   ExecutionContext,
+  forwardRef,
+  Inject,
   Injectable,
 } from '@nestjs/common'
 
@@ -9,7 +11,10 @@ import { CaseService } from '../case.service'
 
 @Injectable()
 export class CaseHasExistedGuard implements CanActivate {
-  constructor(private readonly caseService: CaseService) {}
+  constructor(
+    @Inject(forwardRef(() => CaseService))
+    private readonly caseService: CaseService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
