@@ -27,7 +27,9 @@ const PoliceCases = () => {
       title={messages.policeCasesTitle}
       intro={messages.policeCasesDescription}
       serviceProviderSlug={RIKISLOGREGLUSTJORI_SLUG}
-      serviceProviderTooltip={formatMessage(coreMessages.nationalPoliceCommissionerTooltip)}
+      serviceProviderTooltip={formatMessage(
+        coreMessages.nationalPoliceCommissionerTooltip,
+      )}
     >
       {loading && !error && (
         <Box width="full">

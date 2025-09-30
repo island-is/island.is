@@ -16,7 +16,6 @@ import { GetPoliceCaseInput } from '../dto/getPoliceCaseInput'
 import type { Locale } from '@island.is/shared/types'
 import { PoliceCasesService } from '../services/police-cases.service'
 
-
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/police-cases' })
@@ -47,7 +46,7 @@ export class PoliceCasesResolver {
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input')
-    input: GetPoliceCaseInput
+    input: GetPoliceCaseInput,
   ) {
     return this.policeCasesService.getCase(user, input.caseNumber, locale)
   }

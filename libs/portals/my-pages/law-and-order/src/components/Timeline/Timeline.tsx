@@ -15,7 +15,7 @@ import { ProgressBar, useIsMobile } from '@island.is/portals/my-pages/core'
 interface Props {
   children?: Array<ReactElement>
   title?: string
-  progress?: number,
+  progress?: number
   className?: string
   tooltipText?: string
   box?: Omit<UseBoxStylesProps, 'component'>
@@ -35,7 +35,8 @@ export const Timeline: FC<Props> = ({
   }
 
   //get current progress as ratio of total milestones
-  const currentProgress = (Math.min(Math.max(progress || 0, 0), children.length)) / children.length
+  const currentProgress =
+    Math.min(Math.max(progress || 0, 0), children.length) / children.length
 
   return (
     <Box {...box}>
@@ -85,9 +86,7 @@ export const Timeline: FC<Props> = ({
           <Columns>
             {children?.map((child, index) => (
               <Column key={`step-item-${index}`}>
-                <Box>
-                  {child}
-                </Box>
+                <Box>{child}</Box>
               </Column>
             ))}
           </Columns>

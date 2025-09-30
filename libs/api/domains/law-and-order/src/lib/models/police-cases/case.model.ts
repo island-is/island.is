@@ -9,7 +9,7 @@ export class Case {
   @Field({ nullable: true })
   type?: string
 
-  @Field(() => CaseStatus,{ nullable: true })
+  @Field(() => CaseStatus, { nullable: true })
   status?: CaseStatus
 
   @Field({ nullable: true })

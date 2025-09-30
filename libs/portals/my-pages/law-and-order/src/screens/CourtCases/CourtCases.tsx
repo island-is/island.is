@@ -26,12 +26,12 @@ const CourtCases = () => {
   const cases = data?.lawAndOrderCourtCasesList?.cases
 
   return (
-      <IntroWrapper
-        title={messages.courtCases}
-        intro={messages.courtCasesDescription}
-        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
-      >
+    <IntroWrapper
+      title={messages.courtCases}
+      intro={messages.courtCasesDescription}
+      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
+      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+    >
       {loading && !error && (
         <Box width="full">
           <CardLoader />

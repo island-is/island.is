@@ -11,7 +11,9 @@ export class PoliceCasesClientService {
     this.casesApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   public getCases = async (user: User): Promise<PoliceCaseDto[]> => {
-    const {cases = []} = await this.casesApiWithAuth(user).apiGetcasesSocialsecuritynumberGet({
+    const { cases = [] } = await this.casesApiWithAuth(
+      user,
+    ).apiGetcasesSocialsecuritynumberGet({
       socialsecuritynumber: user.nationalId,
     })
 
