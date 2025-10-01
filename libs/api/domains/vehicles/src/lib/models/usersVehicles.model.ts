@@ -255,6 +255,9 @@ export class VehicleListed {
 
   @Field({ nullable: true })
   latestMileage?: number
+
+  @Field({ nullable: true })
+  vin?: string
 }
 
 @ObjectType()
