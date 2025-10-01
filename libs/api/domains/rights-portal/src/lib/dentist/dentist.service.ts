@@ -49,13 +49,30 @@ export class DentistService {
     dateTo?: Date,
   ): Promise<DentistRegistration | null> {
     const api = this.api.withMiddleware(new AuthMiddleware(user as Auth))
+    // Backward-compatible coercion: accept Dates, ISO strings, timestamps, or missing values
+    const coerceToDate = (value: unknown, fallback: Date): Date => {
+      if (value instanceof Date) {
+        return isNaN(value.getTime()) ? fallback : value
+      }
+      if (typeof value === 'string' || typeof value === 'number') {
+        const parsed = new Date(value)
+        return isNaN(parsed.getTime()) ? fallback : parsed
+      }
+      return fallback
+    }
+
+    const defaultFrom = subYears(new Date(), 5)
+    const defaultTo = new Date()
+
+    const safeFrom = coerceToDate(dateFrom, defaultFrom)
+    const safeTo = coerceToDate(dateTo, defaultTo)
     const res = await Promise.all([
       api.getCurrentDentist().catch(handle404),
       api.dentiststatus().catch(handle404),
       api
         .getDentistBills({
-          dateFrom: dateFrom ? dateFrom : subYears(new Date(), 5),
-          dateTo: dateTo ? dateTo : new Date(),
+          dateFrom: safeFrom,
+          dateTo: safeTo,
         })
         .catch(handle404),
     ])

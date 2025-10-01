@@ -17,6 +17,7 @@ interface LabelProps {
   color?: LabelColor
   icon?: React.ReactNode | boolean
   children?: React.ReactNode
+  fullWidth?: boolean
 }
 
 const getBorderColor = ({ theme, color }: HelperProps) => {
@@ -71,20 +72,20 @@ const getIconByColor = (color: LabelColor) => {
       return null
   }
 }
-
-const LabelHost = styled.View<{ color: LabelColor }>`
+const LabelHost = styled.View<{ color: LabelColor; fullWidth?: boolean }>`
+  align-items: center;
+  justify-content: ${({ fullWidth }) => (fullWidth ? 'flex-start' : 'center')};
   padding: ${({ theme }) => theme.spacing[1]}px;
   padding-top: 6px;
   padding-bottom: 6px;
   gap: 6px;
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-style: solid;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-color: ${dynamicColor(getBorderColor, true)};
   background-color: ${dynamicColor(getBackgroundColor)};
+  ${({ fullWidth }) => fullWidth && 'flex: 1'};
 `
 
 const LabelText = styled(Typography)<{
@@ -93,7 +94,12 @@ const LabelText = styled(Typography)<{
   color: ${dynamicColor(getTextColor, true)};
 `
 
-export function Label({ color = 'default', children, icon }: LabelProps) {
+export function Label({
+  color = 'default',
+  children,
+  icon,
+  fullWidth = false,
+}: LabelProps) {
   const iconElement =
     typeof icon === 'boolean' && icon === true ? (
       <Image
@@ -106,7 +112,7 @@ export function Label({ color = 'default', children, icon }: LabelProps) {
     )
 
   return (
-    <LabelHost color={color}>
+    <LabelHost color={color} fullWidth={fullWidth}>
       {iconElement}
       <LabelText variant={'eyebrow'} color={color}>
         {children}

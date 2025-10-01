@@ -24,7 +24,7 @@ import { DentistRegisterResponse } from './models/registerResponse.model'
 export class DentistResolver {
   constructor(private readonly service: DentistService) {}
 
-  @Scopes(ApiScope.healthDentists)
+  @Scopes(ApiScope.healthDentists, ApiScope.healthHealthcare)
   @Query(() => DentistRegistration, {
     name: 'rightsPortalUserDentistRegistration',
     nullable: true,
