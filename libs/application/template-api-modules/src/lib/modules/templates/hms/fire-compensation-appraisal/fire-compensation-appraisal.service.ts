@@ -128,6 +128,12 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         'photos',
       ])
 
+      const fileLengths = files.map((file) => file.fileContent.length)
+      console.log('--------------------------------')
+      console.log('files array length', files.length)
+      console.log('file lengths')
+      console.dir(fileLengths, { depth: null })
+
       // Map the application to the dto interface
       const applicationDto = mapAnswersToApplicationDto(application, files)
 
