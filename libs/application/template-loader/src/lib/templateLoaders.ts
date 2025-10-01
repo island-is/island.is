@@ -226,7 +226,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.PRACTICAL_EXAM]: () =>
     import('@island.is/application/templates/aosh/practical-exam'),
   [ApplicationTypes.RENTAL_AGREEMENT]: () =>
-    import('@island.is/application/templates/rental-agreement'),
+    import('@island.is/application/templates/hms/rental-agreement'),
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: () =>
     import('@island.is/application/templates/hms/terminate-rental-agreement'),
   [ApplicationTypes.SEMINAR_REGISTRATION]: () =>

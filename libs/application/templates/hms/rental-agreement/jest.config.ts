@@ -11,6 +11,6 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/rental-agreement',
+    '<rootDir>/coverage/libs/application/templates/hms/rental-agreement',
   displayName: 'application-templates-rental-agreement',
 }

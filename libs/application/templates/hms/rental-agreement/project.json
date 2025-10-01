@@ -1,7 +1,7 @@
 {
   "name": "application-templates-rental-agreement",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/application/templates/rental-agreement/src",
+  "sourceRoot": "libs/application/templates/hms/rental-agreement/src",
   "projectType": "library",
   "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
@@ -12,16 +12,16 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/rental-agreement/jest.config.ts"
+        "jestConfig": "libs/application/templates/hms/rental-agreement/jest.config.ts"
       },
       "outputs": [
-        "{workspaceRoot}/coverage/libs/application/templates/rental-agreement"
+        "{workspaceRoot}/coverage/libs/application/templates/hms/rental-agreement"
       ]
     },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/rental-agreement/src/lib/messages/**/*.ts'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/hms/rental-agreement/src/lib/messages/**/*.ts'"
       }
     }
   }
