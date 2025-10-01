@@ -293,6 +293,8 @@ services-auth-admin-api:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -325,6 +327,11 @@ services-auth-admin-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-admin-api'
+    create: true
+    name: 'services-auth-admin-api'
 services-auth-delegation-api:
   enabled: true
   env:
@@ -398,6 +405,8 @@ services-auth-delegation-api:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -424,6 +433,11 @@ services-auth-delegation-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/auth-delegation-api'
+    create: true
+    name: 'auth-delegation-api'
 services-auth-ids-api:
   enabled: true
   env:
@@ -534,6 +548,8 @@ services-auth-ids-api:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -562,6 +578,11 @@ services-auth-ids-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-ids-api'
+    create: true
+    name: 'services-auth-ids-api'
 services-auth-ids-api-cleanup:
   args:
     - 'main.cjs'
@@ -863,6 +884,8 @@ services-auth-public-api:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -889,3 +912,8 @@ services-auth-public-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-public-api'
+    create: true
+    name: 'services-auth-public-api'
