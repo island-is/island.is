@@ -90,14 +90,8 @@ export const m = defineMessages({
       'Rannsókn á máli þínu er lokið og hefur það verið afhent ákæranda til yfirferðar. Ákærandi fer yfir rannsókn málsin og gengur úr skugga um að lögregla hafi aflað allra nauðsynlegra gagna og rannsókn málsins sé lokið',
   },
   statusDescriptionInvestigationStopped: {
-<<<<<<< HEAD
     id: 'api.law-and-order:status-description-investigation-stopped#markdown',
     defaultMessage: 'Ákærandi hefur farið yfir mál þitt og tekið þá ákvörðun að hætta rannsókn. Margar ástæður eru fyrir því að ákveðið er að hætta rannsókn sakamála en réttargæslumaður þinn veitir upplýsingar um ákvörðunina. Þú getur kært þessa ákvörðun til ríkissaksóknara en kæra þarf að berast innan mánaðar frá ákvörðun. Nánari upplýsingar um kæru til ríkissaksóknara má finna [hér](https://www.rikissaksoknari.is/kaerdar-akvardanir)',
-=======
-    id: 'api.law-and-order:status-description-investigation-stopped',
-    defaultMessage:
-      'Ákærandi hefur farið yfir mál þitt og tekið þá ákvörðun að hætta rannsókn. Margar ástæður eru fyrir því að ákveðið er að hætta rannsókn sakamála en réttargæslumaður þinn veitir upplýsingar um ákvörðunina. Þú getur kært þessa ákvörðun til ríkissaksóknara en kæra þarf að berast innan mánaðar frá ákvörðun. Nánari upplýsingar um kæru til ríkissaksóknara má finna [hér](https://www.rikissaksoknari.is/kaerdar-akvardanir)',
->>>>>>> refs/remotes/origin/feat/new-police-case-screens
   },
   statusDescriptionCaseDismissed: {
     id: 'api.law-and-order:status-description-case-dismissed',
