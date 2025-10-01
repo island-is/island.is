@@ -306,6 +306,8 @@ export class AppService {
       serviceStatus: getPoliceDocumentDeliveryStatus(
         updatePoliceDocumentDelivery,
       ),
+      deliveredToDefenderNationalId:
+        updatePoliceDocumentDelivery.defenderNationalId,
     }
     try {
       const res = await fetch(

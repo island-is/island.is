@@ -938,4 +938,37 @@ export const m = defineMessages({
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
   },
+  completedAccordionTitle: {
+    id: 'form.system:completed-accordion-title',
+    defaultMessage: 'Hvað gerist næst?',
+    description: 'What happens next?',
+  },
+  completedHeader: {
+    id: 'form.system:completed-header',
+    defaultMessage: 'Umsókn móttekin',
+    description: 'Application received',
+  },
+  completedText: {
+    id: 'form.system:completed-text-1',
+    defaultMessage: 'Umsókn þín hefur verið móttekin og verður skoðuð.',
+    description: 'Your application has been received and will be reviewed.',
+  },
+  completedBullet1: {
+    id: 'form.system:completed-bullet-1',
+    defaultMessage:
+      'Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar',
+    description:
+      'We will now review the project and will send you a response shortly.',
+  },
+  completedBullet2: {
+    id: 'form.system:completed-bullet-2',
+    defaultMessage: 'Við verðum í sambandi ef okkur vantar frekari upplýsingar',
+    description: 'We will get in touch if we need further information.',
+  },
+  completedBullet3: {
+    id: 'form.system:completed-bullet-3',
+    defaultMessage:
+      'Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið ',
+    description: 'If you need further information, you can email us at ',
+  },
 })

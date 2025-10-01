@@ -51,7 +51,10 @@ query Case($input: CaseQueryInput!) {
       }
       verdict {
         id
+        caseId
+        defendantId
         created
+        verdictDeliveredToNationalCommissionersOffice
         appealDate
         appealDecision
         serviceRequirement
@@ -61,7 +64,7 @@ query Case($input: CaseQueryInput!) {
         externalPoliceDocumentId
         legalPaperRequestDate
         comment
-        defenderNationalId
+        deliveredToDefenderNationalId
         servedBy
       }
     }
@@ -246,6 +249,53 @@ query Case($input: CaseQueryInput!) {
       recordedSpeed
       speedLimit
     }
+    courtSessions {
+      id
+      created
+      modified
+      caseId
+      location
+      startDate
+      endDate
+      isClosed
+      closedLegalProvisions
+      attendees
+      entries
+      rulingType
+      ruling
+      isAttestingWitness
+      attestingWitnessId
+      attestingWitness {
+        id
+        name
+      }
+      closingEntries
+      isConfirmed
+      filedDocuments {
+        id
+        created
+        modified
+        caseId
+        courtSessionId
+        documentType
+        documentOrder
+        name
+        caseFileId
+        generatedPdfUri
+      }
+    }
+    unfiledCourtDocuments {
+      id
+      created
+      modified
+      caseId
+      courtSessionId
+      documentType
+      documentOrder
+      name
+      caseFileId
+      generatedPdfUri
+    }
     requestDriversLicenseSuspension
     appealState
     isStatementDeadlineExpired
@@ -305,8 +355,8 @@ query Case($input: CaseQueryInput!) {
       name
     }
     indictmentAppealDeadline
-    indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadlineExpired
+    indictmentVerdictViewedByAll
     indictmentDecision
     indictmentReviewDecision
     courtSessionType
@@ -318,6 +368,13 @@ query Case($input: CaseQueryInput!) {
       id
       courtCaseNumber
       type
+      state
+      indictmentRulingDecision
+      courtSessions {
+        id
+        startDate
+        endDate
+      }
       court {
         id
         name

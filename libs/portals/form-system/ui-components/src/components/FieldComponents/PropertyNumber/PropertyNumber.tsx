@@ -118,6 +118,7 @@ export const PropertyNumber = ({ item, dispatch }: Props) => {
             <Row>
               <Column span="1/2">
                 <Controller
+                  key={item.id}
                   name={`${item.id}.customPropertyNumber`}
                   control={control}
                   defaultValue={property.propertyNumber}

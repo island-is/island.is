@@ -28,6 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .namespace('identity-server-admin')
     .image('services-auth-public-api')
     .db({ name: 'servicesauth' })
+    .serviceAccount('services-auth-public-api')
     .codeOwner(CodeOwners.Aranja)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
@@ -110,6 +111,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         },
         paths: ['/api(/|$)(.*)'],
         public: true,
+        pathTypeOverride: 'ImplementationSpecific',
         extraAnnotations: {
           dev: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',

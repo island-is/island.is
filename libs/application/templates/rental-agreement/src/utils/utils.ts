@@ -3,8 +3,12 @@ import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { EMAIL_REGEX } from '@island.is/application/core'
-import { RepeaterItem, StateLifeCycle } from '@island.is/application/types'
-import { ApplicantsInfo, PropertyUnit } from '../shared'
+import {
+  RepeaterItem,
+  RepeaterOptionValue,
+  StateLifeCycle,
+} from '@island.is/application/types'
+import { ApplicantsInfo, BankAccount, PropertyUnit } from '../shared'
 
 import * as m from '../lib/messages'
 
@@ -56,12 +60,8 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   return phone?.formatNational() || phoneNumber
 }
 
-export const formatBankInfo = (bankInfo: string) => {
-  const formattedBankInfo = bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
-  if (formattedBankInfo && formattedBankInfo.length >= 6) {
-    return formattedBankInfo
-  }
-  return bankInfo
+export const formatBankInfo = (bankInfo: BankAccount) => {
+  return `${bankInfo.bankNumber}-${bankInfo.ledger}-${bankInfo.accountNumber}`
 }
 
 export const hasDuplicateApplicants = (
@@ -106,22 +106,16 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
   phone: {
     component: 'phone',
     required: true,
-    label: m.landlordAndTenantDetails.phoneInputLabel,
+    label: m.misc.phoneNumber,
     enableCountrySelector: true,
     width: 'half',
   },
   email: {
     component: 'input',
     required: true,
-    label: m.landlordAndTenantDetails.emailInputLabel,
+    label: m.misc.email,
     type: 'email',
     width: 'half',
-  },
-  address: {
-    component: 'input',
-    required: true,
-    label: m.landlordAndTenantDetails.addressInputLabel,
-    maxLength: 100,
   },
 }
 
@@ -134,14 +128,14 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
   phone: {
     component: 'phone',
     required: true,
-    label: m.landlordAndTenantDetails.phoneInputLabel,
+    label: m.misc.phoneNumber,
     enableCountrySelector: true,
     width: 'half',
   },
   email: {
     component: 'input',
     required: true,
-    label: m.landlordAndTenantDetails.emailInputLabel,
+    label: m.misc.email,
     type: 'email',
     width: 'half',
   },
@@ -153,12 +147,27 @@ export const applicantTableConfig = {
     nationalId: (value: string) => value && formatNationalId(value),
   },
   header: [
-    m.landlordAndTenantDetails.nameInputLabel,
-    m.landlordAndTenantDetails.phoneInputLabel,
-    m.landlordAndTenantDetails.nationalIdHeaderLabel,
-    m.landlordAndTenantDetails.emailInputLabel,
+    m.misc.fullName,
+    m.misc.phoneNumber,
+    m.misc.nationalId,
+    m.misc.email,
   ],
   rows: ['name', 'phone', 'nationalId', 'email'],
+}
+
+export const landlordTableConfig = {
+  format: {
+    phone: (value: string) => value && formatPhoneNumber(value),
+    nationalId: (value: string) => value && formatNationalId(value),
+  },
+  header: [
+    m.misc.fullName,
+    m.misc.phoneNumber,
+    m.misc.nationalId,
+    m.misc.email,
+    m.landlordAndTenantDetails.representativeLabel,
+  ],
+  rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
 }
 
 export const toISK = (v: unknown): number => {
@@ -238,4 +247,20 @@ export const isValidInteger = (value: string): boolean => {
 
 export const isValidDecimal = (value: string): boolean => {
   return /^\d*\.?\d*$/.test(value)
+}
+
+export const onlyCharacters = async (
+  optionValue: RepeaterOptionValue,
+  id: string,
+) => {
+  if (typeof optionValue !== 'string') {
+    return [{ key: id, value: optionValue }]
+  }
+
+  const filteredValue = optionValue?.replace(
+    /[^a-zA-ZáéíóúýþæðöÁÉÍÓÚÝÞÆÐÖ.\s]/g,
+    '',
+  )
+
+  return [{ key: id, value: filteredValue }]
 }

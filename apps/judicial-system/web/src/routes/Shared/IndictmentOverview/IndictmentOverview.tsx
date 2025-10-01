@@ -7,15 +7,19 @@ import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   isCompletedCase,
   isDefenceUser,
+  isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlternativeServiceAnnouncement,
+  Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -32,6 +36,7 @@ import {
   UserContext,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
+import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
@@ -104,6 +109,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 const IndictmentOverview: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { features } = useContext(FeatureContext)
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -168,6 +174,21 @@ const IndictmentOverview: FC = () => {
               : formatMessage(strings.inProgressTitle)}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
+          {workingCase.defendants?.map(
+            (defendant) =>
+              features?.includes(Feature.VERDICT_DELIVERY) &&
+              defendant.verdict && (
+                <Box
+                  key={`${defendant.id}${defendant.verdict.id}`}
+                  marginBottom={2}
+                >
+                  <VerdictStatusAlert
+                    defendant={defendant}
+                    verdict={defendant.verdict}
+                  />
+                </Box>
+              ),
+          )}
           {isDefenceUser(user) &&
             workingCase.defendants?.map((defendant) => (
               <>
@@ -228,6 +249,19 @@ const IndictmentOverview: FC = () => {
               <InfoCardActiveIndictment displayVerdictViewDate />
             )}
           </Box>
+          {isCompletedCase(workingCase.state) &&
+            isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            )}
           {(hasLawsBroken || hasMergeCases) && (
             <Box marginBottom={5}>
               {/* 

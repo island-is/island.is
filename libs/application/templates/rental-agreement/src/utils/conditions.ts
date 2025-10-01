@@ -1,6 +1,6 @@
-import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
-import { ApplicantsInfo, PropertyUnit } from '../shared/types'
+import { ApplicantsInfo, LandlordInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
 
@@ -20,12 +20,16 @@ export const singularOrPluralLandlordsTitle = (application: Application) => {
 }
 
 export const shouldShowRepresentative = (answers: FormValue) => {
-  const representatives = getValueViaPath<Array<ApplicantsInfo>>(
+  const representatives = getValueViaPath<Array<ApplicantsInfo | string>>(
     answers,
     'parties.landlordInfo.representativeTable',
   )
 
-  if (!representatives || representatives.length === 0) {
+  if (
+    !representatives ||
+    representatives.length === 0 ||
+    representatives[0] === ''
+  ) {
     return false
   }
 
@@ -86,10 +90,53 @@ export const shouldShowSmokeDetectorsAlert = (answers: FormValue) => {
   return Number(smokeDetectors) < requiredSmokeDetectors
 }
 
+export const shouldFireExtinguisherAlert = (answers: FormValue) => {
+  const fireExtinguisher = getValueViaPath<string>(
+    answers,
+    'fireProtections.fireExtinguisher',
+  )
+
+  if (!fireExtinguisher) {
+    return false
+  }
+
+  return Number(fireExtinguisher) < 1
+}
+
 export const securityDepositRequired = (answers: FormValue) => {
   const securityDepositRequired = getValueViaPath<Array<string>>(
     answers,
     'rentalAmount.securityDepositRequired',
   )
   return securityDepositRequired?.includes(YesOrNoEnum.YES) || false
+}
+
+export const shouldShowLandlordAlert = (answers: FormValue) => {
+  const landlords = getValueViaPath<Array<LandlordInfo>>(
+    answers,
+    'parties.landlordInfo.table',
+  )
+
+  if (landlords?.length === 0) {
+    return false
+  }
+
+  let hasLandlord = false
+  landlords?.forEach((landlord) => {
+    const isRepresentative = landlord?.isRepresentative?.length > 0
+
+    if (!isRepresentative) {
+      hasLandlord = true
+    }
+  })
+
+  return !hasLandlord
+}
+
+export const shouldShowRepresentativeTable = (answers: FormValue) => {
+  const shouldShowRepresentativeTable = getValueViaPath<Array<string>>(
+    answers,
+    'parties.landlordInfo.shouldShowRepresentativeTable',
+  )
+  return shouldShowRepresentativeTable?.includes(YES) || false
 }

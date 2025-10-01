@@ -252,6 +252,9 @@
       "@island.is/api/domains/verdicts": [
         "libs/api/domains/verdicts/src/index.ts"
       ],
+      "@island.is/api/domains/vmst-applications": [
+        "libs/api/domains/vmst-applications/src/index.ts"
+      ],
       "@island.is/api/domains/watson-assistant-chat": [
         "libs/api/domains/watson-assistant-chat/src/index.ts"
       ],
@@ -571,6 +574,9 @@
       ],
       "@island.is/application/templates/social-insurance-administration/death-benefits": [
         "libs/application/templates/social-insurance-administration/death-benefits/src/index.ts"
+      ],
+      "@island.is/application/templates/social-insurance-administration/disability-pension": [
+        "libs/application/templates/social-insurance-administration/disability-pension/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
@@ -1239,7 +1245,6 @@
       "@island.is/testing/e2e": ["libs/testing/e2e/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
-      "@island.is/unicorn-app/*": ["apps/unicorn-app/*"],
       "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],

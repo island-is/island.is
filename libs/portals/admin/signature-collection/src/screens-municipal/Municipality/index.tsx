@@ -12,6 +12,7 @@ import {
   Text,
   Breadcrumbs,
   Divider,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
@@ -23,17 +24,21 @@ import CompareLists from '../../shared-components/compareLists'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import EmptyState from '../../shared-components/emptyState'
+import { CollectionStatus } from '@island.is/api/schema'
+import FindSignature from '../../shared-components/findSignature'
+import format from 'date-fns/format'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const { municipality = '' } = useParams<{ municipality: string }>()
 
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
-  const params = useParams()
-
-  const municipality = params.municipality ?? ''
   const municipalityLists = allLists.filter(
     (list) => list.area.name === municipality,
+  )
+  const municipalityArea = collection?.areas.find(
+    (area) => area.name === municipality,
   )
 
   return (
@@ -67,7 +72,7 @@ export const Municipality = () => {
             />
           </Box>
           <IntroHeader
-            title={formatMessage(m.municipalCollectionTitle)}
+            title={municipality}
             intro={formatMessage(m.municipalCollectionIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
@@ -81,23 +86,45 @@ export const Municipality = () => {
                 ]}
               />
             }
-            marginBottom={4}
+            marginBottom={3}
           />
+          {municipalityArea?.collectionStatus ===
+            CollectionStatus.Processed && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionProcessedTitle)}
+                message={formatMessage(m.collectionProcessedMessage)}
+              />
+            </Box>
+          )}
+          {municipalityArea?.collectionStatus === CollectionStatus.InReview && (
+            <Box marginY={3}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionMunicipalReviewedTitle)}
+                message={formatMessage(m.collectionMunicipalReviewedMessage)}
+              />
+            </Box>
+          )}
           <Divider />
           <Box marginTop={9} />
           {municipalityLists.length === 0 ? (
             <EmptyState
-              title={formatMessage(m.noLists) + ' í ' + municipality}
+              title={formatMessage(m.noLists)}
               description={formatMessage(m.noListsDescription)}
             />
           ) : (
             <GridRow>
               <GridColumn span="12/12">
-                <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
-                  <Text variant="eyebrow">
-                    {formatMessage(m.totalListResults) +
-                      ': ' +
-                      municipalityLists.length}
+                <FindSignature
+                  collectionId={municipalityLists[0].area.collectionId ?? ''}
+                />
+                <Box display="flex" justifyContent="flexEnd">
+                  <Text variant="eyebrow" marginBottom={3}>
+                    {`${formatMessage(m.totalListsPerMunicipality)}: ${
+                      municipalityLists.length
+                    }`}
                   </Text>
                 </Box>
                 <Stack space={3}>
@@ -106,11 +133,17 @@ export const Municipality = () => {
                       key={list.id}
                       eyebrow={municipality}
                       heading={list.candidate.name}
-                      text={
-                        formatMessage(m.numberOfSignatures) +
-                        ': ' +
-                        list.numberOfSignatures
-                      }
+                      text={`${formatMessage(m.listOwner)}: ${
+                        list.candidate.ownerName ?? ''
+                      } (${format(
+                        new Date(list.candidate.ownerBirthDate),
+                        'dd.MM.yyyy',
+                      )})`}
+                      progressMeter={{
+                        currentProgress: list.numberOfSignatures ?? 0,
+                        maxProgress: list.area.min,
+                        withLabel: true,
+                      }}
                       cta={{
                         label: formatMessage(m.viewList),
                         variant: 'text',
@@ -133,7 +166,7 @@ export const Municipality = () => {
               </GridColumn>
             </GridRow>
           )}
-          {municipalityLists.length > 0 && (
+          {municipalityLists?.length > 0 && (
             <CompareLists
               collectionId={collection?.id}
               collectionType={collection?.collectionType}

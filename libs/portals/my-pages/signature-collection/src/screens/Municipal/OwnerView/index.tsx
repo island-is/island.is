@@ -4,95 +4,100 @@ import { m } from '../../../lib/messages'
 import Managers from '../../shared/Managers'
 import {
   SignatureCollection,
-  SignatureCollectionCollectionType,
   SignatureCollectionList,
+  SignatureCollectionSignedList,
 } from '@island.is/api/schema'
-import { useGetListsForOwner } from '../../../hooks'
 import { useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
-import SignedList from '../../shared/SignedList'
-import { Skeleton } from '../../../lib/skeletons'
+import SignedLists from '../../shared/SignedLists'
+import format from 'date-fns/format'
 
 const OwnerView = ({
   currentCollection,
-  collectionType,
+  listsForOwner,
+  signedLists,
 }: {
   currentCollection: SignatureCollection
-  collectionType: SignatureCollectionCollectionType
+  listsForOwner: SignatureCollectionList[]
+  signedLists: SignatureCollectionSignedList[]
 }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
-    collectionType,
-    '',
-  )
+  const { id: collectionId, collectionType } = currentCollection
 
   return (
-    <Box>
-      {!loadingOwnerLists ? (
-        <Stack space={8}>
-          <SignedList collectionType={collectionType} />
-          <Box>
-            <Text variant="h4" marginBottom={3}>
-              {formatMessage(m.myListsDescription)}
-            </Text>
-            {listsForOwner.map((list: SignatureCollectionList) => (
-              <Box key={list.id} marginTop={3}>
-                <ActionCard
-                  backgroundColor="white"
-                  heading={list.title}
-                  progressMeter={{
-                    currentProgress: list.numberOfSignatures || 0,
-                    maxProgress: list.area?.min,
-                    withLabel: true,
-                  }}
-                  eyebrow={list.area.name}
-                  cta={
-                    list.active
-                      ? {
-                          label: formatMessage(m.viewList),
-                          variant: 'text',
-                          icon: 'arrowForward',
-                          onClick: () => {
-                            navigate(
-                              SignatureCollectionPaths.ViewMunicipalList.replace(
-                                ':id',
-                                list.id,
-                              ),
-                              {
-                                state: {
-                                  collectionId: currentCollection?.id || '',
-                                },
-                              },
-                            )
-                          },
-                        }
-                      : undefined
-                  }
-                  tag={
-                    list.active
-                      ? {
-                          label: formatMessage(m.collectionIsActive),
-                          variant: 'blue',
-                          outlined: false,
-                        }
-                      : {
-                          label: formatMessage(m.collectionClosed),
-                          variant: 'red',
-                          outlined: true,
-                        }
-                  }
-                />
-              </Box>
-            ))}
-          </Box>
-          <Managers collectionType={collectionType} />
-        </Stack>
-      ) : (
-        <Skeleton />
+    <Stack space={8}>
+      {signedLists?.length > 0 && (
+        <SignedLists
+          collectionType={collectionType}
+          signedLists={signedLists}
+        />
       )}
-    </Box>
+
+      {/* Candidate created lists */}
+      {listsForOwner?.length > 0 && (
+        <Box>
+          <Text variant="h4" marginBottom={2}>
+            {formatMessage(m.myListsDescription)}
+          </Text>
+          <Stack space={[3, 5]}>
+            {listsForOwner.map((list) => (
+              <ActionCard
+                key={list.id}
+                backgroundColor="white"
+                heading={list.candidate.name ?? ''}
+                progressMeter={{
+                  currentProgress: list.numberOfSignatures || 0,
+                  maxProgress: list.area?.min,
+                  withLabel: true,
+                }}
+                eyebrow={`${formatMessage(m.endTime)} ${format(
+                  new Date(list.endTime),
+                  'dd.MM.yyyy',
+                )}`}
+                cta={
+                  list.active
+                    ? {
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                        onClick: () => {
+                          navigate(
+                            SignatureCollectionPaths.ViewMunicipalList.replace(
+                              ':id',
+                              list.id,
+                            ),
+                            {
+                              state: {
+                                collectionId: collectionId || '',
+                              },
+                            },
+                          )
+                        },
+                      }
+                    : undefined
+                }
+                tag={
+                  list.active
+                    ? {
+                        label: formatMessage(m.collectionIsActive),
+                        variant: 'blue',
+                        outlined: false,
+                      }
+                    : {
+                        label: formatMessage(m.collectionClosed),
+                        variant: 'red',
+                        outlined: true,
+                      }
+                }
+              />
+            ))}
+          </Stack>
+        </Box>
+      )}
+      <Managers collectionType={collectionType} />
+    </Stack>
   )
 }
 

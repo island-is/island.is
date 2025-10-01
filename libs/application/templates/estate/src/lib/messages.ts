@@ -923,6 +923,26 @@ export const m = defineMessages({
     defaultMessage: 'Beiðni móttekin',
     description: '',
   },
+  privateDivisionDoneTitle: {
+    id: 'es.application:privateDivisionDoneTitle',
+    defaultMessage: 'Beiðni um einkaskipti móttekin',
+    description: '',
+  },
+  undividedEstateDoneTitle: {
+    id: 'es.application:undividedEstateDoneTitle',
+    defaultMessage: 'Beiðni um leyfi til setu í óskiptu búi móttekin',
+    description: '',
+  },
+  estateWithoutAssetsDoneTitle: {
+    id: 'es.application:estateWithoutAssetsDoneTitle',
+    defaultMessage: 'Yfirlýsing um eignaleysi dánarbús móttekin',
+    description: '',
+  },
+  officialDivisionDoneTitle: {
+    id: 'es.application:officialDivisionDoneTitle',
+    defaultMessage: 'Yfirlýsing um opinber skipti móttekin',
+    description: '',
+  },
   divisionOfEstateDoneSubtitle: {
     id: 'es.application:divisionOfEstateDoneSubtitle#markdown',
     defaultMessage:
@@ -1140,5 +1160,49 @@ export const m = defineMessages({
     id: 'es.application:realEstateValueTitle',
     defaultMessage: 'Fasteignamat á dánardegi',
     description: '',
+  },
+
+  // Debt repeater messages
+
+  // Debt type messages
+  debtsCreditorType: {
+    id: 'es.application:debtsCreditorType',
+    defaultMessage: 'Tegund skuldar',
+    description: 'Debt type label',
+  },
+  debtsTypeDuties: {
+    id: 'es.application:debtsTypeDuties',
+    defaultMessage: 'Opinber gjöld',
+    description: 'Duties debt type',
+  },
+  debtsTypeOther: {
+    id: 'es.application:debtsTypeOther',
+    defaultMessage: 'Aðrar skuldir',
+    description: 'Other debts type',
+  },
+  debtsTypePropertyFees: {
+    id: 'es.application:debtsTypePropertyFees',
+    defaultMessage: 'Fasteignagjöld',
+    description: 'Property fees debt type',
+  },
+  debtsTypeInsurance: {
+    id: 'es.application:debtsTypeInsurance',
+    defaultMessage: 'Tryggingastofnun',
+    description: 'Insurance company debt type',
+  },
+  debtsTypeLoan: {
+    id: 'es.application:debtsTypeLoan',
+    defaultMessage: 'Lán',
+    description: 'Loan debt type',
+  },
+  debtsTypeCreditCard: {
+    id: 'es.application:debtsTypeCreditCard',
+    defaultMessage: 'Kreditkort',
+    description: 'Credit card debt type',
+  },
+  debtsTypeOverdraft: {
+    id: 'es.application:debtsTypeOverdraft',
+    defaultMessage: 'Yfirdráttur',
+    description: 'Overdraft debt type',
   },
 })

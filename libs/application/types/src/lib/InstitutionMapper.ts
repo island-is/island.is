@@ -269,6 +269,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
     contentfulId: InstitutionContentfulIds.TRYGGINGASTOFNUN,
   },
+  [ApplicationTypes.DISABILITY_PENSION]: {
+    nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
+    slug: InstitutionTypes.TRYGGINGASTOFNUN,
+    contentfulId: InstitutionContentfulIds.TRYGGINGASTOFNUN,
+  },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
     nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
     slug: InstitutionTypes.TRYGGINGASTOFNUN,

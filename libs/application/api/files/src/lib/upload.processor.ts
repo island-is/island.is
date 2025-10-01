@@ -66,7 +66,11 @@ export class UploadProcessor {
             destinationBucket,
             destinationKey,
           )
-
+        withLoggingContext({ applicationId: applicationId }, () => {
+          this.logger.info(
+            `Successfully copied file: ${sourceKey} to ${destinationKey} on attempt ${attempt}/${maxRetries}`,
+          )
+        })
         return {
           attachmentKey: sourceKey,
           resultUrl,
@@ -74,7 +78,11 @@ export class UploadProcessor {
       } catch (error) {
         attempt++
 
-        if (error?.$metadata?.httpStatusCode === 401 && attempt < maxRetries) {
+        if (
+          (error?.$metadata?.httpStatusCode === 401 ||
+            error?.$metadata?.httpStatusCode === 403) &&
+          attempt < maxRetries
+        ) {
           // Exponential backoff: 1s, 2s, 4s
           const delay = Math.pow(2, attempt) * 1000
           await new Promise((resolve) => setTimeout(resolve, delay))
@@ -89,7 +97,7 @@ export class UploadProcessor {
         // Log and re-throw on final attempt or non-retryable errors
         withLoggingContext({ applicationId: applicationId }, () => {
           this.logger.error(
-            `An error occurred while processing copy job on upload on attempt ${attempt}/${maxRetries}`,
+            'An error occurred while processing copy job on upload',
             error,
           )
         })

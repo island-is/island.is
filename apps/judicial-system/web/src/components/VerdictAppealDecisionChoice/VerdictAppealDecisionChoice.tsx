@@ -1,6 +1,7 @@
 import { FC, useContext } from 'react'
 
 import { RadioButton } from '@island.is/island-ui/core'
+import { getDefendantVerdictAppealDecisionLabel } from '@island.is/judicial-system/formatters'
 
 import { Defendant, Verdict, VerdictAppealDecision } from '../../graphql/schema'
 import useVerdict from '../../utils/hooks/useVerdict'
@@ -36,7 +37,9 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
         }}
         large
         backgroundColor="white"
-        label="Dómfelldi tekur áfrýjunarfrest"
+        label={getDefendantVerdictAppealDecisionLabel(
+          VerdictAppealDecision.POSTPONE,
+        )}
         disabled={disabled}
       />
       <RadioButton
@@ -55,7 +58,9 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
         }}
         large
         backgroundColor="white"
-        label="Dómfelldi unir"
+        label={getDefendantVerdictAppealDecisionLabel(
+          VerdictAppealDecision.ACCEPT,
+        )}
         disabled={disabled}
       />
     </div>
