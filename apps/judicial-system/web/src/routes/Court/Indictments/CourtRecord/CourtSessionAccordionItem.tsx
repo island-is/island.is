@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 
 import {
@@ -32,10 +25,10 @@ import {
 import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import {
   Case,
+  CourtDocumentResponse,
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
-  UpdateCourtSessionInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -57,16 +50,6 @@ interface Props {
   onConfirmClick: () => void
   workingCase: Case
   setWorkingCase: Dispatch<SetStateAction<Case>>
-}
-
-interface FiledDocuments {
-  courtSessionId: string
-  files: ReorderableFile[]
-}
-
-interface ReorderableFile {
-  id: string
-  name: string
 }
 
 const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
@@ -107,31 +90,6 @@ const CLOSURE_GROUNDS: [string, string, CourtSessionClosedLegalBasis][] = [
   ],
 ]
 
-const useCourtSessionUpdater = (
-  workingCase: Case,
-  setWorkingCase: Dispatch<SetStateAction<Case>>,
-  updateFn: (updateCourtSession: UpdateCourtSessionInput) => Promise<boolean>,
-) => {
-  return (sessionId: string, updates: Partial<CourtSessionResponse>) => {
-    setWorkingCase((prev) => {
-      if (!prev.courtSessions) return prev
-
-      return {
-        ...prev,
-        courtSessions: prev.courtSessions?.map((item) =>
-          item.id === sessionId ? { ...item, ...updates } : item,
-        ),
-      }
-    })
-
-    updateFn({
-      ...updates,
-      courtSessionId: sessionId,
-      caseId: workingCase.id,
-    })
-  }
-}
-
 const CourtSessionAccordionItem: FC<Props> = (props) => {
   const {
     index,
@@ -148,8 +106,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
-  const [unfiledFiles, setUnfiledFiles] = useState<ReorderableFile[]>([])
-  const [reorderableFiles, setReorderableFiles] = useState<FiledDocuments[]>([])
 
   const {
     judges,
@@ -157,57 +113,20 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     loading: usersLoading,
   } = useUsers(workingCase.court?.id)
 
-  const updateSession = useCourtSessionUpdater(
-    workingCase,
-    setWorkingCase,
-    updateCourtSession,
-  )
-
-  useEffect(() => {
-    if (!workingCase.courtSessions) {
-      return
-    }
-
-    const filedDocuments: FiledDocuments[] = workingCase.courtSessions.map(
-      (courtSession) => ({
-        courtSessionId: courtSession.id,
-        files:
-          courtSession.filedDocuments?.filter(
-            (filedDocument) => filedDocument.courtSessionId === courtSession.id,
-          ) || [],
-      }),
-    )
-
-    setReorderableFiles(filedDocuments)
-  }, [workingCase.courtSessions])
-
-  useEffect(() => {
-    if (!workingCase.unfiledCourtDocuments) {
-      return
-    }
-
-    setUnfiledFiles(
-      workingCase.unfiledCourtDocuments.map((doc) => ({
-        id: doc.id,
-        name: doc.name,
-      })),
-    )
-  }, [workingCase.unfiledCourtDocuments])
-
   const patchSession = (
-    id: string,
+    courtSessionId: string,
     updates: Partial<CourtSessionResponse>,
     { persist = false } = {},
   ) => {
     setWorkingCase((prev) => ({
       ...prev,
       courtSessions: prev.courtSessions?.map((session) =>
-        session.id === id ? { ...session, ...updates } : session,
+        session.id === courtSessionId ? { ...session, ...updates } : session,
       ),
     }))
 
     if (persist) {
-      updateSession(id, updates)
+      updateCourtSession({ ...updates, courtSessionId, caseId: workingCase.id })
     }
   }
 
@@ -215,7 +134,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     if (!file.id) {
       return
     }
+
     const id = file.id
+    const fileInSession = courtSession.filedDocuments?.find(
+      (doc) => doc.id === file.id,
+    )
+
+    if (!fileInSession) {
+      return
+    }
 
     const deleted = await courtDocument.delete.action({
       caseId: workingCase.id,
@@ -227,23 +154,30 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    setUnfiledFiles((prev) => [{ id, name: file.name }, ...prev])
+    setWorkingCase((prev) => ({
+      ...prev,
+      unfiledCourtDocuments: [
+        fileInSession,
+        ...(prev.unfiledCourtDocuments || []),
+      ],
+    }))
 
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? { ...session, files: session.files.filter((i) => i.id !== file.id) }
-          : session,
+    patchSession(courtSession.id, {
+      filedDocuments: courtSession.filedDocuments?.filter(
+        (i) => i.id !== file.id,
       ),
-    )
+    })
   }
 
-  const handleReorder = (newOrder: ReorderableFile[]) => {
+  const handleReorder = (newOrder: CourtDocumentResponse[]) => {
     if (courtSession.isConfirmed) {
       return
     }
 
-    const newIndex = newOrder.findIndex((f) => f.id === draggedFileId)
+    const newIndex =
+      newOrder.findIndex((f) => f.id === draggedFileId) +
+      countDocumentsBeforeSession(index)
+
     if (!draggedFileId || newIndex === -1) {
       return
     }
@@ -255,13 +189,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       documentOrder: newIndex + 1, // +1 because index starts at 0 and the order at 1
     })
 
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? { ...session, files: newOrder }
-          : session,
-      ),
-    )
+    patchSession(courtSession.id, {
+      filedDocuments: newOrder,
+    })
   }
 
   const handleRename = (
@@ -280,21 +210,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       name: newName,
     })
 
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSessionId
-          ? {
-              ...session,
-              files: session.files.map((file) =>
-                file.id === fileId ? { ...file, name: newName } : file,
-              ),
-            }
-          : session,
+    patchSession(courtSession.id, {
+      filedDocuments: courtSession.filedDocuments?.map((file) =>
+        file.id === fileId ? { ...file, name: newName } : file,
       ),
-    )
+    })
   }
 
-  const handleFileCourtDocument = async (file: ReorderableFile) => {
+  const handleFileCourtDocument = async (file: CourtDocumentResponse) => {
     const res = await courtDocument.fileInCourtSession.action({
       caseId: workingCase.id,
       courtSessionId: courtSession.id,
@@ -303,21 +226,16 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     if (!res) return
 
-    setUnfiledFiles((prev) => prev.filter((item) => item.id !== file.id))
-
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? {
-              ...session,
-              files: [
-                ...session.files,
-                { id: res.fileCourtDocumentInCourtSession.id, name: file.name },
-              ],
-            }
-          : session,
+    setWorkingCase((prev) => ({
+      ...prev,
+      unfiledCourtDocuments: prev.unfiledCourtDocuments?.filter(
+        (item) => item.id !== file.id,
       ),
-    )
+    }))
+
+    patchSession(courtSession.id, {
+      filedDocuments: [...(courtSession.filedDocuments || []), res],
+    })
   }
 
   const handleChangeWitness = (value?: string | null) => {
@@ -381,16 +299,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     if (!res) return
 
-    setReorderableFiles((prev) =>
-      prev.map((session) =>
-        session.courtSessionId === courtSession.id
-          ? {
-              ...session,
-              files: [...session.files, { id: res.id, name: value }],
-            }
-          : session,
-      ),
-    )
+    patchSession(courtSession.id, {
+      filedDocuments: [...(courtSession.filedDocuments || []), res],
+    })
   }
 
   const containerVariants = {
@@ -438,10 +349,19 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
   const filedDocuments = useMemo(
     () =>
-      reorderableFiles.find((d) => d.courtSessionId === courtSession.id)
-        ?.files || [],
-    [courtSession.id, reorderableFiles],
+      workingCase.courtSessions?.find((d) => d.id === courtSession.id)
+        ?.filedDocuments || [],
+    [courtSession.id, workingCase.courtSessions],
   )
+
+  const countDocumentsBeforeSession = (index: number) => {
+    const sessionsBefore = workingCase.courtSessions?.slice(0, index) || []
+
+    return sessionsBefore.reduce(
+      (acc, session) => (acc += session.filedDocuments?.length || 0),
+      0,
+    )
+  }
 
   return (
     <AccordionItem
@@ -626,92 +546,109 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             }
             isLoading={courtDocument.create.loading}
           >
-            <Box display="flex" flexDirection="column" rowGap={2}>
-              <Box
-                display="flex"
-                rowGap={2}
-                justifyContent="spaceBetween"
-                className={styles.reorderGroup}
-              >
-                <Reorder.Group
-                  axis="y"
-                  values={filedDocuments}
-                  onReorder={handleReorder}
-                  className={styles.grid}
-                >
-                  <AnimatePresence>
-                    {filedDocuments.map((item) => (
-                      <Reorder.Item
-                        key={item.id}
-                        value={item}
-                        data-reorder-item
-                        onDragStart={() => {
-                          setDraggedFileId(item.id)
-                        }}
-                        onDragEnd={() => {
-                          setDraggedFileId(null)
-                        }}
-                        initial={{ opacity: 0, y: -10, height: 'auto' }}
-                        animate={{ opacity: 1, y: 0, height: 'auto' }}
-                        exit={{ opacity: 0, y: 10, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <EditableCaseFile
-                          enableDrag
-                          caseFile={{
-                            id: item.id,
-                            displayText: item.name,
-                            name: item.name,
-                            canEdit: ['fileName'],
-                          }}
-                          backgroundColor="white"
-                          onRename={(id: string, newName: string) => {
-                            handleRename(courtSession.id, id, newName)
-                          }}
-                          onDelete={handleDeleteFile}
-                          disabled={courtSession.isConfirmed || false}
-                        />
-                      </Reorder.Item>
-                    ))}
-                  </AnimatePresence>
-                </Reorder.Group>
+            <Box display="flex" flexDirection="column" rowGap={2} marginTop={2}>
+              {index > 0 && (
                 <Box
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="spaceAround"
-                  rowGap={2}
+                  background="white"
+                  paddingX={3}
+                  paddingY={2}
+                  borderRadius="large"
                 >
-                  <AnimatePresence>
-                    {filedDocuments.map((_item, i) => {
-                      const currentIndex =
-                        reorderableFiles.slice(0, index).flatMap((a) => a.files)
-                          .length + i
-
-                      return (
-                        <motion.div
+                  <Text variant="h5">{`Skjöl málsins nr. 1-${countDocumentsBeforeSession(
+                    index,
+                  )} liggja frammi`}</Text>
+                </Box>
+              )}
+              {filedDocuments && filedDocuments.length > 0 && (
+                <Box display="flex" columnGap={2} justifyContent="spaceBetween">
+                  <Reorder.Group
+                    axis="y"
+                    values={filedDocuments}
+                    onReorder={handleReorder}
+                    className={styles.grid}
+                  >
+                    <AnimatePresence>
+                      {filedDocuments.map((item) => (
+                        <Reorder.Item
+                          key={item.id}
+                          value={item}
+                          data-reorder-item
+                          onDragStart={() => {
+                            setDraggedFileId(item.id)
+                          }}
+                          onDragEnd={() => {
+                            setDraggedFileId(null)
+                          }}
                           initial={{ opacity: 0, y: -10, height: 'auto' }}
                           animate={{ opacity: 1, y: 0, height: 'auto' }}
                           exit={{ opacity: 0, y: 10, height: 0 }}
                           transition={{ duration: 0.2 }}
-                          key={`þingmerkt_nr_${currentIndex + 1}`}
                         >
-                          <Tag variant="darkerBlue" outlined disabled>
-                            Þingmerkt nr. {currentIndex + 1}
-                          </Tag>
-                        </motion.div>
-                      )
-                    })}
-                  </AnimatePresence>
+                          <EditableCaseFile
+                            enableDrag
+                            caseFile={{
+                              id: item.id,
+                              displayText: item.name,
+                              name: item.name,
+                              canEdit: ['fileName'],
+                            }}
+                            backgroundColor="white"
+                            onRename={(id: string, newName: string) => {
+                              handleRename(courtSession.id, id, newName)
+                            }}
+                            onDelete={handleDeleteFile}
+                            disabled={courtSession.isConfirmed || false}
+                          />
+                        </Reorder.Item>
+                      ))}
+                    </AnimatePresence>
+                  </Reorder.Group>
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="spaceAround"
+                    rowGap={2}
+                  >
+                    <AnimatePresence>
+                      {filedDocuments.map((_item, i) => {
+                        const currentIndex =
+                          (workingCase.courtSessions &&
+                            workingCase.courtSessions
+                              ?.slice(0, index)
+                              .flatMap((a) => a.filedDocuments || []).length +
+                              i) ||
+                          0
+
+                        return (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10, height: 'auto' }}
+                            animate={{ opacity: 1, y: 0, height: 'auto' }}
+                            exit={{ opacity: 0, y: 10, height: 0 }}
+                            transition={{ duration: 0.2 }}
+                            key={`þingmerkt_nr_${currentIndex + 1}`}
+                          >
+                            <Tag variant="darkerBlue" outlined disabled>
+                              Þingmerkt nr. {currentIndex + 1}
+                            </Tag>
+                          </motion.div>
+                        )
+                      })}
+                    </AnimatePresence>
+                  </Box>
                 </Box>
-              </Box>
+              )}
               <Box borderRadius="large" background="white" paddingX={2}>
                 <Accordion dividerOnBottom={false} dividerOnTop={false}>
                   <AccordionItem
                     id={`unfiled-files-${courtSession.id}`}
-                    label={`Önnur skjöl (${unfiledFiles.length})`}
+                    label={`Önnur skjöl ${
+                      workingCase.unfiledCourtDocuments
+                        ? `(${workingCase.unfiledCourtDocuments.length})`
+                        : ''
+                    }`}
                     labelVariant="h5"
                   >
-                    {unfiledFiles.length === 0 ? (
+                    {workingCase.unfiledCourtDocuments?.length === 0 ? (
                       <AlertMessage
                         title="Engin óþingmerkt skjöl"
                         message="Öll skjöl málsins hafa verið lögð fram"
@@ -724,7 +661,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         columnGap={2}
                         rowGap={2}
                       >
-                        {unfiledFiles.map((file) => (
+                        {workingCase.unfiledCourtDocuments?.map((file) => (
                           <Box
                             display="flex"
                             alignItems="center"
