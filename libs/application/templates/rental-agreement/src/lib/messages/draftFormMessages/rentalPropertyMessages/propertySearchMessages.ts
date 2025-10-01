@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const registerProperty = {
+export const propertySearch = {
   search: defineMessages({
     subsectionName: {
       id: 'ra.application:registerProperty.search.subSectionName',

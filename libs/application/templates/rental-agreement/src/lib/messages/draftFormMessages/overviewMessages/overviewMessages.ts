@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const summary = defineMessages({
+export const overview = defineMessages({
   pageTitle: {
     id: 'ra.application:summary.pageTitle',
     defaultMessage: 'Samantekt',
