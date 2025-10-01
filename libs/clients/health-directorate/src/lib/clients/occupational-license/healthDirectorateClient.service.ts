@@ -20,6 +20,7 @@ import { isDefined } from '@island.is/shared/utils'
 import format from 'date-fns/format'
 import { handle404 } from '@island.is/clients/middlewares'
 import { logger } from '@island.is/logging'
+import type { Locale } from '@island.is/shared/types'
 
 @Injectable()
 export class HealthDirectorateClientService {
@@ -45,6 +46,7 @@ export class HealthDirectorateClientService {
 
   public async getHealthDirectorateLicenseToPractice(
     auth: User,
+    locale: Locale,
   ): Promise<Array<HealthDirectorateLicenseToPractice> | null> {
     const licenses = await this.starfsleyfiAMinumSidumApiWithAuth(auth)
       .starfsleyfiAMinumSidumGet()
@@ -96,8 +98,8 @@ export class HealthDirectorateClientService {
             legalEntityId: l.logadiliID,
             licenseHolderNationalId: l.kennitala,
             licenseHolderName: l.nafn,
-            profession: l.starfsstett,
-            practice: l.leyfi,
+            profession: locale === 'en' && l.starfsstettEn ? l.starfsstettEn : l.starfsstett,
+            practice:  locale === 'en' && l.leyfiEn ? l.leyfiEn : l.leyfi,
             licenseNumber: l.leyfisnumer,
             validFrom: l.gildirFra,
             validTo: l.gildirTIl ?? undefined,

@@ -36,21 +36,3 @@ export const getLicenseTypeByIdPrefix = (
 
   return { type, licenseId: id.substring(1) }
 }
-
-export const mapDistrictCommissionersLicenseStatusToStatus = (
-  status: DistrictCommissionersLicenseStatus,
-): Status => {
-  switch (status) {
-    case 'expired':
-      return Status.INVALID
-
-    case 'in-progress':
-      return Status.IN_PROGRESS
-
-    case 'valid':
-      return Status.VALID
-
-    default:
-      return Status.UNKNOWN
-  }
-}
