@@ -14,6 +14,7 @@ export enum Roles {
 }
 
 export enum Routes {
+  PERSONALINFORMATION = 'personalInformation',
   PARTIESINFORMATION = 'partiesInfo',
   REGISTERPROPERTY = 'registerProperty',
   PROPERTYINFORMATION = 'propertyInfo',
@@ -99,4 +100,10 @@ export enum OtherFeesPayeeOptions {
 export enum EmergencyExitOptions {
   YES = '1',
   NO = '0',
+}
+
+export enum ApplicantsRole {
+  LANDLORD = 'landlord',
+  REPRESENTATIVE = 'representative',
+  TENANT = 'tenant',
 }

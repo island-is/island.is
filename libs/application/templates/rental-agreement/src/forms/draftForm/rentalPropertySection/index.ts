@@ -1,6 +1,6 @@
 import { buildSection } from '@island.is/application/core'
 import { propertyInfoSubsection } from './propertyInfoSubsection'
-import { conditionSubsection } from './conditionSubsection'
+import { housingConditionSubsection } from './housingConditionSubsection'
 import { fireProtectionsSubsection } from './fireProtectionsSubsection'
 import { propertySearchSubsection } from './propertySearchSubsection'
 import { descriptionAndSpecialProvisionsSubsection } from './descriptionAndSpecialProvisionsSubsection'
@@ -13,7 +13,7 @@ export const rentalHousingSection = buildSection({
     propertySearchSubsection,
     propertyInfoSubsection,
     descriptionAndSpecialProvisionsSubsection,
-    conditionSubsection,
+    housingConditionSubsection,
     fireProtectionsSubsection,
   ],
 })

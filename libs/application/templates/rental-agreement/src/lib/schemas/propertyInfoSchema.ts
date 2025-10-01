@@ -25,7 +25,7 @@ export const propertyInfoSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
-        params: m.registerProperty.category.classGroupRequiredError,
+        params: m.propertySearch.category.classGroupRequiredError,
         path: ['categoryClassGroup'],
       })
     }

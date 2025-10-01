@@ -34,7 +34,7 @@ export const usePropertyInfo = (
     onError: (error) => {
       console.error('Error fetching properties', error)
       setPropertyInfoError(
-        formatMessage(m.registerProperty.search.propertyInfoError) ||
+        formatMessage(m.propertySearch.search.propertyInfoError) ||
           'Failed to fetch properties',
       )
       setPropertiesByAddressCode(undefined)

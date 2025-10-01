@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const costsMessages = defineMessages({
+export const cost = defineMessages({
   sectionTitle: {
     id: 'ra.application:costsMessages.sectionTitle',
     defaultMessage: 'Kostnaður',

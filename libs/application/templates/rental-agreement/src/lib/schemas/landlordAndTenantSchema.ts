@@ -3,6 +3,7 @@ import * as kennitala from 'kennitala'
 import * as m from '../messages'
 import { EMAIL_REGEX, YES } from '@island.is/application/core'
 import { isValidPhoneNumber } from '../../utils/utils'
+import { ApplicantsRole } from '../../utils/enums'
 
 export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 
@@ -81,115 +82,15 @@ const landLordInfoSchema = z.object({
     }),
 })
 
-const landlordInfo = z
-  .object({
-    table: z.array(landLordInfoSchema),
-    representativeTable: z.any().optional().default([]),
-    shouldShowRepresentativeTable: z.array(z.string()),
-  })
-  .superRefine((data, ctx) => {
-    const { table, representativeTable, shouldShowRepresentativeTable } = data
+const landlordInfo = z.object({
+  table: z.array(landLordInfoSchema),
+  representativeTable: z.any().optional().default([]),
+  shouldShowRepresentativeTable: z.array(z.string()).optional(),
+})
 
-    if (table && table.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.partiesDetails.partiesEmptyTableError,
-        path: ['table'],
-      })
-    }
-
-    // Check for duplicate national IDs in landlord table
-    if (table && table.length > 1) {
-      const nationalIds = new Set<string>()
-      table.forEach((landlord, index) => {
-        const nationalId = landlord.nationalIdWithName?.nationalId
-        if (nationalId) {
-          if (nationalIds.has(nationalId)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: 'Duplicate national ID found',
-              params: m.partiesDetails.duplicateNationalIdError,
-              path: ['table', index, 'nationalIdWithName', 'nationalId'],
-            })
-          } else {
-            nationalIds.add(nationalId)
-          }
-        }
-      })
-    }
-
-    // Check for duplicate national IDs in representative table
-    // Only validate if representativeTable contains objects (not strings from clearOnChange)
-    if (
-      representativeTable &&
-      Array.isArray(representativeTable) &&
-      representativeTable.length > 1 &&
-      shouldShowRepresentativeTable?.includes(YES) &&
-      representativeTable[0] &&
-      typeof representativeTable[0] === 'object'
-    ) {
-      const nationalIds = new Set<string>()
-      representativeTable.forEach((representative, index) => {
-        const nationalId = representative.nationalIdWithName?.nationalId
-        if (nationalId) {
-          if (nationalIds.has(nationalId)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: 'Duplicate national ID found',
-              params: m.partiesDetails.duplicateNationalIdError,
-              path: [
-                'landlordInfo',
-                'representativeTable',
-                index,
-                'nationalIdWithName',
-                'nationalId',
-              ],
-            })
-          } else {
-            nationalIds.add(nationalId)
-          }
-        }
-      })
-    }
-  })
-
-const tenantInfo = z
-  .object({
-    table: z.array(personInfoSchema),
-  })
-  .superRefine((data, ctx) => {
-    const { table } = data
-
-    if (table && table.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.partiesDetails.tenantEmptyTableError,
-        path: ['table'],
-      })
-    }
-
-    // Check for duplicate national IDs in tenant table
-    if (table && table.length > 1) {
-      const nationalIds = new Set<string>()
-      table.forEach((tenant, index) => {
-        const nationalId = tenant.nationalIdWithName?.nationalId
-        if (nationalId) {
-          if (nationalIds.has(nationalId)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: 'Duplicate national ID found',
-              params: m.partiesDetails.duplicateNationalIdError,
-              path: ['table', index, 'nationalIdWithName', 'nationalId'],
-            })
-          } else {
-            nationalIds.add(nationalId)
-          }
-        }
-      })
-    }
-  })
+const tenantInfo = z.object({
+  table: z.array(personInfoSchema),
+})
 
 const checkforDuplicatesHelper = (
   table: Array<{ nationalIdWithName: { nationalId?: string | undefined } }>,
@@ -211,26 +112,39 @@ const checkforDuplicatesHelper = (
 
 export const partiesSchema = z
   .object({
+    applicantsRole: z.string(),
+    applicant: z.object({
+      name: z.string(),
+      nationalId: z.string(),
+      email: z.string(),
+      phoneNumber: z.string(),
+    }),
     landlordInfo,
     tenantInfo,
-  })
+  }) // Cross reference between tables
   .superRefine((data, ctx) => {
-    const { landlordInfo, tenantInfo } = data
+    const { landlordInfo, tenantInfo, applicantsRole, applicant } = data
 
     const landlordTable = landlordInfo.table || []
     const representativeTable = landlordInfo.representativeTable || []
     const tenantTable = tenantInfo.table || []
+    const applicantNationalId = applicant.nationalId
 
     // Create arrays of national IDs from representative and tenant tables
     const shouldShowRepresentativeTable =
       landlordInfo.shouldShowRepresentativeTable || []
 
-    const landlordNationalIds = landlordTable
-      .map((rep) => rep.nationalIdWithName?.nationalId)
-      .filter((id) => !!id) as string[]
+    const landlordNationalIds = [
+      ...(landlordTable
+        .map((rep) => rep.nationalIdWithName?.nationalId)
+        .filter((id) => !!id) as Array<string>),
+      ...(applicantsRole === ApplicantsRole.LANDLORD
+        ? [applicantNationalId]
+        : []),
+    ]
 
-    const representativeNationalIds =
-      shouldShowRepresentativeTable.includes(YES) &&
+    const representativeNationalIds = [
+      ...(shouldShowRepresentativeTable.includes(YES) &&
       representativeTable &&
       representativeTable.length > 0 &&
       typeof representativeTable[0] === 'object'
@@ -240,12 +154,21 @@ export const partiesSchema = z
             >
           )
             .map((rep) => rep.nationalIdWithName?.nationalId)
-            .filter((id) => !!id) as string[])
-        : []
+            .filter((id) => !!id) as Array<string>)
+        : []),
+      ...(applicantsRole === ApplicantsRole.REPRESENTATIVE
+        ? [applicantNationalId]
+        : []),
+    ]
 
-    const tenantNationalIds = tenantTable
-      .map((tenant) => tenant.nationalIdWithName?.nationalId)
-      .filter((id) => !!id) as string[]
+    const tenantNationalIds = [
+      ...(tenantTable
+        .map((tenant) => tenant.nationalIdWithName?.nationalId)
+        .filter((id) => !!id) as Array<string>),
+      ...(applicantsRole === ApplicantsRole.TENANT
+        ? [applicantNationalId]
+        : []),
+    ]
 
     const representativeAndTenantNationalIds = [
       ...representativeNationalIds,
@@ -268,6 +191,7 @@ export const partiesSchema = z
       landlordTable,
       representativeAndTenantNationalIds,
     )
+
     // Check representativeTable for duplicates in landlordTable and tenantTable
     // Only check if shouldShowRepresentativeTable includes YES
     const {
@@ -285,6 +209,7 @@ export const partiesSchema = z
             landlordAndTenantNationalIds,
           )
         : { hasDuplicates: false, duplicateIndex: undefined }
+
     // Check tenantTable for duplicates in landlordTable and representativeTable
     // Only check against representative table if shouldShowRepresentativeTable includes YES
     const {
@@ -343,6 +268,95 @@ export const partiesSchema = z
           'nationalIdWithName',
           'nationalId',
         ],
+      })
+    }
+  }) // Validate landlord table, including if the applicant is a landlord
+  .superRefine((data, ctx) => {
+    const { landlordInfo, applicantsRole, applicant } = data
+    const { table } = landlordInfo
+
+    const landlordNationalIds = [
+      ...(applicantsRole === ApplicantsRole.LANDLORD
+        ? [applicant.nationalId]
+        : []),
+      ...(table
+        .map((landlord) => landlord.nationalIdWithName?.nationalId)
+        .filter((id) => !!id) as Array<string>),
+    ]
+    if (landlordNationalIds.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.partiesDetails.partiesEmptyTableError,
+        path: ['landlordInfo', 'table'],
+      })
+    }
+
+    // Check for duplicate national IDs in landlord table
+    if (landlordNationalIds.length > 1) {
+      const nationalIds = new Set<string>()
+      landlordNationalIds.forEach((nationalId, index) => {
+        if (nationalIds.has(nationalId)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Duplicate national ID found',
+            params: m.partiesDetails.duplicateNationalIdError,
+            path: [
+              'landlordInfo',
+              'table',
+              applicantsRole === ApplicantsRole.LANDLORD ? index - 1 : index,
+              'nationalIdWithName',
+              'nationalId',
+            ],
+          })
+        } else {
+          nationalIds.add(nationalId)
+        }
+      })
+    }
+  }) // Validate tenant table, including if the applicant is a tenant
+  .superRefine((data, ctx) => {
+    const { tenantInfo, applicantsRole, applicant } = data
+    const { table } = tenantInfo
+
+    const tenantNationalIds = [
+      ...(applicantsRole === ApplicantsRole.TENANT
+        ? [applicant.nationalId]
+        : []),
+      ...(table
+        .map((tenant) => tenant.nationalIdWithName?.nationalId)
+        .filter((id) => !!id) as Array<string>),
+    ]
+
+    if (tenantNationalIds.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.partiesDetails.tenantEmptyTableError,
+        path: ['tenantInfo', 'table'],
+      })
+    }
+
+    // Check for duplicate national IDs in tenant table
+    if (tenantNationalIds.length > 1) {
+      const nationalIds = new Set<string>()
+      tenantNationalIds.forEach((nationalId, index) => {
+        if (nationalIds.has(nationalId)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Duplicate national ID found',
+            params: m.partiesDetails.duplicateNationalIdError,
+            path: [
+              'tenantInfo',
+              'table',
+              applicantsRole === ApplicantsRole.TENANT ? index - 1 : index,
+              'nationalIdWithName',
+              'nationalId',
+            ],
+          })
+        } else {
+          nationalIds.add(nationalId)
+        }
       })
     }
   })

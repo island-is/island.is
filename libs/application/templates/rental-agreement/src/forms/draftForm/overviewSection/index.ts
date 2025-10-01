@@ -34,29 +34,29 @@ import * as m from '../../../lib/messages'
 
 export const overviewSection = buildSection({
   id: Routes.SUMMARY,
-  title: m.summary.pageTitle,
+  title: m.overview.pageTitle,
   children: [
     buildMultiField({
       id: Routes.SUMMARY,
       children: [
         buildDescriptionField({
           id: 'summaryTitle',
-          title: m.summary.pageTitle,
+          title: m.overview.pageTitle,
           marginBottom: 2,
         }),
         buildDescriptionField({
           id: 'summaryFirstDescription',
-          description: m.summary.pageDescriptionFirstParagraph,
+          description: m.overview.pageDescriptionFirstParagraph,
         }),
         buildDescriptionField({
           id: 'summarySecondDescription',
-          description: m.summary.pageDescriptionSecondparagraph,
+          description: m.overview.pageDescriptionSecondparagraph,
           marginBottom: 6,
         }),
         // Property address
         buildOverviewField({
           id: 'rentalInfoOverview',
-          title: m.summary.propertyInfoHeader,
+          title: m.overview.propertyInfoHeader,
           items: rentalPropertyOverview,
           backId: Routes.PROPERTYSEARCH,
         }),
@@ -85,14 +85,14 @@ export const overviewSection = buildSection({
         // Rental property
         buildOverviewField({
           id: 'rentalInfoOverview',
-          title: m.summary.propertyInfoHeader,
+          title: m.overview.propertyInfoHeader,
           items: rentalInfoOverview,
           backId: Routes.PROPERTYSEARCH,
         }),
         // Property registration
         buildOverviewField({
           id: 'propertyRegistrationOverview',
-          title: m.registerProperty.category.pageTitle,
+          title: m.propertySearch.category.pageTitle,
           items: propertyRegistrationOverview,
           backId: Routes.PROPERTYINFORMATION,
         }),
@@ -106,7 +106,7 @@ export const overviewSection = buildSection({
         // Property condition
         buildOverviewField({
           id: 'propertyConditionOverview',
-          title: m.summary.propertyConditionTitle,
+          title: m.overview.propertyConditionTitle,
           items: propertyConditionOverview,
           attachments: propertyConditionFilesOverview,
           backId: Routes.CONDITION,
@@ -114,21 +114,21 @@ export const overviewSection = buildSection({
         // Fire protections
         buildOverviewField({
           id: 'fireProtectionsOverview',
-          title: m.summary.fireProtectionsTitle,
+          title: m.overview.fireProtectionsTitle,
           items: fireProtectionsOverview,
           backId: Routes.FIREPROTECTIONS,
         }),
         // Rental period (start and end date)
         buildOverviewField({
           id: 'rentalPeriodOverview',
-          title: m.summary.rentalPeriodDefiniteLabel,
+          title: m.overview.rentalPeriodDefiniteLabel,
           items: rentalPeriodOverview,
           backId: Routes.RENTALPERIOD,
         }),
         // Price
         buildOverviewField({
           id: 'priceOverview',
-          title: m.summary.rentalAmountTitle,
+          title: m.overview.rentalAmountTitle,
           items: priceOverview,
           backId: Routes.RENTALAMOUNT,
         }),
@@ -143,7 +143,7 @@ export const overviewSection = buildSection({
         // Other fees
         buildOverviewField({
           id: 'otherCostsOverview',
-          title: m.summary.otherCostsHeader,
+          title: m.overview.otherCostsHeader,
           items: otherCostsOverview,
           backId: Routes.OTHERFEES,
         }),

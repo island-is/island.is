@@ -16,7 +16,7 @@ import * as m from '../lib/messages'
 export const getPropertyTypeOptions = () => [
   {
     value: RentalHousingCategoryTypes.ENTIRE_HOME,
-    label: m.registerProperty.category.typeSelectLabelEntireHome,
+    label: m.propertySearch.category.typeSelectLabelEntireHome,
   },
   {
     value: RentalHousingCategoryTypes.ROOM,
@@ -24,42 +24,41 @@ export const getPropertyTypeOptions = () => [
   },
   {
     value: RentalHousingCategoryTypes.COMMERCIAL,
-    label: m.registerProperty.category.typeSelectLabelCommercial,
+    label: m.propertySearch.category.typeSelectLabelCommercial,
   },
 ]
 
 export const getPropertyClassOptions = () => [
   {
     value: RentalHousingCategoryClass.SPECIAL_GROUPS,
-    label: m.registerProperty.category.classSelectLabelIsSpecialGroups,
+    label: m.propertySearch.category.classSelectLabelIsSpecialGroups,
   },
   {
     value: RentalHousingCategoryClass.GENERAL_MARKET,
-    label: m.registerProperty.category.classSelectLabelNotSpecialGroups,
+    label: m.propertySearch.category.classSelectLabelNotSpecialGroups,
   },
 ]
 
 export const getPropertyClassGroupOptions = () => [
   {
     value: RentalHousingCategoryClassGroup.STUDENT_HOUSING,
-    label: m.registerProperty.category.classGroupSelectLabelStudentHousing,
+    label: m.propertySearch.category.classGroupSelectLabelStudentHousing,
   },
   {
     value: RentalHousingCategoryClassGroup.SENIOR_CITIZEN_HOUSING,
-    label:
-      m.registerProperty.category.classGroupSelectLabelSeniorCitizenHousing,
+    label: m.propertySearch.category.classGroupSelectLabelSeniorCitizenHousing,
   },
   {
     value: RentalHousingCategoryClassGroup.COMMUNE,
-    label: m.registerProperty.category.classGroupSelectLabelCommune,
+    label: m.propertySearch.category.classGroupSelectLabelCommune,
   },
   {
     value: RentalHousingCategoryClassGroup.HALFWAY_HOUSE,
-    label: m.registerProperty.category.classGroupSelectLabelHalfwayHouse,
+    label: m.propertySearch.category.classGroupSelectLabelHalfwayHouse,
   },
   {
     value: RentalHousingCategoryClassGroup.INCOME_BASED_HOUSING,
-    label: m.registerProperty.category.classGroupSelectLabelIncomeBasedHousing,
+    label: m.propertySearch.category.classGroupSelectLabelIncomeBasedHousing,
   },
 ]
 

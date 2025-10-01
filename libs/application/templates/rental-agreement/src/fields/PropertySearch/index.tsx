@@ -389,7 +389,7 @@ export const PropertySearch = ({ field, errors }: Props) => {
               type="error"
               message={errors?.registerProperty?.['searchresults.units']}
               title={formatMessage(
-                m.registerProperty.search.searchResultsErrorBannerTitle,
+                m.propertySearch.search.searchResultsErrorBannerTitle,
               )}
             />
           )}

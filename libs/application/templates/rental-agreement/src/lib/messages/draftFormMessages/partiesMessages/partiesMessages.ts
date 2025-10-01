@@ -22,6 +22,12 @@ export const partiesDetails = defineMessages({
     defaultMessage: 'Leigusalar',
     description: 'Parties details page title',
   },
+  personalInformationDescription: {
+    id: 'ra.application:partiesDetails.personalInformationDescription',
+    defaultMessage:
+      'Hér eru upplýsingar um þig eins og þær eru skráðar í Þjóðskrá og á Ísland.is. Ef þú vilt nota annað netfang eða símanúmer við gerð leigusamnings, þá getur þú breytt því hér að neðan.',
+    description: 'Parties details description',
+  },
 
   // DataSchema errors
   partiesEmptyTableError: {
@@ -66,7 +72,7 @@ export const partiesDetails = defineMessages({
 export const landlordAndTenantDetails = defineMessages({
   representativeTableTitle: {
     id: 'ra.application:landlordAndTenantDetails.representativeTableTitle',
-    defaultMessage: 'Umboðsaðilar leigusala',
+    defaultMessage: 'Umboðsaðili leigusala',
     description: 'Representative table title',
   },
   representativeTableDescription: {

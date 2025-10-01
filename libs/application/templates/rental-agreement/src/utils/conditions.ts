@@ -1,8 +1,9 @@
 import { getValueViaPath, YES, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
-import { ApplicantsInfo, LandlordInfo, PropertyUnit } from '../shared/types'
+import { ApplicantsInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
+import { ApplicantsRole } from './enums'
 
 export const singularOrPluralLandlordsTitle = (application: Application) => {
   const landlords = getValueViaPath<Array<ApplicantsInfo>>(
@@ -15,8 +16,8 @@ export const singularOrPluralLandlordsTitle = (application: Application) => {
   }
 
   return landlords?.length > 1
-    ? m.summary.landlordsHeaderPlural
-    : m.summary.landlordsHeader
+    ? m.overview.landlordsHeaderPlural
+    : m.overview.landlordsHeader
 }
 
 export const shouldShowRepresentative = (answers: FormValue) => {
@@ -28,7 +29,9 @@ export const shouldShowRepresentative = (answers: FormValue) => {
   if (
     !representatives ||
     representatives.length === 0 ||
-    representatives[0] === ''
+    representatives[0] === '' ||
+    (typeof representatives[0] === 'object' &&
+      representatives[0]?.nationalIdWithName?.nationalId === '')
   ) {
     return false
   }
@@ -49,8 +52,8 @@ export const singularOrPluralRepresentativeTitle = (
   }
 
   return representatives?.length > 1
-    ? m.summary.landlordsRepresentativeLabelPlural
-    : m.summary.landlordsRepresentativeLabel
+    ? m.overview.landlordsRepresentativeLabelPlural
+    : m.overview.landlordsRepresentativeLabel
 }
 
 export const singularOrPluralTenantsTitle = (application: Application) => {
@@ -64,8 +67,8 @@ export const singularOrPluralTenantsTitle = (application: Application) => {
   }
 
   return tenants?.length > 1
-    ? m.summary.tenantsHeaderPlural
-    : m.summary.tenantsHeader
+    ? m.overview.tenantsHeaderPlural
+    : m.overview.tenantsHeader
 }
 
 export const shouldShowSmokeDetectorsAlert = (answers: FormValue) => {
@@ -111,32 +114,19 @@ export const securityDepositRequired = (answers: FormValue) => {
   return securityDepositRequired?.includes(YesOrNoEnum.YES) || false
 }
 
-export const shouldShowLandlordAlert = (answers: FormValue) => {
-  const landlords = getValueViaPath<Array<LandlordInfo>>(
-    answers,
-    'parties.landlordInfo.table',
-  )
-
-  if (landlords?.length === 0) {
-    return false
-  }
-
-  let hasLandlord = false
-  landlords?.forEach((landlord) => {
-    const isRepresentative = landlord?.isRepresentative?.length > 0
-
-    if (!isRepresentative) {
-      hasLandlord = true
-    }
-  })
-
-  return !hasLandlord
-}
-
 export const shouldShowRepresentativeTable = (answers: FormValue) => {
   const shouldShowRepresentativeTable = getValueViaPath<Array<string>>(
     answers,
     'parties.landlordInfo.shouldShowRepresentativeTable',
   )
   return shouldShowRepresentativeTable?.includes(YES) || false
+}
+
+export const shouldShowRepresentativeStaticTable = (answers: FormValue) => {
+  const applicantRole = getValueViaPath<string>(
+    answers,
+    'assignApplicantParty.applicantsRole',
+  )
+
+  return applicantRole === ApplicantsRole.REPRESENTATIVE
 }
