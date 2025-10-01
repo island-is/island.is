@@ -14,19 +14,25 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
+import { MessageService } from '@island.is/judicial-system/message'
 
 import { CaseService, PdfService } from '../../case'
+import { DefendantService } from '../../defendant'
 import { FileService } from '../../file'
+import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
 import { PoliceService } from '../../police'
 import { Verdict } from '../../repository'
 import { InternalVerdictController } from '../internalVerdict.controller'
 import { VerdictController } from '../verdict.controller'
 import { VerdictService } from '../verdict.service'
 
+jest.mock('@island.is/judicial-system/message')
 jest.mock('../../case/case.service')
 jest.mock('../../police/police.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/pdf.service')
+jest.mock('../../defendant/defendant.service')
+jest.mock('../../lawyer-registry/lawyerRegistry.service')
 
 export const createTestingVerdictModule = async () => {
   const verdictModule = await Test.createTestingModule({
@@ -38,10 +44,13 @@ export const createTestingVerdictModule = async () => {
     controllers: [VerdictController, InternalVerdictController],
     providers: [
       SharedAuthModule,
+      MessageService,
       CaseService,
       PoliceService,
       FileService,
       PdfService,
+      DefendantService,
+      LawyerRegistryService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {

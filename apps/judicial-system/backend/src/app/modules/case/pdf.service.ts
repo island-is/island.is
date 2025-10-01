@@ -437,15 +437,17 @@ export class PdfService {
     theCase: Case,
     defendant: Defendant,
     verdict: Verdict,
+    deliveredToDefenderName?: string,
   ): Promise<Buffer> {
     await this.refreshFormatMessage()
 
-    const generatedPdf = await createVerdictServiceCertificate(
+    const generatedPdf = await createVerdictServiceCertificate({
       theCase,
       defendant,
       verdict,
-      this.formatMessage,
-    )
+      deliveredToDefenderName,
+      formatMessage: this.formatMessage,
+    })
 
     return generatedPdf
   }
