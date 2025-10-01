@@ -14,10 +14,10 @@ export class Text {
 @ObjectType('LawAndOrderCourtCaseData')
 export class Data {
   @Field(() => ID)
-  id!: string
+  cacheId!: string
 
   @Field()
-  caseId!: string
+  id!: string
 
   @Field({ nullable: true })
   caseNumberTitle?: string

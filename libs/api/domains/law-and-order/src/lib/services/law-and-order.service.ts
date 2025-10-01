@@ -44,8 +44,8 @@ export class LawAndOrderService {
       cases:
         cases?.map((x: CasesResponse) => {
           return {
-            id: `${x.id}${locale.toString()}`,
-            caseId: x.id,
+            cacheId: `${x.id}${locale.toString()}`,
+            id: x.id,
             caseNumber: x.caseNumber,
             caseNumberTitle: x.caseNumber,
             state: { label: x.state.label, color: mapTagTypes(x.state.color) },
@@ -82,8 +82,8 @@ export class LawAndOrderService {
 
     const data: CourtCase = {
       data: {
-        id: `${singleCase?.caseId ?? id}${locale}`,
-        caseId: singleCase?.caseId ?? id,
+        cacheId: `${singleCase?.caseId ?? id}${locale}`,
+        id: singleCase?.caseId ?? id,
         hasBeenServed: hasBeenServed,
         caseNumberTitle: singleCase?.data.caseNumber,
         groups: (singleCase?.data.groups ?? []).map((group, groupIndex) => {
@@ -129,6 +129,7 @@ export class LawAndOrderService {
 
     const data: Subpoena = {
       data: {
+        cacheId: `${summon.caseId ?? id}${locale}`,
         id: summon.caseId ?? id,
         hasBeenServed: summonData.hasBeenServed,
         chosenDefender: [message, defenderInfo?.defenderName]
@@ -170,6 +171,7 @@ export class LawAndOrderService {
     })
 
     list.choices = Object.entries(DefenseChoices).map(([code, value]) => ({
+      cacheId: `${code}${locale}`,
       id: code,
       label: formatMessage(value.message),
     }))

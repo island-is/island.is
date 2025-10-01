@@ -3,6 +3,7 @@ query GetPoliceCases {
     __typename
     data {
       __typename
+      cacheId
       number
       type
       status {

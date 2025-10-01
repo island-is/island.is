@@ -3,8 +3,8 @@ query GetCourtCases($locale: String!) {
     __typename
     cases {
       __typename
+      cacheId
       id
-      caseId
       caseNumberTitle
       type
       state {

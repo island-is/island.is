@@ -30,10 +30,10 @@ export class State {
 @ObjectType('LawAndOrderCourtCasesCase')
 export class Case {
   @Field(() => ID)
-  id!: string
+  cacheId!: string
 
   @Field()
-  caseId!: string
+  id!: string
 
   @Field({ nullable: true })
   caseNumberTitle?: string

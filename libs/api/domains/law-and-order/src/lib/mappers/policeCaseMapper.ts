@@ -1,5 +1,6 @@
 import { PoliceCaseDto } from '@island.is/clients/police-cases'
 import { Case } from '../models/police-cases/case.model'
+import type { Locale } from '@island.is/shared/types'
 import {
   mapPoliceCaseStatus,
   mapPoliceCaseStatusValue,
@@ -8,6 +9,7 @@ import { FormatMessage } from '@island.is/cms-translations'
 
 export const mapPoliceCase = (
   data: PoliceCaseDto,
+  locale: Locale,
   formatMessage: FormatMessage,
 ): Case | null => {
   if (!data.caseNumber) {
@@ -15,6 +17,7 @@ export const mapPoliceCase = (
   }
 
   return {
+    cacheId: `${data.caseNumber}${locale}`,
     number: data.caseNumber,
     type: data.type,
     status: mapPoliceCaseStatus(

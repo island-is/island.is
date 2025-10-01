@@ -1,6 +1,7 @@
 query GetPoliceCaseDetail($input: LawAndOrderPoliceCaseInput!) {
   lawAndOrderPoliceCase(input: $input) {
     __typename
+    cacheId
     number
     type
     status {

@@ -59,7 +59,7 @@ const CourtCases = () => {
                 variant: 'text',
                 url: LawAndOrderPaths.CourtCaseDetail.replace(
                   ':id',
-                  x.caseId ?? '',
+                  x.id ?? '',
                 ),
               }}
             />

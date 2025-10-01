@@ -37,7 +37,7 @@ export class PoliceCasesService {
     return {
       data:
         cases
-          .map((item) => mapPoliceCase(item, formatMessage))
+          .map((item) => mapPoliceCase(item, locale, formatMessage))
           .filter(isDefined) ?? [],
       totalCount: cases.length,
       pageInfo: {

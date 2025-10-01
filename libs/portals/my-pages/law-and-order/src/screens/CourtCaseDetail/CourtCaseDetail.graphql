@@ -5,8 +5,8 @@ query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
       footnote
     }
     data {
+      cacheId
       id
-      caseId
       hasBeenServed
       caseNumberTitle
       groups {

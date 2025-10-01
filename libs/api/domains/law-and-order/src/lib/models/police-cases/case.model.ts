@@ -1,8 +1,11 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { CaseStatus } from './caseStatus.model'
 
 @ObjectType('LawAndOrderPoliceCase')
 export class Case {
+  @Field(() => ID)
+  cacheId!: string
+
   @Field()
   number!: string
 
