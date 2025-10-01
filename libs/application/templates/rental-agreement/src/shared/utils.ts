@@ -31,28 +31,37 @@ const mapLandLordInfo = (landlord: ApplicantsInfo): ApplicantsInfo => {
 
 const extractParticipants = (
   answers: Application['answers'],
-): ParticipantsSection => ({
-  landlords: (
-    getValueViaPath<ApplicantsInfo[]>(
-      answers,
-      'parties.landlordInfo.table',
+): ParticipantsSection => {
+  let representatives = getValueViaPath<Array<ApplicantsInfo | string>>(
+    answers,
+    'parties.landlordInfo.representativeTable',
+  )
+
+  if (
+    !representatives ||
+    representatives.length === 0 ||
+    typeof representatives[0] === 'string' ||
+    (typeof representatives[0] === 'object' &&
+      representatives[0]?.nationalIdWithName?.nationalId === '')
+  ) {
+    representatives = []
+  }
+
+  return {
+    landlords: (
+      getValueViaPath<ApplicantsInfo[]>(
+        answers,
+        'parties.landlordInfo.table',
+      ) ?? []
+    ).map(mapLandLordInfo),
+    landlordRepresentatives: (representatives as Array<ApplicantsInfo>).map(
+      mapLandLordInfo,
+    ),
+    tenants:
+      getValueViaPath<ApplicantsInfo[]>(answers, 'parties.tenantInfo.table') ??
       [],
-    ) ?? []
-  ).map(mapLandLordInfo),
-  landlordRepresentatives: (
-    getValueViaPath<ApplicantsInfo[]>(
-      answers,
-      'parties.landlordInfo.representativeTable',
-      [],
-    ) ?? []
-  ).map(mapLandLordInfo),
-  tenants:
-    getValueViaPath<ApplicantsInfo[]>(
-      answers,
-      'parties.tenantInfo.table',
-      [],
-    ) ?? [],
-})
+  }
+}
 
 const extractPropertyInfo = (
   answers: Application['answers'],
