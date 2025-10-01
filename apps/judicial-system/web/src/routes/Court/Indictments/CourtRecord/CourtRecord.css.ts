@@ -5,6 +5,7 @@ import { theme } from '@island.is/island-ui/theme'
 export const containerGrid = style({
   display: 'grid',
   gap: theme.spacing[5],
+  marginBottom: theme.spacing[3],
 })
 
 export const grid = style({
@@ -34,17 +35,6 @@ export const twoColGrid = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       gridTemplateColumns: '1fr 1fr',
-    },
-  },
-})
-
-export const reorderGroup = style({
-  marginTop: theme.spacing[2],
-  gap: theme.spacing[2],
-
-  selectors: {
-    '&:not(:has([data-reorder-item]))': {
-      marginTop: 0,
     },
   },
 })

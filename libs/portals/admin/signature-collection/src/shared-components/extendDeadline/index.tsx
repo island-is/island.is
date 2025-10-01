@@ -62,12 +62,14 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box display="flex">
-            <Tag>
-              <Box display="flex" justifyContent="center">
-                <Icon icon="calendar" type="outline" color="blue600" />
-              </Box>
-            </Tag>
-            <Box marginLeft={5}>
+            <Box marginTop={1}>
+              <Tag>
+                <Box display="flex" justifyContent="center">
+                  <Icon icon="calendar" type="outline" color="blue600" />
+                </Box>
+              </Tag>
+            </Box>
+            <Box marginLeft={3}>
               <Text variant="h4">{formatMessage(m.updateListEndTime)}</Text>
               <Text color="blue600" variant="eyebrow" marginY={1}>
                 {endDate ? format(new Date(endDate), 'dd.MM.yyyy - HH:mm') : ''}
@@ -106,6 +108,7 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               loading={loading}
+              icon="reload"
               onClick={() => {
                 extendDeadline(endDate)
                 setModalChangeDateIsOpen(false)

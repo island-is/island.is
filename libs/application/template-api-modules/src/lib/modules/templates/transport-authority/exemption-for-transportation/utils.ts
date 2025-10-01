@@ -102,9 +102,6 @@ export const mapApplicant = (application: Application): Person => {
   return {
     nationalId: nationalRegistryData?.nationalId || '',
     fullName: nationalRegistryData?.fullName || '',
-    address: nationalRegistryData?.address?.streetAddress || '',
-    postalCode: nationalRegistryData?.address?.postalCode || '',
-    city: nationalRegistryData?.address?.locality || '',
     email: applicantAnswers?.email || '',
     phone: applicantAnswers?.phoneNumber?.slice(-7) || '',
   }
@@ -123,9 +120,6 @@ export const mapTransporter = (
     : {
         nationalId: transporterAnswers?.nationalId || '',
         fullName: transporterAnswers?.name || '',
-        address: transporterAnswers?.address || '',
-        postalCode: transporterAnswers?.postalCodeAndCity?.split(' ')?.[0],
-        city: transporterAnswers?.postalCodeAndCity?.split(' ')?.[1],
         email: transporterAnswers?.email || '',
         phone: transporterAnswers?.phone?.slice(-7) || '',
       }
@@ -369,9 +363,6 @@ export const mapApplicationToDto = async (
     transporter: {
       ssn: transporter.nationalId,
       name: transporter.fullName,
-      address: transporter.address,
-      postalCode: transporter.postalCode,
-      city: transporter.city,
       email: transporter.email,
       phone: transporter.phone,
     },

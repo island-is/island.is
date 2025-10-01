@@ -54,6 +54,7 @@ auth-admin-web:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
@@ -165,6 +166,7 @@ identity-server:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -287,6 +289,9 @@ services-auth-admin-api:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -319,6 +324,11 @@ services-auth-admin-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-admin-api'
+    create: true
+    name: 'services-auth-admin-api'
 services-auth-delegation-api:
   enabled: true
   env:
@@ -391,6 +401,9 @@ services-auth-delegation-api:
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -417,6 +430,11 @@ services-auth-delegation-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/auth-delegation-api'
+    create: true
+    name: 'auth-delegation-api'
 services-auth-ids-api:
   enabled: true
   env:
@@ -526,6 +544,7 @@ services-auth-ids-api:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 6
@@ -598,6 +617,7 @@ services-auth-ids-api-cleanup:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 3
@@ -682,6 +702,7 @@ services-auth-personal-representative:
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 2
@@ -751,6 +772,7 @@ services-auth-personal-representative-public:
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 2
@@ -851,6 +873,9 @@ services-auth-public-api:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -877,3 +902,8 @@ services-auth-public-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-public-api'
+    create: true
+    name: 'services-auth-public-api'

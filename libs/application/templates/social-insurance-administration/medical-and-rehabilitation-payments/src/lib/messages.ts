@@ -122,8 +122,8 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     previousApplicationDetails: {
       id: 'marp.application:has.previous.application.details',
-      defaultMessage: 'Fyrri úrræði',
-      description: 'Previous resources',
+      defaultMessage: 'Fyrri meðferð eða endurhæfing',
+      description: 'Previous treatment or rehabilitation',
     },
     otherTreatmentDescription: {
       id: 'marp.application:other.treatment.description',
@@ -888,6 +888,15 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'A prerequisite for ongoing payments is a confirmation of treatment.',
     },
+
+    // Information
+    informationHasPreviousApproval: {
+      id: 'marp.application:confirmed.treatment.information.has.previous.approval',
+      defaultMessage:
+        'Umsækjandi hefur áður verið í viðurkenndri meðferð eða endurhæfingu',
+      description:
+        'The applicant has previously been in confirmed treatment or rehabilitation',
+    },
   }),
 
   confirmationOfPendingResolution: defineMessages({
@@ -902,6 +911,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
         'Forsenda fyrir áframhaldandi greiðslum er að staðfesting á að bið eftir viðurkenndri meðferð eða endurhæfingu.',
       description:
         'A prerequisite for ongoing payments is a confirmation of pending treatment or rehabilitation',
+    },
+
+    // Information
+    informationResources: {
+      id: 'marp.application:confirmation.of.pending.resolution.information.resources',
+      defaultMessage: 'Hvaða úrræði hefur verið sótt um og beðið er eftir',
+      description: 'What resources have been requested and are still awaited',
     },
 
     // Application for medical and rehabilitation payments

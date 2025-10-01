@@ -9,7 +9,6 @@ interface Props {
 }
 
 export const NationalIdField = ({ nationalId, name, disabled }: Props) => {
-  // const { formatMessage } = useIntl()
   const { formatMessage } = useLocale()
   return (
     <GridRow>

@@ -1296,6 +1296,50 @@ export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
   }
 }
 
+export interface IFeaturedGenericListItemsFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Items */
+  items?: IGenericListItem[] | undefined
+
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
+  /** Organization Subpage */
+  organizationSubpage: IOrganizationSubpage
+
+  /** See more link text */
+  seeMoreLinkText?: string | undefined
+
+  /** Automatically fetch items */
+  automaticallyFetchItems?: boolean | undefined
+
+  /** Generic List */
+  genericList?: IGenericList | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+}
+
+export interface IFeaturedGenericListItems
+  extends Entry<IFeaturedGenericListItemsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredGenericListItems'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFeaturedLinksFields {
   /** Internal Title */
   internalTitle?: string | undefined
@@ -1476,6 +1520,7 @@ export interface IFormFieldFields {
     | 'file'
     | 'nationalId (kennitala)'
     | 'information'
+    | 'numeric'
 
   /** Required */
   required?: boolean | undefined
@@ -5344,6 +5389,7 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'featuredArticles'
   | 'featuredEvents'
+  | 'featuredGenericListItems'
   | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'

@@ -42,16 +42,12 @@ export const overviewSection = buildSection({
         buildOverviewField({
           id: 'rentalAgreementOverview',
           title: (application) => ({
-            ...m.overviewMessages.rentalAgreementTitle,
-            values: {
-              terminationType:
-                getValueViaPath(
-                  application.answers,
-                  'terminationType.answer',
-                ) === TerminationTypes.CANCELATION
-                  ? 'rifta'
-                  : 'segja upp',
-            },
+            ...(getValueViaPath(
+              application.answers,
+              'terminationType.answer',
+            ) === TerminationTypes.CANCELATION
+              ? m.overviewMessages.rentalAgreementTitleCancelation
+              : m.overviewMessages.rentalAgreementTitleTermination),
           }),
           backId: 'chooseContract',
           bottomLine: false,
