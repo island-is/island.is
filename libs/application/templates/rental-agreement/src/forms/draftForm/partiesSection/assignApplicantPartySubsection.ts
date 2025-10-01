@@ -4,29 +4,30 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { ApplicantsRole } from '../../../utils/enums'
+import * as m from '../../../lib/messages'
 
 export const assignApplicantPartySubsection = buildSubSection({
   id: 'assignApplicantPartySubsection',
-  title: 'Hlutverk',
+  title: m.assignApplicantPartyMessages.applicantRole,
   children: [
     buildMultiField({
       id: 'assignApplicantPartyMultiField',
-      title: 'Hlutverk',
-      description: 'Vinsamlegast tilgreindu þitt hlutverk í leigusamningnum',
+      title: m.assignApplicantPartyMessages.applicantRole,
+      description: m.assignApplicantPartyMessages.applicantRoleDescription,
       children: [
         buildRadioField({
           id: 'assignApplicantParty.applicantsRole',
           options: [
             {
-              label: 'Ég er leigusali',
+              label: m.assignApplicantPartyMessages.iAmLandlord,
               value: ApplicantsRole.LANDLORD,
             },
             {
-              label: 'Ég er umboðsmaður leigusala',
+              label: m.assignApplicantPartyMessages.iAmRepresentative,
               value: ApplicantsRole.REPRESENTATIVE,
             },
             {
-              label: 'Ég er leigjandi',
+              label: m.assignApplicantPartyMessages.iAmTenant,
               value: ApplicantsRole.TENANT,
             },
           ],

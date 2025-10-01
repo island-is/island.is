@@ -54,7 +54,12 @@ export const partiesSubsection = buildSubSection({
         buildStaticTableField({
           condition: shouldShowRepresentativeStaticTable,
           title: m.landlordAndTenantDetails.representativeTableTitle,
-          header: ['Nafn', 'Kennitala', 'Símanúmer', 'Netfang'],
+          header: [
+            m.misc.fullName,
+            m.misc.nationalId,
+            m.misc.phoneNumber,
+            m.misc.email,
+          ],
           rows: (application: Application) => {
             const data = staticPartyTableData(
               application,
@@ -103,14 +108,14 @@ export const partiesSubsection = buildSubSection({
           id: 'parties.landlordInfo.representativeTable.0.phone',
           enableCountrySelector: true,
           required: true,
-          title: 'Símanúmer',
+          title: m.misc.phoneNumber,
           width: 'half',
         }),
         buildTextField({
           condition: shouldShowRepresentativeTable,
           id: 'parties.landlordInfo.representativeTable.0.email',
           variant: 'email',
-          title: 'Netfang',
+          title: m.misc.email,
           width: 'half',
           required: true,
           marginBottom: 2,
