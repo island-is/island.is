@@ -39,7 +39,6 @@ import {
   getApplicationNameTranslationString,
   getApplicationStatisticsNameTranslationString,
   getPaymentStatusForAdmin,
-  tryToGetNameFromNationalId,
 } from '../utils/application'
 import {
   ApplicationListAdminResponseDto,
@@ -130,9 +129,8 @@ export class ApplicationAdminSerializer
     const applicantActors = await Promise.all(
       application.applicantActors.map(
         async (actorNationalId) =>
-          (await tryToGetNameFromNationalId(
+          (await this.identityService.tryToGetNameFromNationalId(
             actorNationalId,
-            this.identityService,
             true,
           )) ?? actorNationalId,
       ),
@@ -198,11 +196,10 @@ export class ApplicationAdminSerializer
       externalData: [],
       paymentStatus: getPaymentStatusForAdmin(payment),
       applicantName:
-        tryToGetNameFromNationalId(
+        (await this.identityService.tryToGetNameFromNationalId(
           application.applicant,
-          this.identityService,
           false,
-        ) ?? '',
+        )) ?? '',
       adminData: await getAdminDataForAdminPortal(
         template,
         application,

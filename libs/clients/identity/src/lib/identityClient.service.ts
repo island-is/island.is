@@ -56,6 +56,24 @@ export class IdentityClientService {
     )
   }
 
+  async tryToGetNameFromNationalId(
+    nationalId: string,
+    returnWithNationalId?: boolean,
+  ): Promise<string | undefined> {
+    try {
+      const identity = await this.getIdentity(nationalId)
+
+      return identity?.name
+        ? returnWithNationalId
+          ? `${identity?.name} (${kennitala.format(nationalId)})`
+          : identity?.name
+        : undefined
+    } catch (error) {
+      this.logger.error('Error getting identity', error)
+      return undefined
+    }
+  }
+
   private async getCompanyIdentity(
     nationalId: string,
     actorNationalId?: string,
