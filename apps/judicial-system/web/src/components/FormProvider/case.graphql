@@ -54,6 +54,7 @@ query Case($input: CaseQueryInput!) {
         caseId
         defendantId
         created
+        verdictDeliveredToNationalCommissionersOffice
         appealDate
         appealDecision
         serviceRequirement
@@ -63,7 +64,7 @@ query Case($input: CaseQueryInput!) {
         externalPoliceDocumentId
         legalPaperRequestDate
         comment
-        defenderNationalId
+        deliveredToDefenderNationalId
         servedBy
       }
     }
