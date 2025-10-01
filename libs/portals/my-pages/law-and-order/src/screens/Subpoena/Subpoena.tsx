@@ -65,10 +65,7 @@ const Subpoena = () => {
     >
       {!loading && subpoena?.texts?.confirmation && (
         <Box marginTop={4}>
-          <AlertMessage
-            type="success"
-            message={subpoena.texts.confirmation}
-          />
+          <AlertMessage type="success" message={subpoena.texts.confirmation} />
         </Box>
       )}
 
