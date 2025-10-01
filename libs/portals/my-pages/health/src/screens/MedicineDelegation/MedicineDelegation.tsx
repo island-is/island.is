@@ -1,26 +1,38 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  Button,
+  Stack,
+  Text,
+  ToggleSwitchButton,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  EmptyTable,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
-  SortableTable,
+  LinkButton,
+  formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
-import DelegationModal from './components/DelegationModal'
+import { HealthPaths } from '../../lib/paths'
 import { delegationData } from './utils/mockdata'
+import * as styles from './MedicineDelegation.css'
 
 const MedicineDelegation = () => {
   const { formatMessage } = useLocale()
-  const [newDelegationModelOpen, setNewDelegationModelOpen] = useState<{
-    id: string
-    open: boolean
-  } | null>(null)
+  const navigate = useNavigate()
+  const [showExipredPermits, setShowExpiredPermits] = useState(false)
 
-  const openModal = (id: string) => {
-    setNewDelegationModelOpen({ id, open: true })
+  const filteredData = delegationData.filter((permit) =>
+    showExipredPermits ? true : permit.isValid,
+  )
+
+  if (delegationData.length === 0) {
+    return <Problem type="no_data" />
   }
   return (
     <IntroWrapper
@@ -30,52 +42,80 @@ const MedicineDelegation = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicineDelegationTooltip,
       )}
-    >
-      <Box>
-        <Text as="h2" fontWeight="medium" marginBottom={2}>
-          {formatMessage(messages.myDelegations)}
-        </Text>
-        {delegationData.length === 0 ? (
-          <EmptyTable />
-        ) : (
-          <SortableTable
-            labels={{
-              name: formatMessage(m.name),
-              kennitala: formatMessage(m.natreg),
-              delegationType: formatMessage(messages.delegationType),
-              date: formatMessage(m.dateShort),
-            }}
-            defaultSortByKey="name"
-            mobileTitleKey="name"
-            items={delegationData.map((item, i) => ({
-              id: item.id ?? `${i}`,
-              name: item.name,
-              kennitala: item.nationalId,
-              delegationType: item.delegationType,
-              date: item.date.toDateString(),
-              lastNode: {
-                type: 'action',
-                label: formatMessage(m.buttonEdit),
-                icon: { icon: 'pencil', type: 'outline' },
-                action: () => openModal(item.id),
-              },
-            }))}
+      buttonGroup={[
+        <>
+          <LinkButton
+            variant="utility"
+            size="small"
+            to={formatMessage(messages.medicineDelegationReadAboutLink)}
+            text={formatMessage(messages.readAboutPermit)}
+            icon="open"
           />
-        )}
-        {delegationData.map((item, i) => {
+          <Button
+            variant="utility"
+            colorScheme="primary"
+            icon="arrowForward"
+            iconType="outline"
+            size="small"
+            onClick={() => navigate(HealthPaths.HealthMedicineDelegationAdd)}
+          >
+            {formatMessage(messages.addDelegation)}
+          </Button>
+        </>,
+      ]}
+    >
+      <Box justifyContent="spaceBetween" alignItems="center" display="flex">
+        <Text variant="medium">
+          {filteredData?.length === 1
+            ? formatMessage(messages.singlePermit)
+            : formatMessage(messages.numberOfPermits, {
+                number: filteredData?.length,
+              })}
+        </Text>
+        <ToggleSwitchButton
+          className={styles.toggleButton}
+          label={formatMessage(messages.showExipredPermits)}
+          onChange={() => setShowExpiredPermits(!showExipredPermits)}
+          checked={showExipredPermits}
+        />
+      </Box>
+      <Stack space={2}>
+        {filteredData.map((item, i) => {
           return (
-            <DelegationModal
-              key={i}
-              id={`delegationRegistrationModal-${item.id}`}
-              activeDelegation={item}
-              visible={
-                newDelegationModelOpen?.id === item.id &&
-                newDelegationModelOpen.open
+            <ActionCard
+              key={item.id}
+              heading={item.name}
+              headingVariant="h4"
+              text={formatMessage(messages.permitTo, {
+                arg: item.delegationType,
+              })}
+              subText={
+                formatMessage(messages.medicineValidTo) +
+                ' ' +
+                formatDate(item.dateTo)
               }
+              tag={{
+                outlined: false,
+                label: item.isValid
+                  ? formatMessage(messages.valid)
+                  : formatMessage(messages.expired),
+                variant: item.isValid ? 'blue' : 'red',
+              }}
+              cta={{
+                variant: 'text',
+                label: formatMessage(m.seeDetails),
+                onClick: () =>
+                  navigate(
+                    `${HealthPaths.HealthMedicineDelegationDetail.replace(
+                      ':id',
+                      item.id,
+                    )}`,
+                  ),
+              }}
             />
           )
         })}
-      </Box>
+      </Stack>
     </IntroWrapper>
   )
 }

@@ -1468,7 +1468,7 @@ export const m = defineMessages({
   },
   medicineDelegation: {
     id: 'service.portal:medicine-delegation',
-    defaultMessage: 'Lyfjaumboð',
+    defaultMessage: 'Lyfjaheimildir',
   },
   medicinePaymentParticipation: {
     id: 'service.portal:medicine-payment-participation',
@@ -2128,5 +2128,13 @@ export const searchTagsMessages = defineMessages({
   assetsMachines: {
     id: 'sp.search.tags:assets-machines',
     defaultMessage: 'Vélar',
+  },
+  medicineDelegationOther: {
+    id: 'sp.search.tags:medicine-delegation-other',
+    defaultMessage: 'Lyfjaumboð',
+  },
+  medicineDelegationOtherNew: {
+    id: 'sp.search.tags:medicine-delegation-other-new',
+    defaultMessage: 'Nýtt lyfjaumboð',
   },
 })

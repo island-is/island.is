@@ -54,9 +54,17 @@ const MedicineCertificate = lazy(() =>
   import('./screens/MedicineCertificate/MedicineCertificate'),
 )
 
-// const MedicineDelegation = lazy(() =>
-//   import('./screens/MedicineDelegation/MedicineDelegation'),
-// )
+const MedicineDelegation = lazy(() =>
+  import('./screens/MedicineDelegation/MedicineDelegation'),
+)
+
+const MedicineDelegationDetail = lazy(() =>
+  import('./screens/MedicineDelegation/MedicineDelegationDetail'),
+)
+
+const NewMedicineDelegation = lazy(() =>
+  import('./screens/MedicineDelegation/NewMedicineDelegation'),
+)
 
 const PaymentParticipation = lazy(() =>
   import('./screens/PaymentsAndRights/PaymentParticipation'),
@@ -231,14 +239,27 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePrescriptionHistory />,
     },
-    // Commented out because not ready yet
-    // {
-    //   name: hm.medicineDelegation,
-    //   path: HealthPaths.HealthMedicineDelegation,
-    //   key: MEDICINE_LANDLAEKNIR_FLAG,
-    //   enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
-    //   element: <MedicineDelegation />,
-    // },
+    {
+      name: hm.medicineDelegation,
+      path: HealthPaths.HealthMedicineDelegation,
+      key: MEDICINE_LANDLAEKNIR_FLAG, // TODO CHECK IF CORRECT
+      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      element: <MedicineDelegation />,
+    },
+    {
+      name: hm.medicineDelegation,
+      path: HealthPaths.HealthMedicineDelegationDetail,
+      key: MEDICINE_LANDLAEKNIR_FLAG, // TODO CHECK IF CORRECT
+      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      element: <MedicineDelegationDetail />,
+    },
+    {
+      name: hm.medicineDelegation,
+      path: HealthPaths.HealthMedicineDelegationAdd,
+      key: MEDICINE_LANDLAEKNIR_FLAG, // TODO CHECK IF CORRECT
+      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      element: <NewMedicineDelegation />,
+    },
     {
       name: hm.medicinePaymentParticipation,
       path: HealthPaths.HealthMedicinePaymentParticipation,

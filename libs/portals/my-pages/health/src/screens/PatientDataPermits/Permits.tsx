@@ -1,11 +1,11 @@
 import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 import {
+  ActionCard,
   Box,
   Button,
   Stack,
-  ToggleSwitchButton,
   Text,
-  ActionCard,
+  ToggleSwitchButton,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -47,6 +47,7 @@ const PatientDataPermits: React.FC = () => {
         messages.landlaeknirVaccinationsTooltip,
       )} // TODO: Update this tooltip message if needed
       buttonGroup={[
+        // TODO: getLinkTo
         <Button variant="utility" icon="open" iconType="outline">
           {formatMessage(messages.readAboutPermit)}
         </Button>,
