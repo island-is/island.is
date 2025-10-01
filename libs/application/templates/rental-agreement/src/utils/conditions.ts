@@ -123,10 +123,10 @@ export const shouldShowRepresentativeTable = (answers: FormValue) => {
 }
 
 export const shouldShowRepresentativeStaticTable = (answers: FormValue) => {
-  const aplicantRole = getValueViaPath<string>(
+  const applicantRole = getValueViaPath<string>(
     answers,
     'assignApplicantParty.applicantsRole',
   )
 
-  return aplicantRole === ApplicantsRole.REPRESENTATIVE
+  return applicantRole === ApplicantsRole.REPRESENTATIVE
 }
