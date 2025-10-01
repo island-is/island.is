@@ -20,10 +20,6 @@ export const mapDistrictCommissionersLicensesResponse = (
   return (
     licenses
       ?.map((l) => {
-        if (!l || !l.status || !l.title || !l.validFrom) {
-          return
-        }
-
         const licenseId = addLicenseTypePrefix(
           l.id,
           LicenseType.DISTRICT_COMMISSIONERS,
