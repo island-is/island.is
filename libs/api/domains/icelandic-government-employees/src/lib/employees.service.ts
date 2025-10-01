@@ -6,7 +6,7 @@ import { mapEmployee } from "./mappers/employeeMapper";
 import {isDefined} from '@island.is/shared/utils'
 
 @Injectable()
-export class EmployeesService {
+export class IcelandicGovernmentEmployeesService {
   constructor(
     private elfurService: ElfurClientService,
   ) { }
