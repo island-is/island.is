@@ -25,16 +25,14 @@ export const PropertyTableHeader = () => {
             className: `${tableHeadingCell} ${tableCellFastNum}`,
           }}
         >
-          {formatMessage(
-            m.registerProperty.search.searchResultHeaderPropertyId,
-          )}
+          {formatMessage(m.propertySearch.search.searchResultHeaderPropertyId)}
         </Table.HeadData>
         <Table.HeadData
           box={{
             className: `${tableHeadingCell} ${tableCellMerking}`,
           }}
         >
-          {formatMessage(m.registerProperty.search.searchResultHeaderMarking)}
+          {formatMessage(m.propertySearch.search.searchResultHeaderMarking)}
         </Table.HeadData>
         <Table.HeadData
           box={{

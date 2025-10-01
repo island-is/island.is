@@ -46,7 +46,7 @@ export const registerPropertySchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
-        params: m.registerProperty.search.searchResultsNoUnitChosenError,
+        params: m.propertySearch.search.searchResultsNoUnitChosenError,
         path: ['searchresults'],
       })
     }
@@ -59,7 +59,7 @@ export const registerPropertySchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.registerProperty.search.numOfRoomsMinimumError,
+          params: m.propertySearch.search.numOfRoomsMinimumError,
           path: ['searchresults.units'],
         })
       }
@@ -67,7 +67,7 @@ export const registerPropertySchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.registerProperty.search.numOfRoomsMaximumError,
+          params: m.propertySearch.search.numOfRoomsMaximumError,
           path: ['searchresults.units'],
         })
       }
@@ -80,7 +80,7 @@ export const registerPropertySchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.registerProperty.search.changedSizeTooLargeError,
+          params: m.propertySearch.search.changedSizeTooLargeError,
           path: ['searchresults.units'],
         })
       }
@@ -88,7 +88,7 @@ export const registerPropertySchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.registerProperty.search.changedSizeTooSmallError,
+          params: m.propertySearch.search.changedSizeTooSmallError,
           path: ['searchresults.units'],
         })
       }
