@@ -168,8 +168,8 @@ import { PracticalExamTemplateModule } from './aosh/practical-exam/practical-exa
 import { PracticalExamTemplateService } from './aosh/practical-exam/practical-exam.service'
 import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module'
 import { LegalGazetteTemplateService } from './legal-gazette/legal-gazette.service'
-import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
-import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
+import { RentalAgreementModule } from './hms/rental-agreement/rental-agreement.module'
+import { RentalAgreementService } from './hms/rental-agreement/rental-agreement.service'
 import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
 import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 
