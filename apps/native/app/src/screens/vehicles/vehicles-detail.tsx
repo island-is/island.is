@@ -119,7 +119,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
         },
       })
     }
-  })
+  }, componentId)
 
   const {
     mainInfo,
@@ -165,25 +165,29 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               gap: theme.spacing.p4,
             }}
           >
-            <Button
-              style={{ flex: 1 }}
-              iconStyle={{ tintColor: theme.color.dark300 }}
-              isOutlined
-              title={intl.formatMessage({
-                id: 'vehicles.registerMileage',
-              })}
-              iconPosition="end"
-              icon={require('../../assets/icons/edit.png')}
-              isUtilityButton
-              onPress={() => {
-                navigateTo(`/vehicle-change-ownership/`, {
-                  id,
-                  title: {
-                    type: title,
-                  },
-                })
-              }}
-            />
+            {allowMilageRegistration && (
+              <Button
+                style={{ flex: 1 }}
+                iconStyle={{ tintColor: theme.color.dark300 }}
+                isOutlined
+                title={intl.formatMessage({
+                  id: 'vehicles.registerMileage',
+                })}
+                iconPosition="end"
+                icon={require('../../assets/icons/edit.png')}
+                isUtilityButton
+                onPress={() => {
+                  navigateTo(`/vehicle-mileage/`, {
+                    id,
+                    title: {
+                      type: title,
+                      year: basicInfo?.year,
+                      color: registrationInfo?.color,
+                    },
+                  })
+                }}
+              />
+            )}
             <Button
               style={{ flex: 1 }}
               isOutlined
@@ -195,11 +199,8 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
                 id: 'vehicle.links.reportOwnerChange',
               })}
               onPress={() => {
-                navigateTo(`/vehicle-change-ownership/`, {
-                  id,
-                  title: {
-                    type: title,
-                  },
+                navigateTo('/webview', {
+                  source: { uri: getMyPagesLinks().reportOwnerChange },
                 })
               }}
             />
@@ -268,22 +269,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             )}
           </InputRow>
 
-          {allowMilageRegistration && (
-            <Button
-              title={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
-              onPress={() => {
-                navigateTo(`/vehicle-mileage/`, {
-                  id,
-                  title: {
-                    type: title,
-                    year: basicInfo?.year,
-                    color: registrationInfo?.color,
-                  },
-                })
-              }}
-              style={{ marginHorizontal: 16 }}
-            />
-          )}
           <Divider spacing={2} />
 
           <InputRow>

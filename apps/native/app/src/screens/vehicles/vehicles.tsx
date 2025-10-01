@@ -103,12 +103,6 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
       title: intl.formatMessage({ id: 'vehicle.links.vehicleHistory' }),
     },
     {
-      link: myPagesLinks.ownershipCertificatePdf,
-      title: intl.formatMessage({
-        id: 'vehicle.links.ownershipCertificatePdf',
-      }),
-    },
-    {
       link: myPagesLinks.reportOwnerChange,
       title: intl.formatMessage({ id: 'vehicle.links.reportOwnerChange' }),
     },

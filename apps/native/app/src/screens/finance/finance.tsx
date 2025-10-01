@@ -1,39 +1,28 @@
 import { FormattedMessage, useIntl } from 'react-intl'
-import { SafeAreaView, ScrollView } from 'react-native'
+import { SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
-import { Button, Heading, Skeleton, TableViewCell, Typography } from '../../ui'
 import externalLink from '../../assets/icons/external-link.png'
+import { ExternalLinks } from '../../components/external-links/external-links'
 import { getConfig } from '../../config'
 import { GetFinanceStatus } from '../../graphql/types/finance.types'
 import { useGetFinanceStatusQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { getMyPagesLinks } from '../../lib/my-pages-links'
 import { useBrowser } from '../../lib/use-browser'
+import { Button, Heading, Skeleton, TableViewCell, Typography } from '../../ui'
 import { FinanceStatusCard } from './components/finance-status-card'
 
 const { useNavigationOptions, getNavigationOptions } =
-  createNavigationOptionHooks(
-    (theme, intl) => ({
-      topBar: {
-        title: {
-          text: intl.formatMessage({ id: 'finance.screenTitle' }),
-        },
-      },
-    }),
-    {
-      topBar: {
-        largeTitle: {
-          visible: true,
-        },
-        scrollEdgeAppearance: {
-          active: true,
-          noBorder: true,
-        },
+  createNavigationOptionHooks((theme, intl) => ({
+    topBar: {
+      title: {
+        text: intl.formatMessage({ id: 'finance.screenTitle' }),
       },
     },
-  )
+  }))
 
 export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
@@ -45,7 +34,10 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
     errorPolicy: 'ignore',
   })
 
-  useConnectivityIndicator({ componentId, queryResult: res })
+  useConnectivityIndicator({
+    componentId,
+    queryResult: res,
+  })
 
   // Convert JSON scalars to types
   const financeStatusData: GetFinanceStatus = res.data?.getFinanceStatus ?? {
@@ -100,6 +92,23 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
       }}
     />
   ))
+
+  const myPagesLinks = getMyPagesLinks()
+
+  const externalLinks = [
+    {
+      link: myPagesLinks.transactions,
+      title: intl.formatMessage({ id: 'finance.links.transactions' }),
+    },
+    {
+      link: myPagesLinks.payments,
+      title: intl.formatMessage({ id: 'finance.links.payments' }),
+    },
+    {
+      link: myPagesLinks.loans,
+      title: intl.formatMessage({ id: 'finance.links.loans' }),
+    },
+  ]
 
   const showLoading = res.loading && !res.data
 
@@ -190,6 +199,13 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
               )),
             )
           : null}
+      </SafeAreaView>
+      <SafeAreaView style={{ marginHorizontal: 16 }}>
+        <View style={{ marginHorizontal: -16 }}>
+          {externalLinks.map((link) => (
+            <ExternalLinks links={link} key={link.title} />
+          ))}
+        </View>
       </SafeAreaView>
     </ScrollView>
   )

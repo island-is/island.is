@@ -359,7 +359,6 @@ export const is = {
   // vehicle links
   'vehicle.links.ownerLookup': 'Uppfletting í ökutækjaskrá',
   'vehicle.links.vehicleHistory': 'Ökutækjaferill',
-  'vehicle.links.ownershipCertificatePdf': 'Eignastöðuvottorð sem PDF',
   'vehicle.links.reportOwnerChange': 'Tilkynna eigendaskipti',
   'vehicle.links.returnCertificate': 'Skilavottorð',
   'vehicle.links.nameConfidentiality': 'Nafnleynd í ökutækjaskrá',
@@ -407,6 +406,9 @@ export const is = {
   'finance.heading.title': 'Staða við ríkissjóð og stofnanir',
   'finance.heading.subtitle':
     'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
+  'finance.links.payments': 'Greiðslur',
+  'finance.links.loans': 'Lán',
+  'finance.links.transactions': 'Hreyfingar',
 
   // finance detail
   'financeDetail.title': 'Ítarupplýsingar',

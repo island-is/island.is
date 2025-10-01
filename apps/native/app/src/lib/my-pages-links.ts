@@ -1,10 +1,8 @@
-import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
 
 export const getMyPagesLinks = () => {
   const baseUrl =
     environmentStore.getState().environment?.baseUrl ?? 'https://island.is'
-  const { userInfo } = authStore.getState()
 
   return {
     // For More screen
@@ -16,7 +14,6 @@ export const getMyPagesLinks = () => {
     // For Vehicles screen
     ownerLookup: `${baseUrl}/minarsidur/eignir/okutaeki/leit`,
     vehicleHistory: `${baseUrl}/minarsidur/eignir/okutaeki/okutaekjaferill`,
-    ownershipCertificatePdf: `${baseUrl}/bff/api?url=https%3A%2F%2Fapi.dev01.devland.is%2Fdownload%2Fv1%2Fvehicles%2Fownership%2Fpdf%2F${userInfo?.nationalId}`,
     reportOwnerChange: `${baseUrl}/umsoknir/eigendaskipti-okutaekis`,
     returnCertificate: `${baseUrl}/umsoknir/skilavottord`,
     nameConfidentiality: `${baseUrl}/umsoknir/nafnleynd-i-okutaekjaskra`,
@@ -29,5 +26,9 @@ export const getMyPagesLinks = () => {
     vehicleHistoryReport: `${baseUrl}/umsoknir/okutaekjaferill`,
     // For assets screen
     mortgageCertificate: `${baseUrl}/umsoknir/vedbokarvottord`,
+    // For finance screen
+    loans: `${baseUrl}/minarsidur/fjarmal/lan`,
+    payments: `${baseUrl}/minarsidur/fjarmal/greidslur/greidslusedlar-og-greidslukvittanir`,
+    transactions: `${baseUrl}/minarsidur/fjarmal/faerslur/flokkar`,
   }
 }

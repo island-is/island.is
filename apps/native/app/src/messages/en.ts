@@ -479,8 +479,6 @@ export const en: TranslatedMessages = {
   // vehicle links
   'vehicle.links.ownerLookup': 'Vehicle registry lookup',
   'vehicle.links.vehicleHistory': 'Vehicle history',
-  'vehicle.links.ownershipCertificatePdf':
-    'Ownership status certificate as PDF',
   'vehicle.links.reportOwnerChange': 'Report change of ownership',
   'vehicle.links.returnCertificate': 'Return certificate',
   'vehicle.links.nameConfidentiality':
@@ -529,6 +527,9 @@ export const en: TranslatedMessages = {
   'finance.heading.title': 'Financial standing with the government',
   'finance.heading.subtitle':
     'Here you can see an overview of your debt and/or credit balance with the government.',
+  'finance.links.payments': 'Payments',
+  'finance.links.loans': 'Loans',
+  'finance.links.transactions': 'Transactions',
 
   // finance detail
   'financeDetail.title': 'Detailed information',
