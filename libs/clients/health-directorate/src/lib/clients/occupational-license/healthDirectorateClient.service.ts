@@ -98,8 +98,11 @@ export class HealthDirectorateClientService {
             legalEntityId: l.logadiliID,
             licenseHolderNationalId: l.kennitala,
             licenseHolderName: l.nafn,
-            profession: locale === 'en' && l.starfsstettEn ? l.starfsstettEn : l.starfsstett,
-            practice:  locale === 'en' && l.leyfiEn ? l.leyfiEn : l.leyfi,
+            profession:
+              locale === 'en' && l.starfsstettEn
+                ? l.starfsstettEn
+                : l.starfsstett,
+            practice: locale === 'en' && l.leyfiEn ? l.leyfiEn : l.leyfi,
             licenseNumber: l.leyfisnumer,
             validFrom: l.gildirFra,
             validTo: l.gildirTIl ?? undefined,

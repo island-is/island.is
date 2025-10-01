@@ -3,9 +3,7 @@ import { CurrentUser } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject } from '@nestjs/common'
 import { DistrictCommissionersLicensesService } from '@island.is/clients/district-commissioners-licenses'
-import {
-  HealthDirectorateClientService,
-} from '@island.is/clients/health-directorate'
+import { HealthDirectorateClientService } from '@island.is/clients/health-directorate'
 import { License } from './models/license.model'
 import { MMSApi } from '@island.is/clients/mms'
 import { DownloadServiceConfig } from '@island.is/nest/config'
@@ -18,9 +16,18 @@ import { LicenseResponse as MMSLicenseResponse } from '@island.is/clients/mms'
 import { LicenseError } from './models/licenseError.model'
 import { FetchError } from '@island.is/clients/middlewares'
 import { m } from './messages'
-import { mapDistrictCommissionersLicense, mapDistrictCommissionersLicensesResponse } from './mappers/districtCommissionerLicenseMapper'
-import { mapHealthDirectorateLicensesResponse, mapHealthDirectorateLicense } from './mappers/healthDirectorateLicenseMapper'
-import { mapEducationLicense, mapEducationLicensesResponse } from './mappers/educationLicenseMapper'
+import {
+  mapDistrictCommissionersLicense,
+  mapDistrictCommissionersLicensesResponse,
+} from './mappers/districtCommissionerLicenseMapper'
+import {
+  mapHealthDirectorateLicensesResponse,
+  mapHealthDirectorateLicense,
+} from './mappers/healthDirectorateLicenseMapper'
+import {
+  mapEducationLicense,
+  mapEducationLicensesResponse,
+} from './mappers/educationLicenseMapper'
 
 const NAMESPACE_ID = 'api.occupational-licenses'
 
@@ -116,7 +123,10 @@ export class OccupationalLicensesService {
     locale: Locale,
   ): Promise<LicenseResponse | null> {
     const licenses =
-      await this.healthService.getHealthDirectorateLicenseToPractice(user, locale)
+      await this.healthService.getHealthDirectorateLicenseToPractice(
+        user,
+        locale,
+      )
 
     if (!licenses) {
       return null
@@ -187,5 +197,4 @@ export class OccupationalLicensesService {
       ],
     }
   }
-
 }
