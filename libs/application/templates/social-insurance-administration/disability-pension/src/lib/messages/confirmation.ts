@@ -40,7 +40,7 @@ export const confirmation = defineMessages({
   },
   warningDescription: {
     id: 'dp.application:confirmation.warningDescription#markdown',
-    defaultMessage: `Tryggingastofnun vekur athygli þína á því að þú getur átt rétt á greiðslum úr öðrum bótaflokkum sem tengjast heimilisaðstæðum. \n\nSérstaklega er bent á eftirfarandi umsóknir: \n\n- Umsókn um barnalífeyrir \n- Umsókn um heimilisuppbót \n\nTryggingastofnun hvetur þig til að fara í gegnum þessar umsóknir. Þær er hægt að nálgast inni á [tr.is](https://tr.is) og velur þar "Mínar síður". Innskráning fer fram með rafrænum skilríkjum.`,
+    defaultMessage: `# **Þú gætir átt rétt á:**\n\n Tryggingastofnun vekur athygli þína á því að þú getur átt rétt á greiðslum úr öðrum bótaflokkum sem tengjast heimilisaðstæðum. \n\nSérstaklega er bent á eftirfarandi umsóknir: \n\n- Umsókn um barnalífeyrir \n- Umsókn um heimilisuppbót \n\nTryggingastofnun hvetur þig til að fara í gegnum þessar umsóknir. Þær er hægt að nálgast inni á [tr.is](https://tr.is) og velur þar "Mínar síður". Innskráning fer fram með rafrænum skilríkjum.`,
     description: 'Warning description',
   },
 })
