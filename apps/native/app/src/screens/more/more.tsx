@@ -1,7 +1,10 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 
 import airplaneIcon from '../../assets/icons/airplane.png'
@@ -19,6 +22,10 @@ import { getMyPagesLinks } from '../../lib/my-pages-links'
 import { MoreCard, Typography } from '../../ui'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
+import {
+  ButtonRegistry,
+  ComponentRegistry,
+} from '../../utils/component-registry'
 
 const Row = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[1]}px;
@@ -34,6 +41,29 @@ const { useNavigationOptions, getNavigationOptions } =
           text: intl.formatMessage({ id: 'profile.screenTitle' }),
         },
         rightButtons: getRightButtons({ icons: ['settings'], theme }),
+        leftButtons: [
+          {
+            id: ButtonRegistry.ProfileAvatarButton,
+            component: {
+              id: ButtonRegistry.ProfileAvatarButton,
+              name: ButtonRegistry.ProfileAvatarButton,
+              passProps: {
+                onPress: () =>
+                  Navigation.showModal({
+                    stack: {
+                      children: [
+                        {
+                          component: {
+                            name: ComponentRegistry.PersonalInfoScreen,
+                          },
+                        },
+                      ],
+                    },
+                  }),
+              },
+            },
+          },
+        ],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
