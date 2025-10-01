@@ -664,8 +664,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           />
         </InputRow>
         {isOrganDonationEnabled && (
-          <>
-            <InputRow background>
+          <InputRow background>
               <Input
                 label={intl.formatMessage({
                   id: 'health.organDonation',
@@ -704,7 +703,6 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 }
               />
             </InputRow>
-          </>
         )}
         <InputRow background>
           <Input
