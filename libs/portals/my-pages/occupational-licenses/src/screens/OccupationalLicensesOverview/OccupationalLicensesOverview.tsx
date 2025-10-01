@@ -37,10 +37,13 @@ const mapLicenseTypeToOrganization = (
 }
 
 const Overview = () => {
-  const { data, loading, error } = useGetOccupationalLicensesQuery()
   const { data: organizations } = useOrganizations()
-  const { formatMessage, formatDateFns } = useLocale()
+  const { formatMessage, formatDateFns, locale } = useLocale()
   useNamespaces('sp.occupational-licenses')
+
+  const { data, loading, error } = useGetOccupationalLicensesQuery({
+    variables: { locale },
+  })
 
   const licenses =
     data?.occupationalLicenses?.licenses
