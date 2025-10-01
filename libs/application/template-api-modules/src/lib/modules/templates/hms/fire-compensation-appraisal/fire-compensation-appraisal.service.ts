@@ -134,6 +134,17 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       console.log('file lengths')
       console.dir(fileLengths, { depth: null })
 
+      console.log('--------------------------------')
+      console.log('application attachments')
+      console.dir(application.attachments, { depth: null })
+      console.log('--------------------------------')
+
+      console.log('--------------------------------')
+      console.log('application attachments length vs files length')
+      console.dir(Object.keys(application.attachments).length, { depth: null })
+      console.dir(files.length, { depth: null })
+      console.log('--------------------------------')
+
       const missingFiles = files.filter(
         (file) => !file.fileContent || file.fileContent.trim().length === 0,
       )
