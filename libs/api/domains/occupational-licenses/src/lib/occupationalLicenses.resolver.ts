@@ -12,6 +12,7 @@ import { LicenseResult } from './models/licenseResult.model'
 import { isDefined } from '@island.is/shared/utils'
 import { OccupationalLicensesService } from './occupationalLicenses.service'
 import { LicenseType } from './models/licenseType.model'
+import type { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/occupational-licenses' })
@@ -27,11 +28,13 @@ export class OccupationalLicensesResolver {
   @Audit()
   async occupationalLicenses(
     @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
   ): Promise<LicenseCollection | null> {
     const data = await Promise.all([
-      this.service.getHealthDirectorateLicenses(user),
-      this.service.getEducationLicenses(user),
-      this.service.getDistrictCommissionerLicenses(user),
+      this.service.getHealthDirectorateLicenses(user, locale),
+      this.service.getEducationLicenses(user, locale),
+      this.service.getDistrictCommissionerLicenses(user, locale),
     ])
 
     let normalizedResults: Array<typeof LicenseResult> = []
@@ -78,6 +81,7 @@ export class OccupationalLicensesResolver {
         return this.service.getHealthDirectorateLicenseById(
           user,
           licenseType.licenseId,
+          input.locale,
         )
     }
   }
