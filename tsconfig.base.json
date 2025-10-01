@@ -135,6 +135,9 @@
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
+      "@island.is/api/domains/icelandic-government-employees": [
+        "libs/api/domains/icelandic-government-employees/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-names-registry": [
         "libs/api/domains/icelandic-names-registry/src/index.ts"
       ],
@@ -724,6 +727,7 @@
       "@island.is/clients/electronic-registration-statistics": [
         "libs/clients/electronic-registration-statistics/src/index.ts"
       ],
+      "@island.is/clients/elfur": ["libs/clients/elfur/src/index.ts"],
       "@island.is/clients/energy-funds": [
         "libs/clients/energy-funds/src/index.ts"
       ],
@@ -1258,7 +1262,6 @@
         "libs/application/templates/name-of-application/src/index.ts"
       ],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
-      "@island.is/clients/elfur": ["libs/clients/elfur/src/index.ts"]
     }
   }
 }

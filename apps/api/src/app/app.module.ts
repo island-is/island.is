@@ -176,6 +176,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { LicenseConfig } from '@island.is/services/license'
 
 import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
+import { IcelandicGovernmentEmployeesModule } from '@island.is/api/domains/icelandic-government-employees'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { SignatureCollectionModule } from '@island.is/api/domains/signature-collection'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
@@ -261,6 +262,7 @@ const environment = getConfig
     ConsultationPortalModule,
     FormSystemModule,
     CmsModule,
+    IcelandicGovernmentEmployeesModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
     EducationModule.register({
