@@ -228,5 +228,4 @@ export const superUserFields = [
   'customClaims',
   'singleSession',
   'allowedAcr',
-  'sso',
 ]
