@@ -225,6 +225,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       startDate
       isConfirmed
+      ruling
+      filedDocuments {
+        documentOrder
+        name
+        documentType
+        caseFileId
+        generatedPdfUri
+      }
     }
     mergedCases {
       id
@@ -236,6 +244,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         id
         startDate
         endDate
+        ruling
       }
       caseFiles {
         id
@@ -299,8 +308,5 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     indictmentReviewedDate
     indictmentSentToPublicProsecutorDate
     isRegisteredInPrisonSystem
-    courtSessions {
-      ruling
-    }
   }
 }
