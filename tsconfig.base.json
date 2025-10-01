@@ -1257,7 +1257,8 @@
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
       ],
-      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
+      "@island.is/clients/elfur": ["libs/clients/elfur/src/index.ts"]
     }
   }
 }
