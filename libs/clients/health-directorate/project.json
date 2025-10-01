@@ -18,11 +18,11 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/getOpenAPI?serviceCode=landlaeknir > src/lib/clients/organ-donation/clientConfig.json",
-          "prettier --write /clientConfig.json"
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/getOpenAPI?serviceCode=landlaeknir > clientConfig.json",
+          "prettier --write clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/health-directorate/src/lib/clients/organ-donation"
+        "cwd": "libs/clients/health-directorate/src/lib/clients/occupational-license"
       }
     },
     "codegen/backend-client": {
