@@ -2,7 +2,6 @@ import type { User } from '@island.is/auth-nest-tools'
 import { LshClientService } from '@island.is/clients/lsh'
 import type { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
-import * as fs from 'fs'
 
 import { Form, LshDevService } from '@island.is/clients/health-directorate'
 import {
@@ -11,13 +10,10 @@ import {
   transformHealthDirectorateQuestionnaireToList,
 } from '../mappers/health-directorate-client-mapper'
 import { transformLshQuestionnaireFromJson } from '../mappers/lsh-questionnaire-mapper'
-import { data as lsh_list_1 } from '../mockdata/json/lsh_list_1'
-import { data as lsh_list_2 } from '../mockdata/json/lsh_list_2'
 import {
   Questionnaire,
   QuestionnairesList,
 } from '../models/questionnaires.model'
-import path from 'path'
 
 @Injectable()
 export class QuestionnairesService {
@@ -41,17 +37,17 @@ export class QuestionnairesService {
     const lshDevQuestionnaires: QuestionnairesList[] = []
 
     // Handle error for each client so the other can still succeed
-    // try {
-    //   const lshDev: Form[] = await this.lshDevApi.getPatientForms(user)
-    //   // Transform each LSH Dev questionnaire
-    //   lshDev?.map((form) =>
-    //     lshDevQuestionnaires.push(
-    //       transformLshQuestionnaireFromJson(form.formJSON),
-    //     ),
-    //   ) || []
-    // } catch (error) {
-    //   // Handle error (e.g., log it)
-    // }
+    try {
+      const lshDev: Form[] = await this.lshDevApi.getPatientForms(user)
+      // Transform each LSH Dev questionnaire
+      lshDev?.map((form) =>
+        lshDevQuestionnaires.push(
+          transformLshQuestionnaireFromJson(form.formJSON),
+        ),
+      ) || []
+    } catch (error) {
+      // Handle error (e.g., log it)
+    }
 
     const data = [
       elListTransformed,
@@ -60,6 +56,7 @@ export class QuestionnairesService {
     ].find((list) =>
       list.questionnaires?.some((q: Questionnaire) => q.id === id),
     )?.questionnaires?.[0]
+
     if (!data) {
       return null
     }
@@ -75,26 +72,26 @@ export class QuestionnairesService {
     _user: User,
     _locale: Locale,
   ): Promise<QuestionnairesList | null> {
-    // const lshDevQuestionnaires: QuestionnairesList[] = []
+    const lshDevQuestionnaires: QuestionnairesList[] = []
 
-    // const lshDev: Form[] = await this.lshDevApi.getPatientForms(_user)
+    const lshDev: Form[] = await this.lshDevApi.getPatientForms(_user)
 
-    // // Transform each LSH Dev questionnaire
+    // Transform each LSH Dev questionnaire
 
-    // lshDev?.map((form) =>
-    //   lshDevQuestionnaires.push(
-    //     transformLshQuestionnaireFromJson(form.formJSON),
-    //   ),
-    // ) || []
-    // // Filter out questionnaires that don't have an ID
-    // const validLshDevQuestionnaires = lshDevQuestionnaires.map((list) => ({
-    //   ...list,
-    //   questionnaires:
-    //     list.questionnaires?.filter(
-    //       (questionnaire) =>
-    //         questionnaire.id !== undefined && questionnaire.id !== null,
-    //     ) || [],
-    // }))
+    lshDev?.map((form) =>
+      lshDevQuestionnaires.push(
+        transformLshQuestionnaireFromJson(form.formJSON),
+      ),
+    ) || []
+    // Filter out questionnaires that don't have an ID
+    const validLshDevQuestionnaires = lshDevQuestionnaires.map((list) => ({
+      ...list,
+      questionnaires:
+        list.questionnaires?.filter(
+          (questionnaire) =>
+            questionnaire.id !== undefined && questionnaire.id !== null,
+        ) || [],
+    }))
     // Transform EL questionnaire using the health directorate mapper
     const elList = createMockElDistressThermometerQuestionnaire()
     const elListTransformed =
@@ -107,7 +104,7 @@ export class QuestionnairesService {
     const allQuestionnaires: Questionnaire[] = [
       ...(elListTransformed.questionnaires || []),
       ...(elList2Transformed.questionnaires || []),
-      // ...validLshDevQuestionnaires.flatMap((q) => q.questionnaires || []),
+      ...validLshDevQuestionnaires.flatMap((q) => q.questionnaires || []),
     ]
 
     return { questionnaires: allQuestionnaires }
