@@ -224,10 +224,20 @@ export const payout = {
       defaultMessage: 'Upphæð á mánuði',
       description: 'Other benefits payment amount label',
     },
-    payer: {
-      id: 'vmst.ub.application:payout.otherBenefits.payer',
-      defaultMessage: 'Greiðandi',
-      description: 'Payer label',
+    unionPayer: {
+      id: 'vmst.ub.application:payout.otherBenefits.unionPayer',
+      defaultMessage: 'Stéttarfélag',
+      description: 'Union payer label',
+    },
+    pensionFundPayer: {
+      id: 'vmst.ub.application:payout.otherBenefits.pensionFundPayer',
+      defaultMessage: 'Lífeyrissjóður',
+      description: 'Pension fund payer label',
+    },
+    privatePensionFundPayer: {
+      id: 'vmst.ub.application:payout.otherBenefits.privatePensionFundPayer',
+      defaultMessage: 'Séreignasjóður',
+      description: 'Private pension payer label',
     },
     dateFrom: {
       id: 'vmst.ub.application:payout.otherBenefits.dateFrom',

@@ -4,7 +4,7 @@ import { overview as overviewMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
   getPrivatePensionString,
-  getTypeOfPensionPaymentString,
+  getPensionString,
   getUnionString,
 } from '../stringMappers'
 
@@ -28,7 +28,7 @@ export const usePayoutAnswers = (
     externalData,
   )
 
-  const pensionFund = getTypeOfPensionPaymentString(
+  const pensionFund = getPensionString(
     getValueViaPath<string>(answers, 'payout.pensionFund', '') ?? '',
     externalData,
   )
@@ -52,7 +52,7 @@ export const usePayoutAnswers = (
   const valueItems = [
     `${formatMessage(
       overviewMessages.labels.payout.bank,
-    )}: ${bankAccountNumber}-${bankNumber}-${ledger}`,
+    )}: ${bankNumber}-${ledger}-${bankAccountNumber}`,
     `${formatMessage(
       overviewMessages.labels.payout.pensionFund,
     )}: ${pensionFund}`,

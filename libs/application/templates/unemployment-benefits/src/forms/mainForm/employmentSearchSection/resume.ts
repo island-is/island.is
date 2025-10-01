@@ -53,10 +53,11 @@ export const resumeSubSection = buildSubSection({
           condition: (answers) => !doesOwnResume(answers),
         }),
         buildFileUploadField({
-          id: 'resume.resumeFile.file',
+          id: 'resume.resumeFile',
           uploadHeader: employmentSearchMessages.resume.uploadHeader,
           uploadDescription: applicationMessages.fileUploadAcceptFiles,
           maxSize: FILE_SIZE_LIMIT,
+          uploadMultiple: true,
           uploadAccept: UPLOAD_ACCEPT,
           condition: doesOwnResume,
         }),

@@ -20,6 +20,8 @@ import {
 import {
   introductoryMeetingSchema,
   languageSkillsSchema,
+  resumeSchema,
+  workingAbilitySchema,
 } from '../lib/dataSchema'
 import { FileSchema } from '../lib/schemas/fileSchema'
 import { reasonForJobSearchSchema } from '../lib/schemas/reasonForJobSearchSchema'
@@ -68,8 +70,10 @@ export type EducationInAnswers = z.TypeOf<typeof educationSchema>
 export type PreviousEducationInAnswers = z.TypeOf<
   typeof previousEducationSchema
 >
+export type WorkingAbilityInAnswers = z.TypeOf<typeof workingAbilitySchema>
 export type ReasonsForJobSearchInAnswers = z.TypeOf<
   typeof reasonForJobSearchSchema
 >
 export type FileSchemaInAnswers = z.TypeOf<typeof FileSchema>
 export type LanguagesInAnswers = z.TypeOf<typeof languageSkillsSchema>
+export type ResumeInAnswers = z.TypeOf<typeof resumeSchema>

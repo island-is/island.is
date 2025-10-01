@@ -2,7 +2,10 @@ import { getValueViaPath } from '@island.is/application/core'
 import { ExternalData, FormText, FormValue } from '@island.is/application/types'
 import { overview as overviewMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { GaldurDomainModelsSettingsIncomeTypesIncomeTypeCategoryDTO } from '@island.is/clients/vmst-unemployment'
+
 import {
+  getPensionString,
   getPrivatePensionString,
   // getTypeOfIncomeString,
   getUnionString,
@@ -16,55 +19,59 @@ export const useOtherPaymentsAnswers = (
   locale: string,
 ): Array<FormText> => {
   const { formatMessage } = useLocale()
-  const paymentsFromInsurace =
-    getValueViaPath<string>(answers, 'otherBenefits.paymentsFromInsurace') ?? ''
-
-  //Lífeyrissjóðir
-  const otherBenefits =
-    getValueViaPath<Array<OtherBenefitsInAnswers>>(
-      answers,
-      'otherBenefits',
-      [],
+  const incomeTypes =
+    getValueViaPath<
+      GaldurDomainModelsSettingsIncomeTypesIncomeTypeCategoryDTO[]
+    >(
+      externalData,
+      'unemploymentApplication.data.supportData.incomeTypeCategories',
     ) ?? []
-  // TODO after new schema
+  const otherBenefits = getValueViaPath<OtherBenefitsInAnswers>(
+    answers,
+    'otherBenefits',
+  )
 
-  // const paymentsFromPensionStrings = otherBenefits?.paymentsFromPension.map((payment) => {
-  //   return getTypeOfIncomeString(payment, externalData, locale)
-  // })
+  if (otherBenefits?.receivingBenefits === 'no') {
+    return []
+  }
 
-  // //Sjúkradagpeningar
-  // const paymentsFromSicknessAllowance =
-  //   getValueViaPath<PaymentsFromSicknessAllowanceInAnswers>(
-  //     answers,
-  //     'otherBenefits.paymentsFromSicknessAllowance',
-  //     undefined,
-  //   ) ?? undefined
+  const paymentsList: Array<string> = []
 
-  // const SicknessAllowanceUnionString = getUnionString(
-  //   paymentsFromSicknessAllowance?.union ?? '',
-  //   externalData,
-  // )
-
-  // //Séreignasjóður
-  // const paymentsFromPrivatePension =
-  //   getValueViaPath<Array<PaymentsFromPrivatePensionInAnswers>>(
-  //     answers,
-  //     'otherBenefits.payedFromPrivatePensionFundDetails',
-  //     [],
-  //   ) ?? []
-
-  // const paymentsFromPrivatePensionStrings = paymentsFromPrivatePension.map(
-  //   (payment) => {
-  //     const privatePension = getPrivatePensionString(
-  //       payment.privatePensionFund,
-  //       externalData,
-  //     )
-  //     return {
-  //       privatePensionFund: privatePension,
-  //       paymentAmount: payment.paymentAmount,
-  //     }
-  //   },
-  // )
+  otherBenefits?.payments?.forEach((payment) => {
+    const topCategory = incomeTypes.find((x) => x.id === payment.typeOfPayment) // don't show unless there is no subCategory
+    const subCategory = topCategory?.incomeTypes?.find(
+      (x) => x.id === payment.subType,
+    )
+    const paymentAmount = payment.paymentAmount || ''
+    const privatePensionString = getPrivatePensionString(
+      payment.privatePensionFund || '',
+      externalData,
+    )
+    const unionString = getUnionString(payment.union || '', externalData)
+    const pensionFundString = getPensionString(
+      payment.pensionFund || '',
+      externalData,
+    )
+    paymentsList.push(
+      `${
+        !subCategory
+          ? locale === 'is'
+            ? `${topCategory?.name} - `
+            : `${topCategory?.english || ''} - `
+          : ''
+      } ${locale === 'is' ? subCategory?.name : subCategory?.english || ''}${
+        privatePensionString ? ` - ${privatePensionString}` : ''
+      }${unionString ? ` - ${unionString}` : ''}${
+        pensionFundString ? ` - ${pensionFundString}` : ''
+      }${
+        paymentAmount
+          ? `: ${formatIsk(parseInt(paymentAmount))} ${formatMessage(
+              overviewMessages.labels.payout.paymentPerMonth,
+            )}`
+          : ''
+      }`,
+    )
+  })
 
   //Fjármagnstekjur
   const capitalIncome = getValueViaPath<CapitalIncomeInAnswers>(
@@ -72,33 +79,18 @@ export const useOtherPaymentsAnswers = (
     'capitalIncome',
   )
 
+  const total = capitalIncome?.capitalIncomeAmount
+    ?.map((x) => parseInt(x?.amount || '0'))
+    .reduce((a, b) => a + b, 0)
+
   return [
-    `${formatMessage(
-      overviewMessages.labels.payout.otherPayoutsTR,
-    )}: ${formatIsk(parseInt(paymentsFromInsurace))} ${formatMessage(
-      overviewMessages.labels.payout.paymentPerMonth,
-    )}`,
-    // paymentsFromPensionStrings.map((paymentString) => {
-    //   return `${paymentString.typeOfPayment}: ${formatIsk(
-    //     parseInt(paymentString.paymentAmount),
-    //   )} ${formatMessage(overviewMessages.labels.payout.paymentPerMonth)}`
-    // }),
-    // `${formatMessage(
-    //   overviewMessages.labels.payout.otherPayoutSicknessAllowance,
-    // )}: ${SicknessAllowanceUnionString}`,
-    // paymentsFromPrivatePensionStrings.map((paymentString) => {
-    //   return `${paymentString.privatePensionFund}: ${formatIsk(
-    //     parseInt(paymentString.paymentAmount),
-    //   )} ${formatMessage(overviewMessages.labels.payout.paymentPerMonth)}`
-    // }),
-    //TODO add capital income together for one value
-    capitalIncome?.capitalIncomeAmount?.map(
-      (income) =>
-        `${formatMessage(
-          overviewMessages.labels.payout.capitalIncome,
-        )}: ${formatIsk(parseInt(income?.amount || ''))} ${formatMessage(
-          overviewMessages.labels.payout.paymentPerMonth,
-        )}`,
-    ) || '',
+    ...paymentsList,
+    `${formatMessage(overviewMessages.labels.payout.capitalIncome)}${
+      total
+        ? `: ${formatIsk(total)} ${formatMessage(
+            overviewMessages.labels.payout.paymentPerMonth,
+          )}`
+        : ''
+    }`,
   ]
 }

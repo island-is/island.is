@@ -11,12 +11,46 @@ import { ExternalData, StaticText } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   GaldurDomainModelsEducationProgramDTO,
+  GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
   GaldurDomainModelsSettingsIncomeTypesIncomeTypeDTO,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
   GaldurDomainModelsSettingsServiceAreasServiceAreaDTO,
   GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
+
+export const getReasonForJobSearchString = (
+  mainReason: string,
+  externalData: ExternalData,
+  locale: string,
+  additionalReason?: string,
+): { mainReason: string; additionalReason: string } => {
+  const unemploymentReasonCategories =
+    getValueViaPath<
+      Array<GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO>
+    >(
+      externalData,
+      'unemploymentApplication.data.supportData.unemploymentReasonCategories',
+      [],
+    ) || []
+
+  const topCategory = unemploymentReasonCategories.find(
+    (x) => x.id === mainReason,
+  )
+  const subCategory = topCategory?.unemploymentReasons?.find(
+    (x) => x.id === additionalReason,
+  )
+  return {
+    mainReason:
+      locale === 'is' && topCategory?.name
+        ? topCategory?.name
+        : topCategory?.english || '',
+    additionalReason:
+      locale === 'is' && subCategory?.name
+        ? subCategory?.name
+        : subCategory?.english || '',
+  }
+}
 
 export const getCurrentSituationString = (
   status: EmploymentStatus,
@@ -62,7 +96,7 @@ export const getLastTvelveMonthsEducationString = (
   return statusMap[status]
 }
 
-export const getTypeOfPensionPaymentString = (
+export const getPensionString = (
   id: string,
   externalData: ExternalData,
 ): string => {

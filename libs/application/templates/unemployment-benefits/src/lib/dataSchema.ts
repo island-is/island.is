@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { YES, YesOrNoEnum } from '@island.is/application/core'
-import { application, serviceErrors } from './messages'
+import { serviceErrors } from './messages'
 import {
   applicantInformationSchema,
   capitalIncomeSchema,
@@ -26,7 +26,7 @@ const FileSchema = z.object({
 })
 
 export const languageSkillsSchema = z.object({
-  language: z.string(),
+  language: z.string().nullish(), // TODO FIX
   skill: z.string(),
 })
 
@@ -36,22 +36,22 @@ const euresSchema = z.object({
     .refine((v) => Object.values(YesOrNoEnum).includes(v)),
 })
 
-const resumeSchema = z.object({
+export const resumeSchema = z.object({
   doesOwnResume: z
     .nativeEnum(YesOrNoEnum)
     .refine((v) => Object.values(YesOrNoEnum).includes(v)),
-  resumeFile: z.object({ file: z.array(FileSchema) }).optional(),
+  resumeFile: z.array(FileSchema).optional(),
 })
 
 export const introductoryMeetingSchema = z.object({
   language: z.string(),
 })
 
-const workingAbilitySchema = z.object({
+export const workingAbilitySchema = z.object({
   status: z
     .nativeEnum(WorkingAbility)
     .refine((v) => Object.values(WorkingAbility).includes(v)),
-  medicalReport: z.object({ file: z.array(FileSchema) }).optional(),
+  medicalReport: z.array(FileSchema).optional(),
 })
 
 export const UnemploymentBenefitsSchema = z.object({

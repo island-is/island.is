@@ -36,10 +36,17 @@ import {
   getPreviousOccupationInformation,
   getSupportedChildren,
 } from './unemployment-benefits.utils'
+import { FileTypeIds } from './constants'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   errorMsgs,
   FileSchemaInAnswers,
+  EducationInAnswers,
+  WorkingAbilityInAnswers,
+  OtherBenefitsInAnswers,
+  ResumeInAnswers,
+  PaymentTypeIds,
+  EducationType,
 } from '@island.is/application/templates/unemployment-benefits'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -173,6 +180,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
 
     //attachments
     const attachmentList: Array<FileResponseWithType> = []
+
     // Læknistvottorð - ástæða atvinnuleitar
     const medicalCertificateFile =
       getValueViaPath<Array<FileSchemaInAnswers>>(
@@ -180,33 +188,135 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         'reasonForJobSearch.healthReason',
         [],
       ) ?? []
-    medicalCertificateFile.map(async (file) => {
+    medicalCertificateFile.forEach(async (file) => {
       const attachment = await getFileInfo(
         this.s3Service,
         application.id,
         this.config.templateApi.attachmentBucket,
         file,
       )
-      if (attachment) attachmentList.push({ type: '', file: attachment })
+      if (attachment)
+        attachmentList.push({
+          type: FileTypeIds.MEDICAL_CERTIFICATE_RESIGNATION,
+          file: attachment,
+        })
     })
     // Staðfesting á námi/prófgráðu - menntun
+    const educationAnswers = getValueViaPath<EducationInAnswers>(
+      answers,
+      'education',
+    )
+    educationAnswers?.currentEducation?.degreeFile?.forEach(async (file) => {
+      const attachment = await getFileInfo(
+        this.s3Service,
+        application.id,
+        this.config.templateApi.attachmentBucket,
+        file,
+      )
+
+      let fileTypeId
+      if (educationAnswers.typeOfEducation === EducationType.LAST_YEAR) {
+        fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_FINISHED_LAST_TWELVE
+      }
+      if (educationAnswers.typeOfEducation === EducationType.CURRENT) {
+        fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_REGISTERED_NOW
+      }
+      //only option left is LAST_SEMESTER
+      else {
+        if (educationAnswers.didFinishLastSemester === YES) {
+          fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_FINISHED_WITH_DEGREE
+        } else {
+          fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_REGISTERED_LAST_SEMESTER
+        }
+      }
+
+      if (attachment)
+        attachmentList.push({
+          type: fileTypeId,
+          file: attachment,
+        })
+    })
     // starfhæfnisvottorð - vinnufærni - answers.
+    const workingAbility = getValueViaPath<WorkingAbilityInAnswers>(
+      answers,
+      'workingAbility',
+    )
+    workingAbility?.medicalReport?.forEach(async (file) => {
+      const attachment = await getFileInfo(
+        this.s3Service,
+        application.id,
+        this.config.templateApi.attachmentBucket,
+        file,
+      )
+      if (attachment)
+        attachmentList.push({
+          type: FileTypeIds.JOB_ABILITY_CERTIFICATE,
+          file: attachment,
+        })
+    })
+
     // staðfsting á sjúkradagpeningum - aðrar bætur og lífeyrir
     // staðfesting á greiðsluáætlun - aðrar bætur og lífeyrir
+    const otherBenefits = getValueViaPath<OtherBenefitsInAnswers>(
+      answers,
+      'otherBenefits',
+    )
+    otherBenefits?.payments?.forEach((payments) => {
+      payments.sicknessAllowanceFile?.forEach(async (file) => {
+        const attachment = await getFileInfo(
+          this.s3Service,
+          application.id,
+          this.config.templateApi.attachmentBucket,
+          file,
+        )
+        if (attachment)
+          attachmentList.push({
+            type: FileTypeIds.SICKNESS_BENEFIT_PAYMENTS,
+            file: attachment,
+          })
+      })
+
+      payments.paymentPlanFile?.map(async (file) => {
+        const attachment = await getFileInfo(
+          this.s3Service,
+          application.id,
+          this.config.templateApi.attachmentBucket,
+          file,
+        )
+        if (attachment)
+          attachmentList.push({
+            type: FileTypeIds.PAYMENT_PLAN,
+            file: attachment,
+          })
+      })
+    })
+
     // ferilskrá - ferilskrá
+    const resume = getValueViaPath<ResumeInAnswers>(answers, 'resume')
+    resume?.resumeFile?.forEach(async (file) => {
+      const attachment = await getFileInfo(
+        this.s3Service,
+        application.id,
+        this.config.templateApi.attachmentBucket,
+        file,
+      )
+      if (attachment)
+        attachmentList.push({
+          type: FileTypeIds.CV,
+          file: attachment,
+        })
+    })
 
     //childrenSupported
     const childrenSupported = getSupportedChildren(answers)
 
     //bankingPensionUnion
-
     const bankingPensionUnion = getBankinPensionUnion(answers, externalData)
 
     //personalTaxCredit
     const personalTaxCredit = getPersonalTaxCredit(answers)
 
     //employerSettlement
-
     const employerSettlement = getEmployerSettlement(answers)
 
     //languageKnowledge
@@ -214,13 +324,60 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
 
     //workingCapacity
     const workingCapacity = {
-      capacityId: getValueViaPath<string>(answers, 'workingAbility.status'),
+      capacityId: getValueViaPath<WorkingAbilityInAnswers>(
+        answers,
+        'workingAbility',
+      )?.status,
     }
 
     //pensionAndOtherPayments
-    const pensionAndOtherPayments = {
-      //TODO finish this page first
-    }
+    const pensionAndOtherPayments =
+      otherBenefits?.receivingBenefits === YES
+        ? {
+            wellfarePayments: otherBenefits.payments
+              ?.filter(
+                (x) =>
+                  x.typeOfPayment === PaymentTypeIds.INSURANCE_PAYMENTS_TYPE_ID,
+              )
+              .map((payment) => {
+                return {
+                  incomeTypeId: payment.subType,
+                  periodFrom: payment.dateFrom
+                    ? new Date(payment.dateFrom)
+                    : null,
+                  periodTo: payment.dateTo ? new Date(payment.dateTo) : null,
+                  estimatedIncome: parseInt(payment.paymentAmount || ''),
+                  realIncome: parseInt(payment.paymentAmount || ''),
+                }
+              }),
+            pensionPayments: otherBenefits.payments
+              ?.filter(
+                (x) => x.typeOfPayment === PaymentTypeIds.PENSION_FUND_TYPE_ID,
+              )
+              .map((payment) => {
+                return {
+                  incomeTypeId: payment.subType,
+                  estimatedIncome: parseInt(payment.paymentAmount || ''),
+                  realIncome: parseInt(payment.paymentAmount || ''),
+                  pensionFundId: payment.pensionFund,
+                }
+              }),
+            privatePensionPayments: otherBenefits.payments
+              ?.filter(
+                (x) =>
+                  x.typeOfPayment === PaymentTypeIds.SUPPLEMENTARY_FUND_TYPE_ID,
+              )
+              .map((payment) => {
+                return {
+                  incomeTypeId: payment.subType,
+                  estimatedIncome: parseInt(payment.paymentAmount || ''),
+                  realIncome: parseInt(payment.paymentAmount || ''),
+                  privatePensionFundId: payment.pensionFund,
+                }
+              }),
+            // TODO NEED FIELD TO RETURN SJUKRADAGPENINGAR
+          }
+        : null
 
     //previousOccupation
     const previousOccupation = getPreviousOccupationInformation(

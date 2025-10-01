@@ -3,7 +3,7 @@ import { FormText, FormValue } from '@island.is/application/types'
 import { overview as overviewMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { VacationInAnswers } from '../../shared'
-
+import { formatDate } from '../../utils'
 export const useVacationAnswers = (answers: FormValue): Array<FormText> => {
   const { formatMessage } = useLocale()
   const hasVacation =
@@ -23,7 +23,9 @@ export const useVacationAnswers = (answers: FormValue): Array<FormText> => {
     intendedUsage?.vacationDays?.map((intendedUsageItem) => {
       return `${formatMessage(
         overviewMessages.labels.payout.vacationDaysFrom,
-      )}: ${intendedUsageItem.startDate} - ${intendedUsageItem.endDate}`
+      )}: ${formatDate(intendedUsageItem.startDate || '')} - ${formatDate(
+        intendedUsageItem.endDate || '',
+      )}`
     }) || []
 
   const valueItems = [hasVacationString]

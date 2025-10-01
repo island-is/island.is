@@ -1,11 +1,7 @@
 import { z } from 'zod'
 import { FileSchema } from './fileSchema'
 import { YesOrNoEnum } from '@island.is/application/core'
-import {
-  INSURANCE_PAYMENTS_TYPE_ID,
-  SICKNESS_PAYMENTS_TYPE_ID,
-  SUPPLEMENTARY_FUND_TYPE_ID,
-} from '../../shared/constants'
+import { PaymentTypeIds } from '../../shared/constants'
 
 export const otherBenefitsSchema = z
   .object({
@@ -15,14 +11,12 @@ export const otherBenefitsSchema = z
     payments: z
       .array(
         z.object({
-          typeOfPayment: z
-            .preprocess((val) => {
-              if (!val) {
-                return ''
-              }
-              return val
-            }, z.string())
-            .optional(),
+          typeOfPayment: z.preprocess((val) => {
+            if (!val) {
+              return ''
+            }
+            return val
+          }, z.string()),
           subType: z
             .preprocess((val) => {
               if (!val) {
@@ -32,7 +26,9 @@ export const otherBenefitsSchema = z
             }, z.string())
             .optional(),
           paymentAmount: z.string(),
-          payer: z.string().optional(),
+          privatePensionFund: z.string().optional(),
+          pensionFund: z.string().optional(),
+          union: z.string().optional(),
           dateFrom: z.string().optional(),
           dateTo: z.string().optional(),
           sicknessAllowanceFile: z.array(FileSchema).optional(),
@@ -43,7 +39,7 @@ export const otherBenefitsSchema = z
   })
   .superRefine((data, ctx) => {
     data.payments?.forEach((payment, index) => {
-      if (payment.typeOfPayment === SICKNESS_PAYMENTS_TYPE_ID) {
+      if (payment.typeOfPayment === PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID) {
         if (
           !(
             payment.sicknessAllowanceFile &&
@@ -71,17 +67,37 @@ export const otherBenefitsSchema = z
       }
 
       if (
-        payment.typeOfPayment === SUPPLEMENTARY_FUND_TYPE_ID &&
-        !payment.payer
+        payment.typeOfPayment === PaymentTypeIds.SUPPLEMENTARY_FUND_TYPE_ID &&
+        !payment.privatePensionFund
       ) {
         ctx.addIssue({
-          path: ['payments', index, 'payer'],
+          path: ['payments', index, 'privatePensionFund'],
           code: z.ZodIssueCode.custom,
         })
       }
 
       if (
-        payment.typeOfPayment === INSURANCE_PAYMENTS_TYPE_ID &&
+        payment.typeOfPayment === PaymentTypeIds.PENSION_FUND_TYPE_ID &&
+        !payment.pensionFund
+      ) {
+        ctx.addIssue({
+          path: ['payments', index, 'pensionFund'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+
+      if (
+        payment.typeOfPayment === PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID &&
+        !payment.union
+      ) {
+        ctx.addIssue({
+          path: ['payments', index, 'union'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+
+      if (
+        payment.typeOfPayment === PaymentTypeIds.INSURANCE_PAYMENTS_TYPE_ID &&
         !(payment.paymentPlanFile && payment.paymentPlanFile.length > 0)
       ) {
         ctx.addIssue({

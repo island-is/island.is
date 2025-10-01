@@ -37,10 +37,21 @@ export const overview = {
         defaultMessage: 'Umsækjandi',
         description: 'overview section applicant overview applicant label',
       },
+      differentResidence: {
+        id: 'vmst.ub.application:overview.labels.applicantOverview.differentResidence',
+        defaultMessage: 'Dvalarstaður',
+        description:
+          'overview section applicant overview different residence label',
+      },
       children: {
         id: 'vmst.ub.application:overview.labels.applicantOverview.children',
         defaultMessage: 'Börn á framfæri',
         description: 'overview section applicant overview children label',
+      },
+      password: {
+        id: 'vmst.ub.application:overview.labels.applicantOverview.password',
+        defaultMessage: 'Lykilorð',
+        description: 'overview section applicant overview password label',
       },
     }),
 

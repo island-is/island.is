@@ -17,12 +17,9 @@ import {
 import {
   GaldurDomainModelsSettingsIncomeTypesIncomeTypeCategoryDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
+  GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
-import {
-  SICKNESS_PAYMENTS_TYPE_ID,
-  SUPPLEMENTARY_FUND_TYPE_ID,
-  INSURANCE_PAYMENTS_TYPE_ID,
-} from '../../../shared/constants'
+import { PaymentTypeIds } from '../../../shared/constants'
 
 export const otherBenefitsSubSection = buildSubSection({
   id: 'otherBenefitsSubSection',
@@ -80,7 +77,6 @@ export const otherBenefitsSubSection = buildSubSection({
                     application.externalData,
                     'unemploymentApplication.data.supportData.incomeTypeCategories',
                   ) ?? []
-                console.log('incomeTypes', incomeTypes)
                 return incomeTypes?.map((incomeTypes) => ({
                   value: incomeTypes.id ?? '',
                   label:
@@ -95,7 +91,11 @@ export const otherBenefitsSubSection = buildSubSection({
               label: payoutMessages.otherBenefits.typeOfPayment,
               required: true,
               condition: (application, activeField, _) => {
-                if (!activeField) {
+                if (
+                  !activeField ||
+                  activeField.typeOfPayment ===
+                    PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID
+                ) {
                   return false
                 }
                 const incomeTypes =
@@ -135,9 +135,9 @@ export const otherBenefitsSubSection = buildSubSection({
                 )
               },
             },
-            payer: {
+            privatePensionFund: {
               component: 'select',
-              label: payoutMessages.otherBenefits.payer,
+              label: payoutMessages.otherBenefits.privatePensionFundPayer,
               required: true,
               condition: (application, activeField, _) => {
                 if (!activeField) {
@@ -145,12 +145,12 @@ export const otherBenefitsSubSection = buildSubSection({
                 }
 
                 return (
-                  activeField.typeOfPayment === SUPPLEMENTARY_FUND_TYPE_ID ||
-                  activeField.typeOfPayment === SICKNESS_PAYMENTS_TYPE_ID
+                  activeField.typeOfPayment ===
+                  PaymentTypeIds.SUPPLEMENTARY_FUND_TYPE_ID
                 )
               },
               options: (application) => {
-                const incomeTypes =
+                const privatePensionFunds =
                   getValueViaPath<
                     GaldurDomainModelsSettingsPensionFundsPensionFundDTO[]
                   >(
@@ -158,9 +158,65 @@ export const otherBenefitsSubSection = buildSubSection({
                     'unemploymentApplication.data.supportData.privatePensionFunds',
                   ) ?? []
 
-                return incomeTypes?.map((incomeTypes) => ({
-                  value: incomeTypes.id ?? '',
-                  label: incomeTypes.name ?? '',
+                return privatePensionFunds?.map((fund) => ({
+                  value: fund.id ?? '',
+                  label: fund.name ?? '',
+                }))
+              },
+            },
+            pensionFund: {
+              component: 'select',
+              label: payoutMessages.otherBenefits.pensionFundPayer,
+              required: true,
+              condition: (application, activeField, _) => {
+                if (!activeField) {
+                  return false
+                }
+
+                return (
+                  activeField.typeOfPayment ===
+                  PaymentTypeIds.PENSION_FUND_TYPE_ID
+                )
+              },
+              options: (application) => {
+                const pensionFunds =
+                  getValueViaPath<
+                    GaldurDomainModelsSettingsPensionFundsPensionFundDTO[]
+                  >(
+                    application.externalData,
+                    'unemploymentApplication.data.supportData.pensionFunds',
+                  ) ?? []
+
+                return pensionFunds?.map((fund) => ({
+                  value: fund.id ?? '',
+                  label: fund.name ?? '',
+                }))
+              },
+            },
+            union: {
+              component: 'select',
+              label: payoutMessages.otherBenefits.unionPayer,
+              required: true,
+              condition: (application, activeField, _) => {
+                if (!activeField) {
+                  return false
+                }
+
+                return (
+                  activeField.typeOfPayment ===
+                  PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID
+                )
+              },
+              options: (application) => {
+                const unions =
+                  getValueViaPath<GaldurDomainModelsSettingsUnionsUnionDTO[]>(
+                    application.externalData,
+                    'unemploymentApplication.data.supportData.unions',
+                  ) ?? []
+
+                return unions?.map((union) => ({
+                  value: union.id ?? '',
+                  label: union.name ?? '',
                 }))
               },
             },
@@ -175,7 +231,10 @@ export const otherBenefitsSubSection = buildSubSection({
                   return false
                 }
 
-                return activeField.typeOfPayment === SUPPLEMENTARY_FUND_TYPE_ID
+                return (
+                  activeField.typeOfPayment ===
+                  PaymentTypeIds.SUPPLEMENTARY_FUND_TYPE_ID
+                )
               },
             },
             paymentAmount: {
@@ -184,6 +243,18 @@ export const otherBenefitsSubSection = buildSubSection({
               currency: true,
               type: 'number',
               required: true,
+              condition: (application, activeField, _) => {
+                if (!activeField) {
+                  return false
+                }
+
+                return (
+                  activeField.typeOfPayment !==
+                    PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID &&
+                  activeField.subType !== PaymentTypeIds.REHAB_PENSION_ID &&
+                  activeField.subType !== PaymentTypeIds.SPOUSE_PENSION
+                )
+              },
             },
             dateFrom: {
               component: 'date',
@@ -195,7 +266,11 @@ export const otherBenefitsSubSection = buildSubSection({
                   return false
                 }
 
-                return activeField.typeOfPayment === SICKNESS_PAYMENTS_TYPE_ID
+                return (
+                  activeField.typeOfPayment ===
+                    PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID ||
+                  activeField.subType === PaymentTypeIds.REHAB_PENSION_ID
+                )
               },
             },
             dateTo: {
@@ -208,7 +283,11 @@ export const otherBenefitsSubSection = buildSubSection({
                   return false
                 }
 
-                return activeField.typeOfPayment === SICKNESS_PAYMENTS_TYPE_ID
+                return (
+                  activeField.typeOfPayment ===
+                    PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID ||
+                  activeField.subType === PaymentTypeIds.REHAB_PENSION_ID
+                )
               },
             },
             sicknessAllowanceFile: {
@@ -223,7 +302,10 @@ export const otherBenefitsSubSection = buildSubSection({
                   return false
                 }
 
-                return activeField.typeOfPayment === SICKNESS_PAYMENTS_TYPE_ID
+                return (
+                  activeField.typeOfPayment ===
+                  PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID
+                )
               },
             },
             paymentPlanFile: {
@@ -237,7 +319,10 @@ export const otherBenefitsSubSection = buildSubSection({
                   return false
                 }
 
-                return activeField.typeOfPayment === INSURANCE_PAYMENTS_TYPE_ID
+                return (
+                  activeField.typeOfPayment ===
+                  PaymentTypeIds.INSURANCE_PAYMENTS_TYPE_ID
+                )
               },
             },
           },

@@ -547,7 +547,6 @@ export const Item = ({
                     ? defaultVal.nationalId
                     : '',
                   nameDefaultValue: defaultVal ? defaultVal.name : '',
-                  errorMessage: getFieldError(itemId),
                 }
               : {})}
             {...(component === 'input' ? { suffix: suffixVal } : {})}

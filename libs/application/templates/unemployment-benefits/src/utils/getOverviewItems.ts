@@ -30,6 +30,7 @@ import {
   getJobString,
   getLastTvelveMonthsEducationString,
   getLocationString,
+  getReasonForJobSearchString,
   getWorkingAbilityString,
 } from './stringMappers'
 import {
@@ -39,8 +40,8 @@ import {
 } from './overviewAnswers'
 import { useLocale } from '@island.is/localization'
 import { StaticText } from '@island.is/shared/types'
+
 import { GaldurDomainModelsSelectItem } from '@island.is/clients/vmst-unemployment'
-import { formatDate } from './formatDate'
 import {
   wasStudyingInTheLastYear,
   wasStudyingLastSemester,
@@ -50,6 +51,7 @@ export const useApplicantOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { formatMessage } = useLocale()
   const children = getValueViaPath<FamilyInformationInAnswers>(
     answers,
     'familyInformation',
@@ -60,7 +62,13 @@ export const useApplicantOverviewItems = (
 
   const combinedChildren = [...childrenInCustody, ...addedChildren]
   const childrenValueText = combinedChildren.map((x) => x?.name)
-  return [
+
+  const differentResidence = getValueViaPath<YesOrNoEnum>(
+    answers,
+    'applicant.otherAddressCheckbox',
+  )
+
+  const overviewItems: Array<KeyValueItem> = [
     {
       width: 'half',
       keyText: overviewMessages.labels.applicantOverview.applicant,
@@ -74,6 +82,9 @@ export const useApplicantOverviewItems = (
         } ${getValueViaPath<string>(answers, 'applicant.city') ?? ''}`,
         getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
         getValueViaPath<string>(answers, 'applicant.email') ?? '',
+        `${formatMessage(
+          overviewMessages.labels.applicantOverview.password,
+        )}: ${getValueViaPath<string>(answers, 'applicant.password') ?? ''}`,
       ],
     },
     {
@@ -82,14 +93,37 @@ export const useApplicantOverviewItems = (
       valueText: childrenValueText,
     },
   ]
+
+  if (differentResidence?.includes(YES)) {
+    overviewItems.push({
+      width: 'half',
+      keyText: overviewMessages.labels.applicantOverview.differentResidence,
+      valueText: [
+        getValueViaPath<string>(answers, 'applicant.otherAddress') ?? '',
+        getValueViaPath<string>(answers, 'applicant.otherPostcode') ?? '',
+      ],
+    })
+  }
+
+  return overviewItems
 }
 
 export const useEmploymentInformationOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const reason =
+  const { locale } = useLocale()
+  const mainReason =
     getValueViaPath<string>(answers, 'reasonForJobSearch.mainReason') ?? ''
+  const additionalReason =
+    getValueViaPath<string>(answers, 'reasonForJobSearch.additionalReason') ??
+    ''
+  const reasons = getReasonForJobSearchString(
+    mainReason,
+    _externalData,
+    locale,
+    additionalReason,
+  )
   const currentSituationAnswer =
     getValueViaPath<EmploymentStatus>(answers, 'currentSituation.status') ??
     undefined
@@ -117,7 +151,12 @@ export const useEmploymentInformationOverviewItems = (
     {
       width: 'half',
       keyText: overviewMessages.labels.employmentInformation.information,
-      valueText: [reason, currentSituationString, abilityString],
+      valueText: [
+        reasons.mainReason,
+        reasons.additionalReason,
+        currentSituationString,
+        abilityString,
+      ],
     },
     {
       width: 'half',
@@ -131,7 +170,7 @@ export const useEducationOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
   const lastTvelveMonths = getValueViaPath<YesOrNo>(
     answers,
     'education.lastTwelveMonths',
@@ -181,7 +220,7 @@ export const useEducationOverviewItems = (
           showEndDateLabel
             ? formatMessage(overviewMessages.labels.education.endDate)
             : formatMessage(overviewMessages.labels.education.predictedEndDate)
-        }: ${formatDate(currentEducation.endDate)}`,
+        }: ${currentEducation.endDate}`,
       )
     }
 
@@ -192,11 +231,9 @@ export const useEducationOverviewItems = (
         currentEducation.levelOfStudy,
         currentEducation.degree,
         currentEducation.courseOfStudy,
-        `${formatMessage(
-          overviewMessages.labels.education.endDate,
-        )}: ${formatDate(
-          currentEducation.endDate ? currentEducation.endDate : '',
-        )}`,
+        `${formatMessage(overviewMessages.labels.education.endDate)}: ${
+          currentEducation.endDate
+        }`,
       ],
     })
   }

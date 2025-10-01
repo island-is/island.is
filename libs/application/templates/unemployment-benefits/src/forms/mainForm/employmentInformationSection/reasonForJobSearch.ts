@@ -73,6 +73,13 @@ export const reasonForJobSearchSubSection = buildSubSection({
           placeholder:
             employmentMessages.reasonForJobSearch.labels
               .reasonForJobSearchPlaceholder,
+          condition: (answers, externalData) => {
+            const reasonBasedOnChoice = getReasonsBasedOnChoice(
+              answers,
+              externalData,
+            )
+            return !!reasonBasedOnChoice && reasonBasedOnChoice.length > 0
+          },
           options: (application, _, locale) => {
             const reasons = getReasonsBasedOnChoice(
               application.answers,

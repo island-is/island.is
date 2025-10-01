@@ -56,13 +56,14 @@ export const workingAbilitySubSection = buildSubSection({
           condition: needsMedicalReport,
         }),
         buildFileUploadField({
-          id: 'workingAbility.medicalReport.file',
+          id: 'workingAbility.medicalReport',
           title:
             employmentMessages.workingAbility.labels.partTimeFileUploadLabel,
           uploadHeader:
             employmentMessages.workingAbility.labels.partTimeFileUploadLabel,
           uploadDescription: applicationMessages.fileUploadAcceptFiles,
           uploadAccept: UPLOAD_ACCEPT,
+          uploadMultiple: true,
           maxSize: FILE_SIZE_LIMIT,
           condition: needsMedicalReport,
         }),

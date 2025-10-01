@@ -71,6 +71,7 @@ export const Input = forwardRef(
       hideIcon = false,
       ...inputProps
     } = props
+    console.log('value heree?????', value)
     const [hasFocus, setHasFocus] = useState(false)
 
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)

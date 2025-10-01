@@ -342,7 +342,6 @@ export const educationSection = buildSection({
         }),
         buildDateField({
           id: 'education.currentEducation.endDate',
-          minDate: new Date(),
           title: (application: Application) => {
             const previousLabel =
               wasStudyingInTheLastYear(application.answers) ||
@@ -379,6 +378,7 @@ export const educationSection = buildSection({
           uploadDescription: applicationMessages.fileUploadAcceptFiles,
           uploadAccept: UPLOAD_ACCEPT,
           maxSize: FILE_SIZE_LIMIT,
+          uploadMultiple: true,
           doesNotRequireAnswer: true,
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&

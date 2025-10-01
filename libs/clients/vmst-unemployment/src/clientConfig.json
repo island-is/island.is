@@ -991,6 +991,80 @@
           }
         ]
       }
+    },
+    "/api/UnemploymentApplication/validatepaymentpage": {
+      "post": {
+        "tags": [
+          "UnemploymentApplication"
+        ],
+        "operationId": "UnemploymentApplication_ValidatePaymentPage",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_Application_Applications_UnemploymentApplications_Commands_ValidateUnemploymentApplicationPaymentPage_ValidateUnemploymentApplicationPaymentPageCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_UnemploymentApplicationValidationResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/UnemploymentApplication/validateunpaidvacation": {
+      "post": {
+        "tags": [
+          "UnemploymentApplication"
+        ],
+        "operationId": "UnemploymentApplication_ValidatePaymentPage2",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_Application_Applications_UnemploymentApplications_Commands_ValidateUnemploymentApplicationUnpaidVacation_ValidateUnemploymentApplicationUnpaidVacationCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_UnemploymentApplicationValidationResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -5878,6 +5952,14 @@
               "typeNumber": {
                 "type": "string",
                 "nullable": true
+              },
+              "subsistenceTypeIds": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "type": "string",
+                  "format": "guid"
+                }
               }
             }
           }
@@ -8173,6 +8255,59 @@
           "changedByMsUserOnBehalfOfSSN": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applications_UnemploymentApplications_UnemploymentApplicationValidationResponseDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isValid": {
+            "type": "boolean"
+          },
+          "userMessageIS": {
+            "type": "string",
+            "nullable": true
+          },
+          "userMessageEN": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_Application_Applications_UnemploymentApplications_Commands_ValidateUnemploymentApplicationPaymentPage_ValidateUnemploymentApplicationPaymentPageCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ssn": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankingPensionUnion": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_BankingPensionUnion"
+              }
+            ]
+          }
+        }
+      },
+      "Galdur_Application_Applications_UnemploymentApplications_Commands_ValidateUnemploymentApplicationUnpaidVacation_ValidateUnemploymentApplicationUnpaidVacationCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ssn": {
+            "type": "string",
+            "nullable": true
+          },
+          "employerSettlement": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_EmployerSettlementDTO"
+              }
+            ]
           }
         }
       }

@@ -32,6 +32,7 @@ import {
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
   GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
+import { languageIds } from './constants'
 
 export const getStartingLocale = (externalData: ExternalData) => {
   return getValueViaPath<Locale>(externalData, 'startingLocale.data')
@@ -321,24 +322,40 @@ export const getLanguageSkills = (
     'languageSkills',
   )
   return {
-    languages: languageSkills?.map((language) => {
+    languages: languageSkills?.map((language, index) => {
       const languages =
         getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
           externalData,
           'unemploymentApplication.data.supportData.languageKnowledge',
         ) || []
+
+      // TODO this is here because of some bug in readOnly for selectController that always returns value as null even though defaultValue is set
+      const languageId = language
+        ? language.language
+        : index === 0
+        ? languageIds.ICELANDIC
+        : index === 1
+        ? languageIds.ENGLISH
+        : ''
+      const languageName = language
+        ? languages.find((x) => x.id === language.language)?.name
+        : index === 0
+        ? 'Íslenska'
+        : index === 1
+        ? 'Enska'
+        : ''
       return {
-        id: language.language,
-        name: languages.find((x) => x.id === language.language)?.name || '',
+        id: languageId,
+        name: languageName,
         readOnly:
           //These are the id's from icelandic and english from supportData
-          language.language === 'a18e3090-6afb-4afb-a055-1f83bbe498e3' ||
-          language.language === '6d3edede-8951-4621-a835-e04323300fa0',
+          language.language === languageIds.ICELANDIC ||
+          language.language === languageIds.ENGLISH,
         knowledge: language.skill,
         required:
           //These are the id's from icelandic and english from supportData
-          language.language === 'a18e3090-6afb-4afb-a055-1f83bbe498e3' ||
-          language.language === '6d3edede-8951-4621-a835-e04323300fa0',
+          language.language === languageIds.ICELANDIC ||
+          language.language === languageIds.ENGLISH,
       }
     }),
   }

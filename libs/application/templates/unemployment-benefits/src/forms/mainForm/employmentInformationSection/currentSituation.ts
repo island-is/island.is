@@ -25,7 +25,6 @@ export const currentSituationSubSection = buildSubSection({
   id: 'currentSituationSubSection',
   title: employmentMessages.currentSituation.general.sectionTitle,
   children: [
-    //TODO setja alla reiti required
     buildMultiField({
       id: 'currentSituationSubSection',
       title: employmentMessages.currentSituation.general.pageTitle,
