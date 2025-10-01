@@ -70,6 +70,13 @@
         "operationId": "MeReferralController_getReferrals_v1",
         "parameters": [
           {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "The statuses to filter by",
+            "schema": { "type": "array", "items": { "type": "number" } }
+          },
+          {
             "name": "locale",
             "required": false,
             "in": "query",
@@ -893,10 +900,654 @@
     },
     "/v1/me/questionnaires": {
       "get": {
-        "operationId": "QuestionnaireController_findAll_v1",
+        "description": "Get all questionnaires for a user",
+        "operationId": "QuestionnaireController_getAllQuestionnaires_v1",
         "parameters": [],
-        "responses": { "200": { "description": "" } },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionnaireBaseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
         "tags": ["Questionnaire"]
+      }
+    },
+    "/v1/me/questionnaires/{id}": {
+      "get": {
+        "description": "Get questionnaire details",
+        "operationId": "QuestionnaireController_getQuestionnaireDetail_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Questionnaire id",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireDetailDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Questionnaire"]
+      },
+      "post": {
+        "description": "Submit a questionnaire",
+        "operationId": "QuestionnaireController_submitQuestionnaire_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Questionnaire id",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitQuestionnaireDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvalidSubmissionDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Questionnaire"]
+      }
+    },
+    "/v1/me/questionnaires/{id}/{submissionId}": {
+      "get": {
+        "description": "Get a questionnaire submission",
+        "operationId": "QuestionnaireController_getQuestionnaireSubmission_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Questionnaire id",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "submissionId",
+            "required": true,
+            "in": "path",
+            "description": "Submission id",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Questionnaire"]
+      }
+    },
+    "/v1/me/allergies": {
+      "get": {
+        "description": "Get user's allergies",
+        "operationId": "MeAllergyController_getAllergies_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AllergyDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Allergies"]
+      }
+    },
+    "/v1/me/appointments": {
+      "get": {
+        "description": "Get user's appointments",
+        "operationId": "MeAppointmentController_getPatientAppointments_v1",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "description": "The page number",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": true,
+            "in": "query",
+            "description": "The page size",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AppointmentDataDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Appointments"]
+      }
+    },
+    "/v1/me/consent/cross-border-data-exchange/countries": {
+      "get": {
+        "description": "Get countries that can receive health care data from Iceland",
+        "operationId": "MeCrossBorderDataExchangeController_getCountries_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentCountryActorDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
+      }
+    },
+    "/v1/me/consent/cross-border-data-exchange": {
+      "get": {
+        "description": "Get user's cross border data consent",
+        "operationId": "MeCrossBorderDataExchangeController_getCrossBorderDataConsentForPatient_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrossBorderConsentDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
+      },
+      "post": {
+        "description": "Create a new cross border data consent for a patient",
+        "operationId": "MeCrossBorderDataExchangeController_createCrossBorderDataConsentForPatient_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCrossBorderConsentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
+      }
+    },
+    "/v1/me/consent/cross-border-data-exchange/{id}/deactivate": {
+      "put": {
+        "description": "Deactivate a cross border data consent for a patient",
+        "operationId": "MeCrossBorderDataExchangeController_deactivateCrossBorderDataConsentForPatient_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The id of the cross border data consent to deactivate",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
       }
     }
   },
@@ -916,7 +1567,10 @@
           "authorizationCode": {
             "authorizationUrl": "https://identity-server.dev01.devland.is/connect/authorize",
             "tokenUrl": "https://identity-server.dev01.devland.is/connect/token",
-            "scopes": { "openid": "openid" }
+            "scopes": {
+              "openid": "Default openid scope",
+              "@landlaeknir.is/health": "Scope for accessing health data for the authenticated user"
+            }
           }
         }
       }
@@ -934,13 +1588,7 @@
           "statusDisplay": { "type": "string" },
           "organizationName": { "type": "string" }
         },
-        "required": [
-          "id",
-          "name",
-          "statusId",
-          "statusDisplay",
-          "organizationName"
-        ]
+        "required": ["id"]
       },
       "HttpProblemResponse": {
         "type": "object",
@@ -971,9 +1619,9 @@
           "name": { "type": "string" },
           "profession": { "type": "string" },
           "department": { "type": "string" },
-          "institution": { "type": "string" }
+          "institute": { "type": "string" }
         },
-        "required": ["name", "profession", "department", "institution"]
+        "required": ["name"]
       },
       "ReferralDto": {
         "type": "object",
@@ -983,12 +1631,15 @@
           "serviceName": { "type": "string" },
           "createdDate": { "format": "date-time", "type": "string" },
           "validUntilDate": { "format": "date-time", "type": "string" },
-          "stateValue": { "type": "number" },
-          "stateDisplay": { "type": "string" },
+          "closedDate": { "format": "date-time", "type": "string" },
+          "statusValue": { "type": "number" },
+          "statusDisplay": { "type": "string" },
           "assignedProviderId": { "type": "string" },
           "fromInstitute": { "type": "string" },
           "toInstitute": { "type": "string" },
           "reasonForReferral": { "type": "string" },
+          "diagnoses": { "type": "array", "items": { "type": "string" } },
+          "outcome": { "type": "string" },
           "fromContactInfo": {
             "$ref": "#/components/schemas/ReferralContactInfoDto"
           },
@@ -996,8 +1647,25 @@
             "$ref": "#/components/schemas/ReferralContactInfoDto"
           }
         },
-        "required": ["id", "serviceType", "fromContactInfo", "toContactInfo"]
+        "required": ["id", "serviceType", "fromContactInfo"]
       },
+      "PrescribedItemCategory": {
+        "type": "string",
+        "enum": ["regular", "pn", "regiment", "owner"]
+      },
+      "PrescriptionRenewalBlockedReason": {
+        "type": "string",
+        "enum": [
+          "pendingRequest",
+          "rejectedRequest",
+          "dismissedRequest",
+          "notFullyDispensed",
+          "isRegiment",
+          "noMedCard",
+          "noHealthClinic"
+        ]
+      },
+      "PrescriptionRenewalStatus": { "type": "number", "enum": [0, 1, 2, 3] },
       "DispensedItemDto": {
         "type": "object",
         "properties": {
@@ -1005,9 +1673,7 @@
           "productName": { "type": "string" },
           "productStrength": { "type": "string" },
           "dispensedAmount": { "type": "number" },
-          "dispensedAmountDisplay": { "type": "string" },
-          "numberOfPackages": { "type": "number" },
-          "dispensedPackagesDisplay": { "type": "string" }
+          "dispensedAmountDisplay": { "type": "string" }
         },
         "required": ["productId"]
       },
@@ -1018,7 +1684,6 @@
           "dispensingAgentId": { "type": "number" },
           "dispensingAgentName": { "type": "string" },
           "dispensationDate": { "format": "date-time", "type": "string" },
-          "dispensedItemsCount": { "type": "number" },
           "dispensedItems": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/DispensedItemDto" }
@@ -1028,7 +1693,6 @@
           "id",
           "dispensingAgentId",
           "dispensationDate",
-          "dispensedItemsCount",
           "dispensedItems"
         ]
       },
@@ -1038,8 +1702,10 @@
           "prescribedItemId": { "type": "number" },
           "prescriptionId": { "type": "number" },
           "medCardDrugId": { "type": "string" },
+          "medCardDrugCategory": { "type": "number" },
           "prescriberId": { "type": "string" },
           "prescriberName": { "type": "string" },
+          "healthClinic": { "type": "string" },
           "issueDate": { "format": "date-time", "type": "string" },
           "expiryDate": { "format": "date-time", "type": "string" },
           "nextDispensationDate": { "format": "date-time", "type": "string" },
@@ -1052,31 +1718,34 @@
           "productForm": { "type": "string" },
           "productUrl": { "type": "string" },
           "productStrength": { "type": "string" },
-          "productQuantity": { "type": "number" },
+          "productQuantity": {
+            "type": "number",
+            "description": "Product quantity per package"
+          },
+          "numberOfPackages": { "type": "number" },
           "dosageInstructions": { "type": "string" },
           "indication": { "type": "string" },
           "totalPrescribedAmount": { "type": "number" },
           "totalDispensedAmount": { "type": "number" },
-          "totalPrescribedAmountDisplay": { "type": "string" },
+          "prescribedAmountDisplay": { "type": "string" },
           "category": {
-            "type": "string",
-            "enum": ["regular", "pn", "regimen", "owner"]
+            "allOf": [{ "$ref": "#/components/schemas/PrescribedItemCategory" }]
           },
           "isRegiment": { "type": "boolean" },
           "isRenewable": { "type": "boolean" },
           "renewalBlockedReason": {
-            "type": "string",
-            "enum": [
-              "pendingRequest",
-              "rejectedRequest",
-              "notFullyDispensed",
-              "isRegiment",
-              "noMedCard"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescriptionRenewalBlockedReason"
+              }
             ]
           },
-          "renewalStatus": { "type": "number", "enum": [0, 1, 2] },
+          "renewalStatus": {
+            "allOf": [
+              { "$ref": "#/components/schemas/PrescriptionRenewalStatus" }
+            ]
+          },
           "amountRemaining": { "type": "number" },
-          "amountRemainingUnit": { "type": "string" },
           "amountRemainingDisplay": { "type": "string" },
           "percentageRemaining": { "type": "number" },
           "isFullyDispensed": { "type": "boolean" },
@@ -1089,8 +1758,10 @@
           "prescribedItemId",
           "prescriptionId",
           "medCardDrugId",
+          "medCardDrugCategory",
           "prescriberId",
           "prescriberName",
+          "healthClinic",
           "issueDate",
           "expiryDate",
           "nextDispensationDate",
@@ -1116,7 +1787,7 @@
           "medCardDrugId": { "type": "string" },
           "medCardDrugCategory": { "type": "number" }
         },
-        "required": ["prescribedItemId", "medCardDrugId"]
+        "required": ["prescribedItemId", "medCardDrugId", "medCardDrugCategory"]
       },
       "DispensationHistoryItemDto": {
         "type": "object",
@@ -1192,6 +1863,905 @@
           "exceptionComment": { "type": "string" }
         },
         "required": ["isDonor", "exceptions"]
+      },
+      "QuestionnaireBaseDto": {
+        "type": "object",
+        "properties": {
+          "questionnaireId": { "type": "string" },
+          "title": { "type": "string" },
+          "message": { "type": "string" },
+          "numRepliesAllowed": { "type": "number", "default": 1 },
+          "numSubmissions": { "type": "number", "default": 0 },
+          "lastSubmitted": { "format": "date-time", "type": "string" }
+        },
+        "required": ["questionnaireId", "numRepliesAllowed", "numSubmissions"]
+      },
+      "QuestionType": {
+        "type": "string",
+        "enum": [
+          "string",
+          "bool",
+          "date",
+          "number",
+          "list",
+          "table",
+          "attachment",
+          "text"
+        ]
+      },
+      "BaseQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          },
+          "label": { "type": "string" },
+          "htmlLabel": { "type": "string" },
+          "hint": { "type": "string" },
+          "required": { "type": "boolean" },
+          "active": { "type": "boolean" },
+          "visible": { "type": "boolean" }
+        },
+        "required": ["id", "type", "label"]
+      },
+      "StringQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          },
+          "label": { "type": "string" },
+          "htmlLabel": { "type": "string" },
+          "hint": { "type": "string" },
+          "required": { "type": "boolean" },
+          "active": { "type": "boolean" },
+          "visible": { "type": "boolean" },
+          "maxLength": { "type": "number" },
+          "multiline": { "type": "boolean" },
+          "default": { "type": "string" }
+        },
+        "required": ["id", "type", "label"]
+      },
+      "BooleanQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          },
+          "label": { "type": "string" },
+          "htmlLabel": { "type": "string" },
+          "hint": { "type": "string" },
+          "required": { "type": "boolean" },
+          "active": { "type": "boolean" },
+          "visible": { "type": "boolean" },
+          "default": { "type": "boolean" }
+        },
+        "required": ["id", "type", "label"]
+      },
+      "DateQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          },
+          "label": { "type": "string" },
+          "htmlLabel": { "type": "string" },
+          "hint": { "type": "string" },
+          "required": { "type": "boolean" },
+          "active": { "type": "boolean" },
+          "visible": { "type": "boolean" },
+          "default": { "format": "date-time", "type": "string" }
+        },
+        "required": ["id", "type", "label"]
+      },
+      "NumberQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          },
+          "label": { "type": "string" },
+          "htmlLabel": { "type": "string" },
+          "hint": { "type": "string" },
+          "required": { "type": "boolean" },
+          "active": { "type": "boolean" },
+          "visible": { "type": "boolean" },
+          "default": { "type": "number" },
+          "min": { "type": "number" },
+          "max": { "type": "number" },
+          "minDescription": { "type": "string" },
+          "maxDescription": { "type": "string" },
+          "decimals": { "type": "boolean" },
+          "displayClass": { "type": "string" }
+        },
+        "required": ["id", "type", "label"]
+      },
+      "ListQuestionDisplayClass": {
+        "type": "string",
+        "enum": ["slider", "grid"]
+      },
+      "ListQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          },
+          "label": { "type": "string" },
+          "htmlLabel": { "type": "string" },
+          "hint": { "type": "string" },
+          "required": { "type": "boolean" },
+          "active": { "type": "boolean" },
+          "visible": { "type": "boolean" },
+          "minSelections": { "type": "number" },
+          "maxSelections": { "type": "number" },
+          "multiselect": {
+            "type": "boolean",
+            "description": "Will be deprecated in the future, use minSelections and maxSelections instead if provided"
+          },
+          "displayClass": {
+            "allOf": [
+              { "$ref": "#/components/schemas/ListQuestionDisplayClass" }
+            ]
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "label": { "type": "string" },
+                "active": { "type": "boolean" }
+              },
+              "required": ["id", "label"]
+            }
+          }
+        },
+        "required": ["id", "type", "label", "values"]
+      },
+      "AttachmentQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          },
+          "label": { "type": "string" },
+          "htmlLabel": { "type": "string" },
+          "hint": { "type": "string" },
+          "required": { "type": "boolean" },
+          "active": { "type": "boolean" },
+          "visible": { "type": "boolean" },
+          "fileTypes": { "type": "string" }
+        },
+        "required": ["id", "type", "label"]
+      },
+      "TableQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "allOf": [{ "$ref": "#/components/schemas/QuestionType" }]
+          },
+          "label": { "type": "string" },
+          "htmlLabel": { "type": "string" },
+          "hint": { "type": "string" },
+          "required": { "type": "boolean" },
+          "active": { "type": "boolean" },
+          "visible": { "type": "boolean" },
+          "numRows": { "type": "number", "default": 1 },
+          "maxRows": { "type": "number" },
+          "items": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/BooleanQuestionDto" },
+                { "$ref": "#/components/schemas/StringQuestionDto" },
+                { "$ref": "#/components/schemas/DateQuestionDto" },
+                { "$ref": "#/components/schemas/NumberQuestionDto" },
+                { "$ref": "#/components/schemas/ListQuestionDto" },
+                { "$ref": "#/components/schemas/AttachmentQuestionDto" }
+              ]
+            }
+          }
+        },
+        "required": ["id", "type", "label"]
+      },
+      "QuestionTriggerItemDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "value": { "type": "boolean" },
+          "attribute": { "type": "string" }
+        },
+        "required": ["id", "value", "attribute"]
+      },
+      "BooleanTriggerDto": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "triggerId": { "type": "string" },
+          "targetId": { "type": "string" },
+          "visible": { "type": "boolean" },
+          "value": { "type": "boolean" }
+        },
+        "required": ["type", "triggerId", "targetId", "visible"]
+      },
+      "NumberTriggerDto": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "triggerId": { "type": "string" },
+          "targetId": { "type": "string" },
+          "visible": { "type": "boolean" },
+          "equals": { "type": "number" },
+          "lessThan": { "type": "number" },
+          "greaterThan": { "type": "number" },
+          "inRange": { "type": "array", "items": { "type": "number" } },
+          "contains": { "type": "array", "items": { "type": "number" } }
+        },
+        "required": ["type", "triggerId", "targetId", "visible"]
+      },
+      "ListTriggerDto": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "triggerId": { "type": "string" },
+          "targetId": { "type": "string" },
+          "visible": { "type": "boolean" },
+          "equals": { "type": "string" },
+          "contains": {
+            "description": "comma seperated list, e.g. \"1,5,8\" trigger runs when one value is selected",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "containsAll": {
+            "description": "comma seperated list, e.g. \"1,5,8\" trigger runs when all values are selected",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["type", "triggerId", "targetId", "visible"]
+      },
+      "AttachmentReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": { "type": "string" },
+          "answer": { "type": "string" }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "BooleanReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": { "type": "string" },
+          "answer": { "type": "boolean" }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "DateReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": { "type": "string" },
+          "answer": { "type": "string" }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "ListReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": { "type": "string" },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "answer": { "type": "string" }
+              },
+              "required": ["id", "answer"]
+            }
+          }
+        },
+        "required": ["questionId", "values"]
+      },
+      "NumberReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": { "type": "string" },
+          "answer": { "type": "number" }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "StringReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": { "type": "string" },
+          "answer": { "type": "string" }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "TableReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": { "type": "string" },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": { "type": "string" },
+                      "answer": { "type": "string" }
+                    },
+                    "required": ["questionId", "answer"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": { "type": "string" },
+                      "answer": { "type": "number" }
+                    },
+                    "required": ["questionId", "answer"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": { "type": "string" },
+                      "answer": { "type": "boolean" }
+                    },
+                    "required": ["questionId", "answer"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": { "type": "string" },
+                      "answer": { "type": "string" }
+                    },
+                    "required": ["questionId", "answer"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": { "type": "string" },
+                      "answer": { "type": "string" }
+                    },
+                    "required": ["questionId", "answer"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": { "type": "string" },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "string" },
+                            "answer": { "type": "string" }
+                          },
+                          "required": ["id", "answer"]
+                        }
+                      }
+                    },
+                    "required": ["questionId", "values"]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": ["questionId", "rows"]
+      },
+      "QuestionnaireSubmissionBaseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "questionnaireId": { "type": "string" },
+          "isDraft": { "type": "boolean" },
+          "createdDate": { "format": "date-time", "type": "string" },
+          "lastUpdatedDate": { "format": "date-time", "type": "string" },
+          "submittedDate": { "format": "date-time", "type": "string" }
+        },
+        "required": ["id", "questionnaireId", "isDraft", "createdDate"]
+      },
+      "QuestionGroupDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "hint": { "type": "string" },
+          "visible": { "type": "boolean" },
+          "items": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/BooleanQuestionDto" },
+                { "$ref": "#/components/schemas/StringQuestionDto" },
+                { "$ref": "#/components/schemas/DateQuestionDto" },
+                { "$ref": "#/components/schemas/NumberQuestionDto" },
+                { "$ref": "#/components/schemas/ListQuestionDto" },
+                { "$ref": "#/components/schemas/AttachmentQuestionDto" },
+                { "$ref": "#/components/schemas/TableQuestionDto" }
+              ]
+            }
+          }
+        },
+        "required": ["items"]
+      },
+      "QuestionnaireDetailDto": {
+        "type": "object",
+        "properties": {
+          "questionnaireId": { "type": "string" },
+          "title": { "type": "string" },
+          "message": { "type": "string" },
+          "numRepliesAllowed": { "type": "number", "default": 1 },
+          "numSubmissions": { "type": "number", "default": 0 },
+          "lastSubmitted": { "format": "date-time", "type": "string" },
+          "hint": { "type": "string" },
+          "daysBetweenReplies": { "type": "number", "default": 0 },
+          "createdDate": { "format": "date-time", "type": "string" },
+          "expiryDate": { "format": "date-time", "type": "string" },
+          "canSubmit": {
+            "type": "boolean",
+            "description": "Boolean field to check if the questionnaire can be submitted"
+          },
+          "submissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
+            }
+          },
+          "hasDraft": { "type": "boolean" },
+          "groups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/QuestionGroupDto" }
+          },
+          "triggers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "$ref": "#/components/schemas/NumberTriggerDto" },
+                  { "$ref": "#/components/schemas/ListTriggerDto" },
+                  { "$ref": "#/components/schemas/BooleanTriggerDto" }
+                ]
+              }
+            }
+          },
+          "replies": {
+            "type": "array",
+            "description": "Draft replies for the questionnaire",
+            "items": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/AttachmentReplyDto" },
+                { "$ref": "#/components/schemas/BooleanReplyDto" },
+                { "$ref": "#/components/schemas/DateReplyDto" },
+                { "$ref": "#/components/schemas/ListReplyDto" },
+                { "$ref": "#/components/schemas/NumberReplyDto" },
+                { "$ref": "#/components/schemas/StringReplyDto" },
+                { "$ref": "#/components/schemas/TableReplyDto" }
+              ]
+            }
+          }
+        },
+        "required": [
+          "questionnaireId",
+          "numRepliesAllowed",
+          "numSubmissions",
+          "daysBetweenReplies",
+          "canSubmit",
+          "submissions",
+          "hasDraft",
+          "groups",
+          "triggers"
+        ]
+      },
+      "SubmitQuestionnaireDto": {
+        "type": "object",
+        "properties": {
+          "replies": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": { "type": "string" },
+                    "answer": { "type": "string" }
+                  },
+                  "required": ["questionId", "answer"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": { "type": "string" },
+                    "answer": { "type": "boolean" }
+                  },
+                  "required": ["questionId", "answer"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": { "type": "string" },
+                    "answer": { "type": "string" }
+                  },
+                  "required": ["questionId", "answer"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": { "type": "string" },
+                    "answer": { "type": "number" }
+                  },
+                  "required": ["questionId", "answer"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": { "type": "string" },
+                    "answer": { "type": "string" }
+                  },
+                  "required": ["questionId", "answer"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": { "type": "string" },
+                    "values": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "answer": { "type": "string" }
+                        },
+                        "required": ["id", "answer"]
+                      }
+                    }
+                  },
+                  "required": ["questionId", "values"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": { "type": "string" },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": { "type": "string" },
+                                "answer": { "type": "string" }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": { "type": "string" },
+                                "answer": { "type": "number" }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": { "type": "string" },
+                                "answer": { "type": "boolean" }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": { "type": "string" },
+                                "answer": { "type": "string" }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": { "type": "string" },
+                                "answer": { "type": "string" }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": { "type": "string" },
+                                "values": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": { "type": "string" },
+                                      "answer": { "type": "string" }
+                                    },
+                                    "required": ["id", "answer"]
+                                  }
+                                }
+                              },
+                              "required": ["questionId", "values"]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "required": ["questionId", "rows"]
+                }
+              ]
+            }
+          },
+          "isDraft": { "type": "boolean" }
+        },
+        "required": ["replies", "isDraft"]
+      },
+      "QuestionnaireSubmissionDetailDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "message": { "type": "string" },
+          "canSubmit": {
+            "type": "boolean",
+            "description": "Boolean field to check if the questionnaire can be submitted"
+          },
+          "groups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/QuestionGroupDto" }
+          },
+          "replies": {
+            "type": "array",
+            "description": "Draft replies for the questionnaire",
+            "items": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/AttachmentReplyDto" },
+                { "$ref": "#/components/schemas/BooleanReplyDto" },
+                { "$ref": "#/components/schemas/DateReplyDto" },
+                { "$ref": "#/components/schemas/ListReplyDto" },
+                { "$ref": "#/components/schemas/NumberReplyDto" },
+                { "$ref": "#/components/schemas/StringReplyDto" },
+                { "$ref": "#/components/schemas/TableReplyDto" }
+              ]
+            }
+          },
+          "submission": {
+            "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
+          }
+        },
+        "required": ["canSubmit", "groups", "submission"]
+      },
+      "InvalidSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "object",
+            "properties": {
+              "questionId": { "type": "string" },
+              "rowNum": { "type": "number" },
+              "rowQuestionId": { "type": "string" },
+              "errorCode": { "type": "string" },
+              "errorMessage": { "type": "string" }
+            },
+            "required": ["questionId", "errorCode", "errorMessage"]
+          }
+        }
+      },
+      "AllergyClinicalStatus": {
+        "type": "string",
+        "enum": ["active", "inactive", "resolved"]
+      },
+      "AllergyVerificationStatus": {
+        "type": "string",
+        "enum": [
+          "confirmed",
+          "unconfirmed",
+          "presumed",
+          "refuted",
+          "entered-in-error"
+        ]
+      },
+      "AllergyCriticality": {
+        "type": "string",
+        "enum": ["low", "high", "unable-to-assess"]
+      },
+      "AllergyDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "allergen": { "type": "string" },
+          "categories": { "type": "array", "items": { "type": "string" } },
+          "clinicalStatus": {
+            "allOf": [{ "$ref": "#/components/schemas/AllergyClinicalStatus" }]
+          },
+          "clinicalStatusDisplay": { "type": "string" },
+          "verificationStatus": {
+            "allOf": [
+              { "$ref": "#/components/schemas/AllergyVerificationStatus" }
+            ]
+          },
+          "verificationStatusDisplay": { "type": "string" },
+          "criticality": {
+            "allOf": [{ "$ref": "#/components/schemas/AllergyCriticality" }]
+          },
+          "criticalityDisplay": { "type": "string" },
+          "note": { "type": "string" },
+          "recordedDate": { "format": "date-time", "type": "string" }
+        },
+        "required": [
+          "id",
+          "allergen",
+          "categories",
+          "clinicalStatus",
+          "clinicalStatusDisplay",
+          "recordedDate"
+        ]
+      },
+      "AppointmentLocationDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "address": {
+            "type": "string",
+            "description": "Street name, number, direction & P.O. Box etc."
+          },
+          "city": {
+            "type": "string",
+            "description": "The city of the address"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "The postal code of the address"
+          },
+          "country": {
+            "type": "string",
+            "description": "The country of the address"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the location"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the location"
+          }
+        },
+        "required": ["name", "address"]
+      },
+      "AppointmentDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "startTime": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The start time of the appointment"
+          },
+          "endTime": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The end time of the appointment"
+          },
+          "duration": {
+            "type": "number",
+            "description": "The duration of the appointment"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the appointment"
+          },
+          "description": {
+            "type": "string",
+            "description": "The brief description of the appointment"
+          },
+          "patientInstruction": {
+            "type": "string",
+            "description": "Patient facing information about the Appointment"
+          },
+          "location": { "$ref": "#/components/schemas/AppointmentLocationDto" },
+          "practitioners": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["id", "status", "practitioners"]
+      },
+      "PaginationDto": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "number" },
+          "pageSize": { "type": "number" },
+          "totalResults": { "type": "number" },
+          "totalPages": { "type": "number" },
+          "hasNext": { "type": "boolean" },
+          "hasPrevious": { "type": "boolean" }
+        },
+        "required": [
+          "page",
+          "pageSize",
+          "totalResults",
+          "totalPages",
+          "hasNext",
+          "hasPrevious"
+        ]
+      },
+      "AppointmentDataDto": {
+        "type": "object",
+        "properties": {
+          "appointments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AppointmentDto" }
+          },
+          "pagination": { "$ref": "#/components/schemas/PaginationDto" }
+        },
+        "required": ["appointments", "pagination"]
+      },
+      "ConsentCountryActorDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "code": { "type": "string" }
+        },
+        "required": ["id", "name", "code"]
+      },
+      "CrossBorderDataConsentStatus": {
+        "type": "string",
+        "enum": ["active", "inactive", "expired"]
+      },
+      "CrossBorderConsentDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "validFrom": { "format": "date-time", "type": "string" },
+          "validTo": { "format": "date-time", "type": "string" },
+          "status": {
+            "allOf": [
+              { "$ref": "#/components/schemas/CrossBorderDataConsentStatus" }
+            ]
+          },
+          "codes": { "type": "array", "items": { "type": "string" } },
+          "countries": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ConsentCountryActorDto" }
+          }
+        },
+        "required": ["status", "codes", "countries"]
+      },
+      "CreateCrossBorderConsentDto": {
+        "type": "object",
+        "properties": {
+          "validFrom": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 date string",
+            "example": "2024-06-01T00:00:00.000Z"
+          },
+          "validTo": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 date string",
+            "example": "2024-06-01T00:00:00.000Z"
+          },
+          "codes": { "type": "array", "items": { "type": "string" } },
+          "countryCodes": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["validTo", "codes", "countryCodes"]
       }
     }
   }
