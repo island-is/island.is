@@ -72,7 +72,7 @@ export const partiesDetails = defineMessages({
 export const landlordAndTenantDetails = defineMessages({
   representativeTableTitle: {
     id: 'ra.application:landlordAndTenantDetails.representativeTableTitle',
-    defaultMessage: 'Umboðsaðli leigusala',
+    defaultMessage: 'Umboðsaðili leigusala',
     description: 'Representative table title',
   },
   representativeTableDescription: {
