@@ -1,31 +1,30 @@
-import {
-  GridRow as Row,
-  GridColumn as Column,
-  Text,
-  Divider,
-  Box,
-  DropdownMenu,
-  Button,
-  Icon,
-} from '@island.is/island-ui/core'
-import { Dispatch, SetStateAction, useState, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { TranslationTag } from '../../../TranslationTag/TranslationTag'
-import { FormSystemPaths } from '../../../../lib/paths'
-import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
-import { FormSystemForm } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
-import { DELETE_FORM, PUBLISH_FORM } from '@island.is/form-system/graphql'
+import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
+import { DELETE_FORM, PUBLISH_FORM } from '@island.is/form-system/graphql'
+import { m } from '@island.is/form-system/ui'
+import {
+  Box,
+  Button,
+  GridColumn as Column,
+  DialogPrompt,
+  Divider,
+  DropdownMenu,
+  Icon,
+  GridRow as Row,
+  Text,
+} from '@island.is/island-ui/core'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
+import { FormSystemPaths } from '../../../../lib/paths'
+import { TranslationTag } from '../../../TranslationTag/TranslationTag'
 
 interface Props {
   id?: string | null
   name?: string
   created?: Date
   lastModified?: Date
-  org?: string | null
-  state?: number
   options?: string
   isHeader: boolean
   translated?: boolean
@@ -35,7 +34,10 @@ interface Props {
   status?: string
 }
 
-const PATH = `https://beta.dev01.devland.is/form`
+const PATH =
+  process.env.NODE_ENV === 'development'
+    ? `https://beta.dev01.devland.is/form`
+    : 'https://island.is/form'
 
 interface ColumnTextProps {
   text: string | number
@@ -51,8 +53,6 @@ export const TableRow = ({
   id,
   name,
   lastModified,
-  org,
-  state,
   translated,
   setFormsState,
   slug,
@@ -71,22 +71,6 @@ export const TableRow = ({
 
     const json = {
       title: 'Json',
-    }
-
-    const del = {
-      title: formatMessage(m.delete),
-      onClick: async () => {
-        try {
-          await deleteForm({
-            variables: { input: { id } },
-          })
-          setFormsState((prevForms) =>
-            prevForms.filter((form) => form.id !== id),
-          )
-        } catch (error) {
-          console.error('Error deleting form:', error)
-        }
-      },
     }
 
     const publish = {
@@ -127,17 +111,37 @@ export const TableRow = ({
       },
     }
 
-    const items = [copy, json, del]
-
-    if (status === FormStatus.PUBLISHED) {
-      items.push(unPublish)
-    } else {
-      items.push(publish)
+    const del = {
+      title: formatMessage(m.delete),
+      render: () => (
+        <DialogPrompt
+          title={formatMessage(m.delete)}
+          baseId={`delete-form-${id}`}
+          ariaLabel={`delete-form-${id}`}
+          description={formatMessage(m.deleteFormWarning, { formName: name })}
+          disclosureElement={
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              paddingY={2}
+              cursor="pointer"
+            >
+              <Text variant="eyebrow" color="red600">
+                {formatMessage(m.delete)}
+              </Text>
+            </Box>
+          }
+          buttonTextCancel={formatMessage(m.cancel)}
+          buttonTextConfirm={formatMessage(m.delete)}
+        />
+      ),
     }
 
-    items.push(test)
+    const publishUnpublish =
+      status === FormStatus.PUBLISHED ? unPublish : publish
 
-    return items
+    return [copy, json, test, publishUnpublish, del]
   }, [id, slug, status, formatMessage, deleteForm, publishForm, setFormsState])
 
   const goToForm = () => {

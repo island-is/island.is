@@ -1,15 +1,15 @@
-import { useContext, useEffect } from 'react'
-import { TableHeader } from './components/Table/TableHeader'
-import { FormsContext } from '../../context/FormsContext'
-import { TableRow } from './components/Table/TableRow'
 import { useMutation } from '@apollo/client'
 import { CREATE_FORM } from '@island.is/form-system/graphql'
-import { Box, Button, GridRow } from '@island.is/island-ui/core'
-import { useNavigate } from 'react-router-dom'
-import { FormSystemPaths } from '../../lib/paths'
-import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { Box, Button, GridRow } from '@island.is/island-ui/core'
+import { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
+import { FormsContext } from '../../context/FormsContext'
+import { FormSystemPaths } from '../../lib/paths'
 import { OrganizationSelect } from '../OrganizationSelect'
+import { TableHeader } from './components/Table/TableHeader'
+import { TableRow } from './components/Table/TableRow'
 
 export const Forms = () => {
   const {
@@ -98,7 +98,6 @@ export const Forms = () => {
               key={f?.id}
               id={f?.id}
               name={f?.name?.is ?? ''}
-              org={f?.organizationId}
               isHeader={false}
               translated={f?.isTranslated ?? false}
               slug={f?.slug ?? ''}
