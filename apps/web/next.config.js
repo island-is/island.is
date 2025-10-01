@@ -43,6 +43,14 @@ const nextConfig = {
         source: '/rss/domar.xml',
         destination: '/api/domar/rss',
       },
+      {
+        source: '/rss/dagskra-domstola',
+        destination: '/api/dagskra-domstola/rss',
+      },
+      {
+        source: '/rss/dagskra-domstola.xml',
+        destination: '/api/dagskra-domstola/rss',
+      },
     ]
   },
   async redirects() {

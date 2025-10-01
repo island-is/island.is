@@ -3,10 +3,10 @@ import { parseAsString } from 'next-usequerystate'
 
 import initApollo from '@island.is/web/graphql/client'
 import {
-  GetVerdictsQuery,
-  GetVerdictsQueryVariables,
+  GetCourtAgendasQuery,
+  GetCourtAgendasQueryVariables,
 } from '@island.is/web/graphql/schema'
-import { GET_VERDICTS_QUERY } from '@island.is/web/screens/queries/Verdicts'
+import { GET_COURT_AGENDAS_QUERY } from '@island.is/web/screens/queries/CourtAgendas'
 
 interface Item {
   date: string | null | undefined
@@ -34,40 +34,43 @@ export default async function handler(
 
   const host = req.headers?.host
   const protocol = `http${host?.startsWith('localhost') ? '' : 's'}://`
-  const baseUrl = `${protocol}${host}/domar`
+  const baseUrl = `${protocol}${host}/dagskra-domstola`
 
   let itemString = ''
   const court = parseAsString.parseServerSide(req.query?.court)
 
-  const verdicts = await apolloClient.query<
-    GetVerdictsQuery,
-    GetVerdictsQueryVariables
+  const agendas = await apolloClient.query<
+    GetCourtAgendasQuery,
+    GetCourtAgendasQueryVariables
   >({
-    query: GET_VERDICTS_QUERY,
+    query: GET_COURT_AGENDAS_QUERY,
     variables: {
       input: {
         page: 1,
-        courtLevel: court ?? undefined,
+        court: court ?? undefined,
       },
     },
   })
 
-  itemString = (verdicts?.data?.webVerdicts?.items ?? [])
-    .map((item) =>
-      generateItemString({
-        date: item.verdictDate ? new Date(item.verdictDate).toUTCString() : '',
+  itemString = (agendas?.data?.webCourtAgendas?.items ?? [])
+    .map((item) => {
+      const date = item.dateFrom ? new Date(item.dateFrom).toUTCString() : ''
+      return generateItemString({
+        date,
         description: item.title,
         fullUrl: `${baseUrl}/${item.id}`,
-        title: item.caseNumber,
+        title: `${item.caseNumber}${
+          item.courtRoom ? ` - ${item.courtRoom}` : ''
+        }${item.court ? ` - ${item.court}` : ''}${date ? ` - ${date}` : ''}`,
         id: item.id,
-      }),
-    )
+      })
+    })
     .join('')
 
   const feed = `<?xml version="1.0" encoding="UTF-8" ?>
   <rss version="2.0">
   <channel>
-  <title>Dómar og úrskurðir á Ísland.is</title>
+  <title>Dagskrá dómstóla á Ísland.is</title>
   <link>${baseUrl}</link>
   ${itemString}
   </channel>
