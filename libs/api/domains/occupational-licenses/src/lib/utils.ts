@@ -1,5 +1,3 @@
-import { DistrictCommissionersLicenseStatus } from '@island.is/clients/district-commissioners-licenses'
-import { Status } from './models/licenseStatus.model'
 import { LicenseType } from './models/licenseType.model'
 
 export const addLicenseTypePrefix = (id: string, type: LicenseType) => {
