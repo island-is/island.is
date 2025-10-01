@@ -665,44 +665,44 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         </InputRow>
         {isOrganDonationEnabled && (
           <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: 'health.organDonation',
-                })}
-                value={`${
-                  organDonationRes.error
-                    ? ''
-                    : intl.formatMessage({
-                        id: isOrganDonor
-                          ? 'health.organDonation.isDonorDescription'
-                          : 'health.organDonation.isNotDonorDescription',
-                      }) ?? ''
-                }`}
-                loading={organDonationRes.loading && !organDonationRes.data}
-                fullWidhtWarning
-                warningText={
-                  organDonationRes.error
-                    ? intl.formatMessage({
-                        id: 'problem.thirdParty.message',
-                      })
-                    : ''
-                }
-                allowEmptyValue
-                rightElement={
-                  <ExternalLink
-                    onPress={() =>
-                      navigateTo('/webview', {
-                        source: {
-                          uri: `${origin}/minarsidur/heilsa/grunnupplysingar/liffaeragjof`,
-                        },
-                      })
-                    }
-                    text="button.open"
-                    topAlign={organDonationRes.error ? true : false}
-                  />
-                }
-              />
-            </InputRow>
+            <Input
+              label={intl.formatMessage({
+                id: 'health.organDonation',
+              })}
+              value={`${
+                organDonationRes.error
+                  ? ''
+                  : intl.formatMessage({
+                      id: isOrganDonor
+                        ? 'health.organDonation.isDonorDescription'
+                        : 'health.organDonation.isNotDonorDescription',
+                    }) ?? ''
+              }`}
+              loading={organDonationRes.loading && !organDonationRes.data}
+              fullWidhtWarning
+              warningText={
+                organDonationRes.error
+                  ? intl.formatMessage({
+                      id: 'problem.thirdParty.message',
+                    })
+                  : ''
+              }
+              allowEmptyValue
+              rightElement={
+                <ExternalLink
+                  onPress={() =>
+                    navigateTo('/webview', {
+                      source: {
+                        uri: `${origin}/minarsidur/heilsa/grunnupplysingar/liffaeragjof`,
+                      },
+                    })
+                  }
+                  text="button.open"
+                  topAlign={organDonationRes.error ? true : false}
+                />
+              }
+            />
+          </InputRow>
         )}
         <InputRow background>
           <Input
