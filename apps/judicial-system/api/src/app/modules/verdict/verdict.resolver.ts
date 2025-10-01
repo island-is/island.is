@@ -14,8 +14,10 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { DeliverCaseVerdictQueryInput } from './dto/deliverCaseVerdict.input'
 import { UpdateVerdictInput } from './dto/updateVerdict.input'
 import { VerdictQueryInput } from './dto/verdict.input'
+import { DeliverCaseVerdictResponse } from './models/deliverCaseVerdict.response'
 import { Verdict } from './models/verdict.model'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -64,6 +66,26 @@ export class VerdictResolver {
       user.id,
       AuditedAction.GET_VERDICT,
       backendService.getVerdict(input.caseId, input.defendantId),
+      input.caseId,
+    )
+  }
+
+  @Mutation(() => DeliverCaseVerdictResponse, { nullable: true })
+  deliverCaseVerdict(
+    @Args('input', { type: () => DeliverCaseVerdictQueryInput })
+    input: DeliverCaseVerdictQueryInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<DeliverCaseVerdictResponse> {
+    this.logger.debug(
+      `Delivering case verdict ${input.caseId} to affected defendants`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.DELIVER_CASE_VERDICT,
+      backendService.deliverCaseVerdict(input.caseId),
       input.caseId,
     )
   }
