@@ -8,26 +8,26 @@ import * as m from '../../../lib/messages'
 
 export const assignApplicantPartySubsection = buildSubSection({
   id: 'assignApplicantPartySubsection',
-  title: m.assignApplicantPartyMessages.applicantRole,
+  title: m.assignApplicantParty.applicantRole,
   children: [
     buildMultiField({
       id: 'assignApplicantPartyMultiField',
-      title: m.assignApplicantPartyMessages.applicantRole,
-      description: m.assignApplicantPartyMessages.applicantRoleDescription,
+      title: m.assignApplicantParty.applicantRole,
+      description: m.assignApplicantParty.applicantRoleDescription,
       children: [
         buildRadioField({
           id: 'assignApplicantParty.applicantsRole',
           options: [
             {
-              label: m.assignApplicantPartyMessages.iAmLandlord,
+              label: m.assignApplicantParty.iAmLandlord,
               value: ApplicantsRole.LANDLORD,
             },
             {
-              label: m.assignApplicantPartyMessages.iAmRepresentative,
+              label: m.assignApplicantParty.iAmRepresentative,
               value: ApplicantsRole.REPRESENTATIVE,
             },
             {
-              label: m.assignApplicantPartyMessages.iAmTenant,
+              label: m.assignApplicantParty.iAmTenant,
               value: ApplicantsRole.TENANT,
             },
           ],

@@ -8,12 +8,12 @@ import * as m from '../../../lib/messages'
 
 export const propertySearchSubsection = buildSubSection({
   id: Routes.REGISTERPROPERTY,
-  title: m.registerProperty.search.subsectionName,
+  title: m.propertySearch.search.subsectionName,
   children: [
     buildMultiField({
       id: Routes.PROPERTYSEARCH,
-      title: m.registerProperty.search.pageTitle,
-      description: m.registerProperty.search.pageDescription,
+      title: m.propertySearch.search.pageTitle,
+      description: m.propertySearch.search.pageDescription,
       children: [
         buildCustomField({
           id: Routes.PROPERTYSEARCH,

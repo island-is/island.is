@@ -56,15 +56,15 @@ export const PropertyTableUnits = ({
 
   const sizeInputError =
     unitInputErrorMessage ===
-      formatMessage(m.registerProperty.search.changedSizeTooLargeError) ||
+      formatMessage(m.propertySearch.search.changedSizeTooLargeError) ||
     unitInputErrorMessage ===
-      formatMessage(m.registerProperty.search.changedSizeTooSmallError)
+      formatMessage(m.propertySearch.search.changedSizeTooSmallError)
 
   const roomsInputError =
     unitInputErrorMessage ===
-      formatMessage(m.registerProperty.search.numOfRoomsMinimumError) ||
+      formatMessage(m.propertySearch.search.numOfRoomsMinimumError) ||
     unitInputErrorMessage ===
-      formatMessage(m.registerProperty.search.numOfRoomsMaximumError)
+      formatMessage(m.propertySearch.search.numOfRoomsMaximumError)
 
   return (
     <tr key={unitCode}>

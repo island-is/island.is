@@ -16,8 +16,8 @@ export const singularOrPluralLandlordsTitle = (application: Application) => {
   }
 
   return landlords?.length > 1
-    ? m.summary.landlordsHeaderPlural
-    : m.summary.landlordsHeader
+    ? m.overview.landlordsHeaderPlural
+    : m.overview.landlordsHeader
 }
 
 export const shouldShowRepresentative = (answers: FormValue) => {
@@ -52,8 +52,8 @@ export const singularOrPluralRepresentativeTitle = (
   }
 
   return representatives?.length > 1
-    ? m.summary.landlordsRepresentativeLabelPlural
-    : m.summary.landlordsRepresentativeLabel
+    ? m.overview.landlordsRepresentativeLabelPlural
+    : m.overview.landlordsRepresentativeLabel
 }
 
 export const singularOrPluralTenantsTitle = (application: Application) => {
@@ -67,8 +67,8 @@ export const singularOrPluralTenantsTitle = (application: Application) => {
   }
 
   return tenants?.length > 1
-    ? m.summary.tenantsHeaderPlural
-    : m.summary.tenantsHeader
+    ? m.overview.tenantsHeaderPlural
+    : m.overview.tenantsHeader
 }
 
 export const shouldShowSmokeDetectorsAlert = (answers: FormValue) => {

@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const assignApplicantPartyMessages = defineMessages({
+export const assignApplicantParty = defineMessages({
   applicantRole: {
     id: 'ra.application:assignApplicantPartyMessages.applicantRole',
     defaultMessage: 'Hlutverk',
