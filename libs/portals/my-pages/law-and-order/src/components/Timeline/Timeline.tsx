@@ -36,17 +36,21 @@ export const Timeline: FC<Props> = ({
 
   const milestoneCount = children.length - 1
 
-  const milestoneHalfStep = (1 / milestoneCount) / 2
+  const milestoneHalfStep = 1 / milestoneCount / 2
   const milestoneQuarterStep = milestoneHalfStep / 2
 
   //get current progress as ratio of total milestones
-  let currentProgress = (Math.min(Math.max(progress || 0, 0), milestoneCount)) / milestoneCount
+  let currentProgress =
+    Math.min(Math.max(progress || 0, 0), milestoneCount) / milestoneCount
 
-  if (currentProgress > 0 && currentProgress > milestoneHalfStep && currentProgress < 1) {
+  if (
+    currentProgress > 0 &&
+    currentProgress > milestoneHalfStep &&
+    currentProgress < 1
+  ) {
     //more than half
     currentProgress += milestoneQuarterStep
   }
-
 
   return (
     <Box {...box}>
@@ -92,11 +96,21 @@ export const Timeline: FC<Props> = ({
           <Columns>
             {children?.map((child, index) => {
               const middleIndex = milestoneCount / 2
-              return <Column key={`step-item-${index}`}>
-                <Box textAlign={index < middleIndex ? 'left' : index === middleIndex ? 'center' : 'right'}>
-                  {child}
-                </Box>
-              </Column>
+              return (
+                <Column key={`step-item-${index}`}>
+                  <Box
+                    textAlign={
+                      index < middleIndex
+                        ? 'left'
+                        : index === middleIndex
+                        ? 'center'
+                        : 'right'
+                    }
+                  >
+                    {child}
+                  </Box>
+                </Column>
+              )
             })}
           </Columns>
         </Stack>

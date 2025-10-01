@@ -37,5 +37,9 @@ export enum PoliceCaseStatusValueGroup {
 
 /* REGISTERS */
 
-registerEnumType(PoliceCaseStatusValue, { name: 'LawAndOrderPoliceCaseStatusValue' })
-registerEnumType(PoliceCaseStatusValueGroup, { name: 'LawAndOrderPoliceCaseStatusValueGroup' })
+registerEnumType(PoliceCaseStatusValue, {
+  name: 'LawAndOrderPoliceCaseStatusValue',
+})
+registerEnumType(PoliceCaseStatusValueGroup, {
+  name: 'LawAndOrderPoliceCaseStatusValueGroup',
+})

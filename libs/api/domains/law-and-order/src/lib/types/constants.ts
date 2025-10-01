@@ -1,6 +1,6 @@
-import { PoliceCaseStatusValue, PoliceCaseStatusValueGroup } from './enums';
-import { m } from '../messages';
-import { PoliceCaseStatusInfoMap } from './types';
+import { PoliceCaseStatusValue, PoliceCaseStatusValueGroup } from './enums'
+import { m } from '../messages'
+import { PoliceCaseStatusInfoMap } from './types'
 
 export const NAMESPACE = ['api.law-and-order']
 
@@ -76,37 +76,43 @@ export const POLICE_CASE_STATUS_INFO: PoliceCaseStatusInfoMap = {
     description: m.statusDescriptionDistrictProsecutorReview,
   },
   [PoliceCaseStatusValue.INDICTMENT]: {
-      group: PoliceCaseStatusValueGroup.INDICTMENT,
-      header: m.indictment,
-      description: m.statusDescriptionIndictment,
+    group: PoliceCaseStatusValueGroup.INDICTMENT,
+    header: m.indictment,
+    description: m.statusDescriptionIndictment,
   },
   [PoliceCaseStatusValue.COURT_SCHEDULING]: {
-
-     group: PoliceCaseStatusValueGroup.SENT_TO_COURT, header: m.caseSentToCourt,
-      description: m.statusDescriptionCourtScheduling,
+    group: PoliceCaseStatusValueGroup.SENT_TO_COURT,
+    header: m.caseSentToCourt,
+    description: m.statusDescriptionCourtScheduling,
   },
   [PoliceCaseStatusValue.RULING_ANNOUNCED]: {
-     group: PoliceCaseStatusValueGroup.SENT_TO_COURT, header: m.caseSentToCourt,
-      description: m.statusDescriptionRulingAnnounced,
+    group: PoliceCaseStatusValueGroup.SENT_TO_COURT,
+    header: m.caseSentToCourt,
+    description: m.statusDescriptionRulingAnnounced,
   },
   [PoliceCaseStatusValue.DISTRICT_COURT_PROCEEDINGS]: {
-     group: PoliceCaseStatusValueGroup.SENT_TO_COURT, header: m.caseSentToCourt,
-      description: m.statusDescriptionDistrictCourtProceedings,
+    group: PoliceCaseStatusValueGroup.SENT_TO_COURT,
+    header: m.caseSentToCourt,
+    description: m.statusDescriptionDistrictCourtProceedings,
   },
   [PoliceCaseStatusValue.CLOSED_BY_DISTRICT_COURT]: {
-     group: PoliceCaseStatusValueGroup.SENT_TO_COURT, header: m.caseSentToCourt,
-      description: m.statusDescriptionClosedByDistrictCourt,
+    group: PoliceCaseStatusValueGroup.SENT_TO_COURT,
+    header: m.caseSentToCourt,
+    description: m.statusDescriptionClosedByDistrictCourt,
   },
   [PoliceCaseStatusValue.APPEAL]: {
-     group: PoliceCaseStatusValueGroup.SENT_TO_COURT, header: m.caseSentToCourt,
-      description: m.statusDescriptionAppeal,
+    group: PoliceCaseStatusValueGroup.SENT_TO_COURT,
+    header: m.caseSentToCourt,
+    description: m.statusDescriptionAppeal,
   },
   [PoliceCaseStatusValue.MEDIATION]: {
-     group: PoliceCaseStatusValueGroup.SENT_TO_COURT, header: m.caseSentToCourt,
-      description: m.statusDescriptionMediation,
+    group: PoliceCaseStatusValueGroup.SENT_TO_COURT,
+    header: m.caseSentToCourt,
+    description: m.statusDescriptionMediation,
   },
   [PoliceCaseStatusValue.SUPREME_COURT_APPEAL_REQUEST]: {
-     group: PoliceCaseStatusValueGroup.SENT_TO_COURT, header: m.caseSentToCourt,
-      description: m.statusDescriptionSupremeCourtAppealRequest,
-  }
-};
+    group: PoliceCaseStatusValueGroup.SENT_TO_COURT,
+    header: m.caseSentToCourt,
+    description: m.statusDescriptionSupremeCourtAppealRequest,
+  },
+}

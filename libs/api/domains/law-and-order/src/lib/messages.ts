@@ -91,7 +91,8 @@ export const m = defineMessages({
   },
   statusDescriptionInvestigationStopped: {
     id: 'api.law-and-order:status-description-investigation-stopped#markdown',
-    defaultMessage: 'Ákærandi hefur farið yfir mál þitt og tekið þá ákvörðun að hætta rannsókn. Margar ástæður eru fyrir því að ákveðið er að hætta rannsókn sakamála en réttargæslumaður þinn veitir upplýsingar um ákvörðunina. Þú getur kært þessa ákvörðun til ríkissaksóknara en kæra þarf að berast innan mánaðar frá ákvörðun. Nánari upplýsingar um kæru til ríkissaksóknara má finna [hér](https://www.rikissaksoknari.is/kaerdar-akvardanir)',
+    defaultMessage:
+      'Ákærandi hefur farið yfir mál þitt og tekið þá ákvörðun að hætta rannsókn. Margar ástæður eru fyrir því að ákveðið er að hætta rannsókn sakamála en réttargæslumaður þinn veitir upplýsingar um ákvörðunina. Þú getur kært þessa ákvörðun til ríkissaksóknara en kæra þarf að berast innan mánaðar frá ákvörðun. Nánari upplýsingar um kæru til ríkissaksóknara má finna [hér](https://www.rikissaksoknari.is/kaerdar-akvardanir)',
   },
   statusDescriptionCaseDismissed: {
     id: 'api.law-and-order:status-description-case-dismissed',

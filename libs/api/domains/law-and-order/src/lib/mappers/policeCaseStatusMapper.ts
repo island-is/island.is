@@ -1,7 +1,10 @@
-import { FormatMessage } from '@island.is/cms-translations';
-import { CaseStatus } from '../models/police-cases/caseStatus.model';
-import { POLICE_CASE_STATUS_INFO } from '../types/constants';
-import { PoliceCaseStatusValue, PoliceCaseStatusValueGroup } from '../types/enums';
+import { FormatMessage } from '@island.is/cms-translations'
+import { CaseStatus } from '../models/police-cases/caseStatus.model'
+import { POLICE_CASE_STATUS_INFO } from '../types/constants'
+import {
+  PoliceCaseStatusValue,
+  PoliceCaseStatusValueGroup,
+} from '../types/enums'
 
 export const mapPoliceCaseStatusValue = (
   status?: string,
@@ -66,10 +69,10 @@ export const mapPoliceCaseStatus = (
     return {
       value: statusValue,
       statusGroup: PoliceCaseStatusValueGroup.UNKNOWN,
-    };
+    }
   }
 
-  const { header, description, group} = POLICE_CASE_STATUS_INFO[statusValue];
+  const { header, description, group } = POLICE_CASE_STATUS_INFO[statusValue]
 
   return {
     value: statusValue,

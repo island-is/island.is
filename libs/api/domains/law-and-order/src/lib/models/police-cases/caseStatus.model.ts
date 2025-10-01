@@ -1,5 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { PoliceCaseStatusValue, PoliceCaseStatusValueGroup } from '../../types/enums'
+import {
+  PoliceCaseStatusValue,
+  PoliceCaseStatusValueGroup,
+} from '../../types/enums'
 
 @ObjectType('LawAndOrderPoliceCaseStatus')
 export class CaseStatus {

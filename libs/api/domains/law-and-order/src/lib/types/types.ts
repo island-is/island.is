@@ -1,5 +1,5 @@
-import { MessageDescriptor } from "react-intl"
-import { PoliceCaseStatusValue, PoliceCaseStatusValueGroup } from "./enums"
+import { MessageDescriptor } from 'react-intl'
+import { PoliceCaseStatusValue, PoliceCaseStatusValueGroup } from './enums'
 
 export interface Choice {
   message: {
@@ -8,11 +8,11 @@ export interface Choice {
   }
 }
 
-export interface PoliceCaseStatusInfo{
+export interface PoliceCaseStatusInfo {
   header: MessageDescriptor
   description: MessageDescriptor
   group: PoliceCaseStatusValueGroup
-};
+}
 
 export type PoliceCaseStatusInfoMap = {
   [K in Exclude<
