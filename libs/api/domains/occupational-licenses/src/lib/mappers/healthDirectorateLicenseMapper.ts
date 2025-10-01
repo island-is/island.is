@@ -1,20 +1,22 @@
 import { type Locale } from '@island.is/shared/types'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { License } from '../models/license.model'
-import {
-  addLicenseTypePrefix,
-} from '../utils'
+import { addLicenseTypePrefix } from '../utils'
 import { LicenseType } from '../models/licenseType.model'
 import { Status } from '../models/licenseStatus.model'
 import { HealthDirectorateLicenseToPractice } from '@island.is/clients/health-directorate'
 import { isDefined } from '@island.is/shared/utils'
 
-export const mapHealthDirectorateLicensesResponse = (licenses: HealthDirectorateLicenseToPractice[], locale: Locale): Array<License> =>
-  {
-    return licenses
+export const mapHealthDirectorateLicensesResponse = (
+  licenses: HealthDirectorateLicenseToPractice[],
+  locale: Locale,
+): Array<License> => {
+  return (
+    licenses
       ?.map((l) => mapHealthDirectorateLicense(l, locale))
       .filter(isDefined) ?? []
-  }
+  )
+}
 
 export const mapHealthDirectorateLicense = (
   data: HealthDirectorateLicenseToPractice,
