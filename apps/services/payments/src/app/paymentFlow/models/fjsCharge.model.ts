@@ -17,17 +17,17 @@ import {
 } from 'sequelize'
 
 @Table({
-  tableName: 'payment_flow_fjs_charge_confirmation',
+  tableName: 'fjs_charge',
   indexes: [
     {
-      name: 'payment_flow_fjs_charge_confirmation_payment_flow_id_idx',
+      name: 'fjs_charge_payment_flow_id_idx',
       fields: ['payment_flow_id'],
     },
   ],
 })
-export class PaymentFlowFjsChargeConfirmation extends Model<
-  InferAttributes<PaymentFlowFjsChargeConfirmation>,
-  InferCreationAttributes<PaymentFlowFjsChargeConfirmation>
+export class FjsCharge extends Model<
+  InferAttributes<FjsCharge>,
+  InferCreationAttributes<FjsCharge>
 > {
   @ApiProperty()
   @PrimaryKey
@@ -63,6 +63,23 @@ export class PaymentFlowFjsChargeConfirmation extends Model<
   })
   receptionId!: string
 
+  @ApiProperty()
+  @Column({
+    type: DataType.ENUM(
+      'unpaid',
+      'paid',
+      'cancelled',
+      'recreated',
+      'recreatedAndPaid',
+    ),
+    allowNull: false,
+    defaultValue: 'unpaid',
+    field: 'status',
+  })
+  status!: CreationOptional<
+    'unpaid' | 'paid' | 'cancelled' | 'recreated' | 'recreatedAndPaid'
+  >
+
   @CreatedAt
   @Column({
     type: DataType.DATE,
@@ -81,3 +98,5 @@ export class PaymentFlowFjsChargeConfirmation extends Model<
   })
   modified!: CreationOptional<Date>
 }
+
+export type FjsChargeAttributes = InferAttributes<FjsCharge>
