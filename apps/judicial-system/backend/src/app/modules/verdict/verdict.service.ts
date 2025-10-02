@@ -15,6 +15,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   DefendantEventType,
@@ -54,6 +55,7 @@ export class VerdictService {
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     private readonly defendantService: DefendantService,
+    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -254,23 +256,19 @@ export class VerdictService {
             },
           ]
         : []),
-      ...(theCase.prosecutor?.nationalId
+      ...(theCase.prosecutor?.name
         ? [
             {
-              code: 'PROSECUTOR_SSN',
-              value: normalizeAndFormatNationalId(
-                theCase.prosecutor?.nationalId,
-              )[0],
+              code: 'PROSECUTOR_NAME',
+              value: theCase.prosecutor.name,
             },
           ]
         : []),
-      ...(defendant.defenderNationalId
+      ...(defendant.defenderName
         ? [
             {
-              code: 'DEFENDER_SSN',
-              value: normalizeAndFormatNationalId(
-                defendant.defenderNationalId,
-              )[0],
+              code: 'DEFENDER_NAME',
+              value: defendant.defenderName,
             },
           ]
         : []),
@@ -283,6 +281,10 @@ export class VerdictService {
     verdict: Verdict,
     user: TUser,
   ): Promise<DeliverResponse> {
+    // check if verdict is already delivered
+    if (verdict.externalPoliceDocumentId) {
+      return { delivered: true }
+    }
     // get verdict file
     const verdictFile = theCase.caseFiles?.find(
       (caseFile) => caseFile.category === CaseFileCategory.RULING,
@@ -352,5 +354,25 @@ export class VerdictService {
       }
     }
     return verdict
+  }
+
+  async addMessagesForCaseVerdictDeliveryToQueue(theCase: Case, user: TUser) {
+    const messages = theCase.defendants
+      ?.filter(
+        (defendant) =>
+          defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+      )
+      .map((defendant) => ({
+        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+        user,
+        caseId: theCase.id,
+        elementId: [defendant.id],
+      }))
+
+    if (messages && messages.length > 0) {
+      this.messageService.sendMessagesToQueue(messages)
+      return { queued: true }
+    }
+    return { queued: false }
   }
 }

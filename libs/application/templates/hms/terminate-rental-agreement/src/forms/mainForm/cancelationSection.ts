@@ -26,6 +26,7 @@ export const cancelationSection = buildSection({
     buildMultiField({
       id: 'cancelationMultiField',
       title: m.cancelationMessages.title,
+      description: m.cancelationMessages.description,
       children: [
         buildDateField({
           id: 'cancelation.cancelationDate',
