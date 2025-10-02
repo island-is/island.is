@@ -218,7 +218,6 @@ export class HealthDirectorateHealthService {
     input: UpdateOrganDonorDto,
     locale: Locale,
   ): Promise<void> {
-    console.log('updateOrganDonation', JSON.stringify(input, null, 2))
     await withAuthContext(auth, () =>
       dataOr404Null(
         meDonorStatusControllerUpdateOrganDonorStatusV1({

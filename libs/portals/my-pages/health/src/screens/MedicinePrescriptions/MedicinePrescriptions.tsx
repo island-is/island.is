@@ -184,9 +184,9 @@ const MedicinePrescriptions = () => {
                     category: HealthDirectoratePrescribedItemCategory.Pn,
                   },
                   {
-                    name: 'regimenMedicine',
+                    name: 'regimentMedicine',
                     label: formatMessage(messages.regimenMedicine),
-                    category: HealthDirectoratePrescribedItemCategory.Regimen,
+                    category: HealthDirectoratePrescribedItemCategory.Regiment,
                   },
                 ].map(({ name, label, category }) => (
                   <Checkbox
