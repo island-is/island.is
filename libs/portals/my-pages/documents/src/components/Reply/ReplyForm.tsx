@@ -52,16 +52,15 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
   const userName = useMemo(() => profile?.name ?? '', [profile?.name])
   const userEmail = profile?.email ?? userProfile?.email
 
-  const [getTicketQuery, { data, loading, refetch }] =
-    useGetDocumentTicketLazyQuery({
-      variables: {
-        input: {
-          id: documentId,
-          includeDocument: true,
-        },
+  const [getTicketQuery, { loading }] = useGetDocumentTicketLazyQuery({
+    variables: {
+      input: {
+        id: documentId,
+        includeDocument: true,
       },
-      fetchPolicy: 'no-cache',
-    })
+    },
+    fetchPolicy: 'no-cache',
+  })
 
   const handleReplySuccess = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
