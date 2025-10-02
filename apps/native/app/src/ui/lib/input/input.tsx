@@ -110,32 +110,28 @@ export function Input({
                 error={error}
                 height={size === 'big' ? 26 : undefined}
               />
-            ) : (
-              <>
-                {allowEmptyValue && value === '' ? null : (
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Typography
-                      testID={valueTestID}
-                      selectable
-                      variant={size === 'normal' ? 'heading5' : 'heading3'}
-                    >
-                      {tvalue === '' || !value ? '-' : value}
-                    </Typography>
-                    {copy && (
-                      <TouchableOpacity
-                        onPress={() => Clipboard.setString(value ?? '')}
-                        style={{ marginLeft: 4 }}
-                      >
-                        <Image
-                          source={CopyIcon}
-                          style={{ width: 24, height: 24 }}
-                          resizeMode="contain"
-                        />
-                      </TouchableOpacity>
-                    )}
-                  </View>
+            ) : allowEmptyValue && value === '' ? null : (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Typography
+                  testID={valueTestID}
+                  selectable
+                  variant={size === 'normal' ? 'heading5' : 'heading3'}
+                >
+                  {tvalue === '' || !value ? '-' : value}
+                </Typography>
+                {copy && (
+                  <TouchableOpacity
+                    onPress={() => Clipboard.setString(value ?? '')}
+                    style={{ marginLeft: 4 }}
+                  >
+                    <Image
+                      source={CopyIcon}
+                      style={{ width: 24, height: 24 }}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
                 )}
-              </>
+              </View>
             )}
           </View>
           {rightElement}
