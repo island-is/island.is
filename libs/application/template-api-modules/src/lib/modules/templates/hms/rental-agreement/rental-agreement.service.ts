@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { HomeApi } from '@island.is/clients/hms-rental-agreement'
-import { applicationAnswers } from '@island.is/application/templates/rental-agreement'
-import { TemplateApiModuleActionProps } from '../../../types'
-import { BaseTemplateApiService } from '../../base-template-api.service'
+import { applicationAnswers } from '@island.is/application/templates/hms/rental-agreement'
+import { TemplateApiModuleActionProps } from '../../../../types'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { mapRentalApplicationData } from './utils/mapRentalApplicationData'
 import {
   fetchFinancialIndexationForMonths,
