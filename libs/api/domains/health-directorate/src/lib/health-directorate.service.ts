@@ -1,7 +1,6 @@
-import { Auth } from '@island.is/auth-nest-tools'
+import { Auth, getAuthContext } from '@island.is/auth-nest-tools'
 import {
   DispensationHistoryItemDto,
-  HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
   PrescriptionRenewalRequestDto,
@@ -43,7 +42,6 @@ import { WaitlistDetail } from './models/waitlist.model'
 export class HealthDirectorateService {
   constructor(
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
-    private readonly organDonationApi: HealthDirectorateOrganDonationService,
     private readonly healthApi: HealthDirectorateHealthService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -51,8 +49,10 @@ export class HealthDirectorateService {
   /* Organ Donation */
   async getDonorStatus(auth: Auth, locale: Locale): Promise<Donor | null> {
     const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
-    const data: OrganDonorDto | null =
-      await this.organDonationApi.getOrganDonation(auth, lang)
+    const data: OrganDonorDto | null = await this.healthApi.getOrganDonation(
+      auth,
+      lang,
+    )
     if (data === null) {
       return null
     }
@@ -71,6 +71,7 @@ export class HealthDirectorateService {
       isMinor: data.isMinor ?? false,
       isTemporaryResident: data.isTemporaryResident ?? false,
     }
+
     return donorStatus
   }
 
@@ -79,7 +80,7 @@ export class HealthDirectorateService {
     locale: Locale,
   ): Promise<Array<Organ>> {
     const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
-    const data = await this.organDonationApi.getDonationExceptions(auth, lang)
+    const data = await this.healthApi.getDonationExceptions(auth, lang)
     const limitations: Array<Organ> =
       data?.map((item) => {
         return {
@@ -99,7 +100,7 @@ export class HealthDirectorateService {
     const filteredList =
       input.organLimitations?.filter((item) => item !== 'other') ?? []
 
-    return await this.organDonationApi.updateOrganDonation(
+    return await this.healthApi.updateOrganDonation(
       auth,
       {
         isDonor: input.isDonor,
@@ -167,10 +168,10 @@ export class HealthDirectorateService {
         return {
           id: item.id,
           lastUpdated: item.lastUpdated,
-          name: item.name,
+          name: item.name ?? '',
           waitBegan: item.waitBeganDate,
-          organization: item.organizationName.toString(),
-          status: item.statusDisplay?.toString(),
+          organization: item.organizationName?.toString() ?? '',
+          status: item.statusDisplay?.toString() ?? '',
         }
       }) ?? []
 
@@ -211,7 +212,7 @@ export class HealthDirectorateService {
           serviceName: item.serviceName,
           createdDate: item.createdDate,
           validUntilDate: item.validUntilDate,
-          stateDisplay: item.stateDisplay,
+          stateDisplay: item.statusDisplay,
           reason: item.reasonForReferral,
           fromContactInfo: item.fromContactInfo,
           toContactInfo: item.toContactInfo,
@@ -265,7 +266,7 @@ export class HealthDirectorateService {
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
           indication: item.indication,
-          totalPrescribedAmount: item.totalPrescribedAmountDisplay,
+          totalPrescribedAmount: item.prescribedAmountDisplay,
           category: item.category
             ? mapPrescriptionCategory(item.category)
             : undefined,
@@ -282,14 +283,13 @@ export class HealthDirectorateService {
               id: item.id,
               agentName: item.dispensingAgentName,
               date: item.dispensationDate,
-              count: item.dispensedItemsCount,
+              count: item.dispensedItems.length,
               items: item.dispensedItems.map((item) => {
                 return {
                   id: item.productId,
                   name: item.productName,
                   strength: item.productStrength,
                   amount: item.dispensedAmountDisplay,
-                  numberOfPackages: item.numberOfPackages?.toString(),
                 }
               }),
             }
