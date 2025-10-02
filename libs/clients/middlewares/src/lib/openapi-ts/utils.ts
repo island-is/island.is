@@ -1,17 +1,4 @@
 import { handle404 } from '../handle404'
-import { ResponseStyle } from '@hey-api/client-fetch'
-import { Auth } from '@island.is/auth-nest-tools'
-
-// Extend @hey-api/client-fetch to support auth argument.
-declare module '@hey-api/client-fetch' {
-  interface RequestOptions<
-    TResponseStyle extends ResponseStyle = 'fields',
-    ThrowOnError extends boolean = boolean,
-    Url extends string = string,
-  > {
-    auth: Auth
-  }
-}
 
 type Exclude204<T> = T extends { readonly statusCode?: number } ? never : T
 
