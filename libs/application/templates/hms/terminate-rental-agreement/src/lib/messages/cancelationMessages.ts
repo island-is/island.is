@@ -9,7 +9,7 @@ export const cancelationMessages = defineMessages({
   description: {
     id: 'tra.application:cancelation.description#markdown',
     defaultMessage:
-      'Riftun leigusamnings er heimild aðilum í tilteknum tilvikum. Sjá nánar á [hér](https://island.is/leiga-a-ibudarhusnaedi/uppsogn-eda-riftun-leigusamnings).',
+      'Riftun leigusamnings er heimil aðilum í tilteknum tilvikum. Sjá nánar á [hér](https://island.is/leiga-a-ibudarhusnaedi/uppsogn-eda-riftun-leigusamnings).',
     description: 'Cancelation description',
   },
   dateTitle: {
