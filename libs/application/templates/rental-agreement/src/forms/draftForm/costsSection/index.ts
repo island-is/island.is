@@ -6,7 +6,7 @@ import * as m from '../../../lib/messages'
 
 export const costsSection = buildSection({
   id: 'costsSection',
-  title: m.costsMessages.sectionTitle,
+  title: m.cost.sectionTitle,
   children: [
     rentalAmountSubsection,
     securityDepositSubsection,
