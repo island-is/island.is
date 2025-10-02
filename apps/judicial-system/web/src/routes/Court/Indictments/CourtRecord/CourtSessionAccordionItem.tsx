@@ -109,7 +109,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
 
   const {
-    judges,
+    districtCourtAssistants,
     registrars,
     loading: usersLoading,
   } = useUsers(workingCase.court?.id)
@@ -242,7 +242,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }
 
   const handleChangeWitness = (value?: string | null) => {
-    const selectedUser = [...judges, ...registrars].find(
+    const selectedUser = [...districtCourtAssistants, ...registrars].find(
       (u) => u.value === value,
     )
 
@@ -926,8 +926,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               />
               <Select
                 name="courtUsers"
-                options={[...judges, ...registrars].sort((a, b) =>
-                  a.label.localeCompare(b.label),
+                options={[...districtCourtAssistants, ...registrars].sort(
+                  (a, b) => a.label.localeCompare(b.label),
                 )}
                 value={
                   courtSession.attestingWitness
