@@ -20,13 +20,13 @@ Note: It also works to create nested applications by running:
 1. `yarn generate-application-template <folder-name>/<name-of-application>`
 2. `yarn generate-application-template-api-module <folder-name>/<name-of-application>`
 
-## Prefered folder structure of templates and template-api-modules
+## Preferred folder structure of templates and template-api-modules
 
 Rule of thumb should be that every application (at least new ones) should live within an institution folder that lives within /templates
 
 For example:
 
-- /templates/hms/rental-agreements
+- /templates/hms/rental-agreement
 - /templates/aosh/practical-exam
 
 ## Capabilities
