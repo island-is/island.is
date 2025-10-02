@@ -32,7 +32,7 @@
           "yarn openapi-generator -o libs/clients/health-directorate/src/lib/clients/organ-donation/gen/fetch -i libs/clients/health-directorate/src/lib/clients/organ-donation/clientConfig.json",
           "yarn openapi-generator -o libs/clients/health-directorate/src/lib/clients/vaccinations/gen/fetch -i libs/clients/health-directorate/src/lib/clients/vaccinations/clientConfig.json",
           "yarn openapi-generator -o libs/clients/health-directorate/src/lib/clients/occupational-license/gen/fetch -i libs/clients/health-directorate/src/lib/clients/occupational-license/clientConfig.json",
-          "yarn openapi-generator -o libs/clients/health-directorate/src/lib/clients/health/gen/fetch -i libs/clients/health-directorate/src/lib/clients/health/clientConfig.json"
+          "yarn openapi-ts -f libs/clients/health-directorate/src/lib/clients/health/openapi-ts.config.ts"
         ]
       },
       "outputs": ["{projectRoot}/**/gen/fetch"]

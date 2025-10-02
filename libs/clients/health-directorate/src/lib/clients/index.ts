@@ -1,7 +1,6 @@
 export * from './occupational-license'
 export * from './vaccinations'
 export {
-  HealthDirectorateOrganDonationService,
   HealthDirectorateOrganDonationClientConfig,
   OrganDonorDto,
   Locale as organLocale,
@@ -9,8 +8,8 @@ export {
 export {
   HealthDirectorateHealthClientConfig,
   HealthDirectorateHealthService,
-  PrescribedItemDtoRenewalBlockedReasonEnum,
-  PrescribedItemDtoRenewalStatusEnum,
-  PrescribedItemDtoCategoryEnum,
+  PrescribedItemCategory,
+  PrescriptionRenewalBlockedReason,
+  PrescriptionRenewalStatus,
   PrescriptionRenewalRequestDto,
 } from './health'
