@@ -277,6 +277,12 @@
       "@island.is/application/api/payment": [
         "libs/application/api/payment/src/index.ts"
       ],
+      "@island.is/application/assets/graphics": [
+        "libs/application/assets/graphics/index.ts"
+      ],
+      "@island.is/application/assets/institution-logos": [
+        "libs/application/assets/institution-logos/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/core/messages": [
         "libs/application/core/src/lib/messages.ts"
