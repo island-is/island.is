@@ -27,13 +27,13 @@ import {
 
 import { CardResponse, Answer } from '../lib/types'
 import { Option } from '@island.is/application/types'
-import { Sjukra } from '../assets'
+import { IcelandHealthLogo } from '@island.is/application/assets/institution-logos'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 
 export const EuropeanHealthInsuranceCardForm: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardForm',
-  logo: Sjukra,
+  logo: IcelandHealthLogo,
   mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
