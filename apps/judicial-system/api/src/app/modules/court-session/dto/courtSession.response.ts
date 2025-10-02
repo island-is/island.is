@@ -34,6 +34,12 @@ export class CourtSessionResponse {
   readonly location?: string
 
   @Field(() => String, { nullable: true })
+  readonly judgeId?: string
+
+  @Field(() => User, { nullable: true })
+  readonly judge?: User
+
+  @Field(() => String, { nullable: true })
   readonly startDate?: string
 
   @Field(() => String, { nullable: true })

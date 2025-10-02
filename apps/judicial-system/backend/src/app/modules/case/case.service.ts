@@ -248,6 +248,12 @@ export const include: Includeable[] = [
     include: [
       {
         model: User,
+        as: 'judge',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
         as: 'attestingWitness',
         required: false,
         include: [{ model: Institution, as: 'institution' }],

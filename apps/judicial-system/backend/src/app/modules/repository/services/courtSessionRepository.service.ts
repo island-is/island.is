@@ -23,6 +23,7 @@ interface UpdateCourtSessionOptions {
 
 interface UpdateCourtSession {
   location?: string
+  judgeId?: string
   startDate?: Date
   endDate?: Date
   isClosed?: boolean
