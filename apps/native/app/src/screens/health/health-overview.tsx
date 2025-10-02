@@ -559,7 +559,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                   })
             }
             loading={healthCenterRes.loading}
-            fullWidhtWarning
+            fullWidthWarning
             allowEmptyValue={healthCenterRes.error ? true : false}
             warningText={
               healthCenterRes.error
@@ -599,7 +599,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                   })
             }
             loading={healthCenterRes.loading}
-            fullWidhtWarning
+            fullWidthWarning
             allowEmptyValue={healthCenterRes.error ? true : false}
             warningText={
               healthCenterRes.error
@@ -639,7 +639,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             }
             allowEmptyValue={dentistRes.error ? true : false}
             loading={dentistRes.loading}
-            fullWidhtWarning
+            fullWidthWarning
             warningText={
               dentistRes.error
                 ? intl.formatMessage({
@@ -678,7 +678,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                     }) ?? ''
               }`}
               loading={organDonationRes.loading && !organDonationRes.data}
-              fullWidhtWarning
+              fullWidthWarning
               warningText={
                 organDonationRes.error
                   ? intl.formatMessage({
@@ -726,7 +726,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                   })
             }
             loading={bloodTypeRes.loading}
-            fullWidhtWarning
+            fullWidthWarning
             warningText={
               bloodTypeRes.error
                 ? intl.formatMessage({

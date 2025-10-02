@@ -61,7 +61,7 @@ interface InputProps {
   warningText?: string
   rightElement?: React.ReactNode
   allowEmptyValue?: boolean
-  fullWidhtWarning?: boolean
+  fullWidthWarning?: boolean
 }
 
 export function Input({
@@ -79,7 +79,7 @@ export function Input({
   warningText = '',
   rightElement,
   allowEmptyValue = false,
-  fullWidhtWarning = false,
+  fullWidthWarning = false,
 }: InputProps) {
   const theme = useTheme()
   const tvalue =
@@ -138,7 +138,7 @@ export function Input({
         </View>
         {!loading && !error && warningText && (
           <WarningMessage>
-            <Label color="warning" icon fullWidth={fullWidhtWarning}>
+            <Label color="warning" icon fullWidth={fullWidthWarning}>
               {warningText}
             </Label>
           </WarningMessage>
