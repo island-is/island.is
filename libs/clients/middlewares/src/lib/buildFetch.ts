@@ -33,10 +33,11 @@ const toNodeFetchRequest = async (
   const canHaveBody = !['GET', 'HEAD'].includes(globalReq.method)
   const globalReqBody = globalReq.body
 
-  let body: any = undefined
+  let body: undefined | Readable = undefined
 
   // If the request is a globalThis.Request, the body will always be a ReadableStream
   if (canHaveBody && globalReqBody instanceof ReadableStream) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body = Readable.fromWeb(globalReqBody as any)
   }
 
