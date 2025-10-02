@@ -136,6 +136,20 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           href
         }
       }
+      navigationLinks {
+        topLinks {
+          label
+          href
+          midLinks {
+            label
+            href
+            bottomLinks {
+              label
+              href
+            }
+          }
+        }
+      }
       defaultHeaderImage {
         url
         contentType

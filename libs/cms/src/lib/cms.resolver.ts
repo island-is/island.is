@@ -57,7 +57,10 @@ import {
   GetOrganizationSubpageInput,
 } from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
-import { OrganizationPage } from './models/organizationPage.model'
+import {
+  NavigationLinks,
+  OrganizationPage,
+} from './models/organizationPage.model'
 import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
 import { GetAuctionsInput } from './dto/getAuctions.input'
 import { Auction } from './models/auction.model'
@@ -280,7 +283,20 @@ export class CmsResolver {
   async getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
-    return this.cmsContentfulService.getOrganizationPage(input.slug, input.lang)
+    const organizationPage =
+      await this.cmsContentfulService.getOrganizationPage(
+        input.slug,
+        input.lang,
+      )
+
+    if (!organizationPage) {
+      return organizationPage
+    }
+
+    // Used in the resolver to fetch navigation links from cms
+    organizationPage.subpageSlugsInput = input.subpageSlugs
+
+    return organizationPage
   }
 
   @CacheControl(defaultCache)
@@ -1049,5 +1065,19 @@ export class FeaturedGenericListItemsResolver {
       input,
     )
     return response.items
+  }
+}
+
+@Resolver(() => OrganizationPage)
+@CacheControl(defaultCache)
+export class OrganizationPageResolver {
+  constructor(private cmsContentfulService: CmsContentfulService) {}
+
+  @ResolveField(() => NavigationLinks, { nullable: true })
+  async navigationLinks(@Parent() organizationPage: OrganizationPage) {
+    console.log('organizationPage', organizationPage.subpageSlugsInput)
+    return {
+      topLinks: [],
+    }
   }
 }

@@ -232,6 +232,7 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
         input: {
           slug,
           lang: locale as Locale,
+          subpageSlugs: [locale === 'is' ? 'vidburdir' : 'events'],
         },
       },
     }),

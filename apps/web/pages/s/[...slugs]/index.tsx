@@ -190,6 +190,7 @@ Component.getProps = async (context) => {
       input: {
         slug: slugs[0],
         lang: locale,
+        subpageSlugs: slugs.slice(1),
       },
     },
   })

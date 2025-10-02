@@ -161,6 +161,9 @@ BloodDonationRestrictionDetails.getProps = async ({
         input: {
           slug: organizationPageSlug,
           lang: locale,
+          subpageSlugs: [
+            locale === 'is' ? 'ahrif-a-blodgjof' : 'affecting-factors',
+          ],
         },
       },
     }),
