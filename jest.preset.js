@@ -16,9 +16,10 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageReporters: ['json', 'lcov'],
   collectCoverageFrom: [
-    '**/*.{js,jsx,ts,tsx}',
-    '!**/*.css.*',
-    '!**/*.config.*',
+    'src/**/*.{js,jsx,ts,tsx}',
+    '!src/**/*.css.*',
+    '!src/**/*.config.*',
+    '!src/**/*.d.ts',
     '!**/infra/*',
     '!**/seeders/*',
     '!**/migrations/*',
