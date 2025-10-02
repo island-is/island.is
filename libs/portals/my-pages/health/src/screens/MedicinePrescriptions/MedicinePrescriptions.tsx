@@ -185,7 +185,7 @@ const MedicinePrescriptions = () => {
                   },
                   {
                     name: 'regimentMedicine',
-                    label: formatMessage(messages.regimenMedicine),
+                    label: formatMessage(messages.regimentMedicine),
                     category: HealthDirectoratePrescribedItemCategory.Regiment,
                   },
                 ].map(({ name, label, category }) => (
