@@ -109,6 +109,11 @@ export const fireProtectionsSubsection = buildSubSection({
           width: 'half',
           space: 0,
         }),
+        buildDescriptionField({
+          id: 'fireProtections.propertySizeDescription',
+          description: m.housingFireProtections.eldklarMessage,
+          space: 4,
+        }),
         buildHiddenInputWithWatchedValue({
           id: 'fireProtections.propertySize',
           watchValue: 'registerProperty.searchresults.units',
