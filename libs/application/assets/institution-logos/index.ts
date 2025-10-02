@@ -11,6 +11,7 @@ export { IcelandicAssociationOfLocalAuthoritiesLogo } from './IcelandicAssociati
 export { MinistryOfFinanceAndLocalAffairsLogo } from './MinistryOfFinanceAndEconomicAffairsLogo'
 export { DirectorateOfFisheriesLogo } from './DirectorateOfFisheries'
 export { DirectorateOfHealthLogo } from './DirectorateOfHealthLogo'
+export { HmsLogo } from './HmsLogo' // Húsnæðis og mannvirkjastofnun
 export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið
 
 // Municipality logos
