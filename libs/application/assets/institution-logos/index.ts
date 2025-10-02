@@ -6,4 +6,5 @@ export { AlthingiOmbudsmanLogo } from './AlthingiOmbudsmanLogo' // Umboðsmaður
 export { DistrictCommissionersLogo } from './DistrictCommissionersLogo' // Sýslumenn
 export { MinistryForForeignAffairsLogo } from './MinistryForForeignAffairsLogo' // Utanríkisráðuneytið
 export { TheIcelandicPoliceLogo } from './TheIcelandicPoliceLogo' // Lögreglan
+export { TheEnergyAgencyLogo } from './TheEnergyAgencyLogo' // Orkustofnun
 export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið

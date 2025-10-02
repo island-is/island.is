@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
+export const TheEnergyAgencyLogo: FC<React.PropsWithChildren<unknown>> = () => (
   <svg width="318" height="112" viewBox="0 0 318 112">
     <rect width="318" height="112" rx="8" fill="#F8F5FA" />
     <path d="M31.3043 63.1048V49.019H34.6435V63.1048H31.3043Z" fill="#0044B3" />
