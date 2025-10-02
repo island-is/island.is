@@ -289,7 +289,6 @@ export const DocumentLine: FC<Props> = ({
   }
   const unread = !documentLine.opened && !localRead.includes(documentLine.id)
   const isBookmarked = bookmarked || bookmarkSuccess
-
   return (
     <Box className={styles.wrapper} ref={wrapperRef}>
       <Box
@@ -349,8 +348,20 @@ export const DocumentLine: FC<Props> = ({
           minWidth={0}
         >
           {active && <div className={styles.fakeBorder} />}
-          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Box display="inlineFlex">
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            overflow="hidden"
+            alignItems="center"
+          >
+            <Box
+              display="inlineFlex"
+              alignItems="center"
+              minWidth={0}
+              flexShrink={1}
+              overflow="hidden"
+            >
               <Text variant="medium" truncate>
                 {documentLine.sender?.name ?? ''}
               </Text>
@@ -361,6 +372,7 @@ export const DocumentLine: FC<Props> = ({
                   display="flex"
                   justifyContent="center"
                   alignItems="center"
+                  flexShrink={0}
                 >
                   <Icon
                     icon="undo"
@@ -371,7 +383,9 @@ export const DocumentLine: FC<Props> = ({
                 </Box>
               )}
             </Box>
-            <Text variant="medium">{date}</Text>
+            <Box flexShrink={0} marginLeft={2}>
+              <Text variant="medium">{date}</Text>
+            </Box>
           </Box>
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
             <button
