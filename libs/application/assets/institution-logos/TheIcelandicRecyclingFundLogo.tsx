@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-const Logo = () => {
+export const TheIcelandicRecyclingFundLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -34,5 +36,3 @@ const Logo = () => {
     </svg>
   )
 }
-
-export default Logo
