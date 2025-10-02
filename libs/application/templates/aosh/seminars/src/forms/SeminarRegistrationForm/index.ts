@@ -1,6 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { Logo } from '../../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { seminarInformationSection } from './SeminarInformation'
 import { personalInformationSection } from './PersonalInformation'
 import { participantsSection } from './ParticipantsSection'
@@ -12,8 +12,7 @@ import { overviewSection } from './Overview'
 
 export const SeminarRegistrationForm: Form = buildForm({
   id: 'SeminarRegistrationFormDraft',
-  title: '',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: false,

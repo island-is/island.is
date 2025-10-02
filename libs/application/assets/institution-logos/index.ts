@@ -1,2 +1,4 @@
-export { IcelandHealthLogo } from './iceland-health-logo' // Sjúkratryggingar
-export { DirectorateOfLabourLogo } from './directorate-of-labour-logo' // Vinnumálastofnun
+export { IcelandHealthLogo } from './IcelandHealthLogo' // Sjúkratryggingar
+export { DirectorateOfLabourLogo } from './DirectorateOfLabourLogo' // Vinnumálastofnun
+export { AoshLogo } from './AoshLogo' // Vinnueftirlitið
+export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið

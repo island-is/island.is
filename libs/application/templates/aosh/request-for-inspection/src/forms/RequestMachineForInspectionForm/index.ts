@@ -1,13 +1,13 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { informationSection } from './InformationSection'
-import { Logo } from '../../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { conclusion, externalData } from '../../lib/messages'
 
 export const RequestInspectionForm: Form = buildForm({
   id: 'RequestInspectionFormDraft',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const CoatOfArms: React.FC<React.PropsWithChildren<unknown>> = () => (
+export const CoatOfArms: React.FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="98"
     height="103"
@@ -424,5 +424,3 @@ const CoatOfArms: React.FC<React.PropsWithChildren<unknown>> = () => (
     />
   </svg>
 )
-
-export default CoatOfArms

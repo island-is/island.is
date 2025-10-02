@@ -1,6 +1,6 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { Logo } from '../../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { conclusion, externalData } from '../../lib/messages'
 import { InformationSection } from './InformationSection'
@@ -9,7 +9,7 @@ import { OverviewSection } from './OverviewSection'
 
 export const RegisterNewMachineForm: Form = buildForm({
   id: 'RegisterNewMachineFormDraft',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

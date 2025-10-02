@@ -1,6 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { Logo } from '../../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { informationSection } from './InformationSection'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { conclusion } from '../../lib/messages'
@@ -11,7 +11,7 @@ import { overviewSection } from './OverviewSection'
 export const TrainingLicenseOnAWorkMachineForm: Form = buildForm({
   id: 'TrainingLicenseOnAWorkMachineFormsDraft',
   title: '',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: false,
   renderLastScreenBackButton: false,

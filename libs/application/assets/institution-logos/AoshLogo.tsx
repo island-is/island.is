@@ -1,6 +1,7 @@
+// Logo for The Administration of Occupational Safety and Health - Vinnueftirlitið
 import React, { FC } from 'react'
 
-export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
+export const AoshLogo: FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="318"
     height="112"
