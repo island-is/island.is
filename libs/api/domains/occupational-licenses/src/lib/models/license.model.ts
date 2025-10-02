@@ -1,10 +1,13 @@
-import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
 import { GenericField } from './genericField.model'
 import { Status } from './licenseStatus.model'
 import { LicenseType } from './licenseType.model'
 
 @ObjectType('OccupationalLicense')
 export class License {
+  @Field(() => ID)
+  cacheId!: string
+
   @Field()
   licenseId!: string
 
