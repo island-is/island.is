@@ -170,8 +170,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
   const isOrganDonationEnabled = useFeatureFlag('isOrganDonationEnabled', false)
 
-  const newDate = useMemo(() => new Date(), [])
-  const now = useMemo(() => newDate.toISOString(), [newDate])
+  const now = useMemo(() => new Date().toISOString(), [])
 
   const medicinePurchaseRes = useGetMedicineDataQuery()
   const organDonationRes = useGetOrganDonorStatusQuery({
@@ -187,8 +186,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const dentistRes = useGetDentistOverviewQuery({
     variables: {
       input: {
-        dateFrom: newDate as any,
-        dateTo: newDate as any,
+        dateFrom: now,
+        dateTo: now,
       },
     },
   })
