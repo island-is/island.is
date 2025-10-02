@@ -229,7 +229,9 @@ export const OverviewFormField = ({
         ) : (
           <Markdown>
             {`${
-              item.inlineKeyText && !Array.isArray(item?.keyText) && keyTextValue
+              item.inlineKeyText &&
+              !Array.isArray(item?.keyText) &&
+              keyTextValue
                 ? `${keyTextValue}: `
                 : ''
             }${formatTextWithLocale(
