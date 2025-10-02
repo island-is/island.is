@@ -1,6 +1,9 @@
+// Logo for Directorate of Labour - Vinnumálastofnun
 import React, { FC } from 'react'
 
-export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
+export const DirectorateOfLabourLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => (
   <svg
     width="318"
     height="112"
