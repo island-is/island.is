@@ -12,7 +12,7 @@ import { getInspectorOptions } from '../../../utils/options'
 import * as m from '../../../lib/messages'
 import { onlyCharacters } from '../../../utils/utils'
 
-export const conditionSubsection = buildSubSection({
+export const housingConditionSubsection = buildSubSection({
   id: Routes.CONDITION,
   title: m.housingCondition.subSectionName,
   children: [

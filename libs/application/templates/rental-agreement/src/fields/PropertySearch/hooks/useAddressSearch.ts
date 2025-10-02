@@ -24,7 +24,7 @@ export const useAddressSearch = (
     onError: (error) => {
       console.error('Error fetching address', error)
       setAddressSearchError(
-        formatMessage(m.registerProperty.search.addressSearchError) ||
+        formatMessage(m.propertySearch.search.addressSearchError) ||
           'Failed to search addresses',
       )
       setPropertiesByAddressCode(undefined)
