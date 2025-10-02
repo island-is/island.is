@@ -1,6 +1,10 @@
 import { useContext, useMemo } from 'react'
 
 import {
+  isPrisonAdminUser,
+  isPublicProsecutionOfficeUser,
+} from '@island.is/judicial-system/types'
+import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -8,10 +12,6 @@ import {
   CourtDocumentType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  isPrisonAdminUser,
-  isPublicProsecutionOfficeUser,
-} from '@island.is/judicial-system/types'
 
 const useFiledCourtDocuments = () => {
   const { workingCase } = useContext(FormContext)
