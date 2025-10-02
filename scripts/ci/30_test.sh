@@ -7,10 +7,10 @@ set -euxo pipefail
 : "${DD_API_KEY:='<set-api-key>'}"
 : "${NODE_OPTIONS:=}"
 : "${FLAKY_TEST_RETRIES:=3}"
-: "${NX_PARALLEL:=4}"
+: "${NX_PARALLEL:=2}"
 
 # Default to big old-space, and more options for testing, but allow overriding
-NODE_OPTIONS="--max-old-space-size=4096 --unhandled-rejections=warn --trace-warnings --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
+NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --trace-warnings --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
 
 # Array of services to skip during testing
 services_to_skip=(
