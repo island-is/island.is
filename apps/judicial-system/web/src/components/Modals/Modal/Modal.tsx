@@ -12,13 +12,21 @@ import FocusLock from 'react-focus-lock'
 import cn from 'classnames'
 import { motion } from 'motion/react'
 
-import { Box, Button, Checkbox, Icon, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Icon,
+  IconMapIcon,
+  Text,
+} from '@island.is/island-ui/core'
 import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks/useKeyboardCombo/useKeyboardCombo'
 
 import * as styles from './Modal.css'
 
 interface ButtonProps {
   text: string
+  icon?: IconMapIcon
   onClick: () => void
   isLoading?: boolean
   isDisabled?: boolean
@@ -29,6 +37,7 @@ interface FooterCheckbox {
   label: string
   checked: boolean
   onChange: (event: ChangeEvent<HTMLInputElement>) => void
+  disabled?: boolean
 }
 
 interface ModalProps {
@@ -137,6 +146,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
                 label={footerCheckbox.label}
                 onChange={footerCheckbox.onChange}
                 checked={footerCheckbox.checked}
+                disabled={footerCheckbox.disabled || loading}
               />
             )}
             <Box display="flex" columnGap={3}>
@@ -156,6 +166,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
                   data-testid="modalPrimaryButton"
                   variant={invertButtonColors ? 'ghost' : undefined}
                   onClick={primaryButton.onClick}
+                  icon={primaryButton.icon}
                   loading={loading || !!primaryButton.isLoading}
                   disabled={loading || !!primaryButton.isDisabled}
                   colorScheme={primaryButton.colorScheme || 'default'}

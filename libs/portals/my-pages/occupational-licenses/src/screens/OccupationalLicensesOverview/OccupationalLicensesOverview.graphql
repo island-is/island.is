@@ -1,5 +1,5 @@
-query getOccupationalLicenses {
-  occupationalLicenses {
+query getOccupationalLicenses($locale: String!) {
+  occupationalLicenses(locale: $locale) {
     __typename
     licenses {
       ... on OccupationalLicense {

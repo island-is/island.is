@@ -1,31 +1,38 @@
-import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
-import { ApplicantsInfo, LandlordInfo, PropertyUnit } from '../shared/types'
+import { ApplicantsInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
+import { ApplicantsRole } from './enums'
 
 export const singularOrPluralLandlordsTitle = (application: Application) => {
-  const landlords = getValueViaPath<Array<LandlordInfo>>(
+  const landlords = getValueViaPath<Array<ApplicantsInfo>>(
     application.answers,
     'parties.landlordInfo.table',
-  )?.filter((landlord) => !landlord.isRepresentative.includes('✔️'))
+  )
 
   if (!landlords) {
     return null
   }
 
   return landlords?.length > 1
-    ? m.summary.landlordsHeaderPlural
-    : m.summary.landlordsHeader
+    ? m.overview.landlordsHeaderPlural
+    : m.overview.landlordsHeader
 }
 
 export const shouldShowRepresentative = (answers: FormValue) => {
-  const representatives = getValueViaPath<Array<LandlordInfo>>(
+  const representatives = getValueViaPath<Array<ApplicantsInfo | string>>(
     answers,
-    'parties.landlordInfo.table',
-  )?.filter((landlord) => landlord.isRepresentative.includes('✔️'))
+    'parties.landlordInfo.representativeTable',
+  )
 
-  if (!representatives || representatives.length === 0) {
+  if (
+    !representatives ||
+    representatives.length === 0 ||
+    representatives[0] === '' ||
+    (typeof representatives[0] === 'object' &&
+      representatives[0]?.nationalIdWithName?.nationalId === '')
+  ) {
     return false
   }
 
@@ -35,18 +42,18 @@ export const shouldShowRepresentative = (answers: FormValue) => {
 export const singularOrPluralRepresentativeTitle = (
   application: Application,
 ) => {
-  const representatives = getValueViaPath<Array<LandlordInfo>>(
+  const representatives = getValueViaPath<Array<ApplicantsInfo>>(
     application.answers,
-    'parties.landlordInfo.table',
-  )?.filter((landlord) => landlord.isRepresentative.includes('✔️'))
+    'parties.landlordInfo.representativeTable',
+  )
 
   if (!representatives) {
     return null
   }
 
   return representatives?.length > 1
-    ? m.summary.landlordsRepresentativeLabelPlural
-    : m.summary.landlordsRepresentativeLabel
+    ? m.overview.landlordsRepresentativeLabelPlural
+    : m.overview.landlordsRepresentativeLabel
 }
 
 export const singularOrPluralTenantsTitle = (application: Application) => {
@@ -60,8 +67,8 @@ export const singularOrPluralTenantsTitle = (application: Application) => {
   }
 
   return tenants?.length > 1
-    ? m.summary.tenantsHeaderPlural
-    : m.summary.tenantsHeader
+    ? m.overview.tenantsHeaderPlural
+    : m.overview.tenantsHeader
 }
 
 export const shouldShowSmokeDetectorsAlert = (answers: FormValue) => {
@@ -86,10 +93,40 @@ export const shouldShowSmokeDetectorsAlert = (answers: FormValue) => {
   return Number(smokeDetectors) < requiredSmokeDetectors
 }
 
+export const shouldFireExtinguisherAlert = (answers: FormValue) => {
+  const fireExtinguisher = getValueViaPath<string>(
+    answers,
+    'fireProtections.fireExtinguisher',
+  )
+
+  if (!fireExtinguisher) {
+    return false
+  }
+
+  return Number(fireExtinguisher) < 1
+}
+
 export const securityDepositRequired = (answers: FormValue) => {
   const securityDepositRequired = getValueViaPath<Array<string>>(
     answers,
     'rentalAmount.securityDepositRequired',
   )
   return securityDepositRequired?.includes(YesOrNoEnum.YES) || false
+}
+
+export const shouldShowRepresentativeTable = (answers: FormValue) => {
+  const shouldShowRepresentativeTable = getValueViaPath<Array<string>>(
+    answers,
+    'parties.landlordInfo.shouldShowRepresentativeTable',
+  )
+  return shouldShowRepresentativeTable?.includes(YES) || false
+}
+
+export const shouldShowRepresentativeStaticTable = (answers: FormValue) => {
+  const applicantRole = getValueViaPath<string>(
+    answers,
+    'assignApplicantParty.applicantsRole',
+  )
+
+  return applicantRole === ApplicantsRole.REPRESENTATIVE
 }

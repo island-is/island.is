@@ -67,7 +67,7 @@ export const PropertySearchInput = ({
           <AsyncSearch
             options={searchOptions}
             placeholder={formatMessage(
-              m.registerProperty.search.propertySearchPlaceholder,
+              m.propertySearch.search.propertySearchPlaceholder,
             )}
             initialInputValue={selectedAddress ? selectedAddress.label : ''}
             inputValue={searchTerm}

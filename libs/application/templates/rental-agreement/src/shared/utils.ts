@@ -16,38 +16,50 @@ import {
   FireProtectionSection,
   ProvisionsAndConditionSection,
   Files,
-  LandlordInfo,
+  BankAccount,
 } from './types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
-const mapLandLordInfo = (landlord: LandlordInfo): ApplicantsInfo => {
+const mapLandLordInfo = (landlord: ApplicantsInfo): ApplicantsInfo => {
   return {
     nationalIdWithName: landlord.nationalIdWithName,
     phone: landlord.phone,
     email: landlord.email,
     address: '', // Intentionally blank as it is not used in the HMS Rental Agreement
-    isRepresentative: landlord.isRepresentative?.includes('✔️'),
   }
 }
 
 const extractParticipants = (
   answers: Application['answers'],
 ): ParticipantsSection => {
-  const landlordsAndRepresentatives =
-    getValueViaPath<LandlordInfo[]>(
-      answers,
-      'parties.landlordInfo.table',
-      [],
-    ) ?? []
-  const landlords = landlordsAndRepresentatives.map(mapLandLordInfo)
+  let representatives = getValueViaPath<Array<ApplicantsInfo | string>>(
+    answers,
+    'parties.landlordInfo.representativeTable',
+  )
+
+  if (
+    !representatives ||
+    representatives.length === 0 ||
+    typeof representatives[0] === 'string' ||
+    (typeof representatives[0] === 'object' &&
+      representatives[0]?.nationalIdWithName?.nationalId === '')
+  ) {
+    representatives = []
+  }
+
   return {
-    landlords,
-    tenants:
+    landlords: (
       getValueViaPath<ApplicantsInfo[]>(
         answers,
-        'parties.tenantInfo.table',
-        [],
-      ) ?? [],
+        'parties.landlordInfo.table',
+      ) ?? []
+    ).map(mapLandLordInfo),
+    landlordRepresentatives: (representatives as Array<ApplicantsInfo>).map(
+      mapLandLordInfo,
+    ),
+    tenants:
+      getValueViaPath<ApplicantsInfo[]>(answers, 'parties.tenantInfo.table') ??
+      [],
   }
 }
 
@@ -144,7 +156,7 @@ const extractRentalAmount = (
     answers,
     'rentalAmount.paymentDateOther',
   ),
-  paymentMethodBankAccountNumber: getValueViaPath<string>(
+  paymentMethodBankAccountNumber: getValueViaPath<BankAccount>(
     answers,
     'rentalAmount.paymentMethodBankAccountNumber',
   ),

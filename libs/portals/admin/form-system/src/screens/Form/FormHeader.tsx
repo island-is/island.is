@@ -1,17 +1,15 @@
+import { SectionTypes } from '@island.is/form-system/enums'
+import { m } from '@island.is/form-system/ui'
 import {
   Box,
-  Button,
-  GridRow as Row,
   GridColumn as Column,
+  GridRow as Row,
   Tabs,
 } from '@island.is/island-ui/core'
-import { Outlet, useNavigate } from 'react-router-dom'
-import { FormSystemPaths } from '../../lib/paths'
-import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
 import { useContext } from 'react'
+import { useIntl } from 'react-intl'
+import { Outlet } from 'react-router-dom'
 import { ControlContext } from '../../context/ControlContext'
-import { SectionTypes } from '@island.is/form-system/enums'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 
 type FormTabType = {
@@ -31,7 +29,6 @@ const FORM_TABS: FormTabType[] = [
 ]
 
 export const FormHeader = () => {
-  const navigate = useNavigate()
   const { formatMessage } = useIntl()
   const { control, controlDispatch, setInSettings, inSettings } =
     useContext(ControlContext)
@@ -69,19 +66,7 @@ export const FormHeader = () => {
   return (
     <Box marginBottom={4}>
       <Row>
-        <Column span="3/12">
-          <Button
-            variant="text"
-            size="small"
-            onClick={async () => {
-              navigate(FormSystemPaths.FormSystemRoot)
-            }}
-            preTextIcon="arrowBack"
-          >
-            {formatMessage(m.back)}
-          </Button>
-        </Column>
-        <Column span="9/12">
+        <Column offset="3/12" span="9/12">
           <Box
             style={{
               maxWidth: '1200px',

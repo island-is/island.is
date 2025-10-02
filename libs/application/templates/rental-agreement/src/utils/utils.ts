@@ -2,11 +2,17 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { EMAIL_REGEX } from '@island.is/application/core'
-import { RepeaterItem, StateLifeCycle } from '@island.is/application/types'
-import { ApplicantsInfo, PropertyUnit } from '../shared'
+import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
+import {
+  Application,
+  RepeaterItem,
+  RepeaterOptionValue,
+  StateLifeCycle,
+} from '@island.is/application/types'
+import { ApplicantsInfo, BankAccount, PropertyUnit } from '../shared'
 
 import * as m from '../lib/messages'
+import { ApplicantsRole } from './enums'
 
 export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
 export const minChangedUnitSize = 3
@@ -56,12 +62,8 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   return phone?.formatNational() || phoneNumber
 }
 
-export const formatBankInfo = (bankInfo: string) => {
-  const formattedBankInfo = bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
-  if (formattedBankInfo && formattedBankInfo.length >= 6) {
-    return formattedBankInfo
-  }
-  return bankInfo
+export const formatBankInfo = (bankInfo: BankAccount) => {
+  return `${bankInfo.bankNumber}-${bankInfo.ledger}-${bankInfo.accountNumber}`
 }
 
 export const hasDuplicateApplicants = (
@@ -117,12 +119,6 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
     type: 'email',
     width: 'half',
   },
-  address: {
-    component: 'input',
-    required: true,
-    label: m.misc.address,
-    maxLength: 100,
-  },
 }
 
 export const landLordInfoTableFields: Record<string, RepeaterItem> = {
@@ -144,14 +140,6 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
     label: m.misc.email,
     type: 'email',
     width: 'half',
-  },
-  isRepresentative: {
-    component: 'checkbox',
-    label: m.landlordAndTenantDetails.representativeLabel,
-    width: 'half',
-    options: [
-      { label: m.landlordAndTenantDetails.representativeLabel, value: '✔️' },
-    ],
   },
 }
 
@@ -261,4 +249,48 @@ export const isValidInteger = (value: string): boolean => {
 
 export const isValidDecimal = (value: string): boolean => {
   return /^\d*\.?\d*$/.test(value)
+}
+
+export const onlyCharacters = async (
+  optionValue: RepeaterOptionValue,
+  id: string,
+) => {
+  if (typeof optionValue !== 'string') {
+    return [{ key: id, value: optionValue }]
+  }
+
+  const filteredValue = optionValue?.replace(
+    /[^a-zA-ZáéíóúýþæðöÁÉÍÓÚÝÞÆÐÖ.\s]/g,
+    '',
+  )
+
+  return [{ key: id, value: filteredValue }]
+}
+
+export const staticPartyTableData = (
+  application: Application,
+  role: ApplicantsRole,
+) => {
+  const { answers } = application
+  const aplicantRole = getValueViaPath<string>(
+    answers,
+    'assignApplicantParty.applicantsRole',
+  )
+  const fullName = getValueViaPath<string>(answers, 'applicant.name')
+  const nationalId = getValueViaPath<string>(answers, 'applicant.nationalId')
+  const email = getValueViaPath<string>(answers, 'applicant.email')
+  const phone = getValueViaPath<string>(answers, 'applicant.phoneNumber')
+
+  if (aplicantRole !== role) {
+    return []
+  }
+
+  return [
+    {
+      name: fullName ?? '',
+      phone: formatPhoneNumber(phone ?? ''),
+      nationalId: formatNationalId(nationalId ?? ''),
+      email: email ?? '',
+    },
+  ]
 }

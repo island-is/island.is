@@ -12,10 +12,8 @@ import { Application } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import {
-  FriggSchoolsByMunicipalityQuery,
-  OrganizationModelTypeEnum,
-} from '../../../types/schema'
+
+import { OrganizationModelTypeEnum, Query } from '@island.is/api/schema'
 import { isCurrentSchoolRegistered } from '../../../utils/conditionUtils'
 import { ApplicationType, SchoolType } from '../../../utils/constants'
 import {
@@ -99,10 +97,9 @@ export const currentSchoolSubSection = buildSubSection({
             return applicantMunicipalityCode
           },
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggSchoolsByMunicipalityQuery,
+            })
 
             const options =
               data?.friggSchoolsByMunicipality
@@ -132,10 +129,9 @@ export const currentSchoolSubSection = buildSubSection({
           loadingError: coreErrorMessages.failedDataProvider,
           updateOnSelect: ['currentSchool.municipality'],
           loadOptions: async ({ apolloClient, selectedValues }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggSchoolsByMunicipalityQuery,
+            })
 
             const municipalityCode = selectedValues?.[0]
 

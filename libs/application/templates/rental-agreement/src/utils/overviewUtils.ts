@@ -3,12 +3,12 @@ import {
   ExternalData,
   FormValue,
   KeyValueItem,
+  UserProfile,
 } from '@island.is/application/types'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import {
   AddressProps,
   ApplicantsInfo,
-  LandlordInfo,
   Files,
   PropertyUnit,
   RentalAmountSection,
@@ -28,6 +28,7 @@ import { OtherFees, PropertyInfo } from './types'
 import { RentalHousingCategoryClass } from '../shared/enums'
 import { getOptionLabel } from './summaryUtils'
 import {
+  ApplicantsRole,
   OtherFeesPayeeOptions,
   RentalHousingConditionInspector,
   RentalPaymentMethodOptions,
@@ -45,7 +46,7 @@ import {
 } from './options'
 
 const formatPartyItems = (
-  items: Array<ApplicantsInfo | LandlordInfo>,
+  items: Array<ApplicantsInfo>,
 ): Array<KeyValueItem> => {
   return (
     items
@@ -55,15 +56,17 @@ const formatPartyItems = (
             width: 'full' as const,
             keyText: party.nationalIdWithName?.name ?? '',
             valueText: {
-              ...m.summary.nationalIdPrefix,
+              ...m.overview.nationalIdPrefix,
               values: {
-                nationalId: party.nationalIdWithName?.nationalId ?? '',
+                nationalId: formatNationalId(
+                  party.nationalIdWithName?.nationalId ?? '',
+                ),
               },
             },
           },
           {
             width: 'half' as const,
-            keyText: m.summary.emailLabel,
+            keyText: m.overview.emailLabel,
             valueText: party.email ?? '',
           },
           {
@@ -77,58 +80,131 @@ const formatPartyItems = (
   )
 }
 
-export const landlordOverview = (
+const getApplicantsItem = (
   answers: FormValue,
-  _externalData: ExternalData,
-): Array<KeyValueItem> => {
-  const landlords = getValueViaPath<Array<LandlordInfo>>(
+  externalData: ExternalData,
+  role: ApplicantsRole,
+) => {
+  const applicantsRole = getValueViaPath<string>(
     answers,
-    'parties.landlordInfo.table',
-  )?.filter((landlord) => !landlord.isRepresentative.includes('✔️'))
+    'assignApplicantParty.applicantsRole',
+  )
 
-  if (!landlords) {
+  if (applicantsRole !== role) {
     return []
   }
 
-  const items: Array<KeyValueItem> = formatPartyItems(landlords)
+  const fullName = getValueViaPath<string>(
+    externalData,
+    'nationalRegistry.data.fullName',
+  )
+  const nationalId = getValueViaPath<string>(
+    externalData,
+    'nationalRegistry.data.nationalId',
+  )
+  const userProfile = getValueViaPath<UserProfile>(
+    externalData,
+    'userProfile.data',
+  )
 
-  return items
+  return [
+    {
+      width: 'full' as const,
+      keyText: fullName ?? '',
+      valueText: {
+        ...m.overview.nationalIdPrefix,
+        values: {
+          nationalId: formatNationalId(nationalId ?? ''),
+        },
+      },
+    },
+    {
+      width: 'half' as const,
+      keyText: m.misc.email,
+      valueText: userProfile?.email ?? '',
+    },
+    {
+      width: 'half' as const,
+      keyText: m.misc.phoneNumber,
+      valueText: formatPhoneNumber(userProfile?.mobilePhoneNumber ?? ''),
+    },
+  ]
+}
+
+export const landlordOverview = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const landlords = getValueViaPath<Array<ApplicantsInfo>>(
+    answers,
+    'parties.landlordInfo.table',
+  )
+
+  const applicantLandlords = getApplicantsItem(
+    answers,
+    externalData,
+    ApplicantsRole.LANDLORD,
+  )
+
+  if (!landlords && applicantLandlords.length === 0) {
+    return []
+  }
+
+  const items: Array<KeyValueItem> = landlords
+    ? formatPartyItems(landlords)
+    : []
+
+  return [...applicantLandlords, ...items]
 }
 
 export const landlordRepresentativeOverview = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const landlordsRepresentatives = getValueViaPath<Array<LandlordInfo>>(
+  const landlordsRepresentatives = getValueViaPath<Array<ApplicantsInfo>>(
     answers,
-    'parties.landlordInfo.table',
-  )?.filter((landlord) => landlord.isRepresentative.includes('✔️'))
+    'parties.landlordInfo.representativeTable',
+  )
 
-  if (!landlordsRepresentatives) {
+  const applicantRepresentative = getApplicantsItem(
+    answers,
+    externalData,
+    ApplicantsRole.REPRESENTATIVE,
+  )
+
+  if (!landlordsRepresentatives && applicantRepresentative.length === 0) {
     return []
   }
 
-  const items: Array<KeyValueItem> = formatPartyItems(landlordsRepresentatives)
+  const items: Array<KeyValueItem> = landlordsRepresentatives
+    ? formatPartyItems(landlordsRepresentatives)
+    : []
 
-  return items
+  return [...applicantRepresentative, ...items]
 }
 
 export const tenantOverview = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const tenants = getValueViaPath<Array<ApplicantsInfo>>(
     answers,
     'parties.tenantInfo.table',
   )
 
-  if (!tenants) {
+  const applicantTenant = getApplicantsItem(
+    answers,
+    externalData,
+    ApplicantsRole.TENANT,
+  )
+
+  if (!tenants && applicantTenant.length === 0) {
     return []
   }
 
-  const items: Array<KeyValueItem> = formatPartyItems(tenants)
+  const items: Array<KeyValueItem> = tenants ? formatPartyItems(tenants) : []
 
-  return items
+  return [...applicantTenant, ...items]
 }
 
 export const rentalInfoOverview = (
@@ -155,7 +231,7 @@ export const rentalInfoOverview = (
     },
     {
       width: 'half',
-      keyText: m.summary.propertySizeLabel,
+      keyText: m.overview.propertySizeLabel,
       valueText: propertySize,
     },
   ]
@@ -172,7 +248,7 @@ export const propertyRegistrationOverview = (
       ? [
           {
             width: 'half' as const,
-            keyText: m.summary.propertyClassGroupLabel,
+            keyText: m.overview.propertyClassGroupLabel,
             valueText: getOptionLabel(
               propertyInfo.categoryClassGroup || '',
               getPropertyClassGroupOptions,
@@ -185,7 +261,7 @@ export const propertyRegistrationOverview = (
   return [
     {
       width: 'half',
-      keyText: m.summary.propertyTypeLabel,
+      keyText: m.overview.propertyTypeLabel,
       valueText: getOptionLabel(
         propertyInfo?.categoryType || '',
         getPropertyTypeOptions,
@@ -194,12 +270,12 @@ export const propertyRegistrationOverview = (
     },
     {
       width: 'half',
-      keyText: m.summary.propertyClassLabel,
+      keyText: m.overview.propertyClassLabel,
       valueText:
         propertyInfo?.categoryClass ===
         RentalHousingCategoryClass.SPECIAL_GROUPS
-          ? m.summary.propertyClassSpecialGroups
-          : m.summary.propertyClassGeneralMarket,
+          ? m.overview.propertyClassSpecialGroups
+          : m.overview.propertyClassGeneralMarket,
     },
     ...group,
   ]
@@ -217,12 +293,12 @@ export const specialProvisionsOverview = (
   return [
     {
       width: 'full',
-      keyText: m.summary.propertyDescriptionLabel,
+      keyText: m.overview.propertyDescriptionLabel,
       valueText: description || '-',
     },
     {
       width: 'full',
-      keyText: m.summary.PropertySpecialProvisionsLabel,
+      keyText: m.overview.PropertySpecialProvisionsLabel,
       valueText: rules || '-',
     },
   ]
@@ -250,10 +326,10 @@ export const propertyConditionOverview = (
         inspector === RentalHousingConditionInspector.INDEPENDENT_PARTY &&
         inspectorName
           ? {
-              ...m.summary.propertyConditionInspectorValueIndependentParty,
+              ...m.overview.propertyConditionInspectorValueIndependentParty,
               values: { inspectorName },
             }
-          : m.summary.propertyConditionInspectorValueSelfPerformed,
+          : m.overview.propertyConditionInspectorValueSelfPerformed,
     },
     {
       width: 'full',
@@ -302,23 +378,23 @@ export const fireProtectionsOverview = (
   return [
     {
       width: 'half',
-      keyText: m.summary.fireProtectionsSmokeDetectorsLabel,
+      keyText: m.overview.fireProtectionsSmokeDetectorsLabel,
       valueText: smokeDetectors || '-',
     },
 
     {
       width: 'half',
-      keyText: m.summary.fireProtectionsFireExtinguisherLabel,
+      keyText: m.overview.fireProtectionsFireExtinguisherLabel,
       valueText: fireExtinguisher || '-',
     },
     {
       width: 'half',
-      keyText: m.summary.fireProtectionsFireBlanketLabel,
+      keyText: m.overview.fireProtectionsFireBlanketLabel,
       valueText: getOptionLabel(fireBlanket || '', getYesNoOptions, '') || '-',
     },
     {
       width: 'half',
-      keyText: m.summary.fireProtectionsEmergencyExitsLabel,
+      keyText: m.overview.fireProtectionsEmergencyExitsLabel,
       valueText:
         getOptionLabel(emergencyExits || '', getYesNoOptions, '') || '-',
     },
@@ -351,7 +427,7 @@ export const otherCostsOverview = (
     ? [
         {
           width: 'half' as const,
-          keyText: m.summary.houseFundAmountLabel,
+          keyText: m.overview.houseFundAmountLabel,
           valueText: formatCurrency(toISK(otherFees.housingFundAmount ?? '0')),
         },
       ]
@@ -364,17 +440,17 @@ export const otherCostsOverview = (
     ? [
         {
           width: 'half' as const,
-          keyText: m.summary.electricityMeterNumberLabel,
+          keyText: m.overview.electricityMeterNumberLabel,
           valueText: otherFees.electricityCostMeterNumber || '-',
         },
         {
           width: 'half' as const,
-          keyText: m.summary.meterStatusLabel,
+          keyText: m.overview.meterStatusLabel,
           valueText: otherFees.electricityCostMeterStatus || '-',
         },
         {
           width: 'half' as const,
-          keyText: m.summary.dateOfMeterReadingLabel,
+          keyText: m.overview.dateOfMeterReadingLabel,
           valueText: otherFees.electricityCostMeterStatusDate || '-',
         },
       ]
@@ -387,17 +463,17 @@ export const otherCostsOverview = (
     ? [
         {
           width: 'half' as const,
-          keyText: m.summary.heatingCostMeterNumberLabel,
+          keyText: m.overview.heatingCostMeterNumberLabel,
           valueText: otherFees.heatingCostMeterNumber || '-',
         },
         {
           width: 'half' as const,
-          keyText: m.summary.meterStatusLabel,
+          keyText: m.overview.meterStatusLabel,
           valueText: otherFees.heatingCostMeterStatus || '-',
         },
         {
           width: 'half' as const,
-          keyText: m.summary.dateOfMeterReadingLabel,
+          keyText: m.overview.dateOfMeterReadingLabel,
           valueText: otherFees.heatingCostMeterStatusDate || '-',
         },
       ]
@@ -411,7 +487,7 @@ export const otherCostsOverview = (
           return [
             {
               width: 'half' as const,
-              keyText: m.summary.otherCostsLabel,
+              keyText: m.overview.otherCostsLabel,
               valueText: item.description || '-',
             },
             {
@@ -430,7 +506,7 @@ export const otherCostsOverview = (
   return [
     {
       width: houseFundAmount.length > 0 ? 'half' : 'full',
-      keyText: m.summary.houseFundLabel,
+      keyText: m.overview.houseFundLabel,
       valueText: getOptionLabel(
         otherFees.housingFund || '',
         getOtherFeesPayeeOptions,
@@ -441,7 +517,7 @@ export const otherCostsOverview = (
     ...spacer,
     {
       width: electricityCostMeterNumber.length > 0 ? 'half' : 'full',
-      keyText: m.summary.electricityCostLabel,
+      keyText: m.overview.electricityCostLabel,
       valueText: getOptionLabel(
         otherFees.electricityCost || '',
         getOtherFeesPayeeOptions,
@@ -452,7 +528,7 @@ export const otherCostsOverview = (
     ...spacer,
     {
       width: heatingCostMeterNumber.length > 0 ? 'half' : 'full',
-      keyText: m.summary.heatingCostLabel,
+      keyText: m.overview.heatingCostLabel,
       valueText: getOptionLabel(
         otherFees.heatingCost || '',
         getOtherFeesPayeeOptions,
@@ -479,7 +555,7 @@ export const priceOverview = (
     ? [
         {
           width: 'half' as const,
-          keyText: m.summary.indexRateLabel,
+          keyText: m.overview.indexRateLabel,
           valueText: rentalAmount?.indexRate ?? '-',
         },
       ]
@@ -491,16 +567,20 @@ export const priceOverview = (
       ? [
           {
             width: 'half' as const,
-            keyText: m.summary.paymentMethodNationalIdLabel,
+            keyText: m.overview.paymentMethodNationalIdLabel,
             valueText: formatNationalId(
               rentalAmount?.paymentMethodNationalId ?? '-',
             ),
           },
           {
             width: 'half' as const,
-            keyText: m.summary.paymentMethodAccountLabel,
+            keyText: m.overview.paymentMethodAccountLabel,
             valueText: formatBankInfo(
-              rentalAmount?.paymentMethodBankAccountNumber ?? '-',
+              rentalAmount?.paymentMethodBankAccountNumber ?? {
+                bankNumber: '',
+                ledger: '',
+                accountNumber: '',
+              },
             ),
           },
         ]
@@ -509,18 +589,18 @@ export const priceOverview = (
   return [
     {
       width: 'half',
-      keyText: m.summary.rentalAmountValue,
+      keyText: m.overview.rentalAmountValue,
       valueText: formatCurrency(toISK(rentalAmount?.amount ?? '0')),
     },
     {
       width: 'half',
-      keyText: m.summary.rentalAmountIndexedLabel,
+      keyText: m.overview.rentalAmountIndexedLabel,
       valueText: indexedRent ? m.misc.yes : m.misc.no,
     },
     ...index,
     {
       width: 'half',
-      keyText: m.summary.paymentDateOptionsLabel,
+      keyText: m.overview.paymentDateOptionsLabel,
       valueText: getOptionLabel(
         rentalAmount?.paymentDateOptions ?? '',
         getRentalAmountPaymentDateOptions,
@@ -529,7 +609,7 @@ export const priceOverview = (
     },
     {
       width: 'full',
-      keyText: m.summary.paymentMethodTypeLabel,
+      keyText: m.overview.paymentMethodTypeLabel,
       valueText:
         rentalAmount?.paymentMethodOptions === RentalPaymentMethodOptions.OTHER
           ? rentalAmount?.paymentMethodOther || '-'
@@ -562,15 +642,15 @@ export const depositOverview = (
 
   const securityNameKeyTexts = {
     [SecurityDepositTypeOptions.CAPITAL]:
-      m.summary.securityTypeInstitutionLabel,
+      m.overview.securityTypeInstitutionLabel,
     [SecurityDepositTypeOptions.BANK_GUARANTEE]:
-      m.summary.securityTypeInstitutionLabel,
+      m.overview.securityTypeInstitutionLabel,
     [SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE]:
-      m.summary.securityTypeThirdPartyGuaranteeLabel,
+      m.overview.securityTypeThirdPartyGuaranteeLabel,
     [SecurityDepositTypeOptions.INSURANCE_COMPANY]:
-      m.summary.securityTypeInsuranceLabel,
+      m.overview.securityTypeInsuranceLabel,
     [SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND]:
-      m.summary.securityTypeMutualFundLabel,
+      m.overview.securityTypeMutualFundLabel,
   }
 
   const securityNameValueTexts = {
@@ -610,7 +690,7 @@ export const depositOverview = (
     },
     {
       width: 'half',
-      keyText: m.summary.securityTypeLabel,
+      keyText: m.overview.securityTypeLabel,
       valueText: getOptionLabel(
         deposit?.securityType ?? '',
         getSecurityDepositTypeOptions,
@@ -633,19 +713,19 @@ export const rentalPeriodOverview = (
   return [
     {
       width: 'snug',
-      keyText: m.summary.rentalPeriodStartDateLabel,
+      keyText: m.overview.rentalPeriodStartDateLabel,
       valueText: formatDate(rentalPeriod?.startDate ?? ''),
     },
     {
       width: 'snug',
       keyText: rentalPeriod?.isDefinite?.includes(YesOrNoEnum.YES)
-        ? m.summary.rentalPeriodEndDateLabel
-        : m.summary.rentalPeriodDefiniteLabel,
+        ? m.overview.rentalPeriodEndDateLabel
+        : m.overview.rentalPeriodDefiniteLabel,
       valueText:
         rentalPeriod?.isDefinite?.includes(YesOrNoEnum.YES) &&
         rentalPeriod?.endDate
           ? formatDate(rentalPeriod?.endDate?.toString())
-          : m.summary.rentalPeriodDefiniteValue,
+          : m.overview.rentalPeriodDefiniteValue,
     },
   ]
 }
@@ -675,7 +755,7 @@ export const rentalPropertyOverview = (
       keyText: searchResults?.label,
       valueText: [
         {
-          ...m.summary.rentalPropertyId,
+          ...m.overview.rentalPropertyId,
           values: {
             propertyId: unitIdsAsString,
           },

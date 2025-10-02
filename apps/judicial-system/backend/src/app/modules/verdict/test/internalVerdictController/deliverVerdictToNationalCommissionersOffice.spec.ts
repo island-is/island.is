@@ -1,13 +1,17 @@
 import { uuid } from 'uuidv4'
 
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  PoliceFileTypeCode,
+} from '@island.is/judicial-system/types'
+
+import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
 import { FileService } from '../../../file'
 import { PoliceService } from '../../../police'
 import { Case, Defendant, Verdict } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { createTestingVerdictModule } from '../creatingTestingVerdictModule'
 
 interface Then {
   result: DeliverResponse
@@ -103,10 +107,10 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
           },
         ],
         documentDates: [{ code: 'ORDER_BY_DATE', value: new Date(2025, 1, 1) }],
-        fileTypeCode: 'BRTNG_DOMUR',
+        fileTypeCode: PoliceFileTypeCode.VERDICT,
         caseSupplements: [
           { code: 'RVG_CASE_ID', value: caseId },
-          { code: 'COURT_CASE_NUMBER', value: courtCaseNumber },
+          { code: 'VERDICT_COURT_CASE_NUMBER', value: courtCaseNumber },
         ],
       })
     })

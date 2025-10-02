@@ -21,6 +21,7 @@ interface NewsCardProps {
   readMoreText?: string
   href: string
   date?: string
+  formattedDateString?: string
   dateTextColor?: 'dark400' | 'purple400'
   titleVariant?: 'h2' | 'h3'
   titleAs?: 'h2' | 'h3' | 'h4'
@@ -35,6 +36,7 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
   readMoreText = 'Lesa nánar',
   href,
   date,
+  formattedDateString,
   dateTextColor = 'dark400',
   titleVariant = 'h2',
   titleAs = 'h3',
@@ -46,7 +48,11 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
 
   const showImage = width > 600
 
-  const formattedDate = date && format(new Date(date), 'do MMMM yyyy')
+  const formattedDate = formattedDateString
+    ? formattedDateString
+    : date
+    ? format(new Date(date), 'do MMMM yyyy')
+    : ''
 
   if (mini) {
     return (
