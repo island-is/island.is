@@ -26,6 +26,7 @@ import EditableCaseFile from '@island.is/judicial-system-web/src/components/Edit
 import {
   Case,
   CourtDocumentResponse,
+  CourtDocumentType,
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
@@ -154,13 +155,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    setWorkingCase((prev) => ({
-      ...prev,
-      unfiledCourtDocuments: [
-        fileInSession,
-        ...(prev.unfiledCourtDocuments || []),
-      ],
-    }))
+    if (fileInSession.documentType !== CourtDocumentType.EXTERNAL_DOCUMENT) {
+      setWorkingCase((prev) => ({
+        ...prev,
+        unfiledCourtDocuments: [
+          fileInSession,
+          ...(prev.unfiledCourtDocuments || []),
+        ],
+      }))
+    }
 
     patchSession(courtSession.id, {
       filedDocuments: courtSession.filedDocuments?.filter(
