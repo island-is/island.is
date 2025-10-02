@@ -79,6 +79,12 @@ export const housingFireProtections = defineMessages({
     defaultMessage: 'Er eldvarnarteppi til staðar?',
     description: 'Fire blanket requirements',
   },
+  eldklarMessage: {
+    id: 'ra.application:housingFireProtections.eldklarMessage#markdown',
+    defaultMessage:
+      'Ítarefni um brunavarnir má finna á heimasíðu [Eldklár](https://www.vertueldklar.is/)',
+    description: 'Eldklar message',
+  },
 
   // dataSchema
   fireExtinguisherNullError: {
