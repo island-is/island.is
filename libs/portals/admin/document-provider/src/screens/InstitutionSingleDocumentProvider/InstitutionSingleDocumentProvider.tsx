@@ -174,7 +174,7 @@ const SingleDocumentProvider = () => {
                     )}
                     locale="is"
                     selected={fromDate}
-                    minDate={new Date(2011, 1, 1)}
+                    minDate={new Date(2011, 0, 1)}
                     maxDate={new Date()}
                     minYear={2011}
                     maxYear={today.getFullYear()}
@@ -191,7 +191,7 @@ const SingleDocumentProvider = () => {
                     )}
                     locale="is"
                     selected={toDate}
-                    minDate={new Date(2011, 1, 1)}
+                    minDate={new Date(2011, 0, 1)}
                     maxDate={new Date()}
                     minYear={2011}
                     maxYear={today.getFullYear()}

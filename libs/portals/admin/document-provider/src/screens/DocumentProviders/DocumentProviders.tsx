@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useUserInfo } from '@island.is/react-spa/bff'
+import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -16,9 +14,10 @@ import { DocumentProvidersSearch } from './DocumentProvidersSearch'
 import { DocumentProvidersDashboard } from './DocumentProvidersDashboard'
 import { IntroHeader } from '@island.is/portals/core'
 import { DocumentProvidersNavigation } from '../../components/DocumentProvidersNavigation/DocumentProvidersNavigation'
+import { ScopeBasedRender } from '../../components/ScopeBasedRender'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { DocumentProviderPaths } from '../../lib/paths'
 import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
+import InstitutionDocumentProviders from '../InstitutionDocumentProviders/InstitutionDocumentProviders'
 
 export type OrganisationPreview = Pick<
   Organisation,
@@ -35,9 +34,10 @@ const getOrganisationsPreviewQuery = gql`
   }
 `
 
-const DocumentProviders = () => {
-  const navigate = useNavigate()
-  const user = useUserInfo()
+/**
+ * Admin Component - shown to users with admin scopes
+ */
+const AdminDocumentProviders = () => {
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
   const { formatMessage } = useLocale()
@@ -48,16 +48,6 @@ const DocumentProviders = () => {
   const today = new Date()
   const organisationsPreview: OrganisationPreview[] =
     data?.getProviderOrganisations || []
-
-  useEffect(() => {
-    if (user?.scopes?.includes(AdminPortalScope.documentProviderInstitution)) {
-      navigate(DocumentProviderPaths.InstitutionDocumentProviderOverview)
-    }
-  }, [user, navigate])
-
-  if (!user) {
-    return <DocumentProvidersLoading />
-  }
 
   return (
     <GridContainer>
@@ -136,6 +126,26 @@ const DocumentProviders = () => {
         </GridColumn>
       </GridRow>
     </GridContainer>
+  )
+}
+
+/**
+ * Main Document Providers component that uses scope-aware rendering
+ * to display the appropriate interface based on user permissions
+ */
+const DocumentProviders = () => {
+  return (
+    <ScopeBasedRender
+      scopeMap={{
+        [AdminPortalScope.documentProviderInstitution]: (
+          <InstitutionDocumentProviders />
+        ),
+        [AdminPortalScope.documentProvider]: <AdminDocumentProviders />,
+        [AdminPortalScope.documentProviderAdmin]: <AdminDocumentProviders />,
+      }}
+      loading={<DocumentProvidersLoading />}
+      strategy="priority"
+    />
   )
 }
 

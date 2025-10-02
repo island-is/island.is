@@ -21,7 +21,7 @@ import { StatisticBoxList } from '../../components/StatisticBoxList/StatisticBox
 import { TotalStatisticsSortBy } from '@island.is/api/schema'
 import startOfMonth from 'date-fns/startOfMonth'
 import subYears from 'date-fns/subYears'
-import addMonths from 'date-fns/addMonths'
+import subMonths from 'date-fns/subMonths'
 import { DocumentProviderPaths } from '../../lib/paths'
 import { StatisticsBoxData } from '../../lib/types'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -37,7 +37,7 @@ const InstitutionDocumentProviders = () => {
   const firstOfLastYearMonth = startOfMonth(subYears(today, 1))
 
   // 6 months from now
-  const sixMonthsFromNow = addMonths(new Date(), 6)
+  const sixMonthsAgo = subMonths(new Date(), 6)
 
   const [fromDate, setFromDate] = useState<Date | undefined>(
     firstOfLastYearMonth,
@@ -53,7 +53,7 @@ const InstitutionDocumentProviders = () => {
 
   // Fetch statistics for the last 6 months
   const { loading: loadingStatistics6Months, statistics: statistics6Months } =
-    useGetStatisticsByNationalId(sixMonthsFromNow, new Date())
+    useGetStatisticsByNationalId(sixMonthsAgo, new Date())
 
   const { loading: loadingProviders, items: providers } =
     useGetProvidersByNationalId(undefined, undefined)
@@ -134,7 +134,7 @@ const InstitutionDocumentProviders = () => {
                     )}
                     selected={fromDate}
                     locale="is"
-                    minDate={new Date(2011, 1, 1)}
+                    minDate={new Date(2011, 0, 1)}
                     maxDate={new Date()}
                     minYear={2011}
                     maxYear={today.getFullYear()}
@@ -152,7 +152,7 @@ const InstitutionDocumentProviders = () => {
                     )}
                     selected={toDate}
                     locale="is"
-                    minDate={new Date(2011, 1, 1)}
+                    minDate={new Date(2011, 0, 1)}
                     maxDate={new Date()}
                     minYear={2011}
                     maxYear={today.getFullYear()}

@@ -6,6 +6,7 @@ import {
   GraphQLISODateTime,
 } from '@nestjs/graphql'
 import { CategoryStatisticsSortBy } from './statisticsProvidersBreakdownWithCategories.input'
+import { Min } from 'class-validator'
 
 export enum TotalStatisticsSortBy {
   Published = 'Published',
@@ -31,8 +32,10 @@ export class GetStatisticsBreakdownByNationalId {
   desc?: boolean
 
   @Field(() => Int, { nullable: true })
+  @Min(1)
   page?: number
 
   @Field(() => Int, { nullable: true })
+  @Min(1)
   pageSize?: number
 }

@@ -56,7 +56,7 @@ export const DocumentProviderInput = <T extends FieldValues = FieldValues>({
           name={name}
           defaultValue={defaultValue}
           rules={rules}
-          render={({ field: { onChange, value, name } }) => (
+          render={({ field: { onChange, value, name, ref, onBlur } }) => (
             <Input
               name={name}
               value={value}
@@ -65,6 +65,8 @@ export const DocumentProviderInput = <T extends FieldValues = FieldValues>({
               placeholder={placeholder}
               hasError={hasError}
               errorMessage={errorMessage}
+              onBlur={onBlur}
+              ref={ref}
               size="xs"
             />
           )}

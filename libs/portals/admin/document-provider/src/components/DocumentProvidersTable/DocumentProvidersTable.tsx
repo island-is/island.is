@@ -37,8 +37,8 @@ export const ProvidersTable = ({ providers, loading, providerPath }: Props) => {
         </T.Head>
         <T.Body>
           {providers?.length ? (
-            providers.map((item, idx) => (
-              <T.Row key={idx}>
+            providers.map((item) => (
+              <T.Row key={item.providerId}>
                 <T.Data>{item.name}</T.Data>
                 <T.Data align="right">
                   {formatNumber(item.statistics?.published)}
@@ -50,14 +50,15 @@ export const ProvidersTable = ({ providers, loading, providerPath }: Props) => {
                   <Button
                     size="small"
                     icon="arrowForward"
+                    disabled={!providerPath}
                     variant="text"
                     aria-label={`${formatMessage(
                       m.documentProvidersSearchResultsActionCardLabel,
                     )}: ${item.name}`}
                     onClick={() =>
+                      providerPath &&
                       navigate(
-                        providerPath?.replace(':providerId', item.providerId) ||
-                          '',
+                        providerPath.replace(':providerId', item.providerId),
                       )
                     }
                   >
