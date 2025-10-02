@@ -70,6 +70,9 @@ export const RenderFiles: FC<RenderFilesProps> = ({
       return file.name
     }
 
+    console.log(
+      prefixUploadedDocumentNameWithDocumentOrder(file.id, file.name ?? ''),
+    )
     return prefixUploadedDocumentNameWithDocumentOrder(file.id, file.name ?? '')
   }
 

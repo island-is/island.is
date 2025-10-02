@@ -7,10 +7,18 @@ const useFiledCourtDocuments = () => {
   const { workingCase } = useContext(FormContext)
 
   const filedCourtDocuments = useMemo(() => {
+    const m =
+      workingCase.mergedCases?.flatMap(
+        (a) =>
+          a.courtSessions
+            ?.filter((aaa) => aaa.isConfirmed)
+            .flatMap((aa) => aa.filedDocuments || []) || [],
+      ) || []
+
     const filedDocuments =
-      workingCase.courtSessions
+      [...(workingCase.courtSessions || [])]
         ?.filter((session) => session.isConfirmed)
-        .map((session) => session.filedDocuments ?? [])
+        .map((session) => [...(session.filedDocuments ?? []), ...m])
         .flat() ?? []
 
     const uploadedFiledDocuments = filedDocuments.filter(
@@ -31,6 +39,7 @@ const useFiledCourtDocuments = () => {
     caseFileId: string,
     name: string,
   ) => {
+    console.log(workingCase)
     const { uploadedFiledDocuments } = filedCourtDocuments
 
     const document = uploadedFiledDocuments.find(
