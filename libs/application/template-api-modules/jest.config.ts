@@ -8,9 +8,7 @@ export default {
   transform: {
     '^.+\\.[tj]sx?$': [
       'ts-jest',
-      { tsconfig: `${__dirname}/tsconfig.spec.json`,
-      isolatedModules: true
-      },
+      { tsconfig: `${__dirname}/tsconfig.spec.json`, isolatedModules: true },
     ],
   },
   testEnvironment: 'node',
