@@ -1,6 +1,9 @@
+// Logo for District Commisioners - Sýslumenn
 import React, { FC } from 'react'
 
-const Logo: FC<React.PropsWithChildren<unknown>> = () => (
+export const DistrictCommissionersLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => (
   <svg
     width="318"
     height="112"
@@ -43,5 +46,3 @@ const Logo: FC<React.PropsWithChildren<unknown>> = () => (
     </defs>
   </svg>
 )
-
-export default Logo
