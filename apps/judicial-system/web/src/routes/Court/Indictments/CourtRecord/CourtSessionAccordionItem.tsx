@@ -406,7 +406,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 value={defaultJudge}
                 options={judges}
                 onChange={(selectedOption) => {
-                  console.log({ selectedOption })
                   const selectedUser = judges.find(
                     (u) => u.value === selectedOption?.value,
                   )

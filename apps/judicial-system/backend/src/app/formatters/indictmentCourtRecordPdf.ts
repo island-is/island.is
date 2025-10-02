@@ -67,7 +67,9 @@ export const createIndictmentCourtRecordPdf = (
       `Þann ${formatDate(
         courtSession.startDate ?? nowFactory(),
         'PPP',
-      )} heldur ${theCase.judge?.name ?? 'óþekktur'} héraðsdómari dómþing ${
+      )} heldur ${
+        courtSession.judge?.name ?? 'óþekktur'
+      } héraðsdómari dómþing ${
         courtSession.location ?? 'á óþekktum stað'
       }. Fyrir er tekið mál nr. ${
         theCase.courtCaseNumber ?? 'S-xxxx/yyyy'
@@ -156,7 +158,10 @@ export const createIndictmentCourtRecordPdf = (
         'Times-Roman',
       )
       addEmptyLines(doc)
-      addNormalCenteredText(doc, theCase.judge?.name ?? 'Óþekktur héraðsdómari')
+      addNormalCenteredText(
+        doc,
+        courtSession.judge?.name ?? 'Óþekktur héraðsdómari',
+      )
 
       if (courtSession.closingEntries) {
         addEmptyLines(doc)
@@ -172,7 +177,10 @@ export const createIndictmentCourtRecordPdf = (
         'p',
       )}`,
     )
-    addNormalCenteredText(doc, theCase.judge?.name ?? 'Óþekktur héraðsdómari')
+    addNormalCenteredText(
+      doc,
+      courtSession.judge?.name ?? 'Óþekktur héraðsdómari',
+    )
 
     if (courtSession.isAttestingWitness) {
       const attestingWitnessName =
