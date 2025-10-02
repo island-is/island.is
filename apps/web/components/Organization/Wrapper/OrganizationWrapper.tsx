@@ -1004,7 +1004,6 @@ export const OrganizationWrapper: React.FC<
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
-
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
   useEffect(() => {

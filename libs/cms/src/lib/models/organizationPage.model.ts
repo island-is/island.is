@@ -32,7 +32,7 @@ class OrganizationPageTopLevelNavigation {
 }
 
 @ObjectType('OrganizationPageBottomLink')
-class BottomLink {
+export class BottomLink {
   @Field(() => String)
   label!: string
 
@@ -41,7 +41,7 @@ class BottomLink {
 }
 
 @ObjectType('OrganizationPageMidLink')
-class MidLink {
+export class MidLink {
   @Field(() => String)
   label!: string
 
@@ -53,7 +53,7 @@ class MidLink {
 }
 
 @ObjectType('OrganizationPageTopLink')
-class TopLink {
+export class TopLink {
   @Field(() => String)
   label!: string
 
@@ -137,6 +137,9 @@ export class OrganizationPage {
 
   @Field(() => [String], { nullable: true })
   subpageSlugsInput?: string[]
+
+  @Field(() => String, { nullable: true })
+  lang?: string
 }
 
 export const mapOrganizationPage = ({
@@ -201,5 +204,6 @@ export const mapOrganizationPage = ({
     canBeFoundInSearchResults: fields.canBeFoundInSearchResults ?? true,
     showPastEventsOption: fields.showPastEventsOption ?? false,
     navigationLinks: sitemapTree,
+    lang: sys.locale,
   }
 }

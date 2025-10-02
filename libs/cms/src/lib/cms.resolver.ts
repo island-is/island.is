@@ -60,6 +60,9 @@ import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import {
   NavigationLinks,
   OrganizationPage,
+  TopLink,
+  MidLink,
+  BottomLink,
 } from './models/organizationPage.model'
 import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
 import { GetAuctionsInput } from './dto/getAuctions.input'
@@ -84,7 +87,11 @@ import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
 import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
 import { GetSingleSupportQNAInput } from './dto/getSingleSupportQNA.input'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
-import { Locale } from '@island.is/shared/types'
+import {
+  Locale,
+  SitemapTreeNode,
+  SitemapTreeNodeType,
+} from '@island.is/shared/types'
 import { FeaturedArticles } from './models/featuredArticles.model'
 import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
 import { GetTabSectionInput } from './dto/getTabSection.input'
@@ -143,7 +150,10 @@ import {
 } from './dto/getOrganizationPageStandaloneSitemap.input'
 import { GetOrganizationByNationalIdInput } from './dto/getOrganizationByNationalId.input'
 import { GrantCardsList } from './models/grantCardsList.model'
-import { sortAlpha } from '@island.is/shared/utils'
+import {
+  getOrganizationPageUrlPrefix,
+  sortAlpha,
+} from '@island.is/shared/utils'
 import { GetTeamMembersInputOrderBy } from './dto/getTeamMembers.input'
 import { IntroLinkImage } from './models/introLinkImage.model'
 import {
@@ -158,6 +168,11 @@ import {
 } from './models/bloodDonationRestriction.model'
 import { GenericList } from './models/genericList.model'
 import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
+import {
+  IOrganizationParentSubpage,
+  IOrganizationSubpage,
+} from './generated/contentfulTypes'
+import { generateOrganizationSubpageLink } from './models/linkGroup.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -1071,13 +1086,115 @@ export class FeaturedGenericListItemsResolver {
 @Resolver(() => OrganizationPage)
 @CacheControl(defaultCache)
 export class OrganizationPageResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) {}
+  constructor(private readonly cmsContentfulService: CmsContentfulService) {}
+
+  private getTopLinks() {
+    // {
+    //   let nodes = organizationPage.navigationLinks?.childNodes ?? []
+
+    //   for (let i = 0; i < 3; i += 1) {
+    //     const slug = slugs[i]
+    //     if (!slug) {
+    //       break
+    //     }
+    //     let category: SitemapTreeNode | null = null
+    //     let midLinks: MidLink[] = []
+    //     for (const node of nodes) {
+    //       if (
+    //         node.type === SitemapTreeNodeType.CATEGORY &&
+    //         node.slug === slug
+    //       ) {
+    //         category = node
+    //         midLinks = []
+    //         topLinks.push({
+    //           label: lang === 'is' ? node.label : node.labelEN ?? '',
+    //           href: `/${getOrganizationPageUrlPrefix(lang)}/${
+    //             organizationPage.slug
+    //           }/${slug}`,
+    //           midLinks: midLinks,
+    //         })
+
+    //         continue
+    //       }
+
+    //       if (
+    //         node.type === SitemapTreeNodeType.ENTRY &&
+    //         Boolean(node.entryId)
+    //       ) {
+    //         const entry = entries.find((entry) => entry.sys.id === node.entryId)
+    //         if (
+    //           !(
+    //             entry?.sys.contentType.sys.id === 'organizationParentSubpage' ||
+    //             entry?.sys.contentType.sys.id === 'organizationSubpage'
+    //           )
+    //         ) {
+    //           continue
+    //         }
+
+    //         const link = generateOrganizationSubpageLink(
+    //           entry as IOrganizationParentSubpage | IOrganizationSubpage,
+    //         )
+    //         if (!link) {
+    //           continue
+    //         }
+    //         topLinks.push({
+    //           label: link.text,
+    //           href: link.url,
+    //           midLinks: [],
+    //         })
+    //       }
+    //     }
+    //     if (!category) {
+    //       break
+    //     }
+    //     nodes = category?.childNodes ?? []
+    //   }
+    // }
+    return []
+  }
+
+  private extractEntryIds(organizationPage: OrganizationPage): string[] {
+    const slugs = organizationPage.subpageSlugsInput ?? []
+    const entryIds = new Set<string>()
+    const maxDepth = 3
+
+    let nodes = organizationPage.navigationLinks?.childNodes ?? []
+    for (let i = 0; i < maxDepth; i += 1) {
+      const slug = slugs[i]
+      if (!slug) {
+        break
+      }
+      let category: SitemapTreeNode | null = null
+      for (const node of nodes) {
+        if (node.type === SitemapTreeNodeType.ENTRY && Boolean(node.entryId)) {
+          entryIds.add(node.entryId)
+        }
+        if (node.type === SitemapTreeNodeType.CATEGORY && node.slug === slug) {
+          category = node
+        }
+      }
+      if (!category) {
+        break
+      }
+      nodes = category?.childNodes ?? []
+    }
+
+    return Array.from(entryIds)
+  }
 
   @ResolveField(() => NavigationLinks, { nullable: true })
   async navigationLinks(@Parent() organizationPage: OrganizationPage) {
-    console.log('organizationPage', organizationPage.subpageSlugsInput)
+    const entryIds = this.extractEntryIds(organizationPage)
+    const lang = organizationPage.lang ?? 'is'
+
+    const entries = await this.cmsContentfulService.getEntries<
+      IOrganizationParentSubpage | IOrganizationSubpage
+    >(entryIds, lang)
+
+    const topLinks: TopLink[] = this.getTopLinks()
+
     return {
-      topLinks: [],
+      topLinks,
     }
   }
 }
