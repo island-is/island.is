@@ -7,7 +7,8 @@ export { DistrictCommissionersLogo } from './DistrictCommissionersLogo' // Sýsl
 export { MinistryForForeignAffairsLogo } from './MinistryForForeignAffairsLogo' // Utanríkisráðuneytið
 export { TheIcelandicPoliceLogo } from './TheIcelandicPoliceLogo' // Lögreglan
 export { TheEnergyAgencyLogo } from './TheEnergyAgencyLogo' // Orkustofnun
-export { IcelandicAssociationOfLocalAuthoritiesLogo } from './Iceland­icAssoci­ationOfLocalAut­horitiesLogo'
+export { IcelandicAssociationOfLocalAuthoritiesLogo } from './IcelandicAssociationOfLocalAuthoritiesLogo'
+export { MinistryOfFinanceAndLocalAffairsLogo } from './MinistryOfFinanceAndEconomicAffairsLogo'
 export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið
 
 // Municipality logos

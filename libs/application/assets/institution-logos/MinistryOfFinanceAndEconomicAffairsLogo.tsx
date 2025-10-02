@@ -1,6 +1,9 @@
-import React from 'react'
+// Logo for the Ministry of Finance and Economic Affairs - Fjármála og efnahagsráðuneytið
+import React, { FC } from 'react'
 
-export const Logo = () => (
+export const MinistryOfFinanceAndLocalAffairsLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => (
   <svg
     width="303"
     height="66"
