@@ -9,15 +9,18 @@ import {
   DocumentProviderDashboardChartData,
   SentFilesChartDataItem,
 } from '../../lib/types'
+import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
 
 interface Props {
   sentFilesData?: Array<SentFilesChartDataItem>
   chartData?: DocumentProviderDashboardChartData[]
+  loading?: boolean
 }
 
 export const InstitutionDocumentProviderDashboard = ({
   sentFilesData,
   chartData,
+  loading,
 }: Props) => {
   const { formatMessage } = useLocale()
   //Get the sum of opened and published from chartData
@@ -41,6 +44,10 @@ export const InstitutionDocumentProviderDashboard = ({
       color: '#d6b3ff',
     },
   ]
+
+  if (loading) {
+    return <DocumentProvidersLoading />
+  }
 
   return (
     <Box marginBottom={2}>

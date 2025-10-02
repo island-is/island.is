@@ -2,17 +2,24 @@ import { Box, Table as T, Text, Button } from '@island.is/island-ui/core'
 import { useNavigate } from 'react-router-dom'
 import { ProviderInfo } from '../../lib/types'
 import { formatNumber } from '../../lib/utils'
-import { DocumentProviderPaths } from '../../lib/paths'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { DocumentProvidersLoading } from '../DocumentProvidersLoading/DocumentProvidersLoading'
 
 interface Props {
+  loading?: boolean
   providers: Array<ProviderInfo>
+  providerPath?: string
 }
 
-export const ProvidersTable = ({ providers }: Props) => {
+export const ProvidersTable = ({ providers, loading, providerPath }: Props) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
+
+  if (loading) {
+    return <DocumentProvidersLoading />
+  }
+
   return (
     <Box paddingTop={6}>
       <T.Table>
@@ -49,10 +56,8 @@ export const ProvidersTable = ({ providers }: Props) => {
                     )}: ${item.name}`}
                     onClick={() =>
                       navigate(
-                        DocumentProviderPaths.DocumentProviderDocumentProvidersSingle.replace(
-                          ':providerId',
-                          item.providerId,
-                        ),
+                        providerPath?.replace(':providerId', item.providerId) ||
+                          '',
                       )
                     }
                   >

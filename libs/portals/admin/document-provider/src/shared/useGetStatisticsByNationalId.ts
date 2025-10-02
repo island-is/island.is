@@ -9,7 +9,6 @@ import { GetStatisticsByNationalIdReturnType } from '../lib/types'
 import format from 'date-fns/format'
 
 export const useGetStatisticsByNationalId = (
-  nationalId?: string,
   fromDate?: Date,
   toDate?: Date,
 ): GetStatisticsByNationalIdReturnType => {

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -16,14 +16,16 @@ import { useGetProvidersByNationalId } from '../../shared/useGetProvidersByNatio
 import { DocumentProvidersNavigation } from '../../components/DocumentProvidersNavigation/DocumentProvidersNavigation'
 import { useGetProviderStatisticsBreakdownWCategoriesByNationalId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByNationalId'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
 import { useGetStatisticsByNationalId } from '../../shared/useGetStatisticsByNationalId'
 import { StatisticBoxList } from '../../components/StatisticBoxList/StatisticBoxList'
 import { TotalStatisticsSortBy } from '@island.is/api/schema'
 import startOfMonth from 'date-fns/startOfMonth'
 import subYears from 'date-fns/subYears'
+import addMonths from 'date-fns/addMonths'
 import { DocumentProviderPaths } from '../../lib/paths'
 import { StatisticsBoxData } from '../../lib/types'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { useNavigate } from 'react-router-dom'
 
 const InstitutionDocumentProviders = () => {
   const today = new Date()
@@ -34,6 +36,9 @@ const InstitutionDocumentProviders = () => {
   // first day of the same month, one year ago
   const firstOfLastYearMonth = startOfMonth(subYears(today, 1))
 
+  // 6 months from now
+  const sixMonthsFromNow = addMonths(new Date(), 6)
+
   const [fromDate, setFromDate] = useState<Date | undefined>(
     firstOfLastYearMonth,
   )
@@ -41,21 +46,25 @@ const InstitutionDocumentProviders = () => {
 
   const { formatMessage } = useLocale()
   const user = useUserInfo()
+  const navigate = useNavigate()
 
   const { loading: loadingStatistics, statistics } =
-    useGetStatisticsByNationalId(user.profile.nationalId, fromDate, toDate)
-  const { loading, items: providers } = useGetProvidersByNationalId(
-    fromDate,
-    toDate,
-  )
+    useGetStatisticsByNationalId(fromDate, toDate)
+
+  // Fetch statistics for the last 6 months
+  const { loading: loadingStatistics6Months, statistics: statistics6Months } =
+    useGetStatisticsByNationalId(sixMonthsFromNow, new Date())
+
+  const { loading: loadingProviders, items: providers } =
+    useGetProvidersByNationalId(undefined, undefined)
   const { loading: loadingSentFiles, chartData: sentFilesChartData } =
     useGetProviderStatisticsBreakdownWCategoriesByNationalId(
-      fromDate,
-      toDate,
+      undefined,
+      undefined,
       TotalStatisticsSortBy.Date,
       true,
       1,
-      4,
+      6,
     )
 
   const statisticsBox: StatisticsBoxData[] = [
@@ -73,9 +82,11 @@ const InstitutionDocumentProviders = () => {
     },
   ]
 
-  if (loading || loadingSentFiles || loadingStatistics) {
-    return <DocumentProvidersLoading />
-  }
+  useEffect(() => {
+    if (!user?.scopes?.includes(AdminPortalScope.documentProviderInstitution)) {
+      navigate(DocumentProviderPaths.DocumentProviderOverview)
+    }
+  }, [user, navigate])
 
   return (
     <GridContainer>
@@ -85,7 +96,10 @@ const InstitutionDocumentProviders = () => {
           offset={['0', '7/12', '7/12', '0']}
         >
           <Box paddingBottom={4}>
-            <DocumentProvidersNavigation providers={providers || []} />
+            <DocumentProvidersNavigation
+              loading={loadingProviders}
+              providers={providers || []}
+            />
           </Box>
         </GridColumn>
         <GridColumn
@@ -108,6 +122,7 @@ const InstitutionDocumentProviders = () => {
               title={formatMessage(m.documentProvidersTitle)}
               intro={formatMessage(m.documentProvidersDescription)}
             />
+
             <Box marginBottom={[2, 3]}>
               <GridRow>
                 <GridColumn span="6/12">
@@ -159,14 +174,19 @@ const InstitutionDocumentProviders = () => {
             />
 
             <InstitutionDocumentProvidersDashboard
-              statistics={statistics}
+              loading={loadingStatistics6Months || loadingSentFiles}
+              statistics={statistics6Months}
               nationalId={user.profile.nationalId}
               sentFilesData={sentFilesChartData || []}
-              fromDate={fromDate}
-              toDate={toDate}
             />
 
-            <ProvidersTable providers={providers || []}></ProvidersTable>
+            <ProvidersTable
+              providerPath={
+                DocumentProviderPaths.InstitutionDocumentProviderDocumentProvidersSingleTable
+              }
+              loading={loadingProviders}
+              providers={providers || []}
+            ></ProvidersTable>
           </Box>
         </GridColumn>
       </GridRow>

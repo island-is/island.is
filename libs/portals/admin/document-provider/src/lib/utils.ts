@@ -19,3 +19,34 @@ export const formatYAxis = (value: number) => {
   if (abs >= 1_000) return `${sign}${nf.format(abs / 1_000)}K`
   return nf.format(value)
 }
+
+// Convert short month name to full month name for tooltip display
+export const getFullMonthName = (
+  shortMonthName: string | number | undefined,
+): string => {
+  if (shortMonthName === undefined || shortMonthName === null) {
+    return ''
+  }
+
+  if (typeof shortMonthName === 'number') {
+    return shortMonthName.toString()
+  }
+
+  // Mapping of Icelandic short month names to full month names
+  const monthMap: Record<string, string> = {
+    'jan.': 'janúar',
+    'feb.': 'febrúar',
+    'mar.': 'mars',
+    'apr.': 'apríl',
+    maí: 'maí',
+    'jún.': 'júní',
+    'júl.': 'júlí',
+    'ágú.': 'ágúst',
+    'sep.': 'september',
+    'okt.': 'október',
+    'nóv.': 'nóvember',
+    'des.': 'desember',
+  }
+
+  return monthMap[shortMonthName] || shortMonthName
+}

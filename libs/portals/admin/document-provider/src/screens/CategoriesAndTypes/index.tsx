@@ -53,7 +53,10 @@ const CategoriesAndTypes = () => {
             offset={['0', '7/12', '7/12', '0']}
           >
             <Box paddingBottom={4}>
-              <DocumentProvidersNavigation providers={providers || []} />
+              <DocumentProvidersNavigation
+                loading={loading}
+                providers={providers || []}
+              />
             </Box>
           </GridColumn>
           <GridColumn

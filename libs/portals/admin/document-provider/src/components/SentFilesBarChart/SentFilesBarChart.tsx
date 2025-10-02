@@ -13,6 +13,7 @@ import { SentFilesChartDataItem } from '../../lib/types'
 import { formatYAxis } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { CustomTooltip } from '../CustomChartTooltip/CustomChartTooltip'
 
 interface Props {
   data: Array<SentFilesChartDataItem>
@@ -27,14 +28,33 @@ export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const { formatMessage } = useLocale()
 
+  // Filter categories that have data (published > 0) in any data item
+  const activeCatKeys =
+    data && data.length > 0
+      ? CAT_KEYS.filter((key) =>
+          data.some((item) => {
+            const categoryData = item[key as keyof SentFilesChartDataItem] as {
+              published?: number
+            }
+            return (
+              categoryData &&
+              categoryData.published &&
+              categoryData.published > 0
+            )
+          }),
+        )
+      : []
+
   const TITLES =
     data && data.length > 0
-      ? CAT_KEYS.map(
+      ? activeCatKeys.map(
           (key) =>
             (data[0][key as keyof SentFilesChartDataItem] as { name?: string })
               ?.name ?? key,
         )
-      : CAT_KEYS
+      : []
+
+  // Custom tooltip component to format values
 
   return (
     <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -67,8 +87,8 @@ export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
               tick={{ fontSize: 14, fill: '#9999B1' }}
               tickFormatter={formatYAxis}
             />
-            <Tooltip />
-            {CAT_KEYS.map((key, idx) => (
+            <Tooltip content={<CustomTooltip />} />
+            {activeCatKeys.map((key, idx) => (
               <Bar
                 key={key}
                 dataKey={`${key}.published`}
@@ -81,15 +101,15 @@ export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
         </ResponsiveContainer>
         <Box paddingLeft={4} paddingRight={4} marginTop={1}>
           <GridRow rowGap={2}>
-            <GridColumn span={['6/12', '10/12']} offset={['1/12', '2/12']}>
+            <GridColumn span={['12/12']}>
               <GridRow>
                 {TITLES.map((entry, index) => (
-                  <GridColumn key={index} span="6/12">
+                  <GridColumn key={index} span="6/12" paddingBottom={1}>
                     <Text variant="small" fontWeight="medium" color="dark400">
                       <span
                         className="custom-rechart-bullet"
                         style={{
-                          backgroundColor: COLORS[index],
+                          backgroundColor: COLORS[index % COLORS.length],
                           display: 'inline-block',
                           width: 10,
                           height: 10,

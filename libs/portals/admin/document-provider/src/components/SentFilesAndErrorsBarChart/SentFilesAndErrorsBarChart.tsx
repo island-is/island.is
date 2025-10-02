@@ -13,6 +13,7 @@ import { formatYAxis } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SentFilesAndErrorsChartData } from '../../lib/types'
+import { CustomTooltip } from '../CustomChartTooltip/CustomChartTooltip'
 
 interface Props {
   data: Array<SentFilesAndErrorsChartData>
@@ -63,7 +64,7 @@ export const SentFilesAndErrorsBarChart: FC<React.PropsWithChildren<Props>> = ({
               width={40}
               tickFormatter={formatYAxis}
             />
-            <Tooltip />
+            <Tooltip content={<CustomTooltip />} />
 
             <Bar
               dataKey="published"

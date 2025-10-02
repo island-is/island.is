@@ -7,12 +7,17 @@ import { StatisticsBoxData } from '../../lib/types'
 interface Props {
   statistics: Array<StatisticsBoxData>
   loading: boolean
+  boxesPerRow?: 3 | 4
 }
 
 export const StatisticBoxList: FC<React.PropsWithChildren<Props>> = ({
   statistics,
   loading,
+  boxesPerRow = 3,
 }) => {
+  // Calculate grid column span based on boxes per row
+  const columnSpan = boxesPerRow === 4 ? '3/12' : '4/12'
+
   if (loading) {
     return <DocumentProvidersLoading />
   }
@@ -22,7 +27,7 @@ export const StatisticBoxList: FC<React.PropsWithChildren<Props>> = ({
       {statistics && (
         <GridRow>
           {statistics.map((statData, index) => (
-            <GridColumn span={['12/12', '4/12']} key={index}>
+            <GridColumn span={['12/12', columnSpan]} key={index}>
               <StatisticBox name={statData.name} value={statData.value} />
             </GridColumn>
           ))}

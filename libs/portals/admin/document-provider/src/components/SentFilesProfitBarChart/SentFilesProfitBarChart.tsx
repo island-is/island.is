@@ -12,6 +12,7 @@ import {
 import { formatYAxis } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { CustomTooltip } from '../CustomChartTooltip/CustomChartTooltip'
 
 export interface ChartData {
   name: string
@@ -60,7 +61,7 @@ export const SentFilesProfitBarChart: FC<React.PropsWithChildren<Props>> = ({
               tick={{ fontSize: 14, fill: '#9999B1' }}
               tickFormatter={formatYAxis}
             />
-            <Tooltip />
+            <Tooltip content={<CustomTooltip />} />
 
             <Bar
               dataKey="winning"

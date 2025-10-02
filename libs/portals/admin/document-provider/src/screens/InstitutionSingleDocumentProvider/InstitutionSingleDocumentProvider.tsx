@@ -14,18 +14,19 @@ import { m } from '../../lib/messages'
 import { InstitutionDocumentProviderDashboard } from './InstitutionDocumentProviderDashboard'
 import { IntroHeader } from '@island.is/portals/core'
 import { useGetStatisticsOverviewByProviderId } from '../../shared/useGetStatisticsOverviewByProviderId'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useGetProviderStatisticsBreakdownByProviderId } from '../../shared/useGetProviderStatisticsBreakdownByProviderId'
 import { DocumentProviderStatisticsTable } from '../../components/DocumentProviderStatisticsTable/DocumentProviderStatisticsTable'
 import { useGetProviderStatisticsBreakdownWCategoriesByProviderId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByProviderId'
 import { useGetProvidersByNationalId } from '../../shared/useGetProvidersByNationalId'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { DocumentProvidersNavigation } from '../../components/DocumentProvidersNavigation/DocumentProvidersNavigation'
-import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { StatisticBoxList } from '../../components/StatisticBoxList/StatisticBoxList'
 import { CategoryStatisticsSortBy } from '@island.is/api/schema'
 import { DocumentProviderPaths } from '../../lib/paths'
 import { StatisticsBoxData } from '../../lib/types'
+import { DOCUMENT_DELIVERY_PRICE_ISK } from '../../lib/constants'
 
 const SingleDocumentProvider = () => {
   const today = new Date()
@@ -40,11 +41,13 @@ const SingleDocumentProvider = () => {
   const [fromDate, setFromDate] = useState<Date | undefined>(
     firstOfLastYearMonth,
   )
+
   const [toDate, setToDate] = useState<Date | undefined>(firstOfThisMonth)
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
   const [pageSize] = useState(10)
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
 
   const { providerId } = useParams<{ providerId: string }>()
 
@@ -55,18 +58,20 @@ const SingleDocumentProvider = () => {
     fromDate,
     toDate,
   )
+
   const { loading: loadingProviders, items: providers } =
     useGetProvidersByNationalId(undefined, undefined)
 
-  const { chartData } = useGetProviderStatisticsBreakdownByProviderId(
-    providerId,
-    undefined,
-    undefined,
-    'Date',
-    true,
-    1,
-    6,
-  )
+  const { loading: loadingChartData, chartData } =
+    useGetProviderStatisticsBreakdownByProviderId(
+      providerId,
+      undefined,
+      undefined,
+      'Date',
+      true,
+      1,
+      6,
+    )
   const { loading: loadingSentFiles, chartData: sentFilesChartData } =
     useGetProviderStatisticsBreakdownWCategoriesByProviderId(
       providerId,
@@ -102,17 +107,23 @@ const SingleDocumentProvider = () => {
       name: formatMessage(m.statisticsBoxFailures),
       value: statistics?.statistics?.failures || 0,
     },
+    {
+      name: formatMessage(m.statisticsBoxBenefitInCrowns),
+      value:
+        (statistics?.statistics?.published ?? 0) * DOCUMENT_DELIVERY_PRICE_ISK,
+    },
   ]
+  useEffect(() => {
+    if (!user?.scopes?.includes(AdminPortalScope.documentProviderInstitution)) {
+      navigate(DocumentProviderPaths.DocumentProviderOverview)
+    }
+  }, [user, navigate])
 
   useEffect(() => {
     if (breakdown?.totalCount !== undefined && pageSize > 0) {
       setNumPages(Math.ceil(breakdown.totalCount / pageSize))
     }
   }, [breakdown?.totalCount, pageSize])
-
-  if (loading || loadingSentFiles || loadingBreakdown || loadingProviders) {
-    return <DocumentProvidersLoading />
-  }
 
   return (
     <GridContainer>
@@ -122,7 +133,10 @@ const SingleDocumentProvider = () => {
           offset={['0', '7/12', '7/12', '0']}
         >
           <Box paddingBottom={4}>
-            <DocumentProvidersNavigation providers={providers || []} />
+            <DocumentProvidersNavigation
+              loading={loadingProviders}
+              providers={providers || []}
+            />
           </Box>
         </GridColumn>
         <GridColumn
@@ -195,15 +209,20 @@ const SingleDocumentProvider = () => {
             <StatisticBoxList
               loading={loading}
               statistics={statisticsBox || []}
+              boxesPerRow={4}
             />
 
             <InstitutionDocumentProviderDashboard
+              loading={loadingChartData || loadingSentFiles}
               sentFilesData={sentFilesChartData}
               chartData={chartData}
             />
 
             {breakdown ? (
-              <DocumentProviderStatisticsTable statistics={breakdown} />
+              <DocumentProviderStatisticsTable
+                loading={loadingBreakdown}
+                statistics={breakdown}
+              />
             ) : null}
 
             <Box marginTop={2} marginBottom={4}>

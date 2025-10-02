@@ -5,26 +5,25 @@ import { useGetProviderStatisticCategoriesByNationalId } from '../../shared/useG
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
 import { SentFilesChartDataItem, StatisticsOverview } from '../../lib/types'
 import { m } from '../../lib/messages'
+import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
 
 interface Props {
+  loading?: boolean
   statistics: StatisticsOverview | null
   nationalId: string
   sentFilesData?: Array<SentFilesChartDataItem>
-  fromDate?: Date
-  toDate?: Date
 }
 
 export const InstitutionDocumentProvidersDashboard = ({
+  loading,
   statistics,
   sentFilesData,
-  fromDate,
-  toDate,
 }: Props) => {
   const { formatMessage } = useLocale()
 
   const { categories } = useGetProviderStatisticCategoriesByNationalId(
-    fromDate,
-    toDate,
+    undefined,
+    undefined,
   )
   const opened = statistics?.statistics?.opened || 0
   const published = statistics?.statistics?.published || 0
@@ -44,6 +43,10 @@ export const InstitutionDocumentProvidersDashboard = ({
       color: '#d6b3ff',
     },
   ]
+
+  if (loading) {
+    return <DocumentProvidersLoading />
+  }
 
   return (
     <Box marginBottom={2}>

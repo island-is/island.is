@@ -6,13 +6,19 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { DocumentProvidersLoading } from '../DocumentProvidersLoading/DocumentProvidersLoading'
 
 export const DocumentProviderStatisticsTable = ({
   statistics,
+  loading,
 }: {
   statistics: ProviderStatisticsBreakdownPaginationResponse
+  loading: boolean
 }) => {
   const { formatMessage } = useLocale()
+  if (loading) {
+    return <DocumentProvidersLoading />
+  }
   return (
     <Box paddingTop={6}>
       <T.Table>

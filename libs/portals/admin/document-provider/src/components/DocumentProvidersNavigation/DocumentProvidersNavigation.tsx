@@ -5,13 +5,16 @@ import { Navigation, NavigationItem } from '@island.is/island-ui/core'
 import { DocumentProviderPaths } from '../../lib/paths'
 import { useLocation } from 'react-router-dom'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { DocumentProvidersLoading } from '../DocumentProvidersLoading/DocumentProvidersLoading'
 
 interface DocumentProvidersNavigationProps {
   providers: ProviderInfo[]
+  loading: boolean
 }
 
 export const DocumentProvidersNavigation = ({
   providers,
+  loading,
 }: DocumentProvidersNavigationProps) => {
   const location = useLocation()
   const user = useUserInfo()
@@ -30,6 +33,9 @@ export const DocumentProvidersNavigation = ({
     location.pathname,
     user,
   )
+  if (loading) {
+    return <DocumentProvidersLoading />
+  }
 
   return (
     <div>
