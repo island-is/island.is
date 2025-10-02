@@ -1,3 +1,4 @@
+// Logo for The Icelandic recycling fund - Úrvinnslusjóður
 import React, { FC } from 'react'
 
 export const TheIcelandicRecyclingFundLogo: FC<
