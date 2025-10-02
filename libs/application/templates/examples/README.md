@@ -20,6 +20,15 @@ Note: It also works to create nested applications by running:
 1. `yarn generate-application-template <folder-name>/<name-of-application>`
 2. `yarn generate-application-template-api-module <folder-name>/<name-of-application>`
 
+## Preferred folder structure of templates and template-api-modules
+
+Rule of thumb should be that every application (at least new ones) should live within an institution folder that lives within /templates
+
+For example:
+
+- /templates/hms/rental-agreement
+- /templates/aosh/practical-exam
+
 ## Capabilities
 
 Each application template is an extension of the `ApplicationTemplate` interface. It can include as many custom fields as desired, and as many forms as well. All code for this application flow resides within the same library.

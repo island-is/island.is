@@ -21,7 +21,7 @@ import {
 import {
   RentalAgreementAnswers,
   RentalHousingCategoryClass,
-} from '@island.is/application/templates/rental-agreement'
+} from '@island.is/application/templates/hms/rental-agreement'
 
 export const mapRentalApplicationData = (
   applicationId: string,
