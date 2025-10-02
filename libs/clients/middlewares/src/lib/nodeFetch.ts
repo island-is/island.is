@@ -6,15 +6,23 @@ import {
   RequestInit as NodeFetchRequestInit,
   Response,
 } from 'node-fetch'
-import { Auth } from '@island.is/auth-nest-tools'
+import { Auth, getAuthContext } from '@island.is/auth-nest-tools'
 
 class Request extends NodeFetchRequest {
   auth?: Auth
 
   constructor(input: RequestInfo, init?: RequestInit) {
     super(input as NodeRequestInfo, init)
-    this.auth =
-      init?.auth ?? (input instanceof Request ? input.auth : undefined)
+
+    const authInAsyncContext = getAuthContext()
+
+    if (authInAsyncContext) {
+      this.auth = authInAsyncContext
+    } else if (init?.auth) {
+      this.auth = init.auth
+    } else if (input instanceof Request) {
+      this.auth = input.auth
+    }
   }
 }
 
