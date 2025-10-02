@@ -1,10 +1,24 @@
 import { useContext, useMemo } from 'react'
 
-import { FormContext } from '@island.is/judicial-system-web/src/components'
-import { CourtDocumentType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  FormContext,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  CourtDocumentType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  isPrisonAdminUser,
+  isPublicProsecutionOfficeUser,
+} from '@island.is/judicial-system/types'
 
 const useFiledCourtDocuments = () => {
   const { workingCase } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
+  const shouldNotSeePrefix =
+    isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user)
 
   const filedCourtDocuments = useMemo(() => {
     const filedDocuments =
@@ -31,6 +45,10 @@ const useFiledCourtDocuments = () => {
     caseFileId: string,
     name: string,
   ) => {
+    if (shouldNotSeePrefix) {
+      return name
+    }
+
     const { uploadedFiledDocuments } = filedCourtDocuments
 
     const document = uploadedFiledDocuments.find(
@@ -48,6 +66,10 @@ const useFiledCourtDocuments = () => {
     partialUri: string,
     name: string,
   ) => {
+    if (shouldNotSeePrefix) {
+      return name
+    }
+
     const { generatedFiledDocuments } = filedCourtDocuments
 
     const document = generatedFiledDocuments.find((doc) =>
