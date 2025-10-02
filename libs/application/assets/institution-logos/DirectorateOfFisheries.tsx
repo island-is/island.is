@@ -1,6 +1,9 @@
+// Logo for directorate of fisheries - Fiskistofa
 import React, { FC } from 'react'
 
-export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
+export const DirectorateOfFisheriesLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => (
   <svg
     width="241"
     height="64"

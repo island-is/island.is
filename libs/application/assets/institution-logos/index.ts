@@ -9,6 +9,7 @@ export { TheIcelandicPoliceLogo } from './TheIcelandicPoliceLogo' // Lögreglan
 export { TheEnergyAgencyLogo } from './TheEnergyAgencyLogo' // Orkustofnun
 export { IcelandicAssociationOfLocalAuthoritiesLogo } from './IcelandicAssociationOfLocalAuthoritiesLogo'
 export { MinistryOfFinanceAndLocalAffairsLogo } from './MinistryOfFinanceAndEconomicAffairsLogo'
+export { DirectorateOfFisheriesLogo } from './DirectorateOfFisheries'
 export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið
 
 // Municipality logos
