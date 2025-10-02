@@ -209,7 +209,10 @@ export class InvoicePaymentController {
           reason: 'payment_completed',
           message: 'Invoice payment completed',
           metadata: {
-            payment: callbackInput,
+            charge: {
+              ...callbackInput,
+              receptionId: callbackInput.receptionID,
+            },
           },
         },
         {
