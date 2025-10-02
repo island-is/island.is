@@ -1,16 +1,11 @@
-/* eslint-disable */
 export default {
   displayName: 'application-templates-rental-agreement',
   preset: '../../../../../jest.preset.js',
-  rootDir: '../../../..',
-  roots: [__dirname],
   transform: {
-    '^.+\\.[tj]sx?$': [
-      'babel-jest',
-      { cwd: __dirname, configFile: `${__dirname}/babel-jest.config.json` },
-    ],
+    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
+    '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/hms/rental-agreement',
+    '../../../../../coverage/libs/application/templates/hms/terminate-rental-agreement',
 }
