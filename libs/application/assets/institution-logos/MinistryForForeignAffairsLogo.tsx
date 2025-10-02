@@ -1,6 +1,9 @@
+// Logo for The Ministry of Foreign Affairs - Utanríkisráðuneytið
 import React, { FC } from 'react'
 
-export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
+export const MinistryForForeignAffairsLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => (
   <svg viewBox="20 20 200 100" width="250" height="112">
     <style>
       {`
