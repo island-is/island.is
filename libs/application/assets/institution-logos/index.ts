@@ -5,4 +5,5 @@ export { TheIcelandicRecyclingFundLogo } from './TheIcelandicRecyclingFundLogo' 
 export { AlthingiOmbudsmanLogo } from './AlthingiOmbudsmanLogo' // Umboðsmaður Alþingis
 export { DistrictCommissionersLogo } from './DistrictCommissionersLogo' // Sýslumenn
 export { MinistryForForeignAffairsLogo } from './MinistryForForeignAffairsLogo' // Utanríkisráðuneytið
+export { TheIcelandicPoliceLogo } from './TheIcelandicPoliceLogo' // Lögreglan
 export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið

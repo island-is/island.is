@@ -1,4 +1,9 @@
-export const Logo = () => (
+// Logo for The Icelandic Police - Lögreglan
+import React, { FC } from 'react'
+
+export const TheIcelandicPoliceLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => (
   <svg viewBox="0 0 199 86" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M55.0144 35.7197H50.9844V49.2097H59.9694V46.1447L55.0144 46.0947V35.7197Z"
