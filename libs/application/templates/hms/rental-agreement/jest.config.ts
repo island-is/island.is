@@ -1,6 +1,7 @@
 /* eslint-disable */
 export default {
-  preset: './jest.preset.js',
+  displayName: 'application-templates-rental-agreement',
+  preset: '../../../../../jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
   transform: {
@@ -12,5 +13,4 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
     '<rootDir>/coverage/libs/application/templates/hms/rental-agreement',
-  displayName: 'application-templates-rental-agreement',
 }
