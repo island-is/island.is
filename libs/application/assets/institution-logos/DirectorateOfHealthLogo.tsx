@@ -1,6 +1,9 @@
+// Logo for Directorate of Health - Landlæknisembættið
 import React, { FC } from 'react'
 
-export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
+export const DirectorateOfHealthLogo: FC<
+  React.PropsWithChildren<unknown>
+> = () => (
   <svg
     width="318"
     height="112"
