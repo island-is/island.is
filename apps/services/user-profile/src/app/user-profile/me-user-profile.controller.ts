@@ -342,9 +342,17 @@ export class MeUserProfileController {
     @CurrentUser() user: User,
     @Param('deviceToken') deviceToken: string,
   ): Promise<void> {
-    return this.userTokenService.deleteUserTokenByNationalId(
-      deviceToken,
-      user.nationalId,
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        action: 'deleteDeviceToken',
+        namespace,
+        resources: deviceToken,
+      },
+      this.userTokenService.deleteUserTokenByNationalId(
+        user.nationalId,
+        deviceToken,
+      ),
     )
   }
 }
