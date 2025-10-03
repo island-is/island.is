@@ -93,3 +93,62 @@ query GetOrganDonorStatus($locale: String) {
     }
   }
 }
+
+query GetDrugPrescriptions($locale: String) {
+  healthDirectoratePrescriptions(locale: $locale) {
+    prescriptions {
+      id
+      name
+      type
+      form
+      url
+      quantity
+      prescriberName
+      issueDate
+      expiryDate
+      dosageInstructions
+      indication
+      totalPrescribedAmount
+      isRenewable
+      renewalBlockedReason
+      renewalStatus
+      amountRemaining
+      dispensations {
+        id
+        agentName
+        date
+        count
+        items {
+          id
+          name
+          strength
+          amount
+          numberOfPackages
+        }
+      }
+    }
+  }
+}
+
+query GetDrugCertificates {
+  rightsPortalDrugCertificates {
+    id
+    atcCode
+    atcName
+    drugName
+    date
+    validFrom
+    validTo
+    doctor
+    processed
+    approved
+    rejected
+    expired
+    valid
+    comment
+    documentId
+    methylDoctors {
+      name
+    }
+  }
+}
