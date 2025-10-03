@@ -2,21 +2,18 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Select, Tooltip } from '@island.is/island-ui/core'
-import { isRequestCase } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseType,
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useUsers,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { useSelectCourtOfficialsUsersQuery } from './selectCourtOfficialsUsers.generated'
 import { strings } from './SelectCourtOfficials.strings'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
@@ -25,11 +22,11 @@ type RegistrarSelectOption = ReactSelectOption & { registrar: User }
 const SelectCourtOfficials = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { updateCase } = useCase()
-  const { data: usersData, loading: usersLoading } =
-    useSelectCourtOfficialsUsersQuery({
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    })
+  const {
+    judges,
+    registrars,
+    loading: usersLoading,
+  } = useUsers(workingCase.court?.id)
 
   const setJudge = async (judgeId: string) => {
     if (workingCase) {
@@ -66,30 +63,6 @@ const SelectCourtOfficials = () => {
   }
 
   const { formatMessage } = useIntl()
-
-  const judges = (usersData?.users ?? [])
-    .filter(
-      (user: User) =>
-        (user.role === UserRole.DISTRICT_COURT_JUDGE ||
-          (workingCase.type === CaseType.INDICTMENT &&
-            user.role === UserRole.DISTRICT_COURT_ASSISTANT)) &&
-        user.institution?.id === workingCase.court?.id,
-    )
-    .map((judge: User) => {
-      return { label: judge.name ?? '', value: judge.id, judge }
-    })
-
-  const registrars = (usersData?.users ?? [])
-    .filter(
-      (user: User) =>
-        (user.role === UserRole.DISTRICT_COURT_REGISTRAR ||
-          (isRequestCase(workingCase.type) &&
-            user.role === UserRole.DISTRICT_COURT_ASSISTANT)) &&
-        user.institution?.id === workingCase.court?.id,
-    )
-    .map((registrar: User) => {
-      return { label: registrar.name ?? '', value: registrar.id, registrar }
-    })
 
   const defaultJudge = judges?.find(
     (judge) => judge.value === workingCase.judge?.id,

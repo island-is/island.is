@@ -162,7 +162,7 @@ export const sortedFilesInChapter = (
         displayDate: file.displayDate,
         canOpen: Boolean(file.key),
         status: FileUploadStatus.done,
-        canEdit: true,
+        canEdit: ['fileName', 'displayDate'] as const,
         size: file.size,
       }
     })
@@ -360,7 +360,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             canOpen: Boolean(caseFile.key),
             status: FileUploadStatus.done,
             size: caseFile.size,
-            canEdit: true,
+            canEdit: ['fileName', 'displayDate'] as const,
           }
         }),
     ])
