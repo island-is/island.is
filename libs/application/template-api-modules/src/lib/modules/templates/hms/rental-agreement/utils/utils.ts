@@ -1,7 +1,7 @@
 import {
   ApplicantsInfo,
   PropertyUnit,
-} from '@island.is/application/templates/rental-agreement'
+} from '@island.is/application/templates/hms/rental-agreement'
 import { SecurityDepositType } from '@island.is/clients/hms-rental-agreement'
 
 export const parseToNumber = (value: string): number => {
