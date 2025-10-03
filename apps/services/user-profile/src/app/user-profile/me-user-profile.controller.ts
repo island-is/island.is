@@ -8,6 +8,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Headers,
   Param,
@@ -329,5 +330,24 @@ export class MeUserProfileController {
     // It should respond with 303 See Other and a Location header to the existing resource
     // But as the v1 of the user profile is not following this, we will keep the same behaviour.
     return this.userTokenService.addDeviceToken(body.deviceToken, user)
+  }
+
+  @Delete('/device-tokens/:deviceToken')
+  @ApiOperation({
+    summary: 'Deletes a device token for notifications for a user device ',
+  })
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
+  @Audit({
+    resources: (deviceToken: string) => deviceToken,
+  })
+  deleteDeviceToken(
+    @CurrentUser() user: User,
+    @Param('deviceToken') deviceToken: string,
+  ): Promise<void> {
+    return this.userTokenService.deleteUserTokenByNationalId(
+      deviceToken,
+      user.nationalId,
+    )
   }
 }
