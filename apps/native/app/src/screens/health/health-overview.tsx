@@ -38,7 +38,6 @@ import {
   Input,
   InputRow,
   Problem,
-  theme,
   Typography,
 } from '../../ui'
 
