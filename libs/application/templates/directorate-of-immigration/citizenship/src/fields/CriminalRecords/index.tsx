@@ -58,6 +58,7 @@ export const CriminalRecords: FC<FieldBaseProps> = ({
               <FileUploadController
                 application={application}
                 id={`${field.id}[${index}].attachment`}
+                multiple={true}
                 error={
                   errors &&
                   getErrorViaPath(errors, `${field.id}[${index}].attachment`)
