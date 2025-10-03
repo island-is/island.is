@@ -40,8 +40,8 @@ import {
   checkHasSelectedConvoyInFreightPairing,
   getFreightItem,
   getFreightPairingItem,
-  getFilteredFreightPairingItems,
-  getFreightPairingItems,
+  getFreightPairingItemsByIndex,
+  getAllFreightPairingItems,
 } from './freightUtils'
 import { format as formatKennitala } from 'kennitala'
 import {
@@ -306,13 +306,13 @@ export const getFreightOverviewShortTermItems = (
         {
           ...overview.freight.lengthLabel,
           values: {
-            length: formatNumberWithMeters(freightItem?.length),
+            length: formatNumberWithMeters(pairingItem?.length),
           },
         },
         {
           ...overview.freight.weightLabel,
           values: {
-            weight: formatNumberWithTons(freightItem?.weight),
+            weight: formatNumberWithTons(pairingItem?.weight),
           },
         },
         {
@@ -355,8 +355,25 @@ export const getFreightOverviewLongTermItems = (
   _externalData: ExternalData,
   freightIndex: number,
 ): Array<KeyValueItem> => {
-  const pairingItems = getFreightPairingItems(answers, freightIndex)
+  const pairingItems = getFreightPairingItemsByIndex(answers, freightIndex)
   return [
+    {
+      width: 'full',
+      valueText: [
+        {
+          ...overview.freight.lengthLabel,
+          values: {
+            length: formatNumberWithMeters(pairingItems?.[0]?.length),
+          },
+        },
+        {
+          ...overview.freight.weightLabel,
+          values: {
+            weight: formatNumberWithTons(pairingItems?.[0]?.weight),
+          },
+        },
+      ],
+    },
     ...pairingItems
       .map((pairingItem, convoyIndex) => {
         if (!pairingItem) return {}
@@ -576,7 +593,7 @@ export const getOverviewErrorMessage = (
 ): StaticText | undefined => {
   // Convoy missing in freight pairing error
   const convoyItems = getConvoyItems(answers)
-  const freightPairingAllItems = getFilteredFreightPairingItems(answers)
+  const freightPairingAllItems = getAllFreightPairingItems(answers)
   for (let idx = 0; idx < convoyItems.length; idx++) {
     const convoyItem = convoyItems[idx]
     const isPaired = freightPairingAllItems.some(

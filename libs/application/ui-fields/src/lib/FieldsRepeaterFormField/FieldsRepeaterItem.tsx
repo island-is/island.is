@@ -398,6 +398,7 @@ export const Item = ({
       children: undefined,
       title: item.title,
       titleVariant: item.titleVariant,
+      showRequiredStar: requiredVal,
     }
   }
 

@@ -16,6 +16,19 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 
 const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 
+const isNumberOutsideOfLimit = (
+  valueStr: string | null | undefined,
+  max?: number,
+): boolean => {
+  if (max === undefined || valueStr == null) return false
+  const valueNum = Number(valueStr)
+  return isNaN(valueNum) || valueNum <= 0 || valueNum > max
+}
+
+const isRequiredFieldValid = (value: string | null | undefined): boolean => {
+  return !!value && value.trim().length > 0
+}
+
 const ApplicantSchema = z.object({
   nationalId: z
     .string()
@@ -149,62 +162,15 @@ const ConvoySchema = z.object({
   ),
 })
 
-const FreightSchema = z
-  .object({
-    // Note: we are only saving limit in answers to be able to display
-    // pretty zod error message (without the usage of custom component)
-    limit: z
-      .object({
-        maxLength: z.number().optional(),
-        maxWeight: z.number().optional(),
-        maxHeight: z.number().optional(),
-        maxWidth: z.number().optional(),
-        maxTotalLength: z.number().optional(),
-      })
-      .optional(),
-    items: z.array(
-      z.object({
-        freightId: z.string(),
-        name: z.string().min(1).max(100),
-        length: z.string().min(1),
-        weight: z.string().min(1),
-      }),
-    ),
-  })
-  .superRefine(({ items, limit }, ctx) => {
-    if (!limit) return
-
-    const keysToCheck: {
-      key: keyof NonNullable<typeof items[number]>
-      limitKey: keyof NonNullable<typeof limit>
-    }[] = [
-      { key: 'length', limitKey: 'maxLength' },
-      { key: 'weight', limitKey: 'maxWeight' },
-    ]
-
-    keysToCheck.forEach(({ key, limitKey }) => {
-      const max = limit[limitKey]
-      if (max === undefined) return
-
-      items.forEach((item, index) => {
-        const valueStr = item[key]
-        if (valueStr === undefined) return
-
-        const valueNum = Number(valueStr)
-
-        if (isNaN(valueNum) || valueNum <= 0 || valueNum > max) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            params: {
-              ...error.numberValueIsNotWithinLimit,
-              values: { min: '0', max },
-            },
-            path: ['items', index, key],
-          })
-        }
-      })
-    })
-  })
+const FreightSchema = z.object({
+  items: z.array(
+    z.object({
+      // Note: this field is actually required, but setting as optional so it is possible to use onSubmitLoad in tableRepeater
+      freightId: z.string().optional(),
+      name: z.string().min(1).max(100),
+    }),
+  ),
+})
 
 const FreightPairingSchema = z
   .object({
@@ -220,6 +186,8 @@ const FreightPairingSchema = z
       })
       .optional(),
     freightId: z.string(),
+    length: z.string().min(1),
+    weight: z.string().min(1),
     convoyIdList: z.array(z.string()),
     items: z.array(
       z
@@ -241,51 +209,75 @@ const FreightPairingSchema = z
         .nullable(),
     ),
   })
-  .superRefine(({ limit, items, convoyIdList }, ctx) => {
+  .superRefine(({ limit, items, convoyIdList, length, weight }, ctx) => {
+    // Check limit for length and weight
+    if (limit) {
+      if (isNumberOutsideOfLimit(length, limit.maxLength)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: {
+            ...error.numberValueIsNotWithinLimit,
+            values: { min: '0', max: limit.maxLength },
+          },
+          path: ['length'],
+        })
+      }
+
+      if (isNumberOutsideOfLimit(weight, limit.maxWeight)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: {
+            ...error.numberValueIsNotWithinLimit,
+            values: { min: '0', max: limit.maxWeight },
+          },
+          path: ['weight'],
+        })
+      }
+    }
+
+    // Check limit for values in items (height, width, totalLength)
+    // Check required for values in items (height, width, totalLength, exemptionFor)
     if (!items) return
-
     items.forEach((item, index) => {
-      if (!item) return
+      if (!item || !convoyIdList.includes(item.convoyId)) return
 
-      const shouldValidateFields = convoyIdList.includes(item.convoyId)
-      if (!shouldValidateFields) return
+      // Limit validation
+      if (limit) {
+        const limitFields: {
+          key: 'height' | 'width' | 'totalLength'
+          max?: number
+        }[] = [
+          { key: 'height', max: limit.maxHeight },
+          { key: 'width', max: limit.maxWidth },
+          { key: 'totalLength', max: limit.maxTotalLength },
+        ]
 
-      // Limit check
-      if (!limit) return
-      const keysToCheck: {
-        key: keyof typeof item
-        limitKey: keyof typeof limit
+        limitFields.forEach(({ key, max }) => {
+          if (isNumberOutsideOfLimit(item[key], max)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: {
+                ...error.numberValueIsNotWithinLimit,
+                values: { min: '0', max },
+              },
+              path: ['items', index, key],
+            })
+          }
+        })
+      }
+
+      // Required field validation
+      const requiredFields: {
+        key: 'height' | 'width' | 'totalLength'
+        value: string | null
       }[] = [
-        { key: 'height', limitKey: 'maxHeight' },
-        { key: 'width', limitKey: 'maxWidth' },
-        { key: 'totalLength', limitKey: 'maxTotalLength' },
-      ]
-      keysToCheck.forEach(({ key, limitKey }) => {
-        const max = limit[limitKey]
-        if (max === undefined) return
-        const valueStr = item[key]
-        if (valueStr === undefined) return
-        const valueNum = Number(valueStr)
-        if (isNaN(valueNum) || valueNum <= 0 || valueNum > max) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            params: {
-              ...error.numberValueIsNotWithinLimit,
-              values: { min: '0', max },
-            },
-            path: ['items', index, key],
-          })
-        }
-      })
-
-      // Required field checks
-      const fields = [
         { key: 'height', value: item.height },
         { key: 'width', value: item.width },
         { key: 'totalLength', value: item.totalLength },
       ]
-      fields.forEach(({ key, value }) => {
-        if (!value || value.trim() === '') {
+
+      requiredFields.forEach(({ key, value }) => {
+        if (!isRequiredFieldValid(value)) {
           ctx.addIssue({
             path: ['items', index, key],
             code: z.ZodIssueCode.custom,

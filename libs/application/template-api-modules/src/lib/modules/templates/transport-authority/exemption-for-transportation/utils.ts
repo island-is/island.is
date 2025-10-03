@@ -314,6 +314,9 @@ export const mapApplicationToDto = async (
   const freightAnswers = getValueViaPath<
     ExemptionForTransportationAnswers['freight']
   >(application.answers, 'freight')
+  const freightPairingAnswers = getValueViaPath<
+    ExemptionForTransportationAnswers['freightPairing']
+  >(application.answers, 'freightPairing')
 
   // Map applicant, transporter + responsible person
   const applicant = mapApplicant(application)
@@ -411,12 +414,17 @@ export const mapApplicationToDto = async (
     })),
     comment: supportingDocumentsAnswers?.comments,
     cargoes:
-      freightAnswers?.items?.map((item) => ({
-        code: item.freightId,
-        name: item.name,
-        length: Number(item.length),
-        weight: Number(item.weight),
-      })) || [],
+      freightAnswers?.items?.map((item) => {
+        const freightPairing = freightPairingAnswers?.find(
+          (x) => x?.freightId === item.freightId,
+        )
+        return {
+          code: item.freightId ?? '',
+          name: item.name,
+          length: Number(freightPairing?.length ?? ''),
+          weight: Number(freightPairing?.weight ?? ''),
+        }
+      }) || [],
     haulUnits: mapHaulUnits(application),
   }
 }
