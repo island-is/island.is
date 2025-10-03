@@ -328,6 +328,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Heimili banka',
       description: 'Bank address',
     },
+    personalAllowancePlaceholder: {
+      id: 'sia.application:payment.personal.allowance.placeholder',
+      defaultMessage: '1%',
+      description: '1%',
+    },
     currency: {
       id: 'sia.application:payment.currency',
       defaultMessage: 'Mynt',
@@ -712,6 +717,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
     description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
   },
+  bankAccountType: {
+    id: 'sia.application:error.bankAccountType',
+    defaultMessage: 'Nauðsynlegt er að velja tegund reiknings',
+    description: 'You must choose a bank account type',
+  },
   period: {
     id: 'sia.application:error.period',
     defaultMessage: 'Ógildur mánuður.',
@@ -731,6 +741,11 @@ export const errorMessages = defineMessages({
     id: 'sia.application:required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'You must upload an attachment to continue.',
+  },
+  personalAllowanceUse: {
+    id: 'sia.application:personal.allowance.use',
+    defaultMessage: 'Nauðsynlegt er að velja hvort nýta skal persónuafslátt',
+    description: 'You must choose whether to use your personal allowance',
   },
   personalAllowance: {
     id: 'sia.application:personal.allowance',
