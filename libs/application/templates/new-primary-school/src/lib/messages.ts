@@ -883,6 +883,26 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Óska eftir samtali við skóla',
       description: 'Request meeting with the school',
     },
+
+    // Terms
+    termsSubSectionTitle: {
+      id: 'nps.application:different.needs.terms.sub.section.title',
+      defaultMessage: 'Skilmálar',
+      description: 'Terms',
+    },
+    termsSubSectionDescription: {
+      id: 'nps.application:different.needs.terms.description#markdown',
+      defaultMessage:
+        'Í umsókninni felst þríhliða samkomulag milli forsjáraðila, heimaskóla barns og þess skóla sem tekur tímabundið við barni. \n\nAllir aðilar skuldbinda sig til að vinna saman að velferð barns með það að markmiðið að tryggja farsæla endurkomu þess í heimaskóla. Í því felst meðal annars að taka þátt í samstarfi um úrlausnir fyrir barnið, viðhalda virkum samskiptum milli allra aðila, fara eftir markmiðum og áætlun eftir bestu getu, og taka þátt í endurmati á stöðu mála.',
+      description: 'Terms',
+    },
+    termsCheckbox: {
+      id: 'nps.application:different.needs.terms.checkbox',
+      defaultMessage:
+        'Með því að haka hér við staðfesta forsjáraðilar sinn hluta samkomulagsins.',
+      description:
+        'By checking this box custodians confirm their part in the above agreement.',
+    },
   }),
 
   overview: defineMessages({
