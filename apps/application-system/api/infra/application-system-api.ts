@@ -125,7 +125,7 @@ export const workerSetup = (services: {
           }application-system-api.application-system.svc.cluster.local`,
       ),
     })
-    .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
+    .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines, NationalRegistryB2C)
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -143,6 +143,8 @@ export const workerSetup = (services: {
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .args('main.cjs', '--job', 'worker')
     .command('node')
