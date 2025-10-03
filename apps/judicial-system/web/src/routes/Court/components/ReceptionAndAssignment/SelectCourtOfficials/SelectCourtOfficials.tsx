@@ -7,17 +7,12 @@ import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './SelectCourtOfficials.strings'
-
-type JudgeSelectOption = ReactSelectOption & { judge: User }
-type RegistrarSelectOption = ReactSelectOption & { registrar: User }
 
 const SelectCourtOfficials = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
@@ -28,8 +23,11 @@ const SelectCourtOfficials = () => {
     loading: usersLoading,
   } = useUsers(workingCase.court?.id)
 
-  const setJudge = async (judgeId: string) => {
+  const setJudge = async (judgeId?: string) => {
     if (workingCase) {
+      if (!judgeId) {
+        return
+      }
       const updatedCase = await updateCase(workingCase.id, {
         judgeId,
       })
@@ -50,7 +48,6 @@ const SelectCourtOfficials = () => {
       const updatedCase = await updateCase(workingCase.id, {
         registrarId: registrarId ?? null,
       })
-
       if (!updatedCase) {
         return
       }
@@ -88,9 +85,7 @@ const SelectCourtOfficials = () => {
             placeholder={formatMessage(strings.setJudgePlaceholder)}
             value={defaultJudge}
             options={judges}
-            onChange={(selectedOption) =>
-              setJudge((selectedOption as JudgeSelectOption).judge.id)
-            }
+            onChange={(selectedOption) => setJudge(selectedOption?.value)}
             required
             isDisabled={usersLoading}
           />
@@ -101,11 +96,7 @@ const SelectCourtOfficials = () => {
           placeholder={formatMessage(strings.setRegistrarPlaceholder)}
           value={defaultRegistrar}
           options={registrars}
-          onChange={(selectedOption) =>
-            setRegistrar(
-              (selectedOption as RegistrarSelectOption)?.registrar.id,
-            )
-          }
+          onChange={(selectedOption) => setRegistrar(selectedOption?.value)}
           isClearable
           isDisabled={usersLoading}
         />

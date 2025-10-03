@@ -659,7 +659,7 @@ const Conclusion: FC = () => {
           <Box component="section" marginBottom={10}>
             <PdfButton
               caseId={workingCase.id}
-              title={'Þingbók - PDF'}
+              title="Þingbók - PDF"
               pdfType="courtRecord"
               elementId="Þingbók"
             />
