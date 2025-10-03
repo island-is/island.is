@@ -1,3 +1,4 @@
+import type { Entry } from 'contentful'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import {
@@ -89,6 +90,7 @@ import { GetSingleSupportQNAInput } from './dto/getSingleSupportQNA.input'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 import {
   Locale,
+  SitemapTree,
   SitemapTreeNode,
   SitemapTreeNodeType,
 } from '@island.is/shared/types'
@@ -310,6 +312,7 @@ export class CmsResolver {
 
     // Used in the resolver to fetch navigation links from cms
     organizationPage.subpageSlugsInput = input.subpageSlugs
+    organizationPage.lang = input.lang
 
     return organizationPage
   }
@@ -1088,7 +1091,35 @@ export class FeaturedGenericListItemsResolver {
 export class OrganizationPageResolver {
   constructor(private readonly cmsContentfulService: CmsContentfulService) {}
 
-  private getTopLinks() {
+  // private depthFirstSearch(nodes: SitemapTreeNode[], entries: unknown[]) {
+  //   for (const node of nodes) {
+  //     if (node.type === SitemapTreeNodeType.CATEGORY) {
+  //       const category = entries.find((entry) => entry.sys.id === node.entryId)
+  //     }
+  //   }
+  // }
+
+  private getTopLinks(organizationPage: OrganizationPage, entries: unknown[]) {
+    // const nodes = organizationPage.navigationLinks?.childNodes ?? []
+
+    // const topLinks: TopLink[] = nodes.map((node) => {
+    //   if (node.type === SitemapTreeNodeType.CATEGORY) {
+    //     return {
+    //       label: node.label,
+    //       href: `/${getOrganizationPageUrlPrefix(
+    //         organizationPage.lang ?? 'is',
+    //       )}/${organizationPage.slug}/${node.slug}`,
+    //       midLinks: [],
+    //     }
+    //   }
+    // })
+
+    // for (const node of nodes) {
+    //   if (node.type === SitemapTreeNodeType.CATEGORY) {
+    //     const category = entries.find((entry) => entry.sys.id === node.entryId)
+    //   }
+    // }
+
     // {
     //   let nodes = organizationPage.navigationLinks?.childNodes ?? []
 
@@ -1153,10 +1184,79 @@ export class OrganizationPageResolver {
     return []
   }
 
-  private extractEntryIds(organizationPage: OrganizationPage): string[] {
+  private getBreadcrumbs(
+    organizationPage: OrganizationPage,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ) {
+    const slugs = organizationPage.subpageSlugsInput ?? []
+    const maxDepth = 2
+    const lang = organizationPage.lang ?? 'is'
+
+    const breadcrumbs: BottomLink[] = []
+
+    if (slugs.length > 0) {
+      breadcrumbs.push({
+        label: 'Ísland.is',
+        href: lang === 'en' ? '/en' : '/',
+      })
+      breadcrumbs.push({
+        label: organizationPage.title,
+        href: `/${getOrganizationPageUrlPrefix(lang)}/${organizationPage.slug}`,
+      })
+    }
+
+    let category: { childNodes?: SitemapTreeNode[] } | undefined =
+      organizationPage.navigationLinks
+
+    for (let i = 0; i < maxDepth; i += 1) {
+      const slug = slugs[i]
+      if (!slug) {
+        break
+      }
+
+      for (const node of category?.childNodes ?? []) {
+        if (node.type === SitemapTreeNodeType.ENTRY && Boolean(node.entryId)) {
+          const entryItem = entryMap.get(node.entryId)
+          if (!entryItem) {
+            continue
+          }
+          const entryFields = entryItem.entry.fields as { slug?: string }
+          const entrySlug = entryFields?.slug ?? ''
+          if (!entrySlug || entrySlug !== slug) {
+            continue
+          }
+          breadcrumbs.push(entryItem.link)
+        }
+        if (node.type === SitemapTreeNodeType.CATEGORY && node.slug === slug) {
+          const nodeLabel = lang === 'en' ? node.labelEN : node.label
+          const nodeSlug = lang === 'en' ? node.slugEN : node.slug
+          if (!nodeLabel || !nodeSlug) {
+            continue
+          }
+          category = node
+          breadcrumbs.push({
+            label: nodeLabel,
+            href: `/${getOrganizationPageUrlPrefix(lang)}/${
+              organizationPage.slug
+            }/${nodeSlug}`,
+          })
+        }
+      }
+      if (!category) {
+        // TODO: Also try and find the slug in the childNodes of the top level navigation links
+        break
+      }
+    }
+
+    return breadcrumbs
+  }
+
+  private extractEntryIds(organizationPage: OrganizationPage) {
     const slugs = organizationPage.subpageSlugsInput ?? []
     const entryIds = new Set<string>()
     const maxDepth = 3
+
+    const matchedNodes: SitemapTreeNode[] = []
 
     let nodes = organizationPage.navigationLinks?.childNodes ?? []
     for (let i = 0; i < maxDepth; i += 1) {
@@ -1168,9 +1268,11 @@ export class OrganizationPageResolver {
       for (const node of nodes) {
         if (node.type === SitemapTreeNodeType.ENTRY && Boolean(node.entryId)) {
           entryIds.add(node.entryId)
+          matchedNodes.push(node)
         }
         if (node.type === SitemapTreeNodeType.CATEGORY && node.slug === slug) {
           category = node
+          matchedNodes.push(node)
         }
       }
       if (!category) {
@@ -1186,29 +1288,34 @@ export class OrganizationPageResolver {
   async navigationLinks(@Parent() organizationPage: OrganizationPage) {
     const entryIds = this.extractEntryIds(organizationPage)
     const lang = organizationPage.lang ?? 'is'
-    const slugs = organizationPage.subpageSlugsInput ?? []
 
     const entries = await this.cmsContentfulService.getEntries(entryIds, lang)
 
-    const topLinks: TopLink[] = this.getTopLinks()
+    const entryMap = new Map<
+      string,
+      { link: BottomLink; entry: Entry<unknown> }
+    >()
+
+    for (const entry of entries) {
+      const link = generateOrganizationSubpageLink(
+        entry as IOrganizationParentSubpage | IOrganizationSubpage,
+      )
+      if (Boolean(link?.url) && Boolean(link?.text)) {
+        entryMap.set(entry.sys.id, {
+          link: {
+            label: link.text,
+            href: link.url,
+          },
+          entry,
+        })
+      }
+    }
+
+    const breadcrumbs = this.getBreadcrumbs(organizationPage, entryMap)
 
     return {
-      topLinks,
-      breadcrumbs:
-        slugs.length > 0
-          ? [
-              {
-                label: 'Ísland.is',
-                href: lang === 'is' ? '/' : '/en',
-              },
-              {
-                label: organizationPage.title,
-                href: `/${getOrganizationPageUrlPrefix(lang)}/${
-                  organizationPage.slug
-                }`,
-              },
-            ]
-          : [],
+      topLinks: [],
+      breadcrumbs,
     }
   }
 }
