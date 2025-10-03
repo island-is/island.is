@@ -11,7 +11,6 @@ import {
 import { SignatureCollection } from '@island.is/api/schema'
 import SignedLists from '../../shared/SignedLists'
 import Managers from '../../shared/Managers'
-import format from 'date-fns/format'
 
 const OwnerView = ({
   currentCollection,
@@ -69,10 +68,7 @@ const OwnerView = ({
                   maxProgress: list.area?.min || 0,
                   withLabel: true,
                 }}
-                eyebrow={`${formatMessage(m.endTime)} ${format(
-                  new Date(list.endTime),
-                  'dd.MM.yyyy',
-                )}`}
+                eyebrow={list.title}
                 cta={
                   list.active
                     ? {
