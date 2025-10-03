@@ -338,9 +338,6 @@ export class MeUserProfileController {
   })
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
-  @Audit({
-    resources: (deviceToken: string) => deviceToken,
-  })
   deleteDeviceToken(
     @CurrentUser() user: User,
     @Param('deviceToken') deviceToken: string,
