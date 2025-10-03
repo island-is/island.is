@@ -66,14 +66,14 @@ export class ApplicationChargeService {
           try {
             await this.chargeFjsV2ClientService.deleteCharge(chargeId)
           } catch (error) {
-            if(error?.response?.status === 404) {
-              this.logger.info(`Charge with id ${chargeId} not found, not deleting charge`)
+            if (error?.response?.status === 404) {
+              this.logger.info(
+                `Charge with id ${chargeId} not found, not deleting charge`,
+              )
             }
-
           }
         }
       }
-
     } catch (error) {
       this.logger.error(
         `Application charge delete error on id ${application.id}`,
