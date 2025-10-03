@@ -2525,13 +2525,5 @@ describe('MeUserProfileController', () => {
         type: 'https://httpstatuses.org/403',
       })
     })
-
-    it('should return 404 when device token does not exist', async () => {
-      // Act
-      const res = await server.delete('/v2/me/device-tokens/non-existent-token')
-
-      // Assert
-      expect(res.status).toBe(404)
-    })
   })
 })
