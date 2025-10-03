@@ -1,4 +1,4 @@
-import { Auth, getAuthContext } from '@island.is/auth-nest-tools'
+import { Auth } from '@island.is/auth-nest-tools'
 import {
   DispensationHistoryItemDto,
   HealthDirectorateVaccinationsService,
