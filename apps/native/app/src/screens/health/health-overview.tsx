@@ -115,6 +115,7 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({
   text,
   topAlign = false,
 }) => {
+  const theme = useTheme()
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -127,7 +128,7 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({
         style={{
           flexDirection: 'row',
           borderBottomWidth: 1,
-          borderBottomColor: theme.color.blue400,
+          borderBottomColor: theme.color.dark300,
         }}
       >
         <Typography
