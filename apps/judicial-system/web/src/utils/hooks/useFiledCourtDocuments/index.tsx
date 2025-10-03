@@ -10,14 +10,14 @@ const useFiledCourtDocuments = () => {
     const mergedFiledDocuments =
       workingCase.mergedCases?.flatMap(
         (mergedCase) =>
-          mergedCase.courtSessions
-            ?.filter((session) => session.isConfirmed)
+          (mergedCase.courtSessions ?? [])
+            .filter((session) => session.isConfirmed)
             .flatMap((session) => session.filedDocuments ?? []) ?? [],
       ) ?? []
 
     const filedDocuments =
-      workingCase.courtSessions
-        ?.filter((session) => session.isConfirmed)
+      (workingCase.courtSessions ?? [])
+        .filter((session) => session.isConfirmed)
         .flatMap((session) => session.filedDocuments ?? [])
         .concat(mergedFiledDocuments) ?? []
 
