@@ -65,6 +65,7 @@ ingress:
 namespace: 'identity-server-admin'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 progressDeadlineSeconds: 1200
 pvcs: []
 replicaCount:

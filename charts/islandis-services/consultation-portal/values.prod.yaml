@@ -67,6 +67,7 @@ ingress:
 namespace: 'consultation-portal'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 pvcs: []
 replicaCount:
   default: 2

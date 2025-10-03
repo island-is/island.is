@@ -86,6 +86,7 @@ ingress:
 namespace: 'download-service'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 pvcs: []
 replicaCount:
   default: 1
