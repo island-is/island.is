@@ -12,6 +12,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import { CourtSessionResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -96,7 +97,7 @@ const CourtRecord: FC = () => {
           display="flex"
           justifyContent="flexEnd"
           marginTop={5}
-          marginBottom={10}
+          marginBottom={2}
         >
           <Button
             variant="ghost"
@@ -128,6 +129,14 @@ const CourtRecord: FC = () => {
           >
             Bæta við þinghaldi
           </Button>
+        </Box>
+        <Box marginBottom={10}>
+          <PdfButton
+            caseId={workingCase.id}
+            title="Þingbók - PDF"
+            pdfType="courtRecord"
+            disabled={workingCase.courtSessions?.some((c) => !c.isConfirmed)}
+          />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

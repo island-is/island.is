@@ -17,11 +17,11 @@ import {
 import { PaymentFlow } from './paymentFlow.model'
 
 @Table({
-  tableName: 'payment_flow_payment_confirmation',
+  tableName: 'card_payment_details',
 })
-export class PaymentFlowPaymentConfirmation extends Model<
-  InferAttributes<PaymentFlowPaymentConfirmation>,
-  InferCreationAttributes<PaymentFlowPaymentConfirmation>
+export class CardPaymentDetails extends Model<
+  InferAttributes<CardPaymentDetails>,
+  InferCreationAttributes<CardPaymentDetails>
 > {
   @ApiProperty()
   @PrimaryKey
@@ -118,7 +118,7 @@ export class PaymentFlowPaymentConfirmation extends Model<
   modified!: CreationOptional<Date>
 }
 
-export type PaymentFlowPaymentConfirmationAttributes = Omit<
-  InferAttributes<PaymentFlowPaymentConfirmation>,
+export type CardPaymentDetailsAttributes = Omit<
+  InferAttributes<CardPaymentDetails>,
   'created' | 'modified' | 'id'
 >
