@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Animated,
@@ -30,6 +30,7 @@ import { getApplicationUrl } from '../../../utils/applications-utils'
 import { BottomTabsIndicator } from '../../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { createSkeletonArr } from '../../../utils/create-skeleton-arr'
 import { getBadgeVariant } from '../utils/getBadgeVariant'
+import { testIDs } from '../../../utils/test-ids'
 
 type FlatListItem =
   | Application
@@ -114,6 +115,7 @@ export const ApplicationsList = ({
       return (
         <StatusCard
           key={item.id}
+          testID={testIDs.APPLICATION_ITEM}
           title={item.name ?? ''}
           date={new Date(item.created)}
           badge={
@@ -192,7 +194,7 @@ export const ApplicationsList = ({
   ]) as FlatListItem[]
 
   return (
-    <View>
+    <View testID={testIDs.SCREEN_APPLICATIONS_DETAILS}>
       {showError ? (
         <Problem withContainer />
       ) : (

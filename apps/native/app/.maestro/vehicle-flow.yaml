@@ -1,0 +1,19 @@
+appId: 'is.island.app.dev'
+---
+- runFlow: try-signing-in-flow.yaml
+- tapOn:
+    id: 'TABBAR_TAB_MORE'
+- assertVisible:
+    id: 'MORE_CARD_VEHICLES'
+- tapOn:
+    id: 'MORE_CARD_VEHICLES'
+- assertVisible:
+    id: 'SCREEN_VEHICLES'
+- assertVisible:
+    id: 'VEHICLE_ITEM'
+- tapOn:
+    id: 'VEHICLE_ITEM'
+- assertVisible:
+    id: 'SCREEN_VEHICLE_DETAIL'
+- tapOn:
+    text: 'Ökutæki'

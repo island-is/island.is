@@ -11,3 +11,4 @@ generates:
 hooks:
   afterAllFileWrite:
     - prettier --write
+    - node ./libs/api/mocks/tools/fix-schema-deprecated.mjs

@@ -58,7 +58,10 @@ const FamilyMember = React.memo(
     const theme = useTheme()
 
     return (
-      <View style={{ paddingHorizontal: theme.spacing[2] }}>
+      <View
+        style={{ paddingHorizontal: theme.spacing[2] }}
+        testID={testIDs.FAMILY_MEMBER_ITEM}
+      >
         <TouchableHighlight
           underlayColor={
             theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100

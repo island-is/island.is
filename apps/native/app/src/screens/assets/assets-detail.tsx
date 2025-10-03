@@ -40,13 +40,14 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
   const unitsOfUse = data?.assetsDetail?.unitsOfUse
 
   return (
-    <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
+    <View style={{ flex: 1 }}>
       <NavigationBarSheet
         componentId={componentId}
         title={item?.defaultAddress?.displayShort}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
         showLoading={loading}
+        testID={testIDs.SCREEN_ASSETS_DETAIL}
       />
       <ScrollView style={{ flex: 1 }}>
         <View>

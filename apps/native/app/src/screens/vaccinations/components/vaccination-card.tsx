@@ -18,6 +18,7 @@ import externalLinkIcon from '../../../assets/icons/external-link.png'
 import { HealthDirectorateVaccination } from '../../../graphql/types/schema'
 import { useBrowser } from '../../../lib/use-browser'
 import { usePreferencesStore } from '../../../stores/preferences-store'
+import { testIDs } from '../../../utils/test-ids'
 
 const Row = styled.View<{ border?: boolean }>`
   flex-direction: row;
@@ -157,6 +158,7 @@ export function VaccinationsCard({
         setOpen((isOpen) => !isOpen)
       }}
       open={open}
+      testID={testIDs.VACCINATION_ITEM}
     >
       <View style={{ width: '100%', padding: theme.spacing[2] }}>
         {vaccination?.vaccinationsInfo?.length ? (
@@ -237,6 +239,7 @@ export function VaccinationsCard({
                   backgroundColor:
                     index % 2 === 0 ? theme.color.blue100 : theme.color.white,
                 }}
+                testID={testIDs.VACCINATION_ITEM_ROW}
               >
                 <RowItem style={{ maxWidth: '6%' }}>
                   <Typography variant="body3">{index + 1}</Typography>

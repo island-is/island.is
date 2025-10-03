@@ -9,10 +9,11 @@ import {
   addPasskeyAsLoginHint,
   doesUrlSupportPasskey,
 } from './passkeys/helpers'
+import { environmentStore } from '../stores/environment-store'
 
 export const useBrowser = () => {
   const { authenticatePasskey } = useAuthenticatePasskey()
-  const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
+  const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', true) // Why do we need this for it to work?
 
   const openBrowser = async (url: string, componentId?: string) => {
     const passkeysSupported: boolean = Passkey.isSupported()
@@ -20,8 +21,13 @@ export const useBrowser = () => {
     const { hasOnboardedPasskeys, hasCreatedPasskey } =
       preferencesStore.getState()
 
+    // Skip checking for valid urls when mocking
+    const urlSupportsPasskey =
+      doesUrlSupportPasskey(url) ||
+      environmentStore.getState().environment.id === 'mock'
+
     // If url includes minarsidur or umsoknir we need authentication so we check for passkeys
-    if (passkeysSupported && isPasskeyEnabled && doesUrlSupportPasskey(url)) {
+    if (passkeysSupported && isPasskeyEnabled && urlSupportsPasskey) {
       if (hasCreatedPasskey) {
         // Don't show lockscreen behind native passkey modals
         authStore.setState({
@@ -45,6 +51,7 @@ export const useBrowser = () => {
         // Has gone through onboarding but does not have a passkey, open url without passkeys
         openNativeBrowser(url, componentId)
       } else if (!hasOnboardedPasskeys) {
+        console.log('navigating to passkey onboarding')
         // Open passkey onboarding screen
         navigateTo('/passkey', { url, parentComponentId: componentId })
       }
