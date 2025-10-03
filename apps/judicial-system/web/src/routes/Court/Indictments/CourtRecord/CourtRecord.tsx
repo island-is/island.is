@@ -24,7 +24,12 @@ const CourtRecord: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { createCourtSession, updateCourtSession } = useCourtSessions()
-  const [expandedIndex, setExpandedIndex] = useState<number>()
+  const [expandedIndex, setExpandedIndex] = useState<number>(
+    workingCase.courtSessions?.length
+      ? workingCase.courtSessions.length - 1
+      : 0,
+  )
+  // const [courtSessionElementId, setCourtSessionElementId] = useState<string>()
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -82,9 +87,9 @@ const CourtRecord: FC = () => {
               index={index}
               courtSession={courtSession}
               isExpanded={expandedIndex === index}
-              onToggle={() =>
+              onToggle={() => {
                 setExpandedIndex(index === expandedIndex ? -1 : index)
-              }
+              }}
               onConfirmClick={() =>
                 handleConfirmClick(courtSession.id, courtSession.isConfirmed)
               }
@@ -120,6 +125,22 @@ const CourtRecord: FC = () => {
                   } as CourtSessionResponse,
                 ],
               }))
+
+              setTimeout(() => {
+                const courtSessionElementId = `courtRecordAccordionItemFirstSection-${courtSession.id}`
+                if (courtSessionElementId) {
+                  const dateElement = document.getElementById(
+                    courtSessionElementId,
+                  )
+                  if (dateElement) {
+                    console.log('scroll')
+                    dateElement.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'start',
+                    })
+                  }
+                }
+              }, 100)
             }}
             disabled={
               !stepIsValid ||
