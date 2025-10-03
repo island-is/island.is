@@ -137,6 +137,10 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         }
       }
       navigationLinks {
+        breadcrumbs {
+          label
+          href
+        }
         topLinks {
           label
           href

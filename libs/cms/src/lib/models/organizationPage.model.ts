@@ -68,6 +68,9 @@ export class TopLink {
 export class NavigationLinks {
   @CacheField(() => [TopLink])
   topLinks!: TopLink[]
+
+  @CacheField(() => [BottomLink])
+  breadcrumbs!: BottomLink[]
 }
 
 @ObjectType()

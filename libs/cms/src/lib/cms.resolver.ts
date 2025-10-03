@@ -1186,15 +1186,29 @@ export class OrganizationPageResolver {
   async navigationLinks(@Parent() organizationPage: OrganizationPage) {
     const entryIds = this.extractEntryIds(organizationPage)
     const lang = organizationPage.lang ?? 'is'
+    const slugs = organizationPage.subpageSlugsInput ?? []
 
-    const entries = await this.cmsContentfulService.getEntries<
-      IOrganizationParentSubpage | IOrganizationSubpage
-    >(entryIds, lang)
+    const entries = await this.cmsContentfulService.getEntries(entryIds, lang)
 
     const topLinks: TopLink[] = this.getTopLinks()
 
     return {
       topLinks,
+      breadcrumbs:
+        slugs.length > 0
+          ? [
+              {
+                label: 'Ísland.is',
+                href: lang === 'is' ? '/' : '/en',
+              },
+              {
+                label: organizationPage.title,
+                href: `/${getOrganizationPageUrlPrefix(lang)}/${
+                  organizationPage.slug
+                }`,
+              },
+            ]
+          : [],
     }
   }
 }
