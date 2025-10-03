@@ -55,7 +55,9 @@ export enum CardErrorCode {
 
 export enum InvoiceErrorCode {
   FailedToCreateInvoice = 'FailedToCreateInvoice',
+  FailedToCreateInvoiceConfirmation = 'FailedToCreateInvoiceConfirmation',
   InvoiceAlreadyExists = 'InvoiceAlreadyExists',
+  UnsupportedCallbackStatus = 'UnsupportedCallbackStatus',
   UnknownInvoiceError = 'UnknownInvoiceError',
 }
 

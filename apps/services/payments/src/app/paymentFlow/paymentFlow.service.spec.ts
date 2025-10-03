@@ -139,7 +139,7 @@ describe('PaymentFlowService', () => {
     it('should delete a flow with a pending invoice', async () => {
       const paymentFlowWithInvoice = {
         ...mockPaymentFlowDetails,
-        fjsChargeConfirmation: { id: 'fjs-confirm' },
+        fjsCharge: { id: 'fjs-confirm' },
       }
 
       jest
@@ -157,8 +157,8 @@ describe('PaymentFlowService', () => {
         .spyOn(service as TestPartial, 'getPayerName')
         .mockResolvedValue(mockPayer.name)
       jest.spyOn(service, 'logPaymentFlowUpdate').mockResolvedValue(undefined)
-      const deletePaymentChargeSpy = jest
-        .spyOn(service, 'deletePaymentCharge')
+      const deleteFjsChargeSpy = jest
+        .spyOn(service, 'deleteFjsCharge')
         .mockResolvedValue(undefined)
 
       const destroySpy = jest
@@ -170,7 +170,7 @@ describe('PaymentFlowService', () => {
       expect(result).toBeDefined()
       expect(result.paymentStatus).toBe(PaymentStatus.INVOICE_PENDING)
       expect(service.getPaymentFlowDetails).toHaveBeenCalledWith(paymentFlowId)
-      expect(deletePaymentChargeSpy).toHaveBeenCalledWith(paymentFlowId)
+      expect(deleteFjsChargeSpy).toHaveBeenCalledWith(paymentFlowId)
       expect(destroySpy).toHaveBeenCalledWith({ where: { id: paymentFlowId } })
       expect(service.logPaymentFlowUpdate).toHaveBeenCalled()
     })
@@ -178,7 +178,7 @@ describe('PaymentFlowService', () => {
     it('should delete a flow that is unpaid and has no invoice', async () => {
       const paymentFlowWithoutInvoice = {
         ...mockPaymentFlowDetails,
-        fjsChargeConfirmation: null,
+        fjsCharge: null,
       }
 
       jest
@@ -196,8 +196,8 @@ describe('PaymentFlowService', () => {
         .spyOn(service as TestPartial, 'getPayerName')
         .mockResolvedValue(mockPayer.name)
       jest.spyOn(service, 'logPaymentFlowUpdate').mockResolvedValue(undefined)
-      const deletePaymentChargeSpy = jest
-        .spyOn(service, 'deletePaymentCharge')
+      const deleteFjsChargeSpy = jest
+        .spyOn(service, 'deleteFjsCharge')
         .mockResolvedValue(undefined)
 
       const destroySpy = jest
@@ -209,7 +209,7 @@ describe('PaymentFlowService', () => {
       expect(result).toBeDefined()
       expect(result.paymentStatus).toBe(PaymentStatus.UNPAID)
       expect(service.getPaymentFlowDetails).toHaveBeenCalledWith(paymentFlowId)
-      expect(deletePaymentChargeSpy).not.toHaveBeenCalled()
+      expect(deleteFjsChargeSpy).not.toHaveBeenCalled()
       expect(destroySpy).toHaveBeenCalledWith({ where: { id: paymentFlowId } })
       expect(service.logPaymentFlowUpdate).toHaveBeenCalled()
     })
@@ -218,7 +218,7 @@ describe('PaymentFlowService', () => {
       const paymentFlowWithoutUrl = {
         ...mockPaymentFlowDetails,
         onUpdateUrl: null,
-        fjsChargeConfirmation: null,
+        fjsCharge: null,
       }
 
       jest

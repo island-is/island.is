@@ -234,7 +234,7 @@ describe('InvoicePaymentController', () => {
         })
 
       const createChargeSpy = jest
-        .spyOn(paymentFlowService, 'createPaymentCharge')
+        .spyOn(paymentFlowService, 'createFjsCharge')
         .mockImplementation(() => Promise.resolve({} as any))
 
       const response = await server

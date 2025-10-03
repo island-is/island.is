@@ -27,6 +27,7 @@ import { VerificationCallbackInput } from './dtos/verificationCallback.input'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
+import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { getModelToken } from '@nestjs/sequelize'
 import { BadRequestException } from '@nestjs/common'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
@@ -61,6 +62,7 @@ describe('CardPaymentController', () => {
   let paymentFlowService: PaymentFlowService
   let chargeFjsService: ChargeFjsV2ClientService
   let paymentFlowEventModel: typeof PaymentFlowEvent
+  let paymentFulfillmentModel: typeof PaymentFulfillment
 
   let previousPaymentGatewayApiUrl = ''
   let previousTokenSigningSecret = ''
@@ -93,6 +95,7 @@ describe('CardPaymentController', () => {
     paymentFlowService = app.get<PaymentFlowService>(PaymentFlowService)
     chargeFjsService = app.get(ChargeFjsV2ClientService)
     paymentFlowEventModel = app.get(getModelToken(PaymentFlowEvent))
+    paymentFulfillmentModel = app.get(getModelToken(PaymentFulfillment))
 
     jest
       .spyOn(PaymentFlowService.prototype as any, 'getPaymentFlowChargeDetails')
@@ -123,14 +126,17 @@ describe('CardPaymentController', () => {
     paymentFlowId = is.split('/').pop()
   })
 
-  beforeEach(() => {
+  beforeEach(async () => {
     logPaymentFlowUpdateSpy = jest
       .spyOn(paymentFlowService, 'logPaymentFlowUpdate')
       .mockReturnValue(Promise.resolve())
   })
 
-  afterEach(() => {
+  afterEach(async () => {
     logPaymentFlowUpdateSpy.mockRestore()
+
+    // Clean up payment fulfillments to ensure tests are deterministic
+    await paymentFulfillmentModel.destroy({ where: {} })
   })
 
   afterAll(async () => {
@@ -649,8 +655,8 @@ describe('CardPaymentController', () => {
         paymentStatus: PaymentStatus.UNPAID,
         updatedAt: new Date(Date.now() - 30 * 1000),
       })
-    const createPaymentChargeSpy = jest
-      .spyOn(PaymentFlowService.prototype, 'createPaymentCharge')
+    const createFjsChargeSpy = jest
+      .spyOn(PaymentFlowService.prototype, 'createFjsCharge')
       .mockRejectedValue({
         message: FjsErrorCode.AlreadyCreatedCharge,
       } as any)
@@ -670,7 +676,7 @@ describe('CardPaymentController', () => {
     getPaymentFlowDetailsSpy.mockRestore()
     getPaymentFlowChargeDetailsSpy.mockRestore()
     getPaymentFlowStatusSpy.mockRestore()
-    createPaymentChargeSpy.mockRestore()
+    createFjsChargeSpy.mockRestore()
     fetchSpy.mockRestore()
     cacheSpy.mockRestore()
   })

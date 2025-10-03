@@ -31,6 +31,9 @@ export const environment = {
   PAYMENTS_JWT_SIGNING_PRIVATE_KEY: testKeys.privateKey,
   PAYMENTS_JWT_SIGNING_PUBLIC_KEY: testKeys.publicKey,
   PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
+  PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET: 'test-invoice-token-secret',
+  PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM: 'HS256',
+  XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL: 'http://localhost:5555',
 } as const
 
 process.env = {
