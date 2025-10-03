@@ -24,12 +24,7 @@ const CourtRecord: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { createCourtSession, updateCourtSession } = useCourtSessions()
-  const [expandedIndex, setExpandedIndex] = useState<number>(
-    workingCase.courtSessions?.length
-      ? workingCase.courtSessions.length - 1
-      : 0,
-  )
-  // const [courtSessionElementId, setCourtSessionElementId] = useState<string>()
+  const [expandedIndex, setExpandedIndex] = useState<number>()
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -61,11 +56,12 @@ const CourtRecord: FC = () => {
   }
 
   useEffect(() => {
-    setExpandedIndex(
-      workingCase.courtSessions?.length
-        ? workingCase.courtSessions.length - 1
-        : 0,
-    )
+    if (
+      workingCase.courtSessions?.length &&
+      workingCase.courtSessions?.length >= 0
+    ) {
+      setExpandedIndex(workingCase.courtSessions.length - 1)
+    }
   }, [workingCase.courtSessions?.length])
 
   return (
@@ -125,22 +121,6 @@ const CourtRecord: FC = () => {
                   } as CourtSessionResponse,
                 ],
               }))
-
-              setTimeout(() => {
-                const courtSessionElementId = `courtRecordAccordionItemFirstSection-${courtSession.id}`
-                if (courtSessionElementId) {
-                  const dateElement = document.getElementById(
-                    courtSessionElementId,
-                  )
-                  if (dateElement) {
-                    console.log('scroll')
-                    dateElement.scrollIntoView({
-                      behavior: 'smooth',
-                      block: 'start',
-                    })
-                  }
-                }
-              }, 100)
             }}
             disabled={
               !stepIsValid ||

@@ -373,22 +373,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     )
   }
 
-  // useEffect(() => {
-  //   if (isExpanded) {
-  //     console.log('useEffect')
-  //     const courtSessionElementId = `courtRecordAccordionItemFirstSection-${courtSession.id}`
-  //     if (courtSessionElementId) {
-  //       const dateElement = document.getElementById(courtSessionElementId)
-  //       if (dateElement) {
-  //         console.log('scroll')
-  //         dateElement.scrollIntoView({
-  //           behavior: 'smooth',
-  //           block: 'start',
-  //         })
-  //       }
-  //     }
-  //   }
-  // }, [courtSession.id, isExpanded])
+  useEffect(() => {
+    if (isExpanded && !courtSession.isConfirmed) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [isExpanded, courtSession.isConfirmed])
 
   return (
     <AccordionItem
