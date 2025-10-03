@@ -374,6 +374,19 @@ query Case($input: CaseQueryInput!) {
         id
         startDate
         endDate
+        isConfirmed
+        filedDocuments {
+          id
+          created
+          modified
+          caseId
+          courtSessionId
+          documentType
+          documentOrder
+          name
+          caseFileId
+          generatedPdfUri
+        }
       }
       court {
         id
