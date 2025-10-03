@@ -227,9 +227,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isConfirmed
       ruling
       filedDocuments {
+        id
+        created
+        modified
+        caseId
+        courtSessionId
+        documentType
         documentOrder
         name
-        documentType
         caseFileId
         generatedPdfUri
       }
