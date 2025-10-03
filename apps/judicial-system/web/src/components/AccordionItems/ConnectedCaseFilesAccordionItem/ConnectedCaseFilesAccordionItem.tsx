@@ -25,7 +25,6 @@ const ConnectedCaseFilesAccordionItem: FC<Props> = ({
     return null
   }
 
-  console.log(connectedCase)
   return (
     <AccordionItem
       id="connectedCaseFiles"
