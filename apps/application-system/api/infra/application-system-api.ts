@@ -125,7 +125,16 @@ export const workerSetup = (services: {
           }application-system-api.application-system.svc.cluster.local`,
       ),
     })
-    .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines, NationalRegistryB2C)
+    .xroad(
+      Base,
+      Client,
+      Payment,
+      Inna,
+      EHIC,
+      WorkMachines,
+      NationalRegistryB2C,
+      RskCompanyInfo,
+    )
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',

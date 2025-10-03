@@ -880,6 +880,8 @@ application-system-api-worker:
     APPLICATION_SYSTEM_BULL_PREFIX: 'application_system_api_bull_module'
     CLIENT_LOCATION_ORIGIN: 'https://island.is/umsoknir'
     CODE_OWNER: 'norda-applications'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
