@@ -11,6 +11,8 @@ import {
   UnemploymentApplicationCreateUnemploymentApplicationRequest,
   GaldurDomainModelsAttachmentsAttachmentViewModel,
   UnemploymentApplicationApi,
+  UnemploymentApplicationValidatePaymentPageRequest,
+  GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -158,6 +160,20 @@ export class VmstUnemploymentClientService {
     // OpenApi codegen does not seem to handle pure primitive values (i.e not in an object)
     // So the generated code transforms this bool into text, I change it back here
     return (response as unknown) === 'true' || response === true
+  }
+
+  async validateBankInfoUnemploymentApplication(
+    requestParameter: UnemploymentApplicationValidatePaymentPageRequest,
+  ): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO> {
+    const api = await this.createApiClient(
+      UnemploymentApplicationApi,
+      'clients-vmst-unemployment',
+      'Activation Grant API auth failed',
+    )
+
+    return await api.unemploymentApplicationValidatePaymentPage(
+      requestParameter,
+    )
   }
 
   async submitApplication(

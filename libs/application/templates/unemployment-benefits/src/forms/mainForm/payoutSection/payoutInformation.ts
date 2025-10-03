@@ -10,6 +10,7 @@ import {
   buildBankAccountField,
   buildAlertMessageField,
   buildDescriptionField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { payout as payoutMessages } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
@@ -183,6 +184,12 @@ export const payoutInformationSubSection = buildSubSection({
           alertType: 'info',
           doesNotRequireAnswer: true,
           condition: payPrivatePensionFund,
+        }),
+
+        buildCustomField({
+          id: 'payout.validation',
+          component: 'PaymentInformationValidation',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),
