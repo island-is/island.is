@@ -7,4 +7,7 @@ export class PostCommentInput {
 
   @Field()
   comment!: string
+
+  @Field(() => String, { nullable: true })
+  applicationUserName?: string
 }

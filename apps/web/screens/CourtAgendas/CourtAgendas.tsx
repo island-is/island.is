@@ -34,6 +34,8 @@ import {
   CustomPageUniqueIdentifier,
   type GetCourtAgendasQuery,
   type GetCourtAgendasQueryVariables,
+  type GetVerdictLawyersQuery,
+  type GetVerdictLawyersQueryVariables,
   type WebCourtAgendasInput,
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -45,7 +47,10 @@ import {
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
 import SidebarLayout from '../Layouts/SidebarLayout'
-import { GET_COURT_AGENDAS_QUERY } from '../queries/CourtAgendas'
+import {
+  GET_COURT_AGENDAS_QUERY,
+  GET_VERDICT_LAWYERS_QUERY,
+} from '../queries/CourtAgendas'
 import { AgendaCard } from './components/AgendaCard'
 import { DebouncedDatePicker } from './components/DebouncedDatePicker'
 import { m } from './translations.strings'
@@ -61,6 +66,7 @@ enum QueryParam {
   COURT = 'court',
   DATE_FROM = 'dateFrom',
   DATE_TO = 'dateTo',
+  LAWYER = 'lawyer',
 }
 
 interface CourtAgendasProps {
@@ -69,6 +75,7 @@ interface CourtAgendasProps {
     invisibleCourtAgendas: GetCourtAgendasQuery['webCourtAgendas']['items']
     total: number
   }
+  lawyers: GetVerdictLawyersQuery['webVerdictLawyers']['lawyers']
 }
 
 const extractCourtLevelFromState = (court: string | null | undefined) =>
@@ -88,6 +95,9 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
         clearOnDefault: true,
       }),
       [QueryParam.DATE_TO]: parseAsIsoDateTime.withOptions({
+        clearOnDefault: true,
+      }),
+      [QueryParam.LAWYER]: parseAsString.withOptions({
         clearOnDefault: true,
       }),
     },
@@ -134,6 +144,7 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
         court: extractCourtLevelFromState(queryParams[QueryParam.COURT]),
         dateFrom: queryParams[QueryParam.DATE_FROM]?.toISOString() ?? null,
         dateTo: queryParams[QueryParam.DATE_TO]?.toISOString() ?? null,
+        lawyer: queryParams[QueryParam.LAWYER] ?? null,
       }
     },
     [],
@@ -241,7 +252,7 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
   }
 }
 
-const FILTER_ACCORDION_ITEM_IDS = ['date-accordion']
+const FILTER_ACCORDION_ITEM_IDS = ['date-accordion', 'lawyer-accordion']
 
 interface FiltersProps {
   startExpanded?: boolean
@@ -250,6 +261,7 @@ interface FiltersProps {
   renderKey: string | number
   updateRenderKey: () => void
   whiteBackground?: boolean
+  lawyerOptions: { label: string; value: string }[]
 }
 
 const Filters = ({
@@ -259,6 +271,7 @@ const Filters = ({
   renderKey,
   updateRenderKey,
   whiteBackground = false,
+  lawyerOptions,
 }: FiltersProps) => {
   const { formatMessage } = useIntl()
   const [expandedItemIds, setExpandedItemIds] = useState<string[]>(
@@ -366,6 +379,47 @@ const Filters = ({
               </Box>
             </Stack>
           </AccordionItem>
+          <AccordionItem
+            id={FILTER_ACCORDION_ITEM_IDS[1]}
+            label={formatMessage(m.listPage.lawyerAccordionLabel)}
+            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[1])}
+            onToggle={(expanded) => {
+              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[1])
+            }}
+            iconVariant="small"
+            labelVariant="h5"
+            labelColor={queryState[QueryParam.LAWYER] ? 'blue400' : undefined}
+          >
+            <Stack space={2}>
+              <Stack space={2} key={renderKey}>
+                <Select
+                  name="lawyer"
+                  options={lawyerOptions}
+                  size="sm"
+                  label={formatMessage(m.listPage.lawyerSelectLabel)}
+                  value={lawyerOptions.find(
+                    (option) => option.value === queryState[QueryParam.LAWYER],
+                  )}
+                  onChange={(option) => {
+                    updateQueryState(QueryParam.LAWYER, option?.value ?? null)
+                  }}
+                />
+              </Stack>
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  variant="text"
+                  icon="reload"
+                  size="small"
+                  onClick={() => {
+                    updateQueryState(QueryParam.LAWYER, null)
+                    updateRenderKey()
+                  }}
+                >
+                  {formatMessage(m.listPage.clearFilter)}
+                </Button>
+              </Box>
+            </Stack>
+          </AccordionItem>
         </Accordion>
       </Box>
     </Stack>
@@ -386,7 +440,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
     renderKey,
     updateRenderKey,
   } = useCourtAgendasState(props)
-  const { customPageData } = props
+  const { customPageData, lawyers } = props
 
   const { format } = useDateUtils()
   const { formatMessage } = useIntl()
@@ -452,6 +506,13 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
 
   const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
+  const lawyerOptions = useMemo(() => {
+    return lawyers.map((lawyer) => ({
+      label: lawyer.name,
+      value: lawyer.id,
+    }))
+  }, [lawyers])
+
   const filterTags = useMemo(() => {
     const tags: { label: string; onClick: () => void }[] = []
 
@@ -481,8 +542,30 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
       })
     }
 
+    if (queryState[QueryParam.LAWYER]) {
+      const lawyer = lawyerOptions.find(
+        (option) => option.value === queryState[QueryParam.LAWYER],
+      )
+      tags.push({
+        label: `${formatMessage(m.listPage.selectedLawyerPrefix)}: ${
+          lawyer?.label ?? '...'
+        }`,
+        onClick: () => {
+          updateQueryState(QueryParam.LAWYER, null)
+          updateRenderKey()
+        },
+      })
+    }
+
     return tags
-  }, [format, formatMessage, queryState, updateQueryState, updateRenderKey])
+  }, [
+    format,
+    formatMessage,
+    queryState,
+    updateQueryState,
+    updateRenderKey,
+    lawyerOptions,
+  ])
 
   return (
     <Box className="rs_read">
@@ -621,6 +704,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                   updateQueryState={updateQueryState}
                   updateRenderKey={updateRenderKey}
                   whiteBackground={true}
+                  lawyerOptions={lawyerOptions}
                 />
                 <Box
                   background="blue100"
@@ -690,6 +774,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                         updateRenderKey={updateRenderKey}
                         queryState={queryState}
                         updateQueryState={updateQueryState}
+                        lawyerOptions={lawyerOptions}
                       />
                     </Box>
                   </Filter>
@@ -841,8 +926,9 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
   const court = parseAsString.parseServerSide(query[QueryParam.COURT])
   const dateFrom = parseAsString.parseServerSide(query[QueryParam.DATE_FROM])
   const dateTo = parseAsString.parseServerSide(query[QueryParam.DATE_TO])
+  const lawyer = parseAsString.parseServerSide(query[QueryParam.LAWYER])
 
-  const [CourtAgendasResponse] = await Promise.all([
+  const [CourtAgendasResponse, LawyersResponse] = await Promise.all([
     apolloClient.query<GetCourtAgendasQuery, GetCourtAgendasQueryVariables>({
       query: GET_COURT_AGENDAS_QUERY,
       variables: {
@@ -851,9 +937,15 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
           court,
           dateFrom,
           dateTo,
+          lawyer,
         },
       },
     }),
+    apolloClient.query<GetVerdictLawyersQuery, GetVerdictLawyersQueryVariables>(
+      {
+        query: GET_VERDICT_LAWYERS_QUERY,
+      },
+    ),
   ])
 
   const items = CourtAgendasResponse.data.webCourtAgendas.items
@@ -864,6 +956,7 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
       invisibleCourtAgendas: items.slice(ITEMS_PER_PAGE),
       total: CourtAgendasResponse.data.webCourtAgendas.total,
     },
+    lawyers: LawyersResponse.data.webVerdictLawyers?.lawyers ?? [],
   }
 }
 

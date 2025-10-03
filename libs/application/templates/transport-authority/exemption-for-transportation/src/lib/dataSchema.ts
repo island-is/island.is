@@ -95,22 +95,34 @@ const TransporterSchema = z
       .string()
       .optional()
       .refine((v) => !v || isValidPhoneNumber(v)),
-    address: z.string().max(100).optional(),
-    postalCodeAndCity: z.string().optional(),
   })
   .refine(
-    ({ isSameAsApplicant, address }) => {
+    ({ isSameAsApplicant, nationalId }) => {
       if (isSameAsApplicant?.includes(YES)) return true
-      return !!address
+      return nationalId && kennitala.isValid(nationalId)
     },
-    { path: ['address'] },
+    { path: ['nationalId'] },
   )
   .refine(
-    ({ isSameAsApplicant, postalCodeAndCity }) => {
+    ({ isSameAsApplicant, name }) => {
       if (isSameAsApplicant?.includes(YES)) return true
-      return !!postalCodeAndCity
+      return !!name
     },
-    { path: ['postalCodeAndCity'] },
+    { path: ['name'] },
+  )
+  .refine(
+    ({ isSameAsApplicant, email }) => {
+      if (isSameAsApplicant?.includes(YES)) return true
+      return !!email
+    },
+    { path: ['email'] },
+  )
+  .refine(
+    ({ isSameAsApplicant, phone }) => {
+      if (isSameAsApplicant?.includes(YES)) return true
+      return !!phone
+    },
+    { path: ['phone'] },
   )
 
 const ConvoySchema = z.object({

@@ -101,7 +101,7 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
           </Label>
           <Markdown>
             {data?.socialInsuranceConfirmedTreatment?.requestedTreatment?.treatmentTypes
-              ?.map((value, index) => `${index + 1}. ${value.display}`)
+              ?.map((value) => `* ${value.display}`)
               ?.join('\n\n') ?? ''}
           </Markdown>
         </GridColumn>
@@ -125,8 +125,8 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared
-                .hasPreviousApproval,
+              medicalAndRehabilitationPaymentsFormMessage.confirmedTreatment
+                .informationHasPreviousApproval,
             )}
           </Label>
           <Text>

@@ -66,16 +66,6 @@ export const userInformation = {
       defaultMessage: 'Símanúmer',
       description: 'Transporter phone',
     },
-    address: {
-      id: 'ta.eft.application:userInformation.transporter.address',
-      defaultMessage: 'Heimilisfang',
-      description: 'Transporter address',
-    },
-    postalCodeAndCity: {
-      id: 'ta.eft.application:userInformation.transporter.postalCodeAndCity',
-      defaultMessage: 'Póstnúmer og staður',
-      description: 'Transporter postal code',
-    },
   }),
   responsiblePerson: defineMessages({
     subtitle: {

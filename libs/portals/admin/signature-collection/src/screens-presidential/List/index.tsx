@@ -80,7 +80,7 @@ export const List = () => {
                     withManagers
                   />
                 }
-                marginBottom={4}
+                marginBottom={3}
               />
               <Divider />
               <Box marginTop={9} />

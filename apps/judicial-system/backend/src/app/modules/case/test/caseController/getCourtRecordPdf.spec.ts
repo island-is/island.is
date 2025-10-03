@@ -176,7 +176,7 @@ describe('CaseController - Get court record pdf', () => {
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
-      courtSessions: [{ endDate: nowFactory() }],
+      courtSessions: [{ isConfirmed: true }],
     } as Case
     const res = { end: jest.fn() } as unknown as Response
     const pdf = uuid()

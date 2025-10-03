@@ -149,6 +149,9 @@ export class PassportService extends BaseTemplateApiService {
     const applicationId = {
       guid: application.id,
     }
+    const sixMonthsFromNow = new Date(
+      new Date().setMonth(new Date().getMonth() + 6),
+    )
     this.logger.info('submitPassportApplication', applicationId)
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth,
@@ -171,11 +174,28 @@ export class PassportService extends BaseTemplateApiService {
         service,
       }: PassportSchema = application.answers as PassportSchema
 
+      const fetchedPassport = await this.passportApi.getCurrentPassport(auth)
+      if (!fetchedPassport) {
+        throw new TemplateApiError(
+          'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að sækja núverandi vegabréf.',
+          400,
+        )
+      }
       const forUser = !!passport.userPassport
       let result
       const PASSPORT_TYPE = 'P'
       const PASSPORT_SUBTYPE = 'A'
       if (forUser) {
+        if (
+          !fetchedPassport.userPassport?.expiresWithinNoticeTime ||
+          new Date(fetchedPassport.userPassport.expirationDate ?? new Date()) > // check whether the passport after more than 6 months
+            sixMonthsFromNow
+        ) {
+          throw new TemplateApiError(
+            'Ekki er hægt að skila inn umsókn af því að of langt er þar til núverandi vegabréf rennur út.',
+            400,
+          )
+        }
         result = await this.passportApi.preregisterIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: auth.nationalId,
@@ -191,6 +211,28 @@ export class PassportService extends BaseTemplateApiService {
           subType: PASSPORT_SUBTYPE,
         })
       } else {
+        const fetchedChildPassports = fetchedPassport.childPassports?.find(
+          (child) => child.childNationalId === childsPersonalInfo.nationalId,
+        )
+        if (fetchedChildPassports) {
+          const expiringChildPassport = fetchedChildPassports?.passports?.find(
+            (passport) =>
+              passport.expiresWithinNoticeTime &&
+              passport.expirationDate &&
+              new Date(passport.expirationDate) < sixMonthsFromNow, // check that the passport expires after less than 6 months
+          )
+          if (!expiringChildPassport) {
+            throw new TemplateApiError(
+              'Ekki er hægt að skila inn umsókn af því að of langt er þar til núverandi vegabréf rennur út.',
+              400,
+            )
+          }
+        } else {
+          throw new TemplateApiError(
+            'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að sækja núverandi vegabréf.',
+            400,
+          )
+        }
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: childsPersonalInfo.nationalId,

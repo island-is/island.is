@@ -651,6 +651,7 @@ export interface AlertMessageField extends BaseField {
   message?: FormTextWithLocale
   links?: AlertMessageLink[]
   shouldBlockInSetBeforeSubmitCallback?: boolean
+  allowMultipleSetBeforeSubmitCallbacks?: boolean
 }
 
 export interface LinkField extends BaseField {

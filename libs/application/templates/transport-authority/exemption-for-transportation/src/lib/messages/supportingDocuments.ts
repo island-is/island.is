@@ -2,14 +2,24 @@ import { defineMessages } from 'react-intl'
 
 export const supportingDocuments = {
   general: defineMessages({
-    sectionTitle: {
-      id: 'ta.eft.application:supportingDocuments.general.sectionTitle',
+    sectionTitleShortTerm: {
+      id: 'ta.eft.application:supportingDocuments.general.sectionTitleShortTerm',
       defaultMessage: 'Athugasemdir og fylgigögn',
       description: 'Title of supporting documents section',
     },
-    pageTitle: {
-      id: 'ta.eft.application:supportingDocuments.general.pageTitle',
+    sectionTitleLongTerm: {
+      id: 'ta.eft.application:supportingDocuments.general.sectionTitleLongTerm',
+      defaultMessage: 'Athugasemdir',
+      description: 'Title of supporting documents section',
+    },
+    pageTitleShortTerm: {
+      id: 'ta.eft.application:supportingDocuments.general.pageTitleShortTerm',
       defaultMessage: 'Athugasemdir og fylgigögn',
+      description: 'Title of supporting documents page',
+    },
+    pageTitleLongTerm: {
+      id: 'ta.eft.application:supportingDocuments.general.pageTitleLongTerm',
+      defaultMessage: 'Athugasemdir',
       description: 'Title of supporting documents page',
     },
   }),

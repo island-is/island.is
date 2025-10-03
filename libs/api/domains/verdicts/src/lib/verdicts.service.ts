@@ -5,6 +5,7 @@ import { VerdictByIdResponse, VerdictsResponse } from './dto/verdicts.response'
 import { VerdictByIdInput } from './dto/verdictById.input'
 import { CourtAgendasResponse } from './dto/courtAgendas.response'
 import { CourtAgendasInput } from './dto/courtAgendas.input'
+import { LawyersResponse } from './dto/lawyers.response'
 
 @Injectable()
 export class VerdictsService {
@@ -58,6 +59,12 @@ export class VerdictsService {
       items,
       total,
       input,
+    }
+  }
+
+  async getLawyers(): Promise<LawyersResponse> {
+    return {
+      lawyers: await this.verdictsClientService.getLawyers(),
     }
   }
 }

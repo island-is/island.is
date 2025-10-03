@@ -17,7 +17,7 @@ const ListManagers = () => {
       ariaLabel="managersDrawer"
       baseId="managersDrawer"
       disclosure={
-        <Button variant="utility" icon="settings" iconType="outline">
+        <Button variant="utility" icon="people" iconType="outline">
           {formatMessage(m.listManagersTitle)}
         </Button>
       }
@@ -25,13 +25,13 @@ const ListManagers = () => {
       <Text variant="h2" marginTop={2} marginBottom={7}>
         {formatMessage(m.listManagersTitle)}
       </Text>
-      <Text variant="h4" marginBottom={3}>
+      <Text variant="h4" marginBottom={2}>
         {formatMessage(m.listManagers)}
       </Text>
       <Table>
         <Head>
           <Row>
-            <HeadData style={{ width: '25%' }}>
+            <HeadData style={{ width: '20%' }}>
               {formatMessage(m.nationalId)}
             </HeadData>
             <HeadData>{formatMessage(m.name)}</HeadData>
@@ -44,13 +44,13 @@ const ListManagers = () => {
           </Row>
         </Body>
       </Table>
-      <Text variant="h4" marginTop={7} marginBottom={3}>
+      <Text variant="h4" marginTop={7} marginBottom={2}>
         {formatMessage(m.listSupervisors)}
       </Text>
       <Table>
         <Head>
           <Row>
-            <HeadData style={{ width: '25%' }}>
+            <HeadData style={{ width: '20%' }}>
               {formatMessage(m.nationalId)}
             </HeadData>
             <HeadData>{formatMessage(m.name)}</HeadData>

@@ -73,12 +73,14 @@ const ReviewCandidates = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box display="flex">
-            <Tag>
-              <Box display="flex" justifyContent="center">
-                <Icon icon="people" type="outline" color="blue600" />
-              </Box>
-            </Tag>
-            <Box marginLeft={5}>
+            <Box marginTop={1}>
+              <Tag>
+                <Box display="flex" justifyContent="center">
+                  <Icon icon="people" type="outline" color="blue600" />
+                </Box>
+              </Tag>
+            </Box>
+            <Box marginLeft={3}>
               <Text variant="h4">
                 {formatMessage(m.reviewCandidatesModalDescription)}
               </Text>
@@ -120,9 +122,9 @@ const ReviewCandidates = ({
             <Body>
               {allCandidates.map((candidate, key) => (
                 <Row key={candidate.id}>
-                  <Data span={3}>{key + 1}</Data>
-                  <Data span={3}>{candidate.name}</Data>
-                  <Data span={3}>{formatNationalId(candidate.nationalId)}</Data>
+                  <Data>{key + 1}</Data>
+                  <Data>{candidate.name}</Data>
+                  <Data>{formatNationalId(candidate.nationalId)}</Data>
                   <Data style={{ display: 'flex', justifyContent: 'end' }}>
                     <Button
                       variant="text"

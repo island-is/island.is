@@ -259,18 +259,13 @@ test.describe.serial('Indictment tests', () => {
       },
       'TestDomur.pdf',
     )
-
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Summary
-    await expect(page).toHaveURL(`domur/akaera/samantekt/${caseId}`)
+    await page.getByTestId('continueButton').click()
 
     await page.getByTestId('continueButton').click()
-    await page.getByTestId('footerCheckbox').check()
-    await page.getByTestId('modalPrimaryButton').click()
+    await Promise.all([
+      page.getByTestId('modalPrimaryButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
     // Completed case overview
     await expect(page).toHaveURL(`domur/akaera/lokid/${caseId}`)

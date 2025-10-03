@@ -87,7 +87,7 @@ const AllCandidates = () => {
                 ]}
               />
             }
-            marginBottom={4}
+            marginBottom={3}
           />
           {collectionStatus === CollectionStatus.Processed && (
             <Box marginY={3}>
@@ -138,7 +138,7 @@ const AllCandidates = () => {
                         )} ${birthDateFormatted}`}
                         heading={candidate.name}
                         cta={{
-                          label: formatMessage(m.viewList),
+                          label: formatMessage(m.viewCandidate),
                           variant: 'text',
                           icon: 'arrowForward',
                           onClick: () => {
