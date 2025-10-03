@@ -55,14 +55,25 @@ export class ApplicationChargeService {
       const paymentUrl = JSON.parse(payment.definition as unknown as string)
         .paymentUrl as string
 
-      const url = new URL(paymentUrl)
-      const chargeId = url.pathname.split('/').pop()
+      //paymentUrl will be undefined if using MockPayment on dev causing an error
+      if (paymentUrl) {
+        const url = new URL(paymentUrl)
+        const chargeId = url.pathname.split('/').pop()
 
-      this.logger.info('deleteCharge chargeId', chargeId)
+        this.logger.info('deleteCharge chargeId', chargeId)
 
-      if (chargeId) {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+        if (chargeId) {
+          try {
+            await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+          } catch (error) {
+            if(error?.response?.status === 404) {
+              this.logger.info(`Charge with id ${chargeId} not found, not deleting charge`)
+            }
+
+          }
+        }
       }
+
     } catch (error) {
       this.logger.error(
         `Application charge delete error on id ${application.id}`,
