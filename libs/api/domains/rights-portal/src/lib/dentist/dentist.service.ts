@@ -49,7 +49,6 @@ export class DentistService {
     dateTo?: Date,
   ): Promise<DentistRegistration | null> {
     const api = this.api.withMiddleware(new AuthMiddleware(user as Auth))
-
     const res = await Promise.all([
       api.getCurrentDentist().catch(handle404),
       api.dentiststatus().catch(handle404),
