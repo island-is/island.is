@@ -8,9 +8,11 @@ import { EventObject } from 'xstate'
 import { HistoryResponseDto } from './dto/history.dto'
 import { History } from './history.model'
 import { ApplicationTemplateHelper } from '@island.is/application/core'
+import { IdentityClientService } from '@island.is/clients/identity'
 
 @Injectable()
 export class HistoryBuilder {
+  constructor(private identityService: IdentityClientService) {}
   async buildApplicationHistory<
     TContext extends ApplicationContext,
     TStateSchema extends ApplicationStateSchema<TEvents>,
@@ -37,10 +39,22 @@ export class HistoryBuilder {
 
       if (historyLog) {
         if (typeof historyLog.logMessage === 'function') {
-          const values = {
-            subject: exitEventSubjectNationalId,
-            actor: exitEventActorNationalId,
-          }
+          const [subject, actor] = await Promise.all([
+            exitEventSubjectNationalId
+              ? this.identityService.tryToGetNameFromNationalId(
+                  exitEventSubjectNationalId,
+                )
+              : Promise.resolve(undefined),
+
+            exitEventActorNationalId
+              ? this.identityService.tryToGetNameFromNationalId(
+                  exitEventActorNationalId,
+                )
+              : Promise.resolve(undefined),
+          ])
+
+          const values = { subject, actor }
+
           const message = historyLog.logMessage(values)
 
           result.push(

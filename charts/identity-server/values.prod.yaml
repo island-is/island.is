@@ -545,6 +545,8 @@ services-auth-ids-api:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 6
@@ -573,6 +575,11 @@ services-auth-ids-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-ids-api'
+    create: true
+    name: 'services-auth-ids-api'
 services-auth-ids-api-cleanup:
   args:
     - 'main.cjs'
