@@ -470,6 +470,9 @@
       "@island.is/application/templates/hms/fire-compensation-appraisal": [
         "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
       ],
+      "@island.is/application/templates/hms/rental-agreement": [
+        "libs/application/templates/hms/rental-agreement/src/index.ts"
+      ],
       "@island.is/application/templates/hms/terminate-rental-agreement": [
         "libs/application/templates/hms/terminate-rental-agreement/src/index.ts"
       ],
@@ -538,9 +541,6 @@
       ],
       "@island.is/application/templates/public-debt-payment-plan": [
         "libs/application/templates/public-debt-payment-plan/src/index.ts"
-      ],
-      "@island.is/application/templates/rental-agreement": [
-        "libs/application/templates/rental-agreement/src/index.ts"
       ],
       "@island.is/application/templates/secondary-school": [
         "libs/application/templates/secondary-school/src/index.ts"
