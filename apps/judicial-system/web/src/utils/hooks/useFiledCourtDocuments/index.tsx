@@ -19,11 +19,19 @@ const useFiledCourtDocuments = () => {
     : false
 
   const filedCourtDocuments = useMemo(() => {
+    const mergedFiledDocuments =
+      workingCase.mergedCases?.flatMap(
+        (mergedCase) =>
+          (mergedCase.courtSessions ?? [])
+            .filter((session) => session.isConfirmed)
+            .flatMap((session) => session.filedDocuments ?? []) ?? [],
+      ) ?? []
+
     const filedDocuments =
-      workingCase.courtSessions
-        ?.filter((session) => session.isConfirmed)
-        .map((session) => session.filedDocuments ?? [])
-        .flat() ?? []
+      (workingCase.courtSessions ?? [])
+        .filter((session) => session.isConfirmed)
+        .flatMap((session) => session.filedDocuments ?? [])
+        .concat(mergedFiledDocuments) ?? []
 
     const uploadedFiledDocuments = filedDocuments.filter(
       (doc) => doc.documentType === CourtDocumentType.UPLOADED_DOCUMENT,
