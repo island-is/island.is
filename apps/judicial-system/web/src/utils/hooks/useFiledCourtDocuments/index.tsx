@@ -39,7 +39,6 @@ const useFiledCourtDocuments = () => {
     caseFileId: string,
     name: string,
   ) => {
-    console.log(workingCase)
     const { uploadedFiledDocuments } = filedCourtDocuments
 
     const document = uploadedFiledDocuments.find(
