@@ -11,6 +11,7 @@ export enum CustomPageUniqueIdentifier {
   DirectorateOfLabourMyPages = 'DirectorateOfLabourMyPages',
   Verdicts = 'Verdicts',
   BloodDonationRestrictions = 'BloodDonationRestrictions',
+  CourtAgendas = 'CourtAgendas',
 }
 
 export interface StatisticSourceValue {
