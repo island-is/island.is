@@ -490,6 +490,7 @@ SubPage.getProps = async ({
             input: {
               slug: slug as string,
               lang: locale as ContentLanguage,
+              subpageSlugs: subSlug ? [subSlug] : [],
             },
           },
         })

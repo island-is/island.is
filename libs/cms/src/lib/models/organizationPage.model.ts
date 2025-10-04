@@ -1,6 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
-import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
+import { type SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 
 import { IOrganizationPage } from '../generated/contentfulTypes'
@@ -29,6 +29,48 @@ class OrganizationPageTopLevelNavigationLink {
 class OrganizationPageTopLevelNavigation {
   @CacheField(() => [OrganizationPageTopLevelNavigationLink])
   links!: OrganizationPageTopLevelNavigationLink[]
+}
+
+@ObjectType('OrganizationPageBottomLink')
+export class BottomLink {
+  @Field(() => String)
+  label!: string
+
+  @Field(() => String)
+  href!: string
+}
+
+@ObjectType('OrganizationPageMidLink')
+export class MidLink {
+  @Field(() => String)
+  label!: string
+
+  @Field(() => String)
+  href!: string
+
+  @CacheField(() => [BottomLink])
+  bottomLinks!: BottomLink[]
+}
+
+@ObjectType('OrganizationPageTopLink')
+export class TopLink {
+  @Field(() => String)
+  label!: string
+
+  @Field(() => String)
+  href!: string
+
+  @CacheField(() => [MidLink])
+  midLinks!: MidLink[]
+}
+
+@ObjectType('OrganizationPageNavigationLinks')
+export class NavigationLinks {
+  @CacheField(() => [TopLink])
+  topLinks!: TopLink[]
+
+  @CacheField(() => [BottomLink])
+  breadcrumbs!: BottomLink[]
 }
 
 @ObjectType()
@@ -87,11 +129,20 @@ export class OrganizationPage {
   @CacheField(() => OrganizationPageTopLevelNavigation, { nullable: true })
   topLevelNavigation?: OrganizationPageTopLevelNavigation | null
 
+  @CacheField(() => NavigationLinks, { nullable: true })
+  navigationLinks?: SitemapTree
+
   @Field(() => Boolean, { nullable: true })
   canBeFoundInSearchResults?: boolean
 
   @Field(() => Boolean, { nullable: true })
   showPastEventsOption?: boolean
+
+  @Field(() => [String], { nullable: true })
+  subpageSlugsInput?: string[]
+
+  @Field(() => String, { nullable: true })
+  lang?: string
 }
 
 export const mapOrganizationPage = ({
@@ -102,9 +153,10 @@ export const mapOrganizationPage = ({
 
   const topLevelNavigation: OrganizationPageTopLevelNavigation = { links: [] }
 
+  const sitemapTree = fields.sitemap?.fields.tree as SitemapTree | undefined
+
   // Extract top level navigation from sitemap tree
-  for (const node of (fields.sitemap?.fields?.tree as SitemapTree)
-    ?.childNodes ?? []) {
+  for (const node of sitemapTree?.childNodes ?? []) {
     if (
       node.type === SitemapTreeNodeType.CATEGORY &&
       Boolean(node.label) &&
@@ -154,5 +206,7 @@ export const mapOrganizationPage = ({
     topLevelNavigation,
     canBeFoundInSearchResults: fields.canBeFoundInSearchResults ?? true,
     showPastEventsOption: fields.showPastEventsOption ?? false,
+    navigationLinks: sitemapTree,
+    lang: sys.locale,
   }
 }

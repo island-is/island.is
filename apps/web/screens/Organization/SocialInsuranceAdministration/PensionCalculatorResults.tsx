@@ -678,6 +678,7 @@ PensionCalculatorResults.getProps = async ({
         input: {
           slug,
           lang: locale,
+          subpageSlugs: [locale === 'is' ? 'reiknivel' : 'calculator'],
         },
       },
     }),

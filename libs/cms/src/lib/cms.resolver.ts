@@ -1,3 +1,4 @@
+import type { Entry } from 'contentful'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import {
@@ -57,7 +58,13 @@ import {
   GetOrganizationSubpageInput,
 } from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
-import { OrganizationPage } from './models/organizationPage.model'
+import {
+  NavigationLinks,
+  OrganizationPage,
+  TopLink,
+  MidLink,
+  BottomLink,
+} from './models/organizationPage.model'
 import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
 import { GetAuctionsInput } from './dto/getAuctions.input'
 import { Auction } from './models/auction.model'
@@ -81,7 +88,12 @@ import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
 import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
 import { GetSingleSupportQNAInput } from './dto/getSingleSupportQNA.input'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
-import { Locale } from '@island.is/shared/types'
+import {
+  Locale,
+  SitemapTree,
+  SitemapTreeNode,
+  SitemapTreeNodeType,
+} from '@island.is/shared/types'
 import { FeaturedArticles } from './models/featuredArticles.model'
 import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
 import { GetTabSectionInput } from './dto/getTabSection.input'
@@ -140,7 +152,10 @@ import {
 } from './dto/getOrganizationPageStandaloneSitemap.input'
 import { GetOrganizationByNationalIdInput } from './dto/getOrganizationByNationalId.input'
 import { GrantCardsList } from './models/grantCardsList.model'
-import { sortAlpha } from '@island.is/shared/utils'
+import {
+  getOrganizationPageUrlPrefix,
+  sortAlpha,
+} from '@island.is/shared/utils'
 import { GetTeamMembersInputOrderBy } from './dto/getTeamMembers.input'
 import { IntroLinkImage } from './models/introLinkImage.model'
 import {
@@ -155,6 +170,11 @@ import {
 } from './models/bloodDonationRestriction.model'
 import { GenericList } from './models/genericList.model'
 import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
+import {
+  IOrganizationParentSubpage,
+  IOrganizationSubpage,
+} from './generated/contentfulTypes'
+import { generateOrganizationSubpageLink } from './models/linkGroup.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -280,7 +300,21 @@ export class CmsResolver {
   async getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
-    return this.cmsContentfulService.getOrganizationPage(input.slug, input.lang)
+    const organizationPage =
+      await this.cmsContentfulService.getOrganizationPage(
+        input.slug,
+        input.lang,
+      )
+
+    if (!organizationPage) {
+      return organizationPage
+    }
+
+    // Used in the resolver to fetch navigation links from cms
+    organizationPage.subpageSlugsInput = input.subpageSlugs
+    organizationPage.lang = input.lang
+
+    return organizationPage
   }
 
   @CacheControl(defaultCache)
@@ -1049,5 +1083,239 @@ export class FeaturedGenericListItemsResolver {
       input,
     )
     return response.items
+  }
+}
+
+@Resolver(() => OrganizationPage)
+@CacheControl(defaultCache)
+export class OrganizationPageResolver {
+  constructor(private readonly cmsContentfulService: CmsContentfulService) {}
+
+  // private depthFirstSearch(nodes: SitemapTreeNode[], entries: unknown[]) {
+  //   for (const node of nodes) {
+  //     if (node.type === SitemapTreeNodeType.CATEGORY) {
+  //       const category = entries.find((entry) => entry.sys.id === node.entryId)
+  //     }
+  //   }
+  // }
+
+  private getTopLinks(organizationPage: OrganizationPage, entries: unknown[]) {
+    // const nodes = organizationPage.navigationLinks?.childNodes ?? []
+
+    // const topLinks: TopLink[] = nodes.map((node) => {
+    //   if (node.type === SitemapTreeNodeType.CATEGORY) {
+    //     return {
+    //       label: node.label,
+    //       href: `/${getOrganizationPageUrlPrefix(
+    //         organizationPage.lang ?? 'is',
+    //       )}/${organizationPage.slug}/${node.slug}`,
+    //       midLinks: [],
+    //     }
+    //   }
+    // })
+
+    // for (const node of nodes) {
+    //   if (node.type === SitemapTreeNodeType.CATEGORY) {
+    //     const category = entries.find((entry) => entry.sys.id === node.entryId)
+    //   }
+    // }
+
+    // {
+    //   let nodes = organizationPage.navigationLinks?.childNodes ?? []
+
+    //   for (let i = 0; i < 3; i += 1) {
+    //     const slug = slugs[i]
+    //     if (!slug) {
+    //       break
+    //     }
+    //     let category: SitemapTreeNode | null = null
+    //     let midLinks: MidLink[] = []
+    //     for (const node of nodes) {
+    //       if (
+    //         node.type === SitemapTreeNodeType.CATEGORY &&
+    //         node.slug === slug
+    //       ) {
+    //         category = node
+    //         midLinks = []
+    //         topLinks.push({
+    //           label: lang === 'is' ? node.label : node.labelEN ?? '',
+    //           href: `/${getOrganizationPageUrlPrefix(lang)}/${
+    //             organizationPage.slug
+    //           }/${slug}`,
+    //           midLinks: midLinks,
+    //         })
+
+    //         continue
+    //       }
+
+    //       if (
+    //         node.type === SitemapTreeNodeType.ENTRY &&
+    //         Boolean(node.entryId)
+    //       ) {
+    //         const entry = entries.find((entry) => entry.sys.id === node.entryId)
+    //         if (
+    //           !(
+    //             entry?.sys.contentType.sys.id === 'organizationParentSubpage' ||
+    //             entry?.sys.contentType.sys.id === 'organizationSubpage'
+    //           )
+    //         ) {
+    //           continue
+    //         }
+
+    //         const link = generateOrganizationSubpageLink(
+    //           entry as IOrganizationParentSubpage | IOrganizationSubpage,
+    //         )
+    //         if (!link) {
+    //           continue
+    //         }
+    //         topLinks.push({
+    //           label: link.text,
+    //           href: link.url,
+    //           midLinks: [],
+    //         })
+    //       }
+    //     }
+    //     if (!category) {
+    //       break
+    //     }
+    //     nodes = category?.childNodes ?? []
+    //   }
+    // }
+    return []
+  }
+
+  private getBreadcrumbs(
+    organizationPage: OrganizationPage,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ) {
+    const slugs = organizationPage.subpageSlugsInput ?? []
+    const maxDepth = 2
+    const lang = organizationPage.lang ?? 'is'
+
+    const breadcrumbs: BottomLink[] = []
+
+    if (slugs.length > 0) {
+      breadcrumbs.push({
+        label: 'Ísland.is',
+        href: lang === 'en' ? '/en' : '/',
+      })
+      breadcrumbs.push({
+        label: organizationPage.title,
+        href: `/${getOrganizationPageUrlPrefix(lang)}/${organizationPage.slug}`,
+      })
+    }
+
+    let category: { childNodes?: SitemapTreeNode[] } | undefined =
+      organizationPage.navigationLinks
+
+    for (let i = 0; i < maxDepth; i += 1) {
+      const slug = slugs[i]
+      if (!slug) {
+        break
+      }
+
+      for (const node of category?.childNodes ?? []) {
+        if (node.type === SitemapTreeNodeType.ENTRY && Boolean(node.entryId)) {
+          const entryItem = entryMap.get(node.entryId)
+          if (!entryItem) {
+            continue
+          }
+          const entryFields = entryItem.entry.fields as { slug?: string }
+          const entrySlug = entryFields?.slug ?? ''
+          if (!entrySlug || entrySlug !== slug) {
+            continue
+          }
+          breadcrumbs.push(entryItem.link)
+        }
+        if (node.type === SitemapTreeNodeType.CATEGORY && node.slug === slug) {
+          const nodeLabel = lang === 'en' ? node.labelEN : node.label
+          const nodeSlug = lang === 'en' ? node.slugEN : node.slug
+          if (!nodeLabel || !nodeSlug) {
+            continue
+          }
+          category = node
+          breadcrumbs.push({
+            label: nodeLabel,
+            href: `/${getOrganizationPageUrlPrefix(lang)}/${
+              organizationPage.slug
+            }/${nodeSlug}`,
+          })
+        }
+      }
+      if (!category) {
+        // TODO: Also try and find the slug in the childNodes of the top level navigation links
+        break
+      }
+    }
+
+    return breadcrumbs
+  }
+
+  private extractEntryIds(organizationPage: OrganizationPage) {
+    const slugs = organizationPage.subpageSlugsInput ?? []
+    const entryIds = new Set<string>()
+    const maxDepth = 3
+
+    const matchedNodes: SitemapTreeNode[] = []
+
+    let nodes = organizationPage.navigationLinks?.childNodes ?? []
+    for (let i = 0; i < maxDepth; i += 1) {
+      const slug = slugs[i]
+      if (!slug) {
+        break
+      }
+      let category: SitemapTreeNode | null = null
+      for (const node of nodes) {
+        if (node.type === SitemapTreeNodeType.ENTRY && Boolean(node.entryId)) {
+          entryIds.add(node.entryId)
+          matchedNodes.push(node)
+        }
+        if (node.type === SitemapTreeNodeType.CATEGORY && node.slug === slug) {
+          category = node
+          matchedNodes.push(node)
+        }
+      }
+      if (!category) {
+        break
+      }
+      nodes = category?.childNodes ?? []
+    }
+
+    return Array.from(entryIds)
+  }
+
+  @ResolveField(() => NavigationLinks, { nullable: true })
+  async navigationLinks(@Parent() organizationPage: OrganizationPage) {
+    const entryIds = this.extractEntryIds(organizationPage)
+    const lang = organizationPage.lang ?? 'is'
+
+    const entries = await this.cmsContentfulService.getEntries(entryIds, lang)
+
+    const entryMap = new Map<
+      string,
+      { link: BottomLink; entry: Entry<unknown> }
+    >()
+
+    for (const entry of entries) {
+      const link = generateOrganizationSubpageLink(
+        entry as IOrganizationParentSubpage | IOrganizationSubpage,
+      )
+      if (Boolean(link?.url) && Boolean(link?.text)) {
+        entryMap.set(entry.sys.id, {
+          link: {
+            label: link.text,
+            href: link.url,
+          },
+          entry,
+        })
+      }
+    }
+
+    const breadcrumbs = this.getBreadcrumbs(organizationPage, entryMap)
+
+    return {
+      topLinks: [],
+      breadcrumbs,
+    }
   }
 }
