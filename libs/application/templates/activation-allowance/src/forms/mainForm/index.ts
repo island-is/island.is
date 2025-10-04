@@ -3,7 +3,6 @@ import { FormModes } from '@island.is/application/types'
 import { paymentInformationSection } from './paymentInformationSection'
 import { overviewSection } from './overviewSection'
 import { jobHistorySection } from './jobHistory'
-import { Logo } from '../../assets/Logo'
 import { jobWishesSection } from './jobWishesSection'
 import { academicBackgroundSection } from './academicBackgroundSection'
 import { drivingLicensesSection } from './drivingLicensesSection'
@@ -12,11 +11,12 @@ import { cvSection } from './cvSection'
 import { incomeSection } from './incomeSection'
 import { applicantSection } from './personalInformationSection'
 import { reportingObligationSection } from './reportingObligationSection'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
   children: [

@@ -28,7 +28,7 @@ import {
   buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 
-import Logo from '../assets/Logo'
+import { AlthingiOmbudsmanLogo } from '@island.is/application/assets/institution-logos'
 import {
   complainedFor,
   complainee,
@@ -64,7 +64,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
   title: applicationMessage.general.name,
   mode: FormModes.DRAFT,
-  logo: Logo,
+  logo: AlthingiOmbudsmanLogo,
   children: [
     buildSection({
       id: 'information',

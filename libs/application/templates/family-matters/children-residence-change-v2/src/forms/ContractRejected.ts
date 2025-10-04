@@ -4,14 +4,14 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 import * as m from '../lib/messages'
 
 const rejectedForm = (id: string): Form => {
   return buildForm({
     id: id,
     title: m.application.name,
-    logo: Logo,
+    logo: DistrictCommissionersLogo,
     mode: FormModes.REJECTED,
     children: [
       buildSection({

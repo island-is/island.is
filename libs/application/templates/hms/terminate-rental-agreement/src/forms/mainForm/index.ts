@@ -7,7 +7,7 @@ import { unboundTerminationSection } from './unboundTerminationSection'
 import { boundTerminationSection } from './boundTerminationSection'
 import { cancelationSection } from './cancelationSection'
 import { cancelWarningSection } from './cancelWarningSection'
-import HmsLogo from '../../assets/HmsLogo'
+import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { personalInformationSection } from './personalInformationSection'
 import { fileUploadSection } from './fileUploadSection'
 
