@@ -49,6 +49,33 @@
         "tags": ["Frigg"]
       }
     },
+    "/forms/{id}/status": {
+      "get": {
+        "description": "Get statuses.",
+        "operationId": "getFormStatuses",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Get status of an application",
+        "tags": ["Frigg"]
+      }
+    },
     "/key-options": {
       "get": {
         "description": "Get all key options, can be filtered by type. If type input is not valid, all key options will be returned.",
@@ -112,6 +139,13 @@
         "operationId": "getAllSchoolsByMunicipality",
         "parameters": [
           {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "Filter by organization type",
+            "schema": { "type": "string", "enum": ["school", "childCare"] }
+          },
+          {
             "name": "sort",
             "required": false,
             "in": "query",
@@ -162,6 +196,7 @@
             "description": ""
           }
         },
+        "security": [{ "bearer": [] }],
         "summary": "Get all schools.",
         "tags": ["Frigg"]
       }
@@ -192,95 +227,6 @@
         "summary": "Get user by nationalId",
         "tags": ["Frigg"]
       }
-    },
-    "/municipalities/{municipalityId}/applications": {
-      "get": {
-        "operationId": "getApplications",
-        "parameters": [
-          {
-            "name": "municipalityId",
-            "required": true,
-            "in": "path",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "type",
-            "required": false,
-            "in": "query",
-            "schema": { "type": "string", "enum": ["registration"] }
-          },
-          {
-            "name": "since",
-            "required": false,
-            "in": "query",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "description": "To define the download segmentation value i.e. the maximum number of records to be contained in the response.",
-            "schema": { "default": 100, "type": "number", "minimum": 1 }
-          },
-          {
-            "name": "offset",
-            "required": false,
-            "in": "query",
-            "description": "The number of the first record to be supplied in the segmented response message.",
-            "schema": { "default": 0, "type": "number", "minimum": 0 }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns list of applications",
-            "content": {
-              "application/json": { "schema": { "type": "object" } }
-            }
-          },
-          "default": {
-            "headers": {
-              "x-total-count": {
-                "description": "The total number of resources that are available to be returned",
-                "schema": { "type": "integer" }
-              }
-            },
-            "description": ""
-          }
-        },
-        "summary": "Returns a paginated list of applications",
-        "tags": ["Frigg"]
-      }
-    },
-    "/municipalities/{municipalityId}/applications/{applicationId}/pdf": {
-      "get": {
-        "operationId": "getApplicationPdf",
-        "parameters": [
-          {
-            "name": "municipalityId",
-            "required": true,
-            "in": "path",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "applicationId",
-            "required": true,
-            "in": "path",
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns PDF for application",
-            "content": {
-              "application/pdf": {
-                "schema": { "type": "string", "format": "binary" }
-              }
-            }
-          }
-        },
-        "summary": "Returns a PDF for an application",
-        "tags": ["Frigg"]
-      }
     }
   },
   "info": {
@@ -306,7 +252,8 @@
         "properties": {
           "address": { "type": "string" },
           "postCode": { "type": "string" },
-          "municipalityId": { "type": "string" }
+          "municipalityId": { "type": "string" },
+          "municipality": { "type": "string" }
         },
         "required": ["address", "postCode"]
       },

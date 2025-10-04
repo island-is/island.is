@@ -11,8 +11,11 @@ import {
 import { Application } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
-import { ApplicationType, SchoolType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+
+import { OrganizationModelTypeEnum, Query } from '@island.is/api/schema'
+import { isCurrentSchoolRegistered } from '../../../utils/conditionUtils'
+import { ApplicationType, SchoolType } from '../../../utils/constants'
 import {
   formatGrade,
   getApplicationAnswers,
@@ -21,8 +24,6 @@ import {
   getInternationalSchoolsIds,
   getMunicipalityCodeBySchoolUnitId,
 } from '../../../utils/newPrimarySchoolUtils'
-import { Query, OrganizationModelTypeEnum } from '@island.is/api/schema'
-import { isCurrentSchoolRegistered } from '../../../utils/conditionUtils'
 
 export const currentSchoolSubSection = buildSubSection({
   id: 'currentSchoolSubSection',
@@ -100,20 +101,21 @@ export const currentSchoolSubSection = buildSubSection({
               query: friggSchoolsByMunicipalityQuery,
             })
 
-            return (
+            const options =
               data?.friggSchoolsByMunicipality
                 ?.filter(
-                  ({ type, managing }) =>
+                  ({ type, managing, unitId }) =>
                     type === OrganizationModelTypeEnum.Municipality &&
-                    managing &&
+                    Boolean(unitId) &&
+                    Array.isArray(managing) &&
                     managing.length > 0,
                 )
                 ?.map(({ name, unitId }) => ({
-                  value: unitId || '',
+                  value: unitId as string,
                   label: name,
-                }))
-                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
-            )
+                })) ?? []
+
+            return options.sort((a, b) => a.label.localeCompare(b.label))
           },
           condition: (_, externalData) => {
             const { primaryOrgId } = getApplicationExternalData(externalData)
