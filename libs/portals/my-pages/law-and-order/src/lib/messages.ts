@@ -13,6 +13,27 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:court-cases-desc',
     defaultMessage: 'Hér finnur þú mál sem þú átt aðild að í dómskerfinu.',
   },
+  policeCasesTitle: {
+    id: 'sp.law-and-order:police-cases-title',
+    defaultMessage: 'Lögreglumál',
+  },
+  policeCasesDescription: {
+    id: 'sp.law-and-order:police-cases-description',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.',
+  },
+  policeCases: {
+    id: 'sp.law-and-order:police-cases',
+    defaultMessage: 'Lögreglumál',
+  },
+  policeCaseTitle: {
+    id: 'sp.law-and-order:police-case-title',
+    defaultMessage: 'Málsnúmer {arg}',
+  },
+  court: {
+    id: 'sp.law-and-order:court',
+    defaultMessage: 'Dómstóll',
+  },
   seeInfo: {
     id: 'sp.law-and-order:see-info',
     defaultMessage: 'Skoða nánar',
@@ -44,6 +65,10 @@ export const messages = defineMessages({
   subpoenaNotFound: {
     id: 'sp.law-and-order:subpoena-not-found',
     defaultMessage: 'Fyrirkall fannst ekki',
+  },
+  defender: {
+    id: 'sp.law-and-order:defender',
+    defaultMessage: 'Verjandi',
   },
   chooseDefenderTitle: {
     id: 'sp.law-and-order:choose-defender-title',
@@ -105,5 +130,57 @@ export const messages = defineMessages({
   subpoenaInfoText2: {
     id: 'sp.law-and-order:subpoena-info-text2',
     defaultMessage: 'Birtingarfrestur er þrír sólarhringar.',
+  },
+  timeline: {
+    id: 'sp.law-and-order:timeline',
+    defaultMessage: 'Ferill',
+  },
+  caseData: {
+    id: 'sp.law-and-order:case-data',
+    defaultMessage: 'Málsgögn',
+  },
+  caseNumber: {
+    id: 'sp.law-and-order:case-number',
+    defaultMessage: 'Málsnúmer',
+  },
+  receivedDate: {
+    id: 'sp.law-and-order:received-date',
+    defaultMessage: 'Dagsetning móttöku',
+  },
+  contact: {
+    id: 'sp.law-and-order:contact',
+    defaultMessage: 'Tengiliður',
+  },
+  legalAdvisor: {
+    id: 'sp.law-and-order:legal-advisor',
+    defaultMessage: 'Réttargæslumaður',
+  },
+  caseStatus: {
+    id: 'sp.law-and-order:case-status',
+    defaultMessage: 'Staða máls',
+  },
+  analysis: {
+    id: 'sp.law-and-order:analysis',
+    defaultMessage: 'Greining',
+  },
+  investigation: {
+    id: 'sp.law-and-order:investigation',
+    defaultMessage: 'Rannsókn',
+  },
+  investigationFinished: {
+    id: 'sp.law-and-order:investigationFinished',
+    defaultMessage: 'Rannsókn lokið',
+  },
+  indictment: {
+    id: 'sp.law-and-order:indictment',
+    defaultMessage: 'Ákæra',
+  },
+  caseForwarded: {
+    id: 'sp.law-and-order:caseForwarded',
+    defaultMessage: 'Mál sent',
+  },
+  updated: {
+    id: 'sp.law-and-order:updated',
+    defaultMessage: 'Uppfært',
   },
 })
