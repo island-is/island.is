@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -12,8 +14,11 @@ import { gql, useQuery } from '@apollo/client'
 import { Organisation } from '@island.is/api/schema'
 import { DocumentProvidersSearch } from './DocumentProvidersSearch'
 import { DocumentProvidersDashboard } from './DocumentProvidersDashboard'
-import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
-import { documentProviderNavigation } from '../../lib/navigation'
+import { IntroHeader } from '@island.is/portals/core'
+import { DocumentProvidersNavigation } from '../../components/DocumentProvidersNavigation/DocumentProvidersNavigation'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { DocumentProviderPaths } from '../../lib/paths'
+import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
 
 export type OrganisationPreview = Pick<
   Organisation,
@@ -31,6 +36,8 @@ const getOrganisationsPreviewQuery = gql`
 `
 
 const DocumentProviders = () => {
+  const navigate = useNavigate()
+  const user = useUserInfo()
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
   const { formatMessage } = useLocale()
@@ -41,6 +48,17 @@ const DocumentProviders = () => {
   const today = new Date()
   const organisationsPreview: OrganisationPreview[] =
     data?.getProviderOrganisations || []
+
+  useEffect(() => {
+    if (user?.scopes?.includes(AdminPortalScope.documentProviderInstitution)) {
+      navigate(DocumentProviderPaths.InstitutionDocumentProviderOverview)
+    }
+  }, [user, navigate])
+
+  if (!user) {
+    return <DocumentProvidersLoading />
+  }
+
   return (
     <GridContainer>
       <GridRow direction="row">
@@ -49,10 +67,7 @@ const DocumentProviders = () => {
           offset={['0', '7/12', '7/12', '0']}
         >
           <Box paddingBottom={4}>
-            <PortalNavigation
-              navigation={documentProviderNavigation}
-              title={formatMessage(m.documentProviders)}
-            />
+            <DocumentProvidersNavigation loading={false} providers={[]} />
           </Box>
         </GridColumn>
         <GridColumn

@@ -20,10 +20,10 @@ const CREATE_HELP_DESK_MUTATION = gql`
 
 export type CreateHelpDeskInput = Pick<Helpdesk, 'email' | 'phoneNumber'>
 
-export function useCreateHelpDesk(
+export const useCreateHelpDesk = (
   organisationId: string,
   organisationNationalId: string,
-) {
+) => {
   const [createHelpDeskMutation, { called, loading, error }] = useMutation(
     CREATE_HELP_DESK_MUTATION,
   )

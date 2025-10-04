@@ -21,10 +21,10 @@ const CREATE_TECHNICAL_CONTACT_MUTATION = gql`
 
 export type CreateContactInput = Pick<Contact, 'name' | 'email' | 'phoneNumber'>
 
-export function useCreateTechnicalContact(
+export const useCreateTechnicalContact = (
   organisationId: string,
   organisationNationalId: string,
-) {
+) => {
   const [createTechnicalContactMutation, { called, loading, error }] =
     useMutation(CREATE_TECHNICAL_CONTACT_MUTATION)
 
