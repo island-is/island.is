@@ -52,6 +52,15 @@ export class CourtSession extends Model {
   @ApiPropertyOptional({ type: String })
   location?: string
 
+  @ForeignKey(() => User)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  judgeId?: string
+
+  @BelongsTo(() => User, 'judgeId')
+  @ApiPropertyOptional({ type: () => User })
+  judge?: User
+
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
   startDate?: Date
