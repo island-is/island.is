@@ -472,7 +472,7 @@ export const emailsMsg = defineMessages({
   emailListText: {
     id: 'sp.settings:email-list-text',
     defaultMessage:
-      'Hér er listi yfir netföng sem eru skráð hjá þér og umboðum tengt þér.Þú getur stillt {link}',
+      'Hér er listi yfir netföng sem eru skráð hjá þér og umboðum tengt þér. Þú getur stillt {link}',
   },
   emailListTextLink: {
     id: 'sp.settings:email-list-text-link',
