@@ -9,8 +9,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
 import { messages } from '../../lib/messages'
-import { HealthCenterDoctorOption } from '../../screens/HealthCenterRegistration/HealthCenterRegistration'
 import * as styles from './RegisterModal.css'
+import { HealthCenterDoctorOption } from '../../utils/types'
 
 type RegisterModalProps = {
   onClose: () => void
