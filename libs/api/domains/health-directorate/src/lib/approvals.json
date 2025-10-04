@@ -1,0 +1,47 @@
+[
+  {
+    "id": "fff49d63-0104-48e4-8cad-00e311bb2f5a",
+    "createdAt": "2025-08-08T07:10:22.432Z",
+    "validFrom": "2024-05-01T08:11:50.176Z",
+    "validTo": "2025-08-08T07:10:46.565Z",
+    "status": "inactive",
+    "codes": ["patient_summary"],
+    "countries": [
+      {
+        "id": "9b9b79ec-ef25-409d-839b-33eaf5b556e3",
+        "name": "Frakkland",
+        "code": "FR"
+      }
+    ]
+  },
+  {
+    "id": "2c29f9f0-e2e4-4547-9b96-293fc33ed51c",
+    "createdAt": "2025-08-08T07:10:16.026Z",
+    "validFrom": "2024-05-01T08:11:50.176Z",
+    "validTo": "2025-05-01T08:11:50.176Z",
+    "status": "expired",
+    "codes": ["patient_summary"],
+    "countries": [
+      {
+        "id": "98140636-7263-4faa-8979-fb9ae347b906",
+        "name": "Þýskaland",
+        "code": "DE"
+      }
+    ]
+  },
+  {
+    "id": "7f751913-bb9d-4f5a-affe-2b2db4589566",
+    "createdAt": "2025-08-08T07:09:58.864Z",
+    "validFrom": "2025-07-01T08:11:50.176Z",
+    "validTo": "2026-07-01T08:11:50.176Z",
+    "status": "active",
+    "codes": ["patient_summary"],
+    "countries": [
+      {
+        "id": "98140636-7263-4faa-8979-fb9ae347b906",
+        "name": "Þýskaland",
+        "code": "DE"
+      }
+    ]
+  }
+]
