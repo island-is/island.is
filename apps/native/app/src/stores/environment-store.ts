@@ -9,6 +9,7 @@ export interface EnvironmentConfig {
   label: string
   idsIssuer: string
   apiUrl: string
+  baseUrl: string
   configCat: string | null
   datadog: string | null
 }
@@ -73,10 +74,16 @@ export const environmentStore = create<EnvironmentStore>(
                 'X-Cognito-Token': `Bearer ${get().cognito?.accessToken}`,
               },
             }).then((r) => r.json() as Promise<EnvironmentResponse>)
-            const ids = res.results.ids.map((n) => ({
-              ...((environments as any)[n.id] ?? {}),
-              ...n,
-            }))
+            const ids = res.results.ids.map((n) => {
+              const local = (environments as any)[n.id] ?? {}
+              const remote = n as any
+              return {
+                ...local,
+                ...n,
+                // Preserve baseUrl from local if remote does not provide it
+                baseUrl: remote.baseUrl ?? local.baseUrl,
+              }
+            })
             const dev = ids.find((n) => n.id === 'dev')
             const result = [
               ...ids,
