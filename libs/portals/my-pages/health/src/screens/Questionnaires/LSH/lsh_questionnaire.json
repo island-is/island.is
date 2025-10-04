@@ -1,0 +1,4243 @@
+{
+  "Sections": [
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Mjög hraust/-ur",
+              "Value": "Mjög hraust/-ur"
+            },
+            {
+              "Label": "Hraust/-ur",
+              "Value": "Hraust/-ur"
+            },
+            {
+              "Label": "Heilsuveil/-veill",
+              "Value": "Heilsuveil/-veill"
+            },
+            {
+              "Label": "Mjög heilsuveil/-veill",
+              "Value": "Mjög heilsuveil/-veill"
+            }
+          ],
+          "Question": "Hvernig metur þú heilsufar þitt?",
+          "Description": null,
+          "EntryID": "RadioGroup36866",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Hefurðu dvalið á spítala erlendis síðastliðna 6 mánuði?",
+          "Description": null,
+          "EntryID": "RadioGroup39695",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Heilsufar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": null,
+          "Question": "Hæð",
+          "Description": null,
+          "EntryID": "Height",
+          "Type": "Number",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": "cm",
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": "0",
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Þyngd",
+          "Description": null,
+          "EntryID": "Weight",
+          "Type": "Number",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": "kg",
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": "0",
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Hefur þú lést s.l. 6 mánuði án þess að ætla þér það? (Meira en 5% af þyngd þinni, dæmi 3kg ef 60kg, 4kg ef 80kg, 5kg ef 100kg)",
+          "Description": null,
+          "EntryID": "RadioGroup36815",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Eðlilegt eða án athugasemda",
+              "Value": "Eðlilegt eða án athugasemda"
+            },
+            {
+              "Label": "Erfiðleikar með að opna munninn/gapa",
+              "Value": "Erfiðleikar með að opna munninn/gapa"
+            },
+            {
+              "Label": "Góm vandamál (klofinn gómur eða annað)",
+              "Value": "Góm vandamál (klofinn gómur eða annað)"
+            },
+            {
+              "Label": "Kyngingarörðugleikar",
+              "Value": "Kyngingarörðugleikar"
+            },
+            {
+              "Label": "Skert hreyfigeta  (hálshryggur)",
+              "Value": "Skert hreyfigeta  (hálshryggur)"
+            }
+          ],
+          "Question": "Munnur, kok og hálshryggur",
+          "Description": null,
+          "EntryID": "Checklist36816",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Í lagi",
+              "Value": "Í lagi"
+            },
+            {
+              "Label": "Laus gómur (efri)",
+              "Value": "Laus gómur (efri)"
+            },
+            {
+              "Label": "Laus gómur (neðri)",
+              "Value": "Laus gómur (neðri)"
+            },
+            {
+              "Label": "Laus gómur (bæði efri og neðri):Brú/brýr með festingum",
+              "Value": "Laus gómur (bæði efri og neðri):Brú/brýr með festingum"
+            },
+            {
+              "Label": "Implant/implönt",
+              "Value": "Implant/implönt"
+            }
+          ],
+          "Question": "Tennur",
+          "Description": null,
+          "EntryID": "Checklist36817",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Eðlileg eða án athugasemda",
+              "Value": "Eðlileg eða án athugasemda"
+            },
+            {
+              "Label": "Nota gleraugu",
+              "Value": "Nota gleraugu"
+            },
+            {
+              "Label": "Hamlandi sjónskerðing",
+              "Value": "Hamlandi sjónskerðing"
+            },
+            {
+              "Label": "Lögblinda",
+              "Value": "Lögblinda"
+            }
+          ],
+          "Question": "Sjón",
+          "Description": null,
+          "EntryID": "Checklist47830",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Eðlileg eða án athugasemda",
+              "Value": "Eðlileg eða án athugasemda"
+            },
+            {
+              "Label": "Nota heyrnartæki",
+              "Value": "Nota heyrnartæki"
+            },
+            {
+              "Label": "Heyrnarleysi",
+              "Value": "Heyrnarleysi"
+            }
+          ],
+          "Question": "Heyrn",
+          "Description": null,
+          "EntryID": "Checklist47831",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Heilbrigð húð",
+              "Value": "Heilbrigð húð"
+            },
+            {
+              "Label": "Exem",
+              "Value": "Exem"
+            },
+            {
+              "Label": "Sár",
+              "Value": "Sár"
+            },
+            {
+              "Label": "Bruni",
+              "Value": "Bruni"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Húð",
+          "Description": null,
+          "EntryID": "Checklist38491",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text38492"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text38492",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist38491)",
+          "DependsOn": ["Checklist38491"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            },
+            {
+              "Label": "Á ekki við",
+              "Value": "Á ekki við"
+            }
+          ],
+          "Question": "Ertu þunguð?",
+          "Description": null,
+          "EntryID": "RadioGroup36818",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            },
+            {
+              "Label": "Á ekki við",
+              "Value": "Á ekki við"
+            }
+          ],
+          "Question": "Hefur þú gengið með barn/börn?",
+          "Description": null,
+          "EntryID": "RadioGroup36819",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text47840", "Checklist38488"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Fjöldi barna?",
+          "Description": null,
+          "EntryID": "Text47840",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já',@@@RadioGroup36819)",
+          "DependsOn": ["RadioGroup36819"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Um fæðingarveg",
+              "Value": "Um fæðingarveg"
+            },
+            {
+              "Label": "Með keisaraskurði",
+              "Value": "Með keisaraskurði"
+            }
+          ],
+          "Question": "Fæðingarmáti",
+          "Description": null,
+          "EntryID": "Checklist38488",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36819')",
+          "DependsOn": ["RadioGroup36819"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Almennar heilsufarsupplýsingar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Ert þú líffæraþegi/með ígrætt líffæri?",
+          "Description": null,
+          "EntryID": "RadioGroup36941",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text36906"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvaða líffæri?",
+          "Description": null,
+          "EntryID": "Text36906",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36941')",
+          "DependsOn": ["RadioGroup36941"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Líffæraþegi "
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Value1"
+            },
+            {
+              "Label": "Já",
+              "Value": "Value2"
+            }
+          ],
+          "Question": "Ertu með heilsufarsvandamál sem takmarka dagleg verk og athafnir?",
+          "Description": null,
+          "EntryID": "RadioGroup49785",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Value1"
+            },
+            {
+              "Label": "Já",
+              "Value": "Value2"
+            }
+          ],
+          "Question": "Ertu með heilsufarsvandamál sem valda því að þú þarft að halda kyrru fyrir heima?",
+          "Description": null,
+          "EntryID": "RadioGroup49786",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Stöðugt",
+              "Value": "Stöðugt"
+            },
+            {
+              "Label": "Oft",
+              "Value": "Oft"
+            },
+            {
+              "Label": "Stundum",
+              "Value": "Stundum"
+            },
+            {
+              "Label": "Sjaldan",
+              "Value": "Sjaldan"
+            },
+            {
+              "Label": "Aldrei",
+              "Value": "Aldrei"
+            }
+          ],
+          "Question": "Hversu oft á síðustu 4 vikum fannstu fyrir þreytu/orkuleysi?",
+          "Description": null,
+          "EntryID": "RadioGroup48702",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Value1"
+            },
+            {
+              "Label": "Já",
+              "Value": "Value2"
+            }
+          ],
+          "Question": "Hreyfir þú þig reglulega?",
+          "Description": null,
+          "EntryID": "RadioGroup49787",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Lágmarks áreynsla (Athafnir daglegs lífs. Geng inni og úti ca 200 m á undir 5 mín)",
+              "Value": "Lágmarks áreynsla (Athafnir daglegs lífs. Geng inni og úti ca 200 m á undir 5 mín)"
+            },
+            {
+              "Label": "Miðlungs áreynsla (Geng stiga eina hæð án vandamála. Geng á jafnsléttu 6 km/klst)",
+              "Value": "Miðlungs áreynsla (Geng stiga eina hæð án vandamála. Geng á jafnsléttu 6 km/klst)"
+            },
+            {
+              "Label": "Mikil áreynsla (Syndi og hjóla. Þung líkamleg vinna)",
+              "Value": "Mikil áreynsla (Syndi og hjóla. Þung líkamleg vinna)"
+            }
+          ],
+          "Question": "Hversu mikið álag þolir þú?",
+          "Description": null,
+          "EntryID": "RadioGroup36835",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "Lágmarks áreynsla: Klára athafnir daglegs lífs. Geng inni og úti ca 200 m á 3 til 4 mín\\nMiðlungs áreynsla: Geng stiga eina hæð án vandamála. Geng á jafnsléttu 6 km/klst\\nMikil áreynsla: Syndi og hjóla. Þung líkamleg vinna",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Hjarta- og æðasjúkdómur",
+              "Value": "Hjarta- og æðasjúkdómur"
+            },
+            {
+              "Label": "Lungnasjúkdómur",
+              "Value": "Lungnasjúkdómur"
+            },
+            {
+              "Label": "Stoðkerfið",
+              "Value": "Stoðkerfið"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Hvers vegna átt þú erfitt með hreyfingu?",
+          "Description": null,
+          "EntryID": "RadioGroup36836",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text49780"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Önnur ástæða, hver?",
+          "Description": null,
+          "EntryID": "Text49780",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað','@@@RadioGroup36836')",
+          "DependsOn": ["RadioGroup36836"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Ertu með hreyfiskerðingu?",
+          "Description": null,
+          "EntryID": "RadioGroup38490",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text38489"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvert er vandamálið?",
+          "Description": null,
+          "EntryID": "Text38489",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup38490')",
+          "DependsOn": ["RadioGroup38490"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Notar þú hjálpartæki? (t.d. hækjur, göngugrind, hjólastól)",
+          "Description": null,
+          "EntryID": "RadioGroup36837",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text36838"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvaða hjálpartæki?",
+          "Description": null,
+          "EntryID": "Text36838",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36837')",
+          "DependsOn": ["RadioGroup36837"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Reykir þú?",
+          "Description": null,
+          "EntryID": "RadioGroup36842",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text36843", "Text36844", "RadioGroup36845"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hversu lengi hefur þú reykt?",
+          "Description": null,
+          "EntryID": "Text36843",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36842')",
+          "DependsOn": ["RadioGroup36842"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hversu mikið reykir þú á dag?",
+          "Description": null,
+          "EntryID": "Text36844",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36842')",
+          "DependsOn": ["RadioGroup36842"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Hefur þú reykt?",
+          "Description": null,
+          "EntryID": "RadioGroup36845",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Nei','@@@RadioGroup36842')",
+          "DependsOn": ["RadioGroup36842"],
+          "Dependants": ["Text36846", "Text36847", "Text36848"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvenær hættir þú að reykja?",
+          "Description": null,
+          "EntryID": "Text36846",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36845')",
+          "DependsOn": ["RadioGroup36845"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hversu mörg ár reyktir þú?",
+          "Description": null,
+          "EntryID": "Text36847",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36845')",
+          "DependsOn": ["RadioGroup36845"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hversu mikið reyktir þú daglega?",
+          "Description": null,
+          "EntryID": "Text36848",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36845')",
+          "DependsOn": ["RadioGroup36845"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Value1"
+            },
+            {
+              "Label": "Já",
+              "Value": "Value2"
+            }
+          ],
+          "Question": "Notar þú munntóbak eða neftóbak?",
+          "Description": null,
+          "EntryID": "RadioGroup47841",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Veipar þú?",
+          "Description": null,
+          "EntryID": "RadioGroup36850",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Drekkur þú áfengi? ",
+          "Description": null,
+          "EntryID": "RadioGroup36851",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist47836"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "0-6 einingar á viku",
+              "Value": "0-6 einingar á viku"
+            },
+            {
+              "Label": "7-13 einingar á viku",
+              "Value": "7-13 einingar á viku"
+            },
+            {
+              "Label": "14-21 einingu á viku",
+              "Value": "14-21 einingu á viku"
+            },
+            {
+              "Label": "meira en 21 einingu á viku",
+              "Value": "meira en 21 einingu á viku"
+            }
+          ],
+          "Question": "Hve mikið áfengi drekkur þú að jafnaði á viku? (ein eining = 1 vínglas/1 bjór/einfaldur sterkur drykkur)",
+          "Description": null,
+          "EntryID": "Checklist47836",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36851')",
+          "DependsOn": ["RadioGroup36851"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Hefur þú neytt einhverra ávanabindandi lyfja?",
+          "Description": null,
+          "EntryID": "RadioGroup36852",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text36853"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvaða ávanabindandi lyfja hefur þú neytt?",
+          "Description": null,
+          "EntryID": "Text36853",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36852')",
+          "DependsOn": ["RadioGroup36852"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Lífstíll"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Ertu með lyfjaofnæmi?",
+          "Description": null,
+          "EntryID": "RadioGroup36824",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text36825", "RadioGroup36940"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvaða lyfi/lyfjum hefur þú ofnæmi fyrir?",
+          "Description": null,
+          "EntryID": "Text36825",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "'Já' == '@@@RadioGroup36824'",
+          "DependsOn": ["RadioGroup36824"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Lyfjaofnæmi staðfest með rannsókn",
+              "Value": "Lyfjaofnæmi staðfest með rannsókn"
+            },
+            {
+              "Label": "Lyfjaofnæmi ekki staðfest með rannsókn en sterkur grunur",
+              "Value": "Lyfjaofnæmi ekki staðfest með rannsókn en sterkur grunur"
+            }
+          ],
+          "Question": "Lyfjaofnæmi",
+          "Description": null,
+          "EntryID": "RadioGroup36940",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36824')",
+          "DependsOn": ["RadioGroup36824"],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Ertu með annars konar ofnæmi?",
+          "Description": null,
+          "EntryID": "RadioGroup47842",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text36832"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvers konar ofnæmi?",
+          "Description": null,
+          "EntryID": "Text36832",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "'Já' == '@@@RadioGroup47842'",
+          "DependsOn": ["RadioGroup47842"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Tekur þú lyfseðilsskyld lyf?",
+          "Description": null,
+          "EntryID": "RadioGroup36821",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text36822", "RadioGroup36823", "RadioGroup36827"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvaða lyf?",
+          "Description": null,
+          "EntryID": "Text36822",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36821')",
+          "DependsOn": ["RadioGroup36821"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Ertu að taka blóðþynningarlyf önnur en hjartamagnýl?",
+          "Description": null,
+          "EntryID": "RadioGroup36823",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "'Já' == '@@@RadioGroup36821'",
+          "DependsOn": ["RadioGroup36821"],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Ertu í lyfjaskömmtun?",
+          "Description": null,
+          "EntryID": "RadioGroup36827",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "'Já' == '@@@RadioGroup36821'",
+          "DependsOn": ["RadioGroup36821"],
+          "Dependants": ["Text36830"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvaða apótek sér um lyfjaskömmtunina (nafn og staðsetning)?",
+          "Description": null,
+          "EntryID": "Text36830",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36827')",
+          "DependsOn": ["RadioGroup36827"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Almennt fæði",
+              "Value": "Almennt fæði"
+            },
+            {
+              "Label": "Maukfæði",
+              "Value": "Maukfæði"
+            },
+            {
+              "Label": "Fljótandi fæði",
+              "Value": "Fljótandi fæði"
+            },
+            {
+              "Label": "Annað sérfæði",
+              "Value": "Annað sérfæði"
+            }
+          ],
+          "Question": "Mataræði",
+          "Description": null,
+          "EntryID": "RadioGroup47832",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text47833"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Annað sérfæði",
+          "Description": null,
+          "EntryID": "Text47833",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað sérfæði','@@@RadioGroup47832')",
+          "DependsOn": ["RadioGroup47832"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Fæðuóþol/ofnæmi",
+          "Description": null,
+          "EntryID": "RadioGroup47834",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text47835"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvaða fæðuóþol/ofnæmi?",
+          "Description": null,
+          "EntryID": "Text47835",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "'Já' == '@@@RadioGroup47834'",
+          "DependsOn": ["RadioGroup47834"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Tekur þú fæðubótaefni reglulega?",
+          "Description": null,
+          "EntryID": "RadioGroup36839",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text36840"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvaða fæðubótaefni tekur þú inn reglulega?",
+          "Description": null,
+          "EntryID": "Text36840",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36839')",
+          "DependsOn": ["RadioGroup36839"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Tekur þú lýsi?",
+          "Description": null,
+          "EntryID": "RadioGroup36841",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Lyf og ofnæmi"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Ertu í reglulegu eftirliti hjá sérfræðilækni?",
+          "Description": null,
+          "EntryID": "RadioGroup39699",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36855"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Augnlækni",
+              "Value": "Augnlækni"
+            },
+            {
+              "Label": "Geðlækni",
+              "Value": "Geðlækni"
+            },
+            {
+              "Label": "Hjartalækni",
+              "Value": "Hjartalækni"
+            },
+            {
+              "Label": "Innkirtlalækni (t.d. sykursýki/skjaldkirtla/nýrnahettu)",
+              "Value": "Innkirtlalækni (t.d. sykursýki/skjaldkirtla/nýrnahettu)"
+            },
+            {
+              "Label": "Krabbameinslækni",
+              "Value": "Krabbameinslækni"
+            },
+            {
+              "Label": "Lungnalækni",
+              "Value": "Lungnalækni"
+            },
+            {
+              "Label": "Meltingalækni",
+              "Value": "Meltingalækni"
+            },
+            {
+              "Label": "Nýrnalækni",
+              "Value": "Nýrnalækni"
+            },
+            {
+              "Label": "Taugalækni",
+              "Value": "Taugalækni"
+            },
+            {
+              "Label": "Annað en er nefnt hér að ofan",
+              "Value": "Annað en er nefnt hér að ofan"
+            }
+          ],
+          "Question": "Eftirlit hjá sérfræðilækni - merktu við það sem á við",
+          "Description": null,
+          "EntryID": "Checklist36855",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39699')",
+          "DependsOn": ["RadioGroup39699"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Hefur þú verið svæfð/ur?",
+          "Description": null,
+          "EntryID": "RadioGroup36857",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36858"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já, öndunarvegavandamál",
+              "Value": "Já, öndunarvegavandamál"
+            },
+            {
+              "Label": "Já, æðaaðgengi",
+              "Value": "Já, æðaaðgengi"
+            },
+            {
+              "Label": "Já, ógleði eftir aðgerð",
+              "Value": "Já, ógleði eftir aðgerð"
+            },
+            {
+              "Label": "Já,illkynja háhiti (Malignant hyperthermia)",
+              "Value": "Já,illkynja háhiti (Malignant hyperthermia)"
+            }
+          ],
+          "Question": "Voru einhver vandamál tengd svæfingunni?",
+          "Description": null,
+          "EntryID": "Checklist36858",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36857')",
+          "DependsOn": ["RadioGroup36857"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Hefur þú farið i skurðaðgerð?",
+          "Description": null,
+          "EntryID": "RadioGroup37717",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36861"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Bakaðgerð",
+              "Value": "Bakaðgerð"
+            },
+            {
+              "Label": "Heilaaðgerð",
+              "Value": "Heilaaðgerð"
+            },
+            {
+              "Label": "Hjartaaðgerð",
+              "Value": "Hjartaaðgerð"
+            },
+            {
+              "Label": "Keisaraskurðaðgerð",
+              "Value": "Keisaraskurðaðgerð"
+            },
+            {
+              "Label": "Kransæðavíkkun",
+              "Value": "Kransæðavíkkun"
+            },
+            {
+              "Label": "Kvensjúkdómaaðgerð",
+              "Value": "Kvensjúkdómaaðgerð"
+            },
+            {
+              "Label": "Kviðarholsaðgerð",
+              "Value": "Kviðarholsaðgerð"
+            },
+            {
+              "Label": "Liðskiptaaðgerð",
+              "Value": "Liðskiptaaðgerð"
+            },
+            {
+              "Label": "Lungnaaðgerð",
+              "Value": "Lungnaaðgerð"
+            },
+            {
+              "Label": "Nýrna-/þvagfæraaðgerð",
+              "Value": "Nýrna-/þvagfæraaðgerð"
+            },
+            {
+              "Label": "Skjaldkirtilsaðgerð",
+              "Value": "Skjaldkirtilsaðgerð"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Hvað af eftirfarandi skurðaðgerðum hefur þú farið í?",
+          "Description": null,
+          "EntryID": "Checklist36861",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup37717')",
+          "DependsOn": ["RadioGroup37717"],
+          "Dependants": ["Text36862"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Aðrar aðgerðir?",
+          "Description": null,
+          "EntryID": "Text36862",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36861)",
+          "DependsOn": ["Checklist36861"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Óviss",
+              "Value": "Óviss"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Hefur þú fengið mænudeyfingu?",
+          "Description": null,
+          "EntryID": "RadioGroup36859",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["RadioGroup36860"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Óviss",
+              "Value": "Óviss"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Manstu eftir vandamálum tengdum mænudeyfingum?",
+          "Description": null,
+          "EntryID": "RadioGroup36860",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36859')",
+          "DependsOn": ["RadioGroup36859"],
+          "Dependants": ["Text39609"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Ef já, hvað?",
+          "Description": null,
+          "EntryID": "Text39609",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36860')",
+          "DependsOn": ["RadioGroup36860"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Óviss",
+              "Value": "Óviss"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Hefur þú fengið blóðgjöf?",
+          "Description": null,
+          "EntryID": "RadioGroup36863",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Value1"
+            },
+            {
+              "Label": "Já",
+              "Value": "Value2"
+            }
+          ],
+          "Question": "Ef nauðsyn krefur ert þú samþykk/ur blóðgjöf?",
+          "Description": null,
+          "EntryID": "RadioGroup49784",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Lækniseftirlit, aðgerðir og sjúkrahúsdvöl"
+    },
+    {
+      "Questions": [
+        {
+          "Options": null,
+          "Question": "Spurningar um sjúkdóma eftir líffærakerfum",
+          "Description": null,
+          "EntryID": "Label49782",
+          "Type": "Label",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": null,
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Geðræn vandamál",
+          "Description": null,
+          "EntryID": "RadioGroup39649",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist47837"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Athyglisbrestur/ADHD",
+              "Value": "Athyglisbrestur/ADHD"
+            },
+            {
+              "Label": "Depurð/þunglyndi",
+              "Value": "Depurð/þunglyndi"
+            },
+            {
+              "Label": "Fíknivandi",
+              "Value": "Fíknivandi"
+            },
+            {
+              "Label": "Geðhvarfasýki",
+              "Value": "Geðhvarfasýki"
+            },
+            {
+              "Label": "Kvíði",
+              "Value": "Kvíði"
+            },
+            {
+              "Label": "Svefnvandamál",
+              "Value": "Svefnvandamál"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Geðræn vandamál - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist47837",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39649')",
+          "DependsOn": ["RadioGroup39649"],
+          "Dependants": ["Text36869"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36869",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist47837)",
+          "DependsOn": ["Checklist47837"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Geðræn vandamál"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Lungna- og öndunarfærasjúkdómar ",
+          "Description": null,
+          "EntryID": "RadioGroup39651",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist47838"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Astmi",
+              "Value": "Astmi"
+            },
+            {
+              "Label": "Hrotur",
+              "Value": "Hrotur"
+            },
+            {
+              "Label": "Kæfisvefn",
+              "Value": "Kæfisvefn"
+            },
+            {
+              "Label": "Kæfisvefnsvél heima",
+              "Value": "Kæfisvefnsvél heima"
+            },
+            {
+              "Label": "Lungnaþemba",
+              "Value": "Lungnaþemba"
+            },
+            {
+              "Label": "Mæði",
+              "Value": "Mæði"
+            },
+            {
+              "Label": "Saga um berkla",
+              "Value": "Saga um berkla"
+            },
+            {
+              "Label": "Tíðar lungnabólgur",
+              "Value": "Tíðar lungnabólgur"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Lungna og öndunarsjúkdómar - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist47838",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39651')",
+          "DependsOn": ["RadioGroup39651"],
+          "Dependants": ["Text36875"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36875",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað','@@@Checklist47838')",
+          "DependsOn": ["Checklist47838"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Lungna- og öndunarfærasjúkdómar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Miðtaugakerfis- og/eða hrörnunarsjúkdómar",
+          "Description": null,
+          "EntryID": "RadioGroup39650",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36871"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Alzheimer",
+              "Value": "Alzheimer"
+            },
+            {
+              "Label": "Flogaveiki",
+              "Value": "Flogaveiki"
+            },
+            {
+              "Label": "Jafnvægistruflun/Svimi",
+              "Value": "Jafnvægistruflun/Svimi"
+            },
+            {
+              "Label": "Lömun/Helftarlömun",
+              "Value": "Lömun/Helftarlömun"
+            },
+            {
+              "Label": "Minnistruflanir",
+              "Value": "Minnistruflanir"
+            },
+            {
+              "Label": "MND (motor neuron disease)",
+              "Value": "MND (motor neuron disease)"
+            },
+            {
+              "Label": "MS (multiple sclerosis)",
+              "Value": "MS (multiple sclerosis)"
+            },
+            {
+              "Label": "Muscular dystrophy",
+              "Value": "Muscular dystrophy"
+            },
+            {
+              "Label": "Mænuskaði",
+              "Value": "Mænuskaði"
+            },
+            {
+              "Label": "Parkinsons sjúkdómur",
+              "Value": "Parkinsons sjúkdómur"
+            },
+            {
+              "Label": "Þekktur æðagúll í heila",
+              "Value": "Þekktur æðagúll í heila"
+            },
+            {
+              "Label": "Æðaáfall (blóðtappi til heila/heilablæðing)",
+              "Value": "Æðaáfall (blóðtappi til heila/heilablæðing)"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Miðtaugakerfis- og/eða hrörnunarsjúkdómar - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist36871",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39650')",
+          "DependsOn": ["RadioGroup39650"],
+          "Dependants": ["Text36872"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36872",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36871)",
+          "DependsOn": ["Checklist36871"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Miðtaugakerfis- og/eða hrörnunarsjúkdómar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Hjartasjúkdómar",
+          "Description": null,
+          "EntryID": "RadioGroup39652",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36877"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Brjóstverkir við áreynslu",
+              "Value": "Brjóstverkir við áreynslu"
+            },
+            {
+              "Label": "Farið í brennslu á leiðslubrautum í hjarta",
+              "Value": "Farið í brennslu á leiðslubrautum í hjarta"
+            },
+            {
+              "Label": "Gangráður/bjargráður",
+              "Value": "Gangráður/bjargráður"
+            },
+            {
+              "Label": "Háþrýstingur",
+              "Value": "Háþrýstingur"
+            },
+            {
+              "Label": "Hjartabilun",
+              "Value": "Hjartabilun"
+            },
+            {
+              "Label": "Hjartalokusjúkdómur",
+              "Value": "Hjartalokusjúkdómur"
+            },
+            {
+              "Label": "Hjartsláttaróregla",
+              "Value": "Hjartsláttaróregla"
+            },
+            {
+              "Label": "Kransæðasjúkdómur",
+              "Value": "Kransæðasjúkdómur"
+            },
+            {
+              "Label": "Meðfæddir hjartagallar",
+              "Value": "Meðfæddir hjartagallar"
+            },
+            {
+              "Label": "Mæði",
+              "Value": "Mæði"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Hjartasjúkdómar - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist36877",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39652')",
+          "DependsOn": ["RadioGroup39652"],
+          "Dependants": ["Text36878"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36878",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36877)",
+          "DependsOn": ["Checklist36877"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Hjartasjúkdómar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Æðasjúkdómar",
+          "Description": null,
+          "EntryID": "RadioGroup39653",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36880"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Bláæðar fjarlægðar úr fótleggjum",
+              "Value": "Bláæðar fjarlægðar úr fótleggjum"
+            },
+            {
+              "Label": "Brjósthol/ósæð",
+              "Value": "Brjósthol/ósæð"
+            },
+            {
+              "Label": "Fótleggir",
+              "Value": "Fótleggir"
+            },
+            {
+              "Label": "Háls",
+              "Value": "Háls"
+            },
+            {
+              "Label": "Höfuð",
+              "Value": "Höfuð"
+            },
+            {
+              "Label": "Kviðarhol - ósæð/kviðarholslíffæraæðar",
+              "Value": "Kviðarhol - ósæð/kviðarholslíffæraæðar"
+            },
+            {
+              "Label": "Æðahnútar",
+              "Value": "Æðahnútar"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Æðasjúkdómar - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist36880",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39653')",
+          "DependsOn": ["RadioGroup39653"],
+          "Dependants": ["Text36881"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36881",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36880)",
+          "DependsOn": ["Checklist36880"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Æðasjúkdómar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Meltingasjúkdómar",
+          "Description": null,
+          "EntryID": "RadioGroup39654",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36883"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Bakflæði",
+              "Value": "Bakflæði"
+            },
+            {
+              "Label": "Chrons/Colitis ulcerosa",
+              "Value": "Chrons/Colitis ulcerosa"
+            },
+            {
+              "Label": "Hægðatregða",
+              "Value": "Hægðatregða"
+            },
+            {
+              "Label": "Lifrar-/gall-/brissjúkdómur",
+              "Value": "Lifrar-/gall-/brissjúkdómur"
+            },
+            {
+              "Label": "Magabólgur/magasár",
+              "Value": "Magabólgur/magasár"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Meltingarsjúkdómar - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist36883",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39654')",
+          "DependsOn": ["RadioGroup39654"],
+          "Dependants": ["Text36884"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36884",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36883)",
+          "DependsOn": ["Checklist36883"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Meltingarsjúkdómar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            },
+            {
+              "Label": "Á ekki við",
+              "Value": "Á ekki við"
+            }
+          ],
+          "Question": "Kvensjúkdómar ",
+          "Description": null,
+          "EntryID": "RadioGroup39655",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36886"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Blæðingarvandamál",
+              "Value": "Blæðingarvandamál"
+            },
+            {
+              "Label": "Blöðru-/leg-/endaþarmssig",
+              "Value": "Blöðru-/leg-/endaþarmssig"
+            },
+            {
+              "Label": "Endometriosa",
+              "Value": "Endometriosa"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Kvensjúkdómar - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist36886",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39655')",
+          "DependsOn": ["RadioGroup39655"],
+          "Dependants": ["Text36887"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36887",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36886)",
+          "DependsOn": ["Checklist36886"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Kvensjúkdómar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Þvag- og kynfærasjúkdómar",
+          "Description": null,
+          "EntryID": "RadioGroup39688",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36889"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Blóð-/kviðskilun",
+              "Value": "Blóð-/kviðskilun"
+            },
+            {
+              "Label": "Blöðruhálskirtils vandamál",
+              "Value": "Blöðruhálskirtils vandamál"
+            },
+            {
+              "Label": "Endurteknar þvagfærasýkingar",
+              "Value": "Endurteknar þvagfærasýkingar"
+            },
+            {
+              "Label": "Nýrnabilun",
+              "Value": "Nýrnabilun"
+            },
+            {
+              "Label": "Nýrnasjúkdómar",
+              "Value": "Nýrnasjúkdómar"
+            },
+            {
+              "Label": "Nýrnasteinar",
+              "Value": "Nýrnasteinar"
+            },
+            {
+              "Label": "Þvagblöðru vandamál",
+              "Value": "Þvagblöðru vandamál"
+            },
+            {
+              "Label": "Þvagleki",
+              "Value": "Þvagleki"
+            },
+            {
+              "Label": "Þvagtregða",
+              "Value": "Þvagtregða"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Þvag- og kynfærasjúkdómar - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist36889",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "'Já' == '@@@RadioGroup39688'",
+          "DependsOn": ["RadioGroup39688"],
+          "Dependants": ["Text36890"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36890",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36889)",
+          "DependsOn": ["Checklist36889"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Þvag- og kynfærasjúkdómar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Blóðsjúkdómar ",
+          "Description": null,
+          "EntryID": "RadioGroup39689",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36892"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Blóðleysi",
+              "Value": "Blóðleysi"
+            },
+            {
+              "Label": "Blóðsega vandamál",
+              "Value": "Blóðsega vandamál"
+            },
+            {
+              "Label": "Blóðstorku vandamál",
+              "Value": "Blóðstorku vandamál"
+            },
+            {
+              "Label": "Járnskortur",
+              "Value": "Járnskortur"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Blóðsjúkdómar - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist36892",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39689')",
+          "DependsOn": ["RadioGroup39689"],
+          "Dependants": ["Text36893"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36893",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36892)",
+          "DependsOn": ["Checklist36892"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Blóðsjúkdómar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já ",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Innkirtlasjúkdómar ",
+          "Description": null,
+          "EntryID": "RadioGroup39690",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36895"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nýrnahettusjúkdómur",
+              "Value": "Nýrnahettusjúkdómur"
+            },
+            {
+              "Label": "Skjaldkirtilssjúkdómur",
+              "Value": "Skjaldkirtilssjúkdómur"
+            },
+            {
+              "Label": "Sykursýki",
+              "Value": "Sykursýki"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Innkirtlasjúkdómar - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist36895",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39690')",
+          "DependsOn": ["RadioGroup39690"],
+          "Dependants": ["Text36896"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36896",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36895)",
+          "DependsOn": ["Checklist36895"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Innkirtlasjúkdómar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Stoðkerfissjúkdómar",
+          "Description": null,
+          "EntryID": "RadioGroup39691",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36898"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Slitgigt",
+              "Value": "Slitgigt"
+            },
+            {
+              "Label": "Sterasprautur í lið s.l. 3 mánuði",
+              "Value": "Sterasprautur í lið s.l. 3 mánuði"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Stoðkerfissjúkdómar - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist36898",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39691')",
+          "DependsOn": ["RadioGroup39691"],
+          "Dependants": ["Text36899"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36899",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36898)",
+          "DependsOn": ["Checklist36898"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Stoðkerfissjúkdómar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Sýkingar ",
+          "Description": null,
+          "EntryID": "RadioGroup39692",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Checklist36902"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Endurteknar öndunarfærasýkingar síðastliðið ár",
+              "Value": "Endurteknar öndunarfærasýkingar síðastliðið ár"
+            },
+            {
+              "Label": "HIV / lifrarbólga C",
+              "Value": "HIV / lifrarbólga C"
+            },
+            {
+              "Label": "MÓSA/ESBL/VRE",
+              "Value": "MÓSA/ESBL/VRE"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Sýkingar - merktu við það sem á við:",
+          "Description": null,
+          "EntryID": "Checklist36902",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup39692')",
+          "DependsOn": ["RadioGroup39692"],
+          "Dependants": ["Text36903"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36903",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36902)",
+          "DependsOn": ["Checklist36902"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Sýkingar"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Hefur þú greinst með krabbamein?",
+          "Description": null,
+          "EntryID": "RadioGroup36934",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text36909"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvers konar krabbamein?",
+          "Description": null,
+          "EntryID": "Text36909",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36934')",
+          "DependsOn": ["RadioGroup36934"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Er þekkt fjölskyldusaga um krabbamein?",
+          "Description": null,
+          "EntryID": "RadioGroup37718",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Krabbamein"
+    },
+    {
+      "Questions": [
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Ertu með aðra sjúkdóma sem ekki hefur verið spurt um?",
+          "Description": null,
+          "EntryID": "RadioGroup36911",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text36912"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvaða sjúkdóm/a?",
+          "Description": null,
+          "EntryID": "Text36912",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Já','@@@RadioGroup36911')",
+          "DependsOn": ["RadioGroup36911"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Annað"
+    },
+    {
+      "Questions": [
+        {
+          "Options": null,
+          "Question": "Spurningar um félagslegar aðstæður",
+          "Description": null,
+          "EntryID": "Label49783",
+          "Type": "Label",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": null,
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Nei"
+            },
+            {
+              "Label": "Já",
+              "Value": "Já"
+            }
+          ],
+          "Question": "Býrðu ein/-n?",
+          "Description": null,
+          "EntryID": "RadioGroup36942",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text47839"],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Með hverjum",
+          "Description": null,
+          "EntryID": "Text47839",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Nei',@@@RadioGroup36942)",
+          "DependsOn": ["RadioGroup36942"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Value1"
+            },
+            {
+              "Label": "Já",
+              "Value": "Value2"
+            }
+          ],
+          "Question": "Þarftu aðstoð við dagleg verk og athafnir?",
+          "Description": null,
+          "EntryID": "RadioGroup48703",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Nei",
+              "Value": "Value1"
+            },
+            {
+              "Label": "Já",
+              "Value": "Value2"
+            }
+          ],
+          "Question": "Geturðu treyst á einhvern þér nákominn ef þörf krefur?",
+          "Description": null,
+          "EntryID": "RadioGroup48704",
+          "Type": "SingleSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": null,
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Heimsendan mat",
+              "Value": "Heimsendan mat"
+            },
+            {
+              "Label": "Aðstoð ættingja",
+              "Value": "Aðstoð ættingja"
+            },
+            {
+              "Label": "Heimahjúkrun",
+              "Value": "Heimahjúkrun"
+            },
+            {
+              "Label": "Heimilisaðstoð",
+              "Value": "Heimilisaðstoð"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Færðu utan að komandi stuðning inn á heimili þitt?",
+          "Description": null,
+          "EntryID": "Checklist36808",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text36809"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text36809",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist36808)",
+          "DependsOn": ["Checklist36808"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Er í vinnu",
+              "Value": "Er í vinnu"
+            },
+            {
+              "Label": "Er í skóla",
+              "Value": "Er í skóla"
+            },
+            {
+              "Label": "Er öryrki",
+              "Value": "Er öryrki"
+            },
+            {
+              "Label": "Er hætt/-ur að vinna vegna aldurs",
+              "Value": "Er hætt/-ur að vinna vegna aldurs"
+            },
+            {
+              "Label": "Annað",
+              "Value": "Annað"
+            }
+          ],
+          "Question": "Atvinna",
+          "Description": null,
+          "EntryID": "Checklist38586",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": ["Text38587"],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": null,
+          "Question": "Hvað annað?",
+          "Description": null,
+          "EntryID": "Text38587",
+          "Type": "String",
+          "MaxLength": 2048,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "isSelected('Annað',@@@Checklist38586)",
+          "DependsOn": ["Checklist38586"],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        },
+        {
+          "Options": [
+            {
+              "Label": "Ég sjálf/-ur",
+              "Value": "Ég sjálf/-ur"
+            },
+            {
+              "Label": "Forráðamaður",
+              "Value": "Forráðamaður"
+            },
+            {
+              "Label": "Maki/vinur/fjölskyldumeðlimur",
+              "Value": "Maki/vinur/fjölskyldumeðlimur"
+            },
+            {
+              "Label": "Heilbrigðisstarfsmaður",
+              "Value": "Heilbrigðisstarfsmaður"
+            },
+            {
+              "Label": "Annar",
+              "Value": "Annar"
+            }
+          ],
+          "Question": "Hver fyllti út spurningalistann/eyðublaðið?",
+          "Description": null,
+          "EntryID": "Checklist39697",
+          "Type": "MultiSelect",
+          "MaxLength": null,
+          "Required": false,
+          "MinValue": null,
+          "MaxValue": null,
+          "Instructions": "",
+          "Visible": "",
+          "DependsOn": [],
+          "Dependants": [],
+          "Formula": "",
+          "PostLabel": null,
+          "Translations": "{}",
+          "ShowToPatient": "1",
+          "Slider": null,
+          "SendForCalculation": "0",
+          "HideTime": null,
+          "MonthYear": null,
+          "ShowTime": null
+        }
+      ],
+      "Caption": "Félagslegar aðstæður"
+    }
+  ],
+  "Header": "Heilsufarsupplýsingar vegna komu á Landspítala",
+  "Description": "Með þessum spurningalistum viljum við auka virðingu fyrir tíma þínum og starfsfólks okkar, auka skilvirkni við undirbúning og minnka endurtekningar. Enginn þekkir betur þína sögu en þú sjálf/-ur.\\nVið biðjum þig vinsamlegast að svara eftir bestu getu og senda okkur listann til baka innan fjögurra daga.\\nSvörin vistast í sjúkraskrá þinni og eru meðhöndluð sem trúnaðarmál ",
+  "FormID": "Form36806",
+  "GUID": "8a3cf4aa-2f95-4e55-a686-971f3d9c9f8e",
+  "AvailableTranslations": "",
+  "Translations": "{}"
+}

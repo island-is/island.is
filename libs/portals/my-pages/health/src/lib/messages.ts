@@ -1698,4 +1698,42 @@ export const messages = defineMessages({
     id: 'sp.health:renew-ehic-url',
     defaultMessage: 'https://island.is/evropska-sjukratryggingakortid',
   },
+  questionnaires: {
+    defaultMessage: 'Spurningalistar',
+    id: 'sp.health:questionnaires',
+  },
+  questionnairesIntro: {
+    defaultMessage:
+      'Hér getur þú fundið spurningalista sem tengjast heilsu þinni.',
+    id: 'sp.health:questionnaires-intro',
+  },
+  questionnaire: {
+    defaultMessage: 'Spurningalisti',
+    id: 'sp.health:questionnaire',
+  },
+  expiredQuestionnaire: {
+    defaultMessage: 'Útrunnið',
+    id: 'sp.health:expired-questionnaire',
+  },
+  answeredQuestionnaire: {
+    defaultMessage: 'Svarað',
+    id: 'sp.health:answered-questionnaire',
+  },
+  unAnsweredQuestionnaire: {
+    defaultMessage: 'Ósvarað',
+    id: 'sp.health:unanswered-questionnaire',
+  },
+  answer: {
+    defaultMessage: 'Svara',
+    id: 'sp.health:answer',
+  },
+  questionnaireNotFound: {
+    defaultMessage: 'Spurningalisti fannst ekki',
+    id: 'sp.health:questionnaire-not-found',
+  },
+  questionnaireNotFoundDetail: {
+    defaultMessage:
+      'Vinsamlegast athugaðu hvort slóðin sé rétt eða hafðu samband við þjónustuaðila.',
+    id: 'sp.health:questionnaire-not-found-detail',
+  },
 })
