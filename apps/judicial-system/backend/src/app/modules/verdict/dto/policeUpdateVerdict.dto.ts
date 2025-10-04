@@ -10,7 +10,10 @@ import {
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { VerdictServiceStatus } from '@island.is/judicial-system/types'
+import {
+  VerdictAppealDecision,
+  VerdictServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { nationalIdTransformer } from '../../../transformers'
 
@@ -43,4 +46,9 @@ export class PoliceUpdateVerdictDto {
   @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly deliveredToDefenderNationalId?: string
+
+  @IsOptional()
+  @IsEnum(VerdictAppealDecision)
+  @ApiPropertyOptional({ enum: VerdictAppealDecision })
+  readonly appealDecision?: VerdictAppealDecision
 }
