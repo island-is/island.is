@@ -3493,6 +3493,9 @@ export interface IOrganizationParentSubpageFields {
 
   /** Tiny Thumbnail Image */
   tinyThumbnailImage?: Asset | undefined
+
+  /** Short Description */
+  shortDescription?: string | undefined
 }
 
 /** Navigation page for content that belongs in multiple organization subpages */
@@ -3623,6 +3626,9 @@ export interface IOrganizationSubpageFields {
 
   /** Organization Parent Subpage */
   organizationParentSubpage?: IOrganizationParentSubpage | undefined
+
+  /** Short Description */
+  shortDescription?: string | undefined
 }
 
 export interface IOrganizationSubpage
