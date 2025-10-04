@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 
 import {
@@ -366,6 +373,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     )
   }
 
+  useEffect(() => {
+    if (isExpanded && !courtSession.isConfirmed) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [isExpanded, courtSession.isConfirmed])
+
   return (
     <AccordionItem
       id={`courtRecordAccordionItem-${courtSession.id}`}
@@ -376,7 +389,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       onToggle={onToggle}
     >
       <LayoutGroup>
-        <Box className={styles.containerGrid}>
+        <Box
+          id={`courtRecordAccordionItemFirstSection-${courtSession.id}`}
+          className={styles.containerGrid}
+        >
           <BlueBox>
             <div className={styles.grid}>
               <DateTime
