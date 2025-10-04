@@ -1,9 +1,9 @@
 import { Box, Divider, Text } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
-  IntroHeader,
   m,
   InfoLine,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -14,7 +14,7 @@ const LawAndOrderOverview = () => {
   const { formatMessage } = useLocale()
   return (
     <>
-      <IntroHeader
+      <IntroWrapper
         title={m.overview}
         intro={m.lawAndOrderDescription}
         serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}

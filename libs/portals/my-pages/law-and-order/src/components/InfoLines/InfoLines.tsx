@@ -1,16 +1,21 @@
 import React from 'react'
 
-import { Box, Divider, Link, Stack, Text } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
-import { InfoLine } from '@island.is/portals/my-pages/core'
 import {
-  LawAndOrderActionTypeEnum,
+  LawAndOrderAppealDecision,
   LawAndOrderGroup,
+  LawAndOrderItemType,
 } from '@island.is/api/schema'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { useNamespaces } from '@island.is/localization'
+import { RadioFormGroup } from './RadioButtonType'
+import { RenderItem } from './RenderItem'
+import { SubmitHandler } from '../../utils/types'
 
 interface Props {
   groups: Array<LawAndOrderGroup>
+  onFormSubmit?: SubmitHandler
   loading?: boolean
+  appealDecision?: LawAndOrderAppealDecision
 }
 
 const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
@@ -19,6 +24,17 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
   return (
     <Stack space={1}>
       {props.groups.map((x) => {
+        const hasRadioButtons = x.items?.some(
+          (y) => y.type === LawAndOrderItemType.RadioButton,
+        )
+        if (hasRadioButtons)
+          return (
+            <RadioFormGroup
+              group={x}
+              onFormSubmit={props.onFormSubmit}
+              appealDecision={props.appealDecision}
+            />
+          )
         return (
           <>
             <Box marginTop={4} />
@@ -34,41 +50,12 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
                       {x.label}
                     </Text>
                   )}
-                  <InfoLine
+                  <RenderItem
+                    key={i}
+                    item={y}
                     loading={props.loading}
-                    label={y.label ?? ''}
-                    content={y.value ?? ''}
-                    labelColumnSpan={['1/1', '5/12']}
-                    valueColumnSpan={['1/1', '4/12']}
-                    buttonColumnSpan={['3/12']}
-                    renderContent={() =>
-                      y.link ? (
-                        <Link
-                          underline="normal"
-                          underlineVisibility="always"
-                          href={y.link + y.value}
-                          color="blue400"
-                        >
-                          {y.value}
-                        </Link>
-                      ) : (
-                        <Text>{y.value}</Text>
-                      )
-                    }
-                    button={
-                      y.action?.type === LawAndOrderActionTypeEnum.url &&
-                      y.action?.title &&
-                      y.action.data
-                        ? {
-                            type: 'link',
-                            to: y.action?.data,
-                            label: y.action?.title,
-                            icon: 'arrowForward',
-                          }
-                        : undefined
-                    }
+                    dividerOnBottom={(x.items?.length ?? 0) - 1 === i}
                   />
-                  <Divider />
                 </>
               )
             })}
