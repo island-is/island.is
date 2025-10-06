@@ -987,7 +987,7 @@ export const OrganizationWrapper: React.FC<
   pageDescription,
   pageFeaturedImage,
   organizationPage,
-  breadcrumbItems,
+  breadcrumbItems: breadcrumbItemsProp,
   mainContent,
   sidebarContent,
   navigationData,
@@ -1045,6 +1045,22 @@ export const OrganizationWrapper: React.FC<
     organizationPage.organization?.canPagesBeFoundInSearchResults ??
     organizationPage.canBeFoundInSearchResults ??
     true
+
+  const sitemapContentTypeDeterminesNavigationAndBreadcrumbs = n(
+    'sitemapContentTypeDeterminesNavigationAndBreadcrumbs',
+    false,
+  )
+
+  let breadcrumbItems = breadcrumbItemsProp ?? []
+
+  if (sitemapContentTypeDeterminesNavigationAndBreadcrumbs) {
+    breadcrumbItems = (organizationPage.navigationLinks?.breadcrumbs ?? []).map(
+      (breadcrumb) => ({
+        title: breadcrumb.label,
+        href: breadcrumb.href,
+      }),
+    )
+  }
 
   return (
     <>
