@@ -128,7 +128,7 @@ export const createIndictmentCourtRecordPdf = (
       addNormalText(doc, 'Nr.', 'Times-Roman')
       addNumberedList(
         doc,
-        courtSession.filedDocuments.map((d) => d.name),
+        courtSession.filedDocuments.map((d) => d.name.normalize()),
         courtSession.filedDocuments[0].documentOrder,
       )
 
