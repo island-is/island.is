@@ -29,6 +29,12 @@ export class RentalAgreementService extends BaseTemplateApiService {
     return await fetchFinancialIndexationForMonths(months)
   }
 
+  async sendDraft({ application, auth }: TemplateApiModuleActionProps) {
+    return await this.homeApiWithAuth(auth).contractSendDraftPost({
+      contractId: application.id,
+    })
+  }
+
   async submitApplicationToHmsRentalService({
     application,
     auth,
