@@ -39,6 +39,7 @@ export class UserProfileService {
     private v2MeApi: V2MeApi,
     private v2UserProfileApi: V2UsersApi,
     private v2ActorApi: V2ActorApi,
+    // private v2DeviceTokenApi: V2DeviceTokensApi,
     private bankinfoClientService: BankinfoClientService,
   ) {}
 
@@ -294,11 +295,26 @@ export class UserProfileService {
   }
 
   deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
-    return this.v2MeUserProfileApiWithAuth(
-      user,
-    ).meUserProfileControllerDeleteDeviceToken({
-      deviceToken: input.deviceToken,
-    })
+    try {
+      return this.v2MeUserProfileApiWithAuth(
+        user,
+      ).meUserProfileControllerDeleteDeviceToken({
+        deviceToken: input.deviceToken,
+      })
+    } catch (error) {
+      // If the user is not authenticated, try the unauthenticated endpoint, this might happen if the refresh token expired and triggered a logout, then we need to delete the device token from the unauthenticated endpoint
+      if (error.status === 403) {
+        this.logger.info(
+          'Failed to delete device token, trying unauthenticated endpoint',
+          error,
+        )
+        // return this.v2DeviceTokenApi.deviceTokenControllerDeleteDeviceToken({
+        //   deviceToken: input.deviceToken,
+        // })
+      }
+      this.logger.error('Failed to delete device token', error)
+      throw error
+    }
   }
 
   async getUserProfileLocale(user: User) {
