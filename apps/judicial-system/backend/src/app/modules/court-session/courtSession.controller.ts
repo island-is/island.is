@@ -29,10 +29,10 @@ import {
 } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
 import { CourtSession } from '../repository'
+import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
 import { CourtSessionExistsGuard } from './guards/courtSessionExists.guard'
 import { CourtSessionService } from './courtSession.service'
-import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 
 @Controller('api/case/:caseId/courtSession')
 @ApiTags('court-sessions')
