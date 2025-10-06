@@ -8,8 +8,10 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/RegistrationInput" }
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationApplicationInput"
+              }
             }
           }
         },
@@ -461,9 +463,26 @@
             "type": "string",
             "description": "Reason ID for application",
             "example": "ec0ef194-0b74-4a91-adf1-a77f6a262097"
+          },
+          "additionalRequesters": {
+            "description": "national IDs of additional requesters",
+            "example": ["1234567890", "2345678901"],
+            "type": "array",
+            "items": { "type": "string" }
           }
         },
         "required": ["applicant", "selectedOrganizationId", "expectedStartDate"]
+      },
+      "RegistrationApplicationInput": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": { "type": "string", "format": "binary" }
+          },
+          "registration": { "$ref": "#/components/schemas/RegistrationInput" }
+        },
+        "required": ["registration"]
       },
       "FormSubmitSuccessModel": {
         "type": "object",
@@ -550,6 +569,32 @@
           "municipalityId"
         ]
       },
+      "ApplicationFeatureModel": {
+        "type": "object",
+        "properties": { "key": { "type": "string" } },
+        "required": ["key"]
+      },
+      "ApplicationFeatureConfig": {
+        "type": "object",
+        "properties": {
+          "applicationType": { "type": "string", "enum": ["registration"] },
+          "applicationFeatures": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationFeatureModel" }
+          }
+        },
+        "required": ["applicationType", "applicationFeatures"]
+      },
+      "ApplicationSettings": {
+        "type": "object",
+        "properties": {
+          "applicationConfigs": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationFeatureConfig" }
+          }
+        },
+        "required": ["applicationConfigs"]
+      },
       "OrganizationModel": {
         "type": "object",
         "properties": {
@@ -580,7 +625,11 @@
           "unitId": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true },
           "phone": { "type": "string", "nullable": true },
-          "website": { "type": "string", "nullable": true }
+          "website": { "type": "string", "nullable": true },
+          "settings": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationSettings" }]
+          }
         },
         "required": [
           "id",
@@ -595,7 +644,8 @@
           "unitId",
           "email",
           "phone",
-          "website"
+          "website",
+          "settings"
         ]
       },
       "HealthProfileModel": {
