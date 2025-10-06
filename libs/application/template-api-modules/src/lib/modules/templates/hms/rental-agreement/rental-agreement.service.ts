@@ -31,9 +31,9 @@ export class RentalAgreementService extends BaseTemplateApiService {
   }
 
   async sendDraft({ application, auth }: TemplateApiModuleActionProps) {
-    if (isRunningOnEnvironment('local')) {
-      // Don't send draft when running locally because
-      // the application will not exist on the system HMS is calling
+    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+      // Don't send draft when running locally or on dev because
+      // the application will not exist on the system HMS is calling which is prod or staging
       return
     }
 
