@@ -125,6 +125,7 @@ initContainer:
 namespace: 'identity-server'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 pvcs: []
 replicaCount:
   default: 6
