@@ -81,7 +81,7 @@ const academicBackgroundSchema = z.object({
 
 const drivingLicensesSchema = z.object({
   drivingLicenseType: z.array(z.string()).optional(),
-  heavyMachineryLicenses: z.array(z.string()).optional(),
+  heavyMachineryLicenses: z.array(z.string()).nullish(),
   hasDrivingLicense: z.array(z.enum([YES])).optional(),
   hasHeavyMachineryLicense: z.array(z.enum([YES])).optional(),
 })
