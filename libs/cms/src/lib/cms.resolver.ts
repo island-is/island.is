@@ -1091,99 +1091,6 @@ export class FeaturedGenericListItemsResolver {
 export class OrganizationPageResolver {
   constructor(private readonly cmsContentfulService: CmsContentfulService) {}
 
-  // private depthFirstSearch(nodes: SitemapTreeNode[], entries: unknown[]) {
-  //   for (const node of nodes) {
-  //     if (node.type === SitemapTreeNodeType.CATEGORY) {
-  //       const category = entries.find((entry) => entry.sys.id === node.entryId)
-  //     }
-  //   }
-  // }
-
-  private getTopLinks(organizationPage: OrganizationPage, entries: unknown[]) {
-    // const nodes = organizationPage.navigationLinks?.childNodes ?? []
-
-    // const topLinks: TopLink[] = nodes.map((node) => {
-    //   if (node.type === SitemapTreeNodeType.CATEGORY) {
-    //     return {
-    //       label: node.label,
-    //       href: `/${getOrganizationPageUrlPrefix(
-    //         organizationPage.lang ?? 'is',
-    //       )}/${organizationPage.slug}/${node.slug}`,
-    //       midLinks: [],
-    //     }
-    //   }
-    // })
-
-    // for (const node of nodes) {
-    //   if (node.type === SitemapTreeNodeType.CATEGORY) {
-    //     const category = entries.find((entry) => entry.sys.id === node.entryId)
-    //   }
-    // }
-
-    // {
-    //   let nodes = organizationPage.navigationLinks?.childNodes ?? []
-
-    //   for (let i = 0; i < 3; i += 1) {
-    //     const slug = slugs[i]
-    //     if (!slug) {
-    //       break
-    //     }
-    //     let category: SitemapTreeNode | null = null
-    //     let midLinks: MidLink[] = []
-    //     for (const node of nodes) {
-    //       if (
-    //         node.type === SitemapTreeNodeType.CATEGORY &&
-    //         node.slug === slug
-    //       ) {
-    //         category = node
-    //         midLinks = []
-    //         topLinks.push({
-    //           label: lang === 'is' ? node.label : node.labelEN ?? '',
-    //           href: `/${getOrganizationPageUrlPrefix(lang)}/${
-    //             organizationPage.slug
-    //           }/${slug}`,
-    //           midLinks: midLinks,
-    //         })
-
-    //         continue
-    //       }
-
-    //       if (
-    //         node.type === SitemapTreeNodeType.ENTRY &&
-    //         Boolean(node.entryId)
-    //       ) {
-    //         const entry = entries.find((entry) => entry.sys.id === node.entryId)
-    //         if (
-    //           !(
-    //             entry?.sys.contentType.sys.id === 'organizationParentSubpage' ||
-    //             entry?.sys.contentType.sys.id === 'organizationSubpage'
-    //           )
-    //         ) {
-    //           continue
-    //         }
-
-    //         const link = generateOrganizationSubpageLink(
-    //           entry as IOrganizationParentSubpage | IOrganizationSubpage,
-    //         )
-    //         if (!link) {
-    //           continue
-    //         }
-    //         topLinks.push({
-    //           label: link.text,
-    //           href: link.url,
-    //           midLinks: [],
-    //         })
-    //       }
-    //     }
-    //     if (!category) {
-    //       break
-    //     }
-    //     nodes = category?.childNodes ?? []
-    //   }
-    // }
-    return []
-  }
-
   private getNodeSlug(
     node: SitemapTreeNode,
     lang: string,
@@ -1305,10 +1212,6 @@ export class OrganizationPageResolver {
       category = node
     }
 
-    if (breadcrumbs.length > 2) {
-      breadcrumbs.pop()
-    }
-
     return breadcrumbs
   }
 
@@ -1343,6 +1246,80 @@ export class OrganizationPageResolver {
     return Array.from(entryIds)
   }
 
+  private getNodeLabelAndHref(
+    node: SitemapTreeNode,
+    lang: string,
+    organizationPage: OrganizationPage,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ) {
+    if (node.type === SitemapTreeNodeType.CATEGORY)
+      return {
+        label: lang === 'en' ? node.labelEN : node.label,
+        href: `/${getOrganizationPageUrlPrefix(lang)}/${
+          organizationPage.slug
+        }/${node.slug}`,
+      }
+    if (node.type === SitemapTreeNodeType.URL)
+      // TODO: Resolve custom url types
+      return {
+        label: lang === 'en' ? node.labelEN : node.label,
+        href: lang === 'en' ? node.urlEN : node.url,
+      }
+    if (node.type === SitemapTreeNodeType.ENTRY) {
+      const entryItem = entryMap.get(node.entryId)
+      if (!entryItem)
+        return {
+          label: '',
+          href: '',
+        }
+      return {
+        label: entryItem.link.label,
+        href: entryItem.link.href,
+      }
+    }
+    return {
+      label: '',
+      href: '',
+    }
+  }
+
+  private getTopLinks(
+    organizationPage: OrganizationPage,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ): TopLink[] {
+    const lang = organizationPage.lang ?? 'is'
+    return (
+      organizationPage.navigationLinks?.childNodes?.map((node) => {
+        const { label, href } = this.getNodeLabelAndHref(
+          node,
+          lang,
+          organizationPage,
+          entryMap,
+        )
+        if (!label || !href) return null
+        return {
+          label,
+          href,
+          midLinks: node.childNodes
+            .map((childNode) => {
+              const { label, href } = this.getNodeLabelAndHref(
+                childNode,
+                lang,
+                organizationPage,
+                entryMap,
+              )
+              if (!label || !href) return null
+              return {
+                label,
+                href,
+              } as MidLink
+            })
+            .filter(Boolean) as MidLink[],
+        } as TopLink
+      }) ?? []
+    ).filter(Boolean) as TopLink[]
+  }
+
   @ResolveField(() => NavigationLinks, { nullable: true })
   async navigationLinks(@Parent() organizationPage: OrganizationPage) {
     const lang = organizationPage.lang ?? 'is'
@@ -1370,8 +1347,14 @@ export class OrganizationPageResolver {
 
     const breadcrumbs = this.getBreadcrumbs(organizationPage, entryMap)
 
+    const topLinks = this.getTopLinks(organizationPage, entryMap)
+
+    if (breadcrumbs.length > 2) {
+      breadcrumbs.pop()
+    }
+
     return {
-      topLinks: [],
+      topLinks,
       breadcrumbs,
     }
   }
