@@ -6,6 +6,7 @@ import {
   Headers,
   Delete,
   Param,
+  HttpCode,
 } from '@nestjs/common'
 
 import {
@@ -79,6 +80,7 @@ export class UserTokenController {
     },
     response: { status: 204 },
   })
+  @HttpCode(204)
   async deleteDeviceToken(
     @Headers('X-Param-National-Id') nationalId: string | undefined,
     @Param('deviceToken') deviceToken: string,

@@ -39,7 +39,6 @@ export class UserProfileService {
     private v2MeApi: V2MeApi,
     private v2UserProfileApi: V2UsersApi,
     private v2ActorApi: V2ActorApi,
-    // private v2DeviceTokenApi: V2DeviceTokensApi,
     private bankinfoClientService: BankinfoClientService,
   ) {}
 
@@ -294,9 +293,9 @@ export class UserProfileService {
     })
   }
 
-  deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
+  async deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
     try {
-      return this.v2MeUserProfileApiWithAuth(
+      return await this.v2MeUserProfileApiWithAuth(
         user,
       ).meUserProfileControllerDeleteDeviceToken({
         deviceToken: input.deviceToken,
@@ -308,9 +307,11 @@ export class UserProfileService {
           'Failed to delete device token, trying unauthenticated endpoint',
           error,
         )
-        // return this.v2DeviceTokenApi.deviceTokenControllerDeleteDeviceToken({
-        //   deviceToken: input.deviceToken,
-        // })
+        return await this.v2UserProfileApi.userTokenControllerDeleteDeviceToken(
+          {
+            deviceToken: input.deviceToken,
+          },
+        )
       }
       this.logger.error('Failed to delete device token', error)
       throw error
