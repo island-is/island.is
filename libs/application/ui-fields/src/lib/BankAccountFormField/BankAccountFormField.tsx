@@ -168,9 +168,7 @@ export const BankAccountFormField = ({
       selectIfHasValue(accountRef.current)
     }
   }
-  const handleAccountChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleAccountChange = () => {
     setLocalAccountError(undefined)
   }
 
