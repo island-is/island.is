@@ -81,11 +81,11 @@ export const BankAccountFormField = ({
 
   // Prefer local (per-field) errors, then component-level, then RHF field errors
   const useBankNumberError =
-    localBankError ?? safeComponentError ?? safeBankNumberError
+    safeBankNumberError ?? localBankError ?? safeComponentError
   const useLedgerError =
-    localLedgerError ?? safeComponentError ?? safeLedgerError
+    safeLedgerError ?? localLedgerError ?? safeComponentError
   const useAccountNumberError =
-    localAccountError ?? safeComponentError ?? safeAccountNumberError
+    safeAccountNumberError ?? localAccountError ?? safeComponentError
 
   const bankRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null)
   const ledgerRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null)
@@ -153,6 +153,7 @@ export const BankAccountFormField = ({
   const handleBankChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    setLocalBankError(undefined)
     if (digits(e.target.value).length >= BANK_LEN) {
       ledgerRef.current?.focus()
       selectIfHasValue(ledgerRef.current)
@@ -161,6 +162,7 @@ export const BankAccountFormField = ({
   const handleLedgerChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    setLocalLedgerError(undefined)
     if (digits(e.target.value).length >= LEDGER_LEN) {
       accountRef.current?.focus()
       selectIfHasValue(accountRef.current)
@@ -169,9 +171,7 @@ export const BankAccountFormField = ({
   const handleAccountChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    if (digits(e.target.value).length >= ACCOUNT_LEN) {
-      accountRef.current?.blur()
-    }
+    setLocalAccountError(undefined)
   }
 
   return (
