@@ -66,7 +66,6 @@ export class ApplicationChargeService {
           await this.chargeFjsV2ClientService.deleteCharge(chargeId)
         }
       }
-
     } catch (error) {
       this.logger.error(
         `Application charge delete error on id ${application.id}`,

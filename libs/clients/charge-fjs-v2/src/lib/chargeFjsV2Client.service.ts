@@ -1,16 +1,26 @@
-import {Inject, Injectable} from '@nestjs/common'
-import {ChargeStatusByRequestIDrequestIDGETResponse, ChargeStatusResultStatusEnum, DefaultApi,} from '../../gen/fetch'
-import {Catalog, Charge, ChargeResponse, ChargeToValidate, PayeeInfo,} from './chargeFjsV2Client.types'
-import {isValid} from 'kennitala'
-import type {Logger} from '@island.is/logging'
-import {LOGGER_PROVIDER} from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
+import {
+  ChargeStatusByRequestIDrequestIDGETResponse,
+  ChargeStatusResultStatusEnum,
+  DefaultApi,
+} from '../../gen/fetch'
+import {
+  Catalog,
+  Charge,
+  ChargeResponse,
+  ChargeToValidate,
+  PayeeInfo,
+} from './chargeFjsV2Client.types'
+import { isValid } from 'kennitala'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class ChargeFjsV2ClientService {
   constructor(
     private api: DefaultApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    ) {}
+  ) {}
 
   async getChargeStatus(
     chargeId: string,
@@ -24,7 +34,7 @@ export class ChargeFjsV2ClientService {
         this.logger.warn(
           `Did not find charge ${chargeId} in FJS database. No charge status returned`,
           e,
-          )
+        )
         return null
       }
       throw e
