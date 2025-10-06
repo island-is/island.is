@@ -1,12 +1,16 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   Body,
   Controller,
+  Delete,
   Inject,
   Param,
   Patch,
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -28,6 +32,7 @@ import { CourtSession } from '../repository'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
 import { CourtSessionExistsGuard } from './guards/courtSessionExists.guard'
 import { CourtSessionService } from './courtSession.service'
+import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 
 @Controller('api/case/:caseId/courtSession')
 @ApiTags('court-sessions')
@@ -35,6 +40,7 @@ import { CourtSessionService } from './courtSession.service'
 export class CourtSessionController {
   constructor(
     private readonly courtSessionService: CourtSessionService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -80,5 +86,34 @@ export class CourtSessionController {
       courtSessionId,
       courtSessionToUpdate,
     )
+  }
+
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CourtSessionExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Delete(':courtSessionId')
+  @ApiOkResponse({
+    description: 'Deletes a court session',
+  })
+  async delete(
+    @Param('caseId') caseId: string,
+    @Param('courtSessionId') courtSessionId: string,
+  ): Promise<DeleteCourtSessionResponse> {
+    this.logger.debug(
+      `Deleting court session ${courtSessionId}of case ${caseId}`,
+    )
+
+    return this.sequelize.transaction(async (transaction) => {
+      const deleted = await this.courtSessionService.delete(
+        caseId,
+        courtSessionId,
+        transaction,
+      )
+
+      return { deleted }
+    })
   }
 }
