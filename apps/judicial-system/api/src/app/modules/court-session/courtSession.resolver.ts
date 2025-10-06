@@ -18,6 +18,8 @@ import { BackendService } from '../backend'
 import { CourtSessionResponse } from './dto/courtSession.response'
 import { CreateCourtSessionInput } from './dto/createCourtSession.input'
 import { UpdateCourtSessionInput } from './dto/updateCourtSession.input'
+import { DeleteCourtSessionInput } from './dto/deleteCourtSession.input'
+import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
@@ -70,6 +72,28 @@ export class CourtSessionResolver {
         courtSessionId,
         updateCourtSession,
       ),
+      courtSessionId,
+    )
+  }
+
+  @Mutation(() => DeleteCourtSessionResponse, { nullable: true })
+  deleteCourtSession(
+    @Args('input', { type: () => DeleteCourtSessionInput })
+    input: DeleteCourtSessionInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<DeleteCourtSessionResponse> {
+    const { caseId, courtSessionId } = input
+
+    this.logger.debug(
+      `Deleting court session with id ${courtSessionId} in case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.DELETE_COURT_SESSION,
+      backendService.deleteCourtSession(caseId, courtSessionId),
       courtSessionId,
     )
   }

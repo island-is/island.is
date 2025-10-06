@@ -64,6 +64,7 @@ import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
+import { DeleteCourtSessionResponse } from '../court-session/dto/deleteCourtSession.response'
 
 type Transformer<TResult> = (data: never) => TResult
 
@@ -614,6 +615,13 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/courtSession/${courtSessionId}`,
       updateCourtSession,
     )
+  }
+
+  deleteCourtSession(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<DeleteCourtSessionResponse> {
+    return this.delete(`case/${caseId}/courtSession/${courtSessionId}`)
   }
 
   createCourtDocument(
