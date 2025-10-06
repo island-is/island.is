@@ -30,7 +30,6 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   DocumentV2,
-  useGetDocumentsCategoriesAndSendersQuery,
   useListDocumentsQuery,
   useMarkAllDocumentsAsReadMutation,
   usePostMailActionMutationMutation,
