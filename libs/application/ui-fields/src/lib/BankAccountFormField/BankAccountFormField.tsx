@@ -79,7 +79,7 @@ export const BankAccountFormField = ({
     string | undefined
   >(undefined)
 
-  // Prefer local (per-field) errors, then component-level, then RHF field errors
+  // Prefer RHF field errors first, then local (per-field) errors, then component-level errors
   const useBankNumberError =
     safeBankNumberError ?? localBankError ?? safeComponentError
   const useLedgerError =
