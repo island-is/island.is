@@ -233,7 +233,6 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   MINOR_ASSAULT: 'líkamsárás - minniháttar',
   AGGRAVATED_ASSAULT: 'líkamsárás - sérlega hættuleg',
   ASSAULT_LEADING_TO_DEATH: 'líkamsárás sem leiðir til dauða',
-  BODILY_INJURY: 'líkamsmeiðingar',
   MEDICINES_OFFENSE: 'lyfjalög',
   MURDER: 'manndráp',
   RAPE: 'nauðgun',

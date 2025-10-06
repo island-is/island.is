@@ -72,7 +72,6 @@ export const courtSubtypes: CourtSubtypes = {
   MINOR_ASSAULT: 'Líkamsárás - minniháttar',
   AGGRAVATED_ASSAULT: 'Líkamsárás - sérlega hættuleg',
   ASSAULT_LEADING_TO_DEATH: 'Líkamsárás sem leiðir til dauða',
-  BODILY_INJURY: 'Líkamsmeiðingar',
   MEDICINES_OFFENSE: 'Lyfjalög',
   MURDER: 'Manndráp',
   RAPE: 'Nauðgun',
