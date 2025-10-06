@@ -22,8 +22,6 @@ import {
   getVehicleSpacingOverviewItems,
   MAX_CNT_FREIGHT,
   getFreightItem,
-  formatNumberWithMeters,
-  formatNumberWithTons,
   getFreightOverviewShortTermItems,
   getFreightOverviewLongTermItems,
   getOverviewErrorMessage,
@@ -104,8 +102,6 @@ export const overviewSection = buildSection({
                     values: {
                       freightNumber: freightIndex + 1,
                       freightName: freightItem?.name,
-                      length: formatNumberWithMeters(freightItem?.length),
-                      weight: formatNumberWithTons(freightItem?.weight),
                     },
                   }
                 },

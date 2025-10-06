@@ -6,6 +6,7 @@ import {
   buildMultiField,
   buildSelectField,
   buildSubSection,
+  buildTextField,
 } from '@island.is/application/core'
 import { freight } from '../../../lib/messages'
 import { Application, SubSection } from '@island.is/application/types'
@@ -17,9 +18,7 @@ import {
   checkIfExemptionTypeLongTerm,
   MAX_CNT_CONVOY,
   MAX_CNT_FREIGHT,
-  getFreightPairingErrorMessage,
-  formatNumberWithMeters,
-  formatNumberWithTons,
+  getFreightPairingLongTermErrorMessage,
   checkHasSelectedConvoyInFreightPairing,
   getSelectedConvoyIdsInFreightPairing,
 } from '../../../utils'
@@ -39,8 +38,6 @@ const FreightPairingSubSection = (freightIndex: number) =>
         values: {
           freightNumber: freightIndex + 1,
           freightName: freightItem?.name,
-          length: formatNumberWithMeters(freightItem?.length),
-          weight: formatNumberWithTons(freightItem?.weight),
         },
       }
     },
@@ -54,8 +51,6 @@ const FreightPairingSubSection = (freightIndex: number) =>
             values: {
               freightNumber: freightIndex + 1,
               freightName: freightItem?.name,
-              length: formatNumberWithMeters(freightItem?.length),
-              weight: formatNumberWithTons(freightItem?.weight),
             },
           }
         },
@@ -66,6 +61,27 @@ const FreightPairingSubSection = (freightIndex: number) =>
             id: `freightPairing.${freightIndex}.freightId`,
             defaultValue: (application: Application) =>
               getFreightItem(application.answers, freightIndex)?.freightId,
+          }),
+
+          buildTextField({
+            id: `freightPairing.${freightIndex}.length`,
+            title: freight.labels.freightLength,
+            backgroundColor: 'blue',
+            width: 'half',
+            required: true,
+            variant: 'number',
+            thousandSeparator: true,
+            suffix: freight.labels.metersSuffix,
+          }),
+          buildTextField({
+            id: `freightPairing.${freightIndex}.weight`,
+            title: freight.labels.freightWeight,
+            backgroundColor: 'blue',
+            width: 'half',
+            required: true,
+            variant: 'number',
+            thousandSeparator: true,
+            suffix: freight.labels.tonsSuffix,
           }),
 
           buildDescriptionField({
@@ -136,10 +152,10 @@ const FreightPairingSubSection = (freightIndex: number) =>
                 component: 'description',
                 title: freight.labels.exemptionFor,
                 titleVariant: 'h5',
+                required: true,
               },
               exemptionFor: {
                 component: 'checkbox',
-                label: freight.labels.exemptionFor,
                 large: true,
                 backgroundColor: 'blue',
                 width: 'half',
@@ -162,6 +178,11 @@ const FreightPairingSubSection = (freightIndex: number) =>
                     label: freight.exemptionFor.weightOptionTitle,
                   },
                 ],
+              },
+              informationTitle: {
+                component: 'description',
+                title: freight.labels.freightSubtitle,
+                titleVariant: 'h5',
               },
               height: {
                 component: 'input',
@@ -196,13 +217,13 @@ const FreightPairingSubSection = (freightIndex: number) =>
             id: `freightPairing.alertValidation.${freightIndex}`,
             title: freight.create.errorAlertMessageTitle,
             message: (application) =>
-              getFreightPairingErrorMessage(
+              getFreightPairingLongTermErrorMessage(
                 application.externalData,
                 application.answers,
                 freightIndex,
               ) || '',
             condition: (answers, externalData) =>
-              !!getFreightPairingErrorMessage(
+              !!getFreightPairingLongTermErrorMessage(
                 externalData,
                 answers,
                 freightIndex,
