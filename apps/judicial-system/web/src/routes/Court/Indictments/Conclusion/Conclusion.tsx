@@ -24,11 +24,13 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  Item,
   PageHeader,
   PageLayout,
   PageTitle,
   PdfButton,
   SectionHeading,
+  SelectableList,
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -618,10 +620,7 @@ const Conclusion: FC = () => {
         {selectedAction === IndictmentDecision.COMPLETING &&
           (selectedDecision === CaseIndictmentRulingDecision.RULING ||
             selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
-            <Box
-              component="section"
-              marginBottom={hasGeneratedCourtRecord ? 5 : 10}
-            >
+            <Box component="section" marginBottom={5}>
               <SectionHeading
                 title={formatMessage(
                   selectedDecision === CaseIndictmentRulingDecision.RULING
@@ -652,6 +651,27 @@ const Conclusion: FC = () => {
                 onRemove={(file) => handleRemove(file, removeUploadFile)}
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
                 onOpenFile={(file) => onOpenFile(file)}
+              />
+            </Box>
+          )}
+        {selectedAction === IndictmentDecision.COMPLETING &&
+          selectedDecision === CaseIndictmentRulingDecision.RULING &&
+          workingCase.defendants &&
+          workingCase.defendants?.length > 0 && (
+            <Box
+              component="section"
+              marginBottom={hasGeneratedCourtRecord ? 5 : 10}
+            >
+              <SelectableList
+                selectAllText="Útivistardómur"
+                items={workingCase.defendants.map((defendant) => ({
+                  id: defendant.id,
+                  name: defendant.name ?? 'Nafn ekki skráð',
+                }))}
+                onChange={(selectedItems: Item[]) => {
+                  console.log({ selectedItems })
+                }}
+                isLoading={false}
               />
             </Box>
           )}
