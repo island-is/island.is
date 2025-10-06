@@ -28,6 +28,7 @@ import {
   CourtSessionResponse,
   DeleteCourtDocumentResponse,
 } from '../court-session'
+import { DeleteCourtSessionResponse } from '../court-session/dto/deleteCourtSession.response'
 import {
   CivilClaimant,
   Defendant,
@@ -64,7 +65,6 @@ import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
-import { DeleteCourtSessionResponse } from '../court-session/dto/deleteCourtSession.response'
 
 type Transformer<TResult> = (data: never) => TResult
 
