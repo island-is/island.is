@@ -144,13 +144,11 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         topLinks {
           label
           href
+          isActive
           midLinks {
             label
             href
-            bottomLinks {
-              label
-              href
-            }
+            isActive
           }
         }
       }

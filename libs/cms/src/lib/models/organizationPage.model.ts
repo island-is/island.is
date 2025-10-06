@@ -48,8 +48,8 @@ export class MidLink {
   @Field(() => String)
   href!: string
 
-  @CacheField(() => [BottomLink])
-  bottomLinks!: BottomLink[]
+  @Field(() => Boolean)
+  isActive!: boolean
 }
 
 @ObjectType('OrganizationPageTopLink')
@@ -59,6 +59,9 @@ export class TopLink {
 
   @Field(() => String)
   href!: string
+
+  @Field(() => Boolean)
+  isActive!: boolean
 
   @CacheField(() => [MidLink])
   midLinks!: MidLink[]

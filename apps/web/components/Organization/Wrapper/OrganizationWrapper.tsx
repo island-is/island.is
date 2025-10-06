@@ -990,7 +990,7 @@ export const OrganizationWrapper: React.FC<
   breadcrumbItems: breadcrumbItemsProp,
   mainContent,
   sidebarContent,
-  navigationData,
+  navigationData: navigationDataProp,
   fullWidthContent = false,
   stickySidebar = true,
   children,
@@ -1016,11 +1016,6 @@ export const OrganizationWrapper: React.FC<
       href: url,
       active: router.asPath === url,
     })) ?? []
-
-  const activeNavigationItemTitle = useMemo(
-    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
-    [navigationData.items, router.asPath],
-  )
 
   const metaTitleSuffix =
     pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
@@ -1051,16 +1046,52 @@ export const OrganizationWrapper: React.FC<
     false,
   )
 
-  let breadcrumbItems = breadcrumbItemsProp ?? []
+  const { breadcrumbItems, navigationData } = useMemo(() => {
+    if (!sitemapContentTypeDeterminesNavigationAndBreadcrumbs) {
+      return {
+        breadcrumbItems: breadcrumbItemsProp ?? [],
+        navigationData: navigationDataProp,
+      }
+    }
 
-  if (sitemapContentTypeDeterminesNavigationAndBreadcrumbs) {
-    breadcrumbItems = (organizationPage.navigationLinks?.breadcrumbs ?? []).map(
-      (breadcrumb) => ({
-        title: breadcrumb.label,
-        href: breadcrumb.href,
-      }),
-    )
-  }
+    const breadcrumbItems: BreadCrumbItem[] = (
+      organizationPage.navigationLinks?.breadcrumbs ?? []
+    ).map((breadcrumb) => ({
+      title: breadcrumb.label,
+      href: breadcrumb.href,
+    }))
+
+    const navigationData: NavigationData = {
+      title: navigationDataProp.title,
+      items: (organizationPage.navigationLinks?.topLinks ?? []).map(
+        (topLink) => ({
+          title: topLink.label,
+          href: topLink.href,
+          active: topLink.isActive,
+          items: topLink.midLinks.map((midLink) => ({
+            title: midLink.label,
+            href: midLink.href,
+            active: midLink.isActive,
+          })),
+        }),
+      ),
+    }
+
+    return {
+      breadcrumbItems,
+      navigationData,
+    }
+  }, [
+    breadcrumbItemsProp,
+    navigationDataProp,
+    sitemapContentTypeDeterminesNavigationAndBreadcrumbs,
+    organizationPage.navigationLinks,
+  ])
+
+  const activeNavigationItemTitle = useMemo(
+    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
+    [navigationData.items, router.asPath],
+  )
 
   return (
     <>
