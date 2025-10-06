@@ -124,6 +124,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
   const [fieldLoadingState, setFieldLoadingState] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const isSubmittingRef = useRef(false)
   const refetch = useContext<() => void>(RefetchContext)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { loading, error: updateApplicationError }] =
@@ -234,10 +235,11 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   }, [formValue, prevScreen, reset])
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
-    if (isSubmitting) return
+    if (isSubmittingRef.current) return
 
     let response
 
+    isSubmittingRef.current = true
     setIsSubmitting(true)
     setBeforeSubmitError({})
 
@@ -321,6 +323,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
         answerAndGoToNextScreen(data)
       }
     } finally {
+      isSubmittingRef.current = false
       setIsSubmitting(false)
     }
   }
