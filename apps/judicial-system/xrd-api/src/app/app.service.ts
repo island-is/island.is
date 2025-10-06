@@ -329,7 +329,7 @@ export class AppService {
       deliveredToDefenderNationalId:
         updatePoliceDocumentDelivery.defenderNationalId,
       appealDecision:
-        updatePoliceDocumentDelivery.deliverySupplements?.appeal_decision ??
+        updatePoliceDocumentDelivery.deliverySupplements?.appealDecision ??
         undefined,
     }
     try {
