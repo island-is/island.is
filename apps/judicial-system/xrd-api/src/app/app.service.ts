@@ -302,9 +302,9 @@ export class AppService {
       return undefined
     }
 
-    if (updatePoliceDocumentDelivery.deliverySupplements?.appeal_decision) {
+    if (updatePoliceDocumentDelivery.deliverySupplements?.appealDecision) {
       const appealDecision =
-        updatePoliceDocumentDelivery.deliverySupplements.appeal_decision
+        updatePoliceDocumentDelivery.deliverySupplements.appealDecision
 
       if (
         !Object.values(VerdictAppealDecision).includes(
