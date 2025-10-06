@@ -6,7 +6,7 @@ import {
   PersonType,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
-import { getFakeData } from './utils'
+import { getFakeData, roundMonetaryFieldsDeep, stringifyObject } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -34,19 +34,6 @@ export class InheritanceReportService extends BaseTemplateApiService {
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
-  }
-
-  stringifyObject(obj: Record<string, unknown>): Record<string, string> {
-    const result: Record<string, string> = {}
-    for (const key in obj) {
-      if (typeof obj[key] === 'string') {
-        result[key] = obj[key] as string
-      } else {
-        result[key] = JSON.stringify(obj[key])
-      }
-    }
-
-    return result
   }
 
   async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
@@ -120,7 +107,12 @@ export class InheritanceReportService extends BaseTemplateApiService {
       type: PersonType.AnnouncerOfDeathCertificate,
     }
 
-    const uploadData = this.stringifyObject(expandAnswers(answers))
+    const expanded = expandAnswers(answers)
+    const roundedExpanded = roundMonetaryFieldsDeep(expanded) as Record<
+      string,
+      unknown
+    >
+    const uploadData = stringifyObject(roundedExpanded)
 
     const uploadDataName = 'erfdafjarskysla1.0'
     const uploadDataId = 'erfdafjarskysla1.0'

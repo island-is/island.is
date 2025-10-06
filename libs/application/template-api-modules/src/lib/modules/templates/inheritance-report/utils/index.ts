@@ -1,2 +1,8 @@
 import { getFakeData } from './fakeData'
-export { getFakeData }
+import {
+  roundToInt,
+  roundMonetaryFieldsDeep,
+  stringifyObject,
+} from './roundToInt'
+
+export { getFakeData, roundToInt, roundMonetaryFieldsDeep, stringifyObject }
