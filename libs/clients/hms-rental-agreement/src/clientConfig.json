@@ -35,6 +35,26 @@
         }
       }
     },
+    "/contract/send-draft": {
+      "post": {
+        "tags": ["Home"],
+        "parameters": [
+          {
+            "name": "contractId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/contract/kt/{kt}": {
       "get": {
         "tags": ["Home"],
