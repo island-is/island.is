@@ -4,8 +4,11 @@ import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 import { isValidDate, sortAlpha } from '@island.is/shared/utils'
 
-import { VerdictApi } from '../../gen/fetch/gopro'
-import { DefaultApi } from '../../gen/fetch/supreme-court'
+import { BookingApi, VerdictApi } from '../../gen/fetch/gopro'
+import {
+  type ApiV2VerdictGetAgendasPostRequest,
+  DefaultApi,
+} from '../../gen/fetch/supreme-court'
 import { logger } from '@island.is/logging'
 
 const ITEMS_PER_PAGE = 10
@@ -43,8 +46,9 @@ const safelyConvertStringToDate = (
 @Injectable()
 export class VerdictsClientService {
   constructor(
-    private readonly goproApi: VerdictApi,
+    private readonly goproVerdictApi: VerdictApi,
     private readonly supremeCourtApi: DefaultApi,
+    private readonly goproCourtAgendasApi: BookingApi,
   ) {}
 
   async getVerdicts(input: {
@@ -63,7 +67,7 @@ export class VerdictsClientService {
 
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
       !onlyFetchSupremeCourtVerdicts
-        ? this.goproApi.getVerdicts({
+        ? this.goproVerdictApi.getVerdicts({
             requestData: {
               orderBy: 'verdictDate desc',
               itemsPerPage: ITEMS_PER_PAGE,
@@ -173,7 +177,7 @@ export class VerdictsClientService {
 
   async getSingleVerdictById(id: string) {
     if (id.startsWith(GOPRO_ID_PREFIX)) {
-      const response = await this.goproApi.getVerdict({
+      const response = await this.goproVerdictApi.getVerdict({
         id: id.slice(GOPRO_ID_PREFIX.length),
       })
       if (response.item?.docContent)
@@ -214,7 +218,7 @@ export class VerdictsClientService {
 
   async getCaseTypes() {
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
-      this.goproApi.getCaseTypes({}),
+      this.goproVerdictApi.getCaseTypes({}),
       this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
     ])
 
@@ -243,7 +247,7 @@ export class VerdictsClientService {
 
   async getCaseCategories() {
     const [goproResponse] = await Promise.allSettled([
-      this.goproApi.getCaseCategories({}),
+      this.goproVerdictApi.getCaseCategories({}),
     ])
 
     const caseCategorySet = new Set<string>()
@@ -266,7 +270,7 @@ export class VerdictsClientService {
 
   async getKeywords() {
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
-      this.goproApi.getKeywords({}),
+      this.goproVerdictApi.getKeywords({}),
       this.supremeCourtApi.apiV2VerdictGetKeywordsGet(),
     ])
 
@@ -290,6 +294,93 @@ export class VerdictsClientService {
 
     return {
       keywords,
+    }
+  }
+
+  private safelyConvertDateToISOString(date: string | Date | null | undefined) {
+    if (!date) return ''
+    try {
+      return new Date(date).toISOString()
+    } catch (error) {
+      return ''
+    }
+  }
+
+  async getCourtAgendas(input: {
+    page?: number
+    court?: string
+    dateFrom?: string
+    dateTo?: string
+  }) {
+    const onlyFetchSupremeCourtAgendas = input.court === 'Hæstiréttur'
+    const pageNumber = input.page ?? 1
+    const itemsPerPage = 10
+
+    const [supremeCourtResponse, goproResponse] = await Promise.allSettled([
+      !input.court || onlyFetchSupremeCourtAgendas
+        ? this.supremeCourtApi.apiV2VerdictGetAgendasPost({
+            agendaSearchRequest: {
+              page: pageNumber,
+              limit: itemsPerPage,
+              dateFrom: safelyConvertStringToDate(input.dateFrom, 'dateFrom'),
+              dateTo: safelyConvertStringToDate(input.dateTo, 'dateTo'),
+            },
+          } as ApiV2VerdictGetAgendasPostRequest)
+        : { status: 'rejected', items: [], total: 0 },
+      onlyFetchSupremeCourtAgendas
+        ? { status: 'rejected', items: [], total: 0 }
+        : this.goproCourtAgendasApi.getPublishedBookings({
+            pageNumber: pageNumber,
+            court: input.court ?? '',
+            itemsPerPage,
+            dateFrom: input.dateFrom ? input.dateFrom : undefined,
+            dateTo: input.dateTo ? input.dateTo : undefined,
+          }),
+    ])
+
+    const items = []
+    let total = 0
+
+    if (supremeCourtResponse.status === 'fulfilled') {
+      total += Number(supremeCourtResponse.value.total ?? 0)
+      for (const agenda of supremeCourtResponse.value.items ?? []) {
+        items.push({
+          id: `${agenda.id}-${agenda.caseId}-${agenda.caseNumber}`,
+          caseNumber: agenda.caseNumber ?? '',
+          dateFrom: this.safelyConvertDateToISOString(agenda.verdictDate),
+          dateTo: '',
+          closedHearing: agenda.closedSession ?? false,
+          courtRoom: agenda.courtroom ?? '',
+          judges: agenda.judges ?? [],
+          lawyers: [],
+          court: 'Hæstiréttur',
+          type: agenda.caseType ?? '',
+          title: agenda.title ?? '',
+        })
+      }
+    }
+    if (goproResponse.status === 'fulfilled') {
+      total += Number(goproResponse.value.total ?? 0)
+      for (const agenda of goproResponse.value.items ?? []) {
+        items.push({
+          id: `${agenda.bookingId}-${agenda.caseId}-${agenda.caseNumberRaw}`,
+          caseNumber: agenda.caseNumberRaw ?? '',
+          dateFrom: this.safelyConvertDateToISOString(agenda.scheduleDate),
+          dateTo: this.safelyConvertDateToISOString(agenda.scheduleToDate),
+          closedHearing: agenda.closedHearing ?? false,
+          courtRoom: agenda.courtRoom ?? '',
+          judges: agenda.judges ?? [],
+          lawyers: agenda.lawyers ?? [],
+          court: (agenda as { court?: string }).court ?? '',
+          type: agenda.bookingType ?? '',
+          title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
+        })
+      }
+    }
+
+    return {
+      items,
+      total,
     }
   }
 }

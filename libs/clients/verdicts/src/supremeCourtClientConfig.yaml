@@ -136,7 +136,27 @@ components:
           description: Page number for pagination
         limit:
           type: integer
-          default: 100
+          default: 10
+          description: Results per page
+
+    AgendaSearchRequest:
+      type: object
+      properties:
+        dateFrom:
+          type: string
+          format: date
+          description: Filter for verdicts on or after this date (format YYYY-MM-DD)
+        dateTo:
+          type: string
+          format: date
+          description: Filter for verdicts on or before this date (format YYYY-MM-DD)
+        page:
+          type: integer
+          default: 1
+          description: Page number for pagination
+        limit:
+          type: integer
+          default: 10
           description: Results per page
 
   responses:
@@ -298,22 +318,15 @@ paths:
           $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getAgendas:
-    get:
-      summary: Get all agendas
-      parameters:
-        - name: orderBy
-          in: query
-          schema:
-            type: string
-          description: "Field and order (e.g., 'publishDate DESC')"
-        - name: page
-          in: query
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          schema:
-            type: integer
+    post:
+      summary: Search and retrieve agendas with filters
+      description: Retrieve agendas with optional date filters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgendaSearchRequest'
       responses:
         '200':
           description: Successful response
