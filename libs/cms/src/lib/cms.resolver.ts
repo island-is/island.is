@@ -1184,14 +1184,79 @@ export class OrganizationPageResolver {
     return []
   }
 
+  private getNodeSlug(
+    node: SitemapTreeNode,
+    lang: string,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ) {
+    if (node.type === SitemapTreeNodeType.ENTRY && Boolean(node.entryId)) {
+      const entryItem = entryMap.get(node.entryId)
+      if (!entryItem) return ''
+      const entryFields = entryItem.entry.fields as { slug?: string }
+      return entryFields?.slug ?? ''
+    }
+    if (node.type === SitemapTreeNodeType.CATEGORY) {
+      return lang === 'en' ? node.slugEN : node.slug
+    }
+    return ''
+  }
+
+  private findNodeWithSlug(
+    root: { childNodes: SitemapTreeNode[] },
+    slug: string,
+    lang: string,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ): { nodeTrail: SitemapTreeNode[]; node: SitemapTreeNode | null } {
+    for (const node of root?.childNodes ?? []) {
+      if (this.getNodeSlug(node, lang, entryMap) === slug)
+        return { nodeTrail: [], node }
+      if (node.type === SitemapTreeNodeType.CATEGORY) {
+        for (const child of node?.childNodes ?? []) {
+          if (this.getNodeSlug(child, lang, entryMap) === slug)
+            return { nodeTrail: [node], node: child }
+          if (child.type === SitemapTreeNodeType.CATEGORY) {
+            for (const grandchild of child?.childNodes ?? []) {
+              if (this.getNodeSlug(grandchild, lang, entryMap) === slug)
+                return { nodeTrail: [node, child], node: grandchild }
+            }
+          }
+        }
+      }
+    }
+
+    return {
+      nodeTrail: [],
+      node: null,
+    }
+  }
+
+  private convertNodeToBreadcrumb(
+    node: SitemapTreeNode,
+    lang: string,
+    organizationPage: OrganizationPage,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ) {
+    if (node.type === SitemapTreeNodeType.ENTRY) {
+      const entryItem = entryMap.get(node.entryId)
+      if (!entryItem) return null
+      return entryItem.link
+    }
+    if (node.type === SitemapTreeNodeType.CATEGORY) {
+      return {
+        label: node.label,
+        href: `/${getOrganizationPageUrlPrefix(lang)}/${
+          organizationPage.slug
+        }/${node.slug}`,
+      }
+    }
+  }
+
   private getBreadcrumbs(
     organizationPage: OrganizationPage,
     entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
   ) {
     const slugs = organizationPage.subpageSlugsInput ?? []
-    const maxDepth = 2
     const lang = organizationPage.lang ?? 'is'
-
     const breadcrumbs: BottomLink[] = []
 
     if (slugs.length > 0) {
@@ -1205,80 +1270,74 @@ export class OrganizationPageResolver {
       })
     }
 
-    let category: { childNodes?: SitemapTreeNode[] } | undefined =
-      organizationPage.navigationLinks
+    let category = organizationPage.navigationLinks
 
-    for (let i = 0; i < maxDepth; i += 1) {
-      const slug = slugs[i]
-      if (!slug) {
-        break
-      }
+    if (!category) {
+      return breadcrumbs
+    }
 
-      for (const node of category?.childNodes ?? []) {
-        if (node.type === SitemapTreeNodeType.ENTRY && Boolean(node.entryId)) {
-          const entryItem = entryMap.get(node.entryId)
-          if (!entryItem) {
-            continue
-          }
-          const entryFields = entryItem.entry.fields as { slug?: string }
-          const entrySlug = entryFields?.slug ?? ''
-          if (!entrySlug || entrySlug !== slug) {
-            continue
-          }
-          breadcrumbs.push(entryItem.link)
-        }
-        if (node.type === SitemapTreeNodeType.CATEGORY && node.slug === slug) {
-          const nodeLabel = lang === 'en' ? node.labelEN : node.label
-          const nodeSlug = lang === 'en' ? node.slugEN : node.slug
-          if (!nodeLabel || !nodeSlug) {
-            continue
-          }
-          category = node
-          breadcrumbs.push({
-            label: nodeLabel,
-            href: `/${getOrganizationPageUrlPrefix(lang)}/${
-              organizationPage.slug
-            }/${nodeSlug}`,
-          })
-        }
+    for (const slug of slugs) {
+      const { node, nodeTrail } = this.findNodeWithSlug(
+        category,
+        slug,
+        lang,
+        entryMap,
+      )
+      if (!node) break
+      for (const trail of nodeTrail) {
+        const item = this.convertNodeToBreadcrumb(
+          trail,
+          lang,
+          organizationPage,
+          entryMap,
+        )
+        if (!item) break
+        breadcrumbs.push(item)
       }
-      if (!category) {
-        // TODO: Also try and find the slug in the childNodes of the top level navigation links
-        break
-      }
+      const item = this.convertNodeToBreadcrumb(
+        node,
+        lang,
+        organizationPage,
+        entryMap,
+      )
+      if (!item) break
+      breadcrumbs.push(item)
+      category = node
+    }
+
+    if (breadcrumbs.length > 2) {
+      breadcrumbs.pop()
     }
 
     return breadcrumbs
   }
 
-  private extractEntryIds(organizationPage: OrganizationPage) {
-    const slugs = organizationPage.subpageSlugsInput ?? []
+  private extractNavigationLinkEntryIds(organizationPage: OrganizationPage) {
     const entryIds = new Set<string>()
-    const maxDepth = 3
-
-    const matchedNodes: SitemapTreeNode[] = []
-
-    let nodes = organizationPage.navigationLinks?.childNodes ?? []
-    for (let i = 0; i < maxDepth; i += 1) {
-      const slug = slugs[i]
-      if (!slug) {
-        break
+    for (const node of organizationPage.navigationLinks?.childNodes ?? []) {
+      if (node.type === SitemapTreeNodeType.ENTRY && Boolean(node.entryId)) {
+        entryIds.add(node.entryId)
+        continue
       }
-      let category: SitemapTreeNode | null = null
-      for (const node of nodes) {
-        if (node.type === SitemapTreeNodeType.ENTRY && Boolean(node.entryId)) {
-          entryIds.add(node.entryId)
-          matchedNodes.push(node)
+      if (node.type === SitemapTreeNodeType.CATEGORY)
+        for (const child of node.childNodes) {
+          if (
+            child.type === SitemapTreeNodeType.ENTRY &&
+            Boolean(child.entryId)
+          ) {
+            entryIds.add(child.entryId)
+            continue
+          }
+          if (child.type === SitemapTreeNodeType.CATEGORY)
+            for (const grandchild of child.childNodes)
+              if (
+                grandchild.type === SitemapTreeNodeType.ENTRY &&
+                Boolean(grandchild.entryId)
+              ) {
+                entryIds.add(grandchild.entryId)
+                continue
+              }
         }
-        if (node.type === SitemapTreeNodeType.CATEGORY && node.slug === slug) {
-          category = node
-          matchedNodes.push(node)
-        }
-      }
-      if (!category) {
-        break
-      }
-      nodes = category?.childNodes ?? []
     }
 
     return Array.from(entryIds)
@@ -1286,16 +1345,14 @@ export class OrganizationPageResolver {
 
   @ResolveField(() => NavigationLinks, { nullable: true })
   async navigationLinks(@Parent() organizationPage: OrganizationPage) {
-    const entryIds = this.extractEntryIds(organizationPage)
     const lang = organizationPage.lang ?? 'is'
 
+    const entryIds = this.extractNavigationLinkEntryIds(organizationPage)
     const entries = await this.cmsContentfulService.getEntries(entryIds, lang)
-
     const entryMap = new Map<
       string,
       { link: BottomLink; entry: Entry<unknown> }
     >()
-
     for (const entry of entries) {
       const link = generateOrganizationSubpageLink(
         entry as IOrganizationParentSubpage | IOrganizationSubpage,
