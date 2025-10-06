@@ -123,12 +123,13 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     if (courtSession.filedDocuments && courtSession.filedDocuments.length > 0) {
+      console.log(courtSession.filedDocuments)
       addEmptyLines(doc)
       addNormalText(doc, 'Lagt er fram:', 'Times-Bold')
       addNormalText(doc, 'Nr.', 'Times-Roman')
       addNumberedList(
         doc,
-        courtSession.filedDocuments.map((d) => d.name),
+        courtSession.filedDocuments.map((d) => d.name.normalize()),
         courtSession.filedDocuments[0].documentOrder,
       )
 
