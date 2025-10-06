@@ -234,93 +234,95 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   }, [formValue, prevScreen, reset])
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
+    if (isSubmitting) return
+
     let response
 
     setIsSubmitting(true)
     setBeforeSubmitError({})
 
-    let event: string | undefined
-    if (submitField !== undefined) {
-      const finalAnswers = { ...formValue, ...data }
-      if (submitField.placement === 'screen') {
-        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
-      } else {
-        if (submitField.actions.length === 1) {
-          const actionEvent = submitField.actions[0].event
-          event =
-            typeof actionEvent === 'object' ? actionEvent.type : actionEvent
+    try {
+      let event: string | undefined
+      if (submitField !== undefined) {
+        const finalAnswers = { ...formValue, ...data }
+        if (submitField.placement === 'screen') {
+          event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
         } else {
-          const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
-          event = nativeEvent?.submitter?.id ?? 'SUBMIT'
+          if (submitField.actions.length === 1) {
+            const actionEvent = submitField.actions[0].event
+            event =
+              typeof actionEvent === 'object' ? actionEvent.type : actionEvent
+          } else {
+            const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
+            event = nativeEvent?.submitter?.id ?? 'SUBMIT'
+          }
         }
       }
-    }
 
-    if (typeof beforeSubmitCallback.current === 'function') {
-      const [canContinue, possibleError] = await beforeSubmitCallback.current(
-        event,
-      )
+      if (typeof beforeSubmitCallback.current === 'function') {
+        const [canContinue, possibleError] = await beforeSubmitCallback.current(
+          event,
+        )
 
-      if (!canContinue) {
-        setIsSubmitting(false)
-
-        if (typeof possibleError === 'string' && screen && screen.id) {
-          setBeforeSubmitError({ [screen.id]: possibleError })
-        }
-        return
-      }
-    }
-
-    if (submitField !== undefined) {
-      const finalAnswers = { ...formValue, ...data }
-
-      response = await submitApplication({
-        variables: {
-          input: {
-            id: applicationId,
-            event,
-            answers: finalAnswers,
-          },
-        },
-      })
-
-      if (response?.data) {
-        addExternalData(response.data?.submitApplication.externalData)
-
-        if (
-          submitField.refetchApplicationAfterSubmit === true ||
-          (typeof submitField.refetchApplicationAfterSubmit === 'function' &&
-            submitField.refetchApplicationAfterSubmit(event))
-        ) {
-          refetch()
+        if (!canContinue) {
+          if (typeof possibleError === 'string' && screen && screen.id) {
+            setBeforeSubmitError({ [screen.id]: possibleError })
+          }
+          return
         }
       }
-    } else {
-      const extractedAnswers = extractAnswersToSubmitFromScreen(
-        mergeAnswers(formValue, data),
-        screen,
-      )
 
-      response = await updateApplication({
-        variables: {
-          input: {
-            id: applicationId,
-            answers: extractedAnswers,
-            draftProgress: {
-              stepsFinished: currentDraftScreen ?? screen.sectionIndex,
-              totalSteps: totalDraftScreens ?? sections.length - 1,
+      if (submitField !== undefined) {
+        const finalAnswers = { ...formValue, ...data }
+
+        response = await submitApplication({
+          variables: {
+            input: {
+              id: applicationId,
+              event,
+              answers: finalAnswers,
             },
           },
-          locale,
-        },
-      })
-    }
+        })
 
-    if (response?.data) {
-      answerAndGoToNextScreen(data)
-    }
+        if (response?.data) {
+          addExternalData(response.data?.submitApplication.externalData)
 
-    setIsSubmitting(false)
+          if (
+            submitField.refetchApplicationAfterSubmit === true ||
+            (typeof submitField.refetchApplicationAfterSubmit === 'function' &&
+              submitField.refetchApplicationAfterSubmit(event))
+          ) {
+            refetch()
+          }
+        }
+      } else {
+        const extractedAnswers = extractAnswersToSubmitFromScreen(
+          mergeAnswers(formValue, data),
+          screen,
+        )
+
+        response = await updateApplication({
+          variables: {
+            input: {
+              id: applicationId,
+              answers: extractedAnswers,
+              draftProgress: {
+                stepsFinished: currentDraftScreen ?? screen.sectionIndex,
+                totalSteps: totalDraftScreens ?? sections.length - 1,
+              },
+            },
+            locale,
+          },
+        })
+      }
+
+      if (response?.data) {
+        answerAndGoToNextScreen(data)
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const [isMobile, setIsMobile] = useState(false)
