@@ -1,14 +1,19 @@
 import { useState } from 'react'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useLocale } from '@island.is/localization'
-import { Box, DatePicker, GridColumn, GridRow } from '@island.is/island-ui/core'
+import {
+  Box,
+  DatePicker,
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
 import { Organisation } from '@island.is/api/schema'
 import { DocumentProvidersSearch } from './DocumentProvidersSearch'
 import { DocumentProvidersDashboard } from './DocumentProvidersDashboard'
 import { IntroHeader } from '@island.is/portals/core'
-import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
 
 export type OrganisationPreview = Pick<
   Organisation,
@@ -39,7 +44,26 @@ const DocumentProviders = () => {
     data?.getProviderOrganisations || []
 
   if (!user) {
-    return <DocumentProvidersLoading />
+    return (
+      <>
+        <Box marginBottom={[2, 3, 5]}>
+          <SkeletonLoader height={60} borderRadius="large" />
+        </Box>
+        <Box marginBottom={[2, 3]}>
+          <GridRow>
+            <GridColumn span="6/12">
+              <SkeletonLoader height={40} borderRadius="large" />
+            </GridColumn>
+            <GridColumn span="6/12">
+              <SkeletonLoader height={40} borderRadius="large" />
+            </GridColumn>
+          </GridRow>
+        </Box>
+        <Box>
+          <SkeletonLoader height={200} borderRadius="large" />
+        </Box>
+      </>
+    )
   }
 
   return (
@@ -89,13 +113,11 @@ const DocumentProviders = () => {
             </GridColumn>
           </GridRow>
         </Box>
-        {!error && (
-          <DocumentProvidersDashboard
-            organisationsCount={organisationsPreview.length}
-            fromDate={fromDate}
-            toDate={toDate}
-          />
-        )}
+        <DocumentProvidersDashboard
+          organisationsCount={organisationsPreview.length}
+          fromDate={fromDate}
+          toDate={toDate}
+        />
         {!error && (
           <DocumentProvidersSearch
             organisationsPreview={organisationsPreview}

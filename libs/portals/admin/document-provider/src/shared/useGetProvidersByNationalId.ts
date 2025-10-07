@@ -11,6 +11,7 @@ import format from 'date-fns/format'
 export const useGetProvidersByNationalId = (
   fromDate?: Date,
   toDate?: Date,
+  skip?: boolean,
 ): GetProvidersByNationalIdReturnType => {
   const statisticsInput: GetStatisticsProvidersNationalId = {
     from: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
@@ -26,6 +27,7 @@ export const useGetProvidersByNationalId = (
         input: statisticsInput,
       },
       fetchPolicy: 'cache-and-network',
+      skip: skip,
     },
   )
 

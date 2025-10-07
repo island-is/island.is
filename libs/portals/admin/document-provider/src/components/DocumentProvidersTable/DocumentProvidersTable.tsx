@@ -1,11 +1,16 @@
-import { Box, Table as T, Text, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Table as T,
+  Text,
+  Button,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { useNavigate } from 'react-router-dom'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { ProviderInfo } from '../../lib/types'
 import { formatNumber } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { DocumentProvidersLoading } from '../DocumentProvidersLoading/DocumentProvidersLoading'
 
 interface Props {
   loading?: boolean
@@ -18,7 +23,11 @@ export const ProvidersTable = ({ providers, loading, providerPath }: Props) => {
   const { formatMessage } = useLocale()
 
   if (loading) {
-    return <DocumentProvidersLoading />
+    return (
+      <Box paddingTop={6}>
+        <SkeletonLoader repeat={8} height={40} space={2} />
+      </Box>
+    )
   }
 
   return (

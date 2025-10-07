@@ -8,9 +8,16 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 
 export const useDocumentProviderNavigation = (): PortalNavigationItem => {
   const userInfo = useUserInfo()
+
+  // Only fetch providers if user has institution scope
+  const shouldFetchProviders = userInfo?.scopes?.includes(
+    AdminPortalScope.documentProviderInstitution,
+  )
+
   const { items: providers, loading } = useGetProvidersByNationalId(
     undefined,
     undefined,
+    !shouldFetchProviders, // Skip the query if user doesn't have institution scope
   )
 
   return useMemo(() => {
@@ -31,19 +38,13 @@ export const useDocumentProviderNavigation = (): PortalNavigationItem => {
     // Filter navigation items based on user scopes
     const filteredChildren = (documentProviderNavigation.children || []).filter(
       (item) => {
-        // Always show overview
-        if (item.path === DocumentProviderPaths.DocumentProviderOverview) {
-          return true
-        }
-
         // Only show paper and categories for admin users
         if (
           item.path === DocumentProviderPaths.DocumentProviderPaper ||
-          item.path === DocumentProviderPaths.DocumentProviderCategoryAndType
+          item.path === DocumentProviderPaths.DocumentProviderCategoryAndType ||
+          item.path === DocumentProviderPaths.DocumentProviderOverview
         ) {
-          return userInfo?.scopes?.includes(
-            AdminPortalScope.documentProviderAdmin,
-          )
+          return userInfo?.scopes?.includes(AdminPortalScope.documentProvider)
         }
 
         // Hide the template single provider route
@@ -58,16 +59,25 @@ export const useDocumentProviderNavigation = (): PortalNavigationItem => {
       },
     )
 
+    // Only show Skjalaveitendur list for institution users
+    const shouldShowProvidersList = userInfo?.scopes?.includes(
+      AdminPortalScope.documentProviderInstitution,
+    )
+
     return {
       ...documentProviderNavigation,
+      ...filteredChildren,
       children: [
-        ...filteredChildren,
-        {
-          name: 'Skjalaveitendur',
-          path: DocumentProviderPaths.DocumentProviderOverview,
-          children: providerItems,
-          systemRoute: true, // Mark as system route to prevent filtering
-        },
+        ...(shouldShowProvidersList
+          ? [
+              {
+                name: 'Skjalaveitendur',
+                path: DocumentProviderPaths.DocumentProviderOverview,
+                children: providerItems,
+                systemRoute: true, // Mark as system route to prevent filtering
+              },
+            ]
+          : []),
       ],
     }
   }, [providers, loading, userInfo])

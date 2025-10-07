@@ -31,6 +31,7 @@ import { GetStatisticsBreakdownWithCategoriesByProviderId } from '../dto/documen
 import { GetStatisticsBreakdownWithCategoriesByNationalId } from '../dto/document-provider-dashboard/statisticsNationalIdBreakdownWithCategories.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@Scopes(AdminPortalScope.documentProviderInstitution)
 @Audit({ namespace: '@island.is/api/document-provider-dashboard' })
 export class DocumentProviderDashboardResolver {
   constructor(
@@ -39,7 +40,6 @@ export class DocumentProviderDashboardResolver {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  @Scopes(AdminPortalScope.documentProvider)
   @Query(() => ProviderStatisticsPaginationResponse, {
     nullable: true,
     name: 'statisticProvidersByNationalId',
@@ -70,7 +70,6 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Scopes(AdminPortalScope.documentProvider)
   @Query(() => [CategoryStatistics], {
     nullable: true,
     name: 'statisticsCategories',
@@ -111,7 +110,6 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Scopes(AdminPortalScope.documentProvider)
   @Query(() => StatisticsOverview, {
     nullable: true,
     name: 'statisticsByNationalId',
@@ -145,7 +143,6 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Scopes(AdminPortalScope.documentProvider)
   @Query(() => ProviderStatisticsBreakdownPaginationResponse, {
     nullable: true,
     name: 'statisticsBreakdownByProviderId',
@@ -179,7 +176,6 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Scopes(AdminPortalScope.documentProvider)
   @Query(() => DocumentProviderDashboardStatisticsOverview, {
     nullable: true,
     name: 'statisticsOverviewByProviderId',
@@ -215,7 +211,6 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Scopes(AdminPortalScope.documentProvider)
   @Query(() => ProviderStatisticsBreakdownPaginationResponse, {
     nullable: true,
     name: 'statisticsBreakdownByNationalId',
@@ -247,7 +242,6 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Scopes(AdminPortalScope.documentProvider)
   @Query(() => ProviderStatisticsCategoryBreakdownPaginationResponse, {
     nullable: true,
     name: 'statisticsBreakdownWithCategoriesByNationalId',
@@ -279,7 +273,6 @@ export class DocumentProviderDashboardResolver {
     }
   }
 
-  @Scopes(AdminPortalScope.documentProvider)
   @Query(() => ProviderStatisticsCategoryBreakdownPaginationResponse, {
     nullable: true,
     name: 'statisticsBreakdownWithCategoriesByProviderId',

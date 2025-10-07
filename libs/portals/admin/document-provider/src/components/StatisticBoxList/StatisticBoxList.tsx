@@ -1,7 +1,11 @@
 import React, { FC } from 'react'
-import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridRow,
+  GridColumn,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { StatisticBox } from '../StatisticBox/StatisticBox'
-import { DocumentProvidersLoading } from '../DocumentProvidersLoading/DocumentProvidersLoading'
 import { StatisticsBoxData } from '../../lib/types'
 
 interface Props {
@@ -19,7 +23,19 @@ export const StatisticBoxList: FC<React.PropsWithChildren<Props>> = ({
   const columnSpan = boxesPerRow === 4 ? '3/12' : '4/12'
 
   if (loading) {
-    return <DocumentProvidersLoading />
+    return (
+      <Box padding={0}>
+        <GridRow>
+          {[...Array(boxesPerRow)].map((_, index) => (
+            <GridColumn span={['12/12', columnSpan]} key={index}>
+              <Box padding={2}>
+                <SkeletonLoader height={80} borderRadius="large" />
+              </Box>
+            </GridColumn>
+          ))}
+        </GridRow>
+      </Box>
+    )
   }
 
   return (

@@ -1,4 +1,9 @@
-import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Table as T,
+  Text,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { ProviderStatisticsBreakdownPaginationResponse } from '../../lib/types'
 import { DOCUMENT_DELIVERY_PRICE_ISK } from '../../lib/constants'
 import { formatNumber } from '../../lib/utils'
@@ -6,7 +11,6 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { DocumentProvidersLoading } from '../DocumentProvidersLoading/DocumentProvidersLoading'
 
 export const DocumentProviderStatisticsTable = ({
   statistics,
@@ -17,7 +21,11 @@ export const DocumentProviderStatisticsTable = ({
 }) => {
   const { formatMessage } = useLocale()
   if (loading) {
-    return <DocumentProvidersLoading />
+    return (
+      <Box paddingTop={6}>
+        <SkeletonLoader repeat={8} height={40} space={2} />
+      </Box>
+    )
   }
   return (
     <Box paddingTop={6}>

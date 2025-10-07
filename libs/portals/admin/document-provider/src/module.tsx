@@ -39,7 +39,7 @@ const getOverviewScreen = ({
   userInfo,
 }: PortalModuleRoutesProps): React.ReactNode => {
   if (userInfo.scopes.includes(AdminPortalScope.documentProviderInstitution)) {
-    return <DocumentProviders />
+    return <InstitutionDocumentProviders />
   }
   return <DocumentProviders />
 }
@@ -90,7 +90,7 @@ export const documentProviderModule: PortalModule = {
             path: DocumentProviderPaths.DocumentProviderPaper,
             element: <PaperScreen />,
             enabled: props.userInfo.scopes.includes(
-              AdminPortalScope.documentProviderAdmin,
+              AdminPortalScope.documentProvider,
             ),
           },
           {
@@ -98,7 +98,7 @@ export const documentProviderModule: PortalModule = {
             path: DocumentProviderPaths.DocumentProviderCategoryAndType,
             element: <CategoriesAndTypesScreen />,
             enabled: props.userInfo.scopes.includes(
-              AdminPortalScope.documentProviderAdmin,
+              AdminPortalScope.documentProvider,
             ),
           },
         ],

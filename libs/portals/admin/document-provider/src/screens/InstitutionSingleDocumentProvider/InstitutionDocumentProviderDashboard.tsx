@@ -1,4 +1,4 @@
-import { GridRow, Box, Text } from '@island.is/island-ui/core'
+import { GridRow, GridColumn, Box, Text, SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/OpenedFilesDonutChart'
@@ -9,7 +9,6 @@ import {
   DocumentProviderDashboardChartData,
   SentFilesChartDataItem,
 } from '../../lib/types'
-import { DocumentProvidersLoading } from '../../components/DocumentProvidersLoading/DocumentProvidersLoading'
 
 interface Props {
   sentFilesData?: Array<SentFilesChartDataItem>
@@ -46,7 +45,20 @@ export const InstitutionDocumentProviderDashboard = ({
   ]
 
   if (loading) {
-    return <DocumentProvidersLoading />
+    return (
+      <GridRow>
+        <GridColumn span={['12/12', '6/12']}>
+          <Box padding={2}>
+            <SkeletonLoader height={200} borderRadius="large" />
+          </Box>
+        </GridColumn>
+        <GridColumn span={['12/12', '6/12']}>
+          <Box padding={2}>
+            <SkeletonLoader height={200} borderRadius="large" />
+          </Box>
+        </GridColumn>
+      </GridRow>
+    )
   }
 
   return (
