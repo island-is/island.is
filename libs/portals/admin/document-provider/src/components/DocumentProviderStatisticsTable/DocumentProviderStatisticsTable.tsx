@@ -52,9 +52,15 @@ export const DocumentProviderStatisticsTable = ({
                     { locale: is },
                   )}
                 </T.Data>
-                <T.Data align="right">{formatNumber(item.statistics?.published)}</T.Data>
-                <T.Data align="right">{formatNumber(item.statistics?.opened)}</T.Data>
-                <T.Data align="right">{formatNumber(item.statistics?.failures)}</T.Data>
+                <T.Data align="right">
+                  {formatNumber(item.statistics?.published)}
+                </T.Data>
+                <T.Data align="right">
+                  {formatNumber(item.statistics?.opened)}
+                </T.Data>
+                <T.Data align="right">
+                  {formatNumber(item.statistics?.failures)}
+                </T.Data>
                 <T.Data align="right">
                   {formatNumber(
                     (item.statistics?.published ?? 0) *

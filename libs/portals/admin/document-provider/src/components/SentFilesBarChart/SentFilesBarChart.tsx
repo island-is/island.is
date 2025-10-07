@@ -27,7 +27,7 @@ export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
   const { formatMessage } = useLocale()
-  
+
   // Filter categories that have data (published > 0) in any data item
   const activeCatKeys =
     data && data.length > 0

@@ -8,7 +8,7 @@ interface ScopeBasedRenderProps {
   fallback?: ReactNode
   /** Component to render while user data is loading */
   loading?: ReactNode
-  /** 
+  /**
    * Strategy for handling multiple matching scopes
    * - 'first': Render the first matching scope component (default)
    * - 'priority': Use the order in scopeMap as priority (first has highest priority)
