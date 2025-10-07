@@ -8,7 +8,7 @@ import { QuestionAnswer } from '../../types/questionnaire'
 import { Question, QuestionnaireAnswerOptionType } from '@island.is/api/schema'
 import HtmlParser from 'react-html-parser'
 import { Scale } from './QuestionsTypes/Scale'
-import { Slider } from './QuestionsTypes/Slider'
+import { ProgressBar } from '../ProgressBar/ProgressBar'
 
 interface QuestionRendererProps {
   question: Question
@@ -172,20 +172,32 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         )
       }
 
-      // New answer types that will be available in future GraphQL schema updates
       case QuestionnaireAnswerOptionType.slider: {
-        // Use Scale component as a fallback for slider until a proper Slider component is available
-        const answerOptions = question.answerOptions
+        const options = question.answerOptions.options || []
+        const selectedValue =
+          typeof answer?.value === 'string' ? answer.value : ''
+        const selectedIndex = options.findIndex(
+          (option) => option === selectedValue,
+        )
+
+        // If last option is selected, progress is 1, otherwise calculate percentage
+        const progress =
+          selectedIndex === options.length - 1
+            ? 1
+            : selectedIndex >= 0
+            ? selectedIndex / (options.length - 1)
+            : 0
+
         return (
-          <Slider
-            id={question.id}
+          <ProgressBar
+            progress={progress}
             label={question.label}
-            steps={[]}
-            draftTotalSteps={
-              answerOptions.max ? parseInt(answerOptions.max) : 0
-            }
-            draftFinishedSteps={0}
-            description={answerOptions.sublabel || ''}
+            options={question.answerOptions.options?.map((option) => ({
+              label: option,
+              value: option,
+            }))}
+            selectedValue={selectedValue}
+            onOptionClick={(value) => handleValueChange(value)}
           />
         )
       }
