@@ -1,19 +1,12 @@
 import React from 'react'
-import {
-  Box,
-  Button,
-  Text,
-  Inline,
-  Stack,
-  FocusableBox,
-} from '@island.is/island-ui/core'
+import { Box, Text, Stack, FocusableBox } from '@island.is/island-ui/core'
 import * as styles from './QuestionTypes.css'
-
+import cn from 'classnames'
 export interface ScaleProps {
   id: string
   label?: string
-  min: string
-  max: string
+  min: string | number
+  max: string | number
   value?: string | null
   onChange: (value: string) => void
   error?: string
@@ -39,18 +32,30 @@ export const Scale: React.FC<ScaleProps> = ({
   step = 1,
   showLabels = true,
 }) => {
-  const generateScaleValues = () => {
+  // Ensure numeric values
+  const minNum = Number(min)
+  const maxNum = Number(max)
+
+  const generateScaleValues = React.useMemo(() => {
+    // Bail out early if values are invalid
+    if (isNaN(minNum) || isNaN(maxNum) || minNum >= maxNum) {
+      console.warn('⚠️ Invalid min/max in Scale component', { min, max })
+      return []
+    }
+
     const s = typeof step === 'number' && step > 0 ? step : 1
-    const values = []
-    for (let i = min; i <= max; i += s) {
+    const values: string[] = []
+
+    for (let i = minNum; i <= maxNum; i += s) {
       values.push(i.toString())
-      if (i === max) break
+      if (i + s > maxNum) break // prevent floating point overflow
+    }
+    // If we have more than 20 values, show only every 10th
+    if (values.length > 20) {
+      return values.filter((val) => parseFloat(val) % 10 === 0)
     }
     return values
-  }
-
-  console.log('sd')
-  const scaleValues = generateScaleValues()
+  }, [minNum, maxNum, step])
 
   return (
     <Box>
@@ -78,18 +83,21 @@ export const Scale: React.FC<ScaleProps> = ({
         )}
 
         <Box className={styles.scaleContainer} display="flex" flexWrap="nowrap">
-          {scaleValues?.map((scaleValue) => (
-            <FocusableBox
-              className={styles.scaleButton}
-              style={{ height: '80px', width: '74px' }}
-              background={value === scaleValue ? 'blue400' : 'blue100'}
+          {generateScaleValues.map((scaleValue) => (
+            <Box
               key={scaleValue}
-              borderColor={value === scaleValue ? 'blue400' : 'blue200'}
+              className={cn(styles.scaleButton, {
+                [styles.scaleButtonSelected]: value === scaleValue,
+              })}
+              style={{ height: '80px', width: '74px' }}
+              // background={value === scaleValue ? 'blue400' : 'blue100'}
+              // borderColor={value === scaleValue ? 'blue400' : 'blue200'}
               onClick={() => onChange(scaleValue)}
               disabled={disabled}
               display="flex"
               justifyContent="center"
               alignItems="center"
+              color={value === scaleValue ? 'white' : 'dark400'}
             >
               <Text
                 color={value === scaleValue ? 'white' : 'dark400'}
@@ -98,7 +106,7 @@ export const Scale: React.FC<ScaleProps> = ({
               >
                 {scaleValue}
               </Text>
-            </FocusableBox>
+            </Box>
           ))}
         </Box>
 

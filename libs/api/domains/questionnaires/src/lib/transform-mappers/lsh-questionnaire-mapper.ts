@@ -3,13 +3,15 @@ import {
   Question,
   AnswerOption,
   AnswerOptionType,
-} from '../models/question.model'
+  VisibilityCondition,
+  VisibilityOperator,
+} from '../../models/question.model'
 import {
   Questionnaire,
   QuestionnaireSection,
   QuestionnairesList,
   QuestionnairesStatusEnum,
-} from '../models/questionnaires.model'
+} from '../../models/questionnaires.model'
 import { Form } from '@island.is/clients/health-directorate'
 
 // Type definitions for the actual LSH JSON structure based on real data
@@ -140,22 +142,10 @@ const createAnswerType = (
         options: originalQuestion.Options.map((option) => option.Label),
       }
     case 'Number':
-      // Check if it's a thermometer based on display_class
-      if (originalQuestion.display_class === 'thermometer') {
-        return {
-          type: AnswerOptionType.thermometer,
-          ...baseProps,
-          placeholder: originalQuestion.Instructions || undefined,
-          min: originalQuestion.MinValue || 0,
-          max: originalQuestion.MaxValue || 100,
-          minLabel: originalQuestion.Instructions || 'Minimum',
-          maxLabel: 'Maximum',
-        }
-      }
       // Check if it's a slider based on Slider field
       if (originalQuestion.Slider === '1') {
         return {
-          type: AnswerOptionType.slider,
+          type: AnswerOptionType.thermometer,
           ...baseProps,
           placeholder: originalQuestion.Instructions || undefined,
           min: originalQuestion.MinValue || undefined,
@@ -197,25 +187,6 @@ const createAnswerType = (
         ...baseProps,
         placeholder: originalQuestion.Instructions || undefined,
       }
-    case 'List': // Legacy support
-      if (!originalQuestion.Options) {
-        return {
-          type: AnswerOptionType.text,
-          ...baseProps,
-        }
-      }
-      return {
-        type: AnswerOptionType.radio,
-        ...baseProps,
-        options: originalQuestion.Options.map((option) => option.Label),
-      }
-    case 'YesNo': // Legacy support
-      return {
-        type: AnswerOptionType.radio,
-        ...baseProps,
-        options: ['Já', 'Nei'],
-      }
-    case 'Text': // Legacy support
     default:
       return {
         type: AnswerOptionType.text,
@@ -380,117 +351,67 @@ const analyzeDependencies = (
   return {}
 }
 
-// Parse LSH visibility conditions for Form interface
-const parseLshVisibilityCondition = (condition: string): string => {
-  try {
-    if (!condition || condition.trim() === '') {
-      return '' // No condition means always visible
-    }
+// Create structured visibility conditions from LSH conditions
+const createStructuredVisibilityConditions = (
+  originalQuestion: OriginalQuestion,
+): VisibilityCondition[] => {
+  const conditions: VisibilityCondition[] = []
 
-    const originalCondition = condition
-    let cleanCondition = condition.trim()
-
-    // Step 1: Handle not() wrapper around isSelected calls
-    // Pattern: not(isSelected('Value',@@@QuestionID)) → isNotSelected('Value',@@@QuestionID)
-    cleanCondition = cleanCondition.replace(
-      /not\(isSelected\('([^']+)',@@@([^)]+)\)\)/g,
-      "isNotSelected('$1',@@@$2)",
-    )
-
-    // Step 2: Handle regular isSelected calls and convert to condition objects
-    // Pattern: isSelected('Value',@@@QuestionID) → {"questionId":"QuestionID","operator":"equals","value":"Value"}
-    cleanCondition = cleanCondition.replace(
-      /isSelected\('([^']+)',@@@([^)]+)\)/g,
-      (match, value, questionId) => {
-        const conditionObj = {
-          questionId: questionId,
-          operator: 'equals' as const,
-          value: value,
-        }
-        return JSON.stringify(conditionObj)
-      },
-    )
-
-    // Step 3: Handle isNotSelected calls (from step 1) and convert to condition objects with notEquals
-    // Pattern: isNotSelected('Value',@@@QuestionID) → {"questionId":"QuestionID","operator":"notEquals","value":"Value"}
-    cleanCondition = cleanCondition.replace(
-      /isNotSelected\('([^']+)',@@@([^)]+)\)/g,
-      (match, value, questionId) => {
-        const conditionObj = {
-          questionId: questionId,
-          operator: 'notEquals' as const,
-          value: value,
-        }
-        return JSON.stringify(conditionObj)
-      },
-    )
-
-    // Step 4: Handle complex boolean expressions by creating a compound condition
-    if (cleanCondition.includes('&&') || cleanCondition.includes('||')) {
-      // Split on && and || operators while preserving the operators
-      const parts = cleanCondition.split(/(\s*&&\s*|\s*\|\|\s*)/)
-      const conditions = []
-
-      for (let i = 0; i < parts.length; i++) {
-        const part = parts[i].trim()
-        if (part !== '&&' && part !== '||' && part !== '') {
-          try {
-            // Try to parse as JSON condition
-            const parsed = JSON.parse(part)
-            conditions.push(parsed)
-          } catch (parseError) {
-            // If not valid JSON, log the issue but continue
-            console.warn(
-              'Could not parse condition part as JSON:',
-              part,
-              'from original:',
-              originalCondition,
-            )
-          }
-        }
+  // Handle explicit dependencies
+  if (originalQuestion.DependsOn && originalQuestion.DependsOn.length > 0) {
+    originalQuestion.DependsOn.forEach((depId) => {
+      if (depId && typeof depId === 'string') {
+        // Default assumption: show when the dependency question has "Yes" answer
+        conditions.push({
+          questionId: depId,
+          operator: VisibilityOperator.equals,
+          expectedValues: ['Já', 'Yes', 'J', 'Y'],
+          showWhenMatched: true,
+        })
       }
-
-      // For now, return the first condition (we can enhance this later for full boolean logic support)
-      if (conditions.length > 0) {
-        return JSON.stringify(conditions[0])
-      }
-    }
-
-    // Step 5: If it's already a single JSON condition, return it
-    try {
-      JSON.parse(cleanCondition)
-      return cleanCondition
-    } catch (parseError) {
-      // If we can't parse it as JSON, check if we have unparsed patterns
-      if (
-        cleanCondition.includes('isSelected') ||
-        cleanCondition.includes('isNotSelected')
-      ) {
-        console.warn(
-          'Found unparsed isSelected pattern. Original:',
-          originalCondition,
-          'Processed:',
-          cleanCondition,
-        )
-      }
-
-      console.warn(
-        'Could not parse LSH visibility condition as final JSON:',
-        originalCondition,
-        'Processed:',
-        cleanCondition,
-      )
-      return '' // Return empty to make question always visible rather than breaking
-    }
-  } catch (error) {
-    console.error(
-      'Error in parseLshVisibilityCondition:',
-      error,
-      'Input condition:',
-      condition,
-    )
-    return '' // Return empty on any error to prevent crashes
+    })
   }
+
+  // Handle complex visibility conditions from the Visible field
+  if (
+    originalQuestion.Visible &&
+    originalQuestion.Visible !== 'True' &&
+    originalQuestion.Visible.trim() !== ''
+  ) {
+    const visibleCondition = originalQuestion.Visible
+
+    // Extract question IDs and values from isSelected patterns
+    const isSelectedMatches = visibleCondition.matchAll(
+      /isSelected\('([^']+)',['"]?@@@([^)'"]+)['"]?\)/g,
+    )
+
+    for (const match of isSelectedMatches) {
+      const [, value, questionId] = match
+      conditions.push({
+        questionId: questionId.trim(),
+        operator: VisibilityOperator.equals,
+        expectedValues: [value],
+        showWhenMatched: true,
+      })
+    }
+
+    // Extract question IDs and values from not(isSelected(...)) patterns
+    const notIsSelectedMatches = visibleCondition.matchAll(
+      /not\(isSelected\('([^']+)',['"]?@@@([^)'"]+)['"]?\)\)/g,
+    )
+
+    for (const match of notIsSelectedMatches) {
+      const [, value, questionId] = match
+      conditions.push({
+        questionId: questionId.trim(),
+        operator: VisibilityOperator.equals,
+        expectedValues: [value],
+        showWhenMatched: false, // Show when the condition is NOT met
+      })
+    }
+  }
+
+  return conditions
 }
 
 const transformQuestion = (
@@ -512,46 +433,24 @@ const transformQuestion = (
     ...(answerType as any), // Cast to any for now since we have many different answer types
   }
 
-  // Analyze dependencies for this question
+  // Create structured visibility conditions (preferred approach)
+  const structuredConditions =
+    createStructuredVisibilityConditions(originalQuestion)
+
+  // Analyze dependencies for this question (for pattern-based analysis)
   const dependencies = analyzeDependencies(
     allQuestions,
     originalQuestion,
     questionIndex,
   )
 
-  // Check for complex visibility conditions in the Visible field
-  let finalVisibilityCondition = dependencies.visibilityCondition
-  let finalDependsOn = dependencies.dependsOn
-
-  if (
-    originalQuestion.Visible &&
-    originalQuestion.Visible !== 'True' &&
-    originalQuestion.Visible.trim() !== ''
-  ) {
-    // Parse complex LSH visibility condition
-    const parsedCondition = parseLshVisibilityCondition(
-      originalQuestion.Visible,
-    )
-
-    if (parsedCondition) {
-      finalVisibilityCondition = parsedCondition
-
-      // Extract question IDs from the visibility condition for dependsOn
-      const questionIdMatches = originalQuestion.Visible.match(/@@@([^)]+)/g)
-      if (questionIdMatches) {
-        const extractedQuestionIds = questionIdMatches.map(
-          (match) => match.replace('@@@', '').replace(/[\s)]/g, ''), // Clean up any trailing spaces or parentheses
-        )
-
-        // Merge with existing dependencies, avoiding duplicates
-        const allDependencies = [
-          ...(finalDependsOn || []),
-          ...extractedQuestionIds,
-        ]
-        finalDependsOn = [...new Set(allDependencies)] // Remove duplicates
-      }
-    }
-  }
+  // Merge pattern-based dependencies with structured condition dependencies
+  const conditionDependencies = structuredConditions.map((c) => c.questionId)
+  const allDependencies = [
+    ...(dependencies.dependsOn || []),
+    ...conditionDependencies,
+  ]
+  const finalDependsOn = [...new Set(allDependencies)].filter((dep) => dep)
 
   return {
     id: originalQuestion.EntryID,
@@ -562,8 +461,9 @@ const transformQuestion = (
       originalQuestion.Visible,
     ),
     answerOptions: answerOption,
-    dependsOn: finalDependsOn,
-    visibilityCondition: finalVisibilityCondition,
+    visibilityConditions:
+      structuredConditions.length > 0 ? structuredConditions : undefined,
+    dependsOn: finalDependsOn.length > 0 ? finalDependsOn : undefined,
   }
 }
 

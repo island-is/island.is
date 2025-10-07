@@ -8,8 +8,8 @@ import {
   createMockElDistressThermometerQuestionnaire,
   createMockElPregnancyQuestionnaire,
   transformHealthDirectorateQuestionnaireToList,
-} from '../mappers/health-directorate-client-mapper'
-import { transformLshQuestionnaireFromJson } from '../mappers/lsh-questionnaire-mapper'
+} from './transform-mappers/health-directorate-client-mapper'
+import { transformLshQuestionnaireFromJson } from './transform-mappers/lsh-questionnaire-mapper'
 import {
   Questionnaire,
   QuestionnairesList,

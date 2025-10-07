@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react'
+import React, { useRef, useCallback, useState } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
@@ -15,8 +15,6 @@ export interface ThermometerProps {
   minLabel?: string
   maxLabel?: string
   step?: number
-  showValue?: boolean
-  height?: number
 }
 
 export const Thermometer: React.FC<ThermometerProps> = ({
@@ -31,10 +29,53 @@ export const Thermometer: React.FC<ThermometerProps> = ({
   minLabel,
   maxLabel,
   step = 1,
-  showValue = false,
-  height = 500,
 }) => {
+  const height = 500 // Fixed height constant
   const thermometerRef = useRef<HTMLDivElement>(null)
+  const thumbRef = useRef<HTMLDivElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
+
+  // Handle vertical dragging
+  const handlePointerDown = (event: React.PointerEvent<HTMLElement>) => {
+    if (disabled || event.button !== 0) return
+
+    event.preventDefault()
+    setIsDragging(true)
+
+    const startY = event.clientY
+    const rect = thermometerRef.current?.getBoundingClientRect()
+    if (!rect) return
+
+    const handlePointerMove = (moveEvent: PointerEvent) => {
+      const deltaY = moveEvent.clientY - startY
+      const newY = getThumbPosition() + deltaY
+
+      // Convert Y position to value index
+      const segmentHeight = height / displayValues.length
+      const segmentIndex = Math.round(newY / segmentHeight)
+      const clampedIndex = Math.max(
+        0,
+        Math.min(displayValues.length - 1, segmentIndex),
+      )
+
+      // Reverse index because highest value is at top
+      const reversedIndex = displayValues.length - 1 - clampedIndex
+      const newValue = displayValues[reversedIndex]
+
+      if (newValue && newValue !== value) {
+        onChange(newValue)
+      }
+    }
+
+    const handlePointerUp = () => {
+      setIsDragging(false)
+      document.removeEventListener('pointermove', handlePointerMove)
+      document.removeEventListener('pointerup', handlePointerUp)
+    }
+
+    document.addEventListener('pointermove', handlePointerMove)
+    document.addEventListener('pointerup', handlePointerUp)
+  }
 
   // Calculate display values (show every 10th if range is large)
   const getDisplayValues = () => {
@@ -61,6 +102,20 @@ export const Thermometer: React.FC<ThermometerProps> = ({
   }
 
   const displayValues = getDisplayValues()
+
+  // Calculate thumb position based on current value and display values
+  const getThumbPosition = () => {
+    if (!value || displayValues.length === 0) return height // Start at bottom when no value (+ padding offset)
+
+    const currentIndex = displayValues.indexOf(value)
+    if (currentIndex === -1) return height // Start at bottom if value not found (+ padding offset)
+
+    // Calculate position (reversed because highest value is at top)
+    const segmentHeight = height / displayValues.length
+    const reversedIndex = displayValues.length - 1 - currentIndex
+    // Add 18px offset to account for thermometer container's padding + border
+    return reversedIndex * segmentHeight + segmentHeight / 2
+  }
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -136,11 +191,6 @@ export const Thermometer: React.FC<ThermometerProps> = ({
             {label}
             {required && <span style={{ color: 'red' }}> *</span>}
           </Text>
-          {showValue && (
-            <Text variant="small" color="dark300" marginTop={1}>
-              Current value: {value}
-            </Text>
-          )}
         </Box>
       )}
 
@@ -204,29 +254,75 @@ export const Thermometer: React.FC<ThermometerProps> = ({
           >
             {/* Clickable segments */}
             {generateSegments()}
+          </Box>
+        </Box>
 
-            {/* Cyan indicator line for selected value */}
-            {/* {displayValues.includes(value) && (
-              <Box
-                style={{
-                  width: '70px',
-                  height: '4px',
-                  backgroundColor: '#40e0d0',
-                  position: 'absolute',
-                  bottom: `${
-                    (displayValues.indexOf(value) / displayValues.length) *
-                      height +
-                    height / displayValues.length / 2 -
-                    2
-                  }px`,
-                  left: '-5px',
-                  borderRadius: '2px',
-                  boxShadow: '0 2px 4px rgba(64, 224, 208, 0.4)',
-                  zIndex: 10,
-                  pointerEvents: 'none',
-                }}
-              />
-            )} */}
+        {/* Draggable thumb control on the right side */}
+        <Box
+          style={{
+            position: 'relative',
+            width: '60px',
+            height: `532px`,
+          }}
+        >
+          {/* Connecting line from thumb to thermometer */}
+          <Box
+            style={{
+              position: 'absolute',
+              left: '-18px',
+              top: `${getThumbPosition()}px`,
+              width: '51px',
+              height: '2px',
+              backgroundColor: theme.color.mint400,
+              transition: isDragging ? 'none' : 'transform 0.3s, top 0.2s ease',
+
+              transform: 'translateY(-1px)',
+              zIndex: 5,
+            }}
+          />
+
+          {/* Draggable thumb - exactly like Slider component */}
+          <Box
+            ref={thumbRef}
+            onPointerDown={handlePointerDown}
+            style={{
+              boxSizing: 'border-box',
+              cursor: disabled ? 'not-allowed' : 'pointer',
+              background: theme.color.mint400,
+              backgroundClip: 'content-box',
+              padding: '20px',
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              position: 'absolute',
+              left: '8px',
+              top: `${getThumbPosition()}px`,
+              transform: 'translateY(-50%)',
+              transition: isDragging ? 'none' : 'transform 0.3s, top 0.2s ease',
+              WebkitTapHighlightColor: 'transparent',
+              outline: 'none',
+              touchAction: 'none',
+              zIndex: 10,
+            }}
+            // Pseudo-elements using Box components since we can't use CSS pseudo-elements in style prop
+          >
+            {/* Animated background circle (mimics :after pseudo-element) */}
+            <Box
+              style={{
+                content: '""',
+                position: 'absolute',
+                left: '0px',
+                top: '0px',
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                background: theme.color.mint400,
+                opacity: 0.25,
+                transform: isDragging ? 'scale(0.8)' : 'scale(0.6)',
+                transition: 'transform 1.5s ease-in-out',
+                pointerEvents: 'none',
+              }}
+            />
           </Box>
         </Box>
       </Box>

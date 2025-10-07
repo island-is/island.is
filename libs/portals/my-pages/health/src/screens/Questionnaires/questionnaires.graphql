@@ -29,7 +29,6 @@ query GetQuestionnaire($id: String!, $locale: String!) {
         sublabel
         display
         dependsOn
-        visibilityCondition
         answerOptions {
           type
           id
@@ -50,6 +49,12 @@ query GetQuestionnaire($id: String!, $locale: String!) {
           value {
             extraQuestions
           }
+        }
+        visibilityConditions {
+          questionId
+          operator
+          expectedValues
+          showWhenMatched
         }
       }
     }

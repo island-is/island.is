@@ -10,9 +10,12 @@ export const scaleButton = style({
   borderColor: theme.color.blue200,
   selectors: {
     '&:hover': {
-      backgroundColor: theme.color.blue200,
+      backgroundColor: theme.color.blue400,
+      fontWeight: 500,
+      color: `${theme.color.white} !important`,
+      border: '1px solid',
       cursor: 'pointer',
-      color: theme.color.white,
+      borderColor: theme.color.blue400,
     },
     '&:first-of-type': {
       borderTopLeftRadius: theme.border.radius.standard,
@@ -27,6 +30,28 @@ export const scaleButton = style({
       borderBottomRightRadius: theme.border.radius.standard,
     },
   },
+})
+
+export const scaleButtonSelected = style({
+  border: '1px solid',
+  borderColor: theme.color.blue400,
+  fontWeight: 500,
+  backgroundColor: theme.color.blue400,
+  color: theme.color.white,
+  selectors: {
+    '&:hover': {
+      backgroundColor: theme.color.blue400,
+      border: '1px solid',
+      cursor: 'pointer',
+      color: theme.color.white,
+      borderColor: theme.color.blue400,
+    },
+  },
+})
+
+export const outerSlider = style({
+  height: 16,
+  padding: 4,
 })
 
 // globalStyle(`${scaleContainer} ${scaleButton}:first-child`, {

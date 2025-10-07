@@ -13,21 +13,49 @@ registerEnumType(QuestionDisplayType, {
 
 export enum AnswerOptionType {
   text = 'HealthQuestionnaireAnswerText',
+  textarea = 'HealthQuestionnaireAnswerTextarea',
   radio = 'HealthQuestionnaireAnswerRadio',
   checkbox = 'HealthQuestionnaireAnswerCheckbox',
   thermometer = 'HealthQuestionnaireAnswerThermometer',
   number = 'HealthQuestionnaireAnswerNumber',
   scale = 'HealthQuestionnaireAnswerScale',
   label = 'HealthQuestionnaireAnswerLabel',
-  slider = 'slider',
-  date = 'date',
-  datetime = 'datetime',
+  slider = 'HealthQuestionnaireAnswerSlider',
+  date = 'HealthQuestionnaireAnswerDate',
+  datetime = 'HealthQuestionnaireAnswerDateTime',
 }
 
 registerEnumType(AnswerOptionType, {
   name: 'QuestionnaireAnswerOptionType',
   description: 'Type of answer option',
 })
+
+export enum VisibilityOperator {
+  equals = 'equals',
+  contains = 'contains',
+  exists = 'exists',
+  isEmpty = 'isEmpty',
+}
+
+registerEnumType(VisibilityOperator, {
+  name: 'QuestionnaireVisibilityOperator',
+  description: 'Operator for visibility conditions',
+})
+
+@ObjectType('VisibilityCondition')
+export class VisibilityCondition {
+  @Field()
+  questionId!: string
+
+  @Field(() => VisibilityOperator)
+  operator!: VisibilityOperator
+
+  @Field(() => [String], { nullable: true })
+  expectedValues?: string[]
+
+  @Field({ defaultValue: true })
+  showWhenMatched!: boolean
+}
 
 // Answer option value type
 @ObjectType('AnswerOptionValue')
@@ -102,9 +130,9 @@ export class Question {
   @Field(() => AnswerOption)
   answerOptions!: AnswerOption
 
+  @Field(() => [VisibilityCondition], { nullable: true })
+  visibilityConditions?: VisibilityCondition[]
+
   @Field(() => [String], { nullable: true })
   dependsOn?: string[]
-
-  @Field({ nullable: true })
-  visibilityCondition?: string
 }

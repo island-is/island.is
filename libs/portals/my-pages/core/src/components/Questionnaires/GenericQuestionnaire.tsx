@@ -10,7 +10,7 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { QuestionRenderer } from '../Questionnaires/QuestionRenderer'
 import { Stepper } from '../Questionnaires/Stepper'
-import { isQuestionVisible } from './utils/visibilityUtils'
+import { isQuestionVisibleWithStructuredConditions } from './utils/visibilityUtils'
 
 import { Question, Questionnaire } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
@@ -52,12 +52,18 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
         const filteredQuestions = section.questions.filter((question) => {
           if (!question.answerOptions?.type) return false
 
-          return isQuestionVisible(
-            question.id,
-            question.dependsOn || undefined,
-            question.visibilityCondition || undefined,
-            answers,
-          )
+          if (
+            question.visibilityConditions &&
+            question.visibilityConditions.length > 0
+          ) {
+            return isQuestionVisibleWithStructuredConditions(
+              question.visibilityConditions,
+              answers,
+            )
+          }
+
+          // Questions without visibility conditions are visible by default
+          return true
         })
 
         return { ...section, questions: filteredQuestions }

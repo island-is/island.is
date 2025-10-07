@@ -1,3 +1,8 @@
+import {
+  VisibilityCondition as GraphQLVisibilityCondition,
+  VisibilityOperator,
+} from '../../models/question.model'
+
 // Generic types until the health-directorate client exports are available
 // See documentation from EL here:
 // https://e-health-iceland.atlassian.net/wiki/spaces/RD/pages/1253670913/D+nam+skir+spurningalistar+-+XML+structure#%22Message%22-questions---%22type=text%22
@@ -58,8 +63,8 @@ interface HealthDirectorateQuestionDto {
   values?: Array<{ id: string; label?: string }>
 }
 
-// Standardized visibility condition interface for better type safety and clarity
-interface VisibilityCondition {
+// Legacy visibility condition interface for backward compatibility
+interface LegacyVisibilityCondition {
   questionId: string
   operator: 'equals' | 'contains' | 'not_equals' | 'not_contains'
   value: string | string[]
@@ -71,12 +76,12 @@ import {
   QuestionnaireSection,
   QuestionnairesList,
   QuestionnairesStatusEnum,
-} from '../models/questionnaires.model'
+} from '../../models/questionnaires.model'
 import {
   Question,
   QuestionDisplayType,
   AnswerOptionType,
-} from '../models/question.model'
+} from '../../models/question.model'
 
 // Type for all possible question DTOs from the client
 type ClientQuestionDto = HealthDirectorateQuestionDto
@@ -94,14 +99,29 @@ enum QuestionTypeEnum {
 }
 
 /**
- * Creates a standardized visibility condition object
+ * Creates a structured visibility condition for the new GraphQL model
  */
-const createVisibilityCondition = (
+const createStructuredVisibilityCondition = (
   questionId: string,
-  operator: VisibilityCondition['operator'],
+  operator: VisibilityOperator,
+  expectedValues?: string[],
+  showWhenMatched = true,
+): GraphQLVisibilityCondition => ({
+  questionId,
+  operator,
+  expectedValues,
+  showWhenMatched,
+})
+
+/**
+ * Creates a legacy visibility condition object (for backward compatibility)
+ */
+const createLegacyVisibilityCondition = (
+  questionId: string,
+  operator: LegacyVisibilityCondition['operator'],
   value: string | string[],
   visible = true,
-): VisibilityCondition => ({
+): LegacyVisibilityCondition => ({
   questionId,
   operator,
   value,
@@ -109,15 +129,55 @@ const createVisibilityCondition = (
 })
 
 /**
- * Serializes a visibility condition to JSON string for storage
+ * Converts legacy visibility condition to structured format
  */
-const serializeVisibilityCondition = (
-  condition: VisibilityCondition,
+const convertLegacyToStructured = (
+  legacy: LegacyVisibilityCondition,
+): GraphQLVisibilityCondition => {
+  let operator: VisibilityOperator
+  let showWhenMatched = legacy.visible
+
+  switch (legacy.operator) {
+    case 'equals':
+      operator = VisibilityOperator.equals
+      break
+    case 'contains':
+      operator = VisibilityOperator.contains
+      break
+    case 'not_equals':
+      operator = VisibilityOperator.equals
+      showWhenMatched = !legacy.visible // Flip the logic for "not" operations
+      break
+    case 'not_contains':
+      operator = VisibilityOperator.contains
+      showWhenMatched = !legacy.visible // Flip the logic for "not" operations
+      break
+    default:
+      operator = VisibilityOperator.equals
+  }
+
+  const expectedValues = Array.isArray(legacy.value)
+    ? legacy.value
+    : [legacy.value]
+
+  return createStructuredVisibilityCondition(
+    legacy.questionId,
+    operator,
+    expectedValues,
+    showWhenMatched,
+  )
+}
+
+/**
+ * Serializes a legacy visibility condition to JSON string for storage
+ */
+const serializeLegacyVisibilityCondition = (
+  condition: LegacyVisibilityCondition,
 ): string => {
   try {
     return JSON.stringify(condition)
   } catch (error) {
-    console.warn('Failed to serialize visibility condition:', error)
+    console.warn('Failed to serialize legacy visibility condition:', error)
     return JSON.stringify({
       questionId: condition.questionId,
       operator: 'equals',
@@ -128,11 +188,11 @@ const serializeVisibilityCondition = (
 }
 
 /**
- * Parses a visibility condition from JSON string with validation
+ * Parses a legacy visibility condition from JSON string with validation
  */
-const parseVisibilityCondition = (
+const parseLegacyVisibilityCondition = (
   conditionString: string,
-): VisibilityCondition | null => {
+): LegacyVisibilityCondition | null => {
   try {
     const parsed = JSON.parse(conditionString)
 
@@ -146,13 +206,13 @@ const parseVisibilityCondition = (
       (typeof parsed.value === 'string' || Array.isArray(parsed.value)) &&
       typeof parsed.visible === 'boolean'
     ) {
-      return parsed as VisibilityCondition
+      return parsed as LegacyVisibilityCondition
     }
 
-    console.warn('Invalid visibility condition structure:', parsed)
+    console.warn('Invalid legacy visibility condition structure:', parsed)
     return null
   } catch (error) {
-    console.warn('Failed to parse visibility condition:', error)
+    console.warn('Failed to parse legacy visibility condition:', error)
     return null
   }
 }
@@ -190,6 +250,9 @@ const mapQuestionType = (
     case QuestionTypeEnum.List: {
       const listQuestion = questionDto as HealthDirectorateQuestionDto
       // Check if it's multiselect to determine radio vs checkbox
+      if (questionDto.displayClass === 'slider') {
+        return AnswerOptionType.slider
+      }
       if (
         listQuestion.multiselect ||
         (listQuestion.maxSelections && listQuestion.maxSelections > 1)
@@ -264,7 +327,11 @@ const analyzeTriggers = (
   allQuestions: HealthDirectorateQuestionDto[],
   triggers: { [key: string]: unknown[] },
   currentQuestionId: string,
-): { dependsOn?: string[]; visibilityCondition?: string } => {
+): {
+  dependsOn?: string[]
+  visibilityCondition?: string
+  structuredVisibilityConditions?: GraphQLVisibilityCondition[]
+} => {
   // Find triggers that target this question
   const relevantTriggers: unknown[] = []
 
@@ -313,7 +380,7 @@ const analyzeTriggers = (
         : []
 
     // Determine operator and value based on the trigger data
-    let operator: VisibilityCondition['operator'] = 'equals'
+    let operator: LegacyVisibilityCondition['operator'] = 'equals'
     let value: string | string[] = ''
 
     if (containsLabels.length > 1) {
@@ -328,19 +395,44 @@ const analyzeTriggers = (
       value = 'true' // Default assumption for boolean-like visibility
     }
 
-    // Create standardized visibility condition
-    const condition = createVisibilityCondition(
+    // Create structured visibility condition (preferred)
+    let structuredOperator: VisibilityOperator
+    let expectedValues: string[] = []
+    const showWhenMatched = trigger.visible ?? true
+
+    if (operator === 'contains') {
+      structuredOperator = VisibilityOperator.contains
+      expectedValues = containsLabels
+    } else if (operator === 'equals') {
+      structuredOperator = VisibilityOperator.equals
+      expectedValues = [value as string]
+    } else {
+      structuredOperator = VisibilityOperator.exists
+      expectedValues = []
+    }
+
+    const structuredCondition = createStructuredVisibilityCondition(
       trigger.triggerId,
-      operator,
+      structuredOperator,
+      expectedValues.length > 0 ? expectedValues : undefined,
+      showWhenMatched,
+    )
+
+    // Create legacy condition for backward compatibility
+    const legacyCondition = createLegacyVisibilityCondition(
+      trigger.triggerId,
+      operator as LegacyVisibilityCondition['operator'],
       value,
       trigger.visible ?? true,
     )
 
-    const visibilityCondition = serializeVisibilityCondition(condition)
+    const visibilityCondition =
+      serializeLegacyVisibilityCondition(legacyCondition)
 
     return {
       dependsOn: [trigger.triggerId],
       visibilityCondition,
+      structuredVisibilityConditions: [structuredCondition],
     }
   } catch (error) {
     console.warn(
@@ -429,8 +521,8 @@ const transformClientQuestion = (
     sublabel: clientQuestion.htmlLabel || clientQuestion.hint || undefined,
     display: displayType,
     answerOptions,
+    visibilityConditions: dependencies.structuredVisibilityConditions,
     dependsOn: dependencies.dependsOn,
-    visibilityCondition: dependencies.visibilityCondition,
   }
 }
 
@@ -1363,8 +1455,10 @@ export const createMockElDistressThermometerQuestionnaire =
 
 // Utility exports for working with visibility conditions
 export {
-  parseVisibilityCondition,
-  createVisibilityCondition,
-  serializeVisibilityCondition,
+  parseLegacyVisibilityCondition,
+  createLegacyVisibilityCondition,
+  serializeLegacyVisibilityCondition,
+  createStructuredVisibilityCondition,
+  convertLegacyToStructured,
 }
-export type { VisibilityCondition }
+export type { LegacyVisibilityCondition }

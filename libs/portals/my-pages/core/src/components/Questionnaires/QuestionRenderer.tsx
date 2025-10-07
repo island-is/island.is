@@ -8,6 +8,7 @@ import { QuestionAnswer } from '../../types/questionnaire'
 import { Question, QuestionnaireAnswerOptionType } from '@island.is/api/schema'
 import HtmlParser from 'react-html-parser'
 import { Scale } from './QuestionsTypes/Scale'
+import { Slider } from './QuestionsTypes/Slider'
 
 interface QuestionRendererProps {
   question: Question
@@ -132,27 +133,21 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 
       case QuestionnaireAnswerOptionType.scale: {
         const answerOptions = question.answerOptions
-        if (
-          answerOptions.min == null ||
-          answerOptions.max == null ||
-          answerOptions.minLabel == null ||
-          answerOptions.maxLabel == null
-        )
-          return null
+        console.log('scale answerOptions:', answerOptions)
 
         return (
           <Scale
             id={question.id}
             label={question.label}
-            min={answerOptions.min}
-            max={answerOptions.max}
+            min={answerOptions.min ?? '0'}
+            max={answerOptions.max ?? '10'}
             value={typeof answer?.value === 'string' ? answer.value : undefined}
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
             required={question.display === 'required'}
-            minLabel={answerOptions.minLabel}
-            maxLabel={answerOptions.maxLabel}
+            minLabel={answerOptions.minLabel || undefined}
+            maxLabel={answerOptions.maxLabel || undefined}
             showLabels={!!(answerOptions.minLabel || answerOptions.maxLabel)}
           />
         )
@@ -173,7 +168,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             required={question.display === 'required'}
             minLabel={answerOptions.minLabel || 'Min'}
             maxLabel={answerOptions.maxLabel || 'Max'}
-            height={200}
           />
         )
       }
@@ -183,19 +177,15 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         // Use Scale component as a fallback for slider until a proper Slider component is available
         const answerOptions = question.answerOptions
         return (
-          <Scale
+          <Slider
             id={question.id}
             label={question.label}
-            min={answerOptions.min || '0'}
-            max={answerOptions.max || '10'}
-            value={answer?.value ? answer.value.toString() : undefined}
-            onChange={(value: string) => handleValueChange(value)}
-            disabled={disabled}
-            error={error}
-            required={question.display === 'required'}
-            step={1}
-            minLabel={answerOptions.minLabel || `${answerOptions.min || 0}`}
-            maxLabel={answerOptions.maxLabel || `${answerOptions.max || 100}`}
+            steps={[]}
+            draftTotalSteps={
+              answerOptions.max ? parseInt(answerOptions.max) : 0
+            }
+            draftFinishedSteps={0}
+            description={answerOptions.sublabel || ''}
           />
         )
       }

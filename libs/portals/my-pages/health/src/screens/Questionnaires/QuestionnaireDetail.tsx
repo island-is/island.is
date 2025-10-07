@@ -1,19 +1,18 @@
-import { Box, SkeletonLoader, toast } from '@island.is/island-ui/core'
+import { Box, LoadingDots, toast } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
   GenericQuestionnaire,
-  m,
   QuestionAnswer,
 } from '@island.is/portals/my-pages/core'
+import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
+import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
-import { useGetQuestionnaireQuery } from './questionnaires.generated'
-import { theme } from '@island.is/island-ui/theme'
-import { useOrganizations } from '@island.is/portals/my-pages/graphql'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { HealthPaths } from '../../lib/paths'
+import { useGetQuestionnaireQuery } from './questionnaires.generated'
 
 const QuestionnaireDetail: React.FC = () => {
   const { id } = useParams<{ id?: string }>()
@@ -64,7 +63,16 @@ const QuestionnaireDetail: React.FC = () => {
         background={'blue100'}
         width="full"
       >
-        {loading && !error && <SkeletonLoader repeat={16} space={4} />}
+        {loading && !error && (
+          <Box
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            height="full"
+          >
+            <LoadingDots />
+          </Box>
+        )}
         {error && !loading && (
           <Problem type="internal_service_error" noBorder />
         )}
