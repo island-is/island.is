@@ -2312,19 +2312,6 @@ export class CaseService {
           )
         }
 
-        // create new verdict for each defendant when indictment is completed with ruling
-        if (completingIndictmentCaseWithRuling && theCase.defendants) {
-          await Promise.all(
-            theCase.defendants.map((defendant) =>
-              this.verdictService.createVerdict(
-                defendant.id,
-                theCase.id,
-                transaction,
-              ),
-            ),
-          )
-        }
-
         // Remove uploaded ruling files if an indictment case is completed without a ruling
         if (completingIndictmentCaseWithoutRuling && theCase.caseFiles) {
           await Promise.all(

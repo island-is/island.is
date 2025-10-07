@@ -3,11 +3,13 @@ import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import {
   Case,
+  CreateVerdictsInput,
   Defendant,
   UpdateVerdictInput,
   Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { useCreateVerdictsMutation } from './createVerdicts.generated'
 import { useDeliverCaseVerdictMutation } from './deliverCaseVerdict.generated'
 import { useUpdateVerdictMutation } from './updateVerdict.generated'
 import { useVerdictQuery } from './verdict.generated'
@@ -42,7 +44,25 @@ const useVerdict = (currentVerdict?: Verdict) => {
   )
 
   const [updateVerdictMutation] = useUpdateVerdictMutation()
+  const [createVerdictsMutation] = useCreateVerdictsMutation()
 
+  const createVerdicts = useCallback(
+    async (verdictsToCreate: CreateVerdictsInput) => {
+      try {
+        const { data } = await createVerdictsMutation({
+          variables: {
+            input: verdictsToCreate,
+          },
+        })
+
+        return Boolean(data)
+      } catch (error) {
+        toast.error('Upp kom villa við að uppfæra mál')
+        return false
+      }
+    },
+    [createVerdictsMutation],
+  )
   const updateVerdict = useCallback(
     async (updateVerdict: UpdateVerdictInput) => {
       try {
@@ -72,18 +92,21 @@ const useVerdict = (currentVerdict?: Verdict) => {
     [updateDefendantVerdictState, updateVerdict],
   )
 
-  const setAndSendVerdictsToServer = useCallback(
-    (
-      updates: UpdateVerdictInput[],
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
-    ) => {
-      updates.forEach((update) => {
-        updateDefendantVerdictState(update, setWorkingCase)
-        updateVerdict(update)
-      })
-    },
-    [updateDefendantVerdictState, updateVerdict],
-  )
+  // TODO: pass in defendant ids
+  // iterate through ids
+  // deleteVerdict
+  // deleteVerdictFromState
+
+  // const deleteVerdicts = useCallback(
+  //   (
+  //     defendants: UpdateVerdictInput,
+  //     setWorkingCase: Dispatch<SetStateAction<Case>>,
+  //   ) => {
+  //     updateDefendantVerdictState(update, setWorkingCase)
+  //     updateVerdict(update)
+  //   },
+  //   [updateDefendantVerdictState, updateVerdict],
+  // )
 
   const skip =
     !currentVerdict ||
@@ -126,7 +149,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
     verdict: skip || error ? currentVerdict : data?.verdict,
     verdictLoading: skip ? false : verdictLoading,
     setAndSendVerdictToServer,
-    setAndSendVerdictsToServer,
+    createVerdicts,
     deliverCaseVerdict,
   }
 }

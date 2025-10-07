@@ -29,6 +29,7 @@ import { DefendantService } from '../defendant'
 import { FileService } from '../file'
 import { PoliceService } from '../police'
 import { Case, Defendant, Verdict } from '../repository'
+import { CreateVerdictDto } from './dto/createVerdict.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
@@ -91,12 +92,26 @@ export class VerdictService {
     return verdict
   }
 
-  async createVerdict(
-    defendantId: string,
+  private async createVerdict(
     caseId: string,
+    verdict: CreateVerdictDto,
     transaction: Transaction,
   ): Promise<Verdict> {
-    return this.verdictModel.create({ defendantId, caseId }, { transaction })
+    return this.verdictModel.create({ caseId, ...verdict }, { transaction })
+  }
+
+  async createVerdicts(
+    caseId: string,
+    verdicts: CreateVerdictDto[],
+  ): Promise<Verdict[]> {
+    console.log({ verdicts })
+    return this.sequelize.transaction(async (transaction) => {
+      return await Promise.all(
+        verdicts.map((verdict) =>
+          this.createVerdict(caseId, verdict, transaction),
+        ),
+      )
+    })
   }
 
   private async handleServiceRequirementUpdate(

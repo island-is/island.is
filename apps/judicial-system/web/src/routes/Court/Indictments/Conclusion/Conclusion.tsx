@@ -101,7 +101,7 @@ const Conclusion: FC = () => {
   const { isUpdatingCase, setAndSendCaseToServer } = useCase()
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
-  const { setAndSendVerdictsToServer } = useVerdict()
+  const { createVerdicts } = useVerdict()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -125,6 +125,16 @@ const Conclusion: FC = () => {
   const [mergeCaseNumber, setMergeCaseNumber] = useState<string>()
   const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
     useState<string>()
+  const [defendantsWithDefaultJudgments, setDefendantsWithDefaultJudgments] =
+    useState<SelectableItem[]>(
+      workingCase.defendants
+        ? workingCase.defendants?.map((defendant) => ({
+            id: defendant.id,
+            name: defendant.name ?? 'Nafn ekki skráð',
+            checked: defendant.verdict?.isDefaultJudgement ?? false,
+          }))
+        : [],
+    )
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
@@ -139,6 +149,7 @@ const Conclusion: FC = () => {
         return
       }
 
+      // update the case
       const update: UpdateCase = {
         indictmentDecision: selectedAction,
         courtSessionType: null,
@@ -189,6 +200,34 @@ const Conclusion: FC = () => {
         return
       }
 
+      // extract: handleVerdicts
+      // create verdicts to persist the default judgments
+      if (
+        selectedAction === IndictmentDecision.COMPLETING &&
+        update.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+      ) {
+        const defendantVerdictsToCreate = defendantsWithDefaultJudgments.map(
+          (item) => ({
+            defendantId: item.id,
+            isDefaultJudgement: item.checked,
+          }),
+        )
+
+        createVerdicts({
+          caseId: workingCase.id,
+          verdicts: defendantVerdictsToCreate,
+        })
+      }
+      if (
+        workingCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.RULING &&
+        update.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING
+      ) {
+        // remove verdicts
+      }
+      // set and send verdict to server if applicable
+      // handle change if decision is ruling
+
       router.push(
         selectedAction === IndictmentDecision.REDISTRIBUTING
           ? destination
@@ -198,6 +237,8 @@ const Conclusion: FC = () => {
     [
       courtDate.date,
       courtDate.location,
+      createVerdicts,
+      defendantsWithDefaultJudgments,
       mergeCaseNumber,
       postponementReason,
       selectedAction,
@@ -671,14 +712,7 @@ const Conclusion: FC = () => {
                   name: defendant.name ?? 'Nafn ekki skráð',
                 }))}
                 onChange={(selectableItems: SelectableItem[]) => {
-                  // TODO: this is a bit of a problem, because the verdict does not exist at this stage
-                  // we have to create it and also have the option to remove the verdict (if they change the decision)
-                  const verdictsToUpdate = selectableItems.map((item) => ({
-                    caseId: workingCase.id,
-                    defendantId: item.id,
-                    isDefaultJudgement: item.checked,
-                  }))
-                  setAndSendVerdictsToServer(verdictsToUpdate, setWorkingCase)
+                  setDefendantsWithDefaultJudgments(selectableItems)
                 }}
                 isLoading={false}
               />
