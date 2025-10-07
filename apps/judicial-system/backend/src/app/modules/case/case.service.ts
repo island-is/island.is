@@ -2312,6 +2312,21 @@ export class CaseService {
           )
         }
 
+        // Ensure that verdicts exist at this stage, if they don't exist we create them
+        if (completingIndictmentCaseWithRuling && theCase.defendants) {
+          await Promise.all(
+            theCase.defendants.map((defendant) => {
+              if (!defendant.verdict) {
+                return this.verdictService.createVerdict(
+                  theCase.id,
+                  { defendantId: defendant.id },
+                  transaction,
+                )
+              }
+            }),
+          )
+        }
+
         // Remove uploaded ruling files if an indictment case is completed without a ruling
         if (completingIndictmentCaseWithoutRuling && theCase.caseFiles) {
           await Promise.all(

@@ -92,7 +92,7 @@ export class VerdictService {
     return verdict
   }
 
-  private async createVerdict(
+  async createVerdict(
     caseId: string,
     verdict: CreateVerdictDto,
     transaction: Transaction,
@@ -104,7 +104,6 @@ export class VerdictService {
     caseId: string,
     verdicts: CreateVerdictDto[],
   ): Promise<Verdict[]> {
-    console.log({ verdicts })
     return this.sequelize.transaction(async (transaction) => {
       return await Promise.all(
         verdicts.map((verdict) =>
