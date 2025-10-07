@@ -79,7 +79,6 @@ export const AirDiscountOverview = () => {
     'isPortalAirDiscountPageDisabled',
     false,
   )
-  console.log(isPageDisabled)
   const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
   const {
     data: flightLegData,
@@ -114,7 +113,7 @@ export const AirDiscountOverview = () => {
     }
   }
 
-  if (!isPageDisabled.loading && isPageDisabled.value) {
+  if (isPageDisabled) {
     const nextYear = new Date().getFullYear() + 1
     return (
       <Problem
