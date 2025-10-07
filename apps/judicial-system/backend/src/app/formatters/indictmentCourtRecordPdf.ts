@@ -48,8 +48,8 @@ export const createIndictmentCourtRecordPdf = (
     addIndictmentCourtRecordConfirmation(doc, confirmation)
   }
 
-  addEmptyLines(doc, confirmation ? 11 : 9, doc.page.margins.left)
-  setLineGap(doc, 2)
+  addEmptyLines(doc, 5)
+  setLineGap(doc, 4)
   addLargeHeading(doc, theCase.court?.name ?? 'Héraðsdómur', 'Times-Roman')
   addMediumHeading(doc, 'Þingbók')
   addMediumHeading(doc, `Mál nr. ${theCase.courtCaseNumber}`)
