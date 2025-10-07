@@ -21,7 +21,7 @@ Data is fetched from the National Registry, user profile, childrens custody, RSK
 
 All localisation can be found on Contentful.
 
-- [Activation Allowance translation](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/vmst.ub.application)
+- [Unemployment application translation](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/vmst.ub.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 ## Test users
