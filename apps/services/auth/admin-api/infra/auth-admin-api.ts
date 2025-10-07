@@ -28,6 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
     .namespace('identity-server-admin')
     .image('services-auth-admin-api')
+    .serviceAccount('services-auth-admin-api')
     .codeOwner(CodeOwners.Aranja)
     .db({
       name: 'servicesauth',

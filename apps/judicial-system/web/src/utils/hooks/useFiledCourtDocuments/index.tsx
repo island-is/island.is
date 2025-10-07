@@ -1,17 +1,37 @@
 import { useContext, useMemo } from 'react'
 
-import { FormContext } from '@island.is/judicial-system-web/src/components'
+import {
+  isPrisonAdminUser,
+  isPublicProsecutionOfficeUser,
+} from '@island.is/judicial-system/types'
+import {
+  FormContext,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 import { CourtDocumentType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const useFiledCourtDocuments = () => {
   const { workingCase } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
+  const shouldNotSeePrefix = user
+    ? isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user)
+    : false
 
   const filedCourtDocuments = useMemo(() => {
+    const mergedFiledDocuments =
+      workingCase.mergedCases?.flatMap(
+        (mergedCase) =>
+          (mergedCase.courtSessions ?? [])
+            .filter((session) => session.isConfirmed)
+            .flatMap((session) => session.filedDocuments ?? []) ?? [],
+      ) ?? []
+
     const filedDocuments =
-      workingCase.courtSessions
-        ?.filter((session) => session.isConfirmed)
-        .map((session) => session.filedDocuments ?? [])
-        .flat() ?? []
+      (workingCase.courtSessions ?? [])
+        .filter((session) => session.isConfirmed)
+        .flatMap((session) => session.filedDocuments ?? [])
+        .concat(mergedFiledDocuments) ?? []
 
     const uploadedFiledDocuments = filedDocuments.filter(
       (doc) => doc.documentType === CourtDocumentType.UPLOADED_DOCUMENT,
@@ -31,6 +51,10 @@ const useFiledCourtDocuments = () => {
     caseFileId: string,
     name: string,
   ) => {
+    if (shouldNotSeePrefix) {
+      return name
+    }
+
     const { uploadedFiledDocuments } = filedCourtDocuments
 
     const document = uploadedFiledDocuments.find(
@@ -48,6 +72,10 @@ const useFiledCourtDocuments = () => {
     partialUri: string,
     name: string,
   ) => {
+    if (shouldNotSeePrefix) {
+      return name
+    }
+
     const { generatedFiledDocuments } = filedCourtDocuments
 
     const document = generatedFiledDocuments.find((doc) =>
