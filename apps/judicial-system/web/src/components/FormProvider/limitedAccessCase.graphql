@@ -250,6 +250,19 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         startDate
         endDate
         ruling
+        isConfirmed
+        filedDocuments {
+          id
+          created
+          modified
+          caseId
+          courtSessionId
+          documentType
+          documentOrder
+          name
+          caseFileId
+          generatedPdfUri
+        }
       }
       caseFiles {
         id
