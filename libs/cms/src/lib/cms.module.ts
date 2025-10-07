@@ -35,7 +35,7 @@ import { OrganizationTitleByNationalIdLoader } from './loaders/organizationTitle
 import { OrganizationTitleEnByNationalIdLoader } from './loaders/organizationTitleEnByNationalId.loader'
 import { OrganizationLogoByEntryIdLoader } from './loaders/organizationLogoByEntryId.loader'
 import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByEntryId.loader'
-import { OrganizationPageResolver } from './cms.resolver'
+import { OrganizationPageResolver } from './organizationPage.resolver'
 
 @Module({
   imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
