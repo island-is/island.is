@@ -141,11 +141,6 @@ export const employmentSearch = {
       defaultMessage: 'Ökuréttindi {value}',
       description: 'Driving license label',
     },
-    markCorrectDrivingLicenseLabel: {
-      id: 'vmst.ub.application:employmentSearch.licenses.markCorrectDrivingLicenseLabel',
-      defaultMessage: 'Merktu við þau réttindi sem þú ert með',
-      description: 'Mark correct driving license label',
-    },
     hasHeavyMachineryLicenseLabel: {
       id: 'vmst.ub.application:employmentSearch.licenses.hasHeavyMachineryLicenseLabel',
       defaultMessage: 'Ég er með vinnuvélaréttindi',

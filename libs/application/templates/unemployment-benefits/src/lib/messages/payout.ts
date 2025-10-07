@@ -25,21 +25,6 @@ export const payout = {
       defaultMessage: 'Reikningsupplýsingar',
       description: 'payout account label',
     },
-    accountBankNumber: {
-      id: 'vmst.ub.application:payout.payoutInformation.accountBankNumber',
-      defaultMessage: 'Banki',
-      description: 'payout account bank label',
-    },
-    accountTypeNumber: {
-      id: 'vmst.ub.application:payout.payoutInformation.accountTypeNumber',
-      defaultMessage: 'HB',
-      description: 'payout account type number label',
-    },
-    accountNumber: {
-      id: 'vmst.ub.application:payout.payoutInformation.accountNumber',
-      defaultMessage: 'Reikningsnúmer',
-      description: 'payout account number label',
-    },
     unionQuestion: {
       id: 'vmst.ub.application:payout.payoutInformation.unionQuestion',
       defaultMessage: 'Viltu greiða í stéttarfélag?',
@@ -164,11 +149,6 @@ export const payout = {
       id: 'vmst.ub.application:payout.vacation.dateEnd',
       defaultMessage: 'Dagsetning til',
       description: 'Vacation end date label',
-    },
-    datePlaceholder: {
-      id: 'vmst.ub.application:payout.vacation.datePlaceholder',
-      defaultMessage: 'Veldu dagsetningu',
-      description: 'Vacation date placeholder',
     },
   }),
   vacationsAndForeignWorkAgreement: defineMessages({

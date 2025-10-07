@@ -56,14 +56,18 @@ export const useOtherPaymentsAnswers = (
       `${
         !subCategory
           ? locale === 'is'
-            ? `${topCategory?.name} - `
-            : `${topCategory?.english || ''} - `
+            ? `${topCategory?.name}`
+            : `${topCategory?.english || ''} `
           : ''
-      } ${locale === 'is' ? subCategory?.name : subCategory?.english || ''}${
-        privatePensionString ? ` - ${privatePensionString}` : ''
-      }${unionString ? ` - ${unionString}` : ''}${
-        pensionFundString ? ` - ${pensionFundString}` : ''
-      }${
+      } ${
+        subCategory
+          ? locale === 'is'
+            ? ` - ${subCategory?.name || ''}`
+            : ` - ${subCategory?.english || ''}`
+          : ''
+      }${privatePensionString ? ` - ${privatePensionString}` : ''}${
+        unionString ? ` - ${unionString}` : ''
+      }${pensionFundString ? ` - ${pensionFundString}` : ''}${
         paymentAmount
           ? `: ${formatIsk(parseInt(paymentAmount))} ${formatMessage(
               overviewMessages.labels.payout.paymentPerMonth,

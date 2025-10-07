@@ -418,7 +418,9 @@ export const useLanguageOverviewItems = (
     (language: LanguagesInAnswers, index: number) => {
       if (index < 2) {
         //first two are default languages with no id's
-        return `${language.language}: ${language.skill}`
+        const languageName =
+          index === 0 ? 'Íslenska' : index === 1 ? 'Enska' : language.language
+        return `${languageName}: ${language.skill}`
       }
       const languages =
         getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
@@ -431,7 +433,7 @@ export const useLanguageOverviewItems = (
           'unemploymentApplication.data.supportData.languageValues',
         ) || []
       const languageName = languages.find(
-        (x) => x.name === language.language,
+        (x) => x.id === language.language,
       )?.name
       const languageSkill = languageSkills.find(
         (x) => x.id === language.skill,
@@ -469,25 +471,26 @@ export const useResumeOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const hasResume = getValueViaPath<YesOrNoEnum>(
+    answers,
+    'resume.doesOwnResume',
+    YesOrNoEnum.NO,
+  )
+
   const fileName =
     getValueViaPath<Array<FileSchemaInAnswers>>(
       answers,
-      'resume.resumeFile.file',
+      'resume.resumeFile',
       [],
     ) ?? []
+
   return [
     {
       width: 'full',
       keyText: overviewMessages.labels.resume.resume,
       valueText: [
-        getValueViaPath<YesOrNoEnum>(
-          answers,
-          'resume.doesOwnResume',
-          YesOrNoEnum.NO,
-        ) === YES
-          ? coreMessages.radioYes
-          : coreMessages.radioNo,
-        fileName[0]?.name,
+        hasResume === YES ? coreMessages.radioYes : coreMessages.radioNo,
+        hasResume === YES ? fileName[0]?.name : '',
       ],
     },
   ]

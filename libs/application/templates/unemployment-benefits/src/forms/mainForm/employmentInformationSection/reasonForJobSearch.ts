@@ -130,8 +130,8 @@ export const reasonForJobSearchSubSection = buildSubSection({
                 [],
               ) || []
             let required: boolean | undefined
-            unemploymentReasonCategories.map((cat) => {
-              cat.unemploymentReasons?.map((reason) => {
+            unemploymentReasonCategories.forEach((cat) => {
+              cat.unemploymentReasons?.forEach((reason) => {
                 if (reason.id === value) {
                   required = reason.requiresAdditonalDetails
                 }
@@ -176,8 +176,8 @@ export const reasonForJobSearchSubSection = buildSubSection({
                 [],
               ) || []
             let required: boolean | undefined
-            unemploymentReasonCategories.map((cat) => {
-              cat.unemploymentReasons?.map((reason) => {
+            unemploymentReasonCategories.forEach((cat) => {
+              cat.unemploymentReasons?.forEach((reason) => {
                 if (reason.id === value) {
                   required = reason.healthReason
                 }

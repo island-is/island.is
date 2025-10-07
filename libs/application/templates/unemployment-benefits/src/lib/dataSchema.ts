@@ -26,7 +26,7 @@ const FileSchema = z.object({
 })
 
 export const languageSkillsSchema = z.object({
-  language: z.string().nullish(), // TODO FIX
+  language: z.string().nullish(),
   skill: z.string(),
 })
 

@@ -2,6 +2,7 @@ import { buildForm } from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
 import Logo from '../../assets/Logo'
+import { application as applicationMessages } from '../../lib/messages'
 
 export const completedForm = buildForm({
   id: 'completedForm',
@@ -9,8 +10,11 @@ export const completedForm = buildForm({
   logo: Logo,
   children: [
     buildFormConclusionSection({
-      alertTitle: 'Congratulations',
-      alertMessage: 'You have completed this boilerplate application',
+      alertTitle: applicationMessages.successSubmissionTitle,
+      alertMessage: applicationMessages.successSubmissionDescription,
+      expandableDescription: applicationMessages.whatHappensNextContent,
+      infoAlertTitle: applicationMessages.infoAlertTitle,
+      infoAlertMessage: applicationMessages.infoAlertDescription,
     }),
   ],
 })

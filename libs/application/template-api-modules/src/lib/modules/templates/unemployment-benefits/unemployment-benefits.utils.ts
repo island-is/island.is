@@ -108,13 +108,10 @@ export const getJobWishList = (
   answers: FormValue,
   jobCodes: Array<GaldurDomainModelsSettingsJobCodesJobCodeDTO>,
 ) => {
-  const jobWishes = getValueViaPath<JobWishesInAnswers>(
-    answers,
-    'jobWishes.jobList',
-  )
+  const jobWishes = getValueViaPath<JobWishesInAnswers>(answers, 'jobWishes')
 
   return {
-    jobs: jobWishes?.jobList.map((job) => {
+    jobs: jobWishes?.jobList?.map((job) => {
       const chosenJob = jobCodes?.find((x) => x.id === job)
       return {
         id: chosenJob?.id,
@@ -329,7 +326,7 @@ export const getLanguageSkills = (
           'unemploymentApplication.data.supportData.languageKnowledge',
         ) || []
 
-      // TODO this is here because of some bug in readOnly for selectController that always returns value as null even though defaultValue is set
+      // this is here because of some bug in readOnly for selectController that always returns value as null even though defaultValue is set
       const languageId = language
         ? language.language
         : index === 0
@@ -418,10 +415,6 @@ export const getPreviousOccupationInformation = (
     bankruptcyConfirmation:
       unemploymentReasons?.bankruptsyReason?.includes(YES),
   }
-}
-
-export const getAttachmentObjects = (attachments: Array<FileResponse>) => {
-  return ''
 }
 
 export const getFileInfo = async (

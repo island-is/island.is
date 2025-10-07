@@ -1,6 +1,35 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsNumber, IsString } from 'class-validator'
 
+@InputType('VmstApplicationsBankInformationPensionFundInput')
+export class VmstApplicationsBankInformationPensionFundInput {
+  @Field()
+  @IsString()
+  id!: string
+
+  @Field()
+  @IsNumber()
+  percentage!: number
+}
+
+@InputType('VmstApplicationsBankInformationUnionInput')
+export class VmstApplicationsBankInformationUnionInput {
+  @Field()
+  @IsString()
+  id!: string
+}
+
+@InputType('VmstApplicationsBankInformationPrivatePensionInput')
+export class VmstApplicationsBankInformationPrivatePensionInput {
+  @Field()
+  @IsString()
+  id!: string
+
+  @Field()
+  @IsNumber()
+  percentage!: number
+}
+
 @InputType('VmstApplicationsBankInformationInput')
 export class VmstApplicationsBankInformationInput {
   @Field()
@@ -20,6 +49,9 @@ export class VmstApplicationsBankInformationInput {
   })
   pensionFund?: VmstApplicationsBankInformationPensionFundInput
 
+  @Field()
+  doNotPayToUnion!: boolean
+
   @Field(() => VmstApplicationsBankInformationUnionInput, { nullable: true })
   union?: VmstApplicationsBankInformationUnionInput
 
@@ -27,33 +59,4 @@ export class VmstApplicationsBankInformationInput {
     nullable: true,
   })
   privatePensionFunds?: VmstApplicationsBankInformationPrivatePensionInput[]
-}
-
-@InputType('VmstApplicationsBankInformationPensionFundInput')
-export class VmstApplicationsBankInformationPensionFundInput {
-  @Field()
-  @IsString()
-  Id!: string
-
-  @Field()
-  @IsNumber()
-  percentage!: number
-}
-
-@InputType('VmstApplicationsBankInformationUnionInput')
-export class VmstApplicationsBankInformationUnionInput {
-  @Field()
-  @IsString()
-  Id!: string
-}
-
-@InputType('VmstApplicationsBankInformationPrivatePensionInput')
-export class VmstApplicationsBankInformationPrivatePensionInput {
-  @Field()
-  @IsString()
-  Id!: string
-
-  @Field()
-  @IsNumber()
-  percentage!: number
 }

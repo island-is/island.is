@@ -25,7 +25,7 @@ export const otherBenefitsSchema = z
               return val
             }, z.string())
             .optional(),
-          paymentAmount: z.string(),
+          paymentAmount: z.string().optional(),
           privatePensionFund: z.string().optional(),
           pensionFund: z.string().optional(),
           union: z.string().optional(),
@@ -66,24 +66,35 @@ export const otherBenefitsSchema = z
         }
       }
 
-      if (
-        payment.typeOfPayment === PaymentTypeIds.SUPPLEMENTARY_FUND_TYPE_ID &&
-        !payment.privatePensionFund
-      ) {
-        ctx.addIssue({
-          path: ['payments', index, 'privatePensionFund'],
-          code: z.ZodIssueCode.custom,
-        })
+      if (payment.typeOfPayment === PaymentTypeIds.SUPPLEMENTARY_FUND_TYPE_ID) {
+        if (!payment.privatePensionFund) {
+          ctx.addIssue({
+            path: ['payments', index, 'privatePensionFund'],
+            code: z.ZodIssueCode.custom,
+          })
+        }
+
+        if (!payment.paymentAmount) {
+          ctx.addIssue({
+            path: ['payments', index, 'paymentAmount'],
+            code: z.ZodIssueCode.custom,
+          })
+        }
       }
 
-      if (
-        payment.typeOfPayment === PaymentTypeIds.PENSION_FUND_TYPE_ID &&
-        !payment.pensionFund
-      ) {
-        ctx.addIssue({
-          path: ['payments', index, 'pensionFund'],
-          code: z.ZodIssueCode.custom,
-        })
+      if (payment.typeOfPayment === PaymentTypeIds.PENSION_FUND_TYPE_ID) {
+        if (!payment.pensionFund) {
+          ctx.addIssue({
+            path: ['payments', index, 'pensionFund'],
+            code: z.ZodIssueCode.custom,
+          })
+        }
+        if (!payment.paymentAmount) {
+          ctx.addIssue({
+            path: ['payments', index, 'paymentAmount'],
+            code: z.ZodIssueCode.custom,
+          })
+        }
       }
 
       if (
@@ -96,14 +107,24 @@ export const otherBenefitsSchema = z
         })
       }
 
-      if (
-        payment.typeOfPayment === PaymentTypeIds.INSURANCE_PAYMENTS_TYPE_ID &&
-        !(payment.paymentPlanFile && payment.paymentPlanFile.length > 0)
-      ) {
-        ctx.addIssue({
-          path: ['payments', index, 'paymentPlanFile'],
-          code: z.ZodIssueCode.custom,
-        })
+      if (payment.typeOfPayment === PaymentTypeIds.INSURANCE_PAYMENTS_TYPE_ID) {
+        if (!(payment.paymentPlanFile && payment.paymentPlanFile.length > 0)) {
+          ctx.addIssue({
+            path: ['payments', index, 'paymentPlanFile'],
+            code: z.ZodIssueCode.custom,
+          })
+        }
+
+        if (
+          payment.subType !== PaymentTypeIds.REHAB_PENSION_ID &&
+          payment.subType !== PaymentTypeIds.SPOUSE_PENSION &&
+          !payment.paymentAmount
+        ) {
+          ctx.addIssue({
+            path: ['payments', index, 'paymentAmount'],
+            code: z.ZodIssueCode.custom,
+          })
+        }
       }
     })
   })

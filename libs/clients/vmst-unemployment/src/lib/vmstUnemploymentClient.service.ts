@@ -13,6 +13,7 @@ import {
   UnemploymentApplicationApi,
   UnemploymentApplicationValidatePaymentPageRequest,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
+  UnemploymentApplicationValidatePaymentPage2Request,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -172,6 +173,20 @@ export class VmstUnemploymentClientService {
     )
 
     return await api.unemploymentApplicationValidatePaymentPage(
+      requestParameter,
+    )
+  }
+
+  async validateVacationInfoUnemploymentApplication(
+    requestParameter: UnemploymentApplicationValidatePaymentPage2Request,
+  ): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO> {
+    const api = await this.createApiClient(
+      UnemploymentApplicationApi,
+      'clients-vmst-unemployment',
+      'Activation Grant API auth failed',
+    )
+
+    return await api.unemploymentApplicationValidatePaymentPage2(
       requestParameter,
     )
   }

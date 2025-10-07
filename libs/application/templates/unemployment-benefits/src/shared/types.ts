@@ -5,7 +5,6 @@ import {
   currentEducationSchema,
   currentJobSchema,
   currentSituationSchema,
-  educationHistorySchema,
   educationSchema,
   employmentHistorySchema,
   familyInformationSchema,
@@ -25,25 +24,6 @@ import {
 } from '../lib/dataSchema'
 import { FileSchema } from '../lib/schemas/fileSchema'
 import { reasonForJobSearchSchema } from '../lib/schemas/reasonForJobSearchSchema'
-
-export enum EmploymentStatus {
-  UNEMPLOYED = 'unemployed',
-  EMPLOYED = 'employed',
-  PARTJOB = 'partjob',
-  OCCASIONAL = 'occasional',
-}
-
-export enum WorkingAbility {
-  ABLE = 'able',
-  PARTLY_ABLE = 'partlyAble',
-  DISABILITY = 'disability',
-}
-
-export enum EducationType {
-  CURRENT = 'current',
-  LAST_SEMESTER = 'lastSemester',
-  LAST_YEAR = 'lastYear',
-}
 
 export type FamilyInformationInAnswers = z.TypeOf<
   typeof familyInformationSchema

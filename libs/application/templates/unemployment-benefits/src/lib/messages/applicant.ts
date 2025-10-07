@@ -60,11 +60,6 @@ export const applicant = {
       defaultMessage: 'Dvalarstaður ef annar en lögheimili',
       description: 'other address checkbox label',
     },
-    serviceOffice: {
-      id: 'vmst.ub.application:applicant.labels.serviceOffice',
-      defaultMessage: 'Þjónustuskrifstofa',
-      description: 'service office label',
-    },
     dependentChildren: {
       id: 'vmst.ub.application:applicant.labels.dependentChildren',
       defaultMessage: 'Börn á framfæri',

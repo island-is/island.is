@@ -172,8 +172,8 @@ export const employmentHistorySubSection = buildSubSection({
                   value: job.employerSSN ?? '',
                   label:
                     job.employerSSN !== '-'
-                      ? `${job.employer}, ${job.employerSSN}`
-                      : job.employer,
+                      ? `${job.employer || ''}, ${job.employerSSN || ''}`
+                      : job.employer || '',
                 }))
               },
             },

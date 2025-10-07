@@ -32,3 +32,29 @@ export enum PaymentTypeIds {
   REHAB_PENSION_ID = 'asdf', // sjúkra og endurhæfingalífeyrir TODO
   SPOUSE_PENSION = '1234', // Makalífeyrir TODO
 }
+
+export enum EmploymentStatus {
+  UNEMPLOYED = 'unemployed',
+  EMPLOYED = 'employed',
+  PARTJOB = 'partjob',
+  OCCASIONAL = 'occasional',
+}
+
+export const EmploymentStatusIds: Record<EmploymentStatus, number> = {
+  [EmploymentStatus.UNEMPLOYED]: 1,
+  [EmploymentStatus.EMPLOYED]: 4,
+  [EmploymentStatus.PARTJOB]: 2,
+  [EmploymentStatus.OCCASIONAL]: 3,
+}
+
+export enum WorkingAbility {
+  ABLE = 'able',
+  PARTLY_ABLE = 'partlyAble',
+  DISABILITY = 'disability',
+}
+
+export enum EducationType {
+  CURRENT = 'current',
+  LAST_SEMESTER = 'lastSemester',
+  LAST_YEAR = 'lastYear',
+}

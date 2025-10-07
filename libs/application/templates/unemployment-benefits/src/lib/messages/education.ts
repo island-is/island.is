@@ -51,11 +51,6 @@ export const education = {
         'Vinsamlegast skráðu inn eftirfarandi upplýsingar um námið',
       description: 'Type of education description',
     },
-    schoolNameLabel: {
-      id: 'vmst.ub.application:education.labels.schoolNameLabel',
-      defaultMessage: 'Skóli',
-      description: 'School name label',
-    },
     levelOfStudyLabel: {
       id: 'vmst.ub.application:education.labels.levelOfStudyLabel',
       defaultMessage: 'Námsstig',

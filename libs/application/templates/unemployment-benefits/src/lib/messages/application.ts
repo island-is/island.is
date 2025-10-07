@@ -29,18 +29,6 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is submitted',
   },
-  actionCardInReview: {
-    id: 'vmst.ub.application:actionCardInReview',
-    defaultMessage: 'Í vinnslu hjá stofnun',
-    description:
-      'Description of application state/status when application is completed',
-  },
-  actionCardCompleted: {
-    id: 'vmst.ub.application:actionCardCompleted',
-    defaultMessage: 'Afgreidd',
-    description:
-      'Description of application state/status when application is completed',
-  },
   firstSectionTitle: {
     id: 'vmst.ub.application:firstSectionTitle',
     defaultMessage: 'Fyrri hluti: Þinn réttur til atvinnuleysisbóta',
@@ -73,5 +61,35 @@ export const application = defineMessages({
     defaultMessage:
       'Tekið er við skjölum með endingu: pdf, .doc, .docx, .png, .jpg, .jpeg',
     description: 'description for file uploads',
+  },
+  successSubmissionTitle: {
+    id: 'vmst.ub.application:successSubmissionTitle',
+    defaultMessage:
+      'Vinnumálastofnun hefur móttekið umsókn þína og er hún komin til afgreiðslu.',
+    description: 'Successful submission title',
+  },
+  successSubmissionDescription: {
+    id: 'vmst.ub.application:successSubmissionDescription',
+    defaultMessage:
+      'Við sendum þér tilkynningu í tölvupósti um skilaboð á Mínum síðum ef þörf er á frekari gögnum eða  þegar umsókn þín hefur verið afgreidd.',
+    description: 'Successful submission description',
+  },
+  whatHappensNextContent: {
+    id: 'vmst.ub.application:whatHappensNextContent#markdown',
+    defaultMessage: `* Yfirferð umsóknar - Starfsfólk Vinnumálastofnunar fer yfir umsókn þína og öll fylgigögn.
+    \n* Vinnsla - Venjulegur afgreiðslutími er 4-6 vikur, en getur verið lengri á álagstímum.
+    \n* Ákvörðun - Þú færð senda tilkynningu um úrskurð á Mínum síðum.`,
+    description: 'what happens next description',
+  },
+  infoAlertTitle: {
+    id: 'vmst.ub.application:infoAlertTitle',
+    defaultMessage: 'Er eitthvað óljóst',
+    description: 'Info alert title on confirmation page',
+  },
+  infoAlertDescription: {
+    id: 'vmst.ub.application:infoAlertDescription',
+    defaultMessage:
+      'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnunar. Spjallaðu við Ask',
+    description: 'Info alert title on confirmation page',
   },
 })

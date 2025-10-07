@@ -4,7 +4,6 @@ import {
   buildForm,
   buildSection,
   buildSubmitField,
-  coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import {

@@ -15,7 +15,7 @@ export const UpdateEmploymentHistory: FC<FieldBaseProps> = ({
   const { setValue } = useFormContext()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  setBeforeSubmitCallback?.(async (event) => {
+  setBeforeSubmitCallback?.(async () => {
     try {
       setValue('employmentHistory.lastJobs', [])
       const employmentHistoryAnswers =

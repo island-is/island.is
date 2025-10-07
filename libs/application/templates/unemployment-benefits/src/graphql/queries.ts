@@ -11,3 +11,13 @@ export const VALIDATE_ACCOUNT_NUMBER = gql`
     }
   }
 `
+
+export const VALIDATE_VACATION = gql`
+  query ValidateVacation($input: VmstApplicationsVacationValidationInput!) {
+    vmstApplicationsVacationValidationUnemploymentApplication(input: $input) {
+      isValid
+      userMessageIS
+      userMessageEN
+    }
+  }
+`

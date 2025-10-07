@@ -7,6 +7,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import {
   GaldurDomainModelsApplicantsApplicantProfileDTOsElectronicCommunication,
   GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation,
+  GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsFileDTO,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsOtherInformationDTO,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationAccess,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation,
@@ -20,7 +21,6 @@ import { sharedModuleConfig } from '../../shared'
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { ConfigType } from '@nestjs/config'
 import {
-  getAttachmentObjects,
   getBankinPensionUnion,
   getEducationalQuestions,
   getEducationInformation,
@@ -47,11 +47,12 @@ import {
   ResumeInAnswers,
   PaymentTypeIds,
   EducationType,
+  EmploymentStatus,
+  EmploymentStatusIds,
 } from '@island.is/application/templates/unemployment-benefits'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { S3Service } from '@island.is/nest/aws'
-import { FileResponse, FileResponseWithType } from './types'
 
 @Injectable()
 export class UnemploymentBenefitsService extends BaseTemplateApiService {
@@ -179,7 +180,8 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const licenseInformation = getLicenseInformation(answers)
 
     //attachments
-    const attachmentList: Array<FileResponseWithType> = []
+    const attachmentList: Array<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsFileDTO> =
+      []
 
     // Læknistvottorð - ástæða atvinnuleitar
     const medicalCertificateFile =
@@ -197,8 +199,8 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       )
       if (attachment)
         attachmentList.push({
-          type: FileTypeIds.MEDICAL_CERTIFICATE_RESIGNATION,
-          file: attachment,
+          attachmentTypeId: FileTypeIds.MEDICAL_CERTIFICATE_RESIGNATION,
+          name: attachment.fileName,
         })
     })
     // Staðfesting á námi/prófgráðu - menntun
@@ -232,8 +234,8 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
 
       if (attachment)
         attachmentList.push({
-          type: fileTypeId,
-          file: attachment,
+          attachmentTypeId: fileTypeId,
+          name: attachment.fileName,
         })
     })
     // starfhæfnisvottorð - vinnufærni - answers.
@@ -250,8 +252,8 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       )
       if (attachment)
         attachmentList.push({
-          type: FileTypeIds.JOB_ABILITY_CERTIFICATE,
-          file: attachment,
+          attachmentTypeId: FileTypeIds.JOB_ABILITY_CERTIFICATE,
+          name: attachment.fileName,
         })
     })
 
@@ -271,8 +273,8 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         )
         if (attachment)
           attachmentList.push({
-            type: FileTypeIds.SICKNESS_BENEFIT_PAYMENTS,
-            file: attachment,
+            attachmentTypeId: FileTypeIds.SICKNESS_BENEFIT_PAYMENTS,
+            name: attachment.fileName,
           })
       })
 
@@ -285,8 +287,8 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         )
         if (attachment)
           attachmentList.push({
-            type: FileTypeIds.PAYMENT_PLAN,
-            file: attachment,
+            attachmentTypeId: FileTypeIds.PAYMENT_PLAN,
+            name: attachment.fileName,
           })
       })
     })
@@ -302,8 +304,8 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       )
       if (attachment)
         attachmentList.push({
-          type: FileTypeIds.CV,
-          file: attachment,
+          attachmentTypeId: FileTypeIds.CV,
+          name: attachment.fileName,
         })
     })
 
@@ -386,8 +388,13 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     )
 
     //jobStatus
+    const employmentStatusFromAnswers =
+      getValueViaPath<EmploymentStatus>(
+        answers,
+        'currentSituation.employmentStatus',
+      ) || EmploymentStatus.UNEMPLOYED
     const jobStatus = {
-      jobType: 1, // TODO map to hardcoded values from odinn
+      jobType: EmploymentStatusIds[employmentStatusFromAnswers],
     }
 
     //euresInformation
@@ -418,7 +425,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
               educationHistory: educationInformation,
               jobCareer: jobCareer,
               drivingLicense: licenseInformation,
-              //attachments
+              attachments: { files: attachmentList },
               childrenSupported: childrenSupported,
               bankingPensionUnion: bankingPensionUnion,
               personalTaxCredit: personalTaxCredit,

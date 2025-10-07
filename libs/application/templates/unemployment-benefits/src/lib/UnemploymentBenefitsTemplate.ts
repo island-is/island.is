@@ -19,6 +19,7 @@ import { UnemploymentBenefitsSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { application as applicationMessages } from './messages'
@@ -47,6 +48,18 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: applicationMessages.actionCardPrerequisites,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -83,6 +96,18 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: applicationMessages.actionCardDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
@@ -115,6 +140,12 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: applicationMessages.actionCardSubmitted,
+              variant: 'mint',
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,

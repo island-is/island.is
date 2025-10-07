@@ -73,7 +73,7 @@ export const employment = {
         description: 'Agreement label checkbox label',
       },
       healthReasonFileLabel: {
-        id: 'vmst.ub.application:employment.labels.agreementConfirmationLabel',
+        id: 'vmst.ub.application:employment.labels.healthReasonFileLabel',
         defaultMessage: 'Læknisvottorð',
         description: 'Health reason file upload label',
       },
@@ -150,46 +150,10 @@ export const employment = {
         defaultMessage: 'Ég er í starfi á uppsagnarfresti',
         description: 'status option employed label',
       },
-      reasonForUnemploymentDescription: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.reasonForUnemploymentDescription',
-        defaultMessage:
-          'Hér getur þú sett inn frekari skýringar um ástæður atvinnuleysis:',
-        description: 'reason for unemployment dropdown description',
-      },
-      reasonForUnemploymentLabel: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.reasonForUnemploymentLabel',
-        defaultMessage: 'Aðrar ástæður',
-        description: 'reason for unemployment dropdown label',
-      },
-      partTimeJobDescription: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobDescription',
-        defaultMessage: 'Vinsamlegast fylltu út frekari upplýsingar um starfið',
-        description: 'part time job description',
-      },
-      partTimeJobEmployerNationalId: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobEmployerNationalId',
-        defaultMessage: 'Kennitala fyrirtækis',
-        description: 'part time job employer national id label',
-      },
-      partTimeJobEmployerName: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobEmployerName',
-        defaultMessage: 'Nafn fyrirtækis',
-        description: 'part time job employer name label',
-      },
-      partTimeJobEmployerCombination: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobEmployerCombination',
-        defaultMessage: 'Starf',
-        description: 'part time job employer combination label',
-      },
       jobRepeaterEmployment: {
         id: 'vmst.ub.application:employment.currentSituation.labels.jobRepeaterEmployment#markdown',
         defaultMessage: 'Starf {index}',
         description: 'job repeater label',
-      },
-      partTimeJobTitle: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobTitle',
-        defaultMessage: 'Starfsheiti',
-        description: 'part time job title label',
       },
       partTimeJobPercentage: {
         id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobPercentage',
@@ -216,7 +180,6 @@ export const employment = {
         defaultMessage: 'Laun á mánuði fyrir skatt',
         description: 'part time job salary label',
       },
-
       occasionalJobInfoBox: {
         id: 'vmst.ub.application:employment.currentSituation.labels.occasionalJobInfoBox',
         defaultMessage:
@@ -348,16 +311,6 @@ export const employment = {
           'Vinsamlegast settu inn fyrri störf sem þú hefur unnið. Við mælum með því að setja inn eins ítarlega atvinnusögu og hægt er.',
         description: 'Last job label',
       },
-      lastJobCompanyNationalId: {
-        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobCompanyNationalId',
-        defaultMessage: 'Kennitala fyrirtækis',
-        description: 'Last job company national id label',
-      },
-      lastJobCompanyName: {
-        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobCompanyName',
-        defaultMessage: 'Nafn fyrirtækis',
-        description: 'Last job company name label',
-      },
       lastJobTitle: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobTitle',
         defaultMessage: 'Starfsheiti',
@@ -382,17 +335,6 @@ export const employment = {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastOldJobEndDate',
         defaultMessage: 'Lauk störfum',
         description: 'Last old job end date label',
-      },
-      lastJobAlertInformation: {
-        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobAlertInformation',
-        defaultMessage:
-          'Athugaðu að til að fá 100% bætur þarftu að hafa unnið 100% starf í samtals 12 mánuði innan síðustu þriggja ára. Við mælum með því að setja inn eins ítarlega atvinnusögu og hægt er. ',
-        description: 'Last job alert information label',
-      },
-      lastJobPercentageAchievedInformation: {
-        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobPercentageAchievedInformation',
-        defaultMessage: 'Þú virðist hafa náð fullum bótarétti TODO texti hér',
-        description: 'Last job percentage achieved information label',
       },
       addJob: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.addJob',
@@ -421,27 +363,11 @@ export const employment = {
           'Þjónustufulltrúi Vinnumálastofnunar mun hafa samband við þig varðandi störf erlendis ef þörf er á.',
         description: 'EES country alert information label',
       },
-      workOnOwnSSN: {
-        id: 'vmst.ub.application:employment.employmentHistory.labels.workOnOwnSSN',
-        defaultMessage: 'Starfaðir þú á eigin kennitölu?',
-        description: 'Work on own ssn label',
-      },
       workOnOwnSSNAlert: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.workOnOwnSSNAlert',
         defaultMessage:
           'Þú þarft að tilkynna um stöðvun rekstrar til Skattsins með eyðublaði RSK 5.04. Þú þarft ekki að senda afrit af tilkynningunni til Vinnumálastofnunar.',
         description: 'Work on own ssn alert information label',
-      },
-      howLongOnOwnSSN: {
-        id: 'vmst.ub.application:employment.employmentHistory.labels.howLongOnOwnSSN',
-        defaultMessage: 'Hversu lengi hefurðu starfað á eigin kennitölu?',
-        description: 'How long on own ssn label',
-      },
-      ownSSNAlertInformation: {
-        id: 'vmst.ub.application:employment.employmentHistory.labels.ownSSNAlertInformation',
-        defaultMessage:
-          'Upplýsingarnar hér að ofan gefa ekki rétt á 100% bótahlutfalli. Til að hækka bótahlutfall geturðu bætt við starfi. Athugaðu að til að fá 100% bætur þarftu að hafa unnið 100% starf í samtals 12 mánuði innan síðustu þriggja ára. ',
-        description: 'Own SSN alert information label',
       },
     }),
   },

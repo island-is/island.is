@@ -1,11 +1,11 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildDescriptionField,
   buildFieldsRepeaterField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  buildTextField,
   coreMessages,
   NO,
   YES,
@@ -84,6 +84,10 @@ export const vacationSubSection = buildSubSection({
               minDate: new Date(),
             },
           },
+        }),
+        buildCustomField({
+          id: 'vacation.validation',
+          component: 'VacationValidation',
         }),
       ],
     }),

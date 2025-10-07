@@ -5,7 +5,6 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
-  YES,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 import { education as educationMessages } from '../../../lib/messages'
@@ -160,13 +159,12 @@ export const educationHistorySubSection = buildSubSection({
               | GaldurDomainModelsEducationEducationDegreeDTO
               | undefined
 
-            education?.find((program) => {
-              program.degrees?.find((degree) => {
+            education?.forEach((program) => {
+              return program.degrees?.forEach((degree) => {
                 const match = degree.id === degreeAnswer
                 if (match) {
                   degreeValue = degree
                 }
-                return match
               })
             })
             return degreeValue

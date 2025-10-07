@@ -1,5 +1,5 @@
 {
-  "name": "unemployment-benefits",
+  "name": "application-templates-unemployment-benefits",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/unemployment-benefit/src",
   "projectType": "library",
@@ -18,7 +18,7 @@
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/--TEMPLATE--/src/lib/messages.ts"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/unemployment-benefits/src/**/*.{js,ts,tsx}'"
       }
     }
   }

@@ -16,7 +16,7 @@ export const currentEducationSchema = z.object({
   degree: z.string().optional(),
   endDate: z.string().optional(),
   courseOfStudy: z.string().optional(),
-  degreeFile: z.array(FileSchema).optional(),
+  degreeFile: z.array(FileSchema).nullish(),
 })
 
 export const educationSchema = z
@@ -113,7 +113,6 @@ export const educationSchema = z
               (didFinishLastSemester === NO &&
                 appliedForNextSemester !== NO))) ||
           typeOfEducation === EducationType.LAST_YEAR)
-        // TODO add check if grunnskóli -> then no courseOFstudy
       ) {
         return (
           (currentEducation && currentEducation.courseOfStudy) ||
@@ -199,35 +198,6 @@ export const educationSchema = z
     },
     {
       path: ['currentEducation', 'endDate'],
-    },
-  )
-  .refine(
-    ({
-      lastTwelveMonths,
-      typeOfEducation,
-      didFinishLastSemester,
-      appliedForNextSemester,
-      currentEducation,
-    }) => {
-      if (
-        lastTwelveMonths === YES &&
-        (typeOfEducation === EducationType.CURRENT ||
-          (typeOfEducation === EducationType.LAST_SEMESTER &&
-            (didFinishLastSemester === YES ||
-              (didFinishLastSemester === NO &&
-                appliedForNextSemester !== NO))) ||
-          typeOfEducation === EducationType.LAST_YEAR)
-      ) {
-        return (
-          currentEducation &&
-          currentEducation.degreeFile &&
-          currentEducation.degreeFile.length > 0
-        )
-      }
-      return true
-    },
-    {
-      path: ['currentEducation', 'degreeFile'],
     },
   )
   .refine(

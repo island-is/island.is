@@ -5,7 +5,8 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { VMSTApplicationsService } from './vmst-applications-service'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
-import { AccountValidationUnemploymentApplication } from './models'
+import { ValidationUnemploymentApplication } from './models'
+import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -29,7 +30,7 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.validateBankInformation(auth, input)
   }
 
-  @Query(() => AccountValidationUnemploymentApplication, {
+  @Query(() => ValidationUnemploymentApplication, {
     name: 'vmstApplicationsAccountNumberValidationUnemploymentApplication',
   })
   @Audit()
@@ -40,34 +41,23 @@ export class VMSTApplicationsResolver {
     })
     input: VmstApplicationsBankInformationInput,
   ) {
-    const a =
-      this.vmstApplicationsService.validateBankInformationUnemploymentApplication(
-        auth,
-        input,
-      )
-
-    console.log('a', a)
-    return a
+    return this.vmstApplicationsService.validateBankInformationUnemploymentApplication(
+      auth,
+      input,
+    )
   }
 
-  @Query(() => AccountValidationUnemploymentApplication, {
-    name: 'vmstApplicationsAccountNumberValidationUnemploymentApplication',
+  @Query(() => ValidationUnemploymentApplication, {
+    name: 'vmstApplicationsVacationValidationUnemploymentApplication',
   })
   @Audit()
   async validateVacationDays(
     @CurrentUser() auth: User,
     @Args('input', {
-      type: () => VmstApplicationsBankInformationInput,
+      type: () => VmstApplicationsVacationValidationInput,
     })
-    input: VmstApplicationsBankInformationInput,
+    input: VmstApplicationsVacationValidationInput,
   ) {
-    const a =
-      this.vmstApplicationsService.validateBankInformationUnemploymentApplication(
-        auth,
-        input,
-      )
-
-    console.log('a', a)
-    return a
+    return this.vmstApplicationsService.validateVacationDays(auth, input)
   }
 }

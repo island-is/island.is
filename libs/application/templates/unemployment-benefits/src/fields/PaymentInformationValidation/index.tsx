@@ -15,12 +15,10 @@ export const PaymentInformationValidation: FC<
 > = (props) => {
   const { setBeforeSubmitCallback } = props
   const { getValues } = useFormContext()
-  const [errors, setErrors] = useState<Array<MessageDescriptor>>([])
+  const [errors, setErrors] = useState<Array<MessageDescriptor | string>>([])
   const [invalidError, setInvalidError] = useState<boolean>()
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const [getIsValidBankInformation] = useLazyIsBankInfoValid()
-
-  console.log(' IN HEREE???')
 
   const getIsCompanyValidCallback = useCallback(
     async (input: {
@@ -28,13 +26,13 @@ export const PaymentInformationValidation: FC<
       ledger: string
       accountNumber: string
       pensionFund?: { id: string; percentage: number }
+      doNotPayToUnion: boolean
       union?: { id: string }
       privatePensionFunds?: Array<{ id: string; percentage: number }>
     }) => {
       const { data } = await getIsValidBankInformation({
         variables: { input },
       })
-      console.log('data', data)
       return data
     },
     [getIsValidBankInformation],
@@ -43,8 +41,6 @@ export const PaymentInformationValidation: FC<
   setBeforeSubmitCallback?.(async () => {
     setInvalidError(false)
     setErrors([])
-
-    console.log('in here??')
 
     const paymentInfo: PayoutInAnswers = getValues('payout')
     const supportInfo =
@@ -106,23 +102,42 @@ export const PaymentInformationValidation: FC<
     }
 
     try {
-      const isValid = await getIsCompanyValidCallback({
+      const response = await getIsCompanyValidCallback({
         bankNumber: bankNumberSupportData.id || '',
         ledger: ledgerSupportData.id || '',
         accountNumber:
           paymentInfo.bankAccount.accountNumber?.padStart(6, '0') || '',
         pensionFund: { id: pensionFund || '', percentage: 0 },
+        privatePensionFunds: privatePension
+          ? [
+              {
+                id: privatePension || '',
+                percentage: Number(privatePensionPercentage) || 0,
+              },
+            ]
+          : [],
+        doNotPayToUnion: !union,
+        union: union ? { id: union || '' } : undefined,
       })
 
-      console.log('isValid', isValid)
-
       if (
-        isValid?.vmstApplicationsAccountNumberValidationUnemploymentApplication
+        response?.vmstApplicationsAccountNumberValidationUnemploymentApplication
+          .isValid
       )
         return [true, null]
-      setErrors((prev) => [...prev, paymentErrors.invalidAccountNumber])
+
+      const userMessageIS =
+        response?.vmstApplicationsAccountNumberValidationUnemploymentApplication
+          .userMessageIS || ''
+
+      const userMessageEn =
+        response?.vmstApplicationsAccountNumberValidationUnemploymentApplication
+          .userMessageEN || ''
+
+      const userMessageBasedOnLocale =
+        locale === 'en' ? userMessageEn : userMessageIS
+      setErrors((prev) => [...prev, userMessageBasedOnLocale])
     } catch (e) {
-      console.log('e', e)
       setErrors((prev) => [...prev, paymentErrors.invalidAccountNumber])
     }
 

@@ -17,6 +17,7 @@ export const useLazyIsBankInfoValid = () => {
         ledger: string
         accountNumber: string
         pensionFund?: GaldurDomainModelsApplicantsApplicantProfileDTOsPensionFund
+        doNotPayToUnion: boolean
         union?: GaldurDomainModelsApplicantsApplicantProfileDTOsUnion
         supplementaryPensionFunds?: Array<GaldurDomainModelsApplicantsApplicantProfileDTOsPensionFund>
       }

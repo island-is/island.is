@@ -1,6 +1,5 @@
 import {
   buildCheckboxField,
-  buildDescriptionField,
   buildMultiField,
   buildSubSection,
   YES,

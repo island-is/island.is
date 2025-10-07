@@ -3,7 +3,6 @@ import {
   buildDateField,
   buildDescriptionField,
   buildFileUploadField,
-  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -292,53 +291,6 @@ export const educationSection = buildSection({
               wasStudyingInTheLastYear(answers) ||
               (wasStudyingLastSemester(answers) &&
                 appliedForNextSemester(answers) !== NO)),
-        }),
-        buildHiddenInputWithWatchedValue({
-          // TODO what is this doing?
-          id: 'education.currentEducation.id',
-          watchValue: 'education.currentEducation.courseOfStudy',
-          valueModifier: (value) => {
-            return value ? value.toString() : ''
-          },
-          defaultValue: (application: Application) => {
-            const education = getValueViaPath<
-              GaldurDomainModelsEducationProgramDTO[]
-            >(
-              application.externalData,
-              'unemploymentApplication.data.supportData.educationPrograms',
-            )
-            const levelOfStudy =
-              getValueViaPath<string>(
-                application.answers,
-                'education.currentEducation.levelOfStudy',
-                '',
-              ) ?? ''
-
-            const degreeAnswer =
-              getValueViaPath<string>(
-                application.answers,
-                'education.currentEducation.degree',
-                '',
-              ) ?? ''
-            const chosenLevelDegrees = education?.filter(
-              (program) => program.id === levelOfStudy,
-            )[0]?.degrees
-
-            const chosenDegreeSubjects = chosenLevelDegrees?.find(
-              (degree) => degree.id === degreeAnswer,
-            )?.subjects
-
-            const chosenCourseOfStudy = getValueViaPath<string>(
-              application.answers,
-              'education.currentEducation.courseOfStudy',
-            )
-
-            return (
-              chosenDegreeSubjects?.find(
-                (x) => x.degreeId === chosenCourseOfStudy,
-              )?.id ?? ''
-            )
-          },
         }),
         buildDateField({
           id: 'education.currentEducation.endDate',

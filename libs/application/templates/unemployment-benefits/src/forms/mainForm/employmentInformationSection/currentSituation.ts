@@ -105,13 +105,16 @@ export const currentSituationSubSection = buildSubSection({
                 const employmentList = getEmploymentFromRsk(
                   application.externalData,
                 )
-                return employmentList.map((job) => ({
-                  value: job.employerSSN ?? '',
-                  label:
-                    job.employerSSN !== '-'
-                      ? `${job.employer}, ${job.employerSSN}`
-                      : job.employer,
-                }))
+
+                return employmentList
+                  .filter((x) => !!x.employerSSN)
+                  .map((job) => ({
+                    value: job.employerSSN ?? '',
+                    label:
+                      job.employerSSN !== '-'
+                        ? `${job.employer || ''}, ${job.employerSSN || ''}`
+                        : job.employer || '',
+                  }))
               },
             },
             employer: {

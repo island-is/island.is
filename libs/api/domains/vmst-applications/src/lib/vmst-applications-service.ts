@@ -5,6 +5,7 @@ import {
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
 } from '@island.is/clients/vmst-unemployment'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
+import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 
 @Injectable()
 export class VMSTApplicationsService {
@@ -39,22 +40,43 @@ export class VMSTApplicationsService {
             ledgerId: input.ledger,
             accountNumber: input.accountNumber,
             pensionFund: {
-              id: input.pensionFund?.Id || '',
+              id: input.pensionFund?.id || '',
               percentage: input.pensionFund?.percentage,
             },
+            doNotPayToUnion: input.doNotPayToUnion,
             union: {
-              id: input.union?.Id || '',
+              id: input.union?.id || '',
             },
             supplementaryPensionFunds:
               input.privatePensionFunds?.map((fund) => ({
-                id: fund.Id,
+                id: fund.id,
                 percentage: fund.percentage,
               })) || [],
           },
         },
     }
-    console.log('payload', payload)
     return this.vmstUnemploymentService.validateBankInfoUnemploymentApplication(
+      payload,
+    )
+  }
+
+  async validateVacationDays(
+    auth: User,
+    input: VmstApplicationsVacationValidationInput,
+  ): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO> {
+    const payload = {
+      galdurApplicationApplicationsUnemploymentApplicationsCommandsValidateUnemploymentApplicationUnpaidVacationValidateUnemploymentApplicationUnpaidVacationCommand:
+        {
+          ssn: auth.nationalId,
+          employerSettlement: {
+            hasUnpaidVacationTime: input.hasUnpaidVacationTime,
+            unpaidVacations: input.unpaidVacations,
+            resignationEnds: input.resignationEnds,
+          },
+        },
+    }
+
+    return this.vmstUnemploymentService.validateVacationInfoUnemploymentApplication(
       payload,
     )
   }

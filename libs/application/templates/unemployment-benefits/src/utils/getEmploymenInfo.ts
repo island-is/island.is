@@ -50,12 +50,15 @@ export const getEmploymentFromRsk = (externalData: ExternalData) => {
       [],
     ) ?? []
 
-  //TODO REVERT
-  return [
-    { employerSSN: '1234567890', employer: 'Test Company' },
-    { employerSSN: '-', employer: 'Annað' },
-  ] // Temporary mock data for testing
-  // return employmentList
+  const extendedList = [
+    ...employmentList,
+    {
+      employerSSN: '-',
+      employer: 'Annað',
+    },
+  ]
+
+  return extendedList
 }
 
 export const getEmployerNameFromSSN = (

@@ -1,4 +1,3 @@
-import { resume } from 'pdfkit'
 import { defineMessages } from 'react-intl'
 
 export const overview = {

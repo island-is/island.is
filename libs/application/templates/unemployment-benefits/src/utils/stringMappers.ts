@@ -12,7 +12,6 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   GaldurDomainModelsEducationProgramDTO,
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
-  GaldurDomainModelsSettingsIncomeTypesIncomeTypeDTO,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
   GaldurDomainModelsSettingsServiceAreasServiceAreaDTO,
@@ -99,29 +98,29 @@ export const getLastTvelveMonthsEducationString = (
 export const getPensionString = (
   id: string,
   externalData: ExternalData,
-): string => {
+): string | undefined | null => {
   const pensionFundsOptions = getValueViaPath<
     Array<GaldurDomainModelsSettingsPensionFundsPensionFundDTO>
   >(externalData, 'unemploymentApplication.data.supportData.pensionFunds', [])
 
-  return pensionFundsOptions?.find((x) => x.id === id)?.name ?? ''
+  return pensionFundsOptions?.find((x) => x.id === id)?.name
 }
 
 export const getUnionString = (
   id: string,
   externalData: ExternalData,
-): string => {
+): string | undefined | null => {
   const unionOptions = getValueViaPath<
     Array<GaldurDomainModelsSettingsUnionsUnionDTO>
   >(externalData, 'unemploymentApplication.data.supportData.unions', [])
 
-  return unionOptions?.find((x) => x.id === id)?.name ?? ''
+  return unionOptions?.find((x) => x.id === id)?.name
 }
 
 export const getPrivatePensionString = (
   id: string,
   externalData: ExternalData,
-): string => {
+): string | undefined | null => {
   const privatePensionOptions = getValueViaPath<
     Array<GaldurDomainModelsSettingsPensionFundsPensionFundDTO>
   >(
@@ -130,30 +129,8 @@ export const getPrivatePensionString = (
     [],
   )
 
-  return privatePensionOptions?.find((x) => x.id === id)?.name ?? ''
+  return privatePensionOptions?.find((x) => x.id === id)?.name
 }
-
-// export const getTypeOfIncomeString = ( // TODO with new dataSchema
-//   payment: PaymentsFromPensionInAnswers,
-//   externalData: ExternalData,
-//   locale: string,
-// ): PaymentsFromPensionInAnswers => {
-//   const incomeOptions = getValueViaPath<
-//     Array<GaldurDomainModelsSettingsIncomeTypesIncomeTypeDTO>
-//   >(externalData, 'unemploymentApplication.data.supportData.incomeTypes', [])
-
-//   const chosenIncomeOption = incomeOptions?.find(
-//     (x) => x.id === payment.typeOfPayment,
-//   )
-
-//   const optionWithLocale =
-//     locale === 'is' ? chosenIncomeOption?.name : chosenIncomeOption?.english
-
-//   return {
-//     paymentAmount: payment.paymentAmount,
-//     typeOfPayment: optionWithLocale ?? '',
-//   }
-// }
 
 export const getJobString = (
   id: string,
