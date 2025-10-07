@@ -100,4 +100,12 @@ export const messages = defineMessages({
     id: 'sp.air-discount:date',
     defaultMessage: 'Dagsetning',
   },
+  noFunding: {
+    id: 'sp.air-discount:no-funding',
+    defaultMessage: 'Opnað verður aftur fyrir umsóknir um Loftbrú',
+  },
+  noFundingTitle: {
+    id: 'sp.air-discount:no-funding-title',
+    defaultMessage: 'Fjármagn klárað',
+  },
 })

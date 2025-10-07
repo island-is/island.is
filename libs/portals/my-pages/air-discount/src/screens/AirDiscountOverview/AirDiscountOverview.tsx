@@ -27,6 +27,7 @@ import copyToClipboard from 'copy-to-clipboard'
 import UsageTable from '../../components/UsageTable/UsageTable'
 import { AirDiscountSchemeDiscount } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
+import { useFeatureFlag } from '@island.is/react/feature-flags'
 
 const AirDiscountQuery = gql`
   query AirDiscountQuery {
@@ -74,6 +75,11 @@ type CopiedCode = {
 export const AirDiscountOverview = () => {
   useNamespaces('sp.air-discount')
   const { formatMessage } = useLocale()
+  const isPageDisabled = useFeatureFlag(
+    'isPortalAirDiscountPageDisabled',
+    false,
+  )
+  console.log(isPageDisabled)
   const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
   const {
     data: flightLegData,
@@ -106,6 +112,19 @@ export const AirDiscountOverview = () => {
         setCopiedCodes(copiedCodes)
       }, 5000)
     }
+  }
+
+  if (!isPageDisabled.loading && isPageDisabled.value) {
+    const nextYear = new Date().getFullYear() + 1
+    return (
+      <Problem
+        type="no_data"
+        noBorder={false}
+        title={formatMessage(m.noFundingTitle)}
+        message={`${formatMessage(m.noFunding)} 1. janúar ${nextYear}`}
+        imgSrc="./assets/images/coffee.svg"
+      />
+    )
   }
 
   return (
