@@ -108,7 +108,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
-    translation: 'exi.application',
+    translation: ['exi.application', 'uiForms.application'],
   },
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
     slug: 'example-no-inputs',
@@ -156,7 +156,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.HEALTH_INSURANCE]: {
     slug: 'sjukratryggingar',
-    translation: 'hi.application',
+    translation: ['hi.application', 'uiForms.application'],
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
     slug: 'breytt-logheimili-barns',
@@ -164,7 +164,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: {
     slug: 'kvortun-til-personuverndar',
-    translation: 'dpac.application',
+    translation: ['dpac.application', 'uiForms.application'],
   },
   [ApplicationTypes.LOGIN_SERVICE]: {
     slug: 'innskraningarthjonusta',
@@ -184,7 +184,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: {
     slug: 'greidsluaaetlun',
-    translation: 'pdpp.application',
+    translation: ['pdpp.application', 'uiForms.application'],
   },
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
     slug: 'kvortun-til-umbodsmanns-althingis',
@@ -192,7 +192,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.ACCIDENT_NOTIFICATION]: {
     slug: 'slysatilkynning',
-    translation: 'an.application',
+    translation: ['an.application', 'uiForms.application'],
   },
   [ApplicationTypes.GENERAL_PETITION]: {
     slug: 'undirskriftalisti',
@@ -200,7 +200,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
     slug: 'veidileyfi',
-    translation: 'gfl.application',
+    translation: ['gfl.application', 'uiForms.application'],
   },
   [ApplicationTypes.P_SIGN]: {
     slug: 'p-merki',
@@ -448,7 +448,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
     slug: 'uppsogn-eda-riftun-leigusamnings',
-    translation: 'tra.application',
+    translation: ['tra.application', 'uiForms.application'],
   },
   [ApplicationTypes.SEMINAR_REGISTRATION]: {
     slug: 'vinnueftirlitid-namskeid',
@@ -460,11 +460,11 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',
-    translation: 'ss.application',
+    translation: ['ss.application', 'uiForms.application'],
   },
   [ApplicationTypes.ACTIVATION_ALLOWANCE]: {
     slug: 'virknistyrkur',
-    translation: ['aa.application'],
+    translation: ['aa.application', 'uiForms.application'],
   },
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
     slug: 'bilaleigu-gjaldflokkur',
@@ -484,6 +484,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
     slug: 'undanthaga-vegna-flutnings',
-    translation: 'ta.eft.application',
+    translation: ['ta.eft.application', 'uiForms.application'],
   },
 }
