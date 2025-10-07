@@ -1,17 +1,18 @@
-import { CreateOptions, Transaction, UpdateOptions } from 'sequelize'
+import { CreateOptions, Sequelize, Transaction, UpdateOptions } from 'sequelize'
 
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CourtSessionRulingType } from '@island.is/judicial-system/types'
 
 import { CourtSession } from '../models/courtSession.model'
+import { CourtDocumentRepositoryService } from './courtDocumentRepository.service'
 
 interface CreateCourtSessionOptions {
   transaction?: Transaction
@@ -44,8 +45,10 @@ interface UpdateCourtSession {
 @Injectable()
 export class CourtSessionRepositoryService {
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CourtSession)
     private readonly courtSessionModel: typeof CourtSession,
+    private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -144,11 +147,17 @@ export class CourtSessionRepositoryService {
         `Deleting court session ${courtSessionId} of case ${caseId}`,
       )
 
-      await this.deleteFromDatabase(
+      const transaction = options?.transaction
+
+      // First delete all documents in the session
+      await this.courtDocumentRepositoryService.deleteDocumentsInSession(
         caseId,
         courtSessionId,
-        options?.transaction,
+        transaction,
       )
+
+      // Then delete the session itself
+      await this.deleteFromDatabase(caseId, courtSessionId, transaction)
 
       this.logger.debug(
         `Deleted court session ${courtSessionId} of case ${caseId}`,

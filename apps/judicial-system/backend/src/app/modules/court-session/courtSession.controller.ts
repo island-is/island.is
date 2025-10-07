@@ -103,7 +103,7 @@ export class CourtSessionController {
     @Param('courtSessionId') courtSessionId: string,
   ): Promise<DeleteCourtSessionResponse> {
     this.logger.debug(
-      `Deleting court session ${courtSessionId}of case ${caseId}`,
+      `Deleting court session ${courtSessionId} of case ${caseId}`,
     )
 
     return this.sequelize.transaction(async (transaction) => {
