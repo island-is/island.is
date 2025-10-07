@@ -53,7 +53,6 @@ export class AdminDocumentProviderResolver {
     @Args('nationalId') nationalId: string,
     @CurrentUser() user: User,
   ): Promise<Organisation> {
-    console.log('getProviderOrganisation', nationalId, user)
     return this.documentProviderService.getOrganisation(nationalId, user)
   }
 
