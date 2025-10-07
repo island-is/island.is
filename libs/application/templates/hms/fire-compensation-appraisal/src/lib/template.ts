@@ -41,9 +41,9 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   institution: m.miscMessages.institutionName,
   featureFlag: Features.fireCompensationAppraisalEnabled,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.FireCompensationAppraisal.translation,
-  ],
+
   dataSchema,
   allowedDelegations: [
     {

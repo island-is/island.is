@@ -11,6 +11,7 @@ import {
   listOfLastMonths,
   FinancialIndexationEntry,
 } from './utils/utils'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
 export class RentalAgreementService extends BaseTemplateApiService {
@@ -27,6 +28,18 @@ export class RentalAgreementService extends BaseTemplateApiService {
     const months = listOfLastMonths(numberOfMonths)
 
     return await fetchFinancialIndexationForMonths(months)
+  }
+
+  async sendDraft({ application, auth }: TemplateApiModuleActionProps) {
+    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+      // Don't send draft when running locally or on dev because
+      // the application will not exist on the system HMS is calling which is prod or staging
+      return
+    }
+
+    return await this.homeApiWithAuth(auth).contractSendDraftPost({
+      contractId: application.id,
+    })
   }
 
   async submitApplicationToHmsRentalService({
