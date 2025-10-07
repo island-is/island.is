@@ -72,6 +72,19 @@ const useVerdict = (currentVerdict?: Verdict) => {
     [updateDefendantVerdictState, updateVerdict],
   )
 
+  const setAndSendVerdictsToServer = useCallback(
+    (
+      updates: UpdateVerdictInput[],
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
+    ) => {
+      updates.forEach((update) => {
+        updateDefendantVerdictState(update, setWorkingCase)
+        updateVerdict(update)
+      })
+    },
+    [updateDefendantVerdictState, updateVerdict],
+  )
+
   const skip =
     !currentVerdict ||
     !currentVerdict?.externalPoliceDocumentId ||
@@ -113,6 +126,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
     verdict: skip || error ? currentVerdict : data?.verdict,
     verdictLoading: skip ? false : verdictLoading,
     setAndSendVerdictToServer,
+    setAndSendVerdictsToServer,
     deliverCaseVerdict,
   }
 }

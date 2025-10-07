@@ -56,7 +56,6 @@ import { VerdictService } from './verdict.service'
   CaseExistsGuard,
   new CaseTypeGuard(indictmentCases),
   CaseWriteGuard,
-  CaseCompletedGuard,
 )
 export class VerdictController {
   constructor(
@@ -96,7 +95,7 @@ export class VerdictController {
     )
   }
 
-  @UseGuards(DefendantExistsGuard, VerdictExistsGuard)
+  @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
   @RolesRules(publicProsecutorStaffRule, prisonSystemStaffRule)
   @Get('defendant/:defendantId/verdict/serviceCertificate')
   @Header('Content-Type', 'application/pdf')
@@ -133,7 +132,7 @@ export class VerdictController {
     res.end(pdf)
   }
 
-  @UseGuards(DefendantExistsGuard, VerdictExistsGuard)
+  @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -158,6 +157,7 @@ export class VerdictController {
     return this.verdictService.getAndSyncVerdict(verdict, user)
   }
 
+  @UseGuards(CaseCompletedGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,

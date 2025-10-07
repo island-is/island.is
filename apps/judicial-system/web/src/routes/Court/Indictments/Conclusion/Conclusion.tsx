@@ -24,7 +24,6 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  Item,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -34,6 +33,7 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { SelectableItem } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -48,6 +48,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectConnectedCase from './SelectConnectedCase'
@@ -100,6 +101,7 @@ const Conclusion: FC = () => {
   const { isUpdatingCase, setAndSendCaseToServer } = useCase()
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
+  const { setAndSendVerdictsToServer } = useVerdict()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -668,8 +670,15 @@ const Conclusion: FC = () => {
                   id: defendant.id,
                   name: defendant.name ?? 'Nafn ekki skráð',
                 }))}
-                onChange={(selectedItems: Item[]) => {
-                  console.log({ selectedItems })
+                onChange={(selectableItems: SelectableItem[]) => {
+                  // TODO: this is a bit of a problem, because the verdict does not exist at this stage
+                  // we have to create it and also have the option to remove the verdict (if they change the decision)
+                  const verdictsToUpdate = selectableItems.map((item) => ({
+                    caseId: workingCase.id,
+                    defendantId: item.id,
+                    isDefaultJudgement: item.checked,
+                  }))
+                  setAndSendVerdictsToServer(verdictsToUpdate, setWorkingCase)
                 }}
                 isLoading={false}
               />

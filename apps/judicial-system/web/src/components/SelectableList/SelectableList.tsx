@@ -25,7 +25,7 @@ export interface Item {
   tooltipText?: string
 }
 
-interface SelectableItem extends Item {
+export interface SelectableItem extends Item {
   checked: boolean
 }
 
@@ -37,7 +37,7 @@ interface Props {
   errorMessage?: string
   successMessage?: string
   warningMessage?: string
-  onChange?: (selectedItems: Item[]) => void
+  onChange?: (selectedItems: SelectableItem[]) => void
 }
 
 interface AnimateChildrenProps {
@@ -110,11 +110,6 @@ const SelectableList: FC<Props> = (props) => {
     setIsHandlingCTA(false)
   }
 
-  const selectedItems = (selectableItems: SelectableItem[]) =>
-    selectableItems
-      .filter((item) => item.checked)
-      .map(({ id, name }) => ({ id, name }))
-
   const validSelectableItems = selectableItems.filter((item) => !item.invalid)
   return (
     <>
@@ -145,7 +140,7 @@ const SelectableList: FC<Props> = (props) => {
               }))
               setSelectableItems(update)
               if (onChange) {
-                onChange(selectedItems(update))
+                onChange(update)
               }
             }}
             disabled={isHandlingCTA || validSelectableItems.length === 0}
@@ -230,7 +225,7 @@ const SelectableList: FC<Props> = (props) => {
                         )
                         setSelectableItems(update)
                         if (onChange) {
-                          onChange(selectedItems(update))
+                          onChange(update)
                         }
                       }}
                       disabled={item.invalid || isHandlingCTA}

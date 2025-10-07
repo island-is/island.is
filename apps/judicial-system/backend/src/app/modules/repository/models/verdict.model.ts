@@ -138,4 +138,9 @@ export class Verdict extends Model {
   })
   @ApiPropertyOptional({ type: String })
   deliveredToDefenderNationalId?: string
+
+  // is decision given in default of appearance
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isDefaultJudgement?: boolean
 }
