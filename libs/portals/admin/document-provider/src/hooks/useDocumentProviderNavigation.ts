@@ -1,10 +1,14 @@
 import { useMemo } from 'react'
 import { useGetProvidersByNationalId } from '../shared/useGetProvidersByNationalId'
 import { DocumentProviderPaths } from '../lib/paths'
-import { documentProviderNavigation } from '../lib/navigation'
+import {
+  baseDocumentProviderNavigation,
+  documentProviderNavigationRoutes,
+} from '../lib/navigation'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { m } from '../lib/messages'
 
 export const useDocumentProviderNavigation = (): PortalNavigationItem => {
   const userInfo = useUserInfo()
@@ -21,64 +25,49 @@ export const useDocumentProviderNavigation = (): PortalNavigationItem => {
   )
 
   return useMemo(() => {
-    // If loading or no providers, return the base navigation
-    if (loading || !providers || providers.length === 0) {
-      return documentProviderNavigation
+    // If loading providers or no providers, return the base navigation
+    if (loading || !userInfo) {
+      return baseDocumentProviderNavigation
     }
 
-    const providerItems = providers.map((provider) => ({
-      name: provider.name,
-      path: DocumentProviderPaths.DocumentProviderDocumentProvidersSingle.replace(
-        ':providerId',
-        provider.providerId,
-      ),
-      systemRoute: true, // Mark as system route to prevent filtering
-    }))
-
-    // Filter navigation items based on user scopes
-    const filteredChildren = (documentProviderNavigation.children || []).filter(
-      (item) => {
-        // Only show paper and categories for admin users
-        if (
-          item.path === DocumentProviderPaths.DocumentProviderPaper ||
-          item.path === DocumentProviderPaths.DocumentProviderCategoryAndType ||
-          item.path === DocumentProviderPaths.DocumentProviderOverview
-        ) {
-          return userInfo?.scopes?.includes(AdminPortalScope.documentProvider)
-        }
-
-        // Hide the template single provider route
-        if (
-          item.path ===
-          DocumentProviderPaths.DocumentProviderDocumentProvidersSingle
-        ) {
-          return false
-        }
-
-        return true
-      },
-    )
-
-    // Only show Skjalaveitendur list for institution users
     const shouldShowProvidersList = userInfo?.scopes?.includes(
       AdminPortalScope.documentProviderInstitution,
     )
 
-    return {
-      ...documentProviderNavigation,
-      ...filteredChildren,
-      children: [
-        ...(shouldShowProvidersList
-          ? [
-              {
-                name: 'Skjalaveitendur',
-                path: DocumentProviderPaths.DocumentProviderOverview,
-                children: providerItems,
-                systemRoute: true, // Mark as system route to prevent filtering
-              },
-            ]
-          : []),
-      ],
+    const shouldShowAdminRoutes = userInfo?.scopes?.includes(
+      AdminPortalScope.documentProvider,
+    )
+
+    if (shouldShowAdminRoutes) {
+      return {
+        ...{
+          ...baseDocumentProviderNavigation,
+          children: documentProviderNavigationRoutes,
+        },
+      }
+    } else if (shouldShowProvidersList) {
+      const providerItems = providers?.map((provider) => ({
+        name: provider.name,
+        path: DocumentProviderPaths.DocumentProviderDocumentProvidersSingle.replace(
+          ':providerId',
+          provider.providerId,
+        ),
+        systemRoute: true, // Mark as system route to prevent filtering
+      }))
+
+      return {
+        ...baseDocumentProviderNavigation,
+        children: [
+          {
+            name: m.documentProvidersList,
+            path: DocumentProviderPaths.DocumentProviderOverview,
+            children: providerItems,
+            systemRoute: true, // Mark as system route to prevent filtering
+          },
+        ],
+      }
+    } else {
+      return baseDocumentProviderNavigation
     }
   }, [providers, loading, userInfo])
 }
