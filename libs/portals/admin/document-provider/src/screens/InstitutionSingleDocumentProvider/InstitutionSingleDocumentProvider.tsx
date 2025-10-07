@@ -6,7 +6,6 @@ import {
   Breadcrumbs,
   DatePicker,
   GridColumn,
-  GridContainer,
   GridRow,
   Pagination,
 } from '@island.is/island-ui/core'
@@ -20,7 +19,6 @@ import { DocumentProviderStatisticsTable } from '../../components/DocumentProvid
 import { useGetProviderStatisticsBreakdownWCategoriesByProviderId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByProviderId'
 import { useGetProvidersByNationalId } from '../../shared/useGetProvidersByNationalId'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { DocumentProvidersNavigation } from '../../components/DocumentProvidersNavigation/DocumentProvidersNavigation'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { StatisticBoxList } from '../../components/StatisticBoxList/StatisticBoxList'
 import { CategoryStatisticsSortBy } from '@island.is/api/schema'
@@ -126,124 +124,105 @@ const SingleDocumentProvider = () => {
   }, [breakdown?.totalCount, pageSize])
 
   return (
-    <GridContainer>
-      <GridRow direction="row">
-        <GridColumn
-          span={['12/12', '5/12', '5/12', '3/12']}
-          offset={['0', '7/12', '7/12', '0']}
-        >
-          <Box paddingBottom={4}>
-            <DocumentProvidersNavigation
-              loading={loadingProviders}
-              providers={providers || []}
-            />
-          </Box>
-        </GridColumn>
-        <GridColumn
-          paddingTop={[5, 5, 5, 2]}
-          offset={['0', '0', '0', '1/12']}
-          span={['12/12', '12/12', '12/12', '8/12']}
-        >
-          <Breadcrumbs
-            items={[
-              { title: formatMessage(m.documentProviders) },
-              {
-                title: user.profile.name,
-                href: DocumentProviderPaths.DocumentProviderOverview,
-              },
-              { title: statistics?.name ? String(statistics.name) : '' },
-            ]}
-          />
-          <Box marginTop={1} marginBottom={[2, 3, 5]}>
-            <IntroHeader
-              title={
-                statistics?.name
-                  ? String(statistics.name)
-                  : formatMessage(m.rootName)
-              }
-              intro={formatMessage(m.documentProvidersDescription)}
-            />
-            <Box marginBottom={[2, 3]}>
-              <GridRow>
-                <GridColumn span="6/12">
-                  <DatePicker
-                    id="fromDate"
-                    label={formatMessage(m.documentProvidersDateFromLabel)}
-                    placeholderText={formatMessage(
-                      m.documentProvidersDateFromPlaceholderText,
-                    )}
-                    locale="is"
-                    selected={fromDate}
-                    minDate={new Date(2011, 0, 1)}
-                    maxDate={new Date()}
-                    minYear={2011}
-                    maxYear={today.getFullYear()}
-                    handleChange={(date: Date) => setFromDate(date)}
-                    size="sm"
-                  />
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <DatePicker
-                    id="toDate"
-                    label={formatMessage(m.documentProvidersDateToLabel)}
-                    placeholderText={formatMessage(
-                      m.documentProvidersDateToPlaceholderText,
-                    )}
-                    locale="is"
-                    selected={toDate}
-                    minDate={new Date(2011, 0, 1)}
-                    maxDate={new Date()}
-                    minYear={2011}
-                    maxYear={today.getFullYear()}
-                    handleChange={(date: Date) => setToDate(date)}
-                    hasError={fromDate && toDate && toDate < fromDate}
-                    errorMessage={formatMessage(
-                      m.documentProvidersDateToErrorMessage,
-                    )}
-                    size="sm"
-                  />
-                </GridColumn>
-              </GridRow>
-            </Box>
-
-            <StatisticBoxList
-              loading={loading}
-              statistics={statisticsBox || []}
-              boxesPerRow={4}
-            />
-
-            <InstitutionDocumentProviderDashboard
-              loading={loadingChartData || loadingSentFiles}
-              sentFilesData={sentFilesChartData}
-              chartData={chartData}
-            />
-
-            {breakdown ? (
-              <DocumentProviderStatisticsTable
-                loading={loadingBreakdown}
-                statistics={breakdown}
-              />
-            ) : null}
-
-            <Box marginTop={2} marginBottom={4}>
-              <Pagination
-                page={pageNumber}
-                renderLink={(page, className, children) => (
-                  <Box
-                    cursor="pointer"
-                    className={className}
-                    onClick={() => setPageNumber(page)}
-                  >
-                    {children}
-                  </Box>
+    <>
+      <Breadcrumbs
+        items={[
+          { title: formatMessage(m.documentProviders) },
+          {
+            title: user.profile.name,
+            href: DocumentProviderPaths.DocumentProviderOverview,
+          },
+          { title: statistics?.name ? String(statistics.name) : '' },
+        ]}
+      />
+      <Box marginTop={1} marginBottom={[2, 3, 5]}>
+        <IntroHeader
+          title={
+            statistics?.name
+              ? String(statistics.name)
+              : formatMessage(m.rootName)
+          }
+          intro={formatMessage(m.documentProvidersDescription)}
+        />
+        <Box marginBottom={[2, 3]}>
+          <GridRow>
+            <GridColumn span="6/12">
+              <DatePicker
+                id="fromDate"
+                label={formatMessage(m.documentProvidersDateFromLabel)}
+                placeholderText={formatMessage(
+                  m.documentProvidersDateFromPlaceholderText,
                 )}
-                totalPages={numPages}
+                locale="is"
+                selected={fromDate}
+                minDate={new Date(2011, 0, 1)}
+                maxDate={new Date()}
+                minYear={2011}
+                maxYear={today.getFullYear()}
+                handleChange={(date: Date) => setFromDate(date)}
+                size="sm"
               />
-            </Box>
-          </Box>
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
+            </GridColumn>
+            <GridColumn span="6/12">
+              <DatePicker
+                id="toDate"
+                label={formatMessage(m.documentProvidersDateToLabel)}
+                placeholderText={formatMessage(
+                  m.documentProvidersDateToPlaceholderText,
+                )}
+                locale="is"
+                selected={toDate}
+                minDate={new Date(2011, 0, 1)}
+                maxDate={new Date()}
+                minYear={2011}
+                maxYear={today.getFullYear()}
+                handleChange={(date: Date) => setToDate(date)}
+                hasError={fromDate && toDate && toDate < fromDate}
+                errorMessage={formatMessage(
+                  m.documentProvidersDateToErrorMessage,
+                )}
+                size="sm"
+              />
+            </GridColumn>
+          </GridRow>
+        </Box>
+
+        <StatisticBoxList
+          loading={loading}
+          statistics={statisticsBox || []}
+          boxesPerRow={4}
+        />
+
+        <InstitutionDocumentProviderDashboard
+          loading={loadingChartData || loadingSentFiles}
+          sentFilesData={sentFilesChartData}
+          chartData={chartData}
+        />
+
+        {breakdown ? (
+          <DocumentProviderStatisticsTable
+            loading={loadingBreakdown}
+            statistics={breakdown}
+          />
+        ) : null}
+
+        <Box marginTop={2} marginBottom={4}>
+          <Pagination
+            page={pageNumber}
+            renderLink={(page, className, children) => (
+              <Box
+                cursor="pointer"
+                className={className}
+                onClick={() => setPageNumber(page)}
+              >
+                {children}
+              </Box>
+            )}
+            totalPages={numPages}
+          />
+        </Box>
+      </Box>
+    </>
   )
 }
 

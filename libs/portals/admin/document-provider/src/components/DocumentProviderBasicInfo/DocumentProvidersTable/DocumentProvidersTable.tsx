@@ -1,6 +1,7 @@
 import { Box, Table as T, Text, Link } from '@island.is/island-ui/core'
 import { ProviderStatisticsPaginationResponse } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
+import { replaceParams } from '@island.is/react-spa/shared'
 import { m } from '../../../lib/messages'
 import { DocumentProviderPaths } from '../../../lib/paths'
 
@@ -33,10 +34,10 @@ export const ProvidersTable = ({ providerStatistics }: ProvidersTableProps) => {
                 <T.Data>{item.statistics?.opened}</T.Data>
                 <T.Data>
                   <Link
-                    href={DocumentProviderPaths.DocumentProviderDocumentProvidersSingle.replace(
-                      ':providerId',
-                      item.providerId,
-                    )}
+                    href={replaceParams({
+                      href: DocumentProviderPaths.DocumentProviderDocumentProvidersSingle,
+                      params: { providerId: item.providerId },
+                    })}
                     underline="normal"
                   >
                     {formatMessage(

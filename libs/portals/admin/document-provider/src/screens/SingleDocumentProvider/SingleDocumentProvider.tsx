@@ -47,6 +47,8 @@ const SingleDocumentProvider = () => {
 
   const today = new Date()
 
+  console.log('Rendering SingleDocumentProvider')
+
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={[2, 3]}>

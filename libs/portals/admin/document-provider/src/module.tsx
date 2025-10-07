@@ -1,9 +1,10 @@
 import { lazy } from 'react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { PortalModule } from '@island.is/portals/core'
+import { PortalModule, PortalModuleRoutesProps } from '@island.is/portals/core'
 import { DocumentProviderPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { Navigate } from 'react-router-dom'
+import React from 'react'
 
 const DocumentProviders = lazy(() =>
   import('./screens/DocumentProviders/DocumentProviders'),
@@ -26,58 +27,81 @@ const CategoriesAndTypesScreen = lazy(() =>
   import('./screens/CategoriesAndTypes'),
 )
 
+const Root = lazy(() => import('./screens/Root/Root'))
+
 const allowedScopes: string[] = [
   AdminPortalScope.documentProvider,
   AdminPortalScope.documentProviderAdmin,
   AdminPortalScope.documentProviderInstitution,
 ]
 
+const getOverviewScreen = ({
+  userInfo,
+}: PortalModuleRoutesProps): React.ReactNode => {
+  if (userInfo.scopes.includes(AdminPortalScope.documentProviderInstitution)) {
+    return <DocumentProviders />
+  }
+  return <DocumentProviders />
+}
+
+const getSingleDocumentProviderScreen = ({
+  userInfo,
+}: PortalModuleRoutesProps): React.ReactNode => {
+  if (userInfo.scopes.includes(AdminPortalScope.documentProviderInstitution)) {
+    return <InstitutionSingleDocumentProvider />
+  }
+  return <SingleDocumentProvider />
+}
+
 export const documentProviderModule: PortalModule = {
   name: m.rootName,
   layout: 'full',
   enabled: ({ userInfo }) =>
     userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
-  routes: () => {
+  routes: (props) => {
     return [
       {
         name: m.rootName,
         path: DocumentProviderPaths.DocumentProviderRoot,
-        element: (
-          <Navigate
-            to={DocumentProviderPaths.DocumentProviderRootOverview}
-            replace
-          />
-        ),
-      },
-      {
-        name: m.overview,
-        path: DocumentProviderPaths.DocumentProviderOverview,
-        element: <DocumentProviders />,
-      },
-      {
-        name: m.documentProviderSingle,
-        path: DocumentProviderPaths.DocumentProviderDocumentProvidersSingle,
-        element: <SingleDocumentProvider />,
-      },
-      {
-        name: m.overview,
-        path: DocumentProviderPaths.InstitutionDocumentProviderOverview,
-        element: <InstitutionDocumentProviders />,
-      },
-      {
-        name: m.documentProviderSingle,
-        path: DocumentProviderPaths.InstitutionDocumentProviderDocumentProvidersSingle,
-        element: <InstitutionSingleDocumentProvider />,
-      },
-      {
-        name: m.paper,
-        path: DocumentProviderPaths.DocumentProviderPaper,
-        element: <PaperScreen />,
-      },
-      {
-        name: m.catAndTypeName,
-        path: DocumentProviderPaths.DocumentProviderCategoryAndType,
-        element: <CategoriesAndTypesScreen />,
+        element: <Root />,
+        children: [
+          {
+            name: 'index',
+            path: DocumentProviderPaths.DocumentProviderRoot,
+            index: true,
+            element: (
+              <Navigate to={DocumentProviderPaths.DocumentProviderOverview} />
+            ),
+          },
+          {
+            name: m.overview,
+            path: DocumentProviderPaths.DocumentProviderOverview,
+            element: getOverviewScreen(props),
+          },
+          {
+            name: m.documentProviderSingle,
+            path: DocumentProviderPaths.DocumentProviderDocumentProvidersSingle,
+            element: getSingleDocumentProviderScreen(props),
+            dynamic: true,
+            navHide: true,
+          },
+          {
+            name: m.paper,
+            path: DocumentProviderPaths.DocumentProviderPaper,
+            element: <PaperScreen />,
+            enabled: props.userInfo.scopes.includes(
+              AdminPortalScope.documentProviderAdmin,
+            ),
+          },
+          {
+            name: m.catAndTypeName,
+            path: DocumentProviderPaths.DocumentProviderCategoryAndType,
+            element: <CategoriesAndTypesScreen />,
+            enabled: props.userInfo.scopes.includes(
+              AdminPortalScope.documentProviderAdmin,
+            ),
+          },
+        ],
       },
     ]
   },

@@ -1,5 +1,6 @@
 import { Box, Table as T, Text, Button } from '@island.is/island-ui/core'
 import { useNavigate } from 'react-router-dom'
+import { replaceParams } from '@island.is/react-spa/shared'
 import { ProviderInfo } from '../../lib/types'
 import { formatNumber } from '../../lib/utils'
 import { m } from '../../lib/messages'
@@ -58,7 +59,10 @@ export const ProvidersTable = ({ providers, loading, providerPath }: Props) => {
                     onClick={() =>
                       providerPath &&
                       navigate(
-                        providerPath.replace(':providerId', item.providerId),
+                        replaceParams({
+                          href: providerPath,
+                          params: { providerId: item.providerId },
+                        }),
                       )
                     }
                   >
