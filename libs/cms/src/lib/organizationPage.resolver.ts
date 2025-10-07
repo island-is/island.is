@@ -95,10 +95,11 @@ export class OrganizationPageResolver {
   private getBreadcrumbs(
     organizationPage: OrganizationPage,
     entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+    lang: string,
   ) {
     const slugs = organizationPage.subpageSlugsInput ?? []
-    const lang = organizationPage.lang ?? 'is'
     const breadcrumbs: BottomLink[] = []
+    const activeNodeIds = new Set<number>()
 
     if (slugs.length > 0) {
       breadcrumbs.push({
@@ -114,7 +115,7 @@ export class OrganizationPageResolver {
     let category = organizationPage.navigationLinks
 
     if (!category) {
-      return breadcrumbs
+      return { breadcrumbs, activeNodeIds }
     }
 
     for (const slug of slugs) {
@@ -133,6 +134,7 @@ export class OrganizationPageResolver {
           entryMap,
         )
         if (!item) break
+        activeNodeIds.add(trail.id)
         breadcrumbs.push(item)
       }
       const item = this.convertNodeToBreadcrumb(
@@ -142,11 +144,12 @@ export class OrganizationPageResolver {
         entryMap,
       )
       if (!item) break
+      activeNodeIds.add(node.id)
       breadcrumbs.push(item)
       category = node
     }
 
-    return breadcrumbs
+    return { breadcrumbs, activeNodeIds }
   }
 
   private extractNavigationLinkEntryIds(organizationPage: OrganizationPage) {
@@ -248,8 +251,9 @@ export class OrganizationPageResolver {
   private getTopLinks(
     organizationPage: OrganizationPage,
     entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+    lang: string,
+    activeNodeIds: Set<number>,
   ): TopLink[] {
-    const lang = organizationPage.lang ?? 'is'
     return (
       organizationPage.navigationLinks?.childNodes?.map((node) => {
         const { label, href } = this.getNodeLabelAndHref(
@@ -262,6 +266,7 @@ export class OrganizationPageResolver {
         return {
           label,
           href,
+          isActive: activeNodeIds.has(node.id),
           midLinks: node.childNodes
             .map((childNode) => {
               const { label, href } = this.getNodeLabelAndHref(
@@ -274,6 +279,7 @@ export class OrganizationPageResolver {
               return {
                 label,
                 href,
+                isActive: activeNodeIds.has(childNode.id),
               } as MidLink
             })
             .filter(Boolean) as MidLink[],
@@ -307,9 +313,17 @@ export class OrganizationPageResolver {
       }
     }
 
-    const breadcrumbs = this.getBreadcrumbs(organizationPage, entryMap)
-
-    const topLinks = this.getTopLinks(organizationPage, entryMap)
+    const { breadcrumbs, activeNodeIds } = this.getBreadcrumbs(
+      organizationPage,
+      entryMap,
+      lang,
+    )
+    const topLinks = this.getTopLinks(
+      organizationPage,
+      entryMap,
+      lang,
+      activeNodeIds,
+    )
 
     if (breadcrumbs.length > 2) {
       breadcrumbs.pop()

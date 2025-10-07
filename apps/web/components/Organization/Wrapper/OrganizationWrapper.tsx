@@ -1061,19 +1061,30 @@ export const OrganizationWrapper: React.FC<
       href: breadcrumb.href,
     }))
 
+    const pathname = new URL(router.asPath, 'https://island.is').pathname
+
     const navigationData: NavigationData = {
       title: navigationDataProp.title,
       items: (organizationPage.navigationLinks?.topLinks ?? []).map(
-        (topLink) => ({
-          title: topLink.label,
-          href: topLink.href,
-          active: topLink.isActive,
-          items: topLink.midLinks.map((midLink) => ({
-            title: midLink.label,
-            href: midLink.href,
-            active: midLink.isActive,
-          })),
-        }),
+        (topLink) => {
+          let isAnyChildActive = false
+          const midLinks = topLink.midLinks.map((midLink) => {
+            const isActive = midLink.isActive || pathname === midLink.href
+            if (isActive) isAnyChildActive = true
+            return {
+              title: midLink.label,
+              href: midLink.href,
+              active: isActive,
+            }
+          })
+          return {
+            title: topLink.label,
+            href: topLink.href,
+            active:
+              topLink.isActive || pathname === topLink.href || isAnyChildActive,
+            items: midLinks,
+          }
+        },
       ),
     }
 
@@ -1082,10 +1093,12 @@ export const OrganizationWrapper: React.FC<
       navigationData,
     }
   }, [
-    breadcrumbItemsProp,
-    navigationDataProp,
     sitemapContentTypeDeterminesNavigationAndBreadcrumbs,
-    organizationPage.navigationLinks,
+    organizationPage.navigationLinks?.breadcrumbs,
+    organizationPage.navigationLinks?.topLinks,
+    router.asPath,
+    navigationDataProp,
+    breadcrumbItemsProp,
   ])
 
   const activeNavigationItemTitle = useMemo(
