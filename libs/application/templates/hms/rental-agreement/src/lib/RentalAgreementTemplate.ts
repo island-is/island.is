@@ -46,9 +46,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   name: application.name,
   institution: application.institutionName,
-  translationNamespaces: [
-    ApplicationConfigurations.RentalAgreement.translation,
-  ],
+  translationNamespaces: ApplicationConfigurations.RentalAgreement.translation,
   dataSchema,
   featureFlag: Features.rentalAgreement,
   allowedDelegations: [{ type: AuthDelegationType.GeneralMandate }],
