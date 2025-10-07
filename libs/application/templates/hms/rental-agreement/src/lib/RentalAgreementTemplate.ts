@@ -34,6 +34,7 @@ import { application } from './messages'
 enum TemplateApiActions {
   submitApplicationToHmsRentalService = 'submitApplicationToHmsRentalService',
   consumerIndex = 'consumerIndex',
+  sendDraft = 'sendDraft',
 }
 
 const RentalAgreementTemplate: ApplicationTemplate<
@@ -45,9 +46,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   name: application.name,
   institution: application.institutionName,
-  translationNamespaces: [
-    ApplicationConfigurations.RentalAgreement.translation,
-  ],
+  translationNamespaces: ApplicationConfigurations.RentalAgreement.translation,
   dataSchema,
   featureFlag: Features.rentalAgreement,
   allowedDelegations: [{ type: AuthDelegationType.GeneralMandate }],
@@ -130,6 +129,9 @@ const RentalAgreementTemplate: ApplicationTemplate<
           name: States.INREVIEW,
           status: 'inprogress',
           lifecycle: pruneAfterDays(10),
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.sendDraft,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
