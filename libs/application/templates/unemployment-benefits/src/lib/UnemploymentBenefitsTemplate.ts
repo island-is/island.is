@@ -8,7 +8,6 @@ import {
   DefaultEvents,
   FormModes,
   ApplicationConfigurations,
-  NationalRegistrySpouseApi,
   NationalRegistryUserApi,
   ChildrenCustodyInformationApi,
   defineTemplateApi,
@@ -74,7 +73,6 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
               read: 'all',
               api: [
                 UserProfileApi,
-                NationalRegistrySpouseApi,
                 NationalRegistryUserApi,
                 ChildrenCustodyInformationApi,
                 UnemploymentApi,

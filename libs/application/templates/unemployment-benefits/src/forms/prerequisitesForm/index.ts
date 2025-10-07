@@ -9,7 +9,6 @@ import { DefaultEvents } from '@island.is/application/types'
 import {
   FormModes,
   NationalRegistryUserApi,
-  NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
 import { LocaleApi, UnemploymentApi, UserProfileApi } from '../../dataProviders'
@@ -33,14 +32,11 @@ export const Prerequisites = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
+              title: externalData.nationalRegistry.title,
+              subTitle: externalData.nationalRegistry.subTitle,
             }),
             buildDataProviderItem({
               provider: ChildrenCustodyInformationApi,
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
-              title: externalData.nationalRegistry.title,
-              subTitle: externalData.nationalRegistry.subTitle,
             }),
             buildDataProviderItem({
               provider: UserProfileApi,

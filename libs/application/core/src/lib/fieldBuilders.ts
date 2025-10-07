@@ -1208,10 +1208,10 @@ export const buildBankAccountField = (
     marginBottom,
     marginTop,
     titleVariant,
-    defaultValue,
     required,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
+    defaultValue,
   }
 }
 

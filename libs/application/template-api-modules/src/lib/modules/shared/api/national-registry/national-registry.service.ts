@@ -452,41 +452,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
     )
   }
 
-  async getSpouseV3({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouseV3 | null> {
-    const cohabitationInfo =
-      await this.nationalRegistryV3Api.getCohabitationInfo(
-        auth.nationalId,
-        auth,
-      )
-
-    const spouseIndividual = cohabitationInfo
-      ? await this.getIndividual(cohabitationInfo.spouseNationalId, auth)
-      : undefined
-    const spouseBirthPlace = cohabitationInfo
-      ? await this.nationalRegistryApi.getBirthplace(
-          cohabitationInfo.spouseNationalId,
-        )
-      : undefined
-    return (
-      cohabitationInfo && {
-        nationalId: cohabitationInfo.spouseNationalId,
-        name: cohabitationInfo.spouseName,
-        maritalStatus: cohabitationInfo.cohabitationCode,
-        maritalDescription: cohabitationInfo?.cohabitationCodeDescription,
-        lastModified: cohabitationInfo.lastModified,
-        birthplace: spouseBirthPlace && {
-          dateOfBirth: spouseBirthPlace.birthdate,
-          location: spouseBirthPlace.locality,
-          municipalityCode: spouseBirthPlace.municipalityNumber,
-        },
-        citizenship: spouseIndividual?.citizenship,
-        address: spouseIndividual?.address,
-      }
-    )
-  }
-
   async getMaritalTitle({
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistryMaritalTitle | null> {

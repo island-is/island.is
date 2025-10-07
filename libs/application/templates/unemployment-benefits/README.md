@@ -1,15 +1,34 @@
-# unemployment-benefits
+# Unemployment Benefits (Atvinnuleysisbætur) application for the Directorate of Labor
 
-This template for an application was generated with the `nx generate-template unemployment-benefits` command.
+## Description
 
-Write documentation here.
+## URLs
 
-- What gervimenn can use this template
-- What is this application for
-- Which organization is this application for
-- Describe the stateflow of the application on a high level
-- And more...
+- [Local](http://localhost:4242/umsoknir/atvinnuleysisbaetur)
+- [Dev](https://beta.dev01.devland.is/umsoknir/atvinnuleysisbaetur)
+- [Production](https://island.is/umsoknir/atvinnuleysisbaetur)
 
-## Running unit tests
+## Clients and template-api-modules
 
-Run `nx test unemployment-benefits` to execute the unit tests via [Jest](https://jestjs.io).
+- [Client](https://github.com/island-is/island.is/tree/main/libs/clients/vmst-unemployment/src/lib/vmstUnemploymentClient.service.ts)
+- [Template-api-module](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/unemployment-benefits)
+
+## Prerequisite
+
+Data is fetched from the National Registry, user profile, childrens custody, RSK, and the Social Insurance Administration.
+
+## Localisation
+
+All localisation can be found on Contentful.
+
+- [Activation Allowance translation](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/vmst.ub.application)
+- [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
+
+## Test users
+
+- **Gervimaður Færeyja 01030-2399**
+
+## Codeowners
+
+- [Origo](https://github.com/orgs/island-is/teams/origo)
+  - [Berglind](https://github.com/berglindoma13)
