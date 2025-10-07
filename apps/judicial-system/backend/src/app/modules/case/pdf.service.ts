@@ -195,16 +195,10 @@ export class PdfService {
       }
     }
 
-    const test = {
-      actor: 'Test',
-      title: 'Test',
-      institution: 'Test',
-      date: new Date(),
-    }
     const generatedPdf = await createIndictmentCourtRecordPdf(
       theCase,
       isDistrictCourtUser(user),
-      test,
+      confirmation,
     )
 
     if (isCompletedCase(theCase.state) && confirmation) {
