@@ -27,7 +27,7 @@ export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {
   const { formatMessage } = useLocale()
-
+  
   // Filter categories that have data (published > 0) in any data item
   const activeCatKeys =
     data && data.length > 0
@@ -54,7 +54,7 @@ export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
         )
       : []
 
-  // Custom tooltip component to format values
+  const reversedData = [...data].reverse()
 
   return (
     <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -70,7 +70,7 @@ export const SentFilesBarChart: FC<React.PropsWithChildren<Props>> = ({
           {formatMessage(m.statisticsBoxPublishedDocuments)}
         </Text>
         <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={data} margin={{ left: 0 }}>
+          <BarChart data={reversedData} margin={{ left: 0 }}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="name"

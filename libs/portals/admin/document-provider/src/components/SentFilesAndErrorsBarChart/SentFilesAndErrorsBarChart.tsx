@@ -29,7 +29,7 @@ export const SentFilesAndErrorsBarChart: FC<React.PropsWithChildren<Props>> = ({
     formatMessage(m.statisticsBoxPublishedDocuments),
     formatMessage(m.sentErrors),
   ]
-
+  const reversedData = [...data].reverse()
   return (
     <GridColumn span={['12/12', '12/12', '6/12']}>
       <Box
@@ -45,7 +45,7 @@ export const SentFilesAndErrorsBarChart: FC<React.PropsWithChildren<Props>> = ({
         </Text>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart
-            data={data}
+            data={reversedData}
             margin={{ top: 10, right: 10, bottom: 10, left: 0 }}
           >
             <CartesianGrid vertical={false} />

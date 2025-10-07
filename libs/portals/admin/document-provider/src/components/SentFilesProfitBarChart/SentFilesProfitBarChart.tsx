@@ -30,6 +30,7 @@ export const SentFilesProfitBarChart: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const { formatMessage } = useLocale()
   const TITLES = [formatMessage(m.statisticsBoxBenefit)]
+  const reversedData = [...data].reverse()
   return (
     <GridColumn span={['12/12', '12/12', '6/12']}>
       <Box
@@ -44,7 +45,7 @@ export const SentFilesProfitBarChart: FC<React.PropsWithChildren<Props>> = ({
           {formatMessage(m.statisticsBoxBenefitInCrowns)}
         </Text>
         <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={data} margin={{ left: 0 }}>
+          <BarChart data={reversedData} margin={{ left: 0 }}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="name"

@@ -80,7 +80,7 @@ const AdminDocumentProviders = () => {
                       m.documentProvidersDateFromPlaceholderText,
                     )}
                     locale="is"
-                    minDate={new Date(2011, 1, 1)}
+                    minDate={new Date(2011, 0, 1)}
                     maxDate={new Date()}
                     minYear={2011}
                     maxYear={today.getFullYear()}
@@ -96,7 +96,7 @@ const AdminDocumentProviders = () => {
                       m.documentProvidersDateToPlaceholderText,
                     )}
                     locale="is"
-                    minDate={new Date(2011, 1, 1)}
+                    minDate={new Date(2011, 0, 1)}
                     maxDate={new Date()}
                     minYear={2011}
                     maxYear={today.getFullYear()}
