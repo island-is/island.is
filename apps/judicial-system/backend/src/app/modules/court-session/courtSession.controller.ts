@@ -96,6 +96,7 @@ export class CourtSessionController {
   )
   @Delete(':courtSessionId')
   @ApiOkResponse({
+    type: DeleteCourtSessionResponse,
     description: 'Deletes a court session',
   })
   async delete(

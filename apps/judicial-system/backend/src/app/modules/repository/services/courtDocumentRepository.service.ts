@@ -468,10 +468,11 @@ export class CourtDocumentRepositoryService {
       transaction,
     )
 
-    filedDocumentsInSession.forEach(
-      async (filedDocument) =>
-        await this.delete(caseId, courtSessionId, filedDocument.id),
-    )
+    for (const filedDocument of filedDocumentsInSession) {
+      await this.delete(caseId, courtSessionId, filedDocument.id, {
+        transaction,
+      })
+    }
   }
 
   private async getFiledDocumentsInSession(
