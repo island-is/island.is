@@ -31,7 +31,6 @@ const Root = lazy(() => import('./screens/Root/Root'))
 
 const allowedScopes: string[] = [
   AdminPortalScope.documentProvider,
-  AdminPortalScope.documentProviderAdmin,
   AdminPortalScope.documentProviderInstitution,
 ]
 
