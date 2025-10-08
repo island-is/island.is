@@ -2,17 +2,26 @@ import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   AppInfoApi,
-  AppointmentList,
-  AvailableResources,
   BookAppointmentApi,
   FeedbackApi,
   FoodApi,
   Form,
-  PatientProperties,
   PatientPropertiesApi,
-  TableReport,
 } from './gen/fetch'
 
+// Example of posting form answers
+// .. rest of question
+// "CurrentValues": {
+//    "Label": "Label1;Label3",
+//    "Value": "Value1;Value3;"
+// },
+interface postPatientForm {
+  CurrentValues: {
+    Label: string
+    Value: string
+  }
+  EntryID: string
+}
 @Injectable()
 export class LshDevService {
   constructor(
@@ -22,19 +31,6 @@ export class LshDevService {
     private readonly foodApi: FoodApi,
     private readonly patientPropertiesApi: PatientPropertiesApi,
   ) {}
-
-  // Helper methods to create API instances with authentication middleware
-  private appInfoApiWithAuth = (auth: Auth) =>
-    this.appInfoApi.withMiddleware(new AuthMiddleware(auth))
-
-  private bookAppointmentApiWithAuth = (auth: Auth) =>
-    this.bookAppointmentApi.withMiddleware(new AuthMiddleware(auth))
-
-  private feedbackApiWithAuth = (auth: Auth) =>
-    this.feedbackApi.withMiddleware(new AuthMiddleware(auth))
-
-  private foodApiWithAuth = (auth: Auth) =>
-    this.foodApi.withMiddleware(new AuthMiddleware(auth))
 
   private patientPropertiesApiWithAuth = (auth: Auth) =>
     this.patientPropertiesApi.withMiddleware(new AuthMiddleware(auth))
@@ -46,53 +42,9 @@ export class LshDevService {
     return data
   }
 
-  /**
-   * Get patient properties
-   */
-  async getPatientProperties(auth: Auth): Promise<PatientProperties> {
-    return this.patientPropertiesApiWithAuth(auth).apiV2PatientPropertiesGet()
-  }
-
-  /**
-   * Get available resources for booking appointments
-   */
-  async getAvailableResources(auth: Auth): Promise<AvailableResources> {
-    return this.bookAppointmentApiWithAuth(
+  async postPatientForm(auth: Auth, form: any): Promise<boolean> {
+    return await this.patientPropertiesApiWithAuth(
       auth,
-    ).apiV2BookAppointmentGetAvailableResourcesGet()
-  }
-
-  /**
-   * Get patient appointments by ID
-   */
-  async getAppointments(auth: Auth, id: string): Promise<AppointmentList> {
-    return this.bookAppointmentApiWithAuth(
-      auth,
-    ).apiV2BookAppointmentGetAppointmentsIDGet({
-      iD: id,
-    })
-  }
-
-  /**
-   * Get table report from patient properties
-   */
-  async getPatientTableReport(
-    auth: Auth,
-    reportCode?: string,
-  ): Promise<TableReport> {
-    return this.patientPropertiesApiWithAuth(
-      auth,
-    ).apiV2PatientPropertiesGetTableReportGet({
-      reportCode,
-    })
-  }
-
-  /**
-   * Check if patient has data
-   */
-  async hasDataForPatient(auth: Auth) {
-    return this.patientPropertiesApiWithAuth(
-      auth,
-    ).apiV2PatientPropertiesHasDataForPatientGet()
+    ).apiV2PatientPropertiesSubmitFormAnswersPost(form)
   }
 }
