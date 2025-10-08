@@ -68,7 +68,7 @@ const InstitutionDocumentProviders = () => {
     if (!user) {
       return
     }
-    
+
     if (!user?.scopes?.includes(AdminPortalScope.documentProviderInstitution)) {
       navigate(DocumentProviderPaths.DocumentProviderOverview)
     }
