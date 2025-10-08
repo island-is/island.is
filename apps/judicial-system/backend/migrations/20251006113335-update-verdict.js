@@ -8,7 +8,7 @@ module.exports = {
           'verdict',
           'is_default_judgement',
           {
-            type: Sequelize.STRING,
+            type: Sequelize.BOOLEAN,
             allowNull: true,
           },
           { transaction: t },

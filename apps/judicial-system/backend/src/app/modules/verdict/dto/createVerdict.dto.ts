@@ -6,7 +6,7 @@ export class CreateVerdictDto {
   @IsOptional()
   @IsUUID()
   @ApiPropertyOptional({ type: String })
-  defendantId!: string
+  defendantId?: string
 
   @IsOptional()
   @IsBoolean()

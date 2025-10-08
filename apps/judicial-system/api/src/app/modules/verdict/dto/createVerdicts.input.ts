@@ -24,5 +24,5 @@ export class CreateVerdictsInput {
   @IsOptional()
   @IsArray()
   @Field(() => [CreateVerdict], { nullable: true })
-  readonly verdicts?: [CreateVerdict]
+  readonly verdicts?: CreateVerdict[]
 }

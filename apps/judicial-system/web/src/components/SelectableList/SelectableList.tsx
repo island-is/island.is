@@ -134,7 +134,7 @@ const SelectableList: FC<Props> = (props) => {
               validSelectableItems.every((item) => item.checked)
             }
             onChange={(evt) => {
-              const update = selectableItems?.map((item) => ({
+              const update = selectableItems.map((item) => ({
                 ...item,
                 checked: evt.target.checked && !item.invalid,
               }))

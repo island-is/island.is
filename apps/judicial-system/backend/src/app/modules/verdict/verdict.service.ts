@@ -121,7 +121,7 @@ export class VerdictService {
           )?.verdict
           if (currentVerdict) {
             const { defendantId, ...update } = verdict
-            return this.updateVerdict(currentVerdict, update)
+            return this.updateVerdict(currentVerdict, update, transaction)
           } else {
             return this.createVerdict(caseId, verdict, transaction)
           }

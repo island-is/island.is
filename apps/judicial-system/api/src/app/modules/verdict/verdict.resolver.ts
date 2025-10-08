@@ -30,7 +30,7 @@ export class VerdictResolver {
     private readonly logger: Logger,
   ) {}
 
-  @Mutation(() => Verdict, { nullable: true })
+  @Mutation(() => [Verdict], { nullable: true })
   createVerdicts(
     @Args('input', { type: () => CreateVerdictsInput })
     input: CreateVerdictsInput,
@@ -44,7 +44,7 @@ export class VerdictResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_VERDICTS,
-      backendService.createVerdicts(caseId, createVerdictInputs.verdicts),
+      backendService.createVerdicts(caseId, createVerdictInputs.verdicts ?? []),
       caseId,
     )
   }

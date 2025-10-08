@@ -2332,7 +2332,6 @@ export class CaseService {
         if (
           theCase.indictmentRulingDecision ===
             CaseIndictmentRulingDecision.RULING &&
-          update.indictmentRulingDecision &&
           update.indictmentRulingDecision !==
             CaseIndictmentRulingDecision.RULING &&
           theCase.defendants

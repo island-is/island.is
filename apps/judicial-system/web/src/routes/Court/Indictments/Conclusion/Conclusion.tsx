@@ -151,7 +151,7 @@ const Conclusion: FC = () => {
       }),
     )
 
-    createVerdicts({
+    return createVerdicts({
       caseId: workingCase.id,
       verdicts: defendantVerdictsToCreate,
     })
@@ -217,7 +217,10 @@ const Conclusion: FC = () => {
         update.indictmentDecision === IndictmentDecision.COMPLETING &&
         update.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
       ) {
-        handleVerdicts()
+        const success = await handleVerdicts()
+        if (!success) {
+          return
+        }
       }
 
       router.push(
@@ -289,6 +292,16 @@ const Conclusion: FC = () => {
       setMergeCaseNumber(workingCase.mergeCaseNumber)
     }
   }, [workingCase.mergeCaseNumber])
+
+  useEffect(() => {
+    setDefendantsWithDefaultJudgments(
+      (workingCase.defendants ?? []).map((d) => ({
+        id: d.id,
+        name: d.name ?? 'Nafn ekki skráð',
+        checked: d.verdict?.isDefaultJudgement ?? false,
+      })),
+    )
+  }, [workingCase.defendants])
 
   const handleMergeCaseNumberBlur = (value: string) => {
     const validation = validate([[value, ['S-case-number']]])
@@ -698,10 +711,7 @@ const Conclusion: FC = () => {
             >
               <SelectableList
                 selectAllText="Útivistardómur"
-                items={workingCase.defendants.map((defendant) => ({
-                  id: defendant.id,
-                  name: defendant.name ?? 'Nafn ekki skráð',
-                }))}
+                items={defendantsWithDefaultJudgments}
                 onChange={(selectableItems: SelectableItem[]) => {
                   setDefendantsWithDefaultJudgments(selectableItems)
                 }}
