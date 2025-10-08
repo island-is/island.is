@@ -135,7 +135,7 @@
     },
     "inputFileUpload": {
       "header": "Dragðu skrár hingað til að hlaða upp",
-      "description": "Hlaðaðu upp skrár sem þu vilt senda með þinni umsögn",
+      "description": "ef þú vilt senda skrár með umsögn þinni",
       "buttonLabel": "Velja skrár til að hlaða upp"
     },
     "showUploadButtonLabel": "Hlaða upp viðhengi",
