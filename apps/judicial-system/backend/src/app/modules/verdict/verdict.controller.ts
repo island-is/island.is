@@ -78,11 +78,12 @@ export class VerdictController {
   })
   async createVerdicts(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Body() verdictsToCreate: CreateVerdictDto[],
   ): Promise<Verdict[]> {
     this.logger.debug(`Creating verdicts for defendants in ${caseId}`)
 
-    return this.verdictService.createVerdicts(caseId, verdictsToCreate)
+    return this.verdictService.createVerdicts(caseId, verdictsToCreate, theCase.defendants)
   }
 
   @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)

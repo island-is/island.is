@@ -45,6 +45,7 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   | 'appealDecision'
   | 'appealDate'
   | 'serviceInformationForDefendant'
+  | 'isDefaultJudgement'
 >
 
 export class VerdictService {
@@ -97,18 +98,34 @@ export class VerdictService {
     verdict: CreateVerdictDto,
     transaction: Transaction,
   ): Promise<Verdict> {
-    return this.verdictModel.create({ caseId, ...verdict }, { transaction })
+    const currentVerdict = await this.verdictModel.findOne({
+      where: { defendantId: verdict.defendantId },
+    })
+    if (!currentVerdict) {
+      return this.verdictModel.create({ caseId, ...verdict }, { transaction })
+    }
+    return currentVerdict
   }
 
+  // upsert: if the verdict exist, we update the values otherwise we insert it
   async createVerdicts(
     caseId: string,
     verdicts: CreateVerdictDto[],
+    defendants?: Defendant[],
   ): Promise<Verdict[]> {
     return this.sequelize.transaction(async (transaction) => {
       return await Promise.all(
-        verdicts.map((verdict) =>
-          this.createVerdict(caseId, verdict, transaction),
-        ),
+        verdicts.map((verdict) => {
+          const currentVerdict = defendants?.find(
+            (defendant) => verdict.defendantId === defendant.id,
+          )?.verdict
+          if (currentVerdict) {
+            const { defendantId, ...update } = verdict
+            return this.updateVerdict(currentVerdict, update)
+          } else {
+            return this.createVerdict(caseId, verdict, transaction)
+          }
+        }),
       )
     })
   }
@@ -119,7 +136,7 @@ export class VerdictService {
     transaction: Transaction,
   ): Promise<boolean> {
     const numberOfAffectedRows = await this.verdictModel.destroy({
-      where: { id: defendantId, caseId },
+      where: { defendantId, caseId },
       transaction,
     })
 
