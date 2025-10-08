@@ -1,5 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { CacheField } from '@island.is/nest/graphql'
+import { CacheControl, CacheField } from '@island.is/nest/graphql'
 import { type SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 
@@ -126,6 +126,7 @@ export class OrganizationPage {
   @Field()
   theme!: string
 
+  @CacheControl({ inheritMaxAge: true })
   @Field()
   themeProperties!: OrganizationTheme
 
@@ -174,7 +175,7 @@ export class OrganizationPage {
   @Field(() => Boolean, { nullable: true })
   showPastEventsOption?: boolean
 
-  @Field(() => [String], { nullable: true })
+  @CacheField(() => [String], { nullable: true })
   subpageSlugsInput?: string[]
 
   @Field(() => String, { nullable: true })
