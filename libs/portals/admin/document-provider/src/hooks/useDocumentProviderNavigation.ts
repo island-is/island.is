@@ -8,10 +8,12 @@ import {
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
 
 export const useDocumentProviderNavigation = (): PortalNavigationItem => {
   const userInfo = useUserInfo()
+  const { formatMessage } = useLocale()
 
   // Only fetch providers if user has institution scope
   const shouldFetchProviders = userInfo?.scopes?.includes(
@@ -59,7 +61,7 @@ export const useDocumentProviderNavigation = (): PortalNavigationItem => {
         ...baseDocumentProviderNavigation,
         children: [
           {
-            name: m.documentProvidersList,
+            name: formatMessage(m.providersList),
             path: DocumentProviderPaths.DocumentProviderOverview,
             children: providerItems,
             systemRoute: true, // Mark as system route to prevent filtering
@@ -69,5 +71,5 @@ export const useDocumentProviderNavigation = (): PortalNavigationItem => {
     } else {
       return baseDocumentProviderNavigation
     }
-  }, [providers, loading, userInfo])
+  }, [providers, loading, userInfo, formatMessage])
 }

@@ -857,6 +857,10 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:category-types-name',
     defaultMessage: 'Flokkar og Tegundir',
   },
+  providersList: {
+    id: 'portals-admin.document-provider:providers-list',
+    defaultMessage: 'Skjalaveitendur',
+  },
   catAndTypeTitle: {
     id: 'portals-admin.document-provider:category-types-title',
     defaultMessage: 'Flokkar og tegundir erinda',
