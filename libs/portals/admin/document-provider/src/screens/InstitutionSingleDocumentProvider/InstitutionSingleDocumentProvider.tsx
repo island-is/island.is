@@ -166,9 +166,7 @@ const SingleDocumentProvider = () => {
           boxesPerRow={4}
         />
 
-        <InstitutionDocumentProviderDashboard
-          providerId={providerId!}
-        />
+        <InstitutionDocumentProviderDashboard providerId={providerId!} />
 
         {breakdown ? (
           <DocumentProviderStatisticsTable

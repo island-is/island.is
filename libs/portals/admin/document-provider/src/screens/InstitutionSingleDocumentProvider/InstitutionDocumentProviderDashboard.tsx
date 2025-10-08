@@ -15,14 +15,11 @@ import { CategoryStatisticsSortBy } from '@island.is/api/schema'
 import { useGetProviderStatisticsBreakdownWCategoriesByProviderId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByProviderId'
 import { useGetProviderStatisticsBreakdownByProviderId } from '../../shared/useGetProviderStatisticsBreakdownByProviderId'
 
-
 interface Props {
   providerId?: string
 }
 
-export const InstitutionDocumentProviderDashboard = ({
-  providerId
-}: Props) => {
+export const InstitutionDocumentProviderDashboard = ({ providerId }: Props) => {
   const { formatMessage } = useLocale()
   const { loading: loadingSentFiles, chartData: sentFilesData } =
     useGetProviderStatisticsBreakdownWCategoriesByProviderId(
@@ -35,16 +32,16 @@ export const InstitutionDocumentProviderDashboard = ({
       6,
     )
 
-    const { loading: loadingChartData, chartData } =
-      useGetProviderStatisticsBreakdownByProviderId(
-        providerId,
-        undefined,
-        undefined,
-        'Date',
-        true,
-        1,
-        6,
-      )
+  const { loading: loadingChartData, chartData } =
+    useGetProviderStatisticsBreakdownByProviderId(
+      providerId,
+      undefined,
+      undefined,
+      'Date',
+      true,
+      1,
+      6,
+    )
   //Get the sum of opened and published from chartData
   const opened =
     chartData?.reduce((acc, item) => acc + (item?.opened ?? 0), 0) ?? 0

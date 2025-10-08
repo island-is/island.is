@@ -139,7 +139,7 @@ const InstitutionDocumentProviders = () => {
           statistics={statisticsBox || []}
         />
 
-        <InstitutionDocumentProvidersDashboard/>
+        <InstitutionDocumentProvidersDashboard />
 
         <ProvidersTable
           providerPath={

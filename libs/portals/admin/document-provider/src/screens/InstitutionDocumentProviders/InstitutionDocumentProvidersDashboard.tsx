@@ -23,14 +23,14 @@ export const InstitutionDocumentProvidersDashboard = ({}: Props) => {
   const sixMonthsAgo = subMonths(new Date(), 6)
 
   const { loading: loadingSentFiles, chartData: sentFilesData } =
-      useGetProviderStatisticsBreakdownWCategoriesByNationalId(
-        sixMonthsAgo,
-        new Date(),
-        TotalStatisticsSortBy.Date,
-        true,
-        1,
-        6,
-      )
+    useGetProviderStatisticsBreakdownWCategoriesByNationalId(
+      sixMonthsAgo,
+      new Date(),
+      TotalStatisticsSortBy.Date,
+      true,
+      1,
+      6,
+    )
 
   // Fetch statistics for the last 6 months
   const { loading: loadingStatistics6Months, statistics } =
