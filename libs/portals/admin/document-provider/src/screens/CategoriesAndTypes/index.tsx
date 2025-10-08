@@ -1,11 +1,6 @@
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import {
-  Box,
-  Button,
-  Tabs,
-  SkeletonLoader,
-} from '@island.is/island-ui/core'
+import { Box, Button, Tabs, SkeletonLoader } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { IntroHeader } from '@island.is/portals/core'
 import DocumentCategories from './Categories'
@@ -64,53 +59,50 @@ const CategoriesAndTypes = () => {
         setActiveTab,
       }}
     >
-      
-        <Box marginBottom={[2, 3, 5]}>
-          <IntroHeader
-            title={formatMessage(m.catAndTypeTitle)}
-            intro={formatMessage(m.catAndTypeDescription)}
-          />
-          <Box paddingBottom={3}>
-            <Button
-              variant="utility"
-              size="small"
-              onClick={() => setIsModalVisible(true)}
-              icon="add"
-            >
-              {formatMessage(m.add, {
-                add:
-                  activeTab === 'types'
-                    ? formatMessage(m.typeP)
-                    : formatMessage(m.categoryP),
-              })}
-            </Button>
-          </Box>
-          <Tabs
-            selected={activeTab}
-            label={formatMessage(m.catAndTypeTitle)}
-            onChange={(id: TabOptions) => setActiveTab(id)}
-            tabs={[
-              {
-                id: 'categories',
-                label: formatMessage(m.categories),
-                content: (
-                  <DocumentCategories
-                    callback={() => setIsModalVisible(true)}
-                  />
-                ),
-              },
-              {
-                id: 'types',
-                label: formatMessage(m.types),
-                content: (
-                  <DocumentTypes callback={() => setIsModalVisible(true)} />
-                ),
-              },
-            ]}
-            contentBackground="white"
-          />
+      <Box marginBottom={[2, 3, 5]}>
+        <IntroHeader
+          title={formatMessage(m.catAndTypeTitle)}
+          intro={formatMessage(m.catAndTypeDescription)}
+        />
+        <Box paddingBottom={3}>
+          <Button
+            variant="utility"
+            size="small"
+            onClick={() => setIsModalVisible(true)}
+            icon="add"
+          >
+            {formatMessage(m.add, {
+              add:
+                activeTab === 'types'
+                  ? formatMessage(m.typeP)
+                  : formatMessage(m.categoryP),
+            })}
+          </Button>
         </Box>
-      
+        <Tabs
+          selected={activeTab}
+          label={formatMessage(m.catAndTypeTitle)}
+          onChange={(id: TabOptions) => setActiveTab(id)}
+          tabs={[
+            {
+              id: 'categories',
+              label: formatMessage(m.categories),
+              content: (
+                <DocumentCategories callback={() => setIsModalVisible(true)} />
+              ),
+            },
+            {
+              id: 'types',
+              label: formatMessage(m.types),
+              content: (
+                <DocumentTypes callback={() => setIsModalVisible(true)} />
+              ),
+            },
+          ]}
+          contentBackground="white"
+        />
+      </Box>
+
       {isModalVisible && (
         <AddTypeCategory
           isVisible={isModalVisible}
