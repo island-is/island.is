@@ -32,7 +32,7 @@ import {
   setObjectWithNestedKey,
 } from './utils'
 import { Item } from './TableRepeaterItem'
-import { Locale, StaticText } from '@island.is/shared/types'
+import { Locale } from '@island.is/shared/types'
 import { useApolloClient } from '@apollo/client/react'
 import { uuid } from 'uuidv4'
 
@@ -72,7 +72,7 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   const apolloClient = useApolloClient()
   const [loadError, setLoadError] = useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = useState<StaticText | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const items = Object.keys(rawItems).map((key) => ({
     id: key,
@@ -204,15 +204,20 @@ export const TableRepeaterFormField: FC<Props> = ({
     setBeforeSubmitCallback?.(
       async () => {
         if (activeIndexRef.current !== -1) {
-          setErrorMessage(coreErrorMessages.needToFinishRegistration)
-          return [false, '']
+          setErrorMessage(
+            formatMessage(coreErrorMessages.needToFinishRegistration),
+          )
+          return [
+            false,
+            formatMessage(coreErrorMessages.needToFinishRegistration),
+          ]
         }
         setErrorMessage(null)
         return [true, null]
       },
       { allowMultiple: true, customCallbackId: callbackIdRef.current },
     )
-  }, [setBeforeSubmitCallback])
+  }, [formatMessage, setBeforeSubmitCallback])
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -396,9 +401,7 @@ export const TableRepeaterFormField: FC<Props> = ({
           </Box>
         )}
         {errorMessage && (
-          <ErrorMessage id={`${data.id}-error`}>
-            {formatMessage(errorMessage)}
-          </ErrorMessage>
+          <ErrorMessage id={`${data.id}-error`}>{errorMessage}</ErrorMessage>
         )}
       </Box>
     </Box>
