@@ -187,10 +187,23 @@ export class OrganizationPageResolver {
   }
 
   private extractNavigationLinkEntryIds(organizationPage: OrganizationPage) {
+    const parentSubpageEntryIds = new Set<string>()
+    const organizationSubpageEntryIds = new Set<string>()
     const entryIds = new Set<string>()
+
+    const assignEntryToSet = (node: SitemapTreeNode) => {
+      if (!(node.type === SitemapTreeNodeType.ENTRY && Boolean(node.entryId)))
+        return
+      if (node.contentType === 'organizationParentSubpage')
+        parentSubpageEntryIds.add(node.entryId)
+      else if (node.contentType === 'organizationSubpage')
+        organizationSubpageEntryIds.add(node.entryId)
+      else entryIds.add(node.entryId)
+    }
+
     for (const node of organizationPage.navigationLinks?.childNodes ?? []) {
       if (node.type === SitemapTreeNodeType.ENTRY && Boolean(node.entryId)) {
-        entryIds.add(node.entryId)
+        assignEntryToSet(node)
         continue
       }
       if (node.type === SitemapTreeNodeType.CATEGORY)
@@ -199,7 +212,7 @@ export class OrganizationPageResolver {
             child.type === SitemapTreeNodeType.ENTRY &&
             Boolean(child.entryId)
           ) {
-            entryIds.add(child.entryId)
+            assignEntryToSet(child)
             continue
           }
           if (child.type === SitemapTreeNodeType.CATEGORY)
@@ -208,13 +221,17 @@ export class OrganizationPageResolver {
                 grandchild.type === SitemapTreeNodeType.ENTRY &&
                 Boolean(grandchild.entryId)
               ) {
-                entryIds.add(grandchild.entryId)
+                assignEntryToSet(grandchild)
                 continue
               }
         }
     }
 
-    return Array.from(entryIds)
+    return {
+      parentSubpageEntryIds: Array.from(parentSubpageEntryIds),
+      organizationSubpageEntryIds: Array.from(organizationSubpageEntryIds),
+      entryIds: Array.from(entryIds),
+    }
   }
 
   private getNodeLabelAndHref(
@@ -328,13 +345,24 @@ export class OrganizationPageResolver {
   ): Promise<NavigationLinks> {
     const lang = organizationPage.lang ?? 'is'
 
-    const entryIds = this.extractNavigationLinkEntryIds(organizationPage)
-    const entries = await this.cmsContentfulService.getEntries(entryIds, lang)
+    const entryIdsObject = this.extractNavigationLinkEntryIds(organizationPage)
+    const entries =
+      await this.cmsContentfulService.getOrganizationNavigationPages(
+        entryIdsObject,
+        lang,
+      )
     const entryMap = new Map<
       string,
       { link: BottomLink; entry: Entry<unknown> }
     >()
     for (const entry of entries) {
+      ;(
+        entry.fields as { organizationPage: { fields: { slug: string } } }
+      ).organizationPage = {
+        fields: {
+          slug: organizationPage.slug,
+        },
+      }
       const link = generateOrganizationSubpageLink(
         entry as IOrganizationParentSubpage | IOrganizationSubpage,
       )
