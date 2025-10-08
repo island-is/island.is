@@ -137,6 +137,8 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
             alignItems="center"
             justifyContent="spaceBetween"
             columnGap={2}
+            paddingBottom={4}
+            background="white"
           >
             {footerCheckbox && (
               <Checkbox
