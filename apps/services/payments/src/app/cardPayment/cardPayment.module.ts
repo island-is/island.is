@@ -12,14 +12,15 @@ import {
 } from '../paymentFlow/models/paymentFlow.model'
 import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
+import { FjsCharge } from '../paymentFlow/models/fjsCharge.model'
 import { ConfigModule } from '@nestjs/config'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { CardPaymentCacheModule } from './cardPayment.cache'
-import { PaymentFlowPaymentConfirmation } from '../paymentFlow/models/paymentFlowPaymentConfirmation.model'
+import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import { JwksModule } from '../jwks/jwks.module'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
+import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 
 @Module({
   imports: [
@@ -27,8 +28,9 @@ import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
       PaymentFlow,
       PaymentFlowCharge,
       PaymentFlowEvent,
-      PaymentFlowFjsChargeConfirmation,
-      PaymentFlowPaymentConfirmation,
+      FjsCharge,
+      CardPaymentDetails,
+      PaymentFulfillment,
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
