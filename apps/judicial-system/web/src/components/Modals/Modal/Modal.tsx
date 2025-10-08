@@ -124,7 +124,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
             </Text>
           </Box>
           {text && (
-            <Box marginBottom={6} className={styles.breakSpaces}>
+            <Box marginBottom={4} className={styles.breakSpaces}>
               {
                 // Check if text is a string or Element
                 isValidElement(text) ? text : <Text>{text}</Text>
@@ -138,6 +138,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
             justifyContent="spaceBetween"
             columnGap={2}
             paddingBottom={6}
+            paddingTop={2}
             background="white"
             position="sticky"
             bottom={0}
