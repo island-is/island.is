@@ -48,11 +48,11 @@ export const useGetProviderStatisticCategoriesByNationalId = (
   )
 
   const COLORS = [
-    '#007bff', // red
-    '#ff2d55', // blue
-    '#6f42c1', // yellow
-    '#d6b3ff', // teal
-    '#9966FF', // purple
+    '#007bff',
+    '#ff2d55',
+    '#6f42c1',
+    '#d6b3ff',
+    '#9966FF',
   ]
 
   const categories: ProviderStatisticCategory[] = rawCategories.map(

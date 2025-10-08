@@ -65,6 +65,10 @@ const InstitutionDocumentProviders = () => {
   ]
 
   useEffect(() => {
+    if (!user) {
+      return
+    }
+    
     if (!user?.scopes?.includes(AdminPortalScope.documentProviderInstitution)) {
       navigate(DocumentProviderPaths.DocumentProviderOverview)
     }
@@ -75,10 +79,14 @@ const InstitutionDocumentProviders = () => {
       <Breadcrumbs
         items={[
           { title: formatMessage(m.documentProvidersTitle) },
-          {
-            title: user.profile.name,
-            href: DocumentProviderPaths.DocumentProviderOverview,
-          },
+          ...(user?.profile?.name
+            ? [
+                {
+                  title: user.profile.name,
+                  href: DocumentProviderPaths.DocumentProviderOverview,
+                },
+              ]
+            : []),
         ]}
       />
 

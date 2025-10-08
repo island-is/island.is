@@ -102,7 +102,7 @@ const SingleDocumentProvider = () => {
         items={[
           { title: formatMessage(m.documentProviders) },
           {
-            title: user.profile.name,
+            title: user?.profile?.name ?? '',
             href: DocumentProviderPaths.DocumentProviderOverview,
           },
           { title: statistics?.name ? String(statistics.name) : '' },

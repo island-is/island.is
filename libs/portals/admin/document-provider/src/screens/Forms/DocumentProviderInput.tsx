@@ -6,22 +6,8 @@ import {
   FieldValues,
   Path,
   PathValue,
+  RegisterOptions,
 } from 'react-hook-form'
-import {
-  Validate,
-  ValidationRule,
-  ValidationValueMessage,
-} from 'react-hook-form/dist/types/validator'
-
-type ControllerRules = Partial<{
-  required: string | boolean | ValidationValueMessage<boolean>
-  min: ValidationRule<React.ReactText>
-  max: ValidationRule<React.ReactText>
-  maxLength: ValidationRule<number>
-  minLength: ValidationRule<number>
-  pattern: ValidationRule<RegExp>
-  validate: Validate<string, FieldValues>
-}>
 
 interface Props<T extends FieldValues> {
   control: Control<T, string>
@@ -31,7 +17,7 @@ interface Props<T extends FieldValues> {
   errorMessage: string
   label: string
   placeholder: string
-  rules?: ControllerRules
+  rules?: RegisterOptions<T, Path<T>>
   loading?: boolean
 }
 

@@ -48,7 +48,7 @@ export const useDocumentProviderNavigation = (): PortalNavigationItem => {
         },
       }
     } else if (shouldShowProvidersList) {
-      const providerItems = providers?.map((provider) => ({
+      const providerItems = (providers ?? []).map((provider) => ({
         name: provider.name,
         path: DocumentProviderPaths.DocumentProviderDocumentProvidersSingle.replace(
           ':providerId',
