@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m as coreMessage,
@@ -27,7 +27,10 @@ import copyToClipboard from 'copy-to-clipboard'
 import UsageTable from '../../components/UsageTable/UsageTable'
 import { AirDiscountSchemeDiscount } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
-import { useFeatureFlag } from '@island.is/react/feature-flags'
+import {
+  FeatureFlagClient,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
 
 const AirDiscountQuery = gql`
   query AirDiscountQuery {
@@ -72,13 +75,26 @@ type CopiedCode = {
   copied: boolean
 }
 
-export const AirDiscountOverview = () => {
+export const AirDiscountOverview = async () => {
   useNamespaces('sp.air-discount')
   const { formatMessage } = useLocale()
-  const isPageDisabled = useFeatureFlag(
-    'isPortalAirDiscountPageDisabled',
-    false,
-  )
+  const [isDisabled, setIsDisabled] = useState<boolean>(false)
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const isPageDisabled = await featureFlagClient.getValue(
+        'isPortalAirDiscountPageDisabled',
+        false,
+      )
+      if (isPageDisabled) {
+        setIsDisabled(isPageDisabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
   const {
     data: flightLegData,
@@ -113,7 +129,7 @@ export const AirDiscountOverview = () => {
     }
   }
 
-  if (isPageDisabled) {
+  if (isDisabled) {
     const nextYear = new Date().getFullYear() + 1
     return (
       <Problem
