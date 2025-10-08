@@ -856,6 +856,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Engar eignir fundust skráðar fyrir þessa kennitölu.',
     description: 'No properties found summary',
   },
+  needToFinishRegistration: {
+    id: 'application.system:core.fetch.data.needToFinishRegistration',
+    defaultMessage: 'Vantar að klára skráningu',
+    description: 'Need to finish registration to continue',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({

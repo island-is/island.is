@@ -1,5 +1,6 @@
 import {
   coreMessages,
+  coreErrorMessages,
   formatText,
   formatTextWithLocale,
 } from '@island.is/application/core'
@@ -12,6 +13,7 @@ import {
   AlertMessage,
   Box,
   Button,
+  ErrorMessage,
   GridRow,
   Icon,
   Stack,
@@ -21,7 +23,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import {
   buildDefaultTableHeader,
@@ -32,6 +34,7 @@ import {
 import { Item } from './TableRepeaterItem'
 import { Locale } from '@island.is/shared/types'
 import { useApolloClient } from '@apollo/client/react'
+import { uuid } from 'uuidv4'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -39,9 +42,11 @@ interface Props extends FieldBaseProps {
 
 export const TableRepeaterFormField: FC<Props> = ({
   application,
+  setBeforeSubmitCallback,
   field: data,
   showFieldName,
   error,
+  errors,
 }) => {
   const {
     fields: rawItems,
@@ -67,6 +72,7 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   const apolloClient = useApolloClient()
   const [loadError, setLoadError] = useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const items = Object.keys(rawItems).map((key) => ({
     id: key,
@@ -184,6 +190,34 @@ export const TableRepeaterFormField: FC<Props> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Keep activeIndex in a ref so setBeforeSubmit callback always has latest value
+  const activeIndexRef = useRef(activeIndex)
+  useEffect(() => {
+    activeIndexRef.current = activeIndex
+  }, [activeIndex])
+
+  // Register a beforeSubmit callback that blocks form submission until the active registration is completed
+  // Persist a unique callback ID across renders to avoid re-registering in setBeforeSubmitCallback
+  const callbackIdRef = useRef(`TableRepeaterFormField-${uuid()}`)
+  useEffect(() => {
+    setBeforeSubmitCallback?.(
+      async () => {
+        if (activeIndexRef.current !== -1) {
+          setErrorMessage(
+            formatMessage(coreErrorMessages.needToFinishRegistration),
+          )
+          return [
+            false,
+            formatMessage(coreErrorMessages.needToFinishRegistration),
+          ]
+        }
+        setErrorMessage(null)
+        return [true, null]
+      },
+      { allowMultiple: true, customCallbackId: callbackIdRef.current },
+    )
+  }, [formatMessage, setBeforeSubmitCallback])
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -311,6 +345,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                     key={`${data.id}[${activeIndex}].${item.id}`}
                     application={application}
                     error={error}
+                    errors={errors}
                     item={item}
                     dataId={data.id}
                     activeIndex={activeIndex}
@@ -364,6 +399,9 @@ export const TableRepeaterFormField: FC<Props> = ({
               title={formatText(loadErrorMessage, application, formatMessage)}
             />
           </Box>
+        )}
+        {errorMessage && (
+          <ErrorMessage id={`${data.id}-error`}>{errorMessage}</ErrorMessage>
         )}
       </Box>
     </Box>
