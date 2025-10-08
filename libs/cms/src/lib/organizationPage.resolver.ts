@@ -23,11 +23,10 @@ import { generateOrganizationSubpageLink } from './models/linkGroup.model'
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
 type Breadcrumb =
-  | BottomLink &
-      (
+  | BottomLink & { description?: string } & (
         | {
             isCategory: true
-            description?: string
+
             childLinks: NavigationLinksCategoryLink[]
           }
         | { isCategory: false }
@@ -96,6 +95,8 @@ export class OrganizationPageResolver {
       return {
         ...entryItem.link,
         isCategory: false,
+        description: (entryItem.entry.fields as { shortDescription?: string })
+          ?.shortDescription,
       }
     }
     if (node.type === SitemapTreeNodeType.CATEGORY) {

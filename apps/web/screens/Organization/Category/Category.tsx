@@ -45,7 +45,7 @@ const OrganizationCategory: Screen<
         items: getSubpageNavList(organizationPage, router),
         title: n('navigationTitle', 'Efnisyfirlit'),
       }}
-      pageTitle={activeCategory.label} // TODO: Add category title
+      pageTitle={activeCategory.label}
       showReadSpeaker={false}
       breadcrumbItems={[
         {
@@ -58,28 +58,30 @@ const OrganizationCategory: Screen<
             .href,
         },
       ]}
-    >
-      <Stack space={4}>
-        <Stack space={2}>
-          <Text variant="h1" as="h1">
-            {activeCategory.label}
-          </Text>
-          {activeCategory.description && (
-            <Text>{activeCategory.description}</Text>
-          )}
+      mainContent={
+        <Stack space={4}>
+          <Stack space={2}>
+            <Text variant="h1" as="h1">
+              {activeCategory.label}
+            </Text>
+            {activeCategory.description && (
+              <Text>{activeCategory.description}</Text>
+            )}
+          </Stack>
+          <Stack space={3}>
+            {activeCategory.childLinks.map((link) => (
+              <CategoryCard
+                key={link.href}
+                heading={link.label}
+                text={link.description ?? ''}
+                href={link.href}
+                headingAs="h2"
+              />
+            ))}
+          </Stack>
         </Stack>
-        <Stack space={3}>
-          {activeCategory.childLinks.map((link) => (
-            <CategoryCard
-              key={link.href}
-              heading={link.label}
-              text={link.description ?? ''}
-              href={link.href}
-            />
-          ))}
-        </Stack>
-      </Stack>
-    </OrganizationWrapper>
+      }
+    />
   )
 }
 
