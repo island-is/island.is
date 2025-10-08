@@ -1,7 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NotificationsService } from '../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
@@ -79,11 +77,9 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const results =
       await this.vmstUnemploymentClientService.getEmptyApplication(auth)
 
-    const types = this.vmstUnemploymentClientService.getAttachmentTypes()
-    console.log('types', types)
     if (!results.canApply) {
       this.logger.warn(
-        '[VMST-ActivationAllowance]: User cannot apply, creating application returned canApply: False',
+        '[VMST-Unemployment]: User cannot apply, creating application returned canApply: False',
         results.errorMessage,
       )
       throw new TemplateApiError(
@@ -112,16 +108,18 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         'unemploymentApplication.data.supportData.jobCodes',
       ) ?? []
 
-    //unchanged:
+    /* 
+      The following fields remain unchanged after application is done, so we sent them as they came from the api:
+    */
+
     // applicationInformation
-    // applicationAccess
-    //electronicCommunication
     const applicationInformation =
       getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation>(
         application.externalData,
         'unemploymentApplication.data.applicationInformation',
         {},
       )
+    // applicationAccess
     const applicationAccess =
       getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationAccess>(
         application.externalData,
@@ -129,12 +127,19 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         {},
       )
 
+    //electronicCommunication
     const electronicCommunication =
       getValueViaPath<GaldurDomainModelsApplicantsApplicantProfileDTOsElectronicCommunication>(
         application.externalData,
         'unemploymentApplication.data.electronicCommunication',
         {},
       )
+
+    /* End of unchanged fields */
+
+    /* 
+      The following fields are updated with answers from the application, and we need to merge them with the data from the api:
+    */
 
     //personalInformation
     const personalInformationFromService =

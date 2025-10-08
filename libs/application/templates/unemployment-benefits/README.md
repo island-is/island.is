@@ -2,6 +2,8 @@
 
 ## Description
 
+Application for unemployment benefits
+
 ## URLs
 
 - [Local](http://localhost:4242/umsoknir/atvinnuleysisbaetur)

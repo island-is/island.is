@@ -193,6 +193,9 @@ export const certificateOfTenureSection = buildSection({
             unknownPracticalRight: {
               component: 'hiddenInput',
             },
+            // licenseCategoryPrefix: {
+            //   component: 'hiddenInput',
+            // },
             wrongPracticalRight: {
               component: 'hiddenInput',
             },

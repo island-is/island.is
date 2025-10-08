@@ -64,3 +64,21 @@ export const didYouFinishLastSemester = (answers: FormValue) => {
 export const appliedForNextSemester = (answers: FormValue) => {
   return getValueViaPath<string>(answers, 'education.appliedForNextSemester')
 }
+
+export const showAppliedForNextSemester = (answers: FormValue) => {
+  return (
+    wasStudyingLastTwelveMonths(answers) &&
+    wasStudyingLastSemester(answers) &&
+    didYouFinishLastSemester(answers) === NO
+  )
+}
+
+export const showCurrentEducationFields = (answers: FormValue) => {
+  return (
+    wasStudyingLastTwelveMonths(answers) &&
+    (isCurrentlyStudying(answers) ||
+      wasStudyingInTheLastYear(answers) ||
+      (wasStudyingLastSemester(answers) &&
+        appliedForNextSemester(answers) !== NO))
+  )
+}

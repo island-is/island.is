@@ -7,11 +7,10 @@ import { GaldurDomainModelsSettingsIncomeTypesIncomeTypeCategoryDTO } from '@isl
 import {
   getPensionString,
   getPrivatePensionString,
-  // getTypeOfIncomeString,
   getUnionString,
 } from '../stringMappers'
 import { CapitalIncomeInAnswers, OtherBenefitsInAnswers } from '../../shared'
-import { formatIsk } from '..'
+import { formatCurrency } from '@island.is/shared/utils'
 
 export const useOtherPaymentsAnswers = (
   answers: FormValue,
@@ -69,7 +68,7 @@ export const useOtherPaymentsAnswers = (
         unionString ? ` - ${unionString}` : ''
       }${pensionFundString ? ` - ${pensionFundString}` : ''}${
         paymentAmount
-          ? `: ${formatIsk(parseInt(paymentAmount))} ${formatMessage(
+          ? `: ${formatCurrency(parseInt(paymentAmount))} ${formatMessage(
               overviewMessages.labels.payout.paymentPerMonth,
             )}`
           : ''
@@ -91,7 +90,7 @@ export const useOtherPaymentsAnswers = (
     ...paymentsList,
     `${formatMessage(overviewMessages.labels.payout.capitalIncome)}${
       total
-        ? `: ${formatIsk(total)} ${formatMessage(
+        ? `: ${formatCurrency(total)} ${formatMessage(
             overviewMessages.labels.payout.paymentPerMonth,
           )}`
         : ''

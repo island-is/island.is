@@ -23,6 +23,8 @@ import {
   appliedForNextSemester,
   didYouFinishLastSemester,
   isCurrentlyStudying,
+  showAppliedForNextSemester,
+  showCurrentEducationFields,
   wasStudyingInTheLastYear,
   wasStudyingLastSemester,
   wasStudyingLastTwelveMonths,
@@ -131,10 +133,7 @@ export const educationSection = buildSection({
           title: educationMessages.labels.appliedForNextSemesterQuestion,
           titleVariant: 'h5',
           marginTop: 2,
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            wasStudyingLastSemester(answers) &&
-            didYouFinishLastSemester(answers) === NO,
+          condition: showAppliedForNextSemester,
         }),
         buildRadioField({
           id: 'education.appliedForNextSemester',
@@ -151,22 +150,14 @@ export const educationSection = buildSection({
               label: coreMessages.radioNo,
             },
           ],
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            wasStudyingLastSemester(answers) &&
-            didYouFinishLastSemester(answers) === NO,
+          condition: showAppliedForNextSemester,
         }),
         buildDescriptionField({
           id: 'education.currentEducation.typeOfEducationDescription',
           title: educationMessages.labels.typeOfEducationDescription,
           titleVariant: 'h5',
           marginTop: 2,
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            (isCurrentlyStudying(answers) ||
-              wasStudyingInTheLastYear(answers) ||
-              (wasStudyingLastSemester(answers) &&
-                appliedForNextSemester(answers) !== NO)),
+          condition: showCurrentEducationFields,
         }),
         buildSelectField({
           id: 'education.currentEducation.levelOfStudy',
@@ -189,12 +180,7 @@ export const educationSection = buildSection({
               })) ?? []
             )
           },
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            (isCurrentlyStudying(answers) ||
-              wasStudyingInTheLastYear(answers) ||
-              (wasStudyingLastSemester(answers) &&
-                appliedForNextSemester(answers) !== NO)),
+          condition: showCurrentEducationFields,
         }),
         buildTextField({
           id: 'education.currentEducation.units',
@@ -202,12 +188,7 @@ export const educationSection = buildSection({
           width: 'half',
           variant: 'number',
           required: true,
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            (isCurrentlyStudying(answers) ||
-              wasStudyingInTheLastYear(answers) ||
-              (wasStudyingLastSemester(answers) &&
-                appliedForNextSemester(answers) !== NO)),
+          condition: showCurrentEducationFields,
         }),
         buildSelectField({
           id: 'education.currentEducation.degree',
@@ -240,12 +221,7 @@ export const educationSection = buildSection({
               })) ?? []
             )
           },
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            (isCurrentlyStudying(answers) ||
-              wasStudyingInTheLastYear(answers) ||
-              (wasStudyingLastSemester(answers) &&
-                appliedForNextSemester(answers) !== NO)),
+          condition: showCurrentEducationFields,
         }),
         buildSelectField({
           id: 'education.currentEducation.courseOfStudy',
@@ -285,12 +261,7 @@ export const educationSection = buildSection({
               })) ?? []
             )
           },
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            (isCurrentlyStudying(answers) ||
-              wasStudyingInTheLastYear(answers) ||
-              (wasStudyingLastSemester(answers) &&
-                appliedForNextSemester(answers) !== NO)),
+          condition: showCurrentEducationFields,
         }),
         buildDateField({
           id: 'education.currentEducation.endDate',
@@ -304,23 +275,13 @@ export const educationSection = buildSection({
           },
           width: 'half',
           required: true,
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            (isCurrentlyStudying(answers) ||
-              wasStudyingInTheLastYear(answers) ||
-              (wasStudyingLastSemester(answers) &&
-                appliedForNextSemester(answers) !== NO)),
+          condition: showCurrentEducationFields,
         }),
         buildAlertMessageField({
           id: 'education.currentEducation.description',
           message: educationMessages.labels.currentSchoolDegreeInformation,
           alertType: 'info',
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            (isCurrentlyStudying(answers) ||
-              wasStudyingInTheLastYear(answers) ||
-              (wasStudyingLastSemester(answers) &&
-                appliedForNextSemester(answers) !== NO)),
+          condition: showCurrentEducationFields,
         }),
         buildFileUploadField({
           id: 'education.currentEducation.degreeFile',
@@ -332,12 +293,7 @@ export const educationSection = buildSection({
           maxSize: FILE_SIZE_LIMIT,
           uploadMultiple: true,
           doesNotRequireAnswer: true,
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            (isCurrentlyStudying(answers) ||
-              wasStudyingInTheLastYear(answers) ||
-              (wasStudyingLastSemester(answers) &&
-                appliedForNextSemester(answers) !== NO)),
+          condition: showCurrentEducationFields,
         }),
         buildTextField({
           id: 'education.notAppliedForNextSemesterExplanation',
