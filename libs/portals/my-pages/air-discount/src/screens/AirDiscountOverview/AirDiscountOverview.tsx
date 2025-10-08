@@ -75,7 +75,7 @@ type CopiedCode = {
   copied: boolean
 }
 
-export const AirDiscountOverview = async () => {
+export const AirDiscountOverview = () => {
   useNamespaces('sp.air-discount')
   const { formatMessage } = useLocale()
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
