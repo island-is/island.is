@@ -83,7 +83,11 @@ export class VerdictController {
   ): Promise<Verdict[]> {
     this.logger.debug(`Creating verdicts for defendants in ${caseId}`)
 
-    return this.verdictService.createVerdicts(caseId, verdictsToCreate, theCase.defendants)
+    return this.verdictService.createVerdicts(
+      caseId,
+      verdictsToCreate,
+      theCase.defendants,
+    )
   }
 
   @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
