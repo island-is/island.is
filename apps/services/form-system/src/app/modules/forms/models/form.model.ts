@@ -99,7 +99,7 @@ export class Form extends Model<Form> {
     type: DataType.INTEGER,
     defaultValue: 30,
   })
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @Column({
     type: DataType.UUID,
@@ -135,6 +135,13 @@ export class Form extends Model<Form> {
     defaultValue: () => new LanguageType(),
   })
   completedMessage?: LanguageType
+
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  draftTotalSteps!: number
 
   @Column({
     type: DataType.JSON,

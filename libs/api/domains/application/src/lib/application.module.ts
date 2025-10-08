@@ -4,9 +4,13 @@ import { ApplicationService } from './application.service'
 import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ApplicationAdminResolver } from './application-admin/application-admin.resolvers'
-
+import {
+  ApplicationsApi as FormSystemApplicationsApi,
+  Configuration as FormSystemConfiguration,
+} from '@island.is/clients/form-system'
 export interface Config {
   baseApiUrl: string
+  formSystemBaseApiUrl?: string
 }
 
 @Module({})
@@ -38,6 +42,18 @@ export class ApplicationModule {
                 name: 'ApplicationModule.paymentsApi',
               }),
               basePath: config.baseApiUrl,
+            }),
+          ),
+        },
+        {
+          provide: FormSystemApplicationsApi,
+          useValue: new FormSystemApplicationsApi(
+            new FormSystemConfiguration({
+              fetchApi: createEnhancedFetch({
+                name: 'ApplicationModule.formSystemApplicationsApi',
+                timeout: 60000,
+              }),
+              basePath: 'http://localhost:3434',
             }),
           ),
         },

@@ -8,7 +8,8 @@ import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { ValueDto } from './dto/value.dto'
 import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
-import { SectionTypes } from '@island.is/form-system/shared'
+import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
+import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -180,5 +181,115 @@ export class ApplicationMapper {
     }
 
     return completed?.includes(id)
+  }
+
+  async mapApplicationsToMyPagesApplications(
+    applications: Application[],
+  ): Promise<MyPagesApplicationResponseDto[]> {
+    if (!applications?.length) {
+      return []
+    }
+
+    const mapped: MyPagesApplicationResponseDto[] = applications.flatMap(
+      (app) => {
+        if (app.status === ApplicationStatus.DRAFT) return [this.draft(app)]
+        if (app.status === ApplicationStatus.COMPLETED)
+          return [this.completed(app)]
+        return [] // flatMap removes these automatically
+      },
+    )
+
+    // Sort newest first (optional)
+    mapped.sort(
+      (a, b) =>
+        new Date(b.modified as any).getTime() -
+        new Date(a.modified as any).getTime(),
+    )
+
+    return mapped
+  }
+
+  private draft(app: Application): MyPagesApplicationResponseDto {
+    return {
+      id: app.id,
+      created: app.created,
+      modified: app.modified,
+      applicant: app.nationalId,
+      assignees: [],
+      applicantActors: [],
+      state: app.status,
+      actionCard: {
+        title: app.formName,
+        description: '',
+        tag: {
+          label: app.tagLabel,
+          variant: app.tagVariant,
+        },
+        deleteButton: false,
+        pendingAction: {
+          displayStatus: 'displayStatus',
+          title: 'title',
+          content: 'content',
+          button: 'button',
+        },
+        history: [],
+        draftFinishedSteps: app.draftFinishedSteps ?? 0,
+        draftTotalSteps: app.draftTotalSteps ?? 0,
+        historyButton: 'historyButton',
+      },
+      attachments: {},
+      typeId: 'CriminalRecord',
+      answers: { approveExternalData: true },
+      externalData: {},
+      name: '',
+      status: app.status,
+      pruned: false,
+    } as MyPagesApplicationResponseDto
+  }
+
+  private completed(app: Application): MyPagesApplicationResponseDto {
+    return {
+      id: app.id,
+      created: app.created,
+      modified: app.modified,
+      applicant: app.nationalId,
+      assignees: [],
+      applicantActors: [],
+      state: app.status,
+      actionCard: {
+        title: app.formName,
+        description: '',
+        tag: {
+          label: app.tagLabel,
+          variant: app.tagVariant,
+        },
+        deleteButton: false,
+        pendingAction: {
+          displayStatus: 'success',
+          title:
+            'Umsókn þín hefur verið móttekin og er vottorðið aðgengilegt í stafrænu pósthólfi á Ísland.is.',
+        },
+        history: [
+          {
+            date: new Date('2025-09-23T13:36:05.027Z'),
+            log: 'Greiðsla móttekin',
+          },
+          {
+            date: new Date('2025-09-23T13:35:36.309Z'),
+            log: 'Greiðsluferli hafið',
+          },
+        ],
+        draftFinishedSteps: app.draftFinishedSteps ?? 0,
+        draftTotalSteps: app.draftTotalSteps ?? 0,
+        historyButton: 'historyButton',
+      },
+      attachments: {},
+      typeId: 'CriminalRecord',
+      answers: { approveExternalData: true },
+      externalData: {},
+      name: '',
+      status: app.status,
+      pruned: false,
+    }
   }
 }

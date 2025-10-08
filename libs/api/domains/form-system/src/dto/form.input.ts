@@ -99,7 +99,7 @@ export class UpdateFormDtoInput {
   isTranslated?: boolean
 
   @Field(() => Int, { nullable: true })
-  applicationDaysToRemove?: number
+  daysUntilApplicationPrune?: number
 
   @Field(() => Boolean, { nullable: true })
   allowProceedOnValidationFail?: boolean
@@ -159,7 +159,7 @@ export class FormInput {
   beenPublished?: boolean
 
   @Field(() => Int, { nullable: true })
-  applicationDaysToRemove?: number
+  daysUntilApplicationPrune?: number
 
   @Field(() => Int, { nullable: true })
   derivedFrom?: number

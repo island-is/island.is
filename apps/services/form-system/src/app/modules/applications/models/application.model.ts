@@ -15,6 +15,7 @@ import { ApplicationEvent } from './applicationEvent.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { Value } from './value.model'
 import { ApplicationStatus } from '@island.is/form-system/shared'
+import { LanguageType } from '../../../dataTypes/languageType.model'
 
 @Table({ tableName: 'application' })
 export class Application extends Model<Application> {
@@ -31,6 +32,13 @@ export class Application extends Model<Application> {
 
   @UpdatedAt
   modified!: CreationOptional<Date>
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  nationalId!: string
 
   @Column({
     type: DataType.DATE,
@@ -50,9 +58,44 @@ export class Application extends Model<Application> {
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(ApplicationStatus),
-    defaultValue: ApplicationStatus.IN_PROGRESS,
+    defaultValue: ApplicationStatus.DRAFT,
   })
   status!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  state!: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  pruned!: boolean
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  pruneAt?: Date
+
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  draftFinishedSteps!: number
+
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  draftTotalSteps!: number
 
   @Column({
     type: DataType.JSON,
@@ -90,4 +133,8 @@ export class Application extends Model<Application> {
     field: 'organization_id',
   })
   organizationId!: string
+
+  formName?: string
+  tagLabel?: string
+  tagVariant?: string
 }

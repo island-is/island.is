@@ -21,12 +21,14 @@ import {
   ApplicationApplicationsInstitutionAdminInput,
   ApplicationTypesInstitutionAdminInput,
 } from './application-admin/dto/applications-applications-admin-input'
+import { ApplicationsApi as FormSystemApplicationsApi } from '@island.is/clients/form-system'
 
 @Injectable()
 export class ApplicationService {
   constructor(
     private applicationApi: ApplicationsApi,
     private applicationPaymentApi: PaymentsApi,
+    private formSystemApplicationsApi: FormSystemApplicationsApi,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
@@ -35,6 +37,12 @@ export class ApplicationService {
 
   paymentApiWithAuth(auth: Auth) {
     return this.applicationPaymentApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  formSystemApplicationsApiWithAuth(auth: Auth) {
+    return this.formSystemApplicationsApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
   }
 
   async findOne(id: string, auth: Auth, locale: Locale) {
@@ -70,15 +78,39 @@ export class ApplicationService {
     locale: Locale,
     input?: ApplicationApplicationsInput,
   ) {
-    return await this.applicationApiWithAuth(user).applicationControllerFindAll(
-      {
-        nationalId: user.nationalId,
-        locale,
-        typeId: input?.typeId?.join(','),
-        status: input?.status?.join(','),
-        scopeCheck: input?.scopeCheck,
-      },
-    )
+    const applications = await this.applicationApiWithAuth(
+      user,
+    ).applicationControllerFindAll({
+      nationalId: user.nationalId,
+      locale,
+      typeId: input?.typeId?.join(','),
+      status: input?.status?.join(','),
+      scopeCheck: input?.scopeCheck,
+    })
+
+    const formSystemApplications = await this.formSystemApplicationsApiWithAuth(
+      user,
+    ).applicationsControllerFindAllByUser({
+      nationalId: user.nationalId,
+      locale,
+    })
+
+    const allApplications = [
+      ...applications,
+      ...(formSystemApplications as any[]),
+    ]
+
+    // Sort by modified date descending
+    allApplications.sort((a, b) => {
+      const dateA = new Date(a.modified).getTime()
+      const dateB = new Date(b.modified).getTime()
+      return dateB - dateA
+    })
+
+    console.log('allApplications', allApplications)
+    console.log('applications input:', input)
+    // console.log('applications', applications)
+    return allApplications
   }
 
   async findAllAdmin(

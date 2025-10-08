@@ -35,6 +35,9 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Option } from '../../dataTypes/option.model'
 import { FormStatus } from '@island.is/form-system/shared'
+import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
+import { Dependency } from '../../dataTypes/dependency.model'
+import { SectionTypes } from '@island.is/form-system/shared'
 
 @Injectable()
 export class ApplicationsService {
@@ -91,6 +94,8 @@ export class ApplicationsService {
 
     const isTest = form.status !== FormStatus.PUBLISHED
 
+    const nationalId = user.actor?.nationalId || user.nationalId
+
     await this.sequelize.transaction(async (transaction) => {
       const newApplication: Application = await this.applicationModel.create(
         {
@@ -98,7 +103,9 @@ export class ApplicationsService {
           organizationId: form.organizationId,
           isTest: isTest,
           dependencies: form.dependencies,
-          status: ApplicationStatus.IN_PROGRESS,
+          status: ApplicationStatus.DRAFT,
+          nationalId,
+          draftTotalSteps: form.draftTotalSteps,
         } as Application,
         { transaction },
       )
@@ -234,8 +241,9 @@ export class ApplicationsService {
 
     const success: boolean = await this.serviceManager.send(applicationDto)
 
+    console.log('success', success)
     if (success) {
-      application.status = ApplicationStatus.SUBMITTED
+      application.status = ApplicationStatus.COMPLETED
       application.submittedAt = applicationDto.submittedAt
       await application.save()
     }
@@ -398,6 +406,59 @@ export class ApplicationsService {
     return responseDto
   }
 
+  async findAllByNationalId(
+    nationalId: string,
+    locale: string,
+    user: User,
+  ): Promise<MyPagesApplicationResponseDto[]> {
+    const hasDelegation =
+      Array.isArray(user.delegationType) && user.delegationType.length > 0
+    const delegatorNationalId = hasDelegation ? user.nationalId : null
+
+    const isTest = false // TODO: get the environment
+
+    const applications = await this.applicationModel.findAll({
+      where: {
+        nationalId,
+        pruned: false,
+      },
+      include: [{ model: Value, as: 'values' }],
+    })
+
+    const applicationsByUser = await this.getApplicationsByUser(
+      applications,
+      nationalId,
+      delegatorNationalId,
+    )
+
+    // console.log('user', user)
+    // console.log('nationalId:', nationalId)
+    // console.log('locale:', locale)
+
+    for (const app of applicationsByUser) {
+      const form = await this.formModel.findByPk(app.formId)
+      if (form && form.name) {
+        app.formName = locale === 'is' ? form.name.is : form.name.en
+      }
+      if (app.status === ApplicationStatus.DRAFT) {
+        app.tagLabel = locale === 'is' ? 'Í vinnslu' : 'In progress'
+        app.tagVariant = 'blue'
+      }
+      if (app.status === ApplicationStatus.COMPLETED) {
+        app.tagLabel = locale === 'is' ? 'Innsend' : 'Completed'
+        app.tagVariant = 'mint'
+      }
+    }
+
+    // console.log('form-system applications:', applicationsByUser)
+    const mappedApplications =
+      await this.applicationMapper.mapApplicationsToMyPagesApplications(
+        applicationsByUser,
+      )
+
+    return mappedApplications
+  }
+
   private async findAllByUserAndForm(
     user: User,
     formId: string,
@@ -412,14 +473,37 @@ export class ApplicationsService {
 
     const applications = await this.applicationModel.findAll({
       where: {
+        nationalId,
         formId,
-        status: { [Op.ne]: ApplicationStatus.PRUNED },
+        status: { [Op.in]: [ApplicationStatus.DRAFT] },
         isTest,
+        pruned: false,
       },
       include: [{ model: Value, as: 'values' }],
     })
 
+    const applicationsByUser = await this.getApplicationsByUser(
+      applications,
+      nationalId,
+      delegatorNationalId,
+    )
+
     const applicationDtos: ApplicationDto[] = []
+
+    for (const application of applicationsByUser) {
+      const applicationDto = await this.getApplication(application.id)
+      applicationDtos.push(applicationDto)
+    }
+
+    return applicationDtos
+  }
+
+  private async getApplicationsByUser(
+    applications: Application[],
+    nationalId: string | undefined,
+    delegatorNationalId: string | null,
+  ): Promise<Application[]> {
+    const filteredApplications: Application[] = []
 
     for (const application of applications) {
       const loggedInUser = application.values?.find(
@@ -440,11 +524,10 @@ export class ApplicationsService {
         loggedInUser &&
         (!delegatorNationalId || (delegatorNationalId && delegator))
       ) {
-        const applicationDto = await this.getApplication(application.id)
-        applicationDtos.push(applicationDto)
+        filteredApplications.push(application)
       }
     }
-    return applicationDtos
+    return filteredApplications
   }
 
   private async getApplicationForm(
@@ -589,6 +672,7 @@ export class ApplicationsService {
     screenId: string,
     submitScreenDto: SubmitScreenDto,
   ): Promise<ScreenDto> {
+    console.log('inside saveScreen')
     const screen = await this.screenModel.findByPk(screenId)
 
     if (!screen) {
@@ -640,18 +724,33 @@ export class ApplicationsService {
       }
     }
 
-    await application.update({
-      ...application,
-      completed: [...(application.completed ?? []), screen.id],
-    })
+    if (!application.completed?.includes(screen.id)) {
+      await application.update({
+        ...application,
+        completed: [...(application.completed ?? []), screen.id],
+      })
+    }
     const lastScreen = await this.screenModel.findOne({
       where: { sectionId: screen.sectionId },
       order: [['displayOrder', 'DESC']],
     })
-    if (lastScreen && lastScreen.id === screenId) {
+    if (
+      lastScreen &&
+      lastScreen.id === screenId &&
+      !application.completed?.includes(screen.sectionId)
+    ) {
       await application.update({
         ...application,
         completed: [...(application.completed ?? []), screen.sectionId],
+        draftFinishedSteps: application.draftFinishedSteps + 1,
+      })
+      await application.update({
+        ...application,
+
+        draftTotalSteps: await this.calculateDraftTotalSteps(
+          application.formId,
+          application.dependencies || [],
+        ),
       })
     }
 
@@ -666,6 +765,7 @@ export class ApplicationsService {
   }
 
   async submitSection(applicationId: string, sectionId: string): Promise<void> {
+    console.log('inside submitSection')
     const application = await this.applicationModel.findByPk(applicationId)
 
     if (!application) {
@@ -697,7 +797,16 @@ export class ApplicationsService {
     // Mark the section as completed
     if (!application.completed?.includes(section.id)) {
       application.completed = [...(application.completed ?? []), section.id]
+      if (section.sectionType !== SectionTypes.PREMISES) {
+        application.draftFinishedSteps += 1
+      }
     }
+
+    application.draftTotalSteps = await this.calculateDraftTotalSteps(
+      application.formId,
+      application.dependencies || [],
+    )
+
     await application.save()
   }
 
@@ -713,5 +822,36 @@ export class ApplicationsService {
     })
 
     await application.destroy()
+  }
+
+  private async calculateDraftTotalSteps(
+    formId: string,
+    dependencies: Dependency[],
+  ): Promise<number> {
+    const form = await this.formModel.findByPk(formId, {
+      include: [{ model: Section, as: 'sections' }],
+    })
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${formId}' not found`)
+    }
+
+    const wantedSectionTypes = [SectionTypes.PARTIES, SectionTypes.INPUT]
+
+    const sections = form.sections.filter((section) =>
+      wantedSectionTypes.includes(section.sectionType),
+    )
+
+    const totalSteps =
+      sections.length +
+      (form.hasSummaryScreen ? 1 : 0) +
+      (form.hasPayment ? 1 : 0)
+
+    const hiddenSteps = dependencies
+      .filter((dependency) => dependency.isSelected === false)
+      .flatMap((dependency) => dependency.childProps)
+      .filter((id) => sections.some((section) => section.id === id))
+
+    return totalSteps - hiddenSteps.length
   }
 }

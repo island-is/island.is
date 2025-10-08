@@ -169,7 +169,7 @@ export class OrganizationsService {
       'created',
       'modified',
       'isTranslated',
-      'applicationDaysToRemove',
+      'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
       'hasPayment',
@@ -185,21 +185,21 @@ export class OrganizationsService {
     return organizationDto
   }
 
-  async create(
-    createOrganizationDto: CreateOrganizationDto,
-  ): Promise<OrganizationDto> {
-    const organization = createOrganizationDto as Organization
-    const newOrganzation: Organization = new this.organizationModel(
-      organization,
-    )
-    await newOrganzation.save()
+  // async create(
+  //   createOrganizationDto: CreateOrganizationDto,
+  // ): Promise<OrganizationDto> {
+  //   const organization = createOrganizationDto as Organization
+  //   const newOrganzation: Organization = new this.organizationModel(
+  //     organization,
+  //   )
+  //   await newOrganzation.save()
 
-    const keys = ['id', 'name', 'nationalId']
-    const organizationDto: OrganizationDto = defaults(
-      pick(newOrganzation, keys),
-      zipObject(keys, Array(keys.length).fill(null)),
-    ) as OrganizationDto
+  //   const keys = ['id', 'name', 'nationalId']
+  //   const organizationDto: OrganizationDto = defaults(
+  //     pick(newOrganzation, keys),
+  //     zipObject(keys, Array(keys.length).fill(null)),
+  //   ) as OrganizationDto
 
-    return organizationDto
-  }
+  //   return organizationDto
+  // }
 }

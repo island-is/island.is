@@ -25,9 +25,11 @@ import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
-import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
@@ -149,6 +151,30 @@ export class ApplicationsController {
       page,
       limit,
       isTest,
+    )
+  }
+
+  @ApiOperation({
+    summary: 'Get all applications belonging to a user to display on my pages',
+  })
+  @ApiOkResponse({
+    type: [MyPagesApplicationResponseDto],
+    description:
+      'Get all applications belonging to a user to display on my pages',
+  })
+  @ApiParam({ name: 'nationalId', type: String })
+  @ApiParam({ name: 'locale', type: String })
+  @Get('user/:nationalId/:locale')
+  async findAllByUser(
+    @Param('nationalId') nationalId: string,
+    @Param('locale') locale: string,
+    @CurrentUser()
+    user: User,
+  ): Promise<MyPagesApplicationResponseDto[]> {
+    return await this.applicationsService.findAllByNationalId(
+      nationalId,
+      locale,
+      user,
     )
   }
 

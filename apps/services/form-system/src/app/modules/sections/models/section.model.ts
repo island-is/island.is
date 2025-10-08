@@ -1,5 +1,6 @@
 import { CreationOptional, DataTypes } from 'sequelize'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
