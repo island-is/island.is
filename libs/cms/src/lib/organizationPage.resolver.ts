@@ -105,7 +105,7 @@ export class OrganizationPageResolver {
         label: lang === 'en' ? node.labelEN ?? '' : node.label ?? '',
         href: `/${getOrganizationPageUrlPrefix(lang)}/${
           organizationPage.slug
-        }/${node.slug}`,
+        }/${lang === 'en' ? node.slugEN : node.slug}`,
         isCategory: true,
         description: lang === 'en' ? node.descriptionEN : node.description,
         icelandicSlug: node.slug,
@@ -228,7 +228,7 @@ export class OrganizationPageResolver {
         label: lang === 'en' ? node.labelEN : node.label,
         href: `/${getOrganizationPageUrlPrefix(lang)}/${
           organizationPage.slug
-        }/${node.slug}`,
+        }/${lang === 'en' ? node.slugEN : node.slug}`,
       }
     if (node.type === SitemapTreeNodeType.URL) {
       const baseUrl = `/${getOrganizationPageUrlPrefix(lang)}/${

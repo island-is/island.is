@@ -1479,6 +1479,10 @@ export class CmsContentfulService {
   }
 
   async getEntries(entryIds: string[], lang: string, include = 1) {
+    if (entryIds.length === 0) {
+      return []
+    }
+
     const params = {
       'sys.id[in]': entryIds.join(','),
       limit: 1000,

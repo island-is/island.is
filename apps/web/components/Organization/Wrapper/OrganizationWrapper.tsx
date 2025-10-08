@@ -1068,7 +1068,7 @@ export const OrganizationWrapper: React.FC<
       items: (organizationPage.navigationLinks?.topLinks ?? []).map(
         (topLink) => {
           let isAnyChildActive = false
-          const midLinks = topLink.midLinks.map((midLink) => {
+          const midLinks = (topLink.midLinks ?? []).map((midLink) => {
             const isActive = midLink.isActive || pathname === midLink.href
             if (isActive) isAnyChildActive = true
             return {
