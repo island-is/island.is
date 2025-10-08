@@ -48,7 +48,6 @@ query Case($input: CaseQueryInput!) {
         caseId
         defendantId
         policeSubpoenaId
-        arraignmentDate
       }
       verdict {
         id
