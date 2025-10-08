@@ -15,9 +15,7 @@ import { TotalStatisticsSortBy } from '@island.is/api/schema'
 import { useGetProviderStatisticsBreakdownWCategoriesByNationalId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByNationalId'
 import { useGetStatisticsByNationalId } from '../../shared/useGetStatisticsByNationalId'
 
-interface Props {}
-
-export const InstitutionDocumentProvidersDashboard = ({}: Props) => {
+export const InstitutionDocumentProvidersDashboard = () => {
   const { formatMessage } = useLocale()
 
   const sixMonthsAgo = subMonths(new Date(), 6)

@@ -59,7 +59,7 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
           <Box marginBottom={2}></Box>
           {searchResults
             .slice(PAGE_SIZE * (page - 1), PAGE_SIZE * page)
-            .map(({ name, id, nationalId }) => (
+            .map(({ name, id }) => (
               <Box marginBottom={2} key={id}>
                 <ActionCard
                   heading={name}

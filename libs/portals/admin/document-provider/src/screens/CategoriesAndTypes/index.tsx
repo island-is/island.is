@@ -3,8 +3,6 @@ import { useLocale } from '@island.is/localization'
 import {
   Box,
   Button,
-  GridColumn,
-  GridRow,
   Tabs,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
@@ -35,7 +33,7 @@ const CategoriesAndTypes = () => {
     AdminPortalScope.documentProviderInstitution,
   )
 
-  const { loading, items: providers } = useGetProvidersByNationalId(
+  const { loading } = useGetProvidersByNationalId(
     undefined,
     undefined,
     !shouldFetchProviders, // Skip the query if user doesn't have institution scope
@@ -66,7 +64,7 @@ const CategoriesAndTypes = () => {
         setActiveTab,
       }}
     >
-      <>
+      
         <Box marginBottom={[2, 3, 5]}>
           <IntroHeader
             title={formatMessage(m.catAndTypeTitle)}
@@ -112,7 +110,7 @@ const CategoriesAndTypes = () => {
             contentBackground="white"
           />
         </Box>
-      </>
+      
       {isModalVisible && (
         <AddTypeCategory
           isVisible={isModalVisible}

@@ -67,7 +67,7 @@ const DocumentProviders = () => {
   }
 
   return (
-    <>
+    
       <Box marginBottom={[2, 3, 5]}>
         <IntroHeader
           title={formatMessage(m.documentProvidersTitle)}
@@ -124,7 +124,7 @@ const DocumentProviders = () => {
           />
         )}
       </Box>
-    </>
+    
   )
 }
 

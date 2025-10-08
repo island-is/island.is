@@ -37,7 +37,7 @@ const PaperScreen = () => {
   const totalCount = data?.documentProviderPaperMailList.totalCount ?? 0
 
   return (
-    <>
+    
       <Box marginBottom={[2, 3, 5]}>
         <IntroHeader
           title={formatMessage(m.paperTitle)}
@@ -117,7 +117,7 @@ const PaperScreen = () => {
           </Box>
         )}
       </Box>
-    </>
+    
   )
 }
 

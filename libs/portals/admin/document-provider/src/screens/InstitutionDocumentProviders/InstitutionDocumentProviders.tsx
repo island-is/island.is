@@ -5,7 +5,6 @@ import {
   Breadcrumbs,
   DatePicker,
   GridColumn,
-  GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
