@@ -6,16 +6,20 @@ import {
   OrganizationPage,
   OrganizationPageNavigationLinksCategory,
   Query,
+  QueryGetContentSlugArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import {
+  GET_CONTENT_SLUG,
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+} from '../../queries'
 import { getSubpageNavList } from '../SubPage'
 
 export interface OrganizationCategoryProps {
@@ -35,8 +39,6 @@ const OrganizationCategory: Screen<
   const router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-
-  useLocalLinkTypeResolver()
 
   return (
     <OrganizationWrapper
@@ -64,14 +66,14 @@ const OrganizationCategory: Screen<
             <Text variant="h1" as="h1">
               {activeCategory.label}
             </Text>
-            {activeCategory.description && (
+            {Boolean(activeCategory.description) && (
               <Text>{activeCategory.description}</Text>
             )}
           </Stack>
           <Stack space={3}>
-            {activeCategory.childLinks.map((link) => (
+            {activeCategory.childLinks.map((link, index) => (
               <CategoryCard
-                key={link.href}
+                key={`${index}-${link.href}`}
                 heading={link.label}
                 text={link.description ?? ''}
                 href={link.href}
@@ -141,10 +143,32 @@ OrganizationCategory.getProps = async ({
     )
   }
 
+  const otherOrganizationPageSlug = await apolloClient.query<
+    Query,
+    QueryGetContentSlugArgs
+  >({
+    query: GET_CONTENT_SLUG,
+    variables: {
+      input: {
+        id: organizationPageResponse.data.getOrganizationPage.id,
+      },
+    },
+  })
+
+  const slugResponse = otherOrganizationPageSlug.data.getContentSlug?.slug
+
   return {
     organizationPage: organizationPageResponse.data.getOrganizationPage,
     namespace,
     activeCategory,
+    languageToggleHrefOverride: {
+      is: slugResponse?.is
+        ? `/s/${slugResponse.is}/${activeCategory.icelandicSlug}`
+        : undefined,
+      en: slugResponse?.en
+        ? `/en/o/${slugResponse.en}/${activeCategory.englishSlug}`
+        : undefined,
+    },
   }
 }
 

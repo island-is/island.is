@@ -26,7 +26,8 @@ type Breadcrumb =
   | BottomLink & { description?: string } & (
         | {
             isCategory: true
-
+            icelandicSlug?: string
+            englishSlug?: string
             childLinks: NavigationLinksCategoryLink[]
           }
         | { isCategory: false }
@@ -107,6 +108,8 @@ export class OrganizationPageResolver {
         }/${node.slug}`,
         isCategory: true,
         description: lang === 'en' ? node.descriptionEN : node.description,
+        icelandicSlug: node.slug,
+        englishSlug: node.slugEN,
         childLinks: node.childNodes
           .map((childNode) =>
             this.convertNodeToBreadcrumb(

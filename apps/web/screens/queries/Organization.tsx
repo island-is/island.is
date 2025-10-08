@@ -140,6 +140,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         activeCategory {
           label
           description
+          icelandicSlug
+          englishSlug
           childLinks {
             label
             href

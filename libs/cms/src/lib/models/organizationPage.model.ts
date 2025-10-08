@@ -87,6 +87,12 @@ export class NavigationLinksCategory {
   @Field(() => String, { nullable: true })
   description?: string | null
 
+  @Field(() => String, { nullable: true })
+  icelandicSlug?: string
+
+  @Field(() => String, { nullable: true })
+  englishSlug?: string
+
   @CacheField(() => [NavigationLinksCategoryLink])
   childLinks!: NavigationLinksCategoryLink[]
 }
