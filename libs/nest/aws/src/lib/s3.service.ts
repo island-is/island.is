@@ -22,10 +22,7 @@ import {
   PresignedPostOptions,
 } from '@aws-sdk/s3-presigned-post'
 import stream, { Readable } from 'stream'
-import {
-  defaultProvider,
-  credentialsWillNeedRefresh,
-} from '@aws-sdk/credential-provider-node'
+import { defaultProvider } from '@aws-sdk/credential-provider-node'
 
 export interface BucketKeyPair {
   bucket: string
@@ -94,18 +91,6 @@ export class S3Service {
       CopySource: encodeURIComponent(copySource),
     }
     try {
-      console.log('--------------------------------')
-      console.log(
-        'credentialsWillNeedRefresh',
-        credentialsWillNeedRefresh(
-          await this.getS3Client().config.credentials(),
-        ),
-      )
-      console.log(
-        'attempting to copy file using credentials with expiration ',
-        (await this.getS3Client().config.credentials()).expiration,
-      )
-      console.log('--------------------------------')
       return await this.getS3Client().send(new CopyObjectCommand(input))
     } catch (error) {
       this.logger.error(
