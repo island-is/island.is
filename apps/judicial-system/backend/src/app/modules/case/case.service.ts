@@ -2327,6 +2327,29 @@ export class CaseService {
           )
         }
 
+        // if ruling decision is changed to other decision
+        // we have to clean up idle verdicts
+        if (
+          theCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.RULING &&
+          update.indictmentRulingDecision &&
+          update.indictmentRulingDecision !==
+            CaseIndictmentRulingDecision.RULING &&
+          theCase.defendants
+        ) {
+          await Promise.all(
+            theCase.defendants.map((defendant) => {
+              if (defendant.verdict) {
+                return this.verdictService.deleteVerdict(
+                  theCase.id,
+                  defendant.id,
+                  transaction,
+                )
+              }
+            }),
+          )
+        }
+
         // Remove uploaded ruling files if an indictment case is completed without a ruling
         if (completingIndictmentCaseWithoutRuling && theCase.caseFiles) {
           await Promise.all(

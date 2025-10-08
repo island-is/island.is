@@ -143,6 +143,20 @@ const Conclusion: FC = () => {
     user,
   )
 
+  const handleVerdicts = useCallback(async () => {
+    const defendantVerdictsToCreate = defendantsWithDefaultJudgments.map(
+      (item) => ({
+        defendantId: item.id,
+        isDefaultJudgement: item.checked,
+      }),
+    )
+
+    createVerdicts({
+      caseId: workingCase.id,
+      verdicts: defendantVerdictsToCreate,
+    })
+  }, [createVerdicts, defendantsWithDefaultJudgments, workingCase])
+
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!selectedAction) {
@@ -200,33 +214,12 @@ const Conclusion: FC = () => {
         return
       }
 
-      // extract: handleVerdicts
-      // create verdicts to persist the default judgments
       if (
-        selectedAction === IndictmentDecision.COMPLETING &&
+        update.indictmentDecision === IndictmentDecision.COMPLETING &&
         update.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
       ) {
-        const defendantVerdictsToCreate = defendantsWithDefaultJudgments.map(
-          (item) => ({
-            defendantId: item.id,
-            isDefaultJudgement: item.checked,
-          }),
-        )
-
-        createVerdicts({
-          caseId: workingCase.id,
-          verdicts: defendantVerdictsToCreate,
-        })
+        handleVerdicts()
       }
-      if (
-        workingCase.indictmentRulingDecision ===
-          CaseIndictmentRulingDecision.RULING &&
-        update.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING
-      ) {
-        // remove verdicts
-      }
-      // set and send verdict to server if applicable
-      // handle change if decision is ruling
 
       router.push(
         selectedAction === IndictmentDecision.REDISTRIBUTING
@@ -237,8 +230,7 @@ const Conclusion: FC = () => {
     [
       courtDate.date,
       courtDate.location,
-      createVerdicts,
-      defendantsWithDefaultJudgments,
+      handleVerdicts,
       mergeCaseNumber,
       postponementReason,
       selectedAction,

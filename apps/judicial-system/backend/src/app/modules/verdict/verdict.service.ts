@@ -113,6 +113,29 @@ export class VerdictService {
     })
   }
 
+  async deleteVerdict(
+    caseId: string,
+    defendantId: string,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    const numberOfAffectedRows = await this.verdictModel.destroy({
+      where: { id: defendantId, caseId },
+      transaction,
+    })
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting verdict for defendant ${defendantId} of case ${caseId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not delete verdict of ${defendantId} of case ${caseId}`,
+      )
+    }
+    return true
+  }
+
   private async handleServiceRequirementUpdate(
     verdictId: string,
     update: UpdateVerdictDto,
