@@ -11,23 +11,40 @@ import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/Op
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
 import { SentFilesAndErrorsBarChart } from '../../components/SentFilesAndErrorsBarChart/SentFilesAndErrorsBarChart'
 import { SentFilesProfitBarChart } from '../../components/SentFilesProfitBarChart/SentFilesProfitBarChart'
-import {
-  DocumentProviderDashboardChartData,
-  SentFilesChartDataItem,
-} from '../../lib/types'
+import { CategoryStatisticsSortBy } from '@island.is/api/schema'
+import { useGetProviderStatisticsBreakdownWCategoriesByProviderId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByProviderId'
+import { useGetProviderStatisticsBreakdownByProviderId } from '../../shared/useGetProviderStatisticsBreakdownByProviderId'
+
 
 interface Props {
-  sentFilesData?: Array<SentFilesChartDataItem>
-  chartData?: DocumentProviderDashboardChartData[]
-  loading?: boolean
+  providerId?: string
 }
 
 export const InstitutionDocumentProviderDashboard = ({
-  sentFilesData,
-  chartData,
-  loading,
+  providerId
 }: Props) => {
   const { formatMessage } = useLocale()
+  const { loading: loadingSentFiles, chartData: sentFilesData } =
+    useGetProviderStatisticsBreakdownWCategoriesByProviderId(
+      providerId,
+      undefined,
+      undefined,
+      CategoryStatisticsSortBy.Date,
+      true,
+      1,
+      6,
+    )
+
+    const { loading: loadingChartData, chartData } =
+      useGetProviderStatisticsBreakdownByProviderId(
+        providerId,
+        undefined,
+        undefined,
+        'Date',
+        true,
+        1,
+        6,
+      )
   //Get the sum of opened and published from chartData
   const opened =
     chartData?.reduce((acc, item) => acc + (item?.opened ?? 0), 0) ?? 0
@@ -50,7 +67,7 @@ export const InstitutionDocumentProviderDashboard = ({
     },
   ]
 
-  if (loading) {
+  if (loadingSentFiles || loadingChartData) {
     return (
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>

@@ -25,6 +25,7 @@ export const useGetProviderStatisticCategoriesByNationalId = (
     {
       variables: {
         input: statisticsInput,
+
       },
       fetchPolicy: 'cache-and-network',
     },

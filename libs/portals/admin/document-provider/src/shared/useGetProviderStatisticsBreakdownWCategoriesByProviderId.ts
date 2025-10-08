@@ -19,7 +19,6 @@ import format from 'date-fns/format'
 
 export const useGetProviderStatisticsBreakdownWCategoriesByProviderId = (
   providerId?: string,
-  nationalId?: string,
   fromDate?: Date,
   toDate?: Date,
   sortBy?: CategoryStatisticsSortBy,

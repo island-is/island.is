@@ -16,12 +16,9 @@ import { useGetStatisticsOverviewByProviderId } from '../../shared/useGetStatist
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetProviderStatisticsBreakdownByProviderId } from '../../shared/useGetProviderStatisticsBreakdownByProviderId'
 import { DocumentProviderStatisticsTable } from '../../components/DocumentProviderStatisticsTable/DocumentProviderStatisticsTable'
-import { useGetProviderStatisticsBreakdownWCategoriesByProviderId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByProviderId'
-import { useGetProvidersByNationalId } from '../../shared/useGetProvidersByNationalId'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { StatisticBoxList } from '../../components/StatisticBoxList/StatisticBoxList'
-import { CategoryStatisticsSortBy } from '@island.is/api/schema'
 import { DocumentProviderPaths } from '../../lib/paths'
 import { StatisticsBoxData } from '../../lib/types'
 import { DOCUMENT_DELIVERY_PRICE_ISK } from '../../lib/constants'
@@ -57,30 +54,6 @@ const SingleDocumentProvider = () => {
     toDate,
   )
 
-  const { loading: loadingProviders, items: providers } =
-    useGetProvidersByNationalId(undefined, undefined)
-
-  const { loading: loadingChartData, chartData } =
-    useGetProviderStatisticsBreakdownByProviderId(
-      providerId,
-      undefined,
-      undefined,
-      'Date',
-      true,
-      1,
-      6,
-    )
-  const { loading: loadingSentFiles, chartData: sentFilesChartData } =
-    useGetProviderStatisticsBreakdownWCategoriesByProviderId(
-      providerId,
-      user.profile.nationalId,
-      undefined,
-      undefined,
-      CategoryStatisticsSortBy.Date,
-      true,
-      1,
-      6,
-    )
   const { loading: loadingBreakdown, breakdown } =
     useGetProviderStatisticsBreakdownByProviderId(
       providerId,
@@ -194,9 +167,7 @@ const SingleDocumentProvider = () => {
         />
 
         <InstitutionDocumentProviderDashboard
-          loading={loadingChartData || loadingSentFiles}
-          sentFilesData={sentFilesChartData}
-          chartData={chartData}
+          providerId={providerId!}
         />
 
         {breakdown ? (

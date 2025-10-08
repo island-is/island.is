@@ -9,27 +9,38 @@ import {
 import { OpenedFilesDonutChart } from '../../components/OpenedFilesDonutChart/OpenedFilesDonutChart'
 import { useGetProviderStatisticCategoriesByNationalId } from '../../shared/useGetProviderStatisticCategoriesByNationalId'
 import { SentFilesBarChart } from '../../components/SentFilesBarChart/SentFilesBarChart'
-import { SentFilesChartDataItem, StatisticsOverview } from '../../lib/types'
 import { m } from '../../lib/messages'
+import subMonths from 'date-fns/subMonths'
+import { TotalStatisticsSortBy } from '@island.is/api/schema'
+import { useGetProviderStatisticsBreakdownWCategoriesByNationalId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByNationalId'
+import { useGetStatisticsByNationalId } from '../../shared/useGetStatisticsByNationalId'
 
-interface Props {
-  loading?: boolean
-  statistics: StatisticsOverview | null
-  nationalId: string
-  sentFilesData?: Array<SentFilesChartDataItem>
-}
+interface Props {}
 
-export const InstitutionDocumentProvidersDashboard = ({
-  loading,
-  statistics,
-  sentFilesData,
-}: Props) => {
+export const InstitutionDocumentProvidersDashboard = ({}: Props) => {
   const { formatMessage } = useLocale()
 
+  const sixMonthsAgo = subMonths(new Date(), 6)
+
+  const { loading: loadingSentFiles, chartData: sentFilesData } =
+      useGetProviderStatisticsBreakdownWCategoriesByNationalId(
+        sixMonthsAgo,
+        new Date(),
+        TotalStatisticsSortBy.Date,
+        true,
+        1,
+        6,
+      )
+
+  // Fetch statistics for the last 6 months
+  const { loading: loadingStatistics6Months, statistics } =
+    useGetStatisticsByNationalId(sixMonthsAgo, new Date())
+
   const { categories } = useGetProviderStatisticCategoriesByNationalId(
-    undefined,
-    undefined,
+    sixMonthsAgo,
+    new Date(),
   )
+
   const opened = statistics?.statistics?.opened || 0
   const published = statistics?.statistics?.published || 0
   const rawOpenedPct = published > 0 ? (opened / published) * 100 : 0
@@ -49,7 +60,7 @@ export const InstitutionDocumentProvidersDashboard = ({
     },
   ]
 
-  if (loading) {
+  if (loadingSentFiles || loadingStatistics6Months) {
     return (
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
