@@ -135,6 +135,7 @@ export class Application extends Model<Application> {
   organizationId!: string
 
   formName?: string
+  slug?: string
   tagLabel?: string
   tagVariant?: string
 }

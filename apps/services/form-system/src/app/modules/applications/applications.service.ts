@@ -440,6 +440,9 @@ export class ApplicationsService {
       if (form && form.name) {
         app.formName = locale === 'is' ? form.name.is : form.name.en
       }
+      if (form && form.slug) {
+        app.slug = form.slug
+      }
       if (app.status === ApplicationStatus.DRAFT) {
         app.tagLabel = locale === 'is' ? 'Í vinnslu' : 'In progress'
         app.tagVariant = 'blue'

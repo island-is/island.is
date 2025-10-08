@@ -9,6 +9,7 @@ fragment ApplicationFragment on Application {
   progress
   status
   institution
+  formSystemSlug
   actionCard {
     draftTotalSteps
     draftFinishedSteps

@@ -244,6 +244,7 @@ export class ApplicationMapper {
       name: '',
       status: app.status,
       pruned: false,
+      formSystemSlug: app.slug,
     } as MyPagesApplicationResponseDto
   }
 

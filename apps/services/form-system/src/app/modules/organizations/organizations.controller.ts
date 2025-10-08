@@ -37,18 +37,18 @@ import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
-  // @ApiOperation({ summary: 'Create an organization' })
-  // @ApiCreatedResponse({
-  //   description: 'Create an organization',
-  //   type: OrganizationDto,
-  // })
-  // @ApiBody({ type: CreateOrganizationDto })
-  // @Post()
-  // create(
-  //   @Body() createOrganizationDto: CreateOrganizationDto,
-  // ): Promise<OrganizationDto> {
-  //   return this.organizationsService.create(createOrganizationDto)
-  // }
+  @ApiOperation({ summary: 'Create an organization' })
+  @ApiCreatedResponse({
+    description: 'Create an organization',
+    type: OrganizationDto,
+  })
+  @ApiBody({ type: CreateOrganizationDto })
+  @Post()
+  create(
+    @Body() createOrganizationDto: CreateOrganizationDto,
+  ): Promise<OrganizationDto> {
+    return this.organizationsService.create(createOrganizationDto)
+  }
 
   @ApiOperation({ summary: 'Get all Organizations' })
   @ApiOkResponse({

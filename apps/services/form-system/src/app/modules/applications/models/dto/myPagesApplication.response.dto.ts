@@ -188,4 +188,9 @@ export class MyPagesApplicationResponseDto {
   @Expose()
   @IsBoolean()
   pruned?: boolean
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  formSystemSlug?: string
 }
