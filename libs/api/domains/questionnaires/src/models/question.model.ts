@@ -42,7 +42,7 @@ registerEnumType(VisibilityOperator, {
   description: 'Operator for visibility conditions',
 })
 
-@ObjectType('VisibilityCondition')
+@ObjectType('QuestionnaireVisibilityCondition')
 export class VisibilityCondition {
   @Field()
   questionId!: string
@@ -58,14 +58,24 @@ export class VisibilityCondition {
 }
 
 // Answer option value type
-@ObjectType('AnswerOptionValue')
+
+@ObjectType('QuestionnaireOptionsLabelValue')
+export class LabelValue {
+  @Field({ nullable: true })
+  label?: string
+
+  @Field({ nullable: true })
+  value?: string
+}
+
+@ObjectType('QuestionnaireAnswerOptionValue')
 export class AnswerOptionValue {
   @Field(() => [String], { nullable: true })
   extraQuestions?: string[]
 }
 
 // Answer option type - flattened to include answer type properties directly
-@ObjectType('AnswerOption')
+@ObjectType('QuestionnaireAnswerOption')
 export class AnswerOption {
   @Field()
   id!: string
@@ -108,12 +118,12 @@ export class AnswerOption {
   minLabel?: string
 
   // Radio/Checkbox specific fields
-  @Field(() => [String], { nullable: true })
-  options?: string[]
+  @Field(() => [LabelValue], { nullable: true })
+  options?: LabelValue[]
 }
 
 // Main question type
-@ObjectType('Question')
+@ObjectType('QuestionnaireQuestion')
 export class Question {
   @Field()
   id!: string

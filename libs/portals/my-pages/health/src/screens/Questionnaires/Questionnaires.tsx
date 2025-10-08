@@ -1,4 +1,4 @@
-import { QuestionnairesStatusEnum } from '@island.is/api/schema'
+import { QuestionnaireQuestionnairesStatusEnum as QuestionnairesStatusEnum } from '@island.is/api/schema'
 import {
   Box,
   Checkbox,
@@ -51,7 +51,6 @@ const Questionnaires: React.FC = () => {
     },
   })
 
-  console.log(data)
   const toggleStatus = (
     status: any, // TODO: switch to enum from graphql
   ) => {

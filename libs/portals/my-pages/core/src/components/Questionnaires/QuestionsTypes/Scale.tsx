@@ -39,7 +39,7 @@ export const Scale: React.FC<ScaleProps> = ({
   const generateScaleValues = React.useMemo(() => {
     // Bail out early if values are invalid
     if (isNaN(minNum) || isNaN(maxNum) || minNum >= maxNum) {
-      console.warn('⚠️ Invalid min/max in Scale component', { min, max })
+      console.warn('Invalid min/max in Scale component', { min, max })
       return []
     }
 

@@ -45,7 +45,10 @@ query GetQuestionnaire($id: String!, $locale: String!) {
           maxLabel
           minLabel
           # Radio/Checkbox fields
-          options
+          options {
+            label
+            value
+          }
           value {
             extraQuestions
           }
@@ -58,5 +61,13 @@ query GetQuestionnaire($id: String!, $locale: String!) {
         }
       }
     }
+  }
+}
+
+mutation SubmitQuestionnaire($input: QuestionnaireInput!) {
+  submitQuestionnaire(input: $input) {
+    id
+    title
+    status
   }
 }

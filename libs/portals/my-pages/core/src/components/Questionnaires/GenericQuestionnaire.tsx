@@ -12,7 +12,7 @@ import { QuestionRenderer } from '../Questionnaires/QuestionRenderer'
 import { Stepper } from '../Questionnaires/Stepper'
 import { isQuestionVisibleWithStructuredConditions } from './utils/visibilityUtils'
 
-import { Question, Questionnaire } from '@island.is/api/schema'
+import { QuestionnaireQuestion, Questionnaire } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
@@ -125,7 +125,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     const newErrors: { [key: string]: string } = {}
     let isValid = true
 
-    currentQuestions.forEach((question: Question) => {
+    currentQuestions.forEach((question: QuestionnaireQuestion) => {
       if (question.display === 'required') {
         const answer = answers[question.id]
 
@@ -169,7 +169,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     let allValid = true
     const allErrors: { [key: string]: string } = {}
 
-    visibleQuestions?.forEach((question: Question) => {
+    visibleQuestions?.forEach((question: QuestionnaireQuestion) => {
       if (question.display === 'required') {
         const answer = answers[question.id]
         if (
@@ -263,7 +263,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
               {/* Questions */}
               <Box style={{ minHeight: '400px' }} marginX={10} marginY={6}>
                 <Stack space={4}>
-                  {currentQuestions.map((question: Question) => (
+                  {currentQuestions.map((question: QuestionnaireQuestion) => (
                     <QuestionRenderer
                       key={question.id}
                       question={question}

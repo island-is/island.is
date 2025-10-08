@@ -7,7 +7,7 @@ export enum QuestionnairesStatusEnum {
   expired = 'expired',
 }
 registerEnumType(QuestionnairesStatusEnum, {
-  name: 'questionnairesStatusEnum',
+  name: 'QuestionnaireQuestionnairesStatusEnum',
 })
 
 @ObjectType('QuestionnaireSection')

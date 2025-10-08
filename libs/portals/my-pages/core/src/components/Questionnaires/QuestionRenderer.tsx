@@ -5,13 +5,16 @@ import { Radio } from '../Questionnaires/QuestionsTypes/Radio'
 import { Multiple } from '../Questionnaires/QuestionsTypes/Multiple'
 import { Thermometer } from '../Questionnaires/QuestionsTypes/Thermometer'
 import { QuestionAnswer } from '../../types/questionnaire'
-import { Question, QuestionnaireAnswerOptionType } from '@island.is/api/schema'
+import {
+  QuestionnaireQuestion,
+  QuestionnaireAnswerOptionType,
+} from '@island.is/api/schema'
 import HtmlParser from 'react-html-parser'
 import { Scale } from './QuestionsTypes/Scale'
 import { ProgressBar } from '../ProgressBar/ProgressBar'
 
 interface QuestionRendererProps {
-  question: Question
+  question: QuestionnaireQuestion
   answer?: QuestionAnswer
   onAnswerChange: (answer: QuestionAnswer) => void
   disabled?: boolean
@@ -94,9 +97,9 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
           <Radio
             id={question.id}
             label={question.label}
-            options={options.map((option: string) => ({
-              value: option,
-              label: option,
+            options={options.map((option) => ({
+              value: option.value || '',
+              label: option.label || '',
             }))}
             value={typeof answer?.value === 'string' ? answer.value : ''}
             onChange={(value: string) => {
@@ -117,9 +120,9 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
           <Multiple
             id={question.id}
             label={question.label}
-            options={options.map((option: string) => ({
-              value: option,
-              label: option,
+            options={options.map((option) => ({
+              value: option.value || '',
+              label: option.label || '',
             }))}
             value={Array.isArray(answer?.value) ? answer.value : []}
             onChange={(values: string[]) => handleValueChange(values)}
@@ -133,7 +136,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 
       case QuestionnaireAnswerOptionType.scale: {
         const answerOptions = question.answerOptions
-        console.log('scale answerOptions:', answerOptions)
 
         return (
           <Scale
@@ -193,8 +195,8 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             progress={progress}
             label={question.label}
             options={question.answerOptions.options?.map((option) => ({
-              label: option,
-              value: option,
+              label: option.label || '',
+              value: option.value || '',
             }))}
             selectedValue={selectedValue}
             onOptionClick={(value) => handleValueChange(value)}

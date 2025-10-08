@@ -1,8 +1,8 @@
 import { QuestionAnswer } from '../../../types/questionnaire'
-import type { VisibilityCondition } from '@island.is/api/schema'
+import type { QuestionnaireVisibilityCondition } from '@island.is/api/schema'
 import { QuestionnaireVisibilityOperator } from '@island.is/api/schema'
 
-type StructuredVisibilityCondition = VisibilityCondition
+type StructuredVisibilityCondition = QuestionnaireVisibilityCondition
 
 /* -------------------- Helper Functions -------------------- */
 
@@ -54,9 +54,20 @@ const evaluateStructuredCondition = (
     case QuestionnaireVisibilityOperator.equals:
     case QuestionnaireVisibilityOperator.contains:
       if (expectedValues && expectedValues.length > 0) {
-        conditionMet = expectedValues.some((val) =>
-          checkIsSelected(val, questionId, answers),
-        )
+        conditionMet = expectedValues.some((val) => {
+          if (questionId === 'Checklist21448')
+            console.log(
+              'checkIsSelected debug:',
+              checkIsSelected(val, questionId, answers),
+            )
+          return checkIsSelected(val, questionId, answers)
+        })
+        if (questionId === 'Checklist21448') {
+          console.log('Expected values:', expectedValues)
+          console.log('Answers:', answers)
+          console.log('Show when matched:', showWhenMatched)
+          console.log('Condition met for equals/contains:', conditionMet)
+        }
       }
       break
     case QuestionnaireVisibilityOperator.exists:
@@ -78,9 +89,12 @@ export const evaluateStructuredVisibilityConditions = (
   answers: { [key: string]: QuestionAnswer },
 ): boolean => {
   if (!conditions || conditions.length === 0) return true
-  return conditions.every((condition) =>
-    evaluateStructuredCondition(condition, answers),
-  )
+  return conditions.every((condition) => {
+    if (condition.questionId === 'Checklist21448') {
+      console.log('Evaluating condition for Checklist21448:', condition)
+    }
+    return evaluateStructuredCondition(condition, answers)
+  })
 }
 
 /* -------------------- Extract dependencies from visibilityConditions -------------------- */

@@ -5,18 +5,18 @@ import { Injectable } from '@nestjs/common'
 import { QuestionnaireInput } from './dto/questionnaire.input'
 
 import { Form, LshDevService } from '@island.is/clients/health-directorate'
-import {
-  createMockElDistressThermometerQuestionnaire,
-  createMockElPregnancyQuestionnaire,
-  transformHealthDirectorateQuestionnaireToList,
-} from './transform-mappers/health-directorate/health-directorate-client-mapper'
-import { transformLshQuestionnaireFromJson } from './transform-mappers/LSH/lsh-questionnaire-mapper'
+
 import {
   Questionnaire,
   QuestionnairesList,
   QuestionnairesStatusEnum,
 } from '../models/questionnaires.model'
-
+import {
+  createMockElDistressThermometerQuestionnaire,
+  createMockElPregnancyQuestionnaire,
+  mapExternalQuestionnairesToList,
+} from './transform-mappers/health-directorate/hd-mapper'
+import { mapFormsToQuestionnairesList } from './transform-mappers/lsh/lsh-mapper'
 @Injectable()
 export class QuestionnairesService {
   constructor(
@@ -29,27 +29,16 @@ export class QuestionnairesService {
     id: string,
   ): Promise<Questionnaire | null> {
     const elList = createMockElDistressThermometerQuestionnaire()
-    const elListTransformed =
-      transformHealthDirectorateQuestionnaireToList(elList)
+    const elListTransformed = mapExternalQuestionnairesToList([elList])
 
     const elList2 = createMockElPregnancyQuestionnaire()
-    const elList2Transformed =
-      transformHealthDirectorateQuestionnaireToList(elList2)
+    const elList2Transformed = mapExternalQuestionnairesToList([elList2])
 
     const lshDevQuestionnaires: QuestionnairesList[] = []
 
     // Handle error for each client so the other can still succeed
-    try {
-      const lshDev: Form[] = await this.lshDevApi.getPatientForms(user)
-      // Transform each LSH Dev questionnaire
-      lshDev?.map((form) =>
-        lshDevQuestionnaires.push(
-          transformLshQuestionnaireFromJson(form.formJSON),
-        ),
-      ) || []
-    } catch (error) {
-      // Handle error (e.g., log it)
-    }
+    const lshDev: Form[] = await this.lshDevApi.getPatientForms(user)
+    const lshTemp = mapFormsToQuestionnairesList(lshDev)
 
     const data = [
       elListTransformed,
@@ -59,11 +48,13 @@ export class QuestionnairesService {
       list.questionnaires?.some((q: Questionnaire) => q.id === id),
     )?.questionnaires?.[0]
 
-    if (!data) {
+    const lshFound = lshTemp.questionnaires?.find((q) => q.id === id)
+
+    if (!data && !lshFound) {
       return null
     }
 
-    return data
+    return (data || lshFound) ?? null
   }
 
   async submitQuestionnaire(
@@ -96,39 +87,23 @@ export class QuestionnairesService {
     _user: User,
     _locale: Locale,
   ): Promise<QuestionnairesList | null> {
-    const lshDevQuestionnaires: QuestionnairesList[] = []
-
     const lshDev: Form[] = await this.lshDevApi.getPatientForms(_user)
 
     // Transform each LSH Dev questionnaire
+    const lshTemp = mapFormsToQuestionnairesList(lshDev)
 
-    lshDev?.map((form) =>
-      lshDevQuestionnaires.push(
-        transformLshQuestionnaireFromJson(form.formJSON),
-      ),
-    ) || []
-    // Filter out questionnaires that don't have an ID
-    const validLshDevQuestionnaires = lshDevQuestionnaires.map((list) => ({
-      ...list,
-      questionnaires:
-        list.questionnaires?.filter(
-          (questionnaire) =>
-            questionnaire.id !== undefined && questionnaire.id !== null,
-        ) || [],
-    }))
     // Transform EL questionnaire using the health directorate mapper
     const elList = createMockElDistressThermometerQuestionnaire()
-    const elListTransformed =
-      transformHealthDirectorateQuestionnaireToList(elList)
+    const elListTransformed = mapExternalQuestionnairesToList([elList])
 
     const elList2 = createMockElPregnancyQuestionnaire()
-    const elList2Transformed =
-      transformHealthDirectorateQuestionnaireToList(elList2)
+    const elList2Transformed = mapExternalQuestionnairesToList([elList2])
+
     // Combine all questionnaires
     const allQuestionnaires: Questionnaire[] = [
       ...(elListTransformed.questionnaires || []),
       ...(elList2Transformed.questionnaires || []),
-      ...validLshDevQuestionnaires.flatMap((q) => q.questionnaires || []),
+      ...(lshTemp.questionnaires || []),
     ]
 
     return { questionnaires: allQuestionnaires }

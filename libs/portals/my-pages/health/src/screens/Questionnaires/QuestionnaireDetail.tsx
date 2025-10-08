@@ -12,13 +12,17 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
-import { useGetQuestionnaireQuery } from './questionnaires.generated'
+import {
+  useGetQuestionnaireQuery,
+  useSubmitQuestionnaireMutation,
+} from './questionnaires.generated'
 
 const QuestionnaireDetail: React.FC = () => {
   const { id } = useParams<{ id?: string }>()
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
   const { data: organizations } = useOrganizations()
+  const [submitQuestionnaire] = useSubmitQuestionnaireMutation()
 
   const { data, loading, error } = useGetQuestionnaireQuery({
     variables: {
@@ -33,10 +37,6 @@ const QuestionnaireDetail: React.FC = () => {
   }
 
   const handleSubmit = (answers: { [key: string]: QuestionAnswer }) => {
-    console.log('submitted:', answers)
-    toast.success('Spurningalisti sendur')
-    navigate(-1)
-
     // Transform answers back to LSH format
     const formattedAnswers = Object.entries(answers).map(
       ([questionId, answer]) => ({
@@ -46,13 +46,30 @@ const QuestionnaireDetail: React.FC = () => {
       }),
     )
 
+    submitQuestionnaire({
+      variables: {
+        input: {
+          id,
+          entries: formattedAnswers.map((answer) => ({
+            entryID: answer.EntryID,
+            type: answer.Type,
+            values: Array.isArray(answer.Value)
+              ? answer.Value
+              : [String(answer.Value)],
+          })),
+          formId: data?.questionnairesDetail?.id || '',
+        },
+      },
+    })
+    toast.success('Spurningalisti sendur')
+    navigate(-1)
     console.log('answers:', formattedAnswers)
-    // TODO - send to api
   }
 
   const handleCancel = () => {
     // TODO: clear answers or send draft?
     toast.info('Hætt við spurningalista')
+
     navigate(-1)
   }
 
