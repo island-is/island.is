@@ -9,6 +9,8 @@ import {
   TopLink,
   MidLink,
   BottomLink,
+  NavigationLinksCategory,
+  NavigationLinksCategoryLink,
 } from './models/organizationPage.model'
 import { SitemapTreeNode, SitemapTreeNodeType } from '@island.is/shared/types'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
@@ -19,6 +21,17 @@ import {
 import { generateOrganizationSubpageLink } from './models/linkGroup.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
+
+type Breadcrumb =
+  | BottomLink &
+      (
+        | {
+            isCategory: true
+            description?: string
+            childLinks: NavigationLinksCategoryLink[]
+          }
+        | { isCategory: false }
+      )
 
 @Resolver(() => OrganizationPage)
 @CacheControl(defaultCache)
@@ -76,18 +89,33 @@ export class OrganizationPageResolver {
     lang: string,
     organizationPage: OrganizationPage,
     entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
-  ) {
+  ): Breadcrumb | undefined | null {
     if (node.type === SitemapTreeNodeType.ENTRY) {
       const entryItem = entryMap.get(node.entryId)
       if (!entryItem) return null
-      return entryItem.link
+      return {
+        ...entryItem.link,
+        isCategory: false,
+      }
     }
     if (node.type === SitemapTreeNodeType.CATEGORY) {
       return {
-        label: node.label,
+        label: lang === 'en' ? node.labelEN ?? '' : node.label ?? '',
         href: `/${getOrganizationPageUrlPrefix(lang)}/${
           organizationPage.slug
         }/${node.slug}`,
+        isCategory: true,
+        description: lang === 'en' ? node.descriptionEN : node.description,
+        childLinks: node.childNodes
+          .map((childNode) =>
+            this.convertNodeToBreadcrumb(
+              childNode,
+              lang,
+              organizationPage,
+              entryMap,
+            ),
+          )
+          .filter(Boolean) as NavigationLinksCategoryLink[],
       }
     }
   }
@@ -98,17 +126,19 @@ export class OrganizationPageResolver {
     lang: string,
   ) {
     const slugs = organizationPage.subpageSlugsInput ?? []
-    const breadcrumbs: BottomLink[] = []
+    const breadcrumbs: Breadcrumb[] = []
     const activeNodeIds = new Set<number>()
 
     if (slugs.length > 0) {
       breadcrumbs.push({
         label: 'Ísland.is',
         href: lang === 'en' ? '/en' : '/',
+        isCategory: false,
       })
       breadcrumbs.push({
         label: organizationPage.title,
         href: `/${getOrganizationPageUrlPrefix(lang)}/${organizationPage.slug}`,
+        isCategory: false,
       })
     }
 
@@ -289,7 +319,9 @@ export class OrganizationPageResolver {
   }
 
   @ResolveField(() => NavigationLinks, { nullable: true })
-  async navigationLinks(@Parent() organizationPage: OrganizationPage) {
+  async navigationLinks(
+    @Parent() organizationPage: OrganizationPage,
+  ): Promise<NavigationLinks> {
     const lang = organizationPage.lang ?? 'is'
 
     const entryIds = this.extractNavigationLinkEntryIds(organizationPage)
@@ -325,13 +357,20 @@ export class OrganizationPageResolver {
       activeNodeIds,
     )
 
+    let activeCategory: NavigationLinksCategory | null = null
+
     if (breadcrumbs.length > 2) {
+      const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 1]
+      if (lastBreadcrumb.isCategory) {
+        activeCategory = lastBreadcrumb
+      }
       breadcrumbs.pop()
     }
 
     return {
       topLinks,
       breadcrumbs,
+      activeCategory,
     }
   }
 }

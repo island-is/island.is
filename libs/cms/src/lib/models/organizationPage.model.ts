@@ -67,6 +67,30 @@ export class TopLink {
   midLinks!: MidLink[]
 }
 
+@ObjectType('OrganizationPageNavigationLinksCategoryLink')
+export class NavigationLinksCategoryLink {
+  @Field(() => String)
+  label!: string
+
+  @Field(() => String)
+  href!: string
+
+  @Field(() => String, { nullable: true })
+  description?: string
+}
+
+@ObjectType('OrganizationPageNavigationLinksCategory')
+export class NavigationLinksCategory {
+  @Field(() => String)
+  label!: string
+
+  @Field(() => String, { nullable: true })
+  description?: string | null
+
+  @CacheField(() => [NavigationLinksCategoryLink])
+  childLinks!: NavigationLinksCategoryLink[]
+}
+
 @ObjectType('OrganizationPageNavigationLinks')
 export class NavigationLinks {
   @CacheField(() => [TopLink])
@@ -74,6 +98,9 @@ export class NavigationLinks {
 
   @CacheField(() => [BottomLink])
   breadcrumbs!: BottomLink[]
+
+  @CacheField(() => NavigationLinksCategory, { nullable: true })
+  activeCategory?: NavigationLinksCategory | null
 }
 
 @ObjectType()

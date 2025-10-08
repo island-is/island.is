@@ -1,15 +1,16 @@
 import { useRouter } from 'next/router'
 
+import { CategoryCard, Stack, Text } from '@island.is/island-ui/core'
 import { OrganizationWrapper } from '@island.is/web/components'
 import {
   OrganizationPage,
+  OrganizationPageNavigationLinksCategory,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -20,6 +21,7 @@ import { getSubpageNavList } from '../SubPage'
 export interface OrganizationCategoryProps {
   organizationPage: OrganizationPage
   namespace: Record<string, string>
+  activeCategory: OrganizationPageNavigationLinksCategory
 }
 
 type OrganizationCategoryScreenContext = ScreenContext & {
@@ -29,11 +31,10 @@ type OrganizationCategoryScreenContext = ScreenContext & {
 const OrganizationCategory: Screen<
   OrganizationCategoryProps,
   OrganizationCategoryScreenContext
-> = ({ organizationPage, namespace }) => {
+> = ({ organizationPage, namespace, activeCategory }) => {
   const router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const { activeLocale } = useI18n()
 
   useLocalLinkTypeResolver()
 
@@ -44,7 +45,7 @@ const OrganizationCategory: Screen<
         items: getSubpageNavList(organizationPage, router),
         title: n('navigationTitle', 'Efnisyfirlit'),
       }}
-      pageTitle={'TODO'} // TODO: Add category title
+      pageTitle={activeCategory.label} // TODO: Add category title
       showReadSpeaker={false}
       breadcrumbItems={[
         {
@@ -58,7 +59,26 @@ const OrganizationCategory: Screen<
         },
       ]}
     >
-      asfd
+      <Stack space={4}>
+        <Stack space={2}>
+          <Text variant="h1" as="h1">
+            {activeCategory.label}
+          </Text>
+          {activeCategory.description && (
+            <Text>{activeCategory.description}</Text>
+          )}
+        </Stack>
+        <Stack space={3}>
+          {activeCategory.childLinks.map((link) => (
+            <CategoryCard
+              key={link.href}
+              heading={link.label}
+              text={link.description ?? ''}
+              href={link.href}
+            />
+          ))}
+        </Stack>
+      </Stack>
     </OrganizationWrapper>
   )
 }
@@ -108,9 +128,21 @@ OrganizationCategory.getProps = async ({
     )
   }
 
+  const activeCategory =
+    organizationPageResponse.data.getOrganizationPage.navigationLinks
+      ?.activeCategory
+
+  if (!activeCategory) {
+    throw new CustomNextError(
+      404,
+      `Active category with slug: "${categorySlug}" was not found`,
+    )
+  }
+
   return {
     organizationPage: organizationPageResponse.data.getOrganizationPage,
     namespace,
+    activeCategory,
   }
 }
 
