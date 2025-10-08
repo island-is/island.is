@@ -5,6 +5,7 @@ import {
   Breadcrumbs,
   DatePicker,
   GridColumn,
+  GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -12,14 +13,14 @@ import { ProvidersTable } from '../../components/DocumentProvidersTable/Document
 import { InstitutionDocumentProvidersDashboard } from './InstitutionDocumentProvidersDashboard'
 import { IntroHeader } from '@island.is/portals/core'
 import { useGetProvidersByNationalId } from '../../shared/useGetProvidersByNationalId'
-import { useGetProviderStatisticsBreakdownWCategoriesByNationalId } from '../../shared/useGetProviderStatisticsBreakdownWCategoriesByNationalId'
+
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useGetStatisticsByNationalId } from '../../shared/useGetStatisticsByNationalId'
 import { StatisticBoxList } from '../../components/StatisticBoxList/StatisticBoxList'
-import { TotalStatisticsSortBy } from '@island.is/api/schema'
+
 import startOfMonth from 'date-fns/startOfMonth'
 import subYears from 'date-fns/subYears'
-import subMonths from 'date-fns/subMonths'
+
 import { DocumentProviderPaths } from '../../lib/paths'
 import { StatisticsBoxData } from '../../lib/types'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -34,9 +35,6 @@ const InstitutionDocumentProviders = () => {
   // first day of the same month, one year ago
   const firstOfLastYearMonth = startOfMonth(subYears(today, 1))
 
-  // 6 months from now
-  const sixMonthsAgo = subMonths(new Date(), 6)
-
   const [fromDate, setFromDate] = useState<Date | undefined>(
     firstOfLastYearMonth,
   )
@@ -49,21 +47,8 @@ const InstitutionDocumentProviders = () => {
   const { loading: loadingStatistics, statistics } =
     useGetStatisticsByNationalId(fromDate, toDate)
 
-  // Fetch statistics for the last 6 months
-  const { loading: loadingStatistics6Months, statistics: statistics6Months } =
-    useGetStatisticsByNationalId(sixMonthsAgo, new Date())
-
   const { loading: loadingProviders, items: providers } =
     useGetProvidersByNationalId(undefined, undefined)
-  const { loading: loadingSentFiles, chartData: sentFilesChartData } =
-    useGetProviderStatisticsBreakdownWCategoriesByNationalId(
-      undefined,
-      undefined,
-      TotalStatisticsSortBy.Date,
-      true,
-      1,
-      6,
-    )
 
   const statisticsBox: StatisticsBoxData[] = [
     {
@@ -154,12 +139,7 @@ const InstitutionDocumentProviders = () => {
           statistics={statisticsBox || []}
         />
 
-        <InstitutionDocumentProvidersDashboard
-          loading={loadingStatistics6Months || loadingSentFiles}
-          statistics={statistics6Months}
-          nationalId={user.profile.nationalId}
-          sentFilesData={sentFilesChartData || []}
-        />
+        <InstitutionDocumentProvidersDashboard />
 
         <ProvidersTable
           providerPath={

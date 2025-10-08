@@ -52,8 +52,6 @@ import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/a
 import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-scheme/backend/infra/air-discount-scheme-backend'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
 
-import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
-
 import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/regulations-admin-backend'
 
 import {
@@ -175,8 +173,6 @@ const userNotificationBirthdayWorkerService =
 
 const githubActionsCache = githubActionsCacheSetup()
 
-const externalContractsTests = externalContractsTestsSetup()
-
 export const Services: EnvironmentServices = {
   prod: [
     appSystemApi,
@@ -291,7 +287,6 @@ export const Services: EnvironmentServices = {
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
     userNotificationBirthdayWorkerService,
-    externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
     cmsImporter,

@@ -17,7 +17,6 @@ import { CustomTooltip } from '../CustomChartTooltip/CustomChartTooltip'
 
 interface Props {
   data: Array<SentFilesChartDataItem>
-  valueIndex?: number
 }
 
 const COLORS = ['#0061FF', '#6A2EA0', '#FF0050', '#00B39E']
