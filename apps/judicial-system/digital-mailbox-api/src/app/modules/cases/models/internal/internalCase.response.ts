@@ -25,6 +25,7 @@ export class InternalCaseResponse {
   rulingDate?: Date
   indictmentRulingDecision?: CaseIndictmentRulingDecision
   state?: CaseState
+  ruling?: string
 }
 
 interface Defendant {

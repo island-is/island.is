@@ -62,6 +62,7 @@ import {
   CaseFile,
   CaseRepositoryService,
   CaseString,
+  CourtSession,
   DateLog,
   Defendant,
   EventLog,
@@ -1390,6 +1391,11 @@ export class InternalCaseService {
           include: [{ model: Institution, as: 'institution' }],
         },
         { model: DateLog, as: 'dateLogs' },
+        {
+          model: CourtSession,
+          as: 'courtSessions',
+          order: [['created', 'DESC']],
+        },
       ],
       attributes: [
         'courtCaseNumber',
@@ -1446,7 +1452,18 @@ export class InternalCaseService {
       return theCase
     }
 
-    return this.findByIdAndDefendantNationalId(theCase.id, defendantNationalId)
+    const currentCase = await this.findByIdAndDefendantNationalId(
+      theCase.id,
+      defendantNationalId,
+    )
+
+    return {
+      ...currentCase,
+      ruling:
+        currentCase.courtSessions && currentCase.courtSessions?.length > 0
+          ? currentCase.courtSessions[0].ruling
+          : undefined,
+    } as Case
   }
 
   countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {

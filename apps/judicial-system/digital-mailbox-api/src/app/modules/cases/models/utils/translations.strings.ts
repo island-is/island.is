@@ -54,7 +54,7 @@ const translations: Translations = {
     appealDeadline: 'Appeal deadline', //TODO: Verify translation
     appealDecision: 'Appeal decision', //TODO: Verify translation
     appealDecisionText:
-      'Ég hef tekið við leiðbeiningum um rétt til áfrýjunar og áfrýjunarfrest', //TODO: translate
+      'I have accepted the instruction for my right to appeal and the given appeal deadline', //TODO: Verify translation
     appealDecisionAccept: 'Ég uni dómi.',
     appealDecisionPostpone: 'Ég tek áfrýjunarfrest.',
     arraignmentDate: 'Arraignment date',

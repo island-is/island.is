@@ -69,8 +69,6 @@ export class VerdictResponse {
     return {
       caseId: internalCase.id,
       title: t.rulingTitle,
-      // subtitle: 'TODO subtitle (if needed)',
-      appealDecision: defendant?.verdict?.appealDecision,
       groups: [
         {
           label: t.rulingTitle,
@@ -87,6 +85,9 @@ export class VerdictResponse {
               t.appealDeadline,
               appealDeadline ? formatDate(appealDeadline) : t.notAvailable,
             ],
+            ...(isAppealDeadlineExpired
+              ? [[t.appealDecision, defendant?.verdict?.appealDecision]]
+              : []),
           ].map((item) => ({
             label: item[0],
             value: item[1],
@@ -97,9 +98,7 @@ export class VerdictResponse {
           label: t.ruling,
           items: [
             {
-              // This should be replaced with the actual ruling text
-              // but we don't have that stored right now.
-              value: 'TODO Ruling text goes here',
+              value: internalCase.ruling,
               type: 'text',
             },
           ],
