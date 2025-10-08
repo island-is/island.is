@@ -35,6 +35,7 @@ export const siblingsSubSection = buildSubSection({
           removeButtonTooltipText:
             newPrimarySchoolMessages.primarySchool.siblingsDeleteRelative,
           marginTop: 0,
+          editField: true,
           fields: {
             fullName: {
               component: 'input',

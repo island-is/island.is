@@ -1,11 +1,11 @@
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
-  ApplicationInput,
+  FormSubmitSuccessModel,
   FriggApi,
   KeyOption,
   OrganizationModel,
-  FormSubmitSuccessModel,
+  RegistrationInput,
   UserModel,
 } from '../../gen/fetch'
 
@@ -25,8 +25,8 @@ export class FriggClientService {
     })
   }
 
-  async getAllSchoolsByMunicipality(user: User): Promise<OrganizationModel[]> {
-    return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality({})
+  async getOrganizationsByType(user: User): Promise<OrganizationModel[]> {
+    return await this.friggApiWithAuth(user).getOrganizationsByType({})
   }
 
   async getUserById(
@@ -51,8 +51,8 @@ export class FriggClientService {
 
   sendApplication(
     user: User,
-    form: ApplicationInput,
+    form: RegistrationInput,
   ): Promise<FormSubmitSuccessModel> {
-    return this.friggApiWithAuth(user).submitForm({ applicationInput: form })
+    return this.friggApiWithAuth(user).submitForm({ registration: form })
   }
 }

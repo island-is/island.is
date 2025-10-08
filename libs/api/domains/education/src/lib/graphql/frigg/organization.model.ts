@@ -1,7 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { AddressModel } from './address.model'
 
-export enum OrganizationModelTypeEnum {
+export enum OrganizationTypeEnum {
   ChildCare = 'childCare',
   Municipality = 'municipality',
   National = 'national',
@@ -9,12 +9,12 @@ export enum OrganizationModelTypeEnum {
   School = 'school',
 }
 
-registerEnumType(OrganizationModelTypeEnum, {
-  name: 'OrganizationModelTypeEnum',
+registerEnumType(OrganizationTypeEnum, {
+  name: 'OrganizationTypeEnum',
 })
 
-@ObjectType('EducationFriggOrganizationModel')
-export class FriggOrganizationModel {
+@ObjectType('EducationFriggOrganization')
+export class FriggOrganization {
   @Field()
   id!: string
 
@@ -24,14 +24,14 @@ export class FriggOrganizationModel {
   @Field()
   name!: string
 
-  @Field(() => OrganizationModelTypeEnum)
-  type!: OrganizationModelTypeEnum
+  @Field(() => OrganizationTypeEnum)
+  type!: OrganizationTypeEnum
 
   @Field(() => [String], { nullable: true })
   gradeLevels?: string[]
 
-  @Field(() => [FriggOrganizationModel], { nullable: true })
-  managing?: FriggOrganizationModel[]
+  @Field(() => [FriggOrganization], { nullable: true })
+  managing?: FriggOrganization[]
 
   @Field({ nullable: true })
   unitId?: string

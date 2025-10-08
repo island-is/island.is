@@ -4,7 +4,7 @@ import {
   buildSubSection,
   coreErrorMessages,
 } from '@island.is/application/core'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
+import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
@@ -32,11 +32,11 @@ export const currentNurserySubSection = buildSubSection({
           dataTestId: 'current-nursery-municipality',
           loadOptions: async ({ apolloClient }) => {
             const { data } = await apolloClient.query<Query>({
-              query: friggSchoolsByMunicipalityQuery,
+              query: friggOrganizationsByTypeQuery,
             })
 
             return (
-              data?.friggSchoolsByMunicipality?.map(({ name }) => ({
+              data?.friggOrganizationsByType?.map(({ name }) => ({
                 value: name,
                 label: name,
               })) ?? []
@@ -53,11 +53,11 @@ export const currentNurserySubSection = buildSubSection({
           updateOnSelect: ['currentNursery.municipality'],
           loadOptions: async ({ apolloClient, selectedValues }) => {
             const { data } = await apolloClient.query<Query>({
-              query: friggSchoolsByMunicipalityQuery,
+              query: friggOrganizationsByTypeQuery,
             })
 
             return (
-              data?.friggSchoolsByMunicipality
+              data?.friggOrganizationsByType
                 ?.find(({ name }) => name === selectedValues?.[0])
                 ?.managing?.map((nursery) => ({
                   value: nursery.id,

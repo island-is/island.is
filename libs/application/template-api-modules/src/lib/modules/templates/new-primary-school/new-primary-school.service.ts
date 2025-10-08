@@ -3,8 +3,6 @@ import {
   errorMessages,
   FIRST_GRADE_AGE,
   getApplicationAnswers,
-  getOtherGuardian,
-  getSelectedChild,
   TENTH_GRADE_AGE,
 } from '@island.is/application/templates/new-primary-school'
 import { ApplicationTypes } from '@island.is/application/types'
@@ -89,40 +87,6 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     }
 
     return filteredChildren
-  }
-
-  async getCitizenship({ application }: TemplateApiModuleActionProps) {
-    const child = getSelectedChild(
-      application.answers,
-      application.externalData,
-    )
-    const guardian = getOtherGuardian(
-      application.answers,
-      application.externalData,
-    )
-
-    let childCitizenshipCode = ''
-    if (child) {
-      const citizenship = await this.nationalRegistryService.getCitizenship(
-        child.nationalId,
-      )
-
-      childCitizenshipCode = citizenship?.code || ''
-    }
-
-    let otherGuardianCitizenshipCode = ''
-    if (guardian) {
-      const citizenship = await this.nationalRegistryService.getCitizenship(
-        guardian.nationalId,
-      )
-
-      otherGuardianCitizenshipCode = citizenship?.code || ''
-    }
-
-    return {
-      childCitizenshipCode,
-      otherGuardianCitizenshipCode,
-    }
   }
 
   async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
