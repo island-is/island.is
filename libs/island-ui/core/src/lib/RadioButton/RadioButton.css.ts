@@ -42,7 +42,7 @@ export const labelText = style({
   flexDirection: 'column',
   width: '100%',
   whiteSpace: 'normal',
-  wordBreak: 'break-word',
+  overflowWrap: 'anywhere',
 })
 export const largeLabel = style({
   alignItems: 'center',
