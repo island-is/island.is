@@ -163,7 +163,6 @@ const Conclusion: FC = () => {
         return
       }
 
-      // update the case
       const update: UpdateCase = {
         indictmentDecision: selectedAction,
         courtSessionType: null,

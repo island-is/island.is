@@ -28,7 +28,6 @@ export const InformationForDefendant = ({
   ).map(([key, value]) => ({
     label: value.label,
     value: key,
-
     tooltip: value.detail,
   }))
 
