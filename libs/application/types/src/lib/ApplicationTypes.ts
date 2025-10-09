@@ -445,7 +445,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.RENTAL_AGREEMENT]: {
     slug: 'leigusamningur',
-    translation: 'ra.application',
+    translation: ['ra.application', 'uiForms.application'],
   },
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
     slug: 'uppsogn-eda-riftun-leigusamnings',
@@ -481,7 +481,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: {
     slug: 'endurmat-brunabotamats',
-    translation: 'fca.application',
+    translation: ['fca.application', 'uiForms.application'],
   },
   [ApplicationTypes.LEGAL_GAZETTE]: {
     slug: 'logbirtingarblad',
