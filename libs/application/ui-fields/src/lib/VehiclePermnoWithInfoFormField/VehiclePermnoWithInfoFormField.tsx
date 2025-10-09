@@ -165,7 +165,7 @@ export const VehiclePermnoWithInfoFormField: FC<
               permnoInput.length === INPUT_MAX_LENGTH &&
               data?.vehicleBasicInfoByPermno === null
                 ? formatMessage(coreErrorMessages.vehicleNotFoundForPermno)
-                : undefined
+                : errors && getErrorViaPath(errors, makeAndColorField)
             }
             readOnly={true}
           />

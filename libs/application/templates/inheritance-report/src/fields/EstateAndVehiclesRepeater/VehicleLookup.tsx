@@ -20,13 +20,18 @@ export const VehicleLookup = ({
   const descriptionFieldName = `${fieldIndex}.description`
   const vehicleNumberInput = useWatch({
     name: fieldName,
-    defaultValue: '',
+  })
+  const isInitial = useWatch({
+    name: `${fieldIndex}.initial`,
+    defaultValue: false,
   })
 
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: GetVehicleInput }>(GET_VEHICLE_QUERY, {
       onError: (_e) => {
-        setValue(descriptionFieldName, '')
+        if (!isInitial) {
+          setValue(descriptionFieldName, '')
+        }
       },
       onCompleted: (data) => {
         const carName =
@@ -36,7 +41,9 @@ export const VehicleLookup = ({
           carName.startsWith('null') ||
           carName.endsWith('null')
         ) {
-          setValue(descriptionFieldName, '')
+          if (!isInitial) {
+            setValue(descriptionFieldName, '')
+          }
           return
         }
         clearErrors(descriptionFieldName)
@@ -51,19 +58,24 @@ export const VehicleLookup = ({
   }, [queryLoading])
 
   useEffect(() => {
-    if (vehicleNumberInput.trim().length > 0) {
+    if (vehicleNumberInput === undefined) {
+      return
+    }
+
+    const value = String(vehicleNumberInput)
+    if (value.trim().length > 0) {
       getProperty({
         variables: {
           input: {
-            vehicleId: vehicleNumberInput.trim().toUpperCase(),
+            vehicleId: value.trim().toUpperCase(),
           },
         },
       })
-    } else {
+    } else if (!isInitial) {
       setValue(descriptionFieldName, '')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vehicleNumberInput])
+  }, [vehicleNumberInput, isInitial])
 
   return (
     <InputController
