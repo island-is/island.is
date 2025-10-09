@@ -577,7 +577,6 @@ export const getDefendantVerdictAppealDecisionLabel = (
   return ''
 }
 
-
 export const getVerdictAppealDecision = (
   verdictAppealDecision?: VerdictAppealDecision,
 ): string => {

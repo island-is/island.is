@@ -83,7 +83,14 @@ export class VerdictResponse {
               appealDeadline ? formatDate(appealDeadline) : t.notAvailable,
             ],
             ...(isAppealDeadlineExpired
-              ? [[t.appealDecision, getVerdictAppealDecision(defendant?.verdict?.appealDecision)]]
+              ? [
+                  [
+                    t.appealDecision,
+                    getVerdictAppealDecision(
+                      defendant?.verdict?.appealDecision,
+                    ),
+                  ],
+                ]
               : []),
           ].map((item) => ({
             label: item[0],
