@@ -12,6 +12,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
     .namespace(namespace)
     .image(imageName)
     .codeOwner(CodeOwners.Aranja)
+    .serviceAccount('services-sessions')
     .redis()
     .db({
       readOnly: true,
