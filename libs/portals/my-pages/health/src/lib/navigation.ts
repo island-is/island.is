@@ -190,6 +190,20 @@ export const healthNavigation: PortalNavigationItem = {
           name: messages.questionnaire,
           path: HealthPaths.HealthQuestionnairesDetail,
           navHide: true,
+          children: [
+            {
+              name: messages.questionnaire,
+              path: HealthPaths.HealthQuestionnairesAnswer,
+              navHide: true,
+              breadcrumbHide: true,
+            },
+            {
+              name: messages.questionnaire,
+              path: HealthPaths.HealthQuestionnairesAnswered,
+              navHide: true,
+              breadcrumbHide: true,
+            },
+          ],
         },
       ],
     },

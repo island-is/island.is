@@ -32,7 +32,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
 
   // TODO: Fix and find better solution
   const isQuestionnaireDetail =
-    matchPath('/heilsa/spurningalistar/:id', pathname) !== null
+    matchPath('/heilsa/spurningalistar/:id/svara', pathname) !== null
 
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()

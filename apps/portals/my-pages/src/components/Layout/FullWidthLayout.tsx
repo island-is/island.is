@@ -183,7 +183,7 @@ const FullWidthLayoutWrapper: FC<FullWidthLayoutWrapperProps> = (props) => {
   const isSpecialView = !!isDashboard || !!isDocuments
 
   const isQuestionnaireDetail =
-    matchPath('/heilsa/spurningalistar/:id', props.pathname) !== null
+    matchPath('/heilsa/spurningalistar/:id/svara', props.pathname) !== null
   return (
     <FullWidthLayout
       isDashboard={!!isDashboard}

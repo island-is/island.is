@@ -80,7 +80,6 @@ const Questionnaires: React.FC = () => {
     <IntroWrapper
       title={formatMessage(messages.questionnaires)}
       intro={formatMessage(messages.questionnairesIntro)}
-      loading={loading}
     >
       <Filter
         variant="popover"

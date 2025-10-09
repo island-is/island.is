@@ -17,7 +17,7 @@ import {
   useSubmitQuestionnaireMutation,
 } from './questionnaires.generated'
 
-const QuestionnaireDetail: React.FC = () => {
+const QuestionnaireAnswer: React.FC = () => {
   const { id } = useParams<{ id?: string }>()
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
@@ -33,7 +33,11 @@ const QuestionnaireDetail: React.FC = () => {
   })
 
   if (!id) {
-    return <Problem type="not_found" noBorder={false} />
+    return (
+      <Box background="white">
+        <Problem type="not_found" noBorder={false} />
+      </Box>
+    )
   }
 
   const handleSubmit = (answers: { [key: string]: QuestionAnswer }) => {
@@ -109,16 +113,18 @@ const QuestionnaireDetail: React.FC = () => {
           />
         )}
         {!loading && !data?.questionnairesDetail && !error && (
-          <Problem
-            type="not_found"
-            noBorder={false}
-            title={formatMessage(messages.questionnaireNotFound)}
-            message={formatMessage(messages.questionnaireNotFoundDetail)}
-          />
+          <Box background="white" margin={4} borderRadius="lg">
+            <Problem
+              type="not_found"
+              noBorder={false}
+              title={formatMessage(messages.questionnaireNotFound)}
+              message={formatMessage(messages.questionnaireNotFoundDetail)}
+            />
+          </Box>
         )}
       </Box>
     </Box>
   )
 }
 
-export default QuestionnaireDetail
+export default QuestionnaireAnswer

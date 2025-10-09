@@ -1724,4 +1724,16 @@ export const messages = defineMessages({
       'Vinsamlegast athugaðu hvort slóðin sé rétt eða hafðu samband við þjónustuaðila.',
     id: 'sp.health:questionnaire-not-found-detail',
   },
+  seeAnswers: {
+    defaultMessage: 'Skoða svör',
+    id: 'sp.health:see-answers',
+  },
+  treatment: {
+    defaultMessage: 'Meðferð',
+    id: 'sp.health:treatment',
+  },
+  sentFrom: {
+    defaultMessage: 'Sent af',
+    id: 'sp.health:sent-from',
+  },
 })
