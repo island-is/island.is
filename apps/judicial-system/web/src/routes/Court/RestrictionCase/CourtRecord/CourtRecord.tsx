@@ -55,6 +55,7 @@ import { formatCustodyRestrictions } from '@island.is/judicial-system-web/src/ut
 import { isCourtRecordStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { AppealSections } from '../../components'
+import { populateEndOfCourtSessionBookingsIntro } from '../../shared/populateEndOfCourtSessionBookingsIntro'
 
 export const CourtRecord: FC = () => {
   const {
@@ -85,7 +86,7 @@ export const CourtRecord: FC = () => {
   const initialize = useCallback(() => {
     const autofillAttendees = []
     const autofillSessionBookings = []
-    const endOfSessionBookings = []
+    const endOfSessionBookings: string[] = []
 
     if (workingCase.courtAttendees !== '') {
       if (workingCase.prosecutor) {
@@ -143,6 +144,8 @@ export const CourtRecord: FC = () => {
         m.sections.sessionBookings.autofillCourtDocumentOne,
       )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`,
     )
+
+    populateEndOfCourtSessionBookingsIntro(workingCase, endOfSessionBookings)
 
     if (
       workingCase.type === CaseType.CUSTODY ||
@@ -434,6 +437,7 @@ export const CourtRecord: FC = () => {
             </Text>
           </Box>
           <Box marginBottom={5}>
+            {/* TODO */}
             <Input
               data-testid="endOfSessionBookings"
               name="endOfSessionBookings"

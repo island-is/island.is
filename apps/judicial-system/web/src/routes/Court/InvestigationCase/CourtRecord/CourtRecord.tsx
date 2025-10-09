@@ -57,6 +57,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/validate'
 
 import AppealSections from '../../components/AppealSections/AppealSections'
+import { populateEndOfCourtSessionBookingsIntro } from '../../shared/populateEndOfCourtSessionBookingsIntro'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -123,6 +124,7 @@ const CourtRecord: FC = () => {
 
   const initialize = useCallback(() => {
     const autofillAttendees = []
+    const endOfSessionBookings: string[] = []
 
     if (workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
       autofillAttendees.push(formatMessage(core.sessionArrangementsNonePresent))
@@ -168,6 +170,7 @@ const CourtRecord: FC = () => {
         }
       }
     }
+    populateEndOfCourtSessionBookingsIntro(workingCase, endOfSessionBookings)
 
     setAndSendCaseToServer(
       [
@@ -205,6 +208,10 @@ const CourtRecord: FC = () => {
               : workingCase.sessionArrangements ===
                 SessionArrangements.NONE_PRESENT
               ? formatMessage(m.sections.sessionBookings.autofillNonePresent)
+              : undefined,
+          endOfSessionBookings:
+            endOfSessionBookings.length > 0
+              ? endOfSessionBookings.join('')
               : undefined,
         },
       ],
