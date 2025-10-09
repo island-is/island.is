@@ -26,6 +26,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  CourtSessionRulingType,
   EventType,
   hasGeneratedCourtRecordPdf,
   isIndictmentCase,
@@ -1392,9 +1393,21 @@ export class InternalCaseService {
         },
         { model: DateLog, as: 'dateLogs' },
         {
+          model: EventLog,
+          as: 'eventLogs',
+          order: [['created', 'DESC']],
+          where: {
+            event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          },
+        },
+        {
           model: CourtSession,
           as: 'courtSessions',
           order: [['created', 'DESC']],
+          attributes: ['ruling'],
+          where: {
+            ruling_type: CourtSessionRulingType.JUDGEMENT,
+          },
         },
       ],
       attributes: [
@@ -1452,18 +1465,7 @@ export class InternalCaseService {
       return theCase
     }
 
-    const currentCase = await this.findByIdAndDefendantNationalId(
-      theCase.id,
-      defendantNationalId,
-    )
-
-    return {
-      ...currentCase,
-      ruling:
-        currentCase.courtSessions && currentCase.courtSessions?.length > 0
-          ? currentCase.courtSessions[0].ruling
-          : undefined,
-    } as Case
+    return this.findByIdAndDefendantNationalId(theCase.id, defendantNationalId)
   }
 
   countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {

@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   formatDate,
   getRulingInstructionItems,
+  getVerdictAppealDecision,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -10,7 +11,6 @@ import {
   getIndictmentAppealDeadlineDate,
   hasDatePassed,
   ServiceRequirement,
-  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
@@ -26,9 +26,6 @@ export class VerdictResponse {
 
   @ApiProperty({ type: String })
   subtitle?: string
-
-  @ApiProperty({ enum: VerdictAppealDecision })
-  appealDecision?: VerdictAppealDecision
 
   @ApiProperty({ type: [Groups] })
   groups?: Groups[]
@@ -86,7 +83,7 @@ export class VerdictResponse {
               appealDeadline ? formatDate(appealDeadline) : t.notAvailable,
             ],
             ...(isAppealDeadlineExpired
-              ? [[t.appealDecision, defendant?.verdict?.appealDecision]]
+              ? [[t.appealDecision, getVerdictAppealDecision(defendant?.verdict?.appealDecision)]]
               : []),
           ].map((item) => ({
             label: item[0],
@@ -98,7 +95,7 @@ export class VerdictResponse {
           label: t.ruling,
           items: [
             {
-              value: internalCase.ruling,
+              value: internalCase.courtSessions?.[0]?.ruling ?? '',
               type: 'text',
             },
           ],
