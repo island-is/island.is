@@ -34,8 +34,9 @@ export enum VerdictServiceStatus {
   ELECTRONICALLY = ServiceStatus.ELECTRONICALLY,
   DEFENDER = ServiceStatus.DEFENDER,
   IN_PERSON = ServiceStatus.IN_PERSON,
+  FAILED = ServiceStatus.FAILED,
   LEGAL_PAPER = 'LEGAL_PAPER',
-  NOT_APPLICABLE = 'NOT_APPLICABLE', // Note: ONLY used for old verdicts prior to delivering verdicts automatically to the police
+  NOT_APPLICABLE = 'NOT_APPLICABLE', // ONLY used for old verdicts prior to delivering verdicts automatically to the police
 }
 
 export enum PunishmentType {
