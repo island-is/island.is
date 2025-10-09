@@ -437,7 +437,6 @@ export const CourtRecord: FC = () => {
             </Text>
           </Box>
           <Box marginBottom={5}>
-            {/* TODO */}
             <Input
               data-testid="endOfSessionBookings"
               name="endOfSessionBookings"
