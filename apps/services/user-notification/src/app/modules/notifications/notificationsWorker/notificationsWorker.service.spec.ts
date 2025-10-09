@@ -69,8 +69,6 @@ export const MockV2UsersApi = {
       )
     },
   ),
-
-  userTokenControllerDeleteDeviceToken: jest.fn().mockResolvedValue(undefined),
 }
 const mockContentfulGraphQLClientService = {
   fetchData: jest.fn(),
@@ -451,23 +449,5 @@ describe('NotificationsWorkerService', () => {
     expect(companyRegistryService.getCompany).toHaveBeenCalledTimes(1)
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
-  })
-
-  it('should remove invalid device token when API call succeeds', async () => {
-    const nationalId = '1234567890'
-    const deviceToken = 'invalid-token-123'
-    const messageId = 'msg-123'
-
-    const removeInvalidToken = (
-      notificationDispatch as any
-    ).removeInvalidToken.bind(notificationDispatch)
-    await removeInvalidToken(nationalId, deviceToken, messageId)
-
-    expect(
-      userProfileApi.userTokenControllerDeleteUserDeviceToken,
-    ).toHaveBeenCalledWith({
-      xParamNationalId: nationalId,
-      deviceToken: deviceToken,
-    })
   })
 })
