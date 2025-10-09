@@ -175,7 +175,7 @@ export class NotificationDispatchService {
     messageId: string,
   ): Promise<void> {
     try {
-      await this.userProfileApi.userTokenControllerDeleteDeviceToken({
+      await this.userProfileApi.userTokenControllerDeleteUserDeviceToken({
         xParamNationalId: nationalId,
         deviceToken: token,
       })

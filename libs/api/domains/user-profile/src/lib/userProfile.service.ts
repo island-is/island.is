@@ -294,28 +294,11 @@ export class UserProfileService {
   }
 
   async deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
-    try {
-      return await this.v2MeUserProfileApiWithAuth(
-        user,
-      ).meUserProfileControllerDeleteDeviceToken({
-        deviceToken: input.deviceToken,
-      })
-    } catch (error) {
-      // If the user is not authenticated, try the unauthenticated endpoint, this might happen if the refresh token expired and triggered a logout, then we need to delete the device token from the unauthenticated endpoint
-      if (error.status === 403) {
-        this.logger.info(
-          'Failed to delete device token, trying unauthenticated endpoint',
-          error,
-        )
-        return await this.v2UserProfileApi.userTokenControllerDeleteDeviceToken(
-          {
-            deviceToken: input.deviceToken,
-          },
-        )
-      }
-      this.logger.error('Failed to delete device token', error)
-      throw error
-    }
+    return await this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerDeleteDeviceToken({
+      deviceToken: input.deviceToken,
+    })
   }
 
   async getUserProfileLocale(user: User) {

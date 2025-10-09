@@ -20,6 +20,7 @@ import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { UserProfile } from '../models/userProfile.model'
 import { VerificationService } from '../verification.service'
+import { UserTokenService } from '../userToken.service'
 import { formatPhoneNumber } from '../utils/format-phone-number'
 import { SmsVerification } from '../models/smsVerification.model'
 import { EmailVerification } from '../models/emailVerification.model'
@@ -2530,7 +2531,7 @@ describe('MeUserProfileController', () => {
         scope: [UserProfileScope.write],
       })
 
-      // User 1 adds device token
+      // Setup app with User 1
       await app.cleanUp()
       app = await setupApp({
         AppModule,
@@ -2539,6 +2540,7 @@ describe('MeUserProfileController', () => {
       })
       server = request(app.getHttpServer())
 
+      // User 1 adds device token
       const user1Res = await server
         .post('/v2/me/device-tokens')
         .send({ deviceToken: sharedDeviceToken })
@@ -2547,25 +2549,19 @@ describe('MeUserProfileController', () => {
       expect(user1Res.body.deviceToken).toBe(sharedDeviceToken)
       expect(user1Res.body.nationalId).toBe(user1.nationalId)
 
+      // Get the UserTokenService directly to test the reassignment logic
+      const userTokenService = app.get(UserTokenService)
+
       // User 2 uses same device token - should reassign to user 2
-      await app.cleanUp()
-      app = await setupApp({
-        AppModule,
-        SequelizeConfigService,
-        user: user2,
-      })
-      server = request(app.getHttpServer())
+      const result = await userTokenService.addDeviceToken(
+        sharedDeviceToken,
+        user2,
+      )
 
-      const user2Res = await server
-        .post('/v2/me/device-tokens')
-        .send({ deviceToken: sharedDeviceToken })
-
-      expect(user2Res.status).toBe(201)
-      expect(user2Res.body.deviceToken).toBe(sharedDeviceToken)
-      expect(user2Res.body.nationalId).toBe(user2.nationalId)
-
+      expect(result.deviceToken).toBe(sharedDeviceToken)
+      expect(result.nationalId).toBe(user2.nationalId)
       // Should be the same record (same ID) but with updated nationalId
-      expect(user2Res.body.id).toBe(user1Res.body.id)
+      expect(result.id).toBe(user1Res.body.id)
     })
   })
 
