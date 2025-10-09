@@ -4,6 +4,7 @@ import { ApplicationService } from './application.service'
 import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ApplicationAdminResolver } from './application-admin/application-admin.resolvers'
+
 export interface Config {
   baseApiUrl: string
 }
