@@ -116,6 +116,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
 
   const {
+    judges,
     districtCourtAssistants,
     registrars,
     loading: usersLoading,
