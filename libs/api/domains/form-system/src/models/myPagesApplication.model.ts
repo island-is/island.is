@@ -1,30 +1,5 @@
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
-import {
-  ApplicationListAdminResponseDtoStatusEnum,
-  ApplicationListAdminResponseDtoTypeIdEnum,
-} from '../../gen/fetch'
-
-import {
-  ApplicationResponseDtoStatusEnum,
-  ApplicationResponseDtoTypeIdEnum,
-} from '../../gen/fetch'
-
-registerEnumType(ApplicationResponseDtoTypeIdEnum, {
-  name: 'ApplicationResponseDtoTypeIdEnum',
-})
-
-registerEnumType(ApplicationResponseDtoStatusEnum, {
-  name: 'ApplicationResponseDtoStatusEnum',
-})
-
-registerEnumType(ApplicationListAdminResponseDtoTypeIdEnum, {
-  name: 'ApplicationListAdminResponseDtoTypeIdEnum',
-})
-
-registerEnumType(ApplicationListAdminResponseDtoStatusEnum, {
-  name: 'ApplicationListAdminResponseDtoStatusEnum',
-})
 
 @ObjectType()
 class ActionCardTag {
@@ -90,7 +65,7 @@ class ActionCardMetaData {
 }
 
 @ObjectType()
-export class Application {
+export class MyPagesApplication {
   @Field(() => ID)
   id!: string
 
@@ -115,8 +90,8 @@ export class Application {
   @Field(() => ActionCardMetaData, { nullable: true })
   actionCard?: ActionCardMetaData
 
-  @Field(() => ApplicationResponseDtoTypeIdEnum)
-  typeId!: ApplicationResponseDtoTypeIdEnum
+  @Field(() => String)
+  typeId!: string
 
   @Field(() => graphqlTypeJson)
   answers!: object
@@ -133,11 +108,14 @@ export class Application {
   @Field(() => Number, { nullable: true })
   progress?: number
 
-  @Field(() => ApplicationResponseDtoStatusEnum)
-  status!: ApplicationResponseDtoStatusEnum
+  @Field(() => String)
+  status!: String
 
   @Field(() => Boolean, { nullable: true })
   pruned?: boolean
+
+  @Field(() => String, { nullable: true })
+  formSystemSlug?: string
 }
 
 @ObjectType()
@@ -211,8 +189,8 @@ export class ApplicationAdmin {
   @Field(() => ActionCardMetaData, { nullable: true })
   actionCard?: ActionCardMetaData
 
-  @Field(() => ApplicationListAdminResponseDtoTypeIdEnum)
-  typeId!: ApplicationListAdminResponseDtoTypeIdEnum
+  @Field(() => String)
+  typeId!: string
 
   @Field(() => String, { nullable: true })
   name?: string
@@ -223,8 +201,8 @@ export class ApplicationAdmin {
   @Field(() => Number, { nullable: true })
   progress?: number
 
-  @Field(() => ApplicationListAdminResponseDtoStatusEnum)
-  status!: ApplicationListAdminResponseDtoStatusEnum
+  @Field(() => String)
+  status!: string
 
   @Field(() => String, { nullable: true })
   applicantName?: string

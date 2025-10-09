@@ -8,11 +8,16 @@ const getBaseUrl = () => {
 }
 
 export const useOpenApplication = (
-  application: Pick<Application, 'id' | 'typeId'>,
+  application: Pick<Application, 'id' | 'typeId' | 'formSystemSlug'>,
 ) => {
+  console.log('application in useOpenApplication', application)
   const baseUrl = getBaseUrl()
-  const slug = getSlugFromType(application.typeId)
-  const url = `${baseUrl}/${slug}/${application.id}`
+  const slug = application.formSystemSlug
+    ? application.formSystemSlug
+    : getSlugFromType(application.typeId)
+  const url = application.formSystemSlug
+    ? `form/${slug}/${application.id}`
+    : `${baseUrl}/${slug}/${application.id}`
 
   const openApplication = () => {
     window.open(url)

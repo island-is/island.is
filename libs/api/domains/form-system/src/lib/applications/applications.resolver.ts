@@ -7,6 +7,7 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
+import type { Locale } from '@island.is/shared/types'
 import { ApplicationsService } from './applications.service'
 import {
   Application,
@@ -22,6 +23,7 @@ import {
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import { Screen } from '../../models/screen.model'
+import { MyPagesApplication } from '../../models/myPagesApplication.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -60,6 +62,18 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
     return this.applicationsService.getAllApplications(user, input)
+  }
+
+  @Query(() => [MyPagesApplication], {
+    nullable: true,
+    name: 'formSystemMyPagesApplications',
+  })
+  async myPagesApplications(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ): Promise<MyPagesApplication[]> {
+    return this.applicationsService.myPagesApplications(user, locale)
   }
 
   @Mutation(() => Application, {

@@ -16,12 +16,13 @@ export const getSlugFromType = (type: string) => {
 }
 
 export const getApplicationUrl = (
-  application: Pick<Application, 'typeId' | 'id'>,
+  application: Pick<Application, 'typeId' | 'id' | 'formSystemSlug'>,
 ) => {
   const slug = getSlugFromType(application.typeId)
   const uri = `${getConfig().apiUrl.replace(/api$/, 'umsoknir')}/${slug}/${
     application.id
   }`
+  console.log('applications-utils getApplicationUrl', application)
   return uri
 }
 

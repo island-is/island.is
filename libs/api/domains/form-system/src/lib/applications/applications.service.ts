@@ -29,6 +29,7 @@ import {
   ApplicationResponse,
 } from '../../models/applications.model'
 import { Screen } from '../../models/screen.model'
+import { MyPagesApplication } from '../../models/myPagesApplication.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -102,6 +103,21 @@ export class ApplicationsService {
         handle4xx(e, this.handleError, 'failed to get applications'),
       )
     return response as ApplicationResponse
+  }
+
+  async myPagesApplications(
+    auth: User,
+    locale: string,
+  ): Promise<MyPagesApplication[]> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerFindAllByUser({
+        nationalId: auth.nationalId,
+        locale,
+      })
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get applications'),
+      )
+    return response as MyPagesApplication[]
   }
 
   async updateDependencies(
