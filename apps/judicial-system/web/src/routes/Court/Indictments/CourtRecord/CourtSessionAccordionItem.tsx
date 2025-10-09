@@ -377,7 +377,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     )
   }
 
-  const getInititalAttendees = () => {
+  const getInitialAttendees = () => {
     const attendees = []
     if (workingCase.prosecutor) {
       attendees.push(
@@ -393,18 +393,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             `\n${defendant.defenderName} skipaður verjandi ${defendant.name}`,
           )
         }
-      })
-    }
-
-    if (workingCase.translator) {
-      attendees.push(`\n${workingCase.translator} túlkur`)
-    }
-
-    if (workingCase.defendants && workingCase.defendants.length > 0) {
-      workingCase.defendants.forEach((defendant) => {
         attendees.push(`\n${defendant.name} ákærði`)
       })
     }
+
     return attendees.length > 0 ? attendees.join('') : undefined
   }
 
@@ -577,7 +569,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             data-testid="courtAttendees"
             name="courtAttendees"
             label="Mættir eru"
-            value={courtSession.attendees || getInititalAttendees()}
+            value={courtSession.attendees || getInitialAttendees()}
             placeholder="Skrifa hér..."
             onChange={(event) => {
               patchSession(courtSession.id, {
