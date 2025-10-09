@@ -403,6 +403,22 @@ export class CourtDocumentRepositoryService {
     }
   }
 
+  async deleteDocumentsInSession(
+    caseId: string,
+    courtSessionId: string,
+    transaction?: Transaction,
+  ) {
+    const filedDocuments = await this.courtDocumentModel.findAll({
+      where: { caseId, courtSessionId },
+      order: [['documentOrder', 'DESC']], // Delete from highest to lowest order is cheaper
+      transaction,
+    })
+
+    for (const f of filedDocuments) {
+      await this.delete(caseId, courtSessionId, f.id, { transaction })
+    }
+  }
+
   private async makeNextCourtSessionDocumentOrderAvailable(
     caseId: string,
     courtSessionId: string,
@@ -457,43 +473,6 @@ export class CourtDocumentRepositoryService {
       },
     )
     return nextOrder
-  }
-
-  async deleteDocumentsInSession(
-    caseId: string,
-    courtSessionId: string,
-    transaction?: Transaction,
-  ) {
-    const filedDocumentsInSession = await this.getFiledDocumentsInSession(
-      caseId,
-      courtSessionId,
-      transaction,
-    )
-
-    for (const filedDocument of filedDocumentsInSession) {
-      await this.delete(caseId, courtSessionId, filedDocument.id, {
-        transaction,
-      })
-    }
-  }
-
-  private async getFiledDocumentsInSession(
-    caseId: string,
-    courtSessionId: string,
-    transaction?: Transaction,
-  ) {
-    const filedDocuments = await this.courtDocumentModel.findAll({
-      where: { caseId, courtSessionId },
-      transaction,
-    })
-
-    if (filedDocuments.length === 0) {
-      this.logger.info(
-        `No court documents found in court session ${courtSessionId} of case ${caseId}`,
-      )
-    }
-
-    return filedDocuments
   }
 
   private async deleteFromDatabase(
