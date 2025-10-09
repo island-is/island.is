@@ -9,14 +9,15 @@ import { Form, LshDevService } from '@island.is/clients/health-directorate'
 import {
   Questionnaire,
   QuestionnairesList,
-  QuestionnairesStatusEnum,
 } from '../models/questionnaires.model'
 import {
   createMockElDistressThermometerQuestionnaire,
   createMockElPregnancyQuestionnaire,
   mapExternalQuestionnairesToList,
 } from './transform-mappers/health-directorate/hd-mapper'
+import { mapToLshAnswer } from './transform-mappers/lsh/lsh-input-mapper'
 import { mapFormsToQuestionnairesList } from './transform-mappers/lsh/lsh-mapper'
+
 @Injectable()
 export class QuestionnairesService {
   constructor(
@@ -60,27 +61,9 @@ export class QuestionnairesService {
   async submitQuestionnaire(
     user: User,
     input: QuestionnaireInput,
-  ): Promise<Questionnaire | null> {
-    // Get the original questionnaire
-    const questionnaires: Form[] = await this.lshDevApi.getPatientForms(user)
-    const questionnaire = questionnaires.find((q) => q.gUID === input.id)
-    if (!questionnaire) {
-      return null
-    }
-    const parsedFormJSON = questionnaire?.formJSON
-      ? JSON.parse(questionnaire.formJSON)
-      : null
-
-    // TODO: Submit to actual backend service here
-    //await this.lshDevApi.postPatientForm(user, parsedFormJSON)
-    // For now, return the questionnaire with CurrentValues added but without sections in response
-    return {
-      id: input.id,
-      title: questionnaire.caption || 'Submitted Questionnaire',
-      sentDate: new Date().toISOString(),
-      status: QuestionnairesStatusEnum.answered,
-      // Sections are excluded from response as requested
-    }
+  ): Promise<boolean> {
+    const lshAnswer = mapToLshAnswer(input)
+    return await this.lshDevApi.postPatientForm(user, lshAnswer, lshAnswer.GUID)
   }
 
   async getQuestionnaires(

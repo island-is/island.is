@@ -42,7 +42,7 @@ const QuestionnaireDetail: React.FC = () => {
       ([questionId, answer]) => ({
         EntryID: questionId,
         Value: answer.value,
-        Type: typeof answer.value,
+        Type: answer.type,
       }),
     )
 
@@ -57,7 +57,7 @@ const QuestionnaireDetail: React.FC = () => {
               ? answer.Value
               : [String(answer.Value)],
           })),
-          formId: data?.questionnairesDetail?.id || '',
+          formId: data?.questionnairesDetail?.formId || '',
         },
       },
     })

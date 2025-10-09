@@ -52,7 +52,7 @@ export class QuestionnairesResolver {
   async submitQuestionnaire(
     @CurrentUser() user: User,
     @Args('input') input: QuestionnaireInput,
-  ): Promise<Questionnaire | null> {
+  ): Promise<boolean> {
     return this.questionnairesService.submitQuestionnaire(user, input)
   }
 }

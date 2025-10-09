@@ -9,19 +9,6 @@ import {
   PatientPropertiesApi,
 } from './gen/fetch'
 
-// Example of posting form answers
-// .. rest of question
-// "CurrentValues": {
-//    "Label": "Label1;Label3",
-//    "Value": "Value1;Value3;"
-// },
-interface postPatientForm {
-  CurrentValues: {
-    Label: string
-    Value: string
-  }
-  EntryID: string
-}
 @Injectable()
 export class LshDevService {
   constructor(
@@ -42,9 +29,12 @@ export class LshDevService {
     return data
   }
 
-  async postPatientForm(auth: Auth, form: any): Promise<boolean> {
+  async postPatientForm(auth: Auth, form: any, guid: string): Promise<boolean> {
+    console.log('form to post:', form)
     return await this.patientPropertiesApiWithAuth(
       auth,
-    ).apiV2PatientPropertiesSubmitFormAnswersPost(form)
+    ).apiV2PatientPropertiesSubmitFormAnswersPost({
+      formAnswers: { answersJSON: form, formGUID: guid },
+    })
   }
 }

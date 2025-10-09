@@ -30,6 +30,9 @@ export class Questionnaire {
   @Field()
   sentDate!: string
 
+  @Field({ nullable: true })
+  formId?: string
+
   @Field(() => QuestionnairesStatusEnum, { nullable: true })
   status?: QuestionnairesStatusEnum
 

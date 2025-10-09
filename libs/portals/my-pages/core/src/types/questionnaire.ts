@@ -1,5 +1,7 @@
 // GraphQL-based interfaces for dynamic questionnaire rendering
 
+import { QuestionnaireAnswerOptionType } from '@island.is/api/schema'
+
 export interface HealthQuestionnaireAnswerOption {
   id: string
   label: string
@@ -44,5 +46,6 @@ export interface QuestionnaireResponse {
 export interface QuestionAnswer {
   questionId: string
   value: string | string[] | number
+  type: QuestionnaireAnswerOptionType
   extraAnswers?: { [key: string]: QuestionAnswer }
 }

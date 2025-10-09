@@ -35,6 +35,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
     onAnswerChange({
       questionId: question.id,
       value,
+      type: question.answerOptions.type,
       extraAnswers,
     })
   }

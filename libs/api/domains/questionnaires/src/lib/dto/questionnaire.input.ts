@@ -1,4 +1,5 @@
 import { Field, InputType, ID } from '@nestjs/graphql'
+import { AnswerOptionType } from '../../models/question.model'
 
 @InputType()
 export class QuestionnaireEntryInput {
@@ -8,8 +9,8 @@ export class QuestionnaireEntryInput {
   @Field(() => [String])
   values!: string[]
 
-  @Field()
-  type!: string
+  @Field(() => AnswerOptionType)
+  type!: AnswerOptionType
 }
 
 @InputType()

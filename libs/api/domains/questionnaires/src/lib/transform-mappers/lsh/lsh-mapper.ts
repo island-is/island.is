@@ -265,6 +265,7 @@ function mapQuestionnaire(form: Form): Questionnaire {
 
   return {
     id: form.gUID || 'undefined-id',
+    formId: (parsed['FormID'] as string) || 'undefined-form-id',
     title: form.caption || (parsed['Header'] as string) || 'Untitled Form',
     description:
       form.description || (parsed['Description'] as string) || undefined,
