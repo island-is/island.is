@@ -18,6 +18,8 @@ import {
   JobWishesInAnswers,
   LanguagesInAnswers,
   LicensesInAnswers,
+  OtherBenefitsInAnswers,
+  PaymentTypeIds,
   PayoutInAnswers,
   ReasonsForJobSearchInAnswers,
   TaxDiscountInAnswers,
@@ -465,6 +467,55 @@ export const getFileInfo = async (
       500,
     )
   }
+}
+
+export const getPensionAndOtherPayments = (
+  otherBenefits: OtherBenefitsInAnswers,
+) => {
+  return otherBenefits?.receivingBenefits === YES
+    ? {
+        wellfarePayments: otherBenefits.payments
+          ?.filter(
+            (x) =>
+              x.typeOfPayment === PaymentTypeIds.INSURANCE_PAYMENTS_TYPE_ID,
+          )
+          .map((payment) => {
+            return {
+              incomeTypeId: payment.subType,
+              periodFrom: payment.dateFrom ? new Date(payment.dateFrom) : null,
+              periodTo: payment.dateTo ? new Date(payment.dateTo) : null,
+              estimatedIncome: parseInt(payment.paymentAmount || ''),
+              realIncome: parseInt(payment.paymentAmount || ''),
+            }
+          }),
+        pensionPayments: otherBenefits.payments
+          ?.filter(
+            (x) => x.typeOfPayment === PaymentTypeIds.PENSION_FUND_TYPE_ID,
+          )
+          .map((payment) => {
+            return {
+              incomeTypeId: payment.subType,
+              estimatedIncome: parseInt(payment.paymentAmount || ''),
+              realIncome: parseInt(payment.paymentAmount || ''),
+              pensionFundId: payment.pensionFund,
+            }
+          }),
+        privatePensionPayments: otherBenefits.payments
+          ?.filter(
+            (x) =>
+              x.typeOfPayment === PaymentTypeIds.SUPPLEMENTARY_FUND_TYPE_ID,
+          )
+          .map((payment) => {
+            return {
+              incomeTypeId: payment.subType,
+              estimatedIncome: parseInt(payment.paymentAmount || ''),
+              realIncome: parseInt(payment.paymentAmount || ''),
+              privatePensionFundId: payment.pensionFund,
+            }
+          }),
+        // TODO NEED FIELD TO RETURN SJUKRADAGPENINGAR
+      }
+    : null
 }
 
 const getFileExtension = (fileName: string): string | undefined => {

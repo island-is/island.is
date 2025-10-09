@@ -29,6 +29,7 @@ import {
   getJobWishList,
   getLanguageSkills,
   getLicenseInformation,
+  getPensionAndOtherPayments,
   getPersonalInformation,
   getPersonalTaxCredit,
   getPreviousOccupationInformation,
@@ -187,13 +188,13 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       []
 
     // Læknistvottorð - ástæða atvinnuleitar
-    const medicalCertificateFile =
+    const medicalCertificateFiles =
       getValueViaPath<Array<FileSchemaInAnswers>>(
         answers,
         'reasonForJobSearch.healthReason',
         [],
       ) ?? []
-    medicalCertificateFile.forEach(async (file) => {
+    medicalCertificateFiles.forEach(async (file) => {
       const attachment = await getFileInfo(
         this.s3Service,
         application.id,
@@ -219,6 +220,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
         file,
       )
 
+      // We need to return a specific type of file depending on how the user answered the education questions
       let fileTypeId
       if (educationAnswers.typeOfEducation === EducationType.LAST_YEAR) {
         fileTypeId = FileTypeIds.SCHOOL_CONFIRMATION_FINISHED_LAST_TWELVE
@@ -336,53 +338,9 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     }
 
     //pensionAndOtherPayments
-    const pensionAndOtherPayments =
-      otherBenefits?.receivingBenefits === YES
-        ? {
-            wellfarePayments: otherBenefits.payments
-              ?.filter(
-                (x) =>
-                  x.typeOfPayment === PaymentTypeIds.INSURANCE_PAYMENTS_TYPE_ID,
-              )
-              .map((payment) => {
-                return {
-                  incomeTypeId: payment.subType,
-                  periodFrom: payment.dateFrom
-                    ? new Date(payment.dateFrom)
-                    : null,
-                  periodTo: payment.dateTo ? new Date(payment.dateTo) : null,
-                  estimatedIncome: parseInt(payment.paymentAmount || ''),
-                  realIncome: parseInt(payment.paymentAmount || ''),
-                }
-              }),
-            pensionPayments: otherBenefits.payments
-              ?.filter(
-                (x) => x.typeOfPayment === PaymentTypeIds.PENSION_FUND_TYPE_ID,
-              )
-              .map((payment) => {
-                return {
-                  incomeTypeId: payment.subType,
-                  estimatedIncome: parseInt(payment.paymentAmount || ''),
-                  realIncome: parseInt(payment.paymentAmount || ''),
-                  pensionFundId: payment.pensionFund,
-                }
-              }),
-            privatePensionPayments: otherBenefits.payments
-              ?.filter(
-                (x) =>
-                  x.typeOfPayment === PaymentTypeIds.SUPPLEMENTARY_FUND_TYPE_ID,
-              )
-              .map((payment) => {
-                return {
-                  incomeTypeId: payment.subType,
-                  estimatedIncome: parseInt(payment.paymentAmount || ''),
-                  realIncome: parseInt(payment.paymentAmount || ''),
-                  privatePensionFundId: payment.pensionFund,
-                }
-              }),
-            // TODO NEED FIELD TO RETURN SJUKRADAGPENINGAR
-          }
-        : null
+    const pensionAndOtherPayments = otherBenefits
+      ? getPensionAndOtherPayments(otherBenefits)
+      : undefined
 
     //previousOccupation
     const previousOccupation = getPreviousOccupationInformation(
@@ -408,11 +366,6 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
 
     //educationalQuestions
     const educationalQuestions = getEducationalQuestions(answers)
-
-    // throw new Error('dont work please')
-
-    //submit attachments
-    // const attachmentObjectsWithType = getAttachmentObjects(attachmentList)
 
     const submitResponse: UnemploymentApplicationCreateUnemploymentApplicationRequest =
       {
