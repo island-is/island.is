@@ -1972,9 +1972,9 @@ license-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/license-api'
     create: true
-    name: ''
+    name: 'license-api'
 namespaces:
   labels: {}
   namespaces:

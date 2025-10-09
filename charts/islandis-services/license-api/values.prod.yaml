@@ -116,6 +116,6 @@ securityContext:
   privileged: false
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/'
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/license-api'
   create: true
-  name: ''
+  name: 'license-api'
