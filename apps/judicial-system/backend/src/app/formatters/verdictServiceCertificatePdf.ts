@@ -10,7 +10,6 @@ import {
 import { hasTimestamp } from '@island.is/judicial-system/types'
 import {
   UserRole,
-  VerdictAppealDecision,
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
