@@ -41,10 +41,12 @@ import * as styles from './TableRepeaterItem.css'
 import { VehiclePermnoWithInfoFormField } from '../VehiclePermnoWithInfoFormField/VehiclePermnoWithInfoFormField'
 import { DescriptionFormField } from '../DescriptionFormField/DescriptionFormField'
 import { FileUploadFormField } from '../FileUploadFormField/FileUploadFormField'
+import { RecordObject } from '@island.is/shared/types'
 
 interface ItemFieldProps {
   application: Application
   error?: string
+  errors?: RecordObject
   item: RepeaterItem & { id: string }
   dataId: string
   activeIndex: number
@@ -64,6 +66,7 @@ const componentMapper = {
 export const Item = ({
   application,
   error,
+  errors,
   item,
   dataId,
   activeIndex,
@@ -490,6 +493,7 @@ export const Item = ({
       {component === 'vehiclePermnoWithInfo' && vehiclePermnoWithInfoProps && (
         <VehiclePermnoWithInfoFormField
           application={application}
+          errors={errors}
           field={{
             ...vehiclePermnoWithInfoProps,
           }}
