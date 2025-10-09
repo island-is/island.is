@@ -8,15 +8,9 @@ import {
   Param,
 } from '@nestjs/common'
 
-import {
-  IdsAuthGuard,
-  Scopes,
-  ScopesGuard,
-  CurrentUser,
-  User,
-} from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UserProfileScope } from '@island.is/auth/scopes'
-import { Audit, AuditService } from '@island.is/nest/audit'
+import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
 import { UserTokenService } from './userToken.service'
@@ -24,22 +18,19 @@ import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
 
 const namespace = '@island.is/user-profile/v2/userTokens'
 
+@UseGuards(IdsAuthGuard, ScopesGuard)
+@Scopes(UserProfileScope.admin)
 @ApiTags('v2/users')
+@ApiSecurity('oauth2', [UserProfileScope.admin])
 @Controller({
   path: 'users/.nationalId/device-tokens',
   version: ['2'],
 })
 @Audit({ namespace })
 export class UserTokenController {
-  constructor(
-    private readonly userTokenService: UserTokenService,
-    private readonly auditService: AuditService,
-  ) {}
+  constructor(private readonly userTokenService: UserTokenService) {}
 
   @Get()
-  @UseGuards(IdsAuthGuard, ScopesGuard)
-  @Scopes(UserProfileScope.admin)
-  @ApiSecurity('oauth2', [UserProfileScope.admin])
   @Documentation({
     description: 'Get user device tokens for given nationalId.',
     request: {
@@ -66,31 +57,16 @@ export class UserTokenController {
     description: 'Delete a user device token.',
     response: { status: 204 },
   })
+  @Audit({
+    resources: (deviceToken: string) => deviceToken,
+  })
   async deleteUserDeviceToken(
     @Headers('X-Param-National-Id') nationalId: string,
     @Param('deviceToken') deviceToken: string,
-    @CurrentUser() user?: User,
   ): Promise<void> {
-    return this.auditService.auditPromise<void>(
-      {
-        auth:
-          user ??
-          ({
-            actor: 'unauthenticated',
-            scope: [],
-            authorization: '',
-            client: '',
-          } as any),
-        action: 'deleteUserDeviceToken',
-        namespace,
-        resources: deviceToken,
-      },
-      (async () => {
-        await this.userTokenService.deleteUserTokenByNationalId(
-          nationalId,
-          deviceToken,
-        )
-      })(),
+    await this.userTokenService.deleteUserTokenByNationalId(
+      nationalId,
+      deviceToken,
     )
   }
 }
