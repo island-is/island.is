@@ -34,7 +34,7 @@ import {
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
   GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
-import { languageIds } from './constants'
+import { LanguageIds } from './constants'
 
 export const getStartingLocale = (externalData: ExternalData) => {
   return getValueViaPath<Locale>(externalData, 'startingLocale.data')
@@ -332,9 +332,9 @@ export const getLanguageSkills = (
       const languageId = language
         ? language.language
         : index === 0
-        ? languageIds.ICELANDIC
+        ? LanguageIds.ICELANDIC
         : index === 1
-        ? languageIds.ENGLISH
+        ? LanguageIds.ENGLISH
         : ''
       const languageName = language
         ? languages.find((x) => x.id === language.language)?.name
@@ -348,13 +348,13 @@ export const getLanguageSkills = (
         name: languageName,
         readOnly:
           //These are the id's from icelandic and english from supportData
-          language.language === languageIds.ICELANDIC ||
-          language.language === languageIds.ENGLISH,
+          language.language === LanguageIds.ICELANDIC ||
+          language.language === LanguageIds.ENGLISH,
         knowledge: language.skill,
         required:
           //These are the id's from icelandic and english from supportData
-          language.language === languageIds.ICELANDIC ||
-          language.language === languageIds.ENGLISH,
+          language.language === LanguageIds.ICELANDIC ||
+          language.language === LanguageIds.ENGLISH,
       }
     }),
   }
