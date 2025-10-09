@@ -116,10 +116,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
 
   const {
+    judges,
     districtCourtAssistants,
     registrars,
     loading: usersLoading,
   } = useUsers(workingCase.court?.id)
+
+  const defaultJudge = judges?.find(
+    (judge) => judge.value === (courtSession.judgeId ?? workingCase.judge?.id),
+  )
 
   const patchSession = (
     courtSessionId: string,
@@ -413,6 +418,35 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 disabled={courtSession.isConfirmed || false}
                 blueBox={false}
                 required
+              />
+              <Select
+                name="judge"
+                label="Veldu dómara/aðstoðarmann"
+                placeholder="Veldu héraðsdómara"
+                value={defaultJudge}
+                options={judges}
+                onChange={(selectedOption) => {
+                  const selectedUser = judges.find(
+                    (u) => u.value === selectedOption?.value,
+                  )
+                  if (!selectedUser) {
+                    return
+                  }
+                  patchSession(courtSession.id, {
+                    judge: {
+                      id: selectedUser.value || '',
+                      name: selectedUser.label,
+                    },
+                  })
+
+                  patchSession(
+                    courtSession.id,
+                    { judgeId: selectedUser.value },
+                    { persist: true },
+                  )
+                }}
+                required
+                isDisabled={usersLoading || courtSession.isConfirmed || false}
               />
               <Input
                 data-testid="courtLocation"
