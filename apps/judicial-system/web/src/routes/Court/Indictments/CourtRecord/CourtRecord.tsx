@@ -56,11 +56,12 @@ const CourtRecord: FC = () => {
   }
 
   useEffect(() => {
-    setExpandedIndex(
-      workingCase.courtSessions?.length
-        ? workingCase.courtSessions.length - 1
-        : 0,
-    )
+    if (
+      workingCase.courtSessions?.length &&
+      workingCase.courtSessions?.length >= 0
+    ) {
+      setExpandedIndex(workingCase.courtSessions.length - 1)
+    }
   }, [workingCase.courtSessions?.length])
 
   return (
@@ -82,9 +83,9 @@ const CourtRecord: FC = () => {
               index={index}
               courtSession={courtSession}
               isExpanded={expandedIndex === index}
-              onToggle={() =>
+              onToggle={() => {
                 setExpandedIndex(index === expandedIndex ? -1 : index)
-              }
+              }}
               onConfirmClick={() =>
                 handleConfirmClick(courtSession.id, courtSession.isConfirmed)
               }
