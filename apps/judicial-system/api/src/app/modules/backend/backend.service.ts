@@ -28,6 +28,7 @@ import {
   CourtSessionResponse,
   DeleteCourtDocumentResponse,
 } from '../court-session'
+import { DeleteCourtSessionResponse } from '../court-session/dto/deleteCourtSession.response'
 import {
   CivilClaimant,
   Defendant,
@@ -614,6 +615,13 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/courtSession/${courtSessionId}`,
       updateCourtSession,
     )
+  }
+
+  deleteCourtSession(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<DeleteCourtSessionResponse> {
+    return this.delete(`case/${caseId}/courtSession/${courtSessionId}`)
   }
 
   createCourtDocument(

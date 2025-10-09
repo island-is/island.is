@@ -50,6 +50,11 @@ export class UpdatePoliceDocumentDeliveryDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean, required: false })
+  deliveredToDefendant?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean, required: false })
   deliveredOnIslandis?: boolean // delivered electronically on island.is
 
   @IsOptional()

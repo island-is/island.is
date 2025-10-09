@@ -457,6 +457,43 @@ export class CourtDocumentRepositoryService {
     return nextOrder
   }
 
+  async deleteDocumentsInSession(
+    caseId: string,
+    courtSessionId: string,
+    transaction?: Transaction,
+  ) {
+    const filedDocumentsInSession = await this.getFiledDocumentsInSession(
+      caseId,
+      courtSessionId,
+      transaction,
+    )
+
+    for (const filedDocument of filedDocumentsInSession) {
+      await this.delete(caseId, courtSessionId, filedDocument.id, {
+        transaction,
+      })
+    }
+  }
+
+  private async getFiledDocumentsInSession(
+    caseId: string,
+    courtSessionId: string,
+    transaction?: Transaction,
+  ) {
+    const filedDocuments = await this.courtDocumentModel.findAll({
+      where: { caseId, courtSessionId },
+      transaction,
+    })
+
+    if (filedDocuments.length === 0) {
+      this.logger.info(
+        `No court documents found in court session ${courtSessionId} of case ${caseId}`,
+      )
+    }
+
+    return filedDocuments
+  }
+
   private async deleteFromDatabase(
     courtDocumentId: string,
     caseId: string,
@@ -465,7 +502,7 @@ export class CourtDocumentRepositoryService {
   ) {
     const numberOfDeletedRows = await this.courtDocumentModel.destroy({
       where: { id: courtDocumentId, caseId, courtSessionId },
-      transaction: transaction,
+      transaction,
     })
 
     if (numberOfDeletedRows < 1) {

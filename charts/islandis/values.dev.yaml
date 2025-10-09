@@ -3122,6 +3122,8 @@ services-sessions:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -3140,6 +3142,11 @@ services-sessions:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-sessions'
+    create: true
+    name: 'services-sessions'
 services-sessions-cleanup:
   args:
     - 'main.cjs'
