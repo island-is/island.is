@@ -24,6 +24,10 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
+  applyDativeCaseToCourtName,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
+import {
   BlueBox,
   DateTime,
   MultipleValueList,
@@ -378,6 +382,29 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     )
   }
 
+  const getInitialAttendees = () => {
+    const attendees = []
+    if (workingCase.prosecutor) {
+      attendees.push(
+        `${workingCase.prosecutor.name} ${lowercase(
+          workingCase.prosecutor.title,
+        )}`,
+      )
+    }
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      workingCase.defendants.forEach((defendant) => {
+        if (defendant.defenderName) {
+          attendees.push(
+            `\n${defendant.defenderName} skipaður verjandi ${defendant.name}`,
+          )
+        }
+        attendees.push(`\n${defendant.name} ákærði`)
+      })
+    }
+
+    return attendees.length > 0 ? attendees.join('') : undefined
+  }
+
   useEffect(() => {
     if (isExpanded && !courtSession.isConfirmed) {
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -405,7 +432,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 datepickerLabel="Dagsetning þingfestingar"
                 timeLabel="Þinghald hófst (kk:mm)"
                 maxDate={new Date()}
-                selectedDate={courtSession.startDate}
+                selectedDate={
+                  courtSession.startDate ??
+                  workingCase.courtDate?.date ??
+                  workingCase.arraignmentDate?.date
+                }
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
                     patchSession(
@@ -453,7 +484,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 name="courtLocation"
                 tooltip='Sláðu inn staðsetningu dómþings í þágufalli með forskeyti sem hefst á litlum staf. Dæmi "í Héraðsdómi Reykjavíkur". Staðsetning mun birtast með þeim hætti í upphafi þingbókar.'
                 label="Hvar var dómþing haldið?"
-                value={courtSession.location || ''}
+                value={
+                  courtSession.location ??
+                  (workingCase.court?.name
+                    ? `í ${applyDativeCaseToCourtName(workingCase.court?.name)}`
+                    : '')
+                }
                 placeholder='Staðsetning þinghalds, t.d. "í Héraðsdómi Reykjavíkur"'
                 onChange={(event) => {
                   setLocationErrorMessage('')
@@ -567,7 +603,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             data-testid="courtAttendees"
             name="courtAttendees"
             label="Mættir eru"
-            value={courtSession.attendees || ''}
+            value={courtSession.attendees ?? getInitialAttendees()}
             placeholder="Skrifa hér..."
             onChange={(event) => {
               patchSession(courtSession.id, {
