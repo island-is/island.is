@@ -48,7 +48,7 @@ export const createIndictmentCourtRecordPdf = (
     addIndictmentCourtRecordConfirmation(doc, confirmation)
   }
 
-  addEmptyLines(doc, 11, doc.page.margins.left)
+  addEmptyLines(doc, confirmation ? 11 : 6, doc.page.margins.left)
   setLineGap(doc, 2)
   addLargeHeading(doc, theCase.court?.name ?? 'Héraðsdómur', 'Times-Roman')
   addMediumHeading(doc, 'Þingbók')
@@ -128,7 +128,7 @@ export const createIndictmentCourtRecordPdf = (
       addNormalText(doc, 'Nr.', 'Times-Roman')
       addNumberedList(
         doc,
-        courtSession.filedDocuments.map((d) => d.name),
+        courtSession.filedDocuments.map((d) => d.name.normalize()),
         courtSession.filedDocuments[0].documentOrder,
       )
 
