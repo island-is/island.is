@@ -34,7 +34,6 @@ export const setOnMachineNumberChange = async (
     TrainingLicenseOnAWorkMachineAnswers['certificateOfTenure']
   >(application.answers, 'certificateOfTenure', [])
 
-  console.log('value', value)
   const selectedCategory =
     value && value.length > 0
       ? licenseCategories?.find(
