@@ -771,7 +771,8 @@ export type TableRepeaterField = BaseField & {
   titleVariant?: TitleVariants
   fields: Record<string, RepeaterItem>
   onSubmitLoad?(c: TableContext): Promise<{
-    dictionaryOfItems: Array<{ path: string; value: string }>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dictionaryOfItems: Array<{ path: string; value: any }>
   }>
   loadErrorMessage?: StaticText
   /**

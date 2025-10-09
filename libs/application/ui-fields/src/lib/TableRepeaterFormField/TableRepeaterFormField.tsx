@@ -40,6 +40,10 @@ interface Props extends FieldBaseProps {
   field: TableRepeaterField
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type TableRepeaterRow = Record<string, any> & { isNew?: boolean }
+type TableRepeaterForm = Record<string, TableRepeaterRow[]>
+
 export const TableRepeaterFormField: FC<Props> = ({
   application,
   setBeforeSubmitCallback,
@@ -71,15 +75,57 @@ export const TableRepeaterFormField: FC<Props> = ({
   } = data
 
   const apolloClient = useApolloClient()
+  const { formatMessage, lang: locale } = useLocale()
   const [loadError, setLoadError] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
 
   const items = Object.keys(rawItems).map((key) => ({
     id: key,
     ...rawItems[key],
   }))
+  const tableItems = items.filter((x) => x.displayInTable !== false)
+  const tableHeader = table?.header ?? buildDefaultTableHeader(tableItems)
+  const tableRows = table?.rows ?? buildDefaultTableRows(tableItems)
 
-  const load = async () => {
+  const methods = useFormContext<TableRepeaterForm>()
+  const { fields, append, remove } = useFieldArray({
+    control: methods.control,
+    name: data.id,
+  })
+
+  const values = useWatch({
+    control: methods.control,
+    name: data.id,
+  })
+  const customMappedValues = handleCustomMappedValues(tableItems, values)
+
+  const [activeIndex, setActiveIndex] = useState(
+    values?.findIndex((x) => x?.isNew) ?? -1,
+  )
+  const activeField = activeIndex >= 0 ? fields[activeIndex] : null
+
+  const savedFields = fields.filter(
+    (_, index) => index !== activeIndex && !values[index]?.isNew,
+  )
+
+  const staticData = getStaticTableData?.(application)
+
+  // Update the `isNew` flag for a specific row.
+  // Creates a copy of the values to avoid mutating the original form state directly,
+  // which is important to keep React Hook Form state consistent.
+  const updateIsNewValueForRow = (index: number, isNewValue: boolean) => {
+    const oldValues = methods.getValues(data.id) || []
+    const currentRow = oldValues[index]
+    if (currentRow?.isNew) {
+      const newValues = [...oldValues]
+      newValues[index] = { ...currentRow, isNew: isNewValue }
+      methods.setValue(data.id, newValues)
+    }
+  }
+
+  // Update other form values (if necessary) after saving a single row
+  const updateFormAfterSavingRow = async () => {
     if (!onSubmitLoad) {
       return
     }
@@ -101,35 +147,17 @@ export const TableRepeaterFormField: FC<Props> = ({
     }
   }
 
-  const { formatMessage, lang: locale } = useLocale()
-  const methods = useFormContext()
-  const [activeIndex, setActiveIndex] = useState(-1)
-  const { fields, append, remove } = useFieldArray({
-    control: methods.control,
-    name: data.id,
-  })
-  const [isEditing, setIsEditing] = useState(false)
-
-  const values = useWatch({ name: data.id, control: methods.control })
-  const activeField = activeIndex >= 0 ? fields[activeIndex] : null
-  const savedFields = fields.filter((_, index) => index !== activeIndex)
-  const tableItems = items.filter((x) => x.displayInTable !== false)
-  const tableHeader = table?.header ?? buildDefaultTableHeader(tableItems)
-  const tableRows = table?.rows ?? buildDefaultTableRows(tableItems)
-  const staticData = getStaticTableData?.(application)
-  const canAddItem = maxRows ? savedFields.length < maxRows : true
-
-  // check for components that might need some custom value mapping
-  const customMappedValues = handleCustomMappedValues(tableItems, values)
-
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
       shouldFocus: true,
     })
 
     if (isValid) {
+      // Set isNew=false for the current row
+      updateIsNewValueForRow(index, false)
+
       setActiveIndex(-1)
-      await load()
+      await updateFormAfterSavingRow()
     }
     setIsEditing(false)
   }
@@ -143,7 +171,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   }
 
   const handleNewItem = () => {
-    append({})
+    append({ isNew: true })
     setActiveIndex(fields.length)
     methods.clearErrors()
   }
@@ -177,12 +205,14 @@ export const TableRepeaterFormField: FC<Props> = ({
       : formatText(formatted, application, formatMessage)
   }
 
+  // If the list is empty and initActiveFieldIfEmpty=true,
+  // start with one row opened in edit mode
   useEffect(() => {
-    const values = methods.getValues(data.id) || []
-    if (initActiveFieldIfEmpty && values?.length === 0) {
+    const oldValues = methods.getValues(data.id) || []
+    if (initActiveFieldIfEmpty && oldValues.length === 0) {
       // Using setObjectValue to handle nested ids
       const newValues = {}
-      setObjectWithNestedKey(newValues, data.id, [{}])
+      setObjectWithNestedKey(newValues, data.id, [{ isNew: true }])
       methods.reset({
         ...newValues,
       })
@@ -380,7 +410,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                 type="button"
                 onClick={handleNewItem}
                 icon="add"
-                disabled={!canAddItem}
+                disabled={maxRows ? savedFields.length >= maxRows : false}
               >
                 {formatText(addItemButtonText, application, formatMessage)}
               </Button>
