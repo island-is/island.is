@@ -48,7 +48,7 @@ export class QuestionnairesResolver {
     return this.questionnairesService.getQuestionnaire(user, id)
   }
 
-  @Mutation(() => Questionnaire, { name: 'submitQuestionnaire' })
+  @Mutation(() => Boolean, { name: 'submitQuestionnaire' })
   async submitQuestionnaire(
     @CurrentUser() user: User,
     @Args('input') input: QuestionnaireInput,

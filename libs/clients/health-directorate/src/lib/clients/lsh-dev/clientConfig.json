@@ -8,7 +8,7 @@
       "email": "adeline@landspitali.is"
     },
     "license": {
-      "name": "Proprietary"
+      "name": "unknown"
     },
     "version": "2.0"
   },
@@ -539,6 +539,71 @@
               "application/json": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "IAS": ["IAS"]
+          }
+        ]
+      }
+    },
+    "/api/v2/Department": {
+      "get": {
+        "tags": ["Department"],
+        "summary": "Get details about all departments",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Department"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "IAS": ["IAS"]
+          }
+        ]
+      }
+    },
+    "/api/v2/Department/{ID}": {
+      "get": {
+        "tags": ["Department"],
+        "summary": "Get details about all departments",
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Department"
                 }
               }
             }
@@ -1907,7 +1972,8 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/FormAnswers"
+                "type": "object",
+                "additionalProperties": true
               }
             }
           }
@@ -2604,8 +2670,52 @@
             "description": "Description of the chat channel",
             "nullable": true
           },
+          "Categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Categories of messages available for this channel",
+            "nullable": true
+          },
           "Department": {
-            "$ref": "#/components/schemas/Department"
+            "$ref": "#/components/schemas/ChatDepartment"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ChatDepartment": {
+        "type": "object",
+        "properties": {
+          "DepartmentName": {
+            "type": "string",
+            "description": "ID of the chat channel",
+            "nullable": true
+          },
+          "DepartmentLocation": {
+            "type": "string",
+            "description": "Physical location of the department",
+            "nullable": true
+          },
+          "DepartmentPhoneNumber": {
+            "type": "string",
+            "description": "Public phone number of the department",
+            "nullable": true
+          },
+          "DepartmentEmail": {
+            "type": "string",
+            "description": "Public email of the department",
+            "nullable": true
+          },
+          "DepartmentURL": {
+            "type": "string",
+            "description": "URl for the department on the public Landspítali webiste",
+            "nullable": true
+          },
+          "DepartmentFooter": {
+            "type": "string",
+            "description": "Footer text for the department",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2725,34 +2835,44 @@
       "Department": {
         "type": "object",
         "properties": {
-          "DepartmentName": {
+          "ID": {
             "type": "string",
-            "description": "ID of the chat channel",
+            "description": "Department ID",
             "nullable": true
           },
-          "DepartmentLocation": {
+          "Name": {
             "type": "string",
-            "description": "Physical location of the department",
+            "description": "Department name",
             "nullable": true
           },
-          "DepartmentPhoneNumber": {
+          "Description": {
             "type": "string",
-            "description": "Public phone number of the department",
+            "description": "Department description",
             "nullable": true
           },
-          "DepartmentEmail": {
+          "Address": {
             "type": "string",
-            "description": "Public email of the department",
+            "description": "Department address",
             "nullable": true
           },
-          "DepartmentURL": {
+          "GPSPoint": {
             "type": "string",
-            "description": "URl for the department on the public Landspítali webiste",
+            "description": "Department GPS point",
             "nullable": true
           },
-          "DepartmentFooter": {
+          "PhoneNumber": {
             "type": "string",
-            "description": "Footer text for the department",
+            "description": "Department phone numbers",
+            "nullable": true
+          },
+          "OpeningHours": {
+            "type": "string",
+            "description": "Department opening hours",
+            "nullable": true
+          },
+          "PictureLink": {
+            "type": "string",
+            "description": "Department picture link",
             "nullable": true
           }
         },
@@ -2843,24 +2963,6 @@
         },
         "additionalProperties": false,
         "description": "Class containing information about HG forms questions"
-      },
-      "FormAnswers": {
-        "required": ["FormGUID", "AnswersJSON"],
-        "type": "object",
-        "properties": {
-          "FormGUID": {
-            "minLength": 1,
-            "type": "string",
-            "description": "GUID used for tracking this form"
-          },
-          "AnswersJSON": {
-            "minLength": 1,
-            "type": "string",
-            "description": "JSON structure with answers to form"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Class containing answers to HG form"
       },
       "GenericIsPermittedResponse": {
         "type": "object",
@@ -3853,6 +3955,31 @@
             "type": "string",
             "description": "Patient is available to book appointments to this date",
             "nullable": true
+          },
+          "ParentGroup": {
+            "type": "string",
+            "description": "Parent group if resource, if any",
+            "nullable": true
+          },
+          "DepartmentID": {
+            "type": "string",
+            "description": "Department of the resource (used to fetch more data about the department)",
+            "nullable": true
+          },
+          "ResourceName": {
+            "type": "string",
+            "description": "Resource name or employee name for the given resource",
+            "nullable": true
+          },
+          "AppointmentType": {
+            "type": "string",
+            "description": "Appointment type",
+            "nullable": true
+          },
+          "TimeLength": {
+            "type": "string",
+            "description": "Length of the appointment type in minutes",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3871,6 +3998,12 @@
             "minLength": 1,
             "type": "string",
             "description": "Message from patient"
+          },
+          "Category": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "Message from patient",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4002,8 +4135,8 @@
         "description": "island.is OpenId Security Scheme",
         "flows": {
           "authorizationCode": {
-            "authorizationUrl": "https://identity-server.staging01.devland.is/connect/authorize?prompt=select_account",
-            "tokenUrl": "https://identity-server.staging01.devland.is/connect/token",
+            "authorizationUrl": "https://identity-server.dev01.devland.is/connect/authorize?prompt=select_account",
+            "tokenUrl": "https://identity-server.dev01.devland.is/connect/token",
             "scopes": {
               "openid": "This is the only mandatory scope and will return a sub claim which represents a unique identifier for the authenticated user.",
               "profile": "This scope value requests access to the End-User’s default profile Claims, which are",

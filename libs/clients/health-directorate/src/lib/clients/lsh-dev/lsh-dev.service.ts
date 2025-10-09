@@ -33,8 +33,6 @@ export class LshDevService {
     console.log('form to post:', form)
     return await this.patientPropertiesApiWithAuth(
       auth,
-    ).apiV2PatientPropertiesSubmitFormAnswersPost({
-      formAnswers: { answersJSON: form, formGUID: guid },
-    })
+    ).apiV2PatientPropertiesSubmitFormAnswersPost({ requestBody: form })
   }
 }
