@@ -12,12 +12,17 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CourtSessionRulingType } from '@island.is/judicial-system/types'
 
 import { CourtSession } from '../models/courtSession.model'
+import { CourtDocumentRepositoryService } from './courtDocumentRepository.service'
 
 interface CreateCourtSessionOptions {
   transaction?: Transaction
 }
 
 interface UpdateCourtSessionOptions {
+  transaction?: Transaction
+}
+
+interface DeleteCourtSessionOptions {
   transaction?: Transaction
 }
 
@@ -43,6 +48,7 @@ export class CourtSessionRepositoryService {
   constructor(
     @InjectModel(CourtSession)
     private readonly courtSessionModel: typeof CourtSession,
+    private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -128,6 +134,65 @@ export class CourtSessionRepositoryService {
       )
 
       throw error
+    }
+  }
+
+  async delete(
+    caseId: string,
+    courtSessionId: string,
+    options?: DeleteCourtSessionOptions,
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Deleting court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      const transaction = options?.transaction
+
+      // First delete all documents in the session
+      await this.courtDocumentRepositoryService.deleteDocumentsInSession(
+        caseId,
+        courtSessionId,
+        transaction,
+      )
+
+      // Then delete the session itself
+      await this.deleteFromDatabase(caseId, courtSessionId, transaction)
+
+      this.logger.debug(
+        `Deleted court session ${courtSessionId} of case ${caseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error deleting court session ${courtSessionId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  private async deleteFromDatabase(
+    caseId: string,
+    courtSessionId: string,
+    transaction: Transaction | undefined,
+  ) {
+    const numberOfDeletedRows = await this.courtSessionModel.destroy({
+      where: { id: courtSessionId, caseId },
+      transaction,
+    })
+
+    if (numberOfDeletedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not delete court session ${courtSessionId} of case ${caseId}`,
+      )
+    }
+
+    if (numberOfDeletedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfDeletedRows}) affected when deleting court session ${courtSessionId} of case ${caseId}`,
+      )
     }
   }
 }

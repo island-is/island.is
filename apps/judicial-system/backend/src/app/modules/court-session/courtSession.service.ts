@@ -35,4 +35,16 @@ export class CourtSessionService {
       { transaction },
     )
   }
+
+  async delete(
+    caseId: string,
+    courtSessionId: string,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    await this.courtSessionRepositoryService.delete(caseId, courtSessionId, {
+      transaction,
+    })
+
+    return true
+  }
 }
