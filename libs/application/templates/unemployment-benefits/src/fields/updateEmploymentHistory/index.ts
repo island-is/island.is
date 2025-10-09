@@ -7,6 +7,13 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { getValueViaPath } from '@island.is/application/core'
 import { EmploymentHistoryInAnswers } from '../../shared'
 
+/*
+
+  This is because we in a future step we prefill employment history based on current situation answers,
+  so if the user goes back and changes currentSituation so that there is no last job, 
+  then we need to reset the answers in employment history to empty
+
+*/
 export const UpdateEmploymentHistory: FC<FieldBaseProps> = ({
   application,
   setBeforeSubmitCallback,
