@@ -87,10 +87,12 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
 }
 const VerdictStatusAlertMessage = ({
   defendantName,
+  verdictDeliveredToNationalCommissionersOffice,
   verdict,
   lawyer,
 }: {
   defendantName?: string
+  verdictDeliveredToNationalCommissionersOffice?: string | null
   verdict: Verdict
   lawyer?: Lawyer
 }) => {
@@ -133,18 +135,18 @@ const VerdictStatusAlertMessage = ({
   }
 
   if (
-    verdict.verdictDeliveredToNationalCommissionersOffice &&
+    verdictDeliveredToNationalCommissionersOffice &&
     verdict.externalPoliceDocumentId &&
     !verdict.serviceDate
   ) {
     return (
       <AlertMessage
         type="info"
-        title="Dómur er í birtingarferli"
+        title={`Dómur er í birtingarferli - ${defendantName}`}
         message={`Dómur fór í birtingu ${formatDate(
-          verdict.verdictDeliveredToNationalCommissionersOffice,
+          verdictDeliveredToNationalCommissionersOffice,
         )} kl. ${formatDate(
-          verdict.verdictDeliveredToNationalCommissionersOffice,
+          verdictDeliveredToNationalCommissionersOffice,
           TIME_FORMAT,
         )}`}
       />
@@ -159,6 +161,7 @@ const VerdictStatusAlert = (props: {
   defendant: Defendant
 }) => {
   const { verdict: currentVerdict, defendant } = props
+
   const [lawyer, setLawyer] = useState<Lawyer>()
   const { lawyers } = useContext(LawyerRegistryContext)
   const { verdict, verdictLoading } = useVerdict(currentVerdict)
@@ -202,6 +205,9 @@ const VerdictStatusAlert = (props: {
   ) : (
     <VerdictStatusAlertMessage
       verdict={verdict}
+      verdictDeliveredToNationalCommissionersOffice={
+        currentVerdict?.verdictDeliveredToNationalCommissionersOffice
+      }
       lawyer={lawyer}
       defendantName={defendant.name ?? ''}
     />

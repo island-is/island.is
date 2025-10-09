@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { AnimatePresence, LayoutGroup, motion, Reorder } from 'motion/react'
 
 import {
@@ -26,6 +33,7 @@ import EditableCaseFile from '@island.is/judicial-system-web/src/components/Edit
 import {
   Case,
   CourtDocumentResponse,
+  CourtDocumentType,
   CourtSessionClosedLegalBasis,
   CourtSessionResponse,
   CourtSessionRulingType,
@@ -108,7 +116,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
 
   const {
-    judges,
+    districtCourtAssistants,
     registrars,
     loading: usersLoading,
   } = useUsers(workingCase.court?.id)
@@ -158,13 +166,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    setWorkingCase((prev) => ({
-      ...prev,
-      unfiledCourtDocuments: [
-        fileInSession,
-        ...(prev.unfiledCourtDocuments || []),
-      ],
-    }))
+    if (fileInSession.documentType !== CourtDocumentType.EXTERNAL_DOCUMENT) {
+      setWorkingCase((prev) => ({
+        ...prev,
+        unfiledCourtDocuments: [
+          fileInSession,
+          ...(prev.unfiledCourtDocuments || []),
+        ],
+      }))
+    }
 
     patchSession(courtSession.id, {
       filedDocuments: courtSession.filedDocuments?.filter(
@@ -243,7 +253,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }
 
   const handleChangeWitness = (value?: string | null) => {
-    const selectedUser = [...judges, ...registrars].find(
+    const selectedUser = [...districtCourtAssistants, ...registrars].find(
       (u) => u.value === value,
     )
 
@@ -367,6 +377,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     )
   }
 
+  useEffect(() => {
+    if (isExpanded && !courtSession.isConfirmed) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [isExpanded, courtSession.isConfirmed])
+
   return (
     <AccordionItem
       id={`courtRecordAccordionItem-${courtSession.id}`}
@@ -377,7 +393,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       onToggle={onToggle}
     >
       <LayoutGroup>
-        <Box className={styles.containerGrid}>
+        <Box
+          id={`courtRecordAccordionItemFirstSection-${courtSession.id}`}
+          className={styles.containerGrid}
+        >
           <BlueBox>
             <div className={styles.grid}>
               <DateTime
@@ -956,8 +975,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               />
               <Select
                 name="courtUsers"
-                options={[...judges, ...registrars].sort((a, b) =>
-                  a.label.localeCompare(b.label),
+                options={[...districtCourtAssistants, ...registrars].sort(
+                  (a, b) => a.label.localeCompare(b.label),
                 )}
                 value={
                   courtSession.attestingWitness

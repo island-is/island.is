@@ -23,8 +23,6 @@ describe('VerdictController - Top-level guards', () => {
       CaseTypeGuard,
       CaseWriteGuard,
       CaseCompletedGuard,
-      DefendantExistsGuard,
-      VerdictExistsGuard,
     ],
     [
       {
@@ -38,5 +36,26 @@ describe('VerdictController - Top-level guards', () => {
 })
 
 describe('VerdictController - Update', () => {
-  verifyGuards(VerdictController, 'update', [])
+  verifyGuards(VerdictController, 'update', [
+    DefendantExistsGuard,
+    VerdictExistsGuard,
+  ])
+})
+
+describe('VerdictController - getServiceCertificatePdf', () => {
+  verifyGuards(VerdictController, 'getServiceCertificatePdf', [
+    DefendantExistsGuard,
+    VerdictExistsGuard,
+  ])
+})
+
+describe('VerdictController - getVerdict', () => {
+  verifyGuards(VerdictController, 'getVerdict', [
+    DefendantExistsGuard,
+    VerdictExistsGuard,
+  ])
+})
+
+describe('VerdictController - deliverCaseVerdict', () => {
+  verifyGuards(VerdictController, 'deliverCaseVerdict', [])
 })

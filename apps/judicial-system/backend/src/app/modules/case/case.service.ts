@@ -357,6 +357,22 @@ export const include: Includeable[] = [
         separate: true,
       },
       {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: CourtDocument,
+            as: 'filedDocuments',
+            required: false,
+            order: [['documentOrder', 'ASC']],
+            separate: true,
+          },
+        ],
+      },
+      {
         model: CaseFile,
         as: 'caseFiles',
         required: false,
