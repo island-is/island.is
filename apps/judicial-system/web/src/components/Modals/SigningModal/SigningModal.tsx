@@ -168,22 +168,21 @@ export const SigningModal: FC<SigningModalProps> = ({
           formatMessage(m.errorText)
         )
       }
-      primaryButton={{
-        text:
-          signingProgress === 'inProgress'
-            ? ''
-            : signingProgress === 'success'
-            ? ''
-            : formatMessage(m.primaryButtonErrorText),
-        onClick: () => {
-          if (navigateOnClose) {
-            router.push(
-              `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
-            )
-          }
-          onClose()
-        },
-      }}
+      primaryButton={
+        signingProgress === 'error' || signingProgress === 'canceled'
+          ? {
+              text: formatMessage(m.primaryButtonErrorText),
+              onClick: () => {
+                if (navigateOnClose) {
+                  router.push(
+                    `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                  )
+                }
+                onClose()
+              },
+            }
+          : undefined
+      }
       secondaryButton={
         signingProgress === 'inProgress'
           ? undefined
