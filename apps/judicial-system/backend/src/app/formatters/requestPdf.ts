@@ -86,7 +86,16 @@ const constructRestrictionRequestPdf = (
   setLineGap(doc, 24)
   addLargeHeading(doc, title, 'Times-Roman')
   setLineGap(doc, 8)
-  addMediumPlusHeading(doc, formatDate(theCase.created, 'PPP') ?? '')
+  addMediumPlusHeading(
+    doc,
+    formatDate(
+      EventLog.getEventLogByEventType(
+        EventType.CASE_SENT_TO_COURT,
+        theCase.eventLogs,
+      )?.created ?? new Date(),
+      'PPP',
+    ) ?? '',
+  )
   setLineGap(doc, 40)
   addMediumPlusHeading(
     doc,
