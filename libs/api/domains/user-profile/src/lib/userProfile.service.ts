@@ -293,8 +293,8 @@ export class UserProfileService {
     })
   }
 
-  async deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
-    return await this.v2MeUserProfileApiWithAuth(
+  deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
+    return this.v2MeUserProfileApiWithAuth(
       user,
     ).meUserProfileControllerDeleteDeviceToken({
       deviceToken: input.deviceToken,

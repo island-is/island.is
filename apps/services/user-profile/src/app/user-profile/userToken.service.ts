@@ -35,14 +35,6 @@ export class UserTokenService {
     })
   }
 
-  async deleteUserTokenByDeviceToken(deviceToken: string): Promise<void> {
-    await this.userDeviceTokensModel.destroy({
-      where: {
-        deviceToken,
-      },
-    })
-  }
-
   async addDeviceToken(deviceToken: string, user: User) {
     try {
       // Check if this exact device token already exists for this user
