@@ -9,12 +9,16 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
+import { useParams } from 'react-router-dom'
+import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 export const Completed = () => {
   const { formatMessage } = useIntl()
   const supportEmail = 'island@island.is'
+  const { slug } = useParams()
+  const { state } = useApplicationContext()
 
-  return (
+  const stafraentIslandForm = () => (
     <Box marginTop={5}>
       <AlertMessage
         type="success"
@@ -62,5 +66,12 @@ export const Completed = () => {
         </Accordion>
       </Box>
     </Box>
+  )
+
+  return (
+    <>
+      {slug === 'umsokn-um-samstarf-vid-stafraent-island' &&
+        stafraentIslandForm()}
+    </>
   )
 }
