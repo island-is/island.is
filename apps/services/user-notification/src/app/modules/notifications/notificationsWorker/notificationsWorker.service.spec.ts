@@ -464,7 +464,7 @@ describe('NotificationsWorkerService', () => {
     await removeInvalidToken(nationalId, deviceToken, messageId)
 
     expect(
-      userProfileApi.userTokenControllerDeleteDeviceToken,
+      userProfileApi.userTokenControllerDeleteUserDeviceToken,
     ).toHaveBeenCalledWith({
       xParamNationalId: nationalId,
       deviceToken: deviceToken,
