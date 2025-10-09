@@ -644,6 +644,9 @@ export const is = {
   'airDiscount.emptyListTitle': 'Enginn réttur',
   'airDiscount.emptyListDescription':
     'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
+  'airDiscount.disabledTitle': 'Fjármagn klárað',
+  'airDiscount.disabledDescription':
+    'Opnað verður aftur fyrir umsóknir um Loftbrú 1. janúar 2026.',
 
   // offline
   'offline.title': 'Ekkert netsamband',

@@ -643,6 +643,9 @@ export const en: TranslatedMessages = {
   'airDiscount.emptyListTitle': 'No benefits',
   'airDiscount.emptyListDescription':
     'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
+  'airDiscount.disabledTitle': 'Funds exhausted',
+  'airDiscount.disabledDescription':
+    'The application will be reopened for Loftbrú applications on January 1, 2026.',
 
   // offline
   'offline.title': 'No internet connection',
