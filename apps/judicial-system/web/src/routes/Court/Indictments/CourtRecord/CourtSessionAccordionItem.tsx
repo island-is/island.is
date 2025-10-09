@@ -569,7 +569,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             data-testid="courtAttendees"
             name="courtAttendees"
             label="Mættir eru"
-            value={courtSession.attendees || getInitialAttendees()}
+            value={courtSession.attendees ?? getInitialAttendees()}
             placeholder="Skrifa hér..."
             onChange={(event) => {
               patchSession(courtSession.id, {
