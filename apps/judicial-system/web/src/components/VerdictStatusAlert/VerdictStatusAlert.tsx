@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from 'react'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Lawyer } from '@island.is/judicial-system/types'
 
 import { Defendant, Verdict, VerdictServiceStatus } from '../../graphql/schema'
+import useVerdict from '../../utils/hooks/useVerdict'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 
 const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
@@ -58,12 +59,25 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
             : ''
         }`,
       ]
+    case VerdictServiceStatus.NOT_APPLICABLE:
+      return [
+        `Dómur birtur ${
+          verdict.serviceDate
+            ? ` - ${formatDate(verdict.serviceDate)} kl. ${formatDate(
+                verdict.serviceDate,
+                TIME_FORMAT,
+              )}`
+            : ''
+        }`,
+      ]
     default:
       return [
         `Dómur fór í birtingu ${
-          verdict.created
-            ? ` - ${formatDate(verdict.created)} kl. ${formatDate(
-                verdict.created,
+          verdict.verdictDeliveredToNationalCommissionersOffice
+            ? ` - ${formatDate(
+                verdict.verdictDeliveredToNationalCommissionersOffice,
+              )} kl. ${formatDate(
+                verdict.verdictDeliveredToNationalCommissionersOffice,
                 TIME_FORMAT,
               )}`
             : ''
@@ -71,41 +85,30 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
       ]
   }
 }
-
-const VerdictStatusAlert = ({
+const VerdictStatusAlertMessage = ({
+  defendantName,
+  verdictDeliveredToNationalCommissionersOffice,
   verdict,
-  defendant,
+  lawyer,
 }: {
+  defendantName?: string
+  verdictDeliveredToNationalCommissionersOffice?: string | null
   verdict: Verdict
-  defendant: Defendant
+  lawyer?: Lawyer
 }) => {
-  const [lawyer, setLawyer] = useState<Lawyer>()
-  const { lawyers } = useContext(LawyerRegistryContext)
-  const messages = mapServiceStatusMessages(verdict, lawyer)
-  const isServed = verdict.serviceDate && verdict.serviceStatus
+  const messages = verdict ? mapServiceStatusMessages(verdict, lawyer) : []
 
-  useEffect(() => {
-    if (
-      !verdict?.defenderNationalId ||
-      verdict?.serviceStatus !== VerdictServiceStatus.DEFENDER ||
-      !lawyers ||
-      lawyers.length === 0
-    ) {
-      return
-    }
+  const isDeprecatedVerdict =
+    verdict?.serviceStatus === VerdictServiceStatus.NOT_APPLICABLE &&
+    !verdict.serviceDate
+  if (isDeprecatedVerdict) return null
 
-    setLawyer(
-      lawyers.find(
-        (lawyer) => lawyer.nationalId === verdict.defenderNationalId,
-      ),
-    )
-  }, [lawyers, verdict?.defenderNationalId, verdict?.serviceStatus])
-
+  const isServed = Boolean(verdict?.serviceDate && verdict?.serviceStatus)
   if (isServed) {
     return (
       <AlertMessage
         type="success"
-        title={`Birting tókst - ${defendant.name}`}
+        title={`Birting tókst - ${defendantName}`}
         message={
           <Box>
             {messages.map((msg) => (
@@ -123,7 +126,7 @@ const VerdictStatusAlert = ({
     return (
       <AlertMessage
         type="info"
-        title={`Dómur sendur í Lögbirtingarblaðið - ${defendant.name}`}
+        title={`Dómur sendur í Lögbirtingarblaðið - ${defendantName}`}
         message={`Dómur sendur ${formatDate(
           verdict.legalPaperRequestDate,
         )} kl. ${formatDate(verdict.legalPaperRequestDate, TIME_FORMAT)}`}
@@ -131,19 +134,84 @@ const VerdictStatusAlert = ({
     )
   }
 
-  if (!verdict.externalPoliceDocumentId) {
+  if (
+    verdictDeliveredToNationalCommissionersOffice &&
+    verdict.externalPoliceDocumentId &&
+    !verdict.serviceDate
+  ) {
     return (
       <AlertMessage
         type="info"
-        title="Dómur er í birtingarferli"
+        title={`Dómur er í birtingarferli - ${defendantName}`}
         message={`Dómur fór í birtingu ${formatDate(
-          verdict.created,
-        )} kl. ${formatDate(verdict.created, TIME_FORMAT)}`}
+          verdictDeliveredToNationalCommissionersOffice,
+        )} kl. ${formatDate(
+          verdictDeliveredToNationalCommissionersOffice,
+          TIME_FORMAT,
+        )}`}
       />
     )
   }
 
   return null
+}
+
+const VerdictStatusAlert = (props: {
+  verdict: Verdict
+  defendant: Defendant
+}) => {
+  const { verdict: currentVerdict, defendant } = props
+
+  const [lawyer, setLawyer] = useState<Lawyer>()
+  const { lawyers } = useContext(LawyerRegistryContext)
+  const { verdict, verdictLoading } = useVerdict(currentVerdict)
+
+  useEffect(() => {
+    if (
+      verdict?.serviceStatus !== VerdictServiceStatus.DEFENDER ||
+      !lawyers ||
+      lawyers.length === 0
+    ) {
+      return
+    }
+
+    const deliveredToDefenderNationalId =
+      verdict.deliveredToDefenderNationalId ?? defendant.defenderNationalId
+
+    setLawyer(
+      lawyers.find(
+        (lawyer) => lawyer.nationalId === deliveredToDefenderNationalId,
+      ),
+    )
+  }, [
+    lawyers,
+    verdict?.deliveredToDefenderNationalId,
+    verdict?.serviceStatus,
+    defendant.defenderNationalId,
+  ])
+
+  return verdictLoading ? (
+    <Box display="flex" justifyContent="center" paddingY={5}>
+      <LoadingDots />
+    </Box>
+  ) : !verdict ? (
+    <Box marginBottom={2}>
+      <AlertMessage
+        type="error"
+        title={'Ekki tókst að sækja stöðu birtingar'}
+        message={'Vinsamlegast reyndu aftur síðar'}
+      />
+    </Box>
+  ) : (
+    <VerdictStatusAlertMessage
+      verdict={verdict}
+      verdictDeliveredToNationalCommissionersOffice={
+        currentVerdict?.verdictDeliveredToNationalCommissionersOffice
+      }
+      lawyer={lawyer}
+      defendantName={defendant.name ?? ''}
+    />
+  )
 }
 
 export default VerdictStatusAlert

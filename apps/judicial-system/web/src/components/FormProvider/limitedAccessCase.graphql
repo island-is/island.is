@@ -64,6 +64,9 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       }
       verdict {
         id
+        created
+        serviceStatus
+        servedBy
         appealDate
         appealDecision
         serviceRequirement
@@ -218,10 +221,49 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       incidentDescription
       legalArguments
     }
+    courtSessions {
+      id
+      startDate
+      isConfirmed
+      ruling
+      filedDocuments {
+        id
+        created
+        modified
+        caseId
+        courtSessionId
+        documentType
+        documentOrder
+        name
+        caseFileId
+        generatedPdfUri
+      }
+    }
     mergedCases {
       id
       courtCaseNumber
       type
+      state
+      indictmentRulingDecision
+      courtSessions {
+        id
+        startDate
+        endDate
+        ruling
+        isConfirmed
+        filedDocuments {
+          id
+          created
+          modified
+          caseId
+          courtSessionId
+          documentType
+          documentOrder
+          name
+          caseFileId
+          generatedPdfUri
+        }
+      }
       caseFiles {
         id
         created

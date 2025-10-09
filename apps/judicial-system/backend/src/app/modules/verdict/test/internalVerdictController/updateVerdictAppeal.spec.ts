@@ -7,9 +7,10 @@ import {
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
+import { createTestingVerdictModule } from '../createTestingVerdictModule'
+
 import { Case, Defendant, Verdict } from '../../../repository'
 import { InternalUpdateVerdictDto } from '../../dto/internalUpdateVerdict.dto'
-import { createTestingVerdictModule } from '../creatingTestingVerdictModule'
 
 interface Then {
   result: Verdict

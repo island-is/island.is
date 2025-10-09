@@ -35,6 +35,26 @@
         }
       }
     },
+    "/contract/send-draft": {
+      "post": {
+        "tags": ["Home"],
+        "parameters": [
+          {
+            "name": "contractId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/contract/kt/{kt}": {
       "get": {
         "tags": ["Home"],
@@ -934,7 +954,8 @@
           "TENANT_NON_COMPLIANCE",
           "TENANT_BEHAVIOR",
           "BOTH_PARTIES_INTERESTS",
-          "NON_PROFIT_TENANT"
+          "NON_PROFIT_TENANT",
+          "TENANT_TERMINATION"
         ],
         "type": "string"
       }

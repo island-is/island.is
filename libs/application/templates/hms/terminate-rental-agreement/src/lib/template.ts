@@ -156,15 +156,44 @@ const template: ApplicationTemplate<
               label: m.miscMessages.actionCardDone,
             },
             pendingAction(application) {
-              return {
-                displayStatus: 'success',
-                title:
-                  getValueViaPath<string>(
-                    application.answers,
-                    'terminationType.answer',
-                  ) === 'cancelation'
-                    ? m.miscMessages.actioncardDoneTitleCancelation
-                    : m.miscMessages.actioncardDoneTitleTermination,
+              const contractNo = getValueViaPath<string>(
+                application.answers,
+                'rentalAgreement.answer',
+              )
+              const contracts = getValueViaPath<Array<Contract>>(
+                application.externalData,
+                'getRentalAgreements.data',
+              )
+              const contract = contracts?.find(
+                (contract) =>
+                  contract.contractId === parseInt(contractNo ?? ''),
+              )
+              const contractProperty = contract?.contractProperty?.[0]
+              if (
+                getValueViaPath<string>(
+                  application.answers,
+                  'terminationType.answer',
+                ) === 'cancelation'
+              ) {
+                return {
+                  displayStatus: 'success',
+                  title: {
+                    ...m.miscMessages.actioncardDoneTitleCancelationWithAddress,
+                    values: {
+                      address: contractProperty?.streetAndHouseNumber,
+                    },
+                  },
+                }
+              } else {
+                return {
+                  displayStatus: 'success',
+                  title: {
+                    ...m.miscMessages.actioncardDoneTitleTerminationWithAddress,
+                    values: {
+                      address: contractProperty?.streetAndHouseNumber,
+                    },
+                  },
+                }
               }
             },
           },

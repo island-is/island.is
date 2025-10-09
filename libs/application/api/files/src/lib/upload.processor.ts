@@ -97,7 +97,7 @@ export class UploadProcessor {
         // Log and re-throw on final attempt or non-retryable errors
         withLoggingContext({ applicationId: applicationId }, () => {
           this.logger.error(
-            `An error occurred while processing copy job on upload on attempt ${attempt}/${maxRetries}`,
+            'An error occurred while processing copy job on upload',
             error,
           )
         })

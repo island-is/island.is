@@ -1,5 +1,5 @@
-mutation vehicleBulkMileagePost($input: PostVehicleBulkMileageInput!) {
-  vehicleBulkMileagePost(input: $input) {
+mutation vehicleBulkMileagePostFile($input: PostVehicleBulkMileageFileInput!) {
+  vehicleBulkMileagePostFile(input: $input) {
     requestId
     errorMessage
     errorCode
@@ -8,4 +8,11 @@ mutation vehicleBulkMileagePost($input: PostVehicleBulkMileageInput!) {
 
 query vehiclesTemplateDownloadUrl {
   vehiclesMileageTemplateFileDownloadUrl
+}
+
+mutation createVehicleBulkUploadUrl($filename: String!) {
+  createUploadUrl(filename: $filename) {
+    url
+    fields
+  }
 }

@@ -80,4 +80,9 @@ export const unboundTerminationMessages = defineMessages({
       'Leigusali er lögaðili sem er ekki rekinn í hagnaðarskyni og leigjandi uppfyllir ekki lengur skilyrði fyrir leigu',
     description: 'Unbound termination reason options non profit tenant',
   },
+  reasonOptionsTenantTermination: {
+    id: 'tra.application:unboundTermination.reasonOptionsTenantTermination',
+    defaultMessage: 'Leigjandi segir upp leigusamningi',
+    description: 'Unbound termination reason options tenant termination',
+  },
 })

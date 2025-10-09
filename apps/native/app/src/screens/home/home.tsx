@@ -59,7 +59,10 @@ import {
 } from './vehicles-module'
 import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
-import { GenericLicenseType } from '../../graphql/types/schema'
+import {
+  GenericLicenseType,
+  useGetProfileQuery,
+} from '../../graphql/types/schema'
 import { useLocale } from '../../hooks/use-locale'
 
 interface ListItem {
@@ -114,12 +117,16 @@ const { useNavigationOptions, getNavigationOptions } =
 export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
 
-  useAndroidNotificationPermission()
+  const userProfile = useGetProfileQuery({
+    fetchPolicy: 'cache-first',
+  })
+  const { locale: userProfileLocale, documentNotifications } =
+    userProfile.data?.getUserProfile ?? {}
+
+  useAndroidNotificationPermission(documentNotifications)
   const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
   const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
-  const getAndSetLocale = usePreferencesStore(
-    ({ getAndSetLocale }) => getAndSetLocale,
-  )
+  const setLocale = usePreferencesStore(({ setLocale }) => setLocale)
   const isIdentityDocumentEnabled = useFeatureFlag(
     'isIdentityDocumentEnabled',
     false,
@@ -272,11 +279,17 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
     // Sync push tokens and unseen notifications
     syncToken()
     checkUnseen()
-    // Get user locale from server
-    getAndSetLocale()
     // Check if upgrade wall should be shown
     isAppUpdateRequired()
   }, [])
+
+  useEffect(() => {
+    if (!userProfileLocale) {
+      return
+    }
+
+    setLocale(userProfileLocale === 'en' ? 'en-US' : 'is-IS')
+  }, [userProfileLocale, setLocale])
 
   const refetch = useCallback(async () => {
     setRefetching(true)

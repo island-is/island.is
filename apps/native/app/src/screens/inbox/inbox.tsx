@@ -30,7 +30,6 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   DocumentV2,
-  useGetDocumentsCategoriesAndSendersQuery,
   useListDocumentsQuery,
   useMarkAllDocumentsAsReadMutation,
   usePostMailActionMutationMutation,
@@ -214,12 +213,10 @@ export const InboxScreen: NavigationFunctionComponent<InboxScreenProps> = ({
   const [bulkSelectActionMutation, { loading: bulkSelectActionLoading }] =
     usePostMailActionMutationMutation()
 
-  const sendersAndCategories = useGetDocumentsCategoriesAndSendersQuery()
-
-  const availableSenders = sendersAndCategories.data?.getDocumentSenders ?? []
+  const availableSenders = res.data?.senders ?? []
   const availableCategories = useMemo(() => {
-    return sendersAndCategories.data?.getDocumentCategories ?? []
-  }, [sendersAndCategories.data])
+    return res.data?.categories ?? []
+  }, [res.data])
 
   const allDocumentsSelected =
     selectedItems.length === res.data?.documentsV2?.data?.length

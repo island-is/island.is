@@ -81,4 +81,9 @@ export class UpdateCourtSessionDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly closingEntries?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isConfirmed?: boolean
 }

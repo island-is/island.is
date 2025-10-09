@@ -1,15 +1,18 @@
-import { Dispatch, SetStateAction, useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
 import {
   Case,
   Defendant,
   UpdateVerdictInput,
+  Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { useDeliverCaseVerdictMutation } from './deliverCaseVerdict.generated'
 import { useUpdateVerdictMutation } from './updateVerdict.generated'
+import { useVerdictQuery } from './verdict.generated'
 
-const useVerdict = () => {
+const useVerdict = (currentVerdict?: Verdict) => {
   const updateDefendantVerdictState = useCallback(
     (
       update: UpdateVerdictInput,
@@ -69,7 +72,49 @@ const useVerdict = () => {
     [updateDefendantVerdictState, updateVerdict],
   )
 
-  return { setAndSendVerdictToServer }
+  const skip =
+    !currentVerdict ||
+    !currentVerdict?.externalPoliceDocumentId ||
+    Boolean(currentVerdict?.serviceStatus)
+  const {
+    data,
+    loading: verdictLoading,
+    error,
+  } = useVerdictQuery({
+    skip,
+    variables: {
+      input: {
+        caseId: currentVerdict?.caseId ?? '',
+        defendantId: currentVerdict?.defendantId ?? '',
+      },
+    },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
+  const [deliverCaseVerdictMutation] = useDeliverCaseVerdictMutation()
+
+  const deliverCaseVerdict = useMemo(
+    () => async (caseId: string) => {
+      try {
+        const result = await deliverCaseVerdictMutation({
+          variables: { input: { caseId } },
+        })
+        return result.data?.deliverCaseVerdict?.queued ?? false
+      } catch (error) {
+        toast.error('Upp kom villa við senda dóm í birtingu')
+        return false
+      }
+    },
+    [deliverCaseVerdictMutation],
+  )
+
+  return {
+    verdict: skip || error ? currentVerdict : data?.verdict,
+    verdictLoading: skip ? false : verdictLoading,
+    setAndSendVerdictToServer,
+    deliverCaseVerdict,
+  }
 }
 
 export default useVerdict

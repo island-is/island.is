@@ -82,10 +82,16 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get('courtRecord')
+  @Get([
+    'courtRecord',
+    'courtRecord/:fileName',
+    'mergedCase/:mergedCaseId/courtRecord',
+    'mergedCase/:mergedCaseId/courtRecord/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   async getCourtRecordPdf(
     @Param('id') id: string,
+    @Param('mergedCaseId') mergedCaseId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -94,11 +100,15 @@ export class LimitedAccessFileController {
       `Getting the court record for case ${id} as a pdf document`,
     )
 
+    const mergedCaseInjection = mergedCaseId
+      ? `mergedCase/${mergedCaseId}/`
+      : ''
+
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_COURT_RECORD,
       id,
-      'limitedAccess/courtRecord',
+      `limitedAccess/${mergedCaseInjection}courtRecord`,
       req,
       res,
       'pdf',
@@ -249,6 +259,30 @@ export class LimitedAccessFileController {
       req,
       res,
       'zip',
+    )
+  }
+
+  @Get('verdictServiceCertificate/:defendantId')
+  @Header('Content-Type', 'application/pdf')
+  getServiceCertificatePdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting service certificate for verdict of defendant ${defendantId} and case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_VERDICT_SERVICE_CERTIFICATE_PDF,
+      id,
+      `defendant/${defendantId}/verdict/serviceCertificate`,
+      req,
+      res,
+      'pdf',
     )
   }
 }

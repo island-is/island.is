@@ -113,6 +113,12 @@ const FeaturedLinksSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.FeaturedLinksSlice),
 )
 
+const FeaturedGenericListItemsSlice = dynamic(() =>
+  import('@island.is/web/components').then(
+    (mod) => mod.FeaturedGenericListItemsSlice,
+  ),
+)
+
 interface SliceMachineProps {
   slice: Slice
   namespace?: Record<string, string>
@@ -238,6 +244,8 @@ export const renderSlice = (
       )
     case 'IntroLinkImage':
       return <IntroLinkImageSlice slice={slice} />
+    case 'FeaturedGenericListItems':
+      return <FeaturedGenericListItemsSlice slice={slice} />
     default:
       return <RichText body={[slice]} />
   }

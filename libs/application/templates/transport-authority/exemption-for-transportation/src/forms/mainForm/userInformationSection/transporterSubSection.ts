@@ -54,23 +54,6 @@ export const transporterSubSection = buildSubSection({
           clearOnChange: ['transporter.name'],
           condition: (answers) => !isSameAsApplicant(answers, 'transporter'),
         }),
-        buildTextField({
-          id: 'transporter.address',
-          title: userInformation.transporter.address,
-          backgroundColor: 'blue',
-          width: 'half',
-          required: true,
-          condition: (answers) => !isSameAsApplicant(answers, 'transporter'),
-          maxLength: 100,
-        }),
-        buildTextField({
-          id: 'transporter.postalCodeAndCity',
-          title: userInformation.transporter.postalCodeAndCity,
-          backgroundColor: 'blue',
-          width: 'half',
-          required: true,
-          condition: (answers) => !isSameAsApplicant(answers, 'transporter'),
-        }),
         buildPhoneField({
           id: 'transporter.phone',
           title: userInformation.transporter.phone,
@@ -105,25 +88,6 @@ export const transporterSubSection = buildSubSection({
           condition: (answers) => isSameAsApplicant(answers, 'transporter'),
           defaultValue: (application: Application) =>
             application.externalData.nationalRegistry.data?.fullName,
-        }),
-        buildTextField({
-          id: 'transporterReadonly.address',
-          title: userInformation.transporter.address,
-          width: 'half',
-          readOnly: true,
-          condition: (answers) => isSameAsApplicant(answers, 'transporter'),
-          defaultValue: (application: Application) =>
-            application.externalData.nationalRegistry.data?.address
-              ?.streetAddress,
-        }),
-        buildTextField({
-          id: 'transporterReadonly.postalCodeAndCity',
-          title: userInformation.transporter.postalCodeAndCity,
-          width: 'half',
-          readOnly: true,
-          condition: (answers) => isSameAsApplicant(answers, 'transporter'),
-          defaultValue: (application: Application) =>
-            `${application.externalData.nationalRegistry?.data?.address?.postalCode} ${application.externalData.nationalRegistry?.data?.address?.locality}`,
         }),
         buildPhoneField({
           id: 'transporterReadonly.phoneNumber',

@@ -26,18 +26,19 @@ import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import EmptyState from '../../shared-components/emptyState'
 import { CollectionStatus } from '@island.is/api/schema'
 import FindSignature from '../../shared-components/findSignature'
+import format from 'date-fns/format'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const { municipality = '' } = useParams<{ municipality: string }>()
 
-  const { collection, collectionStatus, allLists } =
-    useLoaderData() as ListsLoaderReturn
-  const params = useParams()
-
-  const municipality = params.municipality ?? ''
+  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const municipalityLists = allLists.filter(
     (list) => list.area.name === municipality,
+  )
+  const municipalityArea = collection?.areas.find(
+    (area) => area.name === municipality,
   )
 
   return (
@@ -71,7 +72,7 @@ export const Municipality = () => {
             />
           </Box>
           <IntroHeader
-            title={formatMessage(m.municipalCollectionTitle)}
+            title={municipality}
             intro={formatMessage(m.municipalCollectionIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
@@ -85,9 +86,10 @@ export const Municipality = () => {
                 ]}
               />
             }
-            marginBottom={4}
+            marginBottom={3}
           />
-          {collectionStatus === CollectionStatus.Processed && (
+          {municipalityArea?.collectionStatus ===
+            CollectionStatus.Processed && (
             <Box marginY={3}>
               <AlertMessage
                 type="success"
@@ -96,7 +98,7 @@ export const Municipality = () => {
               />
             </Box>
           )}
-          {collectionStatus === CollectionStatus.InReview && (
+          {municipalityArea?.collectionStatus === CollectionStatus.InReview && (
             <Box marginY={3}>
               <AlertMessage
                 type="success"
@@ -109,7 +111,7 @@ export const Municipality = () => {
           <Box marginTop={9} />
           {municipalityLists.length === 0 ? (
             <EmptyState
-              title={formatMessage(m.noLists) + ' í ' + municipality}
+              title={formatMessage(m.noLists)}
               description={formatMessage(m.noListsDescription)}
             />
           ) : (
@@ -131,9 +133,17 @@ export const Municipality = () => {
                       key={list.id}
                       eyebrow={municipality}
                       heading={list.candidate.name}
-                      text={`${formatMessage(m.totalValidSignatures)}: ${
-                        list.numberOfSignatures
-                      }`}
+                      text={`${formatMessage(m.listOwner)}: ${
+                        list.candidate.ownerName ?? ''
+                      } (${format(
+                        new Date(list.candidate.ownerBirthDate),
+                        'dd.MM.yyyy',
+                      )})`}
+                      progressMeter={{
+                        currentProgress: list.numberOfSignatures ?? 0,
+                        maxProgress: list.area.min,
+                        withLabel: true,
+                      }}
                       cta={{
                         label: formatMessage(m.viewList),
                         variant: 'text',

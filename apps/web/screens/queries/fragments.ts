@@ -725,6 +725,7 @@ export const slices = gql`
         time {
           startTime
           endTime
+          endDate
         }
         location {
           streetAddress
@@ -879,6 +880,7 @@ export const slices = gql`
       time {
         startTime
         endTime
+        endDate
       }
       location {
         streetAddress
@@ -895,12 +897,6 @@ export const slices = gql`
         description
       }
     }
-  }
-
-  fragment EmbedFields on Embed {
-    embedUrl
-    altText
-    aspectRatio
   }
 
   fragment ChartFields on Chart {
@@ -1020,6 +1016,7 @@ export const slices = gql`
         }
         slug
         assetUrl
+        externalUrl
         image {
           url
           title
@@ -1061,6 +1058,39 @@ export const slices = gql`
     seeMoreLink {
       text
       url
+    }
+  }
+
+  fragment FeaturedGenericListItemsFields on FeaturedGenericListItems {
+    __typename
+    id
+    baseUrl
+    seeMoreLinkTextString
+    items {
+      id
+      date
+      title
+      genericList {
+        itemType
+      }
+      cardIntro {
+        ...HtmlFields
+      }
+      filterTags {
+        id
+        title
+        slug
+      }
+      slug
+      assetUrl
+      externalUrl
+      image {
+        url
+        title
+        width
+        height
+        description
+      }
     }
   }
 
@@ -1113,6 +1143,7 @@ export const slices = gql`
     ...GrantCardsListFields
     ...OrganizationParentSubpageListFields
     ...IntroLinkImageFields
+    ...FeaturedGenericListItemsFields
   }
 
   fragment AllSlices on Slice {

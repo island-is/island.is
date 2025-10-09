@@ -82,19 +82,17 @@ const WithdrawAppealContextMenuModal: FC<WithdrawAppealModalProps> = (
     <Modal
       title={formatMessage(strings.withdrawAppealModalTitle)}
       text={formatMessage(strings.withdrawAppealModalText)}
-      primaryButtonText={formatMessage(
-        strings.withdrawAppealModalPrimaryButtonText,
-      )}
-      secondaryButtonText={formatMessage(
-        strings.withdrawAppealModalSecondaryButtonText,
-      )}
-      isPrimaryButtonLoading={isTransitioningCase}
-      onPrimaryButtonClick={handleWithdrawAppealClick}
-      onSecondaryButtonClick={() => {
-        onClose()
+      primaryButton={{
+        text: formatMessage(strings.withdrawAppealModalPrimaryButtonText),
+        onClick: handleWithdrawAppealClick,
+        isLoading: isTransitioningCase,
+        colorScheme: 'destructive',
       }}
-      primaryButtonColorScheme="destructive"
-    ></Modal>
+      secondaryButton={{
+        text: formatMessage(strings.withdrawAppealModalSecondaryButtonText),
+        onClick: () => onClose(),
+      }}
+    />
   )
 }
 

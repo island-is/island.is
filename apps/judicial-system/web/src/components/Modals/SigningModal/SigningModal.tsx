@@ -168,40 +168,44 @@ export const SigningModal: FC<SigningModalProps> = ({
           formatMessage(m.errorText)
         )
       }
-      primaryButtonText={
-        signingProgress === 'inProgress'
-          ? ''
-          : signingProgress === 'success'
-          ? ''
-          : formatMessage(m.primaryButtonErrorText)
-      }
-      secondaryButtonText={
-        signingProgress === 'inProgress'
-          ? undefined
-          : signingProgress === 'success'
-          ? formatMessage(core.closeModal)
-          : formatMessage(m.secondaryButtonErrorText)
-      }
-      onPrimaryButtonClick={() => {
-        if (navigateOnClose) {
-          router.push(
-            `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
-          )
-        }
-        onClose()
-      }}
-      onSecondaryButtonClick={async () => {
-        if (signingProgress === 'success') {
+      primaryButton={{
+        text:
+          signingProgress === 'inProgress'
+            ? ''
+            : signingProgress === 'success'
+            ? ''
+            : formatMessage(m.primaryButtonErrorText),
+        onClick: () => {
           if (navigateOnClose) {
             router.push(
               `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
             )
           }
-        } else {
-          requestRulingSignature()
-        }
-        onClose()
+          onClose()
+        },
       }}
+      secondaryButton={
+        signingProgress === 'inProgress'
+          ? undefined
+          : {
+              text:
+                signingProgress === 'success'
+                  ? formatMessage(core.closeModal)
+                  : formatMessage(m.secondaryButtonErrorText),
+              onClick: async () => {
+                if (signingProgress === 'success') {
+                  if (navigateOnClose) {
+                    router.push(
+                      `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                    )
+                  }
+                } else {
+                  requestRulingSignature()
+                }
+                onClose()
+              },
+            }
+      }
       invertButtonColors={
         signingProgress === 'canceled' || signingProgress === 'error'
       }

@@ -2,6 +2,27 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   info: defineMessages({
+    sendTypePostalMailLabel: {
+      id: 'web.landspitali.memorialCard:info.sendTypePostalMailLabel',
+      defaultMessage: 'Senda kort með bréfpósti',
+      description: 'Senda kort með bréfpósti',
+    },
+    sendTypeEmailLabel: {
+      id: 'web.landspitali.memorialCard:info.sendTypeEmailLabel',
+      defaultMessage: 'Senda kort með tölvupósti',
+      description: 'Senda kort með tölvupósti',
+    },
+    recipientEmailLabel: {
+      id: 'web.landspitali.memorialCard:info.recipientEmailLabel',
+      defaultMessage: 'Netfang viðtakanda',
+      description: 'Netfang viðtakanda',
+    },
+    senderNationalIdDescription: {
+      id: 'web.landspitali.memorialCard:info.senderNationalIdDescription',
+      defaultMessage:
+        'Með því að skrá kennitölu er hægt að nýta styrkinn til skattafsláttar. Ef ekki er skráð kennitala fæst ekki endurgreiðsla.',
+      description: 'Upplýsingar um kennitölureitinn',
+    },
     fundLabel: {
       id: 'web.landspitali.memorialCard:info.fundLabel',
       defaultMessage: 'Veldu nafn minningarsjóðs úr listanum',
@@ -228,6 +249,12 @@ export const m = {
     },
   }),
   validation: defineMessages({
+    genericFormErrorMessage: {
+      id: 'web.landspitali.memorialCard:validation.genericFormErrorMessage',
+      defaultMessage:
+        'Það vantar upplýsingar í einn af reitunum hér fyrir ofan',
+      description: 'Villuskilaboð fyrir form',
+    },
     invalidNationalIdLength: {
       id: 'web.landspitali.memorialCard:validation.invalidNationalIdLength',
       defaultMessage: 'Kennitala verður að vera 10 tölustafir',

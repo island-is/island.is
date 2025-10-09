@@ -8,7 +8,7 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { mockGetProperties } from './mockedFasteign'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   mapAnswersToApplicationDto,
   mapAnswersToApplicationFilesContentDto,
@@ -65,6 +65,16 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         this.logger.error('Failed to fetch properties:', e.message)
         throw new TemplateApiError(e, 500)
       }
+    }
+
+    if (properties?.length === 0) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.noPropertiesFoundTitle,
+          summary: coreErrorMessages.noPropertiesFoundSummary,
+        },
+        400,
+      )
     }
 
     return properties

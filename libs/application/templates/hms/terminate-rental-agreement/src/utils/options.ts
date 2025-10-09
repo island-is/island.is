@@ -53,6 +53,7 @@ export enum TerminationReason {
   TENANTBEHAVIOR = 'TENANT_BEHAVIOR',
   BOTHPARTIESINTERESTS = 'BOTH_PARTIES_INTERESTS',
   NONPROFITTENANT = 'NON_PROFIT_TENANT',
+  TENANTTERMINATION = 'TENANT_TERMINATION',
 }
 
 const terminationReasons = {
@@ -78,6 +79,8 @@ const terminationReasons = {
     m.unboundTerminationMessages.reasonOptionsBothPartiesInterests,
   [TerminationReason.NONPROFITTENANT]:
     m.unboundTerminationMessages.reasonOptionsNonProfitTenant,
+  [TerminationReason.TENANTTERMINATION]:
+    m.unboundTerminationMessages.reasonOptionsTenantTermination,
 }
 
 export const terminationReasonOptions = Object.entries(terminationReasons).map(

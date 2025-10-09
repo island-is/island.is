@@ -1,4 +1,10 @@
 import {
+  ApolloCache,
+  DefaultContext,
+  MutationTuple,
+  OperationVariables,
+} from '@apollo/client'
+import {
   FormSystemDependency,
   FormSystemField,
   FormSystemScreen,
@@ -11,19 +17,13 @@ import {
   SectionTypes,
 } from '@island.is/form-system/ui'
 import {
-  ApolloCache,
-  DefaultContext,
-  MutationTuple,
-  OperationVariables,
-} from '@apollo/client'
-import {
+  firstVisibleScreenIndex,
   hasScreens,
+  lastVisibleScreenIndex,
   nextVisibleScreenInSection,
   nextVisibleSectionIndex,
-  firstVisibleScreenIndex,
   prevVisibleScreenInSection,
   prevVisibleSectionIndex,
-  lastVisibleScreenIndex,
 } from '../utils/reducerHelpers'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -60,6 +60,9 @@ export const getDecrementVariables = (state: ApplicationState) => {
   }
 }
 
+const completeSection = (sections: FormSystemSection[], idx: number) =>
+  sections.map((s, i) => (i === idx ? { ...s, isCompleted: true } : s))
+
 export const incrementWithScreens = (
   state: ApplicationState,
   currentSectionData: FormSystemSection,
@@ -75,12 +78,10 @@ export const incrementWithScreens = (
   const errors = state.errors ?? []
   const isValid = state.isValid ?? true
 
-  // Stop on validation errors
   if (errors.length > 0 || !isValid) {
     return { ...state, errors }
   }
 
-  // Submit current screen for INPUT sections
   if (
     currentSectionData.sectionType === SectionTypes.INPUT ||
     currentSectionData.sectionType === SectionTypes.PARTIES
@@ -132,6 +133,7 @@ export const incrementWithScreens = (
             data: nextSection.screens![firstScreenIdx] as FormSystemScreen,
           }
         : undefined,
+    sections: completeSection(sections, curSecIdx),
     errors: [],
   }
 }
@@ -146,7 +148,7 @@ export const incrementWithoutScreens = (
   >,
 ): ApplicationState => {
   const [submitSection] = submitSectionMutation
-
+  const leavingIdx = state.currentSection.index
   // Submit current section progress
   submitSection({
     variables: {
@@ -160,7 +162,13 @@ export const incrementWithoutScreens = (
   const sections = state.sections ?? []
   const curSecIdx = state.currentSection.index
   const nextSecIdx = nextVisibleSectionIndex(sections, curSecIdx)
-  if (nextSecIdx === -1) return state
+  if (nextSecIdx === -1) {
+    return {
+      ...state,
+      sections: completeSection(sections, leavingIdx),
+      errors: [],
+    }
+  }
   const nextSection = sections[nextSecIdx] as FormSystemSection
   const firstScreenIdx = firstVisibleScreenIndex(nextSection.screens)
 
@@ -174,6 +182,7 @@ export const incrementWithoutScreens = (
             index: firstScreenIdx,
           }
         : undefined,
+    sections: completeSection(sections, leavingIdx),
     errors: [],
   }
 }

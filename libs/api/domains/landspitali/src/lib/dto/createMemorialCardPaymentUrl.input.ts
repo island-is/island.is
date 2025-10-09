@@ -1,8 +1,25 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
-import { Min, IsInt, IsString, IsEmail, IsOptional } from 'class-validator'
+import { WebLandspitaliCreateMemorialCardPaymentUrlInputSendType } from '@island.is/shared/types'
+import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
+import {
+  Min,
+  IsInt,
+  IsString,
+  IsEmail,
+  IsOptional,
+  IsEnum,
+} from 'class-validator'
+
+registerEnumType(WebLandspitaliCreateMemorialCardPaymentUrlInputSendType, {
+  name: 'WebLandspitaliCreateMemorialCardPaymentUrlInputSendType',
+})
 
 @InputType('WebLandspitaliCreateMemorialCardPaymentUrlInput')
 export class CreateMemorialCardPaymentUrlInput {
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  cancelUrl?: string
+
   @Field(() => String)
   locale = 'is'
 
@@ -10,6 +27,14 @@ export class CreateMemorialCardPaymentUrlInput {
   @Field(() => String)
   @IsString()
   recipientName!: string
+
+  @Field(() => WebLandspitaliCreateMemorialCardPaymentUrlInputSendType)
+  @IsEnum(WebLandspitaliCreateMemorialCardPaymentUrlInputSendType)
+  sendType!: WebLandspitaliCreateMemorialCardPaymentUrlInputSendType
+
+  @Field(() => String)
+  @IsString()
+  recipientEmail!: string
 
   @Field(() => String)
   @IsString()

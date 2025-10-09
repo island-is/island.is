@@ -130,25 +130,12 @@ export class CourtDocumentRepositoryService {
         createOptions.transaction = options.transaction
       }
 
-      // Find the document with the highest document order value for this court session
-      const lastDocument = await this.courtDocumentModel.findOne({
-        where: { caseId, courtSessionId },
-        order: [['documentOrder', 'DESC']],
-        transaction: options?.transaction,
-      })
-
-      const nextOrder = lastDocument ? lastDocument.documentOrder + 1 : 1
-
-      // Iincrease order of documents after the current position
-      await this.courtDocumentModel.update(
-        { documentOrder: literal('document_order + 1') },
-        {
-          where: {
-            caseId,
-            documentOrder: { [Op.gte]: nextOrder },
-          },
-          transaction: options?.transaction,
-        },
+      // Make space for the next court session document
+      const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable(
+        caseId,
+        courtSessionId,
+        undefined,
+        options?.transaction,
       )
 
       const courtDocument = await this.courtDocumentModel.create(
@@ -234,6 +221,7 @@ export class CourtDocumentRepositoryService {
               {
                 where: {
                   caseId,
+                  courtSessionId,
                   documentOrder: { [Op.gt]: currentOrder, [Op.lte]: newOrder },
                 },
                 transaction: options?.transaction,
@@ -246,6 +234,7 @@ export class CourtDocumentRepositoryService {
               {
                 where: {
                   caseId,
+                  courtSessionId,
                   documentOrder: { [Op.gte]: newOrder, [Op.lt]: currentOrder },
                 },
                 transaction: options?.transaction,
@@ -301,50 +290,12 @@ export class CourtDocumentRepositoryService {
         `Filing court document ${courtDocumentId} in court session ${courtSessionId} of case ${caseId}`,
       )
 
-      // Get all court sessions and filed documents for the case
-      const courtSessions = await this.courtSessionModel.findAll({
-        where: { caseId },
-        include: [{ model: CourtDocument, as: 'filedDocuments' }],
-        order: [
-          ['created', 'ASC'],
-          ['filedDocuments', 'documentOrder', 'ASC'],
-        ],
-        transaction: options?.transaction,
-      })
-
-      const alreadyFiled = courtSessions.some((c) =>
-        c.filedDocuments?.some((d) => d.id === courtDocumentId),
-      )
-
-      if (alreadyFiled) {
-        throw new BadRequestException(
-          `Court document ${courtDocumentId} of case ${caseId} is already filed in a court session`,
-        )
-      }
-
-      // Find the next document order value for this court session
-      let nextOrder = 1
-      for (const s of courtSessions) {
-        if (s.filedDocuments && s.filedDocuments.length > 0) {
-          nextOrder =
-            s.filedDocuments[s.filedDocuments.length - 1].documentOrder + 1
-        }
-
-        if (s.id === courtSessionId) {
-          break
-        }
-      }
-
-      // Iincrease order of documents after the current position
-      await this.courtDocumentModel.update(
-        { documentOrder: literal('document_order + 1') },
-        {
-          where: {
-            caseId,
-            documentOrder: { [Op.gte]: nextOrder },
-          },
-          transaction: options?.transaction,
-        },
+      // Make space for the next court session document
+      const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable(
+        caseId,
+        courtSessionId,
+        courtDocumentId,
+        options?.transaction,
       )
 
       const [numberOfAffectedRows, courtDocuments] =
@@ -416,7 +367,7 @@ export class CourtDocumentRepositoryService {
           courtDocumentId,
           caseId,
           courtSessionId,
-          options,
+          options?.transaction,
         )
       } else {
         await this.courtDocumentModel.update(
@@ -450,15 +401,71 @@ export class CourtDocumentRepositoryService {
     }
   }
 
+  private async makeNextCourtSessionDocumentOrderAvailable(
+    caseId: string,
+    courtSessionId: string,
+    courtDocumentId: string | undefined,
+    transaction: Transaction | undefined,
+  ) {
+    // Get all court sessions and filed documents for the case
+    const courtSessions = await this.courtSessionModel.findAll({
+      where: { caseId },
+      include: [{ model: CourtDocument, as: 'filedDocuments' }],
+      order: [
+        ['created', 'ASC'],
+        ['filedDocuments', 'documentOrder', 'ASC'],
+      ],
+      transaction: transaction,
+    })
+
+    const alreadyFiled =
+      Boolean(courtDocumentId) &&
+      courtSessions.some((c) =>
+        c.filedDocuments?.some((d) => d.id === courtDocumentId),
+      )
+
+    if (alreadyFiled) {
+      throw new BadRequestException(
+        `Court document ${courtDocumentId} of case ${caseId} is already filed in a court session`,
+      )
+    }
+
+    // Find the next document order value for this court session
+    let nextOrder = 1
+    for (const s of courtSessions) {
+      if (s.filedDocuments && s.filedDocuments.length > 0) {
+        nextOrder =
+          s.filedDocuments[s.filedDocuments.length - 1].documentOrder + 1
+      }
+
+      if (s.id === courtSessionId) {
+        break
+      }
+    }
+
+    // Iincrease order of documents after the current position
+    await this.courtDocumentModel.update(
+      { documentOrder: literal('document_order + 1') },
+      {
+        where: {
+          caseId,
+          documentOrder: { [Op.gte]: nextOrder },
+        },
+        transaction: transaction,
+      },
+    )
+    return nextOrder
+  }
+
   private async deleteFromDatabase(
     courtDocumentId: string,
     caseId: string,
     courtSessionId: string,
-    options: DeleteCourtDocumentOptions | undefined,
+    transaction: Transaction | undefined,
   ) {
     const numberOfDeletedRows = await this.courtDocumentModel.destroy({
       where: { id: courtDocumentId, caseId, courtSessionId },
-      transaction: options?.transaction,
+      transaction: transaction,
     })
 
     if (numberOfDeletedRows < 1) {

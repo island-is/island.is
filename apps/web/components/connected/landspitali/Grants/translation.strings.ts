@@ -2,6 +2,12 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   info: defineMessages({
+    senderNationalIdDescription: {
+      id: 'web.landspitali.directGrants:info.senderNationalIdDescription',
+      defaultMessage:
+        'Með því að skrá kennitölu er hægt að nýta styrkinn til skattafsláttar. Ef ekki er skráð kennitala fæst ekki endurgreiðsla.',
+      description: 'Upplýsingar um kennitölureitinn',
+    },
     grantLabel: {
       id: 'web.landspitali.directGrants:info.grantLabel',
       defaultMessage: 'Veldu nafn styrktarsjóðs úr listanum',
@@ -92,8 +98,34 @@ export const m = {
       defaultMessage: 'Greiða',
       description: 'Halda áfram í greiðslu takki',
     },
+    continuingEducationProject: {
+      id: 'web.landspitali.directGrants:info.continuingEducationProject',
+      defaultMessage: 'Endurmenntun',
+      description: 'Endurmenntun',
+    },
+    researchProject: {
+      id: 'web.landspitali.directGrants:info.researchProject',
+      defaultMessage: 'Rannsóknir',
+      description: 'Rannsóknir',
+    },
+    equipmentPurchaseProject: {
+      id: 'web.landspitali.directGrants:info.equipmentPurchaseProject',
+      defaultMessage: 'Tækjakaup',
+      description: 'Tækjakaup',
+    },
+    otherProjects: {
+      id: 'web.landspitali.directGrants:info.otherProjects',
+      defaultMessage: 'Önnur verkefni',
+      description: 'Önnur verkefni',
+    },
   }),
   validation: defineMessages({
+    genericFormErrorMessage: {
+      id: 'web.landspitali.directGrants:validation.genericFormErrorMessage',
+      defaultMessage:
+        'Það vantar upplýsingar í einn af reitunum hér fyrir ofan',
+      description: 'Villuskilaboð fyrir form',
+    },
     errorTitle: {
       id: 'web.landspitali.directGrants:validation.errorTitle',
       defaultMessage: 'Villa',

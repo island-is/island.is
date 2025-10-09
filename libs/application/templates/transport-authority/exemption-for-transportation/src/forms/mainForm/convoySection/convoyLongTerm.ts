@@ -18,7 +18,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
   id: 'convoyLongTermMultiField',
   condition: checkIfExemptionTypeLongTerm,
   title: convoy.general.pageTitle,
-  description: convoy.general.description,
+  description: convoy.general.descriptionLongTerm,
   children: [
     buildTableRepeaterField({
       id: 'convoy.items',
@@ -99,6 +99,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
       doesNotRequireAnswer: true,
       alertType: 'error',
       shouldBlockInSetBeforeSubmitCallback: true,
+      allowMultipleSetBeforeSubmitCallbacks: true,
     }),
     buildCustomField({
       component: 'HandleBeforeSubmitConvoy',

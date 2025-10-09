@@ -69,7 +69,6 @@ const template: ApplicationTemplate<
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
   adminDataConfig: {
-    whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
     answers: [
       {
         key: 'pickVehicle.plate',

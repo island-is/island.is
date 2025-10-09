@@ -393,9 +393,6 @@ export const getIncome = (
       const employerSSN = incomeExternal?.[index]?.employerSSN
       const year = incomeExternal?.[index]?.year
       const hasEnded = income.hasEmploymentEnded === YES
-      const unpaidVacationDays = income.numberOfLeaveDays
-        ? parseInt(income.numberOfLeaveDays, 10)
-        : undefined
       return {
         employerName: income.employer,
         employerSSN: employerSSN,
@@ -413,15 +410,6 @@ export const getIncome = (
             ? false
             : true,
         explanation: income.explanation,
-        hasUnpaidVacation: income.hasLeaveDays === YES ? true : false,
-        unpaidVacationDays: unpaidVacationDays,
-        unpaidVacations: !income.leaveDates
-          ? []
-          : income.leaveDates.map((dates) => ({
-              unpaidVacationDays: 0,
-              unpaidVacationStart: new Date(dates.dateFrom),
-              unpaidVacationEnd: new Date(dates.dateTo),
-            })) || [],
       }
     })
   return incomePayload

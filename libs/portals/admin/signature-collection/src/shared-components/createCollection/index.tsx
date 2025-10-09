@@ -33,19 +33,17 @@ const CreateCollection = ({
 }) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
-
   const { id, collectionType } = collection
 
-  const params = useParams() as {
+  const { constituencyName, municipality } = useParams<{
     constituencyName?: string
     municipality?: string
-  }
+  }>()
 
-  // Get the right area name based on collection type
   const areaName =
     collectionType === SignatureCollectionCollectionType.Parliamentary
-      ? params.constituencyName
-      : params.municipality
+      ? constituencyName
+      : municipality
 
   // Find the area by name if we have an area name
   const currentArea =
@@ -148,12 +146,14 @@ const CreateCollection = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box display="flex">
-            <Tag>
-              <Box display="flex" justifyContent="center">
-                <Icon icon="add" type="outline" color="blue600" />
-              </Box>
-            </Tag>
-            <Box marginLeft={5}>
+            <Box marginTop={1}>
+              <Tag>
+                <Box display="flex" justifyContent="center">
+                  <Icon icon="add" type="outline" color="blue600" />
+                </Box>
+              </Tag>
+            </Box>
+            <Box marginLeft={3}>
               <Text variant="h4">{formatMessage(m.createCollection)}</Text>
               <Text marginBottom={2}>
                 {formatMessage(m.createCollectionDescription)}

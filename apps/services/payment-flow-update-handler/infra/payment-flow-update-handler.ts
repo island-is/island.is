@@ -14,6 +14,7 @@ export const serviceSetup =
     service(serviceName)
       .image(imageName)
       .namespace(namespace)
+      .serviceAccount(serviceName)
       .env({
         PAYMENTS_WEB_URL: {
           dev: ref(

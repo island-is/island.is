@@ -52,6 +52,7 @@ export enum ApplicationTypes {
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   OLD_AGE_PENSION = 'OldAgePension',
+  DISABILITY_PENSION = 'DisabilityPension',
   HOUSEHOLD_SUPPLEMENT = 'HouseholdSupplement',
   CAR_RECYCLING = 'CarRecycling',
   PRESIDENTIAL_LIST_CREATION = 'PresidentialListCreation',
@@ -309,6 +310,10 @@ export const ApplicationConfigurations = {
     slug: 'ellilifeyrir',
     translation: ['oap.application', 'sia.application', 'uiForms.application'],
   },
+  [ApplicationTypes.DISABILITY_PENSION]: {
+    slug: 'ororkulifeyrir',
+    translation: ['dp.application', 'sia.application', 'uiForms.application'],
+  },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
     slug: 'heimilisuppbot',
     translation: ['hs.application', 'sia.application', 'uiForms.application'],
@@ -439,7 +444,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.RENTAL_AGREEMENT]: {
     slug: 'leigusamningur',
-    translation: 'ra.application',
+    translation: ['ra.application', 'uiForms.application'],
   },
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
     slug: 'uppsogn-eda-riftun-leigusamnings',
@@ -471,7 +476,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: {
     slug: 'endurmat-brunabotamats',
-    translation: 'fca.application',
+    translation: ['fca.application', 'uiForms.application'],
   },
   [ApplicationTypes.LEGAL_GAZETTE]: {
     slug: 'logbirtingarblad',

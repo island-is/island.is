@@ -62,6 +62,7 @@ ingress:
 namespace: 'air-discount-scheme'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

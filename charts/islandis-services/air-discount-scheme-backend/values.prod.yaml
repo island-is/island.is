@@ -97,6 +97,7 @@ initContainer:
 namespace: 'air-discount-scheme'
 podDisruptionBudget:
   maxUnavailable: 1
+  unhealthyPodEvictionPolicy: 'AlwaysAllow'
 pvcs: []
 replicaCount:
   default: 2

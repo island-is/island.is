@@ -51,6 +51,7 @@ air-discount-scheme-api:
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -160,6 +161,7 @@ air-discount-scheme-backend:
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 2
@@ -234,6 +236,7 @@ air-discount-scheme-web:
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 2
@@ -322,6 +325,7 @@ api:
     USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     VMST_UNEMPLOYMENT_XROAD_PATH: 'IS/GOV/7005942039/VMST-Protected/vmst-umsoknir-v1'
     WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: 'island-is-assistant-feedback'
+    WEB_DOMAIN: 'island.is'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/brautskraning-v1'
     XROAD_AIRCRAFT_REGISTRY_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Loftfaraskra-V1'
@@ -467,6 +471,7 @@ api:
   namespace: 'islandis'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -795,6 +800,7 @@ application-system-api:
   namespace: 'application-system'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -874,6 +880,8 @@ application-system-api-worker:
     APPLICATION_SYSTEM_BULL_PREFIX: 'application_system_api_bull_module'
     CLIENT_LOCATION_ORIGIN: 'https://island.is/umsoknir'
     CODE_OWNER: 'norda-applications'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -884,6 +892,12 @@ application-system-api-worker:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
@@ -928,6 +942,7 @@ application-system-api-worker:
   namespace: 'application-system'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -955,6 +970,7 @@ application-system-api-worker:
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME'
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
@@ -1017,6 +1033,7 @@ application-system-form:
   namespace: 'application-system'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 3
@@ -1071,6 +1088,7 @@ cms-importer-worker:
   namespace: 'cms-importer'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 3
@@ -1141,6 +1159,7 @@ consultation-portal:
   namespace: 'consultation-portal'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 2
@@ -1199,6 +1218,7 @@ contentful-apps:
   namespace: 'contentful-apps'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1262,6 +1282,7 @@ contentful-entry-tagger-service:
   namespace: 'contentful-entry-tagger'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1357,6 +1378,9 @@ download-service:
   namespace: 'download-service'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -1387,6 +1411,11 @@ download-service:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/download-service'
+    create: true
+    name: 'download-service'
 endorsement-system-api:
   args:
     - '--tls-min-v1.0'
@@ -1474,6 +1503,7 @@ endorsement-system-api:
   namespace: 'endorsement-system'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1549,6 +1579,7 @@ form-system-web:
   namespace: 'form-system-web'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 2
@@ -1652,6 +1683,7 @@ icelandic-names-registry-backend:
   namespace: 'icelandic-names-registry'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 3
@@ -1710,6 +1742,7 @@ island-ui-storybook:
   namespace: 'storybook'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 3
@@ -1783,6 +1816,7 @@ license-api:
   namespace: 'license-api'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 2
@@ -1848,7 +1882,6 @@ namespaces:
     - 'contentful-apps'
     - 'contentful-entry-tagger'
     - 'portals-my-pages'
-    - 'unicorn-app'
     - 'payments'
     - 'services-payments'
     - 'services-payment-flow-update-handler'
@@ -1905,6 +1938,7 @@ payments:
   namespace: 'payments'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 3
@@ -1974,6 +2008,7 @@ portals-admin:
   namespace: 'portals-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 2
@@ -2066,6 +2101,7 @@ regulations-admin-backend:
   namespace: 'regulations-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 3
@@ -2194,6 +2230,7 @@ search-indexer-service:
   namespace: 'search-indexer'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   progressDeadlineSeconds: 1500
@@ -2274,6 +2311,7 @@ service-portal:
   namespace: 'service-portal'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 2
@@ -2382,6 +2420,7 @@ service-portal-api:
   namespace: 'service-portal'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2480,6 +2519,7 @@ services-bff-portals-admin:
   namespace: 'portals-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2568,6 +2608,7 @@ services-bff-portals-my-pages:
   namespace: 'portals-my-pages'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2654,6 +2695,9 @@ services-documents:
   namespace: 'services-documents'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -2672,6 +2716,11 @@ services-documents:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-documents'
+    create: true
+    name: 'services-documents'
 services-form-system-api:
   enabled: true
   env:
@@ -2707,18 +2756,6 @@ services-form-system-api:
         min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/form-api'
-        - host: 'www.island.is'
-          paths:
-            - '/form-api'
   initContainer:
     containers:
       - args:
@@ -2745,6 +2782,7 @@ services-form-system-api:
   namespace: 'services-form-system-api'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 3
@@ -2813,6 +2851,9 @@ services-payment-flow-update-handler:
   namespace: 'services-payment-flow-update-handler'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -2831,6 +2872,11 @@ services-payment-flow-update-handler:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-payment-flow-update-handler'
+    create: true
+    name: 'services-payment-flow-update-handler'
 services-payments:
   enabled: true
   env:
@@ -2851,6 +2897,7 @@ services-payments:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is/payments-v1'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
@@ -2923,6 +2970,7 @@ services-payments:
   namespace: 'services-payments'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 3
@@ -2944,6 +2992,8 @@ services-payments:
     PAYMENTS_GATEWAY_API_SECRET: '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET'
     PAYMENTS_GATEWAY_API_URL: '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL'
     PAYMENTS_GATEWAY_SYSTEM_CALLING: '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING'
+    PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM: '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM'
+    PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET: '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET'
     PAYMENTS_JWT_SIGNING_KEY_ID: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_KEY_ID'
     PAYMENTS_JWT_SIGNING_PRIVATE_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PRIVATE_KEY'
     PAYMENTS_JWT_SIGNING_PUBLIC_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PUBLIC_KEY'
@@ -3004,6 +3054,7 @@ services-sessions:
   namespace: 'services-sessions'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 1
@@ -3065,6 +3116,7 @@ services-sessions-cleanup:
   namespace: 'services-sessions'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 3
@@ -3155,6 +3207,7 @@ services-sessions-worker:
   namespace: 'services-sessions'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3282,6 +3335,7 @@ services-university-gateway:
   namespace: 'services-university-gateway'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3367,6 +3421,7 @@ services-university-gateway-worker:
   namespace: 'services-university-gateway'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3441,6 +3496,7 @@ skilavottord-web:
   namespace: 'skilavottord'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 2
@@ -3534,6 +3590,7 @@ skilavottord-ws:
   namespace: 'skilavottord'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 3
@@ -3649,6 +3706,7 @@ user-notification:
   namespace: 'user-notification'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3749,6 +3807,7 @@ user-notification-birthday-worker:
   namespace: 'user-notification'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3848,6 +3907,7 @@ user-notification-cleanup-worker:
   namespace: 'user-notification'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3968,6 +4028,7 @@ user-notification-worker:
   namespace: 'user-notification'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -4054,6 +4115,7 @@ web:
   namespace: 'islandis'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   pvcs: []
   replicaCount:
     default: 2
@@ -4114,6 +4176,7 @@ xroad-collector:
   namespace: 'xroad-collector'
   podDisruptionBudget:
     maxUnavailable: 1
+    unhealthyPodEvictionPolicy: 'AlwaysAllow'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []

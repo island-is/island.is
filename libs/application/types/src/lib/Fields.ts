@@ -453,6 +453,7 @@ export interface DescriptionField extends BaseField {
   space?: BoxProps['paddingTop']
   titleVariant?: TitleVariants
   showFieldName?: boolean
+  showRequiredStar?: boolean
 }
 
 export interface RadioField extends InputField {
@@ -650,6 +651,7 @@ export interface AlertMessageField extends BaseField {
   message?: FormTextWithLocale
   links?: AlertMessageLink[]
   shouldBlockInSetBeforeSubmitCallback?: boolean
+  allowMultipleSetBeforeSubmitCallbacks?: boolean
 }
 
 export interface LinkField extends BaseField {
