@@ -6,25 +6,21 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Audit, AuditService } from '@island.is/nest/audit'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
-import type { Locale } from '@island.is/shared/types'
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
+import type { Locale } from '@island.is/shared/types'
 import { GetCourtCaseInput } from '../dto/getCourtCaseInput'
 import { GetSubpoenaInput } from '../dto/getSubpoenaInput'
 import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
-import { CourtCase } from '../models/courtCase.model'
-import { CourtCases } from '../models/courtCases.model'
-import { DefenseChoice } from '../models/defenseChoice.model'
-import { Lawyers } from '../models/lawyers.model'
-import { Subpoena } from '../models/summon.model'
-import { LawAndOrderService } from './law-and-order.service'
+import { CourtCase } from '../models/law-and-order/courtCase.model'
+import { CourtCases } from '../models/law-and-order/courtCases.model'
+import { DefenseChoice } from '../models/law-and-order/defenseChoice.model'
+import { Lawyers } from '../models/law-and-order/lawyers.model'
+import { Subpoena } from '../models/law-and-order/summon.model'
+import { LawAndOrderService } from '../services/law-and-order.service'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 const LOG_CATEGORY = 'law-and-order-resolver'
 

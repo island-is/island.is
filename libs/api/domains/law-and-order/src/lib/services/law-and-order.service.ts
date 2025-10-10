@@ -10,23 +10,22 @@ import { IntlService } from '@island.is/cms-translations'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Injectable } from '@nestjs/common'
-import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
-import { ActionTypeEnum } from '../models/actions.model'
-import { CourtCase } from '../models/courtCase.model'
-import { CourtCases } from '../models/courtCases.model'
-import { Item } from '../models/item.model'
-import { Lawyers } from '../models/lawyers.model'
-import { Subpoena } from '../models/summon.model'
 import {
-  DefenseChoices,
-  mapDefenseChoice,
   mapDefenseChoiceForSummon,
   mapDefenseChoiceForSummonDefaultChoice,
-  mapTagTypes,
-} from './helpers/mappers'
-import { m } from './messages'
-
-const namespaces = ['api.law-and-order']
+  mapDefenseChoice,
+} from '../mappers/defenseChoiceMapper'
+import { DefenseChoices } from '../mappers/messageMapper'
+import { mapTagTypes } from '../mappers/tagTypeMapper'
+import { m } from '../messages'
+import { ActionTypeEnum } from '../models/law-and-order/actions.model'
+import { CourtCase } from '../models/law-and-order/courtCase.model'
+import { CourtCases } from '../models/law-and-order/courtCases.model'
+import { Lawyers } from '../models/law-and-order/lawyers.model'
+import { Subpoena } from '../models/law-and-order/summon.model'
+import { Item } from '../models/law-and-order/item.model'
+import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
+import { NAMESPACE } from '../types/constants'
 
 @Injectable()
 export class LawAndOrderService {
@@ -45,6 +44,7 @@ export class LawAndOrderService {
       cases:
         cases?.map((x: CasesResponse) => {
           return {
+            cacheId: `${x.id}${locale.toString()}`,
             id: x.id,
             caseNumber: x.caseNumber,
             caseNumberTitle: x.caseNumber,
@@ -58,7 +58,7 @@ export class LawAndOrderService {
   }
 
   async getCourtCase(user: User, id: string, locale: Locale) {
-    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
+    const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
     const singleCase = await this.api.getCase(id, user, locale)
     const hasBeenServed = singleCase?.data.hasBeenServed
 
@@ -82,6 +82,7 @@ export class LawAndOrderService {
 
     const data: CourtCase = {
       data: {
+        cacheId: `${singleCase?.caseId ?? id}${locale}`,
         id: singleCase?.caseId ?? id,
         hasBeenServed: hasBeenServed,
         caseNumberTitle: singleCase?.data.caseNumber,
@@ -108,7 +109,7 @@ export class LawAndOrderService {
   }
 
   async getSummon(user: User, id: string, locale: Locale) {
-    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
+    const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
 
     const summon: SubpoenaResponse | null = await this.api.getSummon(
       id,
@@ -128,6 +129,7 @@ export class LawAndOrderService {
 
     const data: Subpoena = {
       data: {
+        cacheId: `${summon.caseId ?? id}${locale}`,
         id: summon.caseId ?? id,
         hasBeenServed: summonData.hasBeenServed,
         chosenDefender: [message, defenderInfo?.defenderName]
@@ -156,7 +158,7 @@ export class LawAndOrderService {
   }
 
   async getLawyers(user: User, locale: Locale) {
-    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
+    const { formatMessage } = await this.intlService.useIntl(NAMESPACE, locale)
 
     const answer: Array<Defender> | undefined | null =
       await this.api.getLawyers(user)
@@ -169,6 +171,7 @@ export class LawAndOrderService {
     })
 
     list.choices = Object.entries(DefenseChoices).map(([code, value]) => ({
+      cacheId: `${code}${locale}`,
       id: code,
       label: formatMessage(value.message),
     }))
