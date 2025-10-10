@@ -226,6 +226,7 @@ export const EstateMembersRepeater: FC<
                     update(index, updatedMember)
                     clearErrors(`${id}[${index}].phone`)
                     clearErrors(`${id}[${index}].email`)
+                    clearErrors(`${id}[${index}].nationalId`)
                     clearErrors(`${id}[${index}].advocate.phone`)
                     clearErrors(`${id}[${index}].advocate.email`)
                   }}
@@ -247,11 +248,7 @@ export const EstateMembersRepeater: FC<
                   disabled={!member.enabled}
                   readOnly
                   format={'######-####'}
-                  error={
-                    member.enabled
-                      ? error && error[index] && error[index].nationalId
-                      : undefined
-                  }
+                  error={error && error[index] && error[index].nationalId}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
