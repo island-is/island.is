@@ -84,11 +84,6 @@ const SingleDocumentProvider = () => {
         (statistics?.statistics?.published ?? 0) * DOCUMENT_DELIVERY_PRICE_ISK,
     },
   ]
-  useEffect(() => {
-    if (!user?.scopes?.includes(AdminPortalScope.documentProviderInstitution)) {
-      navigate(DocumentProviderPaths.DocumentProviderOverview)
-    }
-  }, [user, navigate])
 
   useEffect(() => {
     if (breakdown?.totalCount !== undefined && pageSize > 0) {

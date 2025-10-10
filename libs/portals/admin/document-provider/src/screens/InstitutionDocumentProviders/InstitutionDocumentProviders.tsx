@@ -64,16 +64,6 @@ const InstitutionDocumentProviders = () => {
     },
   ]
 
-  useEffect(() => {
-    if (!user) {
-      return
-    }
-
-    if (!user?.scopes?.includes(AdminPortalScope.documentProviderInstitution)) {
-      navigate(DocumentProviderPaths.DocumentProviderOverview)
-    }
-  }, [user, navigate])
-
   return (
     <>
       <Breadcrumbs
