@@ -645,6 +645,7 @@ OperatingLicenses.getProps = async ({ apolloClient, locale, req }) => {
         input: {
           slug: slug,
           lang: locale as ContentLanguage,
+          subpageSlugs: [subSlug],
         },
       },
     }),

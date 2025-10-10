@@ -136,6 +136,33 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           href
         }
       }
+      navigationLinks {
+        activeCategory {
+          label
+          description
+          icelandicSlug
+          englishSlug
+          childLinks {
+            label
+            href
+            description
+          }
+        }
+        breadcrumbs {
+          label
+          href
+        }
+        topLinks {
+          label
+          href
+          isActive
+          midLinks {
+            label
+            href
+            isActive
+          }
+        }
+      }
       defaultHeaderImage {
         url
         contentType

@@ -140,6 +140,7 @@ MyPages.getProps = async ({ apolloClient, locale }) => {
         input: {
           slug: organizationSlug,
           lang: locale as ContentLanguage,
+          subpageSlugs: [locale === 'is' ? 'minar-sidur' : 'my-pages'],
         },
       },
     }),

@@ -280,7 +280,21 @@ export class CmsResolver {
   async getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
-    return this.cmsContentfulService.getOrganizationPage(input.slug, input.lang)
+    const organizationPage =
+      await this.cmsContentfulService.getOrganizationPage(
+        input.slug,
+        input.lang,
+      )
+
+    if (!organizationPage) {
+      return organizationPage
+    }
+
+    // Used in the resolver to fetch navigation links from cms
+    organizationPage.subpageSlugsInput = input.subpageSlugs
+    organizationPage.lang = input.lang
+
+    return organizationPage
   }
 
   @CacheControl(defaultCache)

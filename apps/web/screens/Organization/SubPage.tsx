@@ -10,6 +10,7 @@ import {
   GridRow,
   Link,
   NavigationItem,
+  ResponsiveSpace,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -68,8 +69,10 @@ export const SubPageContent = ({
   namespace,
   organizationPage,
   subpageTitleVariant = 'h1',
+  paddingTop = 4,
 }: Pick<SubPageProps, 'subpage' | 'organizationPage' | 'namespace'> & {
   subpageTitleVariant?: 'h1' | 'h2'
+  paddingTop?: ResponsiveSpace
 }) => {
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
@@ -123,7 +126,7 @@ export const SubPageContent = ({
   return (
     <>
       <GridContainer>
-        <Box paddingTop={4}>
+        <Box paddingTop={paddingTop}>
           <GridRow>
             <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
               <GridContainer>
@@ -490,6 +493,7 @@ SubPage.getProps = async ({
             input: {
               slug: slug as string,
               lang: locale as ContentLanguage,
+              subpageSlugs: subSlug ? [subSlug] : [],
             },
           },
         })

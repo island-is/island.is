@@ -352,6 +352,7 @@ OrganizationEventArticle.getProps = async ({
               input: {
                 slug: organizationPageSlug,
                 lang: locale as Locale,
+                subpageSlugs: [locale === 'is' ? 'vidburdir' : 'events'],
               },
             },
           })

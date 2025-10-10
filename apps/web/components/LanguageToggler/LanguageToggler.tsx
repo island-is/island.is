@@ -27,6 +27,10 @@ type LanguageTogglerProps = {
   hideWhenMobile?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
   queryParams?: LayoutProps['languageToggleQueryParams']
+  hrefOverride?: {
+    is: string
+    en: string
+  }
 }
 
 export const LanguageToggler = ({
@@ -35,6 +39,7 @@ export const LanguageToggler = ({
   dialogId = 'confirm-language-switch-dialog' +
     (!hideWhenMobile ? '-mobile' : ''),
   queryParams,
+  hrefOverride,
 }: LanguageTogglerProps) => {
   const client = useApolloClient()
   const Router = useRouter()
@@ -49,6 +54,10 @@ export const LanguageToggler = ({
   const getOtherLanguagePath = async () => {
     if (showDialog) {
       return null
+    }
+
+    if (hrefOverride?.[otherLanguage]) {
+      return goToOtherLanguagePage(hrefOverride[otherLanguage])
     }
 
     const pathWithoutQueryParams = Router.asPath.split('?')[0]
