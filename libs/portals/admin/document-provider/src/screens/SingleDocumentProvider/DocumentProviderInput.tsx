@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { useContext } from 'react'
 import { Box, Input, SkeletonLoader } from '@island.is/island-ui/core'
 import { Controller, Control, FieldValues } from 'react-hook-form'
 import { IsFetchingProviderOrganisationContext } from './SingleDocumentProvider'
@@ -7,6 +7,8 @@ import {
   ValidationRule,
   ValidationValueMessage,
 } from 'react-hook-form/dist/types/validator'
+import { Path } from 'react-hook-form'
+import { PathValue } from 'react-hook-form'
 
 type ControllerRules = Partial<{
   required: string | boolean | ValidationValueMessage<boolean>
@@ -18,10 +20,10 @@ type ControllerRules = Partial<{
   validate: Validate<string, FieldValues>
 }>
 
-interface Props {
-  control: Control<any, string>
-  name: string
-  defaultValue: string
+interface Props<T extends FieldValues> {
+  control: Control<T, string>
+  name: Path<T>
+  defaultValue: PathValue<T, Path<T>>
   hasError: boolean
   errorMessage: string
   label: string
@@ -29,7 +31,7 @@ interface Props {
   rules?: ControllerRules
 }
 
-export const DocumentProviderInput: FC<React.PropsWithChildren<Props>> = ({
+export const DocumentProviderInput = <T extends FieldValues = FieldValues>({
   control,
   name,
   defaultValue,
@@ -38,7 +40,7 @@ export const DocumentProviderInput: FC<React.PropsWithChildren<Props>> = ({
   label,
   placeholder,
   rules,
-}) => {
+}: Props<T>) => {
   const loading = useContext(IsFetchingProviderOrganisationContext)
   return (
     <Box marginBottom={2}>

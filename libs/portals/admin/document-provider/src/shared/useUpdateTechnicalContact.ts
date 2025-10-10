@@ -28,7 +28,7 @@ export type ContactInput = Pick<
   'id' | 'name' | 'email' | 'phoneNumber'
 >
 
-export function useUpdateTechnicalContact(organisationId: string) {
+export const useUpdateTechnicalContact = (organisationId: string) => {
   const [updateTechnicalContactMutation, { called, loading, error }] =
     useMutation(UPDATE_TECHNICAL_CONTACT_MUTATION)
 

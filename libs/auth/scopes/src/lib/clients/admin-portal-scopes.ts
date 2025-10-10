@@ -9,6 +9,7 @@ export const adminPortalScopes = [
   AdminPortalScope.applicationSystemAdmin,
   AdminPortalScope.applicationSystemInstitution,
   AdminPortalScope.documentProvider,
+  AdminPortalScope.documentProviderInstitution,
   AdminPortalScope.idsAdmin,
   AdminPortalScope.idsAdminSuperUser,
   AdminPortalScope.petitionsAdmin,

@@ -1,0 +1,28 @@
+{
+  "name": "document-provider-dashboard",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/document-provider-dashboard/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/document-provider-dashboard"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/document-provider-dashboard/jest.config.ts"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/document-provider-dashboard/gen/fetch -i libs/clients/document-provider-dashboard/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}

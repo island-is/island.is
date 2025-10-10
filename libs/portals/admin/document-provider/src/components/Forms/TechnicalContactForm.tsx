@@ -27,16 +27,18 @@ export const TechnicalContactForm: FC<React.PropsWithChildren<Props>> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm()
+  } = useForm<TechnicalContactFormData>()
   const { formatMessage } = useLocale()
   const { updateTechnicalContact, loading } =
     useUpdateTechnicalContact(organisationId)
 
-  const onSubmit: SubmitHandler<any> = (contact: Contact) => {
-    if (contact) {
+  const onSubmit: SubmitHandler<TechnicalContactFormData> = (data) => {
+    if (data) {
       const input: ContactInput = {
-        ...contact,
         id: technicalContact?.id,
+        name: data.name,
+        email: data.email,
+        phoneNumber: data.tel,
       }
       updateTechnicalContact(input)
     }
@@ -102,7 +104,7 @@ export const TechnicalContactForm: FC<React.PropsWithChildren<Props>> = ({
         />
         <Controller
           control={control}
-          name="phoneNumber"
+          name="tel"
           defaultValue={technicalContact?.phoneNumber || ''}
           rules={{
             required: {
@@ -126,8 +128,8 @@ export const TechnicalContactForm: FC<React.PropsWithChildren<Props>> = ({
               name={name}
               value={value}
               onChange={onChange}
-              hasError={!!errors.phoneNumber}
-              errorMessage={errors.phoneNumber?.message as string}
+              hasError={!!errors.tel}
+              errorMessage={errors.tel?.message as string}
             ></Input>
           )}
         />
