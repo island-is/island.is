@@ -3,6 +3,8 @@ export const is = {
   // General buttons
   'button.change': 'Breyta',
   'button.open': 'Skoða',
+  'button.moreInfo': 'Nánari upplýsingar',
+  'button.moreInfoLink': 'hér',
 
   // login
   'login.welcomeMessage': 'Skráðu þig inn í appið með rafrænum skilríkjum',
@@ -644,9 +646,9 @@ export const is = {
   'airDiscount.emptyListTitle': 'Enginn réttur',
   'airDiscount.emptyListDescription':
     'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
-  'airDiscount.disabledTitle': 'Fjármagn klárað',
+  'airDiscount.disabledTitle': 'Tímabundin lokun',
   'airDiscount.disabledDescription':
-    'Opnað verður aftur fyrir umsóknir um Loftbrú 1. janúar 2026.',
+    'Afsláttarkóðar Loftbrúar verða aðgengilegir aftur 1. janúar 2026.',
 
   // offline
   'offline.title': 'Ekkert netsamband',
