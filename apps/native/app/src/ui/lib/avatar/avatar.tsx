@@ -3,27 +3,44 @@ import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
-const Host = styled.View<{ isSmall?: boolean }>`
+const Host = styled.View<{ size?: 'small' | 'medium' | 'large' }>`
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  height: ${(props) => (props.isSmall ? '48px' : '80px')};
-  width: ${(props) => (props.isSmall ? '48px' : '80px')};
-  padding-top: ${(props) => (props.isSmall ? '0' : '3px')};
+  height: ${(props) =>
+    props.size === 'small'
+      ? '32px'
+      : props.size === 'medium'
+      ? '48px'
+      : '80px'};
+  width: ${(props) =>
+    props.size === 'small'
+      ? '32px'
+      : props.size === 'medium'
+      ? '48px'
+      : '80px'};
+  padding-top: ${(props) => (props.size === 'small' ? '0' : '3px')};
   overflow: hidden;
-  border-radius: ${(props) => (props.isSmall ? '48px' : '80px')};
+  border-radius: ${(props) =>
+    props.size === 'small'
+      ? '32px'
+      : props.size === 'medium'
+      ? '48px'
+      : '80px'};
   background-color: ${dynamicColor(({ theme }) => ({
     light: theme.color.blue100,
     dark: theme.shades.dark.shade300,
   }))};
 `
 
-const Text = styled.Text<{ isSmall?: boolean }>`
+const Text = styled.Text<{ size?: 'small' | 'medium' | 'large' }>`
   ${font({
-    fontSize: (props) => (props.isSmall ? 20 : 32),
+    fontSize: (props) =>
+      props.size === 'small' ? 14 : props.size === 'medium' ? 20 : 32,
     fontWeight: '600',
-    lineHeight: (props) => (props.isSmall ? 26 : 38),
+    lineHeight: (props) =>
+      props.size === 'small' ? 15 : props.size === 'medium' ? 26 : 38,
     color: ({ theme }) => ({
       light: theme.color.blue400,
       dark: theme.color.roseTinted200,
@@ -33,10 +50,10 @@ const Text = styled.Text<{ isSmall?: boolean }>`
 
 interface AvatarProps {
   name: string
-  isSmall?: boolean
+  size?: 'small' | 'medium' | 'large'
 }
 
-export function Avatar({ name, isSmall }: AvatarProps) {
+export function Avatar({ name, size = 'medium' }: AvatarProps) {
   function getFirstLetters(str: string) {
     const names = str.split(' ')
 
@@ -50,8 +67,8 @@ export function Avatar({ name, isSmall }: AvatarProps) {
   }
 
   return (
-    <Host isSmall={isSmall}>
-      <Text isSmall={isSmall}>{getFirstLetters(name)}</Text>
+    <Host size={size}>
+      <Text size={size}>{getFirstLetters(name)}</Text>
     </Host>
   )
 }

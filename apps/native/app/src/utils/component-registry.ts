@@ -39,6 +39,7 @@ export const ComponentRegistry = {
   MoreScreen: `${prefix}.screens.MoreScreen`,
   NotificationsScreen: `${prefix}.screens.Notifications`,
   OfflineBanner: `${prefix}.overlay.OfflineBanner`,
+  DropdownMenuOverlay: `${prefix}.overlay.DropdownMenuOverlay`,
   OfflineIcon: `${prefix}.navigation.OfflineIcon`,
   OnboardingBiometricsScreen: `${prefix}.screens.OnboardingBiometrics`,
   OnboardingNotificationsScreen: `${prefix}.screens.OnboardingNotifications`,
@@ -62,6 +63,7 @@ export const ButtonRegistry = {
   DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
   DocumentStarButton: `${prefix}.button.DocumentStarButton`,
   HomeScreenOptionsButton: `${prefix}.button.HomeScreenOptionsButton`,
+  HomeScreenDropdownButton: `${prefix}.button.HomeScreenDropdownButton`,
   InboxBulkDeselectAllButton: `${prefix}.button.InboxBulkDeselectAllButton`,
   InboxBulkSelectAllButton: `${prefix}.button.InboxBulkSelectAllButton`,
   InboxBulkSelectButton: `${prefix}.button.InboxBulkSelectButton`,
@@ -74,6 +76,7 @@ export const ButtonRegistry = {
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
   SettingsButton: `${prefix}.button.SettingsButton`,
   ShareButton: `${prefix}.button.ShareButton`,
+  ProfileAvatarButton: `${prefix}.button.ProfileAvatarButton`,
 }
 
 export const StackRegistry = {
