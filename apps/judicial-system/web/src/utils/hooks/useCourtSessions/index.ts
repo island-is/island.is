@@ -3,15 +3,18 @@ import { useCallback } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import {
   CreateCourtSessionInput,
+  DeleteCourtSessionInput,
   UpdateCourtSessionInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCreateCourtSessionMutation } from './createCourtSession.generated'
+import { useDeleteCourtSessionMutation } from './deleteCourtSession.generated'
 import { useUpdateCourtSessionMutation } from './updateCourtSession.generated'
 
 const useCourtSessions = () => {
-  const [updateCourtSessionMutation] = useUpdateCourtSessionMutation()
   const [createCourtSessionMutation] = useCreateCourtSessionMutation()
+  const [updateCourtSessionMutation] = useUpdateCourtSessionMutation()
+  const [deleteCourtSessionMutation] = useDeleteCourtSessionMutation()
 
   const createCourtSession = useCallback(
     async (createCourtSessionInput: CreateCourtSessionInput) => {
@@ -58,9 +61,29 @@ const useCourtSessions = () => {
     [updateCourtSessionMutation],
   )
 
+  const deleteCourtSession = useCallback(
+    async (deleteCourtSession: DeleteCourtSessionInput) => {
+      try {
+        const { data } = await deleteCourtSessionMutation({
+          variables: {
+            input: deleteCourtSession,
+          },
+        })
+
+        return Boolean(data?.deleteCourtSession?.deleted)
+      } catch (error) {
+        toast.error('Upp kom villa við að eyða þinghaldi')
+
+        return false
+      }
+    },
+    [deleteCourtSessionMutation],
+  )
+
   return {
     createCourtSession,
     updateCourtSession,
+    deleteCourtSession,
   }
 }
 
