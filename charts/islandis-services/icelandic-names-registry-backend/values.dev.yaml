@@ -89,6 +89,8 @@ namespace: 'icelandic-names-registry'
 podDisruptionBudget:
   maxUnavailable: 1
   unhealthyPodEvictionPolicy: 'AlwaysAllow'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -107,3 +109,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/icelandic-names-registry'
+  create: true
+  name: 'icelandic-names-registry'

@@ -68,6 +68,8 @@ namespace: 'identity-server-admin'
 podDisruptionBudget:
   maxUnavailable: 1
   unhealthyPodEvictionPolicy: 'AlwaysAllow'
+podSecurityContext:
+  fsGroup: 65534
 progressDeadlineSeconds: 1200
 pvcs: []
 replicaCount:
@@ -87,3 +89,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/auth-admin-web'
+  create: true
+  name: 'auth-admin-web'

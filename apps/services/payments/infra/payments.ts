@@ -14,6 +14,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
   service(serviceName)
     .namespace(namespace)
     .image(imageName)
+    .serviceAccount(serviceName)
     .db({
       extensions: ['uuid-ossp'],
     })

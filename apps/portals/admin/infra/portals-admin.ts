@@ -3,6 +3,7 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 export const serviceSetup = (): ServiceBuilder<'portals-admin'> =>
   service('portals-admin')
     .namespace('portals-admin')
+    .serviceAccount('portals-admin')
     .liveness('/liveness')
     .readiness('/readiness')
     .replicaCount({

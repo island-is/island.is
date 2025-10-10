@@ -16,6 +16,7 @@ import {
 export const serviceSetup = (): ServiceBuilder<'license-api'> =>
   service('license-api')
     .namespace('license-api')
+    .serviceAccount('license-api')
     .codeOwner(CodeOwners.Hugsmidjan)
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },

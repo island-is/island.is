@@ -5,6 +5,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
   service('air-discount-scheme-backend')
     .image('air-discount-scheme-backend')
     .namespace('air-discount-scheme')
+    .serviceAccount('air-discount-scheme-backend')
     .secrets({
       ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY',
       MYFLUG_API_KEY: '/k8s/air-discount-scheme/backend/MYFLUG_API_KEY',

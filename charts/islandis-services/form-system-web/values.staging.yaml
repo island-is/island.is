@@ -62,6 +62,8 @@ namespace: 'form-system-web'
 podDisruptionBudget:
   maxUnavailable: 1
   unhealthyPodEvictionPolicy: 'AlwaysAllow'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -82,3 +84,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/form-system-web'
+  create: true
+  name: 'form-system-web'

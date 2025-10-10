@@ -13,6 +13,7 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
   service('regulations-admin-backend')
     .image('regulations-admin-backend')
     .namespace('regulations-admin')
+    .serviceAccount('regulations-admin-backend')
     .codeOwner(CodeOwners.Hugsmidjan)
     .env({
       IDENTITY_SERVER_ISSUER_URL: {

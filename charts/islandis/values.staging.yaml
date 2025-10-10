@@ -170,6 +170,8 @@ air-discount-scheme-backend:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -196,6 +198,11 @@ air-discount-scheme-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/air-discount-scheme-backend'
+    create: true
+    name: 'air-discount-scheme-backend'
 air-discount-scheme-web:
   enabled: true
   env:
@@ -1040,6 +1047,8 @@ application-system-form:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -1059,6 +1068,11 @@ application-system-form:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/application-system-form'
+    create: true
+    name: 'application-system-form'
 cms-importer-worker:
   args:
     - 'main.cjs'
@@ -1163,6 +1177,8 @@ consultation-portal:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -1182,6 +1198,11 @@ consultation-portal:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/consultation-portal'
+    create: true
+    name: 'consultation-portal'
 download-service:
   enabled: true
   env:
@@ -1451,6 +1472,8 @@ form-system-web:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -1471,6 +1494,11 @@ form-system-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/form-system-web'
+    create: true
+    name: 'form-system-web'
 global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
@@ -1555,6 +1583,8 @@ icelandic-names-registry-backend:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -1573,6 +1603,11 @@ icelandic-names-registry-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/icelandic-names-registry'
+    create: true
+    name: 'icelandic-names-registry'
 island-ui-storybook:
   enabled: true
   env:
@@ -1688,6 +1723,8 @@ license-api:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -1727,6 +1764,11 @@ license-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/license-api'
+    create: true
+    name: 'license-api'
 namespaces:
   labels: {}
   namespaces:
@@ -1806,6 +1848,8 @@ payments:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -1827,6 +1871,11 @@ payments:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/payments'
+    create: true
+    name: 'payments'
 portals-admin:
   enabled: true
   env:
@@ -1873,6 +1922,8 @@ portals-admin:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -1892,6 +1943,11 @@ portals-admin:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/portals-admin'
+    create: true
+    name: 'portals-admin'
 regulations-admin-backend:
   enabled: true
   env:
@@ -1966,6 +2022,8 @@ regulations-admin-backend:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -1990,6 +2048,11 @@ regulations-admin-backend:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/regulations-admin-backend'
+    create: true
+    name: 'regulations-admin-backend'
 search-indexer-service:
   enabled: true
   env:
@@ -2174,6 +2237,8 @@ service-portal:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -2193,6 +2258,11 @@ service-portal:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/service-portal'
+    create: true
+    name: 'service-portal'
 service-portal-api:
   enabled: true
   env:
@@ -2641,6 +2711,8 @@ services-form-system-api:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -2663,6 +2735,11 @@ services-form-system-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-form-system-api'
+    create: true
+    name: 'services-form-system-api'
 services-payment-flow-update-handler:
   enabled: true
   env:
@@ -2829,6 +2906,8 @@ services-payments:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -2862,6 +2941,11 @@ services-payments:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-payments'
+    create: true
+    name: 'services-payments'
 services-sessions:
   enabled: true
   env:
@@ -3359,6 +3443,8 @@ skilavottord-web:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -3381,6 +3467,11 @@ skilavottord-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/skilavottord-web'
+    create: true
+    name: 'skilavottord-web'
 skilavottord-ws:
   enabled: true
   env:
@@ -3450,6 +3541,8 @@ skilavottord-ws:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -3478,6 +3571,11 @@ skilavottord-ws:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/skilavottord-ws'
+    create: true
+    name: 'skilavottord-ws'
 user-notification:
   args:
     - '--no-experimental-fetch'
@@ -3973,6 +4071,8 @@ web:
   podDisruptionBudget:
     maxUnavailable: 1
     unhealthyPodEvictionPolicy: 'AlwaysAllow'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -3991,6 +4091,11 @@ web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/web'
+    create: true
+    name: 'web'
 xroad-collector:
   args:
     - '--no-experimental-fetch'
