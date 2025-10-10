@@ -110,17 +110,13 @@ export const Draft: Form = buildForm({
               id: 'service.type',
               width: 'half',
               options: ({ answers, externalData }: Application) => {
-                const regularCode = getChargeCode(
-                  answers,
-                  externalData,
-                  Services.REGULAR,
-                )
+                const regularCode = getChargeCode(answers, externalData, {
+                  type: Services.REGULAR,
+                })
                 const regularPrices = getPrice(externalData, regularCode)
-                const expressCode = getChargeCode(
-                  answers,
-                  externalData,
-                  Services.EXPRESS,
-                )
+                const expressCode = getChargeCode(answers, externalData, {
+                  type: Services.EXPRESS,
+                })
                 const expressPrices = getPrice(externalData, expressCode)
 
                 return [
