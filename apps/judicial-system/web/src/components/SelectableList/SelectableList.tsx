@@ -25,17 +25,19 @@ export interface Item {
   tooltipText?: string
 }
 
-interface SelectableItem extends Item {
+export interface SelectableItem extends Item {
   checked: boolean
 }
 
 interface Props {
+  selectAllText?: string
   items?: Item[]
-  CTAButton: CTAButtonAttributes
+  CTAButton?: CTAButtonAttributes
   isLoading: boolean
   errorMessage?: string
   successMessage?: string
   warningMessage?: string
+  onChange?: (selectedItems: SelectableItem[]) => void
 }
 
 interface AnimateChildrenProps {
@@ -70,12 +72,14 @@ const AnimateChildren: FC<PropsWithChildren<AnimateChildrenProps>> = ({
 
 const SelectableList: FC<Props> = (props) => {
   const {
+    selectAllText,
     items,
     CTAButton,
     isLoading,
     errorMessage,
     successMessage,
     warningMessage,
+    onChange,
   } = props
   const { formatMessage } = useIntl()
   const [selectableItems, setSelectableItems] = useState<SelectableItem[]>([])
@@ -98,6 +102,9 @@ const SelectableList: FC<Props> = (props) => {
   }, [items, isLoading])
 
   const handleCTAButtonClick = async () => {
+    if (!CTAButton) {
+      return
+    }
     setIsHandlingCTA(true)
     await CTAButton.onClick(selectableItems.filter((p) => p.checked))
     setIsHandlingCTA(false)
@@ -117,19 +124,25 @@ const SelectableList: FC<Props> = (props) => {
         <Box marginBottom={2}>
           <Checkbox
             name="select-all"
-            label={formatMessage(strings.selectAllLabel)}
+            label={
+              selectAllText
+                ? selectAllText
+                : formatMessage(strings.selectAllLabel)
+            }
             checked={
               validSelectableItems.length > 0 &&
               validSelectableItems.every((item) => item.checked)
             }
-            onChange={(evt) =>
-              setSelectableItems((selectableItems) =>
-                selectableItems?.map((item) => ({
-                  ...item,
-                  checked: evt.target.checked && !item.invalid,
-                })),
-              )
-            }
+            onChange={(evt) => {
+              const update = selectableItems.map((item) => ({
+                ...item,
+                checked: evt.target.checked && !item.invalid,
+              }))
+              setSelectableItems(update)
+              if (onChange) {
+                onChange(update)
+              }
+            }}
             disabled={isHandlingCTA || validSelectableItems.length === 0}
             strong
           />
@@ -204,15 +217,17 @@ const SelectableList: FC<Props> = (props) => {
                       value={item.name}
                       checked={item.checked}
                       tooltip={item.tooltipText}
-                      onChange={(evt) =>
-                        setSelectableItems((selectableItems) =>
-                          selectableItems.map((i) =>
-                            i.id === item.id
-                              ? { ...i, checked: evt.target.checked }
-                              : i,
-                          ),
+                      onChange={(evt) => {
+                        const update = selectableItems.map((i) =>
+                          i.id === item.id
+                            ? { ...i, checked: evt.target.checked }
+                            : i,
                         )
-                      }
+                        setSelectableItems(update)
+                        if (onChange) {
+                          onChange(update)
+                        }
+                      }}
                       disabled={item.invalid || isHandlingCTA}
                     />
                     {item.invalid && (
@@ -232,19 +247,21 @@ const SelectableList: FC<Props> = (props) => {
           )}
         </AnimatePresence>
       </Box>
-      <Box display="flex" justifyContent="flexEnd">
-        <Button
-          onClick={handleCTAButtonClick}
-          loading={isHandlingCTA}
-          disabled={
-            items?.length === 0 ||
-            isLoading ||
-            selectableItems.every((p) => !p.checked)
-          }
-        >
-          {CTAButton.label}
-        </Button>
-      </Box>
+      {CTAButton && (
+        <Box display="flex" justifyContent="flexEnd">
+          <Button
+            onClick={handleCTAButtonClick}
+            loading={isHandlingCTA}
+            disabled={
+              items?.length === 0 ||
+              isLoading ||
+              selectableItems.every((p) => !p.checked)
+            }
+          >
+            {CTAButton.label}
+          </Button>
+        </Box>
+      )}
     </>
   )
 }

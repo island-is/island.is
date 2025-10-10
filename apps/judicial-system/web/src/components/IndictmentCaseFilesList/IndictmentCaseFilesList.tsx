@@ -429,18 +429,24 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 />
               )}
               {permissions.canViewVerdictServiceCertificate &&
-                workingCase.defendants?.map((defendant) => (
-                  <PdfButton
-                    key={defendant.id}
-                    caseId={workingCase.id}
-                    title={formatMessage(strings.serviceCertificateButtonText, {
-                      name: defendant.name,
-                    })}
-                    pdfType="verdictServiceCertificate"
-                    elementId={[defendant.id]}
-                    renderAs="row"
-                  />
-                ))}
+                workingCase.defendants?.map(
+                  (defendant) =>
+                    defendant.verdict?.serviceDate && (
+                      <PdfButton
+                        key={defendant.id}
+                        caseId={workingCase.id}
+                        title={formatMessage(
+                          strings.serviceCertificateButtonText,
+                          {
+                            name: defendant.name,
+                          },
+                        )}
+                        pdfType="verdictServiceCertificate"
+                        elementId={[defendant.id]}
+                        renderAs="row"
+                      />
+                    ),
+                )}
             </Box>
           )}
           <FileSection
