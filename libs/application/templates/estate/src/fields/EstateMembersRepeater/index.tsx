@@ -226,6 +226,7 @@ export const EstateMembersRepeater: FC<
                     update(index, updatedMember)
                     clearErrors(`${id}[${index}].phone`)
                     clearErrors(`${id}[${index}].email`)
+                    clearErrors(`${id}[${index}].nationalId`)
                     clearErrors(`${id}[${index}].advocate.phone`)
                     clearErrors(`${id}[${index}].advocate.email`)
                   }}
