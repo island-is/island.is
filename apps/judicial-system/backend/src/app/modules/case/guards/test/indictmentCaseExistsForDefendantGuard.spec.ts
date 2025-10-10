@@ -112,6 +112,7 @@ describe('Indictment Case Exists For Defendant Guard', () => {
           {
             model: EventLog,
             as: 'eventLogs',
+            required: false,
             order: [['created', 'DESC']],
             where: {
               event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
@@ -120,6 +121,7 @@ describe('Indictment Case Exists For Defendant Guard', () => {
           {
             model: CourtSession,
             as: 'courtSessions',
+            required: false,
             order: [['created', 'DESC']],
             attributes: ['ruling'],
             where: {

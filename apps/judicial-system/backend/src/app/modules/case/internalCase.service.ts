@@ -1395,6 +1395,7 @@ export class InternalCaseService {
         {
           model: EventLog,
           as: 'eventLogs',
+          required: false,
           order: [['created', 'DESC']],
           where: {
             event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
@@ -1403,6 +1404,7 @@ export class InternalCaseService {
         {
           model: CourtSession,
           as: 'courtSessions',
+          required: false,
           order: [['created', 'DESC']],
           attributes: ['ruling'],
           where: {
