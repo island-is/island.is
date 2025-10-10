@@ -190,7 +190,6 @@ const CourtRecord: FC = () => {
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() => {
             handleRuling()
-            setModalVisible('TODO:REMOVE')
           }}
         />
       </FormContentContainer>
