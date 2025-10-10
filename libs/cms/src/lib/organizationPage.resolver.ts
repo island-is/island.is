@@ -101,11 +101,14 @@ export class OrganizationPageResolver {
       }
     }
     if (node.type === SitemapTreeNodeType.CATEGORY) {
+      const nodeSlug = lang === 'en' ? node.slugEN : node.slug
+      const nodeLabel = lang === 'en' ? node.labelEN : node.label
+      if (!nodeSlug || !nodeLabel) return null
       return {
-        label: lang === 'en' ? node.labelEN ?? '' : node.label ?? '',
+        label: nodeLabel,
         href: `/${getOrganizationPageUrlPrefix(lang)}/${
           organizationPage.slug
-        }/${lang === 'en' ? node.slugEN : node.slug}`,
+        }/${nodeSlug}`,
         isCategory: true,
         description: lang === 'en' ? node.descriptionEN : node.description,
         icelandicSlug: node.slug,
@@ -240,13 +243,21 @@ export class OrganizationPageResolver {
     organizationPage: OrganizationPage,
     entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
   ) {
-    if (node.type === SitemapTreeNodeType.CATEGORY)
+    if (node.type === SitemapTreeNodeType.CATEGORY) {
+      const nodeSlug = lang === 'en' ? node.slugEN : node.slug
+      const nodeLabel = lang === 'en' ? node.labelEN : node.label
+      if (!nodeSlug || !nodeLabel)
+        return {
+          label: '',
+          href: '',
+        }
       return {
-        label: lang === 'en' ? node.labelEN : node.label,
+        label: nodeLabel,
         href: `/${getOrganizationPageUrlPrefix(lang)}/${
           organizationPage.slug
-        }/${lang === 'en' ? node.slugEN : node.slug}`,
+        }/${nodeSlug}`,
       }
+    }
     if (node.type === SitemapTreeNodeType.URL) {
       const baseUrl = `/${getOrganizationPageUrlPrefix(lang)}/${
         organizationPage.slug

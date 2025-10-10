@@ -1521,7 +1521,7 @@ export class CmsContentfulService {
         this.contentfulRepository.getLocalizedEntries(
           lang,
           {
-            'sys.id[in]': entryIdsObject.parentSubpageEntryIds.join(','),
+            'sys.id[in]': entryIdsObject.entryIds.join(','),
             limit: 1000,
           },
           1,
