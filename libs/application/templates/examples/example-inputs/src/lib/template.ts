@@ -27,7 +27,7 @@ const template: ApplicationTemplate<
   name: 'Example Inputs',
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Stafrænt Ísland',
-  translationNamespaces: [ApplicationConfigurations.ExampleInputs.translation],
+  translationNamespaces: ApplicationConfigurations.ExampleInputs.translation,
   dataSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
