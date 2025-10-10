@@ -2,6 +2,11 @@ name: 'Prep Dependencies'
 on:
   workflow_call:
     inputs:
+      skip_cache:
+        description: 'Skip cache setup'
+        required: false
+        type: boolean
+        default: false
       force_all_to_be_affected:
         description: 'Should all be affected'
         required: false
@@ -79,7 +84,27 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
+  get-ecr-password:
+    name: Get ECR password
+    runs-on: arc-shared
+    outputs:
+      ecr_username: 'AWS'
+      ecr_password: ${{ steps.pass.outputs.password }}
+    steps:
+      - shell: bash
+        id: pass
+        run: |
+          ECR_PASSWORD=$(aws ecr get-login-password)
+          echo "::add-mask::$ECR_PASSWORD"
+          if [ ${#ECR_PASSWORD} -gt 3 ]; then
+            echo "CORRECT LENGTH"
+          else
+            echo "INVALID LENGTH"
+          fi
+          echo "password=$ECR_PASSWORD" >> $GITHUB_OUTPUT
   install:
+    needs:
+      - get-ecr-password
     outputs:
       MQ_SHA: ${{ steps.prepare-merge-queue.outputs.GIT_SHA }}
       MQ_HELM_VALUES_BRANCH: ${{ steps.prepare-merge-queue.outputs.HELM_VALUES_BRANCH }}
@@ -101,6 +126,25 @@ jobs:
     permissions:
       contents: 'read'
       actions: 'read'
+    services:
+      npminstall:
+        image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/islandis-npm-proxy:1
+        # credentials:
+         # username: ${{ needs.get-ecr-password.outputs.ecr_username }}
+         # password: ${{ needs.get-ecr-password.outputs.ecr_password }}
+        ports:
+          - 3000:3000
+        env: 
+          REDIS_HOSTS: "redis://master.npm-proxy-cluster01.58fvbi.euw1.cache.amazonaws.com:6379"
+          REDIS_STANDALONE: "true"
+          REDIS_TLS: "true"
+          SELF_URL: "http://localhost:3000"
+          NODE_ENV: "production"
+        options: >-
+          --health-cmd="curl --fail http://localhost:3000/__ready || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=30
     steps:
       - name: Set outputs
         id: set-outputs
@@ -115,7 +159,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
+        with:
+          skip-cache: ${{ inputs.skip_cache }}
+       
       - name: load-deps
         uses: ./.github/actions/load-deps
 
