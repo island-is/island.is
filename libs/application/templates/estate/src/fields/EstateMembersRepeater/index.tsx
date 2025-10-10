@@ -247,7 +247,11 @@ export const EstateMembersRepeater: FC<
                   disabled={!member.enabled}
                   readOnly
                   format={'######-####'}
-                  error={error && error[index] && error[index].nationalId}
+                  error={
+                    member.enabled
+                      ? error && error[index] && error[index].nationalId
+                      : undefined
+                  }
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
