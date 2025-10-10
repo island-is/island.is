@@ -22,6 +22,7 @@ type ProblemBaseProps = {
   error?: Error
   title?: string
   message?: string
+  detailLink?: string
   logError?: boolean
 } & Pick<ProblemTemplateBaseProps, 'withContainer' | 'size'>
 
@@ -39,6 +40,7 @@ interface NoDataBaseProps extends ProblemBaseProps {
   error?: never
   title?: string
   message?: string
+  detailLink?: string
 }
 
 interface NoDataWithIconProps extends NoDataBaseProps {
@@ -65,6 +67,7 @@ export const Problem = ({
   withContainer,
   showIcon,
   size = 'large',
+  detailLink,
 }: ProblemProps) => {
   const t = useTranslate()
   const { isConnected } = useOfflineStore()
@@ -128,6 +131,7 @@ export const Problem = ({
           title={title ?? t('problem.noData.title')}
           message={message ?? t('problem.noData.message')}
           size={size}
+          detailLink={detailLink}
         />
       )
 

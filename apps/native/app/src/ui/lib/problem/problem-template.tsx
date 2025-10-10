@@ -4,6 +4,8 @@ import styled from 'styled-components/native'
 
 import { Typography } from '../typography/typography'
 import { Colors } from '../../utils'
+import { Link } from '../link/link'
+import { useIntl } from 'react-intl'
 
 type Variant = 'info' | 'error' | 'warning'
 
@@ -13,6 +15,7 @@ export type ProblemTemplateBaseProps = {
   message: string | ReactNode
   withContainer?: boolean
   size?: 'small' | 'large'
+  detailLink?: string
 }
 
 interface WithIconProps extends ProblemTemplateBaseProps {
@@ -119,8 +122,10 @@ export const ProblemTemplate = ({
   showIcon,
   tag,
   withContainer,
+  detailLink,
   size = 'large',
 }: ProblemTemplateProps) => {
+  const intl = useIntl()
   const { borderColor, tagColor, tagBackgroundColor } =
     getColorsByVariant(variant)
 
@@ -147,6 +152,22 @@ export const ProblemTemplate = ({
         >
           {message}
         </Typography>
+        {detailLink && (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <Typography textAlign="center">
+              {intl.formatMessage({ id: 'button.moreInfo' })}{' '}
+            </Typography>
+            <Link url={detailLink}>
+              {intl.formatMessage({ id: 'button.moreInfoLink' })}
+            </Link>
+          </View>
+        )}
       </Content>
     </Host>
   )
