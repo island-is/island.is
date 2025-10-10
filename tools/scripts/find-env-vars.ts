@@ -6,6 +6,15 @@ import path from 'path'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 
+import {
+  createProjectGraphAsync,
+  type ProjectGraph,
+  type ProjectGraphProjectNode,
+  workspaceRoot,
+} from '@nx/devkit'
+
+process.env.NX_DAEMON = process.env.NX_DAEMON ?? 'false'
+
 type OutputFormat = 'json' | 'text'
 
 const argv = yargs(hideBin(process.argv))
@@ -61,71 +70,113 @@ const OPTIONAL_REGEX = /env(?:\?\.|\.)optional(?:JSON)?\(\s*['"`]([^'"`]+)['"`]/
 const PROCESS_DOT_REGEX = /process\.env(?:\?\.|\.)+([A-Za-z0-9_]+)/g
 const PROCESS_BRACKET_REGEX = /process\.env(?:\?\.|\.)?\[\s*['"`]([^'"`]+)['"`]\s*\]/g
 
-const PROJECT_GLOB_IGNORE = [
-  '**/node_modules/**',
-  '**/dist/**',
-  '**/.git/**',
-  '**/.next/**',
-  '**/.cache/**',
-  '**/.storybook/**',
-]
-
-type ProjectManifest = {
-  name?: string
-  root?: string
-  sourceRoot?: string
-}
-
-type ResolvedProjectConfiguration = {
-  projectRoot: string
-  sourceRoot?: string
-}
-
-function findProjectConfiguration(
-  projectName: string,
-): ResolvedProjectConfiguration | null {
-  const workspaceRoot = process.cwd()
-  const projectFiles = globSync('**/project.json', {
-    cwd: workspaceRoot,
-    absolute: true,
-    ignore: PROJECT_GLOB_IGNORE,
-  })
-
-  for (const file of projectFiles) {
-    try {
-      const manifest = JSON.parse(readFileSync(file, 'utf8')) as ProjectManifest
-      const name = manifest.name ?? path.basename(path.dirname(file))
-      if (name === projectName) {
-        const projectRoot =
-          manifest.root ?? path.relative(workspaceRoot, path.dirname(file))
-        return {
-          projectRoot,
-          sourceRoot: manifest.sourceRoot,
-        }
-      }
-    } catch (error) {
-      // Ignore files that fail to parse
-      continue
-    }
-  }
-
-  return null
-}
-
 async function main() {
   const projectName = argv.project as string
-  const projectConfig = findProjectConfiguration(projectName)
+  const graph = await createProjectGraphAsync()
 
-  if (!projectConfig) {
+  const targetNode = graph.nodes[projectName]
+  if (!targetNode) {
     console.error(`Project "${projectName}" not found in workspace`)
     process.exit(1)
   }
 
-  const workspaceRoot = process.cwd()
-  const scanRoot = projectConfig.sourceRoot ?? projectConfig.projectRoot
-  const absRoot = path.join(workspaceRoot, scanRoot)
+  const relatedProjects = collectProjectTree(projectName, graph)
+  const directoriesToScan = new Set(
+    relatedProjects
+      .map((proj) => proj.data.sourceRoot ?? proj.data.root)
+      .filter((value): value is string => Boolean(value)),
+  )
 
-  const ignorePatterns = [
+  const ignorePatterns = buildIgnorePatterns()
+
+  const result: Result = {
+    project: projectName,
+    root: targetNode.data.sourceRoot ?? targetNode.data.root ?? projectName,
+    required: new Map(),
+    optional: new Map(),
+    process: new Map(),
+  }
+
+  directoriesToScan.forEach((dir) => {
+    const absRoot = path.join(workspaceRoot, dir)
+    const files = globSync('**/*.{ts,tsx,js,jsx}', {
+      cwd: absRoot,
+      absolute: true,
+      ignore: ignorePatterns,
+    })
+
+    files.forEach((file) => {
+      const content = readFileSync(file, 'utf8')
+      const relativePath = path.relative(workspaceRoot, file)
+
+      collectMatches(content, REQUIRED_REGEX).forEach((name) =>
+        addUsage(result.required, name, relativePath),
+      )
+      collectMatches(content, OPTIONAL_REGEX).forEach((name) =>
+        addUsage(result.optional, name, relativePath),
+      )
+      collectMatches(content, PROCESS_DOT_REGEX).forEach((name) =>
+        addUsage(result.process, name, relativePath),
+      )
+      collectMatches(content, PROCESS_BRACKET_REGEX).forEach((name) =>
+        addUsage(result.process, name, relativePath),
+      )
+    })
+  })
+
+  result.required.forEach((_files, name) => {
+    result.optional.delete(name)
+    result.process.delete(name)
+  })
+
+  result.optional.forEach((_files, name) => {
+    result.process.delete(name)
+  })
+
+  outputResult(result)
+}
+
+type ProjectInfo = {
+  name: string
+  data: ProjectGraphProjectNode['data']
+}
+
+function collectProjectTree(
+  projectName: string,
+  graph: ProjectGraph,
+): ProjectInfo[] {
+  const queue: string[] = [projectName]
+  const visited = new Set<string>()
+  const projects: ProjectInfo[] = []
+
+  while (queue.length > 0) {
+    const current = queue.shift()!
+    if (visited.has(current)) {
+      continue
+    }
+    visited.add(current)
+
+    const node = graph.nodes[current]
+    if (!node) {
+      continue
+    }
+
+    projects.push({ name: current, data: node.data })
+
+    const deps = graph.dependencies[current] ?? []
+    deps.forEach((dep) => {
+      if (dep.target.startsWith('npm:')) {
+        return
+      }
+      queue.push(dep.target)
+    })
+  }
+
+  return projects
+}
+
+function buildIgnorePatterns(): string[] {
+  const patterns = [
     '**/node_modules/**',
     '**/dist/**',
     '**/.next/**',
@@ -136,62 +187,18 @@ async function main() {
   ]
 
   if (!INCLUDE_TESTS) {
-    ignorePatterns.push(
+    patterns.push(
       '**/*.spec.*',
       '**/*.test.*',
       '**/test/**',
       '**/__tests__/**',
       '**/*.stories.*',
-      '**/*.storybook/**',
+      '**/.storybook/**',
     )
   }
 
-  ignorePatterns.push(...EXTRA_IGNORES)
-
-  const files = globSync('**/*.{ts,tsx,js,jsx}', {
-    cwd: absRoot,
-    absolute: true,
-    ignore: ignorePatterns,
-  })
-
-  const result: Result = {
-    project: projectName,
-    root: scanRoot,
-    required: new Map(),
-    optional: new Map(),
-    process: new Map(),
-  }
-
-  files.forEach((file) => {
-    const content = readFileSync(file, 'utf8')
-    const relativePath = path.relative(workspaceRoot, file)
-
-    collectMatches(content, REQUIRED_REGEX).forEach((name) =>
-      addUsage(result.required, name, relativePath),
-    )
-    collectMatches(content, OPTIONAL_REGEX).forEach((name) =>
-      addUsage(result.optional, name, relativePath),
-    )
-    collectMatches(content, PROCESS_DOT_REGEX).forEach((name) =>
-      addUsage(result.process, name, relativePath),
-    )
-    collectMatches(content, PROCESS_BRACKET_REGEX).forEach((name) =>
-      addUsage(result.process, name, relativePath),
-    )
-  })
-
-  // Remove optional variables that are also marked required
-  result.required.forEach((_files, name) => {
-    result.optional.delete(name)
-    result.process.delete(name)
-  })
-
-  // Remove process vars already declared optional
-  result.optional.forEach((_files, name) => {
-    result.process.delete(name)
-  })
-
-  outputResult(result)
+  patterns.push(...EXTRA_IGNORES)
+  return patterns
 }
 
 function collectMatches(content: string, pattern: RegExp): string[] {
@@ -248,7 +255,6 @@ function outputResult(result: Result) {
     return
   }
 
-  // text output
   const lines: string[] = []
   lines.push(`Project: ${result.project}`)
   lines.push(`Root: ${result.root}`)
